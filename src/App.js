@@ -1,11 +1,27 @@
 import React from 'react';
+import { useHistory } from "react-router-dom";
 import {Rotas} from "./rotas";
 import "./assets/css/styles.scss"
+import {Cabecalho} from "./componentes/Cabecalho";
+import {SidebarLeft} from "./componentes/SidebarLeft";
+import {Rodape} from "./componentes/Rodape";
 
-function App() {
+export const App = ()=> {
+    const pathName = useHistory().location.pathname
+
   return (
-    <section role="main">
-      <Rotas/>
+    <section role="main" id="main" className='row'>
+        {pathName !== "/login" ? (
+            <>
+                <Cabecalho/>
+                <SidebarLeft/>
+                <Rotas/>
+                <Rodape/>
+            </>
+
+        ): <Rotas/>}
+
+
     </section>
   );
 }
