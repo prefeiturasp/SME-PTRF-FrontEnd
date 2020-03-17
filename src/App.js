@@ -11,15 +11,7 @@ export const App = ()=> {
 
   return (
     <section role="main" id="main" className='row'>
-        {pathName !== "/login" ? (
-            <>
-                <Cabecalho/>
-                <SidebarLeft/>
-                <Rotas/>
-                <Rodape/>
-            </>
-
-        ): <Rotas/>}
+        <Rotas/>
 
 
     </section>
