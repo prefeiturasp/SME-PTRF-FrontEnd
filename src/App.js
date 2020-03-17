@@ -2,6 +2,9 @@ import React from 'react';
 import { useHistory } from "react-router-dom";
 import {Rotas} from "./rotas";
 import "./assets/css/styles.scss"
+import {Cabecalho} from "./componentes/Cabecalho";
+import {SidebarLeft} from "./componentes/SidebarLeft";
+import {Rodape} from "./componentes/Rodape";
 
 
 export const App = ()=> {
@@ -9,7 +12,17 @@ export const App = ()=> {
 
   return (
     <section role="main" id="main" className='row'>
-        <Rotas/>
+
+        {pathName !== "/login" ? (
+            <>
+            <Cabecalho/>
+            <SidebarLeft/>
+            <Rotas/>
+            <Rodape/>
+            </>
+        ) : <Rotas/> }
+
+
 
 
     </section>
