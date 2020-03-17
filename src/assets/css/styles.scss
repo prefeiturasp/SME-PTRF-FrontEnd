@@ -1,0 +1,11 @@
+@import "variaveis.scss";
+body{
+  overflow-x:hidden;
+}
+#main{
+  color: $corFonte;
+  .btn-success{
+    background-color: $corBtnSuccess;
+    border-color: $corBtnSuccess;
+  }
+}
