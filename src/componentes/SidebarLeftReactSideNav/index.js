@@ -18,8 +18,6 @@ import IconeMenuDadosDaAssociacao from "../../assets/img/icone-menu-dados-da-ass
 
 import $ from 'jquery';
 
-
-
 export const SidebarLeft = () => {
 
     const onToggle= () =>{
@@ -43,18 +41,18 @@ export const SidebarLeft = () => {
 
             <SideNav.Toggle />
             <SideNav.Nav defaultSelected="painel">
+                <div className="justify-content-center mx-auto align-items-center sidebar-brand-text mx-3 pt-2">
+                    <p><strong>Escola Municipal de Educação Infantil Emílio Ribas</strong></p>
+                </div>
 
+                {/*<NavItem eventKey="nomeInstituicao">
 
-
-
-                <NavItem eventKey="nome">
-                    <NavIcon>
-
-                    </NavIcon>
                     <NavText>
-                        <div className="container-nome-instituicao mt-0">Escola Municipal de Educação Infantil Emílio Ribas</div>
+                        <div className="container-nome-instituicao">
+                            <p><strong>Escola Municipal de Educação Infantil Emílio Ribas</strong></p>
+                        </div>
                     </NavText>
-                </NavItem>
+                </NavItem>*/}
 
                 <NavItem eventKey="painel">
                     <NavIcon>

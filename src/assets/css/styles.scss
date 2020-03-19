@@ -8,4 +8,24 @@ body{
     background-color: $corBtnSuccess;
     border-color: $corBtnSuccess;
   }
+
+  /* ---------------------------------------------------
+    CONTENT STYLE
+----------------------------------------------------- */
+
+  .page-content {
+    width: calc(100% - 15rem);
+    margin-left: 15rem;
+    transition: all 0.4s;
+  }
+
+  /* for toggle behavior */
+
+  #content.active {
+    width: 100%;
+    margin: 0 0 0 4.5em;
+  }
+
 }
+
+
