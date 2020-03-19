@@ -1,23 +1,46 @@
-.sidenav---sidenav---_2tBP{
+.sideNavCustomizado{
   position: fixed;
   background-color: #00585E;
-}
+  letter-spacing: 0.01em;
+  font-weight: 500;
+  margin-top: 80px;
+  overflow-y: auto;
+  overflow-x: hidden;
 
-.sidenav---navtext---1AE_f{
-  color: #fff !important;
-  font-weight: bold;
-}
+  .sidenav---navtext---1AE_f{
+    color: #fff !important;
+    font-weight: 500;
+  }
 
-.container-nome-instituicao{
-  text-align: center;
-  max-width: 240px;
-  display: inline-block;
-  width: 200px;
-  white-space: normal;
-  line-height: normal;
-  margin-left: -50px;
-}
+  .navItemCustomizado:hover{
+    background-color: #00585E;
+  }
 
-.nomeInstituicao{
+  .container-nome-instituicao{
+    text-align: center;
+    display: inline-block;
+    width: 220px;
+    white-space: normal;
+    line-height: normal;
+    position: relative;
+    float: left;
+    color: #fff !important;
+
+    span{
+      font-weight: normal;
+    }
+  }
+
+  navItemLogo{
+    text-align: center;
+    max-width: 240px;
+    display: inline-block;
+    width: 240px;
+    white-space: normal;
+    line-height: normal;
+    position: relative;
+    float: left;
+    color: #fff !important;
+  }
 
 }

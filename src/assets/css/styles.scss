@@ -4,6 +4,7 @@ body{
 }
 #main{
   color: $corFonte;
+  margin-top: 69px;
   .btn-success{
     background-color: $corBtnSuccess;
     border-color: $corBtnSuccess;
@@ -25,6 +26,11 @@ body{
     width: 100%;
     margin: 0 0 0 4.5em;
   }
+
+  .escondeItem{
+    display: none !important;
+  }
+
 
 }
 

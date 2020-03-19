@@ -1,12 +1,12 @@
 import React, {useState} from "react";
-import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
+import SideNav, { NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
 
 // Be sure to include styles at some point, probably during your bootstraping
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 import "./siderbarLeft.scss"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee, faHome } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faSchool } from '@fortawesome/free-solid-svg-icons'
 
 import IconeMenuPainel from "../../assets/img/icone-menu-painel.svg"
 import IconeMenuGastosDaEscola from "../../assets/img/icone-menu-gastos-da-escola.svg"
@@ -15,12 +15,14 @@ import IconeMenuCadastroDeDespesa from "../../assets/img/icone-menu-cadastro-de-
 import IconeMenuCadastroDeCredito from "../../assets/img/icone-menu-cadastro-de-credito.svg"
 import IconeMenuPrestacaoDeContas from "../../assets/img/icone-menu-prestacao-de-contas.svg"
 import IconeMenuDadosDaAssociacao from "../../assets/img/icone-menu-dados-da-associacao.svg"
+import LogoSP from "../../assets/img/logo-menu.png"
 
 import $ from 'jquery';
 
 
 
 export const SidebarLeft = () => {
+
 
     const onToggle= () =>{
         setExpanded(!expanded)
@@ -34,25 +36,36 @@ export const SidebarLeft = () => {
         <>
 
         <SideNav
+            className="sideNavCustomizado"
             expanded = {expanded}
             onSelect={(selected) => {
                 // Add your code here
             }}
             onToggle={onToggle}
+            //componentClass="sideNavCustomizado"
         >
 
             <SideNav.Toggle />
             <SideNav.Nav defaultSelected="painel">
-
-
-
-
-                <NavItem eventKey="nome">
+                <NavItem
+                    navitemClassName="navItemCustomizado"
+                >
                     <NavIcon>
-
+                        <FontAwesomeIcon style={{fontSize: "25px"}} className={expanded ? "escondeItem" : ""} src={IconeMenuDadosDaAssociacao} icon={faUser}/>
                     </NavIcon>
                     <NavText>
-                        <div className="container-nome-instituicao mt-0">Escola Municipal de Educação Infantil Emílio Ribas</div>
+                        <div className="container-nome-instituicao mt-n4 mb-4">Escola Municipal de Educação Infantil Emílio Ribas</div>
+                    </NavText>
+                </NavItem>
+
+                <NavItem
+                    navitemClassName="navItemCustomizado"
+                >
+                    <NavIcon>
+                        <FontAwesomeIcon style={{fontSize: "25px"}} className={expanded ? "escondeItem" : ""} src={IconeMenuDadosDaAssociacao} icon={faSchool}/>
+                    </NavIcon>
+                    <NavText>
+                        <div className="container-nome-instituicao mt-n4 mb-4"><span className="border border-white rounded-pill px-4 py-1">Eduardo Ramos</span></div>
                     </NavText>
                 </NavItem>
 
@@ -118,6 +131,17 @@ export const SidebarLeft = () => {
                         Dados da Associação
                     </NavText>
                 </NavItem>
+                <NavItem
+                    navitemClassName= {!expanded ? "escondeItem" : "navItemCustomizado"}
+                >
+                    <NavIcon>
+
+                    </NavIcon>
+                    <NavText>
+                        <div className="container-nome-instituicao mt-n4 mb-4"><img src={LogoSP} alt=""/></div>
+                    </NavText>
+                </NavItem>
+
 
             </SideNav.Nav>
         </SideNav>

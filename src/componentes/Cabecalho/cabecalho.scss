@@ -1,7 +1,18 @@
-.container-cabecalho{
-
+.cabecalho{
+  background-color: #fff;
   .logo-cabecalho{
-    width: 64px;
+    width: 100px;
   }
 
+  .btn-sair{
+    background: transparent;
+    border: none;
+  }
+
+  .icone-sair{
+    width: 35px;
+  }
 }
+
+
+

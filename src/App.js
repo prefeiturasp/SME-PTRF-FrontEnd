@@ -15,7 +15,7 @@ export const App = ()=> {
 
         {pathName !== "/login" ? (
             <>
-            {/*<Cabecalho/>*/}
+            <Cabecalho/>
             <SidebarLeft/>
             <Rotas/>
             </>
