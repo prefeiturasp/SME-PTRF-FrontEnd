@@ -6,7 +6,6 @@ import IconeSair from "../../assets/img/sair.svg"
 export const Cabecalho = () => {
 
     return (
-
         <nav className="cabecalho navbar navbar-expand-lg fixed-top pb-0">
             <a className="navbar-brand" href="#"><img className="img-fluid logo-cabecalho ml-3" src={LogoPtrf} alt=""/></a>
                 <ul className="navbar-nav ml-auto">
@@ -14,10 +13,7 @@ export const Cabecalho = () => {
                         <button className="btn-sair"><img className="img-fluid icone-sair" src={IconeSair} alt=""/></button>
                         <p className="mb-">Sair</p>
                     </li>
-
                 </ul>
-
-
         </nav>
     );
 }

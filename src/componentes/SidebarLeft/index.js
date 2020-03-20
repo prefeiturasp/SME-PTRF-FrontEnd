@@ -1,10 +1,7 @@
-import React, {useState} from "react";
+import React, {useContext} from "react";
 import SideNav, { NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
-
-// Be sure to include styles at some point, probably during your bootstraping
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 import "./siderbarLeft.scss"
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faSchool } from '@fortawesome/free-solid-svg-icons'
 
@@ -16,42 +13,40 @@ import IconeMenuCadastroDeCredito from "../../assets/img/icone-menu-cadastro-de-
 import IconeMenuPrestacaoDeContas from "../../assets/img/icone-menu-prestacao-de-contas.svg"
 import IconeMenuDadosDaAssociacao from "../../assets/img/icone-menu-dados-da-associacao.svg"
 import LogoSP from "../../assets/img/logo-menu.png"
+import {SidebarContext} from "../../context/Sidebar";
 
-import $ from 'jquery';
-
-
+import { useHistory } from "react-router-dom";
 
 export const SidebarLeft = () => {
-
+    const sidebarStatus = useContext(SidebarContext);
+    let history = useHistory();
 
     const onToggle= () =>{
-        setExpanded(!expanded)
-        $('#content').toggleClass('active');
+        sidebarStatus.setSideBarStatus(!sidebarStatus.sideBarStatus)
     }
-
-
-    const [expanded, setExpanded] = useState(true)
 
     return (
         <>
-
         <SideNav
+            id="sideBarLeft"
             className="sideNavCustomizado"
-            expanded = {expanded}
+            expanded = {sidebarStatus.sideBarStatus}
             onSelect={(selected) => {
-                // Add your code here
+
+                const to = '/' + selected;
+                if (history.location.pathname !== to) {
+                    history.push(to);
+                }
             }}
             onToggle={onToggle}
-            //componentClass="sideNavCustomizado"
         >
-
             <SideNav.Toggle />
             <SideNav.Nav defaultSelected="painel">
                 <NavItem
                     navitemClassName="navItemCustomizado"
                 >
                     <NavIcon>
-                        <FontAwesomeIcon style={{fontSize: "25px"}} className={expanded ? "escondeItem" : ""} src={IconeMenuDadosDaAssociacao} icon={faUser}/>
+                        <FontAwesomeIcon style={{fontSize: "25px"}} className={sidebarStatus.sideBarStatus ? "escondeItem" : ""} src={IconeMenuDadosDaAssociacao} icon={faUser}/>
                     </NavIcon>
                     <NavText>
                         <div className="container-nome-instituicao mt-n4 mb-4">Escola Municipal de Educação Infantil Emílio Ribas</div>
@@ -62,7 +57,7 @@ export const SidebarLeft = () => {
                     navitemClassName="navItemCustomizado"
                 >
                     <NavIcon>
-                        <FontAwesomeIcon style={{fontSize: "25px"}} className={expanded ? "escondeItem" : ""} src={IconeMenuDadosDaAssociacao} icon={faSchool}/>
+                        <FontAwesomeIcon style={{fontSize: "25px"}} className={sidebarStatus.sideBarStatus ? "escondeItem" : ""} src={IconeMenuDadosDaAssociacao} icon={faSchool}/>
                     </NavIcon>
                     <NavText>
                         <div className="container-nome-instituicao mt-n4 mb-4"><span className="border border-white rounded-pill px-4 py-1">Eduardo Ramos</span></div>
@@ -132,7 +127,7 @@ export const SidebarLeft = () => {
                     </NavText>
                 </NavItem>
                 <NavItem
-                    navitemClassName= {!expanded ? "escondeItem" : "navItemCustomizado"}
+                    navitemClassName= {!sidebarStatus.sideBarStatus ? "escondeItem" : "navItemCustomizado"}
                 >
                     <NavIcon>
 

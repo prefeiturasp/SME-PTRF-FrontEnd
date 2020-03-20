@@ -4,7 +4,7 @@ body{
 }
 #main{
   color: $corFonte;
-  margin-top: 69px;
+
   .btn-success{
     background-color: $corBtnSuccess;
     border-color: $corBtnSuccess;
@@ -18,13 +18,14 @@ body{
     width: calc(100% - 15rem);
     margin-left: 15rem;
     transition: all 0.4s;
+    margin-top: 69px;
   }
 
   /* for toggle behavior */
 
   #content.active {
     width: 100%;
-    margin: 0 0 0 4.5em;
+    margin: 69px 0 0 4.5em;
   }
 
   .escondeItem{
