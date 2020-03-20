@@ -31,17 +31,17 @@
       text-align: center;
       @media screen and (max-height: 610px) {
         padding-top: 2rem;
-        img {
+/*        img {
           height: auto;
           width: 300px;
-        }
+        }*/
       }
       @media screen and (min-height: 611px) {
         padding-top: 5rem;
-        img {
+        /*img {
           height: 105px;
           width: 427px;
-        }
+        }*/
       }
     }
     .logo-prefeitura {

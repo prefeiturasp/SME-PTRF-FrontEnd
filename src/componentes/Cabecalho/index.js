@@ -7,7 +7,7 @@ export const Cabecalho = () => {
 
     return (
         <nav className="cabecalho navbar navbar-expand-lg fixed-top pb-0">
-            <a className="navbar-brand" href="#"><img className="img-fluid logo-cabecalho ml-3" src={LogoPtrf} alt=""/></a>
+            <img className="img-fluid logo-cabecalho ml-3" src={LogoPtrf} alt=""/>
                 <ul className="navbar-nav ml-auto">
                     <li className="nav-item text-center">
                         <button className="btn-sair"><img className="img-fluid icone-sair" src={IconeSair} alt=""/></button>
