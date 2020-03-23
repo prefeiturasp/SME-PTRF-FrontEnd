@@ -24,21 +24,13 @@ export const DespesaForm = () => {
         console.log("Ollyver ", values)
     }
 
-    const handleChange = (value) => {
-        return value.length;
-    }
-
-
-
     return (
         <>
             <Formik
                 initialValues={initialValues()}
                 validationSchema={YupSignupSchemaCadastroDespesa}
                 validateOnBlur={true}
-                //enableReinitialize={true}
                 onSubmit={onSubmit}
-                //onChange={handleChange}
             >
                 {props => (
                     <form onSubmit={props.handleSubmit}>
@@ -46,8 +38,6 @@ export const DespesaForm = () => {
                             <div className="col-12 col-md-6 mt-4">
                                 <label htmlFor="cnpCpf">CNPJ ou CPF do fornecedor</label>
                                 <MaskedInput
-                                    //mask={[/\d/, /\d/, /\d/, '.',  /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/,/\d/]}
-                                    //mask={[/\d/, /\d/, /\d/, '.',  /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/,/\d/]}
                                     mask={(valor) => cpfMaskContitional(valor)}
                                     value={props.values.cnpCpf}
                                     onChange={props.handleChange}

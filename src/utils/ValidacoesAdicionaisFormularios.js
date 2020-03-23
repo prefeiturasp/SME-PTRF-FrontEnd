@@ -38,15 +38,18 @@ export const cpfMaskContitional = (value) => {
 
 function valida_cpf_cnpj ( valor ) {
 
+    if ( !valor || (valor.length < 11 && valor.length > 14) || valor === "00000000000" || valor === "11111111111" || valor === "22222222222" || valor === "33333333333" || valor === "44444444444" || valor === "55555555555" || valor === "66666666666" || valor === "77777777777" || valor === "88888888888"
+        || valor === "99999999999" )
+        return false
+
     // Verifica se é CPF ou CNPJ
-    var valida = verifica_cpf_cnpj( valor );
+    let valida = verifica_cpf_cnpj( valor );
 
     // Garante que o valor é uma string
     valor = valor.toString();
 
     // Remove caracteres inválidos do valor
     valor = valor.replace(/[^0-9]/g, '');
-
 
     // Valida CPF
     if ( valida === 'CPF' ) {
@@ -67,13 +70,6 @@ function valida_cpf_cnpj ( valor ) {
 
 } // valida_cpf_cnpj
 
-/*
- verifica_cpf_cnpj
-
- Verifica se é CPF ou CNPJ
-
- @see http://www.tutsup.com/
-*/
 function verifica_cpf_cnpj ( valor ) {
 
     // Garante que o valor é uma string
@@ -81,19 +77,6 @@ function verifica_cpf_cnpj ( valor ) {
 
     // Remove caracteres inválidos do valor
     valor = valor.replace(/[^0-9]/g, '');
-
-    if ( !valor || (valor.length < 11 && valor.length > 14)
-        || valor == "00000000000"
-        || valor == "11111111111"
-        || valor == "22222222222"
-        || valor == "33333333333"
-        || valor == "44444444444"
-        || valor == "55555555555"
-        || valor == "66666666666"
-        || valor == "77777777777"
-        || valor == "88888888888"
-        || valor == "99999999999" )
-        return false
 
     // Verifica CPF
     if ( valor.length === 11 ) {
@@ -116,7 +99,7 @@ function calc_digitos_posicoes( digitos, posicoes = 10, soma_digitos = 0 ) {
 
     digitos = digitos.toString();
 
-    for ( var i = 0; i < digitos.length; i++  ) {
+    for ( let i = 0; i < digitos.length; i++  ) {
         soma_digitos = soma_digitos + ( digitos[i] * posicoes );
         posicoes--;
         if ( posicoes < 2 ) {
@@ -132,7 +115,7 @@ function calc_digitos_posicoes( digitos, posicoes = 10, soma_digitos = 0 ) {
         soma_digitos = 11 - soma_digitos;
     }
 
-    var cpf = digitos + soma_digitos;
+    let cpf = digitos + soma_digitos;
 
     return cpf;
 
@@ -144,11 +127,11 @@ function valida_cpf( valor ) {
 
     valor = valor.replace(/[^0-9]/g, '');
 
-    var digitos = valor.substr(0, 9);
+    let digitos = valor.substr(0, 9);
 
-    var novo_cpf = calc_digitos_posicoes( digitos );
+    let novo_cpf = calc_digitos_posicoes( digitos );
 
-    var novo_cpf = calc_digitos_posicoes( novo_cpf, 11 );
+    novo_cpf = calc_digitos_posicoes( novo_cpf, 11 );
 
     if ( novo_cpf === valor ) {
         return true;
@@ -159,20 +142,19 @@ function valida_cpf( valor ) {
 } // valida_cpf
 
 function valida_cnpj ( valor ) {
-
     valor = valor.toString();
 
     valor = valor.replace(/[^0-9]/g, '');
 
-    var cnpj_original = valor;
+    let cnpj_original = valor;
 
-    var primeiros_numeros_cnpj = valor.substr( 0, 12 );
+    let primeiros_numeros_cnpj = valor.substr( 0, 12 );
 
-    var primeiro_calculo = calc_digitos_posicoes( primeiros_numeros_cnpj, 5 );
+    let primeiro_calculo = calc_digitos_posicoes( primeiros_numeros_cnpj, 5 );
 
-    var segundo_calculo = calc_digitos_posicoes( primeiro_calculo, 6 );
+    let segundo_calculo = calc_digitos_posicoes( primeiro_calculo, 6 );
 
-    var cnpj = segundo_calculo;
+    let cnpj = segundo_calculo;
 
     if ( cnpj === cnpj_original ) {
         return true;
