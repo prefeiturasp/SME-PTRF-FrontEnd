@@ -113,11 +113,18 @@ export const DespesaForm = () => {
                         <div className="form-row">
                             <div className="col-12 col-md-3 mt-4">
                                 <label htmlFor="dataTransacao">Data da transação</label>
-                                <input
+                                <NumberFormat
+                                    format="##/##/####"
+                                    placeholder="DD/MM/AAAA"
+                                    mask={['D','D','M', 'M', 'Y', 'Y', 'Y', 'Y']}
                                     value={props.values.dataTransacao}
                                     onChange={props.handleChange}
                                     onBlur={props.handleBlur}
-                                    name="dataTransacao" id="dataTransacao" type="text" className="form-control" placeholder="Escolha a data"/>
+                                    name="dataTransacao"
+                                    className="form-control"
+                                />
+                                {props.errors.dataTransacao && <span className="span_erro text-danger mt-1"> {props.errors.dataTransacao}</span>}
+
                             </div>
                             <div className="col-12 col-md-3 mt-4">
                                 <label htmlFor="valorTotal">Valor total</label>
@@ -154,14 +161,6 @@ export const DespesaForm = () => {
                             </div>
                             <div className="col-12 col-md-3 mt-4">
                                 <label htmlFor="valorRecursoAcoes">Valor do recurso das ações</label>
-{/*                                <input
-                                    value={calculaValorRecursoAcoes(props)}
-                                    onChange={props.handleChange}
-                                    onBlur={props.handleBlur}
-                                    //readOnly={true}
-                                    name="valorRecursoAcoes" id="valorRecursoAcoes" type="number" className="form-control" placeholder="Digite o valor total"
-                                />*/}
-
                                 <NumberFormat
                                     value={calculaValorRecursoAcoes(props)}
                                     thousandSeparator={'.'}
@@ -173,7 +172,7 @@ export const DespesaForm = () => {
                                     className="form-control"
                                     onChange={props.handleChange}
                                     onBlur={props.handleBlur}
-                                    //readOnly={true}
+                                    readOnly={true}
                                 />
                                 {props.errors.valorRecursoAcoes && <span className="span_erro text-danger mt-1"> {props.errors.valorRecursoAcoes}</span>}
 
