@@ -3,6 +3,10 @@ import {Formik} from "formik";
 import MaskedInput from 'react-text-mask'
 import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, round} from "../../../utils/ValidacoesAdicionaisFormularios";
 import NumberFormat from 'react-number-format';
+import DatePicker, {registerLocale} from "react-datepicker";
+import 'react-datepicker/dist/react-datepicker.css';
+import pt from "date-fns/locale/pt-BR"
+registerLocale("pt", pt );
 
 export const DespesaForm = () => {
 
@@ -21,6 +25,27 @@ export const DespesaForm = () => {
         }
     )
 
+    const DatePickerField = ({ name, value, onChange }) => {
+        return (
+            <DatePicker
+                selected={(value && new Date(value)) || null}
+                onChange={val => {
+                    onChange(name, val);
+                }}
+                dateFormat="dd/MM/yyyy"
+                locale="pt"
+                showYearDropdown
+                className="form-control"
+                placeholderText="Somente números"
+                customInput={
+                    <MaskedInput
+                        mask = {[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
+                    />
+                }
+            />
+        );
+    };
+
     const onSubmit = (values) => {
         values.valorTotal = trataNumericos(values.valorTotal);
         values.valorRecursoProprio = trataNumericos(values.valorRecursoProprio);
@@ -36,7 +61,12 @@ export const DespesaForm = () => {
                 validateOnBlur={true}
                 onSubmit={onSubmit}
             >
-                {props => (
+                {props => {
+                    const {
+                        values,
+                        setFieldValue
+                    } = props;
+                    return (
                     <form onSubmit={props.handleSubmit}>
                         <div className="form-row">
                             <div className="col-12 col-md-6 mt-4">
@@ -87,11 +117,13 @@ export const DespesaForm = () => {
 
                             <div className="col-12 col-md-3 mt-4">
                                 <label htmlFor="dataDocumento">Data do documento</label>
-                                <input
-                                    value={props.values.dataDocumento}
-                                    onChange={props.handleChange}
-                                    onBlur={props.handleBlur}
-                                    name="dataDocumento" id="dataDocumento" type="text" className="form-control" placeholder="Escolha a data"/>
+                                <DatePickerField
+                                    name="dataDocumento"
+                                    id="dataDocumento"
+                                    value={values.dataDocumento}
+                                    onChange={setFieldValue}
+                                />
+                                {props.errors.dataDocumento && <span className="span_erro text-danger mt-1"> {props.errors.dataDocumento}</span>}
                             </div>
 
                             <div className="col-12 col-md-3 mt-4">
@@ -113,15 +145,11 @@ export const DespesaForm = () => {
                         <div className="form-row">
                             <div className="col-12 col-md-3 mt-4">
                                 <label htmlFor="dataTransacao">Data da transação</label>
-                                <NumberFormat
-                                    format="##/##/####"
-                                    placeholder="DD/MM/AAAA"
-                                    mask={['D','D','M', 'M', 'Y', 'Y', 'Y', 'Y']}
-                                    value={props.values.dataTransacao}
-                                    onChange={props.handleChange}
-                                    onBlur={props.handleBlur}
+                                <DatePickerField
                                     name="dataTransacao"
-                                    className="form-control"
+                                    id="dataTransacao"
+                                    value={values.dataTransacao}
+                                    onChange={setFieldValue}
                                 />
                                 {props.errors.dataTransacao && <span className="span_erro text-danger mt-1"> {props.errors.dataTransacao}</span>}
 
@@ -183,7 +211,8 @@ export const DespesaForm = () => {
                             <button type="submit" className="btn btn-success mt-2">Acessar</button>
                         </div>
                     </form>
-                )}
+                );
+                }}
             </Formik>
         </>
     );

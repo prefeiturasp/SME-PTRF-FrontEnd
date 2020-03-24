@@ -20,18 +20,7 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     numreroDocumento:yup.string(),
     dataDocumento: yup.string(),
     tipoTransacao: yup.string(),
-    dataTransacao: yup.string()
-   .test('test-name', 'Digite uma data válida',
-    function (value) {
-        let dateMomentObject = moment(value, "DD/MM/YYYY"); // 1st argument - string, 2nd argument - format
-        let dateObject = dateMomentObject.toDate(); // convert moment.js object to Date object
-
-        if(dateObject.toString() === "Invalid Date"){
-            return false
-        }else {
-            return true;
-        }
-    }),
+    dataTransacao: yup.string(),
     valorTotal: yup.string(),
     valorRecursoProprio: yup.string(),
     valorRecursoAcoes:yup.string(),
