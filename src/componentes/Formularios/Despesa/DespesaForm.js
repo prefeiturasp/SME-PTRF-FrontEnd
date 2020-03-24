@@ -3,10 +3,7 @@ import {Formik} from "formik";
 import MaskedInput from 'react-text-mask'
 import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, round} from "../../../utils/ValidacoesAdicionaisFormularios";
 import NumberFormat from 'react-number-format';
-import DatePicker, {registerLocale} from "react-datepicker";
-import 'react-datepicker/dist/react-datepicker.css';
-import pt from "date-fns/locale/pt-BR"
-registerLocale("pt", pt );
+import {DatePickerField} from "../../DatePickerField";
 
 export const DespesaForm = () => {
 
@@ -24,27 +21,6 @@ export const DespesaForm = () => {
             valorRecursoAcoes: "",
         }
     )
-
-    const DatePickerField = ({ name, value, onChange }) => {
-        return (
-            <DatePicker
-                selected={(value && new Date(value)) || null}
-                onChange={val => {
-                    onChange(name, val);
-                }}
-                dateFormat="dd/MM/yyyy"
-                locale="pt"
-                showYearDropdown
-                className="form-control"
-                placeholderText="Somente números"
-                customInput={
-                    <MaskedInput
-                        mask = {[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
-                    />
-                }
-            />
-        );
-    };
 
     const onSubmit = (values) => {
         values.valorTotal = trataNumericos(values.valorTotal);
