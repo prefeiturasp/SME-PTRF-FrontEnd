@@ -31,7 +31,11 @@ export const round = (num, places) => {
 }
 
 export const trataNumericos = (valor) =>{
-    return Number(valor.replace(/\./gi,'').replace(/R/gi,'').replace(/,/gi,'.').replace(/\$/, ""));
+    if (typeof (valor) === "string"){
+        return Number(valor.replace(/\./gi,'').replace(/R/gi,'').replace(/,/gi,'.').replace(/\$/, ""));
+    }else {
+        return valor
+    }
 }
 
 export const calculaValorRecursoAcoes = (props) => {

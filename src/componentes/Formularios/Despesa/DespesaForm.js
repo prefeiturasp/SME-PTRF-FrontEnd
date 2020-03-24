@@ -27,6 +27,7 @@ export const DespesaForm = () => {
         values.valorRecursoProprio = trataNumericos(values.valorRecursoProprio);
         values.valorRecursoAcoes = round( (values.valorTotal - values.valorRecursoProprio),2 );
         console.log("Ollyver ", values)
+        document.getElementById("despesaForm").reset();
     }
 
     return (
@@ -36,14 +37,16 @@ export const DespesaForm = () => {
                 validationSchema={YupSignupSchemaCadastroDespesa}
                 validateOnBlur={true}
                 onSubmit={onSubmit}
+                enableReinitialize = {true}
             >
                 {props => {
                     const {
                         values,
-                        setFieldValue
+                        setFieldValue,
+                        resetForm
                     } = props;
                     return (
-                    <form onSubmit={props.handleSubmit}>
+                    <form id="despesaForm" onSubmit={props.handleSubmit}>
                         <div className="form-row">
                             <div className="col-12 col-md-6 mt-4">
                                 <label htmlFor="cnpCpf">CNPJ ou CPF do fornecedor</label>
@@ -179,13 +182,15 @@ export const DespesaForm = () => {
                                     readOnly={true}
                                 />
                                 {props.errors.valorRecursoAcoes && <span className="span_erro text-danger mt-1"> {props.errors.valorRecursoAcoes}</span>}
-
                             </div>
-
                         </div>
+                        <hr/>
+
                         <div className="d-flex  justify-content-end">
+                            <button type="reset" onClick={resetForm} className="btn btn btn-outline-success mt-2 mr-2" >Cancelar </button>
                             <button type="submit" className="btn btn-success mt-2">Acessar</button>
                         </div>
+
                     </form>
                 );
                 }}
