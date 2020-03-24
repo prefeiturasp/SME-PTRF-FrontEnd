@@ -1,7 +1,8 @@
 import React from "react";
 import {Formik} from "formik";
 import MaskedInput from 'react-text-mask'
-import {YupSignupSchemaCadastroDespesa, cpfMaskContitional} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, round} from "../../../utils/ValidacoesAdicionaisFormularios";
+import NumberFormat from 'react-number-format';
 
 export const DespesaForm = () => {
 
@@ -21,6 +22,9 @@ export const DespesaForm = () => {
     )
 
     const onSubmit = (values) => {
+        values.valorTotal = trataNumericos(values.valorTotal);
+        values.valorRecursoProprio = trataNumericos(values.valorRecursoProprio);
+        values.valorRecursoAcoes = round( (values.valorTotal - values.valorRecursoProprio),2 );
         console.log("Ollyver ", values)
     }
 
@@ -117,28 +121,62 @@ export const DespesaForm = () => {
                             </div>
                             <div className="col-12 col-md-3 mt-4">
                                 <label htmlFor="valorTotal">Valor total</label>
-                                <input
+                                <NumberFormat
                                     value={props.values.valorTotal}
+                                    thousandSeparator={'.'}
+                                    decimalSeparator={','}
+                                    decimalScale = {2}
+                                    prefix={'R$'}
+                                    name="valorTotal"
+                                    id="valorTotal"
+                                    className="form-control"
                                     onChange={props.handleChange}
                                     onBlur={props.handleBlur}
-                                    name="valorTotal" id="valorTotal" type="text" className="form-control" placeholder="Digite o valor total"/>
+                                />
+                                {props.errors.valorTotal && <span className="span_erro text-danger mt-1"> {props.errors.valorTotal}</span>}
+
                             </div>
                             <div className="col-12 col-md-3 mt-4">
                                 <label htmlFor="valorRecursoProprio">Valor do recurso próprio</label>
-                                <input
+                                <NumberFormat
                                     value={props.values.valorRecursoProprio}
+                                    thousandSeparator={'.'}
+                                    decimalSeparator={','}
+                                    decimalScale = {2}
+                                    prefix={'R$'}
+                                    name="valorRecursoProprio"
+                                    id="valorRecursoProprio"
+                                    className="form-control"
                                     onChange={props.handleChange}
                                     onBlur={props.handleBlur}
-                                    name="valorRecursoProprio" id="valorRecursoProprio" type="text" className="form-control" placeholder="Digite o valor total"/>
+                                />
+                                {props.errors.valorRecursoProprio && <span className="span_erro text-danger mt-1"> {props.errors.valorRecursoProprio}</span>}
                             </div>
                             <div className="col-12 col-md-3 mt-4">
                                 <label htmlFor="valorRecursoAcoes">Valor do recurso das ações</label>
-                                <input
-                                    value={props.values.valorRecursoAcoes}
+{/*                                <input
+                                    value={calculaValorRecursoAcoes(props)}
                                     onChange={props.handleChange}
                                     onBlur={props.handleBlur}
-                                    readOnly={true}
-                                    name="valorRecursoAcoes" id="valorRecursoAcoes" type="text" className="form-control" placeholder="Digite o valor total"/>
+                                    //readOnly={true}
+                                    name="valorRecursoAcoes" id="valorRecursoAcoes" type="number" className="form-control" placeholder="Digite o valor total"
+                                />*/}
+
+                                <NumberFormat
+                                    value={calculaValorRecursoAcoes(props)}
+                                    thousandSeparator={'.'}
+                                    decimalSeparator={','}
+                                    decimalScale = {2}
+                                    prefix={'R$ '}
+                                    name="valorRecursoAcoes"
+                                    id="valorRecursoAcoes"
+                                    className="form-control"
+                                    onChange={props.handleChange}
+                                    onBlur={props.handleBlur}
+                                    //readOnly={true}
+                                />
+                                {props.errors.valorRecursoAcoes && <span className="span_erro text-danger mt-1"> {props.errors.valorRecursoAcoes}</span>}
+
                             </div>
 
                         </div>

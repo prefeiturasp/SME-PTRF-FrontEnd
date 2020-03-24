@@ -25,6 +25,24 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     valorRecursoAcoes:yup.string(),
 });
 
+export const round = (num, places) => {
+    return +(parseFloat(num).toFixed(places));
+}
+
+export const trataNumericos = (valor) =>{
+    return Number(valor.replace(/\./gi,'').replace(/R/gi,'').replace(/,/gi,'.').replace(/\$/, ""));
+}
+
+export const calculaValorRecursoAcoes = (props) => {
+
+    let valorTotalTratado = trataNumericos(props.values.valorTotal)
+    let valorRecursoProprioTratado = trataNumericos(props.values.valorRecursoProprio)
+    let valorTotal = valorTotalTratado - valorRecursoProprioTratado;
+
+    return valorTotal;
+
+}
+
 export const cpfMaskContitional = (value) => {
     let cpfCnpj = value.replace(/[^\d]+/g, "");
     let mask = [];
