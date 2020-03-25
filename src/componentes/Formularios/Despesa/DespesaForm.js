@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import {DadosDoGastoNaoContext} from "../../../context/DadosDoGastoNao";
 import {Formik} from "formik";
 import MaskedInput from 'react-text-mask'
-import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, round, convertToNumber } from "../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, round, convertToNumber, payloadFormDespesaPrincipal } from "../../../utils/ValidacoesAdicionaisFormularios";
 import NumberFormat from 'react-number-format';
 import {DatePickerField} from "../../DatePickerField";
 import {DadosDoGastoNao} from "./DadosDoGastoNao";
@@ -30,12 +30,10 @@ export const DespesaForm = () => {
 
     const onSubmit = (values) => {
 
-        values.tipo_documento = convertToNumber(values.tipo_documento)
-        values.tipo_transacao = convertToNumber(values.tipo_transacao)
+        let validaPayload = payloadFormDespesaPrincipal(values)
 
-        values.valor_total = trataNumericos(values.valor_total);
-        values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
-        values.valorRecursoAcoes = round((values.valor_total - values.valor_recursos_proprios), 2);
+        console.log("Ollyver payloadFormDespesaPrincipal ", validaPayload)
+
 
         if (dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital !== 0 && dadosDoGastoNaoContext.dadosDoGastoNao.quantidade_itens_capital !== 0){
             dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital = trataNumericos(dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital);
@@ -44,12 +42,7 @@ export const DespesaForm = () => {
         }else{
             dadosDoGastoNaoContext.dadosDoGastoNao.valor_rateio = trataNumericos(dadosDoGastoNaoContext.dadosDoGastoNao.valor_rateio)
         }
-
-
-
-        //console.log("Ollyver valor_rateio ", dadosDoGastoNaoContext.dadosDoGastoNao.valor_rateio)
         console.log("Ollyver dadosDoGastoNao ", dadosDoGastoNaoContext.dadosDoGastoNao)
-        console.log("Ollyver values ", values)
     }
     return (
         <>
