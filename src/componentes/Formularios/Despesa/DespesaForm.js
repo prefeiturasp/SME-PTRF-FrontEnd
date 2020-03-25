@@ -1,19 +1,15 @@
-import React, {useState} from "react";
+import React, {useContext} from "react";
+import {DadosDoGastoNaoContext} from "../../../context/DadosDoGastoNao";
 import {Formik} from "formik";
 import MaskedInput from 'react-text-mask'
-import {
-    YupSignupSchemaCadastroDespesa,
-    cpfMaskContitional,
-    calculaValorRecursoAcoes,
-    trataNumericos,
-    round
-} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, round } from "../../../utils/ValidacoesAdicionaisFormularios";
 import NumberFormat from 'react-number-format';
 import {DatePickerField} from "../../DatePickerField";
-
 import {DadosDoGastoNao} from "./DadosDoGastoNao";
 
 export const DespesaForm = () => {
+
+    const dadosDoGastoNaoContext = useContext(DadosDoGastoNaoContext);
 
     const initialValues = () => (
         {
@@ -31,23 +27,12 @@ export const DespesaForm = () => {
         }
     )
 
-    const [dadosDoGastoNao, setDadosDoGastoNao] =  useState({});
-
-    const handleChangeAtualizacaoCadastral = (name, value) => {
-        setDadosDoGastoNao({
-            ...dadosDoGastoNao,
-            [name]: value
-        });
-    };
-
     const onSubmit = (values) => {
         values.valorTotal = trataNumericos(values.valorTotal);
         values.valorRecursoProprio = trataNumericos(values.valorRecursoProprio);
         values.valorRecursoAcoes = round((values.valorTotal - values.valorRecursoProprio), 2);
-        // values.DadosDoGasto = inputFields;
-        console.log("Ollyver dadosDoGastoNao ", dadosDoGastoNao)
+        console.log("Ollyver dadosDoGastoNao ", dadosDoGastoNaoContext.dadosDoGastoNao)
         console.log("Ollyver values ", values)
-        //console.log("Ollyver inputFields ", inputFields)
     }
 
 
@@ -67,7 +52,7 @@ export const DespesaForm = () => {
                         resetForm
                     } = props;
                     return (
-                        <form id="despesaForm" onSubmit={props.handleSubmit}>
+                        <form method="POST" id="despesaForm" onSubmit={props.handleSubmit}>
                             <div className="form-row">
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="cnpCpf">CNPJ ou CPF do fornecedor</label>
@@ -233,15 +218,12 @@ export const DespesaForm = () => {
                                     </select>
                                 </div>
                             </div>
-
                             {
                                 props.values.dadosDoGasto === "sim" ? (
                                         <h1>Sim</h1>
                                 ) : props.values.dadosDoGasto === "nao" ? (
                                     <DadosDoGastoNao
-                                        dadosDoGastoNao = {dadosDoGastoNao}
-                                        setDadosDoGastoNao={setDadosDoGastoNao}
-                                        handleChangeAtualizacaoCadastral={handleChangeAtualizacaoCadastral}
+                                        dadosDoGastoNaoContext = {dadosDoGastoNaoContext}
                                     />
                                 ) : null
                             }

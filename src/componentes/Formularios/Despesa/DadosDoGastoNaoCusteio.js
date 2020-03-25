@@ -2,15 +2,15 @@ import React from "react";
 
 export const DadosDoGastoNaoCusteio = (propriedades) => {
 
-    const {dadosDoGastoNao, handleChangeAtualizacaoCadastral} = propriedades
+    const {dadosDoGastoNaoContext} = propriedades
 
     return (
         <>
             <div className="col-12 col-md-6 mt-4">
                 <label htmlFor="tipoCusteio">Tipo de custeio</label>
                 <select
-                    value={dadosDoGastoNao.tipoCusteio}
-                    onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)}
+                    value={dadosDoGastoNaoContext.dadosDoGastoNao.tipoCusteio}
+                    onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
                     name='tipoCusteio'
                     id='tipoCusteio'
                     className="form-control"
@@ -23,8 +23,8 @@ export const DadosDoGastoNaoCusteio = (propriedades) => {
             <div className="col-12 mt-4">
                 <label htmlFor="especificacaoMaterialServico">Especificação do material ou serviço</label>
                 <select
-                    value={dadosDoGastoNao.especificacaoMaterialServico}
-                    onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)}
+                    value={dadosDoGastoNaoContext.dadosDoGastoNao.especificacaoMaterialServico}
+                    onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
                     name='especificacaoMaterialServico'
                     id='especificacaoMaterialServico'
                     className="form-control"
@@ -37,8 +37,8 @@ export const DadosDoGastoNaoCusteio = (propriedades) => {
             <div className="col-12 col-md-6 mt-4">
                 <label htmlFor="valorRecursoAcoes">Ação</label>
                 <select
-                    value={dadosDoGastoNao.tipoAcao}
-                    onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)}
+                    value={dadosDoGastoNaoContext.dadosDoGastoNao.tipoAcao}
+                    onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
                     name='tipoAcao'
                     id='tipoAcao'
                     className="form-control"
@@ -55,8 +55,8 @@ export const DadosDoGastoNaoCusteio = (propriedades) => {
                     <div className="col-12 col-md-6">
                         <label htmlFor="tipoDeConta">Tipo de conta utilizada</label>
                         <select
-                            value={dadosDoGastoNao.tipoDeConta}
-                            onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)}
+                            value={dadosDoGastoNaoContext.dadosDoGastoNao.tipoDeConta}
+                            onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
                             name='tipoDeConta'
                             id='tipoDeConta'
                             className="form-control"
@@ -70,8 +70,8 @@ export const DadosDoGastoNaoCusteio = (propriedades) => {
                         <label htmlFor="valorDoCusteio">Valor do custeio</label>
                         <input
                             type='text'
-                            value={dadosDoGastoNao.valorDoCusteio || ''}
-                            onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)}
+                            value={dadosDoGastoNaoContext.dadosDoGastoNao.valorDoCusteio || ''}
+                            onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
                             name='valorDoCusteio'
                             id='valorDoCusteio'
                             className="form-control"

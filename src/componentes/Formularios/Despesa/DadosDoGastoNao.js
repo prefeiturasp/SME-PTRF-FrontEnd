@@ -3,11 +3,7 @@ import {DadosDoGastoNaoCusteio} from "./DadosDoGastoNaoCusteio";
 
 export const DadosDoGastoNao = (propriedades) => {
 
-    const {dadosDoGastoNao, setDadosDoGastoNao, handleChangeAtualizacaoCadastral} = propriedades
-
-    useEffect(()=>{
-        setDadosDoGastoNao({tipoDespesa:"custeio"})
-    }, [])
+    const {dadosDoGastoNaoContext} = propriedades
 
     return (
         <>
@@ -15,10 +11,8 @@ export const DadosDoGastoNao = (propriedades) => {
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor="tipoDespesa">Tipo de aplicação do recurso</label>
                     <select
-                        value={dadosDoGastoNao.tipoDespesa}
-                        //onChange={(e)=>handleChangeAtualizacaoCadastral({tipoDespesa: e.target.value})}
-                        onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)}
-                        //onBlur={props.handleBlur}
+                        value={dadosDoGastoNaoContext.dadosDoGastoNao.tipoDespesa}
+                        onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
                         name='tipoDespesa'
                         id='tipoDespesa'
                         className="form-control"
@@ -28,12 +22,9 @@ export const DadosDoGastoNao = (propriedades) => {
                     </select>
                 </div>
 
-                {dadosDoGastoNao.tipoDespesa === "custeio" ? (
+                {dadosDoGastoNaoContext.dadosDoGastoNao.tipoDespesa === "custeio" ? (
                     <DadosDoGastoNaoCusteio
-                        dadosDoGastoNao = {dadosDoGastoNao}
-                        setDadosDoGastoNao={setDadosDoGastoNao}
-                        handleChangeAtualizacaoCadastral={handleChangeAtualizacaoCadastral}
-
+                        dadosDoGastoNaoContext = {dadosDoGastoNaoContext}
                     />
                 ): null }
 
