@@ -1,27 +1,18 @@
-import React from "react";
-import NumberFormat from 'react-number-format';
-import {GetTiposCusteioApi, GetAcoesAssociacaoApi, GetContasAssociacaoApi, GetEspecificacaoMaterialServicoApi} from "../../../services/GetDadosApiDespesa";
+import React, {useEffect} from "react";
+import {GetAcoesAssociacaoApi, GetContasAssociacaoApi, GetEspecificacaoMaterialServicoApi} from "../../../services/GetDadosApiDespesa";
+import {calculaValorRateio} from "../../../utils/ValidacoesAdicionaisFormularios";
+import NumberFormat from "react-number-format";
 
-export const DadosDoGastoNaoCusteio = (propriedades) => {
+export const DadosDoGastoNaoCapital = (propriedades) => {
 
     const {dadosDoGastoNaoContext} = propriedades
 
+    useEffect(()=>{
+        dadosDoGastoNaoContext.handleChangeDadosDoGastoNao("tipo_custeio", 2 )
+    }, [])
+
     return (
         <>
-            <div className="col-12 col-md-6 mt-4">
-                <label htmlFor="tipo_custeio">Tipo de custeio</label>
-                <select
-                    value={dadosDoGastoNaoContext.dadosDoGastoNao.tipo_custeio}
-                    onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
-                    name='tipo_custeio'
-                    id='tipo_custeio'
-                    className="form-control"
-                >
-                    {GetTiposCusteioApi() && GetTiposCusteioApi().map(item => (
-                        <option key={item.id} value={item.id}>{item.nome}</option>
-                    ))}
-                </select>
-            </div>
 
             <div className="col-12 mt-4">
                 <label htmlFor="especificacao_material_servico">Especificação do material ou serviço</label>
@@ -59,6 +50,54 @@ export const DadosDoGastoNaoCusteio = (propriedades) => {
                 <div className='row'>
 
                     <div className="col-12 col-md-6 mt-4">
+                        <label htmlFor="quantidade_itens_capital">Quantidade de itens</label>
+
+                        <NumberFormat
+                            value={dadosDoGastoNaoContext.dadosDoGastoNao.quantidade_itens_capital}
+                            decimalScale={0}
+                            name="quantidade_itens_capital"
+                            id="quantidade_itens_capital"
+                            className="form-control"
+                            onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                        />
+                    </div>
+
+                    <div className="col-12 col-md-6 mt-4">
+                        <label htmlFor="valor_item_capital">Valor unitário </label>
+                        <NumberFormat
+                            value={dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital}
+                            thousandSeparator={'.'}
+                            decimalSeparator={','}
+                            decimalScale={2}
+                            prefix={'R$ '}
+                            name="valor_item_capital"
+                            id="valor_item_capital"
+                            className="form-control"
+                            onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                        />
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div className="col-12 col-md-6 mt-4">
+                <label htmlFor="numero_processo_incorporacao_capital">Número do processo de incorporação</label>
+                <input
+                    type='text'
+                    value={dadosDoGastoNaoContext.dadosDoGastoNao.numero_processo_incorporacao_capital || ''}
+                    onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                    name='numero_processo_incorporacao_capital'
+                    id='numero_processo_incorporacao_capital'
+                    className="form-control"
+                    placeholder="Escreva o número do processo"
+                />
+            </div>
+
+            <div className="col-12 col-md-6">
+                <div className='row'>
+
+                    <div className="col-12 col-md-6 mt-4">
                         <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
                         <select
                             value={dadosDoGastoNaoContext.dadosDoGastoNao.conta_associacao}
@@ -75,9 +114,9 @@ export const DadosDoGastoNaoCusteio = (propriedades) => {
                     </div>
 
                     <div className="col-12 col-md-6 mt-4">
-                        <label htmlFor="valor_rateio">Valor do custeio</label>
+                        <label htmlFor="valor_rateio">Valor total do capital </label>
                         <NumberFormat
-                            value={dadosDoGastoNaoContext.dadosDoGastoNao.valor_rateio}
+                            value={calculaValorRateio(dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital, dadosDoGastoNaoContext.dadosDoGastoNao.quantidade_itens_capital) }
                             thousandSeparator={'.'}
                             decimalSeparator={','}
                             decimalScale={2}
@@ -86,6 +125,7 @@ export const DadosDoGastoNaoCusteio = (propriedades) => {
                             id="valor_rateio"
                             className="form-control"
                             onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                            readOnly={true}
                         />
                     </div>
 

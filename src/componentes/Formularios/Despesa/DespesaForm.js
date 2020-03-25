@@ -2,10 +2,11 @@ import React, {useContext} from "react";
 import {DadosDoGastoNaoContext} from "../../../context/DadosDoGastoNao";
 import {Formik} from "formik";
 import MaskedInput from 'react-text-mask'
-import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, round } from "../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, round, convertToNumber } from "../../../utils/ValidacoesAdicionaisFormularios";
 import NumberFormat from 'react-number-format';
 import {DatePickerField} from "../../DatePickerField";
 import {DadosDoGastoNao} from "./DadosDoGastoNao";
+import {GetTiposDeDocumentoApi, GetTipoTransacaoApi} from "../../../services/GetDadosApiDespesa";
 
 export const DespesaForm = () => {
 
@@ -13,29 +14,43 @@ export const DespesaForm = () => {
 
     const initialValues = () => (
         {
-            cnpCpf: "",
-            razaoSocial: "",
-            tipoDocumento: "",
-            numreroDocumento: "",
-            dataDocumento: "",
-            tipoTransacao: "",
-            dataTransacao: "",
-            valorTotal: "",
-            valorRecursoProprio: "",
+            cpf_cnpj_fornecedor: "",
+            nome_fornecedor: "",
+            tipo_documento: "",
+            numero_documento: "",
+            data_documento: "",
+            tipo_transacao: "",
+            data_transacao: "",
+            valor_total: "",
+            valor_recursos_proprios: "",
             valorRecursoAcoes: "",
             dadosDoGasto: "",
         }
     )
 
     const onSubmit = (values) => {
-        values.valorTotal = trataNumericos(values.valorTotal);
-        values.valorRecursoProprio = trataNumericos(values.valorRecursoProprio);
-        values.valorRecursoAcoes = round((values.valorTotal - values.valorRecursoProprio), 2);
+
+        values.tipo_documento = convertToNumber(values.tipo_documento)
+        values.tipo_transacao = convertToNumber(values.tipo_transacao)
+
+        values.valor_total = trataNumericos(values.valor_total);
+        values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
+        values.valorRecursoAcoes = round((values.valor_total - values.valor_recursos_proprios), 2);
+
+        if (dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital !== 0 && dadosDoGastoNaoContext.dadosDoGastoNao.quantidade_itens_capital !== 0){
+            dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital = trataNumericos(dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital);
+            dadosDoGastoNaoContext.dadosDoGastoNao.quantidade_itens_capital = trataNumericos(dadosDoGastoNaoContext.dadosDoGastoNao.quantidade_itens_capital);
+            dadosDoGastoNaoContext.dadosDoGastoNao.valor_rateio = round((dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital * dadosDoGastoNaoContext.dadosDoGastoNao.quantidade_itens_capital), 2);
+        }else{
+            dadosDoGastoNaoContext.dadosDoGastoNao.valor_rateio = trataNumericos(dadosDoGastoNaoContext.dadosDoGastoNao.valor_rateio)
+        }
+
+
+
+        //console.log("Ollyver valor_rateio ", dadosDoGastoNaoContext.dadosDoGastoNao.valor_rateio)
         console.log("Ollyver dadosDoGastoNao ", dadosDoGastoNaoContext.dadosDoGastoNao)
         console.log("Ollyver values ", values)
     }
-
-
     return (
         <>
             <Formik
@@ -55,130 +70,133 @@ export const DespesaForm = () => {
                         <form method="POST" id="despesaForm" onSubmit={props.handleSubmit}>
                             <div className="form-row">
                                 <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="cnpCpf">CNPJ ou CPF do fornecedor</label>
+                                    <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
                                     <MaskedInput
                                         mask={(valor) => cpfMaskContitional(valor)}
-                                        value={props.values.cnpCpf}
+                                        value={props.values.cpf_cnpj_fornecedor}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                        name="cnpCpf" id="cnpCpf" type="text" className="form-control"
+                                        name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text" className="form-control"
                                         placeholder="Digite o número do documento"
                                     />
-                                    {props.errors.cnpCpf &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.cnpCpf}</span>}
+                                    {props.errors.cpf_cnpj_fornecedor &&
+                                    <span className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
                                 </div>
                                 <div className="col-12 col-md-6  mt-4">
-                                    <label htmlFor="razaoSocial">Razão social do fornecedor</label>
+                                    <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
                                     <input
-                                        value={props.values.razaoSocial}
+                                        value={props.values.nome_fornecedor}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                        name="razaoSocial" id="razaoSocial" type="text" className="form-control"
+                                        name="nome_fornecedor" id="nome_fornecedor" type="text" className="form-control"
                                         placeholder="Digite o nome"/>
                                 </div>
                             </div>
 
                             <div className="form-row">
                                 <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="tipoDocumento">Tipo de documento</label>
+                                    <label htmlFor="tipo_documento">Tipo de documento</label>
                                     <select
-                                        value={props.values.tipoDocumento}
+                                        value={props.values.tipo_documento}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                        name='tipoDocumento' id='tipoDocumento' className="form-control">
+                                        name='tipo_documento'
+                                        id='tipo_documento'
+                                        className="form-control">
                                         <option value="">Selecione o tipo</option>
-                                        <option value="laranja">Laranja</option>
-                                        <option value="limao">Limão</option>
-                                        <option value="coco">Coco</option>
-                                        <option value="manga">Manga</option>
+                                        {GetTiposDeDocumentoApi() && GetTiposDeDocumentoApi().map(item => (
+                                            <option key={item.id} value={item.id}>{item.nome}</option>
+                                        ))}
                                     </select>
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="numreroDocumento">Número do documento</label>
+                                    <label htmlFor="numero_documento">Número do documento</label>
                                     <input
-                                        value={props.values.numreroDocumento}
+                                        value={props.values.numero_documento}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                        name="numreroDocumento" id="numreroDocumento" type="text"
+                                        name="numero_documento" id="numero_documento" type="text"
                                         className="form-control" placeholder="Digite o número"/>
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="dataDocumento">Data do documento</label>
+                                    <label htmlFor="data_documento">Data do documento</label>
                                     <DatePickerField
-                                        name="dataDocumento"
-                                        id="dataDocumento"
-                                        value={values.dataDocumento}
+                                        name="data_documento"
+                                        id="data_documento"
+                                        value={values.data_documento}
                                         onChange={setFieldValue}
                                     />
-                                    {props.errors.dataDocumento &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.dataDocumento}</span>}
+                                    {props.errors.data_documento &&
+                                    <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="tipoTransacao">Tipo de transação</label>
+                                    <label htmlFor="tipo_transacao">Tipo de transação</label>
                                     <select
-                                        value={props.values.tipoTransacao}
+                                        value={props.values.tipo_transacao}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                        name='tipoTransacao' id='tipoTransacao' className="form-control">
+                                        name='tipo_transacao'
+                                        id='tipo_transacao'
+                                        className="form-control"
+                                    >
                                         <option value="">Selecione o tipo</option>
-                                        <option value="laranja">Laranja</option>
-                                        <option value="limao">Limão</option>
-                                        <option value="coco">Coco</option>
-                                        <option value="manga">Manga</option>
+                                        {GetTipoTransacaoApi() && GetTipoTransacaoApi().map(item => (
+                                            <option key={item.id} value={item.id}>{item.nome}</option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>
 
                             <div className="form-row">
                                 <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="dataTransacao">Data da transação</label>
+                                    <label htmlFor="data_transacao">Data da transação</label>
                                     <DatePickerField
-                                        name="dataTransacao"
-                                        id="dataTransacao"
-                                        value={values.dataTransacao}
+                                        name="data_transacao"
+                                        id="data_transacao"
+                                        value={values.data_transacao}
                                         onChange={setFieldValue}
                                     />
-                                    {props.errors.dataTransacao &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.dataTransacao}</span>}
+                                    {props.errors.data_transacao &&
+                                    <span className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
 
                                 </div>
                                 <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="valorTotal">Valor total</label>
+                                    <label htmlFor="valor_total">Valor total</label>
                                     <NumberFormat
-                                        value={props.values.valorTotal}
+                                        value={props.values.valor_total}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
                                         decimalScale={2}
                                         prefix={'R$'}
-                                        name="valorTotal"
-                                        id="valorTotal"
+                                        name="valor_total"
+                                        id="valor_total"
                                         className="form-control"
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                     />
-                                    {props.errors.valorTotal &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.valorTotal}</span>}
+                                    {props.errors.valor_total &&
+                                    <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
 
                                 </div>
                                 <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="valorRecursoProprio">Valor do recurso próprio</label>
+                                    <label htmlFor="valor_recursos_proprios">Valor do recurso próprio</label>
                                     <NumberFormat
-                                        value={props.values.valorRecursoProprio}
+                                        value={props.values.valor_recursos_proprios}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
                                         decimalScale={2}
                                         prefix={'R$'}
-                                        name="valorRecursoProprio"
-                                        id="valorRecursoProprio"
+                                        name="valor_recursos_proprios"
+                                        id="valor_recursos_proprios"
                                         className="form-control"
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                     />
-                                    {props.errors.valorRecursoProprio && <span
-                                        className="span_erro text-danger mt-1"> {props.errors.valorRecursoProprio}</span>}
+                                    {props.errors.valor_recursos_proprios && <span
+                                        className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
                                 </div>
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valorRecursoAcoes">Valor do recurso das ações</label>

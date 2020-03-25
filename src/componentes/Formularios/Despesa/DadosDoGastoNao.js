@@ -1,5 +1,7 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {DadosDoGastoNaoCusteio} from "./DadosDoGastoNaoCusteio";
+import {DadosDoGastoNaoCapital} from "./DadosDoGastoNaoCapital";
+import {GetTiposAplicacaoRecursoApi} from "../../../services/GetDadosApiDespesa";
 
 export const DadosDoGastoNao = (propriedades) => {
 
@@ -9,24 +11,29 @@ export const DadosDoGastoNao = (propriedades) => {
         <>
             <div className="form-row">
                 <div className="col-12 col-md-6 mt-4">
-                    <label htmlFor="tipoDespesa">Tipo de aplicação do recurso</label>
+                    <label htmlFor="tipo_aplicacao_recurso">Tipo de aplicação do recurso</label>
                     <select
-                        value={dadosDoGastoNaoContext.dadosDoGastoNao.tipoDespesa}
-                        onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
-                        name='tipoDespesa'
-                        id='tipoDespesa'
+                        value={dadosDoGastoNaoContext.dadosDoGastoNao.tipo_aplicacao_recurso}
+                        onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, Number(e.target.value))}
+                        name='tipo_aplicacao_recurso'
+                        id='tipo_aplicacao_recurso'
                         className="form-control"
                     >
-                        <option value="custeio">Custeio</option>
-                        <option value="capital">Capital</option>
+                        {GetTiposAplicacaoRecursoApi() && GetTiposAplicacaoRecursoApi().map(item => (
+                            <option key={item.id} value={Number(item.id)}>{item.nome}</option>
+                        ))}
                     </select>
                 </div>
 
-                {dadosDoGastoNaoContext.dadosDoGastoNao.tipoDespesa === "custeio" ? (
+                {dadosDoGastoNaoContext.dadosDoGastoNao.tipo_aplicacao_recurso === 1 ? (
                     <DadosDoGastoNaoCusteio
                         dadosDoGastoNaoContext = {dadosDoGastoNaoContext}
                     />
-                ): null }
+                ): dadosDoGastoNaoContext.dadosDoGastoNao.tipo_aplicacao_recurso === 2 ? (
+                    <DadosDoGastoNaoCapital
+                        dadosDoGastoNaoContext = {dadosDoGastoNaoContext}
+                    />
+                ) : null}
 
             </div>
 

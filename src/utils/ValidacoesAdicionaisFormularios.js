@@ -10,21 +10,25 @@ export const YupSignupSchemaLogin = yup.object().shape({
 
 export const YupSignupSchemaCadastroDespesa = yup.object().shape({
 
-    cnpCpf: yup.string()
+    cpf_cnpj_fornecedor: yup.string()
     .test('test-name', 'Digite um CPF ou um CNPJ válido',
         function (value) {
             return valida_cpf_cnpj(value)
         }),
-    razaoSocial: yup.string(),
-    tipoDocumento:yup.string(),
-    numreroDocumento:yup.string(),
-    dataDocumento: yup.string(),
-    tipoTransacao: yup.string(),
-    dataTransacao: yup.string(),
-    valorTotal: yup.string(),
-    valorRecursoProprio: yup.string(),
+    nome_fornecedor: yup.string(),
+    tipo_documento:yup.string(),
+    numero_documento:yup.string(),
+    data_documento: yup.string(),
+    tipo_transacao: yup.string(),
+    data_transacao: yup.string(),
+    valor_total: yup.string(),
+    valor_recursos_proprios: yup.string(),
     valorRecursoAcoes:yup.string(),
 });
+
+export const convertToNumber = (string)=>{
+    return Number(string)
+}
 
 export const round = (num, places) => {
     return +(parseFloat(num).toFixed(places));
@@ -34,18 +38,26 @@ export const trataNumericos = (valor) =>{
     if (typeof (valor) === "string"){
         return Number(valor.replace(/\./gi,'').replace(/R/gi,'').replace(/,/gi,'.').replace(/\$/, ""));
     }else {
+
         return valor
     }
 }
 
+export const calculaValorRateio = (valor1, valor2) => {
+
+    let valor1Tratado = trataNumericos(valor1)
+    let valor2Tratado = trataNumericos(valor2)
+
+    let valor_total = valor1Tratado * valor2Tratado;
+
+    return valor_total;
+}
 export const calculaValorRecursoAcoes = (props) => {
 
-    let valorTotalTratado = trataNumericos(props.values.valorTotal)
-    let valorRecursoProprioTratado = trataNumericos(props.values.valorRecursoProprio)
-    let valorTotal = valorTotalTratado - valorRecursoProprioTratado;
-
-    return valorTotal;
-
+    let valor_totalTratado = trataNumericos(props.values.valor_total)
+    let valor_recursos_propriosTratado = trataNumericos(props.values.valor_recursos_proprios)
+    let valor_total = valor_totalTratado - valor_recursos_propriosTratado;
+    return valor_total;
 }
 
 export const cpfMaskContitional = (value) => {

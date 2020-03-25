@@ -1,0 +1,82 @@
+{
+
+  "especificacao_material_servico": [
+    {
+      "id": 1,
+      "descricao": "Material Elétrico",
+      "aplicacao_recurso": "CUSTEIO",
+      "tipo_custeio": 2
+    },
+    {
+      "id": 2,
+      "descricao": "Instalações elétricas",
+      "aplicacao_recurso": "CUSTEIO",
+      "tipo_custeio": 1
+    }
+  ],
+
+  "tipos_aplicacao_recurso": [
+    {
+      "id": 2,
+      "nome": "Capital"
+    },
+    {
+      "id": 1,
+      "nome": "Custeio"
+    }
+  ],
+  "tipos_custeio": [
+    {
+      "id": 3,
+      "nome": "Impostos"
+    },
+    {
+      "id": 2,
+      "nome": "Material"
+    },
+    {
+      "id": 1,
+      "nome": "Serviço"
+    }
+  ],
+  "tipos_documento": [
+    {
+      "id": 1,
+      "nome": "NFe"
+    },
+    {
+      "id": 2,
+      "nome": "Recibo"
+    }
+  ],
+  "tipos_transacao": [
+    {
+      "id": 1,
+      "nome": "Boleto"
+    },
+    {
+      "id": 2,
+      "nome": "Cartão"
+    },
+    {
+      "id": 3,
+      "nome": "Cheque"
+    }
+  ],
+  "acoes_associacao": [
+    {
+      "uuid": "59782482-86d2-4c1b-b0b2-c37be2cafb07",
+      "nome": "PTRF"
+    }
+  ],
+  "contas_associacao": [
+    {
+      "uuid": "b2f4db10-cb3c-410a-8c7e-a371361fb93a",
+      "nome": "Cheque"
+    },
+    {
+      "uuid": "e0f86fea-4650-4682-a01a-7196822d0b6b",
+      "nome": "Cartão"
+    }
+  ]
+}
