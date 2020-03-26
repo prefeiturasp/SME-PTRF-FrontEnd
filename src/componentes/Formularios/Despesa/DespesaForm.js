@@ -35,9 +35,18 @@ export const DespesaForm = () => {
 
         let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values)
         let validaPayloadContext = payloadFormDespesaContext(dadosDoGastoContext.dadosDoGasto)
-        const payload = {
+/*        const payload = {
             ...validaPayloadFormPrincipal,
             rateios: [validaPayloadContext],
+        };*/
+
+        var hege = [validaPayloadContext];
+        var stale = dadosDoGastoContext.inputFields;
+        var children = hege.concat(stale);
+
+        const payload = {
+            ...validaPayloadFormPrincipal,
+            rateios: [validaPayloadContext].concat(dadosDoGastoContext.inputFields),
         };
         console.log("Ollyver Payload", payload)
         resetForm({values: ""})
