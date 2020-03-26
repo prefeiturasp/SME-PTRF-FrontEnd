@@ -7,6 +7,7 @@ import {
 import NumberFormat from "react-number-format";
 
 export const DadosDoGastoCusteioForm = (propriedades) => {
+
     const {dadosDoGastoContext} = propriedades
     return (
         <>

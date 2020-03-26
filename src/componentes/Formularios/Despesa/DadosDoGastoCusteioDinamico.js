@@ -1,11 +1,4 @@
 import React, {Fragment} from "react";
-import {
-    GetAcoesAssociacaoApi, GetContasAssociacaoApi,
-    GetEspecificacaoMaterialServicoApi,
-    GetTiposCusteioApi
-} from "../../../services/GetDadosApiDespesa";
-import NumberFormat from "react-number-format";
-import {DadosDoGastoCusteioForm} from "./DadosDoGastoCusteioForm";
 
 
 export const DadosDoGastoCusteioDinamico = (propriedades) => {
@@ -14,9 +7,28 @@ export const DadosDoGastoCusteioDinamico = (propriedades) => {
         <div className="form-row">
             {dadosDoGastoContext.inputFields.map((inputField, index) => (
                 <Fragment key={`${inputField}~${index}`}>
-                    <DadosDoGastoCusteioForm
-                        dadosDoGastoContext={dadosDoGastoContext}
-                    />
+                    <div className="form-group col-sm-6">
+                        <label htmlFor="firstName">First Name</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="firstName"
+                            name="firstName"
+                            value={dadosDoGastoContext.inputFields.firstName}
+                            onChange={event => dadosDoGastoContext.handleInputChange(index, event)}
+                        />
+                    </div>
+                    <div className="form-group col-sm-4">
+                        <label htmlFor="lastName">Last Name</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="lastName"
+                            name="lastName"
+                            value={dadosDoGastoContext.inputFields.lastName}
+                            onChange={event => dadosDoGastoContext.handleInputChange(index, event)}
+                        />
+                    </div>
                     <div className="form-group col-sm-2">
                         <button
                             className="btn btn-link"
