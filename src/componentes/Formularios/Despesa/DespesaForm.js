@@ -36,13 +36,14 @@ export const DespesaForm = () => {
             ...validaPayloadFormPrincipal,
             rateios: [validaPayloadContext],
         };
+        console.log("Ollyver Payload", payload)
         resetForm({values: ""})
         dadosDoGastoNaoContext.limpaFormulario();
-        console.log("Ollyver Payload", payload)
+
     }
 
-    const handleCancelar = ({resetForm})=> {
-
+    const handleReset = ()=> {
+        dadosDoGastoNaoContext.limpaFormulario();
     }
     return (
         <>
@@ -52,12 +53,12 @@ export const DespesaForm = () => {
                 validateOnBlur={true}
                 onSubmit={onSubmit}
                 enableReinitialize={true}
+                onReset={(props) => handleReset(props)}
             >
                 {props => {
                     const {
                         values,
                         setFieldValue,
-                        resetForm
                     } = props;
                     return (
                         <form method="POST" id="despesaForm" onSubmit={props.handleSubmit}>
@@ -240,7 +241,7 @@ export const DespesaForm = () => {
                             }
 
                             <div className="d-flex  justify-content-end mt-5">
-                                <button type="reset" onClick={resetForm} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                                <button type="reset" onClick={props.handleReset} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                                 <button type="submit" className="btn btn-success mt-2">Acessar</button>
                             </div>
 

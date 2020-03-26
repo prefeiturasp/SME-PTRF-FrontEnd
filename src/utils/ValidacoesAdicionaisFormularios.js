@@ -56,9 +56,18 @@ export const payloadFormDespesaPrincipal = (data)=>{
     data.valor_total = trataNumericos(data.valor_total);
     data.valor_recursos_proprios = trataNumericos(data.valor_recursos_proprios);
     data.valorRecursoAcoes = round((data.valor_total - data.valor_recursos_proprios), 2);
-    data.data_documento =  moment(data.data_documento).format("YYYY-MM-DD");
-    data.data_transacao =  moment(data.data_transacao).format("YYYY-MM-DD");
 
+    if (data.data_documento){
+        data.data_documento =  moment(data.data_documento).format("YYYY-MM-DD");
+    }else {
+        data.data_documento = "";
+    }
+
+    if (data.data_transacao){
+        data.data_transacao =  moment(data.data_transacao).format("YYYY-MM-DD");
+    }else {
+        data.data_transacao = "";
+    }
     return data;
 }
 
