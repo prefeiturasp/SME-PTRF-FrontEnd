@@ -3,6 +3,7 @@ import React, {useState, createContext} from "react";
 export const DadosDoGastoNaoContext = createContext( {
     dadosDoGastoNao: [],
     setDadosDoGastoNao(){},
+    limpaFormulario(){},
 });
 
 export const DadosDoGastoNaoContextProvider = ({children}) => {
@@ -13,15 +14,32 @@ export const DadosDoGastoNaoContextProvider = ({children}) => {
         aplicacao_recurso: "",
         tipo_aplicacao_recurso: 1,
         tipo_custeio: 1,
-        especificacao_material_servico:"servico",
+        especificacao_material_servico:"",
         conta_associacao:"conta1",
         acao_associacao:"",
-        valor_rateio:0,
+        valor_rateio:'',
         //Capital
-        quantidade_itens_capital:0,
-        valor_item_capital:0,
+        quantidade_itens_capital:'',
+        valor_item_capital:'',
         numero_processo_incorporacao_capital:"",
     })
+
+    const limpaFormulario = ()=>{
+        setDadosDoGastoNao({
+            associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
+            aplicacao_recurso: "",
+            tipo_aplicacao_recurso: 1,
+            tipo_custeio: 1,
+            especificacao_material_servico:"",
+            conta_associacao:"conta1",
+            acao_associacao:"",
+            valor_rateio:'',
+            //Capital
+            quantidade_itens_capital:'',
+            valor_item_capital:'',
+            numero_processo_incorporacao_capital:"",
+        });
+    }
 
     const handleChangeDadosDoGastoNao = (name, value) => {
         setDadosDoGastoNao({
@@ -31,7 +49,7 @@ export const DadosDoGastoNaoContextProvider = ({children}) => {
     };
 
     return (
-        <DadosDoGastoNaoContext.Provider value={ { dadosDoGastoNao, setDadosDoGastoNao, handleChangeDadosDoGastoNao } }>
+        <DadosDoGastoNaoContext.Provider value={ { dadosDoGastoNao, setDadosDoGastoNao, handleChangeDadosDoGastoNao, limpaFormulario } }>
             {children}
         </DadosDoGastoNaoContext.Provider>
     )

@@ -26,21 +26,40 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     valorRecursoAcoes:yup.string(),
 });
 
-export const payloadFormDespesaPrincipal = (data)=>{
+export const payloadFormDespesaContext = (data)=>{
 
+    if (data.valor_item_capital !== "" && data.quantidade_itens_capital !== ""){
+        data.valor_item_capital = trataNumericos(data.valor_item_capital);
+        data.quantidade_itens_capital = trataNumericos(data.quantidade_itens_capital);
+        data.valor_rateio = round((data.valor_item_capital * data.quantidade_itens_capital), 2);
+    }else{
+        data.valor_item_capital = 0;
+        data.quantidade_itens_capital = 0;
+        data.valor_rateio = trataNumericos(data.valor_rateio)
+    }
+
+    if (data.tipo_custeio === 1){
+        data.aplicacao_recurso = "CUSTEIO"
+    }else {
+        data.aplicacao_recurso = "CAPITAL"
+    }
+
+    data.especificacao_material_servico = convertToNumber(data.especificacao_material_servico)
+
+    return data;
+}
+
+export const payloadFormDespesaPrincipal = (data)=>{
 
     data.tipo_documento = convertToNumber(data.tipo_documento)
     data.tipo_transacao = convertToNumber(data.tipo_transacao)
-
     data.valor_total = trataNumericos(data.valor_total);
     data.valor_recursos_proprios = trataNumericos(data.valor_recursos_proprios);
     data.valorRecursoAcoes = round((data.valor_total - data.valor_recursos_proprios), 2);
-
     data.data_documento =  moment(data.data_documento).format("YYYY-MM-DD");
     data.data_transacao =  moment(data.data_transacao).format("YYYY-MM-DD");
 
     return data;
-
 }
 
 export const convertToNumber = (string)=>{

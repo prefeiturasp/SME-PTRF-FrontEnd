@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import {DadosDoGastoNaoContext} from "../../../context/DadosDoGastoNao";
 import {Formik} from "formik";
 import MaskedInput from 'react-text-mask'
-import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, round, convertToNumber, payloadFormDespesaPrincipal } from "../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, payloadFormDespesaPrincipal, payloadFormDespesaContext } from "../../../utils/ValidacoesAdicionaisFormularios";
 import NumberFormat from 'react-number-format';
 import {DatePickerField} from "../../DatePickerField";
 import {DadosDoGastoNao} from "./DadosDoGastoNao";
@@ -14,6 +14,7 @@ export const DespesaForm = () => {
 
     const initialValues = () => (
         {
+            associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
             cpf_cnpj_fornecedor: "",
             nome_fornecedor: "",
             tipo_documento: "",
@@ -28,21 +29,20 @@ export const DespesaForm = () => {
         }
     )
 
-    const onSubmit = (values) => {
+    const onSubmit = (values, {resetForm}) => {
+        let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values)
+        let validaPayloadContext = payloadFormDespesaContext(dadosDoGastoNaoContext.dadosDoGastoNao)
+        const payload = {
+            ...validaPayloadFormPrincipal,
+            rateios: [validaPayloadContext],
+        };
+        resetForm({values: ""})
+        dadosDoGastoNaoContext.limpaFormulario();
+        console.log("Ollyver Payload", payload)
+    }
 
-        let validaPayload = payloadFormDespesaPrincipal(values)
+    const handleCancelar = ({resetForm})=> {
 
-        console.log("Ollyver payloadFormDespesaPrincipal ", validaPayload)
-
-
-        if (dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital !== 0 && dadosDoGastoNaoContext.dadosDoGastoNao.quantidade_itens_capital !== 0){
-            dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital = trataNumericos(dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital);
-            dadosDoGastoNaoContext.dadosDoGastoNao.quantidade_itens_capital = trataNumericos(dadosDoGastoNaoContext.dadosDoGastoNao.quantidade_itens_capital);
-            dadosDoGastoNaoContext.dadosDoGastoNao.valor_rateio = round((dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital * dadosDoGastoNaoContext.dadosDoGastoNao.quantidade_itens_capital), 2);
-        }else{
-            dadosDoGastoNaoContext.dadosDoGastoNao.valor_rateio = trataNumericos(dadosDoGastoNaoContext.dadosDoGastoNao.valor_rateio)
-        }
-        console.log("Ollyver dadosDoGastoNao ", dadosDoGastoNaoContext.dadosDoGastoNao)
     }
     return (
         <>
@@ -239,11 +239,8 @@ export const DespesaForm = () => {
                                 ) : null
                             }
 
-
                             <div className="d-flex  justify-content-end mt-5">
-                                <button type="reset" onClick={resetForm}
-                                        className="btn btn btn-outline-success mt-2 mr-2">Cancelar
-                                </button>
+                                <button type="reset" onClick={resetForm} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                                 <button type="submit" className="btn btn-success mt-2">Acessar</button>
                             </div>
 
