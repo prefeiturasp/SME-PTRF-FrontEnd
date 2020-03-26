@@ -3,17 +3,17 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import {BrowserRouter} from "react-router-dom";
 import {SidebarContextProvider} from "./context/Sidebar";
-import {DadosDoGastoNaoContextProvider} from "./context/DadosDoGastoNao";
+import {DadosDoGastoContextProvider} from "./context/DadosDoGasto";
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-    <DadosDoGastoNaoContextProvider>
+    <DadosDoGastoContextProvider>
         <SidebarContextProvider>
             <BrowserRouter>
                 <App/>
             </BrowserRouter>
         </SidebarContextProvider>
-    </DadosDoGastoNaoContextProvider>
+    </DadosDoGastoContextProvider>
     , document.getElementById("root"));
 
 serviceWorker.unregister();

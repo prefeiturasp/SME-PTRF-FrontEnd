@@ -1,5 +1,5 @@
 import React, {useContext} from "react";
-import {DadosDoGastoNaoContext} from "../../../context/DadosDoGastoNao";
+import {DadosDoGastoContext} from "../../../context/DadosDoGasto";
 import {Formik} from "formik";
 import MaskedInput from 'react-text-mask'
 import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, payloadFormDespesaPrincipal, payloadFormDespesaContext } from "../../../utils/ValidacoesAdicionaisFormularios";
@@ -10,7 +10,7 @@ import {GetTiposDeDocumentoApi, GetTipoTransacaoApi} from "../../../services/Get
 
 export const DespesaForm = () => {
 
-    const dadosDoGastoNaoContext = useContext(DadosDoGastoNaoContext);
+    const dadosDoGastoContext = useContext(DadosDoGastoContext);
 
     const initialValues = () => (
         {
@@ -30,20 +30,23 @@ export const DespesaForm = () => {
     )
 
     const onSubmit = (values, {resetForm}) => {
+
+        console.log("inputFields", dadosDoGastoContext.inputFields);
+
         let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values)
-        let validaPayloadContext = payloadFormDespesaContext(dadosDoGastoNaoContext.dadosDoGastoNao)
+        let validaPayloadContext = payloadFormDespesaContext(dadosDoGastoContext.dadosDoGasto)
         const payload = {
             ...validaPayloadFormPrincipal,
             rateios: [validaPayloadContext],
         };
         console.log("Ollyver Payload", payload)
         resetForm({values: ""})
-        dadosDoGastoNaoContext.limpaFormulario();
+        dadosDoGastoContext.limpaFormulario();
 
     }
 
     const handleReset = ()=> {
-        dadosDoGastoNaoContext.limpaFormulario();
+        dadosDoGastoContext.limpaFormulario();
     }
     return (
         <>
@@ -233,12 +236,12 @@ export const DespesaForm = () => {
                             {
                                 props.values.dadosDoGasto === "sim" ? (
                                     <DadosDoGastoEscolha
-                                        dadosDoGastoNaoContext = {dadosDoGastoNaoContext}
+                                        dadosDoGastoContext = {dadosDoGastoContext}
                                         gastoEmMaisDeUmaDespesa = {1}
                                     />
                                 ) : props.values.dadosDoGasto === "nao" ? (
                                     <DadosDoGastoEscolha
-                                        dadosDoGastoNaoContext = {dadosDoGastoNaoContext}
+                                        dadosDoGastoContext = {dadosDoGastoContext}
                                         gastoEmMaisDeUmaDespesa = {0}
                                     />
                                 ) : null

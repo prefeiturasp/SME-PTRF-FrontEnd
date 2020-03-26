@@ -5,10 +5,10 @@ import NumberFormat from "react-number-format";
 
 export const DadosDoGastoCapital = (propriedades) => {
 
-    const {dadosDoGastoNaoContext, gastoEmMaisDeUmaDespesa} = propriedades
+    const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa} = propriedades
 
     useEffect(()=>{
-        dadosDoGastoNaoContext.handleChangeDadosDoGastoNao("tipo_custeio", 2 )
+        dadosDoGastoContext.handleChangeDadosDoGasto("tipo_custeio", 2 )
     }, [])
 
     return (
@@ -17,8 +17,8 @@ export const DadosDoGastoCapital = (propriedades) => {
             <div className="col-12 mt-4">
                 <label htmlFor="especificacao_material_servico">Especificação do material ou serviço</label>
                 <select
-                    value={dadosDoGastoNaoContext.dadosDoGastoNao.especificacao_material_servico}
-                    onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                    value={dadosDoGastoContext.dadosDoGasto.especificacao_material_servico}
+                    onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, e.target.value)}
                     name='especificacao_material_servico'
                     id='especificacao_material_servico'
                     className="form-control"
@@ -33,8 +33,8 @@ export const DadosDoGastoCapital = (propriedades) => {
             <div className="col-12 col-md-6 mt-4">
                 <label htmlFor="acao_associacao">Ação</label>
                 <select
-                    value={dadosDoGastoNaoContext.dadosDoGastoNao.acao}
-                    onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                    value={dadosDoGastoContext.dadosDoGasto.acao}
+                    onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, e.target.value)}
                     name='acao_associacao'
                     id='acao_associacao'
                     className="form-control"
@@ -53,19 +53,19 @@ export const DadosDoGastoCapital = (propriedades) => {
                         <label htmlFor="quantidade_itens_capital">Quantidade de itens</label>
 
                         <NumberFormat
-                            value={dadosDoGastoNaoContext.dadosDoGastoNao.quantidade_itens_capital}
+                            value={dadosDoGastoContext.dadosDoGasto.quantidade_itens_capital}
                             decimalScale={0}
                             name="quantidade_itens_capital"
                             id="quantidade_itens_capital"
                             className="form-control"
-                            onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                            onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, e.target.value)}
                         />
                     </div>
 
                     <div className="col-12 col-md-6 mt-4">
                         <label htmlFor="valor_item_capital">Valor unitário </label>
                         <NumberFormat
-                            value={dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital}
+                            value={dadosDoGastoContext.dadosDoGasto.valor_item_capital}
                             thousandSeparator={'.'}
                             decimalSeparator={','}
                             decimalScale={2}
@@ -73,7 +73,7 @@ export const DadosDoGastoCapital = (propriedades) => {
                             name="valor_item_capital"
                             id="valor_item_capital"
                             className="form-control"
-                            onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                            onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, e.target.value)}
                         />
                     </div>
 
@@ -85,8 +85,8 @@ export const DadosDoGastoCapital = (propriedades) => {
                 <label htmlFor="numero_processo_incorporacao_capital">Número do processo de incorporação</label>
                 <input
                     type='text'
-                    value={dadosDoGastoNaoContext.dadosDoGastoNao.numero_processo_incorporacao_capital || ''}
-                    onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                    value={dadosDoGastoContext.dadosDoGasto.numero_processo_incorporacao_capital || ''}
+                    onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, e.target.value)}
                     name='numero_processo_incorporacao_capital'
                     id='numero_processo_incorporacao_capital'
                     className="form-control"
@@ -100,8 +100,8 @@ export const DadosDoGastoCapital = (propriedades) => {
                     <div className="col-12 col-md-6 mt-4">
                         <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
                         <select
-                            value={dadosDoGastoNaoContext.dadosDoGastoNao.conta_associacao}
-                            onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                            value={dadosDoGastoContext.dadosDoGasto.conta_associacao}
+                            onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, e.target.value)}
                             name='conta_associacao'
                             id='conta_associacao'
                             className="form-control"
@@ -116,7 +116,7 @@ export const DadosDoGastoCapital = (propriedades) => {
                     <div className="col-12 col-md-6 mt-4">
                         <label htmlFor="valor_rateio">Valor total do capital </label>
                         <NumberFormat
-                            value={calculaValorRateio(dadosDoGastoNaoContext.dadosDoGastoNao.valor_item_capital, dadosDoGastoNaoContext.dadosDoGastoNao.quantidade_itens_capital) }
+                            value={calculaValorRateio(dadosDoGastoContext.dadosDoGasto.valor_item_capital, dadosDoGastoContext.dadosDoGasto.quantidade_itens_capital) }
                             thousandSeparator={'.'}
                             decimalSeparator={','}
                             decimalScale={2}
@@ -124,7 +124,7 @@ export const DadosDoGastoCapital = (propriedades) => {
                             name="valor_rateio"
                             id="valor_rateio"
                             className="form-control"
-                            onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                            onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, e.target.value)}
                             readOnly={true}
                         />
                     </div>

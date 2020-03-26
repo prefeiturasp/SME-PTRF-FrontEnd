@@ -1,18 +1,19 @@
-import React from "react";
+import React  from "react";
 import NumberFormat from 'react-number-format';
 import {GetTiposCusteioApi, GetAcoesAssociacaoApi, GetContasAssociacaoApi, GetEspecificacaoMaterialServicoApi} from "../../../services/GetDadosApiDespesa";
+import {DadosDoGastoCusteioDinamico} from "./DadosDoGastoCusteioDinamico";
 
 export const DadosDoGastoCusteio = (propriedades) => {
 
-    const {dadosDoGastoNaoContext, gastoEmMaisDeUmaDespesa} = propriedades
+    const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa} = propriedades
 
     return (
         <>
             <div className="col-12 col-md-6 mt-4">
                 <label htmlFor="tipo_custeio">Tipo de custeio</label>
                 <select
-                    value={dadosDoGastoNaoContext.dadosDoGastoNao.tipo_custeio}
-                    onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                    value={dadosDoGastoContext.dadosDoGasto.tipo_custeio}
+                    onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, e.target.value)}
                     name='tipo_custeio'
                     id='tipo_custeio'
                     className="form-control"
@@ -26,8 +27,8 @@ export const DadosDoGastoCusteio = (propriedades) => {
             <div className="col-12 mt-4">
                 <label htmlFor="especificacao_material_servico">Especificação do material ou serviço</label>
                 <select
-                    value={dadosDoGastoNaoContext.dadosDoGastoNao.especificacao_material_servico}
-                    onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                    value={dadosDoGastoContext.dadosDoGasto.especificacao_material_servico}
+                    onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, e.target.value)}
                     name='especificacao_material_servico'
                     id='especificacao_material_servico'
                     className="form-control"
@@ -42,8 +43,8 @@ export const DadosDoGastoCusteio = (propriedades) => {
             <div className="col-12 col-md-6 mt-4">
                 <label htmlFor="acao_associacao">Ação</label>
                 <select
-                    value={dadosDoGastoNaoContext.dadosDoGastoNao.acao}
-                    onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                    value={dadosDoGastoContext.dadosDoGasto.acao}
+                    onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, e.target.value)}
                     name='acao_associacao'
                     id='acao_associacao'
                     className="form-control"
@@ -61,8 +62,8 @@ export const DadosDoGastoCusteio = (propriedades) => {
                     <div className="col-12 col-md-6 mt-4">
                         <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
                         <select
-                            value={dadosDoGastoNaoContext.dadosDoGastoNao.conta_associacao}
-                            onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                            value={dadosDoGastoContext.dadosDoGasto.conta_associacao}
+                            onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, e.target.value)}
                             name='conta_associacao'
                             id='conta_associacao'
                             className="form-control"
@@ -77,7 +78,7 @@ export const DadosDoGastoCusteio = (propriedades) => {
                     <div className="col-12 col-md-6 mt-4">
                         <label htmlFor="valor_rateio">Valor do custeio</label>
                         <NumberFormat
-                            value={dadosDoGastoNaoContext.dadosDoGastoNao.valor_rateio}
+                            value={dadosDoGastoContext.dadosDoGasto.valor_rateio}
                             thousandSeparator={'.'}
                             decimalSeparator={','}
                             decimalScale={2}
@@ -85,7 +86,7 @@ export const DadosDoGastoCusteio = (propriedades) => {
                             name="valor_rateio"
                             id="valor_rateio"
                             className="form-control"
-                            onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, e.target.value)}
+                            onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, e.target.value)}
                         />
                     </div>
 
@@ -96,7 +97,9 @@ export const DadosDoGastoCusteio = (propriedades) => {
             {gastoEmMaisDeUmaDespesa === 0 ? (
                 <p><strong>NÃO Exibe Campos adicionais</strong></p>
             ) :
-                <p><strong>SIM Exibe Campos adicionais</strong></p>
+                <DadosDoGastoCusteioDinamico
+                    dadosDoGastoContext={dadosDoGastoContext}
+                />
             }
 
         </>

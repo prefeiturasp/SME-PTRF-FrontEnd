@@ -5,7 +5,7 @@ import {GetTiposAplicacaoRecursoApi} from "../../../services/GetDadosApiDespesa"
 
 export const DadosDoGastoEscolha = (propriedades) => {
 
-    const {dadosDoGastoNaoContext, gastoEmMaisDeUmaDespesa} = propriedades
+    const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa} = propriedades
 
     return (
         <>
@@ -13,8 +13,8 @@ export const DadosDoGastoEscolha = (propriedades) => {
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor="tipo_aplicacao_recurso">Tipo de aplicação do recurso</label>
                     <select
-                        value={dadosDoGastoNaoContext.dadosDoGastoNao.tipo_aplicacao_recurso}
-                        onChange={(e) => dadosDoGastoNaoContext.handleChangeDadosDoGastoNao(e.target.name, Number(e.target.value))}
+                        value={dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso}
+                        onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, Number(e.target.value))}
                         name='tipo_aplicacao_recurso'
                         id='tipo_aplicacao_recurso'
                         className="form-control"
@@ -24,14 +24,14 @@ export const DadosDoGastoEscolha = (propriedades) => {
                         ))}
                     </select>
                 </div>
-                {dadosDoGastoNaoContext.dadosDoGastoNao.tipo_aplicacao_recurso === 1 ? (
+                {dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso === 1 ? (
                     <DadosDoGastoCusteio
-                        dadosDoGastoNaoContext = {dadosDoGastoNaoContext}
+                        dadosDoGastoContext = {dadosDoGastoContext}
                         gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
                     />
-                ): dadosDoGastoNaoContext.dadosDoGastoNao.tipo_aplicacao_recurso === 2 ? (
+                ): dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso === 2 ? (
                     <DadosDoGastoCapital
-                        dadosDoGastoNaoContext = {dadosDoGastoNaoContext}
+                        dadosDoGastoContext = {dadosDoGastoContext}
                         gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
                     />
                 ) : null}
