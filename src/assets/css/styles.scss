@@ -10,6 +10,24 @@ body{
     border-color: $corBtnSuccess;
   }
 
+  .btn-outline-success{
+    border-color: $corBtnSuccess;
+    color: $corBtnSuccess;
+  }
+  .btn-outline-success:hover{
+    color: #fff;
+    background-color: $corBtnSuccess;
+    border-color: $corBtnSuccess;
+  }
+
+  hr {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    border: 0;
+    border-top: 1px solid #DADADA;
+    display: block;
+  }
+
   /* ---------------------------------------------------
     CONTENT STYLE
 ----------------------------------------------------- */
@@ -19,10 +37,25 @@ body{
     margin-left: 15rem;
     transition: all 0.4s;
     margin-top: 69px;
+    background-color: #F5F6F8;
+  }
+
+  .page-content .page-content-inner{
+    background-color: #fff;
+    margin: 15px 0 0 0;
+    padding: 15px;
+
+    h2.subtitulo-itens-painel{
+      font-size: 14px;
+    }
+  }
+
+
+  .page-content h1.titulo-itens-painel{
+    font-size: 24px;
   }
 
   /* for toggle behavior */
-
   #content.active {
     width: 100%;
     margin: 69px 0 0 4.5em;

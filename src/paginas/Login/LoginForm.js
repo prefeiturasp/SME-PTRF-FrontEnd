@@ -6,6 +6,10 @@ import {YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios"
 
 export const LoginForm = () => {
 
+    const initialValues = () => (
+        {loginRf: "", loginSenha: ""}
+    )
+
     const onSubmit = (values) => {
         console.log("Ollyver ", values)
     }
@@ -14,7 +18,7 @@ export const LoginForm = () => {
         <div className="w-75">
 
             <Formik
-                initialValues={{loginRf: "", loginSenha: ""}}
+                initialValues={initialValues()}
                 validationSchema={YupSignupSchemaLogin}
                 validateOnBlur={true}
                 enableReinitialize={true}
@@ -29,6 +33,7 @@ export const LoginForm = () => {
                                 type="text"
                                 value={props.values.loginRf}
                                 name="loginRf"
+                                id="loginRf"
                                 className="form-control"
                                 onChange={props.handleChange}
                                 onBlur={props.handleBlur}
@@ -42,6 +47,7 @@ export const LoginForm = () => {
                                 mask={[/\d/, ' ', /\d/, /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/]}
                                 value={props.values.loginSenha}
                                 name="loginSenha"
+                                id="loginSenha"
                                 className="form-control"
                                 onChange={props.handleChange}
                                 onBlur={props.handleBlur}

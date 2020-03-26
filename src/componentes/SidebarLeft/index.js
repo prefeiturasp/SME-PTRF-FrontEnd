@@ -91,7 +91,7 @@ export const SidebarLeft = () => {
                     </NavText>
                 </NavItem>
 
-                <NavItem eventKey="cadastroDeDespesa">
+                <NavItem eventKey="cadastro-de-despesa">
                     <NavIcon>
                         <img src={IconeMenuCadastroDeDespesa} alt=""/>
                     </NavIcon>
