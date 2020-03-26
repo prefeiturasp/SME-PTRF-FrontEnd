@@ -5,7 +5,7 @@ import MaskedInput from 'react-text-mask'
 import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, payloadFormDespesaPrincipal, payloadFormDespesaContext } from "../../../utils/ValidacoesAdicionaisFormularios";
 import NumberFormat from 'react-number-format';
 import {DatePickerField} from "../../DatePickerField";
-import {DadosDoGastoNao} from "./DadosDoGastoNao";
+import {DadosDoGastoEscolha} from "./DadosDoGastoEsolha";
 import {GetTiposDeDocumentoApi, GetTipoTransacaoApi} from "../../../services/GetDadosApiDespesa";
 
 export const DespesaForm = () => {
@@ -232,10 +232,14 @@ export const DespesaForm = () => {
                             </div>
                             {
                                 props.values.dadosDoGasto === "sim" ? (
-                                        <h1>Sim</h1>
-                                ) : props.values.dadosDoGasto === "nao" ? (
-                                    <DadosDoGastoNao
+                                    <DadosDoGastoEscolha
                                         dadosDoGastoNaoContext = {dadosDoGastoNaoContext}
+                                        gastoEmMaisDeUmaDespesa = {1}
+                                    />
+                                ) : props.values.dadosDoGasto === "nao" ? (
+                                    <DadosDoGastoEscolha
+                                        dadosDoGastoNaoContext = {dadosDoGastoNaoContext}
+                                        gastoEmMaisDeUmaDespesa = {0}
                                     />
                                 ) : null
                             }
