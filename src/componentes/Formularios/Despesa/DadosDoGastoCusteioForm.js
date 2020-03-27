@@ -1,14 +1,11 @@
-import React from "react";
-import {
-    GetAcoesAssociacaoApi, GetContasAssociacaoApi,
-    GetEspecificacaoMaterialServicoApi,
-    GetTiposCusteioApi
-} from "../../../services/GetDadosApiDespesa";
+import React, {useContext} from "react";
 import NumberFormat from "react-number-format";
+import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 
 export const DadosDoGastoCusteioForm = (propriedades) => {
 
     const {dadosDoGastoContext} = propriedades
+    const dadosApiContext = useContext(GetDadosApiDespesaContext);
     return (
         <>
             <div className="col-12 col-md-6 mt-4">
@@ -20,7 +17,7 @@ export const DadosDoGastoCusteioForm = (propriedades) => {
                     id='tipo_custeio'
                     className="form-control"
                 >
-                    {GetTiposCusteioApi() && GetTiposCusteioApi().map(item => (
+                    {dadosApiContext.tiposCusteio.length > 0  && dadosApiContext.tiposCusteio.map(item => (
                         <option key={item.id} value={item.id}>{item.nome}</option>
                     ))}
                 </select>
@@ -36,7 +33,7 @@ export const DadosDoGastoCusteioForm = (propriedades) => {
                     className="form-control"
                 >
                     <option value="0">Selecione uma ação</option>
-                    {GetEspecificacaoMaterialServicoApi() && GetEspecificacaoMaterialServicoApi().map(item => (
+                    {dadosApiContext.especificacaoMterialServico.length > 0  && dadosApiContext.especificacaoMterialServico.map(item => (
                         <option key={item.id} value={item.id} >{item.descricao}</option>
                     ))}
                 </select>
@@ -52,7 +49,7 @@ export const DadosDoGastoCusteioForm = (propriedades) => {
                     className="form-control"
                 >
                     <option value="0">Selecione uma ação</option>
-                    {GetAcoesAssociacaoApi() && GetAcoesAssociacaoApi().map(item => (
+                    {dadosApiContext.acoesAssociacao.length > 0  && dadosApiContext.acoesAssociacao.map(item => (
                         <option key={item.uuid} value={item.uuid} >{item.nome}</option>
                     ))}
                 </select>
@@ -71,7 +68,7 @@ export const DadosDoGastoCusteioForm = (propriedades) => {
                             className="form-control"
                         >
                             <option value="0">Selecione uma conta</option>
-                            {GetContasAssociacaoApi() && GetContasAssociacaoApi().map(item => (
+                            {dadosApiContext.contaAssociacao.length > 0  && dadosApiContext.contaAssociacao.map(item => (
                                 <option key={item.uuid} value={item.uuid} >{item.nome}</option>
                             ))}
                         </select>

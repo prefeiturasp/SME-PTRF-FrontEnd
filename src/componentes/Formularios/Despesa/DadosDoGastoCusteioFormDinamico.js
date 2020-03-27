@@ -1,9 +1,4 @@
 import React, {Fragment, useContext} from "react";
-import {
-/*    GetAcoesAssociacaoApi, GetContasAssociacaoApi,
-    GetEspecificacaoMaterialServicoApi,*/
-    GetTiposCusteioApi
-} from "../../../services/GetDadosApiDespesa";
 import NumberFormat from "react-number-format";
 import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 
@@ -12,8 +7,6 @@ export const DadosDoGastoCusteioFormDinamico = (propriedades) => {
 
     const {dadosDoGastoContext} = propriedades
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
-
-    console.log("Ollyver DadosDoGastoCusteioFormDinamico ", dadosApiContext.tiposCusteio)
 
     return (
         <div className="col-12 mt-4">
@@ -57,7 +50,7 @@ export const DadosDoGastoCusteioFormDinamico = (propriedades) => {
                             </select>
                         </div>
 
-                        {/*<div className="col-12 mt-4">
+                        <div className="col-12 mt-4">
                             <label htmlFor="especificacao_material_servico">Especificação do material ou serviço</label>
                             <select
                                 value={dadosDoGastoContext.dadosDoGasto.especificacao_material_servico}
@@ -67,7 +60,7 @@ export const DadosDoGastoCusteioFormDinamico = (propriedades) => {
                                 className="form-control"
                             >
                                 <option value="0">Selecione uma ação</option>
-                                {GetEspecificacaoMaterialServicoApi() && GetEspecificacaoMaterialServicoApi().map(item => (
+                                {dadosApiContext.especificacaoMterialServico.length > 0  && dadosApiContext.especificacaoMterialServico.map(item => (
                                     <option key={item.id} value={item.id}>{item.descricao}</option>
                                 ))}
                             </select>
@@ -83,7 +76,7 @@ export const DadosDoGastoCusteioFormDinamico = (propriedades) => {
                                 className="form-control"
                             >
                                 <option value="0">Selecione uma ação</option>
-                                {GetAcoesAssociacaoApi() && GetAcoesAssociacaoApi().map(item => (
+                                {dadosApiContext.acoesAssociacao.length > 0  && dadosApiContext.acoesAssociacao.map(item => (
                                     <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                                 ))}
                             </select>
@@ -102,7 +95,7 @@ export const DadosDoGastoCusteioFormDinamico = (propriedades) => {
                                         className="form-control"
                                     >
                                         <option value="0">Selecione uma conta</option>
-                                        {GetContasAssociacaoApi() && GetContasAssociacaoApi().map(item => (
+                                        {dadosApiContext.contaAssociacao.length > 0  && dadosApiContext.contaAssociacao.map(item => (
                                             <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                                         ))}
                                     </select>
@@ -125,7 +118,7 @@ export const DadosDoGastoCusteioFormDinamico = (propriedades) => {
 
                             </div>
 
-                        </div>*/}
+                        </div>
                         <div className="form-group col-sm-2">
                             <button
                                 className="btn btn-link"

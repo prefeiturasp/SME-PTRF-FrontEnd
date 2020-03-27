@@ -1,11 +1,12 @@
-import React, {useEffect} from "react";
-import {GetAcoesAssociacaoApi, GetContasAssociacaoApi, GetEspecificacaoMaterialServicoApi} from "../../../services/GetDadosApiDespesa";
+import React, {useContext, useEffect} from "react";
 import {calculaValorRateio} from "../../../utils/ValidacoesAdicionaisFormularios";
 import NumberFormat from "react-number-format";
+import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 
 export const DadosDoGastoCapital = (propriedades) => {
 
     const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa} = propriedades
+    const dadosApiContext = useContext(GetDadosApiDespesaContext);
 
     useEffect(()=>{
         dadosDoGastoContext.handleChangeDadosDoGasto("tipo_custeio", 2 )
@@ -24,7 +25,7 @@ export const DadosDoGastoCapital = (propriedades) => {
                     className="form-control"
                 >
                     <option value="0">Selecione uma ação</option>
-                    {GetEspecificacaoMaterialServicoApi() && GetEspecificacaoMaterialServicoApi().map(item => (
+                    {dadosApiContext.especificacaoMterialServico.length > 0  && dadosApiContext.especificacaoMterialServico.map(item => (
                         <option key={item.id} value={item.id} >{item.descricao}</option>
                     ))}
                 </select>
@@ -40,7 +41,7 @@ export const DadosDoGastoCapital = (propriedades) => {
                     className="form-control"
                 >
                     <option value="0">Selecione uma ação</option>
-                    {GetAcoesAssociacaoApi() && GetAcoesAssociacaoApi().map(item => (
+                    {dadosApiContext.acoesAssociacao.length > 0  && dadosApiContext.acoesAssociacao.map(item => (
                         <option key={item.uuid} value={item.uuid} >{item.nome}</option>
                     ))}
                 </select>
@@ -107,7 +108,7 @@ export const DadosDoGastoCapital = (propriedades) => {
                             className="form-control"
                         >
                             <option value="0">Selecione uma conta</option>
-                            {GetContasAssociacaoApi() && GetContasAssociacaoApi().map(item => (
+                            {dadosApiContext.contaAssociacao.length > 0  && dadosApiContext.contaAssociacao.map(item => (
                                 <option key={item.uuid} value={item.uuid} >{item.nome}</option>
                             ))}
                         </select>

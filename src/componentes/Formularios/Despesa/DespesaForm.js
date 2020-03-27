@@ -6,11 +6,13 @@ import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoA
 import NumberFormat from 'react-number-format';
 import {DatePickerField} from "../../DatePickerField";
 import {DadosDoGastoEscolha} from "./DadosDoGastoEsolha";
-import {GetTiposDeDocumentoApi, GetTipoTransacaoApi} from "../../../services/GetDadosApiDespesa";
+
+import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 
 export const DespesaForm = () => {
 
     const dadosDoGastoContext = useContext(DadosDoGastoContext);
+    const dadosApiContext = useContext(GetDadosApiDespesaContext);
 
     const initialValues = () => (
         {
@@ -110,7 +112,7 @@ export const DespesaForm = () => {
                                         id='tipo_documento'
                                         className="form-control">
                                         <option value="">Selecione o tipo</option>
-                                        {GetTiposDeDocumentoApi() && GetTiposDeDocumentoApi().map(item => (
+                                        {dadosApiContext.tipoDocumento.length > 0  && dadosApiContext.tipoDocumento.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         ))}
                                     </select>
@@ -149,7 +151,7 @@ export const DespesaForm = () => {
                                         className="form-control"
                                     >
                                         <option value="">Selecione o tipo</option>
-                                        {GetTipoTransacaoApi() && GetTipoTransacaoApi().map(item => (
+                                        {dadosApiContext.tipoTransacao.length > 0  && dadosApiContext.tipoTransacao.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         ))}
                                     </select>

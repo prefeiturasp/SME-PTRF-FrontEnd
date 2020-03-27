@@ -1,6 +1,4 @@
 import React  from "react";
-import NumberFormat from 'react-number-format';
-import {GetTiposCusteioApi, GetAcoesAssociacaoApi, GetContasAssociacaoApi, GetEspecificacaoMaterialServicoApi} from "../../../services/GetDadosApiDespesa";
 import {DadosDoGastoCusteioForm} from "./DadosDoGastoCusteioForm";
 import {DadosDoGastoCusteioFormDinamico} from "./DadosDoGastoCusteioFormDinamico";
 

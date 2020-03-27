@@ -1,11 +1,12 @@
-import React from "react";
+import React, {useContext} from "react";
 import {DadosDoGastoCusteio} from "./DadosDoGastoCusteio";
 import {DadosDoGastoCapital} from "./DadosDoGastoCapital";
-import {GetTiposAplicacaoRecursoApi} from "../../../services/GetDadosApiDespesa";
+import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 
 export const DadosDoGastoEscolha = (propriedades) => {
 
     const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa} = propriedades
+    const dadosApiContext = useContext(GetDadosApiDespesaContext);
 
     return (
         <>
@@ -19,7 +20,7 @@ export const DadosDoGastoEscolha = (propriedades) => {
                         id='tipo_aplicacao_recurso'
                         className="form-control"
                     >
-                        {GetTiposAplicacaoRecursoApi() && GetTiposAplicacaoRecursoApi().map(item => (
+                        {dadosApiContext.tipoAplicacaoRecurso.length > 0  && dadosApiContext.tipoAplicacaoRecurso.map(item => (
                             <option key={item.id} value={Number(item.id)}>{item.nome}</option>
                         ))}
                     </select>
