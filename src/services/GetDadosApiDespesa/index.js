@@ -13,6 +13,30 @@ export const GetEspecificacaoMaterialServicoApi = () =>{
     return retornApi
 }
 
+export const GetTiposCusteioApi = () =>{
+    const [tiposCusteio, setTiposCusteio] = useState([]);
+    useEffect(() => {
+        async function loadApi() {
+            const response = await Api.get('tipos_custeio')
+            setTiposCusteio(response.data)
+        }
+        loadApi();
+    }, [])
+   
+}
+
+/*export const GetTiposCusteioApi = () =>{
+    const [retornApi, setRetornoApi] = useState([]);
+    useEffect(() => {
+        async function loadApi() {
+            const response = await Api.get('tipos_custeio')
+            setRetornoApi(response.data)
+        }
+        loadApi();
+    }, [])
+    return retornApi
+}*/
+
 export const GetContasAssociacaoApi = () =>{
     const [retornApi, setRetornoApi] = useState([]);
     useEffect(() => {
@@ -37,17 +61,7 @@ export const GetAcoesAssociacaoApi = () =>{
     return retornApi
 }
 
-export const GetTiposCusteioApi = () =>{
-    const [retornApi, setRetornoApi] = useState([]);
-    useEffect(() => {
-        async function loadApi() {
-            const response = await Api.get('tipos_custeio')
-            setRetornoApi(response.data)
-        }
-        loadApi();
-    }, [])
-    return retornApi
-}
+
 export const GetTiposAplicacaoRecursoApi = () =>{
     const [retornApi, setRetornoApi] = useState([]);
     useEffect(() => {

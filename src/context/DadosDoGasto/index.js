@@ -1,4 +1,5 @@
-import React, {useState, createContext} from "react";
+import React, {useState, createContext, useEffect} from "react";
+import Api from "../../services/Api";
 
 export const DadosDoGastoContext = createContext( {
     dadosDoGasto: [],
@@ -9,9 +10,25 @@ export const DadosDoGastoContext = createContext( {
     handleRemoveFields(){},
     handleInputChange(){},
     limpaFormulario(){},
+
+    retornApi:[],
+    setRetornoApi(){},
+    GetTiposCusteioApi(){},
 });
 
 export const DadosDoGastoContextProvider = ({children}) => {
+    const [retornApi, setRetornoApi] = useState([]);
+    const GetTiposCusteioApi = () =>{
+
+        useEffect(() => {
+            async function loadApi() {
+                const response = await Api.get('tipos_custeio')
+                setRetornoApi(response.data)
+            }
+            loadApi();
+        }, [])
+        //return retornApi
+    }
 
     const [dadosDoGasto, setDadosDoGasto] = useState({
         // Custeio
@@ -83,6 +100,9 @@ export const DadosDoGastoContextProvider = ({children}) => {
     return (
         <DadosDoGastoContext.Provider value={
             {
+                retornApi,
+                setRetornoApi,
+                GetTiposCusteioApi,
                 dadosDoGasto,
                 inputFields,
                 setDadosDoGasto,

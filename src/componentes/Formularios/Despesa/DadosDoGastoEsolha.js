@@ -24,6 +24,8 @@ export const DadosDoGastoEscolha = (propriedades) => {
                         ))}
                     </select>
                 </div>
+            </div>
+            <div className="row">
                 {dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso === 1 ? (
                     <DadosDoGastoCusteio
                         dadosDoGastoContext = {dadosDoGastoContext}
