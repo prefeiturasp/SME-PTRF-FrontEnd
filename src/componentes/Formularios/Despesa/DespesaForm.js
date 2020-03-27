@@ -33,12 +33,8 @@ export const DespesaForm = () => {
 
     const onSubmit = (values, {resetForm}) => {
 
-        //console.log("inputFields ANTES", dadosDoGastoContext.inputFields);
-
         let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values)
         let validaPayloadContext = payloadFormDespesaContext(dadosDoGastoContext.inputFields);
-
-        //console.log("inputFields depois", validaPayloadContext);
 
         const payload = {
             ...validaPayloadFormPrincipal,

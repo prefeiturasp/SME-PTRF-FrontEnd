@@ -28,15 +28,9 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
 
 export const payloadFormDespesaContext = (data)=>{
 
-
-    //console.log("Ollyver payloadFormDespesaContext ", data)
-
-
-
     let arrayRetorno =[]
 
     data.map(item => {
-        //debugger;
         if (item.valor_item_capital !== "" && item.quantidade_itens_capital !== ""){
             item.valor_item_capital = trataNumericos(item.valor_item_capital);
             item.quantidade_itens_capital = trataNumericos(item.quantidade_itens_capital);
@@ -49,7 +43,7 @@ export const payloadFormDespesaContext = (data)=>{
 
         item.tipo_custeio = convertToNumber(item.tipo_custeio)
 
-        if (item.tipo_custeio === 1){
+        if (item.tipo_aplicacao_recurso === 1){
             item.aplicacao_recurso = "CUSTEIO"
         }else {
             item.aplicacao_recurso = "CAPITAL"
@@ -59,8 +53,6 @@ export const payloadFormDespesaContext = (data)=>{
 
         arrayRetorno.push(item)
     })
-
-    console.log("Ollyver arrayRetorno ", arrayRetorno)
 
    return arrayRetorno;
 }
