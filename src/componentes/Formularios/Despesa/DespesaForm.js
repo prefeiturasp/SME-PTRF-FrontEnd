@@ -36,28 +36,18 @@ export const DespesaForm = () => {
         //console.log("inputFields ANTES", dadosDoGastoContext.inputFields);
 
         let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values)
-        let validaPayloadContext = payloadFormDespesaContext(dadosDoGastoContext.dadosDoGasto);
+        let validaPayloadContext = payloadFormDespesaContext(dadosDoGastoContext.inputFields);
 
-        console.log("inputFields depois", dadosDoGastoContext.inputFields);
-        /*        const payload = {
-                    ...validaPayloadFormPrincipal,
-                    rateios: [validaPayloadContext],
-                };*/
-
-        var hege = [validaPayloadContext];
-        var stale = dadosDoGastoContext.inputFields;
-        var children = hege.concat(stale);
+        //console.log("inputFields depois", validaPayloadContext);
 
         const payload = {
             ...validaPayloadFormPrincipal,
-            rateios: dadosDoGastoContext.inputFields,
+            rateios: validaPayloadContext,
         };
+
         console.log("Ollyver Payload", payload)
         resetForm({values: ""})
         dadosDoGastoContext.limpaFormulario();
-
-
-
     }
 
     const handleReset = ()=> {

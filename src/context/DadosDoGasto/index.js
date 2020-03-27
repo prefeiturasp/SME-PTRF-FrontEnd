@@ -22,10 +22,10 @@ export const DadosDoGastoContextProvider = ({children}) => {
         especificacao_material_servico:"",
         conta_associacao:"conta1",
         acao_associacao:"",
-        valor_rateio:'',
+        valor_rateio:0,
         //Capital
-        quantidade_itens_capital:'',
-        valor_item_capital:'',
+        quantidade_itens_capital:0,
+        valor_item_capital:0,
         numero_processo_incorporacao_capital:"",
     })
 
