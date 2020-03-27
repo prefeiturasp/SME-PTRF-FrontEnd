@@ -1,5 +1,4 @@
-import React, {useState, createContext, useEffect} from "react";
-import Api from "../../services/Api";
+import React, {useState, createContext} from "react";
 
 export const DadosDoGastoContext = createContext( {
     dadosDoGasto: [],
@@ -10,29 +9,13 @@ export const DadosDoGastoContext = createContext( {
     handleRemoveFields(){},
     handleInputChange(){},
     limpaFormulario(){},
-
-    retornApi:[],
-    setRetornoApi(){},
-    GetTiposCusteioApi(){},
 });
 
 export const DadosDoGastoContextProvider = ({children}) => {
-    const [retornApi, setRetornoApi] = useState([]);
-    const GetTiposCusteioApi = () =>{
-
-        useEffect(() => {
-            async function loadApi() {
-                const response = await Api.get('tipos_custeio')
-                setRetornoApi(response.data)
-            }
-            loadApi();
-        }, [])
-        //return retornApi
-    }
 
     const [dadosDoGasto, setDadosDoGasto] = useState({
         // Custeio
-        associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
+        associacao: "DADOS DO GASTO - 07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
         aplicacao_recurso: "",
         tipo_aplicacao_recurso: 1,
         tipo_custeio: 1,
@@ -47,12 +30,36 @@ export const DadosDoGastoContextProvider = ({children}) => {
     })
 
     const [inputFields, setInputFields] = useState([
-        { firstName: '', lastName: '' }
+        {  // Custeio
+            associacao: "INPUT FIELDS - 07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
+            aplicacao_recurso: "",
+            tipo_aplicacao_recurso: 1,
+            tipo_custeio: 1,
+            especificacao_material_servico:"",
+            conta_associacao:"conta1",
+            acao_associacao:"",
+            valor_rateio:'',
+            //Capital
+            quantidade_itens_capital:'',
+            valor_item_capital:'',
+            numero_processo_incorporacao_capital:"", }
     ]);
 
     const handleAddFields = () => {
         const values = [...inputFields];
-        values.push({ firstName: '', lastName: '' });
+        values.push({  // Custeio
+            associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
+            aplicacao_recurso: "",
+            tipo_aplicacao_recurso: 1,
+            tipo_custeio: 1,
+            especificacao_material_servico:"",
+            conta_associacao:"conta1",
+            acao_associacao:"",
+            valor_rateio:'',
+            //Capital
+            quantidade_itens_capital:'',
+            valor_item_capital:'',
+            numero_processo_incorporacao_capital:"", });
         setInputFields(values);
     };
 
@@ -64,10 +71,28 @@ export const DadosDoGastoContextProvider = ({children}) => {
 
     const handleInputChange = (index, event) => {
         const values = [...inputFields];
-        if (event.target.name === "firstName") {
-            values[index].firstName = event.target.value;
-        } else {
-            values[index].lastName = event.target.value;
+        if (event.target.name === "associacao") {
+            values[index].associacao = "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69";
+        } else if(event.target.name === "aplicacao_recurso") {
+            values[index].aplicacao_recurso = event.target.value;
+        }else if(event.target.name === "tipo_aplicacao_recurso") {
+            values[index].tipo_aplicacao_recurso = event.target.value;
+        }else if(event.target.name === "tipo_custeio") {
+            values[index].tipo_custeio = event.target.value;
+        }else if(event.target.name === "especificacao_material_servico") {
+            values[index].especificacao_material_servico = event.target.value;
+        }else if(event.target.name === "conta_associacao") {
+            values[index].conta_associacao = event.target.value;
+        }else if(event.target.name === "acao_associacao") {
+            values[index].acao_associacao = event.target.value;
+        }else if(event.target.name === "valor_rateio") {
+            values[index].valor_rateio = event.target.value;
+        }else if(event.target.name === "quantidade_itens_capital") {
+            values[index].quantidade_itens_capital = event.target.value;
+        }else if(event.target.name === "valor_item_capital") {
+            values[index].valor_item_capital = event.target.value;
+        }else if(event.target.name === "numero_processo_incorporacao_capital") {
+            values[index].numero_processo_incorporacao_capital = event.target.value;
         }
 
         setInputFields(values);
@@ -81,28 +106,26 @@ export const DadosDoGastoContextProvider = ({children}) => {
     };
 
     const limpaFormulario = ()=>{
-        setDadosDoGasto({
-            associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
-            aplicacao_recurso: "",
-            tipo_aplicacao_recurso: 1,
-            tipo_custeio: 1,
-            especificacao_material_servico:"",
-            conta_associacao:"conta1",
-            acao_associacao:"",
-            valor_rateio:'',
-            //Capital
-            quantidade_itens_capital:'',
-            valor_item_capital:'',
-            numero_processo_incorporacao_capital:"",
-        });
+        setInputFields([
+            {  // Custeio
+                associacao: "INPUT FIELDS - 07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
+                aplicacao_recurso: "",
+                tipo_aplicacao_recurso: 1,
+                tipo_custeio: 1,
+                especificacao_material_servico:"",
+                conta_associacao:"conta1",
+                acao_associacao:"",
+                valor_rateio:'',
+                //Capital
+                quantidade_itens_capital:'',
+                valor_item_capital:'',
+                numero_processo_incorporacao_capital:"", }
+        ]);
     }
 
     return (
         <DadosDoGastoContext.Provider value={
             {
-                retornApi,
-                setRetornoApi,
-                GetTiposCusteioApi,
                 dadosDoGasto,
                 inputFields,
                 setDadosDoGasto,
