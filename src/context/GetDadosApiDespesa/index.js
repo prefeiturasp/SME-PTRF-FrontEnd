@@ -4,7 +4,7 @@ import Api from "../../services/Api";
 export const GetDadosApiDespesaContext = createContext( {
     tiposCusteio:[],
     setTiposCusteio(){},
-    especificacaoMterialServico:[],
+    especificacaoMaterialServico:[],
     setEspecificacaoMterialServico(){},
     contaAssociacao:[],
     setContaAssociacao(){},
@@ -21,7 +21,7 @@ export const GetDadosApiDespesaContext = createContext( {
 export const GetDadosApiDespesaContextProvider = ({children}) => {
 
     const [tiposCusteio, setTiposCusteio] = useState([]);
-    const [especificacaoMterialServico, setEspecificacaoMterialServico] = useState([]);
+    const [especificacaoMaterialServico, setEspecificacaoMterialServico] = useState([]);
     const [contaAssociacao, setContaAssociacao] = useState([]);
     const [acoesAssociacao, setAcoesAssociacao] = useState([]);
     const [tipoAplicacaoRecurso, setTipoAplicacaoRecurso] = useState([]);
@@ -90,7 +90,7 @@ export const GetDadosApiDespesaContextProvider = ({children}) => {
             {
                 tiposCusteio, 
                 setTiposCusteio, 
-                especificacaoMterialServico, 
+                especificacaoMaterialServico,
                 setEspecificacaoMterialServico, 
                 contaAssociacao,
                 setContaAssociacao,
