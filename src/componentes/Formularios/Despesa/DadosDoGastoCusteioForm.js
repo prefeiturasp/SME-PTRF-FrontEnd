@@ -111,7 +111,7 @@ export const DadosDoGastoCusteioForm = (propriedades) => {
 
                             </div>
                             {gastoEmMaisDeUmaDespesa !== 0 && (
-                                <div className="d-flex  justify-content-start mt-3">
+                                <div className="d-flex  justify-content-start mt-3 mb-3">
                                     {dadosDoGastoContext.inputFields.length > 1 && (
                                         <button
                                             className="btn btn btn-outline-success mt-2 mr-2"
@@ -127,7 +127,7 @@ export const DadosDoGastoCusteioForm = (propriedades) => {
                     )
                 })}
                 {gastoEmMaisDeUmaDespesa !== 0 && (
-                    <div className="d-flex  justify-content-start mt-3">
+                    <div className="d-flex  justify-content-start mt-3 mb-3">
                         <button
                             className="btn btn btn-outline-success mt-2 mr-2"
                             type="button"
