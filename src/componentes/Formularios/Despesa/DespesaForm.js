@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useState, useContext} from "react";
 import {DadosDoGastoContext} from "../../../context/DadosDoGasto";
 import {Formik} from "formik";
 import MaskedInput from 'react-text-mask'
@@ -9,10 +9,15 @@ import {DadosDoGastoEscolha} from "./DadosDoGastoEsolha";
 
 import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 
-export const DespesaForm = () => {
+export const DespesaForm = (parametros) => {
 
     const dadosDoGastoContext = useContext(DadosDoGastoContext);
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
+
+    useState( ()=> {
+        const {idAssociacao} = parametros;
+        console.log("Ollyver ", idAssociacao)
+    }, [])
 
     const initialValues = () => (
         {

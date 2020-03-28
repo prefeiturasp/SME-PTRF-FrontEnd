@@ -1,5 +1,90 @@
 {
 
+  "update-despesa" : [
+    {
+      "id": 2,
+      "associacao": {
+        "id": 1,
+        "nome": "Escola ABC"
+      },
+      "tipo_documento": {
+        "id": 1,
+        "nome": "NF"
+      },
+      "tipo_transacao": {
+        "id": 1,
+        "nome": "Boleto"
+      },
+      "rateios": [
+        {
+          "id": 3,
+          "despesa": 2,
+          "associacao": {
+            "id": 1,
+            "nome": "Escola ABC"
+          },
+          "conta_associacao": {
+            "uuid": "4dc829ba-5779-40a6-a46a-3aa78bf96585",
+            "tipo_conta": {
+              "id": 2,
+              "nome": "Cartão"
+            },
+            "associacao": {
+              "id": 1,
+              "nome": "Escola ABC"
+            },
+            "status": "ATIVA"
+          },
+          "acao_associacao": {
+            "uuid": "721dcff8-293e-4d7d-bb44-6203a62080de",
+            "acao": {
+              "id": 1,
+              "nome": "PTRF"
+            },
+            "associacao": {
+              "id": 1,
+              "nome": "Escola ABC"
+            },
+            "status": "ATIVA"
+          },
+          "especificacao_material_servico": {
+            "id": 1,
+            "descricao": "Material Elétrico",
+            "aplicacao_recurso": "CUSTEIO",
+            "tipo_custeio": {
+              "id": 1,
+              "nome": "Material"
+            }
+          },
+          "tipo_custeio": {
+            "id": 1,
+            "nome": "Material"
+          },
+          "criado_em": "2020-03-26T13:54:34.062741-03:00",
+          "alterado_em": "2020-03-26T13:54:34.062776-03:00",
+          "uuid": "a7009a61-f73a-48b4-b792-5d62853f2df8",
+          "aplicacao_recurso": "CUSTEIO",
+          "valor_rateio": "1000.00",
+          "quantidade_itens_capital": 2,
+          "valor_item_capital": "500.00",
+          "numero_processo_incorporacao_capital": "6234673223462364632",
+          "status": "COMPLETO"
+        }
+      ],
+      "criado_em": "2020-03-26T13:54:34.024677-03:00",
+      "alterado_em": "2020-03-26T13:54:34.024727-03:00",
+      "uuid": "d4493ca1-4f46-45b5-a2d6-1f4d98de6819",
+      "numero_documento": "634767",
+      "data_documento": "2020-03-10",
+      "cpf_cnpj_fornecedor": "36.352.197/0001-75",
+      "nome_fornecedor": "FORNECEDOR TESTE SA",
+      "data_transacao": "2020-03-10",
+      "valor_total": "11000.50",
+      "valor_recursos_proprios": "1000.50",
+      "status": "COMPLETO"
+    }
+  ],
+
   "especificacao_material_servico": [
     {
       "id": 1,
