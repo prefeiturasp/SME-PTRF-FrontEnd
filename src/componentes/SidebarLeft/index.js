@@ -64,7 +64,7 @@ export const SidebarLeft = () => {
                     </NavText>
                 </NavItem>
 
-                <NavItem eventKey="painel">
+                <NavItem eventKey="dashboard">
                     <NavIcon>
                         <img src={IconeMenuPainel} alt=""/>
                     </NavIcon>

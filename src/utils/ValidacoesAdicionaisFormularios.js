@@ -28,25 +28,33 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
 
 export const payloadFormDespesaContext = (data)=>{
 
-    if (data.valor_item_capital !== "" && data.quantidade_itens_capital !== ""){
-        data.valor_item_capital = trataNumericos(data.valor_item_capital);
-        data.quantidade_itens_capital = trataNumericos(data.quantidade_itens_capital);
-        data.valor_rateio = round((data.valor_item_capital * data.quantidade_itens_capital), 2);
-    }else{
-        data.valor_item_capital = 0;
-        data.quantidade_itens_capital = 0;
-        data.valor_rateio = trataNumericos(data.valor_rateio)
-    }
+    let arrayRetorno =[]
 
-    if (data.tipo_custeio === 1){
-        data.aplicacao_recurso = "CUSTEIO"
-    }else {
-        data.aplicacao_recurso = "CAPITAL"
-    }
+    data.map(item => {
+        if (item.valor_item_capital !== "" && item.quantidade_itens_capital !== ""){
+            item.valor_item_capital = trataNumericos(item.valor_item_capital);
+            item.quantidade_itens_capital = trataNumericos(item.quantidade_itens_capital);
+            item.valor_rateio = round((item.valor_item_capital * item.quantidade_itens_capital), 2);
+        }else{
+            item.valor_item_capital = 0;
+            item.quantidade_itens_capital = 0;
+            item.valor_rateio = trataNumericos(item.valor_rateio)
+        }
 
-    data.especificacao_material_servico = convertToNumber(data.especificacao_material_servico)
+        item.tipo_custeio = convertToNumber(item.tipo_custeio)
 
-    return data;
+        if (item.tipo_aplicacao_recurso === 1){
+            item.aplicacao_recurso = "CUSTEIO"
+        }else {
+            item.aplicacao_recurso = "CAPITAL"
+        }
+
+        item.especificacao_material_servico = convertToNumber(item.especificacao_material_servico)
+
+        arrayRetorno.push(item)
+    })
+
+   return arrayRetorno;
 }
 
 export const payloadFormDespesaPrincipal = (data)=>{
