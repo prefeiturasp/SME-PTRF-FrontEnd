@@ -1,30 +1,35 @@
-import React, {useState, useContext} from "react";
+import React, {useContext} from "react";
 import {DadosDoGastoContext} from "../../../context/DadosDoGasto";
 import {Formik} from "formik";
 import MaskedInput from 'react-text-mask'
-import {
-    YupSignupSchemaCadastroDespesa,
-    cpfMaskContitional,
-    calculaValorRecursoAcoes,
-    payloadFormDespesaPrincipal,
-    payloadFormDespesaContext
-} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, payloadFormDespesaPrincipal, payloadFormDespesaContext } from "../../../utils/ValidacoesAdicionaisFormularios";
 import NumberFormat from 'react-number-format';
 import {DatePickerField} from "../../DatePickerField";
 import {DadosDoGastoEscolha} from "./DadosDoGastoEsolha";
-import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
-import {DespesaFormGetInitialValues} from "./DespesaFormGetInitialValues";
 
-export const DespesaForm = (parametros) => {
+import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
+
+export const DespesaForm = () => {
 
     const dadosDoGastoContext = useContext(DadosDoGastoContext);
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
 
-    const initialValues = () => {
-        return DespesaFormGetInitialValues(parametros)
-
-    }
-
+    const initialValues = () => (
+        {
+            associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
+            cpf_cnpj_fornecedor: "",
+            nome_fornecedor: "",
+            tipo_documento: "",
+            numero_documento: "",
+            data_documento: "",
+            tipo_transacao: "",
+            data_transacao: "",
+            valor_total: "",
+            valor_recursos_proprios: "",
+            valorRecursoAcoes: "",
+            dadosDoGasto: "",
+        }
+    )
 
     const onSubmit = (values, {resetForm}) => {
 
@@ -41,7 +46,7 @@ export const DespesaForm = (parametros) => {
         dadosDoGastoContext.limpaFormulario();
     }
 
-    const handleReset = () => {
+    const handleReset = ()=> {
         dadosDoGastoContext.limpaFormulario();
     }
     return (
@@ -69,13 +74,11 @@ export const DespesaForm = (parametros) => {
                                         value={props.values.cpf_cnpj_fornecedor}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                        name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
-                                        className="form-control"
+                                        name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text" className="form-control"
                                         placeholder="Digite o número do documento"
                                     />
                                     {props.errors.cpf_cnpj_fornecedor &&
-                                    <span
-                                        className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
+                                    <span className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
                                 </div>
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
@@ -99,7 +102,7 @@ export const DespesaForm = (parametros) => {
                                         id='tipo_documento'
                                         className="form-control">
                                         <option value="">Selecione o tipo</option>
-                                        {dadosApiContext.tipoDocumento.length > 0 && dadosApiContext.tipoDocumento.map(item => (
+                                        {dadosApiContext.tipoDocumento.length > 0  && dadosApiContext.tipoDocumento.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         ))}
                                     </select>
@@ -138,7 +141,7 @@ export const DespesaForm = (parametros) => {
                                         className="form-control"
                                     >
                                         <option value="">Selecione o tipo</option>
-                                        {dadosApiContext.tipoTransacao.length > 0 && dadosApiContext.tipoTransacao.map(item => (
+                                        {dadosApiContext.tipoTransacao.length > 0  && dadosApiContext.tipoTransacao.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         ))}
                                     </select>
@@ -234,21 +237,19 @@ export const DespesaForm = (parametros) => {
                             {
                                 props.values.dadosDoGasto === "sim" ? (
                                     <DadosDoGastoEscolha
-                                        dadosDoGastoContext={dadosDoGastoContext}
-                                        gastoEmMaisDeUmaDespesa={1}
+                                        dadosDoGastoContext = {dadosDoGastoContext}
+                                        gastoEmMaisDeUmaDespesa = {1}
                                     />
                                 ) : props.values.dadosDoGasto === "nao" ? (
                                     <DadosDoGastoEscolha
-                                        dadosDoGastoContext={dadosDoGastoContext}
-                                        gastoEmMaisDeUmaDespesa={0}
+                                        dadosDoGastoContext = {dadosDoGastoContext}
+                                        gastoEmMaisDeUmaDespesa = {0}
                                     />
                                 ) : null
                             }
 
                             <div className="d-flex  justify-content-end pb-3">
-                                <button type="reset" onClick={props.handleReset}
-                                        className="btn btn btn-outline-success mt-2 mr-2">Cancelar
-                                </button>
+                                <button type="reset" onClick={props.handleReset} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                                 <button type="submit" className="btn btn-success mt-2">Acessar</button>
                             </div>
 

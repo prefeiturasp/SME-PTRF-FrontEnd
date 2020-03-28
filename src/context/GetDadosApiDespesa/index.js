@@ -2,6 +2,8 @@ import React, {useState, createContext, useEffect} from "react";
 import Api from "../../services/Api";
 
 export const GetDadosApiDespesaContext = createContext( {
+    updateDespesa:[],
+    setUpdateDespesa(){},
     tiposCusteio:[],
     setTiposCusteio(){},
     especificacaoMaterialServico:[],
@@ -20,6 +22,7 @@ export const GetDadosApiDespesaContext = createContext( {
 
 export const GetDadosApiDespesaContextProvider = ({children}) => {
 
+    const [updateDespesa, setUpdateDespesa] = useState([]);
     const [tiposCusteio, setTiposCusteio] = useState([]);
     const [especificacaoMaterialServico, setEspecificacaoMterialServico] = useState([]);
     const [contaAssociacao, setContaAssociacao] = useState([]);
@@ -27,6 +30,14 @@ export const GetDadosApiDespesaContextProvider = ({children}) => {
     const [tipoAplicacaoRecurso, setTipoAplicacaoRecurso] = useState([]);
     const [tipoTransacao, setTipoTransacao] = useState([]);
     const [tipoDocumento, setTipoDocumento] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await Api.get('update-despesa')
+            setUpdateDespesa(response.data);
+        };
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -83,13 +94,13 @@ export const GetDadosApiDespesaContextProvider = ({children}) => {
         };
         fetchData();
     }, []);
-
-
     return (
         <GetDadosApiDespesaContext.Provider value={
             {
-                tiposCusteio, 
-                setTiposCusteio, 
+                updateDespesa,
+                setUpdateDespesa,
+                tiposCusteio,
+                setTiposCusteio,
                 especificacaoMaterialServico,
                 setEspecificacaoMterialServico, 
                 contaAssociacao,
@@ -102,8 +113,6 @@ export const GetDadosApiDespesaContextProvider = ({children}) => {
                 setTipoTransacao,
                 tipoDocumento,
                 setTipoDocumento,
-
-
             }}>
             {children}
         </GetDadosApiDespesaContext.Provider>
