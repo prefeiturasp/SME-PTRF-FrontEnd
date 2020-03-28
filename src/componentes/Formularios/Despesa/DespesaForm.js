@@ -2,13 +2,7 @@ import React, {useState, useContext} from "react";
 import {DadosDoGastoContext} from "../../../context/DadosDoGasto";
 import {Formik} from "formik";
 import MaskedInput from 'react-text-mask'
-import {
-    YupSignupSchemaCadastroDespesa,
-    cpfMaskContitional,
-    calculaValorRecursoAcoes,
-    payloadFormDespesaPrincipal,
-    payloadFormDespesaContext
-} from "../../../utils/ValidacoesAdicionaisFormularios";
+import { YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, payloadFormDespesaPrincipal, payloadFormDespesaContext } from "../../../utils/ValidacoesAdicionaisFormularios";
 import NumberFormat from 'react-number-format';
 import {DatePickerField} from "../../DatePickerField";
 import {DadosDoGastoEscolha} from "./DadosDoGastoEsolha";
@@ -19,12 +13,11 @@ export const DespesaForm = (parametros) => {
 
     const dadosDoGastoContext = useContext(DadosDoGastoContext);
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
+    const {idAssociacao} = parametros;
 
     const initialValues = () => {
         return DespesaFormGetInitialValues(parametros)
-
     }
-
 
     const onSubmit = (values, {resetForm}) => {
 
@@ -236,11 +229,14 @@ export const DespesaForm = (parametros) => {
                                     <DadosDoGastoEscolha
                                         dadosDoGastoContext={dadosDoGastoContext}
                                         gastoEmMaisDeUmaDespesa={1}
+                                        idAssociacao={idAssociacao}
                                     />
                                 ) : props.values.dadosDoGasto === "nao" ? (
                                     <DadosDoGastoEscolha
                                         dadosDoGastoContext={dadosDoGastoContext}
                                         gastoEmMaisDeUmaDespesa={0}
+                                        idAssociacao={idAssociacao}
+
                                     />
                                 ) : null
                             }

@@ -1,14 +1,27 @@
 import React from "react";
 import {DadosDoGastoCusteioForm} from "./DadosDoGastoCusteioForm";
+import {DadosDoGastoCusteioFormEdicao} from "./DadosDoGastoCusteioFormEdicao";
 
 export const DadosDoGastoCusteio = (propriedades) => {
-    const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa} = propriedades
+    const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa, idAssociacao} = propriedades
     return (
         <>
-            <DadosDoGastoCusteioForm
+
+            {idAssociacao === undefined ? (
+                <DadosDoGastoCusteioForm
+                    dadosDoGastoContext={dadosDoGastoContext}
+                    gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
+
+                />
+            ):
+            <DadosDoGastoCusteioFormEdicao
                 dadosDoGastoContext={dadosDoGastoContext}
                 gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
+                idAssociacao={idAssociacao}
             />
+            }
+
+
         </>
 
     );

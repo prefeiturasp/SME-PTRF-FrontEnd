@@ -5,7 +5,7 @@ import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 
 export const DadosDoGastoEscolha = (propriedades) => {
 
-    const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa} = propriedades
+    const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa, idAssociacao} = propriedades
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
 
     return (
@@ -31,11 +31,13 @@ export const DadosDoGastoEscolha = (propriedades) => {
                     <DadosDoGastoCusteio
                         dadosDoGastoContext = {dadosDoGastoContext}
                         gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
+                        idAssociacao={idAssociacao}
                     />
                 ): dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso === 2 ? (
                     <DadosDoGastoCapital
                         dadosDoGastoContext = {dadosDoGastoContext}
                         gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
+                        idAssociacao={idAssociacao}
                     />
                 ) : null}
 
