@@ -9,9 +9,13 @@ export const DespesaFormGetInitialValues = (parametros)=>{
 
     let valoreIniciais;
     let meusValores;
+    let rateios=[];
 
     if (idAssociacao !== undefined) {
         dadosApiContext.updateDespesa.length > 0 && dadosApiContext.updateDespesa.map((item) => {
+            item.rateios.map((dataItem, index) => {
+                rateios.push(dataItem)
+            })
             meusValores = {
                 associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
                 cpf_cnpj_fornecedor: item.cpf_cnpj_fornecedor,
@@ -25,6 +29,7 @@ export const DespesaFormGetInitialValues = (parametros)=>{
                 valor_recursos_proprios: item.valor_recursos_proprios,
                 valorRecursoAcoes: "",
                 dadosDoGasto: "",
+                rateios:rateios
             }
         })
         if (meusValores) {
@@ -44,6 +49,7 @@ export const DespesaFormGetInitialValues = (parametros)=>{
                 valor_recursos_proprios: "",
                 valorRecursoAcoes: "",
                 dadosDoGasto: "",
+                rateio: [],
             }
         }
     } else {
@@ -60,6 +66,7 @@ export const DespesaFormGetInitialValues = (parametros)=>{
             valor_recursos_proprios: "",
             valorRecursoAcoes: "",
             dadosDoGasto: "",
+            rateio: [],
         }
     }
 

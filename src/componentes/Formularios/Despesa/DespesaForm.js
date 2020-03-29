@@ -21,6 +21,8 @@ export const DespesaForm = (parametros) => {
 
     const onSubmit = (values, {resetForm}) => {
 
+        console.log("onSubmit ", values)
+
         let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values)
         let validaPayloadContext = payloadFormDespesaContext(dadosDoGastoContext.inputFields);
 
@@ -37,6 +39,7 @@ export const DespesaForm = (parametros) => {
     const handleReset = () => {
         dadosDoGastoContext.limpaFormulario();
     }
+
     return (
         <>
             <Formik
@@ -51,6 +54,7 @@ export const DespesaForm = (parametros) => {
                     const {
                         values,
                         setFieldValue,
+
                     } = props;
                     return (
                         <form method="POST" id="despesaForm" onSubmit={props.handleSubmit}>
@@ -230,12 +234,14 @@ export const DespesaForm = (parametros) => {
                                         dadosDoGastoContext={dadosDoGastoContext}
                                         gastoEmMaisDeUmaDespesa={1}
                                         idAssociacao={idAssociacao}
+
                                     />
                                 ) : props.values.dadosDoGasto === "nao" ? (
                                     <DadosDoGastoEscolha
                                         dadosDoGastoContext={dadosDoGastoContext}
                                         gastoEmMaisDeUmaDespesa={0}
                                         idAssociacao={idAssociacao}
+                                        formikProps={props}
 
                                     />
                                 ) : null

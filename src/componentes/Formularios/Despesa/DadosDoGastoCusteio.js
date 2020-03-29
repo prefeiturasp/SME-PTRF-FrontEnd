@@ -3,7 +3,8 @@ import {DadosDoGastoCusteioForm} from "./DadosDoGastoCusteioForm";
 import {DadosDoGastoCusteioFormEdicao} from "./DadosDoGastoCusteioFormEdicao";
 
 export const DadosDoGastoCusteio = (propriedades) => {
-    const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa, idAssociacao} = propriedades
+    const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa, idAssociacao, formikProps} = propriedades
+
     return (
         <>
 
@@ -18,6 +19,7 @@ export const DadosDoGastoCusteio = (propriedades) => {
                 dadosDoGastoContext={dadosDoGastoContext}
                 gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
                 idAssociacao={idAssociacao}
+                formikProps={formikProps}
             />
             }
 
