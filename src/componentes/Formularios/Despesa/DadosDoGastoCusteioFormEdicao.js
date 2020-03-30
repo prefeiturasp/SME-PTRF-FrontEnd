@@ -8,18 +8,18 @@ export const DadosDoGastoCusteioFormEdicao = (propriedades) => {
     const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa, idAssociacao, formikProps} = propriedades
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
 
-    console.log("DadosDoGastoCusteioFormEdicao - formikProps", formikProps)
-
     return (
         <div className="col-12 mt-4">
             <h1>Edicao</h1>
             <div className="form-row">
-                <div className="col-12">
+                <div className="row">
 
-                    {formikProps.values.rateios.map((rateio, index)=>(
+                    {formikProps.values.rateios.map((rateio, index)=>{
 
+                        console.log("Ollyver rateio ", rateio)
+
+                        return(
                         <Fragment key={index}>
-
 
                             <div className="col-12">
                                 <label htmlFor="tipo_custeio">Tipo de custeio</label>
@@ -57,9 +57,8 @@ export const DadosDoGastoCusteioFormEdicao = (propriedades) => {
 
                             <div className="col-12 col-md-6 mt-4">
                                 <label htmlFor="acao_associacao">Ação</label>
-                                <p><strong>Ollyver - {rateio.acao_associacao.acao.nome}</strong></p>
                                 <select
-                                    defaultValue={rateio.acao_associacao.acao.id}
+                                    defaultValue={rateio.acao_associacao.uuid}
                                     onChange={formikProps.handleChange}
                                     name={`rateios[${index}].acao_associacao`}
                                     //name='acao_associacao'
@@ -68,7 +67,7 @@ export const DadosDoGastoCusteioFormEdicao = (propriedades) => {
                                 >
                                     <option value="0">Selecione uma ação</option>
                                     {dadosApiContext.acoesAssociacao.length > 0 && dadosApiContext.acoesAssociacao.map(item => (
-                                        <option key={item.uuid} value={item.id}>{item.nome}</option>
+                                        <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                                     ))}
                                 </select>
                             </div>
@@ -79,7 +78,7 @@ export const DadosDoGastoCusteioFormEdicao = (propriedades) => {
                                     <div className="col-12 col-md-6 mt-4">
                                         <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
                                         <select
-                                            defaultValue={rateio.conta_associacao.tipo_conta.id}
+                                            defaultValue={rateio.conta_associacao.uuid}
                                             onChange={formikProps.handleChange}
                                             //name='conta_associacao'
                                             name={`rateios[${index}].conta_associacao`}
@@ -114,7 +113,7 @@ export const DadosDoGastoCusteioFormEdicao = (propriedades) => {
 
                             </div>
                         </Fragment>
-                    ))}
+                    )})}
 
 
                 </div>

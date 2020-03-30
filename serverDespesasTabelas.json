@@ -57,7 +57,7 @@
             }
           },
           "tipo_custeio": {
-            "id": 2,
+            "id": 1,
             "nome": "Material"
           },
           "criado_em": "2020-03-26T13:54:34.062741-03:00",
@@ -99,6 +99,7 @@
       "tipo_custeio": 1
     }
   ],
+
 
   "tipos_aplicacao_recurso": [
     {

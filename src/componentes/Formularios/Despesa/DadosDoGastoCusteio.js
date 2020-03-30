@@ -14,7 +14,7 @@ export const DadosDoGastoCusteio = (propriedades) => {
                         gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
 
                     />
-                ):
+                ) :
                 <DadosDoGastoCusteioFormEdicao
                     dadosDoGastoContext={dadosDoGastoContext}
                     gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
