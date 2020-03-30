@@ -1,4 +1,4 @@
-import React, {useState, useContext} from "react";
+import React, {useContext} from "react";
 import {DadosDoGastoContext} from "../../../context/DadosDoGasto";
 import {Form, Formik} from "formik";
 import MaskedInput from 'react-text-mask'

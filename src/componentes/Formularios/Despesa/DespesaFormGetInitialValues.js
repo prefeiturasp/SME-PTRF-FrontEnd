@@ -50,7 +50,20 @@ export const DespesaFormGetInitialValues = (parametros)=>{
                 valor_recursos_proprios: "",
                 valorRecursoAcoes: "",
                 dadosDoGasto: "",
-                rateio: [],
+                rateios: [{
+                    associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
+                    aplicacao_recurso: "",
+                    tipo_aplicacao_recurso: "CUSTEIO",
+                    tipo_custeio: 1,
+                    especificacao_material_servico: "",
+                    conta_associacao: "conta1",
+                    acao_associacao: "",
+                    valor_rateio: 0,
+                    //Capital
+                    quantidade_itens_capital: 0,
+                    valor_item_capital: 0,
+                    numero_processo_incorporacao_capital: "",
+                }],
 
             }
         }
@@ -68,7 +81,21 @@ export const DespesaFormGetInitialValues = (parametros)=>{
             valor_recursos_proprios: "",
             valorRecursoAcoes: "",
             dadosDoGasto: "",
-            rateio: [],
+            rateios: [{
+                associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
+                aplicacao_recurso: "",
+                tipo_aplicacao_recurso: "CUSTEIO",
+                tipo_custeio: 1,
+                especificacao_material_servico: "",
+                conta_associacao: "conta1",
+                acao_associacao: "",
+                valor_rateio: 0,
+                //Capital
+                quantidade_itens_capital: 0,
+                valor_item_capital: 0,
+                numero_processo_incorporacao_capital: "",
+            }],
+
 
         }
     }
