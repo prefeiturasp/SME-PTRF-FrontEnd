@@ -9,18 +9,18 @@ export const DadosDoGastoCusteio = (propriedades) => {
         <>
 
             {idAssociacao === undefined ? (
-                <DadosDoGastoCusteioForm
+                    <DadosDoGastoCusteioForm
+                        dadosDoGastoContext={dadosDoGastoContext}
+                        gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
+
+                    />
+                ):
+                <DadosDoGastoCusteioFormEdicao
                     dadosDoGastoContext={dadosDoGastoContext}
                     gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
-
+                    idAssociacao={idAssociacao}
+                    formikProps={formikProps}
                 />
-            ):
-            <DadosDoGastoCusteioFormEdicao
-                dadosDoGastoContext={dadosDoGastoContext}
-                gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
-                idAssociacao={idAssociacao}
-                formikProps={formikProps}
-            />
             }
 
 

@@ -102,35 +102,35 @@
 
   "tipos_aplicacao_recurso": [
     {
-      "id": 2,
+      "id": "CAPITAL",
       "nome": "Capital"
     },
     {
-      "id": 1,
+      "id": "CUSTEIO",
       "nome": "Custeio"
     }
   ],
   "tipos_custeio": [
     {
-      "id": 3,
-      "nome": "Impostos"
-    },
-    {
-      "id": 2,
+      "id": 1,
       "nome": "Material"
     },
     {
-      "id": 1,
+      "id": 2,
       "nome": "Serviço"
     }
   ],
   "tipos_documento": [
     {
       "id": 1,
-      "nome": "NFe"
+      "nome": "NF"
     },
     {
       "id": 2,
+      "nome": "NFe"
+    },
+    {
+      "id": 3,
       "nome": "Recibo"
     }
   ],
@@ -141,26 +141,26 @@
     },
     {
       "id": 2,
-      "nome": "Cartão"
-    },
-    {
-      "id": 3,
-      "nome": "Cheque"
+      "nome": "Débito em conta"
     }
   ],
   "acoes_associacao": [
     {
-      "uuid": "59782482-86d2-4c1b-b0b2-c37be2cafb07",
+      "uuid": "721dcff8-293e-4d7d-bb44-6203a62080de",
       "nome": "PTRF"
+    },
+    {
+      "uuid": "c7538dc9-98f0-4620-aacd-6e69fe51b350",
+      "nome": "Rolê Cultural"
     }
   ],
   "contas_associacao": [
     {
-      "uuid": "b2f4db10-cb3c-410a-8c7e-a371361fb93a",
+      "uuid": "8060f914-89d5-4635-8e0a-dfa2cc053a11",
       "nome": "Cheque"
     },
     {
-      "uuid": "e0f86fea-4650-4682-a01a-7196822d0b6b",
+      "uuid": "4dc829ba-5779-40a6-a46a-3aa78bf96585",
       "nome": "Cartão"
     }
   ]
