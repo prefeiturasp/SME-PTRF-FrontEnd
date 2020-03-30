@@ -29,7 +29,8 @@ export const DespesaFormGetInitialValues = (parametros)=>{
                 valor_recursos_proprios: item.valor_recursos_proprios,
                 valorRecursoAcoes: "",
                 dadosDoGasto: "",
-                rateios:rateios
+                rateios:rateios,
+
             }
         })
         if (meusValores) {
@@ -50,6 +51,7 @@ export const DespesaFormGetInitialValues = (parametros)=>{
                 valorRecursoAcoes: "",
                 dadosDoGasto: "",
                 rateio: [],
+
             }
         }
     } else {
@@ -67,6 +69,7 @@ export const DespesaFormGetInitialValues = (parametros)=>{
             valorRecursoAcoes: "",
             dadosDoGasto: "",
             rateio: [],
+
         }
     }
 

@@ -27,7 +27,7 @@ export const DadosDoGastoEscolha = (propriedades) => {
                     </select>
                 </div>
             </div>
-            <div className="row">
+            <div className="form-row">
                 {dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso === "CUSTEIO" ? (
                     <DadosDoGastoCusteio
                         dadosDoGastoContext = {dadosDoGastoContext}

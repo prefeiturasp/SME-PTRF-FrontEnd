@@ -1,6 +1,6 @@
 import React, {useState, useContext} from "react";
 import {DadosDoGastoContext} from "../../../context/DadosDoGasto";
-import {Formik} from "formik";
+import {Form, Formik} from "formik";
 import MaskedInput from 'react-text-mask'
 import { YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, payloadFormDespesaPrincipal, payloadFormDespesaContext } from "../../../utils/ValidacoesAdicionaisFormularios";
 import NumberFormat from 'react-number-format';
@@ -57,7 +57,7 @@ export const DespesaForm = (parametros) => {
 
                     } = props;
                     return (
-                        <form method="POST" id="despesaForm" onSubmit={props.handleSubmit}>
+                        <Form onSubmit={props.handleSubmit}>
                             <div className="form-row">
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
@@ -234,6 +234,7 @@ export const DespesaForm = (parametros) => {
                                         dadosDoGastoContext={dadosDoGastoContext}
                                         gastoEmMaisDeUmaDespesa={1}
                                         idAssociacao={idAssociacao}
+                                        formikProps={props}
 
                                     />
                                 ) : props.values.dadosDoGasto === "nao" ? (
@@ -254,7 +255,7 @@ export const DespesaForm = (parametros) => {
                                 <button type="submit" className="btn btn-success mt-2">Acessar</button>
                             </div>
 
-                        </form>
+                        </Form>
                     );
                 }}
             </Formik>

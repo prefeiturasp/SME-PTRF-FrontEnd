@@ -12,6 +12,8 @@ export const DadosDoGastoCusteio = (propriedades) => {
                     <DadosDoGastoCusteioForm
                         dadosDoGastoContext={dadosDoGastoContext}
                         gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
+                        idAssociacao={idAssociacao}
+                        formikProps={formikProps}
 
                     />
                 ) :
