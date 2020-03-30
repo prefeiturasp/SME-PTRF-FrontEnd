@@ -22,6 +22,13 @@ export const DadosDoGastoCusteio = (propriedades) => {
 
                                 <div className="row" key={index}>
 
+                                    {gastoEmMaisDeUmaDespesa !== 0 && (
+                                        <div className="col-12">
+                                            <p className='mb-0'><strong>Despesa {index + 1}</strong></p>
+                                            <hr className='mt-0'/>
+                                        </div>
+                                    )}
+
                                     <div className="col-12">
                                         <label htmlFor="tipo_custeio">Tipo de custeio</label>
                                         <select
@@ -105,7 +112,7 @@ export const DadosDoGastoCusteio = (propriedades) => {
                                                     decimalScale={2}
                                                     prefix={'R$ '}
                                                     name={`rateios[${index}].valor_rateio`}
-                                                    //name="rateios[index].valor_rateio"
+
                                                     id="valor_rateio"
                                                     className="form-control"
                                                 />

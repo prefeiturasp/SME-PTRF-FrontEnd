@@ -40,6 +40,7 @@ export const DadosDoGastoEscolha = (propriedades) => {
                         dadosDoGastoContext = {dadosDoGastoContext}
                         gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
                         idAssociacao={idAssociacao}
+                        formikProps={formikProps}
                     />
                 ) : null}
 
