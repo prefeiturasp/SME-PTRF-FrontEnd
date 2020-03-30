@@ -5,6 +5,8 @@ import { Button } from 'primereact/button'
 import { Row, Col } from 'reactstrap'
 import { getListaRateiosDespesas } from '../../../services/RateiosDespesas.service'
 import { redirect } from '../../../utils/redirect.js'
+import '../../../paginas/404/pagina-404.scss'
+import Img404 from '../../../assets/img/img-404.svg'
 
 export class ListaDeDespesas extends Component {
   constructor(props) {
@@ -86,34 +88,49 @@ export class ListaDeDespesas extends Component {
             </span>
           </Col>
         </Row>
-        <DataTable
-          value={rateiosDespesas}
-          className="mt-3 datatable-footer-coad"
-          paginator={rateiosDespesas.length > rowsPerPage}
-          rows={rowsPerPage}
-          paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-          autoLayout={true}
-          selectionMode="single"
-        >
-          <Column
-            field="numero_documento"
-            header="Número do documento"
-            body={this.numeroDocumentoStatusTemplate}
-          />
-          <Column
-            field="especificacao_material_servico.descricao"
-            header="Especificação do material ou serviço"
-            body={this.especificacaoDataTemplate}
-          />
-          <Column field="aplicacao_recurso" header="Aplicação" />
-          <Column field="acao_associacao.nome" header="Tipo de ação" />
-          <Column
-            field="valor_total"
-            header="Valor"
-            body={this.valorTotalTemplate}
-            style={{ textAlign: 'right' }}
-          />
-        </DataTable>
+        {rateiosDespesas.length > 0 ? (
+          <DataTable
+            value={rateiosDespesas}
+            className="mt-3 datatable-footer-coad"
+            paginator={rateiosDespesas.length > rowsPerPage}
+            rows={rowsPerPage}
+            paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+            autoLayout={true}
+            selectionMode="single"
+          >
+            <Column
+              field="numero_documento"
+              header="Número do documento"
+              body={this.numeroDocumentoStatusTemplate}
+            />
+            <Column
+              field="especificacao_material_servico.descricao"
+              header="Especificação do material ou serviço"
+              body={this.especificacaoDataTemplate}
+            />
+            <Column field="aplicacao_recurso" header="Aplicação" />
+            <Column field="acao_associacao.nome" header="Tipo de ação" />
+            <Column
+              field="valor_total"
+              header="Valor"
+              body={this.valorTotalTemplate}
+              style={{ textAlign: 'right' }}
+            />
+          </DataTable>
+        ) : (
+          <div className="row container-404">
+            <div className="col-lg-6 col-sm-12 mb-lg-0 align-self-center">
+              <p className="texto-404">
+                A sua escola ainda não possui despesas cadastradas, clique no
+                botão "Cadastrar despesa" para começar.
+              </p>
+            </div>
+
+            <div className="col-lg-6 col-sm-12">
+              <img src={Img404} alt="" className="img-fluid" />
+            </div>
+          </div>
+        )}
       </div>
     )
   }
