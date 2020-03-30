@@ -6,11 +6,13 @@ import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoA
 import NumberFormat from 'react-number-format';
 import {DatePickerField} from "../../DatePickerField";
 import {DadosDoGastoEscolha} from "./DadosDoGastoEsolha";
-import {GetTiposDeDocumentoApi, GetTipoTransacaoApi} from "../../../services/GetDadosApiDespesa";
+
+import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 
 export const DespesaForm = () => {
 
     const dadosDoGastoContext = useContext(DadosDoGastoContext);
+    const dadosApiContext = useContext(GetDadosApiDespesaContext);
 
     const initialValues = () => (
         {
@@ -31,27 +33,17 @@ export const DespesaForm = () => {
 
     const onSubmit = (values, {resetForm}) => {
 
-        console.log("inputFields", dadosDoGastoContext.inputFields);
-
         let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values)
-        let validaPayloadContext = payloadFormDespesaContext(dadosDoGastoContext.dadosDoGasto)
-        /*        const payload = {
-                    ...validaPayloadFormPrincipal,
-                    rateios: [validaPayloadContext],
-                };*/
-
-        var hege = [validaPayloadContext];
-        var stale = dadosDoGastoContext.inputFields;
-        var children = hege.concat(stale);
+        let validaPayloadContext = payloadFormDespesaContext(dadosDoGastoContext.inputFields);
 
         const payload = {
             ...validaPayloadFormPrincipal,
-            rateios: [validaPayloadContext].concat(dadosDoGastoContext.inputFields),
+            rateios: validaPayloadContext,
         };
+
         console.log("Ollyver Payload", payload)
         resetForm({values: ""})
         dadosDoGastoContext.limpaFormulario();
-
     }
 
     const handleReset = ()=> {
@@ -110,7 +102,7 @@ export const DespesaForm = () => {
                                         id='tipo_documento'
                                         className="form-control">
                                         <option value="">Selecione o tipo</option>
-                                        {GetTiposDeDocumentoApi() && GetTiposDeDocumentoApi().map(item => (
+                                        {dadosApiContext.tipoDocumento.length > 0  && dadosApiContext.tipoDocumento.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         ))}
                                     </select>
@@ -149,7 +141,7 @@ export const DespesaForm = () => {
                                         className="form-control"
                                     >
                                         <option value="">Selecione o tipo</option>
-                                        {GetTipoTransacaoApi() && GetTipoTransacaoApi().map(item => (
+                                        {dadosApiContext.tipoTransacao.length > 0  && dadosApiContext.tipoTransacao.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         ))}
                                     </select>
@@ -256,7 +248,7 @@ export const DespesaForm = () => {
                                 ) : null
                             }
 
-                            <div className="d-flex  justify-content-end mt-5">
+                            <div className="d-flex  justify-content-end pb-3">
                                 <button type="reset" onClick={props.handleReset} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                                 <button type="submit" className="btn btn-success mt-2">Acessar</button>
                             </div>

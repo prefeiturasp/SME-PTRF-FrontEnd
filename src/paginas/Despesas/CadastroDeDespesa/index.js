@@ -1,6 +1,6 @@
 import React from "react";
 import {PaginasContainer} from "../../PaginasContainer";
-import {DespesaForm} from "../../../componentes/Formularios/Despesa/DespesaForm";
+import {Despesa} from "../../../componentes/Formularios/Despesa";
 
 export const CadastroDeDespesa = () => {
 
@@ -10,7 +10,7 @@ export const CadastroDeDespesa = () => {
             <h1 className="titulo-itens-painel mt-5">Cadastro de Despesa</h1>
             <div className="page-content-inner ">
                 <h2 className="subtitulo-itens-painel">Dados do documento</h2>
-                <DespesaForm/>
+                <Despesa/>
             </div>
         </PaginasContainer>
 
