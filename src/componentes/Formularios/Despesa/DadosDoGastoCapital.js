@@ -1,4 +1,4 @@
-import React, {Fragment, useContext} from "react";
+import React, {useContext} from "react";
 import NumberFormat from "react-number-format";
 import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 import {FieldArray} from 'formik';
@@ -137,8 +137,8 @@ export const DadosDoGastoCapital = (propriedades) => {
                                                 <label htmlFor="valor_rateio">Valor do custeio</label>
                                                 <p><strong>Valor do custeio - {calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}</strong></p>
                                                 <NumberFormat
-
-                                                    value="R$ 600"
+                                                    defaultValue={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
+                                                    //defaultValue={rateio.valor_rateio}
                                                     //value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
                                                     onChange={formikProps.handleChange}
                                                     thousandSeparator={'.'}

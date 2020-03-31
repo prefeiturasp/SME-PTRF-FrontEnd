@@ -88,6 +88,7 @@ export const round = (num, places) => {
 }
 
 export const trataNumericos = (valor) =>{
+
     if (typeof (valor) === "string"){
         return Number(valor.replace(/\./gi,'').replace(/R/gi,'').replace(/,/gi,'.').replace(/\$/, ""));
     }else {
