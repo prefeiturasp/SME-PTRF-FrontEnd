@@ -46,18 +46,26 @@ export class ListaDeDespesas extends Component {
   especificacaoDataTemplate(rowData, column) {
     return (
       <div>
-        <span>{rowData['especificacao_material_servico'].descricao}</span>
+        <span>
+          {rowData['especificacao_material_servico']
+            ? rowData['especificacao_material_servico'].descricao
+            : ''}
+        </span>
         <br></br>
-        <span>Data: {rowData['data_documento']}</span>
+        <span>
+          Data: {rowData['data_documento'] ? rowData['data_documento'] : ''}
+        </span>
       </div>
     )
   }
 
   valorTotalTemplate(rowData, column) {
-    const valorFormatado = rowData['valor_total'].toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    })
+    const valorFormatado = rowData['valor_total']
+      ? rowData['valor_total'].toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        })
+      : ''
     return <span>{valorFormatado}</span>
   }
 
