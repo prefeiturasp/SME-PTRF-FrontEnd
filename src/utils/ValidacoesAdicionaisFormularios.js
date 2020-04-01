@@ -66,8 +66,8 @@ export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAsso
 
     data.associacao = idAssociacao;
 
-    data.tipo_documento = convertToNumber(data.tipo_documento.id)
-    data.tipo_transacao = convertToNumber(data.tipo_transacao.id)
+    data.tipo_documento = convertToNumber(data.tipo_documento)
+    data.tipo_transacao = convertToNumber(data.tipo_transacao)
     data.valor_total = trataNumericos(data.valor_total);
     data.valor_recursos_proprios = trataNumericos(data.valor_recursos_proprios);
     data.valorRecursoAcoes = round((data.valor_total - data.valor_recursos_proprios), 2);
@@ -87,10 +87,10 @@ export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAsso
     data.rateios.map((rateio) =>{
 
         rateio.associacao = idAssociacao;
-        rateio.conta_associacao = rateio.conta_associacao.uuid;
-        rateio.acao_associacao = rateio.acao_associacao.uuid;
-        rateio.tipo_custeio = rateio.tipo_custeio.id;
-        rateio.especificacao_material_servico = rateio.especificacao_material_servico.id;
+        //rateio.conta_associacao = rateio.conta_associacao.uuid;
+        //rateio.acao_associacao = rateio.acao_associacao.uuid;
+        //rateio.tipo_custeio = rateio.tipo_custeio.id;
+        rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico);
 
     })
 

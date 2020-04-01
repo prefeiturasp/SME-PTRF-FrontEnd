@@ -35,11 +35,11 @@ export const DespesaForm = () => {
                 "Content-type": "application/json",
                 Accept: "application/json",
             },
-            //method: "POST",
-            method: "PUT",
-            //url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/`,
-            url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/a1173fcc-7fcf-4782-956a-6285ecbd927d`,
-            //url: 'https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/9ff017ad-d8b5-4454-8121-566b6bd0e182',
+            method: "POST",
+            //method: "PUT",
+            url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/`,
+            //url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/f545399e-d9df-44e6-90ed-489914491e43`,
+
             data: validaPayloadFormPrincipal,
         });
 
@@ -67,6 +67,7 @@ export const DespesaForm = () => {
                         setFieldValue,
 
                     } = props;
+                    console.log(props.values)
                     return (
                         <Form onSubmit={props.handleSubmit}>
                             <div className="form-row">
@@ -108,9 +109,9 @@ export const DespesaForm = () => {
                                         id='tipo_documento'
                                         className="form-control">
                                         <option value={0}>Selecione o tipo</option>
-                                        {dadosApiContext.despesastabelas.tipos_documento && dadosApiContext.despesastabelas.tipos_documento.map(item => (
+                                        {dadosApiContext.despesastabelas.tipos_documento && dadosApiContext.despesastabelas.tipos_documento.map(item =>
                                                 <option key={item.id} value={item.id}>{item.nome}</option>
-                                            )
+
                                         )
                                         }
                                     </select>

@@ -21,6 +21,8 @@ export const DadosDoGastoCusteio = (propriedades) => {
                     <>
                         {formikProps.values.rateios.length > 0 && formikProps.values.rateios.map((rateio, index) => {
 
+                            console.log("Rateio ", rateio)
+
                             return (
 
                                 <div className="row" key={index}>
