@@ -66,13 +66,19 @@ export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAsso
 
     data.associacao = idAssociacao;
 
-    if(verboHttp==="POST"){
-        data.tipo_documento = convertToNumber(data.tipo_documento)
-        data.tipo_transacao = convertToNumber(data.tipo_transacao)
-    }else if(verboHttp==="PUT"){
+    if (data.tipo_documento.id){
         data.tipo_documento = convertToNumber(data.tipo_documento.id)
-        data.tipo_transacao = convertToNumber(data.tipo_transacao.id)
+    }else{
+        data.tipo_documento = convertToNumber(data.tipo_documento)
     }
+
+    if(data.tipo_transacao.id){
+        data.tipo_transacao = convertToNumber(data.tipo_transacao.id)
+    }else{
+        data.tipo_transacao = convertToNumber(data.tipo_transacao)
+    }
+
+
 
     data.tipo_documento = convertToNumber(data.tipo_documento)
     data.tipo_transacao = convertToNumber(data.tipo_transacao)
