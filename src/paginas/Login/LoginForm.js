@@ -1,17 +1,19 @@
-import React from "react";
+import React, {useState} from "react";
 import {Formik} from "formik";
-import MaskedInput from 'react-text-mask'
 import {YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
+import { authService } from "../../services/auth.service";
 
 
 export const LoginForm = () => {
+    const [mensagem, setMensagem] = useState('');
 
     const initialValues = () => (
-        {loginRf: "", loginSenha: ""}
+        {login: "", senha: ""}
     )
 
-    const onSubmit = (values) => {
-        console.log("Ollyver ", values)
+    const onSubmit = async (values) => {
+        const msg = await authService.login(values.login, values.senha);
+        setMensagem(msg);
     }
 
     return (
@@ -27,35 +29,35 @@ export const LoginForm = () => {
                 {props => (
                     <form onSubmit={props.handleSubmit}>
                         <div className="form-group">
-                            <label htmlFor="loginRf">Registro Funcional</label>
+                            <label htmlFor="login">Registro Funcional</label>
 
                             <input
                                 type="text"
-                                value={props.values.loginRf}
-                                name="loginRf"
-                                id="loginRf"
+                                value={props.values.login}
+                                name="login"
+                                id="login"
                                 className="form-control"
                                 onChange={props.handleChange}
                                 onBlur={props.handleBlur}
                             />
-                            {props.errors.loginRf && <div id="feedback">{props.errors.loginRf}</div>}
+                            {props.touched.login && props.errors.login && <span className="span_erro text-danger mt-1"> {props.errors.login} </span>}
 
                         </div>
                         <div className="form-group">
-                            <label htmlFor="loginSenha">Senha</label>
-                            <MaskedInput
-                                mask={[/\d/, ' ', /\d/, /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/]}
-                                value={props.values.loginSenha}
-                                name="loginSenha"
-                                id="loginSenha"
+                            <label htmlFor="senha">Senha</label>
+                            <input
+                                type="password"
+                                value={props.values.senha}
+                                name="senha"
+                                id="senha"
                                 className="form-control"
                                 onChange={props.handleChange}
                                 onBlur={props.handleBlur}
                             />
-                            {props.errors.loginSenha && <div id="feedback">{props.errors.loginSenha}</div>}
+                            {props.touched.login && props.errors.senha && <span className="span_erro text-danger mt-1"> {props.errors.senha} </span>}
 
                         </div>
-
+                        {mensagem && <div id="feedback">{mensagem}</div>}
                         <button type="submit" className="btn btn-success  btn-block  mt-2">Acessar</button>
                     </form>
                 )}

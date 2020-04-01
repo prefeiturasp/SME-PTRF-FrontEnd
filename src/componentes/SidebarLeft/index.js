@@ -17,6 +17,8 @@ import { SidebarContext } from '../../context/Sidebar'
 
 import { useHistory } from 'react-router-dom'
 
+import { USUARIO_NOME, ASSOCIACAO_NOME } from '../../services/auth.service';
+
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
     let history = useHistory();
@@ -49,7 +51,7 @@ export const SidebarLeft = () => {
                         <FontAwesomeIcon style={{fontSize: "25px"}} className={sidebarStatus.sideBarStatus ? "escondeItem" : ""} src={IconeMenuDadosDaAssociacao} icon={faUser}/>
                     </NavIcon>
                     <NavText>
-                        <div className="container-nome-instituicao mt-n4 mb-4">Escola Municipal de Educação Infantil Emílio Ribas</div>
+                        <div className="container-nome-instituicao mt-n4 mb-4">{localStorage.getItem(ASSOCIACAO_NOME)}</div>
                     </NavText>
                 </NavItem>
 
@@ -60,7 +62,7 @@ export const SidebarLeft = () => {
                         <FontAwesomeIcon style={{fontSize: "25px"}} className={sidebarStatus.sideBarStatus ? "escondeItem" : ""} src={IconeMenuDadosDaAssociacao} icon={faSchool}/>
                     </NavIcon>
                     <NavText>
-                        <div className="container-nome-instituicao mt-n4 mb-4"><span className="border border-white rounded-pill px-4 py-1">Eduardo Ramos</span></div>
+                        <div className="container-nome-instituicao mt-n4 mb-4"><span className="border border-white rounded-pill px-4 py-1">{localStorage.getItem(USUARIO_NOME)? localStorage.getItem(USUARIO_NOME).split(" ")[0]: ''}</span></div>
                     </NavText>
                 </NavItem>
 

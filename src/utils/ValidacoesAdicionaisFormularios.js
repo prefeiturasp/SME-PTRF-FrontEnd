@@ -4,8 +4,8 @@ import * as yup from "yup";
 import moment from "moment";
 
 export const YupSignupSchemaLogin = yup.object().shape({
-    loginRf: yup.number().typeError('Campo RF precisa ser numérico').required("Campo código RF é obrigatório"),
-    loginSenha: yup.number().typeError('Campo Senha precisa ser numérico').required("Campo código Senhya é obrigatório"),
+    login: yup.string().required("Campo código RF é obrigatório"),
+    senha: yup.string().typeError('Campo Senha precisa ser numérico').required("Campo código Senhya é obrigatório"),
 });
 
 export const YupSignupSchemaCadastroDespesa = yup.object().shape({
