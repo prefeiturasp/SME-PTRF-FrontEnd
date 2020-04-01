@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect} from "react";
 import {DadosDoGastoContext} from "../../../context/DadosDoGasto";
 import {Form, Formik} from "formik";
 import MaskedInput from 'react-text-mask'
@@ -7,34 +7,22 @@ import NumberFormat from 'react-number-format';
 import {DatePickerField} from "../../DatePickerField";
 import {DadosDoGastoEscolha} from "./DadosDoGastoEsolha";
 import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
-import {DespesaFormGetInitialValues} from "./DespesaFormGetInitialValues";
 import axios from "axios"
 
-export const DespesaForm = (parametros) => {
+export const DespesaForm = () => {
 
     const dadosDoGastoContext = useContext(DadosDoGastoContext);
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
-    const {idAssociacao} = parametros;
 
     const initialValues = () => {
-        return DespesaFormGetInitialValues(parametros)
+        console.log("Ollyver DespesaForm", dadosDoGastoContext.initialValues)
+        return dadosDoGastoContext.initialValues
     }
 
 
     const onSubmit = (values, {resetForm}) => {
 
-
-        console.log("onSubmit ", values)
-
         let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values, dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso)
-        let validaPayloadContext = payloadFormDespesaContext(dadosDoGastoContext.inputFields);
-
-        const payload = {
-            ...validaPayloadFormPrincipal,
-            rateios: validaPayloadContext,
-        };
-
-        //console.log("Ollyver Payload", payload)
         console.log("Ollyver validaPayloadFormPrincipal", validaPayloadFormPrincipal)
 
         // Send a POST request
@@ -247,7 +235,6 @@ export const DespesaForm = (parametros) => {
                                     <DadosDoGastoEscolha
                                         dadosDoGastoContext={dadosDoGastoContext}
                                         gastoEmMaisDeUmaDespesa={1}
-                                        idAssociacao={idAssociacao}
                                         formikProps={props}
 
                                     />
@@ -255,7 +242,6 @@ export const DespesaForm = (parametros) => {
                                     <DadosDoGastoEscolha
                                         dadosDoGastoContext={dadosDoGastoContext}
                                         gastoEmMaisDeUmaDespesa={0}
-                                        idAssociacao={idAssociacao}
                                         formikProps={props}
 
                                     />

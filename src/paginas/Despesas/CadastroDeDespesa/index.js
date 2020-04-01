@@ -1,8 +1,19 @@
-import React from "react";
+import React, {useEffect, useContext} from "react";
 import {PaginasContainer} from "../../PaginasContainer";
 import {Despesa} from "../../../componentes/Formularios/Despesa";
+import {DadosDoGastoContext} from "../../../context/DadosDoGasto";
 
 export const CadastroDeDespesa = () => {
+
+    const dadosDoGastoContext = useContext(DadosDoGastoContext);
+
+    useEffect(() => {
+        (async function setValoresIniciais() {
+            await dadosDoGastoContext.setInitialValues(dadosDoGastoContext.valoresIniciaisFormDespesa);
+        })();
+    }, []);
+
+
 
     return (
         <PaginasContainer>

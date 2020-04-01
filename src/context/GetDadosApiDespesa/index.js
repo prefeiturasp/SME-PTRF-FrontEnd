@@ -1,22 +1,15 @@
-import React, {useState, createContext, useEffect} from "react";
+import React, {useState, createContext, useEffect, useContext} from "react";
 import Api from "../../services/Api";
+import {DadosDoGastoContext} from "../DadosDoGasto";
 
 export const GetDadosApiDespesaContext = createContext( {
+
+    despesa:[],
+    setDespesa(){},
+
     updateDespesa:[],
     setUpdateDespesa(){},
-    tiposCusteio:[],
-    setTiposCusteio(){},
 
-    contaAssociacao:[],
-    setContaAssociacao(){},
-    acoesAssociacao:[],
-    setAcoesAssociacao(){},
-    tipoAplicacaoRecurso:[],
-    setTipoAplicacaoRecurso(){},
-    tipoTransacao:[],
-    setTipoTransacao(){},
-    tipoDocumento:[],
-    setTipoDocumento(){},
     despesastabelas:[],
     setDespesasTabelas(){},
 
@@ -26,16 +19,12 @@ export const GetDadosApiDespesaContext = createContext( {
 });
 
 export const GetDadosApiDespesaContextProvider = ({children}) => {
+    const dadosDoGastoContext = useContext(DadosDoGastoContext);
 
-
+    const [despesa, setDespesa] = useState([]);
     const [despesastabelas, setDespesasTabelas] = useState([]);
     const [updateDespesa, setUpdateDespesa] = useState([]);
-    const [tiposCusteio, setTiposCusteio] = useState([]);
-    const [contaAssociacao, setContaAssociacao] = useState([]);
-    const [acoesAssociacao, setAcoesAssociacao] = useState([]);
-    const [tipoAplicacaoRecurso, setTipoAplicacaoRecurso] = useState([]);
-    const [tipoTransacao, setTipoTransacao] = useState([]);
-    const [tipoDocumento, setTipoDocumento] = useState([]);
+
 
     const [especificacaoMaterialServico, setEspecificacaoMterialServico] = useState([]);
 
@@ -47,48 +36,26 @@ export const GetDadosApiDespesaContextProvider = ({children}) => {
         fetchData();
     }, []);
 
-/*    useEffect(() => {
-        const fetchData = async () => {
-            const response = await Api.get('api/especificacoes/?aplicacao_recurso=CUSTEIO&tipo_custeio=1')
-            setEspecificacaoMterialServico(response.data);
-        };
-        fetchData();
-    }, [especificacaoMaterialServico]);*/
-
-/*
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await Api.get('update-despesa')
-            setUpdateDespesa(response.data);
-        };
-        fetchData();
-    }, []);
-*/
-
-
-
+    const getDespesa = async (idAssociacao) => {
+        const response = await Api.get(`api/despesas/${idAssociacao}/`)
+        return response
+    }
 
 
 
     return (
         <GetDadosApiDespesaContext.Provider value={
             {
+                despesa,
+                setDespesa,
+                getDespesa,
+
                 updateDespesa,
                 setUpdateDespesa,
-                tiposCusteio,
-                setTiposCusteio,
+
                 especificacaoMaterialServico,
                 setEspecificacaoMterialServico, 
-                contaAssociacao,
-                setContaAssociacao,
-                acoesAssociacao, 
-                setAcoesAssociacao,
-                tipoAplicacaoRecurso,
-                setTipoAplicacaoRecurso,
-                tipoTransacao,
-                setTipoTransacao,
-                tipoDocumento,
-                setTipoDocumento,
+
                 despesastabelas,
                 setDespesasTabelas,
 

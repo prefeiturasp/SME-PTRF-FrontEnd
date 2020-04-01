@@ -5,7 +5,7 @@ import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 
 export const DadosDoGastoEscolha = (propriedades) => {
 
-    const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa, idAssociacao, formikProps} = propriedades
+    const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa, formikProps} = propriedades
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
 
 
@@ -33,7 +33,6 @@ export const DadosDoGastoEscolha = (propriedades) => {
                     <DadosDoGastoCapital
                         dadosDoGastoContext = {dadosDoGastoContext}
                         gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
-                        idAssociacao={idAssociacao}
                         formikProps={formikProps}
                     />
 
@@ -41,7 +40,6 @@ export const DadosDoGastoEscolha = (propriedades) => {
                     <DadosDoGastoCusteio
                         dadosDoGastoContext = {dadosDoGastoContext}
                         gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
-                        idAssociacao={idAssociacao}
                         formikProps={formikProps}
                         tipoAplicacaoRecurso="CUSTEIO"
                     />
