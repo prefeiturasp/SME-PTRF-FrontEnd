@@ -148,9 +148,17 @@ body {
     color: #ffffff !important;
   }
 
+  .p-datatable.p-datatable-hoverable-rows
+  .p-datatable-tbody
+  > tr:not(.p-highlight):not(.p-highlight-contextmenu):hover span {
+    color: #fff;
+  }
+
   .ptrf-despesa-status-ativo {
     color: green;
   }
+
+
 
   .ptrf-despesa-status-inativo {
     color: red;
