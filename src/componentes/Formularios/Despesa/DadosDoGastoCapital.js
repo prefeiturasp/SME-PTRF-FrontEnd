@@ -42,9 +42,10 @@ export const DadosDoGastoCapital = (propriedades) => {
                                             className="form-control"
                                         >
                                             <option value="0">Selecione uma ação</option>
-                                            {dadosApiContext.especificacaoMaterialServico.length > 0  && dadosApiContext.especificacaoMaterialServico.map(item => (
+                                            <option key="1" value={1} >Material Elétrico</option>
+                                           {/* {dadosApiContext.especificacaoMaterialServico.length > 0  && dadosApiContext.especificacaoMaterialServico.map(item => (
                                                 <option key={item.id} value={item.id} >{item.descricao}</option>
-                                            ))}
+                                            ))}*/}
                                         </select>
                                     </div>
 
@@ -59,7 +60,7 @@ export const DadosDoGastoCapital = (propriedades) => {
                                             className="form-control"
                                         >
                                             <option value="0">Selecione uma ação</option>
-                                            {dadosApiContext.acoesAssociacao.length > 0  && dadosApiContext.acoesAssociacao.map(item => (
+                                            {dadosApiContext.despesastabelas.acoes_associacao.length > 0  && dadosApiContext.despesastabelas.acoes_associacao.map(item => (
                                                 <option key={item.uuid} value={item.uuid} >{item.nome}</option>
                                             ))}
                                         </select>
@@ -127,7 +128,7 @@ export const DadosDoGastoCapital = (propriedades) => {
                                                     className="form-control"
                                                 >
                                                     <option value="0">Selecione uma conta</option>
-                                                    {dadosApiContext.contaAssociacao.length > 0  && dadosApiContext.contaAssociacao.map(item => (
+                                                    {dadosApiContext.despesastabelas.contas_associacao.length > 0  && dadosApiContext.despesastabelas.contas_associacao.map(item => (
                                                         <option key={item.uuid} value={item.uuid} >{item.nome}</option>
                                                     ))}
                                                 </select>
@@ -137,7 +138,7 @@ export const DadosDoGastoCapital = (propriedades) => {
                                                 <label htmlFor="valor_rateio">Valor do custeio</label>
                                                 <p><strong>Valor do custeio - {calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}</strong></p>
                                                 <NumberFormat
-                                                    defaultValue={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
+                                                    value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
                                                     //defaultValue={rateio.valor_rateio}
                                                     //value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
                                                     onChange={formikProps.handleChange}
@@ -146,34 +147,15 @@ export const DadosDoGastoCapital = (propriedades) => {
                                                     decimalScale={2}
                                                     prefix={'R$ '}
                                                     name={`rateios[${index}].valor_rateio`}
-
-                                                    id="valor_rateio"
-                                                    className="form-control"
-                                                />
-                                            </div>
-
-                                           {/* <div className="col-12 col-md-6 mt-4">
-                                                <label htmlFor="valor_rateio">Valor total do capital </label>
-                                                <NumberFormat
-                                                    //value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
-                                                    value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
-                                                    onChange={formikProps.handleChange}
-                                                    name={`rateios[${index}].valor_rateio`}
-                                                    thousandSeparator={'.'}
-                                                    decimalSeparator={','}
-                                                    decimalScale={2}
-                                                    prefix={'R$ '}
                                                     id="valor_rateio"
                                                     className="form-control"
                                                     readOnly={true}
                                                 />
-                                            </div>*/}
+                                            </div>
+
+
                                         </div>
                                     </div>
-
-
-
-
 
                                     {index >= 1 && gastoEmMaisDeUmaDespesa !== 0 && (
                                         <div className="col-12">
@@ -199,17 +181,16 @@ export const DadosDoGastoCapital = (propriedades) => {
                                 className="btn btn btn-outline-success mt-2 mr-2"
                                 onClick={() => push(
                                     {
-                                        associacao: "DADOS DO GASTO - 07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
+                                        associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14",
                                         aplicacao_recurso: "",
-                                        tipo_aplicacao_recurso: "CUSTEIO",
+                                        tipo_aplicacao_recurso: "",
                                         tipo_custeio: 1,
                                         especificacao_material_servico: "",
-                                        conta_associacao: "conta1",
+                                        conta_associacao: "",
                                         acao_associacao: "",
-                                        valor_rateio: 0,
-                                        //Capital
-                                        quantidade_itens_capital: 0,
-                                        valor_item_capital: 0,
+                                        valor_rateio: "",
+                                        quantidade_itens_capital: "",
+                                        valor_item_capital: "",
                                         numero_processo_incorporacao_capital: "",
                                     }
                                 )

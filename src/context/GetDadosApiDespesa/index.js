@@ -6,8 +6,7 @@ export const GetDadosApiDespesaContext = createContext( {
     setUpdateDespesa(){},
     tiposCusteio:[],
     setTiposCusteio(){},
-    especificacaoMaterialServico:[],
-    setEspecificacaoMterialServico(){},
+
     contaAssociacao:[],
     setContaAssociacao(){},
     acoesAssociacao:[],
@@ -18,19 +17,45 @@ export const GetDadosApiDespesaContext = createContext( {
     setTipoTransacao(){},
     tipoDocumento:[],
     setTipoDocumento(){},
+    despesastabelas:[],
+    setDespesasTabelas(){},
+
+    especificacaoMaterialServico:[],
+    setEspecificacaoMterialServico(){},
+
 });
 
 export const GetDadosApiDespesaContextProvider = ({children}) => {
 
+
+    const [despesastabelas, setDespesasTabelas] = useState([]);
     const [updateDespesa, setUpdateDespesa] = useState([]);
     const [tiposCusteio, setTiposCusteio] = useState([]);
-    const [especificacaoMaterialServico, setEspecificacaoMterialServico] = useState([]);
     const [contaAssociacao, setContaAssociacao] = useState([]);
     const [acoesAssociacao, setAcoesAssociacao] = useState([]);
     const [tipoAplicacaoRecurso, setTipoAplicacaoRecurso] = useState([]);
     const [tipoTransacao, setTipoTransacao] = useState([]);
     const [tipoDocumento, setTipoDocumento] = useState([]);
 
+    const [especificacaoMaterialServico, setEspecificacaoMterialServico] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await Api.get('api/despesas/tabelas/')
+            setDespesasTabelas(response.data);
+        };
+        fetchData();
+    }, []);
+
+/*    useEffect(() => {
+        const fetchData = async () => {
+            const response = await Api.get('api/especificacoes/?aplicacao_recurso=CUSTEIO&tipo_custeio=1')
+            setEspecificacaoMterialServico(response.data);
+        };
+        fetchData();
+    }, [especificacaoMaterialServico]);*/
+
+/*
     useEffect(() => {
         const fetchData = async () => {
             const response = await Api.get('update-despesa')
@@ -38,62 +63,13 @@ export const GetDadosApiDespesaContextProvider = ({children}) => {
         };
         fetchData();
     }, []);
+*/
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await Api.get('tipos_custeio')
-            setTiposCusteio(response.data);
-        };
-        fetchData();
-    }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await Api.get('especificacao_material_servico')
-            setEspecificacaoMterialServico(response.data);
-        };
-        fetchData();
-    }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await Api.get('contas_associacao')
-            setContaAssociacao(response.data);
-        };
-        fetchData();
-    }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await Api.get('acoes_associacao')
-            setAcoesAssociacao(response.data);
-        };
-        fetchData();
-    }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await Api.get('tipos_aplicacao_recurso')
-            setTipoAplicacaoRecurso(response.data);
-        };
-        fetchData();
-    }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await Api.get('tipos_transacao')
-            setTipoTransacao(response.data);
-        };
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await Api.get('tipos_documento')
-            setTipoDocumento(response.data);
-        };
-        fetchData();
-    }, []);
     return (
         <GetDadosApiDespesaContext.Provider value={
             {
@@ -113,6 +89,9 @@ export const GetDadosApiDespesaContextProvider = ({children}) => {
                 setTipoTransacao,
                 tipoDocumento,
                 setTipoDocumento,
+                despesastabelas,
+                setDespesasTabelas,
+
             }}>
             {children}
         </GetDadosApiDespesaContext.Provider>

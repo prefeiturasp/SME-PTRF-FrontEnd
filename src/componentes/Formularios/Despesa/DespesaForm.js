@@ -8,6 +8,7 @@ import {DatePickerField} from "../../DatePickerField";
 import {DadosDoGastoEscolha} from "./DadosDoGastoEsolha";
 import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 import {DespesaFormGetInitialValues} from "./DespesaFormGetInitialValues";
+import axios from "axios"
 
 export const DespesaForm = (parametros) => {
 
@@ -19,11 +20,13 @@ export const DespesaForm = (parametros) => {
         return DespesaFormGetInitialValues(parametros)
     }
 
+
     const onSubmit = (values, {resetForm}) => {
+
 
         console.log("onSubmit ", values)
 
-        let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values)
+        let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values, dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso)
         let validaPayloadContext = payloadFormDespesaContext(dadosDoGastoContext.inputFields);
 
         const payload = {
@@ -31,7 +34,20 @@ export const DespesaForm = (parametros) => {
             rateios: validaPayloadContext,
         };
 
-        console.log("Ollyver Payload", payload)
+        //console.log("Ollyver Payload", payload)
+        console.log("Ollyver validaPayloadFormPrincipal", validaPayloadFormPrincipal)
+
+        // Send a POST request
+        axios({
+            headers: {
+                "Content-type": "application/json",
+                Accept: "application/json",
+            },
+            method: 'post',
+            url: 'https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/',
+            data: validaPayloadFormPrincipal,
+        });
+
         resetForm({values: ""})
         dadosDoGastoContext.limpaFormulario();
     }
@@ -71,8 +87,7 @@ export const DespesaForm = (parametros) => {
                                         placeholder="Digite o número do documento"
                                     />
                                     {props.errors.cpf_cnpj_fornecedor &&
-                                    <span
-                                        className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
+                                    <span className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
                                 </div>
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
@@ -95,8 +110,8 @@ export const DespesaForm = (parametros) => {
                                         name='tipo_documento'
                                         id='tipo_documento'
                                         className="form-control">
-                                        <option value="">Selecione o tipo</option>
-                                        {dadosApiContext.tipoDocumento.length > 0 && dadosApiContext.tipoDocumento.map(item => (
+                                        <option value={0}>Selecione o tipo</option>
+                                        {dadosApiContext.despesastabelas.tipos_documento && dadosApiContext.despesastabelas.tipos_documento.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         ))}
                                     </select>
@@ -120,8 +135,7 @@ export const DespesaForm = (parametros) => {
                                         value={values.data_documento}
                                         onChange={setFieldValue}
                                     />
-                                    {props.errors.data_documento &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
+                                    {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
@@ -134,8 +148,8 @@ export const DespesaForm = (parametros) => {
                                         id='tipo_transacao'
                                         className="form-control"
                                     >
-                                        <option value="">Selecione o tipo</option>
-                                        {dadosApiContext.tipoTransacao.length > 0 && dadosApiContext.tipoTransacao.map(item => (
+                                        <option value={0}>Selecione o tipo</option>
+                                        {dadosApiContext.despesastabelas.tipos_transacao && dadosApiContext.despesastabelas.tipos_transacao.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         ))}
                                     </select>

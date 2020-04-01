@@ -17,7 +17,7 @@ export const DespesaFormGetInitialValues = (parametros)=>{
                 rateios.push(dataItem)
             })
             meusValores = {
-                associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
+                associacao: "c619138d-8c82-4fdd-8544-2bde5803cb4d",
                 cpf_cnpj_fornecedor: item.cpf_cnpj_fornecedor,
                 nome_fornecedor: item.nome_fornecedor,
                 tipo_documento: item.tipo_documento.id,
@@ -38,7 +38,7 @@ export const DespesaFormGetInitialValues = (parametros)=>{
         } else {
 
             valoreIniciais = {
-                associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
+                associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14",
                 cpf_cnpj_fornecedor: "",
                 nome_fornecedor: "",
                 tipo_documento: "",
@@ -51,17 +51,16 @@ export const DespesaFormGetInitialValues = (parametros)=>{
                 valorRecursoAcoes: "",
                 dadosDoGasto: "",
                 rateios: [{
-                    associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
+                    associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14",
                     aplicacao_recurso: "",
-                    tipo_aplicacao_recurso: "CUSTEIO",
+                    tipo_aplicacao_recurso: "",
                     tipo_custeio: 1,
                     especificacao_material_servico: "",
-                    conta_associacao: "conta1",
+                    conta_associacao: "",
                     acao_associacao: "",
-                    valor_rateio: 0,
-                    //Capital
-                    quantidade_itens_capital: 0,
-                    valor_item_capital: 0,
+                    valor_rateio: "",
+                    quantidade_itens_capital: "",
+                    valor_item_capital: "",
                     numero_processo_incorporacao_capital: "",
                 }],
 
@@ -69,7 +68,7 @@ export const DespesaFormGetInitialValues = (parametros)=>{
         }
     } else {
         valoreIniciais = {
-            associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
+            associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14",
             cpf_cnpj_fornecedor: "",
             nome_fornecedor: "",
             tipo_documento: "",
@@ -82,17 +81,16 @@ export const DespesaFormGetInitialValues = (parametros)=>{
             valorRecursoAcoes: "",
             dadosDoGasto: "",
             rateios: [{
-                associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
+                associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14",
                 aplicacao_recurso: "",
-                tipo_aplicacao_recurso: "CUSTEIO",
+                tipo_aplicacao_recurso: "",
                 tipo_custeio: 1,
                 especificacao_material_servico: "",
-                conta_associacao: "conta1",
+                conta_associacao: "",
                 acao_associacao: "",
-                valor_rateio: 0,
-                //Capital
-                quantidade_itens_capital: 0,
-                valor_item_capital: 0,
+                valor_rateio: "",
+                quantidade_itens_capital: "",
+                valor_item_capital: "",
                 numero_processo_incorporacao_capital: "",
             }],
 

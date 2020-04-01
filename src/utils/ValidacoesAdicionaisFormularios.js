@@ -57,7 +57,10 @@ export const payloadFormDespesaContext = (data)=>{
    return arrayRetorno;
 }
 
-export const payloadFormDespesaPrincipal = (data)=>{
+export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso)=>{
+
+    console.log("data ", tipo_aplicacao_recurso)
+    console.log("data ", data)
 
     data.tipo_documento = convertToNumber(data.tipo_documento)
     data.tipo_transacao = convertToNumber(data.tipo_transacao)
@@ -76,6 +79,39 @@ export const payloadFormDespesaPrincipal = (data)=>{
     }else {
         data.data_transacao = "";
     }
+
+    if (tipo_aplicacao_recurso === "CUSTEIO"){
+
+        data.rateios.map((rateio) =>{
+            rateio.valor_item_capital = 0;
+            rateio.quantidade_itens_capital = 0;
+
+            rateio.aplicacao_recurso = tipo_aplicacao_recurso
+            rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
+        })
+    }
+
+
+    if (tipo_aplicacao_recurso === "CAPITAL"){
+        data.rateios.map((rateio) =>{
+
+            rateio.aplicacao_recurso = tipo_aplicacao_recurso
+
+            if (rateio.valor_item_capital !== "" && rateio.quantidade_itens_capital !== ""){
+                rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital);
+                rateio.quantidade_itens_capital = trataNumericos(rateio.quantidade_itens_capital);
+                rateio.valor_rateio = round((rateio.valor_item_capital * rateio.quantidade_itens_capital), 2);
+            }else{
+                rateio.valor_item_capital = 0;
+                rateio.quantidade_itens_capital = 0;
+                rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
+            }
+        })
+    }
+
+
+
+
     return data;
 }
 
