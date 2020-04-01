@@ -2,11 +2,12 @@ import React, {useContext, useEffect, useState} from "react";
 import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 import {DataTable} from 'primereact/datatable';
 import { Column } from 'primereact/column'
-import {Button} from 'primereact/button';
+import { useHistory, Link } from 'react-router-dom'
 
 
 export const ListaDeReceitas = () =>{
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
+    let history = useHistory();
 
     const [receitas, setReceitas] = useState([])
 
@@ -31,10 +32,10 @@ export const ListaDeReceitas = () =>{
 
     return(
         <>
-            {receitas && receitas.map((receita)=>{
-                console.log(receita);
-            })}
-        <h1>Lista de Receitas</h1>
+            <div className="d-flex justify-content-end mb-5 mt-5">
+                <button onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success mt-2 mr-2">Cadastrar crédito</button>
+            </div>
+
             <DataTable value={receitas}>
                 {dynamicColumns}
             </DataTable>

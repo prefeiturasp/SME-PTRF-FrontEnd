@@ -7,11 +7,9 @@ export const ListaDeReceitasPage = () => {
 
     return (
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Cadastro de Despesa</h1>
+            <h1 className="titulo-itens-painel mt-5">Créditos recebidos</h1>
             <div className="page-content-inner ">
-                <h2 className="subtitulo-itens-painel">Dados do documento</h2>
                 <ListaDeReceitas/>
-
             </div>
         </PaginasContainer>
 

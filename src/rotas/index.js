@@ -7,7 +7,7 @@ import {CadastroDeDespesa} from "../paginas/Despesas/CadastroDeDespesa";
 import {EdicaoDeDespesa} from "../paginas/Despesas/EdicaoDeDespesa";
 import { ListaDeDespesasPage } from '../paginas/Despesas/ListaDeDespesas'
 import { CadastroDeReceita } from '../paginas/Receitas/CadastroReceita';
-import {ListaDeReceitasPage} from "../paginas/Despesas/ListaDeReceitas";
+import {ListaDeReceitasPage} from "../paginas/Receitas/ListaDeReceitas";
 
 export const Rotas = () => {
     return(

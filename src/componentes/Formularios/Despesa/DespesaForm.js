@@ -266,8 +266,7 @@ export const DespesaForm = () => {
                             }
 
                             <div className="d-flex  justify-content-end pb-3">
-                                <button type="reset" onClick={props.handleReset}
-                                        className="btn btn btn-outline-success mt-2 mr-2">Cancelar
+                                <button type="reset" onClick={props.handleReset} className="btn btn btn-outline-success mt-2 mr-2">Cancelar
                                 </button>
                                 <button type="submit" className="btn btn-success mt-2">Acessar</button>
                             </div>
