@@ -9,6 +9,8 @@ export const DadosDoGastoCusteio = (propriedades) => {
     const {gastoEmMaisDeUmaDespesa, formikProps} = propriedades
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
 
+    console.log("Ollyver DadosDoGastoCusteio", formikProps.values.rateios)
+
 
     return (
         <div className="col-12 mt-4">
@@ -68,7 +70,7 @@ export const DadosDoGastoCusteio = (propriedades) => {
                                     <div className="col-12 col-md-6 mt-4">
                                         <label htmlFor="acao_associacao">Ação</label>
                                         <select
-                                            defaultValue={rateio.acao_associacao.uuid}
+                                            value={rateio.acao_associacao.uuid}
                                             onChange={formikProps.handleChange}
                                             name={`rateios[${index}].acao_associacao`}
                                             //name='acao_associacao'
@@ -86,9 +88,9 @@ export const DadosDoGastoCusteio = (propriedades) => {
                                         <div className='row'>
 
                                             <div className="col-12 col-md-6 mt-4">
-                                                <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
+                                                <label htmlFor="conta_associacao">Tipo de conta utilizada - UUID: {rateio.conta_associacao.uuid}</label>
                                                 <select
-                                                    defaultValue={rateio.conta_associacao.uuid}
+                                                    value={rateio.conta_associacao.uuid}
                                                     onChange={formikProps.handleChange}
                                                     //name='conta_associacao'
                                                     name={`rateios[${index}].conta_associacao`}

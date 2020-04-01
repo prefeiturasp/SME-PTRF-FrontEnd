@@ -12,12 +12,17 @@ export const DadosDoGastoContext = createContext( {
     setValoresIniciaisFormDespesa(){},
 
     initialValues:[],
-    setInitialValues(){}
+    setInitialValues(){},
+
+    idAssociacao:[],
+    setIdAssociacao(){}
 });
 
 export const DadosDoGastoContextProvider = ({children}) => {
 
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
+
+    const [idAssociacao, setIdAssociacao] = useState("52ad4766-3515-4de9-8ab6-3b12078f8f14")
 
     const [initialValues, setInitialValues] = useState( {
         associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14",

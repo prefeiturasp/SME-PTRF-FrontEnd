@@ -1,15 +1,7 @@
-import React, {useState, createContext, useEffect, useContext} from "react";
+import React, {useState, createContext, useEffect} from "react";
 import Api from "../../services/Api";
-import {DadosDoGastoContext} from "../DadosDoGasto";
 
 export const GetDadosApiDespesaContext = createContext( {
-
-    despesa:[],
-    setDespesa(){},
-
-    updateDespesa:[],
-    setUpdateDespesa(){},
-
     despesastabelas:[],
     setDespesasTabelas(){},
 
@@ -19,13 +11,8 @@ export const GetDadosApiDespesaContext = createContext( {
 });
 
 export const GetDadosApiDespesaContextProvider = ({children}) => {
-    const dadosDoGastoContext = useContext(DadosDoGastoContext);
 
-    const [despesa, setDespesa] = useState([]);
     const [despesastabelas, setDespesasTabelas] = useState([]);
-    const [updateDespesa, setUpdateDespesa] = useState([]);
-
-
     const [especificacaoMaterialServico, setEspecificacaoMterialServico] = useState([]);
 
     useEffect(() => {
@@ -46,12 +33,8 @@ export const GetDadosApiDespesaContextProvider = ({children}) => {
     return (
         <GetDadosApiDespesaContext.Provider value={
             {
-                despesa,
-                setDespesa,
-                getDespesa,
 
-                updateDespesa,
-                setUpdateDespesa,
+                getDespesa,
 
                 especificacaoMaterialServico,
                 setEspecificacaoMterialServico, 

@@ -1,8 +1,13 @@
-import React, {useContext, useEffect} from "react";
+import React, {useContext} from "react";
 import {DadosDoGastoContext} from "../../../context/DadosDoGasto";
 import {Form, Formik} from "formik";
 import MaskedInput from 'react-text-mask'
-import { YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, payloadFormDespesaPrincipal, payloadFormDespesaContext } from "../../../utils/ValidacoesAdicionaisFormularios";
+import {
+    YupSignupSchemaCadastroDespesa,
+    cpfMaskContitional,
+    calculaValorRecursoAcoes,
+    payloadFormDespesaPrincipal
+} from "../../../utils/ValidacoesAdicionaisFormularios";
 import NumberFormat from 'react-number-format';
 import {DatePickerField} from "../../DatePickerField";
 import {DadosDoGastoEscolha} from "./DadosDoGastoEsolha";
@@ -15,14 +20,13 @@ export const DespesaForm = () => {
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
 
     const initialValues = () => {
-        console.log("Ollyver DespesaForm", dadosDoGastoContext.initialValues)
         return dadosDoGastoContext.initialValues
     }
 
 
     const onSubmit = (values, {resetForm}) => {
 
-        let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values, dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso)
+        let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values, dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso, dadosDoGastoContext.idAssociacao)
         console.log("Ollyver validaPayloadFormPrincipal", validaPayloadFormPrincipal)
 
         // Send a POST request
@@ -31,8 +35,11 @@ export const DespesaForm = () => {
                 "Content-type": "application/json",
                 Accept: "application/json",
             },
-            method: 'post',
-            url: 'https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/',
+            //method: "POST",
+            method: "PUT",
+            //url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/`,
+            url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/a1173fcc-7fcf-4782-956a-6285ecbd927d`,
+            //url: 'https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/9ff017ad-d8b5-4454-8121-566b6bd0e182',
             data: validaPayloadFormPrincipal,
         });
 
@@ -75,7 +82,8 @@ export const DespesaForm = () => {
                                         placeholder="Digite o número do documento"
                                     />
                                     {props.errors.cpf_cnpj_fornecedor &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
+                                    <span
+                                        className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
                                 </div>
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
@@ -91,8 +99,9 @@ export const DespesaForm = () => {
                             <div className="form-row">
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="tipo_documento">Tipo de documento</label>
+
                                     <select
-                                        value={props.values.tipo_documento}
+                                        value={props.values.tipo_documento.id}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_documento'
@@ -100,8 +109,10 @@ export const DespesaForm = () => {
                                         className="form-control">
                                         <option value={0}>Selecione o tipo</option>
                                         {dadosApiContext.despesastabelas.tipos_documento && dadosApiContext.despesastabelas.tipos_documento.map(item => (
-                                            <option key={item.id} value={item.id}>{item.nome}</option>
-                                        ))}
+                                                <option key={item.id} value={item.id}>{item.nome}</option>
+                                            )
+                                        )
+                                        }
                                     </select>
                                 </div>
 
@@ -123,13 +134,14 @@ export const DespesaForm = () => {
                                         value={values.data_documento}
                                         onChange={setFieldValue}
                                     />
-                                    {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
+                                    {props.errors.data_documento &&
+                                    <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="tipo_transacao">Tipo de transação</label>
                                     <select
-                                        value={props.values.tipo_transacao}
+                                        value={props.values.tipo_transacao.id}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_transacao'
