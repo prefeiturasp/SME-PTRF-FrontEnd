@@ -35,11 +35,8 @@ export const DespesaForm = () => {
                 "Content-type": "application/json",
                 Accept: "application/json",
             },
-            //method: "POST",
             method: dadosDoGastoContext.verboHttp,
-            //url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/`,
             url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/${dadosDoGastoContext.idDespesa}`,
-
             data: validaPayloadFormPrincipal,
         });
 
