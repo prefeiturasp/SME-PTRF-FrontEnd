@@ -54,10 +54,12 @@ export const payloadFormDespesaContext = (data)=>{
         arrayRetorno.push(item)
     })
 
-   return arrayRetorno;
+    return arrayRetorno;
 }
 
 export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAssociacao, verboHttp)=>{
+
+
 
     data.associacao = idAssociacao;
 
@@ -78,9 +80,9 @@ export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAsso
     data.valorRecursoAcoes = round((data.valor_total - data.valor_recursos_proprios), 2);
 
     if (data.data_documento){
-        data.data_documento = trataData(data.data_documento)
+        //data.data_documento = trataData(data.data_documento)
         //data.data_documento =  moment(data.data_documento, "YYYY-MM-DD").add(1, 'days');
-        //data.data_documento =  moment(data.data_documento).format("YYYY-MM-DD");
+        data.data_documento =  moment(data.data_documento).format("YYYY-MM-DD");
     }else {
         data.data_documento = "";
     }
@@ -88,7 +90,7 @@ export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAsso
     if (data.data_transacao){
         data.data_transacao = trataData(data.data_transacao)
         //data.data_transacao =  moment(data.data_transacao, "YYYY-MM-DD").add(1, 'days');
-        //data.data_transacao =  moment(data.data_transacao).format("YYYY-MM-DD");
+        data.data_transacao =  moment(data.data_transacao).format("YYYY-MM-DD");
     }else {
         data.data_transacao = "";
     }
@@ -154,6 +156,7 @@ export const trataNumericos = (valor) =>{
 
     if (typeof (valor) === "string"){
         return Number(valor.replace(/\./gi,'').replace(/R/gi,'').replace(/,/gi,'.').replace(/\$/, ""));
+
     }else {
 
         return valor
@@ -315,7 +318,3 @@ function valida_cnpj ( valor ) {
     return false;
 
 } // valida_cnpj
-
-
-
-

@@ -20,8 +20,6 @@ export const DespesaForm = () => {
 
     let history = useHistory();
 
-    console.log("Oll", history)
-
     const dadosDoGastoContext = useContext(DadosDoGastoContext);
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
 
@@ -41,8 +39,11 @@ export const DespesaForm = () => {
                 "Content-type": "application/json",
                 Accept: "application/json",
             },
+            //method: "POST",
             method: dadosDoGastoContext.verboHttp,
+            //url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/`,
             url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/${dadosDoGastoContext.idDespesa}`,
+
             data: validaPayloadFormPrincipal,
         });
 
@@ -114,7 +115,7 @@ export const DespesaForm = () => {
                                         className="form-control">
                                         <option value={0}>Selecione o tipo</option>
                                         {dadosApiContext.despesastabelas.tipos_documento && dadosApiContext.despesastabelas.tipos_documento.map(item =>
-                                                <option key={item.id} value={item.id}>{item.nome}</option>
+                                            <option key={item.id} value={item.id}>{item.nome}</option>
 
                                         )
                                         }
