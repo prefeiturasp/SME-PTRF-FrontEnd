@@ -15,7 +15,13 @@ export const DadosDoGastoContext = createContext( {
     setInitialValues(){},
 
     idAssociacao:[],
-    setIdAssociacao(){}
+    setIdAssociacao(){},
+
+    verboHttp:[],
+    setVerboHttp(){},
+
+    idDespesa:[],
+    setIdDespesa(){},
 });
 
 export const DadosDoGastoContextProvider = ({children}) => {
@@ -23,6 +29,8 @@ export const DadosDoGastoContextProvider = ({children}) => {
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
 
     const [idAssociacao, setIdAssociacao] = useState("52ad4766-3515-4de9-8ab6-3b12078f8f14")
+    const [verboHttp, setVerboHttp] = useState("")
+    const [idDespesa, setIdDespesa] = useState("")
 
     const [initialValues, setInitialValues] = useState( {
         associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14",
@@ -136,6 +144,14 @@ export const DadosDoGastoContextProvider = ({children}) => {
 
                 idAssociacao,
                 setIdAssociacao,
+
+                verboHttp,
+                setVerboHttp,
+
+                idDespesa,
+                setIdDespesa,
+
+
 
             } }>
             {children}

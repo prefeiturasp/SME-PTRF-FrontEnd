@@ -26,7 +26,7 @@ export const DespesaForm = () => {
 
     const onSubmit = (values, {resetForm}) => {
 
-        let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values, dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso, dadosDoGastoContext.idAssociacao)
+        let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values, dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso, dadosDoGastoContext.idAssociacao, dadosDoGastoContext.verboHttp)
         console.log("Ollyver validaPayloadFormPrincipal", validaPayloadFormPrincipal)
 
         // Send a POST request
@@ -35,10 +35,10 @@ export const DespesaForm = () => {
                 "Content-type": "application/json",
                 Accept: "application/json",
             },
-            method: "POST",
-            //method: "PUT",
-            url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/`,
-            //url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/f545399e-d9df-44e6-90ed-489914491e43`,
+            //method: "POST",
+            method: dadosDoGastoContext.verboHttp,
+            //url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/`,
+            url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/${dadosDoGastoContext.idDespesa}`,
 
             data: validaPayloadFormPrincipal,
         });

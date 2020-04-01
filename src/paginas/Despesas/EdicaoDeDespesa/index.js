@@ -15,6 +15,9 @@ export const EdicaoDeDespesa = ()=>{
             dadosDoGastoContext.setInitialValues(resposta_api.data)
         })
 
+        dadosDoGastoContext.setVerboHttp("PUT");
+        dadosDoGastoContext.setIdDespesa(associacao);
+
     }, [])
 
 

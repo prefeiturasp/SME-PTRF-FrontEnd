@@ -10,6 +10,7 @@ export const CadastroDeDespesa = () => {
     useEffect(() => {
         (async function setValoresIniciais() {
             await dadosDoGastoContext.setInitialValues(dadosDoGastoContext.valoresIniciaisFormDespesa);
+            await dadosDoGastoContext.setVerboHttp("POST");
         })();
     }, []);
 

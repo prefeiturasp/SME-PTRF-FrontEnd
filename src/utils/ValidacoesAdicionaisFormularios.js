@@ -57,7 +57,7 @@ export const payloadFormDespesaContext = (data)=>{
    return arrayRetorno;
 }
 
-export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAssociacao)=>{
+export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAssociacao, verboHttp)=>{
 
     console.log("data ", tipo_aplicacao_recurso)
     console.log("data ", data)
@@ -65,6 +65,14 @@ export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAsso
     debugger;
 
     data.associacao = idAssociacao;
+
+    if(verboHttp==="POST"){
+        data.tipo_documento = convertToNumber(data.tipo_documento)
+        data.tipo_transacao = convertToNumber(data.tipo_transacao)
+    }else if(verboHttp==="PUT"){
+        data.tipo_documento = convertToNumber(data.tipo_documento.id)
+        data.tipo_transacao = convertToNumber(data.tipo_transacao.id)
+    }
 
     data.tipo_documento = convertToNumber(data.tipo_documento)
     data.tipo_transacao = convertToNumber(data.tipo_transacao)
@@ -85,12 +93,18 @@ export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAsso
     }
 
     data.rateios.map((rateio) =>{
-
         rateio.associacao = idAssociacao;
-        //rateio.conta_associacao = rateio.conta_associacao.uuid;
-        //rateio.acao_associacao = rateio.acao_associacao.uuid;
-        //rateio.tipo_custeio = rateio.tipo_custeio.id;
-        rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico);
+
+        if(verboHttp==="POST"){
+            rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico);
+        }else if(verboHttp==="PUT"){
+            rateio.conta_associacao = rateio.conta_associacao.uuid;
+            rateio.acao_associacao = rateio.acao_associacao.uuid;
+            rateio.tipo_custeio = rateio.tipo_custeio.id;
+            rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico.id);
+        }
+
+
 
     })
 
