@@ -62,10 +62,12 @@ export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAsso
     console.log("data ", tipo_aplicacao_recurso)
     console.log("data ", data)
 
+    debugger;
+
     data.associacao = idAssociacao;
 
-    data.tipo_documento = convertToNumber(data.tipo_documento)
-    data.tipo_transacao = convertToNumber(data.tipo_transacao)
+    data.tipo_documento = convertToNumber(data.tipo_documento.id)
+    data.tipo_transacao = convertToNumber(data.tipo_transacao.id)
     data.valor_total = trataNumericos(data.valor_total);
     data.valor_recursos_proprios = trataNumericos(data.valor_recursos_proprios);
     data.valorRecursoAcoes = round((data.valor_total - data.valor_recursos_proprios), 2);

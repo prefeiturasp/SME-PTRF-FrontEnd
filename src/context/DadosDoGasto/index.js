@@ -133,6 +133,10 @@ export const DadosDoGastoContextProvider = ({children}) => {
 
                 initialValues,
                 setInitialValues,
+
+                idAssociacao,
+                setIdAssociacao,
+
             } }>
             {children}
         </DadosDoGastoContext.Provider>
