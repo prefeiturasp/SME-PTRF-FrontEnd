@@ -14,7 +14,13 @@ import {DadosDoGastoEscolha} from "./DadosDoGastoEsolha";
 import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 import axios from "axios"
 
+import { useHistory } from 'react-router-dom'
+
 export const DespesaForm = () => {
+
+    let history = useHistory();
+
+    console.log("Oll", history)
 
     const dadosDoGastoContext = useContext(DadosDoGastoContext);
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
@@ -42,6 +48,8 @@ export const DespesaForm = () => {
 
         resetForm({values: ""})
         dadosDoGastoContext.limpaFormulario();
+
+        history.push("/lista-de-despesas");
     }
 
     const handleReset = () => {
