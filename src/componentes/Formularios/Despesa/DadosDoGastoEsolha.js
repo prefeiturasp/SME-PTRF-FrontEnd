@@ -5,8 +5,9 @@ import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 
 export const DadosDoGastoEscolha = (propriedades) => {
 
-    const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa} = propriedades
+    const {dadosDoGastoContext, gastoEmMaisDeUmaDespesa, formikProps} = propriedades
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
+
 
     return (
         <>
@@ -14,28 +15,33 @@ export const DadosDoGastoEscolha = (propriedades) => {
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor="tipo_aplicacao_recurso">Tipo de aplicação do recurso</label>
                     <select
-                        value={dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso}
-                        onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, Number(e.target.value))}
+                        value={dadosDoGastoContext.dadosDoGasto.tipos_aplicacao_recurso}
+                        onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, e.target.value)}
                         name='tipo_aplicacao_recurso'
                         id='tipo_aplicacao_recurso'
                         className="form-control"
                     >
-                        {dadosApiContext.tipoAplicacaoRecurso.length > 0  && dadosApiContext.tipoAplicacaoRecurso.map(item => (
-                            <option key={item.id} value={Number(item.id)}>{item.nome}</option>
+                        <option key={0} value={0}>Escolha uma opção</option>
+                        {dadosApiContext.despesastabelas.tipos_aplicacao_recurso.length > 0  && dadosApiContext.despesastabelas.tipos_aplicacao_recurso.map(item => (
+                            <option key={item.id} value={item.id}>{item.nome}</option>
                         ))}
                     </select>
                 </div>
             </div>
-            <div className="row">
-                {dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso === 1 ? (
-                    <DadosDoGastoCusteio
-                        dadosDoGastoContext = {dadosDoGastoContext}
-                        gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
-                    />
-                ): dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso === 2 ? (
+            <div className="form-row">
+                {dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso === "CAPITAL" ? (
                     <DadosDoGastoCapital
                         dadosDoGastoContext = {dadosDoGastoContext}
                         gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
+                        formikProps={formikProps}
+                    />
+
+                ): dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso === "CUSTEIO" ? (
+                    <DadosDoGastoCusteio
+                        dadosDoGastoContext = {dadosDoGastoContext}
+                        gastoEmMaisDeUmaDespesa={gastoEmMaisDeUmaDespesa}
+                        formikProps={formikProps}
+                        tipoAplicacaoRecurso="CUSTEIO"
                     />
                 ) : null}
 

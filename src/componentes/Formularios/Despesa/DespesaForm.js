@@ -1,54 +1,61 @@
 import React, {useContext} from "react";
 import {DadosDoGastoContext} from "../../../context/DadosDoGasto";
-import {Formik} from "formik";
+import {Form, Formik} from "formik";
 import MaskedInput from 'react-text-mask'
-import {YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, payloadFormDespesaPrincipal, payloadFormDespesaContext } from "../../../utils/ValidacoesAdicionaisFormularios";
+import {
+    YupSignupSchemaCadastroDespesa,
+    cpfMaskContitional,
+    calculaValorRecursoAcoes,
+    payloadFormDespesaPrincipal
+} from "../../../utils/ValidacoesAdicionaisFormularios";
 import NumberFormat from 'react-number-format';
 import {DatePickerField} from "../../DatePickerField";
 import {DadosDoGastoEscolha} from "./DadosDoGastoEsolha";
-
 import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
+import axios from "axios"
+
+import { useHistory } from 'react-router-dom'
 
 export const DespesaForm = () => {
+
+    let history = useHistory();
+
+    console.log("Oll", history)
 
     const dadosDoGastoContext = useContext(DadosDoGastoContext);
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
 
-    const initialValues = () => (
-        {
-            associacao: "07ac1e8f-de2f-4e71-8e7a-cc6074cf6a69",
-            cpf_cnpj_fornecedor: "",
-            nome_fornecedor: "",
-            tipo_documento: "",
-            numero_documento: "",
-            data_documento: "",
-            tipo_transacao: "",
-            data_transacao: "",
-            valor_total: "",
-            valor_recursos_proprios: "",
-            valorRecursoAcoes: "",
-            dadosDoGasto: "",
-        }
-    )
+    const initialValues = () => {
+        return dadosDoGastoContext.initialValues
+    }
+
 
     const onSubmit = (values, {resetForm}) => {
 
-        let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values)
-        let validaPayloadContext = payloadFormDespesaContext(dadosDoGastoContext.inputFields);
+        let validaPayloadFormPrincipal = payloadFormDespesaPrincipal(values, dadosDoGastoContext.dadosDoGasto.tipo_aplicacao_recurso, dadosDoGastoContext.idAssociacao, dadosDoGastoContext.verboHttp)
+        console.log("Ollyver validaPayloadFormPrincipal", validaPayloadFormPrincipal)
 
-        const payload = {
-            ...validaPayloadFormPrincipal,
-            rateios: validaPayloadContext,
-        };
+        // Send a POST request
+        axios({
+            headers: {
+                "Content-type": "application/json",
+                Accept: "application/json",
+            },
+            method: dadosDoGastoContext.verboHttp,
+            url: `https://dev-sig.escola.sme.prefeitura.sp.gov.br/api/despesas/${dadosDoGastoContext.idDespesa}`,
+            data: validaPayloadFormPrincipal,
+        });
 
-        console.log("Ollyver Payload", payload)
         resetForm({values: ""})
         dadosDoGastoContext.limpaFormulario();
+
+        history.push("/lista-de-despesas");
     }
 
-    const handleReset = ()=> {
+    const handleReset = () => {
         dadosDoGastoContext.limpaFormulario();
     }
+
     return (
         <>
             <Formik
@@ -63,9 +70,10 @@ export const DespesaForm = () => {
                     const {
                         values,
                         setFieldValue,
+
                     } = props;
                     return (
-                        <form method="POST" id="despesaForm" onSubmit={props.handleSubmit}>
+                        <Form onSubmit={props.handleSubmit}>
                             <div className="form-row">
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
@@ -74,11 +82,13 @@ export const DespesaForm = () => {
                                         value={props.values.cpf_cnpj_fornecedor}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                        name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text" className="form-control"
+                                        name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
+                                        className="form-control"
                                         placeholder="Digite o número do documento"
                                     />
                                     {props.errors.cpf_cnpj_fornecedor &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
+                                    <span
+                                        className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
                                 </div>
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
@@ -94,17 +104,20 @@ export const DespesaForm = () => {
                             <div className="form-row">
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="tipo_documento">Tipo de documento</label>
+
                                     <select
-                                        value={props.values.tipo_documento}
+                                        value={props.values.tipo_documento.id}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_documento'
                                         id='tipo_documento'
                                         className="form-control">
-                                        <option value="">Selecione o tipo</option>
-                                        {dadosApiContext.tipoDocumento.length > 0  && dadosApiContext.tipoDocumento.map(item => (
-                                            <option key={item.id} value={item.id}>{item.nome}</option>
-                                        ))}
+                                        <option value={0}>Selecione o tipo</option>
+                                        {dadosApiContext.despesastabelas.tipos_documento && dadosApiContext.despesastabelas.tipos_documento.map(item =>
+                                                <option key={item.id} value={item.id}>{item.nome}</option>
+
+                                        )
+                                        }
                                     </select>
                                 </div>
 
@@ -133,15 +146,15 @@ export const DespesaForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="tipo_transacao">Tipo de transação</label>
                                     <select
-                                        value={props.values.tipo_transacao}
+                                        value={props.values.tipo_transacao.id}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_transacao'
                                         id='tipo_transacao'
                                         className="form-control"
                                     >
-                                        <option value="">Selecione o tipo</option>
-                                        {dadosApiContext.tipoTransacao.length > 0  && dadosApiContext.tipoTransacao.map(item => (
+                                        <option value={0}>Selecione o tipo</option>
+                                        {dadosApiContext.despesastabelas.tipos_transacao && dadosApiContext.despesastabelas.tipos_transacao.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         ))}
                                     </select>
@@ -175,8 +188,7 @@ export const DespesaForm = () => {
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                     />
-                                    {props.errors.valor_total &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
+                                    {props.errors.valor_total && <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
 
                                 </div>
                                 <div className="col-12 col-md-3 mt-4">
@@ -237,23 +249,29 @@ export const DespesaForm = () => {
                             {
                                 props.values.dadosDoGasto === "sim" ? (
                                     <DadosDoGastoEscolha
-                                        dadosDoGastoContext = {dadosDoGastoContext}
-                                        gastoEmMaisDeUmaDespesa = {1}
+                                        dadosDoGastoContext={dadosDoGastoContext}
+                                        gastoEmMaisDeUmaDespesa={1}
+                                        formikProps={props}
+
                                     />
                                 ) : props.values.dadosDoGasto === "nao" ? (
                                     <DadosDoGastoEscolha
-                                        dadosDoGastoContext = {dadosDoGastoContext}
-                                        gastoEmMaisDeUmaDespesa = {0}
+                                        dadosDoGastoContext={dadosDoGastoContext}
+                                        gastoEmMaisDeUmaDespesa={0}
+                                        formikProps={props}
+
                                     />
                                 ) : null
                             }
 
                             <div className="d-flex  justify-content-end pb-3">
-                                <button type="reset" onClick={props.handleReset} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                                <button type="reset" onClick={props.handleReset}
+                                        className="btn btn btn-outline-success mt-2 mr-2">Cancelar
+                                </button>
                                 <button type="submit" className="btn btn-success mt-2">Acessar</button>
                             </div>
 
-                        </form>
+                        </Form>
                     );
                 }}
             </Formik>
