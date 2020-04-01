@@ -1,21 +1,21 @@
-import React, {useContext} from "react";
-import SideNav, { NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
-import '@trendmicro/react-sidenav/dist/react-sidenav.css';
-import "./siderbarLeft.scss"
+import React, { useContext } from 'react'
+import SideNav, { NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav'
+import '@trendmicro/react-sidenav/dist/react-sidenav.css'
+import './siderbarLeft.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faSchool } from '@fortawesome/free-solid-svg-icons'
 
-import IconeMenuPainel from "../../assets/img/icone-menu-painel.svg"
-import IconeMenuGastosDaEscola from "../../assets/img/icone-menu-gastos-da-escola.svg"
-import IconeMenuCreditosDaEscola from "../../assets/img/icone-menu-creditos-da-escola.svg"
-import IconeMenuCadastroDeDespesa from "../../assets/img/icone-menu-cadastro-de-despesa.svg"
-import IconeMenuCadastroDeCredito from "../../assets/img/icone-menu-cadastro-de-credito.svg"
-import IconeMenuPrestacaoDeContas from "../../assets/img/icone-menu-prestacao-de-contas.svg"
-import IconeMenuDadosDaAssociacao from "../../assets/img/icone-menu-dados-da-associacao.svg"
-import LogoSP from "../../assets/img/logo-menu.png"
-import {SidebarContext} from "../../context/Sidebar";
+import IconeMenuPainel from '../../assets/img/icone-menu-painel.svg'
+import IconeMenuGastosDaEscola from '../../assets/img/icone-menu-gastos-da-escola.svg'
+import IconeMenuCreditosDaEscola from '../../assets/img/icone-menu-creditos-da-escola.svg'
+import IconeMenuCadastroDeDespesa from '../../assets/img/icone-menu-cadastro-de-despesa.svg'
+import IconeMenuCadastroDeCredito from '../../assets/img/icone-menu-cadastro-de-credito.svg'
+import IconeMenuPrestacaoDeContas from '../../assets/img/icone-menu-prestacao-de-contas.svg'
+import IconeMenuDadosDaAssociacao from '../../assets/img/icone-menu-dados-da-associacao.svg'
+import LogoSP from '../../assets/img/logo-menu.png'
+import { SidebarContext } from '../../context/Sidebar'
 
-import { useHistory } from "react-router-dom";
+import { useHistory } from 'react-router-dom'
 
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
@@ -72,7 +72,7 @@ export const SidebarLeft = () => {
                         Painel
                     </NavText>
                 </NavItem>
-                <NavItem eventKey="gastosDaEscola">
+                <NavItem eventKey="lista-de-despesas">
                     <NavIcon>
                         <img src={IconeMenuGastosDaEscola} alt=""/>
                     </NavIcon>
@@ -100,7 +100,7 @@ export const SidebarLeft = () => {
                     </NavText>
                 </NavItem>
 
-                <NavItem eventKey="cadastroCredito">
+                <NavItem eventKey="cadastro-de-credito">
                     <NavIcon>
                         <img src={IconeMenuCadastroDeCredito} alt=""/>
                     </NavIcon>
@@ -144,3 +144,4 @@ export const SidebarLeft = () => {
 
     );
 }
+

@@ -1,0 +1,10 @@
+version: "3"
+services:
+
+  frontend:
+    build: .
+    container_name: ptrf-frontend
+    # image: ptrf-frontend
+    env_file: .env
+    ports:
+      - 8080:80
