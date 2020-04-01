@@ -9,9 +9,6 @@ export const DadosDoGastoCusteio = (propriedades) => {
     const {gastoEmMaisDeUmaDespesa, formikProps} = propriedades
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
 
-    console.log("Ollyver DadosDoGastoCusteio", formikProps.values.rateios)
-
-
     return (
         <div className="col-12 mt-4">
 
@@ -20,8 +17,6 @@ export const DadosDoGastoCusteio = (propriedades) => {
                 render={({insert, remove, push}) => (
                     <>
                         {formikProps.values.rateios.length > 0 && formikProps.values.rateios.map((rateio, index) => {
-
-                            console.log("Rateio ", rateio)
 
                             return (
 

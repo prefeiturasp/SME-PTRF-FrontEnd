@@ -67,7 +67,6 @@ export const DespesaForm = () => {
                         setFieldValue,
 
                     } = props;
-                    console.log(props.values)
                     return (
                         <Form onSubmit={props.handleSubmit}>
                             <div className="form-row">
@@ -184,8 +183,7 @@ export const DespesaForm = () => {
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                     />
-                                    {props.errors.valor_total &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
+                                    {props.errors.valor_total && <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
 
                                 </div>
                                 <div className="col-12 col-md-3 mt-4">

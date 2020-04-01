@@ -59,11 +59,6 @@ export const payloadFormDespesaContext = (data)=>{
 
 export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAssociacao, verboHttp)=>{
 
-    console.log("data ", tipo_aplicacao_recurso)
-    console.log("data ", data)
-
-    debugger;
-
     data.associacao = idAssociacao;
 
     if (data.tipo_documento.id){
@@ -78,22 +73,22 @@ export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAsso
         data.tipo_transacao = convertToNumber(data.tipo_transacao)
     }
 
-
-
-    data.tipo_documento = convertToNumber(data.tipo_documento)
-    data.tipo_transacao = convertToNumber(data.tipo_transacao)
     data.valor_total = trataNumericos(data.valor_total);
     data.valor_recursos_proprios = trataNumericos(data.valor_recursos_proprios);
     data.valorRecursoAcoes = round((data.valor_total - data.valor_recursos_proprios), 2);
 
     if (data.data_documento){
-        data.data_documento =  moment(data.data_documento).format("YYYY-MM-DD");
+        data.data_documento = trataData(data.data_documento)
+        //data.data_documento =  moment(data.data_documento, "YYYY-MM-DD").add(1, 'days');
+        //data.data_documento =  moment(data.data_documento).format("YYYY-MM-DD");
     }else {
         data.data_documento = "";
     }
 
     if (data.data_transacao){
-        data.data_transacao =  moment(data.data_transacao).format("YYYY-MM-DD");
+        data.data_transacao = trataData(data.data_transacao)
+        //data.data_transacao =  moment(data.data_transacao, "YYYY-MM-DD").add(1, 'days');
+        //data.data_transacao =  moment(data.data_transacao).format("YYYY-MM-DD");
     }else {
         data.data_transacao = "";
     }
@@ -109,9 +104,6 @@ export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAsso
             rateio.tipo_custeio = rateio.tipo_custeio.id;
             rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico.id);
         }
-
-
-
     })
 
     if (tipo_aplicacao_recurso === "CUSTEIO"){
@@ -143,10 +135,11 @@ export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAsso
         })
     }
 
-
-
-
     return data;
+}
+
+export const trataData = (data) => {
+    return moment(data, "YYYY-MM-DD").add(1, 'days');
 }
 
 export const convertToNumber = (string)=>{
@@ -160,7 +153,7 @@ export const round = (num, places) => {
 export const trataNumericos = (valor) =>{
 
     if (typeof (valor) === "string"){
-        return Number(valor.replace(/\./gi,'').replace(/R/gi,'').replace(/,/gi,'.').replace(/\$/, ""));
+        return Number(valor.replace(/R/gi,'').replace(/,/gi,'.').replace(/\$/, ""));
     }else {
 
         return valor

@@ -11,6 +11,7 @@ export const CadastroDeDespesa = () => {
         (async function setValoresIniciais() {
             await dadosDoGastoContext.setInitialValues(dadosDoGastoContext.valoresIniciaisFormDespesa);
             await dadosDoGastoContext.setVerboHttp("POST");
+            dadosDoGastoContext.setIdDespesa("");
         })();
     }, []);
 
