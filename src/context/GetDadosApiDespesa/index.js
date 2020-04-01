@@ -8,6 +8,8 @@ export const GetDadosApiDespesaContext = createContext( {
     especificacaoMaterialServico:[],
     setEspecificacaoMterialServico(){},
 
+    getReceitas(){}
+
 });
 
 export const GetDadosApiDespesaContextProvider = ({children}) => {
@@ -28,6 +30,11 @@ export const GetDadosApiDespesaContextProvider = ({children}) => {
         return response
     }
 
+    const getReceitas = async (idAssociacao) => {
+        const response = await Api.get(`api/receitas/`)
+        return response
+    }
+
 
 
     return (
@@ -35,6 +42,8 @@ export const GetDadosApiDespesaContextProvider = ({children}) => {
             {
 
                 getDespesa,
+                getReceitas,
+
 
                 especificacaoMaterialServico,
                 setEspecificacaoMterialServico, 
