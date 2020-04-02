@@ -18,3 +18,7 @@ export const criarReceita = async payload => {
             return error.response;
         });
 }
+export const getListaReceitas = async () => {
+    return (await api.get('api/receitas/', authHeader)).data
+}
+

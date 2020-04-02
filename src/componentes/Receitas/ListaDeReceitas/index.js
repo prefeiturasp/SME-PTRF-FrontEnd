@@ -1,22 +1,24 @@
-import React, {useContext, useEffect, useState} from "react";
-import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
+import React, {useEffect, useState} from "react";
+
 import {DataTable} from 'primereact/datatable';
 import { Column } from 'primereact/column'
-import {Row} from 'primereact/row';
-import { useHistory, Link } from 'react-router-dom'
+import {getListaReceitas} from "../../../services/Receitas.service";
+import { useHistory } from 'react-router-dom'
 
 
 export const ListaDeReceitas = () =>{
-    const dadosApiContext = useContext(GetDadosApiDespesaContext);
+
     let history = useHistory();
 
     const [receitas, setReceitas] = useState([])
 
-    useEffect( ()=>{
-        dadosApiContext.getReceitas()
-        .then(resposta_api => {
-            setReceitas(resposta_api.data.results)
-        })
+    useEffect(() => {
+        const carregaListaReceitas = async () => {
+            const resp = await getListaReceitas();
+            console.log(resp)
+            setReceitas(resp.results);
+        };
+        carregaListaReceitas();
     }, [])
 
     const rowsPerPage = 4

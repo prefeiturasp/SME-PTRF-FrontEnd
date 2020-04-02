@@ -56,7 +56,6 @@ export const ReceitaForm = props => {
     useEffect(() => {
         const carregaTabelas = async () => {
             const resp = await getTabelasReceita();
-            console.log(resp)
             setTabelas(resp);
         };
         carregaTabelas();
