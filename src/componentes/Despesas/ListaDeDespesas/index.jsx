@@ -7,6 +7,7 @@ import { getListaRateiosDespesas } from '../../../services/RateiosDespesas.servi
 import { redirect } from '../../../utils/redirect.js'
 import '../../../paginas/404/pagina-404.scss'
 import Img404 from '../../../assets/img/img-404.svg'
+import { Route } from 'react-router-dom'
 
 export class ListaDeDespesas extends Component {
   constructor(props) {
@@ -69,6 +70,30 @@ export class ListaDeDespesas extends Component {
     return <span>{valorFormatado}</span>
   }
 
+  novaDespesaButton() {
+    return (
+      <Route
+        render={({ history }) => (
+          <Button
+            icon="pi pi-file"
+            label="Cadastrar despesa"
+            style={{ marginBottom: '.80em' }}
+            className="btn-coad-background-outline"
+            onClick={() => {
+              history.push('/cadastro-de-despesa')
+            }}
+          />
+        )}
+      />
+    )
+  }
+
+  redirecionaDetalhe = value => {
+    console.log(value)
+    const url = '/edicao-de-despesa/' + value.despesa
+    redirect(url)
+  }
+
   render() {
     const { rateiosDespesas } = this.state
     const rowsPerPage = 10
@@ -83,17 +108,7 @@ export class ListaDeDespesas extends Component {
             <h6 style={{ fontWeight: 'bold' }}></h6>
           </Col>
           <Col lg={4} xl={4}>
-            <span className="float-right">
-              <Button
-                icon="pi pi-file"
-                label="Cadastrar despesa"
-                style={{ marginBottom: '.80em' }}
-                className="btn-coad-background-outline"
-                onClick={event => {
-                  redirect(`#/modelo-ateste/`)
-                }}
-              />
-            </span>
+            <span className="float-right">{this.novaDespesaButton()}</span>
           </Col>
         </Row>
         {rateiosDespesas.length > 0 ? (
@@ -105,6 +120,7 @@ export class ListaDeDespesas extends Component {
             paginatorTemplate="PrevPageLink PageLinks NextPageLink"
             autoLayout={true}
             selectionMode="single"
+            onRowClick={e => this.redirecionaDetalhe(e.data)}
           >
             <Column
               field="numero_documento"
