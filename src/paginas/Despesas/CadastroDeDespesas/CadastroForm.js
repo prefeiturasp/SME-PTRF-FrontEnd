@@ -121,6 +121,7 @@ export const CadastroForm = () => {
         values.rateios.map((rateio) => {
             rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
             rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico)
+            rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
         })
 
         console.log("onSubmit", values)
@@ -417,7 +418,65 @@ export const CadastroForm = () => {
                                                                 ) )}
                                                             </select>
                                                         </div>
+                                                        <div className="col-12 col-md-6 mt-4">
+                                                            <label htmlFor="acao_associacao">Ação</label>
+                                                            <select
+                                                                value={rateio.acao_associacao.uuid}
+                                                                onChange={props.handleChange}
+                                                                name={`rateios[${index}].acao_associacao`}
+                                                                //name='acao_associacao'
+                                                                id='acao_associacao'
+                                                                className="form-control"
+                                                            >
+                                                                <option value="0">Selecione uma ação</option>
+                                                                {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
+                                                                    <option key={item.uuid} value={item.uuid}>{item.nome}</option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                        <div className="col-12 col-md-6">
+                                                            <div className='row'>
+
+                                                                <div className="col-12 col-md-6 mt-4">
+                                                                    <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
+                                                                    <select
+                                                                        value={rateio.conta_associacao.uuid}
+                                                                        onChange={props.handleChange}
+                                                                        //name='conta_associacao'
+                                                                        name={`rateios[${index}].conta_associacao`}
+                                                                        id='conta_associacao'
+                                                                        className="form-control"
+                                                                    >
+                                                                        <option value="0">Selecione uma conta</option>
+                                                                        {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
+                                                                            <option key={item.uuid} value={item.uuid}>{item.nome}</option>
+                                                                        ))}
+                                                                    </select>
+                                                                </div>
+
+                                                                <div className="col-12 col-md-6 mt-4">
+                                                                    <label htmlFor="valor_rateio">Valor do custeio</label>
+                                                                    <NumberFormat
+                                                                        defaultValue={rateio.valor_rateio}
+                                                                        onChange={props.handleChange}
+                                                                        thousandSeparator={'.'}
+                                                                        decimalSeparator={','}
+                                                                        decimalScale={2}
+                                                                        prefix={'R$ '}
+                                                                        name={`rateios[${index}].valor_rateio`}
+                                                                        id="valor_rateio"
+                                                                        className="form-control"
+                                                                    />
+                                                                </div>
+
+
+
+                                                            </div>
+
+                                                        </div>
                                                     </div>
+
+
 
 
                                                 </Fragment>
