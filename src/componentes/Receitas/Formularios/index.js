@@ -64,7 +64,7 @@ export const ReceitaForm = props => {
         } catch (error) {
             console.log(error)
         }
-        let path = `/dashboard`
+        let path = `/lista-de-receitas`
         props.history.push(path)
     }
 

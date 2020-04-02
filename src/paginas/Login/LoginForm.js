@@ -57,7 +57,7 @@ export const LoginForm = () => {
                             {props.touched.login && props.errors.senha && <span className="span_erro text-danger mt-1"> {props.errors.senha} </span>}
 
                         </div>
-                        {mensagem && <div id="feedback">{mensagem}</div>}
+                        {mensagem && <span className="span_erro text-danger mt-1">{mensagem}</span>}
                         <button type="submit" className="btn btn-success  btn-block  mt-2">Acessar</button>
                     </form>
                 )}
