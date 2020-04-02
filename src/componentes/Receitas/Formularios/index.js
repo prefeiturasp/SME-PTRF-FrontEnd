@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import HTTP_STATUS from "http-status-codes";
 import { Formik } from 'formik';
 import { DatePickerField } from '../../DatePickerField'
@@ -7,9 +7,12 @@ import { getTabelasReceita, criarReceita } from '../../../services/Receitas.serv
 import { trataNumericos } from "../../../utils/ValidacoesAdicionaisFormularios";
 import { ReceitaSchema } from '../Schemas';
 import moment from "moment";
+import {NotificacaoContext} from "../../../context/Notificacao/NotificacaoContext";
 
 
 export const ReceitaForm = props => {
+    const mensagem = useContext(NotificacaoContext);
+
     const tabelaInicial = {
         tipos_receita: [],
         acoes_associacao: [],
@@ -61,6 +64,12 @@ export const ReceitaForm = props => {
         }
         let path = `/dashboard`
         props.history.push(path)
+    }
+
+    const onClickTeste = () => {
+        mensagem.setAbrirModal(true)
+        mensagem.setTituloModal("Erro ao solicitar uniforme")
+        mensagem.setMsg("Essa solicitação já foi finalizada pela escola. Caso necessite realizar alguma alteração, dirija-se a escola do aluno.")
     }
 
     return (
@@ -189,6 +198,7 @@ export const ReceitaForm = props => {
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
                                 <button type="reset" onClick={props.handleReset} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                                 <button type="submit" className="btn btn-success mt-2">Salvar</button>
+                                <button onClick={onClickTeste} type="button" className="btn btn-success mt-2">Teste</button>
                             </div>
                         </form>
                     );
