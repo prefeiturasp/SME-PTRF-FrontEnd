@@ -15,7 +15,6 @@ export const ListaDeReceitas = () =>{
     useEffect(() => {
         const carregaListaReceitas = async () => {
             const resp = await getListaReceitas();
-            console.log(resp)
             setReceitas(resp.results);
         };
         carregaListaReceitas();

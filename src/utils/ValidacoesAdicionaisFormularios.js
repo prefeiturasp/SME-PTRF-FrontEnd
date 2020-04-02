@@ -23,7 +23,7 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     data_transacao: yup.string(),
     valor_total: yup.string(),
     valor_recursos_proprios: yup.string(),
-    valorRecursoAcoes:yup.string(),
+    valor_recusos_acoes:yup.string(),
 });
 
 export const payloadFormDespesaContext = (data)=>{
@@ -77,7 +77,7 @@ export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAsso
 
     data.valor_total = trataNumericos(data.valor_total);
     data.valor_recursos_proprios = trataNumericos(data.valor_recursos_proprios);
-    data.valorRecursoAcoes = round((data.valor_total - data.valor_recursos_proprios), 2);
+    data.valor_recusos_acoes = round((data.valor_total - data.valor_recursos_proprios), 2);
 
     if (data.data_documento){
         //data.data_documento = trataData(data.data_documento)

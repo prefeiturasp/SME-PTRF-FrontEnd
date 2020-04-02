@@ -1,4 +1,4 @@
-import React, {useEffect, useContext} from "react";
+import React  from "react";
 import {PaginasContainer} from "../../PaginasContainer";
 import {ListaDeReceitas} from "../../../componentes/Receitas/ListaDeReceitas";
 
