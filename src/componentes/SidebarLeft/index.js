@@ -84,7 +84,7 @@ export const SidebarLeft = () => {
                 </NavItem>
 
 
-                <NavItem eventKey="creditosDaEscola">
+                <NavItem eventKey="lista-de-receitas">
                     <NavIcon>
                         <img src={IconeMenuCreditosDaEscola} alt=""/>
                     </NavIcon>
