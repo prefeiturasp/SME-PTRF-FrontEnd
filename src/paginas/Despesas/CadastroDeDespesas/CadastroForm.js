@@ -8,7 +8,7 @@ import {
     convertToNumber,
 } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import {getDespesasTabelas} from "../../../services/Despesas.service";
+import {getDespesasTabelas, getEspecificacaoMaterialServico} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../../componentes/DatePickerField";
 import NumberFormat from "react-number-format";
 import moment from "moment";
@@ -46,6 +46,10 @@ export const CadastroForm = () => {
     let history = useHistory();
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [show, setShow] = useState(false);
+    const [aplicacao_recurso, set_aplicacao_recurso] = useState("");
+    const [tipo_custeio, set_tipo_custeio] = useState(undefined);
+    const [especificaoes, set_especificaoes] = useState(undefined);
+    const [especificaoes_disable, set_especificaoes_disable] = useState(true);
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
@@ -57,12 +61,19 @@ export const CadastroForm = () => {
 
     }, [])
 
-    const getEpecificacoes = async (aplicacao_recurso, tipo_custeio) => {
-        console.log("Entrei")
-        //const resp = await getEpecificacoes(aplicacao_recurso, tipo_custeio)
-        //console.log(resp)
+    useEffect(()=> {
+        if (tipo_custeio !== undefined && aplicacao_recurso !== undefined) {
+            const carregaEspecificacoes = async () => {
+                const resp = await getEspecificacaoMaterialServico(aplicacao_recurso, tipo_custeio)
+                set_especificaoes_disable(false)
+                console.log(resp)
+                set_especificaoes(resp);
+            };
+            carregaEspecificacoes();
+            set_especificaoes_disable(true)
+        }
+    },[aplicacao_recurso, tipo_custeio])
 
-    }
 
     const initialValues = () => {
         const inital = {
@@ -109,6 +120,7 @@ export const CadastroForm = () => {
 
         values.rateios.map((rateio) => {
             rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
+            rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico)
         })
 
         console.log("onSubmit", values)
@@ -116,6 +128,14 @@ export const CadastroForm = () => {
 
     const handleReset = (props) => {
 
+    }
+
+    const handleOnBlur = (nome, valor) =>{
+        if (nome === 'aplicacao_recurso'){
+            set_aplicacao_recurso(valor)
+        }else if(nome === 'tipo_custeio'){
+            set_tipo_custeio(valor)
+        }
     }
 
     const onCancelarTrue = () => {
@@ -346,16 +366,14 @@ export const CadastroForm = () => {
                                                             <select
                                                                 value={rateio.aplicacao_recurso}
                                                                 onChange={props.handleChange}
-                                                                //onChange={(e) => dadosDoGastoContext.handleChangeDadosDoGasto(e.target.name, e.target.value)}
-                                                                //name='tipos_de_aplicacao_recurso'
+                                                                onBlur={(e)=>handleOnBlur("aplicacao_recurso", e.target.value)}
                                                                 name={`rateios[${index}].aplicacao_recurso`}
                                                                 id='aplicacao_recurso'
                                                                 className="form-control"
                                                             >
                                                                 <option key={0} value={0}>Escolha uma opção</option>
                                                                 {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map(item => (
-                                                                    <option key={item.id}
-                                                                            value={item.id}>{item.nome}</option>
+                                                                    <option key={item.id} value={item.id}>{item.nome}</option>
                                                                 ))}
                                                             </select>
                                                         </div>
@@ -368,10 +386,12 @@ export const CadastroForm = () => {
                                                             <select
                                                                 defaultValue={rateio.tipo_custeio.id}
                                                                 onChange={props.handleChange}
+                                                                onBlur={(e)=>handleOnBlur("tipo_custeio", e.target.value)}
                                                                 name={`rateios[${index}].tipo_custeio`}
                                                                 id='tipo_custeio'
                                                                 className="form-control"
                                                             >
+                                                                <option value="0">Selecione um tipo</option>
                                                                 {despesasTabelas.tipos_custeio && despesasTabelas.tipos_custeio.map(item => (
                                                                     <option key={item.id} value={item.id}>{item.nome}</option>
                                                                 ))}
@@ -387,19 +407,14 @@ export const CadastroForm = () => {
                                                                 defaultValue={rateio.especificacao_material_servico.id}
                                                                 onChange={props.handleChange}
                                                                 name={`rateios[${index}].especificacao_material_servico`}
-                                                                //name='especificacao_material_servico'
                                                                 id='especificacao_material_servico'
                                                                 className="form-control"
+                                                                disabled={especificaoes_disable}
                                                             >
                                                                 <option value="0">Selecione uma ação</option>
-                                                                <option key="1" value={1} >Material Elétrico</option>
-
-{/*                                                                {getEpecificacoes(rateio.aplicacao_recurso, rateio.tipo_custeio).map((item) => (
+                                                                {especificaoes && especificaoes.map((item)=> (
                                                                     <option key={item.id} value={item.id}>{item.descricao}</option>
-                                                                ))}*/}
-                                                                {/*{dadosApiContext.especificacaoMaterialServico.length > 0 && dadosApiContext.especificacaoMaterialServico.map(item => (
-                                                <option key={item.id} value={item.id}>{item.descricao}</option>
-                                            ))}*/}
+                                                                ) )}
                                                             </select>
                                                         </div>
                                                     </div>

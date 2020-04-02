@@ -13,5 +13,5 @@ export const getDespesasTabelas = async () => {
 }
 
 export const getEspecificacaoMaterialServico = async (aplicacao_recurso, tipo_custeio) => {
-  return (await api.delete(`api/especificacoes/`, authHeader)).data
+  return (await api.get(`api/especificacoes/?aplicacao_recurso=${aplicacao_recurso}&tipo_custeio=${tipo_custeio}`, authHeader)).data
 }
