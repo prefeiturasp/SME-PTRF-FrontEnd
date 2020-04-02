@@ -14,6 +14,6 @@ ReactDOM.render(
             </BrowserRouter>
         </SidebarContextProvider>
     </NotificacaoContextProvider>
-    , document.getElementById("root"));
+    ,document.getElementById("root"));
 
 serviceWorker.unregister();

@@ -193,9 +193,38 @@ export const cpfMaskContitional = (value) => {
 
 function valida_cpf_cnpj ( valor ) {
 
-    if ( !valor || (valor.length < 11 && valor.length > 14) || valor === "00000000000" || valor === "11111111111" || valor === "22222222222" || valor === "33333333333" || valor === "44444444444" || valor === "55555555555" || valor === "66666666666" || valor === "77777777777" || valor === "88888888888"
-        || valor === "99999999999" )
+    // Remove caracteres inválidos do valor
+    if (valor){
+        valor = valor.replace(/[^0-9]/g, '');
+    }
+
+    if (
+        !valor ||
+        (valor.length < 11 && valor.length > 14) ||
+        valor === "00000000000" ||
+        valor === "00000000000000" ||
+        valor === "11111111111" ||
+        valor === "11111111111111" ||
+        valor === "22222222222" ||
+        valor === "22222222222222" ||
+        valor === "33333333333" ||
+        valor === "33333333333333" ||
+        valor === "44444444444" ||
+        valor === "44444444444444" ||
+        valor === "55555555555" ||
+        valor === "55555555555555" ||
+        valor === "66666666666" ||
+        valor === "66666666666666" ||
+        valor === "77777777777" ||
+        valor === "77777777777777" ||
+        valor === "88888888888" ||
+        valor === "88888888888888" ||
+        valor === "99999999999" ||
+        valor === "99999999999999"
+    ){
         return false
+    }
+
 
     // Verifica se é CPF ou CNPJ
     let valida = verifica_cpf_cnpj( valor );
@@ -203,8 +232,7 @@ function valida_cpf_cnpj ( valor ) {
     // Garante que o valor é uma string
     valor = valor.toString();
 
-    // Remove caracteres inválidos do valor
-    valor = valor.replace(/[^0-9]/g, '');
+
 
     // Valida CPF
     if ( valida === 'CPF' ) {
