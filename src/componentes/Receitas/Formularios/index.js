@@ -8,6 +8,8 @@ import { trataNumericos } from "../../../utils/ValidacoesAdicionaisFormularios";
 import { ReceitaSchema } from '../Schemas';
 import moment from "moment";
 import {NotificacaoContext} from "../../../context/Notificacao/NotificacaoContext";
+import { ASSOCIACAO_UUID } from '../../../services/auth.service';
+
 
 
 export const ReceitaForm = props => {
@@ -49,7 +51,7 @@ export const ReceitaForm = props => {
             ...values,
             // Modificar quando o login estiver pronto
             // Usando a associacao que está no ambiente de dev
-            associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14"
+            associacao: localStorage.getItem(ASSOCIACAO_UUID)
         }
 
         try {
