@@ -12,7 +12,6 @@ const authHeader = {
 }
 
 const login = async (login, senha) => {
-    console.log("AQUI");
     let payload = {
         login: login,
         senha: senha
