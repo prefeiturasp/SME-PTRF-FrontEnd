@@ -1,4 +1,5 @@
-import React, {useEffect, useState, useContext} from "react";
+import React, {useEffect, useState, useContext, Component, Fragment} from "react";
+import { Button, Modal } from 'react-bootstrap';
 import HTTP_STATUS from "http-status-codes";
 import { Formik } from 'formik';
 import { DatePickerField } from '../../DatePickerField'
@@ -9,7 +10,35 @@ import { ReceitaSchema } from '../Schemas';
 import moment from "moment";
 import {NotificacaoContext} from "../../../context/Notificacao/NotificacaoContext";
 import { ASSOCIACAO_UUID } from '../../../services/auth.service';
+import { set } from "date-fns";
 
+
+
+class CancelarModal extends Component {
+
+    render () {
+        return (
+            <Fragment>
+                <Modal centered show={this.props.show} onHide={this.handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Deseja cancelar a inclusão de Receita?</Modal.Title>
+                    </Modal.Header>
+                    {/* <Modal.Body>
+                        <div > </div>
+                    </Modal.Body> */}
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={this.props.onCancelarTrue}>
+                            OK
+                        </Button>
+                        <Button variant="primary" onClick={this.props.handleClose}>
+                            fechar
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </Fragment>
+        )
+    }
+}
 
 
 export const ReceitaForm = props => {
@@ -22,6 +51,7 @@ export const ReceitaForm = props => {
     };
 
     const [tabelas, setTabelas] = useState(tabelaInicial);
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
         const carregaTabelas = async () => {
@@ -49,8 +79,6 @@ export const ReceitaForm = props => {
         values.data = moment(values.data).format("YYYY-MM-DD");
         const payload = {
             ...values,
-            // Modificar quando o login estiver pronto
-            // Usando a associacao que está no ambiente de dev
             associacao: localStorage.getItem(ASSOCIACAO_UUID)
         }
 
@@ -68,10 +96,18 @@ export const ReceitaForm = props => {
         props.history.push(path)
     }
 
-    const onClickTeste = () => {
-        mensagem.setAbrirModal(true)
-        mensagem.setTituloModal("Erro ao solicitar uniforme")
-        mensagem.setMsg("Essa solicitação já foi finalizada pela escola. Caso necessite realizar alguma alteração, dirija-se a escola do aluno.")
+    const onCancelarTrue = () => {
+        setShow(false);
+        let path = `/lista-de-receitas`;
+        props.history.push(path);
+    }
+
+    const onHandleClose = () => {
+        setShow(false);
+    }
+
+    const onShowModal = () => {
+        setShow(true);
     }
 
     return (
@@ -198,14 +234,16 @@ export const ReceitaForm = props => {
                                 </div>
                             </div>
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
-                                <button type="reset" onClick={props.handleReset} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                                <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                                 <button type="submit" className="btn btn-success mt-2">Salvar</button>
-                                <button onClick={onClickTeste} type="button" className="btn btn-success mt-2">Teste</button>
                             </div>
                         </form>
                     );
                 }}
             </Formik>
+            <section>
+                <CancelarModal show={show} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+            </section>
         </>
         );
 }
