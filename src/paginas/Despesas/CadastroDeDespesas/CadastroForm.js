@@ -115,8 +115,13 @@ export const CadastroForm = () => {
         values.tipo_transacao = convertToNumber(values.tipo_transacao);
         values.valor_total = trataNumericos(values.valor_total);
         values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
-        values.data_documento = moment(values.data_documento).format("YYYY-MM-DD");
-        values.data_transacao = moment(values.data_transacao).format("YYYY-MM-DD");
+        if (values.data_documento !== ""){
+            values.data_documento = moment(values.data_documento).format("YYYY-MM-DD");
+        }
+
+        if (values.data_transacao !== ""){
+            values.data_transacao = moment(values.data_transacao).format("YYYY-MM-DD");
+        }
 
         values.rateios.map((rateio) => {
             rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
@@ -357,13 +362,20 @@ export const CadastroForm = () => {
                                         {values.rateios.length > 0 && values.rateios.map((rateio, index) => {
                                             return (
 
-                                                <Fragment key={index}>
+                                                <div key={index}>
 
                                                     <div className="form-row">
 
+                                                        {props.values.mais_de_um_tipo_despesa === "sim" && index >=1 &&(
+                                                            <div className="col-12 mt-4 ml-0">
+                                                                <p className='mb-0'><strong>Despesa {index}</strong></p>
+                                                                <hr className='mt-0 mb-1'/>
+                                                            </div>
+                                                        )}
+
                                                         <div className="col-12 col-md-6 mt-4">
-                                                            <label htmlFor="aplicacao_recurso">Tipo de aplicação do
-                                                                recurso</label>
+
+                                                            <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
                                                             <select
                                                                 value={rateio.aplicacao_recurso}
                                                                 onChange={props.handleChange}
@@ -457,7 +469,7 @@ export const CadastroForm = () => {
                                                                 <div className="col-12 col-md-6 mt-4">
                                                                     <label htmlFor="valor_rateio">Valor do custeio</label>
                                                                     <NumberFormat
-                                                                        defaultValue={rateio.valor_rateio}
+                                                                        value={rateio.valor_rateio}
                                                                         onChange={props.handleChange}
                                                                         thousandSeparator={'.'}
                                                                         decimalSeparator={','}
@@ -468,22 +480,56 @@ export const CadastroForm = () => {
                                                                         className="form-control"
                                                                     />
                                                                 </div>
-
-
-
                                                             </div>
-
                                                         </div>
                                                     </div>
 
+                                                    {index >= 1 && props.values.mais_de_um_tipo_despesa === "sim" && (
 
+                                                        
 
+                                                            <div className="d-flex  justify-content-start mt-3 mb-3">
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn btn-outline-success mt-2 mr-2"
+                                                                    onClick={() => remove(index )}
+                                                                >
+                                                                    - Remover Despesa
+                                                                </button>
+                                                            </div>
 
-                                                </Fragment>
+                                                    )}
+                                                </div> /*div key*/
                                             )
                                         })}
-                                    </>
 
+                                        {props.values.mais_de_um_tipo_despesa === "sim" &&
+                                        <div className="d-flex  justify-content-start mt-3 mb-3">
+
+                                            <button
+                                                type="button"
+                                                className="btn btn btn-outline-success mt-2 mr-2"
+                                                onClick={() => push(
+                                                    {
+                                                        associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14",
+                                                        conta_associacao: "",
+                                                        acao_associacao: "",
+                                                        aplicacao_recurso: "",
+                                                        tipo_custeio: "",
+                                                        especificacao_material_servico: "",
+                                                        valor_rateio: "",
+                                                        quantidade_itens_capital: "",
+                                                        valor_item_capital: "",
+                                                        numero_processo_incorporacao_capital: ""
+                                                    }
+                                                )
+                                                }
+                                            >
+                                                + Adicionar despesa parcial
+                                            </button>
+                                        </div>
+                                        }
+                                    </>
 
                                 )}
                             />
@@ -496,8 +542,8 @@ export const CadastroForm = () => {
                                 <button type="submit" className="btn btn-success mt-2">Acessar</button>
                             </div>
                         </Form>
-                    )
-                        ; /*Return metodo principal*/
+
+                    ); /*Return metodo principal*/
 
                 }}
             </Formik>
