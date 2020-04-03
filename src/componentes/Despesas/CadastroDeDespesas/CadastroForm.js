@@ -15,6 +15,7 @@ import moment from "moment";
 import {Button, Modal} from "react-bootstrap";
 import {useHistory} from 'react-router-dom'
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
+import {CadastroFormCapital} from "./CadastroFormCapital";
 
 class CancelarModal extends Component {
 
@@ -63,7 +64,7 @@ export const CadastroForm = () => {
     }, [])
 
     useEffect(()=> {
-        if (tipo_custeio !== undefined && aplicacao_recurso !== undefined) {
+        if (aplicacao_recurso !== undefined) {
             const carregaEspecificacoes = async () => {
                 const resp = await getEspecificacaoMaterialServico(aplicacao_recurso, tipo_custeio)
                 set_especificaoes_disable(false)
@@ -131,8 +132,10 @@ export const CadastroForm = () => {
             rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
             rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico)
             rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
+            rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital)
+            rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)
 
-            values.valor_total_dos_rateios = values.valor_total_dos_rateios + rateio.valor_rateio
+            //values.valor_total_dos_rateios = values.valor_total_dos_rateios + rateio.valor_rateio
         })
 
         if (values.valor_total_dos_rateios !== values.valor_recusos_acoes ) {
@@ -176,6 +179,17 @@ export const CadastroForm = () => {
         setShow(true);
     }
 
+    const calculaValorTodosRateios = (array) => {
+        console.log("calculaValorTodosRateios ", array)
+
+        let valor_total=0
+        array.map((item)=> {
+            valor_total = valor_total + trataNumericos(item.valor_rateio)
+        })
+
+        return valor_total
+    }
+
     return (
         <>
             <Formik
@@ -183,7 +197,7 @@ export const CadastroForm = () => {
                 validationSchema={YupSignupSchemaCadastroDespesa}
                 validateOnBlur={true}
                 onSubmit={onSubmit}
-                enableReinitialize={true}
+                //enableReinitialize={true}
                 onReset={(props) => handleReset(props)}
             >
                 {props => {
@@ -409,7 +423,7 @@ export const CadastroForm = () => {
                                                         </div>
                                                     </div>
 
-                                                    {rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CUSTEIO' ? (
+                                                    { rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CUSTEIO' ? (
                                                         <CadastroFormCusteio
                                                             formikProps={props}
                                                             rateio={rateio}
@@ -419,7 +433,20 @@ export const CadastroForm = () => {
                                                             especificaoes_disable={especificaoes_disable}
                                                             especificaoes={especificaoes}
                                                         />
-                                                    ):null}
+                                                    ):
+                                                        rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
+                                                            <CadastroFormCapital
+                                                                formikProps={props}
+                                                                rateio={rateio}
+                                                                index={index}
+                                                                handleOnBlur={handleOnBlur}
+                                                                despesasTabelas={despesasTabelas}
+                                                                especificaoes_disable={especificaoes_disable}
+                                                                especificaoes={especificaoes}
+                                                            />
+
+                                                            ): null}
+
 
 
                                                     {index >= 1 && props.values.mais_de_um_tipo_despesa === "sim" && (
@@ -473,7 +500,22 @@ export const CadastroForm = () => {
 
                             <div className="d-flex  justify-content-end pb-3">
                                 <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
-                                <button onClick={() => {setFieldValue("valor_recusos_acoes", trataNumericos(props.values.valor_total) - trataNumericos(props.values.valor_recursos_proprios)) }} type="submit" className="btn btn-success mt-2">Acessar</button>
+                                <button onClick={() => {
+                                    setFieldValue("valor_recusos_acoes", trataNumericos(props.values.valor_total) - trataNumericos(props.values.valor_recursos_proprios))
+
+                                    setFieldValue("valor_total_dos_rateios", calculaValorTodosRateios(props.values.rateios) )
+
+                                    /*setFieldValue("valor_total_dos_rateios", props.values.rateios.map((rateio)=>(
+                                        rateio.valor_total_dos_rateios =  (trataNumericos(rateio.valor_rateio) + trataNumericos(rateio.valor_rateio)) / props.values.rateios.length
+                                    )))*/
+
+                                }} type="submit" className="btn btn-success mt-2">Acessar</button>
+
+
+                                {/*<button onClick={() => {setFieldValue("valor_recusos_acoes", trataNumericos(props.values.valor_total) - trataNumericos(props.values.valor_recursos_proprios),
+                                    "valor_total_dos_rateios", props.values.rateios.map((rateio)=>{
+                                        trataNumericos(++rateio.valor_rateio)
+                                })) }} type="submit" className="btn btn-success mt-2">Acessar</button>*/}
 
                             </div>
                         </Form>

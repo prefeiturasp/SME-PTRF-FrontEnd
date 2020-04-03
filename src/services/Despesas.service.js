@@ -13,5 +13,10 @@ export const getDespesasTabelas = async () => {
 }
 
 export const getEspecificacaoMaterialServico = async (aplicacao_recurso, tipo_custeio) => {
-  return (await api.get(`api/especificacoes/?aplicacao_recurso=${aplicacao_recurso}&tipo_custeio=${tipo_custeio}`, authHeader)).data
+  console.log("getEspecificacaoMaterialServico", aplicacao_recurso)
+  if (aplicacao_recurso === "CUSTEIO"){
+    return (await api.get(`api/especificacoes/?aplicacao_recurso=${aplicacao_recurso}&tipo_custeio=${tipo_custeio}`, authHeader)).data
+    }else if(aplicacao_recurso === "CAPITAL") {
+    return (await api.get(`api/especificacoes/?aplicacao_recurso=${aplicacao_recurso}`, authHeader)).data
+  }
 }
