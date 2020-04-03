@@ -2,8 +2,8 @@ import React, {useContext, useEffect, useState} from "react";
 import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 import {DataTable} from 'primereact/datatable';
 import { Column } from 'primereact/column'
-import {Row} from 'primereact/row';
 import { useHistory, Link } from 'react-router-dom'
+import moment from 'moment';
 
 
 export const ListaDeReceitas = () =>{
@@ -19,17 +19,29 @@ export const ListaDeReceitas = () =>{
         })
     }, [])
 
-    const rowsPerPage = 4
-    let cols = [
-        {field: 'tipo_receita.nome', header: 'Tipo'},
-        {field: 'conta_associacao.nome', header: 'Conta'},
-        {field: 'acao_associacao.nome', header: 'Ação'},
-        {field: 'data', header: 'Data'},
-        {field: 'valor', header: 'Valor'},
-    ];
-    let dynamicColumns = cols.map((col,i) => {
-        return  <Column key={col.field} field={col.field} header={col.header} />;
-    });
+    const rowsPerPage = 10;
+
+    const dataTemplate = (rowData, column) => {
+        return (
+            <div>
+            
+                {rowData['data']
+                ? moment(rowData['data']).format('DD/MM/YYYY')
+                : ''}
+            </div>
+        )
+    }
+
+    const valorTemplate = (rowData, column) => {
+        console.log(typeof(rowData['valor']));
+        const valorFormatado = rowData['valor']
+          ? new Number(rowData['valor']).toLocaleString('pt-BR', {
+              style: 'currency',
+              currency: 'BRL'
+            })
+          : ''
+        return (<span>{valorFormatado}</span>)
+    }
 
     return(
         <>
@@ -46,9 +58,17 @@ export const ListaDeReceitas = () =>{
                 autoLayout={true}
                 selectionMode="single"
                 >
-
-                {dynamicColumns}
-
+                <Column field='tipo_receita.nome' header='Tipo' />
+                <Column field='conta_associacao.nome' header='Conta' />
+                <Column field='acao_associacao.nome' header='Ação' />
+                <Column 
+                    field='data'
+                    header='Data'
+                    body={dataTemplate}/>
+                <Column 
+                    field='valor'
+                    header='Valor'
+                    body={valorTemplate}/>
             </DataTable>
         </>
     )
