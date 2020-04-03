@@ -1,13 +1,14 @@
-import React, {useEffect, useState, useContext, Component, Fragment} from "react";
+import React, {useEffect, useState, Component, Fragment} from "react";
 import { Button, Modal } from 'react-bootstrap';
 import HTTP_STATUS from "http-status-codes";
 import { Formik } from 'formik';
 import { DatePickerField } from '../../DatePickerField'
 import CurrencyInput from 'react-currency-input';
-import { getTabelasReceita, criarReceita } from '../../../services/Receitas.service';
+import { criarReceita, atualizaReceita, getReceita, getTabelasReceita } from '../../../services/Receitas.service';
 import { trataNumericos } from "../../../utils/ValidacoesAdicionaisFormularios";
 import { ReceitaSchema } from '../Schemas';
 import moment from "moment";
+import { useParams } from 'react-router-dom';
 import { ASSOCIACAO_UUID } from '../../../services/auth.service';
 
 
@@ -37,34 +38,57 @@ class CancelarModal extends Component {
 
 export const ReceitaForm = props => {
 
+    let {uuid} = useParams();
+
     const tabelaInicial = {
         tipos_receita: [],
         acoes_associacao: [],
         contas_associacao: []
     };
 
+    const initial = {
+        tipo_receita: "",
+        acao_associacao: "",
+        conta_associacao: "",
+        data: "",
+        valor: "",
+        descricao: "",
+    };
+
     const [tabelas, setTabelas] = useState(tabelaInicial);
     const [show, setShow] = useState(false);
+    const [initialValue, setInitialValue] = useState(initial);
+    const [receita, setReceita] = useState({});
 
     useEffect(() => {
         const carregaTabelas = async () => {
             const resp = await getTabelasReceita();
             setTabelas(resp);
         };
+
+        const buscaReceita = async () => {
+            if (uuid) {
+                const resp = await getReceita(uuid);
+                const init = {
+                    tipo_receita: resp.tipo_receita.id,
+                    acao_associacao: resp.acao_associacao.uuid,
+                    conta_associacao: resp.conta_associacao.uuid,
+                    data: resp.data,
+                    valor: new Number(resp.valor).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                      }),
+                    descricao: resp.descricao,
+                }
+                setInitialValue(init);
+                setReceita(resp);
+            }
+    
+        };
         carregaTabelas();
+        buscaReceita();
     }, [])
 
-    const getInitialValues = () => {
-        const initial = {
-            tipo_receita: "",
-            acao_associacao: "",
-            conta_associacao: "",
-            data: "",
-            valor: "",
-            descricao: "",
-        }
-        return initial
-    }
 
     const onSubmit = async (values) => {
         values.valor = trataNumericos(values.valor);
@@ -74,6 +98,17 @@ export const ReceitaForm = props => {
             associacao: localStorage.getItem(ASSOCIACAO_UUID)
         }
 
+        if(uuid){
+            await atualizar(uuid, payload);
+        } else {
+            await cadastrar(payload);
+        }
+
+        let path = `/lista-de-receitas`
+        props.history.push(path)
+    }
+
+    const cadastrar = async (payload) => {
         try {
             const response = await criarReceita(payload)
             if (response.status === HTTP_STATUS.CREATED) {
@@ -84,8 +119,19 @@ export const ReceitaForm = props => {
         } catch (error) {
             console.log(error)
         }
-        let path = `/lista-de-receitas`
-        props.history.push(path)
+    }
+
+    const atualizar = async (uid, payload) => {
+        try {
+            const response = await atualizaReceita(uuid, payload)
+            if (response.status === HTTP_STATUS.CREATED) {
+                console.log("Operação realizada com sucesso!");
+            } else {
+                console.log(response)
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const onCancelarTrue = () => {
@@ -105,8 +151,9 @@ export const ReceitaForm = props => {
     return (
         <>  
             <Formik
-                initialValues={getInitialValues()}
+                initialValues={initialValue}
                 validationSchema={ReceitaSchema}
+                enableReinitialize={true}
                 onSubmit={onSubmit}
             >
                 {props => {
@@ -127,7 +174,9 @@ export const ReceitaForm = props => {
                                         onBlur={props.handleBlur}
                                         className="form-control"
                                     >
-                                        <option>Selecione o tipo</option>
+                                        {receita.tipo_receita
+                                            ? null
+                                            : <option>Selecione o tipo</option>}
                                         {tabelas.tipos_receita.length > 0 ? (tabelas.tipos_receita.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         ))): null}
@@ -170,7 +219,7 @@ export const ReceitaForm = props => {
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="descricao_receita">Descrição da receita</label>
                                     <textarea
-                                        value={props.values.descricao_receita}
+                                        value={props.values.descricao}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name="descricao" 
@@ -194,7 +243,9 @@ export const ReceitaForm = props => {
                                                 onBlur={props.handleBlur}
                                                 className="form-control"
                                             >
-                                                <option>Escolha uma ação</option>
+                                                {receita.acao_associacao
+                                                ? null
+                                                : <option>Escolha uma ação</option>}
                                                 {tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
                                                     <option key={key} value={item.uuid}>{item.nome}</option>
                                                 ))): null}
@@ -212,7 +263,9 @@ export const ReceitaForm = props => {
                                                 onBlur={props.handleBlur}
                                                 className="form-control"
                                             >
-                                                <option>Escolha uma conta</option>
+                                                {receita.conta_associacao
+                                                ? null
+                                                : <option>Escolha uma conta</option>}
                                                 {tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
                                                     <option key={key} value={item.uuid}>{item.nome}</option>
                                                 ))): null}

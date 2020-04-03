@@ -7,7 +7,8 @@ import {CadastroDeDespesa} from "../paginas/Despesas/CadastroDeDespesa";
 import {EdicaoDeDespesa} from "../paginas/Despesas/EdicaoDeDespesa";
 import { ListaDeDespesasPage } from '../paginas/Despesas/ListaDeDespesas'
 import { CadastroDeReceita } from '../paginas/Receitas/CadastroReceita';
-import {ListaDeReceitasPage} from "../paginas/Receitas/ListaDeReceitas";
+import { EdicaoDeReceita } from '../paginas/Receitas/EdicaoReceita';
+import { ListaDeReceitasPage } from "../paginas/Receitas/ListaDeReceitas";
 
 import { authService } from '../services/auth.service';
 
@@ -31,6 +32,10 @@ const routesConfig = [
     {
         path: "/cadastro-de-credito",
         component: CadastroDeReceita
+    },
+    {
+      path: "/edicao-de-receita/:uuid?",
+      component: EdicaoDeReceita
     },
     {
       path: "/lista-de-receitas",
