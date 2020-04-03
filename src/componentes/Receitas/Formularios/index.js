@@ -3,15 +3,12 @@ import { Button, Modal } from 'react-bootstrap';
 import HTTP_STATUS from "http-status-codes";
 import { Formik } from 'formik';
 import { DatePickerField } from '../../DatePickerField'
-import NumberFormat from 'react-number-format';
+import CurrencyInput from 'react-currency-input';
 import { getTabelasReceita, criarReceita } from '../../../services/Receitas.service';
 import { trataNumericos } from "../../../utils/ValidacoesAdicionaisFormularios";
 import { ReceitaSchema } from '../Schemas';
 import moment from "moment";
-import {NotificacaoContext} from "../../../context/Notificacao/NotificacaoContext";
 import { ASSOCIACAO_UUID } from '../../../services/auth.service';
-import { set } from "date-fns";
-
 
 
 class CancelarModal extends Component {
@@ -23,9 +20,6 @@ class CancelarModal extends Component {
                     <Modal.Header closeButton>
                         <Modal.Title>Deseja cancelar a inclusão de Receita?</Modal.Title>
                     </Modal.Header>
-                    {/* <Modal.Body>
-                        <div > </div>
-                    </Modal.Body> */}
                     <Modal.Footer>
                         <Button variant="primary" onClick={this.props.onCancelarTrue}>
                             OK
@@ -42,7 +36,6 @@ class CancelarModal extends Component {
 
 
 export const ReceitaForm = props => {
-    const mensagem = useContext(NotificacaoContext);
 
     const tabelaInicial = {
         tipos_receita: [],
@@ -56,7 +49,6 @@ export const ReceitaForm = props => {
     useEffect(() => {
         const carregaTabelas = async () => {
             const resp = await getTabelasReceita();
-            console.log(resp)
             setTabelas(resp);
         };
         carregaTabelas();
@@ -159,19 +151,16 @@ export const ReceitaForm = props => {
                                 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor">Valor da receita</label>
-                                    <NumberFormat
-                                        value={props.values.valor}
-                                        thousandSeparator={'.'}
-                                        decimalSeparator={','}
-                                        decimalScale={2}
-                                        prefix={'R$'}
+                                    <CurrencyInput
                                         allowNegative={false}
+                                        prefix='R$'
+                                        decimalSeparator=","
+                                        thousandSeparator="."
+                                        value={props.values.valor}
                                         name="valor"
                                         id="valor"
                                         className="form-control"
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                    />
+                                        onChangeEvent={props.handleChange}/>
                                     {props.touched.valor && props.errors.valor &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.valor}</span>}
                                 </div>
