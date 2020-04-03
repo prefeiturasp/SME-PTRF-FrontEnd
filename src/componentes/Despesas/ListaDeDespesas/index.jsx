@@ -8,6 +8,7 @@ import { redirect } from '../../../utils/redirect.js'
 import '../../../paginas/404/pagina-404.scss'
 import Img404 from '../../../assets/img/img-404.svg'
 import { Route } from 'react-router-dom'
+import moment from 'moment'
 
 export class ListaDeDespesas extends Component {
   constructor(props) {
@@ -54,7 +55,10 @@ export class ListaDeDespesas extends Component {
         </span>
         <br></br>
         <span>
-          Data: {rowData['data_documento'] ? rowData['data_documento'] : ''}
+          Data:{' '}
+          {rowData['data_documento']
+            ? moment(rowData['data_documento']).format('DD/MM/YYYY')
+            : ''}
         </span>
       </div>
     )
