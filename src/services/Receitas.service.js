@@ -18,3 +18,18 @@ export const criarReceita = async payload => {
             return error.response;
         });
 }
+
+export const getReceita = async (uuid) => {
+    return (await api.get(`api/receitas/${uuid}/`, authHeader)).data
+}
+
+export const atualizaReceita = async (uuid, payload) => {
+    return api
+        .put(`api/receitas/${uuid}/`, payload, authHeader)
+        .then(response => {
+            return response;
+        })
+        .catch(error => {
+            return error.response;
+        });
+}
