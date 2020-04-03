@@ -9,11 +9,12 @@ import {
 } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import {getDespesasTabelas, getEspecificacaoMaterialServico} from "../../../services/Despesas.service";
-import {DatePickerField} from "../../../componentes/DatePickerField";
+import {DatePickerField} from "../../DatePickerField";
 import NumberFormat from "react-number-format";
 import moment from "moment";
 import {Button, Modal} from "react-bootstrap";
 import {useHistory} from 'react-router-dom'
+import {CadastroFormCusteio} from "./CadastroFormCusteio";
 
 class CancelarModal extends Component {
 
@@ -46,7 +47,7 @@ export const CadastroForm = () => {
     let history = useHistory();
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [show, setShow] = useState(false);
-    const [aplicacao_recurso, set_aplicacao_recurso] = useState("");
+    const [aplicacao_recurso, set_aplicacao_recurso] = useState(undefined);
     const [tipo_custeio, set_tipo_custeio] = useState(undefined);
     const [especificaoes, set_especificaoes] = useState(undefined);
     const [especificaoes_disable, set_especificaoes_disable] = useState(true);
@@ -143,6 +144,9 @@ export const CadastroForm = () => {
         console.log("onSubmit", values)
 
         resetForm({values: ""})
+
+
+
     }
 
     const handleReset = (props) => {
@@ -151,6 +155,7 @@ export const CadastroForm = () => {
 
     const handleOnBlur = (nome, valor) =>{
         if (nome === 'aplicacao_recurso'){
+            console.log("Aplicacao Recurso ", aplicacao_recurso)
             set_aplicacao_recurso(valor)
         }else if(nome === 'tipo_custeio'){
             set_tipo_custeio(valor)
@@ -404,101 +409,20 @@ export const CadastroForm = () => {
                                                         </div>
                                                     </div>
 
-                                                    <div className="form-row">
-                                                        <div className="col-12 col-md-6 mt-4">
+                                                    {rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CUSTEIO' ? (
+                                                        <CadastroFormCusteio
+                                                            formikProps={props}
+                                                            rateio={rateio}
+                                                            index={index}
+                                                            handleOnBlur={handleOnBlur}
+                                                            despesasTabelas={despesasTabelas}
+                                                            especificaoes_disable={especificaoes_disable}
+                                                            especificaoes={especificaoes}
+                                                        />
+                                                    ):null}
 
-                                                            <label htmlFor="tipo_custeio">Tipo de custeio</label>
-                                                            <select
-                                                                defaultValue={rateio.tipo_custeio.id}
-                                                                onChange={props.handleChange}
-                                                                onBlur={(e)=>handleOnBlur("tipo_custeio", e.target.value)}
-                                                                name={`rateios[${index}].tipo_custeio`}
-                                                                id='tipo_custeio'
-                                                                className="form-control"
-                                                            >
-                                                                <option value="0">Selecione um tipo</option>
-                                                                {despesasTabelas.tipos_custeio && despesasTabelas.tipos_custeio.map(item => (
-                                                                    <option key={item.id} value={item.id}>{item.nome}</option>
-                                                                ))}
-                                                            </select>
-                                                        </div>
-
-                                                    </div>
-
-                                                    <div className="form-row">
-                                                        <div className="col-12 mt-4">
-                                                            <label htmlFor="especificacao_material_servico">Especificação do material ou serviço</label>
-                                                            <select
-                                                                defaultValue={rateio.especificacao_material_servico.id}
-                                                                onChange={props.handleChange}
-                                                                name={`rateios[${index}].especificacao_material_servico`}
-                                                                id='especificacao_material_servico'
-                                                                className="form-control"
-                                                                disabled={especificaoes_disable}
-                                                            >
-                                                                <option value="0">Selecione uma ação</option>
-                                                                {especificaoes && especificaoes.map((item)=> (
-                                                                    <option key={item.id} value={item.id}>{item.descricao}</option>
-                                                                ) )}
-                                                            </select>
-                                                        </div>
-                                                        <div className="col-12 col-md-6 mt-4">
-                                                            <label htmlFor="acao_associacao">Ação</label>
-                                                            <select
-                                                                value={rateio.acao_associacao.uuid}
-                                                                onChange={props.handleChange}
-                                                                name={`rateios[${index}].acao_associacao`}
-                                                                //name='acao_associacao'
-                                                                id='acao_associacao'
-                                                                className="form-control"
-                                                            >
-                                                                <option value="0">Selecione uma ação</option>
-                                                                {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
-                                                                    <option key={item.uuid} value={item.uuid}>{item.nome}</option>
-                                                                ))}
-                                                            </select>
-                                                        </div>
-                                                        <div className="col-12 col-md-6">
-                                                            <div className='row'>
-
-                                                                <div className="col-12 col-md-6 mt-4">
-                                                                    <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
-                                                                    <select
-                                                                        value={rateio.conta_associacao.uuid}
-                                                                        onChange={props.handleChange}
-                                                                        //name='conta_associacao'
-                                                                        name={`rateios[${index}].conta_associacao`}
-                                                                        id='conta_associacao'
-                                                                        className="form-control"
-                                                                    >
-                                                                        <option value="0">Selecione uma conta</option>
-                                                                        {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
-                                                                            <option key={item.uuid} value={item.uuid}>{item.nome}</option>
-                                                                        ))}
-                                                                    </select>
-                                                                </div>
-
-                                                                <div className="col-12 col-md-6 mt-4">
-                                                                    <label htmlFor="valor_rateio">Valor do custeio</label>
-                                                                    <NumberFormat
-                                                                        value={rateio.valor_rateio}
-                                                                        onChange={props.handleChange}
-                                                                        thousandSeparator={'.'}
-                                                                        decimalSeparator={','}
-                                                                        decimalScale={2}
-                                                                        prefix={'R$ '}
-                                                                        name={`rateios[${index}].valor_rateio`}
-                                                                        id="valor_rateio"
-                                                                        className="form-control"
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
 
                                                     {index >= 1 && props.values.mais_de_um_tipo_despesa === "sim" && (
-
-                                                        
 
                                                             <div className="d-flex  justify-content-start mt-3 mb-3">
                                                                 <button
@@ -515,7 +439,7 @@ export const CadastroForm = () => {
                                             )
                                         })}
 
-                                        {props.values.mais_de_um_tipo_despesa === "sim" &&
+                                        {props.values.mais_de_um_tipo_despesa === "sim" && aplicacao_recurso !== undefined && aplicacao_recurso!=="0" && aplicacao_recurso !== "" &&
                                         <div className="d-flex  justify-content-start mt-3 mb-3">
 
                                             <button
@@ -549,7 +473,7 @@ export const CadastroForm = () => {
 
                             <div className="d-flex  justify-content-end pb-3">
                                 <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
-                                <button onClick={() => {setFieldValue("valor_recusos_acoes", trataNumericos(props.values.valor_total)- trataNumericos(props.values.valor_recursos_proprios)) }} type="submit" className="btn btn-success mt-2">Acessar</button>
+                                <button onClick={() => {setFieldValue("valor_recusos_acoes", trataNumericos(props.values.valor_total) - trataNumericos(props.values.valor_recursos_proprios)) }} type="submit" className="btn btn-success mt-2">Acessar</button>
 
                             </div>
                         </Form>
