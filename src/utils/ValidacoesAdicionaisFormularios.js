@@ -23,7 +23,19 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     data_transacao: yup.string(),
     valor_total: yup.string(),
     valor_recursos_proprios: yup.string(),
-    valor_recusos_acoes:yup.string(),
+    valor_total_dos_rateios:yup.string(),
+    valor_recusos_acoes:yup.string()
+    .test('test-name', 'O total das classificações deve corresponder ao valor total da nota',
+        function (value) {
+            const { valor_total_dos_rateios } = this.parent;
+            if(value !== valor_total_dos_rateios){
+                return true
+            }else {
+                return false
+            }
+        }),
+
+
 });
 
 export const payloadFormDespesaContext = (data)=>{

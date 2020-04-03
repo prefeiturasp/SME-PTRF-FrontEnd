@@ -5,7 +5,7 @@ import {
     cpfMaskContitional,
     calculaValorRecursoAcoes,
     trataNumericos,
-    convertToNumber,
+    convertToNumber, round,
 } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import {getDespesasTabelas, getEspecificacaoMaterialServico} from "../../../services/Despesas.service";
@@ -90,6 +90,8 @@ export const CadastroForm = () => {
             valor_recursos_proprios: "",
             // Auxiliares
             mais_de_um_tipo_despesa: "",
+            valor_recusos_acoes:0,
+            valor_total_dos_rateios:0,
             // Fim Auxiliares
             rateios: [
                 {
@@ -102,7 +104,7 @@ export const CadastroForm = () => {
                     valor_rateio: "",
                     quantidade_itens_capital: "",
                     valor_item_capital: "",
-                    numero_processo_incorporacao_capital: ""
+                    numero_processo_incorporacao_capital: "",
                 }
             ],
         }
@@ -115,6 +117,7 @@ export const CadastroForm = () => {
         values.tipo_transacao = convertToNumber(values.tipo_transacao);
         values.valor_total = trataNumericos(values.valor_total);
         values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
+        values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)
         if (values.data_documento !== ""){
             values.data_documento = moment(values.data_documento).format("YYYY-MM-DD");
         }
@@ -127,9 +130,19 @@ export const CadastroForm = () => {
             rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
             rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico)
             rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
+
+            values.valor_total_dos_rateios = values.valor_total_dos_rateios + rateio.valor_rateio
         })
 
+        if (values.valor_total_dos_rateios !== values.valor_recusos_acoes ) {
+            console.log("Valores diferentes")
+        }else{
+            console.log("Valores iguais")
+        }
+
         console.log("onSubmit", values)
+
+        resetForm({values: ""})
     }
 
     const handleReset = (props) => {
@@ -310,8 +323,7 @@ export const CadastroForm = () => {
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                     />
-                                    {props.errors.valor_recursos_proprios && <span
-                                        className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
+                                    {props.errors.valor_recursos_proprios && <span className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
@@ -325,12 +337,12 @@ export const CadastroForm = () => {
                                         name="valor_recusos_acoes"
                                         id="valor_recusos_acoes"
                                         className="form-control"
-                                        onChange={props.handleChange}
+                                        onChange={setFieldValue}
+                                        //onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         readOnly={true}
                                     />
-                                    {props.errors.valor_recusos_acoes && <span
-                                        className="span_erro text-danger mt-1"> {props.errors.valor_recusos_acoes}</span>}
+                                    {props.errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> {props.errors.valor_recusos_acoes}</span>}
                                 </div>
                             </div>
 
@@ -536,10 +548,9 @@ export const CadastroForm = () => {
 
 
                             <div className="d-flex  justify-content-end pb-3">
-                                <button type="reset" onClick={onShowModal}
-                                        className="btn btn btn-outline-success mt-2 mr-2">Cancelar
-                                </button>
-                                <button type="submit" className="btn btn-success mt-2">Acessar</button>
+                                <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
+                                <button onClick={() => {setFieldValue("valor_recusos_acoes", trataNumericos(props.values.valor_total)- trataNumericos(props.values.valor_recursos_proprios)) }} type="submit" className="btn btn-success mt-2">Acessar</button>
+
                             </div>
                         </Form>
 
