@@ -62,26 +62,38 @@ export const ReceitaForm = props => {
 
     useEffect(() => {
         const carregaTabelas = async () => {
-            const resp = await getTabelasReceita();
-            setTabelas(resp);
+            getTabelasReceita()
+            .then(response => {
+                setTabelas(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+            
         };
 
         const buscaReceita = async () => {
             if (uuid) {
-                const resp = await getReceita(uuid);
-                const init = {
-                    tipo_receita: resp.tipo_receita !== undefined ? resp.tipo_receita.id : "",
-                    acao_associacao: resp.acao_associacao !== undefined ? resp.acao_associacao.uuid : "",
-                    conta_associacao: resp.conta_associacao !== undefined ? resp.conta_associacao.uuid : "",
-                    data: resp.data !== undefined ? resp.data : "",
-                    valor: resp.valor ? new Number(resp.valor).toLocaleString('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL'
-                      }) : "",
-                    descricao: resp.descricao !== undefined ? resp.descricao : "",
-                }
-                setInitialValue(init);
-                setReceita(resp);
+                getReceita(uuid)
+                .then(response => {
+                    const resp = response.data;
+                    const init = {
+                        tipo_receita: resp.tipo_receita.id,
+                        acao_associacao: resp.acao_associacao.uuid,
+                        conta_associacao: resp.conta_associacao.uuid,
+                        data: resp.data,
+                        valor: resp.valor ? new Number(resp.valor).toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                          }) : "",
+                        descricao: resp.descricao,
+                    }
+                    setInitialValue(init);
+                    setReceita(resp);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
             }
     
         };

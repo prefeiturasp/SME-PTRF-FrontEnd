@@ -5,7 +5,14 @@ const authHeader = {
 }
 
 export const getTabelasReceita = async () => {
-    return (await api.get('api/receitas/tabelas/', authHeader)).data
+    return api
+        .get('api/receitas/tabelas/', authHeader)
+        .then(response => {
+            return response;
+        })
+        .catch(error => {
+            return error.response;
+        });
 }
 
 export const criarReceita = async payload => {
@@ -20,7 +27,15 @@ export const criarReceita = async payload => {
 }
 
 export const getReceita = async (uuid) => {
-    return (await api.get(`api/receitas/${uuid}/`, authHeader)).data
+    return api
+        .get(`api/receitas/${uuid}/`, authHeader)
+        .then(response => {
+            return response;
+        })
+        .catch(error => {
+            return error.response;
+        });
+
 }
 
 export const atualizaReceita = async (uuid, payload) => {
