@@ -18,6 +18,7 @@ import {CadastroFormCusteio} from "./CadastroFormCusteio";
 import {CadastroFormCapital} from "./CadastroFormCapital";
 import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
+import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 
 class CancelarModal extends Component {
     render() {
@@ -84,7 +85,7 @@ export const CadastroForm = () => {
     const initialValues = () => {
         const inital = {
 
-            associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14",
+            associacao: localStorage.getItem(ASSOCIACAO_UUID),
             tipo_documento: "",
             tipo_transacao: "",
             numero_documento: "",
@@ -101,11 +102,11 @@ export const CadastroForm = () => {
             // Fim Auxiliares
             rateios: [
                 {
-                    associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14",
+                    associacao: localStorage.getItem(ASSOCIACAO_UUID),
                     conta_associacao: "",
                     acao_associacao: "",
-                    aplicacao_recurso: "",
-                    tipo_custeio: "",
+                    aplicacao_recurso: "CUSTEIO",
+                    tipo_custeio: "1",
                     especificacao_material_servico: "",
                     valor_rateio: "",
                     quantidade_itens_capital: "",
@@ -119,36 +120,67 @@ export const CadastroForm = () => {
     }
 
     const onSubmit = async (values, {resetForm}) => {
-        values.tipo_documento = convertToNumber(values.tipo_documento);
+        //debugger;
+
+        //if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0 ){
+            values.tipo_documento = convertToNumber(values.tipo_documento);
+        //}else {
+            //values.tipo_documento = null
+        //}
+
         values.tipo_transacao = convertToNumber(values.tipo_transacao);
         values.valor_total = trataNumericos(values.valor_total);
         values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
         values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)
-        if (values.data_documento !== ""){
+
+        if (values.data_documento !== "" && values.data_documento !== null){
             values.data_documento = moment(values.data_documento).format("YYYY-MM-DD");
+        }else {
+            values.data_documento = null
         }
 
-        if (values.data_transacao !== ""){
+        if (values.data_transacao !== "" && values.data_transacao !== null){
             values.data_transacao = moment(values.data_transacao).format("YYYY-MM-DD");
+        }else {
+            values.data_transacao = null
         }
 
         values.rateios.map((rateio) => {
+
             rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
             rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico)
             rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital)
             rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)
             rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
+
+            if (rateio.aplicacao_recurso === "0" || rateio.aplicacao_recurso === "" || rateio.aplicacao_recurso === 0){
+                rateio.aplicacao_recurso = null
+            }
+
+            if (rateio.tipo_custeio === "0" || rateio.tipo_custeio === 0 || rateio.tipo_custeio === ""){
+                rateio.tipo_custeio = null
+            }
+
+
+/*            if (rateio.especificacao_material_servico === "0" || rateio.especificacao_material_servico === 0 || rateio.especificacao_material_servico === ""){
+                rateio.especificacao_material_servico = null
+            }*/
+
             if (rateio.aplicacao_recurso === "CAPITAL"){
                 rateio.valor_rateio = rateio.quantidade_itens_capital * rateio.valor_item_capital
             }
 
         })
 
+        const payload = {
+            ...values,
+        }
+
         console.log("onSubmit", values)
 
         if( despesaContext.verboHttp === "POST"){
             try {
-                const response = await criarDespesa(values)
+                const response = await criarDespesa(payload)
                 if (response.status === HTTP_STATUS.CREATED) {
                     console.log("Operação realizada com sucesso!");
                     resetForm({values: ""})
@@ -156,9 +188,11 @@ export const CadastroForm = () => {
                     history.push(path);
                 } else {
                     console.log(response)
+                   return
                 }
             } catch (error) {
                 console.log(error)
+                return
             }
         }
 
@@ -485,7 +519,7 @@ export const CadastroForm = () => {
                                             )
                                         })}
 
-                                        {props.values.mais_de_um_tipo_despesa === "sim" && aplicacao_recurso !== undefined && aplicacao_recurso!=="0" && aplicacao_recurso !== "" &&
+                                        {props.values.mais_de_um_tipo_despesa === "sim" &&
                                         <div className="d-flex  justify-content-start mt-3 mb-3">
 
                                             <button
