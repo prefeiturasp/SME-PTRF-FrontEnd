@@ -180,11 +180,10 @@ export const CadastroForm = () => {
     }
 
     const calculaValorTodosRateios = (array) => {
-        console.log("calculaValorTodosRateios ", array)
 
         let valor_total=0
         array.map((item)=> {
-            valor_total = valor_total + trataNumericos(item.valor_rateio)
+            valor_total = valor_total + (convertToNumber(item.quantidade_itens_capital) * trataNumericos(item.valor_item_capital))
         })
 
         return valor_total
