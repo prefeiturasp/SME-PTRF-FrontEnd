@@ -13,7 +13,14 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     cpf_cnpj_fornecedor: yup.string()
     .test('test-name', 'Digite um CPF ou um CNPJ válido',
         function (value) {
-            return valida_cpf_cnpj(value)
+
+        //debugger
+
+            if(value !== undefined){
+                return valida_cpf_cnpj(value)
+            }else {
+                return true
+            }
         }),
     nome_fornecedor: yup.string(),
     tipo_documento:yup.string(),
