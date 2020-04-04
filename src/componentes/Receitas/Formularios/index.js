@@ -4,7 +4,7 @@ import HTTP_STATUS from "http-status-codes";
 import { Formik } from 'formik';
 import { DatePickerField } from '../../DatePickerField'
 import CurrencyInput from 'react-currency-input';
-import { criarReceita, atualizaReceita, getReceita, getTabelasReceita } from '../../../services/Receitas.service';
+import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita } from '../../../services/Receitas.service';
 import { trataNumericos } from "../../../utils/ValidacoesAdicionaisFormularios";
 import { ReceitaSchema } from '../Schemas';
 import moment from "moment";
@@ -23,6 +23,29 @@ class CancelarModal extends Component {
                     </Modal.Header>
                     <Modal.Footer>
                         <Button variant="primary" onClick={this.props.onCancelarTrue}>
+                            OK
+                        </Button>
+                        <Button variant="primary" onClick={this.props.handleClose}>
+                            fechar
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </Fragment>
+        )
+    }
+}
+
+class DeletarModal extends Component {
+
+    render () {
+        return (
+            <Fragment>
+                <Modal centered show={this.props.show} onHide={this.handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Deseja exluir está Receita?</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={this.props.onDeletarTrue}>
                             OK
                         </Button>
                         <Button variant="primary" onClick={this.props.handleClose}>
@@ -56,6 +79,7 @@ export const ReceitaForm = props => {
 
     const [tabelas, setTabelas] = useState(tabelaInicial);
     const [show, setShow] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [receita, setReceita] = useState({});
 
@@ -152,10 +176,29 @@ export const ReceitaForm = props => {
 
     const onHandleClose = () => {
         setShow(false);
+        setShowDelete(false);
     }
 
     const onShowModal = () => {
         setShow(true);
+    }
+
+    const onShowDeleteModal = () => {
+        setShowDelete(true);
+    }
+
+    const onDeletarTrue = () => {
+        deletarReceita(uuid)
+            .then(response => {
+                console.log("Receita deletada com sucesso.");
+                setShowDelete(false);
+                let path = `/lista-de-receitas`;
+                props.history.push(path);
+            })
+            .catch(error => {
+                console.log(error);
+                alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
+            });
     }
 
     return (
@@ -287,6 +330,8 @@ export const ReceitaForm = props => {
                             </div>
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
                                 <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                                {uuid 
+                                    ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
                                 <button type="submit" className="btn btn-success mt-2">Salvar</button>
                             </div>
                         </form>
@@ -294,8 +339,13 @@ export const ReceitaForm = props => {
                 }}
             </Formik>
             <section>
-                <CancelarModal show={show} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+                <CancelarModal show={show}  handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
             </section>
+            {uuid 
+                ? 
+                <DeletarModal show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
+                : null
+            }
         </>
         );
 }
