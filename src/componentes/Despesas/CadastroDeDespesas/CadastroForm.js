@@ -260,8 +260,8 @@ export const CadastroForm = () => {
                 validationSchema={YupSignupSchemaCadastroDespesa}
                 validateOnBlur={true}
                 onSubmit={onSubmit}
-                //enableReinitialize={true}
-                onReset={(props) => handleReset(props)}
+                enableReinitialize={true}
+                //onReset={(props) => handleReset(props)}
             >
                 {props => {
                     const {
@@ -269,7 +269,7 @@ export const CadastroForm = () => {
                         setFieldValue,
                     } = props;
                     return (
-                        <Form onSubmit={props.handleSubmit}>
+                        <form onSubmit={props.handleSubmit}>
                             <div className="form-row">
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
@@ -581,7 +581,7 @@ export const CadastroForm = () => {
                                 })) }} type="submit" className="btn btn-success mt-2">Acessar</button>*/}
 
                             </div>
-                        </Form>
+                        </form>
 
                     ); /*Return metodo principal*/
 
