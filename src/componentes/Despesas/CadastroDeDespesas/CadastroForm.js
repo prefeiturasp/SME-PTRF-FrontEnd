@@ -61,7 +61,6 @@ export const CadastroForm = () => {
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
             const resp = await getDespesasTabelas();
-            console.log(resp)
             setDespesasTabelas(resp);
         };
         carregaTabelasDespesas();
@@ -122,13 +121,18 @@ export const CadastroForm = () => {
     const onSubmit = async (values, {resetForm}) => {
         //debugger;
 
-        //if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0 ){
+        if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0 ){
             values.tipo_documento = convertToNumber(values.tipo_documento);
-        //}else {
-            //values.tipo_documento = null
-        //}
+        }else {
+            values.tipo_documento = null
+        }
 
-        values.tipo_transacao = convertToNumber(values.tipo_transacao);
+        if (values.tipo_transacao !== "" && values.tipo_transacao !== "0" && values.tipo_transacao !== 0 ){
+            values.tipo_transacao = convertToNumber(values.tipo_documento);
+        }else {
+            values.tipo_transacao = null
+        }
+
         values.valor_total = trataNumericos(values.valor_total);
         values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
         values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)
@@ -153,6 +157,13 @@ export const CadastroForm = () => {
             rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)
             rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
 
+            if (rateio.conta_associacao === "0" || rateio.conta_associacao === "" || rateio.conta_associacao === 0){
+                rateio.conta_associacao = null
+            }
+            if (rateio.acao_associacao === "0" || rateio.acao_associacao === "" || rateio.acao_associacao === 0){
+                rateio.acao_associacao = null
+            }
+
             if (rateio.aplicacao_recurso === "0" || rateio.aplicacao_recurso === "" || rateio.aplicacao_recurso === 0){
                 rateio.aplicacao_recurso = null
             }
@@ -161,10 +172,9 @@ export const CadastroForm = () => {
                 rateio.tipo_custeio = null
             }
 
-
-/*            if (rateio.especificacao_material_servico === "0" || rateio.especificacao_material_servico === 0 || rateio.especificacao_material_servico === ""){
+            if (rateio.especificacao_material_servico === "0" || rateio.especificacao_material_servico === 0 || rateio.especificacao_material_servico === ""){
                 rateio.especificacao_material_servico = null
-            }*/
+            }
 
             if (rateio.aplicacao_recurso === "CAPITAL"){
                 rateio.valor_rateio = rateio.quantidade_itens_capital * rateio.valor_item_capital
@@ -174,13 +184,14 @@ export const CadastroForm = () => {
 
         const payload = {
             ...values,
+            associacao: localStorage.getItem(ASSOCIACAO_UUID)
         }
 
         console.log("onSubmit", values)
 
         if( despesaContext.verboHttp === "POST"){
             try {
-                const response = await criarDespesa(payload)
+                const response = await criarDespesa(values)
                 if (response.status === HTTP_STATUS.CREATED) {
                     console.log("Operação realizada com sucesso!");
                     resetForm({values: ""})
@@ -294,7 +305,7 @@ export const CadastroForm = () => {
                                     <label htmlFor="tipo_documento">Tipo de documento</label>
 
                                     <select
-                                        value={props.values.tipo_documento.id}
+                                        value={props.values.tipo_documento !== null ? props.values.tipo_documento.id : 0 }
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_documento'
@@ -333,7 +344,7 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="tipo_transacao">Tipo de transação</label>
                                     <select
-                                        value={props.values.tipo_transacao.id}
+                                        value={props.values.tipo_transacao !== null ? props.values.tipo_transacao.id : 0}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_transacao'

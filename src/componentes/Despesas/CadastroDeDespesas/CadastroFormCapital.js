@@ -11,14 +11,14 @@ export const CadastroFormCapital = (propriedades) => {
                 <div className="col-12">
                     <label htmlFor="especificacao_material_servico">Especificação do material ou serviço</label>
                     <select
-                        defaultValue={rateio.especificacao_material_servico.id}
+                        defaultValue={rateio.especificacao_material_servico !== null ? rateio.especificacao_material_servico.id : 0}
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].especificacao_material_servico`}
                         id='especificacao_material_servico'
                         className="form-control"
                         disabled={especificaoes_disable}
                     >
-                        <option value="0">Selecione uma ação</option>
+                        <option key={0} value={0}>Selecione uma ação</option>
                         {especificaoes && especificaoes.map((item) => (
                             <option key={item.id} value={item.id}>{item.descricao}</option>
                         ))}
