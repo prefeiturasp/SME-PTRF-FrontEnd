@@ -32,14 +32,14 @@ export const CadastroFormCusteio = (propriedades) => {
                 <div className="col-12 mt-4">
                     <label htmlFor="especificacao_material_servico">Especificação do material ou serviço</label>
                     <select
-                        defaultValue={rateio.especificacao_material_servico.id}
+                        value={  rateio.especificacao_material_servico !== null ? rateio.especificacao_material_servico.id : 0}
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].especificacao_material_servico`}
                         id='especificacao_material_servico'
                         className="form-control"
                         disabled={especificaoes_disable}
                     >
-                        <option value="0">Selecione uma ação</option>
+                        <option key={0} value={0}>Selecione uma ação</option>
                         {especificaoes && especificaoes.map((item)=> (
                             <option key={item.id} value={item.id}>{item.descricao}</option>
                         ) )}
@@ -48,14 +48,13 @@ export const CadastroFormCusteio = (propriedades) => {
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor="acao_associacao">Ação</label>
                     <select
-                        value={rateio.acao_associacao.uuid}
+                        value={rateio.acao_associacao !== null ? rateio.acao_associacao.uuid : 0}
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].acao_associacao`}
-                        //name='acao_associacao'
                         id='acao_associacao'
                         className="form-control"
                     >
-                        <option value="0">Selecione uma ação</option>
+                        <option key={0} value={0}>Selecione uma ação</option>
                         {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
                             <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                         ))}
@@ -67,14 +66,13 @@ export const CadastroFormCusteio = (propriedades) => {
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
                             <select
-                                value={rateio.conta_associacao.uuid}
+                                value={rateio.conta_associacao !== null ? rateio.conta_associacao.uuid : 0}
                                 onChange={formikProps.handleChange}
-                                //name='conta_associacao'
                                 name={`rateios[${index}].conta_associacao`}
                                 id='conta_associacao'
                                 className="form-control"
                             >
-                                <option value="0">Selecione uma conta</option>
+                                <option key={0} value={0}>Selecione uma conta</option>
                                 {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
                                     <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                                 ))}

@@ -1,4 +1,4 @@
-import React, {Component, Fragment, useEffect, useState} from "react";
+import React, {Component, Fragment, useContext, useEffect, useState} from "react";
 import {Form, Formik, FieldArray} from "formik";
 import {
     YupSignupSchemaCadastroDespesa,
@@ -8,7 +8,7 @@ import {
     convertToNumber, round,
 } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import {getDespesasTabelas, getEspecificacaoMaterialServico} from "../../../services/Despesas.service";
+import {getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import NumberFormat from "react-number-format";
 import moment from "moment";
@@ -16,9 +16,11 @@ import {Button, Modal} from "react-bootstrap";
 import {useHistory} from 'react-router-dom'
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
 import {CadastroFormCapital} from "./CadastroFormCapital";
+import {DespesaContext} from "../../../context/Despesa";
+import HTTP_STATUS from "http-status-codes";
+import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 
 class CancelarModal extends Component {
-
     render() {
         return (
             <Fragment>
@@ -46,6 +48,9 @@ class CancelarModal extends Component {
 
 export const CadastroForm = () => {
     let history = useHistory();
+
+    const despesaContext = useContext(DespesaContext)
+
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [show, setShow] = useState(false);
     const [aplicacao_recurso, set_aplicacao_recurso] = useState(undefined);
@@ -56,7 +61,6 @@ export const CadastroForm = () => {
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
             const resp = await getDespesasTabelas();
-            console.log(resp)
             setDespesasTabelas(resp);
         };
         carregaTabelasDespesas();
@@ -68,7 +72,6 @@ export const CadastroForm = () => {
             const carregaEspecificacoes = async () => {
                 const resp = await getEspecificacaoMaterialServico(aplicacao_recurso, tipo_custeio)
                 set_especificaoes_disable(false)
-                console.log(resp)
                 set_especificaoes(resp);
             };
             carregaEspecificacoes();
@@ -80,7 +83,7 @@ export const CadastroForm = () => {
     const initialValues = () => {
         const inital = {
 
-            associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14",
+            associacao: localStorage.getItem(ASSOCIACAO_UUID),
             tipo_documento: "",
             tipo_transacao: "",
             numero_documento: "",
@@ -97,11 +100,11 @@ export const CadastroForm = () => {
             // Fim Auxiliares
             rateios: [
                 {
-                    associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14",
+                    associacao: localStorage.getItem(ASSOCIACAO_UUID),
                     conta_associacao: "",
                     acao_associacao: "",
-                    aplicacao_recurso: "",
-                    tipo_custeio: "",
+                    aplicacao_recurso: "CUSTEIO",
+                    tipo_custeio: "1",
                     especificacao_material_servico: "",
                     valor_rateio: "",
                     quantidade_itens_capital: "",
@@ -114,39 +117,94 @@ export const CadastroForm = () => {
         return inital
     }
 
-    const onSubmit = (values, {resetForm}) => {
-        values.tipo_documento = convertToNumber(values.tipo_documento);
-        values.tipo_transacao = convertToNumber(values.tipo_transacao);
+    const onSubmit = async (values, {resetForm}) => {
+        //debugger;
+
+        if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0 ){
+            values.tipo_documento = convertToNumber(values.tipo_documento);
+        }else {
+            values.tipo_documento = null
+        }
+
+        if (values.tipo_transacao !== "" && values.tipo_transacao !== "0" && values.tipo_transacao !== 0 ){
+            values.tipo_transacao = convertToNumber(values.tipo_documento);
+        }else {
+            values.tipo_transacao = null
+        }
+
         values.valor_total = trataNumericos(values.valor_total);
         values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
         values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)
-        if (values.data_documento !== ""){
+
+        if (values.data_documento !== "" && values.data_documento !== null){
             values.data_documento = moment(values.data_documento).format("YYYY-MM-DD");
+        }else {
+            values.data_documento = null
         }
 
-        if (values.data_transacao !== ""){
+        if (values.data_transacao !== "" && values.data_transacao !== null){
             values.data_transacao = moment(values.data_transacao).format("YYYY-MM-DD");
+        }else {
+            values.data_transacao = null
         }
 
         values.rateios.map((rateio) => {
+
             rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
             rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico)
-            rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
             rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital)
             rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)
+            rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
 
-            //values.valor_total_dos_rateios = values.valor_total_dos_rateios + rateio.valor_rateio
+            if (rateio.conta_associacao === "0" || rateio.conta_associacao === "" || rateio.conta_associacao === 0){
+                rateio.conta_associacao = null
+            }
+            if (rateio.acao_associacao === "0" || rateio.acao_associacao === "" || rateio.acao_associacao === 0){
+                rateio.acao_associacao = null
+            }
+
+            if (rateio.aplicacao_recurso === "0" || rateio.aplicacao_recurso === "" || rateio.aplicacao_recurso === 0){
+                rateio.aplicacao_recurso = null
+            }
+
+            if (rateio.tipo_custeio === "0" || rateio.tipo_custeio === 0 || rateio.tipo_custeio === ""){
+                rateio.tipo_custeio = null
+            }
+
+            if (rateio.especificacao_material_servico === "0" || rateio.especificacao_material_servico === 0 || rateio.especificacao_material_servico === ""){
+                rateio.especificacao_material_servico = null
+            }
+
+            if (rateio.aplicacao_recurso === "CAPITAL"){
+                rateio.valor_rateio = rateio.quantidade_itens_capital * rateio.valor_item_capital
+            }
+
         })
 
-        if (values.valor_total_dos_rateios !== values.valor_recusos_acoes ) {
-            console.log("Valores diferentes")
-        }else{
-            console.log("Valores iguais")
+        const payload = {
+            ...values,
+            associacao: localStorage.getItem(ASSOCIACAO_UUID)
         }
 
         console.log("onSubmit", values)
 
-        resetForm({values: ""})
+        if( despesaContext.verboHttp === "POST"){
+            try {
+                const response = await criarDespesa(values)
+                if (response.status === HTTP_STATUS.CREATED) {
+                    console.log("Operação realizada com sucesso!");
+                    resetForm({values: ""})
+                    let path = `/lista-de-despesas`;
+                    history.push(path);
+                } else {
+                    console.log(response)
+                   return
+                }
+            } catch (error) {
+                console.log(error)
+                return
+            }
+        }
 
 
 
@@ -158,7 +216,6 @@ export const CadastroForm = () => {
 
     const handleOnBlur = (nome, valor) =>{
         if (nome === 'aplicacao_recurso'){
-            console.log("Aplicacao Recurso ", aplicacao_recurso)
             set_aplicacao_recurso(valor)
         }else if(nome === 'tipo_custeio'){
             set_tipo_custeio(valor)
@@ -182,9 +239,16 @@ export const CadastroForm = () => {
     const calculaValorTodosRateios = (array) => {
 
         let valor_total=0
-        array.map((item)=> {
-            valor_total = valor_total + (convertToNumber(item.quantidade_itens_capital) * trataNumericos(item.valor_item_capital))
-        })
+
+            array.map((item, index) => {
+
+                if (array[index].aplicacao_recurso === "CAPITAL"){
+                    valor_total = valor_total + (convertToNumber(item.quantidade_itens_capital) * trataNumericos(item.valor_item_capital))
+                }
+                if(array[index].aplicacao_recurso === "CUSTEIO") {
+                    valor_total = valor_total + trataNumericos(item.valor_rateio)
+                }
+            })
 
         return valor_total
     }
@@ -240,7 +304,7 @@ export const CadastroForm = () => {
                                     <label htmlFor="tipo_documento">Tipo de documento</label>
 
                                     <select
-                                        value={props.values.tipo_documento.id}
+                                        value={props.values.tipo_documento !== null ? props.values.tipo_documento.id : 0 }
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_documento'
@@ -279,7 +343,7 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="tipo_transacao">Tipo de transação</label>
                                     <select
-                                        value={props.values.tipo_transacao.id}
+                                        value={props.values.tipo_transacao !== null ? props.values.tipo_transacao.id : 0}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_transacao'
@@ -465,7 +529,7 @@ export const CadastroForm = () => {
                                             )
                                         })}
 
-                                        {props.values.mais_de_um_tipo_despesa === "sim" && aplicacao_recurso !== undefined && aplicacao_recurso!=="0" && aplicacao_recurso !== "" &&
+                                        {props.values.mais_de_um_tipo_despesa === "sim" &&
                                         <div className="d-flex  justify-content-start mt-3 mb-3">
 
                                             <button
