@@ -1,4 +1,4 @@
-import React, {Component, Fragment, useEffect, useState} from "react";
+import React, {Component, Fragment, useContext, useEffect, useState} from "react";
 import {Form, Formik, FieldArray} from "formik";
 import {
     YupSignupSchemaCadastroDespesa,
@@ -8,7 +8,7 @@ import {
     convertToNumber, round,
 } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import {getDespesasTabelas, getEspecificacaoMaterialServico} from "../../../services/Despesas.service";
+import {getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import NumberFormat from "react-number-format";
 import moment from "moment";
@@ -16,9 +16,10 @@ import {Button, Modal} from "react-bootstrap";
 import {useHistory} from 'react-router-dom'
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
 import {CadastroFormCapital} from "./CadastroFormCapital";
+import {DespesaContext} from "../../../context/Despesa";
+import HTTP_STATUS from "http-status-codes";
 
 class CancelarModal extends Component {
-
     render() {
         return (
             <Fragment>
@@ -46,6 +47,9 @@ class CancelarModal extends Component {
 
 export const CadastroForm = () => {
     let history = useHistory();
+
+    const despesaContext = useContext(DespesaContext)
+
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [show, setShow] = useState(false);
     const [aplicacao_recurso, set_aplicacao_recurso] = useState(undefined);
@@ -114,7 +118,7 @@ export const CadastroForm = () => {
         return inital
     }
 
-    const onSubmit = (values, {resetForm}) => {
+    const onSubmit = async (values, {resetForm}) => {
         values.tipo_documento = convertToNumber(values.tipo_documento);
         values.tipo_transacao = convertToNumber(values.tipo_transacao);
         values.valor_total = trataNumericos(values.valor_total);
@@ -138,20 +142,25 @@ export const CadastroForm = () => {
                 rateio.valor_rateio = rateio.quantidade_itens_capital * rateio.valor_item_capital
             }
 
-
-
-            //values.valor_total_dos_rateios = values.valor_total_dos_rateios + rateio.valor_rateio
         })
-
-        if (values.valor_total_dos_rateios !== values.valor_recusos_acoes ) {
-            console.log("Valores diferentes")
-        }else{
-            console.log("Valores iguais")
-        }
 
         console.log("onSubmit", values)
 
-        resetForm({values: ""})
+        if( despesaContext.verboHttp === "POST"){
+            try {
+                const response = await criarDespesa(values)
+                if (response.status === HTTP_STATUS.CREATED) {
+                    console.log("Operação realizada com sucesso!");
+                    resetForm({values: ""})
+                    let path = `/lista-de-despesas`;
+                    history.push(path);
+                } else {
+                    console.log(response)
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
 
 
@@ -184,12 +193,11 @@ export const CadastroForm = () => {
     }
 
     const calculaValorTodosRateios = (array) => {
-        console.log(array)
+
         let valor_total=0
 
             array.map((item, index) => {
 
-                //debugger
                 if (array[index].aplicacao_recurso === "CAPITAL"){
                     valor_total = valor_total + (convertToNumber(item.quantidade_itens_capital) * trataNumericos(item.valor_item_capital))
                 }
