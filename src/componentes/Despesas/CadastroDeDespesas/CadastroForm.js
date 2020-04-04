@@ -131,9 +131,14 @@ export const CadastroForm = () => {
         values.rateios.map((rateio) => {
             rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
             rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico)
-            rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
             rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital)
             rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)
+            rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
+            if (rateio.aplicacao_recurso === "CAPITAL"){
+                rateio.valor_rateio = rateio.quantidade_itens_capital * rateio.valor_item_capital
+            }
+
+
 
             //values.valor_total_dos_rateios = values.valor_total_dos_rateios + rateio.valor_rateio
         })
@@ -158,7 +163,6 @@ export const CadastroForm = () => {
 
     const handleOnBlur = (nome, valor) =>{
         if (nome === 'aplicacao_recurso'){
-            console.log("Aplicacao Recurso ", aplicacao_recurso)
             set_aplicacao_recurso(valor)
         }else if(nome === 'tipo_custeio'){
             set_tipo_custeio(valor)
@@ -180,11 +184,19 @@ export const CadastroForm = () => {
     }
 
     const calculaValorTodosRateios = (array) => {
-
+        console.log(array)
         let valor_total=0
-        array.map((item)=> {
-            valor_total = valor_total + (convertToNumber(item.quantidade_itens_capital) * trataNumericos(item.valor_item_capital))
-        })
+
+            array.map((item, index) => {
+
+                //debugger
+                if (array[index].aplicacao_recurso === "CAPITAL"){
+                    valor_total = valor_total + (convertToNumber(item.quantidade_itens_capital) * trataNumericos(item.valor_item_capital))
+                }
+                if(array[index].aplicacao_recurso === "CUSTEIO") {
+                    valor_total = valor_total + trataNumericos(item.valor_rateio)
+                }
+            })
 
         return valor_total
     }
