@@ -47,3 +47,14 @@ export const atualizaReceita = async (uuid, payload) => {
             return error.response;
         });
 }
+
+export const deletarReceita = async uuid => {
+    return api
+        .delete(`api/receitas/${uuid}/`, authHeader)
+        .then(response => {
+            return response;
+        })
+        .catch(error => {
+            return error.response;
+        });
+}
