@@ -14,34 +14,42 @@ import { authService } from '../services/auth.service';
 
 const routesConfig = [
     {
+      exact: true,
+        path: "/edicao-de-receita/:uuid",
+        component: EdicaoDeReceita
+    },
+    {
+        exact: true,
         path: "/dashboard",
         component: Dashboard
     },
-    {
+    { 
+        exact: true,
         path: "/cadastro-de-despesa",
         component: CadastroDeDespesa
     },
-    {
+    { 
+        exact: true,
         path: "/lista-de-despesas",
         component: ListaDeDespesasPage
     },
-    {
+    { 
+        exact: true,
         path: "/edicao-de-despesa/:associacao?",
         component: EdicaoDeDespesa
     },
     {
+        exact: true,
         path: "/cadastro-de-credito",
         component: CadastroDeReceita
     },
     {
-      path: "/edicao-de-receita/:uuid?",
-      component: EdicaoDeReceita
-    },
-    {
+      exact: true,
       path: "/lista-de-receitas",
       component: ListaDeReceitasPage
     },
     {
+        exact: true,
         path: "/",
         component: Dashboard
     },
