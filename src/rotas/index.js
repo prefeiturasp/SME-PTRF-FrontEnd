@@ -3,7 +3,7 @@ import {Route, Switch, Redirect} from 'react-router-dom'
 import {Login} from "../paginas/Login";
 import {Pagina404} from "../paginas/404";
 import {Dashboard} from "../paginas/Dashboard";
-import {CadastroDeDespesa} from "../paginas/Despesas/CadastroDeDespesa";
+import {CadastroDeDespesa} from "../paginas/Despesas/CadastroDeDespesas";
 import {EdicaoDeDespesa} from "../paginas/Despesas/EdicaoDeDespesa";
 import { ListaDeDespesasPage } from '../paginas/Despesas/ListaDeDespesas'
 import { CadastroDeReceita } from '../paginas/Receitas/CadastroReceita';

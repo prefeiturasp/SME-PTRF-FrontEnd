@@ -46,7 +46,7 @@ export const GetDadosApiDespesaContextProvider = ({children}) => {
 
 
                 especificacaoMaterialServico,
-                setEspecificacaoMterialServico, 
+                setEspecificacaoMterialServico,
 
                 despesastabelas,
                 setDespesasTabelas,

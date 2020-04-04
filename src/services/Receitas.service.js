@@ -58,3 +58,8 @@ export const deletarReceita = async uuid => {
             return error.response;
         });
 }
+
+export const getListaReceitas = async () => {
+    return (await api.get('api/receitas/', authHeader)).data
+}
+

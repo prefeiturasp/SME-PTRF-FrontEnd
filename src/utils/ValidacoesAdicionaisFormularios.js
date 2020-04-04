@@ -23,7 +23,21 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     data_transacao: yup.string(),
     valor_total: yup.string(),
     valor_recursos_proprios: yup.string(),
-    valorRecursoAcoes:yup.string(),
+    valor_total_dos_rateios:yup.string(),
+    valor_recusos_acoes:yup.string()
+    .test('test-name', 'O total das classificações deve corresponder ao valor total da nota',
+        function (value) {
+            const { valor_total_dos_rateios } = this.parent;
+            console.log("YUP ", value)
+            console.log("YUP valor_total_dos_rateios ", valor_total_dos_rateios)
+            if(value !== valor_total_dos_rateios){
+                return false
+            }else {
+                return true
+            }
+        }),
+
+
 });
 
 export const payloadFormDespesaContext = (data)=>{
@@ -77,7 +91,7 @@ export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAsso
 
     data.valor_total = trataNumericos(data.valor_total);
     data.valor_recursos_proprios = trataNumericos(data.valor_recursos_proprios);
-    data.valorRecursoAcoes = round((data.valor_total - data.valor_recursos_proprios), 2);
+    data.valor_recusos_acoes = round((data.valor_total - data.valor_recursos_proprios), 2);
 
     if (data.data_documento){
         //data.data_documento = trataData(data.data_documento)
@@ -193,9 +207,38 @@ export const cpfMaskContitional = (value) => {
 
 function valida_cpf_cnpj ( valor ) {
 
-    if ( !valor || (valor.length < 11 && valor.length > 14) || valor === "00000000000" || valor === "11111111111" || valor === "22222222222" || valor === "33333333333" || valor === "44444444444" || valor === "55555555555" || valor === "66666666666" || valor === "77777777777" || valor === "88888888888"
-        || valor === "99999999999" )
+    // Remove caracteres inválidos do valor
+    if (valor){
+        valor = valor.replace(/[^0-9]/g, '');
+    }
+
+    if (
+        !valor ||
+        (valor.length < 11 && valor.length > 14) ||
+        valor === "00000000000" ||
+        valor === "00000000000000" ||
+        valor === "11111111111" ||
+        valor === "11111111111111" ||
+        valor === "22222222222" ||
+        valor === "22222222222222" ||
+        valor === "33333333333" ||
+        valor === "33333333333333" ||
+        valor === "44444444444" ||
+        valor === "44444444444444" ||
+        valor === "55555555555" ||
+        valor === "55555555555555" ||
+        valor === "66666666666" ||
+        valor === "66666666666666" ||
+        valor === "77777777777" ||
+        valor === "77777777777777" ||
+        valor === "88888888888" ||
+        valor === "88888888888888" ||
+        valor === "99999999999" ||
+        valor === "99999999999999"
+    ){
         return false
+    }
+
 
     // Verifica se é CPF ou CNPJ
     let valida = verifica_cpf_cnpj( valor );
@@ -203,8 +246,7 @@ function valida_cpf_cnpj ( valor ) {
     // Garante que o valor é uma string
     valor = valor.toString();
 
-    // Remove caracteres inválidos do valor
-    valor = valor.replace(/[^0-9]/g, '');
+
 
     // Valida CPF
     if ( valida === 'CPF' ) {

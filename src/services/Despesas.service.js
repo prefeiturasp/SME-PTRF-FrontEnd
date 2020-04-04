@@ -7,3 +7,16 @@ const authHeader = {
 export const deleteDespesa = async uuid => {
   return (await api.delete(`api/despesas/${uuid}/`, authHeader)).data
 }
+
+export const getDespesasTabelas = async () => {
+  return (await api.get(`api/despesas/tabelas/`, authHeader)).data
+}
+
+export const getEspecificacaoMaterialServico = async (aplicacao_recurso, tipo_custeio) => {
+  console.log("getEspecificacaoMaterialServico", aplicacao_recurso)
+  if (aplicacao_recurso === "CUSTEIO"){
+    return (await api.get(`api/especificacoes/?aplicacao_recurso=${aplicacao_recurso}&tipo_custeio=${tipo_custeio}`, authHeader)).data
+    }else if(aplicacao_recurso === "CAPITAL") {
+    return (await api.get(`api/especificacoes/?aplicacao_recurso=${aplicacao_recurso}`, authHeader)).data
+  }
+}

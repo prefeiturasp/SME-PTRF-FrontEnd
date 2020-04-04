@@ -92,7 +92,7 @@ export const ReceitaForm = props => {
             .catch(error => {
                 console.log(error);
             });
-            
+
         };
 
         const buscaReceita = async () => {
@@ -108,7 +108,7 @@ export const ReceitaForm = props => {
                         valor: resp.valor ? new Number(resp.valor).toLocaleString('pt-BR', {
                             style: 'currency',
                             currency: 'BRL'
-                          }) : "",
+                        }) : "",
                         descricao: resp.descricao,
                     }
                     setInitialValue(init);
@@ -118,7 +118,7 @@ export const ReceitaForm = props => {
                     console.log(error);
                 });
             }
-    
+
         };
         carregaTabelas();
         buscaReceita();
@@ -189,20 +189,20 @@ export const ReceitaForm = props => {
 
     const onDeletarTrue = () => {
         deletarReceita(uuid)
-            .then(response => {
-                console.log("Receita deletada com sucesso.");
-                setShowDelete(false);
-                let path = `/lista-de-receitas`;
-                props.history.push(path);
-            })
-            .catch(error => {
-                console.log(error);
-                alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
-            });
+        .then(response => {
+            console.log("Receita deletada com sucesso.");
+            setShowDelete(false);
+            let path = `/lista-de-receitas`;
+            props.history.push(path);
+        })
+        .catch(error => {
+            console.log(error);
+            alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
+        });
     }
 
     return (
-        <>  
+        <>
             <Formik
                 initialValues={initialValue}
                 validationSchema={ReceitaSchema}
@@ -250,7 +250,7 @@ export const ReceitaForm = props => {
                                     {props.touched.data && props.errors.data &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.data}</span>}
                                 </div>
-                                
+
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor">Valor da receita</label>
                                     <CurrencyInput
@@ -275,10 +275,10 @@ export const ReceitaForm = props => {
                                         value={props.values.descricao}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                        name="descricao" 
-                                        id="descricao" 
+                                        name="descricao"
+                                        id="descricao"
                                         type="text"
-                                        rows="4" 
+                                        rows="4"
                                         cols="50"
                                         className="form-control"
                                         placeholder="Escreva a descrição da receita"/>
@@ -289,19 +289,19 @@ export const ReceitaForm = props => {
                                     <div className="form-row">
                                         <label htmlFor="acao_associacao">Ação</label>
                                         <select
-                                                id="acao_associacao"
-                                                name="acao_associacao"
-                                                value={props.values.acao_associacao}
-                                                onChange={props.handleChange}
-                                                onBlur={props.handleBlur}
-                                                className="form-control"
-                                            >
-                                                {receita.acao_associacao
+                                            id="acao_associacao"
+                                            name="acao_associacao"
+                                            value={props.values.acao_associacao}
+                                            onChange={props.handleChange}
+                                            onBlur={props.handleBlur}
+                                            className="form-control"
+                                        >
+                                            {receita.acao_associacao
                                                 ? null
                                                 : <option>Escolha uma ação</option>}
-                                                {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
-                                                    <option key={key} value={item.uuid}>{item.nome}</option>
-                                                ))): null}
+                                            {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
+                                                <option key={key} value={item.uuid}>{item.nome}</option>
+                                            ))): null}
                                         </select>
                                         {props.touched.acao_associacao && props.errors.acao_associacao &&
                                         <span className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
@@ -309,19 +309,19 @@ export const ReceitaForm = props => {
                                     <div className="form-row">
                                         <label htmlFor="conta_associacao">Tipo de conta</label>
                                         <select
-                                                id="conta_associacao"
-                                                name="conta_associacao"
-                                                value={props.values.conta_associacao}
-                                                onChange={props.handleChange}
-                                                onBlur={props.handleBlur}
-                                                className="form-control"
-                                            >
-                                                {receita.conta_associacao
+                                            id="conta_associacao"
+                                            name="conta_associacao"
+                                            value={props.values.conta_associacao}
+                                            onChange={props.handleChange}
+                                            onBlur={props.handleBlur}
+                                            className="form-control"
+                                        >
+                                            {receita.conta_associacao
                                                 ? null
                                                 : <option>Escolha uma conta</option>}
-                                                {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
-                                                    <option key={key} value={item.uuid}>{item.nome}</option>
-                                                ))): null}
+                                            {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
+                                                <option key={key} value={item.uuid}>{item.nome}</option>
+                                            ))): null}
                                         </select>
                                         {props.touched.conta_associacao && props.errors.conta_associacao &&
                                         <span className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
@@ -330,7 +330,7 @@ export const ReceitaForm = props => {
                             </div>
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
                                 <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                                {uuid 
+                                {uuid
                                     ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
                                 <button type="submit" className="btn btn-success mt-2">Salvar</button>
                             </div>
@@ -341,11 +341,11 @@ export const ReceitaForm = props => {
             <section>
                 <CancelarModal show={show}  handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
             </section>
-            {uuid 
-                ? 
+            {uuid
+                ?
                 <DeletarModal show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
                 : null
             }
         </>
-        );
+    );
 }

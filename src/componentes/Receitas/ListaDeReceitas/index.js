@@ -1,31 +1,35 @@
-import React, {useContext, useEffect, useState} from "react";
-import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
+import React, {useEffect, useState} from "react";
+
 import {DataTable} from 'primereact/datatable';
+
 import { Column } from 'primereact/column';
 import { useHistory } from 'react-router-dom';
 import '../../../paginas/404/pagina-404.scss'
 import Img404 from '../../../assets/img/img-404.svg'
 import moment from 'moment';
 
+import {getListaReceitas} from "../../../services/Receitas.service";
 
-export const ListaDeReceitas = props =>{
-    const dadosApiContext = useContext(GetDadosApiDespesaContext);
+
+export const ListaDeReceitas = () =>{
+
     let history = useHistory();
 
     const [receitas, setReceitas] = useState([])
 
-    useEffect( ()=>{
-        dadosApiContext.getReceitas()
-        .then(resposta_api => {
-            setReceitas(resposta_api.data.results)
-        })
+    useEffect(() => {
+        const carregaListaReceitas = async () => {
+            const resp = await getListaReceitas();
+            setReceitas(resp.results);
+        };
+        carregaListaReceitas();
     }, [])
 
     const rowsPerPage = 10;
     
     const redirecionaDetalhe = value => {
         const url = '/edicao-de-receita/' + value.uuid
-        props.history.push(url);
+        history.push(url);
     }
 
     const dataTemplate = (rowData, column) => {
