@@ -14,8 +14,6 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     .test('test-name', 'Digite um CPF ou um CNPJ válido',
         function (value) {
 
-        //debugger
-
             if(value !== undefined){
                 return valida_cpf_cnpj(value)
             }else {
@@ -45,120 +43,6 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
 
 
 });
-
-export const payloadFormDespesaContext = (data)=>{
-
-    let arrayRetorno =[]
-
-    data.map(item => {
-        if (item.valor_item_capital !== "" && item.quantidade_itens_capital !== ""){
-            item.valor_item_capital = trataNumericos(item.valor_item_capital);
-            item.quantidade_itens_capital = trataNumericos(item.quantidade_itens_capital);
-            item.valor_rateio = round((item.valor_item_capital * item.quantidade_itens_capital), 2);
-        }else{
-            item.valor_item_capital = 0;
-            item.quantidade_itens_capital = 0;
-            item.valor_rateio = trataNumericos(item.valor_rateio)
-        }
-
-        item.tipo_custeio = convertToNumber(item.tipo_custeio)
-
-        if (item.tipo_aplicacao_recurso === 1){
-            item.aplicacao_recurso = "CUSTEIO"
-        }else {
-            item.aplicacao_recurso = "CAPITAL"
-        }
-
-        item.especificacao_material_servico = convertToNumber(item.especificacao_material_servico)
-
-        arrayRetorno.push(item)
-    })
-
-    return arrayRetorno;
-}
-
-export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAssociacao, verboHttp)=>{
-
-
-
-    data.associacao = idAssociacao;
-
-    if (data.tipo_documento.id){
-        data.tipo_documento = convertToNumber(data.tipo_documento.id)
-    }else{
-        data.tipo_documento = convertToNumber(data.tipo_documento)
-    }
-
-    if(data.tipo_transacao.id){
-        data.tipo_transacao = convertToNumber(data.tipo_transacao.id)
-    }else{
-        data.tipo_transacao = convertToNumber(data.tipo_transacao)
-    }
-
-    data.valor_total = trataNumericos(data.valor_total);
-    data.valor_recursos_proprios = trataNumericos(data.valor_recursos_proprios);
-    data.valor_recusos_acoes = round((data.valor_total - data.valor_recursos_proprios), 2);
-
-    if (data.data_documento){
-        //data.data_documento = trataData(data.data_documento)
-        //data.data_documento =  moment(data.data_documento, "YYYY-MM-DD").add(1, 'days');
-        data.data_documento =  moment(data.data_documento).format("YYYY-MM-DD");
-    }else {
-        data.data_documento = "";
-    }
-
-    if (data.data_transacao){
-        data.data_transacao = trataData(data.data_transacao)
-        //data.data_transacao =  moment(data.data_transacao, "YYYY-MM-DD").add(1, 'days');
-        data.data_transacao =  moment(data.data_transacao).format("YYYY-MM-DD");
-    }else {
-        data.data_transacao = "";
-    }
-
-    data.rateios.map((rateio) =>{
-        rateio.associacao = idAssociacao;
-
-        if(verboHttp==="POST"){
-            rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico);
-        }else if(verboHttp==="PUT"){
-            rateio.conta_associacao = rateio.conta_associacao.uuid;
-            rateio.acao_associacao = rateio.acao_associacao.uuid;
-            rateio.tipo_custeio = rateio.tipo_custeio.id;
-            rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico.id);
-        }
-    })
-
-    if (tipo_aplicacao_recurso === "CUSTEIO"){
-
-        data.rateios.map((rateio) =>{
-            rateio.valor_item_capital = 0;
-            rateio.quantidade_itens_capital = 0;
-
-            rateio.aplicacao_recurso = tipo_aplicacao_recurso
-            rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
-        })
-    }
-
-
-    if (tipo_aplicacao_recurso === "CAPITAL"){
-        data.rateios.map((rateio) =>{
-
-            rateio.aplicacao_recurso = tipo_aplicacao_recurso
-
-            if (rateio.valor_item_capital !== "" && rateio.quantidade_itens_capital !== ""){
-                rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital);
-                rateio.quantidade_itens_capital = trataNumericos(rateio.quantidade_itens_capital);
-                rateio.valor_rateio = round((rateio.valor_item_capital * rateio.quantidade_itens_capital), 2);
-            }else{
-                rateio.valor_item_capital = 0;
-                rateio.quantidade_itens_capital = 0;
-                rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
-            }
-        })
-    }
-
-    return data;
-}
 
 export const trataData = (data) => {
     return moment(data, "YYYY-MM-DD").add(1, 'days');

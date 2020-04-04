@@ -1,5 +1,5 @@
 import React, {Component, Fragment, useContext, useEffect, useState} from "react";
-import {Form, Formik, FieldArray} from "formik";
+import {Formik, FieldArray} from "formik";
 import {
     YupSignupSchemaCadastroDespesa,
     cpfMaskContitional,
@@ -181,11 +181,6 @@ export const CadastroForm = () => {
 
         })
 
-        const payload = {
-            ...values,
-            associacao: localStorage.getItem(ASSOCIACAO_UUID)
-        }
-
         console.log("onSubmit", values)
 
         if( despesaContext.verboHttp === "POST"){
@@ -207,10 +202,6 @@ export const CadastroForm = () => {
         }
 
 
-
-    }
-
-    const handleReset = (props) => {
 
     }
 
