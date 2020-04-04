@@ -30,7 +30,7 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     valor_recursos_proprios: yup.string(),
     valor_total_dos_rateios:yup.string(),
     valor_recusos_acoes:yup.string()
-    .test('test-name', 'O total das classificações deve corresponder ao valor total da nota',
+    /*.test('test-name', 'O total das classificações deve corresponder ao valor total da nota',
         function (value) {
             value = String(round(value,2))
             const { valor_total_dos_rateios } = this.parent;
@@ -39,10 +39,22 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
             }else {
                 return true
             }
-        }),
+        })*/,
 
 
 });
+
+export const currencyFormatter =(value) =>{
+    if (!Number(value)) return "";
+
+    const amount = new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    }).format(value / 100 );
+
+    //return `${amount}`;
+    return amount;
+}
 
 export const trataData = (data) => {
     return moment(data, "YYYY-MM-DD").add(1, 'days');

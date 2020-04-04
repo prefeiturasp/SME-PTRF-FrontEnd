@@ -2,19 +2,17 @@ import React, {useContext, useEffect} from "react";
 import {PaginasContainer} from "../../PaginasContainer";
 import {CadastroDeDespesas} from "../../../componentes/Despesas/CadastroDeDespesas";
 import {DespesaContext} from "../../../context/Despesa";
-import {getDespesasTabelas} from "../../../services/Despesas.service";
 
 export const CadastroDeDespesa = () => {
 
     const despesaContext = useContext(DespesaContext)
 
     useEffect(() => {
-        const setaVerboHttp = async () => {
-            const resp = await despesaContext.setVerboHttp("POST");
-        };
-        setaVerboHttp();
-
-    }, [])
+        (async function setValoresIniciais() {
+            await despesaContext.setVerboHttp("POST");
+            await despesaContext.setIdDespesa("");
+        })();
+    }, []);
 
     return (
         <PaginasContainer>

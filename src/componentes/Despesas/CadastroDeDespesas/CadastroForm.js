@@ -19,6 +19,10 @@ import {CadastroFormCapital} from "./CadastroFormCapital";
 import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
+import {currencyFormatter} from "../../../utils/ValidacoesAdicionaisFormularios";
+
+
+import CurrencyInput from "react-currency-input";
 
 class CancelarModal extends Component {
     render() {
@@ -47,6 +51,8 @@ class CancelarModal extends Component {
 
 
 export const CadastroForm = () => {
+
+
     let history = useHistory();
 
     const despesaContext = useContext(DespesaContext)
@@ -81,44 +87,11 @@ export const CadastroForm = () => {
 
 
     const initialValues = () => {
-        const inital = {
-
-            associacao: localStorage.getItem(ASSOCIACAO_UUID),
-            tipo_documento: "",
-            tipo_transacao: "",
-            numero_documento: "",
-            data_documento: "",
-            cpf_cnpj_fornecedor: "",
-            nome_fornecedor: "",
-            data_transacao: "",
-            valor_total: "",
-            valor_recursos_proprios: "",
-            // Auxiliares
-            mais_de_um_tipo_despesa: "",
-            valor_recusos_acoes:0,
-            valor_total_dos_rateios:0,
-            // Fim Auxiliares
-            rateios: [
-                {
-                    associacao: localStorage.getItem(ASSOCIACAO_UUID),
-                    conta_associacao: "",
-                    acao_associacao: "",
-                    aplicacao_recurso: "CUSTEIO",
-                    tipo_custeio: "1",
-                    especificacao_material_servico: "",
-                    valor_rateio: "",
-                    quantidade_itens_capital: "",
-                    valor_item_capital: "",
-                    numero_processo_incorporacao_capital: "",
-                }
-            ],
-        }
-
-        return inital
+        return despesaContext.initialValues
     }
 
     const onSubmit = async (values, {resetForm}) => {
-        //debugger;
+        debugger;
 
         if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0 ){
             values.tipo_documento = convertToNumber(values.tipo_documento);
@@ -364,7 +337,22 @@ export const CadastroForm = () => {
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_total">Valor total</label>
-                                    <NumberFormat
+
+                                    <CurrencyInput
+                                        format={currencyFormatter()}
+                                        allowNegative={false}
+                                        prefix='R$'
+                                        decimalSeparator=","
+                                        thousandSeparator="."
+                                        value={props.values.valor_total}
+                                        name="valor_total"
+                                        id="valor_total"
+                                        className="form-control"
+                                        onChangeEvent={props.handleChange}
+                                    />
+
+                                    {/*<NumberFormat
+                                        format={currencyFormatter}
                                         value={props.values.valor_total}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
@@ -376,14 +364,16 @@ export const CadastroForm = () => {
                                         className="form-control"
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                    />
+                                    />*/}
                                     {props.errors.valor_total &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recursos_proprios">Valor do recurso próprio</label>
+
                                     <NumberFormat
+                                        format={currencyFormatter}
                                         value={props.values.valor_recursos_proprios}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
@@ -402,11 +392,12 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recusos_acoes">Valor do recurso das ações</label>
                                     <NumberFormat
+                                        format={currencyFormatter}
                                         value={calculaValorRecursoAcoes(props)}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
                                         decimalScale={2}
-                                        prefix={'R$ '}
+                                        prefix={'R$'}
                                         name="valor_recusos_acoes"
                                         id="valor_recusos_acoes"
                                         className="form-control"

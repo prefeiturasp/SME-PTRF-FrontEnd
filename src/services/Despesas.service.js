@@ -27,3 +27,8 @@ export const criarDespesa = async (payload) => {
         return error.response;
     });
 }
+
+export const getDespesa = async (idDespesa) => {
+    console.log("GetDespesa" , idDespesa)
+    return (await api.get(`api/despesas/${idDespesa}`, authHeader)).data
+}

@@ -1,6 +1,6 @@
 import React from "react";
 import NumberFormat from "react-number-format";
-import {calculaValorRateio} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {calculaValorRateio, currencyFormatter} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const CadastroFormCapital = (propriedades) => {
     const {formikProps, rateio, index, handleOnBlur, despesasTabelas, especificaoes_disable, especificaoes} = propriedades
@@ -59,6 +59,7 @@ export const CadastroFormCapital = (propriedades) => {
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="valor_item_capital">Valor unitário </label>
                             <NumberFormat
+                                format={currencyFormatter}
                                 defaultValue={rateio.valor_item_capital}
                                 onChange={formikProps.handleChange}
                                 name={`rateios[${index}].valor_item_capital`}
@@ -94,7 +95,7 @@ export const CadastroFormCapital = (propriedades) => {
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
                             <select
-                                defaultValue={rateio.conta_associacao.uuid}
+                                defaultValue={rateio.conta_associacao !== null ? rateio.conta_associacao.uuid : 0}
                                 onChange={formikProps.handleChange}
                                 //name='conta_associacao'
                                 name={`rateios[${index}].conta_associacao`}
@@ -102,7 +103,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 id='conta_associacao'
                                 className="form-control"
                             >
-                                <option value="0">Selecione uma conta</option>
+                                <option key={0} value={0}>Selecione uma conta</option>
                                 {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
                                     <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                                 ))}
@@ -112,6 +113,7 @@ export const CadastroFormCapital = (propriedades) => {
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="valor_rateio">Valor do custeio</label>
                             <NumberFormat
+                                format={currencyFormatter}
                                 value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
                                 onChange={formikProps.handleChange}
                                 thousandSeparator={'.'}

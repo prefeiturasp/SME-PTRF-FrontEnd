@@ -1,5 +1,6 @@
 import React from "react";
 import NumberFormat from "react-number-format";
+import {currencyFormatter} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const CadastroFormCusteio = (propriedades) => {
     const {formikProps, rateio, index, handleOnBlur, despesasTabelas, especificaoes_disable, especificaoes } = propriedades
@@ -82,6 +83,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="valor_rateio">Valor do custeio</label>
                             <NumberFormat
+                                format={currencyFormatter}
                                 value={rateio.valor_rateio}
                                 onChange={formikProps.handleChange}
                                 thousandSeparator={'.'}
