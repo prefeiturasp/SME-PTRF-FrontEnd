@@ -72,7 +72,6 @@ export const CadastroForm = () => {
             const carregaEspecificacoes = async () => {
                 const resp = await getEspecificacaoMaterialServico(aplicacao_recurso, tipo_custeio)
                 set_especificaoes_disable(false)
-                console.log(resp)
                 set_especificaoes(resp);
             };
             carregaEspecificacoes();
