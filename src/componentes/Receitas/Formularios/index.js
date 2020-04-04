@@ -70,15 +70,15 @@ export const ReceitaForm = props => {
             if (uuid) {
                 const resp = await getReceita(uuid);
                 const init = {
-                    tipo_receita: resp.tipo_receita.id,
-                    acao_associacao: resp.acao_associacao.uuid,
-                    conta_associacao: resp.conta_associacao.uuid,
-                    data: resp.data,
-                    valor: new Number(resp.valor).toLocaleString('pt-BR', {
+                    tipo_receita: resp.tipo_receita !== undefined ? resp.tipo_receita.id : "",
+                    acao_associacao: resp.acao_associacao !== undefined ? resp.acao_associacao.uuid : "",
+                    conta_associacao: resp.conta_associacao !== undefined ? resp.conta_associacao.uuid : "",
+                    data: resp.data !== undefined ? resp.data : "",
+                    valor: resp.valor ? new Number(resp.valor).toLocaleString('pt-BR', {
                         style: 'currency',
                         currency: 'BRL'
-                      }),
-                    descricao: resp.descricao,
+                      }) : "",
+                    descricao: resp.descricao !== undefined ? resp.descricao : "",
                 }
                 setInitialValue(init);
                 setReceita(resp);
@@ -177,7 +177,7 @@ export const ReceitaForm = props => {
                                         {receita.tipo_receita
                                             ? null
                                             : <option>Selecione o tipo</option>}
-                                        {tabelas.tipos_receita.length > 0 ? (tabelas.tipos_receita.map(item => (
+                                        {tabelas.tipos_receita !== undefined && tabelas.tipos_receita.length > 0 ? (tabelas.tipos_receita.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         ))): null}
                                     </select>
@@ -246,7 +246,7 @@ export const ReceitaForm = props => {
                                                 {receita.acao_associacao
                                                 ? null
                                                 : <option>Escolha uma ação</option>}
-                                                {tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
+                                                {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
                                                     <option key={key} value={item.uuid}>{item.nome}</option>
                                                 ))): null}
                                         </select>
@@ -266,7 +266,7 @@ export const ReceitaForm = props => {
                                                 {receita.conta_associacao
                                                 ? null
                                                 : <option>Escolha uma conta</option>}
-                                                {tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
+                                                {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
                                                     <option key={key} value={item.uuid}>{item.nome}</option>
                                                 ))): null}
                                         </select>
