@@ -25,7 +25,7 @@ export const ListaDeReceitas = props =>{
     
     const redirecionaDetalhe = value => {
         const url = '/edicao-de-receita/' + value.uuid
-        history.push(url);
+        props.history.push(url);
     }
 
     const dataTemplate = (rowData, column) => {
