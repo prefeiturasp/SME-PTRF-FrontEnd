@@ -81,6 +81,7 @@ export const Rotas = () => {
                 return (
                     <PrivateRouter
                         key={key}
+                        exact={value.exact}
                         path={value.path}
                         component={value.component}
                     />
