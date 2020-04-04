@@ -1,14 +1,12 @@
-import axios from 'axios';
-import API_URL from './constantes';
+import api from './Api'
 
 const authHeader = {
   'Content-Type': 'application/json'
 }
 
 export const getTabelasReceita = async () => {
-    console.log(API_URL);
-    return axios
-        .get(`${API_URL}/api/receitas/tabelas/`, authHeader)
+    return api
+        .get('api/receitas/tabelas/', authHeader)
         .then(response => {
             return response;
         })
@@ -18,8 +16,8 @@ export const getTabelasReceita = async () => {
 }
 
 export const criarReceita = async payload => {
-    return axios
-        .post(`${API_URL}/api/receitas/`, payload, authHeader)
+    return api
+        .post('api/receitas/', payload, authHeader)
         .then(response => {
             return response;
         })
@@ -29,8 +27,8 @@ export const criarReceita = async payload => {
 }
 
 export const getReceita = async (uuid) => {
-    return axios
-        .get(`${API_URL}/api/receitas/${uuid}/`, authHeader)
+    return api
+        .get(`api/receitas/${uuid}/`, authHeader)
         .then(response => {
             return response;
         })
@@ -40,8 +38,8 @@ export const getReceita = async (uuid) => {
 }
 
 export const atualizaReceita = async (uuid, payload) => {
-    return axios
-        .put(`${API_URL}/api/receitas/${uuid}/`, payload, authHeader)
+    return api
+        .put(`api/receitas/${uuid}/`, payload, authHeader)
         .then(response => {
             return response;
         })
