@@ -3,13 +3,12 @@ import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
 import {DataTable} from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useHistory } from 'react-router-dom';
-import { redirect } from '../../../utils/redirect.js';
 import '../../../paginas/404/pagina-404.scss'
 import Img404 from '../../../assets/img/img-404.svg'
 import moment from 'moment';
 
 
-export const ListaDeReceitas = () =>{
+export const ListaDeReceitas = props =>{
     const dadosApiContext = useContext(GetDadosApiDespesaContext);
     let history = useHistory();
 
@@ -26,7 +25,7 @@ export const ListaDeReceitas = () =>{
     
     const redirecionaDetalhe = value => {
         const url = '/edicao-de-receita/' + value.uuid
-        redirect(url)
+        history.push(url);
     }
 
     const dataTemplate = (rowData, column) => {

@@ -35,7 +35,6 @@ class CancelarModal extends Component {
     }
 }
 
-
 export const ReceitaForm = props => {
 
     let {uuid} = useParams();
@@ -100,7 +99,6 @@ export const ReceitaForm = props => {
         carregaTabelas();
         buscaReceita();
     }, [])
-
 
     const onSubmit = async (values) => {
         values.valor = trataNumericos(values.valor);

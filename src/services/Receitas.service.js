@@ -35,7 +35,6 @@ export const getReceita = async (uuid) => {
         .catch(error => {
             return error.response;
         });
-
 }
 
 export const atualizaReceita = async (uuid, payload) => {
