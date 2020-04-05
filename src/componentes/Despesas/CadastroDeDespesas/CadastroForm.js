@@ -60,7 +60,7 @@ export const CadastroForm = () => {
 
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [show, setShow] = useState(false);
-    const [aplicacao_recurso, set_aplicacao_recurso] = useState(undefined);
+    const [aplicacao_recurso, set_aplicacao_recurso] = useState("CUSTEIO");
     const [tipo_custeio, set_tipo_custeio] = useState(undefined);
     const [especificaoes, set_especificaoes] = useState(undefined);
     const [especificaoes_disable, set_especificaoes_disable] = useState(true);
@@ -75,7 +75,7 @@ export const CadastroForm = () => {
     }, [])
 
     useEffect(()=> {
-        if (aplicacao_recurso !== undefined) {
+        //if (aplicacao_recurso !== undefined) {
             const carregaEspecificacoes = async () => {
                 const resp = await getEspecificacaoMaterialServico(aplicacao_recurso, tipo_custeio)
                 set_especificaoes_disable(false)
@@ -83,7 +83,7 @@ export const CadastroForm = () => {
             };
             carregaEspecificacoes();
             set_especificaoes_disable(true)
-        }
+        //}
     },[aplicacao_recurso, tipo_custeio])
 
 
@@ -172,7 +172,7 @@ export const CadastroForm = () => {
 
             rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital)
             rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)
-            rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
+            rateio.valor_rateio = round(trataNumericos(rateio.valor_rateio),2)
 
             if (rateio.aplicacao_recurso === "0" || rateio.aplicacao_recurso === "" || rateio.aplicacao_recurso === 0){
                 rateio.aplicacao_recurso = null
@@ -268,6 +268,9 @@ export const CadastroForm = () => {
 
         return valor_total
     }
+
+    console.log("MUDANDO ", aplicacao_recurso)
+
 
     return (
         <>
@@ -491,8 +494,15 @@ export const CadastroForm = () => {
                                                             <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
                                                             <select
                                                                 value={rateio.aplicacao_recurso}
-                                                                onChange={props.handleChange}
-                                                                onBlur={(e)=>handleOnBlur("aplicacao_recurso", e.target.value)}
+                                                                //onChange={props.handleChange}
+
+                                                                onChange={(e) => {
+                                                                    props.handleChange(e);
+                                                                    set_aplicacao_recurso(e.target.value);
+                                                                }}
+
+                                                                //onChange={ (e) => { set_aplicacao_recurso(e.target.value); props.handleChange} }
+                                                                //onBlur={(e)=>handleOnBlur("aplicacao_recurso", e.target.value)}
                                                                 name={`rateios[${index}].aplicacao_recurso`}
                                                                 id='aplicacao_recurso'
                                                                 className="form-control"
@@ -514,6 +524,8 @@ export const CadastroForm = () => {
                                                             despesasTabelas={despesasTabelas}
                                                             especificaoes_disable={especificaoes_disable}
                                                             especificaoes={especificaoes}
+                                                            set_aplicacao_recurso={set_aplicacao_recurso}
+                                                            set_tipo_custeio={set_tipo_custeio}
                                                         />
                                                     ):
                                                         rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (

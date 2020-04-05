@@ -11,6 +11,7 @@ export const CadastroDeDespesa = () => {
         (async function setValoresIniciais() {
             await despesaContext.setVerboHttp("POST");
             await despesaContext.setIdDespesa("");
+            await despesaContext.setInitialValues(despesaContext.valores_iniciais)
         })();
     }, []);
 

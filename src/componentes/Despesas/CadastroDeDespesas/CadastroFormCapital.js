@@ -11,7 +11,11 @@ export const CadastroFormCapital = (propriedades) => {
                 <div className="col-12">
                     <label htmlFor="especificacao_material_servico">Especificação do material ou serviço</label>
                     <select
-                        defaultValue={rateio.especificacao_material_servico !== null ? rateio.especificacao_material_servico.id : 0}
+                        value={
+                            rateio.especificacao_material_servico !== null ? (
+                                typeof rateio.especificacao_material_servico === "object" ? rateio.especificacao_material_servico.id : rateio.especificacao_material_servico
+                            ) : 0
+                        }
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].especificacao_material_servico`}
                         id='especificacao_material_servico'
