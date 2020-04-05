@@ -91,7 +91,7 @@ export const CadastroForm = () => {
     }
 
     const onSubmit = async (values, {resetForm}) => {
-        debugger;
+        //debugger;
 
         if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0 ){
             values.tipo_documento = convertToNumber(values.tipo_documento);
@@ -338,7 +338,7 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_total">Valor total</label>
 
-                                    <CurrencyInput
+{/*                                    <CurrencyInput
                                         format={currencyFormatter()}
                                         allowNegative={false}
                                         prefix='R$'
@@ -349,10 +349,10 @@ export const CadastroForm = () => {
                                         id="valor_total"
                                         className="form-control"
                                         onChangeEvent={props.handleChange}
-                                    />
+                                    />*/}
 
-                                    {/*<NumberFormat
-                                        format={currencyFormatter}
+                                    <NumberFormat
+                                        //format={currencyFormatter}
                                         value={props.values.valor_total}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
@@ -364,7 +364,7 @@ export const CadastroForm = () => {
                                         className="form-control"
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                    />*/}
+                                    />
                                     {props.errors.valor_total &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
                                 </div>

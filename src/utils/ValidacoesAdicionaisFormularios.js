@@ -45,6 +45,7 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
 });
 
 export const currencyFormatter =(value) =>{
+
     if (!Number(value)) return "";
 
     const amount = new Intl.NumberFormat("pt-BR", {

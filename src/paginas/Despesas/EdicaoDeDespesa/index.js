@@ -80,7 +80,7 @@ export const EdicaoDeDespesa = ()=>{
 
 
                 console.log("Edicao Despesa Page ", response)
-                despesaContext.setInitialValues(init)
+                despesaContext.setInitialValues(response)
             }).catch(error => {
                 console.log(error);
             });
