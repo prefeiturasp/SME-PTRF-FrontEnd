@@ -93,14 +93,20 @@ export const CadastroForm = () => {
 
     const onSubmit = async (values, {resetForm}) => {
 
-
+debugger
         // Quando é Alteração
         if (typeof values.associacao === "object"){
             values.associacao = localStorage.getItem(ASSOCIACAO_UUID)
         }
-
         if (typeof values.tipo_documento === "object"){
-            values.tipo_documento = values.tipo_documento.id
+
+            if ( values.tipo_documento === null){
+                values.tipo_documento = null
+            }else {
+                values.tipo_documento = values.tipo_documento.id
+            }
+
+
         }else {
             if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0) {
                 values.tipo_documento = convertToNumber(values.tipo_documento);
@@ -110,7 +116,14 @@ export const CadastroForm = () => {
         }
 
         if (typeof values.tipo_transacao === "object"){
-            values.tipo_transacao = values.tipo_transacao.id
+
+            if ( values.tipo_transacao === null){
+                values.tipo_transacao = null
+            }else {
+                values.tipo_transacao = values.tipo_transacao.id
+            }
+
+
         }else {
             if (values.tipo_transacao !== "" && values.tipo_transacao !== "0" && values.tipo_transacao !== 0) {
                 values.tipo_transacao = convertToNumber(values.tipo_transacao);

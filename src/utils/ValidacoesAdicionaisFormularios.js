@@ -19,8 +19,8 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
             }else {
                 return true
             }
-        }),
-    nome_fornecedor: yup.string(),
+        })
+/*    nome_fornecedor: yup.string(),
     tipo_documento:yup.string(),
     numero_documento:yup.string(),
     data_documento: yup.string(),
@@ -29,7 +29,7 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     valor_total: yup.string(),
     valor_recursos_proprios: yup.string(),
     valor_total_dos_rateios:yup.string(),
-    valor_recusos_acoes:yup.string()
+    valor_recusos_acoes:yup.string()*/
     /*.test('test-name', 'O total das classificações deve corresponder ao valor total da nota',
         function (value) {
             value = String(round(value,2))
