@@ -57,6 +57,22 @@ export const currencyFormatter =(value) =>{
     return amount;
 }
 
+/*export const currencyFormatter =(value) =>{
+
+    if (!Number(value)) return "";
+
+    const amount = Number(value).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    })
+
+
+    return `${amount}`;
+    //return amount;
+}*/
+
+
+
 export const trataData = (data) => {
     return moment(data, "YYYY-MM-DD").add(1, 'days');
 }
@@ -94,7 +110,7 @@ export const calculaValorRecursoAcoes = (props) => {
     let valor_totalTratado = trataNumericos(props.values.valor_total)
     let valor_recursos_propriosTratado = trataNumericos(props.values.valor_recursos_proprios)
     let valor_total = valor_totalTratado - valor_recursos_propriosTratado;
-    return valor_total;
+    return valor_total/100;
 }
 
 export const cpfMaskContitional = (value) => {

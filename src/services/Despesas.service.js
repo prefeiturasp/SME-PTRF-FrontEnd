@@ -20,6 +20,11 @@ export const getEspecificacaoMaterialServico = async (aplicacao_recurso, tipo_cu
     }
 }
 
+export const getDespesa = async (idDespesa) => {
+    console.log("GetDespesa" , idDespesa)
+    return (await api.get(`api/despesas/${idDespesa}`, authHeader)).data
+}
+
 export const criarDespesa = async (payload) => {
     return api.post('api/despesas/', payload, authHeader).then(response => {
         return response;
@@ -28,7 +33,11 @@ export const criarDespesa = async (payload) => {
     });
 }
 
-export const getDespesa = async (idDespesa) => {
-    console.log("GetDespesa" , idDespesa)
-    return (await api.get(`api/despesas/${idDespesa}`, authHeader)).data
+export const alterarDespesa = async (payload, idDespesa) => {
+    return api.put(`api/despesas/${idDespesa}`, payload, authHeader).then(response => {
+        return response;
+    }).catch(error => {
+        return error.response;
+    });
 }
+

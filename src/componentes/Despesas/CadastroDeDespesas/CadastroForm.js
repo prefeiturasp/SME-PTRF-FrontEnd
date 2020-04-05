@@ -8,7 +8,12 @@ import {
     convertToNumber, round,
 } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import {getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa} from "../../../services/Despesas.service";
+import {
+    getDespesasTabelas,
+    getEspecificacaoMaterialServico,
+    criarDespesa,
+    alterarDespesa
+} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import NumberFormat from "react-number-format";
 import moment from "moment";
@@ -91,18 +96,31 @@ export const CadastroForm = () => {
     }
 
     const onSubmit = async (values, {resetForm}) => {
-        //debugger;
 
-        if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0 ){
-            values.tipo_documento = convertToNumber(values.tipo_documento);
-        }else {
-            values.tipo_documento = null
+
+        // Quando é Alteração
+        if (typeof values.associacao === "object"){
+            values.associacao = localStorage.getItem(ASSOCIACAO_UUID)
         }
 
-        if (values.tipo_transacao !== "" && values.tipo_transacao !== "0" && values.tipo_transacao !== 0 ){
-            values.tipo_transacao = convertToNumber(values.tipo_documento);
+        if (typeof values.tipo_documento === "object"){
+            values.tipo_documento = values.tipo_documento.id
         }else {
-            values.tipo_transacao = null
+            if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0) {
+                values.tipo_documento = convertToNumber(values.tipo_documento);
+            } else {
+                values.tipo_documento = null
+            }
+        }
+
+        if (typeof values.tipo_transacao === "object"){
+            values.tipo_transacao = values.tipo_transacao.id
+        }else {
+            if (values.tipo_transacao !== "" && values.tipo_transacao !== "0" && values.tipo_transacao !== 0) {
+                values.tipo_transacao = convertToNumber(values.tipo_transacao);
+            } else {
+                values.tipo_transacao = null
+            }
         }
 
         values.valor_total = trataNumericos(values.valor_total);
@@ -123,25 +141,45 @@ export const CadastroForm = () => {
 
         values.rateios.map((rateio) => {
 
-            rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
-            rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico)
+            if (typeof rateio.especificacao_material_servico === "object"){
+                rateio.especificacao_material_servico = rateio.especificacao_material_servico.id
+            }else {
+                rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico)
+            }
+
+            if (typeof rateio.conta_associacao === "object"){
+                rateio.conta_associacao = rateio.conta_associacao.uuid
+            }else {
+                if (rateio.conta_associacao === "0" || rateio.conta_associacao === "" || rateio.conta_associacao === 0){
+                    rateio.conta_associacao = null
+                }
+            }
+
+            if (typeof rateio.acao_associacao === "object"){
+                rateio.acao_associacao = rateio.acao_associacao.uuid
+            }else {
+                if (rateio.acao_associacao === "0" || rateio.acao_associacao === "" || rateio.acao_associacao === 0) {
+                    rateio.acao_associacao = null
+                }
+            }
+
+            if (typeof rateio.tipo_custeio === "object"){
+                rateio.tipo_custeio = rateio.tipo_custeio.id
+            }else {
+
+                if (rateio.tipo_custeio === "0" || rateio.tipo_custeio === 0 || rateio.tipo_custeio === ""){
+                    rateio.tipo_custeio = null
+                }else {
+                    rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
+                }
+            }
+
             rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital)
             rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)
             rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
 
-            if (rateio.conta_associacao === "0" || rateio.conta_associacao === "" || rateio.conta_associacao === 0){
-                rateio.conta_associacao = null
-            }
-            if (rateio.acao_associacao === "0" || rateio.acao_associacao === "" || rateio.acao_associacao === 0){
-                rateio.acao_associacao = null
-            }
-
             if (rateio.aplicacao_recurso === "0" || rateio.aplicacao_recurso === "" || rateio.aplicacao_recurso === 0){
                 rateio.aplicacao_recurso = null
-            }
-
-            if (rateio.tipo_custeio === "0" || rateio.tipo_custeio === 0 || rateio.tipo_custeio === ""){
-                rateio.tipo_custeio = null
             }
 
             if (rateio.especificacao_material_servico === "0" || rateio.especificacao_material_servico === 0 || rateio.especificacao_material_servico === ""){
@@ -167,6 +205,23 @@ export const CadastroForm = () => {
                 } else {
                     console.log(response)
                    return
+                }
+            } catch (error) {
+                console.log(error)
+                return
+            }
+        }else if(despesaContext.verboHttp === "PUT"){
+            console.log("onsubmit Método PUT")
+            try {
+                const response = await alterarDespesa(values, despesaContext.idDespesa)
+                if (response.status === HTTP_STATUS.CREATED) {
+                    console.log("Operação realizada com sucesso!");
+                    resetForm({values: ""})
+                    let path = `/lista-de-despesas`;
+                    history.push(path);
+                } else {
+                    console.log(response)
+                    return
                 }
             } catch (error) {
                 console.log(error)
@@ -338,8 +393,8 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_total">Valor total</label>
 
-{/*                                    <CurrencyInput
-                                        format={currencyFormatter()}
+                                    <CurrencyInput
+                                        //format={currencyFormatter()}
                                         allowNegative={false}
                                         prefix='R$'
                                         decimalSeparator=","
@@ -349,10 +404,10 @@ export const CadastroForm = () => {
                                         id="valor_total"
                                         className="form-control"
                                         onChangeEvent={props.handleChange}
-                                    />*/}
+                                    />
 
-                                    <NumberFormat
-                                        //format={currencyFormatter}
+                                    {/*<NumberFormat
+                                        format={currencyFormatter}
                                         value={props.values.valor_total}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
@@ -364,7 +419,7 @@ export const CadastroForm = () => {
                                         className="form-control"
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                    />
+                                    />*/}
                                     {props.errors.valor_total &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
                                 </div>
@@ -372,7 +427,20 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recursos_proprios">Valor do recurso próprio</label>
 
-                                    <NumberFormat
+                                    <CurrencyInput
+                                        //format={currencyFormatter()}
+                                        allowNegative={false}
+                                        prefix='R$'
+                                        decimalSeparator=","
+                                        thousandSeparator="."
+                                        value={props.values.valor_recursos_proprios}
+                                        name="valor_recursos_proprios"
+                                        id="valor_recursos_proprios"
+                                        className="form-control"
+                                        onChangeEvent={props.handleChange}
+                                    />
+
+                                    {/*<NumberFormat
                                         format={currencyFormatter}
                                         value={props.values.valor_recursos_proprios}
                                         thousandSeparator={'.'}
@@ -385,13 +453,25 @@ export const CadastroForm = () => {
                                         className="form-control"
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                    />
+                                    />*/}
                                     {props.errors.valor_recursos_proprios && <span className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recusos_acoes">Valor do recurso das ações</label>
-                                    <NumberFormat
+                                    <CurrencyInput
+                                        //format={currencyFormatter()}
+                                        allowNegative={false}
+                                        //prefix='R$'
+                                        decimalSeparator=","
+                                        thousandSeparator="."
+                                        value={props.values.valor_recusos_acoes}
+                                        name="valor_recusos_acoes"
+                                        id="valor_recusos_acoes"
+                                        className="form-control"
+                                        onChangeEvent={props.handleChange}
+                                    />
+                                    {/*<NumberFormat
                                         format={currencyFormatter}
                                         value={calculaValorRecursoAcoes(props)}
                                         thousandSeparator={'.'}
@@ -405,7 +485,7 @@ export const CadastroForm = () => {
                                         //onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         readOnly={true}
-                                    />
+                                    />*/}
                                     {props.errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> {props.errors.valor_recusos_acoes}</span>}
                                 </div>
                             </div>
