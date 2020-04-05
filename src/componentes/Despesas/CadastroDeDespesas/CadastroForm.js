@@ -213,8 +213,9 @@ export const CadastroForm = () => {
         }else if(despesaContext.verboHttp === "PUT"){
             console.log("onsubmit Método PUT")
             try {
+                debugger
                 const response = await alterarDespesa(values, despesaContext.idDespesa)
-                if (response.status === HTTP_STATUS.CREATED) {
+                if (response.status === 200) {
                     console.log("Operação realizada com sucesso!");
                     resetForm({values: ""})
                     let path = `/lista-de-despesas`;
@@ -459,20 +460,8 @@ export const CadastroForm = () => {
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recusos_acoes">Valor do recurso das ações</label>
-                                    <CurrencyInput
-                                        //format={currencyFormatter()}
-                                        allowNegative={false}
-                                        //prefix='R$'
-                                        decimalSeparator=","
-                                        thousandSeparator="."
-                                        value={props.values.valor_recusos_acoes}
-                                        name="valor_recusos_acoes"
-                                        id="valor_recusos_acoes"
-                                        className="form-control"
-                                        onChangeEvent={props.handleChange}
-                                    />
-                                    {/*<NumberFormat
-                                        format={currencyFormatter}
+                                    <NumberFormat
+                                        //format={currencyFormatter}
                                         value={calculaValorRecursoAcoes(props)}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
@@ -481,11 +470,11 @@ export const CadastroForm = () => {
                                         name="valor_recusos_acoes"
                                         id="valor_recusos_acoes"
                                         className="form-control"
-                                        onChange={setFieldValue}
-                                        //onChange={props.handleChange}
+                                        //onChange={setFieldValue}
+                                        onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         readOnly={true}
-                                    />*/}
+                                    />
                                     {props.errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> {props.errors.valor_recusos_acoes}</span>}
                                 </div>
                             </div>

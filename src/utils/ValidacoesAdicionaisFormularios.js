@@ -110,7 +110,7 @@ export const calculaValorRecursoAcoes = (props) => {
     let valor_totalTratado = trataNumericos(props.values.valor_total)
     let valor_recursos_propriosTratado = trataNumericos(props.values.valor_recursos_proprios)
     let valor_total = valor_totalTratado - valor_recursos_propriosTratado;
-    return valor_total/100;
+    return valor_total;
 }
 
 export const cpfMaskContitional = (value) => {

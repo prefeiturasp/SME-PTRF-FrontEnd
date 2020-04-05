@@ -60,18 +60,17 @@ export const EdicaoDeDespesa = ()=>{
                         style: 'currency',
                         currency: 'BRL'
                     }) : "",
-                    // Auxiliares
-                    mais_de_um_tipo_despesa: "",
-                    valor_recusos_acoes: resp.valor_recusos_acoes ? Number(resp.valor_recusos_acoes).toLocaleString('pt-BR', {
+
+/*                    valor_recusos_acoes: resp.valor_recusos_acoes ? Number(resp.valor_recusos_acoes).toLocaleString('pt-BR', {
                         style: 'currency',
                         currency: 'BRL'
-                    }) : "",
+                    }) : "",*/
                     valor_total_dos_rateios: resp.valor_total_dos_rateios ? Number(resp.valor_total_dos_rateios).toLocaleString('pt-BR', {
                         style: 'currency',
                         currency: 'BRL'
                     }) : "",
                     // Fim Auxiliares
-                    rateios: resp.rateios
+                    //rateios: rateios_tratados
 
 
                 }
@@ -80,7 +79,7 @@ export const EdicaoDeDespesa = ()=>{
 
 
                 console.log("Edicao Despesa Page ", response)
-                despesaContext.setInitialValues(response)
+                despesaContext.setInitialValues(init)
             }).catch(error => {
                 console.log(error);
             });
