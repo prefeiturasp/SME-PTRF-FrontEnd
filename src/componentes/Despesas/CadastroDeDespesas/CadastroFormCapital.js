@@ -16,7 +16,7 @@ export const CadastroFormCapital = (propriedades) => {
                         name={`rateios[${index}].especificacao_material_servico`}
                         id='especificacao_material_servico'
                         className="form-control"
-                        disabled={especificaoes_disable}
+                        //disabled={especificaoes_disable}
                     >
                         <option key={0} value={0}>Selecione uma ação</option>
                         {especificaoes && especificaoes.map((item) => (

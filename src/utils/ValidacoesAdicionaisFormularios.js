@@ -57,22 +57,6 @@ export const currencyFormatter =(value) =>{
     return amount;
 }
 
-/*export const currencyFormatter =(value) =>{
-
-    if (!Number(value)) return "";
-
-    const amount = Number(value).toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
-    })
-
-
-    return `${amount}`;
-    //return amount;
-}*/
-
-
-
 export const trataData = (data) => {
     return moment(data, "YYYY-MM-DD").add(1, 'days');
 }

@@ -6,6 +6,7 @@ import {getDespesa} from "../../../services/Despesas.service";
 import {CadastroDeDespesas} from "../../../componentes/Despesas/CadastroDeDespesas";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from 'react-currency-input';
+import moment from "moment";
 
 
 
@@ -22,7 +23,6 @@ export const EdicaoDeDespesa = ()=>{
             await despesaContext.setIdDespesa(associacao);
             const resp = await getDespesa(associacao)
             .then(response =>{
-
                 const resp = response;
 
                 let rateios_tratados = resp.rateios.map((item) =>{
@@ -50,8 +50,10 @@ export const EdicaoDeDespesa = ()=>{
                 })
 
                 const init = {
-
                     ...resp,
+                    data_documento: resp.data_documento ?  moment(resp.data_documento, "YYYY-MM-DD"): null,
+                    data_transacao: resp.data_transacao ?  moment(resp.data_transacao, "YYYY-MM-DD"): null,
+
                     valor_total: resp.valor_total ? Number(resp.valor_total).toLocaleString('pt-BR', {
                         style: 'currency',
                         currency: 'BRL'
@@ -65,7 +67,6 @@ export const EdicaoDeDespesa = ()=>{
                         style: 'currency',
                         currency: 'BRL'
                     }) : "",
-
 
                 }
 

@@ -24,10 +24,6 @@ import {CadastroFormCapital} from "./CadastroFormCapital";
 import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
-import {currencyFormatter} from "../../../utils/ValidacoesAdicionaisFormularios";
-
-
-import CurrencyInput from "react-currency-input";
 
 class CancelarModal extends Component {
     render() {
@@ -394,21 +390,7 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_total">Valor total</label>
 
-{/*                                    <CurrencyInput
-                                        //format={currencyFormatter()}
-                                        allowNegative={false}
-                                        prefix='R$'
-                                        decimalSeparator=","
-                                        thousandSeparator="."
-                                        value={props.values.valor_total}
-                                        name="valor_total"
-                                        id="valor_total"
-                                        className="form-control"
-                                        onChangeEvent={props.handleChange}
-                                    />*/}
-
                                     <NumberFormat
-                                        //format={currencyFormatter}
                                         value={props.values.valor_total}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
@@ -428,21 +410,7 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recursos_proprios">Valor do recurso próprio</label>
 
-{/*                                    <CurrencyInput
-                                        //format={currencyFormatter()}
-                                        allowNegative={false}
-                                        prefix='R$'
-                                        decimalSeparator=","
-                                        thousandSeparator="."
-                                        value={props.values.valor_recursos_proprios}
-                                        name="valor_recursos_proprios"
-                                        id="valor_recursos_proprios"
-                                        className="form-control"
-                                        onChangeEvent={props.handleChange}
-                                    />*/}
-
                                     <NumberFormat
-                                        //format={currencyFormatter}
                                         value={props.values.valor_recursos_proprios}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
@@ -511,12 +479,12 @@ export const CadastroForm = () => {
 
                                                     <div className="form-row">
 
-                                                        {props.values.mais_de_um_tipo_despesa === "sim" && index >=1 &&(
+
                                                             <div className="col-12 mt-4 ml-0">
-                                                                <p className='mb-0'><strong>Despesa {index}</strong></p>
+                                                                <p className='mb-0'><strong>Despesa {index+1}</strong></p>
                                                                 <hr className='mt-0 mb-1'/>
                                                             </div>
-                                                        )}
+
 
                                                         <div className="col-12 col-md-6 mt-4">
 
