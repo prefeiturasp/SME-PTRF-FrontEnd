@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 
-import {DataTable} from 'primereact/datatable';
+import { DataTable } from 'primereact/datatable';
 
 import { Column } from 'primereact/column';
 import { useHistory } from 'react-router-dom';
@@ -19,13 +19,17 @@ export const ListaDeReceitas = () =>{
 
     useEffect(() => {
         const carregaListaReceitas = async () => {
-            const resp = await getListaReceitas();
-            setReceitas(resp.results);
+            getListaReceitas().then(response => {
+                setReceitas(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
         };
         carregaListaReceitas();
     }, [])
 
-    const rowsPerPage = 10;
+    const rowsPerPage = 7;
     
     const redirecionaDetalhe = value => {
         const url = '/edicao-de-receita/' + value.uuid

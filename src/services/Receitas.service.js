@@ -60,6 +60,12 @@ export const deletarReceita = async uuid => {
 }
 
 export const getListaReceitas = async () => {
-    return (await api.get('api/receitas/', authHeader)).data
+    return api.get('api/receitas/', authHeader)
+        .then(response => {
+            return response;
+        })
+        .catch(error => {
+            return error.response
+        });
 }
 
