@@ -1,8 +1,9 @@
 import React from "react";
 import NumberFormat from "react-number-format";
+import {currencyFormatter} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const CadastroFormCusteio = (propriedades) => {
-    const {formikProps, rateio, index, handleOnBlur, despesasTabelas, especificaoes_disable, especificaoes } = propriedades
+    const {formikProps, rateio, index, despesasTabelas, especificaoes, set_tipo_custeio } = propriedades
 
     return (
 
@@ -12,9 +13,18 @@ export const CadastroFormCusteio = (propriedades) => {
 
                     <label htmlFor="tipo_custeio">Tipo de custeio</label>
                     <select
-                        defaultValue={rateio.tipo_custeio.id}
-                        onChange={formikProps.handleChange}
-                        onBlur={(e)=>handleOnBlur("tipo_custeio", e.target.value)}
+                        //defaultValue={rateio.tipo_custeio.id}
+                        value={
+                            rateio.tipo_custeio !== null ? (
+                                typeof rateio.tipo_custeio === "object" ? rateio.tipo_custeio.id : rateio.tipo_custeio
+                            ) : 0
+                        }
+                        //onChange={formikProps.handleChange}
+                        onChange={(e) => {
+                            formikProps.handleChange(e);
+                            set_tipo_custeio(e.target.value);
+                        }}
+                        //onBlur={(e)=>handleOnBlur("tipo_custeio", e.target.value)}
                         name={`rateios[${index}].tipo_custeio`}
                         id='tipo_custeio'
                         className="form-control"
@@ -32,12 +42,17 @@ export const CadastroFormCusteio = (propriedades) => {
                 <div className="col-12 mt-4">
                     <label htmlFor="especificacao_material_servico">Especificação do material ou serviço</label>
                     <select
-                        value={  rateio.especificacao_material_servico !== null ? rateio.especificacao_material_servico.id : 0}
+                        //value={rateio.especificacao_material_servico !== null ? rateio.especificacao_material_servico.id : 0}
+                        value={
+                            rateio.especificacao_material_servico !== null ? (
+                                typeof rateio.especificacao_material_servico === "object" ? rateio.especificacao_material_servico.id : rateio.especificacao_material_servico
+                            ) : 0
+                        }
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].especificacao_material_servico`}
                         id='especificacao_material_servico'
                         className="form-control"
-                        disabled={especificaoes_disable}
+                        //disabled={especificaoes_disable}
                     >
                         <option key={0} value={0}>Selecione uma ação</option>
                         {especificaoes && especificaoes.map((item)=> (
@@ -48,7 +63,12 @@ export const CadastroFormCusteio = (propriedades) => {
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor="acao_associacao">Ação</label>
                     <select
-                        value={rateio.acao_associacao !== null ? rateio.acao_associacao.uuid : 0}
+                        //value={rateio.acao_associacao !== null ? rateio.acao_associacao.uuid : 0}
+                        value={
+                            rateio.acao_associacao !== null ? (
+                                typeof rateio.acao_associacao === "object" ? rateio.acao_associacao.uuid : rateio.acao_associacao
+                            ) : 0
+                        }
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].acao_associacao`}
                         id='acao_associacao'
@@ -66,7 +86,12 @@ export const CadastroFormCusteio = (propriedades) => {
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
                             <select
-                                value={rateio.conta_associacao !== null ? rateio.conta_associacao.uuid : 0}
+                                //value={rateio.conta_associacao !== null ? rateio.conta_associacao.uuid : 0}
+                                value={
+                                    rateio.conta_associacao !== null ? (
+                                        typeof rateio.conta_associacao === "object" ? rateio.conta_associacao.uuid : rateio.conta_associacao
+                                    ) : 0
+                                }
                                 onChange={formikProps.handleChange}
                                 name={`rateios[${index}].conta_associacao`}
                                 id='conta_associacao'
@@ -82,6 +107,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="valor_rateio">Valor do custeio</label>
                             <NumberFormat
+                                format={currencyFormatter}
                                 value={rateio.valor_rateio}
                                 onChange={formikProps.handleChange}
                                 thousandSeparator={'.'}

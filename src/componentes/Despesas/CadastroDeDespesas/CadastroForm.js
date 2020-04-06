@@ -1,14 +1,8 @@
 import React, {Component, Fragment, useContext, useEffect, useState} from "react";
-import {Form, Formik, FieldArray} from "formik";
-import {
-    YupSignupSchemaCadastroDespesa,
-    cpfMaskContitional,
-    calculaValorRecursoAcoes,
-    trataNumericos,
-    convertToNumber, round,
-} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {Formik, FieldArray} from "formik";
+import { YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, convertToNumber, round, } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import {getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa} from "../../../services/Despesas.service";
+import { getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa, alterarDespesa} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import NumberFormat from "react-number-format";
 import moment from "moment";
@@ -47,14 +41,16 @@ class CancelarModal extends Component {
 
 
 export const CadastroForm = () => {
+
+
     let history = useHistory();
 
     const despesaContext = useContext(DespesaContext)
 
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [show, setShow] = useState(false);
-    const [aplicacao_recurso, set_aplicacao_recurso] = useState(undefined);
-    const [tipo_custeio, set_tipo_custeio] = useState(undefined);
+    const [aplicacao_recurso, set_aplicacao_recurso] = useState("CUSTEIO");
+    const [tipo_custeio, set_tipo_custeio] = useState(1);
     const [especificaoes, set_especificaoes] = useState(undefined);
     const [especificaoes_disable, set_especificaoes_disable] = useState(true);
 
@@ -68,69 +64,52 @@ export const CadastroForm = () => {
     }, [])
 
     useEffect(()=> {
-        if (aplicacao_recurso !== undefined) {
+        //if (aplicacao_recurso !== undefined) {
             const carregaEspecificacoes = async () => {
                 const resp = await getEspecificacaoMaterialServico(aplicacao_recurso, tipo_custeio)
+                console.log("Carrega especificaçoes aplicacao_recurso ", aplicacao_recurso)
+                console.log("Carrega especificaçoes tipo_custeio ", tipo_custeio)
+                console.log("Carrega especificaçoes ", resp)
                 set_especificaoes_disable(false)
                 set_especificaoes(resp);
             };
             carregaEspecificacoes();
             set_especificaoes_disable(true)
-        }
+        //}
     },[aplicacao_recurso, tipo_custeio])
 
 
     const initialValues = () => {
-        const inital = {
-
-            associacao: localStorage.getItem(ASSOCIACAO_UUID),
-            tipo_documento: "",
-            tipo_transacao: "",
-            numero_documento: "",
-            data_documento: "",
-            cpf_cnpj_fornecedor: "",
-            nome_fornecedor: "",
-            data_transacao: "",
-            valor_total: "",
-            valor_recursos_proprios: "",
-            // Auxiliares
-            mais_de_um_tipo_despesa: "",
-            valor_recusos_acoes:0,
-            valor_total_dos_rateios:0,
-            // Fim Auxiliares
-            rateios: [
-                {
-                    associacao: localStorage.getItem(ASSOCIACAO_UUID),
-                    conta_associacao: "",
-                    acao_associacao: "",
-                    aplicacao_recurso: "CUSTEIO",
-                    tipo_custeio: "1",
-                    especificacao_material_servico: "",
-                    valor_rateio: "",
-                    quantidade_itens_capital: "",
-                    valor_item_capital: "",
-                    numero_processo_incorporacao_capital: "",
-                }
-            ],
-        }
-
-        return inital
+        return despesaContext.initialValues
     }
 
     const onSubmit = async (values, {resetForm}) => {
-        //debugger;
 
-        if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0 ){
-            values.tipo_documento = convertToNumber(values.tipo_documento);
-        }else {
-            values.tipo_documento = null
+        // Quando é Alteração
+        if (typeof values.associacao === "object"){
+            values.associacao = localStorage.getItem(ASSOCIACAO_UUID)
         }
 
-        if (values.tipo_transacao !== "" && values.tipo_transacao !== "0" && values.tipo_transacao !== 0 ){
-            values.tipo_transacao = convertToNumber(values.tipo_documento);
+        if (typeof values.tipo_documento === "object" && values.tipo_documento !== null){
+            values.tipo_documento = values.tipo_documento.id
         }else {
-            values.tipo_transacao = null
+            if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0) {
+                values.tipo_documento = convertToNumber(values.tipo_documento);
+            } else {
+                values.tipo_documento = null
+            }
         }
+
+        if (typeof values.tipo_transacao === "object" && values.tipo_transacao !== null){
+            values.tipo_transacao = values.tipo_transacao.id
+        }else {
+            if (values.tipo_transacao !== "" && values.tipo_transacao !== "0" && values.tipo_transacao !== 0) {
+                values.tipo_transacao = convertToNumber(values.tipo_transacao);
+            } else {
+                values.tipo_transacao = null
+            }
+        }
+
 
         values.valor_total = trataNumericos(values.valor_total);
         values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
@@ -150,25 +129,45 @@ export const CadastroForm = () => {
 
         values.rateios.map((rateio) => {
 
-            rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
-            rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico)
+            if (typeof rateio.especificacao_material_servico === "object" && rateio.especificacao_material_servico !== null){
+                rateio.especificacao_material_servico = rateio.especificacao_material_servico.id
+            }else {
+                rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico)
+            }
+
+            if (typeof rateio.conta_associacao === "object" && rateio.conta_associacao !== null){
+                rateio.conta_associacao = rateio.conta_associacao.uuid
+            }else {
+                if (rateio.conta_associacao === "0" || rateio.conta_associacao === "" || rateio.conta_associacao === 0){
+                    rateio.conta_associacao = null
+                }
+            }
+
+            if (typeof rateio.acao_associacao === "object" && rateio.acao_associacao !== null){
+                rateio.acao_associacao = rateio.acao_associacao.uuid
+            }else {
+                if (rateio.acao_associacao === "0" || rateio.acao_associacao === "" || rateio.acao_associacao === 0) {
+                    rateio.acao_associacao = null
+                }
+            }
+
+            if (typeof rateio.tipo_custeio === "object" && rateio.tipo_custeio !== null){
+                rateio.tipo_custeio = rateio.tipo_custeio.id
+            }else {
+
+                if (rateio.tipo_custeio === "0" || rateio.tipo_custeio === 0 || rateio.tipo_custeio === ""){
+                    rateio.tipo_custeio = null
+                }else {
+                    rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
+                }
+            }
+
             rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital)
             rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)
-            rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
-
-            if (rateio.conta_associacao === "0" || rateio.conta_associacao === "" || rateio.conta_associacao === 0){
-                rateio.conta_associacao = null
-            }
-            if (rateio.acao_associacao === "0" || rateio.acao_associacao === "" || rateio.acao_associacao === 0){
-                rateio.acao_associacao = null
-            }
+            rateio.valor_rateio = round(trataNumericos(rateio.valor_rateio),2)
 
             if (rateio.aplicacao_recurso === "0" || rateio.aplicacao_recurso === "" || rateio.aplicacao_recurso === 0){
                 rateio.aplicacao_recurso = null
-            }
-
-            if (rateio.tipo_custeio === "0" || rateio.tipo_custeio === 0 || rateio.tipo_custeio === ""){
-                rateio.tipo_custeio = null
             }
 
             if (rateio.especificacao_material_servico === "0" || rateio.especificacao_material_servico === 0 || rateio.especificacao_material_servico === ""){
@@ -176,15 +175,10 @@ export const CadastroForm = () => {
             }
 
             if (rateio.aplicacao_recurso === "CAPITAL"){
-                rateio.valor_rateio = rateio.quantidade_itens_capital * rateio.valor_item_capital
+                rateio.valor_rateio = round(rateio.quantidade_itens_capital * rateio.valor_item_capital, 2)
             }
 
         })
-
-        const payload = {
-            ...values,
-            associacao: localStorage.getItem(ASSOCIACAO_UUID)
-        }
 
         console.log("onSubmit", values)
 
@@ -204,22 +198,26 @@ export const CadastroForm = () => {
                 console.log(error)
                 return
             }
+        }else if(despesaContext.verboHttp === "PUT"){
+            console.log("onsubmit Método PUT")
+            try {
+                debugger
+                const response = await alterarDespesa(values, despesaContext.idDespesa)
+                if (response.status === 200) {
+                    console.log("Operação realizada com sucesso!");
+                    resetForm({values: ""})
+                    let path = `/lista-de-despesas`;
+                    history.push(path);
+                } else {
+                    console.log(response)
+                    return
+                }
+            } catch (error) {
+                console.log(error)
+                return
+            }
         }
 
-
-
-    }
-
-    const handleReset = (props) => {
-
-    }
-
-    const handleOnBlur = (nome, valor) =>{
-        if (nome === 'aplicacao_recurso'){
-            set_aplicacao_recurso(valor)
-        }else if(nome === 'tipo_custeio'){
-            set_tipo_custeio(valor)
-        }
     }
 
     const onCancelarTrue = () => {
@@ -304,7 +302,12 @@ export const CadastroForm = () => {
                                     <label htmlFor="tipo_documento">Tipo de documento</label>
 
                                     <select
-                                        value={props.values.tipo_documento !== null ? props.values.tipo_documento.id : 0 }
+                                        value={
+                                            props.values.tipo_documento !== null ? (
+                                                props.values.tipo_documento === "object" ? props.values.tipo_documento.id : props.values.tipo_documento.id
+                                            ) : 0
+                                        }
+                                        //value={props.values.tipo_documento !== null ? props.values.tipo_documento.id : 0 }
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_documento'
@@ -333,7 +336,7 @@ export const CadastroForm = () => {
                                     <DatePickerField
                                         name="data_documento"
                                         id="data_documento"
-                                        value={values.data_documento}
+                                        value={values.data_documento != null ? values.data_documento : ""}
                                         onChange={setFieldValue}
                                     />
                                     {props.errors.data_documento &&
@@ -343,7 +346,12 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="tipo_transacao">Tipo de transação</label>
                                     <select
-                                        value={props.values.tipo_transacao !== null ? props.values.tipo_transacao.id : 0}
+                                        //value={props.values.tipo_transacao !== null ? props.values.tipo_transacao.id : 0}
+                                        value={
+                                            props.values.tipo_transacao !== null ? (
+                                                props.values.tipo_transacao === "object" ? props.values.tipo_transacao.id : props.values.tipo_transacao.id
+                                            ) : 0
+                                        }
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_transacao'
@@ -364,7 +372,8 @@ export const CadastroForm = () => {
                                     <DatePickerField
                                         name="data_transacao"
                                         id="data_transacao"
-                                        value={values.data_transacao}
+                                        value={values.data_transacao != null ? values.data_transacao : ""}
+                                        //value={values.data_transacao}
                                         onChange={setFieldValue}
                                     />
                                     {props.errors.data_transacao &&
@@ -373,6 +382,7 @@ export const CadastroForm = () => {
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_total">Valor total</label>
+
                                     <NumberFormat
                                         value={props.values.valor_total}
                                         thousandSeparator={'.'}
@@ -392,6 +402,7 @@ export const CadastroForm = () => {
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recursos_proprios">Valor do recurso próprio</label>
+
                                     <NumberFormat
                                         value={props.values.valor_recursos_proprios}
                                         thousandSeparator={'.'}
@@ -411,16 +422,17 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recusos_acoes">Valor do recurso das ações</label>
                                     <NumberFormat
+                                        //format={currencyFormatter}
                                         value={calculaValorRecursoAcoes(props)}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
                                         decimalScale={2}
-                                        prefix={'R$ '}
+                                        prefix={'R$'}
                                         name="valor_recusos_acoes"
                                         id="valor_recusos_acoes"
                                         className="form-control"
-                                        onChange={setFieldValue}
-                                        //onChange={props.handleChange}
+                                        //onChange={setFieldValue}
+                                        onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         readOnly={true}
                                     />
@@ -460,20 +472,22 @@ export const CadastroForm = () => {
 
                                                     <div className="form-row">
 
-                                                        {props.values.mais_de_um_tipo_despesa === "sim" && index >=1 &&(
+
                                                             <div className="col-12 mt-4 ml-0">
-                                                                <p className='mb-0'><strong>Despesa {index}</strong></p>
+                                                                <p className='mb-0'><strong>Despesa {index+1}</strong></p>
                                                                 <hr className='mt-0 mb-1'/>
                                                             </div>
-                                                        )}
+
 
                                                         <div className="col-12 col-md-6 mt-4">
 
                                                             <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
                                                             <select
                                                                 value={rateio.aplicacao_recurso}
-                                                                onChange={props.handleChange}
-                                                                onBlur={(e)=>handleOnBlur("aplicacao_recurso", e.target.value)}
+                                                                onChange={(e) => {
+                                                                    props.handleChange(e);
+                                                                    set_aplicacao_recurso(e.target.value);
+                                                                }}
                                                                 name={`rateios[${index}].aplicacao_recurso`}
                                                                 id='aplicacao_recurso'
                                                                 className="form-control"
@@ -491,10 +505,11 @@ export const CadastroForm = () => {
                                                             formikProps={props}
                                                             rateio={rateio}
                                                             index={index}
-                                                            handleOnBlur={handleOnBlur}
                                                             despesasTabelas={despesasTabelas}
                                                             especificaoes_disable={especificaoes_disable}
                                                             especificaoes={especificaoes}
+                                                            set_aplicacao_recurso={set_aplicacao_recurso}
+                                                            set_tipo_custeio={set_tipo_custeio}
                                                         />
                                                     ):
                                                         rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -502,7 +517,6 @@ export const CadastroForm = () => {
                                                                 formikProps={props}
                                                                 rateio={rateio}
                                                                 index={index}
-                                                                handleOnBlur={handleOnBlur}
                                                                 despesasTabelas={despesasTabelas}
                                                                 especificaoes_disable={especificaoes_disable}
                                                                 especificaoes={especificaoes}
