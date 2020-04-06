@@ -61,7 +61,7 @@ export const CadastroForm = () => {
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [show, setShow] = useState(false);
     const [aplicacao_recurso, set_aplicacao_recurso] = useState("CUSTEIO");
-    const [tipo_custeio, set_tipo_custeio] = useState(undefined);
+    const [tipo_custeio, set_tipo_custeio] = useState(1);
     const [especificaoes, set_especificaoes] = useState(undefined);
     const [especificaoes_disable, set_especificaoes_disable] = useState(true);
 
@@ -98,15 +98,9 @@ debugger
         if (typeof values.associacao === "object"){
             values.associacao = localStorage.getItem(ASSOCIACAO_UUID)
         }
-        if (typeof values.tipo_documento === "object"){
 
-            if ( values.tipo_documento === null){
-                values.tipo_documento = null
-            }else {
-                values.tipo_documento = values.tipo_documento.id
-            }
-
-
+        if (typeof values.tipo_documento === "object" && values.tipo_documento !== null){
+            values.tipo_documento = values.tipo_documento.id
         }else {
             if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0) {
                 values.tipo_documento = convertToNumber(values.tipo_documento);
@@ -115,15 +109,9 @@ debugger
             }
         }
 
-        if (typeof values.tipo_transacao === "object"){
 
-            if ( values.tipo_transacao === null){
-                values.tipo_transacao = null
-            }else {
-                values.tipo_transacao = values.tipo_transacao.id
-            }
-
-
+        if (typeof values.tipo_transacao === "object" && values.tipo_transacao !== null){
+            values.tipo_transacao = values.tipo_transacao.id
         }else {
             if (values.tipo_transacao !== "" && values.tipo_transacao !== "0" && values.tipo_transacao !== 0) {
                 values.tipo_transacao = convertToNumber(values.tipo_transacao);
@@ -131,6 +119,7 @@ debugger
                 values.tipo_transacao = null
             }
         }
+
 
         values.valor_total = trataNumericos(values.valor_total);
         values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
@@ -150,13 +139,13 @@ debugger
 
         values.rateios.map((rateio) => {
 
-            if (typeof rateio.especificacao_material_servico === "object"){
+            if (typeof rateio.especificacao_material_servico === "object" && rateio.especificacao_material_servico !== null){
                 rateio.especificacao_material_servico = rateio.especificacao_material_servico.id
             }else {
                 rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico)
             }
 
-            if (typeof rateio.conta_associacao === "object"){
+            if (typeof rateio.conta_associacao === "object" && rateio.conta_associacao !== null){
                 rateio.conta_associacao = rateio.conta_associacao.uuid
             }else {
                 if (rateio.conta_associacao === "0" || rateio.conta_associacao === "" || rateio.conta_associacao === 0){
@@ -164,7 +153,7 @@ debugger
                 }
             }
 
-            if (typeof rateio.acao_associacao === "object"){
+            if (typeof rateio.acao_associacao === "object" && rateio.acao_associacao !== null){
                 rateio.acao_associacao = rateio.acao_associacao.uuid
             }else {
                 if (rateio.acao_associacao === "0" || rateio.acao_associacao === "" || rateio.acao_associacao === 0) {
@@ -172,7 +161,7 @@ debugger
                 }
             }
 
-            if (typeof rateio.tipo_custeio === "object"){
+            if (typeof rateio.tipo_custeio === "object" && rateio.tipo_custeio !== null){
                 rateio.tipo_custeio = rateio.tipo_custeio.id
             }else {
 
@@ -196,7 +185,7 @@ debugger
             }
 
             if (rateio.aplicacao_recurso === "CAPITAL"){
-                rateio.valor_rateio = rateio.quantidade_itens_capital * rateio.valor_item_capital
+                rateio.valor_rateio = round(rateio.quantidade_itens_capital * rateio.valor_item_capital, 2)
             }
 
         })
@@ -336,7 +325,12 @@ debugger
                                     <label htmlFor="tipo_documento">Tipo de documento</label>
 
                                     <select
-                                        value={props.values.tipo_documento !== null ? props.values.tipo_documento.id : 0 }
+                                        value={
+                                            props.values.tipo_documento !== null ? (
+                                                props.values.tipo_documento === "object" ? props.values.tipo_documento.id : props.values.tipo_documento.id
+                                            ) : 0
+                                        }
+                                        //value={props.values.tipo_documento !== null ? props.values.tipo_documento.id : 0 }
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_documento'
@@ -365,7 +359,7 @@ debugger
                                     <DatePickerField
                                         name="data_documento"
                                         id="data_documento"
-                                        value={values.data_documento}
+                                        value={values.data_documento != null ? values.data_documento : ""}
                                         onChange={setFieldValue}
                                     />
                                     {props.errors.data_documento &&
@@ -375,7 +369,12 @@ debugger
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="tipo_transacao">Tipo de transação</label>
                                     <select
-                                        value={props.values.tipo_transacao !== null ? props.values.tipo_transacao.id : 0}
+                                        //value={props.values.tipo_transacao !== null ? props.values.tipo_transacao.id : 0}
+                                        value={
+                                            props.values.tipo_transacao !== null ? (
+                                                props.values.tipo_transacao === "object" ? props.values.tipo_transacao.id : props.values.tipo_transacao.id
+                                            ) : 0
+                                        }
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_transacao'
@@ -396,7 +395,8 @@ debugger
                                     <DatePickerField
                                         name="data_transacao"
                                         id="data_transacao"
-                                        value={values.data_transacao}
+                                        value={values.data_transacao != null ? values.data_transacao : ""}
+                                        //value={values.data_transacao}
                                         onChange={setFieldValue}
                                     />
                                     {props.errors.data_transacao &&

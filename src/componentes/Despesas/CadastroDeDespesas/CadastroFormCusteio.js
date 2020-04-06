@@ -66,7 +66,12 @@ export const CadastroFormCusteio = (propriedades) => {
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor="acao_associacao">Ação</label>
                     <select
-                        value={rateio.acao_associacao !== null ? rateio.acao_associacao.uuid : 0}
+                        //value={rateio.acao_associacao !== null ? rateio.acao_associacao.uuid : 0}
+                        value={
+                            rateio.acao_associacao !== null ? (
+                                typeof rateio.acao_associacao === "object" ? rateio.acao_associacao.uuid : rateio.acao_associacao
+                            ) : 0
+                        }
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].acao_associacao`}
                         id='acao_associacao'
@@ -84,7 +89,12 @@ export const CadastroFormCusteio = (propriedades) => {
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
                             <select
-                                value={rateio.conta_associacao !== null ? rateio.conta_associacao.uuid : 0}
+                                //value={rateio.conta_associacao !== null ? rateio.conta_associacao.uuid : 0}
+                                value={
+                                    rateio.conta_associacao !== null ? (
+                                        typeof rateio.conta_associacao === "object" ? rateio.conta_associacao.uuid : rateio.conta_associacao
+                                    ) : 0
+                                }
                                 onChange={formikProps.handleChange}
                                 name={`rateios[${index}].conta_associacao`}
                                 id='conta_associacao'
