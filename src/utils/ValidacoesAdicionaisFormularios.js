@@ -13,131 +13,48 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     cpf_cnpj_fornecedor: yup.string()
     .test('test-name', 'Digite um CPF ou um CNPJ válido',
         function (value) {
-            return valida_cpf_cnpj(value)
+
+            if(value !== undefined){
+                return valida_cpf_cnpj(value)
+            }else {
+                return true
+            }
         }),
-    nome_fornecedor: yup.string(),
-    tipo_documento:yup.string(),
-    numero_documento:yup.string(),
-    data_documento: yup.string(),
-    tipo_transacao: yup.string(),
-    data_transacao: yup.string(),
-    valor_total: yup.string(),
-    valor_recursos_proprios: yup.string(),
-    valorRecursoAcoes:yup.string(),
+    nome_fornecedor: yup.string().nullable(),
+    tipo_documento:yup.string().nullable(),
+    numero_documento:yup.string().nullable(),
+    data_documento: yup.string().nullable(),
+    tipo_transacao: yup.string().nullable(),
+    data_transacao: yup.string().nullable(),
+    valor_total: yup.string().nullable(),
+    valor_recursos_proprios: yup.string().nullable(),
+    valor_total_dos_rateios:yup.string().nullable(),
+    valor_recusos_acoes:yup.string().nullable()
+    .test('test-name', 'O total das classificações deve corresponder ao valor total da nota',
+        function (value) {
+            value = String(round(value,2))
+            const { valor_total_dos_rateios } = this.parent;
+            if(value !== valor_total_dos_rateios){
+                return false
+            }else {
+                return true
+            }
+        }),
+
+
 });
 
-export const payloadFormDespesaContext = (data)=>{
+export const currencyFormatter =(value) =>{
 
-    let arrayRetorno =[]
+    if (!Number(value)) return "";
 
-    data.map(item => {
-        if (item.valor_item_capital !== "" && item.quantidade_itens_capital !== ""){
-            item.valor_item_capital = trataNumericos(item.valor_item_capital);
-            item.quantidade_itens_capital = trataNumericos(item.quantidade_itens_capital);
-            item.valor_rateio = round((item.valor_item_capital * item.quantidade_itens_capital), 2);
-        }else{
-            item.valor_item_capital = 0;
-            item.quantidade_itens_capital = 0;
-            item.valor_rateio = trataNumericos(item.valor_rateio)
-        }
+    const amount = new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    }).format(value / 100 );
 
-        item.tipo_custeio = convertToNumber(item.tipo_custeio)
-
-        if (item.tipo_aplicacao_recurso === 1){
-            item.aplicacao_recurso = "CUSTEIO"
-        }else {
-            item.aplicacao_recurso = "CAPITAL"
-        }
-
-        item.especificacao_material_servico = convertToNumber(item.especificacao_material_servico)
-
-        arrayRetorno.push(item)
-    })
-
-    return arrayRetorno;
-}
-
-export const payloadFormDespesaPrincipal = (data, tipo_aplicacao_recurso, idAssociacao, verboHttp)=>{
-
-
-
-    data.associacao = idAssociacao;
-
-    if (data.tipo_documento.id){
-        data.tipo_documento = convertToNumber(data.tipo_documento.id)
-    }else{
-        data.tipo_documento = convertToNumber(data.tipo_documento)
-    }
-
-    if(data.tipo_transacao.id){
-        data.tipo_transacao = convertToNumber(data.tipo_transacao.id)
-    }else{
-        data.tipo_transacao = convertToNumber(data.tipo_transacao)
-    }
-
-    data.valor_total = trataNumericos(data.valor_total);
-    data.valor_recursos_proprios = trataNumericos(data.valor_recursos_proprios);
-    data.valorRecursoAcoes = round((data.valor_total - data.valor_recursos_proprios), 2);
-
-    if (data.data_documento){
-        //data.data_documento = trataData(data.data_documento)
-        //data.data_documento =  moment(data.data_documento, "YYYY-MM-DD").add(1, 'days');
-        data.data_documento =  moment(data.data_documento).format("YYYY-MM-DD");
-    }else {
-        data.data_documento = "";
-    }
-
-    if (data.data_transacao){
-        data.data_transacao = trataData(data.data_transacao)
-        //data.data_transacao =  moment(data.data_transacao, "YYYY-MM-DD").add(1, 'days');
-        data.data_transacao =  moment(data.data_transacao).format("YYYY-MM-DD");
-    }else {
-        data.data_transacao = "";
-    }
-
-    data.rateios.map((rateio) =>{
-        rateio.associacao = idAssociacao;
-
-        if(verboHttp==="POST"){
-            rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico);
-        }else if(verboHttp==="PUT"){
-            rateio.conta_associacao = rateio.conta_associacao.uuid;
-            rateio.acao_associacao = rateio.acao_associacao.uuid;
-            rateio.tipo_custeio = rateio.tipo_custeio.id;
-            rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico.id);
-        }
-    })
-
-    if (tipo_aplicacao_recurso === "CUSTEIO"){
-
-        data.rateios.map((rateio) =>{
-            rateio.valor_item_capital = 0;
-            rateio.quantidade_itens_capital = 0;
-
-            rateio.aplicacao_recurso = tipo_aplicacao_recurso
-            rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
-        })
-    }
-
-
-    if (tipo_aplicacao_recurso === "CAPITAL"){
-        data.rateios.map((rateio) =>{
-
-            rateio.aplicacao_recurso = tipo_aplicacao_recurso
-
-            if (rateio.valor_item_capital !== "" && rateio.quantidade_itens_capital !== ""){
-                rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital);
-                rateio.quantidade_itens_capital = trataNumericos(rateio.quantidade_itens_capital);
-                rateio.valor_rateio = round((rateio.valor_item_capital * rateio.quantidade_itens_capital), 2);
-            }else{
-                rateio.valor_item_capital = 0;
-                rateio.quantidade_itens_capital = 0;
-                rateio.valor_rateio = trataNumericos(rateio.valor_rateio)
-            }
-        })
-    }
-
-    return data;
+    //return `${amount}`;
+    return amount;
 }
 
 export const trataData = (data) => {
@@ -193,9 +110,38 @@ export const cpfMaskContitional = (value) => {
 
 function valida_cpf_cnpj ( valor ) {
 
-    if ( !valor || (valor.length < 11 && valor.length > 14) || valor === "00000000000" || valor === "11111111111" || valor === "22222222222" || valor === "33333333333" || valor === "44444444444" || valor === "55555555555" || valor === "66666666666" || valor === "77777777777" || valor === "88888888888"
-        || valor === "99999999999" )
+    // Remove caracteres inválidos do valor
+    if (valor){
+        valor = valor.replace(/[^0-9]/g, '');
+    }
+
+    if (
+        !valor ||
+        (valor.length < 11 && valor.length > 14) ||
+        valor === "00000000000" ||
+        valor === "00000000000000" ||
+        valor === "11111111111" ||
+        valor === "11111111111111" ||
+        valor === "22222222222" ||
+        valor === "22222222222222" ||
+        valor === "33333333333" ||
+        valor === "33333333333333" ||
+        valor === "44444444444" ||
+        valor === "44444444444444" ||
+        valor === "55555555555" ||
+        valor === "55555555555555" ||
+        valor === "66666666666" ||
+        valor === "66666666666666" ||
+        valor === "77777777777" ||
+        valor === "77777777777777" ||
+        valor === "88888888888" ||
+        valor === "88888888888888" ||
+        valor === "99999999999" ||
+        valor === "99999999999999"
+    ){
         return false
+    }
+
 
     // Verifica se é CPF ou CNPJ
     let valida = verifica_cpf_cnpj( valor );
@@ -203,8 +149,7 @@ function valida_cpf_cnpj ( valor ) {
     // Garante que o valor é uma string
     valor = valor.toString();
 
-    // Remove caracteres inválidos do valor
-    valor = valor.replace(/[^0-9]/g, '');
+
 
     // Valida CPF
     if ( valida === 'CPF' ) {

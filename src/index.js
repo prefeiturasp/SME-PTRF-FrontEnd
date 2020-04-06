@@ -3,23 +3,20 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import {BrowserRouter} from "react-router-dom";
 import {SidebarContextProvider} from "./context/Sidebar";
-import {DadosDoGastoContextProvider} from "./context/DadosDoGasto";
-import {GetDadosApiDespesaContextProvider} from "./context/GetDadosApiDespesa";
 import {NotificacaoContextProvider} from "./context/Notificacao/NotificacaoContext";
+import {DespesaContextProvider} from "./context/Despesa";
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
     <NotificacaoContextProvider>
-        <GetDadosApiDespesaContextProvider>
-            <DadosDoGastoContextProvider>
-                <SidebarContextProvider>
-                    <BrowserRouter>
-                        <App/>
-                    </BrowserRouter>
-                </SidebarContextProvider>
-            </DadosDoGastoContextProvider>
-        </GetDadosApiDespesaContextProvider>
+        <DespesaContextProvider>
+            <SidebarContextProvider>
+                <BrowserRouter>
+                    <App/>
+                </BrowserRouter>
+            </SidebarContextProvider>
+        </DespesaContextProvider>
     </NotificacaoContextProvider>
-    , document.getElementById("root"));
+    ,document.getElementById("root"));
 
 serviceWorker.unregister();

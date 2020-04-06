@@ -1,25 +1,40 @@
-import React, {useContext, useEffect, useState} from "react";
-import {GetDadosApiDespesaContext} from "../../../context/GetDadosApiDespesa";
-import {DataTable} from 'primereact/datatable';
-import { Column } from 'primereact/column'
-import { useHistory, Link } from 'react-router-dom'
+import React, {useEffect, useState} from "react";
+
+import { DataTable } from 'primereact/datatable';
+
+import { Column } from 'primereact/column';
+import { useHistory } from 'react-router-dom';
+import '../../../paginas/404/pagina-404.scss'
+import Img404 from '../../../assets/img/img-404.svg'
 import moment from 'moment';
+
+import {getListaReceitas} from "../../../services/Receitas.service";
 
 
 export const ListaDeReceitas = () =>{
-    const dadosApiContext = useContext(GetDadosApiDespesaContext);
+
     let history = useHistory();
 
     const [receitas, setReceitas] = useState([])
 
-    useEffect( ()=>{
-        dadosApiContext.getReceitas()
-        .then(resposta_api => {
-            setReceitas(resposta_api.data.results)
-        })
+    useEffect(() => {
+        const carregaListaReceitas = async () => {
+            getListaReceitas().then(response => {
+                setReceitas(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        };
+        carregaListaReceitas();
     }, [])
 
-    const rowsPerPage = 10;
+    const rowsPerPage = 7;
+    
+    const redirecionaDetalhe = value => {
+        const url = '/edicao-de-receita/' + value.uuid
+        history.push(url);
+    }
 
     const dataTemplate = (rowData, column) => {
         return (
@@ -33,7 +48,6 @@ export const ListaDeReceitas = () =>{
     }
 
     const valorTemplate = (rowData, column) => {
-        console.log(typeof(rowData['valor']));
         const valorFormatado = rowData['valor']
           ? new Number(rowData['valor']).toLocaleString('pt-BR', {
               style: 'currency',
@@ -49,7 +63,7 @@ export const ListaDeReceitas = () =>{
                 <button onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success mt-2 mr-2">Cadastrar crédito</button>
             </div>
 
-            <DataTable
+            {receitas.length > 0 ? (<DataTable
                 value={receitas}
                 className="mt-3 datatable-footer-coad"
                 paginator={receitas.length > rowsPerPage}
@@ -57,6 +71,7 @@ export const ListaDeReceitas = () =>{
                 paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                 autoLayout={true}
                 selectionMode="single"
+                onRowClick={e => redirecionaDetalhe(e.data)}
                 >
                 <Column field='tipo_receita.nome' header='Tipo' />
                 <Column field='conta_associacao.nome' header='Conta' />
@@ -69,7 +84,21 @@ export const ListaDeReceitas = () =>{
                     field='valor'
                     header='Valor'
                     body={valorTemplate}/>
-            </DataTable>
+            </DataTable>)
+            : (
+                <div className="row container-404">
+                  <div className="col-lg-6 col-sm-12 mb-lg-0 align-self-center">
+                    <p className="texto-404">
+                      A sua escola ainda não possui créditos cadastrados, clique no
+                      botão "Cadastrar crédito" para começar!
+                    </p>
+                  </div>
+      
+                  <div className="col-lg-6 col-sm-12">
+                    <img src={Img404} alt="" className="img-fluid" />
+                  </div>
+                </div>
+              )}
         </>
     )
 }
