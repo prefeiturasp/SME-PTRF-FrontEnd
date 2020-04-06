@@ -18,7 +18,6 @@ export const EdicaoDeDespesa = ()=>{
 
     useEffect(() => {
         (async function setValoresIniciais() {
-            //debugger
             await despesaContext.setVerboHttp("PUT");
             await despesaContext.setIdDespesa(associacao);
             const resp = await getDespesa(associacao)

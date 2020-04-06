@@ -2,7 +2,7 @@ import React, {Component, Fragment, useContext, useEffect, useState} from "react
 import {Formik, FieldArray} from "formik";
 import { YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, convertToNumber, round, } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import { getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa, alterarDespesa} from "../../../services/Despesas.service";
+import { getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa, alterarDespesa, deleteDespesa} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import NumberFormat from "react-number-format";
 import moment from "moment";
@@ -39,6 +39,31 @@ class CancelarModal extends Component {
     }
 }
 
+class DeletarModal extends Component {
+
+    render () {
+        return (
+            <Fragment>
+                <Modal centered show={this.props.show} onHide={this.handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Deseja exluir está Despesa?</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>Tem certeza que deseja excluir esta despesa? A ação não poderá ser desfeita.</p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={this.props.onDeletarTrue}>
+                            OK
+                        </Button>
+                        <Button variant="primary" onClick={this.props.handleClose}>
+                            fechar
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </Fragment>
+        )
+    }
+}
 
 export const CadastroForm = () => {
 
@@ -49,6 +74,7 @@ export const CadastroForm = () => {
 
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [show, setShow] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
     const [aplicacao_recurso, set_aplicacao_recurso] = useState("CUSTEIO");
     const [tipo_custeio, set_tipo_custeio] = useState(1);
     const [especificaoes, set_especificaoes] = useState(undefined);
@@ -90,10 +116,11 @@ export const CadastroForm = () => {
             values.associacao = localStorage.getItem(ASSOCIACAO_UUID)
         }
 
+        debugger
         if (typeof values.tipo_documento === "object" && values.tipo_documento !== null){
             values.tipo_documento = values.tipo_documento.id
         }else {
-            if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0) {
+            if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0 && values.tipo_documento !== null) {
                 values.tipo_documento = convertToNumber(values.tipo_documento);
             } else {
                 values.tipo_documento = null
@@ -103,7 +130,7 @@ export const CadastroForm = () => {
         if (typeof values.tipo_transacao === "object" && values.tipo_transacao !== null){
             values.tipo_transacao = values.tipo_transacao.id
         }else {
-            if (values.tipo_transacao !== "" && values.tipo_transacao !== "0" && values.tipo_transacao !== 0) {
+            if (values.tipo_transacao !== "" && values.tipo_transacao !== "0" && values.tipo_transacao !== 0 && values.tipo_transacao !== null) {
                 values.tipo_transacao = convertToNumber(values.tipo_transacao);
             } else {
                 values.tipo_transacao = null
@@ -201,7 +228,6 @@ export const CadastroForm = () => {
         }else if(despesaContext.verboHttp === "PUT"){
             console.log("onsubmit Método PUT")
             try {
-                debugger
                 const response = await alterarDespesa(values, despesaContext.idDespesa)
                 if (response.status === 200) {
                     console.log("Operação realizada com sucesso!");
@@ -228,10 +254,29 @@ export const CadastroForm = () => {
 
     const onHandleClose = () => {
         setShow(false);
+        setShowDelete(false);
     }
 
     const onShowModal = () => {
         setShow(true);
+    }
+
+    const onShowDeleteModal = () => {
+        setShowDelete(true);
+    }
+
+    const onDeletarTrue = () => {
+        deleteDespesa(despesaContext.idDespesa)
+        .then(response => {
+            console.log("Despesa deletada com sucesso.");
+            setShowDelete(false);
+            let path = `/lista-de-despesas`;
+            history.push(path);
+        })
+        .catch(error => {
+            console.log(error);
+            alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
+        });
     }
 
     const calculaValorTodosRateios = (array) => {
@@ -577,23 +622,13 @@ export const CadastroForm = () => {
 
                             <div className="d-flex  justify-content-end pb-3">
                                 <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
+                                {despesaContext.idDespesa
+                                    ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2">Deletar</button>
+                                    : null}
                                 <button onClick={() => {
                                     setFieldValue("valor_recusos_acoes", trataNumericos(props.values.valor_total) - trataNumericos(props.values.valor_recursos_proprios))
-
                                     setFieldValue("valor_total_dos_rateios", calculaValorTodosRateios(props.values.rateios) )
-
-                                    /*setFieldValue("valor_total_dos_rateios", props.values.rateios.map((rateio)=>(
-                                        rateio.valor_total_dos_rateios =  (trataNumericos(rateio.valor_rateio) + trataNumericos(rateio.valor_rateio)) / props.values.rateios.length
-                                    )))*/
-
-                                }} type="submit" className="btn btn-success mt-2">Acessar</button>
-
-
-                                {/*<button onClick={() => {setFieldValue("valor_recusos_acoes", trataNumericos(props.values.valor_total) - trataNumericos(props.values.valor_recursos_proprios),
-                                    "valor_total_dos_rateios", props.values.rateios.map((rateio)=>{
-                                        trataNumericos(++rateio.valor_rateio)
-                                })) }} type="submit" className="btn btn-success mt-2">Acessar</button>*/}
-
+                                }} type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
                             </div>
                         </form>
 
@@ -604,6 +639,11 @@ export const CadastroForm = () => {
             <section>
                 <CancelarModal show={show} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
             </section>
+            {despesaContext.idDespesa
+                ?
+                <DeletarModal show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
+                : null
+            }
         </>
     );
 }
