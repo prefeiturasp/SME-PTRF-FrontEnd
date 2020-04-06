@@ -2,8 +2,7 @@ import React, {Component, Fragment, useContext, useEffect, useState} from "react
 import {Formik, FieldArray} from "formik";
 import { YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, convertToNumber, round, } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import { getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa, alterarDespesa
-} from "../../../services/Despesas.service";
+import { getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa, alterarDespesa, deleteDespesa} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import NumberFormat from "react-number-format";
 import moment from "moment";
@@ -15,6 +14,7 @@ import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 
+
 class CancelarModal extends Component {
     render() {
         return (
@@ -23,9 +23,6 @@ class CancelarModal extends Component {
                     <Modal.Header closeButton>
                         <Modal.Title>Deseja cancelar a inclusão de Despesa?</Modal.Title>
                     </Modal.Header>
-                    {/* <Modal.Body>
-                        <div > </div>
-                    </Modal.Body> */}
                     <Modal.Footer>
                         <Button variant="primary" onClick={this.props.onCancelarTrue}>
                             OK
@@ -39,6 +36,29 @@ class CancelarModal extends Component {
         )
     }
 }
+class DeletarModal extends Component {
+
+    render () {
+        return (
+            <Fragment>
+                <Modal centered show={this.props.show} onHide={this.handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Deseja exluir está Despesa?</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={this.props.onDeletarTrue}>
+                            OK
+                        </Button>
+                        <Button variant="primary" onClick={this.props.handleClose}>
+                            fechar
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </Fragment>
+        )
+    }
+}
+
 
 
 export const CadastroForm = () => {
@@ -50,6 +70,7 @@ export const CadastroForm = () => {
 
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [show, setShow] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
     const [aplicacao_recurso, set_aplicacao_recurso] = useState("CUSTEIO");
     const [tipo_custeio, set_tipo_custeio] = useState(1);
     const [especificaoes, set_especificaoes] = useState(undefined);
@@ -100,7 +121,6 @@ export const CadastroForm = () => {
                 values.tipo_documento = null
             }
         }
-
 
         if (typeof values.tipo_transacao === "object" && values.tipo_transacao !== null){
             values.tipo_transacao = values.tipo_transacao.id
@@ -234,6 +254,24 @@ export const CadastroForm = () => {
 
     const onShowModal = () => {
         setShow(true);
+    }
+
+    const onShowDeleteModal = () => {
+        setShowDelete(true);
+    }
+
+    const onDeletarTrue = () => {
+        deleteDespesa(despesaContext.idDespesa)
+        .then(response => {
+            console.log("Despesa deletada com sucesso.");
+            setShowDelete(false);
+            let path = `/lista-de-despesas`;
+            history.push(path);
+        })
+        .catch(error => {
+            console.log(error);
+            alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
+        });
     }
 
     const calculaValorTodosRateios = (array) => {
@@ -581,20 +619,11 @@ export const CadastroForm = () => {
                                 <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
                                 <button onClick={() => {
                                     setFieldValue("valor_recusos_acoes", trataNumericos(props.values.valor_total) - trataNumericos(props.values.valor_recursos_proprios))
-
                                     setFieldValue("valor_total_dos_rateios", calculaValorTodosRateios(props.values.rateios) )
-
-                                    /*setFieldValue("valor_total_dos_rateios", props.values.rateios.map((rateio)=>(
-                                        rateio.valor_total_dos_rateios =  (trataNumericos(rateio.valor_rateio) + trataNumericos(rateio.valor_rateio)) / props.values.rateios.length
-                                    )))*/
-
                                 }} type="submit" className="btn btn-success mt-2">Acessar</button>
-
-
-                                {/*<button onClick={() => {setFieldValue("valor_recusos_acoes", trataNumericos(props.values.valor_total) - trataNumericos(props.values.valor_recursos_proprios),
-                                    "valor_total_dos_rateios", props.values.rateios.map((rateio)=>{
-                                        trataNumericos(++rateio.valor_rateio)
-                                })) }} type="submit" className="btn btn-success mt-2">Acessar</button>*/}
+                                {despesaContext.idDespesa
+                                    ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button>
+                                    : null}
 
                             </div>
                         </form>
@@ -606,6 +635,11 @@ export const CadastroForm = () => {
             <section>
                 <CancelarModal show={show} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
             </section>
+            {despesaContext.idDespesa
+                ?
+                <DeletarModal show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
+                : null
+            }
         </>
     );
 }
