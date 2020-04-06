@@ -20,11 +20,11 @@ class CancelarModal extends Component {
             <Fragment>
                 <Modal centered show={this.props.show} onHide={this.handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Deseja cancelar a inclusão de Despesa?</Modal.Title>
+                        <Modal.Title>Cancelar cadastro</Modal.Title>
                     </Modal.Header>
-                    {/* <Modal.Body>
-                        <div > </div>
-                    </Modal.Body> */}
+                     <Modal.Body>
+                         <p>Tem certeza que deseja cancelar esse cadastramento? As informações não serão salvas</p>
+                    </Modal.Body>
                     <Modal.Footer>
                         <Button variant="primary" onClick={this.props.onCancelarTrue}>
                             OK
@@ -116,7 +116,6 @@ export const CadastroForm = () => {
             values.associacao = localStorage.getItem(ASSOCIACAO_UUID)
         }
 
-        debugger
         if (typeof values.tipo_documento === "object" && values.tipo_documento !== null){
             values.tipo_documento = values.tipo_documento.id
         }else {

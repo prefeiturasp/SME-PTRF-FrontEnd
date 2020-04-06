@@ -54,7 +54,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         className="form-control"
                         //disabled={especificaoes_disable}
                     >
-                        <option key={0} value={0}>Selecione uma ação</option>
+                        <option key={0} value={0}>Selecione uma especificação</option>
                         {especificaoes && especificaoes.map((item)=> (
                             <option key={item.id} value={item.id}>{item.descricao}</option>
                         ) )}
