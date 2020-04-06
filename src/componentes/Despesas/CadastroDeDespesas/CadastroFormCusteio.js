@@ -3,7 +3,7 @@ import NumberFormat from "react-number-format";
 import {currencyFormatter} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const CadastroFormCusteio = (propriedades) => {
-    const {formikProps, rateio, index, handleOnBlur, despesasTabelas, especificaoes_disable, especificaoes, set_aplicacao_recurso, set_tipo_custeio } = propriedades
+    const {formikProps, rateio, index, despesasTabelas, especificaoes, set_tipo_custeio } = propriedades
 
     return (
 
@@ -43,9 +43,6 @@ export const CadastroFormCusteio = (propriedades) => {
                     <label htmlFor="especificacao_material_servico">Especificação do material ou serviço</label>
                     <select
                         //value={rateio.especificacao_material_servico !== null ? rateio.especificacao_material_servico.id : 0}
-
-                        //value={19}
-
                         value={
                             rateio.especificacao_material_servico !== null ? (
                                 typeof rateio.especificacao_material_servico === "object" ? rateio.especificacao_material_servico.id : rateio.especificacao_material_servico

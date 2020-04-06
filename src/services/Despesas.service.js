@@ -13,15 +13,24 @@ export const getDespesasTabelas = async () => {
 }
 
 export const getEspecificacaoMaterialServico = async (aplicacao_recurso, tipo_custeio) => {
+    console.log("getEspecificacaoMaterialServico aplicacao_recurso |", aplicacao_recurso)
+    console.log("getEspecificacaoMaterialServico tipo_custeio | ", tipo_custeio)
+
     if (aplicacao_recurso === "CUSTEIO") {
-        return (await api.get(`api/especificacoes/?aplicacao_recurso=${aplicacao_recurso}&tipo_custeio=${tipo_custeio}`, authHeader)).data
+
+        return (
+            await api.get(`api/especificacoes/?aplicacao_recurso=${aplicacao_recurso}&tipo_custeio=${tipo_custeio}`, authHeader)
+        ).data
+
     } else if (aplicacao_recurso === "CAPITAL") {
-        return (await api.get(`api/especificacoes/?aplicacao_recurso=${aplicacao_recurso}`, authHeader)).data
+
+        return (
+            await api.get(`api/especificacoes/?aplicacao_recurso=${aplicacao_recurso}`, authHeader)
+        ).data
     }
 }
 
 export const getDespesa = async (idDespesa) => {
-    console.log("GetDespesa" , idDespesa)
     return (await api.get(`api/despesas/${idDespesa}`, authHeader)).data
 }
 

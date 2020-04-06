@@ -1,18 +1,8 @@
 import React, {Component, Fragment, useContext, useEffect, useState} from "react";
 import {Formik, FieldArray} from "formik";
-import {
-    YupSignupSchemaCadastroDespesa,
-    cpfMaskContitional,
-    calculaValorRecursoAcoes,
-    trataNumericos,
-    convertToNumber, round,
-} from "../../../utils/ValidacoesAdicionaisFormularios";
+import { YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, convertToNumber, round, } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import {
-    getDespesasTabelas,
-    getEspecificacaoMaterialServico,
-    criarDespesa,
-    alterarDespesa
+import { getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa, alterarDespesa
 } from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import NumberFormat from "react-number-format";
@@ -78,6 +68,9 @@ export const CadastroForm = () => {
         //if (aplicacao_recurso !== undefined) {
             const carregaEspecificacoes = async () => {
                 const resp = await getEspecificacaoMaterialServico(aplicacao_recurso, tipo_custeio)
+                console.log("Carrega especificaçoes aplicacao_recurso ", aplicacao_recurso)
+                console.log("Carrega especificaçoes tipo_custeio ", tipo_custeio)
+                console.log("Carrega especificaçoes ", resp)
                 set_especificaoes_disable(false)
                 set_especificaoes(resp);
             };
@@ -93,7 +86,6 @@ export const CadastroForm = () => {
 
     const onSubmit = async (values, {resetForm}) => {
 
-debugger
         // Quando é Alteração
         if (typeof values.associacao === "object"){
             values.associacao = localStorage.getItem(ASSOCIACAO_UUID)
@@ -228,16 +220,6 @@ debugger
             }
         }
 
-
-
-    }
-
-    const handleOnBlur = (nome, valor) =>{
-        if (nome === 'aplicacao_recurso'){
-            set_aplicacao_recurso(valor)
-        }else if(nome === 'tipo_custeio'){
-            set_tipo_custeio(valor)
-        }
     }
 
     const onCancelarTrue = () => {
@@ -270,9 +252,6 @@ debugger
 
         return valor_total
     }
-
-    console.log("MUDANDO ", aplicacao_recurso)
-
 
     return (
         <>
@@ -507,15 +486,10 @@ debugger
                                                             <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
                                                             <select
                                                                 value={rateio.aplicacao_recurso}
-                                                                //onChange={props.handleChange}
-
                                                                 onChange={(e) => {
                                                                     props.handleChange(e);
                                                                     set_aplicacao_recurso(e.target.value);
                                                                 }}
-
-                                                                //onChange={ (e) => { set_aplicacao_recurso(e.target.value); props.handleChange} }
-                                                                //onBlur={(e)=>handleOnBlur("aplicacao_recurso", e.target.value)}
                                                                 name={`rateios[${index}].aplicacao_recurso`}
                                                                 id='aplicacao_recurso'
                                                                 className="form-control"
@@ -533,7 +507,6 @@ debugger
                                                             formikProps={props}
                                                             rateio={rateio}
                                                             index={index}
-                                                            handleOnBlur={handleOnBlur}
                                                             despesasTabelas={despesasTabelas}
                                                             especificaoes_disable={especificaoes_disable}
                                                             especificaoes={especificaoes}
@@ -546,7 +519,6 @@ debugger
                                                                 formikProps={props}
                                                                 rateio={rateio}
                                                                 index={index}
-                                                                handleOnBlur={handleOnBlur}
                                                                 despesasTabelas={despesasTabelas}
                                                                 especificaoes_disable={especificaoes_disable}
                                                                 especificaoes={especificaoes}
