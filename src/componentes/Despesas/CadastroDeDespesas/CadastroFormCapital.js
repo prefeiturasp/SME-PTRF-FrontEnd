@@ -3,7 +3,7 @@ import NumberFormat from "react-number-format";
 import {calculaValorRateio, currencyFormatter} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const CadastroFormCapital = (propriedades) => {
-    const {formikProps, rateio, index, despesasTabelas, especificaoes} = propriedades
+    const {formikProps, rateio, index, despesasTabelas, especificaoes_capital} = propriedades
 
     return (
         <>
@@ -20,10 +20,9 @@ export const CadastroFormCapital = (propriedades) => {
                         name={`rateios[${index}].especificacao_material_servico`}
                         id='especificacao_material_servico'
                         className="form-control"
-                        //disabled={especificaoes_disable}
                     >
                         <option key={0} value={0}>Selecione uma especificação</option>
-                        {especificaoes && especificaoes.map((item) => (
+                        {especificaoes_capital && especificaoes_capital.map((item) => (
                             <option key={item.id} value={item.id}>{item.descricao}</option>
                         ))}
                     </select>

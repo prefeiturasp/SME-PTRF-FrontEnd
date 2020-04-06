@@ -2,7 +2,7 @@ import React, {Component, Fragment, useContext, useEffect, useState} from "react
 import {Formik, FieldArray} from "formik";
 import { YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, convertToNumber, round, } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import { getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa, alterarDespesa, deleteDespesa} from "../../../services/Despesas.service";
+import { getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import NumberFormat from "react-number-format";
 import moment from "moment";
@@ -13,6 +13,7 @@ import {CadastroFormCapital} from "./CadastroFormCapital";
 import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
+import {atualizaReceita} from "../../../services/Receitas.service";
 
 class CancelarModal extends Component {
     render() {
@@ -78,32 +79,49 @@ export const CadastroForm = () => {
     const [aplicacao_recurso, set_aplicacao_recurso] = useState("CUSTEIO");
     const [tipo_custeio, set_tipo_custeio] = useState(1);
     const [especificaoes, set_especificaoes] = useState(undefined);
-    const [especificaoes_disable, set_especificaoes_disable] = useState(true);
+    const [especificaoes_capital, set_especificaoes_capital] = useState("");
+    const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
+
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
             const resp = await getDespesasTabelas();
             setDespesasTabelas(resp);
+
+            const array_tipos_custeio = resp.tipos_custeio;
+            let let_especificacoes_custeio = [];
+
+            array_tipos_custeio.map( async (tipoCusteio, index) => {
+                const resposta = await getEspecificacoesCusteio(tipoCusteio.id)
+                let_especificacoes_custeio[tipoCusteio.id] = await resposta
+            })
+
+            set_especificacoes_custeio(let_especificacoes_custeio)
+
         };
         carregaTabelasDespesas();
 
     }, [])
 
+
+
     useEffect(()=> {
         //if (aplicacao_recurso !== undefined) {
             const carregaEspecificacoes = async () => {
                 const resp = await getEspecificacaoMaterialServico(aplicacao_recurso, tipo_custeio)
-                console.log("Carrega especificaçoes aplicacao_recurso ", aplicacao_recurso)
-                console.log("Carrega especificaçoes tipo_custeio ", tipo_custeio)
-                console.log("Carrega especificaçoes ", resp)
-                set_especificaoes_disable(false)
+
                 set_especificaoes(resp);
             };
             carregaEspecificacoes();
-            set_especificaoes_disable(true)
         //}
     },[aplicacao_recurso, tipo_custeio])
 
+    useEffect(() => {
+        (async function get_especificacoes_capital() {
+            const resp = await getEspecificacoesCapital();
+            set_especificaoes_capital(resp)
+        })();
+    }, []);
 
     const initialValues = () => {
         return despesaContext.initialValues
@@ -550,10 +568,10 @@ export const CadastroForm = () => {
                                                             rateio={rateio}
                                                             index={index}
                                                             despesasTabelas={despesasTabelas}
-                                                            especificaoes_disable={especificaoes_disable}
                                                             especificaoes={especificaoes}
                                                             set_aplicacao_recurso={set_aplicacao_recurso}
                                                             set_tipo_custeio={set_tipo_custeio}
+                                                            especificacoes_custeio={especificacoes_custeio}
                                                         />
                                                     ):
                                                         rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -562,15 +580,14 @@ export const CadastroForm = () => {
                                                                 rateio={rateio}
                                                                 index={index}
                                                                 despesasTabelas={despesasTabelas}
-                                                                especificaoes_disable={especificaoes_disable}
-                                                                especificaoes={especificaoes}
+                                                                especificaoes_capital={especificaoes_capital}
                                                             />
 
                                                             ): null}
 
 
 
-                                                    {index >= 1 && props.values.mais_de_um_tipo_despesa === "sim" && (
+                                                        {index >= 1 && props.values.mais_de_um_tipo_despesa === "sim" && (
 
                                                             <div className="d-flex  justify-content-start mt-3 mb-3">
                                                                 <button

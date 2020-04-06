@@ -13,8 +13,8 @@ export const getDespesasTabelas = async () => {
 }
 
 export const getEspecificacaoMaterialServico = async (aplicacao_recurso, tipo_custeio) => {
-    console.log("getEspecificacaoMaterialServico aplicacao_recurso |", aplicacao_recurso)
-    console.log("getEspecificacaoMaterialServico tipo_custeio | ", tipo_custeio)
+    //console.log("getEspecificacaoMaterialServico aplicacao_recurso |", aplicacao_recurso)
+    //console.log("getEspecificacaoMaterialServico tipo_custeio | ", tipo_custeio)
 
     if (aplicacao_recurso === "CUSTEIO") {
 
@@ -30,6 +30,33 @@ export const getEspecificacaoMaterialServico = async (aplicacao_recurso, tipo_cu
     }
 }
 
+export const getEspecificacoesCapital = async () => {
+    return (await api.get(`api/especificacoes/?aplicacao_recurso=CAPITAL`, authHeader)).data
+}
+
+export const getEspecificacoesCusteio = async (id_tipo_custeio) => {
+    return (await api.get(`api/especificacoes/?aplicacao_recurso=CUSTEIO&tipo_custeio=${id_tipo_custeio}`, authHeader)).data
+}
+
+/*
+export const getEspecificacoesCusteioMaterial = async () => {
+    return (await api.get(`api/especificacoes/?aplicacao_recurso=CUSTEIO&tipo_custeio=1`, authHeader)).data
+}
+
+export const getEspecificacoesCusteioServicos = async () => {
+    return (await api.get(`api/especificacoes/?aplicacao_recurso=CUSTEIO&tipo_custeio=2`, authHeader)).data
+}
+
+export const getEspecificacoesCusteioImpostos = async () => {
+    return (await api.get(`api/especificacoes/?aplicacao_recurso=CUSTEIO&tipo_custeio=3`, authHeader)).data
+}
+
+export const getEspecificacoesCusteioTarifas = async () => {
+    return (await api.get(`api/especificacoes/?aplicacao_recurso=CUSTEIO&tipo_custeio=6`, authHeader)).data
+}
+
+
+*/
 export const getDespesa = async (idDespesa) => {
     return (await api.get(`api/despesas/${idDespesa}`, authHeader)).data
 }
