@@ -19,18 +19,18 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
             }else {
                 return true
             }
-        })
-/*    nome_fornecedor: yup.string(),
-    tipo_documento:yup.string(),
-    numero_documento:yup.string(),
-    data_documento: yup.string(),
-    tipo_transacao: yup.string(),
-    data_transacao: yup.string(),
-    valor_total: yup.string(),
-    valor_recursos_proprios: yup.string(),
-    valor_total_dos_rateios:yup.string(),
-    valor_recusos_acoes:yup.string()*/
-    /*.test('test-name', 'O total das classificações deve corresponder ao valor total da nota',
+        }),
+    nome_fornecedor: yup.string().nullable(),
+    tipo_documento:yup.string().nullable(),
+    numero_documento:yup.string().nullable(),
+    data_documento: yup.string().nullable(),
+    tipo_transacao: yup.string().nullable(),
+    data_transacao: yup.string().nullable(),
+    valor_total: yup.string().nullable(),
+    valor_recursos_proprios: yup.string().nullable(),
+    valor_total_dos_rateios:yup.string().nullable(),
+    valor_recusos_acoes:yup.string().nullable()
+    .test('test-name', 'O total das classificações deve corresponder ao valor total da nota',
         function (value) {
             value = String(round(value,2))
             const { valor_total_dos_rateios } = this.parent;
@@ -39,7 +39,7 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
             }else {
                 return true
             }
-        })*/,
+        }),
 
 
 });
