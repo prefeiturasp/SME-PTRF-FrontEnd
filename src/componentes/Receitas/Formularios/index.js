@@ -42,7 +42,7 @@ class DeletarModal extends Component {
             <Fragment>
                 <Modal centered show={this.props.show} onHide={this.handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Deseja exluir está Receita?</Modal.Title>
+                        <Modal.Title>Deseja excluir esta Receita?</Modal.Title>
                     </Modal.Header>
                     <Modal.Footer>
                         <Button variant="primary" onClick={this.props.onDeletarTrue}>
