@@ -4,13 +4,9 @@ import {calculaValorRecursoAcoes, currencyFormatter} from "../../../utils/Valida
 import CurrencyInput from "react-currency-input";
 
 export const CadastroFormCusteio = (propriedades) => {
-    const {formikProps, rateio, index, despesasTabelas, especificaoes, set_tipo_custeio, especificacoes_custeio } = propriedades
-
-    ///console.log("XXXXX ", despesasTabelas)
-    //console.log("XXXXX ", especificacoes_custeio)
+    const {formikProps, rateio, index, despesasTabelas, especificaoes, set_tipo_custeio, especificacoes_custeio} = propriedades
 
     return (
-
         <>
             <div className="form-row">
                 <div className="col-12 col-md-6 mt-4">
@@ -58,17 +54,16 @@ export const CadastroFormCusteio = (propriedades) => {
                         className="form-control"
                     >
                         <option key={0} value={0}>Selecione uma especificação</option>
-                        {console.log("YYYY", rateio.tipo_custeio)}
-                        {especificacoes_custeio && especificacoes_custeio[rateio.tipo_custeio.id] ? (especificacoes_custeio[rateio.tipo_custeio.id].map((item, key) => (
-                            <option key={item.id} value={item.id}>{item.descricao}</option>
-                        ))): null}
-
-                        {/*
-                        {especificacoes_custeio && especificacoes_custeio[rateio.tipo_custeio] && especificacoes_custeio[rateio.tipo_custeio].map(item => (
-                            <option key={item.id} value={item.id}>{item.descricao}</option>
-                        ))}
-*/}
-
+                        {
+                            typeof especificacoes_custeio === "object" && especificacoes_custeio[rateio.tipo_custeio.id] ? (especificacoes_custeio[rateio.tipo_custeio.id].map((item) => (
+                                    <option key={item.id} value={item.id}>{item.descricao}</option>
+                                )))
+                                : (
+                                    especificacoes_custeio && especificacoes_custeio[rateio.tipo_custeio] && especificacoes_custeio[rateio.tipo_custeio].map(item => (
+                                        <option key={item.id} value={item.id}>{item.descricao}</option>
+                                    ))
+                                )
+                        }
                     </select>
                 </div>
                 <div className="col-12 col-md-6 mt-4">
