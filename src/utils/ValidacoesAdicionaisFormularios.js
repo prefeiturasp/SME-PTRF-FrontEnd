@@ -29,19 +29,46 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     valor_total: yup.string().nullable(),
     valor_recursos_proprios: yup.string().nullable(),
     valor_total_dos_rateios:yup.string().nullable(),
+
     valor_recusos_acoes:yup.string().nullable()
+    .when("valor_total_dos_rateios", {
+        is: false,
+        then: yup.string().nullable()
+        .test('test-name', 'O total das classificações deve corresponder ao valor total da nota',
+            function (value) {
+                console.log("YUP value ", value)
+
+                value = String(round(value,2))
+
+                const { valor_total_dos_rateios } = this.parent;
+
+                console.log("YUP valor_total_dos_rateios ", valor_total_dos_rateios)
+
+                if(value !== valor_total_dos_rateios){
+                    return false
+                }else {
+                    return true
+                }
+            }),
+    }),
+
+/*    valor_recusos_acoes:yup.string().nullable()
     .test('test-name', 'O total das classificações deve corresponder ao valor total da nota',
         function (value) {
+            console.log("YUP value ", value)
+
             value = String(round(value,2))
+
             const { valor_total_dos_rateios } = this.parent;
+
+            console.log("YUP valor_total_dos_rateios ", valor_total_dos_rateios)
+
             if(value !== valor_total_dos_rateios){
                 return false
             }else {
                 return true
             }
-        }),
-
-
+        }),*/
 });
 
 export const currencyFormatter =(value) =>{

@@ -1,10 +1,9 @@
-import React, {useEffect, useState} from "react";
-import NumberFormat from "react-number-format";
-import {calculaValorRecursoAcoes, currencyFormatter} from "../../../utils/ValidacoesAdicionaisFormularios";
+import React from "react";
+
 import CurrencyInput from "react-currency-input";
 
 export const CadastroFormCusteio = (propriedades) => {
-    const {formikProps, rateio, index, despesasTabelas, especificaoes, set_tipo_custeio, especificacoes_custeio} = propriedades
+    const {formikProps, rateio, index, despesasTabelas, set_tipo_custeio, especificacoes_custeio} = propriedades
 
     return (
         <>

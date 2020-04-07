@@ -1,5 +1,5 @@
 import React, {Component, Fragment, useContext, useEffect, useState} from "react";
-import {Formik, FieldArray} from "formik";
+import {Formik, FieldArray, Field} from "formik";
 import { YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, convertToNumber, round, } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import { getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio} from "../../../services/Despesas.service";
@@ -13,7 +13,7 @@ import {CadastroFormCapital} from "./CadastroFormCapital";
 import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
-import {atualizaReceita} from "../../../services/Receitas.service";
+
 import CurrencyInput from "react-currency-input";
 
 class CancelarModal extends Component {
@@ -314,24 +314,70 @@ export const CadastroForm = () => {
         return valor_total
     }
 
+    // Synchronous validation
+    const validate = (values, props /* only available when using withFormik */) => {
+        const errors = {};
+
+        console.log("Entei no validade", values)
+
+        let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios)
+        console.log(" Var Recurso Acoes ", var_valor_recursos_acoes)
+
+        let var_valor_total_dos_rateios = 0;
+        let var_valor_total_dos_rateios_capital = 0;
+        let var_valor_total_dos_rateios_custeio = 0;
+
+        values.rateios.map((rateio) => {
+            if (rateio.aplicacao_recurso === "CAPITAL"){
+                var_valor_total_dos_rateios_capital = var_valor_total_dos_rateios_capital + round(trataNumericos(rateio.quantidade_itens_capital) * trataNumericos(rateio.valor_item_capital, 2))
+            }else{
+                var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
+            }
+        })
+
+        console.log(" Var Valor Total dos Rateios CAPITAL ", var_valor_total_dos_rateios_capital)
+        console.log(" Var Valor Total dos Rateios CUSTEIO ", var_valor_total_dos_rateios_custeio)
+
+        var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio
+
+        console.log(" Var Valor Total dos Rateios ", var_valor_total_dos_rateios)
+
+
+        if (var_valor_recursos_acoes !== var_valor_total_dos_rateios) {
+            errors.valor_recusos_acoes = 'O total das classificações deve corresponder ao valor total da nota';
+        }
+        return errors;
+    };
+
+
     return (
         <>
             <Formik
                 initialValues={initialValues()}
                 validationSchema={YupSignupSchemaCadastroDespesa}
-                validateOnBlur={true}
+                validateOnBlur={false}
                 onSubmit={onSubmit}
                 enableReinitialize={true}
+                validate={validate}
                 //onReset={(props) => handleReset(props)}
             >
                 {props => {
                     const {
                         values,
                         setFieldValue,
+                        errors, touched, isValidating
                     } = props;
                     return (
                         <form onSubmit={props.handleSubmit}>
+                            <input type="hidden" name="valor_total_dos_rateios" id="valor_total_dos_rateios" value={calculaValorTodosRateios(props.values.rateios)}/>
+
                             <div className="form-row">
+
+                                {/*<div className="col-12">
+                                    <Field name="username"  onChange={props.handleChange} value={props.username} />
+                                    {errors.username && touched.username && <div>{errors.username}</div>}
+                                </div>*/}
+
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
                                     <MaskedInput
@@ -509,7 +555,28 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recusos_acoes">Valor do recurso das ações</label>
 
-                                    <CurrencyInput
+                                   {/* <Field name="valor_recusos_acoes"  onChange={props.handleChange} value={calculaValorRecursoAcoes(props)} />
+                                    {errors.valor_recusos_acoes && touched.valor_recusos_acoes && <div>{errors.valor_recusos_acoes}</div>}*/}
+
+
+                                    <Field name="valor_recusos_acoes">
+                                        {({ field, form, meta }) => (
+                                            <CurrencyInput
+                                                allowNegative={false}
+                                                prefix='R$'
+                                                decimalSeparator=","
+                                                thousandSeparator="."
+                                                value={calculaValorRecursoAcoes(props)}
+
+                                                id="valor_recusos_acoes"
+                                                className="form-control"
+                                                onChangeEvent={props.handleChange}
+                                                readOnly={true}
+                                            />
+                                        )}
+                                    </Field>
+                                    {errors.valor_recusos_acoes && touched.valor_recusos_acoes && <div>{errors.valor_recusos_acoes}</div>}
+                                    {/*<CurrencyInput
                                         allowNegative={false}
                                         prefix='R$'
                                         decimalSeparator=","
@@ -519,7 +586,8 @@ export const CadastroForm = () => {
                                         id="valor_recusos_acoes"
                                         className="form-control"
                                         onChangeEvent={props.handleChange}
-                                    />
+                                        readOnly={true}
+                                    />*/}
 
                                     {/*<NumberFormat
                                         //format={currencyFormatter}
@@ -571,13 +639,10 @@ export const CadastroForm = () => {
                                                 <div key={index}>
 
                                                     <div className="form-row">
-
-
                                                             <div className="col-12 mt-4 ml-0">
                                                                 <p className='mb-0'><strong>Despesa {index+1}</strong></p>
                                                                 <hr className='mt-0 mb-1'/>
                                                             </div>
-
 
                                                         <div className="col-12 col-md-6 mt-4">
 
@@ -623,9 +688,8 @@ export const CadastroForm = () => {
 
                                                             ): null}
 
-
-
-                                                        {(index >= 1 && props.values.mais_de_um_tipo_despesa === "sim") || (index >= 1 && values.rateios.length > 1) && (
+                                                    
+                                                        {index >= 1 && values.rateios.length > 1 && (
 
                                                             <div className="d-flex  justify-content-start mt-3 mb-3">
                                                                 <button
