@@ -625,7 +625,7 @@ export const CadastroForm = () => {
 
 
 
-                                                        {index >= 1 && props.values.mais_de_um_tipo_despesa === "sim" && (
+                                                        {(index >= 1 && props.values.mais_de_um_tipo_despesa === "sim") || (index >= 1 && values.rateios.length > 1) && (
 
                                                             <div className="d-flex  justify-content-start mt-3 mb-3">
                                                                 <button

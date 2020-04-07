@@ -137,7 +137,21 @@ export const CadastroFormCapital = (propriedades) => {
 
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="valor_rateio">Valor do custeio</label>
-                            <NumberFormat
+
+                            <CurrencyInput
+                                allowNegative={false}
+                                prefix='R$'
+                                decimalSeparator=","
+                                thousandSeparator="."
+                                value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
+                                name={`rateios[${index}].valor_rateio`}
+                                id="valor_rateio"
+                                className="form-control"
+                                onChangeEvent={formikProps.handleChange}
+                                readOnly={true}
+                            />
+
+                            {/*<NumberFormat
                                 //format={currencyFormatter}
                                 value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
                                 onChange={formikProps.handleChange}
@@ -149,7 +163,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 id="valor_rateio"
                                 className="form-control"
                                 readOnly={true}
-                            />
+                            />*/}
                         </div>
 
 
