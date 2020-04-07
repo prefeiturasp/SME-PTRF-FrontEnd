@@ -14,6 +14,7 @@ import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import {atualizaReceita} from "../../../services/Receitas.service";
+import CurrencyInput from "react-currency-input";
 
 class CancelarModal extends Component {
     render() {
@@ -445,7 +446,19 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_total">Valor total</label>
 
-                                    <NumberFormat
+                                    <CurrencyInput
+                                        allowNegative={false}
+                                        prefix='R$'
+                                        decimalSeparator=","
+                                        thousandSeparator="."
+                                        value={props.values.valor_total}
+                                        name="valor_total"
+                                        id="valor_total"
+                                        className="form-control"
+                                        onChangeEvent={props.handleChange}
+                                    />
+
+                                    {/*<NumberFormat
                                         value={props.values.valor_total}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
@@ -457,7 +470,7 @@ export const CadastroForm = () => {
                                         className="form-control"
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                    />
+                                    />*/}
                                     {props.errors.valor_total &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
                                 </div>
@@ -465,7 +478,19 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recursos_proprios">Valor do recurso próprio</label>
 
-                                    <NumberFormat
+                                    <CurrencyInput
+                                        allowNegative={false}
+                                        prefix='R$'
+                                        decimalSeparator=","
+                                        thousandSeparator="."
+                                        value={props.values.valor_recursos_proprios}
+                                        name="valor_recursos_proprios"
+                                        id="valor_recursos_proprios"
+                                        className="form-control"
+                                        onChangeEvent={props.handleChange}
+                                    />
+
+                                    {/*<NumberFormat
                                         value={props.values.valor_recursos_proprios}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
@@ -477,13 +502,26 @@ export const CadastroForm = () => {
                                         className="form-control"
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                    />
+                                    />*/}
                                     {props.errors.valor_recursos_proprios && <span className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recusos_acoes">Valor do recurso das ações</label>
-                                    <NumberFormat
+
+                                    <CurrencyInput
+                                        allowNegative={false}
+                                        prefix='R$'
+                                        decimalSeparator=","
+                                        thousandSeparator="."
+                                        value={calculaValorRecursoAcoes(props)}
+                                        name="valor_recusos_acoes"
+                                        id="valor_recusos_acoes"
+                                        className="form-control"
+                                        onChangeEvent={props.handleChange}
+                                    />
+
+                                    {/*<NumberFormat
                                         //format={currencyFormatter}
                                         value={calculaValorRecursoAcoes(props)}
                                         thousandSeparator={'.'}
@@ -497,7 +535,7 @@ export const CadastroForm = () => {
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         readOnly={true}
-                                    />
+                                    />*/}
                                     {props.errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> {props.errors.valor_recusos_acoes}</span>}
                                 </div>
                             </div>

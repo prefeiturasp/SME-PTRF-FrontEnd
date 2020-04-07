@@ -1,6 +1,7 @@
 import React from "react";
 import NumberFormat from "react-number-format";
 import {calculaValorRateio, currencyFormatter} from "../../../utils/ValidacoesAdicionaisFormularios";
+import CurrencyInput from "react-currency-input";
 
 export const CadastroFormCapital = (propriedades) => {
     const {formikProps, rateio, index, despesasTabelas, especificaoes_capital} = propriedades
@@ -66,7 +67,18 @@ export const CadastroFormCapital = (propriedades) => {
 
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="valor_item_capital">Valor unitário </label>
-                            <NumberFormat
+                            <CurrencyInput
+                                allowNegative={false}
+                                prefix='R$'
+                                decimalSeparator=","
+                                thousandSeparator="."
+                                value={rateio.valor_item_capital}
+                                name={`rateios[${index}].valor_item_capital`}
+                                id="valor_item_capital"
+                                className="form-control"
+                                onChangeEvent={formikProps.handleChange}
+                            />
+                            {/*<NumberFormat
                                 format={currencyFormatter}
                                 value={rateio.valor_item_capital}
                                 onChange={formikProps.handleChange}
@@ -77,7 +89,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 prefix={'R$ '}
                                 id="valor_item_capital"
                                 className="form-control"
-                            />
+                            />*/}
                         </div>
                     </div>
                 </div>
