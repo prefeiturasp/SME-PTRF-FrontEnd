@@ -1,9 +1,10 @@
 import React from "react";
 import NumberFormat from "react-number-format";
 import {calculaValorRateio, currencyFormatter} from "../../../utils/ValidacoesAdicionaisFormularios";
+import CurrencyInput from "react-currency-input";
 
 export const CadastroFormCapital = (propriedades) => {
-    const {formikProps, rateio, index, despesasTabelas, especificaoes} = propriedades
+    const {formikProps, rateio, index, despesasTabelas, especificaoes_capital} = propriedades
 
     return (
         <>
@@ -20,10 +21,9 @@ export const CadastroFormCapital = (propriedades) => {
                         name={`rateios[${index}].especificacao_material_servico`}
                         id='especificacao_material_servico'
                         className="form-control"
-                        //disabled={especificaoes_disable}
                     >
                         <option key={0} value={0}>Selecione uma especificação</option>
-                        {especificaoes && especificaoes.map((item) => (
+                        {especificaoes_capital && especificaoes_capital.map((item) => (
                             <option key={item.id} value={item.id}>{item.descricao}</option>
                         ))}
                     </select>
@@ -67,7 +67,18 @@ export const CadastroFormCapital = (propriedades) => {
 
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="valor_item_capital">Valor unitário </label>
-                            <NumberFormat
+                            <CurrencyInput
+                                allowNegative={false}
+                                prefix='R$'
+                                decimalSeparator=","
+                                thousandSeparator="."
+                                value={rateio.valor_item_capital}
+                                name={`rateios[${index}].valor_item_capital`}
+                                id="valor_item_capital"
+                                className="form-control"
+                                onChangeEvent={formikProps.handleChange}
+                            />
+                            {/*<NumberFormat
                                 format={currencyFormatter}
                                 value={rateio.valor_item_capital}
                                 onChange={formikProps.handleChange}
@@ -78,7 +89,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 prefix={'R$ '}
                                 id="valor_item_capital"
                                 className="form-control"
-                            />
+                            />*/}
                         </div>
                     </div>
                 </div>
@@ -126,7 +137,21 @@ export const CadastroFormCapital = (propriedades) => {
 
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="valor_rateio">Valor do custeio</label>
-                            <NumberFormat
+
+                            <CurrencyInput
+                                allowNegative={false}
+                                prefix='R$'
+                                decimalSeparator=","
+                                thousandSeparator="."
+                                value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
+                                name={`rateios[${index}].valor_rateio`}
+                                id="valor_rateio"
+                                className="form-control"
+                                onChangeEvent={formikProps.handleChange}
+                                readOnly={true}
+                            />
+
+                            {/*<NumberFormat
                                 //format={currencyFormatter}
                                 value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
                                 onChange={formikProps.handleChange}
@@ -138,7 +163,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 id="valor_rateio"
                                 className="form-control"
                                 readOnly={true}
-                            />
+                            />*/}
                         </div>
 
 

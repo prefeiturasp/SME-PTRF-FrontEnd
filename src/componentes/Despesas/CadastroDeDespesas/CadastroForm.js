@@ -2,7 +2,7 @@ import React, {Component, Fragment, useContext, useEffect, useState} from "react
 import {Formik, FieldArray} from "formik";
 import { YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, convertToNumber, round, } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import { getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa, alterarDespesa, deleteDespesa} from "../../../services/Despesas.service";
+import { getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import NumberFormat from "react-number-format";
 import moment from "moment";
@@ -13,6 +13,8 @@ import {CadastroFormCapital} from "./CadastroFormCapital";
 import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
+import {atualizaReceita} from "../../../services/Receitas.service";
+import CurrencyInput from "react-currency-input";
 
 class CancelarModal extends Component {
     render() {
@@ -78,32 +80,49 @@ export const CadastroForm = () => {
     const [aplicacao_recurso, set_aplicacao_recurso] = useState("CUSTEIO");
     const [tipo_custeio, set_tipo_custeio] = useState(1);
     const [especificaoes, set_especificaoes] = useState(undefined);
-    const [especificaoes_disable, set_especificaoes_disable] = useState(true);
+    const [especificaoes_capital, set_especificaoes_capital] = useState("");
+    const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
+
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
             const resp = await getDespesasTabelas();
             setDespesasTabelas(resp);
+
+            const array_tipos_custeio = resp.tipos_custeio;
+            let let_especificacoes_custeio = [];
+
+            array_tipos_custeio.map( async (tipoCusteio, index) => {
+                const resposta = await getEspecificacoesCusteio(tipoCusteio.id)
+                let_especificacoes_custeio[tipoCusteio.id] = await resposta
+            })
+
+            set_especificacoes_custeio(let_especificacoes_custeio)
+
         };
         carregaTabelasDespesas();
 
     }, [])
 
+
+
     useEffect(()=> {
         //if (aplicacao_recurso !== undefined) {
             const carregaEspecificacoes = async () => {
                 const resp = await getEspecificacaoMaterialServico(aplicacao_recurso, tipo_custeio)
-                console.log("Carrega especificaçoes aplicacao_recurso ", aplicacao_recurso)
-                console.log("Carrega especificaçoes tipo_custeio ", tipo_custeio)
-                console.log("Carrega especificaçoes ", resp)
-                set_especificaoes_disable(false)
+
                 set_especificaoes(resp);
             };
             carregaEspecificacoes();
-            set_especificaoes_disable(true)
         //}
     },[aplicacao_recurso, tipo_custeio])
 
+    useEffect(() => {
+        (async function get_especificacoes_capital() {
+            const resp = await getEspecificacoesCapital();
+            set_especificaoes_capital(resp)
+        })();
+    }, []);
 
     const initialValues = () => {
         return despesaContext.initialValues
@@ -427,7 +446,19 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_total">Valor total</label>
 
-                                    <NumberFormat
+                                    <CurrencyInput
+                                        allowNegative={false}
+                                        prefix='R$'
+                                        decimalSeparator=","
+                                        thousandSeparator="."
+                                        value={props.values.valor_total}
+                                        name="valor_total"
+                                        id="valor_total"
+                                        className="form-control"
+                                        onChangeEvent={props.handleChange}
+                                    />
+
+                                    {/*<NumberFormat
                                         value={props.values.valor_total}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
@@ -439,7 +470,7 @@ export const CadastroForm = () => {
                                         className="form-control"
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                    />
+                                    />*/}
                                     {props.errors.valor_total &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
                                 </div>
@@ -447,7 +478,19 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recursos_proprios">Valor do recurso próprio</label>
 
-                                    <NumberFormat
+                                    <CurrencyInput
+                                        allowNegative={false}
+                                        prefix='R$'
+                                        decimalSeparator=","
+                                        thousandSeparator="."
+                                        value={props.values.valor_recursos_proprios}
+                                        name="valor_recursos_proprios"
+                                        id="valor_recursos_proprios"
+                                        className="form-control"
+                                        onChangeEvent={props.handleChange}
+                                    />
+
+                                    {/*<NumberFormat
                                         value={props.values.valor_recursos_proprios}
                                         thousandSeparator={'.'}
                                         decimalSeparator={','}
@@ -459,13 +502,26 @@ export const CadastroForm = () => {
                                         className="form-control"
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                    />
+                                    />*/}
                                     {props.errors.valor_recursos_proprios && <span className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recusos_acoes">Valor do recurso das ações</label>
-                                    <NumberFormat
+
+                                    <CurrencyInput
+                                        allowNegative={false}
+                                        prefix='R$'
+                                        decimalSeparator=","
+                                        thousandSeparator="."
+                                        value={calculaValorRecursoAcoes(props)}
+                                        name="valor_recusos_acoes"
+                                        id="valor_recusos_acoes"
+                                        className="form-control"
+                                        onChangeEvent={props.handleChange}
+                                    />
+
+                                    {/*<NumberFormat
                                         //format={currencyFormatter}
                                         value={calculaValorRecursoAcoes(props)}
                                         thousandSeparator={'.'}
@@ -479,7 +535,7 @@ export const CadastroForm = () => {
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         readOnly={true}
-                                    />
+                                    />*/}
                                     {props.errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> {props.errors.valor_recusos_acoes}</span>}
                                 </div>
                             </div>
@@ -550,10 +606,10 @@ export const CadastroForm = () => {
                                                             rateio={rateio}
                                                             index={index}
                                                             despesasTabelas={despesasTabelas}
-                                                            especificaoes_disable={especificaoes_disable}
                                                             especificaoes={especificaoes}
                                                             set_aplicacao_recurso={set_aplicacao_recurso}
                                                             set_tipo_custeio={set_tipo_custeio}
+                                                            especificacoes_custeio={especificacoes_custeio}
                                                         />
                                                     ):
                                                         rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -562,15 +618,14 @@ export const CadastroForm = () => {
                                                                 rateio={rateio}
                                                                 index={index}
                                                                 despesasTabelas={despesasTabelas}
-                                                                especificaoes_disable={especificaoes_disable}
-                                                                especificaoes={especificaoes}
+                                                                especificaoes_capital={especificaoes_capital}
                                                             />
 
                                                             ): null}
 
 
 
-                                                    {index >= 1 && props.values.mais_de_um_tipo_despesa === "sim" && (
+                                                        {(index >= 1 && props.values.mais_de_um_tipo_despesa === "sim") || (index >= 1 && values.rateios.length > 1) && (
 
                                                             <div className="d-flex  justify-content-start mt-3 mb-3">
                                                                 <button

@@ -1,12 +1,12 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import NumberFormat from "react-number-format";
-import {currencyFormatter} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {calculaValorRecursoAcoes, currencyFormatter} from "../../../utils/ValidacoesAdicionaisFormularios";
+import CurrencyInput from "react-currency-input";
 
 export const CadastroFormCusteio = (propriedades) => {
-    const {formikProps, rateio, index, despesasTabelas, especificaoes, set_tipo_custeio } = propriedades
+    const {formikProps, rateio, index, despesasTabelas, especificaoes, set_tipo_custeio, especificacoes_custeio} = propriedades
 
     return (
-
         <>
             <div className="form-row">
                 <div className="col-12 col-md-6 mt-4">
@@ -52,12 +52,18 @@ export const CadastroFormCusteio = (propriedades) => {
                         name={`rateios[${index}].especificacao_material_servico`}
                         id='especificacao_material_servico'
                         className="form-control"
-                        //disabled={especificaoes_disable}
                     >
                         <option key={0} value={0}>Selecione uma especificação</option>
-                        {especificaoes && especificaoes.map((item)=> (
-                            <option key={item.id} value={item.id}>{item.descricao}</option>
-                        ) )}
+                        {
+                            typeof especificacoes_custeio === "object" && especificacoes_custeio[rateio.tipo_custeio.id] ? (especificacoes_custeio[rateio.tipo_custeio.id].map((item) => (
+                                    <option key={item.id} value={item.id}>{item.descricao}</option>
+                                )))
+                                : (
+                                    especificacoes_custeio && especificacoes_custeio[rateio.tipo_custeio] && especificacoes_custeio[rateio.tipo_custeio].map(item => (
+                                        <option key={item.id} value={item.id}>{item.descricao}</option>
+                                    ))
+                                )
+                        }
                     </select>
                 </div>
                 <div className="col-12 col-md-6 mt-4">
@@ -106,7 +112,18 @@ export const CadastroFormCusteio = (propriedades) => {
 
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="valor_rateio">Valor do custeio</label>
-                            <NumberFormat
+                            <CurrencyInput
+                                allowNegative={false}
+                                prefix='R$'
+                                decimalSeparator=","
+                                thousandSeparator="."
+                                value={rateio.valor_rateio}
+                                name={`rateios[${index}].valor_rateio`}
+                                id="valor_recusos_acoes"
+                                className="form-control"
+                                onChangeEvent={formikProps.handleChange}
+                            />
+                            {/*<NumberFormat
                                 format={currencyFormatter}
                                 value={rateio.valor_rateio}
                                 onChange={formikProps.handleChange}
@@ -117,7 +134,7 @@ export const CadastroFormCusteio = (propriedades) => {
                                 name={`rateios[${index}].valor_rateio`}
                                 id="valor_rateio"
                                 className="form-control"
-                            />
+                            />*/}
                         </div>
                     </div>
                 </div>
