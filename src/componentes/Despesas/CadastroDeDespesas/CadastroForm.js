@@ -2,7 +2,7 @@ import React, {Component, Fragment, useContext, useEffect, useState} from "react
 import {Formik, FieldArray, Field} from "formik";
 import { YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, convertToNumber, round, } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import { getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio} from "../../../services/Despesas.service";
+import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import moment from "moment";
 import {Button, Modal} from "react-bootstrap";
@@ -76,9 +76,6 @@ export const CadastroForm = () => {
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [show, setShow] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
-    const [aplicacao_recurso, set_aplicacao_recurso] = useState("CUSTEIO");
-    const [tipo_custeio, set_tipo_custeio] = useState(1);
-    const [especificaoes, set_especificaoes] = useState(undefined);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
 
@@ -103,18 +100,6 @@ export const CadastroForm = () => {
 
     }, [])
 
-
-
-    useEffect(()=> {
-        //if (aplicacao_recurso !== undefined) {
-            const carregaEspecificacoes = async () => {
-                const resp = await getEspecificacaoMaterialServico(aplicacao_recurso, tipo_custeio)
-
-                set_especificaoes(resp);
-            };
-            carregaEspecificacoes();
-        //}
-    },[aplicacao_recurso, tipo_custeio])
 
     useEffect(() => {
         (async function get_especificacoes_capital() {
@@ -153,7 +138,6 @@ export const CadastroForm = () => {
                 values.tipo_transacao = null
             }
         }
-
 
         values.valor_total = trataNumericos(values.valor_total);
         values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
@@ -497,10 +481,6 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recusos_acoes">Valor do recurso das ações</label>
 
-                                   {/* <Field name="valor_recusos_acoes"  onChange={props.handleChange} value={calculaValorRecursoAcoes(props)} />
-                                    {errors.valor_recusos_acoes && touched.valor_recusos_acoes && <div>{errors.valor_recusos_acoes}</div>}*/}
-
-
                                     <Field name="valor_recusos_acoes">
                                         {({ field, form, meta }) => (
                                             <CurrencyInput
@@ -509,7 +489,6 @@ export const CadastroForm = () => {
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 value={calculaValorRecursoAcoes(props)}
-
                                                 id="valor_recusos_acoes"
                                                 className="form-control"
                                                 onChangeEvent={props.handleChange}
@@ -564,7 +543,6 @@ export const CadastroForm = () => {
                                                                 value={rateio.aplicacao_recurso}
                                                                 onChange={(e) => {
                                                                     props.handleChange(e);
-                                                                    set_aplicacao_recurso(e.target.value);
                                                                 }}
                                                                 name={`rateios[${index}].aplicacao_recurso`}
                                                                 id='aplicacao_recurso'
@@ -584,9 +562,6 @@ export const CadastroForm = () => {
                                                             rateio={rateio}
                                                             index={index}
                                                             despesasTabelas={despesasTabelas}
-                                                            especificaoes={especificaoes}
-                                                            set_aplicacao_recurso={set_aplicacao_recurso}
-                                                            set_tipo_custeio={set_tipo_custeio}
                                                             especificacoes_custeio={especificacoes_custeio}
                                                         />
                                                     ):
@@ -603,7 +578,6 @@ export const CadastroForm = () => {
 
 
                                                         {index >= 1 && values.rateios.length > 1 && (
-
                                                             <div className="d-flex  justify-content-start mt-3 mb-3">
                                                                 <button
                                                                     type="button"
@@ -613,7 +587,6 @@ export const CadastroForm = () => {
                                                                     - Remover Despesa
                                                                 </button>
                                                             </div>
-
                                                     )}
                                                 </div> /*div key*/
                                             )
@@ -627,7 +600,7 @@ export const CadastroForm = () => {
                                                 className="btn btn btn-outline-success mt-2 mr-2"
                                                 onClick={() => push(
                                                     {
-                                                        associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14",
+                                                        associacao: localStorage.getItem(ASSOCIACAO_UUID),
                                                         conta_associacao: "",
                                                         acao_associacao: "",
                                                         aplicacao_recurso: "",
@@ -646,20 +619,14 @@ export const CadastroForm = () => {
                                         </div>
                                         }
                                     </>
-
                                 )}
                             />
-
-
                             <div className="d-flex  justify-content-end pb-3">
                                 <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
                                 {despesaContext.idDespesa
                                     ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2">Deletar</button>
                                     : null}
-                                <button onClick={() => {
-                                    //setFieldValue("valor_recusos_acoes", trataNumericos(props.values.valor_total) - trataNumericos(props.values.valor_recursos_proprios))
-                                    //setFieldValue("valor_total_dos_rateios", calculaValorTodosRateios(props.values.rateios) )
-                                }} type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
+                                <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
                             </div>
                         </form>
 

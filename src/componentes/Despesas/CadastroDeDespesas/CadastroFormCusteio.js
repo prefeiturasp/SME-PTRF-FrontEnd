@@ -18,10 +18,8 @@ export const CadastroFormCusteio = (propriedades) => {
                                 typeof rateio.tipo_custeio === "object" ? rateio.tipo_custeio.id : rateio.tipo_custeio
                             ) : 0
                         }
-                        //onChange={formikProps.handleChange}
                         onChange={(e) => {
                             formikProps.handleChange(e);
-                            set_tipo_custeio(e.target.value);
                         }}
                         //onBlur={(e)=>handleOnBlur("tipo_custeio", e.target.value)}
                         name={`rateios[${index}].tipo_custeio`}
