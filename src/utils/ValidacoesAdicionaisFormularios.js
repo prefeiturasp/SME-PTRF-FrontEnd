@@ -2,6 +2,7 @@
 /* eslint-disable */
 import * as yup from "yup";
 import moment from "moment";
+import {ASSOCIACAO_UUID} from "../services/auth.service";
 
 export const YupSignupSchemaLogin = yup.object().shape({
     login: yup.string().required("Campo código RF é obrigatório"),
@@ -29,47 +30,131 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     valor_total: yup.string().nullable(),
     valor_recursos_proprios: yup.string().nullable(),
     valor_total_dos_rateios:yup.string().nullable(),
-
-    valor_recusos_acoes:yup.string().nullable()
-    .when("valor_total_dos_rateios", {
-        is: false,
-        then: yup.string().nullable()
-        .test('test-name', 'O total das classificações deve corresponder ao valor total da nota',
-            function (value) {
-                console.log("YUP value ", value)
-
-                value = String(round(value,2))
-
-                const { valor_total_dos_rateios } = this.parent;
-
-                console.log("YUP valor_total_dos_rateios ", valor_total_dos_rateios)
-
-                if(value !== valor_total_dos_rateios){
-                    return false
-                }else {
-                    return true
-                }
-            }),
-    }),
-
-/*    valor_recusos_acoes:yup.string().nullable()
-    .test('test-name', 'O total das classificações deve corresponder ao valor total da nota',
-        function (value) {
-            console.log("YUP value ", value)
-
-            value = String(round(value,2))
-
-            const { valor_total_dos_rateios } = this.parent;
-
-            console.log("YUP valor_total_dos_rateios ", valor_total_dos_rateios)
-
-            if(value !== valor_total_dos_rateios){
-                return false
-            }else {
-                return true
-            }
-        }),*/
+    valor_recusos_acoes:yup.string().nullable(),
 });
+
+// Synchronous validation
+export const validateFormDespesas = (values, props /* only available when using withFormik */) => {
+    const errors = {};
+
+    let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios)
+    let var_valor_total_dos_rateios = 0;
+    let var_valor_total_dos_rateios_capital = 0;
+    let var_valor_total_dos_rateios_custeio = 0;
+
+    values.rateios.map((rateio) => {
+        if (rateio.aplicacao_recurso === "CAPITAL"){
+            var_valor_total_dos_rateios_capital = var_valor_total_dos_rateios_capital + round(trataNumericos(rateio.quantidade_itens_capital) * trataNumericos(rateio.valor_item_capital, 2))
+        }else{
+            var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
+        }
+    })
+
+    var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio
+
+    if (var_valor_recursos_acoes !== var_valor_total_dos_rateios) {
+        errors.valor_recusos_acoes = 'O total das classificações deve corresponder ao valor total da nota';
+    }
+    return errors;
+};
+
+export const validaPayloadDespesas = (values) => {
+    // Quando é Alteração
+    if (typeof values.associacao === "object"){
+        values.associacao = localStorage.getItem(ASSOCIACAO_UUID)
+    }
+
+    if (typeof values.tipo_documento === "object" && values.tipo_documento !== null){
+        values.tipo_documento = values.tipo_documento.id
+    }else {
+        if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0 && values.tipo_documento !== null) {
+            values.tipo_documento = convertToNumber(values.tipo_documento);
+        } else {
+            values.tipo_documento = null
+        }
+    }
+
+    if (typeof values.tipo_transacao === "object" && values.tipo_transacao !== null){
+        values.tipo_transacao = values.tipo_transacao.id
+    }else {
+        if (values.tipo_transacao !== "" && values.tipo_transacao !== "0" && values.tipo_transacao !== 0 && values.tipo_transacao !== null) {
+            values.tipo_transacao = convertToNumber(values.tipo_transacao);
+        } else {
+            values.tipo_transacao = null
+        }
+    }
+
+    values.valor_total = trataNumericos(values.valor_total);
+    values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
+    values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)
+
+    if (values.data_documento !== "" && values.data_documento !== null){
+        values.data_documento = moment(values.data_documento).format("YYYY-MM-DD");
+    }else {
+        values.data_documento = null
+    }
+
+    if (values.data_transacao !== "" && values.data_transacao !== null){
+        values.data_transacao = moment(values.data_transacao).format("YYYY-MM-DD");
+    }else {
+        values.data_transacao = null
+    }
+
+    values.rateios.map((rateio) => {
+
+        if (typeof rateio.especificacao_material_servico === "object" && rateio.especificacao_material_servico !== null){
+            rateio.especificacao_material_servico = rateio.especificacao_material_servico.id
+        }else {
+            rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico)
+        }
+
+        if (typeof rateio.conta_associacao === "object" && rateio.conta_associacao !== null){
+            rateio.conta_associacao = rateio.conta_associacao.uuid
+        }else {
+            if (rateio.conta_associacao === "0" || rateio.conta_associacao === "" || rateio.conta_associacao === 0){
+                rateio.conta_associacao = null
+            }
+        }
+
+        if (typeof rateio.acao_associacao === "object" && rateio.acao_associacao !== null){
+            rateio.acao_associacao = rateio.acao_associacao.uuid
+        }else {
+            if (rateio.acao_associacao === "0" || rateio.acao_associacao === "" || rateio.acao_associacao === 0) {
+                rateio.acao_associacao = null
+            }
+        }
+
+        if (typeof rateio.tipo_custeio === "object" && rateio.tipo_custeio !== null){
+            rateio.tipo_custeio = rateio.tipo_custeio.id
+        }else {
+
+            if (rateio.tipo_custeio === "0" || rateio.tipo_custeio === 0 || rateio.tipo_custeio === ""){
+                rateio.tipo_custeio = null
+            }else {
+                rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
+            }
+        }
+
+        rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital)
+        rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)
+        rateio.valor_rateio = round(trataNumericos(rateio.valor_rateio),2)
+
+        if (rateio.aplicacao_recurso === "0" || rateio.aplicacao_recurso === "" || rateio.aplicacao_recurso === 0){
+            rateio.aplicacao_recurso = null
+        }
+
+        if (rateio.especificacao_material_servico === "0" || rateio.especificacao_material_servico === 0 || rateio.especificacao_material_servico === ""){
+            rateio.especificacao_material_servico = null
+        }
+
+        if (rateio.aplicacao_recurso === "CAPITAL"){
+            rateio.valor_rateio = round(rateio.quantidade_itens_capital * rateio.valor_item_capital, 2)
+        }
+
+    })
+
+    return values
+}
 
 export const currencyFormatter =(value) =>{
 

@@ -1,6 +1,6 @@
 import React from "react";
 import NumberFormat from "react-number-format";
-import {calculaValorRateio, currencyFormatter} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {calculaValorRateio,} from "../../../utils/ValidacoesAdicionaisFormularios";
 import CurrencyInput from "react-currency-input";
 
 export const CadastroFormCapital = (propriedades) => {
@@ -115,7 +115,6 @@ export const CadastroFormCapital = (propriedades) => {
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
                             <select
-                                //defaultValue={rateio.conta_associacao !== null ? rateio.conta_associacao.uuid : 0}
                                 value={
                                     rateio.conta_associacao !== null ? (
                                         typeof rateio.conta_associacao === "object" ? rateio.conta_associacao.uuid : rateio.conta_associacao
@@ -151,19 +150,6 @@ export const CadastroFormCapital = (propriedades) => {
                                 readOnly={true}
                             />
 
-                            {/*<NumberFormat
-                                //format={currencyFormatter}
-                                value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
-                                onChange={formikProps.handleChange}
-                                thousandSeparator={'.'}
-                                decimalSeparator={','}
-                                decimalScale={2}
-                                prefix={'R$ '}
-                                name={`rateios[${index}].valor_rateio`}
-                                id="valor_rateio"
-                                className="form-control"
-                                readOnly={true}
-                            />*/}
                         </div>
 
 

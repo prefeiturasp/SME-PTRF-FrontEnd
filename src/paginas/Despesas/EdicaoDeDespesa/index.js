@@ -5,7 +5,6 @@ import {DespesaContext} from "../../../context/Despesa";
 import {getDespesa} from "../../../services/Despesas.service";
 import {CadastroDeDespesas} from "../../../componentes/Despesas/CadastroDeDespesas";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
-import CurrencyInput from 'react-currency-input';
 import moment from "moment";
 
 

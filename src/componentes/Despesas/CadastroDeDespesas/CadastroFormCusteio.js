@@ -3,7 +3,7 @@ import React from "react";
 import CurrencyInput from "react-currency-input";
 
 export const CadastroFormCusteio = (propriedades) => {
-    const {formikProps, rateio, index, despesasTabelas, set_tipo_custeio, especificacoes_custeio} = propriedades
+    const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio} = propriedades
 
     return (
         <>
