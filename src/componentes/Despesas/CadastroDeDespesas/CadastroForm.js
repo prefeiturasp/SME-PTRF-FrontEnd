@@ -1,69 +1,24 @@
-import React, {Component, Fragment, useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
 import { YupSignupSchemaCadastroDespesa, validaPayloadDespesas, validateFormDespesas, cpfMaskContitional, calculaValorRecursoAcoes,  } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
-import {Button, Modal} from "react-bootstrap";
 import {useHistory} from 'react-router-dom'
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
 import {CadastroFormCapital} from "./CadastroFormCapital";
 import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
-
 import CurrencyInput from "react-currency-input";
 
-class CancelarModal extends Component {
-    render() {
-        return (
-            <Fragment>
-                <Modal centered show={this.props.show} onHide={this.props.handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Cancelar cadastro</Modal.Title>
-                    </Modal.Header>
-                     <Modal.Body>
-                         <p>Tem certeza que deseja cancelar esse cadastramento? As informações não serão salvas</p>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={this.props.onCancelarTrue}>
-                            OK
-                        </Button>
-                        <Button variant="primary" onClick={this.props.handleClose}>
-                            Fechar
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            </Fragment>
-        )
-    }
-}
+import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Modais"
 
-class DeletarModal extends Component {
 
-    render () {
-        return (
-            <Fragment>
-                <Modal centered show={this.props.show} onHide={this.props.handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Deseja excluir esta Despesa?</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <p>Tem certeza que deseja excluir esta despesa? A ação não poderá ser desfeita.</p>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={this.props.onDeletarTrue}>
-                            OK
-                        </Button>
-                        <Button variant="primary" onClick={this.props.handleClose}>
-                            Fechar
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            </Fragment>
-        )
-    }
-}
+
+
+
+
 
 export const CadastroForm = () => {
 
@@ -74,6 +29,7 @@ export const CadastroForm = () => {
 
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [show, setShow] = useState(false);
+    const [showAvisoCapital, setShowAvisoCapital] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
@@ -163,10 +119,15 @@ export const CadastroForm = () => {
     const onHandleClose = () => {
         setShow(false);
         setShowDelete(false);
+        setShowAvisoCapital(false);
     }
 
     const onShowModal = () => {
         setShow(true);
+    }
+
+    const onShowAvisoCapitalModal = () => {
+        setShowAvisoCapital(true);
     }
 
     const onShowDeleteModal = () => {
@@ -185,6 +146,12 @@ export const CadastroForm = () => {
             console.log(error);
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
         });
+    }
+
+    const handleAvisoCapital = (value) => {
+        if (value === "CAPITAL"){
+            onShowAvisoCapitalModal()
+        }
     }
 
     return (
@@ -410,6 +377,7 @@ export const CadastroForm = () => {
                                                                 value={rateio.aplicacao_recurso}
                                                                 onChange={(e) => {
                                                                     props.handleChange(e);
+                                                                    handleAvisoCapital(e.target.value)
                                                                 }}
                                                                 name={`rateios[${index}].aplicacao_recurso`}
                                                                 id='aplicacao_recurso'
@@ -503,6 +471,9 @@ export const CadastroForm = () => {
             </Formik>
             <section>
                 <CancelarModal show={show} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+            </section>
+            <section>
+                <AvisoCapitalModal show={showAvisoCapital} handleClose={onHandleClose} />
             </section>
             {despesaContext.idDespesa
                 ?
