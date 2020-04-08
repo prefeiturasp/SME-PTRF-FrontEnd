@@ -30,7 +30,7 @@ class CancelarModal extends Component {
                             OK
                         </Button>
                         <Button variant="primary" onClick={this.props.handleClose}>
-                            Fechar
+                            fechar
                         </Button>
                     </Modal.Footer>
                 </Modal>
@@ -46,7 +46,7 @@ class DeletarModal extends Component {
             <Fragment>
                 <Modal centered show={this.props.show} onHide={this.handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Deseja excluir está Despesa?</Modal.Title>
+                        <Modal.Title>Deseja exluir está Despesa?</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <p>Tem certeza que deseja excluir esta despesa? A ação não poderá ser desfeita.</p>
@@ -56,7 +56,7 @@ class DeletarModal extends Component {
                             OK
                         </Button>
                         <Button variant="primary" onClick={this.props.handleClose}>
-                            Fechar
+                            fechar
                         </Button>
                     </Modal.Footer>
                 </Modal>
