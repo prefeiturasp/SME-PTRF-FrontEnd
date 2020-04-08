@@ -18,7 +18,7 @@ class CancelarModal extends Component {
     render() {
         return (
             <Fragment>
-                <Modal centered show={this.props.show} onHide={this.handleClose}>
+                <Modal centered show={this.props.show} onHide={this.props.handleClose}>
                     <Modal.Header closeButton>
                         <Modal.Title>Cancelar cadastro</Modal.Title>
                     </Modal.Header>
@@ -44,9 +44,9 @@ class DeletarModal extends Component {
     render () {
         return (
             <Fragment>
-                <Modal centered show={this.props.show} onHide={this.handleClose}>
+                <Modal centered show={this.props.show} onHide={this.props.handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Deseja excluir está Despesa?</Modal.Title>
+                        <Modal.Title>Deseja excluir esta Despesa?</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <p>Tem certeza que deseja excluir esta despesa? A ação não poderá ser desfeita.</p>
