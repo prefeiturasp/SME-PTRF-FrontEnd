@@ -4,7 +4,6 @@ import { YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecurso
 import MaskedInput from 'react-text-mask'
 import { getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
-import NumberFormat from "react-number-format";
 import moment from "moment";
 import {Button, Modal} from "react-bootstrap";
 import {useHistory} from 'react-router-dom'
@@ -48,7 +47,7 @@ class DeletarModal extends Component {
             <Fragment>
                 <Modal centered show={this.props.show} onHide={this.handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Deseja excluir está Despesa?</Modal.Title>
+                        <Modal.Title>Deseja exluir está Despesa?</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <p>Tem certeza que deseja excluir esta despesa? A ação não poderá ser desfeita.</p>
@@ -58,7 +57,7 @@ class DeletarModal extends Component {
                             OK
                         </Button>
                         <Button variant="primary" onClick={this.props.handleClose}>
-                            Fechar
+                            fechar
                         </Button>
                     </Modal.Footer>
                 </Modal>
@@ -297,23 +296,6 @@ export const CadastroForm = () => {
         });
     }
 
-    const calculaValorTodosRateios = (array) => {
-
-        let valor_total=0
-
-            array.map((item, index) => {
-
-                if (array[index].aplicacao_recurso === "CAPITAL"){
-                    valor_total = valor_total + (convertToNumber(item.quantidade_itens_capital) * trataNumericos(item.valor_item_capital))
-                }
-                if(array[index].aplicacao_recurso === "CUSTEIO") {
-                    valor_total = valor_total + trataNumericos(item.valor_rateio)
-                }
-            })
-
-        return valor_total
-    }
-
     // Synchronous validation
     const validate = (values, props /* only available when using withFormik */) => {
         const errors = {};
@@ -369,15 +351,7 @@ export const CadastroForm = () => {
                     } = props;
                     return (
                         <form onSubmit={props.handleSubmit}>
-                            <input type="hidden" name="valor_total_dos_rateios" id="valor_total_dos_rateios" value={calculaValorTodosRateios(props.values.rateios)}/>
-
                             <div className="form-row">
-
-                                {/*<div className="col-12">
-                                    <Field name="username"  onChange={props.handleChange} value={props.username} />
-                                    {errors.username && touched.username && <div>{errors.username}</div>}
-                                </div>*/}
-
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
                                     <MaskedInput
@@ -392,7 +366,6 @@ export const CadastroForm = () => {
                                     {props.errors.cpf_cnpj_fornecedor && <span
                                         className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
                                 </div>
-
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
                                     <input
@@ -402,14 +375,11 @@ export const CadastroForm = () => {
                                         name="nome_fornecedor" id="nome_fornecedor" type="text" className="form-control"
                                         placeholder="Digite o nome"/>
                                 </div>
-
                             </div>
 
                             <div className="form-row">
-
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="tipo_documento">Tipo de documento</label>
-
                                     <select
                                         value={
                                             props.values.tipo_documento !== null ? (
@@ -503,20 +473,6 @@ export const CadastroForm = () => {
                                         className="form-control"
                                         onChangeEvent={props.handleChange}
                                     />
-
-                                    {/*<NumberFormat
-                                        value={props.values.valor_total}
-                                        thousandSeparator={'.'}
-                                        decimalSeparator={','}
-                                        decimalScale={2}
-                                        allowNegative={false}
-                                        prefix={'R$'}
-                                        name="valor_total"
-                                        id="valor_total"
-                                        className="form-control"
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                    />*/}
                                     {props.errors.valor_total &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
                                 </div>
@@ -535,20 +491,6 @@ export const CadastroForm = () => {
                                         className="form-control"
                                         onChangeEvent={props.handleChange}
                                     />
-
-                                    {/*<NumberFormat
-                                        value={props.values.valor_recursos_proprios}
-                                        thousandSeparator={'.'}
-                                        decimalSeparator={','}
-                                        decimalScale={2}
-                                        allowNegative={false}
-                                        prefix={'R$'}
-                                        name="valor_recursos_proprios"
-                                        id="valor_recursos_proprios"
-                                        className="form-control"
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                    />*/}
                                     {props.errors.valor_recursos_proprios && <span className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
                                 </div>
 
@@ -575,36 +517,7 @@ export const CadastroForm = () => {
                                             />
                                         )}
                                     </Field>
-                                    {errors.valor_recusos_acoes && touched.valor_recusos_acoes && <div>{errors.valor_recusos_acoes}</div>}
-                                    {/*<CurrencyInput
-                                        allowNegative={false}
-                                        prefix='R$'
-                                        decimalSeparator=","
-                                        thousandSeparator="."
-                                        value={calculaValorRecursoAcoes(props)}
-                                        name="valor_recusos_acoes"
-                                        id="valor_recusos_acoes"
-                                        className="form-control"
-                                        onChangeEvent={props.handleChange}
-                                        readOnly={true}
-                                    />*/}
-
-                                    {/*<NumberFormat
-                                        //format={currencyFormatter}
-                                        value={calculaValorRecursoAcoes(props)}
-                                        thousandSeparator={'.'}
-                                        decimalSeparator={','}
-                                        decimalScale={2}
-                                        prefix={'R$'}
-                                        name="valor_recusos_acoes"
-                                        id="valor_recusos_acoes"
-                                        className="form-control"
-                                        //onChange={setFieldValue}
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                        readOnly={true}
-                                    />*/}
-                                    {props.errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> {props.errors.valor_recusos_acoes}</span>}
+                                    {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}
                                 </div>
                             </div>
 
@@ -688,7 +601,7 @@ export const CadastroForm = () => {
 
                                                             ): null}
 
-                                                    
+
                                                         {index >= 1 && values.rateios.length > 1 && (
 
                                                             <div className="d-flex  justify-content-start mt-3 mb-3">
@@ -744,8 +657,8 @@ export const CadastroForm = () => {
                                     ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2">Deletar</button>
                                     : null}
                                 <button onClick={() => {
-                                    setFieldValue("valor_recusos_acoes", trataNumericos(props.values.valor_total) - trataNumericos(props.values.valor_recursos_proprios))
-                                    setFieldValue("valor_total_dos_rateios", calculaValorTodosRateios(props.values.rateios) )
+                                    //setFieldValue("valor_recusos_acoes", trataNumericos(props.values.valor_total) - trataNumericos(props.values.valor_recursos_proprios))
+                                    //setFieldValue("valor_total_dos_rateios", calculaValorTodosRateios(props.values.rateios) )
                                 }} type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
                             </div>
                         </form>
