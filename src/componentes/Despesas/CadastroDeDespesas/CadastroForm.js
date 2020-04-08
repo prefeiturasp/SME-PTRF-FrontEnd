@@ -14,14 +14,7 @@ import CurrencyInput from "react-currency-input";
 
 import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Modais"
 
-
-
-
-
-
-
 export const CadastroForm = () => {
-
 
     let history = useHistory();
 
