@@ -6,7 +6,7 @@ export const ModalBootstrap = (propriedades) =>{
         <Fragment>
             <Modal centered show={propriedades.show} onHide={propriedades.handleClose}>
                 <Modal.Header>
-                    <Modal.Title>Aviso</Modal.Title>
+                    <Modal.Title>{propriedades.titulo}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div dangerouslySetInnerHTML={{ __html: propriedades.bodyText }} />

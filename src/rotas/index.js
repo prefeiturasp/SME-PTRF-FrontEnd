@@ -2,7 +2,7 @@ import React from "react";
 import {Route, Switch, Redirect} from 'react-router-dom'
 import {Login} from "../paginas/Login";
 import {Pagina404} from "../paginas/404";
-import {Dashboard} from "../paginas/Dashboard";
+import {DashboardPage} from "../paginas/Dashboard";
 import {CadastroDeDespesa} from "../paginas/Despesas/CadastroDeDespesas";
 import {EdicaoDeDespesa} from "../paginas/Despesas/EdicaoDeDespesa";
 import { ListaDeDespesasPage } from '../paginas/Despesas/ListaDeDespesas'
@@ -21,7 +21,7 @@ const routesConfig = [
     {
         exact: true,
         path: "/dashboard",
-        component: Dashboard
+        component: DashboardPage
     },
     { 
         exact: true,
@@ -51,7 +51,7 @@ const routesConfig = [
     {
         exact: true,
         path: "/",
-        component: Dashboard
+        component: DashboardPage
     },
 ]
 
