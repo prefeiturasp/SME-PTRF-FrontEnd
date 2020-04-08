@@ -1,11 +1,9 @@
 import React, {Component, Fragment, useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
-import { YupSignupSchemaCadastroDespesa, cpfMaskContitional, calculaValorRecursoAcoes, trataNumericos, convertToNumber, round, } from "../../../utils/ValidacoesAdicionaisFormularios";
+import { YupSignupSchemaCadastroDespesa, validaPayloadDespesas, validateFormDespesas, cpfMaskContitional, calculaValorRecursoAcoes,  } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import { getDespesasTabelas, getEspecificacaoMaterialServico, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio} from "../../../services/Despesas.service";
+import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
-import NumberFormat from "react-number-format";
-import moment from "moment";
 import {Button, Modal} from "react-bootstrap";
 import {useHistory} from 'react-router-dom'
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
@@ -32,7 +30,7 @@ class CancelarModal extends Component {
                             OK
                         </Button>
                         <Button variant="primary" onClick={this.props.handleClose}>
-                            fechar
+                            Fechar
                         </Button>
                     </Modal.Footer>
                 </Modal>
@@ -48,7 +46,7 @@ class DeletarModal extends Component {
             <Fragment>
                 <Modal centered show={this.props.show} onHide={this.handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Deseja exluir está Despesa?</Modal.Title>
+                        <Modal.Title>Deseja excluir está Despesa?</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <p>Tem certeza que deseja excluir esta despesa? A ação não poderá ser desfeita.</p>
@@ -58,7 +56,7 @@ class DeletarModal extends Component {
                             OK
                         </Button>
                         <Button variant="primary" onClick={this.props.handleClose}>
-                            fechar
+                            Fechar
                         </Button>
                     </Modal.Footer>
                 </Modal>
@@ -77,9 +75,6 @@ export const CadastroForm = () => {
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [show, setShow] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
-    const [aplicacao_recurso, set_aplicacao_recurso] = useState("CUSTEIO");
-    const [tipo_custeio, set_tipo_custeio] = useState(1);
-    const [especificaoes, set_especificaoes] = useState(undefined);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
 
@@ -105,18 +100,6 @@ export const CadastroForm = () => {
     }, [])
 
 
-
-    useEffect(()=> {
-        //if (aplicacao_recurso !== undefined) {
-            const carregaEspecificacoes = async () => {
-                const resp = await getEspecificacaoMaterialServico(aplicacao_recurso, tipo_custeio)
-
-                set_especificaoes(resp);
-            };
-            carregaEspecificacoes();
-        //}
-    },[aplicacao_recurso, tipo_custeio])
-
     useEffect(() => {
         (async function get_especificacoes_capital() {
             const resp = await getEspecificacoesCapital();
@@ -130,100 +113,7 @@ export const CadastroForm = () => {
 
     const onSubmit = async (values, {resetForm}) => {
 
-        // Quando é Alteração
-        if (typeof values.associacao === "object"){
-            values.associacao = localStorage.getItem(ASSOCIACAO_UUID)
-        }
-
-        if (typeof values.tipo_documento === "object" && values.tipo_documento !== null){
-            values.tipo_documento = values.tipo_documento.id
-        }else {
-            if (values.tipo_documento !== "" && values.tipo_documento !== "0" && values.tipo_documento !== 0 && values.tipo_documento !== null) {
-                values.tipo_documento = convertToNumber(values.tipo_documento);
-            } else {
-                values.tipo_documento = null
-            }
-        }
-
-        if (typeof values.tipo_transacao === "object" && values.tipo_transacao !== null){
-            values.tipo_transacao = values.tipo_transacao.id
-        }else {
-            if (values.tipo_transacao !== "" && values.tipo_transacao !== "0" && values.tipo_transacao !== 0 && values.tipo_transacao !== null) {
-                values.tipo_transacao = convertToNumber(values.tipo_transacao);
-            } else {
-                values.tipo_transacao = null
-            }
-        }
-
-
-        values.valor_total = trataNumericos(values.valor_total);
-        values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
-        values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)
-
-        if (values.data_documento !== "" && values.data_documento !== null){
-            values.data_documento = moment(values.data_documento).format("YYYY-MM-DD");
-        }else {
-            values.data_documento = null
-        }
-
-        if (values.data_transacao !== "" && values.data_transacao !== null){
-            values.data_transacao = moment(values.data_transacao).format("YYYY-MM-DD");
-        }else {
-            values.data_transacao = null
-        }
-
-        values.rateios.map((rateio) => {
-
-            if (typeof rateio.especificacao_material_servico === "object" && rateio.especificacao_material_servico !== null){
-                rateio.especificacao_material_servico = rateio.especificacao_material_servico.id
-            }else {
-                rateio.especificacao_material_servico = convertToNumber(rateio.especificacao_material_servico)
-            }
-
-            if (typeof rateio.conta_associacao === "object" && rateio.conta_associacao !== null){
-                rateio.conta_associacao = rateio.conta_associacao.uuid
-            }else {
-                if (rateio.conta_associacao === "0" || rateio.conta_associacao === "" || rateio.conta_associacao === 0){
-                    rateio.conta_associacao = null
-                }
-            }
-
-            if (typeof rateio.acao_associacao === "object" && rateio.acao_associacao !== null){
-                rateio.acao_associacao = rateio.acao_associacao.uuid
-            }else {
-                if (rateio.acao_associacao === "0" || rateio.acao_associacao === "" || rateio.acao_associacao === 0) {
-                    rateio.acao_associacao = null
-                }
-            }
-
-            if (typeof rateio.tipo_custeio === "object" && rateio.tipo_custeio !== null){
-                rateio.tipo_custeio = rateio.tipo_custeio.id
-            }else {
-
-                if (rateio.tipo_custeio === "0" || rateio.tipo_custeio === 0 || rateio.tipo_custeio === ""){
-                    rateio.tipo_custeio = null
-                }else {
-                    rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
-                }
-            }
-
-            rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital)
-            rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)
-            rateio.valor_rateio = round(trataNumericos(rateio.valor_rateio),2)
-
-            if (rateio.aplicacao_recurso === "0" || rateio.aplicacao_recurso === "" || rateio.aplicacao_recurso === 0){
-                rateio.aplicacao_recurso = null
-            }
-
-            if (rateio.especificacao_material_servico === "0" || rateio.especificacao_material_servico === 0 || rateio.especificacao_material_servico === ""){
-                rateio.especificacao_material_servico = null
-            }
-
-            if (rateio.aplicacao_recurso === "CAPITAL"){
-                rateio.valor_rateio = round(rateio.quantidade_itens_capital * rateio.valor_item_capital, 2)
-            }
-
-        })
+        validaPayloadDespesas(values)
 
         console.log("onSubmit", values)
 
@@ -297,59 +187,6 @@ export const CadastroForm = () => {
         });
     }
 
-    const calculaValorTodosRateios = (array) => {
-
-        let valor_total=0
-
-            array.map((item, index) => {
-
-                if (array[index].aplicacao_recurso === "CAPITAL"){
-                    valor_total = valor_total + (convertToNumber(item.quantidade_itens_capital) * trataNumericos(item.valor_item_capital))
-                }
-                if(array[index].aplicacao_recurso === "CUSTEIO") {
-                    valor_total = valor_total + trataNumericos(item.valor_rateio)
-                }
-            })
-
-        return valor_total
-    }
-
-    // Synchronous validation
-    const validate = (values, props /* only available when using withFormik */) => {
-        const errors = {};
-
-        console.log("Entei no validade", values)
-
-        let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios)
-        console.log(" Var Recurso Acoes ", var_valor_recursos_acoes)
-
-        let var_valor_total_dos_rateios = 0;
-        let var_valor_total_dos_rateios_capital = 0;
-        let var_valor_total_dos_rateios_custeio = 0;
-
-        values.rateios.map((rateio) => {
-            if (rateio.aplicacao_recurso === "CAPITAL"){
-                var_valor_total_dos_rateios_capital = var_valor_total_dos_rateios_capital + round(trataNumericos(rateio.quantidade_itens_capital) * trataNumericos(rateio.valor_item_capital, 2))
-            }else{
-                var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
-            }
-        })
-
-        console.log(" Var Valor Total dos Rateios CAPITAL ", var_valor_total_dos_rateios_capital)
-        console.log(" Var Valor Total dos Rateios CUSTEIO ", var_valor_total_dos_rateios_custeio)
-
-        var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio
-
-        console.log(" Var Valor Total dos Rateios ", var_valor_total_dos_rateios)
-
-
-        if (var_valor_recursos_acoes !== var_valor_total_dos_rateios) {
-            errors.valor_recusos_acoes = 'O total das classificações deve corresponder ao valor total da nota';
-        }
-        return errors;
-    };
-
-
     return (
         <>
             <Formik
@@ -358,26 +195,17 @@ export const CadastroForm = () => {
                 validateOnBlur={false}
                 onSubmit={onSubmit}
                 enableReinitialize={true}
-                validate={validate}
-                //onReset={(props) => handleReset(props)}
+                validate={validateFormDespesas}
             >
                 {props => {
                     const {
                         values,
                         setFieldValue,
-                        errors, touched, isValidating
+                        errors,
                     } = props;
                     return (
                         <form onSubmit={props.handleSubmit}>
-                            <input type="hidden" name="valor_total_dos_rateios" id="valor_total_dos_rateios" value={calculaValorTodosRateios(props.values.rateios)}/>
-
                             <div className="form-row">
-
-                                {/*<div className="col-12">
-                                    <Field name="username"  onChange={props.handleChange} value={props.username} />
-                                    {errors.username && touched.username && <div>{errors.username}</div>}
-                                </div>*/}
-
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
                                     <MaskedInput
@@ -392,7 +220,6 @@ export const CadastroForm = () => {
                                     {props.errors.cpf_cnpj_fornecedor && <span
                                         className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
                                 </div>
-
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
                                     <input
@@ -402,21 +229,17 @@ export const CadastroForm = () => {
                                         name="nome_fornecedor" id="nome_fornecedor" type="text" className="form-control"
                                         placeholder="Digite o nome"/>
                                 </div>
-
                             </div>
 
                             <div className="form-row">
-
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="tipo_documento">Tipo de documento</label>
-
                                     <select
                                         value={
                                             props.values.tipo_documento !== null ? (
                                                 props.values.tipo_documento === "object" ? props.values.tipo_documento.id : props.values.tipo_documento.id
                                             ) : 0
                                         }
-                                        //value={props.values.tipo_documento !== null ? props.values.tipo_documento.id : 0 }
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_documento'
@@ -455,7 +278,6 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="tipo_transacao">Tipo de transação</label>
                                     <select
-                                        //value={props.values.tipo_transacao !== null ? props.values.tipo_transacao.id : 0}
                                         value={
                                             props.values.tipo_transacao !== null ? (
                                                 props.values.tipo_transacao === "object" ? props.values.tipo_transacao.id : props.values.tipo_transacao.id
@@ -482,7 +304,6 @@ export const CadastroForm = () => {
                                         name="data_transacao"
                                         id="data_transacao"
                                         value={values.data_transacao != null ? values.data_transacao : ""}
-                                        //value={values.data_transacao}
                                         onChange={setFieldValue}
                                     />
                                     {props.errors.data_transacao &&
@@ -503,20 +324,6 @@ export const CadastroForm = () => {
                                         className="form-control"
                                         onChangeEvent={props.handleChange}
                                     />
-
-                                    {/*<NumberFormat
-                                        value={props.values.valor_total}
-                                        thousandSeparator={'.'}
-                                        decimalSeparator={','}
-                                        decimalScale={2}
-                                        allowNegative={false}
-                                        prefix={'R$'}
-                                        name="valor_total"
-                                        id="valor_total"
-                                        className="form-control"
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                    />*/}
                                     {props.errors.valor_total &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
                                 </div>
@@ -535,29 +342,11 @@ export const CadastroForm = () => {
                                         className="form-control"
                                         onChangeEvent={props.handleChange}
                                     />
-
-                                    {/*<NumberFormat
-                                        value={props.values.valor_recursos_proprios}
-                                        thousandSeparator={'.'}
-                                        decimalSeparator={','}
-                                        decimalScale={2}
-                                        allowNegative={false}
-                                        prefix={'R$'}
-                                        name="valor_recursos_proprios"
-                                        id="valor_recursos_proprios"
-                                        className="form-control"
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                    />*/}
                                     {props.errors.valor_recursos_proprios && <span className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recusos_acoes">Valor do recurso das ações</label>
-
-                                   {/* <Field name="valor_recusos_acoes"  onChange={props.handleChange} value={calculaValorRecursoAcoes(props)} />
-                                    {errors.valor_recusos_acoes && touched.valor_recusos_acoes && <div>{errors.valor_recusos_acoes}</div>}*/}
-
 
                                     <Field name="valor_recusos_acoes">
                                         {({ field, form, meta }) => (
@@ -567,7 +356,6 @@ export const CadastroForm = () => {
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 value={calculaValorRecursoAcoes(props)}
-
                                                 id="valor_recusos_acoes"
                                                 className="form-control"
                                                 onChangeEvent={props.handleChange}
@@ -575,36 +363,7 @@ export const CadastroForm = () => {
                                             />
                                         )}
                                     </Field>
-                                    {errors.valor_recusos_acoes && touched.valor_recusos_acoes && <div>{errors.valor_recusos_acoes}</div>}
-                                    {/*<CurrencyInput
-                                        allowNegative={false}
-                                        prefix='R$'
-                                        decimalSeparator=","
-                                        thousandSeparator="."
-                                        value={calculaValorRecursoAcoes(props)}
-                                        name="valor_recusos_acoes"
-                                        id="valor_recusos_acoes"
-                                        className="form-control"
-                                        onChangeEvent={props.handleChange}
-                                        readOnly={true}
-                                    />*/}
-
-                                    {/*<NumberFormat
-                                        //format={currencyFormatter}
-                                        value={calculaValorRecursoAcoes(props)}
-                                        thousandSeparator={'.'}
-                                        decimalSeparator={','}
-                                        decimalScale={2}
-                                        prefix={'R$'}
-                                        name="valor_recusos_acoes"
-                                        id="valor_recusos_acoes"
-                                        className="form-control"
-                                        //onChange={setFieldValue}
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                        readOnly={true}
-                                    />*/}
-                                    {props.errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> {props.errors.valor_recusos_acoes}</span>}
+                                    {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}
                                 </div>
                             </div>
 
@@ -651,7 +410,6 @@ export const CadastroForm = () => {
                                                                 value={rateio.aplicacao_recurso}
                                                                 onChange={(e) => {
                                                                     props.handleChange(e);
-                                                                    set_aplicacao_recurso(e.target.value);
                                                                 }}
                                                                 name={`rateios[${index}].aplicacao_recurso`}
                                                                 id='aplicacao_recurso'
@@ -671,9 +429,6 @@ export const CadastroForm = () => {
                                                             rateio={rateio}
                                                             index={index}
                                                             despesasTabelas={despesasTabelas}
-                                                            especificaoes={especificaoes}
-                                                            set_aplicacao_recurso={set_aplicacao_recurso}
-                                                            set_tipo_custeio={set_tipo_custeio}
                                                             especificacoes_custeio={especificacoes_custeio}
                                                         />
                                                     ):
@@ -688,9 +443,8 @@ export const CadastroForm = () => {
 
                                                             ): null}
 
-                                                    
-                                                        {index >= 1 && values.rateios.length > 1 && (
 
+                                                        {index >= 1 && values.rateios.length > 1 && (
                                                             <div className="d-flex  justify-content-start mt-3 mb-3">
                                                                 <button
                                                                     type="button"
@@ -700,7 +454,6 @@ export const CadastroForm = () => {
                                                                     - Remover Despesa
                                                                 </button>
                                                             </div>
-
                                                     )}
                                                 </div> /*div key*/
                                             )
@@ -714,7 +467,7 @@ export const CadastroForm = () => {
                                                 className="btn btn btn-outline-success mt-2 mr-2"
                                                 onClick={() => push(
                                                     {
-                                                        associacao: "52ad4766-3515-4de9-8ab6-3b12078f8f14",
+                                                        associacao: localStorage.getItem(ASSOCIACAO_UUID),
                                                         conta_associacao: "",
                                                         acao_associacao: "",
                                                         aplicacao_recurso: "",
@@ -733,20 +486,14 @@ export const CadastroForm = () => {
                                         </div>
                                         }
                                     </>
-
                                 )}
                             />
-
-
                             <div className="d-flex  justify-content-end pb-3">
                                 <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
                                 {despesaContext.idDespesa
                                     ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2">Deletar</button>
                                     : null}
-                                <button onClick={() => {
-                                    setFieldValue("valor_recusos_acoes", trataNumericos(props.values.valor_total) - trataNumericos(props.values.valor_recursos_proprios))
-                                    setFieldValue("valor_total_dos_rateios", calculaValorTodosRateios(props.values.rateios) )
-                                }} type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
+                                <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
                             </div>
                         </form>
 

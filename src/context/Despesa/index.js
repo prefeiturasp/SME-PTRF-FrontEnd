@@ -1,4 +1,4 @@
-import React, {useState, createContext, useEffect} from "react";
+import React, {useState, createContext} from "react";
 import {ASSOCIACAO_UUID} from "../../services/auth.service";
 
 export const DespesaContext = createContext( {
