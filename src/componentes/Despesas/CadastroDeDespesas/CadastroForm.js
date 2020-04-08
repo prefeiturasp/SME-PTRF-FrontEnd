@@ -30,7 +30,7 @@ class CancelarModal extends Component {
                             OK
                         </Button>
                         <Button variant="primary" onClick={this.props.handleClose}>
-                            fechar
+                            Fechar
                         </Button>
                     </Modal.Footer>
                 </Modal>
