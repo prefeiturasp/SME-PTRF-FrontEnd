@@ -1,17 +1,18 @@
 import React, {useEffect, useState} from "react";
 
-import { DataTable } from 'primereact/datatable';
+import {DataTable} from 'primereact/datatable';
 
-import { Column } from 'primereact/column';
-import { useHistory } from 'react-router-dom';
+import {Column} from 'primereact/column';
+import {Link, useHistory} from 'react-router-dom';
 import '../../../paginas/404/pagina-404.scss'
 import moment from 'moment';
 import {getListaReceitas, filtroPorPalavra} from "../../../services/Receitas.service";
 import {FormFiltroPorPalavra} from "../../FormFiltroPorPalavra";
 import {MensagemCentralizada} from "../../Mensagens/NaoEncontrado/MensagemCentralizada";
 import {MensagemLadoDireito} from "../../Mensagens/NaoEncontrado/MensagemLadoDireito";
+import Img404 from "../../../assets/img/img-404.svg";
 
-export const ListaDeReceitas = () =>{
+export const ListaDeReceitas = () => {
 
     let history = useHistory();
 
@@ -23,8 +24,7 @@ export const ListaDeReceitas = () =>{
         const carregaListaReceitas = async () => {
             getListaReceitas().then(response => {
                 setReceitas(response.data);
-            })
-            .catch(error => {
+            }).catch(error => {
                 console.log(error);
             });
         };
@@ -43,19 +43,19 @@ export const ListaDeReceitas = () =>{
             <div>
 
                 {rowData['data']
-                ? moment(rowData['data']).format('DD/MM/YYYY')
-                : ''}
+                    ? moment(rowData['data']).format('DD/MM/YYYY')
+                    : ''}
             </div>
         )
     }
 
     const valorTemplate = (rowData, column) => {
         const valorFormatado = rowData['valor']
-          ? new Number(rowData['valor']).toLocaleString('pt-BR', {
-              style: 'currency',
-              currency: 'BRL'
+            ? new Number(rowData['valor']).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
             })
-          : ''
+            : ''
         return (<span>{valorFormatado}</span>)
     }
 
@@ -71,41 +71,64 @@ export const ListaDeReceitas = () =>{
         set_filtro_por_palavra(true)
     }
 
-    return(
+    return (
         <>
-            <div className="d-flex justify-content-end mb-5 mt-5">
-                <button onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success mt-2 mr-2">Cadastrar crédito</button>
+
+            <div className="row">
+                <div className="col-12">
+                    <p>Filtrar por</p>
+                </div>
+                <div className="col-12 col-md-8">
+                    <FormFiltroPorPalavra
+                        onSubmit={handleSubmitFormFiltroPorPalavra}
+                        inputValue={inputPesquisa}
+                        onChange={handleChangeFormFiltroPorPalavra}
+                    />
+                </div>
+                <div className="col-12 col-md-4">
+                    <button onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right">Cadastrar crédito
+                    </button>
+
+                </div>
             </div>
 
-            <FormFiltroPorPalavra
-                onSubmit={handleSubmitFormFiltroPorPalavra}
-                inputValue={inputPesquisa}
-                onChange={handleChangeFormFiltroPorPalavra}
-            />
+            {/*<div className="d-flex bd-highlight mb-3">
+                <div className="mr-auto col-12 col-md-7 p-2 bd-highlight">
+                    <FormFiltroPorPalavra
+                        onSubmit={handleSubmitFormFiltroPorPalavra}
+                        inputValue={inputPesquisa}
+                        onChange={handleChangeFormFiltroPorPalavra}
+                    />
+                </div>
+
+                <div className="p-2 bd-highlight">
+                    <button onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success mt-2 mr-2">Cadastrar crédito</button>
+                </div>
+            </div>*/}
 
             {receitas.length > 0 ? (<DataTable
-                value={receitas}
-                className="mt-3 datatable-footer-coad"
-                paginator={receitas.length > rowsPerPage}
-                rows={rowsPerPage}
-                paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                autoLayout={true}
-                selectionMode="single"
-                onRowClick={e => redirecionaDetalhe(e.data)}
+                    value={receitas}
+                    className="mt-3 datatable-footer-coad"
+                    paginator={receitas.length > rowsPerPage}
+                    rows={rowsPerPage}
+                    paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                    autoLayout={true}
+                    selectionMode="single"
+                    onRowClick={e => redirecionaDetalhe(e.data)}
                 >
-                <Column field='tipo_receita.nome' header='Tipo' />
-                <Column field='conta_associacao.nome' header='Conta' />
-                <Column field='acao_associacao.nome' header='Ação' />
-                <Column
-                    field='data'
-                    header='Data'
-                    body={dataTemplate}/>
-                <Column
-                    field='valor'
-                    header='Valor'
-                    body={valorTemplate}/>
-            </DataTable>)
-            : (
+                    <Column field='tipo_receita.nome' header='Tipo'/>
+                    <Column field='conta_associacao.nome' header='Conta'/>
+                    <Column field='acao_associacao.nome' header='Ação'/>
+                    <Column
+                        field='data'
+                        header='Data'
+                        body={dataTemplate}/>
+                    <Column
+                        field='valor'
+                        header='Valor'
+                        body={valorTemplate}/>
+                </DataTable>)
+                : (
                     filtro_por_palavra ? (
                             <MensagemCentralizada
                                 texto='Não encontramos resultados, verifique os filtros e tente novamente'
@@ -115,7 +138,7 @@ export const ListaDeReceitas = () =>{
                             texto='A sua escola ainda não possui créditos cadastrados, clique no botão "Cadastrar crédito" para começar!'
                         />
 
-              )
+                )
             }
         </>
     )
