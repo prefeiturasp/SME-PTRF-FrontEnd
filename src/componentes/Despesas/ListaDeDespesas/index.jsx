@@ -13,7 +13,7 @@ import Img404 from "../../../assets/img/img-404.svg"
 import {MsgImgLadoDireito} from "../../Mensagens/MsgImgLadoDireito";
 import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
 import "./lista-de-despesas.scss"
-import {FormFiltrosAvancados} from "./FormFiltrosAvancados";
+import {FormFiltrosAvancados} from "../FormFiltrosAvancados/FormFiltrosAvancados";
 
 export class ListaDeDespesas extends Component {
     constructor(props) {
@@ -165,7 +165,7 @@ export class ListaDeDespesas extends Component {
                                 Cancelar
                             </button>
                             <button
-                                type="button"
+                                type="submit"
                                 className="btn btn-success mt-2 ml-2"
                             >
                                 Filtrar
