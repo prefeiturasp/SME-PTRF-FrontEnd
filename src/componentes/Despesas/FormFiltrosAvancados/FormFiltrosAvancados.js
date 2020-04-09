@@ -4,15 +4,16 @@ import {filtrosAvancadosRateios} from "../../../services/RateiosDespesas.service
 
 export const FormFiltrosAvancados = (props) => {
 
-    const {btnMaisFiltros, onClickBtnMaisFiltros, setBuscaUtilizandoFiltro, setLista, iniciaLista} = props;
-    const [despesasTabelas, setDespesasTabelas] = useState([])
-
-    const [state, setState] = useState({
+    const initialState = {
         filtrar_por_termo: "",
         aplicacao_recurso: "",
         acao_associacao: "",
         despesa_status: "",
-    });
+    }
+
+    const {btnMaisFiltros, onClickBtnMaisFiltros, setBuscaUtilizandoFiltro, setLista, iniciaLista} = props;
+    const [despesasTabelas, setDespesasTabelas] = useState([])
+    const [state, setState] = useState(initialState);
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
@@ -28,7 +29,6 @@ export const FormFiltrosAvancados = (props) => {
             ...state,
             [name]: value
         });
-
     }
 
     const handleSubmit = async (event) => {
@@ -36,6 +36,10 @@ export const FormFiltrosAvancados = (props) => {
         const lista_retorno_api =  await filtrosAvancadosRateios(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status)
         setLista(lista_retorno_api)
         setBuscaUtilizandoFiltro(true)
+    }
+
+    const limpaFormulario = () => {
+        setState(initialState);
     }
 
     return (
@@ -83,6 +87,7 @@ export const FormFiltrosAvancados = (props) => {
                             onClick={(e)=>{
                                     onClickBtnMaisFiltros();
                                     iniciaLista();
+                                    limpaFormulario()
                                 }
                             }
                             className="btn btn-outline-success mt-2 mr-2"
