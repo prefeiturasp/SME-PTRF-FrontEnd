@@ -4,7 +4,7 @@ import {filtrosAvancadosRateios} from "../../../services/RateiosDespesas.service
 
 export const FormFiltrosAvancados = (props) => {
 
-    const {btnMaisFiltros, onClickBtnMaisFiltros, setBuscaUtilizandoFiltro, setLista} = props;
+    const {btnMaisFiltros, onClickBtnMaisFiltros, setBuscaUtilizandoFiltro, setLista, iniciaLista} = props;
     const [despesasTabelas, setDespesasTabelas] = useState([])
 
     const [state, setState] = useState({
@@ -36,14 +36,6 @@ export const FormFiltrosAvancados = (props) => {
         const lista_retorno_api =  await filtrosAvancadosRateios(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status)
         setLista(lista_retorno_api)
         setBuscaUtilizandoFiltro(true)
-    }
-
-    const limpaFormulario = () => {
-        console.log("Entrei no limpaFormulario")
-        /*setFiltrarPorTermo("")
-        setAplicacaoRecurso("")
-        setAcaoAssociacao("")
-        setDespesaStatus("")*/
     }
 
     return (
@@ -90,7 +82,7 @@ export const FormFiltrosAvancados = (props) => {
                         <button
                             onClick={(e)=>{
                                     onClickBtnMaisFiltros();
-                                    limpaFormulario();
+                                    iniciaLista();
                                 }
                             }
                             className="btn btn-outline-success mt-2 mr-2"

@@ -155,6 +155,7 @@ export class ListaDeDespesas extends Component {
                     buscaUtilizandoFiltro={this.state.buscaUtilizandoFiltro}
                     setBuscaUtilizandoFiltro={(buscaUtilizandoFiltro)=>this.setState({buscaUtilizandoFiltro})}
                     setLista={(rateiosDespesas)=>this.setState({rateiosDespesas})}
+                    iniciaLista={this.buscaRateiosDespesas}
                 />
 
                 {rateiosDespesas.length > 0 ? (
