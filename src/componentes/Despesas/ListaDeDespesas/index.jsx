@@ -16,7 +16,7 @@ export class ListaDeDespesas extends Component {
         this.state = {
             rateiosDespesas: [],
             inputPesquisa: "",
-            texto404:"",
+            filtro_por_palavra:false,
         }
 
         this.handleSubmitFiltroPorPalavra = this.handleSubmitFiltroPorPalavra.bind(this);
@@ -26,7 +26,6 @@ export class ListaDeDespesas extends Component {
     buscaRateiosDespesas = async () => {
         const rateiosDespesas = await getListaRateiosDespesas()
         this.setState({rateiosDespesas})
-        this.setState({texto404:"A sua escola ainda não possui despesas cadastradas, clique no botão \"Cadastrar despesa\" para começar."})
     }
 
     componentDidMount() {
@@ -112,7 +111,7 @@ export class ListaDeDespesas extends Component {
         event.preventDefault();
         const rateiosDespesas = await filtroPorPalavra(this.state.inputPesquisa)
         this.setState({rateiosDespesas})
-        this.setState({texto404:"Não encontramos nenhum resultado..."})
+        this.setState({filtro_por_palavra:true})
     }
 
     render() {
@@ -174,19 +173,38 @@ export class ListaDeDespesas extends Component {
                             style={{textAlign: 'right'}}
                         />
                     </DataTable>
-                ) : (
-                    <div className="row container-404">
-                        <div className="col-lg-6 col-sm-12 mb-lg-0 align-self-center">
-                            <p className="texto-404">
-                                {this.state.texto404}
-                            </p>
-                        </div>
+                ) :
+                    this.state.filtro_por_palavra ? (
+                        <div className="row justify-content-center container-404 mt-5">
+                            <div className="col-md-auto col-lg-7">
+                                <p className="texto-404 text-center">
+                                    Não encontramos resultados, verifique os filtros e tente novamente
+                                </p>
+                            </div>
 
-                        <div className="col-lg-6 col-sm-12">
-                            <img src={Img404} alt="" className="img-fluid"/>
+                            <div className="col-md-auto col-lg-12">
+                                <div className="text-center">
+                                    <img src={Img404} alt="" className="img-fluid"/>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                )}
+                        ) :
+                        <div className="row container-404">
+                            <div className="col-lg-6 col-sm-12 mb-lg-0 align-self-center">
+                                <p className="texto-404">
+                                    A sua escola ainda não possui despesas cadastradas, clique no botão "Cadastrar despesa" para começar.
+                                </p>
+                            </div>
+
+                            <div className="col-lg-6 col-sm-12">
+                                <img src={Img404} alt="" className="img-fluid"/>
+                            </div>
+                        </div>
+                    }
+
+
+
+
             </div>
         )
     }
