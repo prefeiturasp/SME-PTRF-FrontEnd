@@ -60,7 +60,6 @@ export const ListaDeReceitas = () => {
     }
 
 
-
     return (
         <>
             <div className="row">
@@ -80,7 +79,6 @@ export const ListaDeReceitas = () => {
                 <div className="col-12 col-md-4">
                     <button onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right">Cadastrar crédito
                     </button>
-
                 </div>
             </div>
 

@@ -13,6 +13,7 @@ import Img404 from "../../../assets/img/img-404.svg"
 import {MsgImgLadoDireito} from "../../Mensagens/MsgImgLadoDireito";
 import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
 import "./lista-de-despesas.scss"
+import {FormFiltrosAvancados} from "./FormFiltrosAvancados";
 
 export class ListaDeDespesas extends Component {
     constructor(props) {
@@ -153,12 +154,7 @@ export class ListaDeDespesas extends Component {
 
                     <div className='col-12'>
 
-                        <div className="card card-body">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad
-                            squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt
-                            sapiente
-                            ea proident.
-                        </div>
+                        <FormFiltrosAvancados/>
 
                         <div className="d-flex justify-content-end pb-3 mt-3">
                             <button
