@@ -1,4 +1,5 @@
 import api from './Api'
+import {ASSOCIACAO_UUID} from "./auth.service";
 
 const authHeader = {
   'Content-Type': 'application/json'
@@ -70,6 +71,6 @@ export const getListaReceitas = async () => {
 }
 
 export const filtroPorPalavra = async (palavra) => {
-    return (await api.get(`api/receitas/?search=${palavra}`, authHeader)).data
+    return (await api.get(`api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 }
 

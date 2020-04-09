@@ -127,7 +127,7 @@ export class ListaDeDespesas extends Component {
                         <p>Filtrar por</p>
                     </div>
 
-                    <Col lg={8} xl={8}>
+                    <Col lg={7} xl={7} className="pr-0">
                         <i
                             className="float-left fas fa-file-signature"
                             style={{marginRight: '5px', color: '#42474A'}}
@@ -138,8 +138,12 @@ export class ListaDeDespesas extends Component {
                             onChange={this.handleChangeFormFiltroPorPalavra}
                         />
 
+
                     </Col>
-                    <Col lg={4} xl={4}>
+                    <Col lg={2} xl={2} className="pl-sm-0">
+                        <button type="button" className="btn btn btn-outline-success">Mais Filtros</button>
+                    </Col>
+                    <Col lg={3} xl={3}>
                         <span className="float-right">{this.novaDespesaButton()}</span>
                     </Col>
                 </Row>
