@@ -8,7 +8,7 @@ import {redirect} from '../../../utils/redirect.js'
 import '../../../paginas/404/pagina-404.scss'
 import {Route} from 'react-router-dom'
 import moment from 'moment'
-import {FiltroPorPalavra} from "../../FiltroPorPalavra";
+import {FiltroPorPalavra} from "../../FormFiltroPorPalavra";
 import {MensagemLadoDireito} from "../../Mensagens/NaoEncontrado/MensagemLadoDireito";
 import {MensagemCentralizada} from "../../Mensagens/NaoEncontrado/MensagemCentralizada";
 
