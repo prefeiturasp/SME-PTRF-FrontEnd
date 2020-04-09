@@ -1,11 +1,12 @@
 import React from "react";
-import "../../../../assets/img/img-404.svg"
-import "../../../../paginas/404/pagina-404.scss"
-import Img404 from "../../../../assets/img/img-404.svg";
+import "../../../assets/img/img-404.svg"
+import "../../../paginas/404/pagina-404.scss"
 
-export const MensagemCentralizada = (props) => {
+export const MsgImgCentralizada = (props) => {
 
-    const {texto}=props
+    const {texto, img } = props
+
+    console.log("Ollyver ", img)
 
     return(
         <div className="row justify-content-center container-404 mt-5">
@@ -17,7 +18,7 @@ export const MensagemCentralizada = (props) => {
 
             <div className="col-md-auto col-lg-12">
                 <div className="text-center">
-                    <img src={Img404} alt="" className="img-fluid"/>
+                    <img src={img} alt="" className="img-fluid"/>
                 </div>
             </div>
         </div>

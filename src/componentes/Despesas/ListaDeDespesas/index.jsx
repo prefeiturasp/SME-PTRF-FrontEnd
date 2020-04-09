@@ -9,8 +9,9 @@ import '../../../paginas/404/pagina-404.scss'
 import {Route} from 'react-router-dom'
 import moment from 'moment'
 import {FormFiltroPorPalavra} from "../../FormFiltroPorPalavra";
-import {MensagemLadoDireito} from "../../Mensagens/NaoEncontrado/MensagemLadoDireito";
-import {MensagemCentralizada} from "../../Mensagens/NaoEncontrado/MensagemCentralizada";
+import Img404 from "../../../assets/img/img-404.svg"
+import {MsgImgLadoDireito} from "../../Mensagens/MsgImgLadoDireito";
+import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
 
 export class ListaDeDespesas extends Component {
     constructor(props) {
@@ -118,6 +119,7 @@ export class ListaDeDespesas extends Component {
     render() {
         const {rateiosDespesas} = this.state
         const rowsPerPage = 10
+
         return (
             <div>
                 <Row>
@@ -173,12 +175,14 @@ export class ListaDeDespesas extends Component {
                         </DataTable>
                     ) :
                     this.state.filtro_por_palavra ? (
-                            <MensagemCentralizada
-                                texto='Não encontramos resultados, verifique os filtros e tente novamente'
-                            />
+                        <MsgImgCentralizada
+                            texto='Não encontramos resultados, verifique os filtros e tente novamente.'
+                            img={Img404}
+                        />
                         ) :
-                        <MensagemLadoDireito
+                        <MsgImgLadoDireito
                             texto='A sua escola ainda não possui despesas cadastradas, clique no botão "Cadastrar despesa" para começar.'
+                            img={Img404}
                         />
 
                 }

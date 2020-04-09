@@ -1,11 +1,11 @@
 import React from "react";
-import "../../../../assets/img/img-404.svg"
-import "../../../../paginas/404/pagina-404.scss"
-import Img404 from "../../../../assets/img/img-404.svg";
+import "../../../assets/img/img-404.svg"
+import "../../../paginas/404/pagina-404.scss"
+import Img404 from "../../../assets/img/img-404.svg";
 
-export const MensagemLadoDireito = (props) => {
+export const MsgImgLadoDireito = (props) => {
 
-    const {texto}=props
+    const {texto, img } = props
 
     return(
         <div className="row container-404">
@@ -15,7 +15,7 @@ export const MensagemLadoDireito = (props) => {
                 </p>
             </div>
             <div className="col-lg-6 col-sm-12">
-                <img src={Img404} alt="" className="img-fluid"/>
+                <img src={img} alt="" className="img-fluid"/>
             </div>
         </div>
     )

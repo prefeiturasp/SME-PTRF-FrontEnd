@@ -8,8 +8,8 @@ import '../../../paginas/404/pagina-404.scss'
 import moment from 'moment';
 import {getListaReceitas, filtroPorPalavra} from "../../../services/Receitas.service";
 import {FormFiltroPorPalavra} from "../../FormFiltroPorPalavra";
-import {MensagemCentralizada} from "../../Mensagens/NaoEncontrado/MensagemCentralizada";
-import {MensagemLadoDireito} from "../../Mensagens/NaoEncontrado/MensagemLadoDireito";
+import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
+import {MsgImgLadoDireito} from "../../Mensagens/MsgImgLadoDireito";
 import Img404 from "../../../assets/img/img-404.svg";
 
 export const ListaDeReceitas = () => {
@@ -73,7 +73,6 @@ export const ListaDeReceitas = () => {
 
     return (
         <>
-
             <div className="row">
                 <div className="col-12">
                     <p>Filtrar por</p>
@@ -91,20 +90,6 @@ export const ListaDeReceitas = () => {
 
                 </div>
             </div>
-
-            {/*<div className="d-flex bd-highlight mb-3">
-                <div className="mr-auto col-12 col-md-7 p-2 bd-highlight">
-                    <FormFiltroPorPalavra
-                        onSubmit={handleSubmitFormFiltroPorPalavra}
-                        inputValue={inputPesquisa}
-                        onChange={handleChangeFormFiltroPorPalavra}
-                    />
-                </div>
-
-                <div className="p-2 bd-highlight">
-                    <button onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success mt-2 mr-2">Cadastrar crédito</button>
-                </div>
-            </div>*/}
 
             {receitas.length > 0 ? (<DataTable
                     value={receitas}
@@ -130,12 +115,14 @@ export const ListaDeReceitas = () => {
                 </DataTable>)
                 : (
                     filtro_por_palavra ? (
-                            <MensagemCentralizada
-                                texto='Não encontramos resultados, verifique os filtros e tente novamente'
-                            />
+                        <MsgImgCentralizada
+                            texto='Não encontramos resultados, verifique os filtros e tente novamente.'
+                            img={Img404}
+                        />
                         ) :
-                        <MensagemLadoDireito
-                            texto='A sua escola ainda não possui créditos cadastrados, clique no botão "Cadastrar crédito" para começar!'
+                        <MsgImgLadoDireito
+                            texto='A sua escola ainda não possui créditos cadastrados, clique no botão "Cadastrar crédito" para começar.'
+                            img={Img404}
                         />
 
                 )
