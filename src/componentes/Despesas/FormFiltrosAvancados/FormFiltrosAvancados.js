@@ -4,7 +4,7 @@ import {filtrosAvancadosRateios} from "../../../services/RateiosDespesas.service
 
 export const FormFiltrosAvancados = (props) => {
 
-    const {mais_filtros, onClickBtnMaisFiltros, setLista} = props;
+    const {mais_filtros, onClickBtnMaisFiltros, buscaUtilizandoFiltro, setBuscaUtilizandoFiltro, setLista} = props;
     const [despesasTabelas, setDespesasTabelas] = useState([])
 
     const [filtrarPorTermo, setFiltrarPorTermo] = useState("")
@@ -25,7 +25,7 @@ export const FormFiltrosAvancados = (props) => {
         event.preventDefault();
         const lista_retorno_api =  await filtrosAvancadosRateios(filtrarPorTermo, aplicacaoRecurso, acaoAssociacao, despesaStatus)
         setLista(lista_retorno_api)
-        //set_filtro_por_palavra(true)
+        setBuscaUtilizandoFiltro(true)
     }
 
     return (

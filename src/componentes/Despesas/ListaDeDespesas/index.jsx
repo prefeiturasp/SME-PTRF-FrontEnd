@@ -21,7 +21,7 @@ export class ListaDeDespesas extends Component {
         this.state = {
             rateiosDespesas: [],
             inputPesquisa: "",
-            filtro_por_palavra: false,
+            buscaUtilizandoFiltro: false,
             mais_filtros: false,
         }
     }
@@ -129,8 +129,8 @@ export class ListaDeDespesas extends Component {
                         <FormFiltroPorPalavra
                             inputPesquisa={this.state.inputPesquisa}
                             setInputPesquisa={(inputPesquisa)=>this.setState({inputPesquisa})}
-                            filtro_por_palavra={this.state.filtro_por_palavra}
-                            set_filtro_por_palavra={(filtro_por_palavra)=>this.setState({filtro_por_palavra})}
+                            buscaUtilizandoFiltro={this.state.buscaUtilizandoFiltro}
+                            setBuscaUtilizandoFiltro={(buscaUtilizandoFiltro)=>this.setState({buscaUtilizandoFiltro})}
                             setLista={(rateiosDespesas)=>this.setState({rateiosDespesas})}
                             origem="Despesas"
                         />
@@ -149,11 +149,11 @@ export class ListaDeDespesas extends Component {
                     </Col>
                 </Row>
 
-
-
                 <FormFiltrosAvancados
                     mais_filtros = {this.state.mais_filtros}
                     onClickBtnMaisFiltros={this.onClickBtnMaisFiltros}
+                    buscaUtilizandoFiltro={this.state.buscaUtilizandoFiltro}
+                    setBuscaUtilizandoFiltro={(buscaUtilizandoFiltro)=>this.setState({buscaUtilizandoFiltro})}
                     setLista={(rateiosDespesas)=>this.setState({rateiosDespesas})}
                 />
 
@@ -188,7 +188,7 @@ export class ListaDeDespesas extends Component {
                             />
                         </DataTable>
                     ) :
-                    this.state.filtro_por_palavra ? (
+                    this.state.buscaUtilizandoFiltro ? (
                             <MsgImgCentralizada
                                 texto='Não encontramos resultados, verifique os filtros e tente novamente.'
                                 img={Img404}

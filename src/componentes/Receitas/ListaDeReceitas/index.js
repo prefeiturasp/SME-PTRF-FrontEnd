@@ -18,7 +18,7 @@ export const ListaDeReceitas = () => {
 
     const [receitas, setReceitas] = useState([])
     const [inputPesquisa, setInputPesquisa] = useState("")
-    const [filtro_por_palavra, set_filtro_por_palavra] = useState(false)
+    const [buscaUtilizandoFiltro, setBuscaUtilizandoFiltro] = useState(false)
 
     useEffect(() => {
         const carregaListaReceitas = async () => {
@@ -70,8 +70,8 @@ export const ListaDeReceitas = () => {
                     <FormFiltroPorPalavra
                         inputPesquisa={inputPesquisa}
                         setInputPesquisa={setInputPesquisa}
-                        filtro_por_palavra={filtro_por_palavra}
-                        set_filtro_por_palavra={set_filtro_por_palavra}
+                        buscaUtilizandoFiltro={buscaUtilizandoFiltro}
+                        setBuscaUtilizandoFiltro={setBuscaUtilizandoFiltro}
                         setLista={setReceitas}
                         origem="Receitas"
                     />
@@ -105,7 +105,7 @@ export const ListaDeReceitas = () => {
                         body={valorTemplate}/>
                 </DataTable>)
                 : (
-                    filtro_por_palavra ? (
+                    buscaUtilizandoFiltro ? (
                         <MsgImgCentralizada
                             texto='Não encontramos resultados, verifique os filtros e tente novamente.'
                             img={Img404}

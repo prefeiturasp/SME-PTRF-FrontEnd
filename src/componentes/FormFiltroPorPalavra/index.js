@@ -6,7 +6,7 @@ import {filtroPorPalavraRateios} from "../../services/RateiosDespesas.service";
 
 export const FormFiltroPorPalavra = (props) => {
 
-    const {inputPesquisa, setInputPesquisa, set_filtro_por_palavra, setLista, origem} = props
+    const {inputPesquisa, setInputPesquisa, setBuscaUtilizandoFiltro, setLista, origem} = props
 
     const handleSubmitFormFiltroPorPalavra = async (event) => {
         event.preventDefault();
@@ -18,7 +18,7 @@ export const FormFiltroPorPalavra = (props) => {
         }
 
         setLista(lista_retorno_api)
-        set_filtro_por_palavra(true)
+        setBuscaUtilizandoFiltro(true)
     }
 
     return (
