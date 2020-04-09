@@ -107,7 +107,6 @@ export class ListaDeDespesas extends Component {
     }
 
     onClickBtnMaisFiltros = (event) => {
-        console.log("Ollyver Cliquei")
         this.setState({mais_filtros: !this.state.mais_filtros})
     }
 
@@ -150,31 +149,14 @@ export class ListaDeDespesas extends Component {
                     </Col>
                 </Row>
 
-                <div className={`row ${this.state.mais_filtros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
 
-                    <div className='col-12'>
 
-                        <FormFiltrosAvancados/>
+                <FormFiltrosAvancados
+                    mais_filtros = {this.state.mais_filtros}
+                    onClickBtnMaisFiltros={this.onClickBtnMaisFiltros}
+                    setLista={(rateiosDespesas)=>this.setState({rateiosDespesas})}
+                />
 
-                        <div className="d-flex justify-content-end pb-3 mt-3">
-                            <button
-                                onClick={this.onClickBtnMaisFiltros}
-                                className="btn btn-outline-success mt-2 mr-2"
-                                type="button"
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                type="submit"
-                                className="btn btn-success mt-2 ml-2"
-                            >
-                                Filtrar
-                            </button>
-                        </div>
-
-                    </div>
-
-                </div>
                 {rateiosDespesas.length > 0 ? (
                         <DataTable
                             value={rateiosDespesas}

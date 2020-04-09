@@ -13,3 +13,13 @@ export const getListaRateiosDespesas = async uuid => {
 export const filtroPorPalavraRateios = async (palavra) => {
     return (await api.get(`api/rateios-despesas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 }
+
+export const filtrosAvancadosRateios = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status) => {
+    console.log("Service palavra ", palavra)
+    console.log("Service aplicacao_recurso ", aplicacao_recurso)
+    console.log("Service acao_associacao__uuid ", acao_associacao__uuid)
+    console.log("Service despesa__status ", despesa__status)
+
+
+    return (await api.get(`api/rateios-despesas/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&acao_associacao__uuid=${acao_associacao__uuid}&despesa__status=${despesa__status}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
+}
