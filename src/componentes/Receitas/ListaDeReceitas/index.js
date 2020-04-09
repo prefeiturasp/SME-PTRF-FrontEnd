@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import '../../../paginas/404/pagina-404.scss'
 import moment from 'moment';
 import {getListaReceitas, filtroPorPalavra} from "../../../services/Receitas.service";
-import {FiltroPorPalavra} from "../../FormFiltroPorPalavra";
+import {FormFiltroPorPalavra} from "../../FormFiltroPorPalavra";
 import {MensagemCentralizada} from "../../Mensagens/NaoEncontrado/MensagemCentralizada";
 import {MensagemLadoDireito} from "../../Mensagens/NaoEncontrado/MensagemLadoDireito";
 
@@ -59,12 +59,12 @@ export const ListaDeReceitas = () =>{
         return (<span>{valorFormatado}</span>)
     }
 
-    const handleChangeFiltroPorPalavra = (event) => {
+    const handleChangeFormFiltroPorPalavra = (event) => {
         setInputPesquisa(event.target.value)
         //this.setState({inputPesquisa: event.target.value});
     }
 
-    const handleSubmitFiltroPorPalavra = async (event) => {
+    const handleSubmitFormFiltroPorPalavra = async (event) => {
         event.preventDefault();
         const receitas = await filtroPorPalavra(inputPesquisa)
         setReceitas(receitas)
@@ -77,10 +77,10 @@ export const ListaDeReceitas = () =>{
                 <button onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success mt-2 mr-2">Cadastrar crédito</button>
             </div>
 
-            <FiltroPorPalavra
-                onSubmit={handleSubmitFiltroPorPalavra}
+            <FormFiltroPorPalavra
+                onSubmit={handleSubmitFormFiltroPorPalavra}
                 inputValue={inputPesquisa}
-                onChange={handleChangeFiltroPorPalavra}
+                onChange={handleChangeFormFiltroPorPalavra}
             />
 
             {receitas.length > 0 ? (<DataTable

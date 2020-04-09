@@ -8,7 +8,7 @@ import {redirect} from '../../../utils/redirect.js'
 import '../../../paginas/404/pagina-404.scss'
 import {Route} from 'react-router-dom'
 import moment from 'moment'
-import {FiltroPorPalavra} from "../../FormFiltroPorPalavra";
+import {FormFiltroPorPalavra} from "../../FormFiltroPorPalavra";
 import {MensagemLadoDireito} from "../../Mensagens/NaoEncontrado/MensagemLadoDireito";
 import {MensagemCentralizada} from "../../Mensagens/NaoEncontrado/MensagemCentralizada";
 
@@ -20,8 +20,8 @@ export class ListaDeDespesas extends Component {
             inputPesquisa: "",
             filtro_por_palavra: false,
         }
-        this.handleSubmitFiltroPorPalavra = this.handleSubmitFiltroPorPalavra.bind(this);
-        this.handleChangeFiltroPorPalavra = this.handleChangeFiltroPorPalavra.bind(this);
+        this.handleSubmitFormFiltroPorPalavra = this.handleSubmitFormFiltroPorPalavra.bind(this);
+        this.handleChangeFormFiltroPorPalavra = this.handleChangeFormFiltroPorPalavra.bind(this);
     }
 
     buscaRateiosDespesas = async () => {
@@ -104,11 +104,11 @@ export class ListaDeDespesas extends Component {
         redirect(url)
     }
 
-    handleChangeFiltroPorPalavra = (event) => {
+    handleChangeFormFiltroPorPalavra = (event) => {
         this.setState({inputPesquisa: event.target.value});
     }
 
-    handleSubmitFiltroPorPalavra = async (event) => {
+    handleSubmitFormFiltroPorPalavra = async (event) => {
         event.preventDefault();
         const rateiosDespesas = await filtroPorPalavra(this.state.inputPesquisa)
         this.setState({rateiosDespesas})
@@ -130,10 +130,10 @@ export class ListaDeDespesas extends Component {
                             className="float-left fas fa-file-signature"
                             style={{marginRight: '5px', color: '#42474A'}}
                         ></i>
-                        <FiltroPorPalavra
-                            onSubmit={this.handleSubmitFiltroPorPalavra}
+                        <FormFiltroPorPalavra
+                            onSubmit={this.handleSubmitFormFiltroPorPalavra}
                             inputValue={this.state.inputPesquisa}
-                            onChange={this.handleChangeFiltroPorPalavra}
+                            onChange={this.handleChangeFormFiltroPorPalavra}
                         />
 
                     </Col>

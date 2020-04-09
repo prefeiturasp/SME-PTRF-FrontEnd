@@ -1,6 +1,6 @@
 import React from "react";
 
-export const FiltroPorPalavra = (props) => {
+export const FormFiltroPorPalavra = (props) => {
 
     const {onSubmit, inputValue, onChange} = props
 
