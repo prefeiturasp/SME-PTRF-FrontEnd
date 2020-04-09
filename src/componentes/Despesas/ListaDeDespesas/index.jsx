@@ -6,9 +6,12 @@ import {Row, Col} from 'reactstrap'
 import {getListaRateiosDespesas, filtroPorPalavra} from '../../../services/RateiosDespesas.service'
 import {redirect} from '../../../utils/redirect.js'
 import '../../../paginas/404/pagina-404.scss'
-import Img404 from '../../../assets/img/img-404.svg'
 import {Route} from 'react-router-dom'
 import moment from 'moment'
+import {FormFiltroPorPalavra} from "../../FormFiltroPorPalavra";
+import Img404 from "../../../assets/img/img-404.svg"
+import {MsgImgLadoDireito} from "../../Mensagens/MsgImgLadoDireito";
+import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
 
 export class ListaDeDespesas extends Component {
     constructor(props) {
@@ -16,11 +19,10 @@ export class ListaDeDespesas extends Component {
         this.state = {
             rateiosDespesas: [],
             inputPesquisa: "",
-            filtro_por_palavra:false,
+            filtro_por_palavra: false,
         }
-
-        this.handleSubmitFiltroPorPalavra = this.handleSubmitFiltroPorPalavra.bind(this);
-        this.handleChangeFiltroPorPalavra = this.handleChangeFiltroPorPalavra.bind(this);
+        this.handleSubmitFormFiltroPorPalavra = this.handleSubmitFormFiltroPorPalavra.bind(this);
+        this.handleChangeFormFiltroPorPalavra = this.handleChangeFormFiltroPorPalavra.bind(this);
     }
 
     buscaRateiosDespesas = async () => {
@@ -103,20 +105,21 @@ export class ListaDeDespesas extends Component {
         redirect(url)
     }
 
-    handleChangeFiltroPorPalavra = (event) => {
+    handleChangeFormFiltroPorPalavra = (event) => {
         this.setState({inputPesquisa: event.target.value});
     }
 
-    handleSubmitFiltroPorPalavra = async (event) => {
+    handleSubmitFormFiltroPorPalavra = async (event) => {
         event.preventDefault();
         const rateiosDespesas = await filtroPorPalavra(this.state.inputPesquisa)
         this.setState({rateiosDespesas})
-        this.setState({filtro_por_palavra:true})
+        this.setState({filtro_por_palavra: true})
     }
 
     render() {
         const {rateiosDespesas} = this.state
         const rowsPerPage = 10
+
         return (
             <div>
                 <Row>
@@ -129,82 +132,60 @@ export class ListaDeDespesas extends Component {
                             className="float-left fas fa-file-signature"
                             style={{marginRight: '5px', color: '#42474A'}}
                         ></i>
+                        <FormFiltroPorPalavra
+                            onSubmit={this.handleSubmitFormFiltroPorPalavra}
+                            inputValue={this.state.inputPesquisa}
+                            onChange={this.handleChangeFormFiltroPorPalavra}
+                        />
 
-                        <form className="form-inline" onSubmit={this.handleSubmitFiltroPorPalavra}>
-                            <div className="form-group mr-2 mb-2 w-75">
-                                <input value={this.state.inputPesquisa} onChange={this.handleChangeFiltroPorPalavra}
-                                       name="inputPesquisa" type="text" className="form-control w-100"
-                                       id="inputPesquisa" placeholder="Escreva o termo que deseja filtrar"/>
-                            </div>
-                            <button type="submit" className="btn btn btn-outline-success mr-2 mb-2">Filtrar</button>
-                        </form>
                     </Col>
                     <Col lg={4} xl={4}>
                         <span className="float-right">{this.novaDespesaButton()}</span>
                     </Col>
                 </Row>
                 {rateiosDespesas.length > 0 ? (
-                    <DataTable
-                        value={rateiosDespesas}
-                        className="mt-3 datatable-footer-coad"
-                        paginator={rateiosDespesas.length > rowsPerPage}
-                        rows={rowsPerPage}
-                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                        autoLayout={true}
-                        selectionMode="single"
-                        onRowClick={e => this.redirecionaDetalhe(e.data)}
-                    >
-                        <Column
-                            field="numero_documento"
-                            header="Número do documento"
-                            body={this.numeroDocumentoStatusTemplate}
-                        />
-                        <Column
-                            field="especificacao_material_servico.descricao"
-                            header="Especificação do material ou serviço"
-                            body={this.especificacaoDataTemplate}
-                        />
-                        <Column field="aplicacao_recurso" header="Aplicação"/>
-                        <Column field="acao_associacao.nome" header="Tipo de ação"/>
-                        <Column
-                            field="valor_total"
-                            header="Valor"
-                            body={this.valorTotalTemplate}
-                            style={{textAlign: 'right'}}
-                        />
-                    </DataTable>
-                ) :
+                        <DataTable
+                            value={rateiosDespesas}
+                            className="mt-3 datatable-footer-coad"
+                            paginator={rateiosDespesas.length > rowsPerPage}
+                            rows={rowsPerPage}
+                            paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                            autoLayout={true}
+                            selectionMode="single"
+                            onRowClick={e => this.redirecionaDetalhe(e.data)}
+                        >
+                            <Column
+                                field="numero_documento"
+                                header="Número do documento"
+                                body={this.numeroDocumentoStatusTemplate}
+                            />
+                            <Column
+                                field="especificacao_material_servico.descricao"
+                                header="Especificação do material ou serviço"
+                                body={this.especificacaoDataTemplate}
+                            />
+                            <Column field="aplicacao_recurso" header="Aplicação"/>
+                            <Column field="acao_associacao.nome" header="Tipo de ação"/>
+                            <Column
+                                field="valor_total"
+                                header="Valor"
+                                body={this.valorTotalTemplate}
+                                style={{textAlign: 'right'}}
+                            />
+                        </DataTable>
+                    ) :
                     this.state.filtro_por_palavra ? (
-                        <div className="row justify-content-center container-404 mt-5">
-                            <div className="col-md-auto col-lg-7">
-                                <p className="texto-404 text-center">
-                                    Não encontramos resultados, verifique os filtros e tente novamente
-                                </p>
-                            </div>
-
-                            <div className="col-md-auto col-lg-12">
-                                <div className="text-center">
-                                    <img src={Img404} alt="" className="img-fluid"/>
-                                </div>
-                            </div>
-                        </div>
+                        <MsgImgCentralizada
+                            texto='Não encontramos resultados, verifique os filtros e tente novamente.'
+                            img={Img404}
+                        />
                         ) :
-                        <div className="row container-404">
-                            <div className="col-lg-6 col-sm-12 mb-lg-0 align-self-center">
-                                <p className="texto-404">
-                                    A sua escola ainda não possui despesas cadastradas, clique no botão "Cadastrar despesa" para começar.
-                                </p>
-                            </div>
+                        <MsgImgLadoDireito
+                            texto='A sua escola ainda não possui despesas cadastradas, clique no botão "Cadastrar despesa" para começar.'
+                            img={Img404}
+                        />
 
-                            <div className="col-lg-6 col-sm-12">
-                                <img src={Img404} alt="" className="img-fluid"/>
-                            </div>
-                        </div>
-                    }
-
-
-
-
+                }
             </div>
         )
     }
