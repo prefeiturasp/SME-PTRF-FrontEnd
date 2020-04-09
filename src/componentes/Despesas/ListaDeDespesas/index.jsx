@@ -12,6 +12,7 @@ import {FormFiltroPorPalavra} from "../../FormFiltroPorPalavra";
 import Img404 from "../../../assets/img/img-404.svg"
 import {MsgImgLadoDireito} from "../../Mensagens/MsgImgLadoDireito";
 import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
+import "./lista-de-despesas.scss"
 
 export class ListaDeDespesas extends Component {
     constructor(props) {
@@ -20,6 +21,7 @@ export class ListaDeDespesas extends Component {
             rateiosDespesas: [],
             inputPesquisa: "",
             filtro_por_palavra: false,
+            mais_filtros: false,
         }
         this.handleSubmitFormFiltroPorPalavra = this.handleSubmitFormFiltroPorPalavra.bind(this);
         this.handleChangeFormFiltroPorPalavra = this.handleChangeFormFiltroPorPalavra.bind(this);
@@ -116,6 +118,11 @@ export class ListaDeDespesas extends Component {
         this.setState({filtro_por_palavra: true})
     }
 
+    onClickBtnMaisFiltros = (event) => {
+        console.log("Ollyver Cliquei")
+        this.setState({mais_filtros: !this.state.mais_filtros})
+    }
+
     render() {
         const {rateiosDespesas} = this.state
         const rowsPerPage = 10
@@ -126,8 +133,7 @@ export class ListaDeDespesas extends Component {
                     <div className="col-12">
                         <p>Filtrar por</p>
                     </div>
-
-                    <Col lg={7} xl={7} className="pr-0">
+                    <Col lg={7} xl={7} className={`pr-0 ${!this.state.mais_filtros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
                         <i
                             className="float-left fas fa-file-signature"
                             style={{marginRight: '5px', color: '#42474A'}}
@@ -137,16 +143,51 @@ export class ListaDeDespesas extends Component {
                             inputValue={this.state.inputPesquisa}
                             onChange={this.handleChangeFormFiltroPorPalavra}
                         />
-
-
                     </Col>
-                    <Col lg={2} xl={2} className="pl-sm-0">
-                        <button type="button" className="btn btn btn-outline-success">Mais Filtros</button>
+                    <Col lg={2} xl={2} className={`pl-sm-0 ${!this.state.mais_filtros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
+                        <button
+                            onClick={this.onClickBtnMaisFiltros}
+                            type="button"
+                            className="btn btn btn-outline-success"
+                        >
+                            Mais Filtros
+                        </button>
                     </Col>
-                    <Col lg={3} xl={3}>
+                    <Col lg={!this.state.mais_filtros ? 3 : 12} xl={!this.state.mais_filtros ? 3 : 12}>
                         <span className="float-right">{this.novaDespesaButton()}</span>
                     </Col>
                 </Row>
+
+                <div className={`row ${this.state.mais_filtros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
+
+                    <div className='col-12'>
+
+                        <div className="card card-body">
+                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad
+                            squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt
+                            sapiente
+                            ea proident.
+                        </div>
+
+                        <div className="d-flex justify-content-end pb-3 mt-3">
+                            <button
+                                onClick={this.onClickBtnMaisFiltros}
+                                className="btn btn-outline-success mt-2 mr-2"
+                                type="button"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-success mt-2 ml-2"
+                            >
+                                Filtrar
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
                 {rateiosDespesas.length > 0 ? (
                         <DataTable
                             value={rateiosDespesas}
@@ -179,10 +220,10 @@ export class ListaDeDespesas extends Component {
                         </DataTable>
                     ) :
                     this.state.filtro_por_palavra ? (
-                        <MsgImgCentralizada
-                            texto='Não encontramos resultados, verifique os filtros e tente novamente.'
-                            img={Img404}
-                        />
+                            <MsgImgCentralizada
+                                texto='Não encontramos resultados, verifique os filtros e tente novamente.'
+                                img={Img404}
+                            />
                         ) :
                         <MsgImgLadoDireito
                             texto='A sua escola ainda não possui despesas cadastradas, clique no botão "Cadastrar despesa" para começar.'
