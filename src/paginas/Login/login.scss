@@ -1,0 +1,66 @@
+.login-bg {
+  background: url("../../assets/img/bg-login.png");
+  width: 50%;
+  position: absolute;
+  height: 100%;
+  left: 0px;
+  object-fit: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.right-half {
+  @media screen and (min-width: 992px) {
+    position: absolute;
+    right: 0px;
+    width: 50%;
+    height: 100%;
+    text-align: center;
+  }
+  .container {
+    position: absolute;
+    left: 50%;
+    height: 100%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    padding: 0 85px;
+    text-align: left;
+    .logo-ptrf {
+      text-align: center;
+      @media screen and (max-height: 610px) {
+        padding-top: 2rem;
+/*        img {
+          height: auto;
+          width: 300px;
+        }*/
+      }
+      @media screen and (min-height: 611px) {
+        padding-top: 5rem;
+        /*img {
+          height: 105px;
+          width: 427px;
+        }*/
+      }
+    }
+    .logo-prefeitura {
+      text-align: center;
+      @media screen and (max-height: 610px) {
+        padding-top: 1rem;
+        img {
+          height: auto;
+          width: 100px;
+        }
+      }
+      @media screen and (min-height: 611px) {
+        padding-top: 2rem;
+        img {
+          height: 65px;
+          width: 171px;
+        }
+      }
+    }
+  }
+}
+

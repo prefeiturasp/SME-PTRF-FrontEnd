@@ -1,0 +1,166 @@
+@import 'variaveis.scss';
+
+body {
+  overflow-x: hidden;
+}
+
+#main {
+  color: $corFonte;
+
+  .btn-success {
+    background-color: $corBtnSuccess;
+    border-color: $corBtnSuccess;
+  }
+
+  .btn-outline-success {
+    border-color: $corBtnSuccess;
+    color: $corBtnSuccess;
+  }
+
+  .btn-outline-success:hover {
+    color: #fff;
+    background-color: $corBtnSuccess;
+    border-color: $corBtnSuccess;
+  }
+
+  hr {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    border: 0;
+    border-top: 1px solid #dadada;
+    display: block;
+  }
+
+  /* ---------------------------------------------------
+    CONTENT STYLE
+----------------------------------------------------- */
+
+  .page-content {
+    width: calc(100% - 15rem);
+    margin-left: 15rem;
+    transition: all 0.4s;
+    margin-top: 69px;
+    background-color: #f5f6f8;
+  }
+
+  .page-content .page-content-inner {
+    background-color: #fff;
+    margin: 15px 0 0 0;
+    padding: 15px;
+
+    h2.subtitulo-itens-painel {
+      font-size: 14px;
+    }
+  }
+
+  .page-content h1.titulo-itens-painel {
+    font-size: 24px;
+  }
+
+  /* for toggle behavior */
+  #content.active {
+    width: 100%;
+    margin: 69px 0 0 4.5em;
+  }
+
+  .escondeItem {
+    display: none !important;
+  }
+
+  /* Botões PrimeReact */
+
+  .p-button {
+    background-color: $mainColor;
+    border-color: $mainColor;
+    font-weight: bold;
+  }
+
+  .p-button:enabled:hover {
+    border-color: $mainColor !important;
+  }
+
+  .p-button:enabled:focus {
+    box-shadow: 0 0 0 0.1em $mainColor;
+  }
+
+  .btn-coad-background-outline {
+    border-color: $mainColor;
+    color: $mainColor !important;
+    background-color: $whiteColor;
+    font-weight: bold;
+  }
+
+  /* Paginator PrimeReact */
+
+  .p-paginator {
+    background-color: #ffffff !important;
+    border: 0px;
+    padding: 2.5em !important;
+  }
+
+  .p-paginator-next {
+    height: 4em !important;
+    min-width: 4em !important;
+  }
+
+  .p-paginator-prev {
+    height: 4em !important;
+    min-width: 4em !important;
+  }
+
+  .p-paginator-page {
+    height: 4em !important;
+    min-width: 4em !important;
+    border: 1px solid #dadada !important;
+  }
+
+  .p-highlight {
+    background-color: #00585e !important;
+  }
+
+  .p-paginator-element {
+    border: 1px solid #dadada !important;
+  }
+
+  /* DataTable PrimeReact */
+  .p-datatable-thead > tr > th {
+    text-align: left !important;
+  }
+
+  .datatable-footer-coad {
+    .p-datatable-footer {
+      background-color: #ffffff !important;
+      font-weight: normal !important;
+    }
+  }
+
+  .datatable-strapd-coad {
+    .p-datatable-tbody > tr:nth-child(even) {
+      background-color: transparent;
+    }
+  }
+
+  .p-datatable.p-datatable-hoverable-rows
+    .p-datatable-tbody
+    > tr:not(.p-highlight):not(.p-highlight-contextmenu):hover {
+    cursor: pointer;
+    background-color: $hoverBackgroundColor;
+    color: #ffffff !important;
+  }
+
+  .p-datatable.p-datatable-hoverable-rows
+  .p-datatable-tbody
+  > tr:not(.p-highlight):not(.p-highlight-contextmenu):hover span {
+    color: #fff;
+  }
+
+  .ptrf-despesa-status-ativo {
+    color: green;
+  }
+
+
+
+  .ptrf-despesa-status-inativo {
+    color: red;
+  }
+}

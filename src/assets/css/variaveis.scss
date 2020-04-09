@@ -1,0 +1,16 @@
+// Cores
+
+$corBranco: #ffffff;
+$corFonte: #42474A;
+$corBtnSuccess: #00585E;
+$mainColor: #00585E;
+$whiteColor: #ffffff;
+$hoverBackgroundColor: #2B7D83;
+
+// Fontes
+
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,700");
+
+@mixin roboto-sans {
+  font-family: "Roboto", sans-serif !important;
+}

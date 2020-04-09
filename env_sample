@@ -1,0 +1,7 @@
+API_URL=""
+SERVER_NAME=localhost
+# SENTRY
+SENTRY_URL=""
+
+# Só é usada no ambiente local
+#REACT_APP_NODE_ENV="local"
