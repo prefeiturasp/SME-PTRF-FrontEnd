@@ -6,7 +6,7 @@ import {Column} from 'primereact/column';
 import {Link, useHistory} from 'react-router-dom';
 import '../../../paginas/404/pagina-404.scss'
 import moment from 'moment';
-import {getListaReceitas, filtroPorPalavra} from "../../../services/Receitas.service";
+import {getListaReceitas} from "../../../services/Receitas.service";
 import {FormFiltroPorPalavra} from "../../FormFiltroPorPalavra";
 import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../Mensagens/MsgImgLadoDireito";
@@ -17,7 +17,7 @@ export const ListaDeReceitas = () => {
     let history = useHistory();
 
     const [receitas, setReceitas] = useState([])
-    const [inputPesquisa, setInputPesquisa] = useState([])
+    const [inputPesquisa, setInputPesquisa] = useState("")
     const [filtro_por_palavra, set_filtro_por_palavra] = useState(false)
 
     useEffect(() => {
@@ -59,17 +59,7 @@ export const ListaDeReceitas = () => {
         return (<span>{valorFormatado}</span>)
     }
 
-    const handleChangeFormFiltroPorPalavra = (event) => {
-        setInputPesquisa(event.target.value)
-        //this.setState({inputPesquisa: event.target.value});
-    }
 
-    const handleSubmitFormFiltroPorPalavra = async (event) => {
-        event.preventDefault();
-        const receitas = await filtroPorPalavra(inputPesquisa)
-        setReceitas(receitas)
-        set_filtro_por_palavra(true)
-    }
 
     return (
         <>
@@ -79,9 +69,12 @@ export const ListaDeReceitas = () => {
                 </div>
                 <div className="col-12 col-md-8">
                     <FormFiltroPorPalavra
-                        onSubmit={handleSubmitFormFiltroPorPalavra}
-                        inputValue={inputPesquisa}
-                        onChange={handleChangeFormFiltroPorPalavra}
+                        inputPesquisa={inputPesquisa}
+                        setInputPesquisa={setInputPesquisa}
+                        filtro_por_palavra={filtro_por_palavra}
+                        set_filtro_por_palavra={set_filtro_por_palavra}
+                        setLista={setReceitas}
+                        origem="Receitas"
                     />
                 </div>
                 <div className="col-12 col-md-4">

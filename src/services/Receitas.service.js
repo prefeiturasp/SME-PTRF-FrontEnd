@@ -70,7 +70,7 @@ export const getListaReceitas = async () => {
         });
 }
 
-export const filtroPorPalavra = async (palavra) => {
+export const filtroPorPalavraReceitas = async (palavra) => {
     return (await api.get(`api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 }
 

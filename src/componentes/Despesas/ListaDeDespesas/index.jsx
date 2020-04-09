@@ -3,7 +3,7 @@ import {DataTable} from 'primereact/datatable'
 import {Column} from 'primereact/column'
 import {Button} from 'primereact/button'
 import {Row, Col} from 'reactstrap'
-import {getListaRateiosDespesas, filtroPorPalavra} from '../../../services/RateiosDespesas.service'
+import {getListaRateiosDespesas} from '../../../services/RateiosDespesas.service'
 import {redirect} from '../../../utils/redirect.js'
 import '../../../paginas/404/pagina-404.scss'
 import {Route} from 'react-router-dom'
@@ -23,8 +23,6 @@ export class ListaDeDespesas extends Component {
             filtro_por_palavra: false,
             mais_filtros: false,
         }
-        this.handleSubmitFormFiltroPorPalavra = this.handleSubmitFormFiltroPorPalavra.bind(this);
-        this.handleChangeFormFiltroPorPalavra = this.handleChangeFormFiltroPorPalavra.bind(this);
     }
 
     buscaRateiosDespesas = async () => {
@@ -107,17 +105,6 @@ export class ListaDeDespesas extends Component {
         redirect(url)
     }
 
-    handleChangeFormFiltroPorPalavra = (event) => {
-        this.setState({inputPesquisa: event.target.value});
-    }
-
-    handleSubmitFormFiltroPorPalavra = async (event) => {
-        event.preventDefault();
-        const rateiosDespesas = await filtroPorPalavra(this.state.inputPesquisa)
-        this.setState({rateiosDespesas})
-        this.setState({filtro_por_palavra: true})
-    }
-
     onClickBtnMaisFiltros = (event) => {
         console.log("Ollyver Cliquei")
         this.setState({mais_filtros: !this.state.mais_filtros})
@@ -138,10 +125,14 @@ export class ListaDeDespesas extends Component {
                             className="float-left fas fa-file-signature"
                             style={{marginRight: '5px', color: '#42474A'}}
                         ></i>
+
                         <FormFiltroPorPalavra
-                            onSubmit={this.handleSubmitFormFiltroPorPalavra}
-                            inputValue={this.state.inputPesquisa}
-                            onChange={this.handleChangeFormFiltroPorPalavra}
+                            inputPesquisa={this.state.inputPesquisa}
+                            setInputPesquisa={(inputPesquisa)=>this.setState({inputPesquisa})}
+                            filtro_por_palavra={this.state.filtro_por_palavra}
+                            set_filtro_por_palavra={(filtro_por_palavra)=>this.setState({filtro_por_palavra})}
+                            setLista={(rateiosDespesas)=>this.setState({rateiosDespesas})}
+                            origem="Despesas"
                         />
                     </Col>
                     <Col lg={2} xl={2} className={`pl-sm-0 ${!this.state.mais_filtros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>

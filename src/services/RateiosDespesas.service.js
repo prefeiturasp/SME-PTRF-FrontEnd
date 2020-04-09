@@ -10,6 +10,6 @@ export const getListaRateiosDespesas = async uuid => {
 }
 
 
-export const filtroPorPalavra = async (palavra) => {
+export const filtroPorPalavraRateios = async (palavra) => {
     return (await api.get(`api/rateios-despesas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 }
