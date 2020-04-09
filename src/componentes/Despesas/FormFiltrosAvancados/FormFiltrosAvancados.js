@@ -4,7 +4,7 @@ import {filtrosAvancadosRateios} from "../../../services/RateiosDespesas.service
 
 export const FormFiltrosAvancados = (props) => {
 
-    const {mais_filtros, onClickBtnMaisFiltros, buscaUtilizandoFiltro, setBuscaUtilizandoFiltro, setLista} = props;
+    const {btnMaisFiltros, onClickBtnMaisFiltros, buscaUtilizandoFiltro, setBuscaUtilizandoFiltro, setLista} = props;
     const [despesasTabelas, setDespesasTabelas] = useState([])
 
     const [filtrarPorTermo, setFiltrarPorTermo] = useState("")
@@ -29,7 +29,7 @@ export const FormFiltrosAvancados = (props) => {
     }
 
     return (
-        <div className={`row ${mais_filtros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
+        <div className={`row ${btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
             <div className='col-12'>
                 <form onSubmit={handleSubmit}>
                     <div className="form-row">

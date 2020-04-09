@@ -22,7 +22,7 @@ export class ListaDeDespesas extends Component {
             rateiosDespesas: [],
             inputPesquisa: "",
             buscaUtilizandoFiltro: false,
-            mais_filtros: false,
+            btnMaisFiltros: false,
         }
     }
 
@@ -107,7 +107,7 @@ export class ListaDeDespesas extends Component {
     }
 
     onClickBtnMaisFiltros = (event) => {
-        this.setState({mais_filtros: !this.state.mais_filtros})
+        this.setState({btnMaisFiltros: !this.state.btnMaisFiltros})
     }
 
     render() {
@@ -120,7 +120,7 @@ export class ListaDeDespesas extends Component {
                     <div className="col-12">
                         <p>Filtrar por</p>
                     </div>
-                    <Col lg={7} xl={7} className={`pr-0 ${!this.state.mais_filtros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
+                    <Col lg={7} xl={7} className={`pr-0 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
                         <i
                             className="float-left fas fa-file-signature"
                             style={{marginRight: '5px', color: '#42474A'}}
@@ -135,7 +135,7 @@ export class ListaDeDespesas extends Component {
                             origem="Despesas"
                         />
                     </Col>
-                    <Col lg={2} xl={2} className={`pl-sm-0 ${!this.state.mais_filtros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
+                    <Col lg={2} xl={2} className={`pl-sm-0 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
                         <button
                             onClick={this.onClickBtnMaisFiltros}
                             type="button"
@@ -144,13 +144,13 @@ export class ListaDeDespesas extends Component {
                             Mais Filtros
                         </button>
                     </Col>
-                    <Col lg={!this.state.mais_filtros ? 3 : 12} xl={!this.state.mais_filtros ? 3 : 12}>
+                    <Col lg={!this.state.btnMaisFiltros ? 3 : 12} xl={!this.state.btnMaisFiltros ? 3 : 12}>
                         <span className="float-right">{this.novaDespesaButton()}</span>
                     </Col>
                 </Row>
 
                 <FormFiltrosAvancados
-                    mais_filtros = {this.state.mais_filtros}
+                    btnMaisFiltros = {this.state.btnMaisFiltros}
                     onClickBtnMaisFiltros={this.onClickBtnMaisFiltros}
                     buscaUtilizandoFiltro={this.state.buscaUtilizandoFiltro}
                     setBuscaUtilizandoFiltro={(buscaUtilizandoFiltro)=>this.setState({buscaUtilizandoFiltro})}
