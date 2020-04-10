@@ -1,5 +1,6 @@
 import api from './Api'
 import { TOKEN_ALIAS } from './auth.service.js';
+import {ASSOCIACAO_UUID} from "./auth.service";
 
 const authHeader = {
     headers: {
@@ -73,7 +74,7 @@ export const getListaReceitas = async () => {
         });
 }
 
-export const filtroPorPalavra = async (palavra) => {
-    return (await api.get(`api/receitas/?search=${palavra}`, authHeader)).data
+export const filtroPorPalavraReceitas = async (palavra) => {
+    return (await api.get(`api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 }
 

@@ -3,11 +3,7 @@ import "../../../assets/img/img-404.svg"
 import "../../../paginas/404/pagina-404.scss"
 
 export const MsgImgCentralizada = (props) => {
-
     const {texto, img } = props
-
-    console.log("Ollyver ", img)
-
     return(
         <div className="row justify-content-center container-404 mt-5">
             <div className="col-md-auto col-lg-7">

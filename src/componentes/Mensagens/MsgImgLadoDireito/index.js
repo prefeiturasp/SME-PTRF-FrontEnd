@@ -1,7 +1,6 @@
 import React from "react";
 import "../../../assets/img/img-404.svg"
 import "../../../paginas/404/pagina-404.scss"
-import Img404 from "../../../assets/img/img-404.svg";
 
 export const MsgImgLadoDireito = (props) => {
 

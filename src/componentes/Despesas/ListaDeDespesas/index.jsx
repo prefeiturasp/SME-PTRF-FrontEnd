@@ -3,7 +3,7 @@ import {DataTable} from 'primereact/datatable'
 import {Column} from 'primereact/column'
 import {Button} from 'primereact/button'
 import {Row, Col} from 'reactstrap'
-import {getListaRateiosDespesas, filtroPorPalavra} from '../../../services/RateiosDespesas.service'
+import {getListaRateiosDespesas} from '../../../services/RateiosDespesas.service'
 import {redirect} from '../../../utils/redirect.js'
 import '../../../paginas/404/pagina-404.scss'
 import {Route} from 'react-router-dom'
@@ -12,6 +12,8 @@ import {FormFiltroPorPalavra} from "../../FormFiltroPorPalavra";
 import Img404 from "../../../assets/img/img-404.svg"
 import {MsgImgLadoDireito} from "../../Mensagens/MsgImgLadoDireito";
 import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
+import "./lista-de-despesas.scss"
+import {FormFiltrosAvancados} from "../FormFiltrosAvancados/FormFiltrosAvancados";
 
 export class ListaDeDespesas extends Component {
     constructor(props) {
@@ -19,10 +21,9 @@ export class ListaDeDespesas extends Component {
         this.state = {
             rateiosDespesas: [],
             inputPesquisa: "",
-            filtro_por_palavra: false,
+            buscaUtilizandoFiltro: false,
+            btnMaisFiltros: false,
         }
-        this.handleSubmitFormFiltroPorPalavra = this.handleSubmitFormFiltroPorPalavra.bind(this);
-        this.handleChangeFormFiltroPorPalavra = this.handleChangeFormFiltroPorPalavra.bind(this);
     }
 
     buscaRateiosDespesas = async () => {
@@ -85,15 +86,13 @@ export class ListaDeDespesas extends Component {
         return (
             <Route
                 render={({history}) => (
-                    <Button
-                        icon="pi pi-file"
-                        label="Cadastrar despesa"
-                        style={{marginBottom: '.80em'}}
-                        className="btn-coad-background-outline"
-                        onClick={() => {
-                            history.push('/cadastro-de-despesa')
-                        }}
-                    />
+                    <button
+                        onClick={() => history.push('/cadastro-de-despesa')}
+                        type="button"
+                        className="btn btn btn-outline-success float-right"
+                    >
+                        Cadastrar despesa
+                    </button>
                 )}
             />
         )
@@ -105,15 +104,8 @@ export class ListaDeDespesas extends Component {
         redirect(url)
     }
 
-    handleChangeFormFiltroPorPalavra = (event) => {
-        this.setState({inputPesquisa: event.target.value});
-    }
-
-    handleSubmitFormFiltroPorPalavra = async (event) => {
-        event.preventDefault();
-        const rateiosDespesas = await filtroPorPalavra(this.state.inputPesquisa)
-        this.setState({rateiosDespesas})
-        this.setState({filtro_por_palavra: true})
+    onClickBtnMaisFiltros = (event) => {
+        this.setState({btnMaisFiltros: !this.state.btnMaisFiltros})
     }
 
     render() {
@@ -126,23 +118,44 @@ export class ListaDeDespesas extends Component {
                     <div className="col-12">
                         <p>Filtrar por</p>
                     </div>
-
-                    <Col lg={8} xl={8}>
+                    <Col lg={7} xl={7} className={`pr-0 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
                         <i
                             className="float-left fas fa-file-signature"
                             style={{marginRight: '5px', color: '#42474A'}}
                         ></i>
-                        <FormFiltroPorPalavra
-                            onSubmit={this.handleSubmitFormFiltroPorPalavra}
-                            inputValue={this.state.inputPesquisa}
-                            onChange={this.handleChangeFormFiltroPorPalavra}
-                        />
 
+                        <FormFiltroPorPalavra
+                            inputPesquisa={this.state.inputPesquisa}
+                            setInputPesquisa={(inputPesquisa)=>this.setState({inputPesquisa})}
+                            buscaUtilizandoFiltro={this.state.buscaUtilizandoFiltro}
+                            setBuscaUtilizandoFiltro={(buscaUtilizandoFiltro)=>this.setState({buscaUtilizandoFiltro})}
+                            setLista={(rateiosDespesas)=>this.setState({rateiosDespesas})}
+                            origem="Despesas"
+                        />
                     </Col>
-                    <Col lg={4} xl={4}>
+                    <Col lg={2} xl={2} className={`pl-sm-0 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
+                        <button
+                            onClick={this.onClickBtnMaisFiltros}
+                            type="button"
+                            className="btn btn btn-outline-success"
+                        >
+                            Mais Filtros
+                        </button>
+                    </Col>
+                    <Col lg={!this.state.btnMaisFiltros ? 3 : 12} xl={!this.state.btnMaisFiltros ? 3 : 12}>
                         <span className="float-right">{this.novaDespesaButton()}</span>
                     </Col>
                 </Row>
+
+                <FormFiltrosAvancados
+                    btnMaisFiltros = {this.state.btnMaisFiltros}
+                    onClickBtnMaisFiltros={this.onClickBtnMaisFiltros}
+                    buscaUtilizandoFiltro={this.state.buscaUtilizandoFiltro}
+                    setBuscaUtilizandoFiltro={(buscaUtilizandoFiltro)=>this.setState({buscaUtilizandoFiltro})}
+                    setLista={(rateiosDespesas)=>this.setState({rateiosDespesas})}
+                    iniciaLista={this.buscaRateiosDespesas}
+                />
+
                 {rateiosDespesas.length > 0 ? (
                         <DataTable
                             value={rateiosDespesas}
@@ -174,11 +187,11 @@ export class ListaDeDespesas extends Component {
                             />
                         </DataTable>
                     ) :
-                    this.state.filtro_por_palavra ? (
-                        <MsgImgCentralizada
-                            texto='Não encontramos resultados, verifique os filtros e tente novamente.'
-                            img={Img404}
-                        />
+                    this.state.buscaUtilizandoFiltro ? (
+                            <MsgImgCentralizada
+                                texto='Não encontramos resultados, verifique os filtros e tente novamente.'
+                                img={Img404}
+                            />
                         ) :
                         <MsgImgLadoDireito
                             texto='A sua escola ainda não possui despesas cadastradas, clique no botão "Cadastrar despesa" para começar.'
