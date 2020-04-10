@@ -69,7 +69,7 @@ export const ListaDeReceitas = () => {
 
     return (
         <>
-            <div className="row">
+            <div className="row mb-3">
                 <div className="col-12">
                     <p>Filtrar por</p>
                 </div>
