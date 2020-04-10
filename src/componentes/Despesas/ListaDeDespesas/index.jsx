@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {DataTable} from 'primereact/datatable'
 import {Column} from 'primereact/column'
-import {Button} from 'primereact/button'
 import {Row, Col} from 'reactstrap'
 import {getListaRateiosDespesas} from '../../../services/RateiosDespesas.service'
 import {redirect} from '../../../utils/redirect.js'
