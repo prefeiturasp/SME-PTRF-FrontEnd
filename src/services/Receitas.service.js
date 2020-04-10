@@ -65,16 +65,14 @@ export const deletarReceita = async uuid => {
 }
 
 export const getListaReceitas = async () => {
-    return api.get('api/receitas/', authHeader)
-        .then(response => {
-            return response;
-        })
-        .catch(error => {
-            return error.response
-        });
+    return (await api.get(`api/receitas/`, authHeader)).data
 }
 
 export const filtroPorPalavraReceitas = async (palavra) => {
     return (await api.get(`api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
+}
+
+export const filtrosAvancadosReceitas = async (palavra, tipo_receita, acao_associacao__uuid, conta_associacao__uuid) => {
+    return (await api.get(`api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&tipo_receita=${tipo_receita}&acao_associacao__uuid=${acao_associacao__uuid}&conta_associacao__uuid=${conta_associacao__uuid}`, authHeader)).data
 }
 

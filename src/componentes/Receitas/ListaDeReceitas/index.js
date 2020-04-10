@@ -11,27 +11,29 @@ import {FormFiltroPorPalavra} from "../../FormFiltroPorPalavra";
 import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../Mensagens/MsgImgLadoDireito";
 import Img404 from "../../../assets/img/img-404.svg";
+import "./lista-de-receitas.scss"
+import {FormFiltrosAvancados} from "../FormFiltrosAvancados";
 
 export const ListaDeReceitas = () => {
 
     let history = useHistory();
+    const rowsPerPage = 7;
 
     const [receitas, setReceitas] = useState([])
     const [inputPesquisa, setInputPesquisa] = useState("")
     const [buscaUtilizandoFiltro, setBuscaUtilizandoFiltro] = useState(false)
+    const [btnMaisFiltros, setBtnMaisFiltros] = useState(false)
 
     useEffect(() => {
-        const carregaListaReceitas = async () => {
-            getListaReceitas().then(response => {
-                setReceitas(response.data);
-            }).catch(error => {
-                console.log(error);
-            });
-        };
-        carregaListaReceitas();
+        buscaListaReceitas()
     }, [])
 
-    const rowsPerPage = 7;
+
+
+    const buscaListaReceitas = async () => {
+        const listaReceitas = await getListaReceitas()
+        setReceitas(listaReceitas)
+    }
 
     const redirecionaDetalhe = value => {
         const url = '/edicao-de-receita/' + value.uuid
@@ -59,6 +61,11 @@ export const ListaDeReceitas = () => {
         return (<span>{valorFormatado}</span>)
     }
 
+    const onClickBtnMaisFiltros = (event) => {
+        setBtnMaisFiltros(!btnMaisFiltros)
+    }
+
+
 
     return (
         <>
@@ -66,7 +73,7 @@ export const ListaDeReceitas = () => {
                 <div className="col-12">
                     <p>Filtrar por</p>
                 </div>
-                <div className="col-12 col-md-8">
+                <div className={`col-12 col-md-7 pr-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`} >
                     <FormFiltroPorPalavra
                         inputPesquisa={inputPesquisa}
                         setInputPesquisa={setInputPesquisa}
@@ -76,11 +83,29 @@ export const ListaDeReceitas = () => {
                         origem="Receitas"
                     />
                 </div>
-                <div className="col-12 col-md-4">
+                <div className={`col-12 col-md-2 pl-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`} >
+                    <button
+                        onClick={onClickBtnMaisFiltros}
+                        type="button"
+                        className="btn btn btn-outline-success"
+                    >
+                        Mais Filtros
+                    </button>
+                </div>
+                <div className={`${btnMaisFiltros ? "col-12" : "col-12 col-md-3"}`}>
                     <button onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right">Cadastrar crédito
                     </button>
                 </div>
             </div>
+
+            <FormFiltrosAvancados
+                btnMaisFiltros = {btnMaisFiltros}
+                onClickBtnMaisFiltros={onClickBtnMaisFiltros}
+                setLista={setReceitas}
+                setBuscaUtilizandoFiltro={setBuscaUtilizandoFiltro}
+                iniciaLista={buscaListaReceitas}
+
+            />
 
             {receitas.length > 0 ? (<DataTable
                     value={receitas}
