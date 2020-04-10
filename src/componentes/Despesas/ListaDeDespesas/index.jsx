@@ -86,15 +86,13 @@ export class ListaDeDespesas extends Component {
         return (
             <Route
                 render={({history}) => (
-                    <Button
-                        icon="pi pi-file"
-                        label="Cadastrar despesa"
-                        style={{marginBottom: '.80em'}}
-                        className="btn-coad-background-outline"
-                        onClick={() => {
-                            history.push('/cadastro-de-despesa')
-                        }}
-                    />
+                    <button
+                        onClick={() => history.push('/cadastro-de-despesa')}
+                        type="button"
+                        className="btn btn btn-outline-success float-right"
+                    >
+                        Cadastrar despesa
+                    </button>
                 )}
             />
         )
