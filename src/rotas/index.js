@@ -9,7 +9,7 @@ import { ListaDeDespesasPage } from '../paginas/Despesas/ListaDeDespesas'
 import { CadastroDeReceita } from '../paginas/Receitas/CadastroReceita';
 import { EdicaoDeReceita } from '../paginas/Receitas/EdicaoReceita';
 import { ListaDeReceitasPage } from "../paginas/Receitas/ListaDeReceitas";
-import {DadosAssociacaoPage} from "../paginas/Associacao";
+import {DadosDaAssociacaoPage} from "../paginas/Associacao";
 
 import { authService } from '../services/auth.service';
 
@@ -52,7 +52,7 @@ const routesConfig = [
     {
       exact: true,
       path: "/dados-da-associacao",
-      component: DadosAssociacaoPage
+      component: DadosDaAssociacaoPage
     },
     {
         exact: true,
