@@ -10,53 +10,7 @@ import { ReceitaSchema } from '../Schemas';
 import moment from "moment";
 import { useParams } from 'react-router-dom';
 import { ASSOCIACAO_UUID } from '../../../services/auth.service';
-
-
-class CancelarModal extends Component {
-
-    render () {
-        return (
-            <Fragment>
-                <Modal centered show={this.props.show} onHide={this.handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Deseja cancelar a inclusão de Receita?</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={this.props.onCancelarTrue}>
-                            OK
-                        </Button>
-                        <Button variant="primary" onClick={this.props.handleClose}>
-                            fechar
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            </Fragment>
-        )
-    }
-}
-
-class DeletarModal extends Component {
-
-    render () {
-        return (
-            <Fragment>
-                <Modal centered show={this.props.show} onHide={this.handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Deseja excluir esta Receita?</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={this.props.onDeletarTrue}>
-                            OK
-                        </Button>
-                        <Button variant="primary" onClick={this.props.handleClose}>
-                            fechar
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            </Fragment>
-        )
-    }
-}
+import {DeletarModalReceitas, CancelarModalReceitas} from "../../../utils/Modais";
 
 export const ReceitaForm = props => {
 
@@ -339,11 +293,11 @@ export const ReceitaForm = props => {
                 }}
             </Formik>
             <section>
-                <CancelarModal show={show}  handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+                <CancelarModalReceitas show={show}  handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
             </section>
             {uuid
                 ?
-                <DeletarModal show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
+                <DeletarModalReceitas show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
                 : null
             }
         </>
