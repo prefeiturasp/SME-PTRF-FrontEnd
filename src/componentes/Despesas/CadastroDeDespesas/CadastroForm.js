@@ -177,8 +177,7 @@ export const CadastroForm = () => {
                                         className="form-control"
                                         placeholder="Digite o número do documento"
                                     />
-                                    {props.errors.cpf_cnpj_fornecedor && <span
-                                        className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
+                                    {props.errors.cpf_cnpj_fornecedor && <span className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
                                 </div>
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
@@ -401,9 +400,7 @@ export const CadastroForm = () => {
                                                                 despesasTabelas={despesasTabelas}
                                                                 especificaoes_capital={especificaoes_capital}
                                                             />
-
                                                             ): null}
-
 
                                                         {index >= 1 && values.rateios.length > 1 && (
                                                             <div className="d-flex  justify-content-start mt-3 mb-3">
@@ -420,8 +417,7 @@ export const CadastroForm = () => {
                                             )
                                         })}
 
-                                        {props.values.mais_de_um_tipo_despesa === "sim" &&
-                                        <div className="d-flex  justify-content-start mt-3 mb-3">
+                                        {props.values.mais_de_um_tipo_despesa === "sim" && <div className="d-flex  justify-content-start mt-3 mb-3">
 
                                             <button
                                                 type="button"
