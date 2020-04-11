@@ -149,12 +149,18 @@ export const CadastroForm = () => {
         }
     }
 
-    const get_nome_razao_social = async (cpf_cnpj) => {
+    const get_nome_razao_social = async (cpf_cnpj, setFieldValue) => {
         console.log("Ollyver cpf_cnpj ", cpf_cnpj)
         //if (cpf_cnpj)
         let resp = await getNomeRazaoSocial(cpf_cnpj)
         console.log("Ollyver ", resp)
-        set_nome_fornecedor(resp)
+
+        if (resp && resp.length > 0 && resp[0].nome){
+            setFieldValue("nome_fornecedor", resp[0].nome)
+            //set_nome_fornecedor(resp[0].nome)
+        }
+
+        //set_nome_fornecedor(resp)
         //console.log("Ollyver ", nome_razao_social[0].nome)
         //console.log("Ollyver ", nome_razao_social)
         //return nome_razao_social
@@ -188,7 +194,7 @@ export const CadastroForm = () => {
                                         value={props.values.cpf_cnpj_fornecedor}
                                         onChange={(e)=>{
                                             props.handleChange(e);
-                                            get_nome_razao_social(e.target.value)
+                                            get_nome_razao_social(e.target.value, setFieldValue)
 
                                             }
                                         }
@@ -202,8 +208,8 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
                                     <input
-                                        value={nome_fornecedor}
-                                        //value={props.values.nome_fornecedor}
+                                        //value={nome_fornecedor}
+                                        value={props.values.nome_fornecedor}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name="nome_fornecedor" id="nome_fornecedor" type="text" className="form-control"
