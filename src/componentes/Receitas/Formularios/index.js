@@ -240,45 +240,52 @@ export const ReceitaForm = props => {
                                     <span className="span_erro text-danger mt-1"> {props.errors.descricao}</span>}
                                 </div>
                                 <div className="col-12 col-md-6 mt-4">
-                                    <div className="form-row">
-                                        <label htmlFor="acao_associacao">Ação</label>
-                                        <select
-                                            id="acao_associacao"
-                                            name="acao_associacao"
-                                            value={props.values.acao_associacao}
-                                            onChange={props.handleChange}
-                                            onBlur={props.handleBlur}
-                                            className="form-control"
-                                        >
-                                            {receita.acao_associacao
-                                                ? null
-                                                : <option>Escolha uma ação</option>}
-                                            {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
-                                                <option key={key} value={item.uuid}>{item.nome}</option>
-                                            ))): null}
-                                        </select>
-                                        {props.touched.acao_associacao && props.errors.acao_associacao &&
-                                        <span className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
+
+                                    <div className="row">
+                                        <div className="col-12">
+
+                                            <label htmlFor="acao_associacao">Ação</label>
+                                            <select
+                                                id="acao_associacao"
+                                                name="acao_associacao"
+                                                value={props.values.acao_associacao}
+                                                onChange={props.handleChange}
+                                                onBlur={props.handleBlur}
+                                                className="form-control"
+                                            >
+                                                {receita.acao_associacao
+                                                    ? null
+                                                    : <option>Escolha uma ação</option>}
+                                                {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
+                                                    <option key={key} value={item.uuid}>{item.nome}</option>
+                                                ))): null}
+                                            </select>
+                                            {props.touched.acao_associacao && props.errors.acao_associacao &&
+                                            <span className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
+                                        </div>
                                     </div>
-                                    <div className="form-row">
-                                        <label htmlFor="conta_associacao">Tipo de conta</label>
-                                        <select
-                                            id="conta_associacao"
-                                            name="conta_associacao"
-                                            value={props.values.conta_associacao}
-                                            onChange={props.handleChange}
-                                            onBlur={props.handleBlur}
-                                            className="form-control"
-                                        >
-                                            {receita.conta_associacao
-                                                ? null
-                                                : <option>Escolha uma conta</option>}
-                                            {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
-                                                <option key={key} value={item.uuid}>{item.nome}</option>
-                                            ))): null}
-                                        </select>
-                                        {props.touched.conta_associacao && props.errors.conta_associacao &&
-                                        <span className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
+
+                                    <div className="row">
+                                        <div className="col-12">
+                                            <label htmlFor="conta_associacao">Tipo de conta</label>
+                                            <select
+                                                id="conta_associacao"
+                                                name="conta_associacao"
+                                                value={props.values.conta_associacao}
+                                                onChange={props.handleChange}
+                                                onBlur={props.handleBlur}
+                                                className="form-control"
+                                            >
+                                                {receita.conta_associacao
+                                                    ? null
+                                                    : <option>Escolha uma conta</option>}
+                                                {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
+                                                    <option key={key} value={item.uuid}>{item.nome}</option>
+                                                ))): null}
+                                            </select>
+                                            {props.touched.conta_associacao && props.errors.conta_associacao &&
+                                            <span className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
