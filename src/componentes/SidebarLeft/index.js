@@ -122,7 +122,7 @@ export const SidebarLeft = () => {
             <NavText>Prestação de contas</NavText>
           </NavItem>
 
-          <NavItem eventKey="dadosAssociacao">
+          <NavItem eventKey="dados-da-associacao">
             <NavIcon>
               <img src={IconeMenuDadosDaAssociacao} alt="" />
             </NavIcon>
