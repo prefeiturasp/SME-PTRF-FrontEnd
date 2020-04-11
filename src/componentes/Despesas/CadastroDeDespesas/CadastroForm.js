@@ -13,7 +13,6 @@ import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
 
 import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Modais"
-import {getListaReceitas} from "../../../services/Receitas.service";
 
 export const CadastroForm = () => {
 
@@ -27,8 +26,6 @@ export const CadastroForm = () => {
     const [showDelete, setShowDelete] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
-    const [nome_fornecedor, set_nome_fornecedor] = useState("");
-
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
@@ -66,8 +63,6 @@ export const CadastroForm = () => {
 
         validaPayloadDespesas(values)
 
-        console.log("onSubmit", values)
-
         if( despesaContext.verboHttp === "POST"){
             try {
                 const response = await criarDespesa(values)
@@ -85,7 +80,7 @@ export const CadastroForm = () => {
                 return
             }
         }else if(despesaContext.verboHttp === "PUT"){
-            console.log("onsubmit Método PUT")
+
             try {
                 const response = await alterarDespesa(values, despesaContext.idDespesa)
                 if (response.status === 200) {
@@ -150,22 +145,10 @@ export const CadastroForm = () => {
     }
 
     const get_nome_razao_social = async (cpf_cnpj, setFieldValue) => {
-        console.log("Ollyver cpf_cnpj ", cpf_cnpj)
-        //if (cpf_cnpj)
         let resp = await getNomeRazaoSocial(cpf_cnpj)
-        console.log("Ollyver ", resp)
-
         if (resp && resp.length > 0 && resp[0].nome){
             setFieldValue("nome_fornecedor", resp[0].nome)
-            //set_nome_fornecedor(resp[0].nome)
         }
-
-        //set_nome_fornecedor(resp)
-        //console.log("Ollyver ", nome_razao_social[0].nome)
-        //console.log("Ollyver ", nome_razao_social)
-        //return nome_razao_social
-
-
     }
 
     return (
