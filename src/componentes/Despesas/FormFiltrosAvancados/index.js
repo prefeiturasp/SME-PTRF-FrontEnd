@@ -12,6 +12,7 @@ export const FormFiltrosAvancados = (props) => {
     }
 
     const {btnMaisFiltros, onClickBtnMaisFiltros, setBuscaUtilizandoFiltro, setLista, iniciaLista} = props;
+
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [state, setState] = useState(initialState);
 

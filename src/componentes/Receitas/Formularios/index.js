@@ -10,53 +10,7 @@ import { ReceitaSchema } from '../Schemas';
 import moment from "moment";
 import { useParams } from 'react-router-dom';
 import { ASSOCIACAO_UUID } from '../../../services/auth.service';
-
-
-class CancelarModal extends Component {
-
-    render () {
-        return (
-            <Fragment>
-                <Modal centered show={this.props.show} onHide={this.handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Deseja cancelar a inclusão de Receita?</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={this.props.onCancelarTrue}>
-                            OK
-                        </Button>
-                        <Button variant="primary" onClick={this.props.handleClose}>
-                            fechar
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            </Fragment>
-        )
-    }
-}
-
-class DeletarModal extends Component {
-
-    render () {
-        return (
-            <Fragment>
-                <Modal centered show={this.props.show} onHide={this.handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Deseja excluir esta Receita?</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={this.props.onDeletarTrue}>
-                            OK
-                        </Button>
-                        <Button variant="primary" onClick={this.props.handleClose}>
-                            fechar
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            </Fragment>
-        )
-    }
-}
+import {DeletarModalReceitas, CancelarModalReceitas} from "../../../utils/Modais";
 
 export const ReceitaForm = props => {
 
@@ -92,7 +46,6 @@ export const ReceitaForm = props => {
             .catch(error => {
                 console.log(error);
             });
-
         };
 
         const buscaReceita = async () => {
@@ -118,7 +71,6 @@ export const ReceitaForm = props => {
                     console.log(error);
                 });
             }
-
         };
         carregaTabelas();
         buscaReceita();
@@ -286,45 +238,52 @@ export const ReceitaForm = props => {
                                     <span className="span_erro text-danger mt-1"> {props.errors.descricao}</span>}
                                 </div>
                                 <div className="col-12 col-md-6 mt-4">
-                                    <div className="form-row">
-                                        <label htmlFor="acao_associacao">Ação</label>
-                                        <select
-                                            id="acao_associacao"
-                                            name="acao_associacao"
-                                            value={props.values.acao_associacao}
-                                            onChange={props.handleChange}
-                                            onBlur={props.handleBlur}
-                                            className="form-control"
-                                        >
-                                            {receita.acao_associacao
-                                                ? null
-                                                : <option>Escolha uma ação</option>}
-                                            {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
-                                                <option key={key} value={item.uuid}>{item.nome}</option>
-                                            ))): null}
-                                        </select>
-                                        {props.touched.acao_associacao && props.errors.acao_associacao &&
-                                        <span className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
+
+                                    <div className="row">
+                                        <div className="col-12">
+
+                                            <label htmlFor="acao_associacao">Ação</label>
+                                            <select
+                                                id="acao_associacao"
+                                                name="acao_associacao"
+                                                value={props.values.acao_associacao}
+                                                onChange={props.handleChange}
+                                                onBlur={props.handleBlur}
+                                                className="form-control"
+                                            >
+                                                {receita.acao_associacao
+                                                    ? null
+                                                    : <option>Escolha uma ação</option>}
+                                                {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
+                                                    <option key={key} value={item.uuid}>{item.nome}</option>
+                                                ))): null}
+                                            </select>
+                                            {props.touched.acao_associacao && props.errors.acao_associacao &&
+                                            <span className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
+                                        </div>
                                     </div>
-                                    <div className="form-row">
-                                        <label htmlFor="conta_associacao">Tipo de conta</label>
-                                        <select
-                                            id="conta_associacao"
-                                            name="conta_associacao"
-                                            value={props.values.conta_associacao}
-                                            onChange={props.handleChange}
-                                            onBlur={props.handleBlur}
-                                            className="form-control"
-                                        >
-                                            {receita.conta_associacao
-                                                ? null
-                                                : <option>Escolha uma conta</option>}
-                                            {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
-                                                <option key={key} value={item.uuid}>{item.nome}</option>
-                                            ))): null}
-                                        </select>
-                                        {props.touched.conta_associacao && props.errors.conta_associacao &&
-                                        <span className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
+
+                                    <div className="row">
+                                        <div className="col-12">
+                                            <label htmlFor="conta_associacao">Tipo de conta</label>
+                                            <select
+                                                id="conta_associacao"
+                                                name="conta_associacao"
+                                                value={props.values.conta_associacao}
+                                                onChange={props.handleChange}
+                                                onBlur={props.handleBlur}
+                                                className="form-control"
+                                            >
+                                                {receita.conta_associacao
+                                                    ? null
+                                                    : <option>Escolha uma conta</option>}
+                                                {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
+                                                    <option key={key} value={item.uuid}>{item.nome}</option>
+                                                ))): null}
+                                            </select>
+                                            {props.touched.conta_associacao && props.errors.conta_associacao &&
+                                            <span className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -339,11 +298,11 @@ export const ReceitaForm = props => {
                 }}
             </Formik>
             <section>
-                <CancelarModal show={show}  handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+                <CancelarModalReceitas show={show}  handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
             </section>
             {uuid
                 ?
-                <DeletarModal show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
+                <DeletarModalReceitas show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
                 : null
             }
         </>

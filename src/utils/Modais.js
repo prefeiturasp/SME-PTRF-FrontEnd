@@ -1,5 +1,6 @@
 import React from "react";
 import {ModalBootstrap} from "../componentes/ModalBootstrap";
+import {Modal} from "react-bootstrap";
 
 export const AvisoCapitalModal = (propriedades) => {
     return (
@@ -29,6 +30,21 @@ export const CancelarModal = (propriedades) => {
     )
 }
 
+export const CancelarModalReceitas = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Deseja cancelar a inclusão de Receita?"
+            bodyText=""
+            primeiroBotaoOnclick={propriedades.onCancelarTrue}
+            primeiroBotaoTexto="OK"
+            segundoBotaoOnclick={propriedades.handleClose}
+            segundoBotaoTexto="Fechar"
+        />
+    )
+}
+
 export const DeletarModal = (propriedades) => {
     return (
         <ModalBootstrap
@@ -36,6 +52,20 @@ export const DeletarModal = (propriedades) => {
             onHide={propriedades.handleClose}
             titulo="Deseja excluir esta Despesa?"
             bodyText="<p>Tem certeza que deseja excluir esta despesa? A ação não poderá ser desfeita.</p>"
+            primeiroBotaoOnclick={propriedades.onDeletarTrue}
+            primeiroBotaoTexto="OK"
+            segundoBotaoOnclick={propriedades.handleClose}
+            segundoBotaoTexto="Fechar"
+        />
+    )
+}
+export const DeletarModalReceitas = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Deseja excluir esta Receita?"
+            bodyText="<p>Tem certeza que deseja excluir esta Receita? A ação não poderá ser desfeita.</p>"
             primeiroBotaoOnclick={propriedades.onDeletarTrue}
             primeiroBotaoTexto="OK"
             segundoBotaoOnclick={propriedades.handleClose}
