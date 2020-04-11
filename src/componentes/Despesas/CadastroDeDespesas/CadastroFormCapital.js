@@ -32,7 +32,6 @@ export const CadastroFormCapital = (propriedades) => {
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor="acao_associacao">Ação</label>
                     <select
-                        //value={rateio.acao_associacao.uuid}
                         value={
                             rateio.acao_associacao !== null ? (
                                 typeof rateio.acao_associacao === "object" ? rateio.acao_associacao.uuid : rateio.acao_associacao
@@ -40,7 +39,6 @@ export const CadastroFormCapital = (propriedades) => {
                         }
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].acao_associacao`}
-                        //name='acao_associacao'
                         id='acao_associacao'
                         className="form-control"
                     >
@@ -78,22 +76,9 @@ export const CadastroFormCapital = (propriedades) => {
                                 className="form-control"
                                 onChangeEvent={formikProps.handleChange}
                             />
-                            {/*<NumberFormat
-                                format={currencyFormatter}
-                                value={rateio.valor_item_capital}
-                                onChange={formikProps.handleChange}
-                                name={`rateios[${index}].valor_item_capital`}
-                                thousandSeparator={'.'}
-                                decimalSeparator={','}
-                                decimalScale={2}
-                                prefix={'R$ '}
-                                id="valor_item_capital"
-                                className="form-control"
-                            />*/}
                         </div>
                     </div>
                 </div>
-
 
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor="numero_processo_incorporacao_capital">Número do processo de incorporação</label>
@@ -101,7 +86,6 @@ export const CadastroFormCapital = (propriedades) => {
                         defaultValue={rateio.numero_processo_incorporacao_capital}
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].numero_processo_incorporacao_capital`}
-
                         type='text'
                         id='numero_processo_incorporacao_capital'
                         className="form-control"
@@ -121,9 +105,7 @@ export const CadastroFormCapital = (propriedades) => {
                                     ) : 0
                                 }
                                 onChange={formikProps.handleChange}
-                                //name='conta_associacao'
                                 name={`rateios[${index}].conta_associacao`}
-
                                 id='conta_associacao'
                                 className="form-control"
                             >
@@ -136,7 +118,6 @@ export const CadastroFormCapital = (propriedades) => {
 
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="valor_rateio">Valor do custeio</label>
-
                             <CurrencyInput
                                 allowNegative={false}
                                 prefix='R$'
@@ -151,12 +132,8 @@ export const CadastroFormCapital = (propriedades) => {
                             />
 
                         </div>
-
-
                     </div>
                 </div>
-
-
             </div>
         </>
     )

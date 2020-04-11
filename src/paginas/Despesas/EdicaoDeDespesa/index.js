@@ -67,8 +67,6 @@ export const EdicaoDeDespesa = ()=>{
                     }) : "",
 
                 }
-
-                console.log("Edicao Despesa Page ", response)
                 despesaContext.setInitialValues(init)
             }).catch(error => {
                 console.log(error);
@@ -78,7 +76,6 @@ export const EdicaoDeDespesa = ()=>{
 
     return(
         <PaginasContainer>
-
             <h1 className="titulo-itens-painel mt-5">Edição de Despesa</h1>
             <div className="page-content-inner ">
                 <CadastroDeDespesas/>

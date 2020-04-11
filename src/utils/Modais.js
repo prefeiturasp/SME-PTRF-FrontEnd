@@ -1,6 +1,5 @@
 import React from "react";
 import {ModalBootstrap} from "../componentes/ModalBootstrap";
-import {Modal} from "react-bootstrap";
 
 export const AvisoCapitalModal = (propriedades) => {
     return (

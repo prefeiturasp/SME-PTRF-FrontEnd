@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
 import { YupSignupSchemaCadastroDespesa, validaPayloadDespesas, validateFormDespesas, cpfMaskContitional, calculaValorRecursoAcoes,  } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio} from "../../../services/Despesas.service";
+import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import {useHistory} from 'react-router-dom'
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
@@ -26,7 +26,6 @@ export const CadastroForm = () => {
     const [showDelete, setShowDelete] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
-
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
@@ -64,8 +63,6 @@ export const CadastroForm = () => {
 
         validaPayloadDespesas(values)
 
-        console.log("onSubmit", values)
-
         if( despesaContext.verboHttp === "POST"){
             try {
                 const response = await criarDespesa(values)
@@ -83,7 +80,7 @@ export const CadastroForm = () => {
                 return
             }
         }else if(despesaContext.verboHttp === "PUT"){
-            console.log("onsubmit Método PUT")
+
             try {
                 const response = await alterarDespesa(values, despesaContext.idDespesa)
                 if (response.status === 200) {
@@ -147,6 +144,13 @@ export const CadastroForm = () => {
         }
     }
 
+    const get_nome_razao_social = async (cpf_cnpj, setFieldValue) => {
+        let resp = await getNomeRazaoSocial(cpf_cnpj)
+        if (resp && resp.length > 0 && resp[0].nome){
+            setFieldValue("nome_fornecedor", resp[0].nome)
+        }
+    }
+
     return (
         <>
             <Formik
@@ -171,18 +175,23 @@ export const CadastroForm = () => {
                                     <MaskedInput
                                         mask={(valor) => cpfMaskContitional(valor)}
                                         value={props.values.cpf_cnpj_fornecedor}
-                                        onChange={props.handleChange}
+                                        onChange={(e)=>{
+                                            props.handleChange(e);
+                                            get_nome_razao_social(e.target.value, setFieldValue)
+
+                                            }
+                                        }
                                         onBlur={props.handleBlur}
                                         name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
                                         className="form-control"
                                         placeholder="Digite o número do documento"
                                     />
-                                    {props.errors.cpf_cnpj_fornecedor && <span
-                                        className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
+                                    {props.errors.cpf_cnpj_fornecedor && <span className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
                                 </div>
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
                                     <input
+                                        //value={nome_fornecedor}
                                         value={props.values.nome_fornecedor}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
@@ -401,9 +410,7 @@ export const CadastroForm = () => {
                                                                 despesasTabelas={despesasTabelas}
                                                                 especificaoes_capital={especificaoes_capital}
                                                             />
-
                                                             ): null}
-
 
                                                         {index >= 1 && values.rateios.length > 1 && (
                                                             <div className="d-flex  justify-content-start mt-3 mb-3">
@@ -420,8 +427,7 @@ export const CadastroForm = () => {
                                             )
                                         })}
 
-                                        {props.values.mais_de_um_tipo_despesa === "sim" &&
-                                        <div className="d-flex  justify-content-start mt-3 mb-3">
+                                        {props.values.mais_de_um_tipo_despesa === "sim" && <div className="d-flex  justify-content-start mt-3 mb-3">
 
                                             <button
                                                 type="button"

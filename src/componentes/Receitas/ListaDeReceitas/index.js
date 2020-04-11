@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {DataTable} from 'primereact/datatable';
 
 import {Column} from 'primereact/column';
-import {Link, useHistory} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import '../../../paginas/404/pagina-404.scss'
 import moment from 'moment';
 import {getListaReceitas} from "../../../services/Receitas.service";

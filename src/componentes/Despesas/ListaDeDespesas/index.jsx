@@ -98,7 +98,6 @@ export class ListaDeDespesas extends Component {
     }
 
     redirecionaDetalhe = value => {
-        console.log(value)
         const url = '/edicao-de-despesa/' + value.despesa
         redirect(url)
     }
