@@ -46,7 +46,6 @@ export const ReceitaForm = props => {
             .catch(error => {
                 console.log(error);
             });
-
         };
 
         const buscaReceita = async () => {
@@ -72,7 +71,6 @@ export const ReceitaForm = props => {
                     console.log(error);
                 });
             }
-
         };
         carregaTabelas();
         buscaReceita();
