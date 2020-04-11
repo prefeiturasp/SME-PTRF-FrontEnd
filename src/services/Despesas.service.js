@@ -40,3 +40,12 @@ export const alterarDespesa = async (payload, idDespesa) => {
     });
 }
 
+export const getNomeRazaoSocial = async (cpf_cnpj) => {
+    if (cpf_cnpj){
+        return (await api.get(`/api/fornecedores/?uuid=&cpf_cnpj=${cpf_cnpj}`, authHeader)).data[0].nome
+    }else {
+        return ""
+    }
+}
+
+

@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
 import { YupSignupSchemaCadastroDespesa, validaPayloadDespesas, validateFormDespesas, cpfMaskContitional, calculaValorRecursoAcoes,  } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio} from "../../../services/Despesas.service";
+import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import {useHistory} from 'react-router-dom'
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
@@ -13,6 +13,7 @@ import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
 
 import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Modais"
+import {getListaReceitas} from "../../../services/Receitas.service";
 
 export const CadastroForm = () => {
 
@@ -26,6 +27,7 @@ export const CadastroForm = () => {
     const [showDelete, setShowDelete] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
+    const [nome_fornecedor, set_nome_fornecedor] = useState("");
 
 
     useEffect(() => {
@@ -147,6 +149,19 @@ export const CadastroForm = () => {
         }
     }
 
+    const get_nome_razao_social = async (cpf_cnpj) => {
+        console.log("Ollyver cpf_cnpj ", cpf_cnpj)
+        //if (cpf_cnpj)
+        let resp = await getNomeRazaoSocial(cpf_cnpj)
+        console.log("Ollyver ", resp)
+        set_nome_fornecedor(resp)
+        //console.log("Ollyver ", nome_razao_social[0].nome)
+        //console.log("Ollyver ", nome_razao_social)
+        //return nome_razao_social
+
+
+    }
+
     return (
         <>
             <Formik
@@ -171,7 +186,12 @@ export const CadastroForm = () => {
                                     <MaskedInput
                                         mask={(valor) => cpfMaskContitional(valor)}
                                         value={props.values.cpf_cnpj_fornecedor}
-                                        onChange={props.handleChange}
+                                        onChange={(e)=>{
+                                            props.handleChange(e);
+                                            get_nome_razao_social(e.target.value)
+
+                                            }
+                                        }
                                         onBlur={props.handleBlur}
                                         name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
                                         className="form-control"
@@ -182,7 +202,8 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
                                     <input
-                                        value={props.values.nome_fornecedor}
+                                        value={nome_fornecedor}
+                                        //value={props.values.nome_fornecedor}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name="nome_fornecedor" id="nome_fornecedor" type="text" className="form-control"
