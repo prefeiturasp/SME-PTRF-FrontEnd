@@ -103,6 +103,7 @@ export class ListaDeDespesas extends Component {
     }
 
     onClickBtnMaisFiltros = (event) => {
+        this.setState({inputPesquisa: ""})
         this.setState({btnMaisFiltros: !this.state.btnMaisFiltros})
     }
 
