@@ -19,7 +19,6 @@ export const DadosDaAsssociacao = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
         const payload = {
             "nome": stateAssociacao.nome,
             "presidente_associacao_nome": stateAssociacao.presidente_associacao_nome,
