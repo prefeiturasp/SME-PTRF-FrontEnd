@@ -1,9 +1,15 @@
 import React, {useEffect, useState} from "react";
+import {useHistory} from 'react-router-dom'
 import {getAssociacao, alterarAssociacao} from "../../../services/Associacao.service";
+import {CancelarModalAssociacao, SalvarModalAssociacao} from "../../../utils/Modais";
 
 export const DadosDaAsssociacao = () => {
 
+    let history = useHistory();
+
     const [stateAssociacao, setStateAssociacao] = useState(undefined);
+    const [showModalReceitasCancelar, setShowModalReceitasCancelar] = useState(false);
+    const [showModalReceitasSalvar, setShowModalReceitasSalvar] = useState(false);
 
     useEffect(()=> {
         buscaAssociacao();
@@ -33,18 +39,48 @@ export const DadosDaAsssociacao = () => {
             "presidente_conselho_fiscal_rf": ""
         }
 
-        await alterarAssociacao(payload);
-
-
+        try {
+            const response = await alterarAssociacao(payload);
+            if (response.status === 200) {
+                console.log("Operação realizada com sucesso!");
+                onShowModalSalvar()
+            } else {
+                console.log(response)
+                return
+            }
+        } catch (error) {
+            console.log(error)
+            return
+        }
     }
-
-
 
     const handleChange = (name, value) => {
         setStateAssociacao({
             ...stateAssociacao,
             [name]: value
         });
+    }
+
+    const onHandleClose = () => {
+        setShowModalReceitasCancelar(false);
+    }
+
+    const onCancelarAssociacaoTrue = () => {
+        setShowModalReceitasCancelar(false);
+        let path = `/dashboard`;
+        history.push(path);
+    }
+
+    const onShowModalCancelar = () => {
+        setShowModalReceitasCancelar(true);
+    }
+
+    const onSalvarAssociacaoTrue = () => {
+        setShowModalReceitasSalvar(false);
+    }
+
+    const onShowModalSalvar = () => {
+        setShowModalReceitasSalvar(true);
     }
 
     return (
@@ -89,14 +125,17 @@ export const DadosDaAsssociacao = () => {
                                 </div>
                             </div>
                             <div className="d-flex  justify-content-end pb-3">
-                                <button type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
+                                <button onClick={onShowModalCancelar} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
                                 <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
                             </div>
                         </form>
                     </div>
                 </div>
             ): null}
-
+            <section>
+                <CancelarModalAssociacao show={showModalReceitasCancelar}  handleClose={onHandleClose} onCancelarTrue={onCancelarAssociacaoTrue}/>
+                <SalvarModalAssociacao show={showModalReceitasSalvar} handleClose={onHandleClose} onCancelarTrue={onSalvarAssociacaoTrue} />
+            </section>
         </>
     );
 }
