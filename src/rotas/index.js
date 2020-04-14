@@ -9,6 +9,7 @@ import { ListaDeDespesasPage } from '../paginas/Despesas/ListaDeDespesas'
 import { CadastroDeReceita } from '../paginas/Receitas/CadastroReceita';
 import { EdicaoDeReceita } from '../paginas/Receitas/EdicaoReceita';
 import { ListaDeReceitasPage } from "../paginas/Receitas/ListaDeReceitas";
+import {DadosDaAssociacaoPage} from "../paginas/Associacao";
 
 import { authService } from '../services/auth.service';
 
@@ -35,7 +36,7 @@ const routesConfig = [
     },
     { 
         exact: true,
-        path: "/edicao-de-despesa/:associacao?",
+        path: "/edicao-de-despesa/:associacao",
         component: EdicaoDeDespesa
     },
     {
@@ -47,6 +48,11 @@ const routesConfig = [
       exact: true,
       path: "/lista-de-receitas",
       component: ListaDeReceitasPage
+    },
+    {
+      exact: true,
+      path: "/dados-da-associacao",
+      component: DadosDaAssociacaoPage
     },
     {
         exact: true,

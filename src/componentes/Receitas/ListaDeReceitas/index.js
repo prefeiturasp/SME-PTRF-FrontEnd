@@ -62,6 +62,7 @@ export const ListaDeReceitas = () => {
     }
 
     const onClickBtnMaisFiltros = (event) => {
+        setInputPesquisa("")
         setBtnMaisFiltros(!btnMaisFiltros)
     }
 

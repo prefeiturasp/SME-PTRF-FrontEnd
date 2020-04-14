@@ -44,8 +44,8 @@ export const SidebarLeft = () => {
         onToggle={onToggle}
       >
         <SideNav.Toggle />
-        <SideNav.Nav defaultSelected="painel">
-          <NavItem navitemClassName="navItemCustomizado">
+        <SideNav.Nav defaultSelected="dashboard">
+          <NavItem navitemClassName="navItemCustomizadoNome" eventKey="dashboard">
             <NavIcon>
               <FontAwesomeIcon
                 style={{ fontSize: '25px' }}
@@ -61,7 +61,7 @@ export const SidebarLeft = () => {
             </NavText>
           </NavItem>
 
-          <NavItem navitemClassName="navItemCustomizado">
+          <NavItem navitemClassName="navItemCustomizadoNome" eventKey="dashboard">
             <NavIcon>
               <FontAwesomeIcon
                 style={{ fontSize: '25px' }}
@@ -87,6 +87,7 @@ export const SidebarLeft = () => {
             </NavIcon>
             <NavText>Painel</NavText>
           </NavItem>
+
           <NavItem eventKey="lista-de-despesas">
             <NavIcon>
               <img src={IconeMenuGastosDaEscola} alt="" />
@@ -122,17 +123,18 @@ export const SidebarLeft = () => {
             <NavText>Prestação de contas</NavText>
           </NavItem>
 
-          <NavItem eventKey="dadosAssociacao">
+          <NavItem eventKey="dados-da-associacao">
             <NavIcon>
               <img src={IconeMenuDadosDaAssociacao} alt="" />
             </NavIcon>
             <NavText>Dados da Associação</NavText>
           </NavItem>
           <NavItem
+            eventKey="dashboard"
             navitemClassName={
               !sidebarStatus.sideBarStatus
                 ? 'escondeItem'
-                : 'navItemCustomizado'
+                : 'navItemCustomizadoNome'
             }
           >
             <NavIcon></NavIcon>
@@ -143,10 +145,11 @@ export const SidebarLeft = () => {
             </NavText>
           </NavItem>
           <NavItem
+            eventKey="dashboard"
             navitemClassName={
               !sidebarStatus.sideBarStatus
                 ? 'escondeItem'
-                : 'navItemCustomizado'
+                : 'navItemCustomizadoNome'
             }
           >
             <NavIcon></NavIcon>
