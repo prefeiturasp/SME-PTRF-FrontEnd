@@ -10,7 +10,6 @@ const authHeader = {
 }
 
 export const getAssociacao = async () => {
-    console.log("getAssociacao ", ASSOCIACAO_UUID)
     return (await api.get(`api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 }
 

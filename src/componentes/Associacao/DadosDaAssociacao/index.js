@@ -1,11 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {useHistory} from 'react-router-dom'
 import {getAssociacao, alterarAssociacao} from "../../../services/Associacao.service";
 import {CancelarModalAssociacao, SalvarModalAssociacao} from "../../../utils/Modais";
 
 export const DadosDaAsssociacao = () => {
-
-    let history = useHistory();
 
     const [stateAssociacao, setStateAssociacao] = useState(undefined);
     const [showModalReceitasCancelar, setShowModalReceitasCancelar] = useState(false);
@@ -17,19 +14,11 @@ export const DadosDaAsssociacao = () => {
 
     const buscaAssociacao = async () => {
         const associacao = await getAssociacao();
-        console.log("Assosicacao ", associacao)
         setStateAssociacao(associacao)
     }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-        console.log("nome ", stateAssociacao.nome)
-        console.log("codigo_eol ", stateAssociacao.unidade.codigo_eol)
-        console.log("dre ", stateAssociacao.unidade.dre.nome)
-        console.log("cnpj ", stateAssociacao.cnpj)
-        console.log("presidente_associacao_nome ", stateAssociacao.presidente_associacao_nome)
-        console.log("presidente_conselho_fiscal_nome ", stateAssociacao.presidente_conselho_fiscal_nome)
 
         const payload = {
             "nome": stateAssociacao.nome,
@@ -67,8 +56,7 @@ export const DadosDaAsssociacao = () => {
 
     const onCancelarAssociacaoTrue = () => {
         setShowModalReceitasCancelar(false);
-        let path = `/dashboard`;
-        history.push(path);
+        buscaAssociacao();
     }
 
     const onShowModalCancelar = () => {
