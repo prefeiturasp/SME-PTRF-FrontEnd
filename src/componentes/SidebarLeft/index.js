@@ -25,8 +25,6 @@ export const SidebarLeft = () => {
     sidebarStatus.setSideBarStatus(!sidebarStatus.sideBarStatus)
   }
 
-  console.log("Ollyver ", sidebarStatus.sideBarStatus)
-
   return (
     <>
       <SideNav
@@ -44,7 +42,7 @@ export const SidebarLeft = () => {
         <SideNav.Toggle />
         <SideNav.Nav defaultSelected="dashboard">
 
-          <NavItem navitemClassName={sidebarStatus.sideBarStatus ? 'navItemCustomizadoNome esconde-icone mb-n3' : 'navItemCustomizadoNome'}  eventKey="dashboard">
+          <NavItem navitemClassName={sidebarStatus.sideBarStatus ? 'navItemCustomizadoNome esconde-icone mb-n2' : 'navItemCustomizadoNome'}  eventKey="dashboard">
             <NavIcon>
               <FontAwesomeIcon
                 style={{ fontSize: '25px'}}
