@@ -3,6 +3,10 @@
   height: 40px !important;
 }
 
+.esconde-icone > div{
+  line-height: 0 !important;
+  height: 0 !important;
+}
 .sideNavCustomizado{
   position: fixed;
   background-color: #00585E;
@@ -45,7 +49,7 @@
     }
   }
 
-  navItemLogo{
+  .navItemLogo{
     text-align: center;
     max-width: 240px;
     display: inline-block;

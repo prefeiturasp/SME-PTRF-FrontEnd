@@ -25,6 +25,8 @@ export const SidebarLeft = () => {
     sidebarStatus.setSideBarStatus(!sidebarStatus.sideBarStatus)
   }
 
+  console.log("Ollyver ", sidebarStatus.sideBarStatus)
+
   return (
     <>
       <SideNav
@@ -42,10 +44,10 @@ export const SidebarLeft = () => {
         <SideNav.Toggle />
         <SideNav.Nav defaultSelected="dashboard">
 
-          <NavItem navitemClassName="navItemCustomizadoNome" eventKey="dashboard">
+          <NavItem navitemClassName={sidebarStatus.sideBarStatus ? 'navItemCustomizadoNome esconde-icone mb-n3' : 'navItemCustomizadoNome'}  eventKey="dashboard">
             <NavIcon>
               <FontAwesomeIcon
-                style={{ fontSize: '25px',  height:'40px',   }}
+                style={{ fontSize: '25px'}}
                 className={sidebarStatus.sideBarStatus ? 'escondeItem' : ''}
                 src={IconeMenuDadosDaAssociacao}
                 icon={faUser}
