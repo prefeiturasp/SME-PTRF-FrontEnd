@@ -1,8 +1,22 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {PaginasContainer} from "../PaginasContainer";
 import {Dashboard} from "../../componentes/Dashborard";
+import {getAcoesAssociacao} from "../../services/Dashboard.service";
 
 export const DashboardPage = () => {
+
+    const [acoesAssociacao, setAcoesAssociacao] = useState({})
+
+    useEffect(() => {
+        buscaListaAcoesAssociacao();
+    }, [])
+
+    const buscaListaAcoesAssociacao = async () => {
+        const listaAcoes = await getAcoesAssociacao()
+        console.log("listaAcoes ", listaAcoes)
+        setAcoesAssociacao(listaAcoes)
+    }
+
 
     return (
         <PaginasContainer>
