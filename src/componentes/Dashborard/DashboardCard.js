@@ -1,19 +1,13 @@
 import React from "react";
 import "./dashboard.scss"
-import moment from "moment";
 import "../../paginas/404/pagina-404.scss"
 import {MsgImgLadoDireito} from "../Mensagens/MsgImgLadoDireito";
 import Img404 from "../../assets/img/img-404.svg"
+import {exibeDataPT_BR, exibeDateTimePT_BR, exibeValorFormatadoPT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
 
 export const DashboardCard = ({acoesAssociacao}) => {
     console.log("Ollyver ", acoesAssociacao)
 
-    const valorFormatado = (valor)  => {
-        return valor.toLocaleString('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-        })
-    }
     return (
         <>
             {
@@ -31,17 +25,17 @@ export const DashboardCard = ({acoesAssociacao}) => {
                                         <div className='row'>
                                             <div className="col-12 col-md-5 align-self-center">
                                                 <div className="col-12 container-lado-esquerdo pt-1 pb-1">
-                                                    <p className="pt-1 mb-1" >Custeio: <strong>{valorFormatado(acao.saldo_atual_custeio)}</strong></p>
-                                                    <p className="pt-1 mb-1">Capital: <strong>{valorFormatado(acao.saldo_atual_capital)}</strong></p>
-                                                    <p className="pt-1 pb-1 mb-0">Total: <strong>{valorFormatado(acao.saldo_atual_total)}</strong></p>
+                                                    <p className="pt-1 mb-1" >Custeio: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}</strong></p>
+                                                    <p className="pt-1 mb-1">Capital: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_capital)}</strong></p>
+                                                    <p className="pt-1 pb-1 mb-0">Total: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_total)}</strong></p>
                                                 </div>
                                             </div>
                                             <div className="col-12 col-md-7 container-lado-direito align-self-center ">
-                                                <p className="pt-1 mb-1" >Saldo reprogramado: <strong>{valorFormatado(acao.saldo_reprogramado)}</strong></p>
-                                                <p className="pt-1 mb-1">Repasses no período: <strong>{valorFormatado(acao.repasses_no_periodo)}</strong></p>
-                                                <p className="pt-1 pb-1 mb-0">Despesa declarada: <strong>{valorFormatado(acao.despesas_no_periodo)}</strong></p>
+                                                <p className="pt-1 mb-1" >Saldo reprogramado: <strong>{exibeValorFormatadoPT_BR(acao.saldo_reprogramado)}</strong></p>
+                                                <p className="pt-1 mb-1">Repasses no período: <strong>{exibeValorFormatadoPT_BR(acao.repasses_no_periodo)}</strong></p>
+                                                <p className="pt-1 pb-1 mb-0">Despesa declarada: <strong>{exibeValorFormatadoPT_BR(acao.despesas_no_periodo)}</strong></p>
                                                 {acao.acao_associacao_nome === "PTRF" ? (
-                                                    <p className="pt-1 pb-1 mb-0">Próx. repasse a partir de: <strong>{moment(new Date(acoesAssociacao.data_prevista_repasse), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY")}</strong></p>
+                                                    <p className="pt-1 pb-1 mb-0">Próx. repasse a partir de: <strong>{exibeDataPT_BR(acoesAssociacao.data_prevista_repasse)}</strong></p>
                                                 ) : null }
                                             </div>
                                         </div>
@@ -57,7 +51,7 @@ export const DashboardCard = ({acoesAssociacao}) => {
                 />
             }
             <div className="d-flex justify-content-end pb-3 mt-5">
-                <p className="ultima-atualizacao">Última atualização: {moment(new Date(acoesAssociacao.ultima_atualizacao), "YYYY-MM-DD").format("DD/MM/YYYY [às] HH:mm:ss" )}</p>
+                <p className="ultima-atualizacao">Última atualização: {exibeDateTimePT_BR(acoesAssociacao.ultima_atualizacao)}</p>
             </div>
         </>
     );

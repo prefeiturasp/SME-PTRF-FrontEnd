@@ -1,4 +1,4 @@
-import React, {Fragment} from "react";
+import React from "react";
 import {DashboardCard} from "./DashboardCard";
 
 export const Dashboard = ({acoesAssociacao}) => {

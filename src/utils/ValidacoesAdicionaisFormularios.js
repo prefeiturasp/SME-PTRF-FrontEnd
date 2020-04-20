@@ -156,22 +156,31 @@ export const validaPayloadDespesas = (values) => {
     return values
 }
 
-export const currencyFormatter =(value) =>{
-
-    if (!Number(value)) return "";
-
-    const amount = new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-    }).format(value / 100 );
-
-    //return `${amount}`;
-    return amount;
+export const exibeValorFormatadoPT_BR = (valor)  => {
+    return valor.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    })
 }
 
-export const trataData = (data) => {
-    return moment(data, "YYYY-MM-DD").add(1, 'days');
+export const exibeDataPT_BR = (data) => {
+    if (data === 'None'){
+        data = moment(new Date(), "YYYY-MM-DD").format("DD/MM/YYYY");
+    }else {
+        data =  moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY");
+    }
+    return data
 }
+
+export const exibeDateTimePT_BR = (data) => {
+    if (data === 'None'){
+        data = moment(new Date(), "YYYY-MM-DD").format("DD/MM/YYYY [às] HH:mm:ss");
+    }else {
+        data =  moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY [às] HH:mm:ss");
+    }
+    return data
+}
+
 
 export const convertToNumber = (string)=>{
     return Number(string)
