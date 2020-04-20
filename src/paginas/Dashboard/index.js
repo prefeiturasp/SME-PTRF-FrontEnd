@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import moment from "moment";
 import {PaginasContainer} from "../PaginasContainer";
 import {Dashboard} from "../../componentes/Dashborard";
 import {getAcoesAssociacao} from "../../services/Dashboard.service";

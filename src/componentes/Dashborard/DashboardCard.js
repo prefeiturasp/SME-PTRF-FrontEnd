@@ -1,17 +1,35 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import "./dashboard.scss"
 import "../../paginas/404/pagina-404.scss"
 import {MsgImgLadoDireito} from "../Mensagens/MsgImgLadoDireito";
 import Img404 from "../../assets/img/img-404.svg"
 import {exibeDataPT_BR, exibeDateTimePT_BR, exibeValorFormatadoPT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
+import Loading from "../../utils/Loading";
 
 export const DashboardCard = ({acoesAssociacao}) => {
     console.log("Ollyver ", acoesAssociacao)
+    const [loading, setLoading] = useState(true);
+
+    useEffect(()=> {
+        setInterval(() =>  {
+            setLoading(false);
+            }, 1000);
+
+    }, [])
 
     return (
         <>
             {
-                acoesAssociacao.info_acoes && acoesAssociacao.info_acoes.length > 0 ? (
+                loading ? (
+                    <Loading
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="0"
+                        marginBottom="0"
+                    />
+                ) : null
+            }
+            {!loading && acoesAssociacao.info_acoes && acoesAssociacao.info_acoes.length > 0 ? (
                     <div className="row row-cols-1 row-cols-md-2">
                         {acoesAssociacao.info_acoes.map((acao, index) =>
                             <div key={index} className="col mb-4 container-dashboard-card">
@@ -45,14 +63,18 @@ export const DashboardCard = ({acoesAssociacao}) => {
                         )}
                     </div>
                 ):
-                    <MsgImgLadoDireito
-                    texto='A sua escola não possui ações ativas nesse período.'
-                    img={Img404}
-                />
+                !loading ? (
+                    <>
+                        <MsgImgLadoDireito
+                            texto='A sua escola não possui ações ativas nesse período.'
+                            img={Img404}
+                        />
+                            <div className="d-flex justify-content-end pb-3 mt-5">
+                            <p className="ultima-atualizacao">Última atualização: {exibeDateTimePT_BR(acoesAssociacao.ultima_atualizacao)}</p>
+                        </div>
+                    </>
+                ) : null
             }
-            <div className="d-flex justify-content-end pb-3 mt-5">
-                <p className="ultima-atualizacao">Última atualização: {exibeDateTimePT_BR(acoesAssociacao.ultima_atualizacao)}</p>
-            </div>
         </>
     );
 }
