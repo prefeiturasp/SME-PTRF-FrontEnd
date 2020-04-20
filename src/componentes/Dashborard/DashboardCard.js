@@ -7,14 +7,13 @@ import {exibeDataPT_BR, exibeDateTimePT_BR, exibeValorFormatadoPT_BR} from "../.
 import Loading from "../../utils/Loading";
 
 export const DashboardCard = ({acoesAssociacao}) => {
-    console.log("Ollyver ", acoesAssociacao)
+
     const [loading, setLoading] = useState(true);
 
     useEffect(()=> {
         setInterval(() =>  {
             setLoading(false);
             }, 1000);
-
     }, [])
 
     return (
