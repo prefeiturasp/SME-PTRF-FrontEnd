@@ -40,6 +40,7 @@ export const ReceitaForm = props => {
         const carregaTabelas = async () => {
             getTabelasReceita()
             .then(response => {
+                console.log("Tabelas Receitas ", response)
                 setTabelas(response.data);
             })
             .catch(error => {
@@ -229,7 +230,7 @@ export const ReceitaForm = props => {
                                         name="descricao"
                                         id="descricao"
                                         type="text"
-                                        rows="4"
+                                        rows="5"
                                         cols="50"
                                         className="form-control"
                                         placeholder="Escreva a descrição da receita"/>
@@ -262,7 +263,7 @@ export const ReceitaForm = props => {
                                         </div>
                                     </div>
 
-                                    <div className="row">
+                                    <div className="row mt-4">
                                         <div className="col-12">
                                             <label htmlFor="conta_associacao">Tipo de conta</label>
                                             <select
