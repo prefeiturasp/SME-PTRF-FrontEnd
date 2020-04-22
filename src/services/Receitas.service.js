@@ -76,3 +76,7 @@ export const filtrosAvancadosReceitas = async (palavra, tipo_receita, acao_assoc
     return (await api.get(`api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&tipo_receita=${tipo_receita}&acao_associacao__uuid=${acao_associacao__uuid}&conta_associacao__uuid=${conta_associacao__uuid}`, authHeader)).data
 }
 
+export const getRepasse = async (acao_associacao_uuid) => {
+    return (await api.get(`api/repasses/pendentes/?acao-associacao=${acao_associacao_uuid}`, authHeader)).data
+}
+

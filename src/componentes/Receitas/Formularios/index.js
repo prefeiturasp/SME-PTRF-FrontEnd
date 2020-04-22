@@ -3,7 +3,7 @@ import HTTP_STATUS from "http-status-codes";
 import { Formik } from 'formik';
 import { DatePickerField } from '../../DatePickerField'
 import CurrencyInput from 'react-currency-input';
-import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita } from '../../../services/Receitas.service';
+import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita, getRepasse } from '../../../services/Receitas.service';
 import { trataNumericos } from "../../../utils/ValidacoesAdicionaisFormularios";
 import { ReceitaSchema } from '../Schemas';
 import moment from "moment";
@@ -35,6 +35,17 @@ export const ReceitaForm = props => {
     const [showDelete, setShowDelete] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [receita, setReceita] = useState({});
+    const [e_repasse, set_e_repasse] = useState(false);
+    const [e_repasse_acao, set_e_repasse_acao] = useState("");
+
+    useEffect(()=> {
+
+        if (e_repasse !== false && e_repasse_acao !== ""){
+            get_repasse();
+        }
+
+    }, [e_repasse, e_repasse_acao])
+
 
     useEffect(() => {
         const carregaTabelas = async () => {
@@ -153,6 +164,36 @@ export const ReceitaForm = props => {
         });
     }
 
+    const getValoresAdicionais = (e, tabela)=>{
+
+        if (e.target.name === 'tipo_receita') {
+            tabela.map((item) => {
+                if (item.id === Number(e.target.value)) {
+                    set_e_repasse(item.e_repasse)
+                }
+            })
+        }
+
+        if(e.target.name === 'acao_associacao'){
+            set_e_repasse_acao( e.target.value)
+        }
+
+    }
+
+    const get_repasse = async () => {
+
+        try {
+            const repasse = await getRepasse(e_repasse_acao)
+            console.log("REPASSE", repasse)
+            setInitialValue(repasse);
+        }catch (e) {
+            console.log("Erro: ", e)
+        }
+
+
+
+    }
+
     return (
         <>
             <Formik
@@ -175,7 +216,12 @@ export const ReceitaForm = props => {
                                         id="tipo_receita"
                                         name="tipo_receita"
                                         value={props.values.tipo_receita}
-                                        onChange={props.handleChange}
+                                        onChange={(e)=>{
+                                            props.handleChange(e);
+                                            getValoresAdicionais(e, tabelas.tipos_receita)
+                                        }
+                                        }
+
                                         onBlur={props.handleBlur}
                                         className="form-control"
                                     >
@@ -247,7 +293,12 @@ export const ReceitaForm = props => {
                                                 id="acao_associacao"
                                                 name="acao_associacao"
                                                 value={props.values.acao_associacao}
-                                                onChange={props.handleChange}
+                                                //onChange={props.handleChange}
+                                                onChange={(e)=>{
+                                                    props.handleChange(e);
+                                                    getValoresAdicionais(e, tabelas.acoes_associacao)
+                                                }
+                                                }
                                                 onBlur={props.handleBlur}
                                                 className="form-control"
                                             >
