@@ -154,16 +154,6 @@ export const CadastroForm = () => {
         }
     }
 
-    const getMaisDeUmTipoDeDespesa = (values) => {
-        console.log("Ollyver mais_de_um_tipo_de_despesa ", values)
-        if (values.rateios && values.rateios.length > 1 ){
-            return "sim"
-        }else {
-            return 'nao'
-        }
-
-    }
-
     return (
         <>
             <Formik
@@ -355,15 +345,8 @@ export const CadastroForm = () => {
                             <div className="form-row">
                                 <div className="col-12 col-md-3 ">
                                     <select
-                                        //value={ values.rateios && values.rateios.length <= 1 ? props.values.mais_de_um_tipo_despesa : 'sim'}
                                         value={props.values.mais_de_um_tipo_despesa}
-                                        onChange={(e)=>{
-                                            props.handleChange(e);
-                                            //getMaisDeUmTipoDeDespesa(values)
-
-                                            }
-                                        }
-                                        //onBlur={props.handleBlur}
+                                        onChange={props.handleChange}
                                         name='mais_de_um_tipo_despesa'
                                         id='mais_de_um_tipo_despesa'
                                         className="form-control"
