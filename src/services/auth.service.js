@@ -46,7 +46,7 @@ const login = async (login, senha) => {
     } catch (error) {
         console.log('ERROR');
         console.log(error.response.data);
-        return error.response.data.detail;
+        return error.response.data.data.detail;
     }
 };
 
