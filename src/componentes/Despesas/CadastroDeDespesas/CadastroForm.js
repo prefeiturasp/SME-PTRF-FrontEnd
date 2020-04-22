@@ -26,6 +26,8 @@ export const CadastroForm = () => {
     const [showDelete, setShowDelete] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
+    const [mais_de_um_tipo_de_despesa, set_mais_de_um_tipo_de_despesa] = useState(false);
+    const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
@@ -60,6 +62,7 @@ export const CadastroForm = () => {
     }
 
     const onSubmit = async (values, {resetForm}) => {
+        setBtnSubmitDisable(true);
 
         validaPayloadDespesas(values)
 
@@ -149,6 +152,16 @@ export const CadastroForm = () => {
         if (resp && resp.length > 0 && resp[0].nome){
             setFieldValue("nome_fornecedor", resp[0].nome)
         }
+    }
+
+    const getMaisDeUmTipoDeDespesa = (values) => {
+        console.log("Ollyver mais_de_um_tipo_de_despesa ", values)
+        if (values.rateios && values.rateios.length > 1 ){
+            return "sim"
+        }else {
+            return 'nao'
+        }
+
     }
 
     return (
@@ -342,9 +355,15 @@ export const CadastroForm = () => {
                             <div className="form-row">
                                 <div className="col-12 col-md-3 ">
                                     <select
+                                        //value={ values.rateios && values.rateios.length <= 1 ? props.values.mais_de_um_tipo_despesa : 'sim'}
                                         value={props.values.mais_de_um_tipo_despesa}
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
+                                        onChange={(e)=>{
+                                            props.handleChange(e);
+                                            //getMaisDeUmTipoDeDespesa(values)
+
+                                            }
+                                        }
+                                        //onBlur={props.handleBlur}
                                         name='mais_de_um_tipo_despesa'
                                         id='mais_de_um_tipo_despesa'
                                         className="form-control"
@@ -460,7 +479,7 @@ export const CadastroForm = () => {
                                 {despesaContext.idDespesa
                                     ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2">Deletar</button>
                                     : null}
-                                <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
+                                <button disabled={btnSubmitDisable} type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
                             </div>
                         </form>
 
