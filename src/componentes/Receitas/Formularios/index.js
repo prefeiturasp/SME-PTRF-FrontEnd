@@ -173,11 +173,23 @@ export const ReceitaForm = props => {
         if (e_repasse_tipo_receita !== false && e_repasse_acao !== "" && e_repasse_acao !== "Escolha uma ação") {
 
             try {
-                const repasse = await getRepasse(e_repasse_acao)
+                const repasse = await getRepasse(e_repasse_acao);
+
+                console.log("REPASSE ", repasse)
 
                 let data_digitada = moment(values.data);
                 let data_inicio = moment(repasse.periodo.data_inicio_realizacao_despesas);
-                let data_fim = moment(repasse.periodo.data_fim_realizacao_despesas);
+                let data_fim = repasse.periodo.data_fim_realizacao_despesas;
+
+                console.log("Data fim 01 ", data_fim)
+
+                if (data_fim === null){
+                    data_fim = moment(new Date());
+                }else {
+                    data_fim = moment(repasse.periodo.data_fim_realizacao_despesas);
+                }
+
+                console.log("Data fim 02 ", data_fim)
 
                 if(data_digitada  > data_fim || data_digitada < data_inicio ){
                     errors.data = `Data inválida. A data tem que ser entre ${data_inicio.format("DD/MM/YYYY")} e ${data_fim.format("DD/MM/YYYY")}`;
