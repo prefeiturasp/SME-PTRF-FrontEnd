@@ -46,7 +46,6 @@ export const ReceitaForm = props => {
     const [initialValue, setInitialValue] = useState(initial);
     const [receita, setReceita] = useState({});
 
-
     useEffect(() => {
         const carregaTabelas = async () => {
             getTabelasReceita().then(response => {
@@ -96,11 +95,8 @@ export const ReceitaForm = props => {
         } else {
             await cadastrar(payload);
         }
-
         let path = `/lista-de-receitas`
         props.history.push(path)
-
-
     }
 
     const cadastrar = async (payload) => {
@@ -185,7 +181,6 @@ export const ReceitaForm = props => {
 
                 if(data_digitada  > data_fim || data_digitada < data_inicio ){
                     errors.data = `Data inválida. A data tem que ser entre ${data_inicio.format("DD/MM/YYYY")} e ${data_fim.format("DD/MM/YYYY")}`;
-                    //errors.data = 'Data inválida. A data tem que ser igual ou menor a data atual que o repasse foi creditado em sua conta';
                 }
 
                 const init = {
@@ -219,7 +214,6 @@ export const ReceitaForm = props => {
                     const {
                         values,
                         setFieldValue,
-
                     } = props;
                     return (
                         <form method="POST" id="receitaForm" onSubmit={props.handleSubmit}>
@@ -232,10 +226,8 @@ export const ReceitaForm = props => {
                                         value={props.values.tipo_receita}
                                         onChange={(e) => {
                                             props.handleChange(e);
-                                            //getValoresAdicionais(e, tabelas.tipos_receita)
                                         }
                                         }
-
                                         onBlur={props.handleBlur}
                                         className="form-control"
                                     >
@@ -289,7 +281,6 @@ export const ReceitaForm = props => {
                                         onBlur={props.handleBlur}
                                         name="descricao"
                                         id="descricao"
-                                        type="text"
                                         rows="5"
                                         cols="50"
                                         className="form-control"
@@ -307,10 +298,8 @@ export const ReceitaForm = props => {
                                                 id="acao_associacao"
                                                 name="acao_associacao"
                                                 value={props.values.acao_associacao}
-                                                //onChange={props.handleChange}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
-                                                    //getValoresAdicionais(e, tabelas.acoes_associacao)
                                                 }
                                                 }
                                                 onBlur={props.handleBlur}
@@ -359,8 +348,7 @@ export const ReceitaForm = props => {
                                         className="btn btn btn-outline-success mt-2 mr-2">Cancelar
                                 </button>
                                 {uuid
-                                    ? <button type="reset" onClick={onShowDeleteModal}
-                                              className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
+                                    ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
                                 <button type="submit" className="btn btn-success mt-2">Salvar</button>
                             </div>
                         </form>
