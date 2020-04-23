@@ -1,7 +1,11 @@
 import api from './Api'
+import { TOKEN_ALIAS } from './auth.service.js';
 
 const authHeader = {
-    'Content-Type': 'application/json'
+    headers: {
+        'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,  
+        'Content-Type': 'application/json'
+    }
 }
 
 export const deleteDespesa = async uuid => {
