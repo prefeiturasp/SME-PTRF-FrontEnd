@@ -1,18 +1,25 @@
 import React, {useEffect, useState} from "react";
 import HTTP_STATUS from "http-status-codes";
-import { Formik } from 'formik';
-import { DatePickerField } from '../../DatePickerField'
+import {Formik} from 'formik';
+import {DatePickerField} from '../../DatePickerField'
 import CurrencyInput from 'react-currency-input';
-import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita, getRepasse } from '../../../services/Receitas.service';
+import {
+    criarReceita,
+    atualizaReceita,
+    deletarReceita,
+    getReceita,
+    getTabelasReceita,
+    getRepasse
+} from '../../../services/Receitas.service';
 import {
     exibeDataPT_BR,
     round,
     trataNumericos,
 } from "../../../utils/ValidacoesAdicionaisFormularios";
-import { ReceitaSchema } from '../Schemas';
+import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
-import { useParams } from 'react-router-dom';
-import { ASSOCIACAO_UUID } from '../../../services/auth.service';
+import {useParams} from 'react-router-dom';
+import {ASSOCIACAO_UUID} from '../../../services/auth.service';
 import {DeletarModalReceitas, CancelarModalReceitas} from "../../../utils/Modais";
 
 export const ReceitaForm = props => {
@@ -44,9 +51,9 @@ export const ReceitaForm = props => {
     const [tipo_de_receita, set_tipo_de_receita] = useState("");
     const [acao, set_acao] = useState("");
 
-    useEffect(()=> {
+    useEffect(() => {
 
-        if (e_repasse !== false && e_repasse_acao !== ""){
+        if (e_repasse !== false && e_repasse_acao !== "") {
             get_repasse();
         }
 
@@ -55,19 +62,16 @@ export const ReceitaForm = props => {
 
     useEffect(() => {
         const carregaTabelas = async () => {
-            getTabelasReceita()
-            .then(response => {
+            getTabelasReceita().then(response => {
                 setTabelas(response.data);
-            })
-            .catch(error => {
+            }).catch(error => {
                 console.log(error);
             });
         };
 
         const buscaReceita = async () => {
             if (uuid) {
-                getReceita(uuid)
-                .then(response => {
+                getReceita(uuid).then(response => {
                     const resp = response.data;
                     const init = {
                         tipo_receita: resp.tipo_receita.id,
@@ -82,8 +86,7 @@ export const ReceitaForm = props => {
                     }
                     setInitialValue(init);
                     setReceita(resp);
-                })
-                .catch(error => {
+                }).catch(error => {
                     console.log(error);
                 });
             }
@@ -94,32 +97,21 @@ export const ReceitaForm = props => {
 
     const onSubmit = async (values) => {
 
-        values.valor = round(trataNumericos(values.valor),2);
+        values.valor = round(trataNumericos(values.valor), 2);
         values.data = moment(values.data).format("YYYY-MM-DD");
         const payload = {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID)
         }
 
-        if(uuid){
-            try {
-                await atualizar(uuid, payload);
-                let path = `/lista-de-receitas`
-                props.history.push(path)
-            }catch (e) {
-                console.log("Erro ao cadastrar a receita: ", e.message)
-            }
-
+        if (uuid) {
+            await atualizar(uuid, payload);
         } else {
-            try {
-                await cadastrar(payload);
-                let path = `/lista-de-receitas`
-                props.history.push(path)
-            }catch (e) {
-                console.log("Erro ao atualizar a receita: ", e.message)
-            }
-
+            await cadastrar(payload);
         }
+
+        let path = `/lista-de-receitas`
+        props.history.push(path)
 
 
     }
@@ -170,20 +162,18 @@ export const ReceitaForm = props => {
     }
 
     const onDeletarTrue = () => {
-        deletarReceita(uuid)
-        .then(response => {
+        deletarReceita(uuid).then(response => {
             console.log("Receita deletada com sucesso.");
             setShowDelete(false);
             let path = `/lista-de-receitas`;
             props.history.push(path);
-        })
-        .catch(error => {
+        }).catch(error => {
             console.log(error);
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
         });
     }
 
-    const getValoresAdicionais = (e, tabela)=>{
+    const getValoresAdicionais = (e, tabela) => {
 
         if (e.target.name === 'tipo_receita') {
             set_tipo_de_receita(e.target.value)
@@ -194,26 +184,27 @@ export const ReceitaForm = props => {
             })
         }
 
-        if(e.target.name === 'acao_associacao'){
+        if (e.target.name === 'acao_associacao') {
             set_acao(e.target.value)
-            set_e_repasse_acao( e.target.value)
+            set_e_repasse_acao(e.target.value)
         }
 
     }
 
     const get_repasse = async () => {
-/*        const init = {
-            tipo_receita: resp.tipo_receita.id,
-            acao_associacao: resp.acao_associacao.uuid,
-            conta_associacao: resp.conta_associacao.uuid,
-            data: resp.data,
-            valor: resp.valor ? new Number(resp.valor).toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }) : "",
-            descricao: resp.descricao,
-        }
-        */
+        /*        const init = {
+                    tipo_receita: resp.tipo_receita.id,
+                    acao_associacao: resp.acao_associacao.uuid,
+                    conta_associacao: resp.conta_associacao.uuid,
+                    data: resp.data,
+                    valor: resp.valor ? new Number(resp.valor).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    }) : "",
+                    descricao: resp.descricao,
+                }
+                */
+
 
         try {
             const repasse = await getRepasse(e_repasse_acao)
@@ -231,16 +222,16 @@ export const ReceitaForm = props => {
                 valor: repasse.valor_capital + repasse.valor_custeio
 
             }
-/*            const init = {
-                ...initialValue,
-                valor: repasse.valor_capital && repasse.valor_custeio ? Number(repasse.valor_capital + repasse.valor_custeio).toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL'
-                }) : "",
+            /*            const init = {
+                            ...initialValue,
+                            valor: repasse.valor_capital && repasse.valor_custeio ? Number(repasse.valor_capital + repasse.valor_custeio).toLocaleString('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                            }) : "",
 
-            }*/
+                        }*/
             setInitialValue(init);
-        }catch (e) {
+        } catch (e) {
             console.log("Erro: ", e)
         }
 
@@ -262,13 +253,28 @@ export const ReceitaForm = props => {
 
         e_repasse_acao = values.acao_associacao;
 
-        if (e_repasse_tipo_receita !== false && e_repasse_acao !== "" && e_repasse_acao !== "Escolha uma ação"){
+        if (e_repasse_tipo_receita !== false && e_repasse_acao !== "" && e_repasse_acao !== "Escolha uma ação") {
 
-            console.log("ENTREI")
+           //debugger;
+
+
             try {
                 const repasse = await getRepasse(e_repasse_acao)
                 console.log("REPASSE", repasse)
 
+                let data_digitada = moment(values.data);
+                let data_inicio = moment(repasse.periodo.data_inicio_realizacao_despesas);
+                let data_fim = moment(repasse.periodo.data_fim_realizacao_despesas);
+                //let data_fim = new Date(repasse.periodo.data_fim_realizacao_despesas)
+
+
+                console.log("Data Digitada: ", data_digitada)
+                console.log("Data Inicio: ", data_inicio)
+                console.log("Data Fim: ", data_fim)
+
+                if(data_digitada  > data_fim || data_digitada < data_inicio ){
+                    errors.data = 'Data inválida. A data tem que ser igual ou menor a data atual que o repasse foi creditado em sua conta';
+                }
 
                 const init = {
                     ...initialValue,
@@ -280,10 +286,13 @@ export const ReceitaForm = props => {
                     valor: Number(repasse.valor_capital) + Number(repasse.valor_custeio)
                 }
                 setInitialValue(init);
-            }catch (e) {
+            } catch (e) {
                 console.log("Erro: ", e)
+                errors.acao_associacao = 'Não existe repasses pendentes para a associação nesta ação';
             }
         }
+
+        return errors;
     }
 
     return (
@@ -292,6 +301,7 @@ export const ReceitaForm = props => {
                 initialValues={initialValue}
                 validationSchema={ReceitaSchema}
                 enableReinitialize={true}
+                validateOnBlur={true}
                 onSubmit={onSubmit}
                 validate={validateFormReceitas}
             >
@@ -310,7 +320,7 @@ export const ReceitaForm = props => {
                                         id="tipo_receita"
                                         name="tipo_receita"
                                         value={props.values.tipo_receita}
-                                        onChange={(e)=>{
+                                        onChange={(e) => {
                                             props.handleChange(e);
                                             //getValoresAdicionais(e, tabelas.tipos_receita)
                                         }
@@ -324,7 +334,7 @@ export const ReceitaForm = props => {
                                             : <option>Selecione o tipo</option>}
                                         {tabelas.tipos_receita !== undefined && tabelas.tipos_receita.length > 0 ? (tabelas.tipos_receita.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
-                                        ))): null}
+                                        ))) : null}
                                     </select>
                                     {props.touched.tipo_receita && props.errors.tipo_receita &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.tipo_receita}</span>}
@@ -388,7 +398,7 @@ export const ReceitaForm = props => {
                                                 name="acao_associacao"
                                                 value={props.values.acao_associacao}
                                                 //onChange={props.handleChange}
-                                                onChange={(e)=>{
+                                                onChange={(e) => {
                                                     props.handleChange(e);
                                                     //getValoresAdicionais(e, tabelas.acoes_associacao)
                                                 }
@@ -401,10 +411,11 @@ export const ReceitaForm = props => {
                                                     : <option>Escolha uma ação</option>}
                                                 {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
                                                     <option key={key} value={item.uuid}>{item.nome}</option>
-                                                ))): null}
+                                                ))) : null}
                                             </select>
                                             {props.touched.acao_associacao && props.errors.acao_associacao &&
-                                            <span className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
+                                            <span
+                                                className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
                                         </div>
                                     </div>
 
@@ -424,18 +435,22 @@ export const ReceitaForm = props => {
                                                     : <option>Escolha uma conta</option>}
                                                 {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
                                                     <option key={key} value={item.uuid}>{item.nome}</option>
-                                                ))): null}
+                                                ))) : null}
                                             </select>
                                             {props.touched.conta_associacao && props.errors.conta_associacao &&
-                                            <span className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
+                                            <span
+                                                className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
-                                <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                                <button type="reset" onClick={onShowModal}
+                                        className="btn btn btn-outline-success mt-2 mr-2">Cancelar
+                                </button>
                                 {uuid
-                                    ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
+                                    ? <button type="reset" onClick={onShowDeleteModal}
+                                              className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
                                 <button type="submit" className="btn btn-success mt-2">Salvar</button>
                             </div>
                         </form>
@@ -443,7 +458,7 @@ export const ReceitaForm = props => {
                 }}
             </Formik>
             <section>
-                <CancelarModalReceitas show={show}  handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+                <CancelarModalReceitas show={show} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
             </section>
             {uuid
                 ?
