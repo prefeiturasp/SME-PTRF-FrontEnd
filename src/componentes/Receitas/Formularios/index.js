@@ -12,7 +12,6 @@ import {
     getRepasse
 } from '../../../services/Receitas.service';
 import {
-    exibeDataPT_BR,
     round,
     trataNumericos,
 } from "../../../utils/ValidacoesAdicionaisFormularios";
@@ -46,18 +45,6 @@ export const ReceitaForm = props => {
     const [showDelete, setShowDelete] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [receita, setReceita] = useState({});
-    const [e_repasse, set_e_repasse] = useState(false);
-    const [e_repasse_acao, set_e_repasse_acao] = useState("");
-    const [tipo_de_receita, set_tipo_de_receita] = useState("");
-    const [acao, set_acao] = useState("");
-
-    useEffect(() => {
-
-        if (e_repasse !== false && e_repasse_acao !== "") {
-            get_repasse();
-        }
-
-    }, [e_repasse, e_repasse_acao, tipo_de_receita, acao])
 
 
     useEffect(() => {
@@ -173,74 +160,8 @@ export const ReceitaForm = props => {
         });
     }
 
-    const getValoresAdicionais = (e, tabela) => {
-
-        if (e.target.name === 'tipo_receita') {
-            set_tipo_de_receita(e.target.value)
-            tabela.map((item) => {
-                if (item.id === Number(e.target.value)) {
-                    set_e_repasse(item.e_repasse)
-                }
-            })
-        }
-
-        if (e.target.name === 'acao_associacao') {
-            set_acao(e.target.value)
-            set_e_repasse_acao(e.target.value)
-        }
-
-    }
-
-    const get_repasse = async () => {
-        /*        const init = {
-                    tipo_receita: resp.tipo_receita.id,
-                    acao_associacao: resp.acao_associacao.uuid,
-                    conta_associacao: resp.conta_associacao.uuid,
-                    data: resp.data,
-                    valor: resp.valor ? new Number(resp.valor).toLocaleString('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL'
-                    }) : "",
-                    descricao: resp.descricao,
-                }
-                */
-
-
-        try {
-            const repasse = await getRepasse(e_repasse_acao)
-            console.log("REPASSE", repasse)
-            console.log("REPASSE", repasse.valor_capital)
-            console.log("REPASSE", repasse.valor_custeio)
-            repasse.valor_capital = Number(repasse.valor_capital)
-            repasse.valor_custeio = Number(repasse.valor_custeio)
-
-            const init = {
-                ...initialValue,
-                tipo_receita: tipo_de_receita,
-                acao_associacao: acao,
-                conta_associacao: repasse.conta_associacao.uuid,
-                valor: repasse.valor_capital + repasse.valor_custeio
-
-            }
-            /*            const init = {
-                            ...initialValue,
-                            valor: repasse.valor_capital && repasse.valor_custeio ? Number(repasse.valor_capital + repasse.valor_custeio).toLocaleString('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL'
-                            }) : "",
-
-                        }*/
-            setInitialValue(init);
-        } catch (e) {
-            console.log("Erro: ", e)
-        }
-
-    }
-
     const validateFormReceitas = async (values) => {
         const errors = {};
-
-        console.log("Values ", values)
 
         let e_repasse_tipo_receita = false;
         let e_repasse_acao = "Escolha uma ação";
@@ -255,25 +176,16 @@ export const ReceitaForm = props => {
 
         if (e_repasse_tipo_receita !== false && e_repasse_acao !== "" && e_repasse_acao !== "Escolha uma ação") {
 
-           //debugger;
-
-
             try {
                 const repasse = await getRepasse(e_repasse_acao)
-                console.log("REPASSE", repasse)
 
                 let data_digitada = moment(values.data);
                 let data_inicio = moment(repasse.periodo.data_inicio_realizacao_despesas);
                 let data_fim = moment(repasse.periodo.data_fim_realizacao_despesas);
-                //let data_fim = new Date(repasse.periodo.data_fim_realizacao_despesas)
-
-
-                console.log("Data Digitada: ", data_digitada)
-                console.log("Data Inicio: ", data_inicio)
-                console.log("Data Fim: ", data_fim)
 
                 if(data_digitada  > data_fim || data_digitada < data_inicio ){
-                    errors.data = 'Data inválida. A data tem que ser igual ou menor a data atual que o repasse foi creditado em sua conta';
+                    errors.data = `Data inválida. A data tem que ser entre ${data_inicio.format("DD/MM/YYYY")} e ${data_fim.format("DD/MM/YYYY")}`;
+                    //errors.data = 'Data inválida. A data tem que ser igual ou menor a data atual que o repasse foi creditado em sua conta';
                 }
 
                 const init = {
@@ -281,8 +193,6 @@ export const ReceitaForm = props => {
                     tipo_receita: values.tipo_receita,
                     acao_associacao: values.acao_associacao,
                     conta_associacao: repasse.conta_associacao.uuid,
-                    //data: moment(new Date(repasse.periodo.data_inicio_realizacao_despesas), "YYYY-MM-DD").format("DD/MM/YYYY"),
-                    //data: exibeDataPT_BR(repasse.periodo.data_inicio_realizacao_despesas),
                     valor: Number(repasse.valor_capital) + Number(repasse.valor_custeio)
                 }
                 setInitialValue(init);
