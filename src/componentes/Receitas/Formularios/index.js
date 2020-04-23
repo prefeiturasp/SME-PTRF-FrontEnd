@@ -4,7 +4,11 @@ import { Formik } from 'formik';
 import { DatePickerField } from '../../DatePickerField'
 import CurrencyInput from 'react-currency-input';
 import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita, getRepasse } from '../../../services/Receitas.service';
-import { trataNumericos } from "../../../utils/ValidacoesAdicionaisFormularios";
+import {
+    exibeDataPT_BR,
+    round,
+    trataNumericos,
+} from "../../../utils/ValidacoesAdicionaisFormularios";
 import { ReceitaSchema } from '../Schemas';
 import moment from "moment";
 import { useParams } from 'react-router-dom';
@@ -37,6 +41,8 @@ export const ReceitaForm = props => {
     const [receita, setReceita] = useState({});
     const [e_repasse, set_e_repasse] = useState(false);
     const [e_repasse_acao, set_e_repasse_acao] = useState("");
+    const [tipo_de_receita, set_tipo_de_receita] = useState("");
+    const [acao, set_acao] = useState("");
 
     useEffect(()=> {
 
@@ -44,14 +50,13 @@ export const ReceitaForm = props => {
             get_repasse();
         }
 
-    }, [e_repasse, e_repasse_acao])
+    }, [e_repasse, e_repasse_acao, tipo_de_receita, acao])
 
 
     useEffect(() => {
         const carregaTabelas = async () => {
             getTabelasReceita()
             .then(response => {
-                console.log("Tabelas Receitas ", response)
                 setTabelas(response.data);
             })
             .catch(error => {
@@ -88,7 +93,8 @@ export const ReceitaForm = props => {
     }, [])
 
     const onSubmit = async (values) => {
-        values.valor = trataNumericos(values.valor);
+
+        values.valor = round(trataNumericos(values.valor),2);
         values.data = moment(values.data).format("YYYY-MM-DD");
         const payload = {
             ...values,
@@ -96,13 +102,26 @@ export const ReceitaForm = props => {
         }
 
         if(uuid){
-            await atualizar(uuid, payload);
+            try {
+                await atualizar(uuid, payload);
+                let path = `/lista-de-receitas`
+                props.history.push(path)
+            }catch (e) {
+                console.log("Erro ao cadastrar a receita: ", e.message)
+            }
+
         } else {
-            await cadastrar(payload);
+            try {
+                await cadastrar(payload);
+                let path = `/lista-de-receitas`
+                props.history.push(path)
+            }catch (e) {
+                console.log("Erro ao atualizar a receita: ", e.message)
+            }
+
         }
 
-        let path = `/lista-de-receitas`
-        props.history.push(path)
+
     }
 
     const cadastrar = async (payload) => {
@@ -167,6 +186,7 @@ export const ReceitaForm = props => {
     const getValoresAdicionais = (e, tabela)=>{
 
         if (e.target.name === 'tipo_receita') {
+            set_tipo_de_receita(e.target.value)
             tabela.map((item) => {
                 if (item.id === Number(e.target.value)) {
                     set_e_repasse(item.e_repasse)
@@ -175,23 +195,95 @@ export const ReceitaForm = props => {
         }
 
         if(e.target.name === 'acao_associacao'){
+            set_acao(e.target.value)
             set_e_repasse_acao( e.target.value)
         }
 
     }
 
     const get_repasse = async () => {
+/*        const init = {
+            tipo_receita: resp.tipo_receita.id,
+            acao_associacao: resp.acao_associacao.uuid,
+            conta_associacao: resp.conta_associacao.uuid,
+            data: resp.data,
+            valor: resp.valor ? new Number(resp.valor).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }) : "",
+            descricao: resp.descricao,
+        }
+        */
 
         try {
             const repasse = await getRepasse(e_repasse_acao)
             console.log("REPASSE", repasse)
-            setInitialValue(repasse);
+            console.log("REPASSE", repasse.valor_capital)
+            console.log("REPASSE", repasse.valor_custeio)
+            repasse.valor_capital = Number(repasse.valor_capital)
+            repasse.valor_custeio = Number(repasse.valor_custeio)
+
+            const init = {
+                ...initialValue,
+                tipo_receita: tipo_de_receita,
+                acao_associacao: acao,
+                conta_associacao: repasse.conta_associacao.uuid,
+                valor: repasse.valor_capital + repasse.valor_custeio
+
+            }
+/*            const init = {
+                ...initialValue,
+                valor: repasse.valor_capital && repasse.valor_custeio ? Number(repasse.valor_capital + repasse.valor_custeio).toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                }) : "",
+
+            }*/
+            setInitialValue(init);
         }catch (e) {
             console.log("Erro: ", e)
         }
 
+    }
+
+    const validateFormReceitas = async (values) => {
+        const errors = {};
+
+        console.log("Values ", values)
+
+        let e_repasse_tipo_receita = false;
+        let e_repasse_acao = "Escolha uma ação";
+
+        tabelas.tipos_receita.map((item) => {
+            if (item.id === Number(values.tipo_receita)) {
+                e_repasse_tipo_receita = item.e_repasse
+            }
+        })
+
+        e_repasse_acao = values.acao_associacao;
+
+        if (e_repasse_tipo_receita !== false && e_repasse_acao !== "" && e_repasse_acao !== "Escolha uma ação"){
+
+            console.log("ENTREI")
+            try {
+                const repasse = await getRepasse(e_repasse_acao)
+                console.log("REPASSE", repasse)
 
 
+                const init = {
+                    ...initialValue,
+                    tipo_receita: values.tipo_receita,
+                    acao_associacao: values.acao_associacao,
+                    conta_associacao: repasse.conta_associacao.uuid,
+                    //data: moment(new Date(repasse.periodo.data_inicio_realizacao_despesas), "YYYY-MM-DD").format("DD/MM/YYYY"),
+                    //data: exibeDataPT_BR(repasse.periodo.data_inicio_realizacao_despesas),
+                    valor: Number(repasse.valor_capital) + Number(repasse.valor_custeio)
+                }
+                setInitialValue(init);
+            }catch (e) {
+                console.log("Erro: ", e)
+            }
+        }
     }
 
     return (
@@ -201,11 +293,13 @@ export const ReceitaForm = props => {
                 validationSchema={ReceitaSchema}
                 enableReinitialize={true}
                 onSubmit={onSubmit}
+                validate={validateFormReceitas}
             >
                 {props => {
                     const {
                         values,
                         setFieldValue,
+
                     } = props;
                     return (
                         <form method="POST" id="receitaForm" onSubmit={props.handleSubmit}>
@@ -218,7 +312,7 @@ export const ReceitaForm = props => {
                                         value={props.values.tipo_receita}
                                         onChange={(e)=>{
                                             props.handleChange(e);
-                                            getValoresAdicionais(e, tabelas.tipos_receita)
+                                            //getValoresAdicionais(e, tabelas.tipos_receita)
                                         }
                                         }
 
@@ -296,7 +390,7 @@ export const ReceitaForm = props => {
                                                 //onChange={props.handleChange}
                                                 onChange={(e)=>{
                                                     props.handleChange(e);
-                                                    getValoresAdicionais(e, tabelas.acoes_associacao)
+                                                    //getValoresAdicionais(e, tabelas.acoes_associacao)
                                                 }
                                                 }
                                                 onBlur={props.handleBlur}

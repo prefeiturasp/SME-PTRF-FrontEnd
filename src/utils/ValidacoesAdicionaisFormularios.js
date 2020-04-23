@@ -33,6 +33,8 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     valor_recusos_acoes:yup.string().nullable(),
 });
 
+
+
 // Synchronous validation
 export const validateFormDespesas = (values, props /* only available when using withFormik */) => {
     const errors = {};
