@@ -26,7 +26,6 @@ export const CadastroForm = () => {
     const [showDelete, setShowDelete] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
-    const [mais_de_um_tipo_de_despesa, set_mais_de_um_tipo_de_despesa] = useState(false);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
 
     useEffect(() => {

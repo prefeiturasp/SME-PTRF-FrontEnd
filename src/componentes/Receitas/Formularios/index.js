@@ -3,18 +3,8 @@ import HTTP_STATUS from "http-status-codes";
 import {Formik} from 'formik';
 import {DatePickerField} from '../../DatePickerField'
 import CurrencyInput from 'react-currency-input';
-import {
-    criarReceita,
-    atualizaReceita,
-    deletarReceita,
-    getReceita,
-    getTabelasReceita,
-    getRepasse
-} from '../../../services/Receitas.service';
-import {
-    round,
-    trataNumericos,
-} from "../../../utils/ValidacoesAdicionaisFormularios";
+import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita, getRepasse } from '../../../services/Receitas.service';
+import { round, trataNumericos,} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
@@ -45,6 +35,8 @@ export const ReceitaForm = props => {
     const [showDelete, setShowDelete] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [receita, setReceita] = useState({});
+    const [readOnlyValor, setReadOnlyValor] = useState(false);
+
 
     useEffect(() => {
         const carregaTabelas = async () => {
@@ -203,10 +195,13 @@ export const ReceitaForm = props => {
                     valor: Number(repasse.valor_capital) + Number(repasse.valor_custeio)
                 }
                 setInitialValue(init);
+                setReadOnlyValor(true);
             } catch (e) {
                 console.log("Erro: ", e)
                 errors.acao_associacao = 'Não existe repasses pendentes para a associação nesta ação';
             }
+        }else {
+            setReadOnlyValor(false)
         }
 
         return errors;
@@ -263,8 +258,7 @@ export const ReceitaForm = props => {
                                         onChange={setFieldValue}
                                         onBlur={props.handleBlur}
                                     />
-                                    {props.touched.data && props.errors.data &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.data}</span>}
+                                    {props.touched.data && props.errors.data && <span className="span_erro text-danger mt-1"> {props.errors.data}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
@@ -278,9 +272,10 @@ export const ReceitaForm = props => {
                                         name="valor"
                                         id="valor"
                                         className="form-control"
-                                        onChangeEvent={props.handleChange}/>
-                                    {props.touched.valor && props.errors.valor &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.valor}</span>}
+                                        onChangeEvent={props.handleChange}
+                                        readOnly={readOnlyValor}
+                                    />
+                                    {props.touched.valor && props.errors.valor && <span className="span_erro text-danger mt-1"> {props.errors.valor}</span>}
                                 </div>
                             </div>
 
@@ -297,14 +292,12 @@ export const ReceitaForm = props => {
                                         cols="50"
                                         className="form-control"
                                         placeholder="Escreva a descrição da receita"/>
-                                    {props.touched.descricao && props.errors.descricao &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.descricao}</span>}
+                                    {props.touched.descricao && props.errors.descricao && <span className="span_erro text-danger mt-1"> {props.errors.descricao}</span>}
                                 </div>
                                 <div className="col-12 col-md-6 mt-4">
 
                                     <div className="row">
                                         <div className="col-12">
-
                                             <label htmlFor="acao_associacao">Ação</label>
                                             <select
                                                 id="acao_associacao"
@@ -325,8 +318,7 @@ export const ReceitaForm = props => {
                                                 ))) : null}
                                             </select>
                                             {props.touched.acao_associacao && props.errors.acao_associacao &&
-                                            <span
-                                                className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
+                                            <span className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
                                         </div>
                                     </div>
 
@@ -340,6 +332,7 @@ export const ReceitaForm = props => {
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
                                                 className="form-control"
+                                                disabled={readOnlyValor}
                                             >
                                                 {receita.conta_associacao
                                                     ? null
@@ -349,16 +342,13 @@ export const ReceitaForm = props => {
                                                 ))) : null}
                                             </select>
                                             {props.touched.conta_associacao && props.errors.conta_associacao &&
-                                            <span
-                                                className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
+                                            <span className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
-                                <button type="reset" onClick={onShowModal}
-                                        className="btn btn btn-outline-success mt-2 mr-2">Cancelar
-                                </button>
+                                <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
                                 {uuid
                                     ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
                                 <button type="submit" className="btn btn-success mt-2">Salvar</button>
