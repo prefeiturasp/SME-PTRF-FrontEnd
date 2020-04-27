@@ -173,7 +173,6 @@ export const ReceitaForm = props => {
                     repasse = await getRepasse(e_repasse_acao, false);
                 }
 
-
                 console.log("REPASSE ", repasse)
 
                 let data_digitada = moment(values.data);
