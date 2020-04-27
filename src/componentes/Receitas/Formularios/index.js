@@ -51,7 +51,6 @@ export const ReceitaForm = props => {
             if (uuid) {
                 getReceita(uuid).then(response => {
                     const resp = response.data;
-                    console.log("get Receita ", resp.data)
                     const init = {
                         tipo_receita: resp.tipo_receita.id,
                         acao_associacao: resp.acao_associacao.uuid,
@@ -172,8 +171,6 @@ export const ReceitaForm = props => {
                 }else {
                     repasse = await getRepasse(e_repasse_acao, false);
                 }
-
-                console.log("REPASSE ", repasse)
 
                 let data_digitada = moment(values.data);
                 let data_inicio = moment(repasse.periodo.data_inicio_realizacao_despesas);

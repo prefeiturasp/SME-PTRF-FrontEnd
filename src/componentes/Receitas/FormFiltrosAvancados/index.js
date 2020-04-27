@@ -119,7 +119,7 @@ export const FormFiltrosAvancados = (props) => {
                                 limpaFormulario()
                             }
                             }
-                            className="btn btn-outline-success mt-2 mr-2"
+                            className="btn btn-outline-success mt-2"
                             type="button"
                         >
                             Cancelar
