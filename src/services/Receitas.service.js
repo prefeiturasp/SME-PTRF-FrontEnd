@@ -77,7 +77,6 @@ export const filtrosAvancadosReceitas = async (palavra, tipo_receita, acao_assoc
 }
 
 export const getRepasse = async (acao_associacao_uuid, eAtualizacao=false) => {
-    console.log("eAtualizacao, ", eAtualizacao);
     return (await api.get(`api/repasses/pendentes/?acao-associacao=${acao_associacao_uuid}${eAtualizacao ? "&edit=True": ""}`, authHeader)).data
 }
 

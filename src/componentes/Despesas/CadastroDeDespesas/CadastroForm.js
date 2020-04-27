@@ -74,7 +74,6 @@ export const CadastroForm = () => {
                     let path = `/lista-de-despesas`;
                     history.push(path);
                 } else {
-                    console.log(response)
                    return
                 }
             } catch (error) {
@@ -91,7 +90,6 @@ export const CadastroForm = () => {
                     let path = `/lista-de-despesas`;
                     history.push(path);
                 } else {
-                    console.log(response)
                     return
                 }
             } catch (error) {
