@@ -51,6 +51,7 @@ export const ReceitaForm = props => {
             if (uuid) {
                 getReceita(uuid).then(response => {
                     const resp = response.data;
+                    console.log("get Receita ", resp.data)
                     const init = {
                         tipo_receita: resp.tipo_receita.id,
                         acao_associacao: resp.acao_associacao.uuid,
@@ -165,7 +166,13 @@ export const ReceitaForm = props => {
         if (e_repasse_tipo_receita !== false && e_repasse_acao !== "" && e_repasse_acao !== "Escolha uma ação") {
 
             try {
-                const repasse = await getRepasse(e_repasse_acao);
+                let repasse;
+                if (uuid){
+                    repasse = await getRepasse(e_repasse_acao, true);
+                }else {
+                    repasse = await getRepasse(e_repasse_acao, false);
+                }
+
 
                 console.log("REPASSE ", repasse)
 
