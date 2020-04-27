@@ -459,9 +459,9 @@ export const CadastroForm = () => {
                             <div className="d-flex  justify-content-end pb-3">
                                 <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
                                 {despesaContext.idDespesa
-                                    ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2">Deletar</button>
+                                    ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button>
                                     : null}
-                                <button disabled={btnSubmitDisable} type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
+                                <button disabled={btnSubmitDisable} type="submit" className="btn btn-success mt-2">Salvar</button>
                             </div>
                         </form>
 
