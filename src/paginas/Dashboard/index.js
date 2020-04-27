@@ -14,7 +14,6 @@ export const DashboardPage = () => {
 
     const buscaListaAcoesAssociacao = async () => {
         const listaAcoes = await getAcoesAssociacao()
-        console.log("Ollyver Lista ", listaAcoes)
         setAcoesAssociacao(listaAcoes)
     }
 
