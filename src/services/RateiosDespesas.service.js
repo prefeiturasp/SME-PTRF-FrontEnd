@@ -1,8 +1,12 @@
 import api from './Api'
 import {ASSOCIACAO_UUID} from "./auth.service";
+import { TOKEN_ALIAS } from './auth.service.js';
 
 const authHeader = {
-    'Content-Type': 'application/json'
+    headers: {
+        'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,  
+        'Content-Type': 'application/json'
+    }
 }
 
 export const getListaRateiosDespesas = async uuid => {
