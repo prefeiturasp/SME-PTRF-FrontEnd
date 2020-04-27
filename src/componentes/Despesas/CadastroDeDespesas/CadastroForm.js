@@ -1,72 +1,20 @@
-import React, {Component, Fragment, useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
 import { YupSignupSchemaCadastroDespesa, validaPayloadDespesas, validateFormDespesas, cpfMaskContitional, calculaValorRecursoAcoes,  } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio} from "../../../services/Despesas.service";
+import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
-import {Button, Modal} from "react-bootstrap";
 import {useHistory} from 'react-router-dom'
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
 import {CadastroFormCapital} from "./CadastroFormCapital";
 import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
-
 import CurrencyInput from "react-currency-input";
 
-class CancelarModal extends Component {
-    render() {
-        return (
-            <Fragment>
-                <Modal centered show={this.props.show} onHide={this.props.handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Cancelar cadastro</Modal.Title>
-                    </Modal.Header>
-                     <Modal.Body>
-                         <p>Tem certeza que deseja cancelar esse cadastramento? As informações não serão salvas</p>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={this.props.onCancelarTrue}>
-                            OK
-                        </Button>
-                        <Button variant="primary" onClick={this.props.handleClose}>
-                            Fechar
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            </Fragment>
-        )
-    }
-}
-
-class DeletarModal extends Component {
-
-    render () {
-        return (
-            <Fragment>
-                <Modal centered show={this.props.show} onHide={this.props.handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Deseja excluir esta Despesa?</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <p>Tem certeza que deseja excluir esta despesa? A ação não poderá ser desfeita.</p>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={this.props.onDeletarTrue}>
-                            OK
-                        </Button>
-                        <Button variant="primary" onClick={this.props.handleClose}>
-                            Fechar
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            </Fragment>
-        )
-    }
-}
+import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Modais"
 
 export const CadastroForm = () => {
-
 
     let history = useHistory();
 
@@ -74,10 +22,11 @@ export const CadastroForm = () => {
 
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [show, setShow] = useState(false);
+    const [showAvisoCapital, setShowAvisoCapital] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
-
+    const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
@@ -112,10 +61,9 @@ export const CadastroForm = () => {
     }
 
     const onSubmit = async (values, {resetForm}) => {
+        setBtnSubmitDisable(true);
 
         validaPayloadDespesas(values)
-
-        console.log("onSubmit", values)
 
         if( despesaContext.verboHttp === "POST"){
             try {
@@ -126,7 +74,6 @@ export const CadastroForm = () => {
                     let path = `/lista-de-despesas`;
                     history.push(path);
                 } else {
-                    console.log(response)
                    return
                 }
             } catch (error) {
@@ -134,7 +81,7 @@ export const CadastroForm = () => {
                 return
             }
         }else if(despesaContext.verboHttp === "PUT"){
-            console.log("onsubmit Método PUT")
+
             try {
                 const response = await alterarDespesa(values, despesaContext.idDespesa)
                 if (response.status === 200) {
@@ -143,7 +90,6 @@ export const CadastroForm = () => {
                     let path = `/lista-de-despesas`;
                     history.push(path);
                 } else {
-                    console.log(response)
                     return
                 }
             } catch (error) {
@@ -163,10 +109,15 @@ export const CadastroForm = () => {
     const onHandleClose = () => {
         setShow(false);
         setShowDelete(false);
+        setShowAvisoCapital(false);
     }
 
     const onShowModal = () => {
         setShow(true);
+    }
+
+    const onShowAvisoCapitalModal = () => {
+        setShowAvisoCapital(true);
     }
 
     const onShowDeleteModal = () => {
@@ -185,6 +136,19 @@ export const CadastroForm = () => {
             console.log(error);
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
         });
+    }
+
+    const handleAvisoCapital = (value) => {
+        if (value === "CAPITAL"){
+            onShowAvisoCapitalModal()
+        }
+    }
+
+    const get_nome_razao_social = async (cpf_cnpj, setFieldValue) => {
+        let resp = await getNomeRazaoSocial(cpf_cnpj)
+        if (resp && resp.length > 0 && resp[0].nome){
+            setFieldValue("nome_fornecedor", resp[0].nome)
+        }
     }
 
     return (
@@ -211,18 +175,23 @@ export const CadastroForm = () => {
                                     <MaskedInput
                                         mask={(valor) => cpfMaskContitional(valor)}
                                         value={props.values.cpf_cnpj_fornecedor}
-                                        onChange={props.handleChange}
+                                        onChange={(e)=>{
+                                            props.handleChange(e);
+                                            get_nome_razao_social(e.target.value, setFieldValue)
+
+                                            }
+                                        }
                                         onBlur={props.handleBlur}
                                         name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
                                         className="form-control"
                                         placeholder="Digite o número do documento"
                                     />
-                                    {props.errors.cpf_cnpj_fornecedor && <span
-                                        className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
+                                    {props.errors.cpf_cnpj_fornecedor && <span className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
                                 </div>
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
                                     <input
+                                        //value={nome_fornecedor}
                                         value={props.values.nome_fornecedor}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
@@ -375,7 +344,6 @@ export const CadastroForm = () => {
                                     <select
                                         value={props.values.mais_de_um_tipo_despesa}
                                         onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
                                         name='mais_de_um_tipo_despesa'
                                         id='mais_de_um_tipo_despesa'
                                         className="form-control"
@@ -410,6 +378,7 @@ export const CadastroForm = () => {
                                                                 value={rateio.aplicacao_recurso}
                                                                 onChange={(e) => {
                                                                     props.handleChange(e);
+                                                                    handleAvisoCapital(e.target.value)
                                                                 }}
                                                                 name={`rateios[${index}].aplicacao_recurso`}
                                                                 id='aplicacao_recurso'
@@ -440,9 +409,7 @@ export const CadastroForm = () => {
                                                                 despesasTabelas={despesasTabelas}
                                                                 especificaoes_capital={especificaoes_capital}
                                                             />
-
                                                             ): null}
-
 
                                                         {index >= 1 && values.rateios.length > 1 && (
                                                             <div className="d-flex  justify-content-start mt-3 mb-3">
@@ -459,8 +426,7 @@ export const CadastroForm = () => {
                                             )
                                         })}
 
-                                        {props.values.mais_de_um_tipo_despesa === "sim" &&
-                                        <div className="d-flex  justify-content-start mt-3 mb-3">
+                                        {props.values.mais_de_um_tipo_despesa === "sim" && <div className="d-flex  justify-content-start mt-3 mb-3">
 
                                             <button
                                                 type="button"
@@ -491,9 +457,9 @@ export const CadastroForm = () => {
                             <div className="d-flex  justify-content-end pb-3">
                                 <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
                                 {despesaContext.idDespesa
-                                    ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2">Deletar</button>
+                                    ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button>
                                     : null}
-                                <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
+                                <button disabled={btnSubmitDisable} type="submit" className="btn btn-success mt-2">Salvar</button>
                             </div>
                         </form>
 
@@ -503,6 +469,9 @@ export const CadastroForm = () => {
             </Formik>
             <section>
                 <CancelarModal show={show} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+            </section>
+            <section>
+                <AvisoCapitalModal show={showAvisoCapital} handleClose={onHandleClose} />
             </section>
             {despesaContext.idDespesa
                 ?

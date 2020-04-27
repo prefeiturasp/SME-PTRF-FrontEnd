@@ -1,7 +1,11 @@
 import api from './Api'
+import { TOKEN_ALIAS } from './auth.service.js';
 
 const authHeader = {
-    'Content-Type': 'application/json'
+    headers: {
+        'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,  
+        'Content-Type': 'application/json'
+    }
 }
 
 export const deleteDespesa = async uuid => {
@@ -39,4 +43,13 @@ export const alterarDespesa = async (payload, idDespesa) => {
         return error.response;
     });
 }
+
+export const getNomeRazaoSocial = async (cpf_cnpj) => {
+    if (cpf_cnpj){
+        return (await api.get(`/api/fornecedores/?uuid=&cpf_cnpj=${cpf_cnpj}`, authHeader)).data
+    }else {
+        return ""
+    }
+}
+
 

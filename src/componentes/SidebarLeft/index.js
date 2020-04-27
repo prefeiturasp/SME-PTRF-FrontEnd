@@ -4,7 +4,6 @@ import '@trendmicro/react-sidenav/dist/react-sidenav.css'
 import './siderbarLeft.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faSchool } from '@fortawesome/free-solid-svg-icons'
-
 import IconeMenuPainel from '../../assets/img/icone-menu-painel.svg'
 import IconeMenuGastosDaEscola from '../../assets/img/icone-menu-gastos-da-escola.svg'
 import IconeMenuCreditosDaEscola from '../../assets/img/icone-menu-creditos-da-escola.svg'
@@ -14,11 +13,8 @@ import IconeMenuPrestacaoDeContas from '../../assets/img/icone-menu-prestacao-de
 import IconeMenuDadosDaAssociacao from '../../assets/img/icone-menu-dados-da-associacao.svg'
 import LogoSP from '../../assets/img/logo-menu.png'
 import { SidebarContext } from '../../context/Sidebar'
-
 import { useHistory } from 'react-router-dom'
-
 import { USUARIO_NOME, ASSOCIACAO_NOME } from '../../services/auth.service'
-
 import { Versao } from '../Versao'
 
 export const SidebarLeft = () => {
@@ -44,24 +40,25 @@ export const SidebarLeft = () => {
         onToggle={onToggle}
       >
         <SideNav.Toggle />
-        <SideNav.Nav defaultSelected="painel">
-          <NavItem navitemClassName="navItemCustomizado">
+        <SideNav.Nav defaultSelected="dashboard">
+
+          <NavItem navitemClassName={sidebarStatus.sideBarStatus ? 'navItemCustomizadoNome esconde-icone mb-n2' : 'navItemCustomizadoNome'}  eventKey="dashboard">
             <NavIcon>
               <FontAwesomeIcon
-                style={{ fontSize: '25px' }}
+                style={{ fontSize: '25px'}}
                 className={sidebarStatus.sideBarStatus ? 'escondeItem' : ''}
                 src={IconeMenuDadosDaAssociacao}
                 icon={faUser}
               />
             </NavIcon>
             <NavText>
-              <div className="container-nome-instituicao mt-n4 mb-4">
+              <div className="container-nome-instituicao">
                 {localStorage.getItem(ASSOCIACAO_NOME)}
               </div>
             </NavText>
           </NavItem>
 
-          <NavItem navitemClassName="navItemCustomizado">
+          <NavItem navitemClassName="navItemCustomizadoNome" eventKey="dashboard">
             <NavIcon>
               <FontAwesomeIcon
                 style={{ fontSize: '25px' }}
@@ -87,6 +84,7 @@ export const SidebarLeft = () => {
             </NavIcon>
             <NavText>Painel</NavText>
           </NavItem>
+
           <NavItem eventKey="lista-de-despesas">
             <NavIcon>
               <img src={IconeMenuGastosDaEscola} alt="" />
@@ -122,31 +120,33 @@ export const SidebarLeft = () => {
             <NavText>Prestação de contas</NavText>
           </NavItem>
 
-          <NavItem eventKey="dadosAssociacao">
+          <NavItem eventKey="dados-da-associacao">
             <NavIcon>
               <img src={IconeMenuDadosDaAssociacao} alt="" />
             </NavIcon>
             <NavText>Dados da Associação</NavText>
           </NavItem>
           <NavItem
+            eventKey="dashboard"
             navitemClassName={
               !sidebarStatus.sideBarStatus
                 ? 'escondeItem'
-                : 'navItemCustomizado'
+                : 'navItemCustomizadoNome'
             }
           >
             <NavIcon></NavIcon>
             <NavText>
-              <div className="container-nome-instituicao mt-n4 mb-4">
+              <div className="container-nome-instituicao mt-n4">
                 <img src={LogoSP} alt="" />
               </div>
             </NavText>
           </NavItem>
           <NavItem
+            eventKey="dashboard"
             navitemClassName={
               !sidebarStatus.sideBarStatus
                 ? 'escondeItem'
-                : 'navItemCustomizado'
+                : 'navItemCustomizadoNome'
             }
           >
             <NavIcon></NavIcon>

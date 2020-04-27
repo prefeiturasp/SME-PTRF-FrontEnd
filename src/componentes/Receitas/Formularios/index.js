@@ -1,62 +1,15 @@
-import React, {useEffect, useState, Component, Fragment} from "react";
-import { Button, Modal } from 'react-bootstrap';
+import React, {useEffect, useState} from "react";
 import HTTP_STATUS from "http-status-codes";
-import { Formik } from 'formik';
-import { DatePickerField } from '../../DatePickerField'
+import {Formik} from 'formik';
+import {DatePickerField} from '../../DatePickerField'
 import CurrencyInput from 'react-currency-input';
-import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita } from '../../../services/Receitas.service';
-import { trataNumericos } from "../../../utils/ValidacoesAdicionaisFormularios";
-import { ReceitaSchema } from '../Schemas';
+import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita, getRepasse } from '../../../services/Receitas.service';
+import { round, trataNumericos,} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
-import { useParams } from 'react-router-dom';
-import { ASSOCIACAO_UUID } from '../../../services/auth.service';
-
-
-class CancelarModal extends Component {
-
-    render () {
-        return (
-            <Fragment>
-                <Modal centered show={this.props.show} onHide={this.handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Deseja cancelar a inclusão de Receita?</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={this.props.onCancelarTrue}>
-                            OK
-                        </Button>
-                        <Button variant="primary" onClick={this.props.handleClose}>
-                            fechar
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            </Fragment>
-        )
-    }
-}
-
-class DeletarModal extends Component {
-
-    render () {
-        return (
-            <Fragment>
-                <Modal centered show={this.props.show} onHide={this.handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Deseja excluir esta Receita?</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={this.props.onDeletarTrue}>
-                            OK
-                        </Button>
-                        <Button variant="primary" onClick={this.props.handleClose}>
-                            fechar
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            </Fragment>
-        )
-    }
-}
+import {useParams} from 'react-router-dom';
+import {ASSOCIACAO_UUID} from '../../../services/auth.service';
+import {DeletarModalReceitas, CancelarModalReceitas} from "../../../utils/Modais";
 
 export const ReceitaForm = props => {
 
@@ -82,23 +35,21 @@ export const ReceitaForm = props => {
     const [showDelete, setShowDelete] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [receita, setReceita] = useState({});
+    const [readOnlyValor, setReadOnlyValor] = useState(false);
+
 
     useEffect(() => {
         const carregaTabelas = async () => {
-            getTabelasReceita()
-            .then(response => {
+            getTabelasReceita().then(response => {
                 setTabelas(response.data);
-            })
-            .catch(error => {
+            }).catch(error => {
                 console.log(error);
             });
-
         };
 
         const buscaReceita = async () => {
             if (uuid) {
-                getReceita(uuid)
-                .then(response => {
+                getReceita(uuid).then(response => {
                     const resp = response.data;
                     const init = {
                         tipo_receita: resp.tipo_receita.id,
@@ -113,31 +64,29 @@ export const ReceitaForm = props => {
                     }
                     setInitialValue(init);
                     setReceita(resp);
-                })
-                .catch(error => {
+                }).catch(error => {
                     console.log(error);
                 });
             }
-
         };
         carregaTabelas();
         buscaReceita();
     }, [])
 
     const onSubmit = async (values) => {
-        values.valor = trataNumericos(values.valor);
+
+        values.valor = round(trataNumericos(values.valor), 2);
         values.data = moment(values.data).format("YYYY-MM-DD");
         const payload = {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID)
         }
 
-        if(uuid){
+        if (uuid) {
             await atualizar(uuid, payload);
         } else {
             await cadastrar(payload);
         }
-
         let path = `/lista-de-receitas`
         props.history.push(path)
     }
@@ -188,17 +137,73 @@ export const ReceitaForm = props => {
     }
 
     const onDeletarTrue = () => {
-        deletarReceita(uuid)
-        .then(response => {
+        deletarReceita(uuid).then(response => {
             console.log("Receita deletada com sucesso.");
             setShowDelete(false);
             let path = `/lista-de-receitas`;
             props.history.push(path);
-        })
-        .catch(error => {
+        }).catch(error => {
             console.log(error);
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
         });
+    }
+
+    const validateFormReceitas = async (values) => {
+        const errors = {};
+
+        let e_repasse_tipo_receita = false;
+        let e_repasse_acao = "Escolha uma ação";
+
+        tabelas.tipos_receita.map((item) => {
+            if (item.id === Number(values.tipo_receita)) {
+                e_repasse_tipo_receita = item.e_repasse
+            }
+        })
+
+        e_repasse_acao = values.acao_associacao;
+
+        if (e_repasse_tipo_receita !== false && e_repasse_acao !== "" && e_repasse_acao !== "Escolha uma ação") {
+
+            try {
+                let repasse;
+                if (uuid){
+                    repasse = await getRepasse(e_repasse_acao, true);
+                }else {
+                    repasse = await getRepasse(e_repasse_acao, false);
+                }
+
+                let data_digitada = moment(values.data);
+                let data_inicio = moment(repasse.periodo.data_inicio_realizacao_despesas);
+                let data_fim = repasse.periodo.data_fim_realizacao_despesas;
+
+                if (data_fim === null){
+                    data_fim = moment(new Date());
+                }else {
+                    data_fim = moment(repasse.periodo.data_fim_realizacao_despesas);
+                }
+
+                if(data_digitada  > data_fim || data_digitada < data_inicio ){
+                    errors.data = `Data inválida. A data tem que ser entre ${data_inicio.format("DD/MM/YYYY")} e ${data_fim.format("DD/MM/YYYY")}`;
+                }
+
+                const init = {
+                    ...initialValue,
+                    tipo_receita: values.tipo_receita,
+                    acao_associacao: values.acao_associacao,
+                    conta_associacao: repasse.conta_associacao.uuid,
+                    valor: Number(repasse.valor_capital) + Number(repasse.valor_custeio)
+                }
+                setInitialValue(init);
+                setReadOnlyValor(true);
+            } catch (e) {
+                console.log("Erro: ", e)
+                errors.acao_associacao = 'Não existe repasses pendentes para a associação nesta ação';
+            }
+        }else {
+            setReadOnlyValor(false)
+        }
+
+        return errors;
     }
 
     return (
@@ -207,7 +212,9 @@ export const ReceitaForm = props => {
                 initialValues={initialValue}
                 validationSchema={ReceitaSchema}
                 enableReinitialize={true}
+                validateOnBlur={true}
                 onSubmit={onSubmit}
+                validate={validateFormReceitas}
             >
                 {props => {
                     const {
@@ -223,7 +230,10 @@ export const ReceitaForm = props => {
                                         id="tipo_receita"
                                         name="tipo_receita"
                                         value={props.values.tipo_receita}
-                                        onChange={props.handleChange}
+                                        onChange={(e) => {
+                                            props.handleChange(e);
+                                        }
+                                        }
                                         onBlur={props.handleBlur}
                                         className="form-control"
                                     >
@@ -232,7 +242,7 @@ export const ReceitaForm = props => {
                                             : <option>Selecione o tipo</option>}
                                         {tabelas.tipos_receita !== undefined && tabelas.tipos_receita.length > 0 ? (tabelas.tipos_receita.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
-                                        ))): null}
+                                        ))) : null}
                                     </select>
                                     {props.touched.tipo_receita && props.errors.tipo_receita &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.tipo_receita}</span>}
@@ -247,8 +257,7 @@ export const ReceitaForm = props => {
                                         onChange={setFieldValue}
                                         onBlur={props.handleBlur}
                                     />
-                                    {props.touched.data && props.errors.data &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.data}</span>}
+                                    {props.touched.data && props.errors.data && <span className="span_erro text-danger mt-1"> {props.errors.data}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
@@ -262,9 +271,10 @@ export const ReceitaForm = props => {
                                         name="valor"
                                         id="valor"
                                         className="form-control"
-                                        onChangeEvent={props.handleChange}/>
-                                    {props.touched.valor && props.errors.valor &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.valor}</span>}
+                                        onChangeEvent={props.handleChange}
+                                        readOnly={readOnlyValor}
+                                    />
+                                    {props.touched.valor && props.errors.valor && <span className="span_erro text-danger mt-1"> {props.errors.valor}</span>}
                                 </div>
                             </div>
 
@@ -277,59 +287,67 @@ export const ReceitaForm = props => {
                                         onBlur={props.handleBlur}
                                         name="descricao"
                                         id="descricao"
-                                        type="text"
-                                        rows="4"
+                                        rows="5"
                                         cols="50"
                                         className="form-control"
                                         placeholder="Escreva a descrição da receita"/>
-                                    {props.touched.descricao && props.errors.descricao &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.descricao}</span>}
+                                    {props.touched.descricao && props.errors.descricao && <span className="span_erro text-danger mt-1"> {props.errors.descricao}</span>}
                                 </div>
                                 <div className="col-12 col-md-6 mt-4">
-                                    <div className="form-row">
-                                        <label htmlFor="acao_associacao">Ação</label>
-                                        <select
-                                            id="acao_associacao"
-                                            name="acao_associacao"
-                                            value={props.values.acao_associacao}
-                                            onChange={props.handleChange}
-                                            onBlur={props.handleBlur}
-                                            className="form-control"
-                                        >
-                                            {receita.acao_associacao
-                                                ? null
-                                                : <option>Escolha uma ação</option>}
-                                            {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
-                                                <option key={key} value={item.uuid}>{item.nome}</option>
-                                            ))): null}
-                                        </select>
-                                        {props.touched.acao_associacao && props.errors.acao_associacao &&
-                                        <span className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
+
+                                    <div className="row">
+                                        <div className="col-12">
+                                            <label htmlFor="acao_associacao">Ação</label>
+                                            <select
+                                                id="acao_associacao"
+                                                name="acao_associacao"
+                                                value={props.values.acao_associacao}
+                                                onChange={(e) => {
+                                                    props.handleChange(e);
+                                                }
+                                                }
+                                                onBlur={props.handleBlur}
+                                                className="form-control"
+                                            >
+                                                {receita.acao_associacao
+                                                    ? null
+                                                    : <option>Escolha uma ação</option>}
+                                                {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
+                                                    <option key={key} value={item.uuid}>{item.nome}</option>
+                                                ))) : null}
+                                            </select>
+                                            {props.touched.acao_associacao && props.errors.acao_associacao &&
+                                            <span className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
+                                        </div>
                                     </div>
-                                    <div className="form-row">
-                                        <label htmlFor="conta_associacao">Tipo de conta</label>
-                                        <select
-                                            id="conta_associacao"
-                                            name="conta_associacao"
-                                            value={props.values.conta_associacao}
-                                            onChange={props.handleChange}
-                                            onBlur={props.handleBlur}
-                                            className="form-control"
-                                        >
-                                            {receita.conta_associacao
-                                                ? null
-                                                : <option>Escolha uma conta</option>}
-                                            {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
-                                                <option key={key} value={item.uuid}>{item.nome}</option>
-                                            ))): null}
-                                        </select>
-                                        {props.touched.conta_associacao && props.errors.conta_associacao &&
-                                        <span className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
+
+                                    <div className="row mt-4">
+                                        <div className="col-12">
+                                            <label htmlFor="conta_associacao">Tipo de conta</label>
+                                            <select
+                                                id="conta_associacao"
+                                                name="conta_associacao"
+                                                value={props.values.conta_associacao}
+                                                onChange={props.handleChange}
+                                                onBlur={props.handleBlur}
+                                                className="form-control"
+                                                disabled={readOnlyValor}
+                                            >
+                                                {receita.conta_associacao
+                                                    ? null
+                                                    : <option>Escolha uma conta</option>}
+                                                {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
+                                                    <option key={key} value={item.uuid}>{item.nome}</option>
+                                                ))) : null}
+                                            </select>
+                                            {props.touched.conta_associacao && props.errors.conta_associacao &&
+                                            <span className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
-                                <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                                <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
                                 {uuid
                                     ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
                                 <button type="submit" className="btn btn-success mt-2">Salvar</button>
@@ -339,11 +357,11 @@ export const ReceitaForm = props => {
                 }}
             </Formik>
             <section>
-                <CancelarModal show={show}  handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+                <CancelarModalReceitas show={show} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
             </section>
             {uuid
                 ?
-                <DeletarModal show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
+                <DeletarModalReceitas show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
                 : null
             }
         </>

@@ -25,16 +25,16 @@ export const EdicaoDeDespesa = ()=>{
 
                 let rateios_tratados = resp.rateios.map((item) =>{
 
-                        item.associacao = localStorage.getItem(ASSOCIACAO_UUID)
-                        item.conta_associacao = item.conta_associacao ? item.conta_associacao : ""
-                        item.acao_associacao = item.acao_associacao ? item.acao_associacao : ""
-                        item.aplicacao_recurso = item.aplicacao_recurso? item.aplicacao_recurso : "CUSTEIO"
-                        item.tipo_custeio = item.tipo_custeio ? item.tipo_custeio : "1"
-                        item.especificacao_material_servico = item.especificacao_material_servico ? item.especificacao_material_servico : ""
-                        item.valor_rateio = item.valor_rateio ? item.valor_rateio : ""
-                        item.quantidade_itens_capital = item.quantidade_itens_capital ? item.quantidade_itens_capital : ""
-                        item.valor_item_capital = item.valor_item_capital ? item.valor_item_capital : ""
-                        item.numero_processo_incorporacao_capital = item.numero_processo_incorporacao_capital ? item.numero_processo_incorporacao_capital : ""
+                    item.associacao = localStorage.getItem(ASSOCIACAO_UUID)
+                    item.conta_associacao = item.conta_associacao ? item.conta_associacao : ""
+                    item.acao_associacao = item.acao_associacao ? item.acao_associacao : ""
+                    item.aplicacao_recurso = item.aplicacao_recurso? item.aplicacao_recurso : "CUSTEIO"
+                    item.tipo_custeio = item.tipo_custeio ? item.tipo_custeio : "1"
+                    item.especificacao_material_servico = item.especificacao_material_servico ? item.especificacao_material_servico : ""
+                    item.valor_rateio = item.valor_rateio ? item.valor_rateio : ""
+                    item.quantidade_itens_capital = item.quantidade_itens_capital ? item.quantidade_itens_capital : ""
+                    item.valor_item_capital = item.valor_item_capital ? item.valor_item_capital : ""
+                    item.numero_processo_incorporacao_capital = item.numero_processo_incorporacao_capital ? item.numero_processo_incorporacao_capital : ""
 
                     item.valor_rateio = item.valor_rateio ? Number(item.valor_rateio).toLocaleString('pt-BR', {
                         style: 'currency',
@@ -49,6 +49,7 @@ export const EdicaoDeDespesa = ()=>{
 
                 const init = {
                     ...resp,
+                    mais_de_um_tipo_despesa : resp.rateios.length > 1 ? "sim" : "nao",
                     data_documento: resp.data_documento ?  moment(resp.data_documento, "YYYY-MM-DD"): null,
                     data_transacao: resp.data_transacao ?  moment(resp.data_transacao, "YYYY-MM-DD"): null,
 
@@ -67,8 +68,6 @@ export const EdicaoDeDespesa = ()=>{
                     }) : "",
 
                 }
-
-                console.log("Edicao Despesa Page ", response)
                 despesaContext.setInitialValues(init)
             }).catch(error => {
                 console.log(error);
@@ -78,7 +77,6 @@ export const EdicaoDeDespesa = ()=>{
 
     return(
         <PaginasContainer>
-
             <h1 className="titulo-itens-painel mt-5">Edição de Despesa</h1>
             <div className="page-content-inner ">
                 <CadastroDeDespesas/>
