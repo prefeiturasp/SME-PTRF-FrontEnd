@@ -173,15 +173,11 @@ export const ReceitaForm = props => {
                 let data_inicio = moment(repasse.periodo.data_inicio_realizacao_despesas);
                 let data_fim = repasse.periodo.data_fim_realizacao_despesas;
 
-                console.log("Data fim 01 ", data_fim)
-
                 if (data_fim === null){
                     data_fim = moment(new Date());
                 }else {
                     data_fim = moment(repasse.periodo.data_fim_realizacao_despesas);
                 }
-
-                console.log("Data fim 02 ", data_fim)
 
                 if(data_digitada  > data_fim || data_digitada < data_inicio ){
                     errors.data = `Data inválida. A data tem que ser entre ${data_inicio.format("DD/MM/YYYY")} e ${data_fim.format("DD/MM/YYYY")}`;
