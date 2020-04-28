@@ -29,7 +29,7 @@ export const EdicaoDeDespesa = ()=>{
                     item.conta_associacao = item.conta_associacao ? item.conta_associacao : ""
                     item.acao_associacao = item.acao_associacao ? item.acao_associacao : ""
                     item.aplicacao_recurso = item.aplicacao_recurso? item.aplicacao_recurso : "CUSTEIO"
-                    item.tipo_custeio = item.tipo_custeio ? item.tipo_custeio : "1"
+                    item.tipo_custeio = item.tipo_custeio ? item.tipo_custeio : ""
                     item.especificacao_material_servico = item.especificacao_material_servico ? item.especificacao_material_servico : ""
                     item.valor_rateio = item.valor_rateio ? item.valor_rateio : ""
                     item.quantidade_itens_capital = item.quantidade_itens_capital ? item.quantidade_itens_capital : ""

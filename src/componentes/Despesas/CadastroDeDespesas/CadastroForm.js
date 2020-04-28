@@ -148,6 +148,8 @@ export const CadastroForm = () => {
         let resp = await getNomeRazaoSocial(cpf_cnpj)
         if (resp && resp.length > 0 && resp[0].nome){
             setFieldValue("nome_fornecedor", resp[0].nome)
+        }else {
+            setFieldValue("nome_fornecedor", "")
         }
     }
 
