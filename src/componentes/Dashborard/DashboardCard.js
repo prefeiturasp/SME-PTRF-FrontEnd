@@ -51,7 +51,7 @@ export const DashboardCard = ({acoesAssociacao}) => {
                                                 <p className="pt-1 mb-1" >Saldo reprogramado: <strong>{exibeValorFormatadoPT_BR(acao.saldo_reprogramado)}</strong></p>
                                                 <p className="pt-1 mb-1">Repasses no período: <strong>{exibeValorFormatadoPT_BR(acao.repasses_no_periodo)}</strong></p>
                                                 <p className="pt-1 pb-1 mb-0">Despesa declarada: <strong>{exibeValorFormatadoPT_BR(acao.despesas_no_periodo)}</strong></p>
-                                                {acao.acao_associacao_nome === "PTRF" ? (
+                                                {acao.acao_associacao_nome.trim() === "PTRF" ? (
                                                     <p className="pt-1 pb-1 mb-0">Próx. repasse a partir de: <strong>{exibeDataPT_BR(acoesAssociacao.data_prevista_repasse)}</strong></p>
                                                 ) : null }
                                             </div>
@@ -68,12 +68,12 @@ export const DashboardCard = ({acoesAssociacao}) => {
                             texto='A sua escola não possui ações ativas nesse período.'
                             img={Img404}
                         />
-                            <div className="d-flex justify-content-end pb-3 mt-5">
-                            <p className="ultima-atualizacao">Última atualização: {exibeDateTimePT_BR(acoesAssociacao.ultima_atualizacao)}</p>
-                        </div>
                     </>
                 ) : null
             }
+            <div className="d-flex justify-content-end pb-3 mt-5">
+                <p className="ultima-atualizacao">Última atualização: {exibeDateTimePT_BR(acoesAssociacao.ultima_atualizacao)}</p>
+            </div>
         </>
     );
 }
