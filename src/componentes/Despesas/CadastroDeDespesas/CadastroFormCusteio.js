@@ -40,16 +40,16 @@ export const CadastroFormCusteio = (propriedades) => {
                         value={
                             rateio.especificacao_material_servico !== null ? (
                                 typeof rateio.especificacao_material_servico === "object" ? rateio.especificacao_material_servico.id : rateio.especificacao_material_servico
-                            ) : 0
+                            ) : ""
                         }
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].especificacao_material_servico`}
                         id='especificacao_material_servico'
                         className="form-control"
                     >
-                        <option key={0} value={0}>Selecione uma especificação</option>
+                        <option key={0} value="">Selecione uma especificação</option>
                         {
-                            typeof especificacoes_custeio === "object" && especificacoes_custeio[rateio.tipo_custeio.id] ? (especificacoes_custeio[rateio.tipo_custeio.id].map((item) => (
+                            rateio.tipo_custeio !== null && rateio.tipo_custeio !== undefined && rateio.tipo_custeio.id !== null && rateio.tipo_custeio.id !== undefined && typeof especificacoes_custeio === "object" && especificacoes_custeio[rateio.tipo_custeio.id] ? (especificacoes_custeio[rateio.tipo_custeio.id].map((item) => (
                                     <option key={item.id} value={item.id}>{item.descricao}</option>
                                 )))
                                 : (
