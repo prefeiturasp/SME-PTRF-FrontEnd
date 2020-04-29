@@ -2,13 +2,14 @@ import React from "react";
 import {Route, Switch, Redirect} from 'react-router-dom'
 import {Login} from "../paginas/Login";
 import {Pagina404} from "../paginas/404";
-import {Dashboard} from "../paginas/Dashboard";
+import {DashboardPage} from "../paginas/Dashboard";
 import {CadastroDeDespesa} from "../paginas/Despesas/CadastroDeDespesas";
 import {EdicaoDeDespesa} from "../paginas/Despesas/EdicaoDeDespesa";
 import { ListaDeDespesasPage } from '../paginas/Despesas/ListaDeDespesas'
 import { CadastroDeReceita } from '../paginas/Receitas/CadastroReceita';
 import { EdicaoDeReceita } from '../paginas/Receitas/EdicaoReceita';
 import { ListaDeReceitasPage } from "../paginas/Receitas/ListaDeReceitas";
+import {DadosDaAssociacaoPage} from "../paginas/Associacao";
 
 import { authService } from '../services/auth.service';
 
@@ -21,7 +22,7 @@ const routesConfig = [
     {
         exact: true,
         path: "/dashboard",
-        component: Dashboard
+        component: DashboardPage
     },
     { 
         exact: true,
@@ -35,7 +36,7 @@ const routesConfig = [
     },
     { 
         exact: true,
-        path: "/edicao-de-despesa/:associacao?",
+        path: "/edicao-de-despesa/:associacao",
         component: EdicaoDeDespesa
     },
     {
@@ -49,9 +50,14 @@ const routesConfig = [
       component: ListaDeReceitasPage
     },
     {
+      exact: true,
+      path: "/dados-da-associacao",
+      component: DadosDaAssociacaoPage
+    },
+    {
         exact: true,
         path: "/",
-        component: Dashboard
+        component: DashboardPage
     },
 ]
 

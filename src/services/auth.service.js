@@ -20,7 +20,6 @@ const login = async (login, senha) => {
     try {
         const response = (await api.post('api/login', payload, authHeader))
         const resp = response.data
-        console.log(resp);
         if (response.status === HTTP_STATUS.OK) {
             if (resp.detail) {
                 console.log(resp.detail);
@@ -46,7 +45,7 @@ const login = async (login, senha) => {
     } catch (error) {
         console.log('ERROR');
         console.log(error.response.data);
-        return error.response.data.detail;
+        return error.response.data.data.detail;
     }
 };
 

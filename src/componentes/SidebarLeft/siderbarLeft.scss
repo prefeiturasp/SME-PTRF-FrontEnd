@@ -1,3 +1,12 @@
+.sidenav---navitem---9uL5T, .sidenav---navicon---3gCRo{
+  line-height: 35px !important;
+  height: 35px !important;
+}
+
+.esconde-icone > div{
+  line-height: 0 !important;
+  height: 0 !important;
+}
 .sideNavCustomizado{
   position: fixed;
   background-color: #00585E;
@@ -7,6 +16,7 @@
   overflow-y: auto;
   overflow-x: hidden;
 
+
   .sidenav---navtext---1AE_f{
     color: #fff !important;
     font-weight: 500;
@@ -14,6 +24,14 @@
 
   .navItemCustomizado:hover{
     background-color: #00585E;
+  }
+
+  .navItemCustomizadoNome:hover{
+    background-color: #00585e;
+  }
+
+  .navItemCustomizadoNome{
+    background-color: #00585e;
   }
 
   .container-nome-instituicao{
@@ -31,7 +49,7 @@
     }
   }
 
-  navItemLogo{
+  .navItemLogo{
     text-align: center;
     max-width: 240px;
     display: inline-block;
