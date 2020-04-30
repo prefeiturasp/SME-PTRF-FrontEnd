@@ -11,7 +11,7 @@ export const PrestacaoDeContasPage = () => {
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Prestação de contas</h1>
             <InformacoesIniciais/>
-            <div className="page-content-inner">
+            <div className="page-content-inner pt-0">
                 <PrestacaoDeContas/>
             </div>
         </PaginasContainer>

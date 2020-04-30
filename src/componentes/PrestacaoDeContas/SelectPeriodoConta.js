@@ -4,7 +4,7 @@ export const PeriodoConta = ({periodoConta, handleChangePeriodoConta}) => {
 
         return(
             <form id="periodo_conta">
-                <div className="row">
+                <div className="row pt-4">
                     <div className="col-md-12 col-lg-7 col-xl-5 mb-md-2">
                         <div className="row">
                             <div className="col-12 col-sm-5 col-md-3 mt-2 pr-0 mr-xl-n3 mr-lg-n2">
