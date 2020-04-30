@@ -10,12 +10,16 @@ export const PrestacaoDeContas = () => {
     const [periodoConta, setPeriodoConta] = useState("");
     const [exibeMensagem, setExibeMensagem] = useState(true);
     const [statusPrestacaoConta, setStatusPrestacaoConta] = useState(false);
-    const [corStatusPrestacaoConta, setCorStatusPrestacaoConta] = useState(false);
+    const [corBarraDeStatusPrestacaoDeContas, setCorBarraDeStatusPrestacaoDeContas] = useState("");
 
     useEffect(()=> {
         if (periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== ""){
             setExibeMensagem(false)
-            setStatusPrestacaoConta(true)
+            setStatusPrestacaoConta(true);
+
+            if (periodoConta.periodo === "laranja" &&  periodoConta.acao === "manga"){
+                setCorBarraDeStatusPrestacaoDeContas('verde')
+            }
         }else {
             setExibeMensagem(true)
             setStatusPrestacaoConta(false)
@@ -33,6 +37,7 @@ export const PrestacaoDeContas = () => {
         <>
             <BarraDeStatusPrestacaoDeContas
                 statusPrestacaoConta={statusPrestacaoConta}
+                corBarraDeStatusPrestacaoDeContas={corBarraDeStatusPrestacaoDeContas}
             />
 
             <PeriodoConta
