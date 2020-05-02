@@ -11,17 +11,14 @@ export const PrestacaoDeContas = () => {
     const [exibeMensagem, setExibeMensagem] = useState(true);
     const [statusPrestacaoConta, setStatusPrestacaoConta] = useState(false);
     const [corBarraDeStatusPrestacaoDeContas, setCorBarraDeStatusPrestacaoDeContas] = useState("");
+    const [textoBarraDeStatusPrestacaoDeContas, setTextoBarraDeStatusPrestacaoDeContas] = useState("");
 
     useEffect(()=> {
         if (periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== ""){
             setExibeMensagem(false)
             setStatusPrestacaoConta(true);
+            setConfBarraStatus(periodoConta)
 
-            if (periodoConta.periodo === "laranja" &&  periodoConta.conta === "manga"){
-                setCorBarraDeStatusPrestacaoDeContas('verde')
-            }else{
-                setCorBarraDeStatusPrestacaoDeContas('amarelo')
-            }
         }else {
             setExibeMensagem(true)
             setStatusPrestacaoConta(false)
@@ -35,11 +32,26 @@ export const PrestacaoDeContas = () => {
         });
     }
 
+    const setConfBarraStatus = (status) => {
+        if (periodoConta.periodo === "laranja" &&  periodoConta.conta === "manga"){
+            setCorBarraDeStatusPrestacaoDeContas('verde')
+            setTextoBarraDeStatusPrestacaoDeContas("A geração dos documentos da conciliação desse período foi efetuada, clique no botão “Rever conciliação” para fazer alterações")
+        }else{
+            setCorBarraDeStatusPrestacaoDeContas('amarelo')
+            setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período está aberta.")
+        }
+
+
+
+    }
+
     return (
         <>
             <BarraDeStatusPrestacaoDeContas
                 statusPrestacaoConta={statusPrestacaoConta}
                 corBarraDeStatusPrestacaoDeContas={corBarraDeStatusPrestacaoDeContas}
+                textoBarraDeStatusPrestacaoDeContas={textoBarraDeStatusPrestacaoDeContas}
+
             />
 
             <PeriodoConta
