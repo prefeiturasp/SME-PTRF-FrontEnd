@@ -55,14 +55,12 @@ export const PrestacaoDeContas = () => {
                 handleChangePeriodoConta={handleChangePeriodoConta}
                 statusPrestacaoConta={statusPrestacaoConta}
             />
-            {exibeMensagem ? (
+            {exibeMensagem && (
                     <MsgImgCentralizada
                         texto='Selecione um período e uma conta acima para visualizar as ações'
                         img={Img404}
                     />
-            ) :
-                <p>Preenchido os dois</p>
-            }
+            )}
         </>
     )
 }

@@ -1,6 +1,15 @@
-import React from "react";
+import React, {useState} from "react";
+import {DemonstrativoFinanceiro} from "./DemonstrativoFinanceiro";
 
 export const PeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPrestacaoConta}) => {
+
+    const [demonstrativoFinanceiro, setDemonstrativoFinanceiro] = useState(false)
+
+    const handleClick = () => {
+
+        setDemonstrativoFinanceiro(true)
+
+    }
 
         return(
             <>
@@ -64,12 +73,13 @@ export const PeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPres
                     </div>
 
                     <div className="col-12 col-md-4 text-right">
-                        <button type="button" className="btn btn btn-success">Iniciar a prestação de contas</button>
+                        <button onClick={handleClick} type="button" className="btn btn btn-success">Iniciar a prestação de contas</button>
                     </div>
-
                 </div>
-
             )}
+                {demonstrativoFinanceiro && statusPrestacaoConta && (
+                    <DemonstrativoFinanceiro/>
+                )}
         </>
 
         )
