@@ -40,9 +40,6 @@ export const PrestacaoDeContas = () => {
             setCorBarraDeStatusPrestacaoDeContas('amarelo')
             setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período está aberta.")
         }
-
-
-
     }
 
     return (
@@ -51,12 +48,12 @@ export const PrestacaoDeContas = () => {
                 statusPrestacaoConta={statusPrestacaoConta}
                 corBarraDeStatusPrestacaoDeContas={corBarraDeStatusPrestacaoDeContas}
                 textoBarraDeStatusPrestacaoDeContas={textoBarraDeStatusPrestacaoDeContas}
-
             />
 
             <PeriodoConta
                 periodoConta={periodoConta}
                 handleChangePeriodoConta={handleChangePeriodoConta}
+                statusPrestacaoConta={statusPrestacaoConta}
             />
             {exibeMensagem ? (
                     <MsgImgCentralizada
