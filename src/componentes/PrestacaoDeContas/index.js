@@ -17,8 +17,10 @@ export const PrestacaoDeContas = () => {
             setExibeMensagem(false)
             setStatusPrestacaoConta(true);
 
-            if (periodoConta.periodo === "laranja" &&  periodoConta.acao === "manga"){
+            if (periodoConta.periodo === "laranja" &&  periodoConta.conta === "manga"){
                 setCorBarraDeStatusPrestacaoDeContas('verde')
+            }else{
+                setCorBarraDeStatusPrestacaoDeContas('amarelo')
             }
         }else {
             setExibeMensagem(true)
