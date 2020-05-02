@@ -1,8 +1,9 @@
 import React from "react";
 
-export const PeriodoConta = ({periodoConta, handleChangePeriodoConta}) => {
+export const PeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPrestacaoConta}) => {
 
         return(
+            <>
             <form id="periodo_conta">
                 <div className="row pt-4">
                     <div className="col-md-12 col-lg-7 col-xl-5 mb-md-2">
@@ -54,5 +55,22 @@ export const PeriodoConta = ({periodoConta, handleChangePeriodoConta}) => {
                     </div>
                 </div>
             </form>
+
+            {statusPrestacaoConta && (
+                <div className='row mt-5'>
+
+                    <div className="col-12 col-md-8">
+                        <p><strong>Última conciliação feita em 22/03/2020 10:45</strong></p>
+                    </div>
+
+                    <div className="col-12 col-md-4 text-right">
+                        <button type="button" className="btn btn btn-success">Iniciar a prestação de contas</button>
+                    </div>
+
+                </div>
+
+            )}
+        </>
+
         )
 }
