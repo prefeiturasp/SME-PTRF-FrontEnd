@@ -113,7 +113,7 @@ export const SidebarLeft = () => {
             <NavText>Cadastro de crédito</NavText>
           </NavItem>
 
-          <NavItem eventKey="prestacaoDeContas">
+          <NavItem eventKey="prestacao-de-contas">
             <NavIcon>
               <img src={IconeMenuPrestacaoDeContas} alt="" />
             </NavIcon>

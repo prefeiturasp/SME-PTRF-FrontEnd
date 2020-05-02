@@ -10,6 +10,7 @@ import { CadastroDeReceita } from '../paginas/Receitas/CadastroReceita';
 import { EdicaoDeReceita } from '../paginas/Receitas/EdicaoReceita';
 import { ListaDeReceitasPage } from "../paginas/Receitas/ListaDeReceitas";
 import {DadosDaAssociacaoPage} from "../paginas/Associacao";
+import {PrestacaoDeContasPage} from "../paginas/PrestacaoDeContas";
 
 import { authService } from '../services/auth.service';
 
@@ -53,6 +54,11 @@ const routesConfig = [
       exact: true,
       path: "/dados-da-associacao",
       component: DadosDaAssociacaoPage
+    },
+    {
+      exact: true,
+      path: "/prestacao-de-contas",
+      component: PrestacaoDeContasPage
     },
     {
         exact: true,
