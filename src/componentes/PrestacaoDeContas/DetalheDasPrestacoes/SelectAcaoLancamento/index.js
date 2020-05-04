@@ -2,7 +2,7 @@
 
 export const SelectAcaoLancamento = ({acaoLancamento, handleChangeSelectAcoes}) => {
     return(
-        <form className="form-inline">
+        <form className="form-inline mt-5">
             <label className="my-1 mr-2" htmlFor="acao">Ação selecionada: </label>
             <select
                 value={acaoLancamento.acao}
@@ -17,7 +17,7 @@ export const SelectAcaoLancamento = ({acaoLancamento, handleChangeSelectAcoes}) 
                 <option value="manga">Manga</option>
             </select>
 
-            <label className="my-1 mr-2 ml-5" htmlFor="lancamento">Tipo de lançamento: </label>
+            <label className="my-1 mr-2 ml-4" htmlFor="lancamento">Tipo de lançamento: </label>
             <select
                 value={acaoLancamento.lancamento}
                 onChange={(e) => handleChangeSelectAcoes(e.target.name, e.target.value)}

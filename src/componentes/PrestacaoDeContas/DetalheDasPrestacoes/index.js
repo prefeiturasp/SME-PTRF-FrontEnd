@@ -1,6 +1,8 @@
 import React, {useState} from "react";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {SelectAcaoLancamento} from "./SelectAcaoLancamento";
+import {TabelaDeLancamentos} from "./TabelaDeLancamentos";
+import {Justificativa} from "./Justivicativa";
 
 export const DetalheDasPrestacoes = () => {
     const [acaoLancamento, setAcaoLancamento]= useState("")
@@ -18,12 +20,20 @@ export const DetalheDasPrestacoes = () => {
     }
 
     return(
-        <div className="col-12 detalhe-das-prestacoes-container" >
+        <div className="col-12 detalhe-das-prestacoes-container mb-5" >
             <TopoComBotoes/>
             <SelectAcaoLancamento
                 acaoLancamento={acaoLancamento}
                 handleChangeSelectAcoes={handleChangeSelectAcoes}
             />
+            <TabelaDeLancamentos
+                conciliados={false}
+            />
+
+            <TabelaDeLancamentos
+                conciliados={true}
+            />
+            <Justificativa/>
         </div>
     )
 }
