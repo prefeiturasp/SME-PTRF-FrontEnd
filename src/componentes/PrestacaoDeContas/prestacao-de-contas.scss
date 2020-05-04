@@ -7,6 +7,13 @@
   }
 }
 
+.btn-readonly{
+  background-color: #A4A4A4 !important;
+  color: #fff !important;
+  border-color: #A4A4A4 !important;
+
+}
+
 .barra-status-verde{
   background-color: #289B00;
 }
@@ -47,5 +54,15 @@
 
   }
 
+}
+
+.detalhe-das-prestacoes-container{
+  margin-top: 69px;
+  padding: 15px 30px;
+
+  .detalhe-das-prestacoes-titulo{
+    font-size: 24px;
+    font-weight: bold;
+  }
 }
 

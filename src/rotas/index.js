@@ -11,6 +11,7 @@ import { EdicaoDeReceita } from '../paginas/Receitas/EdicaoReceita';
 import { ListaDeReceitasPage } from "../paginas/Receitas/ListaDeReceitas";
 import {DadosDaAssociacaoPage} from "../paginas/Associacao";
 import {PrestacaoDeContasPage} from "../paginas/PrestacaoDeContas";
+import {DetalheDasPrestacoes} from "../componentes/PrestacaoDeContas/DetalheDasPrestacoes";
 
 import { authService } from '../services/auth.service';
 
@@ -59,6 +60,11 @@ const routesConfig = [
       exact: true,
       path: "/prestacao-de-contas",
       component: PrestacaoDeContasPage
+    },
+    {
+      exact: true,
+      path: "/detalhe-das-prestacoes",
+      component: DetalheDasPrestacoes
     },
     {
         exact: true,

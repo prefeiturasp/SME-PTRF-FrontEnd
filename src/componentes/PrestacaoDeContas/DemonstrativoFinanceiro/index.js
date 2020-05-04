@@ -27,7 +27,7 @@ export const DemonstrativoFinanceiro = () => {
         return (
             <div className="text-right">
                 <button type="button" className="btn btn-outline-success mr-2">prévia </button>
-                <button disabled={true} type="button" className="btn btn-success demonstrativo-financeiro-btn-readonly">documento final </button>
+                <button disabled={true} type="button" className="btn btn-success btn-readonly">documento final </button>
             </div>
         )
     }
