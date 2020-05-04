@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom";
 
 export const PeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPrestacaoConta}) => {
 
@@ -64,7 +65,12 @@ export const PeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPres
                     </div>
 
                     <div className="col-12 col-md-4 text-right">
-                        <button type="button" className="btn btn btn-success">Iniciar a prestação de contas</button>
+                        <Link
+                            to="/detalhe-das-prestacoes"
+                            className="btn btn btn-success"
+                        >
+                            <strong>Iniciar a prestação de contas</strong>
+                        </Link>
                     </div>
                 </div>
             )}

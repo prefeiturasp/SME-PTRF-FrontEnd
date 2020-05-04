@@ -8,10 +8,10 @@ export const TopoComBotoes = () => {
             </div>
 
             <div className='col-12 col-md-7 text-right'>
-                <button type="button" className="btn btn-outline-success mr-2 mt-2">Cadastrar despesa</button>
-                <button type="button" className="btn btn-outline-success mr-2 mt-2">Cancelar</button>
-                <button type="button" className="btn btn-outline-success mt-2">Salvar</button>
-                <button disabled="" type="button" className="btn btn-success btn-readonly ml-2 mt-2">Concluir a conciliação</button>
+                <button type="button" className="btn btn-outline-success mr-2 mt-2"><strong>Cadastrar despesa</strong></button>
+                <button type="button" className="btn btn-outline-success mr-2 mt-2"><strong>Cancelar</strong></button>
+                <button type="button" className="btn btn-outline-success mt-2"><strong>Salvar</strong></button>
+                <button disabled="" type="button" className="btn btn-success btn-readonly ml-2 mt-2"><strong>Concluir a conciliação</strong></button>
             </div>
         </div>
     );
