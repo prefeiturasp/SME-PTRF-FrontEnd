@@ -3,20 +3,16 @@ import {TopoComBotoes} from "./TopoComBotoes";
 import {SelectAcaoLancamento} from "./SelectAcaoLancamento";
 import {TabelaDeLancamentos} from "./TabelaDeLancamentos";
 import {Justificativa} from "./Justivicativa";
+import {TabelaValoresPendentesPorAcao} from "./TabelaValoresPendentesPorAcao";
 
 export const DetalheDasPrestacoes = () => {
     const [acaoLancamento, setAcaoLancamento]= useState("")
 
     const handleChangeSelectAcoes = (name, value) => {
-
-        console.log("Ollyver Nome ", name)
-        console.log("Ollyver Valor ", value)
-
         setAcaoLancamento({
             ...acaoLancamento,
             [name]: value
         });
-
     }
 
     return(
@@ -26,10 +22,10 @@ export const DetalheDasPrestacoes = () => {
                 acaoLancamento={acaoLancamento}
                 handleChangeSelectAcoes={handleChangeSelectAcoes}
             />
+            <TabelaValoresPendentesPorAcao/>
             <TabelaDeLancamentos
                 conciliados={false}
             />
-
             <TabelaDeLancamentos
                 conciliados={true}
             />

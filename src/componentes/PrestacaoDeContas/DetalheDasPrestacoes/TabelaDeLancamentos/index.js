@@ -22,7 +22,6 @@ export const TabelaDeLancamentos = ({conciliados}) => {
                 {conciliados ? (
                     <div className="align-middle text-center">
                         <input type="checkbox" value="" id="checkConferido"/>
-
                     </div>
                 ): (
                     <div className="text-center">
