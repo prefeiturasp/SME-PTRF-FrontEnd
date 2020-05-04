@@ -1,3 +1,6 @@
+.fonte-normal{
+  font-weight: normal !important;
+}
 .container-texto-introdutorio{
   background-color: #D3F1F3;
 
@@ -51,10 +54,14 @@
     background-color: #A4A4A4 !important;
     color: #fff !important;
     border-color: #A4A4A4 !important;
-
   }
 
 }
+
+body .p-datatable .p-datatable-tbody > tr:nth-child(even){
+  background-color: #fff !important;
+}
+
 
 .detalhe-das-prestacoes-container{
   margin-top: 69px;
@@ -72,9 +79,37 @@
   .detalhe-das-prestacoes-align-center{
     text-align: center !important;
   }
+  .detalhe-das-prestacoes-tabela{
+    border: none !important;
+  }
+
+  .detalhe-das-prestacoes-tabela-th-fundo-branco{
+    background-color: #fff !important;
+  }
+
+  .detalhe-das-prestacoes-tabela th{
+    padding: 25px !important;
+    border: solid 1px #E0E0E0 !important;
+  }
+
+
+  .detalhe-das-prestacoes-tabela tfoot tr td{
+    text-align: left !important;
+    border: solid 1px #E0E0E0 !important;
+  }
+
+
+  .detalhe-das-prestacoes-tabela td{
+    padding: 25px !important;
+    border: none !important;
+    border-right: solid 1px #E0E0E0 !important;
+    border-left: solid 1px #E0E0E0 !important;
+
+  }
 
   .detalhe-das-prestacoes-tabela-fundo-azul-claro{
     background-color: #E0F7F9 !important;
+    font-weight: bold;
   }
 
 
