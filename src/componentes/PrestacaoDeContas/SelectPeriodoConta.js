@@ -1,14 +1,12 @@
 import React, {useState} from "react";
-import {DemonstrativoFinanceiro} from "./DemonstrativoFinanceiro";
+import {DemonstrativoFinanceiro} from "../PrestacaoDeContas/DemonstrativoFinanceiro";
 
 export const PeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPrestacaoConta}) => {
 
     const [demonstrativoFinanceiro, setDemonstrativoFinanceiro] = useState(false)
 
     const handleClick = () => {
-
         setDemonstrativoFinanceiro(true)
-
     }
 
         return(
