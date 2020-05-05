@@ -16,11 +16,8 @@ import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Mod
 
 export const CadastroForm = () => {
 
-    let {associacao} = useParams();
     let {origem} = useParams();
-
-    console.log("Ollyver ", associacao)
-    console.log("Ollyver ", origem)
+    console.log("Ollyver origem | ", origem)
 
     let history = useHistory();
 
@@ -66,6 +63,17 @@ export const CadastroForm = () => {
         return despesaContext.initialValues
     }
 
+    const getPath = () => {
+        let path;
+        if (origem === undefined){
+            path = `/lista-de-despesas`;
+        }else {
+            path = `/detalhe-das-prestacoes`;
+        }
+
+        history.push(path);
+    }
+
     const onSubmit = async (values, {resetForm}) => {
         setBtnSubmitDisable(true);
 
@@ -77,8 +85,7 @@ export const CadastroForm = () => {
                 if (response.status === HTTP_STATUS.CREATED) {
                     console.log("Operação realizada com sucesso!");
                     resetForm({values: ""})
-                    let path = `/lista-de-despesas`;
-                    history.push(path);
+                    getPath();
                 } else {
                    return
                 }
@@ -93,8 +100,7 @@ export const CadastroForm = () => {
                 if (response.status === 200) {
                     console.log("Operação realizada com sucesso!");
                     resetForm({values: ""})
-                    let path = `/lista-de-despesas`;
-                    history.push(path);
+                    getPath();
                 } else {
                     return
                 }
@@ -108,8 +114,7 @@ export const CadastroForm = () => {
 
     const onCancelarTrue = () => {
         setShow(false);
-        let path = `/lista-de-despesas`;
-        history.push(path);
+        getPath();
     }
 
     const onHandleClose = () => {
@@ -135,8 +140,7 @@ export const CadastroForm = () => {
         .then(response => {
             console.log("Despesa deletada com sucesso.");
             setShowDelete(false);
-            let path = `/lista-de-despesas`;
-            history.push(path);
+            getPath();
         })
         .catch(error => {
             console.log(error);
