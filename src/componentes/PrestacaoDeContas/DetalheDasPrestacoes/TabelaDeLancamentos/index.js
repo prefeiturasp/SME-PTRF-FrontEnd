@@ -1,20 +1,38 @@
-import React from "react";
+import React, {useState} from "react";
+import {useHistory} from 'react-router-dom';
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import IconeNaoConciliado from "../../../../assets/img/icone-nao-conciliado.svg"
-import Img404 from "../../../../assets/img/img-404.svg";
+import {RedirectModalTabelaLancamentos} from "../../../../utils/Modais";
 
 export const TabelaDeLancamentos = ({conciliados}) => {
 
+    let history = useHistory();
     const rowsPerPage = 7;
 
     const estado = [
-
         {cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Papelaria Araçari LTDA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Boleto bancário', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Capital', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
         {cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Lavatudo lavanderia industrial LTDA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Boleto bancário', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Custeio', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
         {cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Umapalavralonga SA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Cheque', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Capital', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
         {cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Papelaria Kalunga LTDA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Boleto bancário', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Custeio', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
     ];
+
+    const [showModal, setShowModal] = useState(false);
+
+    const onShowModal = () => {
+        setShowModal(true);
+    }
+
+    const onHandleClose = () => {
+        setShowModal(false);
+    }
+
+    const onCancelarTrue = () => {
+        setShowModal(false);
+        let path = `/lista-de-receitas`;
+        history.push(path);
+    }
+
 
     const getConferido = (rowData) => {
         return (
@@ -37,6 +55,15 @@ export const TabelaDeLancamentos = ({conciliados}) => {
         )
     }
 
+    const redirecionaDetalhe = value => {
+
+        console.log("Ollyver ", value)
+        onShowModal();
+
+        //const url = '/edicao-de-receita/' + value.uuid
+        //history.push(url);
+    }
+
     return (
         <div className="row mt-4">
             <div className="col-12">
@@ -50,7 +77,7 @@ export const TabelaDeLancamentos = ({conciliados}) => {
                         paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                         autoLayout={true}
                         selectionMode="single"
-                        //onRowClick={e => redirecionaDetalhe(e.data)}
+                        onRowClick={e => redirecionaDetalhe(e.data)}
                     >
                         <Column field="cnpjCpf" header="CNPJ ou CPF do fornecedor" />
                         <Column field="razaoSocial" header="Razão social do fornecedor"/>
@@ -70,6 +97,10 @@ export const TabelaDeLancamentos = ({conciliados}) => {
                     </DataTable>
                 </div>
             </div>
+            <section>
+                <RedirectModalTabelaLancamentos show={showModal} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+            </section>
         </div>
+
     )
 }
