@@ -38,7 +38,7 @@ const routesConfig = [
     },
     { 
         exact: true,
-        path: "/edicao-de-despesa/:associacao",
+        path: "/edicao-de-despesa/:associacao/:origem?",
         component: EdicaoDeDespesa
     },
     {

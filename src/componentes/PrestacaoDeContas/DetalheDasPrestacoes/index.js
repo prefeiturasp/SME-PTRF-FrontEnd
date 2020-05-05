@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {SelectAcaoLancamento} from "./SelectAcaoLancamento";
-import {TabelaDeLancamentos} from "./TabelaDeLancamentos";
+import {TabelaDeLancamentosDespesas} from "./TabelaDeLancamentosDespesas";
 import {Justificativa} from "./Justivicativa";
 import {TabelaValoresPendentesPorAcao} from "./TabelaValoresPendentesPorAcao";
 
@@ -22,11 +22,12 @@ export const DetalheDasPrestacoes = () => {
                 acaoLancamento={acaoLancamento}
                 handleChangeSelectAcoes={handleChangeSelectAcoes}
             />
-            <TabelaValoresPendentesPorAcao/>
-            <TabelaDeLancamentos
+            {/*<TabelaValoresPendentesPorAcao/>*/}
+
+            <TabelaDeLancamentosDespesas
                 conciliados={false}
             />
-            <TabelaDeLancamentos
+            <TabelaDeLancamentosDespesas
                 conciliados={true}
             />
             <Justificativa/>

@@ -5,19 +5,20 @@ import {Column} from "primereact/column";
 import IconeNaoConciliado from "../../../../assets/img/icone-nao-conciliado.svg"
 import {RedirectModalTabelaLancamentos} from "../../../../utils/Modais";
 
-export const TabelaDeLancamentos = ({conciliados}) => {
+export const TabelaDeLancamentosDespesas = ({conciliados}) => {
 
     let history = useHistory();
     const rowsPerPage = 7;
 
     const estado = [
-        {cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Papelaria Araçari LTDA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Boleto bancário', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Capital', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
-        {cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Lavatudo lavanderia industrial LTDA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Boleto bancário', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Custeio', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
-        {cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Umapalavralonga SA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Cheque', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Capital', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
-        {cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Papelaria Kalunga LTDA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Boleto bancário', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Custeio', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
+        {uuid:'76d50f83-16da-4c43-96b9-456618091003', cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Papelaria Araçari LTDA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Boleto bancário', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Capital', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
+        {uuid:'76d50f83-16da-4c43-96b9-456618091003', cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Lavatudo lavanderia industrial LTDA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Boleto bancário', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Custeio', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
+        {uuid:'76d50f83-16da-4c43-96b9-456618091003', cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Umapalavralonga SA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Cheque', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Capital', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
+        {uuid:'76d50f83-16da-4c43-96b9-456618091003', cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Papelaria Kalunga LTDA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Boleto bancário', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Custeio', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
     ];
 
     const [showModal, setShowModal] = useState(false);
+    const [uuid, setUuid] = useState('');
 
     const onShowModal = () => {
         setShowModal(true);
@@ -29,8 +30,8 @@ export const TabelaDeLancamentos = ({conciliados}) => {
 
     const onCancelarTrue = () => {
         setShowModal(false);
-        let path = `/lista-de-receitas`;
-        history.push(path);
+        const url = '/edicao-de-despesa/' + uuid + '/tabela-de-lancamentos-despesas'
+        history.push(url);
     }
 
 
@@ -58,6 +59,7 @@ export const TabelaDeLancamentos = ({conciliados}) => {
     const redirecionaDetalhe = value => {
 
         console.log("Ollyver ", value)
+        setUuid(value.uuid)
         onShowModal();
 
         //const url = '/edicao-de-receita/' + value.uuid

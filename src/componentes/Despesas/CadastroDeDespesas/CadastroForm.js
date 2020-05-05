@@ -4,7 +4,7 @@ import { YupSignupSchemaCadastroDespesa, validaPayloadDespesas, validateFormDesp
 import MaskedInput from 'react-text-mask'
 import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
-import {useHistory} from 'react-router-dom'
+import {useHistory, useParams} from 'react-router-dom';
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
 import {CadastroFormCapital} from "./CadastroFormCapital";
 import {DespesaContext} from "../../../context/Despesa";
@@ -15,6 +15,12 @@ import CurrencyInput from "react-currency-input";
 import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Modais"
 
 export const CadastroForm = () => {
+
+    let {associacao} = useParams();
+    let {origem} = useParams();
+
+    console.log("Ollyver ", associacao)
+    console.log("Ollyver ", origem)
 
     let history = useHistory();
 
