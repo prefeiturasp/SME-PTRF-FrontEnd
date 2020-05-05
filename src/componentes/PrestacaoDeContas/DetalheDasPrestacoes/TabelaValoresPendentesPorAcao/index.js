@@ -27,6 +27,7 @@ export const TabelaValoresPendentesPorAcao = () => {
             <Column className="detalhe-das-prestacoes-align-center detalhe-das-prestacoes-tabela-th-fundo-branco" header="Receitas" colSpan={3} />
             <Column className="detalhe-das-prestacoes-align-center detalhe-das-prestacoes-tabela-th-fundo-branco" header="Despesas" colSpan={3} />
         </Row>
+
         <Row>
             <Column className="detalhe-das-prestacoes-tabela-th-fundo-branco" header="Total" />
             <Column className="detalhe-das-prestacoes-tabela-th-fundo-branco" header="Conciliado" />
@@ -35,6 +36,7 @@ export const TabelaValoresPendentesPorAcao = () => {
             <Column className="detalhe-das-prestacoes-tabela-th-fundo-branco" header="Conciliado" />
             <Column className="detalhe-das-prestacoes-tabela-th-fundo-branco" header="À conciliar" />
         </Row>
+
     </ColumnGroup>;
 
     let footerGroup = <ColumnGroup>
@@ -60,7 +62,12 @@ export const TabelaValoresPendentesPorAcao = () => {
                         value={sales}
                         headerColumnGroup={headerGroup}
                         footerColumnGroup={footerGroup}
-                        className="detalhe-das-prestacoes-tabela"
+                        className="detalhe-das-prestacoes-tabela mt-3 datatable-footer-coad"
+                        paginator={sales.length > rowsPerPage}
+                        rows={rowsPerPage}
+                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                        autoLayout={true}
+                        //selectionMode="single"
                     >
                         <Column className="detalhe-das-prestacoes-tabela-fundo-azul-claro" field="acao" />
                         <Column field="totalReceitas" />

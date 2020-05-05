@@ -58,9 +58,14 @@
 
 }
 
-body .p-datatable .p-datatable-tbody > tr:nth-child(even){
+/*body .p-datatable .p-datatable-tbody > tr:nth-child(even){
   background-color: #fff !important;
 }
+
+.detalhe-das-prestacoes-container .detalhe-das-prestacoes-tabela td:hover{
+  color: red;
+}*/
+
 
 
 .detalhe-das-prestacoes-container{
@@ -88,7 +93,7 @@ body .p-datatable .p-datatable-tbody > tr:nth-child(even){
   }
 
   .detalhe-das-prestacoes-tabela th{
-    padding: 25px !important;
+    padding: 20px !important;
     border: solid 1px #E0E0E0 !important;
   }
 
@@ -100,7 +105,7 @@ body .p-datatable .p-datatable-tbody > tr:nth-child(even){
 
 
   .detalhe-das-prestacoes-tabela td{
-    padding: 25px !important;
+    padding: 20px !important;
     border: none !important;
     border-right: solid 1px #E0E0E0 !important;
     border-left: solid 1px #E0E0E0 !important;
