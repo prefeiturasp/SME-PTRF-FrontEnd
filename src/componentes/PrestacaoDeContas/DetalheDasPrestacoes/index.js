@@ -6,6 +6,7 @@ import {TabelaDeLancamentosDespesas} from "./TabelaDeLancamentosDespesas";
 import {TabelaDeLancamentosReceitas} from "./TabelaDeLancamentosReceitas";
 import {Justificativa} from "./Justivicativa";
 import {filtrosAvancadosReceitas, getTabelasReceita} from "../../../services/Receitas.service";
+import {filtrosAvancadosRateios} from "../../../services/RateiosDespesas.service";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -22,10 +23,14 @@ export const DetalheDasPrestacoes = () => {
 
             if (acaoLancamento.lancamento === 'receitas-lancadas'){
                 console.log("É RECEITA")
+                setDespesas([])
                 getReceitas();
+
             }else if (acaoLancamento.lancamento === 'despesas-lancadas'){
                 console.log("É DESPESA")
                 setReceitas([])
+                getDespesas();
+
             }
         }else{
             setReceitas([])
@@ -48,9 +53,11 @@ export const DetalheDasPrestacoes = () => {
     const getReceitas = async () => {
         const lista_retorno_api =  await filtrosAvancadosReceitas("", "", acaoLancamento.acao, "")
         setReceitas(lista_retorno_api)
+    }
 
-        console.log("Lista de Receitas ", lista_retorno_api)
-
+    const getDespesas = async () => {
+        const lista_retorno_api =  await filtrosAvancadosRateios("", '', acaoLancamento.acao, "")
+        setDespesas(lista_retorno_api)
     }
 
     const handleChangeSelectAcoes = (name, value) => {
@@ -83,16 +90,19 @@ export const DetalheDasPrestacoes = () => {
                 <TabelaDeLancamentosReceitas
                     receitas={receitas}
                 />
-            ): (
+            ):
+            despesas && despesas.length > 0 ? (
                 <>
                 <TabelaDeLancamentosDespesas
                     conciliados={false}
+                    despesas={despesas}
                 />
                 <TabelaDeLancamentosDespesas
                 conciliados={true}
+                despesas={despesas}
                 />
                 </>
-            )
+            ): "Não existem lancamentos"
             }
 
 
