@@ -18,7 +18,7 @@ import { authService } from '../services/auth.service';
 const routesConfig = [
     {
       exact: true,
-        path: "/edicao-de-receita/:uuid",
+        path: "/edicao-de-receita/:uuid/:origem?",
         component: EdicaoDeReceita
     },
     {
@@ -43,7 +43,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/cadastro-de-credito",
+        path: "/cadastro-de-credito/:origem?",
         component: CadastroDeReceita
     },
     {
