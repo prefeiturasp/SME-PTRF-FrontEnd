@@ -57,13 +57,8 @@ export const TabelaDeLancamentosDespesas = ({conciliados}) => {
     }
 
     const redirecionaDetalhe = value => {
-
-        console.log("Ollyver ", value)
         setUuid(value.uuid)
         onShowModal();
-
-        //const url = '/edicao-de-receita/' + value.uuid
-        //history.push(url);
     }
 
     return (

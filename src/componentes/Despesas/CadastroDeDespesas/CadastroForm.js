@@ -17,8 +17,6 @@ import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Mod
 export const CadastroForm = () => {
 
     let {origem} = useParams();
-    console.log("Ollyver origem | ", origem)
-
     let history = useHistory();
 
     const despesaContext = useContext(DespesaContext)

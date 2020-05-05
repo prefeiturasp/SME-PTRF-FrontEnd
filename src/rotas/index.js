@@ -28,7 +28,7 @@ const routesConfig = [
     },
     { 
         exact: true,
-        path: "/cadastro-de-despesa",
+        path: "/cadastro-de-despesa/:origem?",
         component: CadastroDeDespesa
     },
     { 
