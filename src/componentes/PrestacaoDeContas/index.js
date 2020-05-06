@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {PeriodoConta} from "./SelectPeriodoConta";
+import {SelectPeriodoConta} from "./SelectPeriodoConta";
 import {MsgImgCentralizada} from "../Mensagens/MsgImgCentralizada";
 import "../../assets/img/img-404.svg"
 import Img404 from "../../assets/img/img-404.svg";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import {DemonstrativoFinanceiro} from "../PrestacaoDeContas/DemonstrativoFinanceiro";
+import {getTabelasReceita} from "../../services/Receitas.service";
 
 export const PrestacaoDeContas = () => {
 
@@ -13,9 +14,25 @@ export const PrestacaoDeContas = () => {
     const [statusPrestacaoConta, setStatusPrestacaoConta] = useState(false);
     const [corBarraDeStatusPrestacaoDeContas, setCorBarraDeStatusPrestacaoDeContas] = useState("");
     const [textoBarraDeStatusPrestacaoDeContas, setTextoBarraDeStatusPrestacaoDeContas] = useState("");
-    const [demonstrativoFinanceiro, setDemonstrativoFinanceiro] = useState(false)
+    const [demonstrativoFinanceiro, setDemonstrativoFinanceiro] = useState(false);
+    const [contasAssociacao, setContasAssociacao] = useState(false);
+
+    useEffect(() => {
+        const carregaTabelas = async () => {
+            await getTabelasReceita().then(response => {
+                console.log("Prestacao de conta index ", response)
+                setContasAssociacao(response.data.contas_associacao);
+            }).catch(error => {
+                console.log(error);
+            });
+        };
+        carregaTabelas();
+    }, [])
 
     useEffect(()=> {
+
+        console.log("useEfect ", periodoConta)
+
         if (periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== ""){
             setExibeMensagem(false)
             setStatusPrestacaoConta(true);
@@ -53,10 +70,11 @@ export const PrestacaoDeContas = () => {
                 textoBarraDeStatusPrestacaoDeContas={textoBarraDeStatusPrestacaoDeContas}
             />
 
-            <PeriodoConta
+            <SelectPeriodoConta
                 periodoConta={periodoConta}
                 handleChangePeriodoConta={handleChangePeriodoConta}
                 statusPrestacaoConta={statusPrestacaoConta}
+                contasAssociacao={contasAssociacao}
             />
             {demonstrativoFinanceiro && statusPrestacaoConta && (
                 <DemonstrativoFinanceiro/>

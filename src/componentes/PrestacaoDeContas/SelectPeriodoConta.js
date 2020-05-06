@@ -1,7 +1,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 
-export const PeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPrestacaoConta}) => {
+export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPrestacaoConta, contasAssociacao}) => {
 
         return(
             <>
@@ -45,10 +45,9 @@ export const PeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPres
                                     className="form-control"
                                 >
                                     <option value="">Selecione uma conta</option>
-                                    <option value="laranja">Laranja</option>
-                                    <option value="limao">Limão</option>
-                                    <option value="coco">Coco</option>
-                                    <option value="manga">Manga</option>
+                                    {contasAssociacao && contasAssociacao.map((acao)=>
+                                        <option key={acao.uuid} value={acao.uuid}>{acao.nome}</option>
+                                    )}
                                 </select>
                             </div>
 
