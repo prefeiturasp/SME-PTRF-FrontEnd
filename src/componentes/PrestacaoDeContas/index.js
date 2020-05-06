@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import {useHistory} from "react-router-dom";
 import {SelectPeriodoConta} from "./SelectPeriodoConta";
 import {MsgImgCentralizada} from "../Mensagens/MsgImgCentralizada";
 import "../../assets/img/img-404.svg"
@@ -11,7 +12,10 @@ import {getTabelasReceita} from "../../services/Receitas.service";
 import {getPeriodos, getStatus} from "../../services/PrestacaoDeContas.service";
 import {exibeDateTimePT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
 
+
 export const PrestacaoDeContas = () => {
+
+    let history = useHistory();
 
     const [periodoConta, setPeriodoConta] = useState("");
     const [exibeMensagem, setExibeMensagem] = useState(true);
@@ -21,6 +25,8 @@ export const PrestacaoDeContas = () => {
     const [dataUltimaConciliacao, setDataUltimaConciliacao] = useState('')
     const [cssBotaoConciliacao, setCssBotaoConciliacao] = useState("");
     const [textoBotaoConciliacao, setTextoBotaoConciliacao] = useState("");
+    const [botaoConciliacaoReadonly, setBotaoConciliacaoReadonly] = useState(true);
+    const [linkBotaoConciliacao, setLinkBotaoConciliacao] = useState('');
     const [demonstrativoFinanceiro, setDemonstrativoFinanceiro] = useState(false);
 
     const [contasAssociacao, setContasAssociacao] = useState(false);
@@ -60,6 +66,7 @@ export const PrestacaoDeContas = () => {
         setConfBarraStatus(status);
         setConfBotaoConciliacao(status);
         setConfDataUltimaConciliacao(status);
+        setBotaoConciliacaoReadonly(false);
     }
 
     const setConfBarraStatus = (status) => {
@@ -97,10 +104,16 @@ export const PrestacaoDeContas = () => {
     }
 
     const handleChangePeriodoConta = (name, value) => {
+        setBotaoConciliacaoReadonly(true);
         setPeriodoConta({
             ...periodoConta,
             [name]: value
         });
+    }
+
+    const handleClickBotaoConciliacao = () => {
+        let path = `/detalhe-das-prestacoes`;
+        history.push(path);
     }
 
     return (
@@ -125,6 +138,8 @@ export const PrestacaoDeContas = () => {
                     statusPrestacaoConta={statusPrestacaoConta}
                     cssBotaoConciliacao={cssBotaoConciliacao}
                     textoBotaoConciliacao={textoBotaoConciliacao}
+                    botaoConciliacaoReadonly={botaoConciliacaoReadonly}
+                    handleClickBotaoConciliacao={handleClickBotaoConciliacao}
                 />
             </div>
             {demonstrativoFinanceiro && statusPrestacaoConta !== undefined && (
