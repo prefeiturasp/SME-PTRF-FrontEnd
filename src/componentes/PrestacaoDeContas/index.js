@@ -5,17 +5,19 @@ import "../../assets/img/img-404.svg"
 import Img404 from "../../assets/img/img-404.svg";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import {DemonstrativoFinanceiro} from "../PrestacaoDeContas/DemonstrativoFinanceiro";
+import {BotaoConciliacao} from "./BotaoConciliacao";
 import {getTabelasReceita} from "../../services/Receitas.service";
-import {getPeriodos} from "../../services/PrestacaoDeContas.service";
+import {getPeriodos, getStatus} from "../../services/PrestacaoDeContas.service";
 
 export const PrestacaoDeContas = () => {
 
     const [periodoConta, setPeriodoConta] = useState("");
     const [exibeMensagem, setExibeMensagem] = useState(true);
-    const [statusPrestacaoConta, setStatusPrestacaoConta] = useState(false);
+    const [statusPrestacaoConta, setStatusPrestacaoConta] = useState(undefined);
     const [corBarraDeStatusPrestacaoDeContas, setCorBarraDeStatusPrestacaoDeContas] = useState("");
     const [textoBarraDeStatusPrestacaoDeContas, setTextoBarraDeStatusPrestacaoDeContas] = useState("");
     const [demonstrativoFinanceiro, setDemonstrativoFinanceiro] = useState(false);
+
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
 
@@ -30,7 +32,6 @@ export const PrestacaoDeContas = () => {
 
         const carregaPeriodos = async () =>{
             let periodos = await getPeriodos();
-            console.log("Carrega Periodos ", periodos)
             setPeriodosAssociacao(periodos);
         }
 
@@ -39,36 +40,40 @@ export const PrestacaoDeContas = () => {
     }, [])
 
     useEffect(()=> {
-
-        console.log("useEfect ", periodoConta)
-
         if (periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== ""){
             setExibeMensagem(false)
-            setStatusPrestacaoConta(true);
             setDemonstrativoFinanceiro(true)
-            setConfBarraStatus(periodoConta)
-
+            getStatusPrestacaoDeConta(periodoConta.periodo, periodoConta.conta)
         }else {
             setExibeMensagem(true)
-            setStatusPrestacaoConta(false)
+            setStatusPrestacaoConta(undefined)
         }
     }, [periodoConta])
+
+    const getStatusPrestacaoDeConta = async (periodo_uuid, conta_uuid) => {
+        let status = await getStatus(periodo_uuid, conta_uuid);
+        setConfBarraStatus(status.status)
+    }
+
+    const setConfBarraStatus = (status) => {
+        setStatusPrestacaoConta(status);
+        if (status === "FECHADO"){
+            setCorBarraDeStatusPrestacaoDeContas('verde')
+            setTextoBarraDeStatusPrestacaoDeContas("A geração dos documentos da conciliação desse período foi efetuada, clique no botão “Rever conciliação” para fazer alterações")
+        }else if(status === "ABERTO"){
+            setCorBarraDeStatusPrestacaoDeContas('amarelo')
+            setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período está aberta.")
+        }else if(status === null){
+            setCorBarraDeStatusPrestacaoDeContas('vermelho')
+            setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período ainda não foi iniciada.")
+        }
+    }
 
     const handleChangePeriodoConta = (name, value) => {
         setPeriodoConta({
             ...periodoConta,
             [name]: value
         });
-    }
-
-    const setConfBarraStatus = (status) => {
-        if (periodoConta.periodo === "laranja" &&  periodoConta.conta === "manga"){
-            setCorBarraDeStatusPrestacaoDeContas('verde')
-            setTextoBarraDeStatusPrestacaoDeContas("A geração dos documentos da conciliação desse período foi efetuada, clique no botão “Rever conciliação” para fazer alterações")
-        }else{
-            setCorBarraDeStatusPrestacaoDeContas('amarelo')
-            setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período está aberta.")
-        }
     }
 
     return (
@@ -78,15 +83,16 @@ export const PrestacaoDeContas = () => {
                 corBarraDeStatusPrestacaoDeContas={corBarraDeStatusPrestacaoDeContas}
                 textoBarraDeStatusPrestacaoDeContas={textoBarraDeStatusPrestacaoDeContas}
             />
-
             <SelectPeriodoConta
                 periodoConta={periodoConta}
                 handleChangePeriodoConta={handleChangePeriodoConta}
-                statusPrestacaoConta={statusPrestacaoConta}
                 periodosAssociacao={periodosAssociacao}
                 contasAssociacao={contasAssociacao}
             />
-            {demonstrativoFinanceiro && statusPrestacaoConta && (
+            <BotaoConciliacao
+                statusPrestacaoConta={statusPrestacaoConta}
+            />
+            {demonstrativoFinanceiro && statusPrestacaoConta !== undefined && (
                 <DemonstrativoFinanceiro/>
             )}
             {exibeMensagem && (
