@@ -84,22 +84,22 @@ export const PrestacaoDeContas = () => {
     }
 
     const setConfDataUltimaConciliacao = (status) => {
-
         if (status.conciliado_em){
             setDataUltimaConciliacao(exibeDateTimePT_BR(status.conciliado_em))
         }else{
             setDataUltimaConciliacao("-")
         }
-
     }
 
     const setConfBotaoConciliacao = (status) => {
         if (status.status === "ABERTO" || status.status === "FECHADO"){
-            setCssBotaoConciliacao("btn-outline-success")
-            setTextoBotaoConciliacao("Rever conciliação")
+            setCssBotaoConciliacao("btn-outline-success");
+            setTextoBotaoConciliacao("Rever conciliação");
+            setLinkBotaoConciliacao("/detalhe-das-prestacoes");
         }else if(status.status === null){
             setCssBotaoConciliacao("btn-success")
-            setTextoBotaoConciliacao("Iniciar a prestação de contas")
+            setTextoBotaoConciliacao("Iniciar a prestação de contas");
+            setLinkBotaoConciliacao("/detalhe-das-prestacoes");
         }
     }
 
@@ -112,7 +112,7 @@ export const PrestacaoDeContas = () => {
     }
 
     const handleClickBotaoConciliacao = () => {
-        let path = `/detalhe-das-prestacoes`;
+        let path = linkBotaoConciliacao;
         history.push(path);
     }
 
