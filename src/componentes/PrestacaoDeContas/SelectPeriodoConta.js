@@ -1,8 +1,7 @@
 import React from "react";
-import {Link} from "react-router-dom";
+import {exibeDataPT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
 
-export const PeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPrestacaoConta}) => {
-
+export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, periodosAssociacao, contasAssociacao}) => {
         return(
             <>
             <form id="periodo_conta">
@@ -21,10 +20,9 @@ export const PeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPres
                                     className="form-control"
                                 >
                                     <option value="">Escolha um período</option>
-                                    <option value="laranja">Laranja</option>
-                                    <option value="limao">Limão</option>
-                                    <option value="coco">Coco</option>
-                                    <option value="manga">Manga</option>
+                                    {periodosAssociacao && periodosAssociacao.map((periodo)=>
+                                        <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}</option>
+                                    )}
                                 </select>
                             </div>
                         </div>
@@ -45,10 +43,9 @@ export const PeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPres
                                     className="form-control"
                                 >
                                     <option value="">Selecione uma conta</option>
-                                    <option value="laranja">Laranja</option>
-                                    <option value="limao">Limão</option>
-                                    <option value="coco">Coco</option>
-                                    <option value="manga">Manga</option>
+                                    {contasAssociacao && contasAssociacao.map((conta)=>
+                                        <option key={conta.uuid} value={conta.uuid}>{conta.nome}</option>
+                                    )}
                                 </select>
                             </div>
 
@@ -56,24 +53,6 @@ export const PeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPres
                     </div>
                 </div>
             </form>
-
-            {statusPrestacaoConta && (
-                <div className='row mt-5'>
-
-                    <div className="col-12 col-md-8">
-                        <p><strong>Última conciliação feita em 22/03/2020 10:45</strong></p>
-                    </div>
-
-                    <div className="col-12 col-md-4 text-right">
-                        <Link
-                            to="/detalhe-das-prestacoes"
-                            className="btn btn btn-success"
-                        >
-                            <strong>Iniciar a prestação de contas</strong>
-                        </Link>
-                    </div>
-                </div>
-            )}
 
         </>
 

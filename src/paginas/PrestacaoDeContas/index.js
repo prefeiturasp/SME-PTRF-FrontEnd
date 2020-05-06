@@ -9,7 +9,7 @@ import {InformacoesIniciais} from "../../componentes/PrestacaoDeContas/Informaco
 export const PrestacaoDeContasPage = () => {
     return (
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Prestação de contas</h1>
+            <h1 className="titulo-itens-painel mt-5 mb-4">Prestação de contas</h1>
             <InformacoesIniciais/>
             <div className="page-content-inner pt-0">
                 <PrestacaoDeContas/>

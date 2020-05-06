@@ -1,6 +1,6 @@
 import React from "react";
 import MaskedInput from 'react-text-mask'
-import DatePicker, {registerLocale, setDefaultLocale} from "react-datepicker";
+import DatePicker, {registerLocale} from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import pt from "date-fns/locale/pt-BR";
 import "./datePickerField.scss";
