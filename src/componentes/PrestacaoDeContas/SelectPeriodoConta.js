@@ -1,5 +1,6 @@
 import React from "react";
 import {Link} from "react-router-dom";
+import moment from "moment";
 
 export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPrestacaoConta, periodosAssociacao, contasAssociacao}) => {
 
@@ -21,9 +22,8 @@ export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, stat
                                     className="form-control"
                                 >
                                     <option value="">Escolha um período</option>
-                                    <option value="">Selecione uma conta</option>
                                     {periodosAssociacao && periodosAssociacao.map((periodo)=>
-                                        <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas} até ${periodo.data_fim_realizacao_despesas}`}</option>
+                                        <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${moment(new Date(periodo.data_inicio_realizacao_despesas), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY")} até ${periodo.data_fim_realizacao_despesas ? moment(new Date(periodo.data_fim_realizacao_despesas), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY") : "-"}`}</option>
                                     )}
                                 </select>
                             </div>
