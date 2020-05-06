@@ -6,6 +6,7 @@ import Img404 from "../../assets/img/img-404.svg";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import {DemonstrativoFinanceiro} from "../PrestacaoDeContas/DemonstrativoFinanceiro";
 import {getTabelasReceita} from "../../services/Receitas.service";
+import {getPeriodos} from "../../services/PrestacaoDeContas.service";
 
 export const PrestacaoDeContas = () => {
 
@@ -16,17 +17,25 @@ export const PrestacaoDeContas = () => {
     const [textoBarraDeStatusPrestacaoDeContas, setTextoBarraDeStatusPrestacaoDeContas] = useState("");
     const [demonstrativoFinanceiro, setDemonstrativoFinanceiro] = useState(false);
     const [contasAssociacao, setContasAssociacao] = useState(false);
+    const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
 
     useEffect(() => {
         const carregaTabelas = async () => {
             await getTabelasReceita().then(response => {
-                console.log("Prestacao de conta index ", response)
                 setContasAssociacao(response.data.contas_associacao);
             }).catch(error => {
                 console.log(error);
             });
         };
+
+        const carregaPeriodos = async () =>{
+            let periodos = await getPeriodos();
+            console.log("Carrega Periodos ", periodos)
+            setPeriodosAssociacao(periodos);
+        }
+
         carregaTabelas();
+        carregaPeriodos();
     }, [])
 
     useEffect(()=> {
@@ -74,6 +83,7 @@ export const PrestacaoDeContas = () => {
                 periodoConta={periodoConta}
                 handleChangePeriodoConta={handleChangePeriodoConta}
                 statusPrestacaoConta={statusPrestacaoConta}
+                periodosAssociacao={periodosAssociacao}
                 contasAssociacao={contasAssociacao}
             />
             {demonstrativoFinanceiro && statusPrestacaoConta && (

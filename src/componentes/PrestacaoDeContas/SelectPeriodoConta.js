@@ -1,7 +1,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 
-export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPrestacaoConta, contasAssociacao}) => {
+export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, statusPrestacaoConta, periodosAssociacao, contasAssociacao}) => {
 
         return(
             <>
@@ -21,10 +21,10 @@ export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, stat
                                     className="form-control"
                                 >
                                     <option value="">Escolha um período</option>
-                                    <option value="laranja">Laranja</option>
-                                    <option value="limao">Limão</option>
-                                    <option value="coco">Coco</option>
-                                    <option value="manga">Manga</option>
+                                    <option value="">Selecione uma conta</option>
+                                    {periodosAssociacao && periodosAssociacao.map((periodo)=>
+                                        <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas} até ${periodo.data_fim_realizacao_despesas}`}</option>
+                                    )}
                                 </select>
                             </div>
                         </div>
@@ -45,8 +45,8 @@ export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, stat
                                     className="form-control"
                                 >
                                     <option value="">Selecione uma conta</option>
-                                    {contasAssociacao && contasAssociacao.map((acao)=>
-                                        <option key={acao.uuid} value={acao.uuid}>{acao.nome}</option>
+                                    {contasAssociacao && contasAssociacao.map((conta)=>
+                                        <option key={conta.uuid} value={conta.uuid}>{conta.nome}</option>
                                     )}
                                 </select>
                             </div>
