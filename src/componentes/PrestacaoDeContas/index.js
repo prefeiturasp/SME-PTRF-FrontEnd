@@ -6,8 +6,10 @@ import Img404 from "../../assets/img/img-404.svg";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import {DemonstrativoFinanceiro} from "../PrestacaoDeContas/DemonstrativoFinanceiro";
 import {BotaoConciliacao} from "./BotaoConciliacao";
+import {DataUltimaConciliacao} from "./DataUltimaConciliacao";
 import {getTabelasReceita} from "../../services/Receitas.service";
 import {getPeriodos, getStatus} from "../../services/PrestacaoDeContas.service";
+import moment from "moment";
 
 export const PrestacaoDeContas = () => {
 
@@ -16,6 +18,9 @@ export const PrestacaoDeContas = () => {
     const [statusPrestacaoConta, setStatusPrestacaoConta] = useState(undefined);
     const [corBarraDeStatusPrestacaoDeContas, setCorBarraDeStatusPrestacaoDeContas] = useState("");
     const [textoBarraDeStatusPrestacaoDeContas, setTextoBarraDeStatusPrestacaoDeContas] = useState("");
+    const [dataUltimaConciliacao, setDataUltimaConciliacao] = useState('')
+    const [cssBotaoConciliacao, setCssBotaoConciliacao] = useState("");
+    const [textoBotaoConciliacao, setTextoBotaoConciliacao] = useState("");
     const [demonstrativoFinanceiro, setDemonstrativoFinanceiro] = useState(false);
 
     const [contasAssociacao, setContasAssociacao] = useState(false);
@@ -52,20 +57,43 @@ export const PrestacaoDeContas = () => {
 
     const getStatusPrestacaoDeConta = async (periodo_uuid, conta_uuid) => {
         let status = await getStatus(periodo_uuid, conta_uuid);
-        setConfBarraStatus(status.status)
+        console.log("Carrega Status ", status)
+        setConfBarraStatus(status);
+        setConfBotaoConciliacao(status);
+        setConfDataUltimaConciliacao(status);
     }
 
     const setConfBarraStatus = (status) => {
-        setStatusPrestacaoConta(status);
-        if (status === "FECHADO"){
+        setStatusPrestacaoConta(status.status);
+        if (status.status === "FECHADO"){
             setCorBarraDeStatusPrestacaoDeContas('verde')
             setTextoBarraDeStatusPrestacaoDeContas("A geração dos documentos da conciliação desse período foi efetuada, clique no botão “Rever conciliação” para fazer alterações")
-        }else if(status === "ABERTO"){
+        }else if(status.status === "ABERTO"){
             setCorBarraDeStatusPrestacaoDeContas('amarelo')
             setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período está aberta.")
-        }else if(status === null){
+        }else if(status.status === null){
             setCorBarraDeStatusPrestacaoDeContas('vermelho')
             setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período ainda não foi iniciada.")
+        }
+    }
+
+    const setConfDataUltimaConciliacao = (status) => {
+
+        if (status.conciliado_em && status.conciliado_em !== null){
+            setDataUltimaConciliacao(moment(new Date(status.conciliado_em), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY"))
+        }else{
+            setDataUltimaConciliacao("-")
+        }
+
+    }
+
+    const setConfBotaoConciliacao = (status) => {
+        if (status.status === "ABERTO" || status.status === "FECHADO"){
+            setCssBotaoConciliacao("btn-outline-success")
+            setTextoBotaoConciliacao("Rever conciliação")
+        }else if(status.status === null){
+            setCssBotaoConciliacao("btn-success")
+            setTextoBotaoConciliacao("Iniciar a prestação de contas")
         }
     }
 
@@ -89,9 +117,17 @@ export const PrestacaoDeContas = () => {
                 periodosAssociacao={periodosAssociacao}
                 contasAssociacao={contasAssociacao}
             />
-            <BotaoConciliacao
-                statusPrestacaoConta={statusPrestacaoConta}
-            />
+            <div className='row mt-5'>
+                <DataUltimaConciliacao
+                    statusPrestacaoConta={statusPrestacaoConta}
+                    dataUltimaConciliacao={dataUltimaConciliacao}
+                />
+                <BotaoConciliacao
+                    statusPrestacaoConta={statusPrestacaoConta}
+                    cssBotaoConciliacao={cssBotaoConciliacao}
+                    textoBotaoConciliacao={textoBotaoConciliacao}
+                />
+            </div>
             {demonstrativoFinanceiro && statusPrestacaoConta !== undefined && (
                 <DemonstrativoFinanceiro/>
             )}
