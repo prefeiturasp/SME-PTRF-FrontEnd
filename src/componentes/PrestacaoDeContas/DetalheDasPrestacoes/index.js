@@ -17,10 +17,14 @@ export const DetalheDasPrestacoes = () => {
     const [acoesAssociacao, setAcoesAssociacao] = useState(false);
     const [acaoLancamento, setAcaoLancamento]= useState("")
 
+    useEffect(()=> {
+        getAcaoLancamento();
+    }, [])
+
     useEffect(()=>{
 
         if (acaoLancamento.acao && acaoLancamento.lancamento){
-
+            localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento))
             if (acaoLancamento.lancamento === 'receitas-lancadas'){
                 console.log("É RECEITA")
                 setDespesas([])
@@ -30,7 +34,6 @@ export const DetalheDasPrestacoes = () => {
                 console.log("É DESPESA")
                 setReceitas([])
                 getDespesas();
-
             }
         }else{
             setReceitas([])
@@ -49,6 +52,11 @@ export const DetalheDasPrestacoes = () => {
         };
         carregaTabelas();
     }, [])
+
+    const getAcaoLancamento = () => {
+        const files = JSON.parse(localStorage.getItem('acaoLancamento'))
+        setAcaoLancamento(files)
+    }
 
     const getReceitas = async () => {
         const lista_retorno_api =  await filtrosAvancadosReceitas("", "", acaoLancamento.acao, "")
