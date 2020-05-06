@@ -22,7 +22,6 @@ const login = async (login, senha) => {
         const resp = response.data
         if (response.status === HTTP_STATUS.OK) {
             if (resp.detail) {
-                console.log(resp.detail);
                 return "Usuário não autorizado!"
             }
             localStorage.setItem(TOKEN_ALIAS, resp.token);
@@ -39,7 +38,6 @@ const login = async (login, senha) => {
                 resp.associacao.nome
             )
             const decoded = decode(resp.token);
-            console.log(decoded)
             window.location.href = "/";
         } 
     } catch (error) {

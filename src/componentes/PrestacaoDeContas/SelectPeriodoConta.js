@@ -1,6 +1,5 @@
 import React from "react";
-import {Link} from "react-router-dom";
-import moment from "moment";
+import {exibeDataPT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
 
 export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, periodosAssociacao, contasAssociacao}) => {
         return(
@@ -22,7 +21,7 @@ export const SelectPeriodoConta = ({periodoConta, handleChangePeriodoConta, peri
                                 >
                                     <option value="">Escolha um período</option>
                                     {periodosAssociacao && periodosAssociacao.map((periodo)=>
-                                        <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${moment(new Date(periodo.data_inicio_realizacao_despesas), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY")} até ${periodo.data_fim_realizacao_despesas ? moment(new Date(periodo.data_fim_realizacao_despesas), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY") : "-"}`}</option>
+                                        <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}</option>
                                     )}
                                 </select>
                             </div>

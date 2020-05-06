@@ -26,12 +26,9 @@ export const DetalheDasPrestacoes = () => {
         if (acaoLancamento.acao && acaoLancamento.lancamento){
             localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento))
             if (acaoLancamento.lancamento === 'receitas-lancadas'){
-                console.log("É RECEITA")
                 setDespesas([])
                 getReceitas();
-
             }else if (acaoLancamento.lancamento === 'despesas-lancadas'){
-                console.log("É DESPESA")
                 setReceitas([])
                 getDespesas();
             }

@@ -9,7 +9,7 @@ import {BotaoConciliacao} from "./BotaoConciliacao";
 import {DataUltimaConciliacao} from "./DataUltimaConciliacao";
 import {getTabelasReceita} from "../../services/Receitas.service";
 import {getPeriodos, getStatus} from "../../services/PrestacaoDeContas.service";
-import moment from "moment";
+import {exibeDateTimePT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
 
 export const PrestacaoDeContas = () => {
 
@@ -57,7 +57,6 @@ export const PrestacaoDeContas = () => {
 
     const getStatusPrestacaoDeConta = async (periodo_uuid, conta_uuid) => {
         let status = await getStatus(periodo_uuid, conta_uuid);
-        console.log("Carrega Status ", status)
         setConfBarraStatus(status);
         setConfBotaoConciliacao(status);
         setConfDataUltimaConciliacao(status);
@@ -66,7 +65,7 @@ export const PrestacaoDeContas = () => {
     const setConfBarraStatus = (status) => {
         setStatusPrestacaoConta(status.status);
         if (status.status === "FECHADO"){
-            setCorBarraDeStatusPrestacaoDeContas('verde')
+            setCorBarraDeStatusPrestacaoDeContas('verde');
             setTextoBarraDeStatusPrestacaoDeContas("A geração dos documentos da conciliação desse período foi efetuada, clique no botão “Rever conciliação” para fazer alterações")
         }else if(status.status === "ABERTO"){
             setCorBarraDeStatusPrestacaoDeContas('amarelo')
@@ -79,8 +78,8 @@ export const PrestacaoDeContas = () => {
 
     const setConfDataUltimaConciliacao = (status) => {
 
-        if (status.conciliado_em && status.conciliado_em !== null){
-            setDataUltimaConciliacao(moment(new Date(status.conciliado_em), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY"))
+        if (status.conciliado_em){
+            setDataUltimaConciliacao(exibeDateTimePT_BR(status.conciliado_em))
         }else{
             setDataUltimaConciliacao("-")
         }
