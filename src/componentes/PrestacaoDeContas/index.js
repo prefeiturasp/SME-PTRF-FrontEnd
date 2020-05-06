@@ -4,6 +4,7 @@ import {MsgImgCentralizada} from "../Mensagens/MsgImgCentralizada";
 import "../../assets/img/img-404.svg"
 import Img404 from "../../assets/img/img-404.svg";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
+import {DemonstrativoFinanceiro} from "../PrestacaoDeContas/DemonstrativoFinanceiro";
 
 export const PrestacaoDeContas = () => {
 
@@ -12,11 +13,13 @@ export const PrestacaoDeContas = () => {
     const [statusPrestacaoConta, setStatusPrestacaoConta] = useState(false);
     const [corBarraDeStatusPrestacaoDeContas, setCorBarraDeStatusPrestacaoDeContas] = useState("");
     const [textoBarraDeStatusPrestacaoDeContas, setTextoBarraDeStatusPrestacaoDeContas] = useState("");
+    const [demonstrativoFinanceiro, setDemonstrativoFinanceiro] = useState(false)
 
     useEffect(()=> {
         if (periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== ""){
             setExibeMensagem(false)
             setStatusPrestacaoConta(true);
+            setDemonstrativoFinanceiro(true)
             setConfBarraStatus(periodoConta)
 
         }else {
@@ -55,6 +58,9 @@ export const PrestacaoDeContas = () => {
                 handleChangePeriodoConta={handleChangePeriodoConta}
                 statusPrestacaoConta={statusPrestacaoConta}
             />
+            {demonstrativoFinanceiro && statusPrestacaoConta && (
+                <DemonstrativoFinanceiro/>
+            )}
             {exibeMensagem && (
                     <MsgImgCentralizada
                         texto='Selecione um período e uma conta acima para visualizar as ações'

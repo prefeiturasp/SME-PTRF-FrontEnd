@@ -97,7 +97,23 @@ export const SalvarModalAssociacao = (propriedades) => {
             bodyText="<p>A edição foi salva com sucesso!</p>"
             primeiroBotaoOnclick={propriedades.onCancelarTrue}
             primeiroBotaoTexto="OK"
+        />
+    )
+}
 
+export const RedirectModalTabelaLancamentos = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Edição do lançamento"
+            bodyText="<p>Você será direcionado para a página de edição desse lançamento, deseja continuar?</p>"
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Não"
+            primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={propriedades.onCancelarTrue}
+            segundoBotaoTexto="Sim, leve-me à página de edição"
+            segundoBotaoCss="success"
         />
     )
 }
