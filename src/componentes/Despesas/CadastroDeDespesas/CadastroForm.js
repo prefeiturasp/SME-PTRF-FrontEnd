@@ -29,6 +29,13 @@ export const CadastroForm = () => {
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
+    const [qtdeErros, setQtdeErros] = useState(0);
+
+    const getQtdErros = () => {
+        let classesCssIsInvalid = document.getElementsByClassName("is_invalid");
+        console.log("Ollyver is_invalid", classesCssIsInvalid.length)
+        return classesCssIsInvalid.length
+    }
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
@@ -165,6 +172,13 @@ export const CadastroForm = () => {
 
     return (
         <>
+            {getQtdErros() > 0 &&
+                <div className="row">
+                    <div className="col-12 barra-status-amarelo">
+                        <p className="titulo-status pt-1 pb-1 mb-0">Quantidade de Erros: {getQtdErros()}</p>
+                    </div>
+                </div>
+            }
             <Formik
                 initialValues={initialValues()}
                 validationSchema={YupSignupSchemaCadastroDespesa}
@@ -185,6 +199,7 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
                                     <MaskedInput
+                                        data-type={!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" ? "erro" : ""}
                                         mask={(valor) => cpfMaskContitional(valor)}
                                         value={props.values.cpf_cnpj_fornecedor}
                                         onChange={(e)=>{
@@ -203,6 +218,7 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
                                     <input
+                                        data-type={!props.values.nome_fornecedor && despesaContext.verboHttp === "PUT" ? "erro" : ""}
                                         value={props.values.nome_fornecedor}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
