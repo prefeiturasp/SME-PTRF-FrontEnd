@@ -10,6 +10,8 @@ registerLocale("pt", pt );
 
 
 export const DatePickerField = ({ name, value, onChange }) => {
+    console.log("DatePickerField ", name)
+    console.log("DatePickerField ", value)
     return (
         <DatePicker
             selected={(value && new Date(moment(value).format('MMMM D, YYYY'))) || null}
@@ -17,9 +19,10 @@ export const DatePickerField = ({ name, value, onChange }) => {
                 onChange(name, val);
             }}
             dateFormat="dd/MM/yyyy"
+            name={name}
             locale="pt"
             showYearDropdown
-            className="form-control"
+            className={`${ (name === "data_documento" || name === "data_transacao") && !value ? 'is_invalid' : ""} form-control`}
             placeholderText="Somente números"
             customInput={
                 <MaskedInput

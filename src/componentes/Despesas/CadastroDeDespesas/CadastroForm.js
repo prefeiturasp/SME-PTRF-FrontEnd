@@ -11,8 +11,8 @@ import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
-
 import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Modais"
+import "./cadastro-de-despesas.scss"
 
 export const CadastroForm = () => {
 
@@ -28,6 +28,24 @@ export const CadastroForm = () => {
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
+
+    /*const input = document.querySelector('input')
+    input.addEventListener('input', evt => {
+        const value = input.value
+
+        if (!value) {
+            input.dataset.state = ''
+            return
+        }
+
+        const trimmed = value.trim()
+
+        if (trimmed) {
+            input.dataset.state = 'valid'
+        } else {
+            input.dataset.state = 'invalid'
+        }
+    })*/
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
@@ -58,6 +76,7 @@ export const CadastroForm = () => {
     }, []);
 
     const initialValues = () => {
+        console.log("Initial Values ", despesaContext.initialValues)
         return despesaContext.initialValues
     }
 
@@ -193,7 +212,7 @@ export const CadastroForm = () => {
                                         }
                                         onBlur={props.handleBlur}
                                         name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
-                                        className="form-control"
+                                        className={`${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                         placeholder="Digite o número do documento"
                                     />
                                     {props.errors.cpf_cnpj_fornecedor && <span className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
@@ -205,7 +224,8 @@ export const CadastroForm = () => {
                                         value={props.values.nome_fornecedor}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                        name="nome_fornecedor" id="nome_fornecedor" type="text" className="form-control"
+                                        name="nome_fornecedor" id="nome_fornecedor" type="text"
+                                        className={`${!props.values.nome_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                         placeholder="Digite o nome"/>
                                 </div>
                             </div>
@@ -223,7 +243,8 @@ export const CadastroForm = () => {
                                         onBlur={props.handleBlur}
                                         name='tipo_documento'
                                         id='tipo_documento'
-                                        className="form-control">
+                                        className={`${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                    >
                                         <option key={0} value={0}>Selecione o tipo</option>
                                         {despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.map(item =>
                                             <option key={item.id} value={item.id}>{item.nome}</option>
@@ -238,20 +259,33 @@ export const CadastroForm = () => {
                                         value={props.values.numero_documento}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                        name="numero_documento" id="numero_documento" type="text"
-                                        className="form-control" placeholder="Digite o número"/>
+                                        name="numero_documento"
+                                        id="numero_documento" type="text"
+                                        className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                        placeholder="Digite o número"/>
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
+
+{/*                                    <label htmlFor="data_transacao">Data da transação</label>
+                                    <DatePickerField
+                                        name="data_transacao"
+                                        id="data_transacao"
+                                        value={values.data_transacao != null ? values.data_transacao : ""}
+                                        onChange={setFieldValue}
+
+                                    />
+                                    {props.errors.data_transacao && <span className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}*/}
+
                                     <label htmlFor="data_documento">Data do documento</label>
                                     <DatePickerField
                                         name="data_documento"
                                         id="data_documento"
                                         value={values.data_documento != null ? values.data_documento : ""}
                                         onChange={setFieldValue}
+
                                     />
-                                    {props.errors.data_documento &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
+                                    {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
@@ -266,7 +300,7 @@ export const CadastroForm = () => {
                                         onBlur={props.handleBlur}
                                         name='tipo_transacao'
                                         id='tipo_transacao'
-                                        className="form-control"
+                                        className={`${!props.values.tipo_transacao && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                     >
                                         <option key={0} value={0}>Selecione o tipo</option>
                                         {despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map(item => (
@@ -284,13 +318,14 @@ export const CadastroForm = () => {
                                         id="data_transacao"
                                         value={values.data_transacao != null ? values.data_transacao : ""}
                                         onChange={setFieldValue}
+
                                     />
                                     {props.errors.data_transacao &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="valor_total">Valor total</label>
+                                    <label htmlFor="valor_total">Valor total - {props.values.valor_total}</label>
 
                                     <CurrencyInput
                                         allowNegative={false}
@@ -300,7 +335,7 @@ export const CadastroForm = () => {
                                         value={props.values.valor_total}
                                         name="valor_total"
                                         id="valor_total"
-                                        className="form-control"
+                                        className={`${ ( props.values.valor_total === "R$ 0,00" || props.values.valor_total === "R$0,00" || !props.values.valor_total) && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                         onChangeEvent={props.handleChange}
                                     />
                                     {props.errors.valor_total &&
@@ -318,7 +353,7 @@ export const CadastroForm = () => {
                                         value={props.values.valor_recursos_proprios}
                                         name="valor_recursos_proprios"
                                         id="valor_recursos_proprios"
-                                        className="form-control"
+                                        className={`${!props.values.valor_recursos_proprios && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                         onChangeEvent={props.handleChange}
                                     />
                                     {props.errors.valor_recursos_proprios && <span className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
@@ -336,6 +371,7 @@ export const CadastroForm = () => {
                                                 thousandSeparator="."
                                                 value={calculaValorRecursoAcoes(props)}
                                                 id="valor_recusos_acoes"
+                                                name="valor_recusos_acoes"
                                                 className="form-control"
                                                 onChangeEvent={props.handleChange}
                                                 readOnly={true}
