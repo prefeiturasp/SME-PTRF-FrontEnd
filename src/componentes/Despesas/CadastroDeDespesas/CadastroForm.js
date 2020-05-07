@@ -283,6 +283,7 @@ export const CadastroForm = () => {
                                         id="data_documento"
                                         value={values.data_documento != null ? values.data_documento : ""}
                                         onChange={setFieldValue}
+                                        about={despesaContext.verboHttp}
 
                                     />
                                     {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
@@ -318,7 +319,7 @@ export const CadastroForm = () => {
                                         id="data_transacao"
                                         value={values.data_transacao != null ? values.data_transacao : ""}
                                         onChange={setFieldValue}
-
+                                        about={despesaContext.verboHttp}
                                     />
                                     {props.errors.data_transacao &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
@@ -335,7 +336,7 @@ export const CadastroForm = () => {
                                         value={props.values.valor_total}
                                         name="valor_total"
                                         id="valor_total"
-                                        className={`${ ( props.values.valor_total === "R$ 0,00" || props.values.valor_total === "R$0,00" || !props.values.valor_total) && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                        className={`${  (props.values.valor_total === "R$ 0,00" || props.values.valor_total === "R$0,00") && despesaContext.verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                                         onChangeEvent={props.handleChange}
                                     />
                                     {props.errors.valor_total &&
