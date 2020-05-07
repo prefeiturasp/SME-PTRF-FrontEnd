@@ -1,10 +1,10 @@
 import React from "react";
 import NumberFormat from "react-number-format";
-import {calculaValorRateio,} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {calculaValorRateio, trataNumericos,} from "../../../utils/ValidacoesAdicionaisFormularios";
 import CurrencyInput from "react-currency-input";
 
 export const CadastroFormCapital = (propriedades) => {
-    const {formikProps, rateio, index, despesasTabelas, especificaoes_capital} = propriedades
+    const {formikProps, rateio, index, despesasTabelas, especificaoes_capital, verboHttp} = propriedades
 
     return (
         <>
@@ -20,9 +20,9 @@ export const CadastroFormCapital = (propriedades) => {
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].especificacao_material_servico`}
                         id='especificacao_material_servico'
-                        className="form-control"
+                        className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} form-control`}
                     >
-                        <option key={0} value={0}>Selecione uma especificação</option>
+                        <option key={0} value="">Selecione uma especificação</option>
                         {especificaoes_capital && especificaoes_capital.map((item) => (
                             <option key={item.id} value={item.id}>{item.descricao}</option>
                         ))}
@@ -40,9 +40,9 @@ export const CadastroFormCapital = (propriedades) => {
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].acao_associacao`}
                         id='acao_associacao'
-                        className="form-control"
+                        className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
                     >
-                        <option value="0">Selecione uma ação</option>
+                        <option value="">Selecione uma ação</option>
                         {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
                             <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                         ))}
@@ -59,7 +59,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 name={`rateios[${index}].quantidade_itens_capital`}
                                 decimalScale={0}
                                 id="quantidade_itens_capital"
-                                className="form-control"
+                                className={`${ (!rateio.quantidade_itens_capital || rateio.quantidade_itens_capital === '0') && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                             />
                         </div>
 
@@ -73,7 +73,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 value={rateio.valor_item_capital}
                                 name={`rateios[${index}].valor_item_capital`}
                                 id="valor_item_capital"
-                                className="form-control"
+                                className={`${ trataNumericos(rateio.valor_item_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                                 onChangeEvent={formikProps.handleChange}
                             />
                         </div>
@@ -88,7 +88,7 @@ export const CadastroFormCapital = (propriedades) => {
                         name={`rateios[${index}].numero_processo_incorporacao_capital`}
                         type='text'
                         id='numero_processo_incorporacao_capital'
-                        className="form-control"
+                        className={`${!rateio.numero_processo_incorporacao_capital && verboHttp === "PUT" && "is_invalid "} form-control`}
                         placeholder="Escreva o número do processo"
                     />
                 </div>
@@ -107,9 +107,9 @@ export const CadastroFormCapital = (propriedades) => {
                                 onChange={formikProps.handleChange}
                                 name={`rateios[${index}].conta_associacao`}
                                 id='conta_associacao'
-                                className="form-control"
+                                className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
                             >
-                                <option key={0} value={0}>Selecione uma conta</option>
+                                <option key={0} value="">Selecione uma conta</option>
                                 {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
                                     <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                                 ))}

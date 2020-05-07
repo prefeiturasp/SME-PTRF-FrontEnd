@@ -300,7 +300,7 @@ export const CadastroForm = () => {
                                     <label htmlFor="valor_total">Valor total</label>
                                     <CurrencyInput
                                         allowNegative={false}
-                                        prefix='R$ '
+                                        prefix='R$'
                                         decimalSeparator=","
                                         thousandSeparator="."
                                         value={props.values.valor_total}
@@ -425,6 +425,7 @@ export const CadastroForm = () => {
                                                                 index={index}
                                                                 despesasTabelas={despesasTabelas}
                                                                 especificaoes_capital={especificaoes_capital}
+                                                                verboHttp={despesaContext.verboHttp}
                                                             />
                                                             ): null}
 
