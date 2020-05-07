@@ -13,6 +13,7 @@ import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
 import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
+import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const CadastroForm = () => {
 
@@ -28,24 +29,6 @@ export const CadastroForm = () => {
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
-
-    /*const input = document.querySelector('input')
-    input.addEventListener('input', evt => {
-        const value = input.value
-
-        if (!value) {
-            input.dataset.state = ''
-            return
-        }
-
-        const trimmed = value.trim()
-
-        if (trimmed) {
-            input.dataset.state = 'valid'
-        } else {
-            input.dataset.state = 'invalid'
-        }
-    })*/
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
@@ -220,7 +203,6 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
                                     <input
-                                        //value={nome_fornecedor}
                                         value={props.values.nome_fornecedor}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
@@ -266,17 +248,6 @@ export const CadastroForm = () => {
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
-
-{/*                                    <label htmlFor="data_transacao">Data da transação</label>
-                                    <DatePickerField
-                                        name="data_transacao"
-                                        id="data_transacao"
-                                        value={values.data_transacao != null ? values.data_transacao : ""}
-                                        onChange={setFieldValue}
-
-                                    />
-                                    {props.errors.data_transacao && <span className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}*/}
-
                                     <label htmlFor="data_documento">Data do documento</label>
                                     <DatePickerField
                                         name="data_documento"
@@ -326,21 +297,19 @@ export const CadastroForm = () => {
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="valor_total">Valor total - {props.values.valor_total}</label>
-
+                                    <label htmlFor="valor_total">Valor total</label>
                                     <CurrencyInput
                                         allowNegative={false}
-                                        prefix='R$'
+                                        prefix='R$ '
                                         decimalSeparator=","
                                         thousandSeparator="."
                                         value={props.values.valor_total}
                                         name="valor_total"
                                         id="valor_total"
-                                        className={`${  (props.values.valor_total === "R$ 0,00" || props.values.valor_total === "R$0,00") && despesaContext.verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                                        className={`${ trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                                         onChangeEvent={props.handleChange}
                                     />
-                                    {props.errors.valor_total &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
+                                    {props.errors.valor_total && <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
@@ -354,7 +323,7 @@ export const CadastroForm = () => {
                                         value={props.values.valor_recursos_proprios}
                                         name="valor_recursos_proprios"
                                         id="valor_recursos_proprios"
-                                        className={`${!props.values.valor_recursos_proprios && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                        className={`${ trataNumericos(props.values.valor_recursos_proprios) === 0 && despesaContext.verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                                         onChangeEvent={props.handleChange}
                                     />
                                     {props.errors.valor_recursos_proprios && <span className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
