@@ -30,11 +30,19 @@ export const CadastroForm = () => {
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
     const [qtdeErros, setQtdeErros] = useState(0);
+    const [exibeBarraStatusErro, setExibeBarraStatusErro] = useState(false);
 
-    const getQtdErros = () => {
-        let classesCssIsInvalid = document.getElementsByClassName("is_invalid");
-        console.log("Ollyver is_invalid", classesCssIsInvalid.length)
-        return classesCssIsInvalid.length
+    useEffect(()=> {
+
+        let aqui = getQtdErros();
+        console.log("Ollyver is_invalid", aqui)
+
+    }, [])
+
+    const getQtdErros = async () => {
+        let classesCssIsInvalid = await document.getElementsByClassName("is_invalid");
+
+        return classesCssIsInvalid;
     }
 
     useEffect(() => {
@@ -172,7 +180,7 @@ export const CadastroForm = () => {
 
     return (
         <>
-            {getQtdErros() > 0 &&
+            {qtdeErros > 0 &&
 
                     <div className="col-12 barra-status-erros pt-1 pb-1">
                         <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {getQtdErros()} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
@@ -488,7 +496,7 @@ export const CadastroForm = () => {
                                     </>
                                 )}
                             />
-                            <div className="d-flex  justify-content-end pb-3">
+                            <div className="d-flex  justify-content-end pb-3 mt-3">
                                 <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
                                 {despesaContext.idDespesa
                                     ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button>
