@@ -14,9 +14,13 @@ input[data-state="invalid"] {
 
 /* Show red borders when filled, but invalid */
 .is_invalid{
-  border-color: hsl(0, 76%, 50%);
   background-image: url("../../../assets/img/icone-nao-conciliado.svg");
   background-repeat: no-repeat;
   //background-attachment: fixed;
   background-position: 93% 50%;
+}
+
+.barra-status-erros{
+  background-color: #C65D00;
+  border-radius: 3px;
 }

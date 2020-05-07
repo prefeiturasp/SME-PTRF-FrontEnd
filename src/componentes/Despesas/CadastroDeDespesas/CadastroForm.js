@@ -173,11 +173,11 @@ export const CadastroForm = () => {
     return (
         <>
             {getQtdErros() > 0 &&
-                <div className="row">
-                    <div className="col-12 barra-status-amarelo">
-                        <p className="titulo-status pt-1 pb-1 mb-0">Quantidade de Erros: {getQtdErros()}</p>
+
+                    <div className="col-12 barra-status-erros pt-1 pb-1">
+                        <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {getQtdErros()} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
                     </div>
-                </div>
+
             }
             <Formik
                 initialValues={initialValues()}
