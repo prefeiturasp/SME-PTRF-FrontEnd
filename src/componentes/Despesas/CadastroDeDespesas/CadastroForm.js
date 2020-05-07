@@ -362,9 +362,9 @@ export const CadastroForm = () => {
                                         onChange={props.handleChange}
                                         name='mais_de_um_tipo_despesa'
                                         id='mais_de_um_tipo_despesa'
-                                        className="form-control"
+                                        className={`${!props.values.mais_de_um_tipo_despesa && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                     >
-                                        <option value="0">Selecione</option>
+                                        <option value="">Selecione</option>
                                         <option value="nao">Não</option>
                                         <option value="sim">Sim</option>
                                     </select>
@@ -398,9 +398,9 @@ export const CadastroForm = () => {
                                                                 }}
                                                                 name={`rateios[${index}].aplicacao_recurso`}
                                                                 id='aplicacao_recurso'
-                                                                className="form-control"
+                                                                className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                             >
-                                                                <option key={0} value={0}>Escolha uma opção</option>
+                                                                <option key={0} value="">Escolha uma opção</option>
                                                                 {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map(item => (
                                                                     <option key={item.id} value={item.id}>{item.nome}</option>
                                                                 ))}
@@ -415,6 +415,7 @@ export const CadastroForm = () => {
                                                             index={index}
                                                             despesasTabelas={despesasTabelas}
                                                             especificacoes_custeio={especificacoes_custeio}
+                                                            verboHttp={despesaContext.verboHttp}
                                                         />
                                                     ):
                                                         rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
