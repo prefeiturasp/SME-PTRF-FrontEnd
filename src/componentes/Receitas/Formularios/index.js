@@ -13,6 +13,7 @@ import {DeletarModalReceitas, CancelarModalReceitas} from "../../../utils/Modais
 
 export const ReceitaForm = props => {
 
+    let {origem} = useParams();
     let {uuid} = useParams();
 
     const tabelaInicial = {
@@ -87,8 +88,7 @@ export const ReceitaForm = props => {
         } else {
             await cadastrar(payload);
         }
-        let path = `/lista-de-receitas`
-        props.history.push(path)
+        getPath();
     }
 
     const cadastrar = async (payload) => {
@@ -119,8 +119,7 @@ export const ReceitaForm = props => {
 
     const onCancelarTrue = () => {
         setShow(false);
-        let path = `/lista-de-receitas`;
-        props.history.push(path);
+        getPath();
     }
 
     const onHandleClose = () => {
@@ -140,8 +139,7 @@ export const ReceitaForm = props => {
         deletarReceita(uuid).then(response => {
             console.log("Receita deletada com sucesso.");
             setShowDelete(false);
-            let path = `/lista-de-receitas`;
-            props.history.push(path);
+            getPath();
         }).catch(error => {
             console.log(error);
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
@@ -204,6 +202,16 @@ export const ReceitaForm = props => {
         }
 
         return errors;
+    }
+
+    const getPath = () => {
+        let path;
+        if (origem === undefined){
+            path = `/lista-de-receitas`;
+        }else {
+            path = `/detalhe-das-prestacoes`;
+        }
+        props.history.push(path);
     }
 
     return (

@@ -4,7 +4,7 @@ import { YupSignupSchemaCadastroDespesa, validaPayloadDespesas, validateFormDesp
 import MaskedInput from 'react-text-mask'
 import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
-import {useHistory} from 'react-router-dom'
+import {useHistory, useParams} from 'react-router-dom';
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
 import {CadastroFormCapital} from "./CadastroFormCapital";
 import {DespesaContext} from "../../../context/Despesa";
@@ -16,6 +16,7 @@ import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Mod
 
 export const CadastroForm = () => {
 
+    let {origem} = useParams();
     let history = useHistory();
 
     const despesaContext = useContext(DespesaContext)
@@ -60,6 +61,17 @@ export const CadastroForm = () => {
         return despesaContext.initialValues
     }
 
+    const getPath = () => {
+        let path;
+        if (origem === undefined){
+            path = `/lista-de-despesas`;
+        }else {
+            path = `/detalhe-das-prestacoes`;
+        }
+
+        history.push(path);
+    }
+
     const onSubmit = async (values, {resetForm}) => {
         setBtnSubmitDisable(true);
 
@@ -71,8 +83,7 @@ export const CadastroForm = () => {
                 if (response.status === HTTP_STATUS.CREATED) {
                     console.log("Operação realizada com sucesso!");
                     resetForm({values: ""})
-                    let path = `/lista-de-despesas`;
-                    history.push(path);
+                    getPath();
                 } else {
                    return
                 }
@@ -87,8 +98,7 @@ export const CadastroForm = () => {
                 if (response.status === 200) {
                     console.log("Operação realizada com sucesso!");
                     resetForm({values: ""})
-                    let path = `/lista-de-despesas`;
-                    history.push(path);
+                    getPath();
                 } else {
                     return
                 }
@@ -102,8 +112,7 @@ export const CadastroForm = () => {
 
     const onCancelarTrue = () => {
         setShow(false);
-        let path = `/lista-de-despesas`;
-        history.push(path);
+        getPath();
     }
 
     const onHandleClose = () => {
@@ -129,8 +138,7 @@ export const CadastroForm = () => {
         .then(response => {
             console.log("Despesa deletada com sucesso.");
             setShowDelete(false);
-            let path = `/lista-de-despesas`;
-            history.push(path);
+            getPath();
         })
         .catch(error => {
             console.log(error);
