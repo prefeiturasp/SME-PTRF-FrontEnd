@@ -14,6 +14,7 @@ import CurrencyInput from "react-currency-input";
 import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {getListaRateiosDespesas} from "../../../services/RateiosDespesas.service";
 
 export const CadastroForm = () => {
 
@@ -32,17 +33,11 @@ export const CadastroForm = () => {
     const [qtdeErros, setQtdeErros] = useState(0);
     const [exibeBarraStatusErro, setExibeBarraStatusErro] = useState(false);
 
-    useEffect(()=> {
 
-        let aqui = getQtdErros();
-        console.log("Ollyver is_invalid", aqui)
-
-    }, [])
-
-    const getQtdErros = async () => {
-        let classesCssIsInvalid = await document.getElementsByClassName("is_invalid");
-
-        return classesCssIsInvalid;
+    const getQtdErros = () => {
+        let classesCssIsInvalid = document.getElementsByClassName("is_invalid");
+        console.log("Ollyver is_invalid", classesCssIsInvalid.length)
+        return classesCssIsInvalid.length
     }
 
     useEffect(() => {
@@ -180,11 +175,11 @@ export const CadastroForm = () => {
 
     return (
         <>
-            {qtdeErros > 0 &&
+            {getQtdErros() > 0 &&
 
-                    <div className="col-12 barra-status-erros pt-1 pb-1">
-                        <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {getQtdErros()} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
-                    </div>
+                <div className="col-12 barra-status-erros pt-1 pb-1">
+                    <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {getQtdErros()} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
+                </div>
 
             }
             <Formik
