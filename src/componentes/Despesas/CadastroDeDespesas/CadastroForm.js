@@ -14,7 +14,7 @@ import CurrencyInput from "react-currency-input";
 import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
-import {getListaRateiosDespesas} from "../../../services/RateiosDespesas.service";
+
 
 export const CadastroForm = () => {
 
@@ -34,6 +34,11 @@ export const CadastroForm = () => {
     const [exibeBarraStatusErro, setExibeBarraStatusErro] = useState(false);
 
 
+    useEffect(()=>{
+
+        console.log("Use EFE ", despesaContext.qtde_erros_form_despesa)
+
+    }, [despesaContext.qtde_erros_form_despesa])
 
     useEffect(() =>{
 
@@ -99,7 +104,7 @@ export const CadastroForm = () => {
     }, []);
 
     const getQtdErros = () => {
-        let classesCssIsInvalid = document.getElementsByClassName("is_invalid");
+        let classesCssIsInvalid = Array.from(document.getElementsByClassName("is_invalid"));
         //console.log("Ollyver is_invalid", classesCssIsInvalid.length)
         return classesCssIsInvalid.length
     }
@@ -211,13 +216,7 @@ export const CadastroForm = () => {
 
     return (
         <>
-            {getQtdErros() > 0 &&
 
-                <div className="col-12 barra-status-erros pt-1 pb-1">
-                    <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {getQtdErros()} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
-                </div>
-
-            }
             <Formik
                 initialValues={initialValues()}
                 validationSchema={YupSignupSchemaCadastroDespesa}
@@ -233,6 +232,14 @@ export const CadastroForm = () => {
                         errors,
                     } = props;
                     return (
+                        <>
+                        {values.qtde_erros_form_despesa  > 0 && despesaContext.verboHttp === "PUT" &&
+
+                        <div className="col-12 barra-status-erros pt-1 pb-1">
+                            <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {values.qtde_erros_form_despesa} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
+                        </div>
+
+                        }
                         <form onSubmit={props.handleSubmit}>
                             <div className="form-row">
                                 <div className="col-12 col-md-6 mt-4">
@@ -533,6 +540,7 @@ export const CadastroForm = () => {
                                 <button disabled={btnSubmitDisable} type="submit" className="btn btn-success mt-2">Salvar</button>
                             </div>
                         </form>
+                        </>
 
                     ); /*Return metodo principal*/
 
