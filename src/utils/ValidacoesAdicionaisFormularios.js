@@ -33,29 +33,14 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     valor_recusos_acoes:yup.string().nullable(),
 });
 
-function isEmptyObject(data) {
-
-    console.log("validateFormDespesas ", data)
-
-    var count = 0;
-    for(var i in data)
-    {
-        if(!data.hasOwnProperty(i))
-        {
-            count ++;
-        }
-    }
-    return count;
-}
-
 // Synchronous validation
 export const validateFormDespesas = (values, props /* only available when using withFormik */) => {
 
-    values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length
+    values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
     const errors = {};
 
-    let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios)
+    let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
     let var_valor_total_dos_rateios = 0;
     let var_valor_total_dos_rateios_capital = 0;
     let var_valor_total_dos_rateios_custeio = 0;

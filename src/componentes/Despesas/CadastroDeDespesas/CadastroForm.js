@@ -62,7 +62,6 @@ export const CadastroForm = () => {
 
 
     const initialValues = () => {
-        //console.log("Initial Values ", despesaContext.initialValues)
         return despesaContext.initialValues
     }
 
@@ -316,7 +315,7 @@ export const CadastroForm = () => {
                                         value={props.values.valor_total}
                                         name="valor_total"
                                         id="valor_total"
-                                        className={`${ trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                                        className={`${ trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                         onChangeEvent={props.handleChange}
                                     />
                                     {props.errors.valor_total && <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
@@ -333,7 +332,7 @@ export const CadastroForm = () => {
                                         value={props.values.valor_recursos_proprios}
                                         name="valor_recursos_proprios"
                                         id="valor_recursos_proprios"
-                                        className={`${ trataNumericos(props.values.valor_recursos_proprios) === 0 && despesaContext.verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                                        className={`${ trataNumericos(props.values.valor_recursos_proprios) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                         onChangeEvent={props.handleChange}
                                     />
                                     {props.errors.valor_recursos_proprios && <span className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
