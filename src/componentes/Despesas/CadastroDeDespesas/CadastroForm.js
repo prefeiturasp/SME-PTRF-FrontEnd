@@ -30,50 +30,7 @@ export const CadastroForm = () => {
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
-    const [qtdeErros, setQtdeErros] = useState(0);
-    const [exibeBarraStatusErro, setExibeBarraStatusErro] = useState(false);
 
-
-    useEffect(()=>{
-
-        console.log("Use EFE ", despesaContext.qtde_erros_form_despesa)
-
-    }, [despesaContext.qtde_erros_form_despesa])
-
-    useEffect(() =>{
-
-        var arr = [
-            { id: 15 },
-            { id: -1 },
-            { id: 0 },
-            { id: 3 },
-            { id: 12.2 },
-            { },
-            { id: null },
-            { id: NaN },
-            { id: 'undefined' }
-        ];
-
-        var invalidEntries = 0;
-
-        function filterByID(obj) {
-            if ('id' in obj && typeof(obj.id) === 'number' && !isNaN(obj.id)) {
-                return true;
-            } else {
-                invalidEntries++;
-                return false;
-            }
-        }
-
-        var arrByID = arr.filter(filterByID);
-
-        //console.log('Filtered Array\n', arrByID);
-        // [{ id: 15 }, { id: -1 }, { id: 0 }, { id: 3 }, { id: 12.2 }]
-
-        //console.log('Number of Invalid Entries = ', invalidEntries);
-        // Number of Invalid Entries = 4
-
-    }, [])
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
@@ -103,11 +60,6 @@ export const CadastroForm = () => {
         })();
     }, []);
 
-    const getQtdErros = () => {
-        let classesCssIsInvalid = Array.from(document.getElementsByClassName("is_invalid"));
-        //console.log("Ollyver is_invalid", classesCssIsInvalid.length)
-        return classesCssIsInvalid.length
-    }
 
     const initialValues = () => {
         //console.log("Initial Values ", despesaContext.initialValues)
@@ -121,7 +73,6 @@ export const CadastroForm = () => {
         }else {
             path = `/detalhe-das-prestacoes`;
         }
-
         history.push(path);
     }
 
@@ -216,11 +167,10 @@ export const CadastroForm = () => {
 
     return (
         <>
-
             <Formik
                 initialValues={initialValues()}
                 validationSchema={YupSignupSchemaCadastroDespesa}
-                validateOnBlur={false}
+                validateOnBlur={true}
                 onSubmit={onSubmit}
                 enableReinitialize={true}
                 validate={validateFormDespesas}
@@ -233,13 +183,13 @@ export const CadastroForm = () => {
                     } = props;
                     return (
                         <>
-                        {values.qtde_erros_form_despesa  > 0 && despesaContext.verboHttp === "PUT" &&
+                        {props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
 
                         <div className="col-12 barra-status-erros pt-1 pb-1">
-                            <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {values.qtde_erros_form_despesa} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
+                            <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
                         </div>
 
-                        }
+                       }
                         <form onSubmit={props.handleSubmit}>
                             <div className="form-row">
                                 <div className="col-12 col-md-6 mt-4">
@@ -279,7 +229,7 @@ export const CadastroForm = () => {
                                         value={
                                             props.values.tipo_documento !== null ? (
                                                 props.values.tipo_documento === "object" ? props.values.tipo_documento.id : props.values.tipo_documento.id
-                                            ) : 0
+                                            ) : ""
                                         }
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
@@ -287,7 +237,7 @@ export const CadastroForm = () => {
                                         id='tipo_documento'
                                         className={`${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                     >
-                                        <option key={0} value={0}>Selecione o tipo</option>
+                                        <option key={0} value="">Selecione o tipo</option>
                                         {despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.map(item =>
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         )
@@ -326,7 +276,7 @@ export const CadastroForm = () => {
                                         value={
                                             props.values.tipo_transacao !== null ? (
                                                 props.values.tipo_transacao === "object" ? props.values.tipo_transacao.id : props.values.tipo_transacao.id
-                                            ) : 0
+                                            ) : ""
                                         }
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
@@ -334,7 +284,7 @@ export const CadastroForm = () => {
                                         id='tipo_transacao'
                                         className={`${!props.values.tipo_transacao && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                     >
-                                        <option key={0} value={0}>Selecione o tipo</option>
+                                        <option key={0} value="">Selecione o tipo</option>
                                         {despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         ))}
@@ -438,15 +388,13 @@ export const CadastroForm = () => {
                                     <>
                                         {values.rateios.length > 0 && values.rateios.map((rateio, index) => {
                                             return (
-
                                                 <div key={index}>
-
                                                     <div className="form-row">
-                                                            <div className="col-12 mt-4 ml-0">
-                                                                <p className='mb-0'><strong>Despesa {index+1}</strong></p>
-                                                                <hr className='mt-0 mb-1'/>
-                                                            </div>
 
+                                                        <div className="col-12 mt-4 ml-0">
+                                                            <p className='mb-0'><strong>Despesa {index+1}</strong></p>
+                                                            <hr className='mt-0 mb-1'/>
+                                                        </div>
                                                         <div className="col-12 col-md-6 mt-4">
 
                                                             <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
@@ -504,30 +452,30 @@ export const CadastroForm = () => {
                                             )
                                         })}
 
-                                        {props.values.mais_de_um_tipo_despesa === "sim" && <div className="d-flex  justify-content-start mt-3 mb-3">
-
-                                            <button
-                                                type="button"
-                                                className="btn btn btn-outline-success mt-2 mr-2"
-                                                onClick={() => push(
-                                                    {
-                                                        associacao: localStorage.getItem(ASSOCIACAO_UUID),
-                                                        conta_associacao: "",
-                                                        acao_associacao: "",
-                                                        aplicacao_recurso: "",
-                                                        tipo_custeio: "",
-                                                        especificacao_material_servico: "",
-                                                        valor_rateio: "",
-                                                        quantidade_itens_capital: "",
-                                                        valor_item_capital: "",
-                                                        numero_processo_incorporacao_capital: ""
+                                        {props.values.mais_de_um_tipo_despesa === "sim" &&
+                                            <div className="d-flex  justify-content-start mt-3 mb-3">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn btn-outline-success mt-2 mr-2"
+                                                    onClick={() => push(
+                                                        {
+                                                            associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                                                            conta_associacao: "",
+                                                            acao_associacao: "",
+                                                            aplicacao_recurso: "",
+                                                            tipo_custeio: "",
+                                                            especificacao_material_servico: "",
+                                                            valor_rateio: "",
+                                                            quantidade_itens_capital: "",
+                                                            valor_item_capital: "",
+                                                            numero_processo_incorporacao_capital: ""
+                                                        }
+                                                    )
                                                     }
-                                                )
-                                                }
-                                            >
-                                                + Adicionar despesa parcial
-                                            </button>
-                                        </div>
+                                                >
+                                                    + Adicionar despesa parcial
+                                                </button>
+                                            </div>
                                         }
                                     </>
                                 )}

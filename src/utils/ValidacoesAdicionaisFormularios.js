@@ -51,13 +51,7 @@ function isEmptyObject(data) {
 // Synchronous validation
 export const validateFormDespesas = (values, props /* only available when using withFormik */) => {
 
-    let classesCssIsInvalid = document.getElementsByClassName("is_invalid").length;
-
-    values.qtde_erros_form_despesa= document.getElementsByClassName("is_invalid").length
-
-    console.log("Agora vai ", classesCssIsInvalid)
-
-
+    values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length
 
     const errors = {};
 

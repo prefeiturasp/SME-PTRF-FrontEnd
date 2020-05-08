@@ -16,7 +16,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         value={
                             rateio.tipo_custeio !== null ? (
                                 typeof rateio.tipo_custeio === "object" ? rateio.tipo_custeio.id : rateio.tipo_custeio
-                            ) : 0
+                            ) : ""
                         }
                         onChange={(e) => {
                             formikProps.handleChange(e);
@@ -67,7 +67,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         value={
                             rateio.acao_associacao !== null ? (
                                 typeof rateio.acao_associacao === "object" ? rateio.acao_associacao.uuid : rateio.acao_associacao
-                            ) : 0
+                            ) : ""
                         }
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].acao_associacao`}
@@ -89,7 +89,7 @@ export const CadastroFormCusteio = (propriedades) => {
                                 value={
                                     rateio.conta_associacao !== null ? (
                                         typeof rateio.conta_associacao === "object" ? rateio.conta_associacao.uuid : rateio.conta_associacao
-                                    ) : 0
+                                    ) : ""
                                 }
                                 onChange={formikProps.handleChange}
                                 name={`rateios[${index}].conta_associacao`}
