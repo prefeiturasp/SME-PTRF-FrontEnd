@@ -33,20 +33,21 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     valor_recusos_acoes:yup.string().nullable(),
 });
 
-
-
 // Synchronous validation
 export const validateFormDespesas = (values, props /* only available when using withFormik */) => {
+
+    values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
+
     const errors = {};
 
-    let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios)
+    let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
     let var_valor_total_dos_rateios = 0;
     let var_valor_total_dos_rateios_capital = 0;
     let var_valor_total_dos_rateios_custeio = 0;
 
     values.rateios.map((rateio) => {
         if (rateio.aplicacao_recurso === "CAPITAL"){
-            var_valor_total_dos_rateios_capital = var_valor_total_dos_rateios_capital + round(trataNumericos(rateio.quantidade_itens_capital) * trataNumericos(rateio.valor_item_capital, 2))
+            var_valor_total_dos_rateios_capital = var_valor_total_dos_rateios_capital + trataNumericos(rateio.quantidade_itens_capital) * trataNumericos(rateio.valor_item_capital)
         }else{
             var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
         }
@@ -54,7 +55,7 @@ export const validateFormDespesas = (values, props /* only available when using 
 
     var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio
 
-    if (var_valor_recursos_acoes !== var_valor_total_dos_rateios) {
+    if (round(var_valor_recursos_acoes,2) !== round(var_valor_total_dos_rateios,2)) {
         errors.valor_recusos_acoes = 'O total das classificações deve corresponder ao valor total da nota';
     }
     return errors;

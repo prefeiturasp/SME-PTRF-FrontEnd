@@ -1,0 +1,26 @@
+/* Show green borders when valid */
+input[data-state="valid"] {
+  border-color: hsl(120, 76%, 50%);
+}
+
+/* Show red borders when filled, but invalid */
+input[data-state="invalid"] {
+  border-color: hsl(0, 76%, 50%);
+}
+
+.is_valid {
+  border-color: hsl(120, 76%, 50%);
+}
+
+/* Show red borders when filled, but invalid */
+.is_invalid{
+  background-image: url("../../../assets/img/icone-nao-conciliado.svg");
+  background-repeat: no-repeat;
+  //background-attachment: fixed;
+  background-position: 93% 50%;
+}
+
+.barra-status-erros{
+  background-color: #C65D00;
+  border-radius: 3px;
+}

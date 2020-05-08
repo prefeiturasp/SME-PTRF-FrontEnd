@@ -11,8 +11,10 @@ import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
-
 import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Modais"
+import "./cadastro-de-despesas.scss"
+import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
+
 
 export const CadastroForm = () => {
 
@@ -28,6 +30,7 @@ export const CadastroForm = () => {
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
+
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
@@ -57,6 +60,7 @@ export const CadastroForm = () => {
         })();
     }, []);
 
+
     const initialValues = () => {
         return despesaContext.initialValues
     }
@@ -68,7 +72,6 @@ export const CadastroForm = () => {
         }else {
             path = `/detalhe-das-prestacoes`;
         }
-
         history.push(path);
     }
 
@@ -166,7 +169,7 @@ export const CadastroForm = () => {
             <Formik
                 initialValues={initialValues()}
                 validationSchema={YupSignupSchemaCadastroDespesa}
-                validateOnBlur={false}
+                validateOnBlur={true}
                 onSubmit={onSubmit}
                 enableReinitialize={true}
                 validate={validateFormDespesas}
@@ -178,6 +181,14 @@ export const CadastroForm = () => {
                         errors,
                     } = props;
                     return (
+                        <>
+                        {props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
+
+                        <div className="col-12 barra-status-erros pt-1 pb-1">
+                            <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
+                        </div>
+
+                       }
                         <form onSubmit={props.handleSubmit}>
                             <div className="form-row">
                                 <div className="col-12 col-md-6 mt-4">
@@ -193,7 +204,7 @@ export const CadastroForm = () => {
                                         }
                                         onBlur={props.handleBlur}
                                         name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
-                                        className="form-control"
+                                        className={`${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                         placeholder="Digite o número do documento"
                                     />
                                     {props.errors.cpf_cnpj_fornecedor && <span className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
@@ -201,11 +212,11 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
                                     <input
-                                        //value={nome_fornecedor}
                                         value={props.values.nome_fornecedor}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                        name="nome_fornecedor" id="nome_fornecedor" type="text" className="form-control"
+                                        name="nome_fornecedor" id="nome_fornecedor" type="text"
+                                        className={`${!props.values.nome_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                         placeholder="Digite o nome"/>
                                 </div>
                             </div>
@@ -217,14 +228,15 @@ export const CadastroForm = () => {
                                         value={
                                             props.values.tipo_documento !== null ? (
                                                 props.values.tipo_documento === "object" ? props.values.tipo_documento.id : props.values.tipo_documento.id
-                                            ) : 0
+                                            ) : ""
                                         }
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_documento'
                                         id='tipo_documento'
-                                        className="form-control">
-                                        <option key={0} value={0}>Selecione o tipo</option>
+                                        className={`${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                    >
+                                        <option key={0} value="">Selecione o tipo</option>
                                         {despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.map(item =>
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         )
@@ -238,8 +250,10 @@ export const CadastroForm = () => {
                                         value={props.values.numero_documento}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                        name="numero_documento" id="numero_documento" type="text"
-                                        className="form-control" placeholder="Digite o número"/>
+                                        name="numero_documento"
+                                        id="numero_documento" type="text"
+                                        className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                        placeholder="Digite o número"/>
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
@@ -249,9 +263,10 @@ export const CadastroForm = () => {
                                         id="data_documento"
                                         value={values.data_documento != null ? values.data_documento : ""}
                                         onChange={setFieldValue}
+                                        about={despesaContext.verboHttp}
+
                                     />
-                                    {props.errors.data_documento &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
+                                    {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
@@ -260,15 +275,15 @@ export const CadastroForm = () => {
                                         value={
                                             props.values.tipo_transacao !== null ? (
                                                 props.values.tipo_transacao === "object" ? props.values.tipo_transacao.id : props.values.tipo_transacao.id
-                                            ) : 0
+                                            ) : ""
                                         }
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name='tipo_transacao'
                                         id='tipo_transacao'
-                                        className="form-control"
+                                        className={`${!props.values.tipo_transacao && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                     >
-                                        <option key={0} value={0}>Selecione o tipo</option>
+                                        <option key={0} value="">Selecione o tipo</option>
                                         {despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         ))}
@@ -284,6 +299,7 @@ export const CadastroForm = () => {
                                         id="data_transacao"
                                         value={values.data_transacao != null ? values.data_transacao : ""}
                                         onChange={setFieldValue}
+                                        about={despesaContext.verboHttp}
                                     />
                                     {props.errors.data_transacao &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
@@ -291,7 +307,6 @@ export const CadastroForm = () => {
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_total">Valor total</label>
-
                                     <CurrencyInput
                                         allowNegative={false}
                                         prefix='R$'
@@ -300,11 +315,10 @@ export const CadastroForm = () => {
                                         value={props.values.valor_total}
                                         name="valor_total"
                                         id="valor_total"
-                                        className="form-control"
+                                        className={`${ trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                         onChangeEvent={props.handleChange}
                                     />
-                                    {props.errors.valor_total &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
+                                    {props.errors.valor_total && <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
@@ -318,7 +332,7 @@ export const CadastroForm = () => {
                                         value={props.values.valor_recursos_proprios}
                                         name="valor_recursos_proprios"
                                         id="valor_recursos_proprios"
-                                        className="form-control"
+                                        className={`${ trataNumericos(props.values.valor_recursos_proprios) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                         onChangeEvent={props.handleChange}
                                     />
                                     {props.errors.valor_recursos_proprios && <span className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
@@ -336,6 +350,7 @@ export const CadastroForm = () => {
                                                 thousandSeparator="."
                                                 value={calculaValorRecursoAcoes(props)}
                                                 id="valor_recusos_acoes"
+                                                name="valor_recusos_acoes"
                                                 className="form-control"
                                                 onChangeEvent={props.handleChange}
                                                 readOnly={true}
@@ -356,9 +371,9 @@ export const CadastroForm = () => {
                                         onChange={props.handleChange}
                                         name='mais_de_um_tipo_despesa'
                                         id='mais_de_um_tipo_despesa'
-                                        className="form-control"
+                                        className={`${!props.values.mais_de_um_tipo_despesa && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                     >
-                                        <option value="0">Selecione</option>
+                                        <option value="">Selecione</option>
                                         <option value="nao">Não</option>
                                         <option value="sim">Sim</option>
                                     </select>
@@ -372,15 +387,13 @@ export const CadastroForm = () => {
                                     <>
                                         {values.rateios.length > 0 && values.rateios.map((rateio, index) => {
                                             return (
-
                                                 <div key={index}>
-
                                                     <div className="form-row">
-                                                            <div className="col-12 mt-4 ml-0">
-                                                                <p className='mb-0'><strong>Despesa {index+1}</strong></p>
-                                                                <hr className='mt-0 mb-1'/>
-                                                            </div>
 
+                                                        <div className="col-12 mt-4 ml-0">
+                                                            <p className='mb-0'><strong>Despesa {index+1}</strong></p>
+                                                            <hr className='mt-0 mb-1'/>
+                                                        </div>
                                                         <div className="col-12 col-md-6 mt-4">
 
                                                             <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
@@ -392,9 +405,9 @@ export const CadastroForm = () => {
                                                                 }}
                                                                 name={`rateios[${index}].aplicacao_recurso`}
                                                                 id='aplicacao_recurso'
-                                                                className="form-control"
+                                                                className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                             >
-                                                                <option key={0} value={0}>Escolha uma opção</option>
+                                                                <option key={0} value="">Escolha uma opção</option>
                                                                 {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map(item => (
                                                                     <option key={item.id} value={item.id}>{item.nome}</option>
                                                                 ))}
@@ -409,6 +422,7 @@ export const CadastroForm = () => {
                                                             index={index}
                                                             despesasTabelas={despesasTabelas}
                                                             especificacoes_custeio={especificacoes_custeio}
+                                                            verboHttp={despesaContext.verboHttp}
                                                         />
                                                     ):
                                                         rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -418,6 +432,7 @@ export const CadastroForm = () => {
                                                                 index={index}
                                                                 despesasTabelas={despesasTabelas}
                                                                 especificaoes_capital={especificaoes_capital}
+                                                                verboHttp={despesaContext.verboHttp}
                                                             />
                                                             ): null}
 
@@ -436,35 +451,35 @@ export const CadastroForm = () => {
                                             )
                                         })}
 
-                                        {props.values.mais_de_um_tipo_despesa === "sim" && <div className="d-flex  justify-content-start mt-3 mb-3">
-
-                                            <button
-                                                type="button"
-                                                className="btn btn btn-outline-success mt-2 mr-2"
-                                                onClick={() => push(
-                                                    {
-                                                        associacao: localStorage.getItem(ASSOCIACAO_UUID),
-                                                        conta_associacao: "",
-                                                        acao_associacao: "",
-                                                        aplicacao_recurso: "",
-                                                        tipo_custeio: "",
-                                                        especificacao_material_servico: "",
-                                                        valor_rateio: "",
-                                                        quantidade_itens_capital: "",
-                                                        valor_item_capital: "",
-                                                        numero_processo_incorporacao_capital: ""
+                                        {props.values.mais_de_um_tipo_despesa === "sim" &&
+                                            <div className="d-flex  justify-content-start mt-3 mb-3">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn btn-outline-success mt-2 mr-2"
+                                                    onClick={() => push(
+                                                        {
+                                                            associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                                                            conta_associacao: "",
+                                                            acao_associacao: "",
+                                                            aplicacao_recurso: "",
+                                                            tipo_custeio: "",
+                                                            especificacao_material_servico: "",
+                                                            valor_rateio: "",
+                                                            quantidade_itens_capital: "",
+                                                            valor_item_capital: "",
+                                                            numero_processo_incorporacao_capital: ""
+                                                        }
+                                                    )
                                                     }
-                                                )
-                                                }
-                                            >
-                                                + Adicionar despesa parcial
-                                            </button>
-                                        </div>
+                                                >
+                                                    + Adicionar despesa parcial
+                                                </button>
+                                            </div>
                                         }
                                     </>
                                 )}
                             />
-                            <div className="d-flex  justify-content-end pb-3">
+                            <div className="d-flex  justify-content-end pb-3 mt-3">
                                 <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
                                 {despesaContext.idDespesa
                                     ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button>
@@ -472,6 +487,7 @@ export const CadastroForm = () => {
                                 <button disabled={btnSubmitDisable} type="submit" className="btn btn-success mt-2">Salvar</button>
                             </div>
                         </form>
+                        </>
 
                     ); /*Return metodo principal*/
 
