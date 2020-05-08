@@ -33,10 +33,74 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
     valor_recusos_acoes:yup.string().nullable(),
 });
 
+function isEmptyObject(data) {
 
+    console.log("validateFormDespesas ", data)
+
+    var count = 0;
+    for(var i in data)
+    {
+        if(!data.hasOwnProperty(i))
+        {
+            count ++;
+        }
+    }
+    return count;
+}
 
 // Synchronous validation
 export const validateFormDespesas = (values, props /* only available when using withFormik */) => {
+
+    let vazio = isEmptyObject(values)
+
+    //console.log("vazio ", vazio)
+
+    //console.log(Object.values(values));
+
+    let count = 0;
+    let count_array = 0;
+
+    let resultado = Object.values(values).filter((el)=>{
+        return !el || el === "R$ 0,00"
+    })
+
+    //debugger;
+/*    let resultado2 = values.rateios.filter((el)=>{
+        return !el || el === "R$ 0,00"
+    })*/
+
+    values.rateios.map((item, index)=>{
+        //console.log("Item MAP ", item, "Item INDEX ", index)
+        if (!item[index] || item[index] === "R$ 0,00" ){
+
+        }
+
+    })
+
+    //console.log("resultado ", resultado)
+    //console.log("resultado2 ", resultado2)
+
+    Object.values(values).map((item) => {
+
+        if (Array.isArray(item)){
+
+            item.map((item_array) => {
+                Object.values(item_array).map((el)=>{
+                    if (!el || el === "R$ 0,00"){
+                        count++;
+                    }
+                })
+            })
+
+        }else {
+            if (!item || item === "R$ 0,00"){
+                count++;
+            }
+        }
+    })
+
+    console.log("Contador ", count);
+
     const errors = {};
 
     let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios)

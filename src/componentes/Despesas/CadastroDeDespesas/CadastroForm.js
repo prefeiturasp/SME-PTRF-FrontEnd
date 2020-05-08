@@ -34,11 +34,41 @@ export const CadastroForm = () => {
     const [exibeBarraStatusErro, setExibeBarraStatusErro] = useState(false);
 
 
-    const getQtdErros = () => {
-        let classesCssIsInvalid = document.getElementsByClassName("is_invalid");
-        console.log("Ollyver is_invalid", classesCssIsInvalid.length)
-        return classesCssIsInvalid.length
-    }
+
+    useEffect(() =>{
+
+        var arr = [
+            { id: 15 },
+            { id: -1 },
+            { id: 0 },
+            { id: 3 },
+            { id: 12.2 },
+            { },
+            { id: null },
+            { id: NaN },
+            { id: 'undefined' }
+        ];
+
+        var invalidEntries = 0;
+
+        function filterByID(obj) {
+            if ('id' in obj && typeof(obj.id) === 'number' && !isNaN(obj.id)) {
+                return true;
+            } else {
+                invalidEntries++;
+                return false;
+            }
+        }
+
+        var arrByID = arr.filter(filterByID);
+
+        //console.log('Filtered Array\n', arrByID);
+        // [{ id: 15 }, { id: -1 }, { id: 0 }, { id: 3 }, { id: 12.2 }]
+
+        //console.log('Number of Invalid Entries = ', invalidEntries);
+        // Number of Invalid Entries = 4
+
+    }, [])
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
@@ -68,8 +98,14 @@ export const CadastroForm = () => {
         })();
     }, []);
 
+    const getQtdErros = () => {
+        let classesCssIsInvalid = document.getElementsByClassName("is_invalid");
+        //console.log("Ollyver is_invalid", classesCssIsInvalid.length)
+        return classesCssIsInvalid.length
+    }
+
     const initialValues = () => {
-        console.log("Initial Values ", despesaContext.initialValues)
+        //console.log("Initial Values ", despesaContext.initialValues)
         return despesaContext.initialValues
     }
 
@@ -202,7 +238,6 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
                                     <MaskedInput
-                                        data-type={!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" ? "erro" : ""}
                                         mask={(valor) => cpfMaskContitional(valor)}
                                         value={props.values.cpf_cnpj_fornecedor}
                                         onChange={(e)=>{
@@ -221,7 +256,6 @@ export const CadastroForm = () => {
                                 <div className="col-12 col-md-6  mt-4">
                                     <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
                                     <input
-                                        data-type={!props.values.nome_fornecedor && despesaContext.verboHttp === "PUT" ? "erro" : ""}
                                         value={props.values.nome_fornecedor}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
