@@ -51,8 +51,13 @@ export const DetalheDasPrestacoes = () => {
     }, [])
 
     const getAcaoLancamento = () => {
-        const files = JSON.parse(localStorage.getItem('acaoLancamento'))
-        setAcaoLancamento(files)
+        if (localStorage.getItem('acaoLancamento')) {
+            const files = JSON.parse(localStorage.getItem('acaoLancamento'))
+            console.log("Files ", files)
+            setAcaoLancamento(files)
+        }else {
+            setAcaoLancamento({ acao: "", lancamento: "" })
+        }
     }
 
     const getReceitas = async () => {
