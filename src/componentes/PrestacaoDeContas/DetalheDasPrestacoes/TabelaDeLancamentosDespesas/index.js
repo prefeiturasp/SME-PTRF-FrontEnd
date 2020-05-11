@@ -90,7 +90,7 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas}) => {
                         <Column field="valor" header="Valor"/>
                         <Column
                             field="conferido"
-                            header="Conferido"
+                            header="Demonstrado"
                             body={getConferido}
                         />
                     </DataTable>

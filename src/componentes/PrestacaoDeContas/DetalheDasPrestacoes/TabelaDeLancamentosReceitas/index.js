@@ -104,7 +104,7 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas}) => {
                             />
                             <Column
                                 field='acao_associacao.status'
-                                header='Conferido'
+                                header='Demonstrado'
                                 body={conferidoTemplate}
                             />
                         </DataTable>
