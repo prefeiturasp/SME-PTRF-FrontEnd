@@ -16,6 +16,8 @@ export const DetalheDasPrestacoes = () => {
     const [despesas, setDespesas] = useState([])
     const [acoesAssociacao, setAcoesAssociacao] = useState(false);
     const [acaoLancamento, setAcaoLancamento]= useState("")
+    const [btnCadastrarTexto, setBtnCadastrarTexto]= useState("")
+    const [btnCadastrarUrl, setBtnCadastrarUrl]= useState("")
 
     useEffect(()=> {
         getAcaoLancamento();
@@ -24,12 +26,18 @@ export const DetalheDasPrestacoes = () => {
     useEffect(()=>{
 
         if (acaoLancamento.acao && acaoLancamento.lancamento){
+
             localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento))
+            
             if (acaoLancamento.lancamento === 'receitas-lancadas'){
+                setBtnCadastrarTexto("Cadastrar Receita")
+                setBtnCadastrarUrl("/cadastro-de-credito/tabela-de-lancamentos-despesas")
                 setDespesas([])
                 getReceitas();
             }else if (acaoLancamento.lancamento === 'despesas-lancadas'){
                 setReceitas([])
+                setBtnCadastrarTexto("Cadastrar Despesa")
+                setBtnCadastrarUrl("/cadastro-de-despesa/tabela-de-lancamentos-despesas")
                 getDespesas();
             }
         }else{
@@ -53,7 +61,6 @@ export const DetalheDasPrestacoes = () => {
     const getAcaoLancamento = () => {
         if (localStorage.getItem('acaoLancamento')) {
             const files = JSON.parse(localStorage.getItem('acaoLancamento'))
-            console.log("Files ", files)
             setAcaoLancamento(files)
         }else {
             setAcaoLancamento({ acao: "", lancamento: "" })
@@ -77,15 +84,15 @@ export const DetalheDasPrestacoes = () => {
         });
     }
 
-    const handleClickCadastrarDespesa = () => {
-        let path = `/cadastro-de-despesa/tabela-de-lancamentos-despesas`;
-        history.push(path);
+    const handleClickCadastrar = () => {
+        history.push(btnCadastrarUrl);
     }
 
     return(
         <div className="col-12 detalhe-das-prestacoes-container mb-5" >
             <TopoComBotoes
-                handleClickCadastrarDespesa={handleClickCadastrarDespesa}
+                handleClickCadastrar={handleClickCadastrar}
+                btnCadastrarTexto={btnCadastrarTexto}
             />
 
             <SelectAcaoLancamento
