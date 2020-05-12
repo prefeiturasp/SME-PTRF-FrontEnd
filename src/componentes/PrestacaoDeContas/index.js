@@ -9,7 +9,7 @@ import {DemonstrativoFinanceiro} from "../PrestacaoDeContas/DemonstrativoFinance
 import {BotaoConciliacao} from "./BotaoConciliacao";
 import {DataUltimaConciliacao} from "./DataUltimaConciliacao";
 import {getTabelasReceita} from "../../services/Receitas.service";
-import {getPeriodos, getStatus, getIniciarPrestacaoDeContas} from "../../services/PrestacaoDeContas.service";
+import {getPeriodos, getStatus, getIniciarPrestacaoDeContas, getReabrirPeriodo} from "../../services/PrestacaoDeContas.service";
 import {exibeDateTimePT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
 import {ReverConciliacao} from "../../utils/Modais";
 
@@ -47,7 +47,6 @@ export const PrestacaoDeContas = () => {
 
         const carregaPeriodos = async () =>{
             let periodos = await getPeriodos();
-            console.log("DATAS ", periodos)
             setPeriodosAssociacao(periodos);
         }
 
@@ -158,9 +157,12 @@ export const PrestacaoDeContas = () => {
         setShow(false);
     }
 
-    const reabrirPeriodo = () => {
+    const reabrirPeriodo = async () => {
         setShow(false);
-        console.log("ENTREI NO reabrirPeriodo");
+        let payload = {
+            "motivo": textareaModalReverConciliacao
+        }
+        let reabrir_periodo = await getReabrirPeriodo(statusPrestacaoConta.uuid, payload)
     }
 
     return (
