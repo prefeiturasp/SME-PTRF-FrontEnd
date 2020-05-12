@@ -16,3 +16,11 @@ export const getPeriodos = async () => {
 export const getStatus = async (periodo_uuid, conta_uuid) => {
     return (await api.get(`/api/prestacoes-contas/por-conta-e-periodo/?conta_associacao_uuid=${conta_uuid}&periodo_uuid=${periodo_uuid}`, authHeader)).data
 }
+
+export const getIniciarPrestacaoDeContas = async (conta_uuid, periodo_uuid) => {
+    return (await api.post(`/api/prestacoes-contas/iniciar/?conta_associacao_uuid=${conta_uuid}&periodo_uuid=${periodo_uuid}`, authHeader)).data
+}
+
+export const getRevisarPrestacaoDeContas = async (conta_uuid, periodo_uuid) => {
+    return (await api.post(`/api/prestacoes-contas/iniciar/?conta_associacao_uuid=${conta_uuid}&periodo_uuid=${periodo_uuid}`, authHeader)).data
+}

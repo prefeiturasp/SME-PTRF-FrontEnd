@@ -9,7 +9,7 @@ import {DemonstrativoFinanceiro} from "../PrestacaoDeContas/DemonstrativoFinance
 import {BotaoConciliacao} from "./BotaoConciliacao";
 import {DataUltimaConciliacao} from "./DataUltimaConciliacao";
 import {getTabelasReceita} from "../../services/Receitas.service";
-import {getPeriodos, getStatus} from "../../services/PrestacaoDeContas.service";
+import {getPeriodos, getStatus, getIniciarPrestacaoDeContas} from "../../services/PrestacaoDeContas.service";
 import {exibeDateTimePT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
 
 
@@ -32,6 +32,8 @@ export const PrestacaoDeContas = () => {
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
 
+    const [prestacaoDeContasUuid, setPrestacaoDeContasUuid] = useState(null);
+
     useEffect(() => {
         const carregaTabelas = async () => {
             await getTabelasReceita().then(response => {
@@ -43,6 +45,7 @@ export const PrestacaoDeContas = () => {
 
         const carregaPeriodos = async () =>{
             let periodos = await getPeriodos();
+            console.log("DATAS ", periodos)
             setPeriodosAssociacao(periodos);
         }
 
@@ -66,8 +69,11 @@ export const PrestacaoDeContas = () => {
         setConfBarraStatus(status);
         setConfBotaoConciliacao(status);
         setConfDataUltimaConciliacao(status);
+        iniciarReverPrestacaoDeContas(status)
         setBotaoConciliacaoReadonly(false);
+
     }
+
 
     const setConfBarraStatus = (status) => {
         setStatusPrestacaoConta(status.status);
@@ -80,6 +86,22 @@ export const PrestacaoDeContas = () => {
         }else if(status.status === null){
             setCorBarraDeStatusPrestacaoDeContas('vermelho')
             setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período ainda não foi iniciada.")
+        }
+    }
+
+    const iniciarReverPrestacaoDeContas = async (status) =>{
+
+        //debugger;
+
+        //console.log("iniciarReverPrestacaoDeContas Status ", status)
+        
+
+        if (status.status === null){
+            let prestacao = await getIniciarPrestacaoDeContas(periodoConta.conta, periodoConta.periodo);
+            setPrestacaoDeContasUuid(prestacao.uuid)
+            console.log("iniciarPrestacaoDeContas ", prestacao)
+        }else{
+            console.log("NÃO É NNULL")
         }
     }
 
