@@ -28,10 +28,10 @@ export const DetalheDasPrestacoes = () => {
         if (acaoLancamento.acao && acaoLancamento.lancamento){
 
             localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento))
-            
+
             if (acaoLancamento.lancamento === 'receitas-lancadas'){
                 setBtnCadastrarTexto("Cadastrar Receita")
-                setBtnCadastrarUrl("/cadastro-de-credito/tabela-de-lancamentos-despesas")
+                setBtnCadastrarUrl("/cadastro-de-credito/tabela-de-lancamentos-receitas")
                 setDespesas([])
                 getReceitas();
             }else if (acaoLancamento.lancamento === 'despesas-lancadas'){

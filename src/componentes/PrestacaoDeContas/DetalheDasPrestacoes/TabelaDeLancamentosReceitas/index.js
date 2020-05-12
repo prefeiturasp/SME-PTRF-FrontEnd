@@ -23,7 +23,7 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas}) => {
 
     const onCancelarTrue = () => {
         setShowModal(false);
-        const url = '/edicao-de-receita/' + uuid + '/tabela-de-lancamentos-despesas'
+        const url = '/edicao-de-receita/' + uuid + '/tabela-de-lancamentos-receitas'
         history.push(url);
     }
 
