@@ -122,9 +122,14 @@ export const ReverConciliacao = (propriedades) => {
     const bodyTextarea = () => {
         return(
             <form className="form-group">
+                <p><strong>Revisão dos lançamentos realizados no período: Ao rever os lançamentos deste período, você permitirá que alterações sejam feitas nos dados da Associação e cadastro de receitas e despesas.</strong></p>
+                <label htmlFor="reabrir-periodo">Escreva abaixo o motivo da revisão dos lançamentos</label>
                 <textarea
+                    rows="3"
+                    placeholder="Escreva o motivo"
                     value={propriedades.textareaModalReverConciliacao}
                     onChange={propriedades.handleChangeModalReverConciliacao}
+                    name="reabrir-periodo"
                     type='text'
                     className="form-control"
                 />
@@ -138,10 +143,12 @@ export const ReverConciliacao = (propriedades) => {
             onHide={propriedades.handleClose}
             titulo="Reabertura prévia da prestação de contas do período"
             bodyText={bodyTextarea()}
-            primeiroBotaoOnclick={propriedades.onCancelarTrue}
-            primeiroBotaoTexto="OK"
-            segundoBotaoOnclick={propriedades.handleClose}
-            segundoBotaoTexto="Fechar"
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Cancelar"
+            primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={propriedades.reabrirPeriodo}
+            segundoBotaoTexto="Salvar e reabrir o período"
+            segundoBotaoCss="success"
         />
 
     )

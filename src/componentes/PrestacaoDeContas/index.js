@@ -158,8 +158,9 @@ export const PrestacaoDeContas = () => {
         setShow(false);
     }
 
-    const onCancelarTrue = () => {
+    const reabrirPeriodo = () => {
         setShow(false);
+        console.log("ENTREI NO reabrirPeriodo");
     }
 
     return (
@@ -200,7 +201,13 @@ export const PrestacaoDeContas = () => {
             )}
 
             <section>
-                <ReverConciliacao textareaModalReverConciliacao={textareaModalReverConciliacao} handleChangeModalReverConciliacao={handleChangeModalReverConciliacao} show={show} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+                <ReverConciliacao
+                    show={show}
+                    handleClose={onHandleClose}
+                    reabrirPeriodo={reabrirPeriodo}
+                    textareaModalReverConciliacao={textareaModalReverConciliacao}
+                    handleChangeModalReverConciliacao={handleChangeModalReverConciliacao}
+                />
             </section>
         </>
     )
