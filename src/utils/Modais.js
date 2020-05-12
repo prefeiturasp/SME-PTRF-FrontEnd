@@ -148,7 +148,6 @@ export const ReverConciliacao = (propriedades) => {
             primeiroBotaoCss="outline-success"
             segundoBotaoOnclick={propriedades.reabrirPeriodo}
             segundoBotaoTexto="Salvar e reabrir o período"
-            //segundoBotaoCss="success"
             segundoBotaoCss={propriedades.textareaModalReverConciliacao.trim() === "" ? "dark" : "success"}
             segundoBotaoDisable={propriedades.textareaModalReverConciliacao.trim() === ""}
         />

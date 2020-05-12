@@ -62,7 +62,7 @@ export const PrestacaoDeContas = () => {
         }else {
             setExibeMensagem(true)
             setStatusPrestacaoConta(undefined)
-            localStorage.setItem("uuidPrestacaoConta", "")
+            localStorage.setItem("uuidPrestacaoConta", undefined)
         }
     }, [periodoConta])
 
