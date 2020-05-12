@@ -11,6 +11,7 @@ import {DataUltimaConciliacao} from "./DataUltimaConciliacao";
 import {getTabelasReceita} from "../../services/Receitas.service";
 import {getPeriodos, getStatus, getIniciarPrestacaoDeContas} from "../../services/PrestacaoDeContas.service";
 import {exibeDateTimePT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
+import {ReverConciliacao} from "../../utils/Modais";
 
 
 export const PrestacaoDeContas = () => {
@@ -32,7 +33,8 @@ export const PrestacaoDeContas = () => {
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
 
-    const [prestacaoDeContasUuid, setPrestacaoDeContasUuid] = useState(null);
+    const [show, setShow] = useState(false);
+    const [textareaModalReverConciliacao, setTextareaModalReverConciliacao] = useState("");
 
     useEffect(() => {
         const carregaTabelas = async () => {
@@ -66,17 +68,17 @@ export const PrestacaoDeContas = () => {
 
     const getStatusPrestacaoDeConta = async (periodo_uuid, conta_uuid) => {
         let status = await getStatus(periodo_uuid, conta_uuid);
+        setStatusPrestacaoConta(status);
         setConfBarraStatus(status);
         setConfBotaoConciliacao(status);
         setConfDataUltimaConciliacao(status);
-        iniciarReverPrestacaoDeContas(status)
         setBotaoConciliacaoReadonly(false);
 
     }
 
 
     const setConfBarraStatus = (status) => {
-        setStatusPrestacaoConta(status.status);
+
         if (status.status === "FECHADO"){
             setCorBarraDeStatusPrestacaoDeContas('verde');
             setTextoBarraDeStatusPrestacaoDeContas("A geração dos documentos da conciliação desse período foi efetuada, clique no botão “Rever conciliação” para fazer alterações")
@@ -91,14 +93,10 @@ export const PrestacaoDeContas = () => {
 
     const iniciarReverPrestacaoDeContas = async (status) =>{
 
-        //debugger;
-
-        //console.log("iniciarReverPrestacaoDeContas Status ", status)
-        
+        let prestacao;
 
         if (status.status === null){
-            let prestacao = await getIniciarPrestacaoDeContas(periodoConta.conta, periodoConta.periodo);
-            setPrestacaoDeContasUuid(prestacao.uuid)
+            prestacao = await getIniciarPrestacaoDeContas(periodoConta.conta, periodoConta.periodo);
             console.log("iniciarPrestacaoDeContas ", prestacao)
         }else{
             console.log("NÃO É NNULL")
@@ -134,12 +132,39 @@ export const PrestacaoDeContas = () => {
     }
 
     const handleClickBotaoConciliacao = () => {
+
+        console.log("handleClickBotaoConciliacao", statusPrestacaoConta)
+
+        iniciarReverPrestacaoDeContas(statusPrestacaoConta)
+
+        if (statusPrestacaoConta.status === "ABERTO"){
+            onShowModal();
+        }
+
         let path = linkBotaoConciliacao;
-        history.push(path);
+        //history.push(path);
+    }
+
+    const handleChangeModalReverConciliacao = (event) => {
+        setTextareaModalReverConciliacao(event.target.value)
+
+    }
+
+    const onShowModal = () => {
+        setShow(true);
+    }
+
+    const onHandleClose = () => {
+        setShow(false);
+    }
+
+    const onCancelarTrue = () => {
+        setShow(false);
     }
 
     return (
         <>
+            {<p>TEXT AREA: {textareaModalReverConciliacao}</p>}
             <BarraDeStatusPrestacaoDeContas
                 statusPrestacaoConta={statusPrestacaoConta}
                 corBarraDeStatusPrestacaoDeContas={corBarraDeStatusPrestacaoDeContas}
@@ -173,6 +198,10 @@ export const PrestacaoDeContas = () => {
                         img={Img404}
                     />
             )}
+
+            <section>
+                <ReverConciliacao textareaModalReverConciliacao={textareaModalReverConciliacao} handleChangeModalReverConciliacao={handleChangeModalReverConciliacao} show={show} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+            </section>
         </>
     )
 }

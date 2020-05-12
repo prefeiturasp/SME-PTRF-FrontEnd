@@ -1,5 +1,5 @@
 import React from "react";
-import {ModalBootstrap} from "../componentes/ModalBootstrap";
+import {ModalBootstrap, ModalBootstrapReverConciliacao} from "../componentes/ModalBootstrap";
 
 export const AvisoCapitalModal = (propriedades) => {
     return (
@@ -115,5 +115,34 @@ export const RedirectModalTabelaLancamentos = (propriedades) => {
             segundoBotaoTexto="Sim, leve-me à página de edição"
             segundoBotaoCss="success"
         />
+    )
+}
+
+export const ReverConciliacao = (propriedades) => {
+    const bodyTextarea = () => {
+        return(
+            <form className="form-group">
+                <textarea
+                    value={propriedades.textareaModalReverConciliacao}
+                    onChange={propriedades.handleChangeModalReverConciliacao}
+                    type='text'
+                    className="form-control"
+                />
+            </form>
+        )
+
+    }
+    return (
+        <ModalBootstrapReverConciliacao
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Reabertura prévia da prestação de contas do período"
+            bodyText={bodyTextarea()}
+            primeiroBotaoOnclick={propriedades.onCancelarTrue}
+            primeiroBotaoTexto="OK"
+            segundoBotaoOnclick={propriedades.handleClose}
+            segundoBotaoTexto="Fechar"
+        />
+
     )
 }
