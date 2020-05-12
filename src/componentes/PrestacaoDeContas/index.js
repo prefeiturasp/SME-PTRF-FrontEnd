@@ -62,12 +62,14 @@ export const PrestacaoDeContas = () => {
         }else {
             setExibeMensagem(true)
             setStatusPrestacaoConta(undefined)
+            localStorage.setItem("uuidPrestacaoConta", "")
         }
     }, [periodoConta])
 
     const getStatusPrestacaoDeConta = async (periodo_uuid, conta_uuid) => {
         let status = await getStatus(periodo_uuid, conta_uuid);
         setStatusPrestacaoConta(status);
+        localStorage.setItem("uuidPrestacaoConta", status.uuid)
         setConfBarraStatus(status);
         setConfBotaoConciliacao(status);
         setConfDataUltimaConciliacao(status);
@@ -90,16 +92,10 @@ export const PrestacaoDeContas = () => {
         }
     }
 
-    const iniciarReverPrestacaoDeContas = async (status) =>{
-
-        let prestacao;
-
-        if (status.status === null){
-            prestacao = await getIniciarPrestacaoDeContas(periodoConta.conta, periodoConta.periodo);
-            console.log("iniciarPrestacaoDeContas ", prestacao)
-        }else{
-            console.log("NÃO É NNULL")
-        }
+    const iniciarPrestacaoDeContas = async () =>{
+        let prestacao = await getIniciarPrestacaoDeContas(periodoConta.conta, periodoConta.periodo);
+        let path = linkBotaoConciliacao;
+        history.push(path);
     }
 
     const setConfDataUltimaConciliacao = (status) => {
@@ -132,16 +128,13 @@ export const PrestacaoDeContas = () => {
 
     const handleClickBotaoConciliacao = () => {
 
-        console.log("handleClickBotaoConciliacao", statusPrestacaoConta)
-
-        iniciarReverPrestacaoDeContas(statusPrestacaoConta)
-
-        if (statusPrestacaoConta.status === "ABERTO"){
+        if (statusPrestacaoConta.status === "ABERTO" || statusPrestacaoConta.status === "FECHADO"){
             onShowModal();
+        }else if(statusPrestacaoConta.status === null) {
+            iniciarPrestacaoDeContas()
         }
 
-        let path = linkBotaoConciliacao;
-        //history.push(path);
+
     }
 
     const handleChangeModalReverConciliacao = (event) => {
@@ -163,11 +156,12 @@ export const PrestacaoDeContas = () => {
             "motivo": textareaModalReverConciliacao
         }
         let reabrir_periodo = await getReabrirPeriodo(statusPrestacaoConta.uuid, payload)
+        let path = linkBotaoConciliacao;
+        history.push(path);
     }
 
     return (
         <>
-            {<p>TEXT AREA: {textareaModalReverConciliacao}</p>}
             <BarraDeStatusPrestacaoDeContas
                 statusPrestacaoConta={statusPrestacaoConta}
                 corBarraDeStatusPrestacaoDeContas={corBarraDeStatusPrestacaoDeContas}

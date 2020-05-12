@@ -42,7 +42,7 @@ export const ModalBootstrapReverConciliacao = (propriedades) =>{
                         {propriedades.primeiroBotaoTexto}
                     </Button>
                     {propriedades.segundoBotaoOnclick && propriedades.segundoBotaoTexto ? (
-                        <Button variant={propriedades.segundoBotaoCss ? propriedades.segundoBotaoCss : "primary"} onClick={propriedades.segundoBotaoOnclick}>
+                        <Button disabled={propriedades.segundoBotaoDisable} variant={propriedades.segundoBotaoCss ? propriedades.segundoBotaoCss : "primary"} onClick={propriedades.segundoBotaoOnclick}>
                             {propriedades.segundoBotaoTexto}
                         </Button>
                     ):null}
