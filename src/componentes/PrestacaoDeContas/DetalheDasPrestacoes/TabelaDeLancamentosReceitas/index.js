@@ -81,6 +81,8 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
                             autoLayout={true}
                             selectionMode="single"
                             onRowClick={e => redirecionaDetalhe(e.data)}
+                            //resizableColumns={false}
+                            //columnResizeMode="fit"
                         >
                             <Column field='tipo_receita.nome' header='Tipo'/>
                             <Column field='conta_associacao.nome' header='Conta'/>

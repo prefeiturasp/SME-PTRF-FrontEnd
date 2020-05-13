@@ -35,6 +35,7 @@ export const DetalheDasPrestacoes = () => {
 
     useEffect(() => {
 
+
         if (acaoLancamento.acao && acaoLancamento.lancamento) {
 
             localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento))
@@ -57,6 +58,7 @@ export const DetalheDasPrestacoes = () => {
             setReceitasConferidas([])
             setDespesas([])
         }
+
 
     }, [acaoLancamento])
 
@@ -120,9 +122,6 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const handleChangeCheckboxReceitas = async (event, uuid_receita) => {
-
-        console.log("handleChangeCheckboxReceitas ", event.target.checked)
-        //console.log("handleChangeCheckboxReceitas  rowData ", uuid_receita)
         if (event.target.checked) {
             let conciliar = await conciliarReceitas(uuid_receita);
         } else if (!event.target.checked) {
@@ -134,8 +133,8 @@ export const DetalheDasPrestacoes = () => {
     }
 
     return (
-
         <div className="col-12 detalhe-das-prestacoes-container mb-5">
+            {console.log("LOADING ", loading)}
             {
                 loading && (
                     <Loading
