@@ -162,7 +162,7 @@ export const DetalheDasPrestacoes = () => {
 
                 {/*<TabelaValoresPendentesPorAcao/>*/}
 
-                { !receitasNaoConferidas.length > 0 && !receitasConferidas.length > 0 &&
+                { !receitasNaoConferidas.length > 0 && !receitasConferidas.length > 0 && acaoLancamento.lancamento === "receitas-lancadas" &&
                     <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
                 }
 
