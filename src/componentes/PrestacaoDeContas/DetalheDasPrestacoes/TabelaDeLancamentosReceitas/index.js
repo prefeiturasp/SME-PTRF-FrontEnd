@@ -49,22 +49,12 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas}) => {
 
     const conferidoTemplate = (rowData) => {
         return (
-            <div>
-                {!rowData['conferido'] ? (
-                    <div className="align-middle text-center">
-                        <input type="checkbox" value="" id="checkConferido"/>
-                    </div>
-                ): (
-                    <div className="text-center">
-                        <img
-                            src={IconeNaoConciliado}
-                            alt=""
-                            className="img-fluid"
-                        />
-                    </div>
-                )}
 
+
+            <div className="align-middle text-center">
+                <input checked={conciliados} type="checkbox" value="" id="checkConferido"/>
             </div>
+
         )
     }
 

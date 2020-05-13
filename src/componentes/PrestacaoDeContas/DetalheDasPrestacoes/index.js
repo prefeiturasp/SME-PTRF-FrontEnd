@@ -12,7 +12,8 @@ export const DetalheDasPrestacoes = () => {
 
     let history = useHistory();
 
-    const [receitas, setReceitas] = useState([])
+    const [receitasNaoConferidas, setReceitasNaoConferidas] = useState([])
+    const [receitasConferidas, setReceitasConferidas] = useState([])
     const [despesas, setDespesas] = useState([])
     const [acoesAssociacao, setAcoesAssociacao] = useState(false);
     const [acaoLancamento, setAcaoLancamento]= useState("")
@@ -35,13 +36,15 @@ export const DetalheDasPrestacoes = () => {
                 setDespesas([])
                 getReceitas();
             }else if (acaoLancamento.lancamento === 'despesas-lancadas'){
-                setReceitas([])
+                setReceitasNaoConferidas([])
+                setReceitasConferidas([])
                 setBtnCadastrarTexto("Cadastrar Despesa")
                 setBtnCadastrarUrl("/cadastro-de-despesa/tabela-de-lancamentos-despesas")
                 getDespesas();
             }
         }else{
-            setReceitas([])
+            setReceitasNaoConferidas([])
+            setReceitasConferidas([])
             setDespesas([])
         }
 
@@ -68,9 +71,15 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const getReceitas = async () => {
-        const lista_retorno_api =  await getReceitasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "False")
-        console.log("getReceitas ", lista_retorno_api)
-        setReceitas(lista_retorno_api)
+        //debugger;
+        const naoConferidas =  await getReceitasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "False")
+        console.log("getReceitas NÃO Conferidas", naoConferidas)
+        setReceitasNaoConferidas(naoConferidas)
+
+        const conferidas =  await getReceitasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "True")
+        setReceitasConferidas(conferidas)
+        console.log("getReceitas Conferidas", conferidas)
+
     }
 
     const getDespesas = async () => {
@@ -105,12 +114,20 @@ export const DetalheDasPrestacoes = () => {
 
             {/*<TabelaValoresPendentesPorAcao/>*/}
 
-            {receitas && receitas.length > 0 ? (
+            {receitasNaoConferidas && receitasNaoConferidas.length > 0 && (
                 <TabelaDeLancamentosReceitas
-                    receitas={receitas}
+                    conciliados={false}
+                    receitas={receitasNaoConferidas}
                 />
-            ):
-            despesas && despesas.length > 0 ? (
+            )}
+
+            { receitasConferidas && receitasConferidas.length > 0 && (
+                <TabelaDeLancamentosReceitas
+                    conciliados={true}
+                    receitas={receitasConferidas}
+                />
+            )}
+            {despesas && despesas.length > 0 ? (
                 <>
                 <TabelaDeLancamentosDespesas
                     conciliados={false}
