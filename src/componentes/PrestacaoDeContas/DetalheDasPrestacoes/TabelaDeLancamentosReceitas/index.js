@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import {useHistory} from 'react-router-dom';
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
-import IconeNaoConciliado from "../../../../assets/img/icone-nao-conciliado.svg"
 import moment from "moment";
 import {RedirectModalTabelaLancamentos} from "../../../../utils/Modais";
 
@@ -51,10 +50,10 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
         return (
             <div className="align-middle text-center">
                 <input
-                    defaultChecked={conciliados}
+                    checked={conciliados}
                     type="checkbox"
                     value={checkboxReceitas}
-                    onChange={handleChangeCheckboxReceitas}
+                    onChange={(e)=>handleChangeCheckboxReceitas(e, rowData.uuid)}
                     name="checkConferido"
                     id="checkConferido"
                 />

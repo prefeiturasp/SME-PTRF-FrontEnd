@@ -6,7 +6,7 @@ import {TabelaDeLancamentosDespesas} from "./TabelaDeLancamentosDespesas";
 import {TabelaDeLancamentosReceitas} from "./TabelaDeLancamentosReceitas";
 import {Justificativa} from "./Justivicativa";
 import {getTabelasReceita} from "../../../services/Receitas.service";
-import {getDespesasPrestacaoDeContas, getReceitasPrestacaoDeContas} from "../../../services/PrestacaoDeContas.service";
+import {getDespesasPrestacaoDeContas, getReceitasPrestacaoDeContas, getConciliarReceita, getDesconciliarReceita} from "../../../services/PrestacaoDeContas.service";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -74,19 +74,19 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const getReceitas = async () => {
-        //debugger;
         const naoConferidas =  await getReceitasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "False")
-        console.log("getReceitas NÃO Conferidas", naoConferidas)
         setReceitasNaoConferidas(naoConferidas)
 
         const conferidas =  await getReceitasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "True")
         setReceitasConferidas(conferidas)
-        console.log("getReceitas Conferidas", conferidas)
-
     }
 
-    const conciliarReceitas = () => {
+    const conciliarReceitas = async (uuid_receita) => {
+        const conciliar =  await getConciliarReceita(uuid_receita)
+    }
 
+    const desconciliarReceitas = async (uuid_receita) => {
+        const conciliar =  await getDesconciliarReceita(uuid_receita)
     }
 
     const getDespesas = async () => {
@@ -106,9 +106,16 @@ export const DetalheDasPrestacoes = () => {
         history.push(btnCadastrarUrl);
     }
 
-    const handleChangeCheckboxReceitas = (event) => {
+    const handleChangeCheckboxReceitas = async (event, uuid_receita) => {
         console.log("handleChangeCheckboxReceitas ", event.target.checked)
-        //setCheckboxReceitas(!event.target.checked)
+        //console.log("handleChangeCheckboxReceitas  rowData ", uuid_receita)
+        if (event.target.checked){
+            let conciliar = await conciliarReceitas(uuid_receita);
+        }else if(!event.target.checked) {
+            let desconciliar = await desconciliarReceitas(uuid_receita)
+        }
+        //setCheckboxReceitas(event.target.checked)
+        await getReceitas();
 
     }
 
@@ -127,7 +134,7 @@ export const DetalheDasPrestacoes = () => {
 
             {/*<TabelaValoresPendentesPorAcao/>*/}
 
-            {receitasNaoConferidas && receitasNaoConferidas.length > 0 && (
+            {receitasNaoConferidas && receitasNaoConferidas.length > 0 ? (
                 <TabelaDeLancamentosReceitas
                     conciliados={false}
                     receitas={receitasNaoConferidas}
@@ -135,16 +142,16 @@ export const DetalheDasPrestacoes = () => {
                     handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
 
                 />
-            )}
+            ) : <p className="mt-5"><strong>Não existem lançamentos não conciliados</strong></p> }
 
-            { receitasConferidas && receitasConferidas.length > 0 && (
+            { receitasConferidas && receitasConferidas.length > 0 ? (
                 <TabelaDeLancamentosReceitas
                     conciliados={true}
                     receitas={receitasConferidas}
                     checkboxReceitas={checkboxReceitas}
                     handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
                 />
-            )}
+            ) : <p className="mt-5"><strong>Não existem lançamentos conciliados</strong></p> }
             {despesas && despesas.length > 0 ? (
                 <>
                 <TabelaDeLancamentosDespesas
@@ -156,7 +163,7 @@ export const DetalheDasPrestacoes = () => {
                 despesas={despesas}
                 />
                 </>
-            ): "Não existem lancamentos"
+            ): null
             }
 
 
