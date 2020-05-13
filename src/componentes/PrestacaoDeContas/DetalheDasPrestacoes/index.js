@@ -5,8 +5,8 @@ import {SelectAcaoLancamento} from "./SelectAcaoLancamento";
 import {TabelaDeLancamentosDespesas} from "./TabelaDeLancamentosDespesas";
 import {TabelaDeLancamentosReceitas} from "./TabelaDeLancamentosReceitas";
 import {Justificativa} from "./Justivicativa";
-import {filtrosAvancadosReceitas, getTabelasReceita} from "../../../services/Receitas.service";
-import {filtrosAvancadosRateios} from "../../../services/RateiosDespesas.service";
+import {getTabelasReceita} from "../../../services/Receitas.service";
+import {getDespesasPrestacaoDeContas, getReceitasPrestacaoDeContas} from "../../../services/PrestacaoDeContas.service";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -68,12 +68,14 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const getReceitas = async () => {
-        const lista_retorno_api =  await filtrosAvancadosReceitas("", "", acaoLancamento.acao, "")
+        const lista_retorno_api =  await getReceitasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "False")
+        console.log("getReceitas ", lista_retorno_api)
         setReceitas(lista_retorno_api)
     }
 
     const getDespesas = async () => {
-        const lista_retorno_api =  await filtrosAvancadosRateios("", '', acaoLancamento.acao, "")
+        const lista_retorno_api =  await getDespesasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "False")
+        console.log("getDespesas ", lista_retorno_api)
         setDespesas(lista_retorno_api)
     }
 

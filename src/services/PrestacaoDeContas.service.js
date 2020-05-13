@@ -24,3 +24,11 @@ export const getIniciarPrestacaoDeContas = async (conta_uuid, periodo_uuid) => {
 export const getReabrirPeriodo = async (uuid, payload) => {
     return (await api.patch(`/api/prestacoes-contas/${uuid}/revisar/`, payload, authHeader))
 }
+
+export const getDespesasPrestacaoDeContas = async (uuidPrestacaoDeContas, acao_associacao__uuid, conferido) => {
+    return (await api.get(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/despesas/?acao_associacao_uuid=${acao_associacao__uuid}&conferido=${conferido}`, authHeader)).data
+}
+
+export const getReceitasPrestacaoDeContas = async (uuidPrestacaoDeContas, acao_associacao__uuid, conferido) => {
+    return (await api.get(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/receitas/?acao_associacao_uuid=${acao_associacao__uuid}&conferido=${conferido}`, authHeader)).data
+}
