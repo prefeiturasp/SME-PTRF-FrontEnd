@@ -74,7 +74,7 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
                     {receitas && receitas.length > 0 ? (
                         <DataTable
                             value={receitas}
-                            className="mt-3 datatable-footer-coad"
+                            className="mt-3 datatable-footer-coad tabela-lancamentos-receitas"
                             paginator={receitas.length > rowsPerPage}
                             rows={rowsPerPage}
                             paginatorTemplate="PrevPageLink PageLinks NextPageLink"

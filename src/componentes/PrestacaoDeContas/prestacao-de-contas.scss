@@ -101,6 +101,7 @@
   .detalhe-das-prestacoes-tabela tfoot tr td{
     text-align: left !important;
     border: solid 1px #E0E0E0 !important;
+    width: 150px !important;
   }
 
 
@@ -115,6 +116,14 @@
   .detalhe-das-prestacoes-tabela-fundo-azul-claro{
     background-color: #E0F7F9 !important;
     font-weight: bold;
+  }
+
+  .tabela-lancamentos-receitas{
+
+  }
+
+  .tabela-lancamentos-receitas td{
+    width: calc(100% / 6) !important;
   }
 
 

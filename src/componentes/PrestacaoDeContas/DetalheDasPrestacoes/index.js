@@ -35,14 +35,14 @@ export const DetalheDasPrestacoes = () => {
 
     useEffect(() => {
 
-        if (acaoLancamento.acao && acaoLancamento.lancamento) {
+        localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento))
 
-            localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento))
+        if (acaoLancamento.acao && acaoLancamento.lancamento) {
             setReceitasConferidas([])
             setReceitasNaoConferidas([])
 
             if (acaoLancamento.lancamento === 'receitas-lancadas') {
-                setLoading(true)
+                //setLoading(true)
                 setBtnCadastrarTexto("Cadastrar Receita")
                 setBtnCadastrarUrl("/cadastro-de-credito/tabela-de-lancamentos-receitas")
                 setDespesas([])
@@ -136,7 +136,6 @@ export const DetalheDasPrestacoes = () => {
 
     return (
         <div className="col-12 detalhe-das-prestacoes-container mb-5">
-            {console.log("LOADING ", loading)}
             {
                 loading && (
                     <Loading
@@ -184,6 +183,7 @@ export const DetalheDasPrestacoes = () => {
                         handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
                     />
                 )}
+
                 {despesas && despesas.length > 0 ? (
                     <>
                         <TabelaDeLancamentosDespesas
