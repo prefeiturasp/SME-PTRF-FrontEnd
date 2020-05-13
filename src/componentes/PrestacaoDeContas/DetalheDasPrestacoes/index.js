@@ -37,7 +37,8 @@ export const DetalheDasPrestacoes = () => {
                 setBtnCadastrarTexto("Cadastrar Receita")
                 setBtnCadastrarUrl("/cadastro-de-credito/tabela-de-lancamentos-receitas")
                 setDespesas([])
-                getReceitas();
+                getReceitasNaoConferidas();
+                getReceitasConferidas();
             }else if (acaoLancamento.lancamento === 'despesas-lancadas'){
                 setReceitasNaoConferidas([])
                 setReceitasConferidas([])
@@ -73,10 +74,12 @@ export const DetalheDasPrestacoes = () => {
         }
     }
 
-    const getReceitas = async () => {
+    const getReceitasNaoConferidas = async () => {
         const naoConferidas =  await getReceitasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "False")
         setReceitasNaoConferidas(naoConferidas)
+    }
 
+    const getReceitasConferidas = async () => {
         const conferidas =  await getReceitasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "True")
         setReceitasConferidas(conferidas)
     }
@@ -114,9 +117,8 @@ export const DetalheDasPrestacoes = () => {
         }else if(!event.target.checked) {
             let desconciliar = await desconciliarReceitas(uuid_receita)
         }
-        //setCheckboxReceitas(event.target.checked)
-        await getReceitas();
-
+        await getReceitasNaoConferidas();
+        await getReceitasConferidas();
     }
 
     return(
