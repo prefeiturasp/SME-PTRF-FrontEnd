@@ -37,18 +37,14 @@ export const DetalheDasPrestacoes = () => {
 
         if (acaoLancamento.acao && acaoLancamento.lancamento) {
 
-
             localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento))
 
             if (acaoLancamento.lancamento === 'receitas-lancadas') {
-                setLoading(true)
                 setBtnCadastrarTexto("Cadastrar Receita")
                 setBtnCadastrarUrl("/cadastro-de-credito/tabela-de-lancamentos-receitas")
                 setDespesas([])
                 getReceitasNaoConferidas();
                 getReceitasConferidas();
-                setLoading(false)
-
             } else if (acaoLancamento.lancamento === 'despesas-lancadas') {
                 setReceitasNaoConferidas([])
                 setReceitasConferidas([])
@@ -61,7 +57,6 @@ export const DetalheDasPrestacoes = () => {
             setReceitasConferidas([])
             setDespesas([])
         }
-
 
     }, [acaoLancamento])
 
@@ -86,13 +81,17 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const getReceitasNaoConferidas = async () => {
+        setLoading(true)
         const naoConferidas = await getReceitasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "False")
         setReceitasNaoConferidas(naoConferidas)
+        setLoading(false)
     }
 
     const getReceitasConferidas = async () => {
+        setLoading(true)
         const conferidas = await getReceitasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "True")
         setReceitasConferidas(conferidas)
+        setLoading(false)
     }
 
     const conciliarReceitas = async (uuid_receita) => {
@@ -121,7 +120,7 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const handleChangeCheckboxReceitas = async (event, uuid_receita) => {
-        setLoading(true)
+
         console.log("handleChangeCheckboxReceitas ", event.target.checked)
         //console.log("handleChangeCheckboxReceitas  rowData ", uuid_receita)
         if (event.target.checked) {
@@ -129,10 +128,9 @@ export const DetalheDasPrestacoes = () => {
         } else if (!event.target.checked) {
             let desconciliar = await desconciliarReceitas(uuid_receita)
         }
+
         await getReceitasNaoConferidas();
         await getReceitasConferidas();
-        setLoading(false)
-
     }
 
     return (
