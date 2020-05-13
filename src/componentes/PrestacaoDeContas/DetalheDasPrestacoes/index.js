@@ -35,12 +35,14 @@ export const DetalheDasPrestacoes = () => {
 
     useEffect(() => {
 
-
         if (acaoLancamento.acao && acaoLancamento.lancamento) {
 
             localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento))
+            setReceitasConferidas([])
+            setReceitasNaoConferidas([])
 
             if (acaoLancamento.lancamento === 'receitas-lancadas') {
+                setLoading(true)
                 setBtnCadastrarTexto("Cadastrar Receita")
                 setBtnCadastrarUrl("/cadastro-de-credito/tabela-de-lancamentos-receitas")
                 setDespesas([])
