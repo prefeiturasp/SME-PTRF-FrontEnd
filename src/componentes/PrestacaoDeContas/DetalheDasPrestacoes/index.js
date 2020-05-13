@@ -162,7 +162,11 @@ export const DetalheDasPrestacoes = () => {
 
                 {/*<TabelaValoresPendentesPorAcao/>*/}
 
-                {receitasNaoConferidas && receitasNaoConferidas.length > 0 ? (
+                { !receitasNaoConferidas.length > 0 && !receitasConferidas.length > 0 &&
+                    <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
+                }
+
+                {receitasNaoConferidas && receitasNaoConferidas.length > 0 && (
                     <TabelaDeLancamentosReceitas
                         conciliados={false}
                         receitas={receitasNaoConferidas}
@@ -170,16 +174,16 @@ export const DetalheDasPrestacoes = () => {
                         handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
 
                     />
-                ) : <p className="mt-5"><strong>Não existem lançamentos não conciliados</strong></p>}
+                )}
 
-                {receitasConferidas && receitasConferidas.length > 0 ? (
+                {receitasConferidas && receitasConferidas.length > 0 && (
                     <TabelaDeLancamentosReceitas
                         conciliados={true}
                         receitas={receitasConferidas}
                         checkboxReceitas={checkboxReceitas}
                         handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
                     />
-                ) : <p className="mt-5"><strong>Não existem lançamentos conciliados</strong></p>}
+                )}
                 {despesas && despesas.length > 0 ? (
                     <>
                         <TabelaDeLancamentosDespesas
