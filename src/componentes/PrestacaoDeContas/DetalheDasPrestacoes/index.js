@@ -14,6 +14,9 @@ export const DetalheDasPrestacoes = () => {
 
     const [receitasNaoConferidas, setReceitasNaoConferidas] = useState([])
     const [receitasConferidas, setReceitasConferidas] = useState([])
+    const [checkboxReceitas, setCheckboxReceitas] = useState(false)
+
+
     const [despesas, setDespesas] = useState([])
     const [acoesAssociacao, setAcoesAssociacao] = useState(false);
     const [acaoLancamento, setAcaoLancamento]= useState("")
@@ -82,6 +85,10 @@ export const DetalheDasPrestacoes = () => {
 
     }
 
+    const conciliarReceitas = () => {
+
+    }
+
     const getDespesas = async () => {
         const lista_retorno_api =  await getDespesasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "False")
         console.log("getDespesas ", lista_retorno_api)
@@ -97,6 +104,12 @@ export const DetalheDasPrestacoes = () => {
 
     const handleClickCadastrar = () => {
         history.push(btnCadastrarUrl);
+    }
+
+    const handleChangeCheckboxReceitas = (event) => {
+        console.log("handleChangeCheckboxReceitas ", event.target.checked)
+        //setCheckboxReceitas(!event.target.checked)
+
     }
 
     return(
@@ -118,6 +131,9 @@ export const DetalheDasPrestacoes = () => {
                 <TabelaDeLancamentosReceitas
                     conciliados={false}
                     receitas={receitasNaoConferidas}
+                    checkboxReceitas={checkboxReceitas}
+                    handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
+
                 />
             )}
 
@@ -125,6 +141,8 @@ export const DetalheDasPrestacoes = () => {
                 <TabelaDeLancamentosReceitas
                     conciliados={true}
                     receitas={receitasConferidas}
+                    checkboxReceitas={checkboxReceitas}
+                    handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
                 />
             )}
             {despesas && despesas.length > 0 ? (

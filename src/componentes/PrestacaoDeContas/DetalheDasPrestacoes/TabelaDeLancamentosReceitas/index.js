@@ -6,7 +6,7 @@ import IconeNaoConciliado from "../../../../assets/img/icone-nao-conciliado.svg"
 import moment from "moment";
 import {RedirectModalTabelaLancamentos} from "../../../../utils/Modais";
 
-export const TabelaDeLancamentosReceitas = ({conciliados, receitas}) => {
+export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxReceitas, handleChangeCheckboxReceitas}) => {
 
     let history = useHistory();
     const rowsPerPage = 7;
@@ -49,12 +49,16 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas}) => {
 
     const conferidoTemplate = (rowData) => {
         return (
-
-
             <div className="align-middle text-center">
-                <input checked={conciliados} type="checkbox" value="" id="checkConferido"/>
+                <input
+                    defaultChecked={conciliados}
+                    type="checkbox"
+                    value={checkboxReceitas}
+                    onChange={handleChangeCheckboxReceitas}
+                    name="checkConferido"
+                    id="checkConferido"
+                />
             </div>
-
         )
     }
 
