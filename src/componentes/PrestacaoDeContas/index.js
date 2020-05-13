@@ -94,6 +94,8 @@ export const PrestacaoDeContas = () => {
 
     const iniciarPrestacaoDeContas = async () =>{
         let prestacao = await getIniciarPrestacaoDeContas(periodoConta.conta, periodoConta.periodo);
+        console.log("iniciarPrestacaoDeContas ",prestacao)
+        localStorage.setItem("uuidPrestacaoConta", prestacao.uuid)
         let path = linkBotaoConciliacao;
         history.push(path);
     }
