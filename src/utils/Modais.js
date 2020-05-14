@@ -154,3 +154,18 @@ export const ReverConciliacao = (propriedades) => {
 
     )
 }
+
+export const CancelarPrestacaoDeContas = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Deseja cancelar a conciliação?"
+            bodyText="<p>Você será direcionado para a página prestação de contas, deseja continuar?</p>"
+            primeiroBotaoOnclick={propriedades.onCancelarTrue}
+            primeiroBotaoTexto="OK"
+            segundoBotaoOnclick={propriedades.handleClose}
+            segundoBotaoTexto="Fechar"
+        />
+    )
+}

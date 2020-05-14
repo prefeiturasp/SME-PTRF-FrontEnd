@@ -19,6 +19,22 @@ import Loading from "../../../utils/Loading";
 export const DetalheDasPrestacoes = () => {
 
     let history = useHistory();
+
+    const [showCancelar, setShowCancelar] = useState(false);
+
+    const onShowCancelar = () => {
+        setShowCancelar(true);
+    }
+
+    const onCancelarTrue = () => {
+        setShowCancelar(false);
+        history.push('/prestacao-de-contas')
+    }
+
+    const onHandleClose = () => {
+        setShowCancelar(false);
+    }
+
     const [loading, setLoading] = useState(false);
 
     const [receitasNaoConferidas, setReceitasNaoConferidas] = useState([])
@@ -28,8 +44,6 @@ export const DetalheDasPrestacoes = () => {
     const [despesasNaoConferidas, setDespesasNaoConferidas] = useState([])
     const [despesasConferidas, setDespesasConferidas] = useState([])
     const [checkboxDespesas, setCheckboxDespesas] = useState(false)
-
-
 
     const [acoesAssociacao, setAcoesAssociacao] = useState(false);
     const [acaoLancamento, setAcaoLancamento] = useState("")
@@ -188,6 +202,10 @@ export const DetalheDasPrestacoes = () => {
                 <TopoComBotoes
                     handleClickCadastrar={handleClickCadastrar}
                     btnCadastrarTexto={btnCadastrarTexto}
+                    showCancelar={showCancelar}
+                    onShowCancelar={onShowCancelar}
+                    onHandleClose={onHandleClose}
+                    onCancelarTrue={onCancelarTrue}
                 />
 
                 <SelectAcaoLancamento
