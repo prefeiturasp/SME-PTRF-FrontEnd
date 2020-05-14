@@ -4,8 +4,9 @@ import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import IconeNaoConciliado from "../../../../assets/img/icone-nao-conciliado.svg"
 import {RedirectModalTabelaLancamentos} from "../../../../utils/Modais";
+import moment from "moment";
 
-export const TabelaDeLancamentosDespesas = ({conciliados, despesas}) => {
+export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDespesas, handleChangeCheckboxDespesas}) => {
 
     let history = useHistory();
     const rowsPerPage = 7;
@@ -37,30 +38,69 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas}) => {
     }
 
 
-    const getConferido = (rowData) => {
+    const redirecionaDetalhe = value => {
+        console.log("redirecionaDetalhe ", value)
+        setUuid(value.uuid)
+        onShowModal();
+    }
+
+    const conferidoTemplate = (rowData) => {
+        console.log("status_despesa ", conciliados)
+        if (rowData.status_despesa === "COMPLETO"){
+            return (
+                <div className="align-middle text-center">
+                    <input
+                        checked={conciliados}
+                        type="checkbox"
+                        value={checkboxDespesas}
+                        onChange={(e)=>handleChangeCheckboxDespesas(e, rowData.uuid)}
+                        name="checkConferido"
+                        id="checkConferido"
+                    />
+                </div>
+            )
+        }else {
+            return (
+                <div className="text-center">
+                    <img
+                        src={IconeNaoConciliado}
+                        alt=""
+                        className="img-fluid"
+                    />
+                </div>
+            )
+        }
+
+    }
+
+    const dataDocumento = (rowData, column) => {
         return (
             <div>
-                {conciliados ? (
-                    <div className="align-middle text-center">
-                        <input type="checkbox" value="" id="checkConferido"/>
-                    </div>
-                ): (
-                    <div className="text-center">
-                        <img
-                            src={IconeNaoConciliado}
-                            alt=""
-                            className="img-fluid"
-                        />
-                    </div>
-                )}
-
+                {rowData['data_documento']
+                    ? moment(rowData['data_documento']).format('DD/MM/YYYY')
+                    : ''}
             </div>
         )
     }
 
-    const redirecionaDetalhe = value => {
-        setUuid(value.uuid)
-        onShowModal();
+    const dataTransacao = (rowData, column) => {
+        return (
+            <div>
+                {rowData['data_transacao']
+                    ? moment(rowData['data_transacao']).format('DD/MM/YYYY')
+                    : ''}
+            </div>
+        )
+    }
+
+    const valorTemplate = (rowData, column) => {
+        const valorFormatado = rowData['valor_total']
+            ? new Number(rowData['valor_total']).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            })
+            : ''
+        return (<span>{valorFormatado}</span>)
     }
 
     return (
@@ -69,29 +109,42 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas}) => {
                 <p className="detalhe-das-prestacoes-titulo-lancamentos">Laçamentos {conciliados ? "conciliados" : "pendentes de conciliação"}</p>
                 <div className="content-section implementation">
                     <DataTable
-                        value={estado}
+                        value={despesas}
                         className="mt-3 datatable-footer-coad"
-                        paginator={estado.length > rowsPerPage}
+                        paginator={despesas.length > rowsPerPage}
                         rows={rowsPerPage}
                         paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                         autoLayout={true}
                         selectionMode="single"
                         onRowClick={e => redirecionaDetalhe(e.data)}
                     >
-                        <Column field="cnpjCpf" header="CNPJ ou CPF do fornecedor" />
-                        <Column field="razaoSocial" header="Razão social do fornecedor"/>
-                        <Column field="tipoDocumento" header="Tipo de documento"/>
-                        <Column field="numDocumento" header="Número do documento"/>
-                        <Column field="dataDocumento" header="Data do documento"/>
-                        <Column field="tipoTransacao" header="Tipo de transação"/>
-                        <Column field="dataTransacao" header="Data da transação"/>
-                        <Column field="aplicacaoDoRecurso" header="Aplicação do recurso"/>
-                        <Column field="especMatRecurso" header="Especificação do material ou serviço"/>
-                        <Column field="valor" header="Valor"/>
+                        <Column field="cpf_cnpj_fornecedor" header="CNPJ ou CPF do fornecedor" />
+                        <Column field="nome_fornecedor" header="Razão social do fornecedor"/>
+                        <Column field="tipo_documento_nome" header="Tipo de documento"/>
+                        <Column field="numero_documento" header="Número do documento"/>
+                        <Column
+                            field="data_documento"
+                            header="Data do documento"
+                            body={dataDocumento}
+                        />
+                        <Column field="tipo_transacao_nome" header="Tipo de transação" />
+                        <Column
+                            field="data_transacao"
+                            header="Data da transação"
+                            body={dataTransacao}
+
+                        />
+                        <Column field="aplicacao_recurso" header="Aplicação do recurso"/>
+                        <Column field="especificacao_material_servico.descricao" header="Especificação do material ou serviço"/>
+                        <Column
+                            field="valor_total"
+                            header="Valor"
+                            body={valorTemplate}
+                        />
                         <Column
                             field="conferido"
                             header="Demonstrado"
-                            body={getConferido}
+                            body={conferidoTemplate}
                         />
                     </DataTable>
                 </div>

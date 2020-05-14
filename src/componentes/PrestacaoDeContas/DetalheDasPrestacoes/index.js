@@ -10,7 +10,9 @@ import {
     getDespesasPrestacaoDeContas,
     getReceitasPrestacaoDeContas,
     getConciliarReceita,
-    getDesconciliarReceita
+    getDesconciliarReceita,
+    getConciliarDespesa,
+    getDesconciliarDespesa,
 } from "../../../services/PrestacaoDeContas.service";
 import Loading from "../../../utils/Loading";
 
@@ -25,6 +27,8 @@ export const DetalheDasPrestacoes = () => {
 
     const [despesasNaoConferidas, setDespesasNaoConferidas] = useState([])
     const [despesasConferidas, setDespesasConferidas] = useState([])
+    const [checkboxDespesas, setCheckboxDespesas] = useState(false)
+
 
 
     const [acoesAssociacao, setAcoesAssociacao] = useState(false);
@@ -104,6 +108,22 @@ export const DetalheDasPrestacoes = () => {
         setLoading(false)
     }
 
+    const getDespesasNaoConferidas = async () => {
+        setLoading(true)
+        const naoConferidas = await getDespesasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "False")
+        console.log("getDespesasNaoConferidas ", naoConferidas)
+        setDespesasNaoConferidas(naoConferidas)
+        setLoading(false)
+    }
+
+    const getDespesasConferidas = async () => {
+        setLoading(true)
+        const conferidas = await getDespesasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "True")
+        console.log("getDespesasConferidas ", conferidas)
+        setDespesasConferidas(conferidas)
+        setLoading(false)
+    }
+
     const conciliarReceitas = async (uuid_receita) => {
         const conciliar = await getConciliarReceita(uuid_receita)
     }
@@ -112,16 +132,12 @@ export const DetalheDasPrestacoes = () => {
         const conciliar = await getDesconciliarReceita(uuid_receita)
     }
 
-    const getDespesasNaoConferidas = async () => {
-        const naoConferidas = await getDespesasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "False")
-        console.log("getDespesasNaoConferidas ", naoConferidas)
-        setDespesasNaoConferidas(naoConferidas)
+    const conciliarDespesas = async (uuid_receita) => {
+        const conciliar = await getConciliarDespesa(uuid_receita)
     }
 
-    const getDespesasConferidas = async () => {
-        const conferidas = await getDespesasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "True")
-        console.log("getDespesasConferidas ", conferidas)
-        setDespesasNaoConferidas(conferidas)
+    const desconciliarDespesas = async (uuid_receita) => {
+        const conciliar = await getDesconciliarDespesa(uuid_receita)
     }
 
     const handleChangeSelectAcoes = (name, value) => {
@@ -144,6 +160,17 @@ export const DetalheDasPrestacoes = () => {
 
         await getReceitasNaoConferidas();
         await getReceitasConferidas();
+    }
+
+    const handleChangeCheckboxDespesas = async (event, uuid_receita) => {
+        if (event.target.checked) {
+            let conciliar = await conciliarDespesas(uuid_receita);
+        } else if (!event.target.checked) {
+            let desconciliar = await desconciliarDespesas(uuid_receita)
+        }
+
+        await getDespesasNaoConferidas();
+        await getDespesasConferidas();
     }
 
     return (
@@ -196,11 +223,17 @@ export const DetalheDasPrestacoes = () => {
                     />
                 )}
 
+                { !despesasNaoConferidas.length > 0 && !despesasConferidas.length > 0 && acaoLancamento.lancamento === "despesas-lancadas" &&
+                <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
+                }
+
                 {despesasNaoConferidas && despesasNaoConferidas.length > 0  &&
 
                     <TabelaDeLancamentosDespesas
                         conciliados={false}
                         despesas={despesasNaoConferidas}
+                        checkboxDespesas={checkboxDespesas}
+                        handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
                     />
 
                 }
@@ -209,6 +242,8 @@ export const DetalheDasPrestacoes = () => {
                     <TabelaDeLancamentosDespesas
                         conciliados={true}
                         despesas={despesasConferidas}
+                        checkboxDespesas={checkboxDespesas}
+                        handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
                     />
                 }
 

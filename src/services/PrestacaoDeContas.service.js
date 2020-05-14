@@ -40,3 +40,11 @@ export const getConciliarReceita = async (uuid_receita) => {
 export const getDesconciliarReceita = async (uuid_receita) => {
     return (await api.patch(`/api/receitas/${uuid_receita}/desconciliar/`, authHeader)).data
 }
+
+export const getConciliarDespesa = async (uuid_receita) => {
+    return (await api.patch(`/api/rateios-despesas/${uuid_receita}/conciliar/`, authHeader)).data
+}
+
+export const getDesconciliarDespesa = async (uuid_receita) => {
+    return (await api.patch(`/api/rateios-despesas/${uuid_receita}/desconciliar/`, authHeader)).data
+}
