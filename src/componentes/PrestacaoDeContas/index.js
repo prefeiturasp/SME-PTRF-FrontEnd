@@ -147,6 +147,7 @@ export const PrestacaoDeContas = () => {
     }
 
     const handleClickBotaoConciliacao = () => {
+        setBotaoConciliacaoReadonly(true);
         if (statusPrestacaoConta.status === "ABERTO" || statusPrestacaoConta.status === "FECHADO") {
             onShowModal();
         } else if (statusPrestacaoConta.status === null) {
@@ -174,10 +175,7 @@ export const PrestacaoDeContas = () => {
         let payload = {
             "motivo": textareaModalReverConciliacao
         }
-        let reabrir_periodo = await getReabrirPeriodo(statusPrestacaoConta.uuid, payload)
-
-        console.log("reabrirPeriodo ", reabrir_periodo)
-
+        await getReabrirPeriodo(statusPrestacaoConta.uuid, payload)
         let path = linkBotaoConciliacao;
         history.push(path);
     }
