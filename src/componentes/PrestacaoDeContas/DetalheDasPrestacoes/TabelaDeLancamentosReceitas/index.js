@@ -7,6 +7,8 @@ import {RedirectModalTabelaLancamentos} from "../../../../utils/Modais";
 
 export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxReceitas, handleChangeCheckboxReceitas}) => {
 
+    //console.log("TabelaDeLancamentosReceitas ", receitas);
+
     let history = useHistory();
     const rowsPerPage = 7;
     const [showModal, setShowModal] = useState(false);

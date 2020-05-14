@@ -10,7 +10,7 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas}) => {
     let history = useHistory();
     const rowsPerPage = 7;
 
-    console.log("Ollyver ", despesas)
+    console.log("TabelaDeLancamentosDespesas ", despesas)
 
     const estado = [
         {uuid:'e9688f81-e75b-40ca-a47d-603dea73af14', cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Papelaria Araçari LTDA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Boleto bancário', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Capital', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},

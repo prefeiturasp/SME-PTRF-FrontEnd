@@ -9,7 +9,12 @@ import {DemonstrativoFinanceiro} from "../PrestacaoDeContas/DemonstrativoFinance
 import {BotaoConciliacao} from "./BotaoConciliacao";
 import {DataUltimaConciliacao} from "./DataUltimaConciliacao";
 import {getTabelasReceita} from "../../services/Receitas.service";
-import {getPeriodos, getStatus, getIniciarPrestacaoDeContas, getReabrirPeriodo} from "../../services/PrestacaoDeContas.service";
+import {
+    getPeriodos,
+    getStatus,
+    getIniciarPrestacaoDeContas,
+    getReabrirPeriodo
+} from "../../services/PrestacaoDeContas.service";
 import {exibeDateTimePT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
 import {ReverConciliacao} from "../../utils/Modais";
 
@@ -45,7 +50,7 @@ export const PrestacaoDeContas = () => {
             });
         };
 
-        const carregaPeriodos = async () =>{
+        const carregaPeriodos = async () => {
             let periodos = await getPeriodos();
             setPeriodosAssociacao(periodos);
         }
@@ -54,12 +59,12 @@ export const PrestacaoDeContas = () => {
         carregaPeriodos();
     }, [])
 
-    useEffect(()=> {
-        if (periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== ""){
+    useEffect(() => {
+        if (periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== "") {
             setExibeMensagem(false)
             setDemonstrativoFinanceiro(true)
             getStatusPrestacaoDeConta(periodoConta.periodo, periodoConta.conta)
-        }else {
+        } else {
             setExibeMensagem(true)
             setStatusPrestacaoConta(undefined)
             localStorage.setItem("uuidPrestacaoConta", undefined)
@@ -67,7 +72,14 @@ export const PrestacaoDeContas = () => {
     }, [periodoConta])
 
     const getStatusPrestacaoDeConta = async (periodo_uuid, conta_uuid) => {
+
+        console.log("getStatusPrestacaoDeConta Periodo: ", periodo_uuid);
+        console.log("getStatusPrestacaoDeConta Conta: ", conta_uuid);
+
         let status = await getStatus(periodo_uuid, conta_uuid);
+
+        console.log("getStatusPrestacaoDeConta status: ", status);
+
         setStatusPrestacaoConta(status);
         localStorage.setItem("uuidPrestacaoConta", status.uuid)
         setConfBarraStatus(status);
@@ -80,40 +92,39 @@ export const PrestacaoDeContas = () => {
 
     const setConfBarraStatus = (status) => {
 
-        if (status.status === "FECHADO"){
+        if (status.status === "FECHADO") {
             setCorBarraDeStatusPrestacaoDeContas('verde');
             setTextoBarraDeStatusPrestacaoDeContas("A geração dos documentos da conciliação desse período foi efetuada, clique no botão “Rever conciliação” para fazer alterações")
-        }else if(status.status === "ABERTO"){
+        } else if (status.status === "ABERTO") {
             setCorBarraDeStatusPrestacaoDeContas('amarelo')
             setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período está aberta.")
-        }else if(status.status === null){
+        } else if (status.status === null) {
             setCorBarraDeStatusPrestacaoDeContas('vermelho')
             setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período ainda não foi iniciada.")
         }
     }
 
-    const iniciarPrestacaoDeContas = async () =>{
+    const iniciarPrestacaoDeContas = async () => {
         let prestacao = await getIniciarPrestacaoDeContas(periodoConta.conta, periodoConta.periodo);
-        console.log("iniciarPrestacaoDeContas ",prestacao)
         localStorage.setItem("uuidPrestacaoConta", prestacao.uuid)
         let path = linkBotaoConciliacao;
         history.push(path);
     }
 
     const setConfDataUltimaConciliacao = (status) => {
-        if (status.conciliado_em){
+        if (status.conciliado_em) {
             setDataUltimaConciliacao(exibeDateTimePT_BR(status.conciliado_em))
-        }else{
+        } else {
             setDataUltimaConciliacao("-")
         }
     }
 
     const setConfBotaoConciliacao = (status) => {
-        if (status.status === "ABERTO" || status.status === "FECHADO"){
+        if (status.status === "ABERTO" || status.status === "FECHADO") {
             setCssBotaoConciliacao("btn-outline-success");
             setTextoBotaoConciliacao("Rever conciliação");
             setLinkBotaoConciliacao("/detalhe-das-prestacoes");
-        }else if(status.status === null){
+        } else if (status.status === null) {
             setCssBotaoConciliacao("btn-success")
             setTextoBotaoConciliacao("Iniciar a prestação de contas");
             setLinkBotaoConciliacao("/detalhe-das-prestacoes");
@@ -129,10 +140,9 @@ export const PrestacaoDeContas = () => {
     }
 
     const handleClickBotaoConciliacao = () => {
-
-        if (statusPrestacaoConta.status === "ABERTO" || statusPrestacaoConta.status === "FECHADO"){
+        if (statusPrestacaoConta.status === "ABERTO" || statusPrestacaoConta.status === "FECHADO") {
             onShowModal();
-        }else if(statusPrestacaoConta.status === null) {
+        } else if (statusPrestacaoConta.status === null) {
             iniciarPrestacaoDeContas()
         }
 
@@ -158,6 +168,9 @@ export const PrestacaoDeContas = () => {
             "motivo": textareaModalReverConciliacao
         }
         let reabrir_periodo = await getReabrirPeriodo(statusPrestacaoConta.uuid, payload)
+
+        console.log("reabrirPeriodo ", reabrir_periodo)
+
         let path = linkBotaoConciliacao;
         history.push(path);
     }
@@ -192,10 +205,10 @@ export const PrestacaoDeContas = () => {
                 <DemonstrativoFinanceiro/>
             )}
             {exibeMensagem && (
-                    <MsgImgCentralizada
-                        texto='Selecione um período e uma conta acima para visualizar as ações'
-                        img={Img404}
-                    />
+                <MsgImgCentralizada
+                    texto='Selecione um período e uma conta acima para visualizar as ações'
+                    img={Img404}
+                />
             )}
 
             <section>

@@ -18,12 +18,15 @@ export const DetalheDasPrestacoes = () => {
 
     let history = useHistory();
     const [loading, setLoading] = useState(false);
+
     const [receitasNaoConferidas, setReceitasNaoConferidas] = useState([])
     const [receitasConferidas, setReceitasConferidas] = useState([])
     const [checkboxReceitas, setCheckboxReceitas] = useState(false)
 
+    const [despesasNaoConferidas, setDespesasNaoConferidas] = useState([])
+    const [despesasConferidas, setDespesasConferidas] = useState([])
 
-    const [despesas, setDespesas] = useState([])
+
     const [acoesAssociacao, setAcoesAssociacao] = useState(false);
     const [acaoLancamento, setAcaoLancamento] = useState("")
     const [btnCadastrarTexto, setBtnCadastrarTexto] = useState("")
@@ -45,7 +48,8 @@ export const DetalheDasPrestacoes = () => {
                 //setLoading(true)
                 setBtnCadastrarTexto("Cadastrar Receita")
                 setBtnCadastrarUrl("/cadastro-de-credito/tabela-de-lancamentos-receitas")
-                setDespesas([])
+                setDespesasNaoConferidas([]);
+                setDespesasConferidas([]);
                 getReceitasNaoConferidas();
                 getReceitasConferidas();
             } else if (acaoLancamento.lancamento === 'despesas-lancadas') {
@@ -53,12 +57,14 @@ export const DetalheDasPrestacoes = () => {
                 setReceitasConferidas([])
                 setBtnCadastrarTexto("Cadastrar Despesa")
                 setBtnCadastrarUrl("/cadastro-de-despesa/tabela-de-lancamentos-despesas")
-                getDespesas();
+                getDespesasNaoConferidas();
+                getDespesasConferidas();
             }
         } else {
             setReceitasNaoConferidas([])
             setReceitasConferidas([])
-            setDespesas([])
+            setDespesasNaoConferidas([]);
+            setDespesasConferidas([]);
         }
 
 
@@ -106,10 +112,16 @@ export const DetalheDasPrestacoes = () => {
         const conciliar = await getDesconciliarReceita(uuid_receita)
     }
 
-    const getDespesas = async () => {
-        const lista_retorno_api = await getDespesasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "False")
-        console.log("getDespesas ", lista_retorno_api)
-        setDespesas(lista_retorno_api)
+    const getDespesasNaoConferidas = async () => {
+        const naoConferidas = await getDespesasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "False")
+        console.log("getDespesasNaoConferidas ", naoConferidas)
+        setDespesasNaoConferidas(naoConferidas)
+    }
+
+    const getDespesasConferidas = async () => {
+        const conferidas = await getDespesasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "True")
+        console.log("getDespesasConferidas ", conferidas)
+        setDespesasNaoConferidas(conferidas)
     }
 
     const handleChangeSelectAcoes = (name, value) => {
@@ -184,18 +196,20 @@ export const DetalheDasPrestacoes = () => {
                     />
                 )}
 
-                {despesas && despesas.length > 0 ? (
-                    <>
-                        <TabelaDeLancamentosDespesas
-                            conciliados={false}
-                            despesas={despesas}
-                        />
-                        <TabelaDeLancamentosDespesas
-                            conciliados={true}
-                            despesas={despesas}
-                        />
-                    </>
-                ) : null
+                {despesasNaoConferidas && despesasNaoConferidas.length > 0  &&
+
+                    <TabelaDeLancamentosDespesas
+                        conciliados={false}
+                        despesas={despesasNaoConferidas}
+                    />
+
+                }
+
+                {despesasConferidas && despesasConferidas.length > 0 &&
+                    <TabelaDeLancamentosDespesas
+                        conciliados={true}
+                        despesas={despesasConferidas}
+                    />
                 }
 
 
