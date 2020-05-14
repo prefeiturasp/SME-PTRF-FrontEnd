@@ -49,6 +49,7 @@ export const DetalheDasPrestacoes = () => {
     const [acaoLancamento, setAcaoLancamento] = useState("")
     const [btnCadastrarTexto, setBtnCadastrarTexto] = useState("")
     const [btnCadastrarUrl, setBtnCadastrarUrl] = useState("")
+    const [textareaJustificativa, setTextareaJustificativa] = useState("")
 
     useEffect(() => {
         getAcaoLancamento();
@@ -63,7 +64,6 @@ export const DetalheDasPrestacoes = () => {
             setReceitasNaoConferidas([])
 
             if (acaoLancamento.lancamento === 'receitas-lancadas') {
-                //setLoading(true)
                 setBtnCadastrarTexto("Cadastrar Receita")
                 setBtnCadastrarUrl("/cadastro-de-credito/tabela-de-lancamentos-receitas")
                 setDespesasNaoConferidas([]);
@@ -185,6 +185,11 @@ export const DetalheDasPrestacoes = () => {
         await getDespesasConferidas();
     }
 
+    const handleChangeTextareaJustificativa = (event) =>{
+        console.log("handleChangeTextareaJustificativa ", event.target.value)
+        setTextareaJustificativa(event.target.value)
+    }
+
     return (
         <div className="col-12 detalhe-das-prestacoes-container mb-5">
             {
@@ -264,7 +269,10 @@ export const DetalheDasPrestacoes = () => {
                 }
 
 
-                <Justificativa/>
+                <Justificativa
+                    textareaJustificativa={textareaJustificativa}
+                    handleChangeTextareaJustificativa={handleChangeTextareaJustificativa}
+                />
             </>
             }
         </div>

@@ -11,8 +11,6 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
     let history = useHistory();
     const rowsPerPage = 7;
 
-    console.log("TabelaDeLancamentosDespesas ", despesas)
-
     const [showModal, setShowModal] = useState(false);
     const [uuid, setUuid] = useState('');
 
@@ -32,13 +30,11 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
 
 
     const redirecionaDetalhe = value => {
-        console.log("redirecionaDetalhe ", value)
         setUuid(value.despesa)
         onShowModal();
     }
 
     const conferidoTemplate = (rowData) => {
-        console.log("status_despesa ", conciliados)
         if (rowData.status_despesa === "COMPLETO"){
             return (
                 <div className="align-middle text-center">
