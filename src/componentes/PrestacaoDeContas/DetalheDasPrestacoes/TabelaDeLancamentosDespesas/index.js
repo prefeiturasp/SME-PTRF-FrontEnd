@@ -13,13 +13,6 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
 
     console.log("TabelaDeLancamentosDespesas ", despesas)
 
-    const estado = [
-        {uuid:'e9688f81-e75b-40ca-a47d-603dea73af14', cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Papelaria Araçari LTDA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Boleto bancário', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Capital', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
-        {uuid:'e9688f81-e75b-40ca-a47d-603dea73af14', cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Lavatudo lavanderia industrial LTDA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Boleto bancário', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Custeio', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
-        {uuid:'e9688f81-e75b-40ca-a47d-603dea73af14', cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Umapalavralonga SA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Cheque', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Capital', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
-        {uuid:'e9688f81-e75b-40ca-a47d-603dea73af14', cnpjCpf: '53.274.690/0001-33', razaoSocial: 'Papelaria Kalunga LTDA', tipoDocumento: 'NFS-e', numDocumento: '883271263', dataDocumento: '24/02/2020', tipoTransacao: 'Boleto bancário', dataTransacao: '26/02/2020', aplicacaoDoRecurso: 'Custeio', especMatRecurso: 'Compra de 200 tablets', valor: 'R$12.234,76'},
-    ];
-
     const [showModal, setShowModal] = useState(false);
     const [uuid, setUuid] = useState('');
 
@@ -40,7 +33,7 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
 
     const redirecionaDetalhe = value => {
         console.log("redirecionaDetalhe ", value)
-        setUuid(value.uuid)
+        setUuid(value.despesa)
         onShowModal();
     }
 
@@ -110,7 +103,7 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
                 <div className="content-section implementation">
                     <DataTable
                         value={despesas}
-                        className="mt-3 datatable-footer-coad"
+                        className="mt-3 tabela-lancamentos-despesas"
                         paginator={despesas.length > rowsPerPage}
                         rows={rowsPerPage}
                         paginatorTemplate="PrevPageLink PageLinks NextPageLink"
