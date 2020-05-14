@@ -13,6 +13,7 @@ import {
     getDesconciliarReceita,
     getConciliarDespesa,
     getDesconciliarDespesa,
+    getSalvarPrestacaoDeConta,
 } from "../../../services/PrestacaoDeContas.service";
 import Loading from "../../../utils/Loading";
 
@@ -36,11 +37,25 @@ export const DetalheDasPrestacoes = () => {
         history.push('/prestacao-de-contas')
     }
 
-    const onSalvarTrue = () => {
+    const onSalvarTrue = async () => {
         setShowSalvar(false);
         setShowCancelar(false);
-        //history.push('/prestacao-de-contas')
-        console.log("onSalvarTrue")
+        /*let retorno = await salvarPrestacaoDeContas();
+        console.log("onSalvarTrue ", retorno)
+        //history.push('/prestacao-de-contas')*/
+
+        let payload = {
+            observacoes: textareaJustificativa,
+        }
+
+        try {
+            let retorno = await getSalvarPrestacaoDeConta(localStorage.getItem("uuidPrestacaoConta"), payload)
+            console.log("salvarPrestacaoDeContas ", retorno)
+            history.push('/prestacao-de-contas')
+        }catch (e) {
+            console.log("Erro: ", e.message())
+        }
+
     }
 
     const onHandleClose = () => {
@@ -163,6 +178,14 @@ export const DetalheDasPrestacoes = () => {
 
     const desconciliarDespesas = async (uuid_receita) => {
         await getDesconciliarDespesa(uuid_receita)
+    }
+
+    const salvarPrestacaoDeContas = async () =>{
+        let payload = {
+            observacoes: textareaJustificativa,
+        }
+        let retorno = await getSalvarPrestacaoDeConta(localStorage.getItem("uuidPrestacaoConta"), payload)
+        console.log("salvarPrestacaoDeContas ", retorno)
     }
 
     const handleChangeSelectAcoes = (name, value) => {
