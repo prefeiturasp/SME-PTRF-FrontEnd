@@ -111,7 +111,6 @@ export const DetalheDasPrestacoes = () => {
     const getDespesasNaoConferidas = async () => {
         setLoading(true)
         const naoConferidas = await getDespesasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "False")
-        console.log("getDespesasNaoConferidas ", naoConferidas)
         setDespesasNaoConferidas(naoConferidas)
         setLoading(false)
     }
@@ -119,25 +118,24 @@ export const DetalheDasPrestacoes = () => {
     const getDespesasConferidas = async () => {
         setLoading(true)
         const conferidas = await getDespesasPrestacaoDeContas(localStorage.getItem("uuidPrestacaoConta"), acaoLancamento.acao, "True")
-        console.log("getDespesasConferidas ", conferidas)
         setDespesasConferidas(conferidas)
         setLoading(false)
     }
 
     const conciliarReceitas = async (uuid_receita) => {
-        const conciliar = await getConciliarReceita(uuid_receita)
+        await getConciliarReceita(uuid_receita)
     }
 
     const desconciliarReceitas = async (uuid_receita) => {
-        const conciliar = await getDesconciliarReceita(uuid_receita)
+        await getDesconciliarReceita(uuid_receita)
     }
 
     const conciliarDespesas = async (uuid_receita) => {
-        const conciliar = await getConciliarDespesa(uuid_receita)
+       await getConciliarDespesa(uuid_receita)
     }
 
     const desconciliarDespesas = async (uuid_receita) => {
-        const conciliar = await getDesconciliarDespesa(uuid_receita)
+        await getDesconciliarDespesa(uuid_receita)
     }
 
     const handleChangeSelectAcoes = (name, value) => {
@@ -153,9 +151,9 @@ export const DetalheDasPrestacoes = () => {
 
     const handleChangeCheckboxReceitas = async (event, uuid_receita) => {
         if (event.target.checked) {
-            let conciliar = await conciliarReceitas(uuid_receita);
+            await conciliarReceitas(uuid_receita);
         } else if (!event.target.checked) {
-            let desconciliar = await desconciliarReceitas(uuid_receita)
+            await desconciliarReceitas(uuid_receita)
         }
 
         await getReceitasNaoConferidas();
@@ -164,9 +162,9 @@ export const DetalheDasPrestacoes = () => {
 
     const handleChangeCheckboxDespesas = async (event, uuid_receita) => {
         if (event.target.checked) {
-            let conciliar = await conciliarDespesas(uuid_receita);
+            await conciliarDespesas(uuid_receita);
         } else if (!event.target.checked) {
-            let desconciliar = await desconciliarDespesas(uuid_receita)
+            await desconciliarDespesas(uuid_receita)
         }
 
         await getDespesasNaoConferidas();
