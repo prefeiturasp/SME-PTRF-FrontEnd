@@ -21,9 +21,14 @@ export const DetalheDasPrestacoes = () => {
     let history = useHistory();
 
     const [showCancelar, setShowCancelar] = useState(false);
+    const [showSalvar, setShowSalvar] = useState(false);
 
     const onShowCancelar = () => {
         setShowCancelar(true);
+    }
+
+    const onShowSalvar = () => {
+        setShowSalvar(true);
     }
 
     const onCancelarTrue = () => {
@@ -31,8 +36,16 @@ export const DetalheDasPrestacoes = () => {
         history.push('/prestacao-de-contas')
     }
 
+    const onSalvarTrue = () => {
+        setShowSalvar(false);
+        setShowCancelar(false);
+        //history.push('/prestacao-de-contas')
+        console.log("onSalvarTrue")
+    }
+
     const onHandleClose = () => {
         setShowCancelar(false);
+        setShowSalvar(false);
     }
 
     const [loading, setLoading] = useState(false);
@@ -208,9 +221,12 @@ export const DetalheDasPrestacoes = () => {
                     handleClickCadastrar={handleClickCadastrar}
                     btnCadastrarTexto={btnCadastrarTexto}
                     showCancelar={showCancelar}
+                    showSalvar={showSalvar}
                     onShowCancelar={onShowCancelar}
-                    onHandleClose={onHandleClose}
+                    onShowSalvar={onShowSalvar}
                     onCancelarTrue={onCancelarTrue}
+                    onSalvarTrue={onSalvarTrue}
+                    onHandleClose={onHandleClose}
                 />
 
                 <SelectAcaoLancamento
@@ -267,7 +283,6 @@ export const DetalheDasPrestacoes = () => {
                         handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
                     />
                 }
-
 
                 <Justificativa
                     textareaJustificativa={textareaJustificativa}
