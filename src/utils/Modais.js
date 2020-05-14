@@ -183,3 +183,31 @@ export const SalvarPrestacaoDeContas = (propriedades) => {
         />
     )
 }
+
+export const ConcluirPrestacaoDeContas = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Deseja concluir a conciliação?"
+            bodyText="<p>Ela poderá ser revisada se desejar.</p>"
+            primeiroBotaoOnclick={propriedades.onConcluirTrue}
+            primeiroBotaoTexto="OK"
+            segundoBotaoOnclick={propriedades.handleClose}
+            segundoBotaoTexto="Fechar"
+        />
+    )
+}
+
+export const ErroGeral = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Ooops!!! Algum erro aconteceu"
+            bodyText="<p>Tente atualizar a página e repetir a operação</p>"
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Fechar"
+        />
+    )
+}

@@ -14,8 +14,10 @@ import {
     getConciliarDespesa,
     getDesconciliarDespesa,
     getSalvarPrestacaoDeConta,
+    getConcluirPrestacaoDeConta,
 } from "../../../services/PrestacaoDeContas.service";
 import Loading from "../../../utils/Loading";
+import {ErroGeral, RedirectModalTabelaLancamentos} from "../../../utils/Modais";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -23,45 +25,9 @@ export const DetalheDasPrestacoes = () => {
 
     const [showCancelar, setShowCancelar] = useState(false);
     const [showSalvar, setShowSalvar] = useState(false);
+    const [showConcluir, setShowConcluir] = useState(false);
+    const [showErroGeral, setShowErroGeral] = useState(false);
 
-    const onShowCancelar = () => {
-        setShowCancelar(true);
-    }
-
-    const onShowSalvar = () => {
-        setShowSalvar(true);
-    }
-
-    const onCancelarTrue = () => {
-        setShowCancelar(false);
-        history.push('/prestacao-de-contas')
-    }
-
-    const onSalvarTrue = async () => {
-        setShowSalvar(false);
-        setShowCancelar(false);
-        /*let retorno = await salvarPrestacaoDeContas();
-        console.log("onSalvarTrue ", retorno)
-        //history.push('/prestacao-de-contas')*/
-
-        let payload = {
-            observacoes: textareaJustificativa,
-        }
-
-        try {
-            let retorno = await getSalvarPrestacaoDeConta(localStorage.getItem("uuidPrestacaoConta"), payload)
-            console.log("salvarPrestacaoDeContas ", retorno)
-            history.push('/prestacao-de-contas')
-        }catch (e) {
-            console.log("Erro: ", e.message())
-        }
-
-    }
-
-    const onHandleClose = () => {
-        setShowCancelar(false);
-        setShowSalvar(false);
-    }
 
     const [loading, setLoading] = useState(false);
 
@@ -173,19 +139,11 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const conciliarDespesas = async (uuid_receita) => {
-       await getConciliarDespesa(uuid_receita)
+        await getConciliarDespesa(uuid_receita)
     }
 
     const desconciliarDespesas = async (uuid_receita) => {
         await getDesconciliarDespesa(uuid_receita)
-    }
-
-    const salvarPrestacaoDeContas = async () =>{
-        let payload = {
-            observacoes: textareaJustificativa,
-        }
-        let retorno = await getSalvarPrestacaoDeConta(localStorage.getItem("uuidPrestacaoConta"), payload)
-        console.log("salvarPrestacaoDeContas ", retorno)
     }
 
     const handleChangeSelectAcoes = (name, value) => {
@@ -221,9 +179,73 @@ export const DetalheDasPrestacoes = () => {
         await getDespesasConferidas();
     }
 
-    const handleChangeTextareaJustificativa = (event) =>{
+    const handleChangeTextareaJustificativa = (event) => {
         console.log("handleChangeTextareaJustificativa ", event.target.value)
         setTextareaJustificativa(event.target.value)
+    }
+
+    const onShowCancelar = () => {
+        setShowCancelar(true);
+    }
+
+    const onShowSalvar = () => {
+        setShowSalvar(true);
+    }
+
+    const onShowConcluir = () => {
+        setShowConcluir(true);
+    }
+
+    const onShowErroGeral = () => {
+        setShowErroGeral(true);
+    }
+
+    const onCancelarTrue = () => {
+        setShowCancelar(false);
+        history.push('/prestacao-de-contas')
+    }
+
+    const onSalvarTrue = async () => {
+        setShowCancelar(false);
+        setShowSalvar(false);
+        setShowConcluir(false);
+        let payload = {
+            observacoes: textareaJustificativa,
+        }
+        try {
+            let retorno = await getSalvarPrestacaoDeConta(localStorage.getItem("uuidPrestacaoConta"), payload)
+            console.log("salvarPrestacaoDeContas ", retorno)
+            history.push('/prestacao-de-contas')
+        } catch (e) {
+            onShowErroGeral();
+            console.log("Erro: ", e.message())
+        }
+    }
+
+    const onConcluirTrue = async () => {
+        setShowCancelar(false);
+        setShowSalvar(false);
+        setShowConcluir(false);
+        console.log("getConcluirPrestacaoDeConta ")
+        let payload = {
+            observacoes: textareaJustificativa,
+        }
+
+        try {
+            let retorno = await getConcluirPrestacaoDeConta(localStorage.getItem("uuidPrestacaoConta"), payload)
+            console.log("getConcluirPrestacaoDeConta ", retorno)
+            history.push('/prestacao-de-contas')
+        } catch (e) {
+            onShowErroGeral();
+            console.log("Erro: ", e.message)
+        }
+    }
+
+    const onHandleClose = () => {
+        setShowCancelar(false);
+        setShowSalvar(false);
+        setShowConcluir(false);
+        setShowErroGeral(false)
     }
 
     return (
@@ -245,10 +267,13 @@ export const DetalheDasPrestacoes = () => {
                     btnCadastrarTexto={btnCadastrarTexto}
                     showCancelar={showCancelar}
                     showSalvar={showSalvar}
+                    showConcluir={showConcluir}
                     onShowCancelar={onShowCancelar}
                     onShowSalvar={onShowSalvar}
+                    onShowConcluir={onShowConcluir}
                     onCancelarTrue={onCancelarTrue}
                     onSalvarTrue={onSalvarTrue}
+                    onConcluirTrue={onConcluirTrue}
                     onHandleClose={onHandleClose}
                 />
 
@@ -260,8 +285,8 @@ export const DetalheDasPrestacoes = () => {
 
                 {/*<TabelaValoresPendentesPorAcao/>*/}
 
-                { !receitasNaoConferidas.length > 0 && !receitasConferidas.length > 0 && acaoLancamento.lancamento === "receitas-lancadas" &&
-                    <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
+                {!receitasNaoConferidas.length > 0 && !receitasConferidas.length > 0 && acaoLancamento.lancamento === "receitas-lancadas" &&
+                <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
                 }
 
                 {receitasNaoConferidas && receitasNaoConferidas.length > 0 && (
@@ -283,28 +308,28 @@ export const DetalheDasPrestacoes = () => {
                     />
                 )}
 
-                { !despesasNaoConferidas.length > 0 && !despesasConferidas.length > 0 && acaoLancamento.lancamento === "despesas-lancadas" &&
+                {!despesasNaoConferidas.length > 0 && !despesasConferidas.length > 0 && acaoLancamento.lancamento === "despesas-lancadas" &&
                 <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
                 }
 
-                {despesasNaoConferidas && despesasNaoConferidas.length > 0  &&
+                {despesasNaoConferidas && despesasNaoConferidas.length > 0 &&
 
-                    <TabelaDeLancamentosDespesas
-                        conciliados={false}
-                        despesas={despesasNaoConferidas}
-                        checkboxDespesas={checkboxDespesas}
-                        handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
-                    />
+                <TabelaDeLancamentosDespesas
+                    conciliados={false}
+                    despesas={despesasNaoConferidas}
+                    checkboxDespesas={checkboxDespesas}
+                    handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
+                />
 
                 }
 
                 {despesasConferidas && despesasConferidas.length > 0 &&
-                    <TabelaDeLancamentosDespesas
-                        conciliados={true}
-                        despesas={despesasConferidas}
-                        checkboxDespesas={checkboxDespesas}
-                        handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
-                    />
+                <TabelaDeLancamentosDespesas
+                    conciliados={true}
+                    despesas={despesasConferidas}
+                    checkboxDespesas={checkboxDespesas}
+                    handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
+                />
                 }
 
                 <Justificativa
@@ -313,6 +338,10 @@ export const DetalheDasPrestacoes = () => {
                 />
             </>
             }
+
+            <section>
+                <ErroGeral show={showErroGeral} handleClose={onHandleClose}/>
+            </section>
         </div>
 
     )

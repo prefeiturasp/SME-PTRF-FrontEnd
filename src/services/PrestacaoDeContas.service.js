@@ -52,3 +52,7 @@ export const getDesconciliarDespesa = async (uuid_receita) => {
 export const getSalvarPrestacaoDeConta = async (uuidPrestacaoDeContas, payload) => {
     return (await api.patch(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/salvar/`,payload, authHeader)).data
 }
+
+export const getConcluirPrestacaoDeConta = async (uuidPrestacaoDeContas, payload) => {
+    return (await api.patch(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/concluir/`,payload, authHeader)).data
+}
