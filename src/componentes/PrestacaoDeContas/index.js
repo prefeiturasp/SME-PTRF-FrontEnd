@@ -42,6 +42,10 @@ export const PrestacaoDeContas = () => {
     const [textareaModalReverConciliacao, setTextareaModalReverConciliacao] = useState("");
 
     useEffect(() => {
+        getPeriodoConta();
+    }, [])
+
+    useEffect(() => {
         const carregaTabelas = async () => {
             await getTabelasReceita().then(response => {
                 setContasAssociacao(response.data.contas_associacao);
@@ -60,6 +64,7 @@ export const PrestacaoDeContas = () => {
     }, [])
 
     useEffect(() => {
+        localStorage.setItem('periodoConta', JSON.stringify(periodoConta))
         if (periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== "") {
             setExibeMensagem(false)
             setDemonstrativoFinanceiro(true)
@@ -71,15 +76,17 @@ export const PrestacaoDeContas = () => {
         }
     }, [periodoConta])
 
+    const getPeriodoConta = () => {
+        if (localStorage.getItem('periodoConta')) {
+            const files = JSON.parse(localStorage.getItem('periodoConta'))
+            setPeriodoConta(files)
+        } else {
+            setPeriodoConta({periodo: "", conta: ""})
+        }
+    }
+
     const getStatusPrestacaoDeConta = async (periodo_uuid, conta_uuid) => {
-
-        console.log("getStatusPrestacaoDeConta Periodo: ", periodo_uuid);
-        console.log("getStatusPrestacaoDeConta Conta: ", conta_uuid);
-
         let status = await getStatus(periodo_uuid, conta_uuid);
-
-        console.log("getStatusPrestacaoDeConta status: ", status);
-
         setStatusPrestacaoConta(status);
         localStorage.setItem("uuidPrestacaoConta", status.uuid)
         setConfBarraStatus(status);
