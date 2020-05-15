@@ -73,6 +73,7 @@ export const DetalheDasPrestacoes = () => {
                 getDespesasConferidas();
             }
         } else {
+            setBtnCadastrarTexto("")
             setReceitasNaoConferidas([])
             setReceitasConferidas([])
             setDespesasNaoConferidas([]);
