@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { Rotas } from './rotas'
@@ -14,19 +13,22 @@ import { SidebarLeft } from './componentes/SidebarLeft'
 export const App = () => {
     const pathName = useHistory().location.pathname
 
-    console.log("pathName ", pathName)
-
     return (
         <section role="main" id="main" className="row">
             {pathName === '/login' ? (
                 <Rotas />
-            ) : (
+            ) : pathName === '/detalhe-das-prestacoes' ? (
+                    <>
+                        <Cabecalho />
+                        <Rotas />
+                    </>
+                ) :
                 <>
                     <Cabecalho />
                     <SidebarLeft />
                     <Rotas />
                 </>
-            )}
+            }
         </section>
     )
 }
