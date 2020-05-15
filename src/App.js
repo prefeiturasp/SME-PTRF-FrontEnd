@@ -1,3 +1,4 @@
+
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { Rotas } from './rotas'
@@ -11,37 +12,23 @@ import { Cabecalho } from './componentes/Cabecalho'
 import { SidebarLeft } from './componentes/SidebarLeft'
 
 export const App = () => {
-  const pathName = useHistory().location.pathname
+    const pathName = useHistory().location.pathname
 
-  const conditionalRender = () => {
-    if (pathName === '/login'){
-      return(
-          <Rotas />
-      )
-    }else if (pathName === '/detalhe-das-prestacoes'){
-      return (
-          <>
-            <Cabecalho />
-            <Rotas />
-          </>
-      )
-    }else {
-      return (
-          <>
-            <Cabecalho />
-            <SidebarLeft />
-            <Rotas />
-          </>
-      )
-    }
+    console.log("pathName ", pathName)
 
-  }
-
-  return (
-    <section role="main" id="main" className="row">
-      {conditionalRender()}
-    </section>
-  )
+    return (
+        <section role="main" id="main" className="row">
+            {pathName === '/login' ? (
+                <Rotas />
+            ) : (
+                <>
+                    <Cabecalho />
+                    <SidebarLeft />
+                    <Rotas />
+                </>
+            )}
+        </section>
+    )
 }
 
 export default App
