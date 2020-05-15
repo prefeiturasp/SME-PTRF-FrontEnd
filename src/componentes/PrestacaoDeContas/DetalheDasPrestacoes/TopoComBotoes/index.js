@@ -10,7 +10,10 @@ export const TopoComBotoes = ({handleClickCadastrar, btnCadastrarTexto, showCanc
             </div>
 
             <div className='col-12 col-md-7 text-right'>
-                <button onClick={handleClickCadastrar} type="button" className="btn btn-outline-success mr-2 mt-2"><strong>{btnCadastrarTexto}</strong></button>
+                {btnCadastrarTexto &&
+                <button onClick={handleClickCadastrar} type="button" className="btn btn-outline-success mr-2 mt-2">
+                    <strong>{btnCadastrarTexto}</strong></button>
+                }
                 <button type="button" onClick={onShowCancelar} className="btn btn-outline-success mr-2 mt-2"><strong>Cancelar</strong></button>
                 <button type="button" onClick={onShowSalvar} className="btn btn-outline-success mt-2"><strong>Salvar</strong></button>
                 <button disabled="" onClick={onShowConcluir} type="button" className="btn btn-success ml-2 mt-2"><strong>Concluir a conciliação</strong></button>

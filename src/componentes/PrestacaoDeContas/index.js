@@ -168,6 +168,7 @@ export const PrestacaoDeContas = () => {
 
     const onHandleClose = () => {
         setShow(false);
+        setBotaoConciliacaoReadonly(false);
     }
 
     const reabrirPeriodo = async () => {

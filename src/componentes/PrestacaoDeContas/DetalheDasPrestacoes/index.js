@@ -17,7 +17,7 @@ import {
     getConcluirPrestacaoDeConta,
 } from "../../../services/PrestacaoDeContas.service";
 import Loading from "../../../utils/Loading";
-import {ErroGeral, RedirectModalTabelaLancamentos} from "../../../utils/Modais";
+import {ErroGeral} from "../../../utils/Modais";
 
 export const DetalheDasPrestacoes = () => {
 
