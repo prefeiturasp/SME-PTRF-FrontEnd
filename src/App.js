@@ -13,22 +13,33 @@ import { SidebarLeft } from './componentes/SidebarLeft'
 export const App = () => {
   const pathName = useHistory().location.pathname
 
-  return (
-    <section role="main" id="main" className="row">
-      {pathName === '/detalhe-das-prestacoes' ? (
-        <>
-          <Cabecalho />
+  const conditionalRender = () => {
+    if (pathName === '/login'){
+      return(
           <Rotas />
-        </>
-      ) : pathName === '/login' ? (
-        <Rotas />
-      ) :
+      )
+    }else if (pathName === '/detalhe-das-prestacoes'){
+      return (
+          <>
+            <Cabecalho />
+            <Rotas />
+          </>
+      )
+    }else {
+      return (
           <>
             <Cabecalho />
             <SidebarLeft />
             <Rotas />
           </>
-      }
+      )
+    }
+
+  }
+
+  return (
+    <section role="main" id="main" className="row">
+      {conditionalRender()}
     </section>
   )
 }
