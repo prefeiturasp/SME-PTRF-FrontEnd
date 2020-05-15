@@ -28,7 +28,6 @@ export const DetalheDasPrestacoes = () => {
     const [showConcluir, setShowConcluir] = useState(false);
     const [showErroGeral, setShowErroGeral] = useState(false);
 
-
     const [loading, setLoading] = useState(false);
 
     const [receitasNaoConferidas, setReceitasNaoConferidas] = useState([])
