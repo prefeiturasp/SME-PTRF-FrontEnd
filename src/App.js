@@ -13,15 +13,20 @@ import { SidebarLeft } from './componentes/SidebarLeft'
 export const App = () => {
   const pathName = useHistory().location.pathname
 
+  var url_atual = window.location.pathname;
+
+  //console.log("pathName ", pathName)
+  console.log("url_atual ", url_atual)
+
   return (
     <section role="main" id="main" className="row">
-      {pathName === '/login' ? (
-        <Rotas />
-      ) : pathName === '/detalhe-das-prestacoes' ? (
+      {url_atual === '/detalhe-das-prestacoes' ? (
         <>
           <Cabecalho />
           <Rotas />
         </>
+      ) : url_atual === '/login' ? (
+        <Rotas />
       ) :
           <>
             <Cabecalho />
