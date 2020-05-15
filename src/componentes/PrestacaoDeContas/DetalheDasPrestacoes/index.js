@@ -180,7 +180,6 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const handleChangeTextareaJustificativa = (event) => {
-        console.log("handleChangeTextareaJustificativa ", event.target.value)
         setTextareaJustificativa(event.target.value)
     }
 
@@ -214,7 +213,6 @@ export const DetalheDasPrestacoes = () => {
         }
         try {
             let retorno = await getSalvarPrestacaoDeConta(localStorage.getItem("uuidPrestacaoConta"), payload)
-            console.log("salvarPrestacaoDeContas ", retorno)
             history.push('/prestacao-de-contas')
         } catch (e) {
             onShowErroGeral();
@@ -226,14 +224,12 @@ export const DetalheDasPrestacoes = () => {
         setShowCancelar(false);
         setShowSalvar(false);
         setShowConcluir(false);
-        console.log("getConcluirPrestacaoDeConta ")
         let payload = {
             observacoes: textareaJustificativa,
         }
 
         try {
             let retorno = await getConcluirPrestacaoDeConta(localStorage.getItem("uuidPrestacaoConta"), payload)
-            console.log("getConcluirPrestacaoDeConta ", retorno)
             history.push('/prestacao-de-contas')
         } catch (e) {
             onShowErroGeral();

@@ -13,7 +13,7 @@ export const TopoComBotoes = ({handleClickCadastrar, btnCadastrarTexto, showCanc
                 <button onClick={handleClickCadastrar} type="button" className="btn btn-outline-success mr-2 mt-2"><strong>{btnCadastrarTexto}</strong></button>
                 <button type="button" onClick={onShowCancelar} className="btn btn-outline-success mr-2 mt-2"><strong>Cancelar</strong></button>
                 <button type="button" onClick={onShowSalvar} className="btn btn-outline-success mt-2"><strong>Salvar</strong></button>
-                <button disabled="" onClick={onShowConcluir} type="button" className="btn btn-success btn-readonly ml-2 mt-2"><strong>Concluir a conciliação</strong></button>
+                <button disabled="" onClick={onShowConcluir} type="button" className="btn btn-success ml-2 mt-2"><strong>Concluir a conciliação</strong></button>
             </div>
 
             <section>
