@@ -222,12 +222,12 @@ export const ReceitaForm = props => {
     }
 
     const getClassificacaoReceita = (id_tipo_acao) =>{
-        console.log("getClassificacaoReceita ", id_tipo_acao)
+        console.log("getClassificacaoReceita ", tabelas.tipos_receita)
 
         const found = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_acao));
 
-        console.log("found aceita_capital: ", found.aceita_capital)
-        console.log("found aceita_custeio: ", found.aceita_custeio)
+        console.log("found aceita_capital: ", tabelas.tipos_receita.find(element => element.id === Number(id_tipo_acao)).aceita_capital )
+        console.log("found aceita_custeio: ", tabelas.tipos_receita.find(element => element.id === Number(id_tipo_acao)).aceita_custeio)
 
         /*tabelas.tipos_receita.map((item) => {
             //console.log("ITEM", item)
@@ -368,12 +368,16 @@ export const ReceitaForm = props => {
                                                 className="form-control"
                                                 disabled={readOnlyValor}
                                             >
-                                                {}
+                                                {console.log("AQUI ", props.values.tipo_receita)}
                                                 {receita.categorias_receita ? null : <option key={0} value="">Escolha a classificação</option>}
 
                                                 {tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 ? (
                                                     tabelas.categorias_receita.map((item, key) => (
-                                                    <option key={item.id} value={item.id}>{item.nome}</option>
+
+                                                        tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)) && (
+                                                            <option disabled={ (item.id === "CAPITAL" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_capital) || (item.id === "CUSTEIO" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_custeio) } key={item.id} value={item.id}>{item.nome}</option>
+                                                            )
+
                                                 ))
                                                 ) : null}
 
