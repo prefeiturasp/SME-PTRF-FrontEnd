@@ -222,16 +222,21 @@ export const ReceitaForm = props => {
     }
 
     const getClassificacaoReceita = (id_tipo_acao) =>{
-        //console.log("getClassificacaoReceita ", id_tipo_acao)
+        console.log("getClassificacaoReceita ", id_tipo_acao)
 
-        tabelas.tipos_receita.map((item) => {
+        const found = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_acao));
+
+        console.log("found aceita_capital: ", found.aceita_capital)
+        console.log("found aceita_custeio: ", found.aceita_custeio)
+
+        /*tabelas.tipos_receita.map((item) => {
             //console.log("ITEM", item)
             if (item.id === Number(id_tipo_acao)){
                 console.log("ITEM Nome", item.nome)
                 console.log("ITEM aceita_capital", item.aceita_capital)
                 console.log("ITEM aceita_custeio", item.aceita_custeio)
             }
-        })
+        })*/
 
     }
 
@@ -261,6 +266,7 @@ export const ReceitaForm = props => {
                                         value={props.values.tipo_receita}
                                         onChange={(e) => {
                                             props.handleChange(e);
+                                            getClassificacaoReceita(e.target.value)
                                         }
                                         }
                                         onBlur={props.handleBlur}
@@ -362,7 +368,7 @@ export const ReceitaForm = props => {
                                                 className="form-control"
                                                 disabled={readOnlyValor}
                                             >
-                                                {getClassificacaoReceita(props.values.tipos_receita)}
+                                                {}
                                                 {receita.categorias_receita ? null : <option key={0} value="">Escolha a classificação</option>}
 
                                                 {tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 ? (
