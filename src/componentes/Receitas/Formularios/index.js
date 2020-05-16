@@ -38,6 +38,7 @@ export const ReceitaForm = props => {
     const [initialValue, setInitialValue] = useState(initial);
     const [receita, setReceita] = useState({});
     const [readOnlyValor, setReadOnlyValor] = useState(false);
+    const [readOnlyClassificacaoReceita, setreadOnlyClassificacaoReceita] = useState(false);
 
 
     useEffect(() => {
@@ -54,7 +55,6 @@ export const ReceitaForm = props => {
             if (uuid) {
                 getReceita(uuid).then(response => {
                     const resp = response.data;
-                    console.log("RECEITA ", resp.categoria_receita)
                     const init = {
                         tipo_receita: resp.tipo_receita.id,
                         categoria_receita: resp.categoria_receita,
@@ -151,9 +151,6 @@ export const ReceitaForm = props => {
     }
 
     const validateFormReceitas = async (values) => {
-
-        //console.log("Ollyver validateFormReceitas ", values)
-
         const errors = {};
 
         let e_repasse_tipo_receita = false;
@@ -222,23 +219,23 @@ export const ReceitaForm = props => {
     }
 
     const getClassificacaoReceita = (id_tipo_acao, setFieldValue) =>{
-        console.log("getClassificacaoReceita ", tabelas.tipos_receita)
 
-        setFieldValue("categoria_receita", "");
+        let aceitaCapital = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_acao)).aceita_capital
+        let aceitaCusteio = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_acao)).aceita_custeio
 
-        const found = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_acao));
+        console.log("found aceita_capital: ", aceitaCapital)
+        console.log("found aceita_custeio: ", aceitaCusteio)
 
-        console.log("found aceita_capital: ", tabelas.tipos_receita.find(element => element.id === Number(id_tipo_acao)).aceita_capital )
-        console.log("found aceita_custeio: ", tabelas.tipos_receita.find(element => element.id === Number(id_tipo_acao)).aceita_custeio)
-
-        /*tabelas.tipos_receita.map((item) => {
-            //console.log("ITEM", item)
-            if (item.id === Number(id_tipo_acao)){
-                console.log("ITEM Nome", item.nome)
-                console.log("ITEM aceita_capital", item.aceita_capital)
-                console.log("ITEM aceita_custeio", item.aceita_custeio)
-            }
-        })*/
+        if (aceitaCapital && !aceitaCusteio){
+            setFieldValue("categoria_receita", "CAPITAL");
+            setreadOnlyClassificacaoReceita(true);
+        }else if(aceitaCusteio && !aceitaCapital){
+            setFieldValue("categoria_receita", "CUSTEIO");
+            setreadOnlyClassificacaoReceita(true);
+        }else {
+            setFieldValue("categoria_receita", "");
+            setreadOnlyClassificacaoReceita(false);
+        }
 
     }
 
@@ -368,9 +365,8 @@ export const ReceitaForm = props => {
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
                                                 className="form-control"
-                                                disabled={readOnlyValor}
+                                                disabled={readOnlyClassificacaoReceita}
                                             >
-                                                {console.log("AQUI ", props.values.tipo_receita)}
                                                 {receita.categorias_receita ? null : <option key={0} value="">Escolha a classificação</option>}
 
                                                 {tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 ? (
@@ -381,10 +377,10 @@ export const ReceitaForm = props => {
                                                                 style={{display: (item.id === "CAPITAL" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_capital) || (item.id === "CUSTEIO" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_custeio)  ? "none": "block" }}
                                                                 key={item.id}
                                                                 value={item.id}
-                                                            >{item.nome}
+                                                            >
+                                                                {item.nome}
                                                             </option>
-                                                            )
-
+                                                        )
                                                 ))
                                                 ) : null}
 
