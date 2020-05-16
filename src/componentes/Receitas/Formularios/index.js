@@ -218,13 +218,10 @@ export const ReceitaForm = props => {
         props.history.push(path);
     }
 
-    const getClassificacaoReceita = (id_tipo_acao, setFieldValue) =>{
+    const getClassificacaoReceita = (id_tipo_receita, setFieldValue) =>{
 
-        let aceitaCapital = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_acao)).aceita_capital
-        let aceitaCusteio = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_acao)).aceita_custeio
-
-        console.log("found aceita_capital: ", aceitaCapital)
-        console.log("found aceita_custeio: ", aceitaCusteio)
+        let aceitaCapital = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_capital;
+        let aceitaCusteio = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_custeio;
 
         if (aceitaCapital && !aceitaCusteio){
             setFieldValue("categoria_receita", "CAPITAL");
@@ -236,7 +233,18 @@ export const ReceitaForm = props => {
             setFieldValue("categoria_receita", "");
             setreadOnlyClassificacaoReceita(false);
         }
+    }
 
+    const getDisplayOptionClassificacaoReceita = (id_categoria_receita, id_tipo_receita) => {
+
+        let aceitaCapital = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_capital;
+        let aceitaCusteio = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_custeio;
+
+        if ( (id_categoria_receita === "CAPITAL" && !aceitaCapital) || (id_categoria_receita === "CUSTEIO" && !aceitaCusteio ) ){
+            return "none"
+        }else {
+            return "block"
+        }
     }
 
     return (
@@ -374,7 +382,8 @@ export const ReceitaForm = props => {
 
                                                         tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)) && (
                                                             <option
-                                                                style={{display: (item.id === "CAPITAL" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_capital) || (item.id === "CUSTEIO" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_custeio)  ? "none": "block" }}
+                                                                style={{display: getDisplayOptionClassificacaoReceita(item.id, props.values.tipo_receita)}}
+                                                                //style={{display: (item.id === "CAPITAL" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_capital) || (item.id === "CUSTEIO" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_custeio)  ? "none": "block" }}
                                                                 key={item.id}
                                                                 value={item.id}
                                                             >
