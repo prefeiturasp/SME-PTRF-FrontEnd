@@ -24,6 +24,7 @@ export const ReceitaForm = props => {
 
     const initial = {
         tipo_receita: "",
+        categoria_receita: "",
         acao_associacao: "",
         conta_associacao: "",
         data: "",
@@ -42,6 +43,7 @@ export const ReceitaForm = props => {
     useEffect(() => {
         const carregaTabelas = async () => {
             getTabelasReceita().then(response => {
+                console.log("getTabelasReceita ", response.data)
                 setTabelas(response.data);
             }).catch(error => {
                 console.log(error);
@@ -52,8 +54,10 @@ export const ReceitaForm = props => {
             if (uuid) {
                 getReceita(uuid).then(response => {
                     const resp = response.data;
+                    console.log("RECEITA ", resp.categoria_receita)
                     const init = {
                         tipo_receita: resp.tipo_receita.id,
+                        categoria_receita: resp.categoria_receita,
                         acao_associacao: resp.acao_associacao.uuid,
                         conta_associacao: resp.conta_associacao.uuid,
                         data: resp.data,
@@ -147,6 +151,9 @@ export const ReceitaForm = props => {
     }
 
     const validateFormReceitas = async (values) => {
+
+        //console.log("Ollyver validateFormReceitas ", values)
+
         const errors = {};
 
         let e_repasse_tipo_receita = false;
@@ -212,6 +219,20 @@ export const ReceitaForm = props => {
             path = `/detalhe-das-prestacoes`;
         }
         props.history.push(path);
+    }
+
+    const getClassificacaoReceita = (id_tipo_acao) =>{
+        //console.log("getClassificacaoReceita ", id_tipo_acao)
+
+        tabelas.tipos_receita.map((item) => {
+            //console.log("ITEM", item)
+            if (item.id === Number(id_tipo_acao)){
+                console.log("ITEM Nome", item.nome)
+                console.log("ITEM aceita_capital", item.aceita_capital)
+                console.log("ITEM aceita_custeio", item.aceita_custeio)
+            }
+        })
+
     }
 
     return (
@@ -295,7 +316,7 @@ export const ReceitaForm = props => {
                                         onBlur={props.handleBlur}
                                         name="descricao"
                                         id="descricao"
-                                        rows="5"
+                                        rows="9"
                                         cols="50"
                                         className="form-control"
                                         placeholder="Escreva a descrição da receita"/>
@@ -326,6 +347,32 @@ export const ReceitaForm = props => {
                                             </select>
                                             {props.touched.acao_associacao && props.errors.acao_associacao &&
                                             <span className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
+                                        </div>
+                                    </div>
+
+                                    <div className="row mt-4">
+                                        <div className="col-12">
+                                            <label htmlFor="categoria_receita">Classificação da receita</label>
+                                            <select
+                                                id="categoria_receita"
+                                                name="categoria_receita"
+                                                value={props.values.categoria_receita}
+                                                onChange={props.handleChange}
+                                                onBlur={props.handleBlur}
+                                                className="form-control"
+                                                disabled={readOnlyValor}
+                                            >
+                                                {getClassificacaoReceita(props.values.tipos_receita)}
+                                                {receita.categorias_receita ? null : <option key={0} value="">Escolha a classificação</option>}
+
+                                                {tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 ? (
+                                                    tabelas.categorias_receita.map((item, key) => (
+                                                    <option key={item.id} value={item.id}>{item.nome}</option>
+                                                ))
+                                                ) : null}
+
+                                            </select>
+                                            {props.touched.categorias_receita && props.errors.categorias_receita && <span className="span_erro text-danger mt-1"> {props.errors.categorias_receita}</span>}
                                         </div>
                                     </div>
 
