@@ -379,7 +379,6 @@ export const ReceitaForm = props => {
                                                         tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)) && (
                                                             <option
                                                                 style={{display: (item.id === "CAPITAL" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_capital) || (item.id === "CUSTEIO" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_custeio)  ? "none": "block" }}
-                                                                disabled={ (item.id === "CAPITAL" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_capital) || (item.id === "CUSTEIO" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_custeio)}
                                                                 key={item.id}
                                                                 value={item.id}
                                                             >{item.nome}
@@ -390,7 +389,7 @@ export const ReceitaForm = props => {
                                                 ) : null}
 
                                             </select>
-                                            {props.touched.categorias_receita && props.errors.categorias_receita && <span className="span_erro text-danger mt-1"> {props.errors.categorias_receita}</span>}
+                                            {props.touched.categoria_receita && props.errors.categoria_receita && <span className="span_erro text-danger mt-1"> {props.errors.categoria_receita}</span>}
                                         </div>
                                     </div>
 
