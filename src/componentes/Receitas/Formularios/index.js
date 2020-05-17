@@ -237,10 +237,10 @@ export const ReceitaForm = props => {
 
     const getDisplayOptionClassificacaoReceita = (id_categoria_receita, id_tipo_receita) => {
 
-        let aceitaCapital = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_capital;
-        let aceitaCusteio = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_custeio;
+        let id_categoria_receita_lower = id_categoria_receita.toLowerCase();
+        let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
 
-        if ( (id_categoria_receita === "CAPITAL" && !aceitaCapital) || (id_categoria_receita === "CUSTEIO" && !aceitaCusteio ) ){
+        if ( !aceitaClassificacao ){
             return "none"
         }else {
             return "block"
