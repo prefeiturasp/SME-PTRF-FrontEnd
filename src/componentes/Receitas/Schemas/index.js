@@ -4,6 +4,7 @@ import { trataNumericos } from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const ReceitaSchema = yup.object().shape({
     tipo_receita: yup.string().required("Tipo de receita é obrigatório."),
+    categoria_receita: yup.string().required("Classificação da receita é obrigatório."),
     acao_associacao: yup.string().required("Ação é obrigatório."),
     conta_associacao: yup.string().required("Tipo de conta é obrigatório."),
     data: yup.string().required("Data da receita é obrigatório.").nullable(),
