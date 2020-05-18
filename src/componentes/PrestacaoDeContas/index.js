@@ -115,7 +115,8 @@ export const PrestacaoDeContas = () => {
         let prestacao = await getIniciarPrestacaoDeContas(periodoConta.conta, periodoConta.periodo);
         localStorage.setItem("uuidPrestacaoConta", prestacao.uuid)
         let path = linkBotaoConciliacao;
-        history.push(path);
+        window.location.assign(path)
+        //history.push(path);
     }
 
     const setConfDataUltimaConciliacao = (status) => {
@@ -178,7 +179,8 @@ export const PrestacaoDeContas = () => {
         }
         await getReabrirPeriodo(statusPrestacaoConta.uuid, payload)
         let path = linkBotaoConciliacao;
-        history.push(path);
+        window.location.assign(path)
+        //history.push(path);
     }
 
     return (

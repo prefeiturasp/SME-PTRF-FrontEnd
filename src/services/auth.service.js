@@ -68,7 +68,8 @@ const logout = () => {
     localStorage.removeItem(USUARIO_NOME);
     localStorage.removeItem(ASSOCIACAO_UUID);
     localStorage.removeItem(ASSOCIACAO_NOME);
-    window.location.reload();
+    //window.location.reload();
+    window.location.assign("/login")
 };
 
 

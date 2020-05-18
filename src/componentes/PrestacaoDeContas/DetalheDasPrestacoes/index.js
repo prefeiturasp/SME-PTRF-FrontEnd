@@ -44,11 +44,6 @@ export const DetalheDasPrestacoes = () => {
     const [btnCadastrarUrl, setBtnCadastrarUrl] = useState("")
     const [textareaJustificativa, setTextareaJustificativa] = useState("")
 
-    const [reload, setReload] = useState(0)
-    useEffect(()=>{
-        setReload(1)
-    }, []);
-
     useEffect(() => {
         getAcaoLancamento();
     }, [])
@@ -159,7 +154,8 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const handleClickCadastrar = () => {
-        history.push(btnCadastrarUrl);
+        //history.push(btnCadastrarUrl);
+        window.location.assign(btnCadastrarUrl)
     }
 
     const handleChangeCheckboxReceitas = async (event, uuid_receita) => {
@@ -206,7 +202,8 @@ export const DetalheDasPrestacoes = () => {
 
     const onCancelarTrue = () => {
         setShowCancelar(false);
-        history.push('/prestacao-de-contas')
+        window.location.assign('/prestacao-de-contas')
+        //history.push('/prestacao-de-contas')
     }
 
     const onSalvarTrue = async () => {
@@ -218,7 +215,7 @@ export const DetalheDasPrestacoes = () => {
         }
         try {
             let retorno = await getSalvarPrestacaoDeConta(localStorage.getItem("uuidPrestacaoConta"), payload)
-            history.push('/prestacao-de-contas')
+            window.location.assign('/prestacao-de-contas')
         } catch (e) {
             onShowErroGeral();
             console.log("Erro: ", e.message())
@@ -235,7 +232,7 @@ export const DetalheDasPrestacoes = () => {
 
         try {
             let retorno = await getConcluirPrestacaoDeConta(localStorage.getItem("uuidPrestacaoConta"), payload)
-            history.push('/prestacao-de-contas')
+            window.location.assign('/prestacao-de-contas')
         } catch (e) {
             onShowErroGeral();
             console.log("Erro: ", e.message)
