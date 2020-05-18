@@ -44,7 +44,6 @@ export const ReceitaForm = props => {
     useEffect(() => {
         const carregaTabelas = async () => {
             getTabelasReceita().then(response => {
-                console.log("getTabelasReceita ", response.data)
                 setTabelas(response.data);
             }).catch(error => {
                 console.log(error);
@@ -220,16 +219,24 @@ export const ReceitaForm = props => {
 
     const getClassificacaoReceita = (id_tipo_receita, setFieldValue) =>{
 
-        let aceitaCapital = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_capital;
-        let aceitaCusteio = tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_custeio;
+        let qtdeAceitaClassificacao = [];
 
-        if (aceitaCapital && !aceitaCusteio){
-            setFieldValue("categoria_receita", "CAPITAL");
-            setreadOnlyClassificacaoReceita(true);
-        }else if(aceitaCusteio && !aceitaCapital){
-            setFieldValue("categoria_receita", "CUSTEIO");
-            setreadOnlyClassificacaoReceita(true);
-        }else {
+        tabelas.categorias_receita.map((item, index)=>{
+            let id_categoria_receita_lower = item.id.toLowerCase();
+            let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
+            qtdeAceitaClassificacao.push(aceitaClassificacao);
+
+            if (aceitaClassificacao){
+                setFieldValue("categoria_receita", item.id);
+                setreadOnlyClassificacaoReceita(true);
+            }
+        });
+
+        let resultado = qtdeAceitaClassificacao.filter( (value) =>{
+            return value === true;
+        }).length;
+
+        if (resultado > 1 ){
             setFieldValue("categoria_receita", "");
             setreadOnlyClassificacaoReceita(false);
         }
