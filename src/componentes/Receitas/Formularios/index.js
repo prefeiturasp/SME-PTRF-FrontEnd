@@ -198,7 +198,7 @@ export const ReceitaForm = props => {
                 setReadOnlyValor(true);
             } catch (e) {
                 console.log("Erro: ", e)
-                errors.acao_associacao = 'Não existe repasses pendentes para a associação nesta ação';
+                errors.acao_associacao = 'Não existem repasses pendentes para a Associação nesta ação';
             }
         }else {
             setReadOnlyValor(false)
