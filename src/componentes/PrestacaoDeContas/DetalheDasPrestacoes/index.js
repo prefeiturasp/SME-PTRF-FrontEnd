@@ -44,6 +44,11 @@ export const DetalheDasPrestacoes = () => {
     const [btnCadastrarUrl, setBtnCadastrarUrl] = useState("")
     const [textareaJustificativa, setTextareaJustificativa] = useState("")
 
+    const [reload, setReload] = useState(0)
+    useEffect(()=>{
+        setReload(1)
+    }, []);
+
     useEffect(() => {
         getAcaoLancamento();
     }, [])
