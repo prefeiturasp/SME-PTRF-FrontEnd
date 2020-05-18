@@ -1,16 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import "./login.scss"
 import logoSP from "../../assets/img/logoSP.svg"
 import LogoPtrf from "../../assets/img/logo-ptrf.png"
 import {LoginForm} from "./LoginForm"
 
 export const Login = () => {
-    const [reload, setReload] = useState(0)
-    useEffect(()=>{
-        setReload(1)
-
-    }, []);
-
     return (
         <>
             <div className="login-bg d-none d-lg-block d-xl-block"/>

@@ -13,6 +13,8 @@ import { SidebarLeft } from './componentes/SidebarLeft'
 export const App = () => {
     const pathName = useHistory().location.pathname
 
+    console.log("pathName ", pathName)
+
     return (
         <section role="main" id="main" className="row">
             {pathName === '/login' ? (
