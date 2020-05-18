@@ -205,7 +205,7 @@ export const CadastroForm = () => {
                                         onBlur={props.handleBlur}
                                         name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
                                         className={`${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                        placeholder="Digite o número do documento"
+                                        placeholder="Digite o número do CNPJ ou CPF (apenas algarismos)"
                                     />
                                     {props.errors.cpf_cnpj_fornecedor && <span className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
                                 </div>
@@ -306,7 +306,7 @@ export const CadastroForm = () => {
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="valor_total">Valor total</label>
+                                    <label htmlFor="valor_total">Valor total do documento</label>
                                     <CurrencyInput
                                         allowNegative={false}
                                         prefix='R$'
@@ -339,7 +339,7 @@ export const CadastroForm = () => {
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="valor_recusos_acoes">Valor do recurso das ações</label>
+                                    <label htmlFor="valor_recusos_acoes">Valor do PTRF</label>
 
                                     <Field name="valor_recusos_acoes">
                                         {({ field, form, meta }) => (

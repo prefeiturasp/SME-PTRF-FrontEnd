@@ -7,7 +7,8 @@ export const AvisoCapitalModal = (propriedades) => {
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Aviso"
-            bodyText="<p>A relação de bens de capital é a mesma utilizada no Sistema de Bens Patrimoniais Móveis (SBPM) da Prefeitura de São Paulo e, portanto, nem todos os itens podem ser adquiridos com os recursos do PTRF.</p>"
+            bodyText="<p>A relação de bens de
+capital é a mesma utilizada no Sistema de Bens Patrimoniais Móveis (SBPM) da Prefeitura de São Paulo e, portanto, contém itens que não podem ser adquiridos com recursos do PTRF.</p>"
             primeiroBotaoOnclick={propriedades.handleClose}
             primeiroBotaoTexto="Estou Ciente"
         />
