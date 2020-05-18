@@ -214,7 +214,7 @@ export const ReceitaForm = props => {
         }else {
             path = `/detalhe-das-prestacoes`;
         }
-        props.history.push(path);
+        window.location.assign(path)
     }
 
     const getClassificacaoReceita = (id_tipo_receita, setFieldValue) =>{

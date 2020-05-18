@@ -4,7 +4,7 @@ import { YupSignupSchemaCadastroDespesa, validaPayloadDespesas, validateFormDesp
 import MaskedInput from 'react-text-mask'
 import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial} from "../../../services/Despesas.service";
 import {DatePickerField} from "../../DatePickerField";
-import {useHistory, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
 import {CadastroFormCapital} from "./CadastroFormCapital";
 import {DespesaContext} from "../../../context/Despesa";
@@ -19,7 +19,6 @@ import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 export const CadastroForm = () => {
 
     let {origem} = useParams();
-    let history = useHistory();
 
     const despesaContext = useContext(DespesaContext)
 
@@ -72,7 +71,7 @@ export const CadastroForm = () => {
         }else {
             path = `/detalhe-das-prestacoes`;
         }
-        history.push(path);
+        window.location.assign(path)
     }
 
     const onSubmit = async (values, {resetForm}) => {

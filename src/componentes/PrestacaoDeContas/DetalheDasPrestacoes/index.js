@@ -154,7 +154,6 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const handleClickCadastrar = () => {
-        //history.push(btnCadastrarUrl);
         window.location.assign(btnCadastrarUrl)
     }
 
@@ -203,7 +202,6 @@ export const DetalheDasPrestacoes = () => {
     const onCancelarTrue = () => {
         setShowCancelar(false);
         window.location.assign('/prestacao-de-contas')
-        //history.push('/prestacao-de-contas')
     }
 
     const onSalvarTrue = async () => {
