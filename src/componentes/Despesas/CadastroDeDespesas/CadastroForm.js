@@ -3,6 +3,7 @@ import {Formik, FieldArray, Field} from "formik";
 import { YupSignupSchemaCadastroDespesa, validaPayloadDespesas, validateFormDespesas, cpfMaskContitional, calculaValorRecursoAcoes,  } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial} from "../../../services/Despesas.service";
+import {getVerificarSaldo} from "../../../services/RateiosDespesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import {useParams} from 'react-router-dom';
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
@@ -11,7 +12,7 @@ import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
-import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Modais"
+import {AvisoCapitalModal, CancelarModal, DeletarModal, SaldoInsuficiente} from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 
@@ -26,6 +27,7 @@ export const CadastroForm = () => {
     const [show, setShow] = useState(false);
     const [showAvisoCapital, setShowAvisoCapital] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
+    const [showSaldoInsuficiente, setShowSaldoInsuficiente] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
@@ -74,10 +76,26 @@ export const CadastroForm = () => {
         window.location.assign(path)
     }
 
+    const verificarSaldo = async (payload) => {
+        let saldo = await getVerificarSaldo(payload, despesaContext.idDespesa);
+        console.log("Saldo ", saldo)
+        return saldo;
+
+    }
+
     const onSubmit = async (values, {resetForm}) => {
         setBtnSubmitDisable(true);
 
         validaPayloadDespesas(values)
+
+        let retorno_saldo = await verificarSaldo(values);
+
+        console.log("retorno_saldo ", retorno_saldo)
+
+        debugger;
+        if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente"){
+            onShowSaldoInsuficiente()
+        }
 
         if( despesaContext.verboHttp === "POST"){
             try {
@@ -85,7 +103,7 @@ export const CadastroForm = () => {
                 if (response.status === HTTP_STATUS.CREATED) {
                     console.log("Operação realizada com sucesso!");
                     resetForm({values: ""})
-                    getPath();
+                    //getPath();
                 } else {
                    return
                 }
@@ -100,7 +118,7 @@ export const CadastroForm = () => {
                 if (response.status === 200) {
                     console.log("Operação realizada com sucesso!");
                     resetForm({values: ""})
-                    getPath();
+                    //getPath();
                 } else {
                     return
                 }
@@ -121,6 +139,7 @@ export const CadastroForm = () => {
         setShow(false);
         setShowDelete(false);
         setShowAvisoCapital(false);
+        setShowSaldoInsuficiente(false)
     }
 
     const onShowModal = () => {
@@ -133,6 +152,16 @@ export const CadastroForm = () => {
 
     const onShowDeleteModal = () => {
         setShowDelete(true);
+    }
+
+    const onShowSaldoInsuficiente = () => {
+        setShowSaldoInsuficiente(true);
+    }
+
+    const onSaldoInsuficienteTrue = () => {
+        setShowSaldoInsuficiente(false);
+        console.log("onSaldoInsuficienteTrue")
+        return;
     }
 
     const onDeletarTrue = () => {
@@ -497,6 +526,9 @@ export const CadastroForm = () => {
             </section>
             <section>
                 <AvisoCapitalModal show={showAvisoCapital} handleClose={onHandleClose} />
+            </section>
+            <section>
+                <SaldoInsuficiente show={showSaldoInsuficiente} handleClose={onHandleClose} onSaldoInsuficienteTrue={onSaldoInsuficienteTrue}/>
             </section>
             {despesaContext.idDespesa
                 ?

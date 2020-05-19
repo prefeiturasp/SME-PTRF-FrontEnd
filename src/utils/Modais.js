@@ -212,3 +212,18 @@ export const ErroGeral = (propriedades) => {
         />
     )
 }
+
+export const SaldoInsuficiente = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Saldo Insuficiente"
+            bodyText="<p>Não há saldo disponível para a despesa cadastrada, nas ações/aplicações abaixo. Você deseja cadastrá-la mesmo assim?</p>"
+            primeiroBotaoOnclick={propriedades.onSaldoInsuficienteTrue}
+            primeiroBotaoTexto="OK"
+            segundoBotaoOnclick={propriedades.handleClose}
+            segundoBotaoTexto="Fechar"
+        />
+    )
+}

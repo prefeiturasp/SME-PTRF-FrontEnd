@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {useHistory} from 'react-router-dom';
 import {TopoComBotoes} from "./TopoComBotoes";
 import {SelectAcaoLancamento} from "./SelectAcaoLancamento";
 import {TabelaDeLancamentosDespesas} from "./TabelaDeLancamentosDespesas";
@@ -20,8 +19,6 @@ import Loading from "../../../utils/Loading";
 import {ErroGeral} from "../../../utils/Modais";
 
 export const DetalheDasPrestacoes = () => {
-
-    let history = useHistory();
 
     const [showCancelar, setShowCancelar] = useState(false);
     const [showSalvar, setShowSalvar] = useState(false);
