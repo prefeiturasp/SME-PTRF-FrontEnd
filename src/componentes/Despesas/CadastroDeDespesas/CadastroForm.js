@@ -136,29 +136,35 @@ export const CadastroForm = () => {
         }
     }
 
-    const onShowSaldoInsuficiente = async (values) => {
-        console.log("onShowSaldoInsuficiente ", values)
-        validaPayloadDespesas(values)
-        let retorno_saldo = await verificarSaldo(values);
+    const onShowSaldoInsuficiente = async (values, errors) => {
+        console.log("onShowSaldoInsuficiente values ", values)
+        console.log("onShowSaldoInsuficiente errors ", errors )
 
-        console.log("retorno_saldo ", retorno_saldo)
+        debugger;
 
-        if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente"){
-            setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes)
-            setShowSaldoInsuficiente(true);
-        }else {
-            onSubmit(values);
+        if (Object.entries(errors).length === 0) {
+            debugger;
+            let retorno_saldo = await verificarSaldo(values);
+
+            console.log("retorno_saldo ", retorno_saldo)
+
+            if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
+                setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes)
+                setShowSaldoInsuficiente(true);
+            } else {
+                let veio_do_modal=true
+                onSubmit(values, veio_do_modal);
+            }
         }
 
     }
 
 
-    const onSubmit = async (values, resetForm ) => {
+    const onSubmit = async (values, resetForm, veio_do_modal=false ) => {
         setBtnSubmitDisable(true);
         setShowSaldoInsuficiente(false);
 
-        console.log("VALUES ONSUBMIT ", values)
-
+        validaPayloadDespesas(values)
 
         if( despesaContext.verboHttp === "POST"){
             try {
@@ -517,7 +523,7 @@ export const CadastroForm = () => {
                                 {despesaContext.idDespesa
                                     ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button>
                                     : null}
-                                <button disabled={btnSubmitDisable} type="button" onClick={()=>onShowSaldoInsuficiente(values, {resetForm})} className="btn btn-success mt-2">Salvar</button>
+                                <button disabled={btnSubmitDisable} type="button" onClick={()=>onShowSaldoInsuficiente(values, errors, {resetForm})} className="btn btn-success mt-2">Salvar</button>
                             </div>
                             <section>
                                 <SaldoInsuficiente saldosInsuficientesDaAcao={saldosInsuficientesDaAcao} show={showSaldoInsuficiente} handleClose={onHandleClose} onSaldoInsuficienteTrue={()=>onSubmit(values, {resetForm})}/>
