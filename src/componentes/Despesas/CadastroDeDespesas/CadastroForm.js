@@ -31,6 +31,7 @@ export const CadastroForm = () => {
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
+    const [saldosInsuficientesDaAcao, setSaldosInsuficientesDaAcao] = useState([]);
 
 
     useEffect(() => {
@@ -135,39 +136,37 @@ export const CadastroForm = () => {
         }
     }
 
-    const onShowSaldoInsuficiente = () => {
-        setShowSaldoInsuficiente(true);
+    const onShowSaldoInsuficiente = async (values) => {
+        console.log("onShowSaldoInsuficiente ", values)
+        validaPayloadDespesas(values)
+        let retorno_saldo = await verificarSaldo(values);
+
+        console.log("retorno_saldo ", retorno_saldo)
+
+        if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente"){
+            setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes)
+            setShowSaldoInsuficiente(true);
+        }else {
+            onSubmit(values);
+        }
+
     }
 
-    const onSaldoInsuficienteTrue = () => {
-        setShowSaldoInsuficiente(false);
-        console.log("onSaldoInsuficienteTrue")
 
-    }
-
-    const onSubmit = async (values, {resetForm} ) => {
+    const onSubmit = async (values, resetForm ) => {
         setBtnSubmitDisable(true);
         setShowSaldoInsuficiente(false);
 
         console.log("VALUES ONSUBMIT ", values)
 
-        validaPayloadDespesas(values)
-
-        /*        let retorno_saldo = await verificarSaldo(values);
-
-                console.log("retorno_saldo ", retorno_saldo)
-
-                if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente"){
-                    onShowSaldoInsuficiente()
-                }*/
 
         if( despesaContext.verboHttp === "POST"){
             try {
                 const response = await criarDespesa(values)
                 if (response.status === HTTP_STATUS.CREATED) {
                     console.log("Operação realizada com sucesso!");
-                    resetForm({values: ""})
-                    //getPath();
+                    //resetForm({values: ""})
+                    getPath();
                 } else {
                     return
                 }
@@ -181,8 +180,8 @@ export const CadastroForm = () => {
                 const response = await alterarDespesa(values, despesaContext.idDespesa)
                 if (response.status === 200) {
                     console.log("Operação realizada com sucesso!");
-                    resetForm({values: ""})
-                    //getPath();
+                    //resetForm({values: ""})
+                    getPath();
                 } else {
                     return
                 }
@@ -518,10 +517,10 @@ export const CadastroForm = () => {
                                 {despesaContext.idDespesa
                                     ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button>
                                     : null}
-                                <button disabled={btnSubmitDisable} type="button" onClick={onShowSaldoInsuficiente} className="btn btn-success mt-2">Salvar</button>
+                                <button disabled={btnSubmitDisable} type="button" onClick={()=>onShowSaldoInsuficiente(values, {resetForm})} className="btn btn-success mt-2">Salvar</button>
                             </div>
                             <section>
-                                <SaldoInsuficiente show={showSaldoInsuficiente} handleClose={onHandleClose} onSaldoInsuficienteTrue={()=>onSubmit(values, resetForm)}/>
+                                <SaldoInsuficiente saldosInsuficientesDaAcao={saldosInsuficientesDaAcao} show={showSaldoInsuficiente} handleClose={onHandleClose} onSaldoInsuficienteTrue={()=>onSubmit(values, {resetForm})}/>
                             </section>
                         </form>
                         </>
