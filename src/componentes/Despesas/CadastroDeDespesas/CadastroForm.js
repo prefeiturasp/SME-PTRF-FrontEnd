@@ -83,53 +83,6 @@ export const CadastroForm = () => {
 
     }
 
-    const onSubmit = async (values, {resetForm}) => {
-        setBtnSubmitDisable(true);
-
-        validaPayloadDespesas(values)
-
-        let retorno_saldo = await verificarSaldo(values);
-
-        console.log("retorno_saldo ", retorno_saldo)
-
-        debugger;
-        if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente"){
-            onShowSaldoInsuficiente()
-        }
-
-        if( despesaContext.verboHttp === "POST"){
-            try {
-                const response = await criarDespesa(values)
-                if (response.status === HTTP_STATUS.CREATED) {
-                    console.log("Operação realizada com sucesso!");
-                    resetForm({values: ""})
-                    //getPath();
-                } else {
-                   return
-                }
-            } catch (error) {
-                console.log(error)
-                return
-            }
-        }else if(despesaContext.verboHttp === "PUT"){
-
-            try {
-                const response = await alterarDespesa(values, despesaContext.idDespesa)
-                if (response.status === 200) {
-                    console.log("Operação realizada com sucesso!");
-                    resetForm({values: ""})
-                    //getPath();
-                } else {
-                    return
-                }
-            } catch (error) {
-                console.log(error)
-                return
-            }
-        }
-
-    }
-
     const onCancelarTrue = () => {
         setShow(false);
         getPath();
@@ -152,16 +105,6 @@ export const CadastroForm = () => {
 
     const onShowDeleteModal = () => {
         setShowDelete(true);
-    }
-
-    const onShowSaldoInsuficiente = () => {
-        setShowSaldoInsuficiente(true);
-    }
-
-    const onSaldoInsuficienteTrue = () => {
-        setShowSaldoInsuficiente(false);
-        console.log("onSaldoInsuficienteTrue")
-        return;
     }
 
     const onDeletarTrue = () => {
@@ -192,6 +135,66 @@ export const CadastroForm = () => {
         }
     }
 
+    const onShowSaldoInsuficiente = () => {
+        setShowSaldoInsuficiente(true);
+    }
+
+    const onSaldoInsuficienteTrue = () => {
+        setShowSaldoInsuficiente(false);
+        console.log("onSaldoInsuficienteTrue")
+
+    }
+
+    const onSubmit = async (values, {resetForm} ) => {
+        setBtnSubmitDisable(true);
+        setShowSaldoInsuficiente(false);
+
+        console.log("VALUES ONSUBMIT ", values)
+
+        validaPayloadDespesas(values)
+
+        /*        let retorno_saldo = await verificarSaldo(values);
+
+                console.log("retorno_saldo ", retorno_saldo)
+
+                if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente"){
+                    onShowSaldoInsuficiente()
+                }*/
+
+        if( despesaContext.verboHttp === "POST"){
+            try {
+                const response = await criarDespesa(values)
+                if (response.status === HTTP_STATUS.CREATED) {
+                    console.log("Operação realizada com sucesso!");
+                    resetForm({values: ""})
+                    //getPath();
+                } else {
+                    return
+                }
+            } catch (error) {
+                console.log(error)
+                return
+            }
+        }else if(despesaContext.verboHttp === "PUT"){
+
+            try {
+                const response = await alterarDespesa(values, despesaContext.idDespesa)
+                if (response.status === 200) {
+                    console.log("Operação realizada com sucesso!");
+                    resetForm({values: ""})
+                    //getPath();
+                } else {
+                    return
+                }
+            } catch (error) {
+                console.log(error)
+                return
+            }
+        }
+
+    }
+
+
     return (
         <>
             <Formik
@@ -199,6 +202,7 @@ export const CadastroForm = () => {
                 validationSchema={YupSignupSchemaCadastroDespesa}
                 validateOnBlur={true}
                 onSubmit={onSubmit}
+                //onSubmit={values => onSubmit(values)}
                 enableReinitialize={true}
                 validate={validateFormDespesas}
             >
@@ -206,8 +210,10 @@ export const CadastroForm = () => {
                     const {
                         values,
                         setFieldValue,
+                        resetForm,
                         errors,
                     } = props;
+
                     return (
                         <>
                         {props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
@@ -512,8 +518,11 @@ export const CadastroForm = () => {
                                 {despesaContext.idDespesa
                                     ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button>
                                     : null}
-                                <button disabled={btnSubmitDisable} type="submit" className="btn btn-success mt-2">Salvar</button>
+                                <button disabled={btnSubmitDisable} type="button" onClick={onShowSaldoInsuficiente} className="btn btn-success mt-2">Salvar</button>
                             </div>
+                            <section>
+                                <SaldoInsuficiente show={showSaldoInsuficiente} handleClose={onHandleClose} onSaldoInsuficienteTrue={()=>onSubmit(values, resetForm)}/>
+                            </section>
                         </form>
                         </>
 
@@ -527,9 +536,7 @@ export const CadastroForm = () => {
             <section>
                 <AvisoCapitalModal show={showAvisoCapital} handleClose={onHandleClose} />
             </section>
-            <section>
-                <SaldoInsuficiente show={showSaldoInsuficiente} handleClose={onHandleClose} onSaldoInsuficienteTrue={onSaldoInsuficienteTrue}/>
-            </section>
+
             {despesaContext.idDespesa
                 ?
                 <DeletarModal show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
