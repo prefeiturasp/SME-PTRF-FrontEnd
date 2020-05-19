@@ -132,16 +132,21 @@ export const validaPayloadDespesas = (values) => {
             }
         }
 
-        if (typeof rateio.tipo_custeio === "object" && rateio.tipo_custeio !== null){
-            rateio.tipo_custeio = rateio.tipo_custeio.id
-        }else {
+        if (rateio.tipo_custeio !== null ){
 
-            if (rateio.tipo_custeio === "0" || rateio.tipo_custeio === 0 || rateio.tipo_custeio === ""){
-                rateio.tipo_custeio = null
+            if (typeof rateio.tipo_custeio === "object" && rateio.tipo_custeio !== null){
+                rateio.tipo_custeio = rateio.tipo_custeio.id
             }else {
-                rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
+
+                if (rateio.tipo_custeio === "0" || rateio.tipo_custeio === 0 || rateio.tipo_custeio === ""){
+                    rateio.tipo_custeio = null
+                }else {
+                    rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
+                }
             }
         }
+
+
 
         rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital)
         rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)

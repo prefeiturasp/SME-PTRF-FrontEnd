@@ -140,10 +140,11 @@ export const CadastroForm = () => {
         console.log("onShowSaldoInsuficiente values ", values)
         console.log("onShowSaldoInsuficiente errors ", errors )
 
-        debugger;
+        validaPayloadDespesas(values)
+
 
         if (Object.entries(errors).length === 0) {
-            debugger;
+
             let retorno_saldo = await verificarSaldo(values);
 
             console.log("retorno_saldo ", retorno_saldo)
