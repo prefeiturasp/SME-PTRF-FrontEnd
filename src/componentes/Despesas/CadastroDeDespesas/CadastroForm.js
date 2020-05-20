@@ -148,15 +148,14 @@ export const CadastroForm = () => {
                 setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes)
                 setShowSaldoInsuficiente(true);
             } else {
-                let veio_do_modal=true
-                onSubmit(values, veio_do_modal);
+                onSubmit(values);
             }
         }
 
     }
 
 
-    const onSubmit = async (values, resetForm, veio_do_modal=false ) => {
+    const onSubmit = async (values) => {
         setBtnSubmitDisable(true);
         setShowSaldoInsuficiente(false);
 

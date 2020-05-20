@@ -104,11 +104,7 @@ export const validaPayloadDespesas = (values) => {
         values.data_transacao = null
     }
 
-    //debugger;
-
     values.rateios.map((rateio) => {
-
-        //debugger;
 
         if (typeof rateio.especificacao_material_servico === "object" && rateio.especificacao_material_servico !== null){
             rateio.especificacao_material_servico = rateio.especificacao_material_servico.id
@@ -145,8 +141,6 @@ export const validaPayloadDespesas = (values) => {
                 }
             }
         }
-
-
 
         rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital)
         rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)
