@@ -79,7 +79,6 @@ export const CadastroForm = () => {
 
     const verificarSaldo = async (payload) => {
         let saldo = await getVerificarSaldo(payload, despesaContext.idDespesa);
-        console.log("Saldo ", saldo)
         return saldo;
 
     }
@@ -137,16 +136,12 @@ export const CadastroForm = () => {
     }
 
     const onShowSaldoInsuficiente = async (values, errors) => {
-        console.log("onShowSaldoInsuficiente values ", values)
-        console.log("onShowSaldoInsuficiente errors ", errors )
 
         validaPayloadDespesas(values)
-
 
         if (Object.entries(errors).length === 0) {
 
             let retorno_saldo = await verificarSaldo(values);
-
             console.log("retorno_saldo ", retorno_saldo)
 
             if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {

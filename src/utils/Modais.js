@@ -230,16 +230,16 @@ export const SaldoInsuficiente = (propriedades) => {
                 <p>Não há saldo disponível para a despesa cadastrada, nas ações/aplicações abaixo. Você deseja cadastrá-la mesmo assim?</p>
                 {propriedades.saldosInsuficientesDaAcao && propriedades.saldosInsuficientesDaAcao.length > 0 && propriedades.saldosInsuficientesDaAcao.map((item, index) =>
                         <ul key={index} className="list-group list-group-flush mb-3">
-                            <li className="list-group-item">
+                            <li className="list-group-item p-0">
                                 <strong>Ação:</strong> {item.acao}
                             </li>
-                            <li className="list-group-item">
+                            <li className="list-group-item p-0">
                                 <strong>Aplicacao:</strong> {item.aplicacao}
                             </li>
-                            <li className="list-group-item">
+                            <li className="list-group-item p-0">
                                 <strong>Saldo Disponível:</strong> {item.saldo_disponivel}
                             </li>
-                            <li className="list-group-item" key={index}>
+                            <li className="list-group-item p-0" key={index}>
                                 <strong>Total dos rateios:</strong> {item.total_rateios}
                             </li>
                         </ul>
