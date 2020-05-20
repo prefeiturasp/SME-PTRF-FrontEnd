@@ -62,6 +62,7 @@ export const validateFormDespesas = (values, props /* only available when using 
 };
 
 export const validaPayloadDespesas = (values) => {
+
     // Quando é Alteração
     if (typeof values.associacao === "object"){
         values.associacao = localStorage.getItem(ASSOCIACAO_UUID)
@@ -127,14 +128,17 @@ export const validaPayloadDespesas = (values) => {
             }
         }
 
-        if (typeof rateio.tipo_custeio === "object" && rateio.tipo_custeio !== null){
-            rateio.tipo_custeio = rateio.tipo_custeio.id
-        }else {
+        if (rateio.tipo_custeio !== null ){
 
-            if (rateio.tipo_custeio === "0" || rateio.tipo_custeio === 0 || rateio.tipo_custeio === ""){
-                rateio.tipo_custeio = null
+            if (typeof rateio.tipo_custeio === "object" && rateio.tipo_custeio !== null){
+                rateio.tipo_custeio = rateio.tipo_custeio.id
             }else {
-                rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
+
+                if (rateio.tipo_custeio === "0" || rateio.tipo_custeio === 0 || rateio.tipo_custeio === ""){
+                    rateio.tipo_custeio = null
+                }else {
+                    rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
+                }
             }
         }
 

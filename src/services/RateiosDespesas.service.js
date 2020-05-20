@@ -21,3 +21,11 @@ export const filtroPorPalavraRateios = async (palavra) => {
 export const filtrosAvancadosRateios = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status) => {
     return (await api.get(`api/rateios-despesas/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&acao_associacao__uuid=${acao_associacao__uuid}&despesa__status=${despesa__status}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 }
+
+export const getVerificarSaldo = async (payload, despesa_uuid="") => {
+    if (despesa_uuid){
+        return (await api.post(`/api/rateios-despesas/verificar-saldos/?despesa_uuid=${despesa_uuid}`, payload, authHeader)).data
+    }else {
+        return (await api.post(`/api/rateios-despesas/verificar-saldos/`, payload, authHeader)).data
+    }
+}

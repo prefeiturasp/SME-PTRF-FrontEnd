@@ -3,6 +3,7 @@ import {Formik, FieldArray, Field} from "formik";
 import { YupSignupSchemaCadastroDespesa, validaPayloadDespesas, validateFormDespesas, cpfMaskContitional, calculaValorRecursoAcoes,  } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial} from "../../../services/Despesas.service";
+import {getVerificarSaldo} from "../../../services/RateiosDespesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import {useParams} from 'react-router-dom';
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
@@ -11,7 +12,7 @@ import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
-import {AvisoCapitalModal, CancelarModal, DeletarModal} from "../../../utils/Modais"
+import {AvisoCapitalModal, CancelarModal, DeletarModal, SaldoInsuficiente} from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 
@@ -26,9 +27,11 @@ export const CadastroForm = () => {
     const [show, setShow] = useState(false);
     const [showAvisoCapital, setShowAvisoCapital] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
+    const [showSaldoInsuficiente, setShowSaldoInsuficiente] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
+    const [saldosInsuficientesDaAcao, setSaldosInsuficientesDaAcao] = useState([]);
 
 
     useEffect(() => {
@@ -74,41 +77,9 @@ export const CadastroForm = () => {
         window.location.assign(path)
     }
 
-    const onSubmit = async (values, {resetForm}) => {
-        setBtnSubmitDisable(true);
-
-        validaPayloadDespesas(values)
-
-        if( despesaContext.verboHttp === "POST"){
-            try {
-                const response = await criarDespesa(values)
-                if (response.status === HTTP_STATUS.CREATED) {
-                    console.log("Operação realizada com sucesso!");
-                    resetForm({values: ""})
-                    getPath();
-                } else {
-                   return
-                }
-            } catch (error) {
-                console.log(error)
-                return
-            }
-        }else if(despesaContext.verboHttp === "PUT"){
-
-            try {
-                const response = await alterarDespesa(values, despesaContext.idDespesa)
-                if (response.status === 200) {
-                    console.log("Operação realizada com sucesso!");
-                    resetForm({values: ""})
-                    getPath();
-                } else {
-                    return
-                }
-            } catch (error) {
-                console.log(error)
-                return
-            }
-        }
+    const verificarSaldo = async (payload) => {
+        let saldo = await getVerificarSaldo(payload, despesaContext.idDespesa);
+        return saldo;
 
     }
 
@@ -121,6 +92,7 @@ export const CadastroForm = () => {
         setShow(false);
         setShowDelete(false);
         setShowAvisoCapital(false);
+        setShowSaldoInsuficiente(false)
     }
 
     const onShowModal = () => {
@@ -163,6 +135,66 @@ export const CadastroForm = () => {
         }
     }
 
+    const onShowSaldoInsuficiente = async (values, errors) => {
+
+        validaPayloadDespesas(values)
+
+        if (Object.entries(errors).length === 0) {
+
+            let retorno_saldo = await verificarSaldo(values);
+            console.log("retorno_saldo ", retorno_saldo)
+
+            if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
+                setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes)
+                setShowSaldoInsuficiente(true);
+            } else {
+                onSubmit(values);
+            }
+        }
+
+    }
+
+
+    const onSubmit = async (values) => {
+        setBtnSubmitDisable(true);
+        setShowSaldoInsuficiente(false);
+
+        validaPayloadDespesas(values)
+
+        if( despesaContext.verboHttp === "POST"){
+            try {
+                const response = await criarDespesa(values)
+                if (response.status === HTTP_STATUS.CREATED) {
+                    console.log("Operação realizada com sucesso!");
+                    //resetForm({values: ""})
+                    getPath();
+                } else {
+                    return
+                }
+            } catch (error) {
+                console.log(error)
+                return
+            }
+        }else if(despesaContext.verboHttp === "PUT"){
+
+            try {
+                const response = await alterarDespesa(values, despesaContext.idDespesa)
+                if (response.status === 200) {
+                    console.log("Operação realizada com sucesso!");
+                    //resetForm({values: ""})
+                    getPath();
+                } else {
+                    return
+                }
+            } catch (error) {
+                console.log(error)
+                return
+            }
+        }
+
+    }
+
+
     return (
         <>
             <Formik
@@ -170,6 +202,7 @@ export const CadastroForm = () => {
                 validationSchema={YupSignupSchemaCadastroDespesa}
                 validateOnBlur={true}
                 onSubmit={onSubmit}
+                //onSubmit={values => onSubmit(values)}
                 enableReinitialize={true}
                 validate={validateFormDespesas}
             >
@@ -177,8 +210,10 @@ export const CadastroForm = () => {
                     const {
                         values,
                         setFieldValue,
+                        resetForm,
                         errors,
                     } = props;
+
                     return (
                         <>
                         {props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
@@ -483,8 +518,11 @@ export const CadastroForm = () => {
                                 {despesaContext.idDespesa
                                     ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button>
                                     : null}
-                                <button disabled={btnSubmitDisable} type="submit" className="btn btn-success mt-2">Salvar</button>
+                                <button disabled={btnSubmitDisable} type="button" onClick={()=>onShowSaldoInsuficiente(values, errors, {resetForm})} className="btn btn-success mt-2">Salvar</button>
                             </div>
+                            <section>
+                                <SaldoInsuficiente saldosInsuficientesDaAcao={saldosInsuficientesDaAcao} show={showSaldoInsuficiente} handleClose={onHandleClose} onSaldoInsuficienteTrue={()=>onSubmit(values, {resetForm})}/>
+                            </section>
                         </form>
                         </>
 
@@ -498,6 +536,7 @@ export const CadastroForm = () => {
             <section>
                 <AvisoCapitalModal show={showAvisoCapital} handleClose={onHandleClose} />
             </section>
+
             {despesaContext.idDespesa
                 ?
                 <DeletarModal show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
