@@ -37,7 +37,7 @@ export const criarDespesa = async (payload) => {
 }
 
 export const alterarDespesa = async (payload, idDespesa) => {
-    return api.put(`api/despesas/${idDespesa}`, payload, authHeader).then(response => {
+    return api.put(`api/despesas/${idDespesa}/`, payload, authHeader).then(response => {
         return response;
     }).catch(error => {
         return error.response;

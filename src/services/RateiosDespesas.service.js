@@ -10,7 +10,7 @@ const authHeader = {
 }
 
 export const getListaRateiosDespesas = async uuid => {
-    return (await api.get('api/rateios-despesas/', authHeader)).data
+    return (await api.get( `api/rateios-despesas/?associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 }
 
 
@@ -28,4 +28,8 @@ export const getVerificarSaldo = async (payload, despesa_uuid="") => {
     }else {
         return (await api.post(`/api/rateios-despesas/verificar-saldos/`, payload, authHeader)).data
     }
+}
+
+export const getSomaDosTotais = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status) => {
+    return (await api.get(`api/rateios-despesas/totais/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&acao_associacao__uuid=${acao_associacao__uuid}&despesa__status=${despesa__status}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 }

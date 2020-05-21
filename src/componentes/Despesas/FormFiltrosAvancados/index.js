@@ -11,7 +11,7 @@ export const FormFiltrosAvancados = (props) => {
         despesa_status: "",
     }
 
-    const {btnMaisFiltros, onClickBtnMaisFiltros, setBuscaUtilizandoFiltro, setLista, iniciaLista} = props;
+    const {btnMaisFiltros, onClickBtnMaisFiltros, setBuscaUtilizandoFiltro, setLista, iniciaLista, reusltadoSomaDosTotais, setLoading} = props;
 
     const [despesasTabelas, setDespesasTabelas] = useState([])
     const [state, setState] = useState(initialState);
@@ -34,9 +34,15 @@ export const FormFiltrosAvancados = (props) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        //setLoading(true);
+
+        reusltadoSomaDosTotais(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status);
         const lista_retorno_api =  await filtrosAvancadosRateios(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status)
         setLista(lista_retorno_api)
         setBuscaUtilizandoFiltro(true)
+
+       // setLoading(false)
+
     }
 
     const limpaFormulario = () => {
@@ -88,6 +94,7 @@ export const FormFiltrosAvancados = (props) => {
                             onClick={(e)=>{
                                     onClickBtnMaisFiltros();
                                     iniciaLista();
+                                    reusltadoSomaDosTotais();
                                     limpaFormulario()
                                 }
                             }

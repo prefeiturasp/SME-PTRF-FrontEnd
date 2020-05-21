@@ -366,7 +366,7 @@ export const CadastroForm = () => {
                                         value={props.values.valor_recursos_proprios}
                                         name="valor_recursos_proprios"
                                         id="valor_recursos_proprios"
-                                        className={`${ trataNumericos(props.values.valor_recursos_proprios) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                        className="form-control"
                                         onChangeEvent={props.handleChange}
                                     />
                                     {props.errors.valor_recursos_proprios && <span className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}

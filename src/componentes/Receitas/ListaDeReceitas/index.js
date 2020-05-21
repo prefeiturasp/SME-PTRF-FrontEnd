@@ -13,6 +13,7 @@ import {MsgImgLadoDireito} from "../../Mensagens/MsgImgLadoDireito";
 import Img404 from "../../../assets/img/img-404.svg";
 import "./lista-de-receitas.scss"
 import {FormFiltrosAvancados} from "../FormFiltrosAvancados";
+import Loading from "../../../utils/Loading";
 
 export const ListaDeReceitas = () => {
 
@@ -23,11 +24,11 @@ export const ListaDeReceitas = () => {
     const [inputPesquisa, setInputPesquisa] = useState("")
     const [buscaUtilizandoFiltro, setBuscaUtilizandoFiltro] = useState(false)
     const [btnMaisFiltros, setBtnMaisFiltros] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         buscaListaReceitas()
     }, [])
-
 
 
     const buscaListaReceitas = async () => {
@@ -67,82 +68,98 @@ export const ListaDeReceitas = () => {
     }
 
 
-
     return (
         <>
-            <div className="row mb-3">
-                <div className="col-12">
-                    <p>Filtrar por</p>
-                </div>
-                <div className={`col-12 col-md-7 pr-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`} >
-                    <FormFiltroPorPalavra
-                        inputPesquisa={inputPesquisa}
-                        setInputPesquisa={setInputPesquisa}
-                        buscaUtilizandoFiltro={buscaUtilizandoFiltro}
-                        setBuscaUtilizandoFiltro={setBuscaUtilizandoFiltro}
-                        setLista={setReceitas}
-                        origem="Receitas"
+            {loading ? (
+                    <Loading
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="50"
+                        marginBottom="0"
                     />
-                </div>
-                <div className={`col-12 col-md-2 pl-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`} >
-                    <button
-                        onClick={onClickBtnMaisFiltros}
-                        type="button"
-                        className="btn btn btn-outline-success"
-                    >
-                        Mais Filtros
-                    </button>
-                </div>
-                <div className={`${btnMaisFiltros ? "col-12" : "col-12 col-md-3"}`}>
-                    <button onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right">Cadastrar crédito
-                    </button>
-                </div>
-            </div>
+                ) :
+                <>
+                    <div className="row mb-3">
+                        <div className="col-12">
+                            <p>Filtrar por</p>
+                        </div>
+                        <div
+                            className={`col-12 col-md-7 pr-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
+                            <FormFiltroPorPalavra
+                                inputPesquisa={inputPesquisa}
+                                setInputPesquisa={setInputPesquisa}
+                                buscaUtilizandoFiltro={buscaUtilizandoFiltro}
+                                setBuscaUtilizandoFiltro={setBuscaUtilizandoFiltro}
+                                setLista={setReceitas}
+                                setLoading={setLoading}
+                                origem="Receitas"
+                            />
+                        </div>
+                        <div
+                            className={`col-12 col-md-2 pl-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
+                            <button
+                                onClick={onClickBtnMaisFiltros}
+                                type="button"
+                                className="btn btn btn-outline-success"
+                            >
+                                Mais Filtros
+                            </button>
+                        </div>
+                        <div className={`${btnMaisFiltros ? "col-12" : "col-12 col-md-3"}`}>
+                            <button onClick={() => history.push('/cadastro-de-credito')} type="submit"
+                                    className="btn btn btn-outline-success float-right">Cadastrar crédito
+                            </button>
+                        </div>
+                    </div>
 
-            <FormFiltrosAvancados
-                btnMaisFiltros = {btnMaisFiltros}
-                onClickBtnMaisFiltros={onClickBtnMaisFiltros}
-                setLista={setReceitas}
-                setBuscaUtilizandoFiltro={setBuscaUtilizandoFiltro}
-                iniciaLista={buscaListaReceitas}
+                    <FormFiltrosAvancados
+                        btnMaisFiltros={btnMaisFiltros}
+                        onClickBtnMaisFiltros={onClickBtnMaisFiltros}
+                        setLista={setReceitas}
+                        setBuscaUtilizandoFiltro={setBuscaUtilizandoFiltro}
+                        iniciaLista={buscaListaReceitas}
+                        setLoading={setLoading}
 
-            />
+                    />
 
-            {receitas.length > 0 ? (<DataTable
-                    value={receitas}
-                    className="mt-3 datatable-footer-coad"
-                    paginator={receitas.length > rowsPerPage}
-                    rows={rowsPerPage}
-                    paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                    autoLayout={true}
-                    selectionMode="single"
-                    onRowClick={e => redirecionaDetalhe(e.data)}
-                >
-                    <Column field='tipo_receita.nome' header='Tipo'/>
-                    <Column field='conta_associacao.nome' header='Conta'/>
-                    <Column field='acao_associacao.nome' header='Ação'/>
-                    <Column
-                        field='data'
-                        header='Data'
-                        body={dataTemplate}/>
-                    <Column
-                        field='valor'
-                        header='Valor'
-                        body={valorTemplate}/>
-                </DataTable>)
-                : (
-                    buscaUtilizandoFiltro ? (
-                        <MsgImgCentralizada
-                            texto='Não encontramos resultados, verifique os filtros e tente novamente.'
-                            img={Img404}
-                        />
-                        ) :
-                        <MsgImgLadoDireito
-                            texto='A sua escola ainda não possui créditos cadastrados, clique no botão "Cadastrar crédito" para começar.'
-                            img={Img404}
-                        />
+                    {receitas.length > 0 ? (<DataTable
+                            value={receitas}
+                            className="mt-3 datatable-footer-coad"
+                            paginator={receitas.length > rowsPerPage}
+                            rows={rowsPerPage}
+                            paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                            autoLayout={true}
+                            selectionMode="single"
+                            onRowClick={e => redirecionaDetalhe(e.data)}
+                        >
+                            <Column field='tipo_receita.nome' header='Tipo'/>
+                            <Column field='conta_associacao.nome' header='Conta'/>
+                            <Column field='acao_associacao.nome' header='Ação'/>
+                            <Column
+                                field='data'
+                                header='Data'
+                                body={dataTemplate}/>
+                            <Column
+                                field='valor'
+                                header='Valor'
+                                body={valorTemplate}/>
+                        </DataTable>)
+                        : (
+                            buscaUtilizandoFiltro ? (
+                                    <MsgImgCentralizada
+                                        texto='Não encontramos resultados, verifique os filtros e tente novamente.'
+                                        img={Img404}
+                                    />
+                                ) :
+                                <MsgImgLadoDireito
+                                    texto='A sua escola ainda não possui créditos cadastrados, clique no botão "Cadastrar crédito" para começar.'
+                                    img={Img404}
+                                />
 
-                )
+                        )
+                    }
+                </>
+
             }
         </>
     )
