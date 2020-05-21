@@ -181,7 +181,7 @@ export class ListaDeDespesas extends Component {
                                 setLista={(rateiosDespesas) => this.setState({rateiosDespesas})}
                                 reusltadoSomaDosTotais={this.reusltadoSomaDosTotais}
                                 iniciaLista={this.buscaRateiosDespesas}
-                                //setLoading={(loading) => this.setState({loading})}
+                                setLoading={(loading) => this.setState({loading})}
                             />
 
                             {rateiosDespesas.length > 0 && Object.entries(somaDosTotais).length > 0 ? (
