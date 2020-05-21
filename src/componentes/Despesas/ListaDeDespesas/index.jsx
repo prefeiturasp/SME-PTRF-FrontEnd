@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {DataTable} from 'primereact/datatable'
 import {Column} from 'primereact/column'
 import {Row, Col} from 'reactstrap'
-import {getListaRateiosDespesas} from '../../../services/RateiosDespesas.service'
+import {getListaRateiosDespesas, getSomaDosTotais} from '../../../services/RateiosDespesas.service'
 import {redirect} from '../../../utils/redirect.js'
 import '../../../paginas/404/pagina-404.scss'
 import {Route} from 'react-router-dom'
@@ -20,19 +20,29 @@ export class ListaDeDespesas extends Component {
         super(props)
         this.state = {
             rateiosDespesas: [],
+            somaDosTotais: {},
             inputPesquisa: "",
             buscaUtilizandoFiltro: false,
             btnMaisFiltros: false,
         }
     }
 
-    buscaRateiosDespesas = async () => {
+    buscaRateiosDespesas = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "") => {
         const rateiosDespesas = await getListaRateiosDespesas()
         this.setState({rateiosDespesas})
+
+        //const somaDosTotais = await getSomaDosTotais(palavra,aplicacao_recurso, acao_associacao__uuid, despesa__status);
+        //this.setState({somaDosTotais})
+    }
+
+    reusltadoSomaDosTotais = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "") => {
+        const somaDosTotais = await getSomaDosTotais(palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status);
+        this.setState({somaDosTotais})
     }
 
     componentDidMount() {
-        this.buscaRateiosDespesas()
+        this.buscaRateiosDespesas();
+        this.reusltadoSomaDosTotais();
     }
 
     numeroDocumentoStatusTemplate(rowData, column) {
@@ -109,7 +119,7 @@ export class ListaDeDespesas extends Component {
     }
 
     render() {
-        const {rateiosDespesas} = this.state
+        const {rateiosDespesas, somaDosTotais} = this.state
         const rowsPerPage = 10
 
         return (
@@ -118,7 +128,8 @@ export class ListaDeDespesas extends Component {
                     <div className="col-12">
                         <p>Filtrar por</p>
                     </div>
-                    <Col lg={7} xl={7} className={`pr-0 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
+                    <Col lg={7} xl={7}
+                         className={`pr-0 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
                         <i
                             className="float-left fas fa-file-signature"
                             style={{marginRight: '5px', color: '#42474A'}}
@@ -126,14 +137,15 @@ export class ListaDeDespesas extends Component {
 
                         <FormFiltroPorPalavra
                             inputPesquisa={this.state.inputPesquisa}
-                            setInputPesquisa={(inputPesquisa)=>this.setState({inputPesquisa})}
+                            setInputPesquisa={(inputPesquisa) => this.setState({inputPesquisa})}
                             buscaUtilizandoFiltro={this.state.buscaUtilizandoFiltro}
-                            setBuscaUtilizandoFiltro={(buscaUtilizandoFiltro)=>this.setState({buscaUtilizandoFiltro})}
-                            setLista={(rateiosDespesas)=>this.setState({rateiosDespesas})}
+                            setBuscaUtilizandoFiltro={(buscaUtilizandoFiltro) => this.setState({buscaUtilizandoFiltro})}
+                            setLista={(rateiosDespesas) => this.setState({rateiosDespesas})}
                             origem="Despesas"
                         />
                     </Col>
-                    <Col lg={2} xl={2} className={`pl-sm-0 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
+                    <Col lg={2} xl={2}
+                         className={`pl-sm-0 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
                         <button
                             onClick={this.onClickBtnMaisFiltros}
                             type="button"
@@ -148,48 +160,50 @@ export class ListaDeDespesas extends Component {
                 </Row>
 
                 <FormFiltrosAvancados
-                    btnMaisFiltros = {this.state.btnMaisFiltros}
+                    btnMaisFiltros={this.state.btnMaisFiltros}
                     onClickBtnMaisFiltros={this.onClickBtnMaisFiltros}
                     buscaUtilizandoFiltro={this.state.buscaUtilizandoFiltro}
-                    setBuscaUtilizandoFiltro={(buscaUtilizandoFiltro)=>this.setState({buscaUtilizandoFiltro})}
-                    setLista={(rateiosDespesas)=>this.setState({rateiosDespesas})}
+                    setBuscaUtilizandoFiltro={(buscaUtilizandoFiltro) => this.setState({buscaUtilizandoFiltro})}
+                    setLista={(rateiosDespesas) => this.setState({rateiosDespesas})}
                     iniciaLista={this.buscaRateiosDespesas}
                 />
 
-                {rateiosDespesas.length > 0 ? (
+                {rateiosDespesas.length > 0 && Object.entries(somaDosTotais).length > 0  ? (
+                        <>
+                            <SomaDasDespesas
+                                somaDosTotais={somaDosTotais}
+                            />
 
-                    <>
-                        <SomaDasDespesas/>
-                        <DataTable
-                            value={rateiosDespesas}
-                            className="mt-3 datatable-footer-coad"
-                            paginator={rateiosDespesas.length > rowsPerPage}
-                            rows={rowsPerPage}
-                            paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                            autoLayout={true}
-                            selectionMode="single"
-                            onRowClick={e => this.redirecionaDetalhe(e.data)}
-                        >
-                            <Column
-                                field="numero_documento"
-                                header="Número do documento"
-                                body={this.numeroDocumentoStatusTemplate}
-                            />
-                            <Column
-                                field="especificacao_material_servico.descricao"
-                                header="Especificação do material ou serviço"
-                                body={this.especificacaoDataTemplate}
-                            />
-                            <Column field="aplicacao_recurso" header="Aplicação"/>
-                            <Column field="acao_associacao.nome" header="Tipo de ação"/>
-                            <Column
-                                field="valor_total"
-                                header="Valor"
-                                body={this.valorTotalTemplate}
-                                style={{textAlign: 'right'}}
-                            />
-                        </DataTable>
-                    </>
+                            <DataTable
+                                value={rateiosDespesas}
+                                className="mt-3 datatable-footer-coad"
+                                paginator={rateiosDespesas.length > rowsPerPage}
+                                rows={rowsPerPage}
+                                paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                                autoLayout={true}
+                                selectionMode="single"
+                                onRowClick={e => this.redirecionaDetalhe(e.data)}
+                            >
+                                <Column
+                                    field="numero_documento"
+                                    header="Número do documento"
+                                    body={this.numeroDocumentoStatusTemplate}
+                                />
+                                <Column
+                                    field="especificacao_material_servico.descricao"
+                                    header="Especificação do material ou serviço"
+                                    body={this.especificacaoDataTemplate}
+                                />
+                                <Column field="aplicacao_recurso" header="Aplicação"/>
+                                <Column field="acao_associacao.nome" header="Tipo de ação"/>
+                                <Column
+                                    field="valor_total"
+                                    header="Valor"
+                                    body={this.valorTotalTemplate}
+                                    style={{textAlign: 'right'}}
+                                />
+                            </DataTable>
+                        </>
                     ) :
                     this.state.buscaUtilizandoFiltro ? (
                             <MsgImgCentralizada
