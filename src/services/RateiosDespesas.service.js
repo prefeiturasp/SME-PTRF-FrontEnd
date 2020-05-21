@@ -29,3 +29,7 @@ export const getVerificarSaldo = async (payload, despesa_uuid="") => {
         return (await api.post(`/api/rateios-despesas/verificar-saldos/`, payload, authHeader)).data
     }
 }
+
+export const getSomaDosTotais = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status) => {
+    return (await api.get(`api/rateios-despesas/totais/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&acao_associacao__uuid=${acao_associacao__uuid}&despesa__status=${despesa__status}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
+}
