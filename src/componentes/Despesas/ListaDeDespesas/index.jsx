@@ -30,9 +30,6 @@ export class ListaDeDespesas extends Component {
     buscaRateiosDespesas = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "") => {
         const rateiosDespesas = await getListaRateiosDespesas()
         this.setState({rateiosDespesas})
-
-        //const somaDosTotais = await getSomaDosTotais(palavra,aplicacao_recurso, acao_associacao__uuid, despesa__status);
-        //this.setState({somaDosTotais})
     }
 
     reusltadoSomaDosTotais = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "") => {
@@ -141,6 +138,7 @@ export class ListaDeDespesas extends Component {
                             buscaUtilizandoFiltro={this.state.buscaUtilizandoFiltro}
                             setBuscaUtilizandoFiltro={(buscaUtilizandoFiltro) => this.setState({buscaUtilizandoFiltro})}
                             setLista={(rateiosDespesas) => this.setState({rateiosDespesas})}
+                            reusltadoSomaDosTotais={this.reusltadoSomaDosTotais}
                             origem="Despesas"
                         />
                     </Col>
@@ -165,6 +163,7 @@ export class ListaDeDespesas extends Component {
                     buscaUtilizandoFiltro={this.state.buscaUtilizandoFiltro}
                     setBuscaUtilizandoFiltro={(buscaUtilizandoFiltro) => this.setState({buscaUtilizandoFiltro})}
                     setLista={(rateiosDespesas) => this.setState({rateiosDespesas})}
+                    reusltadoSomaDosTotais={this.reusltadoSomaDosTotais}
                     iniciaLista={this.buscaRateiosDespesas}
                 />
 

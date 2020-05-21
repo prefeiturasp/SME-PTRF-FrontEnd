@@ -2,9 +2,6 @@ import React from "react";
 import "./soma-das-depesas.scss"
 
 export const SomaDasDespesas = ({somaDosTotais}) => {
-
-    console.log("Soma dos totais ", somaDosTotais)
-
     return (
         <div className="row">
             <div className="col-12 mt-5">
@@ -18,11 +15,11 @@ export const SomaDasDespesas = ({somaDosTotais}) => {
                     </thead>
                     <tbody>
                     <tr>
-                        <td>{somaDosTotais.total_despesas_com_filtro.toLocaleString('pt-BR', {
+                        <td>{somaDosTotais.total_despesas_sem_filtro && somaDosTotais.total_despesas_sem_filtro.toLocaleString('pt-BR', {
                             style: 'currency',
                             currency: 'BRL'
                         })}</td>
-                        <td>{somaDosTotais.total_despesas_sem_filtro.toLocaleString('pt-BR', {
+                        <td>{somaDosTotais.total_despesas_com_filtro && somaDosTotais.total_despesas_com_filtro.toLocaleString('pt-BR', {
                             style: 'currency',
                             currency: 'BRL'
                         })}</td>
