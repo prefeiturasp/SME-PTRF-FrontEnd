@@ -6,20 +6,23 @@ import {filtroPorPalavraRateios} from "../../services/RateiosDespesas.service";
 
 export const FormFiltroPorPalavra = (props) => {
 
-    const {inputPesquisa, setInputPesquisa, setBuscaUtilizandoFiltro, setLista, origem, reusltadoSomaDosTotais} = props
+    const {inputPesquisa, setInputPesquisa, setBuscaUtilizandoFiltro, setLista, origem, reusltadoSomaDosTotais, setLoading} = props
 
     const handleSubmitFormFiltroPorPalavra = async (event) => {
         event.preventDefault();
+        setLoading(true)
         let lista_retorno_api
         if (origem === "Receitas"){
             lista_retorno_api =  await filtroPorPalavraReceitas(inputPesquisa)
         }else if(origem === "Despesas"){
             lista_retorno_api =  await filtroPorPalavraRateios(inputPesquisa)
         }
-
-        reusltadoSomaDosTotais(inputPesquisa);
+        if(reusltadoSomaDosTotais){
+            reusltadoSomaDosTotais(inputPesquisa);
+        }
         setLista(lista_retorno_api)
         setBuscaUtilizandoFiltro(true)
+        setLoading(false)
     }
 
     return (
