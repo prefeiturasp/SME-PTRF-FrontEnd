@@ -13,6 +13,7 @@ import {MsgImgLadoDireito} from "../../Mensagens/MsgImgLadoDireito";
 import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
 import "./lista-de-despesas.scss"
 import {FormFiltrosAvancados} from "../FormFiltrosAvancados";
+import {SomaDasDespesas} from "../SomaDasDespesas";
 
 export class ListaDeDespesas extends Component {
     constructor(props) {
@@ -156,6 +157,9 @@ export class ListaDeDespesas extends Component {
                 />
 
                 {rateiosDespesas.length > 0 ? (
+
+                    <>
+                        <SomaDasDespesas/>
                         <DataTable
                             value={rateiosDespesas}
                             className="mt-3 datatable-footer-coad"
@@ -185,6 +189,7 @@ export class ListaDeDespesas extends Component {
                                 style={{textAlign: 'right'}}
                             />
                         </DataTable>
+                    </>
                     ) :
                     this.state.buscaUtilizandoFiltro ? (
                             <MsgImgCentralizada
