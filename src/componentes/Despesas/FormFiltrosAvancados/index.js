@@ -35,10 +35,12 @@ export const FormFiltrosAvancados = (props) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         //setLoading(true);
+
         reusltadoSomaDosTotais(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status);
         const lista_retorno_api =  await filtrosAvancadosRateios(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status)
         setLista(lista_retorno_api)
         setBuscaUtilizandoFiltro(true)
+
        // setLoading(false)
 
     }
