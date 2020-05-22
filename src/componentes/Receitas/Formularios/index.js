@@ -144,10 +144,6 @@ export const ReceitaForm = props => {
         setShowDelete(true);
     }
 
-    const onShowPeriodoFechado = () => {
-        setShowPeriodoFechado(true);
-    }
-
     const onDeletarTrue = () => {
         deletarReceita(uuid).then(response => {
             console.log("Receita deletada com sucesso.");
@@ -491,7 +487,6 @@ export const ReceitaForm = props => {
                 <DeletarModalReceitas show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
                 : null
             }
-
             <section>
                 <PeriodoFechado show={showPeriodoFechado} handleClose={onHandleClose}/>
             </section>
