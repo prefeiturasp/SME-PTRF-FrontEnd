@@ -24,7 +24,7 @@ import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {getPeriodoFechadoReceita} from "../../../services/Receitas.service";
 
 
-export const CadastroForm = () => {
+export const CadastroForm = ({verbo_http}) => {
 
     let {origem} = useParams();
 
@@ -45,7 +45,7 @@ export const CadastroForm = () => {
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
 
     useEffect(()=>{
-        if (despesaContext.initialValues.data_documento && despesaContext.verboHttp === "PUT"){
+        if (despesaContext.initialValues.data_documento && verbo_http === "PUT"){
             periodoFechado(despesaContext.initialValues.data_documento)
         }
     }, [despesaContext.initialValues])
@@ -213,7 +213,7 @@ export const CadastroForm = () => {
 
     const periodoFechado = async (data_receita) =>{
 
-        console.log("periodoFechado ", data_receita)
+        console.log("periodoFechado data_receita ", data_receita)
 
         let palavra = "";
         let aplicacao_recurso = "";
@@ -555,6 +555,7 @@ export const CadastroForm = () => {
                                                                 despesasTabelas={despesasTabelas}
                                                                 especificaoes_capital={especificaoes_capital}
                                                                 verboHttp={despesaContext.verboHttp}
+                                                                disabled={readOnlyCampos}
                                                             />
                                                             ): null}
 
