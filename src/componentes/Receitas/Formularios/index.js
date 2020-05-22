@@ -72,6 +72,7 @@ export const ReceitaForm = props => {
                     }
                     setInitialValue(init);
                     setReceita(resp);
+                    periodoFechado(resp.data)
                 }).catch(error => {
                     console.log(error);
                 });
