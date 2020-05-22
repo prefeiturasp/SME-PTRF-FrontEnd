@@ -3,13 +3,13 @@ import HTTP_STATUS from "http-status-codes";
 import {Formik} from 'formik';
 import {DatePickerField} from '../../DatePickerField'
 import CurrencyInput from 'react-currency-input';
-import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita, getRepasse } from '../../../services/Receitas.service';
+import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita, getRepasse, getPeriodoFechadoReceita } from '../../../services/Receitas.service';
 import { round, trataNumericos,} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../services/auth.service';
-import {DeletarModalReceitas, CancelarModalReceitas} from "../../../utils/Modais";
+import {DeletarModalReceitas, CancelarModalReceitas, PeriodoFechado} from "../../../utils/Modais";
 
 export const ReceitaForm = props => {
 
@@ -35,10 +35,14 @@ export const ReceitaForm = props => {
     const [tabelas, setTabelas] = useState(tabelaInicial);
     const [show, setShow] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
+    const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [receita, setReceita] = useState({});
     const [readOnlyValor, setReadOnlyValor] = useState(false);
     const [readOnlyClassificacaoReceita, setreadOnlyClassificacaoReceita] = useState(false);
+
+    const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
+    const [readOnlyCampos, setReadOnlyCampos] = useState(false);
 
 
     useEffect(() => {
@@ -128,6 +132,7 @@ export const ReceitaForm = props => {
     const onHandleClose = () => {
         setShow(false);
         setShowDelete(false);
+        setShowPeriodoFechado(false);
     }
 
     const onShowModal = () => {
@@ -136,6 +141,10 @@ export const ReceitaForm = props => {
 
     const onShowDeleteModal = () => {
         setShowDelete(true);
+    }
+
+    const onShowPeriodoFechado = () => {
+        setShowPeriodoFechado(true);
     }
 
     const onDeletarTrue = () => {
@@ -149,8 +158,84 @@ export const ReceitaForm = props => {
         });
     }
 
+    const getPath = () => {
+        let path;
+        if (origem === undefined){
+            path = `/lista-de-receitas`;
+        }else {
+            path = `/detalhe-das-prestacoes`;
+        }
+        window.location.assign(path)
+    }
+
+    const getClassificacaoReceita = (id_tipo_receita, setFieldValue) =>{
+
+        let qtdeAceitaClassificacao = [];
+
+        tabelas.categorias_receita.map((item, index)=>{
+            let id_categoria_receita_lower = item.id.toLowerCase();
+            let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
+            qtdeAceitaClassificacao.push(aceitaClassificacao);
+
+            if (aceitaClassificacao){
+                setFieldValue("categoria_receita", item.id);
+                setreadOnlyClassificacaoReceita(true);
+            }
+        });
+
+        let resultado = qtdeAceitaClassificacao.filter( (value) =>{
+            return value === true;
+        }).length;
+
+        if (resultado > 1 ){
+            setFieldValue("categoria_receita", "");
+            setreadOnlyClassificacaoReceita(false);
+        }
+    }
+
+    const getDisplayOptionClassificacaoReceita = (id_categoria_receita, id_tipo_receita) => {
+
+        let id_categoria_receita_lower = id_categoria_receita.toLowerCase();
+        let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
+
+        if ( !aceitaClassificacao ){
+            return "none"
+        }else {
+            return "block"
+        }
+    }
+
+    const periodoFechado = async (data_receita) =>{
+
+        console.log("periodoFechado ", data_receita)
+
+        let palavra = "";
+        let aplicacao_recurso = "";
+        let acao_associacao__uuid = "";
+        let despesa__status = "";
+
+        let periodo_fechado = await getPeriodoFechadoReceita(palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status);
+        if (periodo_fechado.total_despesas_com_filtro){
+            //errors.data = 'Este período está fechado!!';
+            setReadOnlyBtnAcao(true);
+            setShowPeriodoFechado(true);
+            setReadOnlyCampos(true);
+        }else {
+            setReadOnlyBtnAcao(false)
+            setReadOnlyCampos(false)
+        }
+
+        return periodo_fechado;
+
+    }
+
     const validateFormReceitas = async (values) => {
         const errors = {};
+
+        // Verifica período fechado para a receita
+        if (values.data){
+            await periodoFechado(values.data)
+        }
 
         let e_repasse_tipo_receita = false;
         let e_repasse_acao = "Escolha uma ação";
@@ -207,53 +292,6 @@ export const ReceitaForm = props => {
         return errors;
     }
 
-    const getPath = () => {
-        let path;
-        if (origem === undefined){
-            path = `/lista-de-receitas`;
-        }else {
-            path = `/detalhe-das-prestacoes`;
-        }
-        window.location.assign(path)
-    }
-
-    const getClassificacaoReceita = (id_tipo_receita, setFieldValue) =>{
-
-        let qtdeAceitaClassificacao = [];
-
-        tabelas.categorias_receita.map((item, index)=>{
-            let id_categoria_receita_lower = item.id.toLowerCase();
-            let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
-            qtdeAceitaClassificacao.push(aceitaClassificacao);
-
-            if (aceitaClassificacao){
-                setFieldValue("categoria_receita", item.id);
-                setreadOnlyClassificacaoReceita(true);
-            }
-        });
-
-        let resultado = qtdeAceitaClassificacao.filter( (value) =>{
-            return value === true;
-        }).length;
-
-        if (resultado > 1 ){
-            setFieldValue("categoria_receita", "");
-            setreadOnlyClassificacaoReceita(false);
-        }
-    }
-
-    const getDisplayOptionClassificacaoReceita = (id_categoria_receita, id_tipo_receita) => {
-
-        let id_categoria_receita_lower = id_categoria_receita.toLowerCase();
-        let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
-
-        if ( !aceitaClassificacao ){
-            return "none"
-        }else {
-            return "block"
-        }
-    }
-
     return (
         <>
             <Formik
@@ -277,6 +315,7 @@ export const ReceitaForm = props => {
                                     <select
                                         id="tipo_receita"
                                         name="tipo_receita"
+                                        disabled={readOnlyCampos}
                                         value={props.values.tipo_receita}
                                         onChange={(e) => {
                                             props.handleChange(e);
@@ -312,6 +351,7 @@ export const ReceitaForm = props => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor">Valor da receita</label>
                                     <CurrencyInput
+                                        disabled={readOnlyCampos}
                                         allowNegative={false}
                                         prefix='R$'
                                         decimalSeparator=","
@@ -331,6 +371,7 @@ export const ReceitaForm = props => {
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="descricao_receita">Descrição da receita</label>
                                     <textarea
+                                        disabled={readOnlyCampos}
                                         value={props.values.descricao}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
@@ -348,6 +389,7 @@ export const ReceitaForm = props => {
                                         <div className="col-12">
                                             <label htmlFor="acao_associacao">Ação</label>
                                             <select
+                                                disabled={readOnlyCampos}
                                                 id="acao_associacao"
                                                 name="acao_associacao"
                                                 value={props.values.acao_associacao}
@@ -380,7 +422,7 @@ export const ReceitaForm = props => {
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
                                                 className="form-control"
-                                                disabled={readOnlyClassificacaoReceita}
+                                                disabled={readOnlyClassificacaoReceita || readOnlyCampos}
                                             >
                                                 {receita.categorias_receita ? null : <option key={0} value="">Escolha a classificação</option>}
 
@@ -415,7 +457,7 @@ export const ReceitaForm = props => {
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
                                                 className="form-control"
-                                                disabled={readOnlyValor}
+                                                disabled={readOnlyValor || readOnlyCampos}
                                             >
                                                 {receita.conta_associacao
                                                     ? null
@@ -433,8 +475,8 @@ export const ReceitaForm = props => {
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
                                 <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
                                 {uuid
-                                    ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
-                                <button type="submit" className="btn btn-success mt-2">Salvar</button>
+                                    ? <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
+                                <button disabled={readOnlyBtnAcao} type="submit" className="btn btn-success mt-2">Salvar</button>
                             </div>
                         </form>
                     );
@@ -448,6 +490,10 @@ export const ReceitaForm = props => {
                 <DeletarModalReceitas show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
                 : null
             }
+
+            <section>
+                <PeriodoFechado show={showPeriodoFechado} handleClose={onHandleClose}/>
+            </section>
         </>
     );
 }

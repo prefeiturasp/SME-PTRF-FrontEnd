@@ -261,3 +261,16 @@ export const SaldoInsuficiente = (propriedades) => {
         />
     )
 }
+
+export const PeriodoFechado = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Peridodo Fechado"
+            bodyText="Este período está fechado, tente outra Data da Receita"
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Fechar"
+        />
+    )
+}
