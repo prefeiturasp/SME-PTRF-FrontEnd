@@ -80,3 +80,7 @@ export const getRepasse = async (acao_associacao_uuid, eAtualizacao=false) => {
     return (await api.get(`api/repasses/pendentes/?acao-associacao=${acao_associacao_uuid}${eAtualizacao ? "&edit=True": ""}`, authHeader)).data
 }
 
+export const getPeriodoFechado = async () => {
+    return (await api.get(`api/receitas/`, authHeader)).data
+}
+
