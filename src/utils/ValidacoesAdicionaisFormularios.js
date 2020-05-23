@@ -38,19 +38,14 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
 
 export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral) =>{
 
-    console.log("_periodoFechado data ", data)
-    console.log("_periodoFechado setReadOnlyCampos ", setReadOnlyCampos)
     data = moment(data, "YYYY-MM-DD").format("YYYY-MM-DD");
-
     console.log("periodoFechado data_receita ", data)
 
     try {
         let periodo_fechado = await getPeriodoFechado(data);
-
         console.log("periodoFechado periodo_fechado ", periodo_fechado)
 
         if (periodo_fechado.aceita_alteracoes){
-            //debugger;
             setReadOnlyBtnAcao(true);
             setShowPeriodoFechado(true);
             setReadOnlyCampos(true);

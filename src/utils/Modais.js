@@ -268,7 +268,7 @@ export const PeriodoFechado = (propriedades) => {
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Peridodo Fechado"
-            bodyText="Este período está fechado, tente outra Data da Receita"
+            bodyText="Este período está fechado, tente novamente."
             primeiroBotaoOnclick={propriedades.handleClose}
             primeiroBotaoTexto="Fechar"
         />

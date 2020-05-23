@@ -9,7 +9,7 @@ import {
     periodoFechado,
 } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial, getPeriodoFechadoDespesa} from "../../../services/Despesas.service";
+import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial} from "../../../services/Despesas.service";
 import {getVerificarSaldo} from "../../../services/RateiosDespesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import {useParams} from 'react-router-dom';
@@ -29,8 +29,6 @@ import {
 } from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
-import {getPeriodoFechadoReceita} from "../../../services/Receitas.service";
-
 
 export const CadastroForm = ({verbo_http}) => {
 

@@ -209,8 +209,6 @@ export const ReceitaForm = props => {
         }
     }
 
-
-
     const validateFormReceitas = async (values) => {
         const errors = {};
 
