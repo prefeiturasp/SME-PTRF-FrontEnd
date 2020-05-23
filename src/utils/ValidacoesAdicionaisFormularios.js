@@ -45,7 +45,7 @@ export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFec
         let periodo_fechado = await getPeriodoFechado(data);
         console.log("periodoFechado periodo_fechado ", periodo_fechado)
 
-        if (periodo_fechado.aceita_alteracoes){
+        if (!periodo_fechado.aceita_alteracoes){
             setReadOnlyBtnAcao(true);
             setShowPeriodoFechado(true);
             setReadOnlyCampos(true);
