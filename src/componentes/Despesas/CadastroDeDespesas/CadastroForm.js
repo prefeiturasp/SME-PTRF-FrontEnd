@@ -6,6 +6,7 @@ import {
     cpfMaskContitional,
     calculaValorRecursoAcoes,
     round,
+    _periodoFechado,
 } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial, getPeriodoFechadoDespesa} from "../../../services/Despesas.service";
@@ -212,6 +213,8 @@ export const CadastroForm = ({verbo_http}) => {
     }
 
     const periodoFechado = async (data_receita) =>{
+
+        _periodoFechado(data_receita, setReadOnlyCampos)
 
         console.log("periodoFechado data_receita ", data_receita)
 

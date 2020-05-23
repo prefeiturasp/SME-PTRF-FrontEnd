@@ -35,6 +35,18 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
 
 // Synchronous validation
 
+
+export const _periodoFechado = (data, setReadOnlyCampos) =>{
+
+    console.log("_periodoFechado data ", data)
+    console.log("_periodoFechado setReadOnlyCampos ", setReadOnlyCampos)
+   /* if(typeof(setReadOnlyCampos)=="function"){
+        setReadOnlyCampos.call("Ollyver");
+    }*/
+
+
+}
+
 export const validaPayloadDespesas = (values) => {
 
     // Quando é Alteração
