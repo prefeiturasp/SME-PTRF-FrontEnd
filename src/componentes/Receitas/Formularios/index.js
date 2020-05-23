@@ -3,13 +3,14 @@ import HTTP_STATUS from "http-status-codes";
 import {Formik} from 'formik';
 import {DatePickerField} from '../../DatePickerField'
 import CurrencyInput from 'react-currency-input';
-import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita, getRepasse, getPeriodoFechadoReceita } from '../../../services/Receitas.service';
+import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita, getRepasse } from '../../../services/Receitas.service';
+import {getPeriodoFechado} from "../../../services/Associacao.service";
 import { round, trataNumericos,} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../services/auth.service';
-import {DeletarModalReceitas, CancelarModalReceitas, PeriodoFechado} from "../../../utils/Modais";
+import {DeletarModalReceitas, CancelarModalReceitas, PeriodoFechado, ErroGeral} from "../../../utils/Modais";
 
 export const ReceitaForm = props => {
 
@@ -36,6 +37,7 @@ export const ReceitaForm = props => {
     const [show, setShow] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
+    const [showErroGeral, setShowErroGeral] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [receita, setReceita] = useState({});
     const [readOnlyValor, setReadOnlyValor] = useState(false);
@@ -43,6 +45,7 @@ export const ReceitaForm = props => {
 
     const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
+
 
 
     useEffect(() => {
@@ -134,6 +137,7 @@ export const ReceitaForm = props => {
         setShow(false);
         setShowDelete(false);
         setShowPeriodoFechado(false);
+        setShowErroGeral(false);
     }
 
     const onShowModal = () => {
@@ -153,6 +157,10 @@ export const ReceitaForm = props => {
             console.log(error);
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
         });
+    }
+
+    const onShowErroGeral = () => {
+        setShowErroGeral(true);
     }
 
     const getPath = () => {
@@ -204,26 +212,36 @@ export const ReceitaForm = props => {
 
     const periodoFechado = async (data_receita) =>{
 
-        console.log("periodoFechado ", data_receita)
+        data_receita = moment(data_receita, "YYYY-MM-DD").format("YYYY-MM-DD");
 
-        let palavra = "";
-        let aplicacao_recurso = "";
-        let acao_associacao__uuid = "";
-        let despesa__status = "";
+        console.log("periodoFechado data_receita ", data_receita)
 
-        let periodo_fechado = await getPeriodoFechadoReceita(palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status);
-        if (periodo_fechado.total_despesas_com_filtro){
-            //errors.data = 'Este período está fechado!!';
+        try {
+            let periodo_fechado = await getPeriodoFechado(data_receita);
+
+
+            console.log("periodoFechado periodo_fechado ", periodo_fechado)
+
+            if (!periodo_fechado.aceita_alteracoes){
+                setReadOnlyBtnAcao(true);
+                setShowPeriodoFechado(true);
+                setReadOnlyCampos(true);
+            }else {
+                setReadOnlyBtnAcao(false);
+                setShowPeriodoFechado(false);
+                setReadOnlyCampos(false);
+            }
+        }
+        catch (e) {
             setReadOnlyBtnAcao(true);
             setShowPeriodoFechado(true);
             setReadOnlyCampos(true);
-        }else {
-            setReadOnlyBtnAcao(false)
-            setReadOnlyCampos(false)
+            onShowErroGeral();
+            console.log("Erro ao buscar perído ", e)
         }
 
-        return periodo_fechado;
 
+        //return periodo_fechado;
     }
 
     const validateFormReceitas = async (values) => {
@@ -489,6 +507,9 @@ export const ReceitaForm = props => {
             }
             <section>
                 <PeriodoFechado show={showPeriodoFechado} handleClose={onHandleClose}/>
+            </section>
+            <section>
+                <ErroGeral show={showErroGeral} handleClose={onHandleClose}/>
             </section>
         </>
     );
