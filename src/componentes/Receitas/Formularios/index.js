@@ -4,8 +4,7 @@ import {Formik} from 'formik';
 import {DatePickerField} from '../../DatePickerField'
 import CurrencyInput from 'react-currency-input';
 import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita, getRepasse } from '../../../services/Receitas.service';
-import {getPeriodoFechado} from "../../../services/Associacao.service";
-import { round, trataNumericos,} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {round, trataNumericos, periodoFechado} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
@@ -75,7 +74,7 @@ export const ReceitaForm = props => {
                     }
                     setInitialValue(init);
                     setReceita(resp);
-                    periodoFechado(resp.data)
+                    periodoFechado(resp.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
                 }).catch(error => {
                     console.log(error);
                 });
@@ -210,46 +209,14 @@ export const ReceitaForm = props => {
         }
     }
 
-    const periodoFechado = async (data_receita) =>{
 
-        data_receita = moment(data_receita, "YYYY-MM-DD").format("YYYY-MM-DD");
-
-        console.log("periodoFechado data_receita ", data_receita)
-
-        try {
-            let periodo_fechado = await getPeriodoFechado(data_receita);
-
-
-            console.log("periodoFechado periodo_fechado ", periodo_fechado)
-
-            if (!periodo_fechado.aceita_alteracoes){
-                setReadOnlyBtnAcao(true);
-                setShowPeriodoFechado(true);
-                setReadOnlyCampos(true);
-            }else {
-                setReadOnlyBtnAcao(false);
-                setShowPeriodoFechado(false);
-                setReadOnlyCampos(false);
-            }
-        }
-        catch (e) {
-            setReadOnlyBtnAcao(true);
-            setShowPeriodoFechado(true);
-            setReadOnlyCampos(true);
-            onShowErroGeral();
-            console.log("Erro ao buscar perído ", e)
-        }
-
-
-        //return periodo_fechado;
-    }
 
     const validateFormReceitas = async (values) => {
         const errors = {};
 
         // Verifica período fechado para a receita
         if (values.data){
-            await periodoFechado(values.data)
+            await  periodoFechado(values.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
         }
 
         let e_repasse_tipo_receita = false;

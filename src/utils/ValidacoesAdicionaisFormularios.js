@@ -3,6 +3,7 @@
 import * as yup from "yup";
 import moment from "moment";
 import {ASSOCIACAO_UUID} from "../services/auth.service";
+import {getPeriodoFechado} from "../services/Associacao.service";
 
 export const YupSignupSchemaLogin = yup.object().shape({
     login: yup.string().required("Campo código RF é obrigatório"),
@@ -35,14 +36,37 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
 
 // Synchronous validation
 
-
-export const _periodoFechado = (data, setReadOnlyCampos) =>{
+export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral) =>{
 
     console.log("_periodoFechado data ", data)
     console.log("_periodoFechado setReadOnlyCampos ", setReadOnlyCampos)
-   /* if(typeof(setReadOnlyCampos)=="function"){
-        setReadOnlyCampos.call("Ollyver");
-    }*/
+    data = moment(data, "YYYY-MM-DD").format("YYYY-MM-DD");
+
+    console.log("periodoFechado data_receita ", data)
+
+    try {
+        let periodo_fechado = await getPeriodoFechado(data);
+
+        console.log("periodoFechado periodo_fechado ", periodo_fechado)
+
+        if (periodo_fechado.aceita_alteracoes){
+            //debugger;
+            setReadOnlyBtnAcao(true);
+            setShowPeriodoFechado(true);
+            setReadOnlyCampos(true);
+        }else {
+            setReadOnlyBtnAcao(false);
+            setShowPeriodoFechado(false);
+            setReadOnlyCampos(false);
+        }
+    }
+    catch (e) {
+        setReadOnlyBtnAcao(true);
+        setShowPeriodoFechado(true);
+        setReadOnlyCampos(true);
+        onShowErroGeral();
+        console.log("Erro ao buscar perído ", e)
+    }
 
 
 }

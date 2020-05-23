@@ -6,7 +6,7 @@ import {
     cpfMaskContitional,
     calculaValorRecursoAcoes,
     round,
-    _periodoFechado,
+    periodoFechado,
 } from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial, getPeriodoFechadoDespesa} from "../../../services/Despesas.service";
@@ -19,7 +19,14 @@ import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
-import {AvisoCapitalModal, CancelarModal, DeletarModal, PeriodoFechado, SaldoInsuficiente} from "../../../utils/Modais"
+import {
+    AvisoCapitalModal,
+    CancelarModal,
+    DeletarModal,
+    ErroGeral,
+    PeriodoFechado,
+    SaldoInsuficiente
+} from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {getPeriodoFechadoReceita} from "../../../services/Receitas.service";
@@ -37,6 +44,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [showDelete, setShowDelete] = useState(false);
     const [showSaldoInsuficiente, setShowSaldoInsuficiente] = useState(false);
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
+    const [showErroGeral, setShowErroGeral] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
@@ -47,7 +55,8 @@ export const CadastroForm = ({verbo_http}) => {
 
     useEffect(()=>{
         if (despesaContext.initialValues.data_documento && verbo_http === "PUT"){
-            periodoFechado(despesaContext.initialValues.data_documento)
+            periodoFechado(despesaContext.initialValues.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+            //periodoFechado(despesaContext.initialValues.data_documento)
         }
     }, [despesaContext.initialValues])
 
@@ -144,6 +153,9 @@ export const CadastroForm = ({verbo_http}) => {
             onShowAvisoCapitalModal()
         }
     }
+    const onShowErroGeral = () => {
+        setShowErroGeral(true);
+    }
 
     const get_nome_razao_social = async (cpf_cnpj, setFieldValue) => {
         let resp = await getNomeRazaoSocial(cpf_cnpj)
@@ -212,9 +224,9 @@ export const CadastroForm = ({verbo_http}) => {
 
     }
 
-    const periodoFechado = async (data_receita) =>{
+/*    const periodoFechado = async (data_receita) =>{
 
-        _periodoFechado(data_receita, setReadOnlyCampos)
+        periodoFechado(data_receita, setReadOnlyCampos)
 
         console.log("periodoFechado data_receita ", data_receita)
 
@@ -235,7 +247,7 @@ export const CadastroForm = ({verbo_http}) => {
 
         return periodo_fechado;
 
-    }
+    }*/
 
     const validateFormDespesas = async (values, props /* only available when using withFormik */) => {
 
@@ -243,7 +255,9 @@ export const CadastroForm = ({verbo_http}) => {
 
         // Verifica período fechado para a receita
         if (values.data_documento){
-            await periodoFechado(values.data_documento)
+            //await periodoFechado(values.data_documento)
+            await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+
         }
 
         const errors = {};
@@ -636,6 +650,9 @@ export const CadastroForm = ({verbo_http}) => {
             }
             <section>
                 <PeriodoFechado show={showPeriodoFechado} handleClose={onHandleClose}/>
+            </section>
+            <section>
+                <ErroGeral show={showErroGeral} handleClose={onHandleClose}/>
             </section>
         </>
     );
