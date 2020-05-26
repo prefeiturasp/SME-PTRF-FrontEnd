@@ -39,11 +39,9 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
 export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral) =>{
 
   data = moment(data, "YYYY-MM-DD").format("YYYY-MM-DD");
-  console.log("periodoFechado data_receita ", data)
 
   try {
     let periodo_fechado = await getPeriodoFechado(data);
-    console.log("periodoFechado periodo_fechado ", periodo_fechado)
 
     if (!periodo_fechado.aceita_alteracoes){
       setReadOnlyBtnAcao(true);
@@ -62,8 +60,6 @@ export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFec
     onShowErroGeral();
     console.log("Erro ao buscar perído ", e)
   }
-
-
 }
 
 export const validaPayloadDespesas = (values) => {
