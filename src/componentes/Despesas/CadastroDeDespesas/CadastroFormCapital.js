@@ -4,7 +4,7 @@ import {calculaValorRateio, trataNumericos,} from "../../../utils/ValidacoesAdic
 import CurrencyInput from "react-currency-input";
 
 export const CadastroFormCapital = (propriedades) => {
-    const {formikProps, rateio, index, despesasTabelas, especificaoes_capital, verboHttp} = propriedades
+    const {formikProps, rateio, index, despesasTabelas, especificaoes_capital, verboHttp, disabled} = propriedades
 
     return (
         <>
@@ -21,6 +21,7 @@ export const CadastroFormCapital = (propriedades) => {
                         name={`rateios[${index}].especificacao_material_servico`}
                         id='especificacao_material_servico'
                         className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        disabled={disabled}
                     >
                         <option key={0} value="">Selecione uma especificação</option>
                         {especificaoes_capital && especificaoes_capital.map((item) => (
@@ -41,6 +42,7 @@ export const CadastroFormCapital = (propriedades) => {
                         name={`rateios[${index}].acao_associacao`}
                         id='acao_associacao'
                         className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        disabled={disabled}
                     >
                         <option value="">Selecione uma ação</option>
                         {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
@@ -60,6 +62,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 decimalScale={0}
                                 id="quantidade_itens_capital"
                                 className={`${ (!rateio.quantidade_itens_capital || rateio.quantidade_itens_capital === '0') && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                                disabled={disabled}
                             />
                         </div>
 
@@ -75,6 +78,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 id="valor_item_capital"
                                 className={`${ trataNumericos(rateio.valor_item_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                                 onChangeEvent={formikProps.handleChange}
+                                disabled={disabled}
                             />
                         </div>
                     </div>
@@ -90,6 +94,7 @@ export const CadastroFormCapital = (propriedades) => {
                         id='numero_processo_incorporacao_capital'
                         className={`${!rateio.numero_processo_incorporacao_capital && verboHttp === "PUT" && "is_invalid "} form-control`}
                         placeholder="Escreva o número do processo"
+                        disabled={disabled}
                     />
                 </div>
 
@@ -108,6 +113,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 name={`rateios[${index}].conta_associacao`}
                                 id='conta_associacao'
                                 className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
+                                disabled={disabled}
                             >
                                 <option key={0} value="">Selecione uma conta</option>
                                 {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
@@ -128,7 +134,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 id="valor_rateio"
                                 className="form-control"
                                 onChangeEvent={formikProps.handleChange}
-                                readOnly={true}
+                                disabled={disabled}
                             />
 
                         </div>
