@@ -9,9 +9,10 @@ import moment from "moment";
 registerLocale("pt", pt );
 
 
-export const DatePickerField = ({ name, about, value, onChange }) => {
+export const DatePickerField = ({ name, about, value, onChange, disabled }) => {
     return (
         <DatePicker
+            disabled={disabled}
             selected={(value && new Date(moment(value).format('MMMM D, YYYY'))) || null}
             onChange={val => {
                 onChange(name, val);

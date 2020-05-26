@@ -4,7 +4,7 @@ import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const CadastroFormCusteio = (propriedades) => {
 
-    const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp} = propriedades
+    const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled} = propriedades
 
     return (
         <>
@@ -24,6 +24,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         name={`rateios[${index}].tipo_custeio`}
                         id='tipo_custeio'
                         className={`${!rateio.tipo_custeio && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        disabled={disabled}
                     >
                         <option value="">Selecione um tipo</option>
                         {despesasTabelas.tipos_custeio && despesasTabelas.tipos_custeio.map(item => (
@@ -47,6 +48,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         name={`rateios[${index}].especificacao_material_servico`}
                         id='especificacao_material_servico'
                         className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        disabled={disabled}
                     >
                         <option key={0} value="">Selecione uma especificação</option>
                         {
@@ -73,6 +75,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         name={`rateios[${index}].acao_associacao`}
                         id='acao_associacao'
                         className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        disabled={disabled}
                     >
                         <option key={0} value="">Selecione uma ação</option>
                         {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
@@ -95,6 +98,7 @@ export const CadastroFormCusteio = (propriedades) => {
                                 name={`rateios[${index}].conta_associacao`}
                                 id='conta_associacao'
                                 className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
+                                disabled={disabled}
                             >
                                 <option key={0} value="">Selecione uma conta</option>
                                 {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
@@ -115,6 +119,7 @@ export const CadastroFormCusteio = (propriedades) => {
                                 id="valor_recusos_acoes"
                                 className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                                 onChangeEvent={formikProps.handleChange}
+                                disabled={disabled}
                             />
                         </div>
                     </div>
