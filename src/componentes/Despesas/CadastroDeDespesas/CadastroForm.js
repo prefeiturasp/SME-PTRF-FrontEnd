@@ -76,7 +76,6 @@ export const CadastroForm = ({verbo_http}) => {
         };
         carregaTabelasDespesas();
 
-
     }, [])
 
 
@@ -86,7 +85,6 @@ export const CadastroForm = ({verbo_http}) => {
             set_especificaoes_capital(resp)
         })();
     }, []);
-
 
     const initialValues = () => {
         return despesaContext.initialValues
@@ -166,7 +164,7 @@ export const CadastroForm = ({verbo_http}) => {
 
     const onShowSaldoInsuficiente = async (values, errors) => {
 
-        validaPayloadDespesas(values)
+        validaPayloadDespesas(values);
 
         if (Object.entries(errors).length === 0) {
 
@@ -181,7 +179,6 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
     }
-
 
     const onSubmit = async (values) => {
         setBtnSubmitDisable(true);
@@ -222,31 +219,6 @@ export const CadastroForm = ({verbo_http}) => {
 
     }
 
-/*    const periodoFechado = async (data_receita) =>{
-
-        periodoFechado(data_receita, setReadOnlyCampos)
-
-        console.log("periodoFechado data_receita ", data_receita)
-
-        let palavra = "";
-        let aplicacao_recurso = "";
-        let acao_associacao__uuid = "";
-        let despesa__status = "";
-
-        let periodo_fechado = await getPeriodoFechadoReceita(palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status);
-        if (periodo_fechado.total_despesas_com_filtro){
-            setReadOnlyBtnAcao(true);
-            setShowPeriodoFechado(true);
-            setReadOnlyCampos(true);
-        }else {
-            setReadOnlyBtnAcao(false)
-            setReadOnlyCampos(false)
-        }
-
-        return periodo_fechado;
-
-    }*/
-
     const validateFormDespesas = async (values, props /* only available when using withFormik */) => {
 
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
@@ -255,7 +227,6 @@ export const CadastroForm = ({verbo_http}) => {
         if (values.data_documento){
             //await periodoFechado(values.data_documento)
             await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
-
         }
 
         const errors = {};
