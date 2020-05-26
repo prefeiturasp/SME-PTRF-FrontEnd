@@ -56,7 +56,7 @@ export const DashboardPage = () => {
                         id="periodo"
                         className="form-control"
                     >
-                        <option value="">Escolha um período</option>
+                       {/* <option value="">Escolha um período</option>*/}
                         {periodosAssociacao && periodosAssociacao.map((periodo)=>
                             <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}</option>
                         )}
@@ -65,16 +65,6 @@ export const DashboardPage = () => {
 
             </div>
 
-
-
-            {/*<h2 className="subtitulo-itens-painel-out">
-                {'Período: '}
-                {acoesAssociacao.periodo_referencia} {' - '}
-                {exibeDataPT_BR(acoesAssociacao.data_inicio_realizacao_despesas)}
-                {' até '}
-                {exibeDataPT_BR(acoesAssociacao.data_fim_realizacao_despesas)}
-                {'.'}
-            </h2>*/}
             <BarraDeStatusPeriodoAssociacao
                 statusPeriodoAssociacao={acoesAssociacao.periodo_status}
                 corBarraDeStatusPeriodoAssociacao={getCorStatusPeriodo(
