@@ -392,3 +392,40 @@ function valida_cnpj ( valor ) {
   return false;
 
 } // valida_cnpj
+
+export const getTextoStatusPeriodo = (statusId) => {
+  if (statusId === 'EM_ANDAMENTO') {
+    status = 'O período está em andamento'
+  } else if (statusId === 'PENDENTE') {
+    status = 'O período está pendente'
+  } else if (statusId === 'CONCILIADO') {
+    status = 'O período foi conferido pela Associação'
+  } else if (statusId === 'APROVADO') {
+    status =
+        'O período está fechado e foi aprovado pela Diretoria Regional de Educação'
+  } else if (statusId === 'REJEITADO') {
+    status =
+        'O período está fechado e foi rejeitado pela Diretoria Regional de Educação'
+  } else {
+    status = 'O período está com status indefinido'
+  }
+  return status
+}
+
+export const getCorStatusPeriodo = (statusId) => {
+  let cor = ''
+  if (statusId === 'EM_ANDAMENTO') {
+    cor = 'cinza'
+  } else if (statusId === 'PENDENTE') {
+    cor = 'vermelho'
+  } else if (statusId === 'CONCILIADO') {
+    cor = 'amarelo'
+  } else if (statusId === 'APROVADO') {
+    cor = 'verde'
+  } else if (statusId === 'REJEITADO') {
+    cor = 'vermelho'
+  } else {
+    cor = 'vermelho'
+  }
+  return cor
+}
