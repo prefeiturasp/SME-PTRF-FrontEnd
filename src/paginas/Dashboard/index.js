@@ -2,21 +2,21 @@ import React, {useEffect, useState} from 'react'
 import {PaginasContainer} from '../PaginasContainer'
 import {Dashboard} from '../../componentes/Dashborard'
 import {getAcoesAssociacao,getAcoesAssociacaoPorPeriodo} from '../../services/Dashboard.service'
-import {
-    exibeDataPT_BR,
-    getCorStatusPeriodo,
-    getTextoStatusPeriodo,
-} from '../../utils/ValidacoesAdicionaisFormularios'
+import {exibeDataPT_BR, getCorStatusPeriodo, getTextoStatusPeriodo,} from '../../utils/ValidacoesAdicionaisFormularios'
 import {BarraDeStatusPeriodoAssociacao} from '../../componentes/Dashborard/BarraDeStatusPeriodoAssociacao'
 import {getPeriodos} from "../../services/PrestacaoDeContas.service";
+import Loading from "../../utils/Loading";
 
 export const DashboardPage = () => {
     const [acoesAssociacao, setAcoesAssociacao] = useState({})
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
+    const [loading, setLoading] = useState(false)
 
 
     useEffect(() => {
+        setLoading(true)
         buscaListaAcoesAssociacao()
+        setLoading(false)
     }, [])
 
     const buscaListaAcoesAssociacao = async () => {
@@ -31,13 +31,13 @@ export const DashboardPage = () => {
     }
 
     const handleChangePeriodo = async (value) => {
-
+        setLoading(true)
         console.log("handleChangePeriodo ", value)
 
         let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodo(value)
         console.log("acoesPorPeriodo ", acoesPorPeriodo)
         setAcoesAssociacao(acoesPorPeriodo)
-
+        setLoading(false)
 
     }
 
@@ -56,7 +56,7 @@ export const DashboardPage = () => {
                         id="periodo"
                         className="form-control"
                     >
-                       {/* <option value="">Escolha um período</option>*/}
+                        <option value="">Escolha um período</option>
                         {periodosAssociacao && periodosAssociacao.map((periodo)=>
                             <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}</option>
                         )}
@@ -74,9 +74,20 @@ export const DashboardPage = () => {
                     acoesAssociacao.periodo_status
                 )}
             />
-            <div className="page-content-inner bg-transparent p-0">
-                <Dashboard acoesAssociacao={acoesAssociacao}/>
-            </div>
+            {loading ? (
+                <Loading
+                    corGrafico="black"
+                    corFonte="dark"
+                    marginTop="0"
+                    marginBottom="0"
+                />
+            ) :
+                <div className="page-content-inner bg-transparent p-0">
+                    <Dashboard acoesAssociacao={acoesAssociacao}/>
+                </div>
+            }
+
+
         </PaginasContainer>
     )
 }
