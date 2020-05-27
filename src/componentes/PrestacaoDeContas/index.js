@@ -90,29 +90,27 @@ export const PrestacaoDeContas = () => {
         setConfBotaoConciliacao(status);
         setConfDataUltimaConciliacao(status);
         setBotaoConciliacaoReadonly(false);
-
     }
 
-
     const setConfBarraStatus = (status) => {
-
         if (status.status === "FECHADO") {
             setCorBarraDeStatusPrestacaoDeContas('verde');
             setTextoBarraDeStatusPrestacaoDeContas("A geração dos documentos da conciliação desse período foi efetuada, clique no botão “Rever conciliação” para fazer alterações")
-        } else if (status.status === "ABERTO") {
+        } else if (status.status === "ABERTO" && status.conciliado) {
             setCorBarraDeStatusPrestacaoDeContas('amarelo')
             setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período está aberta.")
-        } else if (status.status === null) {
+        } else if (status.status === null || !status.conciliado) {
             setCorBarraDeStatusPrestacaoDeContas('vermelho')
             setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período ainda não foi iniciada.")
         }
     }
 
     const iniciarPrestacaoDeContas = async () => {
-        let prestacao = await getIniciarPrestacaoDeContas(periodoConta.conta, periodoConta.periodo);
-        localStorage.setItem("uuidPrestacaoConta", prestacao.uuid)
-        let path = linkBotaoConciliacao;
-        window.location.assign(path)
+        if (!statusPrestacaoConta.uuid){
+            let prestacao = await getIniciarPrestacaoDeContas(periodoConta.conta, periodoConta.periodo);
+            localStorage.setItem("uuidPrestacaoConta", prestacao.uuid)
+        }
+        window.location.assign(linkBotaoConciliacao)
     }
 
     const setConfDataUltimaConciliacao = (status) => {
@@ -124,11 +122,11 @@ export const PrestacaoDeContas = () => {
     }
 
     const setConfBotaoConciliacao = (status) => {
-        if (status.status === "ABERTO" || status.status === "FECHADO") {
+        if ( (status.status === "ABERTO" && status.conciliado) || status.status === "FECHADO") {
             setCssBotaoConciliacao("btn-outline-success");
             setTextoBotaoConciliacao("Rever conciliação");
             setLinkBotaoConciliacao("/detalhe-das-prestacoes");
-        } else if (status.status === null) {
+        } else if (status.status === null || !status.conciliado ) {
             setCssBotaoConciliacao("btn-success")
             setTextoBotaoConciliacao("Iniciar a prestação de contas");
             setLinkBotaoConciliacao("/detalhe-das-prestacoes");
@@ -145,18 +143,15 @@ export const PrestacaoDeContas = () => {
 
     const handleClickBotaoConciliacao = () => {
         setBotaoConciliacaoReadonly(true);
-        if (statusPrestacaoConta.status === "ABERTO" || statusPrestacaoConta.status === "FECHADO") {
+        if ( (statusPrestacaoConta.status === "ABERTO" && statusPrestacaoConta.conciliado)  || statusPrestacaoConta.status === "FECHADO") {
             onShowModal();
-        } else if (statusPrestacaoConta.status === null) {
+        } else if (statusPrestacaoConta.status === null || !statusPrestacaoConta.conciliado ) {
             iniciarPrestacaoDeContas()
         }
-
-
     }
 
     const handleChangeModalReverConciliacao = (event) => {
         setTextareaModalReverConciliacao(event.target.value)
-
     }
 
     const onShowModal = () => {
@@ -174,8 +169,7 @@ export const PrestacaoDeContas = () => {
             "motivo": textareaModalReverConciliacao
         }
         await getReabrirPeriodo(statusPrestacaoConta.uuid, payload)
-        let path = linkBotaoConciliacao;
-        window.location.assign(path)
+        window.location.assign(linkBotaoConciliacao)
     }
 
     return (
@@ -213,7 +207,6 @@ export const PrestacaoDeContas = () => {
                     img={Img404}
                 />
             )}
-
             <section>
                 <ReverConciliacao
                     show={show}
