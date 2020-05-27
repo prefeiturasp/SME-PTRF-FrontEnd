@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {useHistory} from "react-router-dom";
 import {SelectPeriodoConta} from "./SelectPeriodoConta";
 import {MsgImgCentralizada} from "../Mensagens/MsgImgCentralizada";
 import "../../assets/img/img-404.svg"
@@ -20,8 +19,6 @@ import {ReverConciliacao} from "../../utils/Modais";
 
 
 export const PrestacaoDeContas = () => {
-
-    let history = useHistory();
 
     const [periodoConta, setPeriodoConta] = useState("");
     const [exibeMensagem, setExibeMensagem] = useState(true);
