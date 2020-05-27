@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import './dashboard.scss'
 import '../../paginas/404/pagina-404.scss'
 import {MsgImgLadoDireito} from '../Mensagens/MsgImgLadoDireito'

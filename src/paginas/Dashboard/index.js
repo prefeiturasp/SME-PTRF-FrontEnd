@@ -8,38 +8,30 @@ import {getPeriodos} from "../../services/PrestacaoDeContas.service";
 import Loading from "../../utils/Loading";
 
 export const DashboardPage = () => {
-    const [acoesAssociacao, setAcoesAssociacao] = useState({})
+    const [acoesAssociacao, setAcoesAssociacao] = useState({});
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
-    const [loading, setLoading] = useState(false)
-
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setLoading(true)
         buscaListaAcoesAssociacao()
-        setLoading(false)
-    }, [])
+    }, []);
 
     const buscaListaAcoesAssociacao = async () => {
         let periodos = await getPeriodos();
-        //console.log("carregaPeriodos ", periodos)
-
         setPeriodosAssociacao(periodos);
         const listaAcoes = await getAcoesAssociacao();
-        console.log("buscaListaAcoesAssociacao ", listaAcoes)
-        setAcoesAssociacao(listaAcoes)
-
-    }
+        setAcoesAssociacao(listaAcoes);
+        setLoading(false);
+    };
 
     const handleChangePeriodo = async (value) => {
-        setLoading(true)
-        console.log("handleChangePeriodo ", value)
-
-        let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodo(value)
-        console.log("acoesPorPeriodo ", acoesPorPeriodo)
-        setAcoesAssociacao(acoesPorPeriodo)
-        setLoading(false)
-
-    }
+        setLoading(true);
+        if (value){
+            let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodo(value);
+            setAcoesAssociacao(acoesPorPeriodo);
+        }
+        setLoading(false);
+    };
 
     return (
         <PaginasContainer>
@@ -50,30 +42,20 @@ export const DashboardPage = () => {
                 </div>
                 <div className="col-auto my-1">
                     <select
-                        value={periodosAssociacao.uuid}
+                        defaultValue=""
                         onChange={(e) => handleChangePeriodo(e.target.value)}
                         name="periodo"
                         id="periodo"
                         className="form-control"
                     >
-                        <option value="">Escolha um período</option>
+                        <option disabled value="">Escolha um período</option>
                         {periodosAssociacao && periodosAssociacao.map((periodo)=>
                             <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}</option>
                         )}
                     </select>
                 </div>
-
             </div>
 
-            <BarraDeStatusPeriodoAssociacao
-                statusPeriodoAssociacao={acoesAssociacao.periodo_status}
-                corBarraDeStatusPeriodoAssociacao={getCorStatusPeriodo(
-                    acoesAssociacao.periodo_status
-                )}
-                textoBarraDeStatusPeriodoAssociacao={getTextoStatusPeriodo(
-                    acoesAssociacao.periodo_status
-                )}
-            />
             {loading ? (
                 <Loading
                     corGrafico="black"
@@ -82,12 +64,17 @@ export const DashboardPage = () => {
                     marginBottom="0"
                 />
             ) :
-                <div className="page-content-inner bg-transparent p-0">
-                    <Dashboard acoesAssociacao={acoesAssociacao}/>
-                </div>
+                <>
+                    <BarraDeStatusPeriodoAssociacao
+                        statusPeriodoAssociacao={acoesAssociacao.periodo_status}
+                        corBarraDeStatusPeriodoAssociacao={getCorStatusPeriodo(acoesAssociacao.periodo_status)}
+                        textoBarraDeStatusPeriodoAssociacao={getTextoStatusPeriodo(acoesAssociacao.periodo_status)}
+                    />
+                    <div className="page-content-inner bg-transparent p-0">
+                        <Dashboard acoesAssociacao={acoesAssociacao}/>
+                    </div>
+                </>
             }
-
-
         </PaginasContainer>
     )
-}
+};
