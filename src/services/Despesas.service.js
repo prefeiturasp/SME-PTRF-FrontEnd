@@ -1,5 +1,6 @@
 import api from './Api'
 import { TOKEN_ALIAS } from './auth.service.js';
+import {ASSOCIACAO_UUID} from "./auth.service";
 
 const authHeader = {
     headers: {
@@ -37,7 +38,7 @@ export const criarDespesa = async (payload) => {
 }
 
 export const alterarDespesa = async (payload, idDespesa) => {
-    return api.put(`api/despesas/${idDespesa}`, payload, authHeader).then(response => {
+    return api.put(`api/despesas/${idDespesa}/`, payload, authHeader).then(response => {
         return response;
     }).catch(error => {
         return error.response;
@@ -50,6 +51,10 @@ export const getNomeRazaoSocial = async (cpf_cnpj) => {
     }else {
         return ""
     }
+}
+
+export const getPeriodoFechadoDespesa = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status) => {
+    return (await api.get(`api/rateios-despesas/totais/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&acao_associacao__uuid=${acao_associacao__uuid}&despesa__status=${despesa__status}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 }
 
 

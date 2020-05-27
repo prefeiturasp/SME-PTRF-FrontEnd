@@ -1,56 +1,65 @@
-.fonte-normal{
+.fonte-normal {
   font-weight: normal !important;
 }
-.container-texto-introdutorio{
+
+.container-texto-introdutorio {
   background-color: #D3F1F3;
 
-  .titulos-informacoes{
+  .titulos-informacoes {
     font-size: 16px;
     font-weight: bold;
   }
 }
 
-.btn-readonly{
+.btn-readonly {
   background-color: #A4A4A4 !important;
   color: #fff !important;
   border-color: #A4A4A4 !important;
 
 }
 
-.barra-status-verde{
+.barra-status-verde {
   background-color: #289B00;
 }
-.barra-status-amarelo{
+
+.barra-status-amarelo {
   background-color: #DE9524;
 }
-.barra-status-vermelho{
+
+.barra-status-vermelho {
   background-color: #B40C02;
 }
 
-.titulo-status{
+.barra-status-cinza {
+  background-color: #A4A4A4;
+}
+
+.titulo-status {
   color: #fff;
   font-size: 14px !important;
   font-weight: bold !important;
 }
 
-.demonstrativo-financeiro-container{
+.demonstrativo-financeiro-container {
 
-  .demonstrativo-financeiro-titulo{
+  .demonstrativo-financeiro-titulo {
     font-weight: bold;
     font-size: 20px;
   }
-  .demonstrativo-financeiro-nome-acao{
+
+  .demonstrativo-financeiro-nome-acao {
     margin-bottom: 0;
     margin-top: 15px;
     font-weight: bold;
     font-size: 14px;
   }
-  .demonstrativo-financeiro-documento-pendente{
+
+  .demonstrativo-financeiro-documento-pendente {
     font-size: 12px;
     color: #B40C02;
   }
 
-  .demonstrativo-financeiro-btn-readonly{
+  .demonstrativo-financeiro-btn-readonly {
     background-color: #A4A4A4 !important;
     color: #fff !important;
     border-color: #A4A4A4 !important;
@@ -68,43 +77,46 @@
 
 
 
-.detalhe-das-prestacoes-container{
+.detalhe-das-prestacoes-container {
   margin-top: 69px;
   padding: 15px 30px;
 
-  .detalhe-das-prestacoes-titulo, .detalhe-das-prestacoes-titulo-lancamentos{
+  .detalhe-das-prestacoes-titulo,
+  .detalhe-das-prestacoes-titulo-lancamentos {
     font-size: 24px;
     font-weight: bold;
   }
 
-  .detalhe-das-prestacoes-titulo-lancamentos{
+  .detalhe-das-prestacoes-titulo-lancamentos {
     font-weight: bold;
   }
 
-  .detalhe-das-prestacoes-align-center{
+  .detalhe-das-prestacoes-align-center {
     text-align: center !important;
   }
-  .detalhe-das-prestacoes-tabela{
+
+  .detalhe-das-prestacoes-tabela {
     border: none !important;
   }
 
-  .detalhe-das-prestacoes-tabela-th-fundo-branco{
+  .detalhe-das-prestacoes-tabela-th-fundo-branco {
     background-color: #fff !important;
   }
 
-  .detalhe-das-prestacoes-tabela th{
+  .detalhe-das-prestacoes-tabela th {
     padding: 20px !important;
     border: solid 1px #E0E0E0 !important;
   }
 
 
-  .detalhe-das-prestacoes-tabela tfoot tr td{
+  .detalhe-das-prestacoes-tabela tfoot tr td {
     text-align: left !important;
     border: solid 1px #E0E0E0 !important;
+    width: 150px !important;
   }
 
 
-  .detalhe-das-prestacoes-tabela td{
+  .detalhe-das-prestacoes-tabela td {
     padding: 20px !important;
     border: none !important;
     border-right: solid 1px #E0E0E0 !important;
@@ -112,11 +124,29 @@
 
   }
 
-  .detalhe-das-prestacoes-tabela-fundo-azul-claro{
+  .detalhe-das-prestacoes-tabela-fundo-azul-claro {
     background-color: #E0F7F9 !important;
     font-weight: bold;
   }
 
 
-}
+  .tabela-lancamentos-receitas td {
+    width: calc(100% / 6) !important;
+    padding: 15px !important;
+  }
 
+  .tabela-lancamentos-receitas td input[type=checkbox] {
+    transform: scale(1.3) !important;
+  }
+
+  .tabela-lancamentos-despesas td {
+    width: calc(100% / 6) !important;
+    padding: 15px !important;
+  }
+
+  .tabela-lancamentos-despesas td input[type=checkbox] {
+    transform: scale(1.3) !important;
+  }
+
+
+}

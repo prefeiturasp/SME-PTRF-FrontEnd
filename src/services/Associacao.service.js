@@ -20,3 +20,7 @@ export const alterarAssociacao = async (payload) => {
         return error.response;
     });
 }
+
+export const getPeriodoFechado = async (data_verificacao) => {
+    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/status-periodo/?data=${data_verificacao}`, authHeader)).data
+}

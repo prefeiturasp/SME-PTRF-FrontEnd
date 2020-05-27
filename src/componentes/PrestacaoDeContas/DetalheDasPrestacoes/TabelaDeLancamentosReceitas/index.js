@@ -2,11 +2,10 @@ import React, {useState} from "react";
 import {useHistory} from 'react-router-dom';
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
-import IconeNaoConciliado from "../../../../assets/img/icone-nao-conciliado.svg"
 import moment from "moment";
 import {RedirectModalTabelaLancamentos} from "../../../../utils/Modais";
 
-export const TabelaDeLancamentosReceitas = ({conciliados, receitas}) => {
+export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxReceitas, handleChangeCheckboxReceitas}) => {
 
     let history = useHistory();
     const rowsPerPage = 7;
@@ -23,7 +22,7 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas}) => {
 
     const onCancelarTrue = () => {
         setShowModal(false);
-        const url = '/edicao-de-receita/' + uuid + '/tabela-de-lancamentos-despesas'
+        const url = '/edicao-de-receita/' + uuid + '/tabela-de-lancamentos-receitas'
         history.push(url);
     }
 
@@ -49,21 +48,15 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas}) => {
 
     const conferidoTemplate = (rowData) => {
         return (
-            <div>
-                {!rowData['conferido'] ? (
-                    <div className="align-middle text-center">
-                        <input type="checkbox" value="" id="checkConferido"/>
-                    </div>
-                ): (
-                    <div className="text-center">
-                        <img
-                            src={IconeNaoConciliado}
-                            alt=""
-                            className="img-fluid"
-                        />
-                    </div>
-                )}
-
+            <div className="align-middle text-center">
+                <input
+                    checked={conciliados}
+                    type="checkbox"
+                    value={checkboxReceitas}
+                    onChange={(e)=>handleChangeCheckboxReceitas(e, rowData.uuid)}
+                    name="checkConferido"
+                    id="checkConferido"
+                />
             </div>
         )
     }
@@ -81,13 +74,15 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas}) => {
                     {receitas && receitas.length > 0 ? (
                         <DataTable
                             value={receitas}
-                            className="mt-3 datatable-footer-coad"
+                            className="mt-3 datatable-footer-coad tabela-lancamentos-receitas"
                             paginator={receitas.length > rowsPerPage}
                             rows={rowsPerPage}
                             paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                             autoLayout={true}
                             selectionMode="single"
                             onRowClick={e => redirecionaDetalhe(e.data)}
+                            //resizableColumns={false}
+                            //columnResizeMode="fit"
                         >
                             <Column field='tipo_receita.nome' header='Tipo'/>
                             <Column field='conta_associacao.nome' header='Conta'/>
@@ -104,7 +99,7 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas}) => {
                             />
                             <Column
                                 field='acao_associacao.status'
-                                header='Conferido'
+                                header='Demonstrado'
                                 body={conferidoTemplate}
                             />
                         </DataTable>

@@ -4,12 +4,12 @@ import {Formik} from 'formik';
 import {DatePickerField} from '../../DatePickerField'
 import CurrencyInput from 'react-currency-input';
 import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita, getRepasse } from '../../../services/Receitas.service';
-import { round, trataNumericos,} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {round, trataNumericos, periodoFechado} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../services/auth.service';
-import {DeletarModalReceitas, CancelarModalReceitas} from "../../../utils/Modais";
+import {DeletarModalReceitas, CancelarModalReceitas, PeriodoFechado, ErroGeral} from "../../../utils/Modais";
 
 export const ReceitaForm = props => {
 
@@ -24,6 +24,7 @@ export const ReceitaForm = props => {
 
     const initial = {
         tipo_receita: "",
+        categoria_receita: "",
         acao_associacao: "",
         conta_associacao: "",
         data: "",
@@ -34,9 +35,16 @@ export const ReceitaForm = props => {
     const [tabelas, setTabelas] = useState(tabelaInicial);
     const [show, setShow] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
+    const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
+    const [showErroGeral, setShowErroGeral] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [receita, setReceita] = useState({});
     const [readOnlyValor, setReadOnlyValor] = useState(false);
+    const [readOnlyClassificacaoReceita, setreadOnlyClassificacaoReceita] = useState(false);
+
+    const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
+    const [readOnlyCampos, setReadOnlyCampos] = useState(false);
+
 
 
     useEffect(() => {
@@ -54,6 +62,7 @@ export const ReceitaForm = props => {
                     const resp = response.data;
                     const init = {
                         tipo_receita: resp.tipo_receita.id,
+                        categoria_receita: resp.categoria_receita,
                         acao_associacao: resp.acao_associacao.uuid,
                         conta_associacao: resp.conta_associacao.uuid,
                         data: resp.data,
@@ -65,6 +74,7 @@ export const ReceitaForm = props => {
                     }
                     setInitialValue(init);
                     setReceita(resp);
+                    periodoFechado(resp.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
                 }).catch(error => {
                     console.log(error);
                 });
@@ -125,6 +135,8 @@ export const ReceitaForm = props => {
     const onHandleClose = () => {
         setShow(false);
         setShowDelete(false);
+        setShowPeriodoFechado(false);
+        setShowErroGeral(false);
     }
 
     const onShowModal = () => {
@@ -146,8 +158,64 @@ export const ReceitaForm = props => {
         });
     }
 
+    const onShowErroGeral = () => {
+        setShowErroGeral(true);
+    }
+
+    const getPath = () => {
+        let path;
+        if (origem === undefined){
+            path = `/lista-de-receitas`;
+        }else {
+            path = `/detalhe-das-prestacoes`;
+        }
+        window.location.assign(path)
+    }
+
+    const getClassificacaoReceita = (id_tipo_receita, setFieldValue) =>{
+
+        let qtdeAceitaClassificacao = [];
+
+        tabelas.categorias_receita.map((item, index)=>{
+            let id_categoria_receita_lower = item.id.toLowerCase();
+            let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
+            qtdeAceitaClassificacao.push(aceitaClassificacao);
+
+            if (aceitaClassificacao){
+                setFieldValue("categoria_receita", item.id);
+                setreadOnlyClassificacaoReceita(true);
+            }
+        });
+
+        let resultado = qtdeAceitaClassificacao.filter( (value) =>{
+            return value === true;
+        }).length;
+
+        if (resultado > 1 ){
+            setFieldValue("categoria_receita", "");
+            setreadOnlyClassificacaoReceita(false);
+        }
+    }
+
+    const getDisplayOptionClassificacaoReceita = (id_categoria_receita, id_tipo_receita) => {
+
+        let id_categoria_receita_lower = id_categoria_receita.toLowerCase();
+        let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
+
+        if ( !aceitaClassificacao ){
+            return "none"
+        }else {
+            return "block"
+        }
+    }
+
     const validateFormReceitas = async (values) => {
         const errors = {};
+
+        // Verifica período fechado para a receita
+        if (values.data){
+            await  periodoFechado(values.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+        }
 
         let e_repasse_tipo_receita = false;
         let e_repasse_acao = "Escolha uma ação";
@@ -195,23 +263,13 @@ export const ReceitaForm = props => {
                 setReadOnlyValor(true);
             } catch (e) {
                 console.log("Erro: ", e)
-                errors.acao_associacao = 'Não existe repasses pendentes para a associação nesta ação';
+                errors.acao_associacao = 'Não existem repasses pendentes para a Associação nesta ação';
             }
         }else {
             setReadOnlyValor(false)
         }
 
         return errors;
-    }
-
-    const getPath = () => {
-        let path;
-        if (origem === undefined){
-            path = `/lista-de-receitas`;
-        }else {
-            path = `/detalhe-das-prestacoes`;
-        }
-        props.history.push(path);
     }
 
     return (
@@ -237,9 +295,11 @@ export const ReceitaForm = props => {
                                     <select
                                         id="tipo_receita"
                                         name="tipo_receita"
+                                        disabled={readOnlyCampos}
                                         value={props.values.tipo_receita}
                                         onChange={(e) => {
                                             props.handleChange(e);
+                                            getClassificacaoReceita(e.target.value, setFieldValue)
                                         }
                                         }
                                         onBlur={props.handleBlur}
@@ -271,6 +331,7 @@ export const ReceitaForm = props => {
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor">Valor da receita</label>
                                     <CurrencyInput
+                                        disabled={readOnlyCampos}
                                         allowNegative={false}
                                         prefix='R$'
                                         decimalSeparator=","
@@ -290,12 +351,13 @@ export const ReceitaForm = props => {
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="descricao_receita">Descrição da receita</label>
                                     <textarea
+                                        disabled={readOnlyCampos}
                                         value={props.values.descricao}
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         name="descricao"
                                         id="descricao"
-                                        rows="5"
+                                        rows="9"
                                         cols="50"
                                         className="form-control"
                                         placeholder="Escreva a descrição da receita"/>
@@ -307,6 +369,7 @@ export const ReceitaForm = props => {
                                         <div className="col-12">
                                             <label htmlFor="acao_associacao">Ação</label>
                                             <select
+                                                disabled={readOnlyCampos}
                                                 id="acao_associacao"
                                                 name="acao_associacao"
                                                 value={props.values.acao_associacao}
@@ -331,6 +394,41 @@ export const ReceitaForm = props => {
 
                                     <div className="row mt-4">
                                         <div className="col-12">
+                                            <label htmlFor="categoria_receita">Classificação da receita</label>
+                                            <select
+                                                id="categoria_receita"
+                                                name="categoria_receita"
+                                                value={props.values.categoria_receita}
+                                                onChange={props.handleChange}
+                                                onBlur={props.handleBlur}
+                                                className="form-control"
+                                                disabled={readOnlyClassificacaoReceita || readOnlyCampos}
+                                            >
+                                                {receita.categorias_receita ? null : <option key={0} value="">Escolha a classificação</option>}
+
+                                                {tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 ? (
+                                                    tabelas.categorias_receita.map((item, key) => (
+
+                                                        tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)) && (
+                                                            <option
+                                                                style={{display: getDisplayOptionClassificacaoReceita(item.id, props.values.tipo_receita)}}
+                                                                //style={{display: (item.id === "CAPITAL" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_capital) || (item.id === "CUSTEIO" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_custeio)  ? "none": "block" }}
+                                                                key={item.id}
+                                                                value={item.id}
+                                                            >
+                                                                {item.nome}
+                                                            </option>
+                                                        )
+                                                ))
+                                                ) : null}
+
+                                            </select>
+                                            {props.touched.categoria_receita && props.errors.categoria_receita && <span className="span_erro text-danger mt-1"> {props.errors.categoria_receita}</span>}
+                                        </div>
+                                    </div>
+
+                                    <div className="row mt-4">
+                                        <div className="col-12">
                                             <label htmlFor="conta_associacao">Tipo de conta</label>
                                             <select
                                                 id="conta_associacao"
@@ -339,7 +437,7 @@ export const ReceitaForm = props => {
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
                                                 className="form-control"
-                                                disabled={readOnlyValor}
+                                                disabled={readOnlyValor || readOnlyCampos}
                                             >
                                                 {receita.conta_associacao
                                                     ? null
@@ -357,8 +455,8 @@ export const ReceitaForm = props => {
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
                                 <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
                                 {uuid
-                                    ? <button type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
-                                <button type="submit" className="btn btn-success mt-2">Salvar</button>
+                                    ? <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
+                                <button disabled={readOnlyBtnAcao} type="submit" className="btn btn-success mt-2">Salvar</button>
                             </div>
                         </form>
                     );
@@ -372,6 +470,12 @@ export const ReceitaForm = props => {
                 <DeletarModalReceitas show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
                 : null
             }
+            <section>
+                <PeriodoFechado show={showPeriodoFechado} handleClose={onHandleClose}/>
+            </section>
+            <section>
+                <ErroGeral show={showErroGeral} handleClose={onHandleClose}/>
+            </section>
         </>
     );
 }
