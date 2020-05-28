@@ -64,7 +64,7 @@ export const PrestacaoDeContas = () => {
         localStorage.setItem('periodoConta', JSON.stringify(periodoConta))
         if (periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== "") {
             setExibeMensagem(false)
-            setDemonstrativoFinanceiro(true)
+            //setDemonstrativoFinanceiro(true)
             getStatusPrestacaoDeConta(periodoConta.periodo, periodoConta.conta)
         } else {
             setExibeMensagem(true)
@@ -91,6 +91,14 @@ export const PrestacaoDeContas = () => {
         setConfBotaoConciliacao(status);
         setConfDataUltimaConciliacao(status);
         setBotaoConciliacaoReadonly(false);
+
+        if (localStorage.getItem('uuidPrestacaoConta') !== 'undefined' 
+            && localStorage.getItem('uuidPrestacaoConta') !== undefined 
+            && (status !== undefined ? (status.status === null || status.conciliado) : false)) {
+            setDemonstrativoFinanceiro(true)
+        } else {
+            setDemonstrativoFinanceiro(false)
+        }
     }
 
     const setConfBarraStatus = (status) => {
@@ -199,7 +207,7 @@ export const PrestacaoDeContas = () => {
                     handleClickBotaoConciliacao={handleClickBotaoConciliacao}
                 />
             </div>
-            {demonstrativoFinanceiro && statusPrestacaoConta !== undefined && (
+            {demonstrativoFinanceiro === true && statusPrestacaoConta !== undefined && (
                 <DemonstrativoFinanceiro/>
             )}
             {exibeMensagem && (
