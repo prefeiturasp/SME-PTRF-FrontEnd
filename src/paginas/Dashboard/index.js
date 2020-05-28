@@ -51,7 +51,6 @@ export const DashboardPage = () => {
                         id="periodo"
                         className="form-control"
                     >
-                        {/*<option disabled value="">Escolha um período</option>*/}
                         {periodosAssociacao && periodosAssociacao.map((periodo)=>
                             <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}</option>
                         )}
