@@ -12,7 +12,7 @@ export const DemonstrativoFinanceiro = () => {
 
     useEffect(() =>  {
         buscaAcoes();
-    }, {})
+    }, [estado])
 
     const buscaAcoes = async () => {
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo;
@@ -24,8 +24,8 @@ export const DemonstrativoFinanceiro = () => {
             return {
                 nomeAcao: info.acao_associacao_nome, 
                 acaoUuid: info.acao_associacao_uuid,
-                receitaDeclarada: `R$ ${info.receitas_no_periodo}`, 
-                despesaDeclarada: `R$ ${info.receitas_no_periodo}`,
+                receitaDeclarada: info.receitas_no_periodo, 
+                despesaDeclarada: info.receitas_no_periodo,
                 mensagem: msg} 
         }));
         setEstado(est_result);
@@ -64,6 +64,28 @@ export const DemonstrativoFinanceiro = () => {
         )
     }
 
+    const valorReceita = (rowData, column) => {
+        const valor = rowData['receitaDeclarada']
+            ? new Number(rowData['receitaDeclarada']).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            })
+            : 0
+        const valorFormatado = `R$ ${valor}`
+        return (<span>{valorFormatado}</span>)
+    }
+
+    const valorDespesa = (rowData, column) => {
+        const valor = rowData['despesaDeclarada']
+            ? new Number(rowData['despesaDeclarada']).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            })
+            : 0
+        const valorFormatado = `R$ ${valor}`
+        return (<span>{valorFormatado}</span>)
+    }
+
     return (
         <div className="demonstrativo-financeiro-container mt-5">
             <p className="demonstrativo-financeiro-titulo">Demontrativo Financeiro</p>
@@ -84,8 +106,14 @@ export const DemonstrativoFinanceiro = () => {
                         header="Nome da ação"
                         body={getNomeAcao}
                     />
-                    <Column field="receitaDeclarada" header="Receita declarada"/>
-                    <Column field="despesaDeclarada" header="Despesa declarada"/>
+                    <Column 
+                        field="receitaDeclarada" 
+                        header="Receita declarada" 
+                        body={valorReceita}/>
+                    <Column 
+                        field="despesaDeclarada" 
+                        header="Despesa declarada" 
+                        body={valorDespesa}/>
                     <Column
                         field='botoes'
                         header=''
