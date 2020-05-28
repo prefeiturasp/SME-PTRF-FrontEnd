@@ -81,11 +81,11 @@ const PrivateRouter = (
       render={props =>
         authService.isLoggedIn() ? (
           <Component {...props} />
-        ) : (
-          <Redirect
+        ) :
+            window.location.assign("/login")
+          /* <Redirect
             to={{ pathname: "/login", state: { from: props.location } }} // eslint-disable-line
-          />
-        )
+          /> */
       }
     />
   );
