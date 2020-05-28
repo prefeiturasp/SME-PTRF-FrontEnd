@@ -19,8 +19,10 @@ export const DashboardPage = () => {
     const buscaListaAcoesAssociacao = async () => {
         let periodos = await getPeriodos();
         setPeriodosAssociacao(periodos);
+
         const listaAcoes = await getAcoesAssociacao();
         setAcoesAssociacao(listaAcoes);
+
         setLoading(false);
     };
 
@@ -42,13 +44,14 @@ export const DashboardPage = () => {
                 </div>
                 <div className="col-auto my-1">
                     <select
-                        defaultValue=""
+                        value={periodosAssociacao.uuid}
+                        //defaultValue=""
                         onChange={(e) => handleChangePeriodo(e.target.value)}
                         name="periodo"
                         id="periodo"
                         className="form-control"
                     >
-                        <option disabled value="">Escolha um período</option>
+                        {/*<option disabled value="">Escolha um período</option>*/}
                         {periodosAssociacao && periodosAssociacao.map((periodo)=>
                             <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}</option>
                         )}
