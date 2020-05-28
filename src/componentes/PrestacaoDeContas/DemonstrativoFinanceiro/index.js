@@ -1,33 +1,65 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
+import {ASSOCIACAO_UUID} from "../../../services/auth.service";
+import {getAcoes, previa, documentoFinal, getDemonstrativoInfo} from "../../../services/DemonstrativoFinanceiro.service";
 
 export const DemonstrativoFinanceiro = () => {
 
     const rowsPerPage = 7;
 
-    const estado = [
+    const [estado, setEstado] = useState('');
 
-        {nomeAcao: 'Fazendo Futuro', receitaDeclarada: 'R$ 230,00', despesaDeclarada: 'R$ 2.432,54'},
-        {nomeAcao: 'Orçamento do Grêmio Estudantil', receitaDeclarada: 'R$0,0', despesaDeclarada: 'R$ 356,90'},
-        {nomeAcao: 'PTRF', receitaDeclarada: 'R$ 2,00', despesaDeclarada: 'R$ 50.342,54'},
-        {nomeAcao: 'Rolê Cultural', receitaDeclarada: 'R$ 0,50', despesaDeclarada: 'R$ 875, 23'},
-    ];
+    useEffect(() =>  {
+        buscaAcoes();
+    }, {})
+
+    const buscaAcoes = async () => {
+        const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo;
+        const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
+        const result = await getAcoes(associacao_uuid, periodo_uuid);
+        
+        let est_result = await Promise.all(result.info_acoes.map(async (info) => {
+            const msg = await getDemonstrativoInfo(info.acao_associacao_uuid);
+            return {
+                nomeAcao: info.acao_associacao_nome, 
+                acaoUuid: info.acao_associacao_uuid,
+                receitaDeclarada: `R$ ${info.receitas_no_periodo}`, 
+                despesaDeclarada: `R$ ${info.receitas_no_periodo}`,
+                mensagem: msg} 
+        }));
+        setEstado(est_result);
+    }
+
+    const gerarPrevia = async (acaoUuid) => {
+        const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo
+        const conta_uuid = JSON.parse(localStorage.getItem('periodoConta')).conta
+        
+        await previa(acaoUuid, conta_uuid, periodo_uuid);
+    }
+
+    const gerarDocumentoFinal = async (acaoUuid) => {
+        const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo
+        const conta_uuid = JSON.parse(localStorage.getItem('periodoConta')).conta
+        
+        await documentoFinal(acaoUuid, conta_uuid, periodo_uuid);
+        await buscaAcoes();
+    }
 
     const getNomeAcao = (rowData) => {
         return (
             <div>
                 <p className="demonstrativo-financeiro-nome-acao"><strong>{rowData['nomeAcao']}</strong></p>
-                <p className="demonstrativo-financeiro-documento-pendente">Documento pendente de geração</p>
+                <p className={rowData['mensagem'].includes('pendente') ? "demonstrativo-financeiro-documento-pendente" :"demonstrativo-financeiro-documento-gerado"}  >{rowData['mensagem']}</p>
             </div>
         )
     }
 
-    const getBotoes = () => {
+    const getBotoes = (rowData) => {
         return (
             <div className="text-right">
-                <button type="button" className="btn btn-outline-success mr-2">prévia </button>
-                <button disabled={true} type="button" className="btn btn-success btn-readonly">documento final </button>
+                <button type="button" onClick={(e) => gerarPrevia(rowData['acaoUuid'])} className="btn btn-outline-success mr-2">prévia </button>
+                <button disabled={false} onClick={(e) => gerarDocumentoFinal(rowData['acaoUuid'])} type="button" className="btn btn-success">documento final</button>
             </div>
         )
     }
