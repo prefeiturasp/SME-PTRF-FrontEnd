@@ -25,7 +25,7 @@ export const DemonstrativoFinanceiro = () => {
                 nomeAcao: info.acao_associacao_nome, 
                 acaoUuid: info.acao_associacao_uuid,
                 receitaDeclarada: info.receitas_no_periodo, 
-                despesaDeclarada: info.receitas_no_periodo,
+                despesaDeclarada: info.despesas_no_periodo,
                 mensagem: msg} 
         }));
         setEstado(est_result);
