@@ -267,7 +267,7 @@ export const PeriodoFechado = (propriedades) => {
         <ModalBootstrap
             show={propriedades.show}
             onHide={propriedades.handleClose}
-            titulo="Peridodo Fechado"
+            titulo="Período Fechado"
             bodyText="Este período está fechado, tente novamente."
             primeiroBotaoOnclick={propriedades.handleClose}
             primeiroBotaoTexto="Fechar"
