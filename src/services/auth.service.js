@@ -22,7 +22,7 @@ const login = async (login, senha) => {
         const resp = response.data
         if (response.status === HTTP_STATUS.OK) {
             if (resp.detail) {
-                return "Usuário não autorizado!"
+                return "RF incorreto"
             }
             localStorage.setItem(TOKEN_ALIAS, resp.token);
             localStorage.setItem(

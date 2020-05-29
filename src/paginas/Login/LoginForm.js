@@ -16,7 +16,7 @@ export const LoginForm = () => {
             const msg = await authService.login(values.login, values.senha);
             setMensagem(msg);
         }catch (e) {
-            setMensagem("Senha inválida!")
+            setMensagem("Senha incorreta")
         }
     }
 
