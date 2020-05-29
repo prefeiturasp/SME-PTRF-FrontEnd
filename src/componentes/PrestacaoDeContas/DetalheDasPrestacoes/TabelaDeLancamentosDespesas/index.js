@@ -95,7 +95,7 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
     return (
         <div className="row mt-4">
             <div className="col-12">
-                <p className="detalhe-das-prestacoes-titulo-lancamentos">Laçamentos {conciliados ? "conciliados" : "pendentes de conciliação"}</p>
+                <p className="detalhe-das-prestacoes-titulo-lancamentos">Lançamentos {conciliados ? "conciliados" : "pendentes de conciliação"}</p>
                 <div className="content-section implementation">
                     <DataTable
                         value={despesas}
