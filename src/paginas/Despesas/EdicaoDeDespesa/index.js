@@ -79,7 +79,10 @@ export const EdicaoDeDespesa = ()=>{
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Edição de Despesa</h1>
             <div className="page-content-inner ">
-                <CadastroDeDespesas/>
+                <h2 className="subtitulo-itens-painel mb-4">Dados do documento</h2>
+                <CadastroDeDespesas
+                    verbo_http={"PUT"}
+                />
             </div>
         </PaginasContainer>
     )

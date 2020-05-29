@@ -22,8 +22,7 @@ const login = async (login, senha) => {
         const resp = response.data
         if (response.status === HTTP_STATUS.OK) {
             if (resp.detail) {
-                console.log(resp.detail);
-                return "Usuário não autorizado!"
+                return "RF incorreto"
             }
             localStorage.setItem(TOKEN_ALIAS, resp.token);
             localStorage.setItem(
@@ -39,7 +38,6 @@ const login = async (login, senha) => {
                 resp.associacao.nome
             )
             const decoded = decode(resp.token);
-            console.log(decoded)
             window.location.href = "/";
         } 
     } catch (error) {
@@ -70,7 +68,11 @@ const logout = () => {
     localStorage.removeItem(USUARIO_NOME);
     localStorage.removeItem(ASSOCIACAO_UUID);
     localStorage.removeItem(ASSOCIACAO_NOME);
-    window.location.reload();
+    localStorage.removeItem(ASSOCIACAO_NOME);
+    localStorage.removeItem('periodoConta');
+    localStorage.removeItem('uuidPrestacaoConta');
+    //window.location.reload();
+    window.location.assign("/login")
 };
 
 

@@ -1,10 +1,12 @@
 import React from "react";
 import {CadastroForm} from "./CadastroForm";
 
-export const CadastroDeDespesas = () =>{
+export const CadastroDeDespesas = ({verbo_http}) =>{
 
     return (
-        <CadastroForm/>
+        <CadastroForm
+            verbo_http={verbo_http}
+        />
     );
 
 }

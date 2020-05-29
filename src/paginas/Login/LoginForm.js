@@ -12,8 +12,12 @@ export const LoginForm = () => {
     )
 
     const onSubmit = async (values) => {
-        const msg = await authService.login(values.login, values.senha);
-        setMensagem(msg);
+        try {
+            const msg = await authService.login(values.login, values.senha);
+            setMensagem(msg);
+        }catch (e) {
+            setMensagem("Senha incorreta")
+        }
     }
 
     return (

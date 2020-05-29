@@ -102,7 +102,7 @@ export const DadosDaAsssociacao = () => {
 
                             <div className="form-row">
                                 <div className="form-group col-md-6">
-                                    <label htmlFor="presidente_associacao_nome"><strong>Presidente da APM</strong></label>
+                                    <label htmlFor="presidente_associacao_nome"><strong>Presidente da Associação</strong></label>
                                     <input value={stateAssociacao.presidente_associacao_nome ? stateAssociacao.presidente_associacao_nome : ""} onChange={(e)=>handleChange(e.target.name, e.target.value)} name="presidente_associacao_nome" id="presidente_associacao_nome" type="text" className="form-control" />
                                 </div>
 
