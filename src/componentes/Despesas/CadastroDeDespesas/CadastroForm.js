@@ -50,6 +50,8 @@ export const CadastroForm = ({verbo_http}) => {
 
     const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
+    const [cssEscondeDocumentoTransacao, setCssEscondeDocumentoTransacao] = useState('');
+    const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
 
     useEffect(()=>{
         if (despesaContext.initialValues.data_documento && verbo_http === "PUT"){
@@ -254,8 +256,18 @@ export const CadastroForm = ({verbo_http}) => {
         return errors;
     };
 
-    const exibeNumeroDocumento = (valor) => {
-        console.log("exibeNumeroDocumento ", valor)
+    const exibeDocumentoTransacao = (valor) => {
+        console.log("exibeDocumentoTransacao ", valor)
+        //let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
+        let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor))
+        console.log("exibeDocumentoTransacao ", exibe_documento_transacao)
+        if (exibe_documento_transacao.tem_documento){
+            setCssEscondeDocumentoTransacao("escondeItem")
+            setLabelDocumentoTransacao(exibe_documento_transacao.nome)
+        }else {
+            setCssEscondeDocumentoTransacao("")
+        }
+
     }
 
 
@@ -386,7 +398,7 @@ export const CadastroForm = ({verbo_http}) => {
                                         //onChange={props.handleChange}
                                         onChange={(e) => {
                                             props.handleChange(e);
-                                            exibeNumeroDocumento(e.target.value)
+                                            exibeDocumentoTransacao(e.target.value)
                                         }}
                                         onBlur={props.handleBlur}
                                         name='tipo_transacao'
@@ -416,19 +428,21 @@ export const CadastroForm = ({verbo_http}) => {
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="documento_transacao">Número do cheque</label>
-                                    <input
-                                        value={props.values.documento_transacao}
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                        name="documento_transacao"
-                                        id="documento_transacao"
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Digite o número do documento"
-                                        disabled={readOnlyCampos}
-                                    />
-                                    {props.errors.documento_transacao && <span className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
+                                    <div className={cssEscondeDocumentoTransacao}>
+                                        <label htmlFor="documento_transacao">Número do cheque</label>
+                                        <input
+                                            value={props.values.documento_transacao}
+                                            onChange={props.handleChange}
+                                            onBlur={props.handleBlur}
+                                            name="documento_transacao"
+                                            id="documento_transacao"
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="Digite o número do documento"
+                                            disabled={readOnlyCampos}
+                                        />
+                                        {props.errors.documento_transacao && <span className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
+                                    </div>
                                 </div>
 
                             </div>
