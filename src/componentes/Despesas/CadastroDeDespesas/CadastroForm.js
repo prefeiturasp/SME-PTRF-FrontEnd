@@ -63,6 +63,8 @@ export const CadastroForm = ({verbo_http}) => {
             const resp = await getDespesasTabelas();
             setDespesasTabelas(resp);
 
+            console.log("Despesas Tabelas ", resp)
+
             const array_tipos_custeio = resp.tipos_custeio;
             let let_especificacoes_custeio = [];
 
@@ -252,6 +254,10 @@ export const CadastroForm = ({verbo_http}) => {
         return errors;
     };
 
+    const exibeNumeroDocumento = (valor) => {
+        console.log("exibeNumeroDocumento ", valor)
+    }
+
 
 
     return (
@@ -377,7 +383,11 @@ export const CadastroForm = ({verbo_http}) => {
                                                 props.values.tipo_transacao === "object" ? props.values.tipo_transacao.id : props.values.tipo_transacao.id
                                             ) : ""
                                         }
-                                        onChange={props.handleChange}
+                                        //onChange={props.handleChange}
+                                        onChange={(e) => {
+                                            props.handleChange(e);
+                                            exibeNumeroDocumento(e.target.value)
+                                        }}
                                         onBlur={props.handleBlur}
                                         name='tipo_transacao'
                                         id='tipo_transacao'
