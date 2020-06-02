@@ -307,8 +307,7 @@ export const SaldoInsuficienteConta = (propriedades) => {
             onHide={propriedades.handleClose}
             titulo="Saldo da Conta Insuficiente"
             bodyText={listaDeSaldosInsuficientes()}
-            aceitarLancamento={false}
-            //aceitarLancamento={propriedades.saldosInsuficientesDaConta.aceitar_lancamento}
+            aceitarLancamento={propriedades.saldosInsuficientesDaConta.aceitar_lancamento}
             primeiroBotaoOnclick={propriedades.onSaldoInsuficienteContaTrue}
             primeiroBotaoTexto="OK"
             segundoBotaoOnclick={propriedades.handleClose}
