@@ -54,7 +54,10 @@ export const CadastroForm = ({verbo_http}) => {
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
 
     useEffect(()=>{
-        if (despesaContext.initialValues.tipo_transacao.id && verbo_http === "PUT"){
+
+        console.log("despesaContext.initialValues ", despesaContext.initialValues)
+
+        if (despesaContext.initialValues.tipo_transacao && despesaContext.initialValues.tipo_transacao.id && verbo_http === "PUT"){
             exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id)
         }
         if (despesaContext.initialValues.data_documento && verbo_http === "PUT"){
@@ -175,7 +178,7 @@ export const CadastroForm = ({verbo_http}) => {
 
             let retorno_saldo = await verificarSaldo(values);
 
-            if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
+            if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente") {
                 setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes)
                 setShowSaldoInsuficiente(true);
             } else {
@@ -258,7 +261,6 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const exibeDocumentoTransacao = (valor) => {
-        //console.log("exibeDocumentoTransacao valor ", valor)
 
         if (valor){
             let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor))
