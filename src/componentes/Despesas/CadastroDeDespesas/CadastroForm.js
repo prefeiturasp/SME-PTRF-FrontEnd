@@ -54,9 +54,6 @@ export const CadastroForm = ({verbo_http}) => {
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
 
     useEffect(()=>{
-
-        console.log("despesaContext.initialValues.tipo_transacao.id ", despesaContext.initialValues.tipo_transacao.id)
-
         if (despesaContext.initialValues.tipo_transacao.id && verbo_http === "PUT"){
             exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id)
         }
@@ -94,6 +91,7 @@ export const CadastroForm = ({verbo_http}) => {
     }, []);
 
     const initialValues = () => {
+        console.log("initialValues ", despesaContext.initialValues)
         return despesaContext.initialValues
     }
 
@@ -260,15 +258,13 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const exibeDocumentoTransacao = (valor) => {
-        console.log("exibeDocumentoTransacao valor ", valor)
-
-
+        //console.log("exibeDocumentoTransacao valor ", valor)
 
         if (valor){
             let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor))
-            console.log("exibeDocumentoTransacao ", exibe_documento_transacao)
+            //console.log("exibeDocumentoTransacao ", exibe_documento_transacao)
 
-            if (exibe_documento_transacao.tem_documento && valor){
+            if (exibe_documento_transacao.tem_documento){
                 setCssEscondeDocumentoTransacao("")
                 setLabelDocumentoTransacao(exibe_documento_transacao.nome)
             }else {
@@ -277,8 +273,6 @@ export const CadastroForm = ({verbo_http}) => {
         }else {
             setCssEscondeDocumentoTransacao("escondeItem")
         }
-
-
 
     }
 
