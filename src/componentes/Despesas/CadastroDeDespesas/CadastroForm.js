@@ -25,7 +25,9 @@ import {
     DeletarModal,
     ErroGeral,
     PeriodoFechado,
-    SaldoInsuficiente
+    SaldoInsuficiente,
+    SaldoInsuficienteConta
+
 } from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
@@ -41,12 +43,14 @@ export const CadastroForm = ({verbo_http}) => {
     const [showAvisoCapital, setShowAvisoCapital] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
     const [showSaldoInsuficiente, setShowSaldoInsuficiente] = useState(false);
+    const [showSaldoInsuficienteConta, setShowSaldoInsuficienteConta] = useState(false);
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
     const [showErroGeral, setShowErroGeral] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
     const [saldosInsuficientesDaAcao, setSaldosInsuficientesDaAcao] = useState([]);
+    const [saldosInsuficientesDaConta, setSaldosInsuficientesDaConta] = useState([]);
 
     const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
@@ -122,6 +126,7 @@ export const CadastroForm = ({verbo_http}) => {
         setShowAvisoCapital(false);
         setShowSaldoInsuficiente(false)
         setShowPeriodoFechado(false)
+        setShowSaldoInsuficienteConta(false)
     }
 
     const onShowModal = () => {
@@ -171,15 +176,22 @@ export const CadastroForm = ({verbo_http}) => {
 
         validaPayloadDespesas(values);
 
+
         if (Object.entries(errors).length === 0) {
 
             let retorno_saldo = await verificarSaldo(values);
 
-            if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente") {
+            console.log("retorno_saldo ", retorno_saldo);
+
+            if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente"){
+                setSaldosInsuficientesDaConta(retorno_saldo.saldos_insuficientes)
+                setShowSaldoInsuficienteConta(true)
+
+            }else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
                 setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes)
                 setShowSaldoInsuficiente(true);
             } else {
-                onSubmit(values);
+                //onSubmit(values);
             }
         }
 
@@ -644,6 +656,9 @@ export const CadastroForm = ({verbo_http}) => {
                             </div>
                             <section>
                                 <SaldoInsuficiente saldosInsuficientesDaAcao={saldosInsuficientesDaAcao} show={showSaldoInsuficiente} handleClose={onHandleClose} onSaldoInsuficienteTrue={()=>onSubmit(values, {resetForm})}/>
+                            </section>
+                            <section>
+                                <SaldoInsuficienteConta saldosInsuficientesDaConta={saldosInsuficientesDaConta} show={showSaldoInsuficienteConta} handleClose={onHandleClose} onSaldoInsuficienteContaTrue={()=>onSubmit(values, {resetForm})}/>
                             </section>
                         </form>
                         </>

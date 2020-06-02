@@ -2,7 +2,8 @@ import React from "react";
 import {
     ModalBootstrap,
     ModalBootstrapReverConciliacao,
-    ModalBootstrapSaldoInsuficiente
+    ModalBootstrapSaldoInsuficiente,
+    ModalBootstrapSaldoInsuficienteDaconta
 } from "../componentes/ModalBootstrap";
 
 export const AvisoCapitalModal = (propriedades) => {
@@ -241,10 +242,6 @@ export const SaldoInsuficiente = (propriedades) => {
                                 style: 'currency',
                                 currency: 'BRL'
                             })}
-{/*                                <td>{somaDosTotais.total_despesas_sem_filtro && somaDosTotais.total_despesas_sem_filtro.toLocaleString('pt-BR', {
-                                    style: 'currency',
-                                    currency: 'BRL'
-                                })}</td>*/}
                             </li>
                             <li className="list-group-item p-0" key={index}>
                                 <strong>Total dos rateios:</strong> {item.total_rateios.toLocaleString('pt-BR', {
@@ -260,6 +257,53 @@ export const SaldoInsuficiente = (propriedades) => {
     }
     return (
         <ModalBootstrapSaldoInsuficiente
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Saldo Insuficiente"
+            bodyText={listaDeSaldosInsuficientes()}
+            primeiroBotaoOnclick={propriedades.onSaldoInsuficienteTrue}
+            primeiroBotaoTexto="OK"
+            segundoBotaoOnclick={propriedades.handleClose}
+            segundoBotaoTexto="Fechar"
+        />
+    )
+}
+
+export const SaldoInsuficienteConta = (propriedades) => {
+
+    const listaDeSaldosInsuficientes = () => {
+
+        return (
+            <>
+                <p>Não há saldo disponível para a despesa cadastrada, nas ações/aplicações abaixo. Você deseja cadastrá-la mesmo assim?</p>
+                {propriedades.saldosInsuficientesDaConta && propriedades.saldosInsuficientesDaConta.length > 0 && propriedades.saldosInsuficientesDaConta.map((item, index) =>
+                        <ul key={index} className="list-group list-group-flush mb-3">
+                            <li className="list-group-item p-0">
+                                <strong>Ação:</strong> {item.acao}
+                            </li>
+                            <li className="list-group-item p-0">
+                                <strong>Aplicacao:</strong> {item.aplicacao}
+                            </li>
+                            <li className="list-group-item p-0">
+                                <strong>Saldo Disponível:</strong> {item.saldo_disponivel.toLocaleString('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                            })}
+                            </li>
+                            <li className="list-group-item p-0" key={index}>
+                                <strong>Total dos rateios:</strong> {item.total_rateios.toLocaleString('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                            })}
+                            </li>
+                        </ul>
+                    )
+                }
+            </>
+        )
+    }
+    return (
+        <ModalBootstrapSaldoInsuficienteDaconta
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Saldo Insuficiente"
