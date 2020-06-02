@@ -29,6 +29,7 @@ export const DespesaContextProvider = ({children}) => {
         cpf_cnpj_fornecedor: "",
         nome_fornecedor: "",
         data_transacao: "",
+        documento_transacao: "",
         valor_total: "",
         valor_recursos_proprios: "",
         // Auxiliares
@@ -61,6 +62,7 @@ export const DespesaContextProvider = ({children}) => {
         cpf_cnpj_fornecedor: "",
         nome_fornecedor: "",
         data_transacao: "",
+        documento_transacao: "",
         valor_total: "",
         valor_recursos_proprios: "",
         // Auxiliares

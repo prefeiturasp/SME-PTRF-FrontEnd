@@ -348,20 +348,6 @@ export const CadastroForm = ({verbo_http}) => {
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="numero_documento">Número do documento</label>
-                                    <input
-                                        value={props.values.numero_documento}
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                        name="numero_documento"
-                                        id="numero_documento" type="text"
-                                        className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                        placeholder="Digite o número"
-                                        disabled={readOnlyCampos}
-                                    />
-                                </div>
-
-                                <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="data_documento">Data do documento</label>
                                     <DatePickerField
                                         //disabled={readOnlyCampos}
@@ -375,7 +361,21 @@ export const CadastroForm = ({verbo_http}) => {
                                     {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                 </div>
 
-                                <div className="col-12 col-md-3 mt-4">
+                                <div className="col-12 col-md-6 mt-4">
+                                    <label htmlFor="numero_documento">Número do documento</label>
+                                    <input
+                                        value={props.values.numero_documento}
+                                        onChange={props.handleChange}
+                                        onBlur={props.handleBlur}
+                                        name="numero_documento"
+                                        id="numero_documento" type="text"
+                                        className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                        placeholder="Digite o número"
+                                        disabled={readOnlyCampos}
+                                    />
+                                </div>
+
+                                <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="tipo_transacao">Tipo de transação</label>
                                     <select
                                         value={
@@ -400,9 +400,7 @@ export const CadastroForm = ({verbo_http}) => {
                                         ))}
                                     </select>
                                 </div>
-                            </div>
 
-                            <div className="form-row">
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="data_transacao">Data da transação</label>
                                     <DatePickerField
@@ -416,6 +414,27 @@ export const CadastroForm = ({verbo_http}) => {
                                     {props.errors.data_transacao &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
                                 </div>
+
+                                <div className="col-12 col-md-3 mt-4">
+                                    <label htmlFor="documento_transacao">Número do cheque</label>
+                                    <input
+                                        value={props.values.documento_transacao}
+                                        onChange={props.handleChange}
+                                        onBlur={props.handleBlur}
+                                        name="documento_transacao"
+                                        id="documento_transacao"
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Digite o número do documento"
+                                        disabled={readOnlyCampos}
+                                    />
+                                    {props.errors.documento_transacao && <span className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
+                                </div>
+
+                            </div>
+
+                            <div className="form-row">
+
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_total">Valor total do documento</label>

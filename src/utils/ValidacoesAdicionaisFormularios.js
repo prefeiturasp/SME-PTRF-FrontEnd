@@ -28,6 +28,7 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
   data_documento: yup.string().nullable(),
   tipo_transacao: yup.string().nullable(),
   data_transacao: yup.string().nullable(),
+  documento_transacao: yup.string().nullable(),
   valor_total: yup.string().nullable(),
   valor_recursos_proprios: yup.string().nullable(),
   valor_total_dos_rateios:yup.string().nullable(),
