@@ -88,9 +88,11 @@ export const ModalBootstrapSaldoInsuficienteDaconta = (propriedades) =>{
                     {propriedades.bodyText}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant={propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"} onClick={propriedades.primeiroBotaoOnclick}>
-                        {propriedades.primeiroBotaoTexto}
-                    </Button>
+                    {propriedades.aceitarLancamento &&
+                        <Button variant={propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"} onClick={propriedades.primeiroBotaoOnclick}>
+                            {propriedades.primeiroBotaoTexto}
+                        </Button>
+                    }
                     {propriedades.segundoBotaoOnclick && propriedades.segundoBotaoTexto ? (
                         <Button disabled={propriedades.segundoBotaoDisable} variant={propriedades.segundoBotaoCss ? propriedades.segundoBotaoCss : "primary"} onClick={propriedades.segundoBotaoOnclick}>
                             {propriedades.segundoBotaoTexto}

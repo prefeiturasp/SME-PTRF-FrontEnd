@@ -271,18 +271,17 @@ export const SaldoInsuficiente = (propriedades) => {
 
 export const SaldoInsuficienteConta = (propriedades) => {
 
+    console.log("SaldoInsuficienteConta", propriedades)
+
     const listaDeSaldosInsuficientes = () => {
 
         return (
             <>
-                <p>Não há saldo disponível para a despesa cadastrada, nas ações/aplicações abaixo. Você deseja cadastrá-la mesmo assim?</p>
-                {propriedades.saldosInsuficientesDaConta && propriedades.saldosInsuficientesDaConta.length > 0 && propriedades.saldosInsuficientesDaConta.map((item, index) =>
+                <p>Não há saldo disponível para a despesa cadastrada na conta selecionada. {propriedades.saldosInsuficientesDaConta.aceitar_lancamento ? "Deseja salvar assim mesmo?" : ""}</p>
+                {propriedades.saldosInsuficientesDaConta.saldos_insuficientes && propriedades.saldosInsuficientesDaConta.saldos_insuficientes.length > 0 && propriedades.saldosInsuficientesDaConta.saldos_insuficientes.map((item, index) =>
                         <ul key={index} className="list-group list-group-flush mb-3">
                             <li className="list-group-item p-0">
-                                <strong>Ação:</strong> {item.acao}
-                            </li>
-                            <li className="list-group-item p-0">
-                                <strong>Aplicacao:</strong> {item.aplicacao}
+                                <strong>Conta:</strong> {item.conta}
                             </li>
                             <li className="list-group-item p-0">
                                 <strong>Saldo Disponível:</strong> {item.saldo_disponivel.toLocaleString('pt-BR', {
@@ -306,9 +305,11 @@ export const SaldoInsuficienteConta = (propriedades) => {
         <ModalBootstrapSaldoInsuficienteDaconta
             show={propriedades.show}
             onHide={propriedades.handleClose}
-            titulo="Saldo Insuficiente"
+            titulo="Saldo da Conta Insuficiente"
             bodyText={listaDeSaldosInsuficientes()}
-            primeiroBotaoOnclick={propriedades.onSaldoInsuficienteTrue}
+            aceitarLancamento={false}
+            //aceitarLancamento={propriedades.saldosInsuficientesDaConta.aceitar_lancamento}
+            primeiroBotaoOnclick={propriedades.onSaldoInsuficienteContaTrue}
             primeiroBotaoTexto="OK"
             segundoBotaoOnclick={propriedades.handleClose}
             segundoBotaoTexto="Fechar"

@@ -176,7 +176,6 @@ export const CadastroForm = ({verbo_http}) => {
 
         validaPayloadDespesas(values);
 
-
         if (Object.entries(errors).length === 0) {
 
             let retorno_saldo = await verificarSaldo(values);
@@ -184,14 +183,14 @@ export const CadastroForm = ({verbo_http}) => {
             console.log("retorno_saldo ", retorno_saldo);
 
             if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente"){
-                setSaldosInsuficientesDaConta(retorno_saldo.saldos_insuficientes)
+                setSaldosInsuficientesDaConta(retorno_saldo)
                 setShowSaldoInsuficienteConta(true)
 
             }else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
                 setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes)
                 setShowSaldoInsuficiente(true);
             } else {
-                //onSubmit(values);
+                onSubmit(values);
             }
         }
 

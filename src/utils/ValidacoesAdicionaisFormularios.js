@@ -66,9 +66,8 @@ export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFec
 export const validaPayloadDespesas = (values, despesasTabelas=null) => {
 
   if (despesasTabelas){
-    //debugger;
     let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(values.tipo_transacao))
-    if(!exibe_documento_transacao.tem_documento){
+    if(!values.tipo_transacao || !exibe_documento_transacao.tem_documento){
       values.documento_transacao ="";
     }
   }
