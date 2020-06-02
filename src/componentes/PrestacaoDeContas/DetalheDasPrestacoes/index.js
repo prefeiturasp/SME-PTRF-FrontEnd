@@ -213,7 +213,7 @@ export const DetalheDasPrestacoes = () => {
             window.location.assign('/prestacao-de-contas')
         } catch (e) {
             onShowErroGeral();
-            console.log("Erro: ", e.message())
+            console.log("Erro: ", e.message)
         }
     }
 
