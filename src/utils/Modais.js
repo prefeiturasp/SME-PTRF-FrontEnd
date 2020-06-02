@@ -237,10 +237,20 @@ export const SaldoInsuficiente = (propriedades) => {
                                 <strong>Aplicacao:</strong> {item.aplicacao}
                             </li>
                             <li className="list-group-item p-0">
-                                <strong>Saldo Disponível:</strong> {item.saldo_disponivel}
+                                <strong>Saldo Disponível:</strong> {item.saldo_disponivel.toLocaleString('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                            })}
+{/*                                <td>{somaDosTotais.total_despesas_sem_filtro && somaDosTotais.total_despesas_sem_filtro.toLocaleString('pt-BR', {
+                                    style: 'currency',
+                                    currency: 'BRL'
+                                })}</td>*/}
                             </li>
                             <li className="list-group-item p-0" key={index}>
-                                <strong>Total dos rateios:</strong> {item.total_rateios}
+                                <strong>Total dos rateios:</strong> {item.total_rateios.toLocaleString('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                            })}
                             </li>
                         </ul>
                     )
