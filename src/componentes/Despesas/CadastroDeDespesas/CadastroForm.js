@@ -55,11 +55,13 @@ export const CadastroForm = ({verbo_http}) => {
 
     useEffect(()=>{
 
-        console.log("despesaContext.initialValues ", despesaContext.initialValues)
+        console.log("despesaContext.initialValues.tipo_transacao.id ", despesaContext.initialValues.tipo_transacao.id)
 
+        if (despesaContext.initialValues.tipo_transacao.id){
+            exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id)
+        }
         if (despesaContext.initialValues.data_documento && verbo_http === "PUT"){
             periodoFechado(despesaContext.initialValues.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
-            //periodoFechado(despesaContext.initialValues.data_documento)
         }
     }, [despesaContext.initialValues])
 
@@ -67,8 +69,6 @@ export const CadastroForm = ({verbo_http}) => {
         const carregaTabelasDespesas = async () => {
             const resp = await getDespesasTabelas();
             setDespesasTabelas(resp);
-
-            console.log("Despesas Tabelas ", resp)
 
             const array_tipos_custeio = resp.tipos_custeio;
             let let_especificacoes_custeio = [];
@@ -260,16 +260,25 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const exibeDocumentoTransacao = (valor) => {
-        console.log("exibeDocumentoTransacao ", valor)
-        //let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
-        let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor))
-        console.log("exibeDocumentoTransacao ", exibe_documento_transacao)
-        if (!exibe_documento_transacao.tem_documento){
-            setCssEscondeDocumentoTransacao("escondeItem")
+        console.log("exibeDocumentoTransacao valor ", valor)
+
+
+
+        if (valor){
+            let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor))
+            console.log("exibeDocumentoTransacao ", exibe_documento_transacao)
+
+            if (exibe_documento_transacao.tem_documento && valor){
+                setCssEscondeDocumentoTransacao("")
+                setLabelDocumentoTransacao(exibe_documento_transacao.nome)
+            }else {
+                setCssEscondeDocumentoTransacao("escondeItem")
+            }
         }else {
-            setCssEscondeDocumentoTransacao("")
-            setLabelDocumentoTransacao(exibe_documento_transacao.nome)
+            setCssEscondeDocumentoTransacao("escondeItem")
         }
+
+
 
     }
 
