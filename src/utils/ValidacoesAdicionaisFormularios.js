@@ -63,7 +63,19 @@ export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFec
   }
 }
 
-export const validaPayloadDespesas = (values) => {
+export const validaPayloadDespesas = (values, despesasTabelas=null) => {
+
+  console.log("validaPayloadDespesas ", despesasTabelas)
+
+  if (despesasTabelas){
+    //debugger;
+    let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(values.tipo_transacao))
+    if(!exibe_documento_transacao.tem_documento){
+      values.documento_transacao ="";
+    }
+  }
+
+
 
   // Quando é Alteração
   if (typeof values.associacao === "object"){

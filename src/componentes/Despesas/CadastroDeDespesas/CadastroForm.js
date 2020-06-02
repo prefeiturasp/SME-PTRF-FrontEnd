@@ -189,7 +189,7 @@ export const CadastroForm = ({verbo_http}) => {
         setBtnSubmitDisable(true);
         setShowSaldoInsuficiente(false);
 
-        validaPayloadDespesas(values)
+        validaPayloadDespesas(values, despesasTabelas)
 
         if( despesaContext.verboHttp === "POST"){
             try {
