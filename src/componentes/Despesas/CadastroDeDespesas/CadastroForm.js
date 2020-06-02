@@ -54,6 +54,9 @@ export const CadastroForm = ({verbo_http}) => {
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
 
     useEffect(()=>{
+
+        console.log("despesaContext.initialValues ", despesaContext.initialValues)
+
         if (despesaContext.initialValues.data_documento && verbo_http === "PUT"){
             periodoFechado(despesaContext.initialValues.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
             //periodoFechado(despesaContext.initialValues.data_documento)
@@ -261,11 +264,11 @@ export const CadastroForm = ({verbo_http}) => {
         //let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
         let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor))
         console.log("exibeDocumentoTransacao ", exibe_documento_transacao)
-        if (exibe_documento_transacao.tem_documento){
+        if (!exibe_documento_transacao.tem_documento){
             setCssEscondeDocumentoTransacao("escondeItem")
-            setLabelDocumentoTransacao(exibe_documento_transacao.nome)
         }else {
             setCssEscondeDocumentoTransacao("")
+            setLabelDocumentoTransacao(exibe_documento_transacao.nome)
         }
 
     }
@@ -429,7 +432,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <div className={cssEscondeDocumentoTransacao}>
-                                        <label htmlFor="documento_transacao">Número do cheque</label>
+                                        <label htmlFor="documento_transacao">Número do {labelDocumentoTransacao}</label>
                                         <input
                                             value={props.values.documento_transacao}
                                             onChange={props.handleChange}
