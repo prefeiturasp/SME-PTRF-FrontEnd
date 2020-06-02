@@ -50,14 +50,14 @@ export const CadastroForm = ({verbo_http}) => {
 
     const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
-    const [cssEscondeDocumentoTransacao, setCssEscondeDocumentoTransacao] = useState('');
+    const [cssEscondeDocumentoTransacao, setCssEscondeDocumentoTransacao] = useState('escondeItem');
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
 
     useEffect(()=>{
 
         console.log("despesaContext.initialValues.tipo_transacao.id ", despesaContext.initialValues.tipo_transacao.id)
 
-        if (despesaContext.initialValues.tipo_transacao.id){
+        if (despesaContext.initialValues.tipo_transacao.id && verbo_http === "PUT"){
             exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id)
         }
         if (despesaContext.initialValues.data_documento && verbo_http === "PUT"){
