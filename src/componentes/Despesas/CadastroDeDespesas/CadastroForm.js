@@ -1,13 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
-import {
-    YupSignupSchemaCadastroDespesa,
-    validaPayloadDespesas,
-    cpfMaskContitional,
-    calculaValorRecursoAcoes,
-    round,
-    periodoFechado,
-} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaCadastroDespesa, validaPayloadDespesas, cpfMaskContitional, calculaValorRecursoAcoes, round, periodoFechado} from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial} from "../../../services/Despesas.service";
 import {getVerificarSaldo} from "../../../services/RateiosDespesas.service";
@@ -19,14 +12,7 @@ import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
-import {
-    AvisoCapitalModal,
-    CancelarModal,
-    DeletarModal,
-    ErroGeral,
-    PeriodoFechado,
-    SaldoInsuficiente
-} from "../../../utils/Modais"
+import {AvisoCapitalModal, CancelarModal, DeletarModal, ErroGeral, PeriodoFechado, SaldoInsuficiente, SaldoInsuficienteConta} from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 
@@ -41,12 +27,14 @@ export const CadastroForm = ({verbo_http}) => {
     const [showAvisoCapital, setShowAvisoCapital] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
     const [showSaldoInsuficiente, setShowSaldoInsuficiente] = useState(false);
+    const [showSaldoInsuficienteConta, setShowSaldoInsuficienteConta] = useState(false);
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
     const [showErroGeral, setShowErroGeral] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
     const [saldosInsuficientesDaAcao, setSaldosInsuficientesDaAcao] = useState([]);
+    const [saldosInsuficientesDaConta, setSaldosInsuficientesDaConta] = useState([]);
 
     const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
@@ -54,7 +42,6 @@ export const CadastroForm = ({verbo_http}) => {
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
 
     useEffect(()=>{
-
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
             exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id)
         }
@@ -77,10 +64,8 @@ export const CadastroForm = ({verbo_http}) => {
             })
 
             set_especificacoes_custeio(let_especificacoes_custeio)
-
         };
         carregaTabelasDespesas();
-
     }, [])
 
 
@@ -122,6 +107,7 @@ export const CadastroForm = ({verbo_http}) => {
         setShowAvisoCapital(false);
         setShowSaldoInsuficiente(false)
         setShowPeriodoFechado(false)
+        setShowSaldoInsuficienteConta(false)
     }
 
     const onShowModal = () => {
@@ -175,7 +161,11 @@ export const CadastroForm = ({verbo_http}) => {
 
             let retorno_saldo = await verificarSaldo(values);
 
-            if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente") {
+            if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente"){
+                setSaldosInsuficientesDaConta(retorno_saldo)
+                setShowSaldoInsuficienteConta(true)
+
+            }else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
                 setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes)
                 setShowSaldoInsuficiente(true);
             } else {
@@ -230,7 +220,6 @@ export const CadastroForm = ({verbo_http}) => {
 
         // Verifica período fechado para a receita
         if (values.data_documento){
-            //await periodoFechado(values.data_documento)
             await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
         }
 
@@ -258,7 +247,6 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const exibeDocumentoTransacao = (valor) => {
-
         if (valor){
             let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor))
 
@@ -271,10 +259,7 @@ export const CadastroForm = ({verbo_http}) => {
         }else {
             setCssEscondeDocumentoTransacao("escondeItem")
         }
-
     }
-
-
 
     return (
         <>
@@ -298,11 +283,9 @@ export const CadastroForm = ({verbo_http}) => {
                     return (
                         <>
                         {props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
-
-                        <div className="col-12 barra-status-erros pt-1 pb-1">
-                            <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
-                        </div>
-
+                            <div className="col-12 barra-status-erros pt-1 pb-1">
+                                <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
+                            </div>
                        }
                         <form onSubmit={props.handleSubmit}>
                             <div className="form-row">
@@ -473,7 +456,6 @@ export const CadastroForm = ({verbo_http}) => {
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recursos_proprios">Valor do recurso próprio</label>
-
                                     <CurrencyInput
                                         allowNegative={false}
                                         prefix='R$'
@@ -491,7 +473,6 @@ export const CadastroForm = ({verbo_http}) => {
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recusos_acoes">Valor do PTRF</label>
-
                                     <Field name="valor_recusos_acoes">
                                         {({ field, form, meta }) => (
                                             <CurrencyInput
@@ -532,7 +513,6 @@ export const CadastroForm = ({verbo_http}) => {
                                     </select>
                                 </div>
                             </div>
-
 
                             <FieldArray
                                 name="rateios"
@@ -580,29 +560,30 @@ export const CadastroForm = ({verbo_http}) => {
                                                             disabled={readOnlyCampos}
                                                         />
                                                     ):
-                                                        rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
-                                                            <CadastroFormCapital
-                                                                formikProps={props}
-                                                                rateio={rateio}
-                                                                index={index}
-                                                                despesasTabelas={despesasTabelas}
-                                                                especificaoes_capital={especificaoes_capital}
-                                                                verboHttp={despesaContext.verboHttp}
-                                                                disabled={readOnlyCampos}
-                                                            />
-                                                            ): null}
+                                                    rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
+                                                        <CadastroFormCapital
+                                                            formikProps={props}
+                                                            rateio={rateio}
+                                                            index={index}
+                                                            despesasTabelas={despesasTabelas}
+                                                            especificaoes_capital={especificaoes_capital}
+                                                            verboHttp={despesaContext.verboHttp}
+                                                            disabled={readOnlyCampos}
+                                                        />
+                                                    ): null}
 
-                                                        {index >= 1 && values.rateios.length > 1 && (
-                                                            <div className="d-flex  justify-content-start mt-3 mb-3">
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn btn-outline-success mt-2 mr-2"
-                                                                    onClick={() => remove(index )}
-                                                                >
-                                                                    - Remover Despesa
-                                                                </button>
-                                                            </div>
+                                                    {index >= 1 && values.rateios.length > 1 && (
+                                                        <div className="d-flex  justify-content-start mt-3 mb-3">
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn btn-outline-success mt-2 mr-2"
+                                                                onClick={() => remove(index )}
+                                                            >
+                                                                - Remover Despesa
+                                                            </button>
+                                                        </div>
                                                     )}
+
                                                 </div> /*div key*/
                                             )
                                         })}
@@ -645,6 +626,9 @@ export const CadastroForm = ({verbo_http}) => {
                             <section>
                                 <SaldoInsuficiente saldosInsuficientesDaAcao={saldosInsuficientesDaAcao} show={showSaldoInsuficiente} handleClose={onHandleClose} onSaldoInsuficienteTrue={()=>onSubmit(values, {resetForm})}/>
                             </section>
+                            <section>
+                                <SaldoInsuficienteConta saldosInsuficientesDaConta={saldosInsuficientesDaConta} show={showSaldoInsuficienteConta} handleClose={onHandleClose} onSaldoInsuficienteContaTrue={()=>onSubmit(values, {resetForm})}/>
+                            </section>
                         </form>
                         </>
 
@@ -658,7 +642,6 @@ export const CadastroForm = ({verbo_http}) => {
             <section>
                 <AvisoCapitalModal show={showAvisoCapital} handleClose={onHandleClose} />
             </section>
-
             {despesaContext.idDespesa
                 ?
                 <DeletarModal show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
