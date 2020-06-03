@@ -18,7 +18,7 @@ capital é a mesma utilizada no Sistema de Bens Patrimoniais Móveis (SBPM) da P
             primeiroBotaoTexto="Estou Ciente"
         />
     )
-}
+};
 
 export const CancelarModal = (propriedades) => {
     return (
@@ -33,7 +33,7 @@ export const CancelarModal = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const CancelarModalReceitas = (propriedades) => {
     return (
@@ -48,7 +48,7 @@ export const CancelarModalReceitas = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const DeletarModal = (propriedades) => {
     return (
@@ -63,7 +63,7 @@ export const DeletarModal = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 export const DeletarModalReceitas = (propriedades) => {
     return (
         <ModalBootstrap
@@ -77,7 +77,7 @@ export const DeletarModalReceitas = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const CancelarModalAssociacao = (propriedades) => {
     return (
@@ -92,7 +92,7 @@ export const CancelarModalAssociacao = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const SalvarModalAssociacao = (propriedades) => {
     return (
@@ -105,7 +105,7 @@ export const SalvarModalAssociacao = (propriedades) => {
             primeiroBotaoTexto="OK"
         />
     )
-}
+};
 
 export const RedirectModalTabelaLancamentos = (propriedades) => {
     return (
@@ -122,7 +122,7 @@ export const RedirectModalTabelaLancamentos = (propriedades) => {
             segundoBotaoCss="success"
         />
     )
-}
+};
 
 
 export const CancelarPrestacaoDeContas = (propriedades) => {
@@ -138,7 +138,7 @@ export const CancelarPrestacaoDeContas = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const SalvarPrestacaoDeContas = (propriedades) => {
     return (
@@ -153,7 +153,7 @@ export const SalvarPrestacaoDeContas = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const ConcluirPrestacaoDeContas = (propriedades) => {
     return (
@@ -168,7 +168,7 @@ export const ConcluirPrestacaoDeContas = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const ErroGeral = (propriedades) => {
     return (
@@ -181,7 +181,7 @@ export const ErroGeral = (propriedades) => {
             primeiroBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const ReverConciliacao = (propriedades) => {
     const bodyTextarea = () => {
@@ -197,13 +197,12 @@ export const ReverConciliacao = (propriedades) => {
                     value={propriedades.textareaModalReverConciliacao}
                     onChange={propriedades.handleChangeModalReverConciliacao}
                     name="reabrir-periodo"
-                    type='text'
                     className="form-control"
                 />
             </form>
         )
 
-    }
+    };
     return (
         <ModalBootstrapReverConciliacao
             show={propriedades.show}
@@ -220,7 +219,7 @@ export const ReverConciliacao = (propriedades) => {
         />
 
     )
-}
+};
 
 export const SaldoInsuficiente = (propriedades) => {
 
@@ -254,7 +253,7 @@ export const SaldoInsuficiente = (propriedades) => {
                 }
             </>
         )
-    }
+    };
     return (
         <ModalBootstrapSaldoInsuficiente
             show={propriedades.show}
@@ -267,11 +266,9 @@ export const SaldoInsuficiente = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const SaldoInsuficienteConta = (propriedades) => {
-
-    console.log("SaldoInsuficienteConta", propriedades)
 
     const listaDeSaldosInsuficientes = () => {
 
@@ -300,7 +297,7 @@ export const SaldoInsuficienteConta = (propriedades) => {
                 }
             </>
         )
-    }
+    };
     return (
         <ModalBootstrapSaldoInsuficienteDaconta
             show={propriedades.show}
@@ -314,7 +311,7 @@ export const SaldoInsuficienteConta = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const PeriodoFechado = (propriedades) => {
     return (
@@ -327,4 +324,4 @@ export const PeriodoFechado = (propriedades) => {
             primeiroBotaoTexto="Fechar"
         />
     )
-}
+};

@@ -25,7 +25,7 @@ export const ModalBootstrap = (propriedades) =>{
             </Modal>
         </Fragment>
     )
-}
+};
 
 export const ModalBootstrapReverConciliacao = (propriedades) =>{
     return (
@@ -50,7 +50,7 @@ export const ModalBootstrapReverConciliacao = (propriedades) =>{
             </Modal>
         </Fragment>
     )
-}
+};
 
 export const ModalBootstrapSaldoInsuficiente = (propriedades) =>{
     return (
@@ -75,7 +75,7 @@ export const ModalBootstrapSaldoInsuficiente = (propriedades) =>{
             </Modal>
         </Fragment>
     )
-}
+};
 
 export const ModalBootstrapSaldoInsuficienteDaconta = (propriedades) =>{
     return (
@@ -102,4 +102,4 @@ export const ModalBootstrapSaldoInsuficienteDaconta = (propriedades) =>{
             </Modal>
         </Fragment>
     )
-}
+};
