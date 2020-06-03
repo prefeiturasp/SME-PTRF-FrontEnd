@@ -16,7 +16,7 @@ import {
 } from "../../services/PrestacaoDeContas.service";
 import {exibeDateTimePT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
 import {ReverConciliacao} from "../../utils/Modais";
-
+import {BoxPrestacaoDeContasPorPeriodo} from "../GeracaoDaAta/BoxPrestacaoDeContasPorPeriodo";
 
 export const PrestacaoDeContas = () => {
 
@@ -31,6 +31,7 @@ export const PrestacaoDeContas = () => {
     const [botaoConciliacaoReadonly, setBotaoConciliacaoReadonly] = useState(true);
     const [linkBotaoConciliacao, setLinkBotaoConciliacao] = useState('');
     const [demonstrativoFinanceiro, setDemonstrativoFinanceiro] = useState(false);
+    const [boxPrestacaoDeContasPorPeriodo, setBoxPrestacaoDeContasPorPeriodo] = useState(false);
 
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
@@ -64,11 +65,11 @@ export const PrestacaoDeContas = () => {
         localStorage.setItem('periodoConta', JSON.stringify(periodoConta))
         if (periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== "") {
             setExibeMensagem(false)
-            //setDemonstrativoFinanceiro(true)
             getStatusPrestacaoDeConta(periodoConta.periodo, periodoConta.conta)
         } else {
             setExibeMensagem(true)
-            setDemonstrativoFinanceiro(false)
+            setDemonstrativoFinanceiro(false);
+            setBoxPrestacaoDeContasPorPeriodo(false);
             setStatusPrestacaoConta(undefined)
             localStorage.setItem("uuidPrestacaoConta", undefined)
         }
@@ -92,12 +93,12 @@ export const PrestacaoDeContas = () => {
         setConfDataUltimaConciliacao(status);
         setBotaoConciliacaoReadonly(false);
 
-        if (localStorage.getItem('uuidPrestacaoConta') !== 'undefined' 
-            && localStorage.getItem('uuidPrestacaoConta') !== undefined 
-            && (status !== undefined ? (status.status === null || status.conciliado) : false)) {
-            setDemonstrativoFinanceiro(true)
+        if (localStorage.getItem('uuidPrestacaoConta') !== 'undefined' && localStorage.getItem('uuidPrestacaoConta') !== undefined && (status !== undefined ? (status.status === null || status.conciliado) : false)) {
+            setDemonstrativoFinanceiro(true);
+            setBoxPrestacaoDeContasPorPeriodo(true);
         } else {
-            setDemonstrativoFinanceiro(false)
+            setDemonstrativoFinanceiro(false);
+            setBoxPrestacaoDeContasPorPeriodo(false);
         }
     }
 
@@ -210,6 +211,11 @@ export const PrestacaoDeContas = () => {
             {demonstrativoFinanceiro === true && statusPrestacaoConta !== undefined && (
                 <DemonstrativoFinanceiro/>
             )}
+
+            {boxPrestacaoDeContasPorPeriodo === true && statusPrestacaoConta !== undefined && (
+                <BoxPrestacaoDeContasPorPeriodo/>
+            )}
+
             {exibeMensagem && (
                 <MsgImgCentralizada
                     texto='Selecione um período e uma conta acima para visualizar as ações'
