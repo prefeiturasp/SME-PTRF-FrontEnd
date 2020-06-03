@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-export const TextoDespesas = ()=> {
+export const TextoDespesas = () => {
 
     const [itensDespesas, setItensDespesas] = useState([
         "Assessoria Contábil ",
@@ -20,29 +20,28 @@ export const TextoDespesas = ()=> {
     ]);
 
 
+    const divideArrayColunas = (array, cols) => {
 
-    const split = (array, cols)=> {
+        let indexAtual = 0;
 
-        let indexAtual=0;
-
-        var ret = [];
-        if (cols==1 || array.length === 1){
+        let ret = [];
+        if (cols == 1 || array.length === 1) {
             ret.push(array);
-        }else{
-            var size = Math.ceil(array.length / cols);
-            for (var i = 0; i < cols; i++) {
-                var start = i*size;
-                ret.push(array.slice(start, start+size));
+        } else {
+            let size = Math.ceil(array.length / cols);
+            for (let i = 0; i < cols; i++) {
+                let start = i * size;
+                ret.push(array.slice(start, start + size));
             }
         }
 
-        return ret.map((item, index)=>{
-            return(
+        return ret.map((item, index) => {
+            return (
                 <div key={index} className='col-3'>
-                    {item.map((el, elIndex)=>{
-                        indexAtual = indexAtual+1;
-                        return(
-                            <p key={elIndex} className="mb-1">{indexAtual}-{el}</p>
+                    {item.map((textoDespesa, textoDespesaIndex) => {
+                        indexAtual = indexAtual + 1;
+                        return (
+                            <p key={textoDespesaIndex} className="mb-0">{indexAtual}-{textoDespesa}</p>
                         )
                     })}
                 </div>
@@ -50,11 +49,12 @@ export const TextoDespesas = ()=> {
         })
     }
 
-    return(
+    return (
         <>
-            <p className="texto-despesas-titulo">Despesas de custeio: <span className="texto-despesas-valor">R$ 12.072,28</span></p>
+            <p className="texto-despesas-titulo">Despesas de custeio: <span className="texto-despesas-valor">R$ 12.072,28</span>
+            </p>
             <div id='contem' className='row'>
-                {split(itensDespesas, 3)}
+                {divideArrayColunas(itensDespesas, 3)}
             </div>
         </>
     )
