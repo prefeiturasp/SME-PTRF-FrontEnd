@@ -7,7 +7,6 @@ export const BoxPrestacaoDeContasPorPeriodo = () => {
             <div className="col-12">
                 <h1 className="titulo-box-prestacao-de-contas-por-periodo">Ata de apresentação da prestação de contas por período</h1>
                 <div className="col-12">
-
                     <div className="row mt-3 border pt-4 pb-4">
                         <div className="col-12 col-md-8">
                             <p className='fonte-14 mb-1'><strong>Ata de apresentação da prestação de contas</strong></p>
@@ -17,11 +16,8 @@ export const BoxPrestacaoDeContasPorPeriodo = () => {
                             <button type="button" className="btn btn-success float-right">Visualizar ata</button>
                         </div>
                     </div>
-
                 </div>
-
-
             </div>
         </div>
     )
-}
+};

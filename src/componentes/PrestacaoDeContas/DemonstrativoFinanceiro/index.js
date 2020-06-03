@@ -12,7 +12,7 @@ export const DemonstrativoFinanceiro = () => {
 
     useEffect(() =>  {
         buscaAcoes();
-    }, [estado])
+    }, [])
 
     const buscaAcoes = async () => {
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo;
@@ -90,6 +90,7 @@ export const DemonstrativoFinanceiro = () => {
         <div className="demonstrativo-financeiro-container mt-5">
             <p className="demonstrativo-financeiro-titulo">Demontrativo Financeiro</p>
 
+            {estado &&
             <div className="content-section implementation">
                 <DataTable
                     value={estado}
@@ -106,13 +107,13 @@ export const DemonstrativoFinanceiro = () => {
                         header="Nome da ação"
                         body={getNomeAcao}
                     />
-                    <Column 
-                        field="receitaDeclarada" 
-                        header="Receita declarada" 
+                    <Column
+                        field="receitaDeclarada"
+                        header="Receita declarada"
                         body={valorReceita}/>
-                    <Column 
-                        field="despesaDeclarada" 
-                        header="Despesa declarada" 
+                    <Column
+                        field="despesaDeclarada"
+                        header="Despesa declarada"
                         body={valorDespesa}/>
                     <Column
                         field='botoes'
@@ -121,6 +122,7 @@ export const DemonstrativoFinanceiro = () => {
                     />
                 </DataTable>
             </div>
+            }
         </div>
     );
 }
