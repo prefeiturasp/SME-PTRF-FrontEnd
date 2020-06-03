@@ -1,4 +1,5 @@
 import React from "react";
+import {TextoDespesas} from "./TextoDespesas";
 
 export const TabelaDinamica = ()=> {
     return(
@@ -35,6 +36,7 @@ export const TabelaDinamica = ()=> {
                 </tr>
                 </tbody>
             </table>
+            <TextoDespesas/>
         </>
     )
 }
