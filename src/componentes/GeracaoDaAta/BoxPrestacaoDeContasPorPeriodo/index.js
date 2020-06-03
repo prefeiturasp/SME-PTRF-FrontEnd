@@ -2,6 +2,11 @@ import React from "react";
 import "../geracao-da-ata.scss"
 
 export const BoxPrestacaoDeContasPorPeriodo = () => {
+
+    const onClickVisualizarAta = () =>{
+        window.location.assign('/visualizacao-da-ata')
+    }
+
     return (
         <div className="row mt-5">
             <div className="col-12">
@@ -13,7 +18,7 @@ export const BoxPrestacaoDeContasPorPeriodo = () => {
                             <p className="fonte-12 mb-1 status-preenchido">Último preenchimento em 10/05/2020 10:50</p>
                         </div>
                         <div className="col-12 col-md-4 align-self-center">
-                            <button type="button" className="btn btn-success float-right">Visualizar ata</button>
+                            <button onClick={onClickVisualizarAta}  type="button" className="btn btn-success float-right">Visualizar ata</button>
                         </div>
                     </div>
                 </div>
