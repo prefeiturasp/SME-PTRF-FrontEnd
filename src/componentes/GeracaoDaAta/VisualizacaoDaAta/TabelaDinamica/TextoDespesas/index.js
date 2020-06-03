@@ -21,8 +21,10 @@ export const TextoDespesas = ()=> {
 
 
 
-
     const split = (array, cols)=> {
+
+        let indexAtual=0;
+
         var ret = [];
         if (cols==1 || array.length === 1){
             ret.push(array);
@@ -33,28 +35,27 @@ export const TextoDespesas = ()=> {
                 ret.push(array.slice(start, start+size));
             }
         }
+
         return ret.map((item, index)=>{
             return(
-                <div key={index} className='col-4'>
-                    {item.map((el)=>{
+                <div key={index} className='col-3'>
+                    {item.map((el, elIndex)=>{
+                        indexAtual = indexAtual+1;
                         return(
-                            <p>{el}</p>
+                            <p key={elIndex} className="mb-1">{indexAtual}-{el}</p>
                         )
                     })}
                 </div>
             );
         })
-
     }
 
     return(
         <>
             <p className="texto-despesas-titulo">Despesas de custeio: <span className="texto-despesas-valor">R$ 12.072,28</span></p>
-
             <div id='contem' className='row'>
                 {split(itensDespesas, 3)}
             </div>
-
         </>
     )
 }
