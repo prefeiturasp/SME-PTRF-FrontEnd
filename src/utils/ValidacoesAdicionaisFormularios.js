@@ -28,6 +28,7 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
   data_documento: yup.string().nullable(),
   tipo_transacao: yup.string().nullable(),
   data_transacao: yup.string().nullable(),
+  documento_transacao: yup.string().nullable(),
   valor_total: yup.string().nullable(),
   valor_recursos_proprios: yup.string().nullable(),
   valor_total_dos_rateios:yup.string().nullable(),
@@ -62,7 +63,16 @@ export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFec
   }
 }
 
-export const validaPayloadDespesas = (values) => {
+export const validaPayloadDespesas = (values, despesasTabelas=null) => {
+
+  if (despesasTabelas){
+    let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(values.tipo_transacao))
+    if(!values.tipo_transacao || !exibe_documento_transacao.tem_documento){
+      values.documento_transacao ="";
+    }
+  }
+
+
 
   // Quando é Alteração
   if (typeof values.associacao === "object"){

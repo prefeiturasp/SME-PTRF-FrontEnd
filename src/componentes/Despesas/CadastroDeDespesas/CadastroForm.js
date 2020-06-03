@@ -1,13 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
-import {
-    YupSignupSchemaCadastroDespesa,
-    validaPayloadDespesas,
-    cpfMaskContitional,
-    calculaValorRecursoAcoes,
-    round,
-    periodoFechado,
-} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaCadastroDespesa, validaPayloadDespesas, cpfMaskContitional, calculaValorRecursoAcoes, round, periodoFechado} from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial} from "../../../services/Despesas.service";
 import {getVerificarSaldo} from "../../../services/RateiosDespesas.service";
@@ -19,14 +12,7 @@ import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
-import {
-    AvisoCapitalModal,
-    CancelarModal,
-    DeletarModal,
-    ErroGeral,
-    PeriodoFechado,
-    SaldoInsuficiente
-} from "../../../utils/Modais"
+import {AvisoCapitalModal, CancelarModal, DeletarModal, ErroGeral, PeriodoFechado, SaldoInsuficiente, SaldoInsuficienteConta} from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 
@@ -41,20 +27,26 @@ export const CadastroForm = ({verbo_http}) => {
     const [showAvisoCapital, setShowAvisoCapital] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
     const [showSaldoInsuficiente, setShowSaldoInsuficiente] = useState(false);
+    const [showSaldoInsuficienteConta, setShowSaldoInsuficienteConta] = useState(false);
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
     const [showErroGeral, setShowErroGeral] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
     const [saldosInsuficientesDaAcao, setSaldosInsuficientesDaAcao] = useState([]);
+    const [saldosInsuficientesDaConta, setSaldosInsuficientesDaConta] = useState([]);
 
     const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
+    const [cssEscondeDocumentoTransacao, setCssEscondeDocumentoTransacao] = useState('escondeItem');
+    const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
 
     useEffect(()=>{
+        if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
+            exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id)
+        }
         if (despesaContext.initialValues.data_documento && verbo_http === "PUT"){
             periodoFechado(despesaContext.initialValues.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
-            //periodoFechado(despesaContext.initialValues.data_documento)
         }
     }, [despesaContext.initialValues])
 
@@ -72,10 +64,8 @@ export const CadastroForm = ({verbo_http}) => {
             })
 
             set_especificacoes_custeio(let_especificacoes_custeio)
-
         };
         carregaTabelasDespesas();
-
     }, [])
 
 
@@ -87,7 +77,7 @@ export const CadastroForm = ({verbo_http}) => {
     }, []);
 
     const initialValues = () => {
-        return despesaContext.initialValues
+        return despesaContext.initialValues;
     }
 
     const getPath = () => {
@@ -117,6 +107,7 @@ export const CadastroForm = ({verbo_http}) => {
         setShowAvisoCapital(false);
         setShowSaldoInsuficiente(false)
         setShowPeriodoFechado(false)
+        setShowSaldoInsuficienteConta(false)
     }
 
     const onShowModal = () => {
@@ -170,7 +161,11 @@ export const CadastroForm = ({verbo_http}) => {
 
             let retorno_saldo = await verificarSaldo(values);
 
-            if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
+            if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente"){
+                setSaldosInsuficientesDaConta(retorno_saldo)
+                setShowSaldoInsuficienteConta(true)
+
+            }else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
                 setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes)
                 setShowSaldoInsuficiente(true);
             } else {
@@ -184,7 +179,7 @@ export const CadastroForm = ({verbo_http}) => {
         setBtnSubmitDisable(true);
         setShowSaldoInsuficiente(false);
 
-        validaPayloadDespesas(values)
+        validaPayloadDespesas(values, despesasTabelas)
 
         if( despesaContext.verboHttp === "POST"){
             try {
@@ -225,7 +220,6 @@ export const CadastroForm = ({verbo_http}) => {
 
         // Verifica período fechado para a receita
         if (values.data_documento){
-            //await periodoFechado(values.data_documento)
             await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
         }
 
@@ -252,7 +246,20 @@ export const CadastroForm = ({verbo_http}) => {
         return errors;
     };
 
+    const exibeDocumentoTransacao = (valor) => {
+        if (valor){
+            let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor))
 
+            if (exibe_documento_transacao.tem_documento){
+                setCssEscondeDocumentoTransacao("")
+                setLabelDocumentoTransacao(exibe_documento_transacao.nome)
+            }else {
+                setCssEscondeDocumentoTransacao("escondeItem")
+            }
+        }else {
+            setCssEscondeDocumentoTransacao("escondeItem")
+        }
+    }
 
     return (
         <>
@@ -276,11 +283,9 @@ export const CadastroForm = ({verbo_http}) => {
                     return (
                         <>
                         {props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
-
-                        <div className="col-12 barra-status-erros pt-1 pb-1">
-                            <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
-                        </div>
-
+                            <div className="col-12 barra-status-erros pt-1 pb-1">
+                                <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
+                            </div>
                        }
                         <form onSubmit={props.handleSubmit}>
                             <div className="form-row">
@@ -342,20 +347,6 @@ export const CadastroForm = ({verbo_http}) => {
                                 </div>
 
                                 <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="numero_documento">Número do documento</label>
-                                    <input
-                                        value={props.values.numero_documento}
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                        name="numero_documento"
-                                        id="numero_documento" type="text"
-                                        className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                        placeholder="Digite o número"
-                                        disabled={readOnlyCampos}
-                                    />
-                                </div>
-
-                                <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="data_documento">Data do documento</label>
                                     <DatePickerField
                                         //disabled={readOnlyCampos}
@@ -369,7 +360,21 @@ export const CadastroForm = ({verbo_http}) => {
                                     {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                 </div>
 
-                                <div className="col-12 col-md-3 mt-4">
+                                <div className="col-12 col-md-6 mt-4">
+                                    <label htmlFor="numero_documento">Número do documento</label>
+                                    <input
+                                        value={props.values.numero_documento}
+                                        onChange={props.handleChange}
+                                        onBlur={props.handleBlur}
+                                        name="numero_documento"
+                                        id="numero_documento" type="text"
+                                        className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                        placeholder="Digite o número"
+                                        disabled={readOnlyCampos}
+                                    />
+                                </div>
+
+                                <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="tipo_transacao">Tipo de transação</label>
                                     <select
                                         value={
@@ -377,7 +382,11 @@ export const CadastroForm = ({verbo_http}) => {
                                                 props.values.tipo_transacao === "object" ? props.values.tipo_transacao.id : props.values.tipo_transacao.id
                                             ) : ""
                                         }
-                                        onChange={props.handleChange}
+                                        //onChange={props.handleChange}
+                                        onChange={(e) => {
+                                            props.handleChange(e);
+                                            exibeDocumentoTransacao(e.target.value)
+                                        }}
                                         onBlur={props.handleBlur}
                                         name='tipo_transacao'
                                         id='tipo_transacao'
@@ -390,9 +399,7 @@ export const CadastroForm = ({verbo_http}) => {
                                         ))}
                                     </select>
                                 </div>
-                            </div>
 
-                            <div className="form-row">
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="data_transacao">Data da transação</label>
                                     <DatePickerField
@@ -406,6 +413,29 @@ export const CadastroForm = ({verbo_http}) => {
                                     {props.errors.data_transacao &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
                                 </div>
+
+                                <div className="col-12 col-md-3 mt-4">
+                                    <div className={cssEscondeDocumentoTransacao}>
+                                        <label htmlFor="documento_transacao">Número do {labelDocumentoTransacao}</label>
+                                        <input
+                                            value={props.values.documento_transacao}
+                                            onChange={props.handleChange}
+                                            onBlur={props.handleBlur}
+                                            name="documento_transacao"
+                                            id="documento_transacao"
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="Digite o número do documento"
+                                            disabled={readOnlyCampos}
+                                        />
+                                        {props.errors.documento_transacao && <span className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div className="form-row">
+
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_total">Valor total do documento</label>
@@ -426,7 +456,6 @@ export const CadastroForm = ({verbo_http}) => {
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recursos_proprios">Valor do recurso próprio</label>
-
                                     <CurrencyInput
                                         allowNegative={false}
                                         prefix='R$'
@@ -444,7 +473,6 @@ export const CadastroForm = ({verbo_http}) => {
 
                                 <div className="col-12 col-md-3 mt-4">
                                     <label htmlFor="valor_recusos_acoes">Valor do PTRF</label>
-
                                     <Field name="valor_recusos_acoes">
                                         {({ field, form, meta }) => (
                                             <CurrencyInput
@@ -485,7 +513,6 @@ export const CadastroForm = ({verbo_http}) => {
                                     </select>
                                 </div>
                             </div>
-
 
                             <FieldArray
                                 name="rateios"
@@ -533,29 +560,30 @@ export const CadastroForm = ({verbo_http}) => {
                                                             disabled={readOnlyCampos}
                                                         />
                                                     ):
-                                                        rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
-                                                            <CadastroFormCapital
-                                                                formikProps={props}
-                                                                rateio={rateio}
-                                                                index={index}
-                                                                despesasTabelas={despesasTabelas}
-                                                                especificaoes_capital={especificaoes_capital}
-                                                                verboHttp={despesaContext.verboHttp}
-                                                                disabled={readOnlyCampos}
-                                                            />
-                                                            ): null}
+                                                    rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
+                                                        <CadastroFormCapital
+                                                            formikProps={props}
+                                                            rateio={rateio}
+                                                            index={index}
+                                                            despesasTabelas={despesasTabelas}
+                                                            especificaoes_capital={especificaoes_capital}
+                                                            verboHttp={despesaContext.verboHttp}
+                                                            disabled={readOnlyCampos}
+                                                        />
+                                                    ): null}
 
-                                                        {index >= 1 && values.rateios.length > 1 && (
-                                                            <div className="d-flex  justify-content-start mt-3 mb-3">
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn btn-outline-success mt-2 mr-2"
-                                                                    onClick={() => remove(index )}
-                                                                >
-                                                                    - Remover Despesa
-                                                                </button>
-                                                            </div>
+                                                    {index >= 1 && values.rateios.length > 1 && (
+                                                        <div className="d-flex  justify-content-start mt-3 mb-3">
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn btn-outline-success mt-2 mr-2"
+                                                                onClick={() => remove(index )}
+                                                            >
+                                                                - Remover Despesa
+                                                            </button>
+                                                        </div>
                                                     )}
+
                                                 </div> /*div key*/
                                             )
                                         })}
@@ -598,6 +626,9 @@ export const CadastroForm = ({verbo_http}) => {
                             <section>
                                 <SaldoInsuficiente saldosInsuficientesDaAcao={saldosInsuficientesDaAcao} show={showSaldoInsuficiente} handleClose={onHandleClose} onSaldoInsuficienteTrue={()=>onSubmit(values, {resetForm})}/>
                             </section>
+                            <section>
+                                <SaldoInsuficienteConta saldosInsuficientesDaConta={saldosInsuficientesDaConta} show={showSaldoInsuficienteConta} handleClose={onHandleClose} onSaldoInsuficienteContaTrue={()=>onSubmit(values, {resetForm})}/>
+                            </section>
                         </form>
                         </>
 
@@ -611,7 +642,6 @@ export const CadastroForm = ({verbo_http}) => {
             <section>
                 <AvisoCapitalModal show={showAvisoCapital} handleClose={onHandleClose} />
             </section>
-
             {despesaContext.idDespesa
                 ?
                 <DeletarModal show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
