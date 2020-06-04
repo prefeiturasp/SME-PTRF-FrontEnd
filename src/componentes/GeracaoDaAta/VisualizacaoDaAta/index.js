@@ -31,8 +31,6 @@ export const VisualizacaoDaAta = () => {
     }
 
     const handleChangeEditarAta = (name, value) => {
-
-        //console.log("handleChangeEditarAta Name: ", name, " Value: ", value )
         setStateFormEditarAta({
             ...stateFormEditarAta,
             [name]: value
@@ -64,8 +62,6 @@ export const VisualizacaoDaAta = () => {
                     onSubmitEditarAta={onSubmitEditarAta}
                     onChange={handleChangeEditarAta}
                     stateFormEditarAta={stateFormEditarAta}
-                    //textareaModalReverConciliacao={textareaModalReverConciliacao}
-                    //handleChangeModalReverConciliacao={handleChangeModalReverConciliacao}
                 />
             </section>
         </div>

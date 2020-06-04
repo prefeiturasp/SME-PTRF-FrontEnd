@@ -327,8 +327,7 @@ export const PeriodoFechado = (propriedades) => {
     )
 };
 
-export const EditarAta = (propriedades) => {
-    console.log("Modal EditarAta ", propriedades)
+export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, stateFormEditarAta}) => {
     const bodyTextarea = () => {
         return (
             <form className="form-group">
@@ -337,8 +336,8 @@ export const EditarAta = (propriedades) => {
                     <div className='col-12 col-md-6'>
                         <label htmlFor="tipo_reuniao">Tipo de Reunião</label>
                         <select
-                            value={propriedades.stateFormEditarAta.tipo_reuniao}
-                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            value={stateFormEditarAta.tipo_reuniao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
                             name="tipo_reuniao"
                             className="form-control"
                         >
@@ -351,24 +350,24 @@ export const EditarAta = (propriedades) => {
 
                         <label htmlFor="local_reuniao" className="mt-3">Local da reunião</label>
                         <input
-                            value={propriedades.stateFormEditarAta.local_reuniao}
-                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            value={stateFormEditarAta.local_reuniao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
                             name="local_reuniao"
                             className="form-control"
                         />
 
                         <label htmlFor="presidente_reuniao" className="mt-3">Presidente da reunião</label>
                         <input
-                            value={propriedades.stateFormEditarAta.presidente_reuniao}
-                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            value={stateFormEditarAta.presidente_reuniao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
                             name="presidente_reuniao"
                             className="form-control"
                         />
 
                         <label htmlFor="secretario_reuniao" className="mt-3">Secretário da reunião</label>
                         <input
-                            value={propriedades.stateFormEditarAta.secretario_reuniao}
-                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            value={stateFormEditarAta.secretario_reuniao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
                             name="secretario_reuniao"
                             className="form-control"
                         />
@@ -378,16 +377,16 @@ export const EditarAta = (propriedades) => {
                     <div className='col-12 col-md-6'>
                         <label htmlFor="data_reuniao">Data</label>
                         <input
-                            value={propriedades.stateFormEditarAta.data_reuniao}
-                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            value={stateFormEditarAta.data_reuniao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
                             name="data_reuniao"
                             className="form-control"
                         />
 
                         <label htmlFor="abertura_reuniao" className="mt-3">Abertura da reunião</label>
                         <select
-                            value={propriedades.stateFormEditarAta.abertura_reuniao}
-                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            value={stateFormEditarAta.abertura_reuniao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
                             name="abertura_reuniao"
                             className="form-control"
                         >
@@ -400,16 +399,16 @@ export const EditarAta = (propriedades) => {
 
                         <label htmlFor="cargo_presidente_reuniao" className="mt-3">Cargo</label>
                         <input
-                            value={propriedades.stateFormEditarAta.cargo_presidente_reuniao}
-                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            value={stateFormEditarAta.cargo_presidente_reuniao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
                             name="cargo_presidente_reuniao"
                             className="form-control"
                         />
 
                         <label htmlFor="cargo_secretario_reuniao" className="mt-3">Cargo</label>
                         <input
-                            value={propriedades.stateFormEditarAta.cargo_secretario_reuniao}
-                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            value={stateFormEditarAta.cargo_secretario_reuniao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
                             name="cargo_secretario_reuniao"
                             className="form-control"
                         />
@@ -424,8 +423,8 @@ export const EditarAta = (propriedades) => {
                             <textarea
                                 rows="3"
                                 placeholder="Escreva seu texto aqui"
-                                value={propriedades.stateFormEditarAta.comentarios_ata}
-                                onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                                value={stateFormEditarAta.comentarios_ata}
+                                onChange={(e)=>onChange(e.target.name, e.target.value)}
                                 name="comentarios_ata"
                                 className="form-control"
                             />
@@ -434,8 +433,8 @@ export const EditarAta = (propriedades) => {
                         <div className="form-group">
                             <label htmlFor="posicionamento">Como os presentes se posicionam à prestação de contas apresentada?</label>
                             <select
-                                value={propriedades.stateFormEditarAta.posicionamento}
-                                onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                                value={stateFormEditarAta.posicionamento}
+                                onChange={(e)=>onChange(e.target.name, e.target.value)}
                                 name="posicionamento"
                                 className="form-control"
                             >
@@ -455,16 +454,16 @@ export const EditarAta = (propriedades) => {
     };
     return (
         <ModalBootstrapEditarAta
-            show={propriedades.show}
-            onHide={propriedades.handleClose}
+            show={show}
+            onHide={handleClose}
             titulo="Editar Ata de apresentação"
             bodyText={bodyTextarea()}
 
-            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoOnclick={handleClose}
             primeiroBotaoTexto="Cancelar"
             primeiroBotaoCss="outline-success"
 
-            segundoBotaoOnclick={propriedades.onSubmitEditarAta}
+            segundoBotaoOnclick={onSubmitEditarAta}
             segundoBotaoTexto="Salvar"
             segundoBotaoCss="success"
 
