@@ -1,19 +1,18 @@
 import React from "react";
-import {TextoDespesas} from "./TextoDespesas";
 
-export const TabelaDinamica = ()=> {
+export const TabelaTotais = ()=>{
     return(
         <>
             <p className='titulo-tabela-acoes mt-5'>
-                PTRF Básico
+                Totais
             </p>
-            <table className="table table-bordered tabela-acoes">
+            <table className="table table-bordered tabela-totais">
                 <thead>
                 <tr className="tr-titulo">
                     <th scope="col"></th>
                     <th scope="col">Custeio (R$)</th>
                     <th scope="col">Capital (R$)</th>
-                    <th scope="col">Total (R$) </th>
+                    <th scope="col">Total (R$)</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -37,7 +36,6 @@ export const TabelaDinamica = ()=> {
                 </tr>
                 </tbody>
             </table>
-            <TextoDespesas/>
         </>
     )
 }
