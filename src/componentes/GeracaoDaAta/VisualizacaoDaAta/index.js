@@ -9,6 +9,18 @@ import {EditarAta} from "../../../utils/Modais";
 
 export const VisualizacaoDaAta = () => {
     const [showEditarAta, setShowEditarAta] = useState(false);
+    const [stateFormEditarAta, setStateFormEditarAta] = useState({
+        comentarios_ata:"Valor inicial comentário ata",
+        posicionamento:"3",
+        tipo_reuniao:"",
+        local_reuniao:"",
+        presidente_reuniao:"",
+        secretario_reuniao:"",
+        data_reuniao:"",
+        abertura_reuniao:"",
+        cargo_presidente_reuniao:"",
+        cargo_secretario_reuniao:"",
+    });
 
     const onHandleClose = () => {
         setShowEditarAta(false);
@@ -18,10 +30,17 @@ export const VisualizacaoDaAta = () => {
         setShowEditarAta(true);
     }
 
+    const handleChangeEditarAta = (name, value) => {
+
+        //console.log("handleChangeEditarAta Name: ", name, " Value: ", value )
+        setStateFormEditarAta({
+            ...stateFormEditarAta,
+            [name]: value
+        });
+    }
+
     const onSubmitEditarAta = () =>{
-
-        console.log("onSubmitEditarAta")
-
+        console.log("onSubmitEditarAta ", stateFormEditarAta)
     }
 
     return(
@@ -43,6 +62,8 @@ export const VisualizacaoDaAta = () => {
                     show={showEditarAta}
                     handleClose={onHandleClose}
                     onSubmitEditarAta={onSubmitEditarAta}
+                    onChange={handleChangeEditarAta}
+                    stateFormEditarAta={stateFormEditarAta}
                     //textareaModalReverConciliacao={textareaModalReverConciliacao}
                     //handleChangeModalReverConciliacao={handleChangeModalReverConciliacao}
                 />

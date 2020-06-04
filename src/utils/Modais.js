@@ -332,18 +332,123 @@ export const EditarAta = (propriedades) => {
     const bodyTextarea = () => {
         return (
             <form className="form-group">
-                <p><strong>Revisão dos lançamentos realizados no período: Ao rever os lançamentos deste período, você
-                    permitirá que alterações sejam feitas nos dados da Associação e cadastro de receitas e
-                    despesas.</strong></p>
-                <label htmlFor="reabrir-periodo">Escreva abaixo o motivo da revisão dos lançamentos</label>
-                <textarea
-                    rows="3"
-                    placeholder="Escreva o motivo"
-                    //value={propriedades.textareaModalReverConciliacao}
-                    //onChange={propriedades.handleChangeModalReverConciliacao}
-                    name="editar-ata"
-                    className="form-control"
-                />
+                <div className="row">
+
+                    <div className='col-12 col-md-6'>
+                        <label htmlFor="tipo_reuniao">Tipo de Reunião</label>
+                        <select
+                            value={propriedades.stateFormEditarAta.tipo_reuniao}
+                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            name="tipo_reuniao"
+                            className="form-control"
+                        >
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+
+                        <label htmlFor="local_reuniao" className="mt-3">Local da reunião</label>
+                        <input
+                            value={propriedades.stateFormEditarAta.local_reuniao}
+                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            name="local_reuniao"
+                            className="form-control"
+                        />
+
+                        <label htmlFor="presidente_reuniao" className="mt-3">Presidente da reunião</label>
+                        <input
+                            value={propriedades.stateFormEditarAta.presidente_reuniao}
+                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            name="presidente_reuniao"
+                            className="form-control"
+                        />
+
+                        <label htmlFor="secretario_reuniao" className="mt-3">Secretário da reunião</label>
+                        <input
+                            value={propriedades.stateFormEditarAta.secretario_reuniao}
+                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            name="secretario_reuniao"
+                            className="form-control"
+                        />
+
+                    </div>
+
+                    <div className='col-12 col-md-6'>
+                        <label htmlFor="data_reuniao">Data</label>
+                        <input
+                            value={propriedades.stateFormEditarAta.data_reuniao}
+                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            name="data_reuniao"
+                            className="form-control"
+                        />
+
+                        <label htmlFor="abertura_reuniao" className="mt-3">Abertura da reunião</label>
+                        <select
+                            value={propriedades.stateFormEditarAta.abertura_reuniao}
+                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            name="abertura_reuniao"
+                            className="form-control"
+                        >
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+
+                        <label htmlFor="cargo_presidente_reuniao" className="mt-3">Cargo</label>
+                        <input
+                            value={propriedades.stateFormEditarAta.cargo_presidente_reuniao}
+                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            name="cargo_presidente_reuniao"
+                            className="form-control"
+                        />
+
+                        <label htmlFor="cargo_secretario_reuniao" className="mt-3">Cargo</label>
+                        <input
+                            value={propriedades.stateFormEditarAta.cargo_secretario_reuniao}
+                            onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                            name="cargo_secretario_reuniao"
+                            className="form-control"
+                        />
+
+                    </div>
+
+
+                    <div className="col-12 mt-3">
+                        <div className="form-group">
+                            <label htmlFor="comentarios_ata" className="mb-0">Manifestações, Comentários e Justificativas</label>
+                            <p><small>Utilize esse campo para registrar possíveis dúvidas, discussões, esclarecimentos aparecidos durante a reunião</small></p>
+                            <textarea
+                                rows="3"
+                                placeholder="Escreva seu texto aqui"
+                                value={propriedades.stateFormEditarAta.comentarios_ata}
+                                onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                                name="comentarios_ata"
+                                className="form-control"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="posicionamento">Como os presentes se posicionam à prestação de contas apresentada?</label>
+                            <select
+                                value={propriedades.stateFormEditarAta.posicionamento}
+                                onChange={(e)=>propriedades.onChange(e.target.name, e.target.value)}
+                                name="posicionamento"
+                                className="form-control"
+                            >
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div> {/*row*/}
             </form>
         )
 
@@ -352,16 +457,16 @@ export const EditarAta = (propriedades) => {
         <ModalBootstrapEditarAta
             show={propriedades.show}
             onHide={propriedades.handleClose}
-            titulo="Reabertura prévia da prestação de contas do período"
+            titulo="Editar Ata de apresentação"
             bodyText={bodyTextarea()}
 
             primeiroBotaoOnclick={propriedades.handleClose}
             primeiroBotaoTexto="Cancelar"
             primeiroBotaoCss="outline-success"
 
-           segundoBotaoOnclick={propriedades.onSubmitEditarAta}
-           segundoBotaoTexto="Salvar"
-           segundoBotaoCss={propriedades.textareaModalReverConciliacao === "" ? "dark" : "success"}
+            segundoBotaoOnclick={propriedades.onSubmitEditarAta}
+            segundoBotaoTexto="Salvar"
+            segundoBotaoCss="success"
 
         />
 

@@ -107,7 +107,7 @@ export const ModalBootstrapSaldoInsuficienteDaconta = (propriedades) =>{
 export const ModalBootstrapEditarAta = (propriedades) =>{
     return (
         <Fragment>
-            <Modal centered show={propriedades.show} onHide={propriedades.onHide}>
+            <Modal centered show={propriedades.show} onHide={propriedades.onHide}  size="lg">
                 <Modal.Header>
                     <Modal.Title>{propriedades.titulo}</Modal.Title>
                 </Modal.Header>
