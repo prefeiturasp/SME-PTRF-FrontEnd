@@ -26,26 +26,26 @@ export const VisualizacaoDaAta = () => {
     const onHandleClose = () => {
         setShowEditarAta(false);
         setShowTextoCopiado(false)
-    }
+    };
 
     const handleClickEditarAta = () => {
         setShowEditarAta(true);
-    }
+    };
 
     const handleChangeEditarAta = (name, value) => {
         setStateFormEditarAta({
             ...stateFormEditarAta,
             [name]: value
         });
-    }
+    };
 
     const handleClickFecharAta = () => {
         window.location.assign("/prestacao-de-contas")
-    }
+    };
 
     const handleClickCopiarAta = ()=> {
 
-        let  doc = document, text = doc.getElementById("copiar")
+        let  doc = document, text = doc.getElementById("copiar");
         let range, selection;
 
         if(doc.body.createTextRange){
@@ -60,14 +60,15 @@ export const VisualizacaoDaAta = () => {
             selection.removeAllRanges();
             selection.addRange(range);
         }
-        document.execCommand('copy')
-
-        setShowTextoCopiado(true)
+        document.execCommand('copy');
+        if (range){
+            setShowTextoCopiado(true)
+        }
     };
 
     const onSubmitEditarAta = () =>{
         console.log("onSubmitEditarAta ", stateFormEditarAta)
-    }
+    };
 
     return(
         <div className="col-12 container-visualizacao-da-ata mb-5">
@@ -104,4 +105,4 @@ export const VisualizacaoDaAta = () => {
             </section>
         </div>
     )
-}
+};
