@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useState} from "react";
 import "../geracao-da-ata.scss"
 import {TopoComBotoes} from "./TopoComBotoes";
 import {TextoDinamicoSuperior} from "./TextoDinamicoSuperior";
@@ -22,11 +22,6 @@ export const VisualizacaoDaAta = () => {
         cargo_secretario_reuniao:"",
     });
 
-    const [copySuccess, setCopySuccess] = useState('');
-
-
-
-
     const onHandleClose = () => {
         setShowEditarAta(false);
     }
@@ -42,30 +37,12 @@ export const VisualizacaoDaAta = () => {
         });
     }
 
-    const onSubmitEditarAta = () =>{
-        console.log("onSubmitEditarAta ", stateFormEditarAta)
-    }
-
     const handleClickFecharAta = () => {
         window.location.assign("/prestacao-de-contas")
     }
 
-    const textAreaRef = useRef(null);
+    const handleClickCopiarAta = ()=> {
 
-    function copyToClipboard(e) {
-
-        console.log("copyToClipboard ", e)
-        console.log("copyToClipboard ", textAreaRef.current);
-
-        const el = textAreaRef.current
-
-        let elementText = el.textContent;
-
-        //var text = document.getElementById("copiar").value;
-
-        //navigator.clipboard.writeText(text);
-
-        //debugger;
         let  doc = document, text = doc.getElementById("copiar")
         let range, selection;
 
@@ -81,23 +58,12 @@ export const VisualizacaoDaAta = () => {
             selection.removeAllRanges();
             selection.addRange(range);
         }
-
-        console.log("Range ", range)
-
         document.execCommand('copy')
-
-
-        //textAreaRef.current.select();
-
-        //document.execCommand('copy');
-
-        /*textAreaRef.current.select();
-        document.execCommand('copy');
-        // This is just personal preference.
-        // I prefer to not show the the whole text area selected.
-        e.target.focus();*/
-        setCopySuccess('Copied!');
     };
+
+    const onSubmitEditarAta = () =>{
+        console.log("onSubmitEditarAta ", stateFormEditarAta)
+    }
 
     return(
         <div className="col-12 container-visualizacao-da-ata mb-5">
@@ -105,19 +71,11 @@ export const VisualizacaoDaAta = () => {
                 <TopoComBotoes
                     handleClickEditarAta={handleClickEditarAta}
                     handleClickFecharAta={handleClickFecharAta}
+                    handleClickCopiarAta={handleClickCopiarAta}
                 />
             </div>
 
-            {
-                /* Logical shortcut for only displaying the
-                   button if the copy command exists */
-                document.queryCommandSupported('copy') &&
-                <div className="col-12">
-                    <button className="btn btn-success" onClick={(e)=>copyToClipboard(e)}>Copy</button>
-                    {copySuccess}
-                </div>
-            }
-            <div ref={textAreaRef} id="copiar" className="col-12">
+            <div id="copiar" className="col-12">
                 <TextoDinamicoSuperior/>
                 <TabelaDinamica/>
                 <TabelaTotais/>
