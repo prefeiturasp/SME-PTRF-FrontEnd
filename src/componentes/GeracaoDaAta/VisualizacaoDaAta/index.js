@@ -3,6 +3,7 @@ import "../geracao-da-ata.scss"
 import {TopoComBotoes} from "./TopoComBotoes";
 import {TextoDinamicoSuperior} from "./TextoDinamicoSuperior";
 import {TabelaDinamica} from "./TabelaDinamica";
+import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
 
 export const VisualizacaoDaAta = () => {
     return(
@@ -13,6 +14,7 @@ export const VisualizacaoDaAta = () => {
             <div id="copiar" className="col-12">
                 <TextoDinamicoSuperior/>
                 <TabelaDinamica/>
+                <TextoDinamicoInferior/>
             </div>
         </div>
     )
