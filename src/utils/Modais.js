@@ -3,7 +3,8 @@ import {
     ModalBootstrap,
     ModalBootstrapReverConciliacao,
     ModalBootstrapSaldoInsuficiente,
-    ModalBootstrapSaldoInsuficienteDaconta
+    ModalBootstrapSaldoInsuficienteDaconta,
+    ModalBootstrapEditarAta
 } from "../componentes/ModalBootstrap";
 
 export const AvisoCapitalModal = (propriedades) => {
@@ -323,5 +324,46 @@ export const PeriodoFechado = (propriedades) => {
             primeiroBotaoOnclick={propriedades.handleClose}
             primeiroBotaoTexto="Fechar"
         />
+    )
+};
+
+export const EditarAta = (propriedades) => {
+    console.log("Modal EditarAta ", propriedades)
+    const bodyTextarea = () => {
+        return (
+            <form className="form-group">
+                <p><strong>Revisão dos lançamentos realizados no período: Ao rever os lançamentos deste período, você
+                    permitirá que alterações sejam feitas nos dados da Associação e cadastro de receitas e
+                    despesas.</strong></p>
+                <label htmlFor="reabrir-periodo">Escreva abaixo o motivo da revisão dos lançamentos</label>
+                <textarea
+                    rows="3"
+                    placeholder="Escreva o motivo"
+                    //value={propriedades.textareaModalReverConciliacao}
+                    //onChange={propriedades.handleChangeModalReverConciliacao}
+                    name="editar-ata"
+                    className="form-control"
+                />
+            </form>
+        )
+
+    };
+    return (
+        <ModalBootstrapEditarAta
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Reabertura prévia da prestação de contas do período"
+            bodyText={bodyTextarea()}
+
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Cancelar"
+            primeiroBotaoCss="outline-success"
+
+           segundoBotaoOnclick={propriedades.onSubmitEditarAta}
+           segundoBotaoTexto="Salvar"
+           segundoBotaoCss={propriedades.textareaModalReverConciliacao === "" ? "dark" : "success"}
+
+        />
+
     )
 };
