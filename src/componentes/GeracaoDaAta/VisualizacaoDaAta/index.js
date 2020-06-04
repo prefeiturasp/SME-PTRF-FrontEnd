@@ -41,11 +41,16 @@ export const VisualizacaoDaAta = () => {
         console.log("onSubmitEditarAta ", stateFormEditarAta)
     }
 
+    const handleClickFecharAta = () => {
+        window.location.assign("/prestacao-de-contas")
+    }
+
     return(
         <div className="col-12 container-visualizacao-da-ata mb-5">
             <div className="col-12 mt-4">
                 <TopoComBotoes
                     handleClickEditarAta={handleClickEditarAta}
+                    handleClickFecharAta={handleClickFecharAta}
                 />
             </div>
             <div id="copiar" className="col-12">

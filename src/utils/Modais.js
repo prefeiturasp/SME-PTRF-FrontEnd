@@ -458,16 +458,12 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
             onHide={handleClose}
             titulo="Editar Ata de apresentação"
             bodyText={bodyTextarea()}
-
             primeiroBotaoOnclick={handleClose}
             primeiroBotaoTexto="Cancelar"
             primeiroBotaoCss="outline-success"
-
             segundoBotaoOnclick={onSubmitEditarAta}
             segundoBotaoTexto="Salvar"
             segundoBotaoCss="success"
-
         />
-
     )
 };
