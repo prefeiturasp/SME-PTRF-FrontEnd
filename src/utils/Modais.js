@@ -467,3 +467,16 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
         />
     )
 };
+
+export const TextoCopiado = ({show, handleClose}) => {
+    return (
+        <ModalBootstrap
+            show={show}
+            onHide={handleClose}
+            titulo="Texto copiado com sucesso"
+            bodyText='Digite as teclas CTRL + V para "colar" o conteúdo copiado onde desejar'
+            primeiroBotaoOnclick={handleClose}
+            primeiroBotaoTexto="Fechar"
+        />
+    )
+};

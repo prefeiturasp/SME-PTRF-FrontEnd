@@ -5,10 +5,11 @@ import {TextoDinamicoSuperior} from "./TextoDinamicoSuperior";
 import {TabelaDinamica} from "./TabelaDinamica";
 import {TabelaTotais} from "./TabelaTotais";
 import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
-import {EditarAta} from "../../../utils/Modais";
+import {EditarAta, TextoCopiado} from "../../../utils/Modais";
 
 export const VisualizacaoDaAta = () => {
     const [showEditarAta, setShowEditarAta] = useState(false);
+    const [showTextoCopiado, setShowTextoCopiado] = useState(false);
     const [stateFormEditarAta, setStateFormEditarAta] = useState({
         comentarios_ata:"Valor inicial comentário ata",
         posicionamento:"3",
@@ -24,6 +25,7 @@ export const VisualizacaoDaAta = () => {
 
     const onHandleClose = () => {
         setShowEditarAta(false);
+        setShowTextoCopiado(false)
     }
 
     const handleClickEditarAta = () => {
@@ -59,6 +61,8 @@ export const VisualizacaoDaAta = () => {
             selection.addRange(range);
         }
         document.execCommand('copy')
+
+        setShowTextoCopiado(true)
     };
 
     const onSubmitEditarAta = () =>{
@@ -89,6 +93,13 @@ export const VisualizacaoDaAta = () => {
                     onSubmitEditarAta={onSubmitEditarAta}
                     onChange={handleChangeEditarAta}
                     stateFormEditarAta={stateFormEditarAta}
+                />
+            </section>
+
+            <section>
+                <TextoCopiado
+                    show={showTextoCopiado}
+                    handleClose={onHandleClose}
                 />
             </section>
         </div>
