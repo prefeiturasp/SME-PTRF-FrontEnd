@@ -16,11 +16,12 @@ export const DemonstrativoFinanceiro = () => {
 
     const buscaAcoes = async () => {
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo;
+        const conta_uuid = JSON.parse(localStorage.getItem('periodoConta')).conta;
         const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
         const result = await getAcoes(associacao_uuid, periodo_uuid);
         
         let est_result = await Promise.all(result.info_acoes.map(async (info) => {
-            const msg = await getDemonstrativoInfo(info.acao_associacao_uuid);
+            const msg = await getDemonstrativoInfo(info.acao_associacao_uuid, conta_uuid, periodo_uuid);
             return {
                 nomeAcao: info.acao_associacao_nome, 
                 acaoUuid: info.acao_associacao_uuid,
