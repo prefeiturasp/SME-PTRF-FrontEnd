@@ -1,53 +1,71 @@
-import React, {useEffect, useState} from "react";
+import React, {Component, useEffect, useState} from "react";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import {getAcoes, previa, documentoFinal, getDemonstrativoInfo} from "../../../services/DemonstrativoFinanceiro.service";
 
-export const DemonstrativoFinanceiro = () => {
 
-    const rowsPerPage = 7;
+export class DemonstrativoFinanceiro extends Component {
+    _isMounted = false;
 
-    const [estado, setEstado] = useState('');
+    state = {
+        rowsPerPage: 7,
+        estado: [],
+    }
 
-    useEffect(() =>  {
-        buscaAcoes();
-    }, [estado])
+    componentDidMount() {
+        this._isMounted = true;
+        this.buscaAcoes()
+    }
+    
+    componentDidUpdate(prevProps) {
+        if (prevProps.periodoConta !== this.props.periodoConta) {
+            this.buscaAcoes()
+        }
+    }
 
-    const buscaAcoes = async () => {
-        const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo;
-        const conta_uuid = JSON.parse(localStorage.getItem('periodoConta')).conta;
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
+    buscaAcoes = async () => {
+        const periodo_uuid = this.props.periodoConta.periodo;
+        const conta_uuid = this.props.periodoConta.conta;
         const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
         const result = await getAcoes(associacao_uuid, periodo_uuid);
         
-        let est_result = await Promise.all(result.info_acoes.map(async (info) => {
+        Promise.all(result.info_acoes.map(async (info) => {
             const msg = await getDemonstrativoInfo(info.acao_associacao_uuid, conta_uuid, periodo_uuid);
             return {
                 nomeAcao: info.acao_associacao_nome, 
                 acaoUuid: info.acao_associacao_uuid,
                 receitaDeclarada: info.receitas_no_periodo, 
                 despesaDeclarada: info.despesas_no_periodo,
-                mensagem: msg} 
-        }));
-        setEstado(est_result);
+                mensagem: msg}
+        })).then((result) => {
+            if(this._isMounted) {
+                this.setState({estado: result});
+            }
+            
+        });
     }
 
-    const gerarPrevia = async (acaoUuid) => {
+    gerarPrevia = async (acaoUuid) => {
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo
         const conta_uuid = JSON.parse(localStorage.getItem('periodoConta')).conta
         
         await previa(acaoUuid, conta_uuid, periodo_uuid);
     }
 
-    const gerarDocumentoFinal = async (acaoUuid) => {
+    gerarDocumentoFinal = async (acaoUuid) => {
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo
         const conta_uuid = JSON.parse(localStorage.getItem('periodoConta')).conta
         
         await documentoFinal(acaoUuid, conta_uuid, periodo_uuid);
-        await buscaAcoes();
+        await this.buscaAcoes();
     }
 
-    const getNomeAcao = (rowData) => {
+    getNomeAcao = (rowData) => {
         return (
             <div>
                 <p className="demonstrativo-financeiro-nome-acao"><strong>{rowData['nomeAcao']}</strong></p>
@@ -56,16 +74,16 @@ export const DemonstrativoFinanceiro = () => {
         )
     }
 
-    const getBotoes = (rowData) => {
+    getBotoes = (rowData) => {
         return (
             <div className="text-right">
-                <button type="button" onClick={(e) => gerarPrevia(rowData['acaoUuid'])} className="btn btn-outline-success mr-2">prévia </button>
-                <button disabled={false} onClick={(e) => gerarDocumentoFinal(rowData['acaoUuid'])} type="button" className="btn btn-success">documento final</button>
+                <button type="button" onClick={(e) => this.gerarPrevia(rowData['acaoUuid'])} className="btn btn-outline-success mr-2">prévia </button>
+                <button disabled={false} onClick={(e) => this.gerarDocumentoFinal(rowData['acaoUuid'])} type="button" className="btn btn-success">documento final</button>
             </div>
         )
     }
 
-    const valorReceita = (rowData, column) => {
+    valorReceita = (rowData, column) => {
         const valor = rowData['receitaDeclarada']
             ? new Number(rowData['receitaDeclarada']).toLocaleString('pt-BR', {
                 style: 'currency',
@@ -76,7 +94,7 @@ export const DemonstrativoFinanceiro = () => {
         return (<span>{valorFormatado}</span>)
     }
 
-    const valorDespesa = (rowData, column) => {
+    valorDespesa = (rowData, column) => {
         const valor = rowData['despesaDeclarada']
             ? new Number(rowData['despesaDeclarada']).toLocaleString('pt-BR', {
                 style: 'currency',
@@ -87,41 +105,43 @@ export const DemonstrativoFinanceiro = () => {
         return (<span>{valorFormatado}</span>)
     }
 
-    return (
-        <div className="demonstrativo-financeiro-container mt-5">
-            <p className="demonstrativo-financeiro-titulo">Demontrativo Financeiro</p>
+    render() {
+        const {estado, rowsPerPage} = this.state;
+        return (
+            <div className="demonstrativo-financeiro-container mt-5">
+                <p className="demonstrativo-financeiro-titulo">Demontrativo Financeiro</p>
 
-            <div className="content-section implementation">
-                <DataTable
-                    value={estado}
-                    className="mt-3 datatable-footer-coad"
-                    paginator={estado.length > rowsPerPage}
-                    rows={rowsPerPage}
-                    paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                    autoLayout={true}
-                    selectionMode="single"
-                    //onRowClick={e => redirecionaDetalhe(e.data)}
-                >
-                    <Column
-                        field="nomeAcao"
-                        header="Nome da ação"
-                        body={getNomeAcao}
-                    />
-                    <Column 
-                        field="receitaDeclarada" 
-                        header="Receita declarada" 
-                        body={valorReceita}/>
-                    <Column 
-                        field="despesaDeclarada" 
-                        header="Despesa declarada" 
-                        body={valorDespesa}/>
-                    <Column
-                        field='botoes'
-                        header=''
-                        body={getBotoes}
-                    />
-                </DataTable>
-            </div>
-        </div>
-    );
+                <div className="content-section implementation">
+                    <DataTable
+                        value={estado}
+                        className="mt-3 datatable-footer-coad"
+                        paginator={estado.length > rowsPerPage}
+                        rows={rowsPerPage}
+                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                        autoLayout={true}
+                        selectionMode="single"
+                        //onRowClick={e => redirecionaDetalhe(e.data)}
+                    >
+                        <Column
+                            field="nomeAcao"
+                            header="Nome da ação"
+                            body={this.getNomeAcao}
+                        />
+                        <Column 
+                            field="receitaDeclarada" 
+                            header="Receita declarada" 
+                            body={this.valorReceita}/>
+                        <Column 
+                            field="despesaDeclarada" 
+                            header="Despesa declarada" 
+                            body={this.valorDespesa}/>
+                        <Column
+                            field='botoes'
+                            header=''
+                            body={this.getBotoes}
+                        />
+                    </DataTable>
+                </div>
+            </div>);
+    }
 }
