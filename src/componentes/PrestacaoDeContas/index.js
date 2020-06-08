@@ -16,7 +16,7 @@ import {
     getDataPreenchimentoAta,
     getIniciarAta,
 } from "../../services/PrestacaoDeContas.service";
-import {exibeDateTimePT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
+import {exibeDateTimePT_BR, exibeDateTimePT_BR_Ata} from "../../utils/ValidacoesAdicionaisFormularios";
 import {ReverConciliacao} from "../../utils/Modais";
 import {BoxPrestacaoDeContasPorPeriodo} from "../GeracaoDaAta/BoxPrestacaoDeContasPorPeriodo";
 
@@ -116,7 +116,7 @@ export const PrestacaoDeContas = () => {
 
             setCorBoxPrestacaoDeContasPorPeriodo("verde")
             setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome)
-            setDataBoxPrestacaoDeContasPorPeriodo("Último preenchimento em "+data_preenchimento.alterado_em)
+            setDataBoxPrestacaoDeContasPorPeriodo("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em))
 
         }catch (e) {
             console.log("Erro Data ", e)

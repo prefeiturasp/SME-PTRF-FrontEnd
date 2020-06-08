@@ -197,6 +197,15 @@ export const exibeDateTimePT_BR = (data) => {
   return data
 }
 
+export const exibeDateTimePT_BR_Ata = (data) => {
+  if (data === 'None'){
+    data = moment(new Date(), "YYYY-MM-DD").format("DD/MM/YYYY [às] HH:mm");
+  }else {
+    data =  moment(new Date(data), "YYYY-MM-DD").format("DD/MM/YYYY [às] HH:mm");
+  }
+  return data
+}
+
 
 export const convertToNumber = (string)=>{
   return Number(string)
