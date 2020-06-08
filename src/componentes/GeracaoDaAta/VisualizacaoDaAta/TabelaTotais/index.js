@@ -1,41 +1,71 @@
 import React from "react";
 
-export const TabelaTotais = ({infoAta, valorTemplate}) =>{
-    return(
+export const TabelaTotais = ({infoAta, valorTemplate}) => {
+    console.log("TabelaTotais ", infoAta.totais)
+    return (
         <>
-            <p className='titulo-tabela-acoes mt-5'>
-                Totais
-            </p>
-            <table className="table table-bordered tabela-totais">
-                <thead>
-                <tr className="tr-titulo">
-                    <th scope="col"></th>
-                    <th scope="col">Custeio (R$)</th>
-                    <th scope="col">Capital (R$)</th>
-                    <th scope="col">Total (R$)</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Larry the Bird</td>
-                    <td>@twitter</td>
-                    <td>Thornton</td>
-                </tr>
-                </tbody>
-            </table>
+
+            {infoAta.totais && Object.entries(infoAta.totais) !== undefined && Object.entries(infoAta.totais).length > 0 &&
+                <>
+                    <p className='titulo-tabela-acoes mt-5'>
+                        Totais
+                    </p>
+                    <table className="table table-bordered tabela-totais">
+                        <thead>
+                        <tr className="tr-titulo">
+                            <th scope="col"></th>
+                            <th scope="col">Custeio (R$)</th>
+                            <th scope="col">Capital (R$)</th>
+                            <th scope="col">Total (R$)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Saldo anterior</td>
+                            <td>{valorTemplate(infoAta.totais.saldo_reprogramado_custeio)}</td>
+                            <td>{valorTemplate(infoAta.totais.saldo_reprogramado_capital)}</td>
+                            <td>{valorTemplate(infoAta.totais.saldo_reprogramado)}</td>
+                        </tr>
+                        <tr>
+                            <td>Recebimento</td>
+                            <td>{valorTemplate(infoAta.totais.repasses_no_periodo_custeio)}</td>
+                            <td>{valorTemplate(infoAta.totais.repasses_no_periodo_capital)}</td>
+                            <td>{valorTemplate(infoAta.totais.repasses_no_periodo)}</td>
+                        </tr>
+                        <tr>
+                            <td>Demais créditos (rendimento e outros)</td>
+                            <td>{valorTemplate(infoAta.totais.outras_receitas_no_periodo_custeio)}</td>
+                            <td>{valorTemplate(infoAta.totais.outras_receitas_no_periodo_capital)}</td>
+                            <td>{valorTemplate(infoAta.totais.outras_receitas_no_periodo)}</td>
+                        </tr>
+                        <tr>
+                            <td>Despesas</td>
+                            <td>{valorTemplate(infoAta.totais.despesas_no_periodo_custeio)}</td>
+                            <td>{valorTemplate(infoAta.totais.despesas_no_periodo_capital)}</td>
+                            <td>{valorTemplate(infoAta.totais.despesas_no_periodo)}</td>
+                        </tr>
+                        <tr>
+                            <td>Saldo atual</td>
+                            <td>{valorTemplate(infoAta.totais.saldo_atual_custeio)}</td>
+                            <td>{valorTemplate(infoAta.totais.saldo_atual_capital)}</td>
+                            <td>{valorTemplate(infoAta.totais.saldo_atual_total)}</td>
+                        </tr>
+                        <tr>
+                            <td>Pagamentos a compensar</td>
+                            <td>{valorTemplate(infoAta.totais.despesas_nao_conciliadas_custeio)}</td>
+                            <td>{valorTemplate(infoAta.totais.despesas_nao_conciliadas_capital)}</td>
+                            <td>{valorTemplate(infoAta.totais.despesas_nao_conciliadas)}</td>
+                        </tr>
+                        <tr>
+                            <td>Crédito não demonstrado</td>
+                            <td>{valorTemplate(infoAta.totais.receitas_nao_conciliadas_custeio)}</td>
+                            <td>{valorTemplate(infoAta.totais.receitas_nao_conciliadas_capital)}</td>
+                            <td>{valorTemplate(infoAta.totais.receitas_nao_conciliadas)}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </>
+            }
         </>
     )
 }
