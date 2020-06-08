@@ -1,9 +1,11 @@
 import React, {useState} from "react";
 
-export const TextoDespesas = ({infoAta}) => {
-    console.log("TextoDespesas ",infoAta )
+export const TextoDespesas = ({especificaoesDespesaCusteio, especificaoesDespesaCapital}) => {
+    console.log("TextoDespesas ", especificaoesDespesaCusteio)
 
-    const [itensDespesas, setItensDespesas] = useState([
+    const [itensDespesas, setItensDespesas] = useState(especificaoesDespesaCusteio);
+
+    /*const [itensDespesas, setItensDespesas] = useState([
         "Assessoria Contábil ",
         "Tarifa Fornec Cheque",
         "Tarifa Processamento Cheque",
@@ -18,7 +20,7 @@ export const TextoDespesas = ({infoAta}) => {
         "Tarifa Fornec Cheque",
         "Tarifa Processamento Cheque",
         "Tarifa Pacote de Serviço ",
-    ]);
+    ]);*/
 
 
     const divideArrayColunas = (array, cols) => {
@@ -26,7 +28,7 @@ export const TextoDespesas = ({infoAta}) => {
         let indexAtual = 0;
 
         let ret = [];
-        if (cols == 1 || array.length === 1) {
+        if (cols == 1 || array.length <= 5) {
             ret.push(array);
         } else {
             let size = Math.ceil(array.length / cols);
@@ -52,11 +54,29 @@ export const TextoDespesas = ({infoAta}) => {
 
     return (
         <>
-            <p className="texto-despesas-titulo">Despesas de custeio: <span className="texto-despesas-valor">R$ 12.072,28</span>
-            </p>
-            <div id='contem' className='row'>
-                {divideArrayColunas(itensDespesas, 3)}
-            </div>
+            {especificaoesDespesaCusteio && especificaoesDespesaCusteio.length > 0 ? (
+                <div className="mt-3 mb-3">
+                    <p className="texto-despesas-titulo">Despesas de custeio: <span className="texto-despesas-valor">R$ 12.072,28</span></p>
+                    <div id='contem' className='row'>
+                        {divideArrayColunas(especificaoesDespesaCusteio, 3)}
+                    </div>
+                </div>
+            ) :
+                <p className="texto-despesas-titulo">Despesas de custeio: <span className='font-weight-normal'>Não foram realizadas despesas de Custeio no período.</span></p>
+            }
+
+            {especificaoesDespesaCapital && especificaoesDespesaCapital.length > 0 ? (
+                    <>
+                        <p className="texto-despesas-titulo">Despesas de capital: <span className="texto-despesas-valor">R$ 12.072,28</span></p>
+                        <div id='contem' className='row'>
+                            {divideArrayColunas(especificaoesDespesaCapital, 3)}
+                        </div>
+                    </>
+                ) :
+                <p className="texto-despesas-titulo">Despesas de capital: <span className='font-weight-normal'>Não foram realizadas despesas de Capital no período. </span></p>
+            }
+
+
         </>
     )
 }
