@@ -4,8 +4,7 @@ export const TabelaTotais = ({infoAta, valorTemplate}) => {
     console.log("TabelaTotais ", infoAta.totais)
     return (
         <>
-
-            {infoAta.totais && Object.entries(infoAta.totais) !== undefined && Object.entries(infoAta.totais).length > 0 &&
+            {infoAta.totais && Object.entries(infoAta.totais).length > 0 &&
                 <>
                     <p className='titulo-tabela-acoes mt-5'>
                         Totais
