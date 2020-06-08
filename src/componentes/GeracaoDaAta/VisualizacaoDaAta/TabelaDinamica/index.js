@@ -66,6 +66,9 @@ export const TabelaDinamica = ({infoAta, valorTemplate})=> {
                     <TextoDespesas
                         especificaoesDespesaCusteio={info.especificacoes_despesas}
                         especificaoesDespesaCapital=""
+                        despesasPeriodoCusteio={info.despesas_no_periodo_custeio}
+                        despesasPeriodoCapital={info.despesas_no_periodo_capital}
+                        valorTemplate={valorTemplate}
                     />
                 </div>
             ))}
