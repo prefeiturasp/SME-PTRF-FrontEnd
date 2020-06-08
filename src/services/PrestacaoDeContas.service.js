@@ -56,3 +56,11 @@ export const getSalvarPrestacaoDeConta = async (uuidPrestacaoDeContas, payload) 
 export const getConcluirPrestacaoDeConta = async (uuidPrestacaoDeContas, payload) => {
     return (await api.patch(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/concluir/`,payload, authHeader)).data
 }
+
+export const getDataPreenchimentoAta = async (uuidPrestacaoDeContas) => {
+    return (await api.get(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/ata/`,authHeader)).data
+}
+
+export const getIniciarAta = async (uuidPrestacaoDeContas) => {
+    return (await api.post(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/iniciar-ata/`,authHeader)).data
+}
