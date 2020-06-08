@@ -56,7 +56,7 @@ export const TextoDespesas = ({especificaoesDespesaCusteio, especificaoesDespesa
         <>
             {especificaoesDespesaCusteio && especificaoesDespesaCusteio.length > 0 ? (
                 <div className="mt-3 mb-3">
-                    <p className="texto-despesas-titulo">Despesas de custeio: <span className="texto-despesas-valor">{valorTemplate(despesasPeriodoCusteio)}</span></p>
+                    <p className="texto-despesas-titulo">Despesas de custeio: <span className="texto-despesas-valor">R${valorTemplate(despesasPeriodoCusteio)}</span></p>
                     <div id='contem' className='row'>
                         {divideArrayColunas(especificaoesDespesaCusteio, 3)}
                     </div>
@@ -67,7 +67,7 @@ export const TextoDespesas = ({especificaoesDespesaCusteio, especificaoesDespesa
 
             {especificaoesDespesaCapital && especificaoesDespesaCapital.length > 0 ? (
                     <>
-                        <p className="texto-despesas-titulo">Despesas de capital: <span className="texto-despesas-valor">{valorTemplate(despesasPeriodoCapital)}</span></p>
+                        <p className="texto-despesas-titulo">Despesas de capital: <span className="texto-despesas-valor">R${valorTemplate(despesasPeriodoCapital)}</span></p>
                         <div id='contem' className='row'>
                             {divideArrayColunas(especificaoesDespesaCapital, 3)}
                         </div>
@@ -75,8 +75,6 @@ export const TextoDespesas = ({especificaoesDespesaCusteio, especificaoesDespesa
                 ) :
                 <p className="texto-despesas-titulo">Despesas de capital: <span className='font-weight-normal'>Não foram realizadas despesas de Capital no período. </span></p>
             }
-
-
         </>
     )
 }
