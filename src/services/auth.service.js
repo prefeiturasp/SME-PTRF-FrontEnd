@@ -71,6 +71,7 @@ const logout = () => {
     localStorage.removeItem(ASSOCIACAO_NOME);
     localStorage.removeItem('periodoConta');
     localStorage.removeItem('uuidPrestacaoConta');
+    localStorage.removeItem('acaoLancamento');
     //window.location.reload();
     window.location.assign("/login")
 };
