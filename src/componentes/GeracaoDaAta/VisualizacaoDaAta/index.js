@@ -116,6 +116,7 @@ export const VisualizacaoDaAta = () => {
                         />
                     </>
                 }
+                <br/>
                 <TextoDinamicoInferior/>
             </div>
 
