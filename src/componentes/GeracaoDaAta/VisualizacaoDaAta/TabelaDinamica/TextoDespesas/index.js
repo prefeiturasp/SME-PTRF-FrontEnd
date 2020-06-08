@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 
-export const TextoDespesas = () => {
+export const TextoDespesas = ({infoAta}) => {
+    console.log("TextoDespesas ",infoAta )
 
     const [itensDespesas, setItensDespesas] = useState([
         "Assessoria Contábil ",

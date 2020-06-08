@@ -63,7 +63,9 @@ export const TabelaDinamica = ({infoAta, valorTemplate})=> {
                         </tr>
                         </tbody>
                     </table>
-                    <TextoDespesas/>
+                    <TextoDespesas
+                        infoAta={infoAta}
+                    />
                 </div>
             ))}
 
