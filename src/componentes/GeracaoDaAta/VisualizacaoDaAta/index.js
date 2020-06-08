@@ -84,11 +84,14 @@ export const VisualizacaoDaAta = () => {
 
     const valorTemplate = (valor) => {
         console.log("valorTemplate ", valor)
-        return Number(valor).toLocaleString('pt-BR', {
+        let valor_formatado = Number(valor).toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL'
-        })
+        });
 
+        valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "")
+
+        return valor_formatado
     }
 
 
