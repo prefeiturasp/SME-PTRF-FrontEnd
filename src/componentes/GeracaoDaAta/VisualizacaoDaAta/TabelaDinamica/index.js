@@ -12,7 +12,7 @@ export const TabelaDinamica = ({infoAta, valorTemplate})=> {
                     <table className="table table-bordered tabela-acoes">
                         <thead>
                         <tr className="tr-titulo">
-                            <th scope="col"></th>
+                            <th scope="col">&nbsp;</th>
                             <th scope="col">Custeio (R$)</th>
                             <th scope="col">Capital (R$)</th>
                             <th scope="col">Total (R$) </th>

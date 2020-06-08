@@ -1,7 +1,6 @@
 import React from "react";
 
 export const TabelaTotais = ({infoAta, valorTemplate}) => {
-    console.log("TabelaTotais ", infoAta.totais)
     return (
         <>
             {infoAta.totais && Object.entries(infoAta.totais).length > 0 &&
@@ -12,7 +11,7 @@ export const TabelaTotais = ({infoAta, valorTemplate}) => {
                     <table className="table table-bordered tabela-totais">
                         <thead>
                         <tr className="tr-titulo">
-                            <th scope="col"></th>
+                            <th scope="col">&nbsp;</th>
                             <th scope="col">Custeio (R$)</th>
                             <th scope="col">Capital (R$)</th>
                             <th scope="col">Total (R$)</th>
@@ -67,4 +66,4 @@ export const TabelaTotais = ({infoAta, valorTemplate}) => {
             }
         </>
     )
-}
+};
