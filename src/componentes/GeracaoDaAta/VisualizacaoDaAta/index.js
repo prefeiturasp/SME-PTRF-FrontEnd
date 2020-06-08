@@ -104,12 +104,18 @@ export const VisualizacaoDaAta = () => {
             <div id="copiar" className="col-12">
                 <TextoDinamicoSuperior/>
                 {infoAta &&
+                    <>
                     <TabelaDinamica
                         infoAta={infoAta}
                         valorTemplate={valorTemplate}
                     />
+
+                    <TabelaTotais
+                        infoAta={infoAta}
+                        valorTemplate={valorTemplate}
+                        />
+                    </>
                 }
-                <TabelaTotais/>
                 <TextoDinamicoInferior/>
             </div>
 

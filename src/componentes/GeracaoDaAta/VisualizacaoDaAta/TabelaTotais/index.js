@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TabelaTotais = ()=>{
+export const TabelaTotais = ({infoAta, valorTemplate}) =>{
     return(
         <>
             <p className='titulo-tabela-acoes mt-5'>
