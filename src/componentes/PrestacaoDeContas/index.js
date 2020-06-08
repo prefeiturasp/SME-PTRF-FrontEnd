@@ -210,7 +210,7 @@ export const PrestacaoDeContas = () => {
             
             {demonstrativoFinanceiro === true && statusPrestacaoConta !== undefined && (
                 <>
-                    <DemonstrativoFinanceiro/>
+                    <DemonstrativoFinanceiro periodoConta={periodoConta}/>
                     <RelacaoDeBens periodoConta={periodoConta}/>
                 </>
             )}

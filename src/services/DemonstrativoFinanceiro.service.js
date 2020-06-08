@@ -13,8 +13,8 @@ export const getAcoes = async (associacao_uuid, periodo_uuid) => {
     return (await api.get(`/api/demonstrativo-financeiro/acoes/?associacao_uuid=${associacao_uuid}&periodo_uuid=${periodo_uuid}`, authHeader)).data
 }
 
-export const getDemonstrativoInfo = async (acao_associacao_uuid) => {
-    return (await api.get(`/api/demonstrativo-financeiro/demonstrativo-info/?acao-associacao=${acao_associacao_uuid}`, authHeader)).data
+export const getDemonstrativoInfo = async (acao_associacao_uuid, conta_associacao_uuid, periodo_uuid) => {
+    return (await api.get(`/api/demonstrativo-financeiro/demonstrativo-info/?acao-associacao=${acao_associacao_uuid}&conta-associacao=${conta_associacao_uuid}&periodo=${periodo_uuid}`, authHeader)).data
 }
 
 export const previa = async (acao_associacao, conta_associacao, periodo) => {

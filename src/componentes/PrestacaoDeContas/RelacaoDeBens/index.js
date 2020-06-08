@@ -2,12 +2,14 @@ import React, {Component} from "react";
 import {previa, documentoFinal, getRelacaoBensInfo} from "../../../services/RelacaoDeBens.service";
 
 export default class RelacaoDeBens extends Component {
+    _isMounted = false;
 
     state = {
         mensagem: "",
     }
 
     async componentDidMount() {
+        this._isMounted = true;
         await this.relacaoBensInfo();
     }
 
@@ -17,10 +19,20 @@ export default class RelacaoDeBens extends Component {
         }
     }
 
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
     relacaoBensInfo = async () => {
         const {periodo, conta} = this.props.periodoConta;
-        const msg = await getRelacaoBensInfo(conta, periodo);
-        this.setState({mensagem: msg});
+        getRelacaoBensInfo(conta, periodo).then(
+            (mensagem) => {
+                if(this._isMounted) {
+                    this.setState({mensagem: mensagem});
+                }
+            }
+        );
+        ;
     }
     
     gerarPrevia = async () => {
