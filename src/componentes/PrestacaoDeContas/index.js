@@ -112,36 +112,28 @@ export const PrestacaoDeContas = () => {
         let data_preenchimento;
         try {
             data_preenchimento = await getDataPreenchimentoAta(status.uuid)
-            console.log("data_preenchimento ", data_preenchimento)
-
             setCorBoxPrestacaoDeContasPorPeriodo("verde")
             setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome)
             setDataBoxPrestacaoDeContasPorPeriodo("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em))
 
         }catch (e) {
-            console.log("Erro Data ", e)
-            let iniciar_ata = await getIniciarAta(status.uuid)
-
-            debugger;
-            console.log("iniciar_ata ", iniciar_ata)
+            data_preenchimento = await getIniciarAta(status.uuid)
             setCorBoxPrestacaoDeContasPorPeriodo("vermelho")
-            setTextoBoxPrestacaoDeContasPorPeriodo("Ata não preenchida")
-            setDataBoxPrestacaoDeContasPorPeriodo("")
+            setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome)
+            setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida")
         }
-        
-
-        return data_preenchimento
     }
 
     const setConfBarraStatus = (status) => {
         if (status.status === "FECHADO") {
             setCorBarraDeStatusPrestacaoDeContas('verde');
             setTextoBarraDeStatusPrestacaoDeContas("A geração dos documentos da conciliação desse período foi efetuada, clique no botão “Rever conciliação” para fazer alterações")
+            setConfBoxPrestacaoDeContasPorPeriodo(status)
 
         } else if (status.status === "ABERTO" && status.conciliado) {
             setCorBarraDeStatusPrestacaoDeContas('amarelo')
             setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período está aberta.")
-            console.log("setConfBoxPrestacaoDeContasPorPeriodo ", setConfBoxPrestacaoDeContasPorPeriodo(status))
+            setConfBoxPrestacaoDeContasPorPeriodo(status)
 
         } else if (status.status === null || !status.conciliado) {
             setCorBarraDeStatusPrestacaoDeContas('vermelho')
