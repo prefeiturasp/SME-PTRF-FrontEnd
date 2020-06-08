@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import "../geracao-da-ata.scss"
 import {TopoComBotoes} from "./TopoComBotoes";
 import {TextoDinamicoSuperior} from "./TextoDinamicoSuperior";
@@ -6,6 +6,7 @@ import {TabelaDinamica} from "./TabelaDinamica";
 import {TabelaTotais} from "./TabelaTotais";
 import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
 import {EditarAta, TextoCopiado} from "../../../utils/Modais";
+import {getInfoAta} from "../../../services/PrestacaoDeContas.service";
 
 export const VisualizacaoDaAta = () => {
     const [showEditarAta, setShowEditarAta] = useState(false);
@@ -22,6 +23,17 @@ export const VisualizacaoDaAta = () => {
         cargo_presidente_reuniao:"",
         cargo_secretario_reuniao:"",
     });
+
+    const [infoAta, setInfoAta]= useState({})
+
+    useEffect(()=>{
+        const infoAta = async ()=>{
+            let info_ata = await getInfoAta();
+            console.log("Info Ata ", info_ata)
+            setInfoAta(info_ata)
+        }
+        infoAta();
+    }, [])
 
     const onHandleClose = () => {
         setShowEditarAta(false);
@@ -70,6 +82,16 @@ export const VisualizacaoDaAta = () => {
         console.log("onSubmitEditarAta ", stateFormEditarAta)
     };
 
+    const valorTemplate = (valor) => {
+        return Number(valor).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        })
+
+    }
+
+
+
     return(
         <div className="col-12 container-visualizacao-da-ata mb-5">
             <div className="col-12 mt-4">
@@ -82,7 +104,12 @@ export const VisualizacaoDaAta = () => {
 
             <div id="copiar" className="col-12">
                 <TextoDinamicoSuperior/>
-                <TabelaDinamica/>
+                {infoAta &&
+                    <TabelaDinamica
+                        infoAta={infoAta}
+                        valorTemplate={valorTemplate}
+                    />
+                }
                 <TabelaTotais/>
                 <TextoDinamicoInferior/>
             </div>

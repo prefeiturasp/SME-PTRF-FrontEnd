@@ -1,43 +1,76 @@
 import React from "react";
 import {TextoDespesas} from "./TextoDespesas";
 
-export const TabelaDinamica = ()=> {
+export const TabelaDinamica = ({infoAta, valorTemplate})=> {
+
+    console.log("TabelaDinamica ", infoAta.acoes)
+    console.log("TabelaDinamica ", valorTemplate)
+
     return(
         <>
-            <p className='titulo-tabela-acoes mt-5'>
-                PTRF Básico
-            </p>
-            <table className="table table-bordered tabela-acoes">
-                <thead>
-                <tr className="tr-titulo">
-                    <th scope="col"></th>
-                    <th scope="col">Custeio (R$)</th>
-                    <th scope="col">Capital (R$)</th>
-                    <th scope="col">Total (R$) </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Larry the Bird</td>
-                    <td>@twitter</td>
-                    <td>Thornton</td>
-                </tr>
-                </tbody>
-            </table>
-            <TextoDespesas/>
+            {infoAta.acoes && infoAta.acoes.length > 0 && infoAta.acoes.map((info)=>(
+                <div key={info.acao_associacao_uuid}>
+                    <p className='titulo-tabela-acoes mt-5'>
+                        {info.acao_associacao_nome}
+                    </p>
+                    <table className="table table-bordered tabela-acoes">
+                        <thead>
+                        <tr className="tr-titulo">
+                            <th scope="col"></th>
+                            <th scope="col">Custeio (R$)</th>
+                            <th scope="col">Capital (R$)</th>
+                            <th scope="col">Total (R$) </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Saldo anterior</td>
+                            <td>{valorTemplate(info.saldo_reprogramado_custeio)}</td>
+                            <td>{valorTemplate(info.saldo_reprogramado_capital)}</td>
+                            <td>{valorTemplate(info.saldo_reprogramado)}</td>
+                        </tr>
+                        <tr>
+                            <td>Recebimento</td>
+                            <td>{valorTemplate(info.repasses_no_periodo_custeio)}</td>
+                            <td>{valorTemplate(info.repasses_no_periodo_capital)}</td>
+                            <td>{valorTemplate(info.repasses_no_periodo)}</td>
+                        </tr>
+                        <tr>
+                            <td>Demais créditos (rendimento e outros)</td>
+                            <td>{info.outras_receitas_no_periodo_custeio}</td>
+                            <td>{info.outras_receitas_no_periodo_capital}</td>
+                            <td>{info.outras_receitas_no_periodo}</td>
+                        </tr>
+                        <tr>
+                            <td>Despesas</td>
+                            <td>{info.despesas_no_periodo_custeio}</td>
+                            <td>{info.despesas_no_periodo_capital}</td>
+                            <td>{info.despesas_no_periodo}</td>
+                        </tr>
+                        <tr>
+                            <td>Saldo atual</td>
+                            <td>{info.saldo_atual_custeio}</td>
+                            <td>{info.saldo_atual_capital}</td>
+                            <td>{info.saldo_atual_total}</td>
+                        </tr>
+                        <tr>
+                            <td>Pagamentos a compensar</td>
+                            <td>{info.despesas_nao_conciliadas_custeio}</td>
+                            <td>{info.despesas_nao_conciliadas_capital}</td>
+                            <td>{info.despesas_nao_conciliadas}</td>
+                        </tr>
+                        <tr>
+                            <td>Crédito não demonstrado</td>
+                            <td>{info.receitas_nao_conciliadas_custeio}</td>
+                            <td>{info.receitas_nao_conciliadas_capital}</td>
+                            <td>{info.receitas_nao_conciliadas}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <TextoDespesas/>
+                </div>
+            ))}
+
         </>
     )
 }
