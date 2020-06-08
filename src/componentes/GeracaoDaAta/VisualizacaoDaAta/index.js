@@ -83,6 +83,7 @@ export const VisualizacaoDaAta = () => {
     };
 
     const valorTemplate = (valor) => {
+        console.log("valorTemplate ", valor)
         return Number(valor).toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL'

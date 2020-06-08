@@ -4,7 +4,6 @@ import {TextoDespesas} from "./TextoDespesas";
 export const TabelaDinamica = ({infoAta, valorTemplate})=> {
 
     console.log("TabelaDinamica ", infoAta.acoes)
-    console.log("TabelaDinamica ", valorTemplate)
 
     return(
         <>
