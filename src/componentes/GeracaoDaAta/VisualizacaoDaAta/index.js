@@ -83,18 +83,13 @@ export const VisualizacaoDaAta = () => {
     };
 
     const valorTemplate = (valor) => {
-        console.log("valorTemplate ", valor)
         let valor_formatado = Number(valor).toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL'
         });
-
-        valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "")
-
+        valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
         return valor_formatado
     }
-
-
 
     return(
         <div className="col-12 container-visualizacao-da-ata mb-5">

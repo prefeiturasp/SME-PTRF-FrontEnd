@@ -36,33 +36,33 @@ export const TabelaDinamica = ({infoAta, valorTemplate})=> {
                         </tr>
                         <tr>
                             <td>Demais créditos (rendimento e outros)</td>
-                            <td>{info.outras_receitas_no_periodo_custeio}</td>
-                            <td>{info.outras_receitas_no_periodo_capital}</td>
-                            <td>{info.outras_receitas_no_periodo}</td>
+                            <td>{valorTemplate(info.outras_receitas_no_periodo_custeio)}</td>
+                            <td>{valorTemplate(info.outras_receitas_no_periodo_capital)}</td>
+                            <td>{valorTemplate(info.outras_receitas_no_periodo)}</td>
                         </tr>
                         <tr>
                             <td>Despesas</td>
-                            <td>{info.despesas_no_periodo_custeio}</td>
-                            <td>{info.despesas_no_periodo_capital}</td>
-                            <td>{info.despesas_no_periodo}</td>
+                            <td>{valorTemplate(info.despesas_no_periodo_custeio)}</td>
+                            <td>{valorTemplate(info.despesas_no_periodo_capital)}</td>
+                            <td>{valorTemplate(info.despesas_no_periodo)}</td>
                         </tr>
                         <tr>
                             <td>Saldo atual</td>
-                            <td>{info.saldo_atual_custeio}</td>
-                            <td>{info.saldo_atual_capital}</td>
-                            <td>{info.saldo_atual_total}</td>
+                            <td>{valorTemplate(info.saldo_atual_custeio)}</td>
+                            <td>{valorTemplate(info.saldo_atual_capital)}</td>
+                            <td>{valorTemplate(info.saldo_atual_total)}</td>
                         </tr>
                         <tr>
                             <td>Pagamentos a compensar</td>
-                            <td>{info.despesas_nao_conciliadas_custeio}</td>
-                            <td>{info.despesas_nao_conciliadas_capital}</td>
-                            <td>{info.despesas_nao_conciliadas}</td>
+                            <td>{valorTemplate(info.despesas_nao_conciliadas_custeio)}</td>
+                            <td>{valorTemplate(info.despesas_nao_conciliadas_capital)}</td>
+                            <td>{valorTemplate(info.despesas_nao_conciliadas)}</td>
                         </tr>
                         <tr>
                             <td>Crédito não demonstrado</td>
-                            <td>{info.receitas_nao_conciliadas_custeio}</td>
-                            <td>{info.receitas_nao_conciliadas_capital}</td>
-                            <td>{info.receitas_nao_conciliadas}</td>
+                            <td>{valorTemplate(info.receitas_nao_conciliadas_custeio)}</td>
+                            <td>{valorTemplate(info.receitas_nao_conciliadas_capital)}</td>
+                            <td>{valorTemplate(info.receitas_nao_conciliadas)}</td>
                         </tr>
                         </tbody>
                     </table>
