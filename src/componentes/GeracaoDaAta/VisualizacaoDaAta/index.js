@@ -35,8 +35,9 @@ export const VisualizacaoDaAta = () => {
             console.log("Info Ata ", info_ata)
             setInfoAta(info_ata);
 
-            let dados_ata = await getDadosAta(info_ata.uuid)
+            let dados_ata = await getDadosAta()
             console.log("Dados Ata ", dados_ata)
+
 
         }
 
@@ -50,8 +51,24 @@ export const VisualizacaoDaAta = () => {
         tabelasAta();
     }, [])
 
-    const getDadosAta = async (uuid_ata) =>{
-        return await getAtas(uuid_ata)
+    const getDadosAta = async () =>{
+
+        let dados_ata = await getAtas()
+
+        setDadosAta({
+            comentarios:dados_ata.comentarios,
+            parecer_conselho:dados_ata.parecer_conselho,
+            tipo_reuniao:dados_ata.tipo_reuniao,
+            local_reuniao:dados_ata.tipo_reuniao,
+            presidente_reuniao:dados_ata.presidente_reuniao,
+            secretario_reuniao:dados_ata.secretario_reuniao,
+            data_reuniao:dados_ata.data_reuniao,
+            convocacao:dados_ata.convocacao,
+            cargo_presidente_reuniao:dados_ata.cargo_presidente_reuniao,
+            cargo_secretaria_reuniao:dados_ata.cargo_secretaria_reuniao,
+        })
+
+        return dados_ata
     }
 
     const onHandleClose = () => {
@@ -113,7 +130,7 @@ export const VisualizacaoDaAta = () => {
             "comentarios": stateFormEditarAta.comentarios,
         }
 
-        let atualizar_dados = await atualizarInfoAta(infoAta.uuid, payload)
+        let atualizar_dados = await atualizarInfoAta(payload);
 
         console.log("atualizar_dados ", atualizar_dados)
 

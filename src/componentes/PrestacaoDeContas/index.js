@@ -111,16 +111,19 @@ export const PrestacaoDeContas = () => {
     const setConfBoxPrestacaoDeContasPorPeriodo = async (status)=>{
         let data_preenchimento;
         try {
-            data_preenchimento = await getDataPreenchimentoAta(status.uuid)
-            setCorBoxPrestacaoDeContasPorPeriodo("verde")
-            setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome)
-            setDataBoxPrestacaoDeContasPorPeriodo("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em))
+            data_preenchimento = await getDataPreenchimentoAta(status.uuid);
+            console.log("Data preenchimento ", data_preenchimento);
+            localStorage.setItem("uuidAta", data_preenchimento.uuid);
+            setCorBoxPrestacaoDeContasPorPeriodo("verde");
+            setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
+            setDataBoxPrestacaoDeContasPorPeriodo("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
 
         }catch (e) {
-            data_preenchimento = await getIniciarAta(status.uuid)
-            setCorBoxPrestacaoDeContasPorPeriodo("vermelho")
-            setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome)
-            setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida")
+            data_preenchimento = await getIniciarAta(status.uuid);
+            localStorage.setItem("uuidAta", data_preenchimento.uuid);
+            setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
+            setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
+            setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
         }
     }
 
