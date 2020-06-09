@@ -1,7 +1,8 @@
 import React, {useState} from "react";
 
 export const TextoDespesas = ({especificaoesDespesaCusteio, especificaoesDespesaCapital, despesasPeriodoCusteio, despesasPeriodoCapital, valorTemplate}) => {
-    console.log("TextoDespesas ", especificaoesDespesaCusteio)
+    console.log("TextoDespesas especificaoesDespesaCusteio ", especificaoesDespesaCusteio);
+    console.log("TextoDespesas especificaoesDespesaCapital ", especificaoesDespesaCapital);
 
     const [itensDespesas, setItensDespesas] = useState(especificaoesDespesaCusteio);
 
