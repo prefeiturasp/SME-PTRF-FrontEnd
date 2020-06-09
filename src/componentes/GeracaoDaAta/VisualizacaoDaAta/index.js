@@ -53,13 +53,13 @@ export const VisualizacaoDaAta = () => {
 
     const getDadosAta = async () =>{
 
-        let dados_ata = await getAtas()
+        let dados_ata = await getAtas();
 
-        setDadosAta({
+        setStateFormEditarAta({
             comentarios:dados_ata.comentarios,
             parecer_conselho:dados_ata.parecer_conselho,
             tipo_reuniao:dados_ata.tipo_reuniao,
-            local_reuniao:dados_ata.tipo_reuniao,
+            local_reuniao:dados_ata.local_reuniao,
             presidente_reuniao:dados_ata.presidente_reuniao,
             secretario_reuniao:dados_ata.secretario_reuniao,
             data_reuniao:dados_ata.data_reuniao,
@@ -67,6 +67,8 @@ export const VisualizacaoDaAta = () => {
             cargo_presidente_reuniao:dados_ata.cargo_presidente_reuniao,
             cargo_secretaria_reuniao:dados_ata.cargo_secretaria_reuniao,
         })
+
+        setDadosAta(dados_ata);
 
         return dados_ata
     }
@@ -130,10 +132,14 @@ export const VisualizacaoDaAta = () => {
             "comentarios": stateFormEditarAta.comentarios,
         }
 
-        let atualizar_dados = await atualizarInfoAta(payload);
-
-        console.log("atualizar_dados ", atualizar_dados)
-
+        try {
+            let atualizar_dados = await atualizarInfoAta(payload);
+            console.log("atualizar_dados ", atualizar_dados)
+            getDadosAta();
+            setShowEditarAta(false);
+        }catch (e) {
+            console.log("Erro ao atualizar a Ata ", e)
+        }
     };
 
     const valorTemplate = (valor) => {
