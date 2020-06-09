@@ -7,7 +7,7 @@ import {TabelaTotais} from "./TabelaTotais";
 import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
 import {EditarAta, TextoCopiado} from "../../../utils/Modais";
 import {getInfoAta} from "../../../services/PrestacaoDeContas.service";
-import {getTabelasAtas, atualizarInfoAta} from "../../../services/AtasAssociacao.service";
+import {getTabelasAtas, atualizarInfoAta, getAtas} from "../../../services/AtasAssociacao.service";
 
 export const VisualizacaoDaAta = () => {
     const [showEditarAta, setShowEditarAta] = useState(false);
@@ -15,24 +15,29 @@ export const VisualizacaoDaAta = () => {
     const [stateFormEditarAta, setStateFormEditarAta] = useState({
         comentarios:"",
         parecer_conselho:"",
-        tipo_reuniao:"",
+        tipo_reuniao:"ORDINARIA",
         local_reuniao:"",
         presidente_reuniao:"",
         secretario_reuniao:"",
         data_reuniao:"",
-        convocacao:"",
+        convocacao:"PRIMEIRA",
         cargo_presidente_reuniao:"",
         cargo_secretaria_reuniao:"",
     });
 
     const [infoAta, setInfoAta]= useState({})
     const [tabelas, setTabelas]= useState({})
+    const [dadosAta, setDadosAta]= useState({})
 
     useEffect(()=>{
         const infoAta = async ()=>{
             let info_ata = await getInfoAta();
             console.log("Info Ata ", info_ata)
-            setInfoAta(info_ata)
+            setInfoAta(info_ata);
+
+            let dados_ata = await getDadosAta(info_ata.uuid)
+            console.log("Dados Ata ", dados_ata)
+
         }
 
         const tabelasAta = async ()=>{
@@ -44,6 +49,10 @@ export const VisualizacaoDaAta = () => {
         infoAta();
         tabelasAta();
     }, [])
+
+    const getDadosAta = async (uuid_ata) =>{
+        return await getAtas(uuid_ata)
+    }
 
     const onHandleClose = () => {
         setShowEditarAta(false);
@@ -88,8 +97,26 @@ export const VisualizacaoDaAta = () => {
         }
     };
 
-    const onSubmitEditarAta = () =>{
+    const onSubmitEditarAta = async () =>{
         console.log("onSubmitEditarAta ", stateFormEditarAta)
+
+        const payload = {
+            "tipo_reuniao": stateFormEditarAta.tipo_reuniao,
+            "convocacao": stateFormEditarAta.convocacao,
+            "data_reuniao": stateFormEditarAta.data_reuniao,
+            "local_reuniao": stateFormEditarAta.local_reuniao,
+            "presidente_reuniao": stateFormEditarAta.presidente_reuniao,
+            "cargo_presidente_reuniao": stateFormEditarAta.cargo_presidente_reuniao,
+            "secretario_reuniao": stateFormEditarAta.secretario_reuniao,
+            "cargo_secretaria_reuniao": stateFormEditarAta.cargo_secretaria_reuniao,
+            "parecer_conselho": stateFormEditarAta.parecer_conselho,
+            "comentarios": stateFormEditarAta.comentarios,
+        }
+
+        let atualizar_dados = await atualizarInfoAta(infoAta.uuid, payload)
+
+        console.log("atualizar_dados ", atualizar_dados)
+
     };
 
     const valorTemplate = (valor) => {

@@ -10,9 +10,13 @@ const authHeader = {
 }
 
 export const atualizarInfoAta = async (uuid_ata, payload) => {
-    return (await api.patch(`/atas-associacao/${uuid_ata}/`, payload, authHeader))
+    return (await api.patch(`api/atas-associacao/${uuid_ata}/`, payload, authHeader))
 }
 
 export const getTabelasAtas = async () => {
-    return (await api.get(`/api/atas-associacao/tabelas/`, authHeader)).data
+    return (await api.get(`api/atas-associacao/tabelas/`, authHeader)).data
+}
+
+export const getAtas = async (uuid_ata) => {
+    return (await api.get(`api/atas-associacao/${uuid_ata}/`, authHeader)).data
 }
