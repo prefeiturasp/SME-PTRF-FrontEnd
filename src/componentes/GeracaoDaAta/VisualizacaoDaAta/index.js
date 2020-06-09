@@ -11,10 +11,12 @@ import {getTabelasAtas, atualizarInfoAta, getAtas} from "../../../services/AtasA
 import moment from "moment";
 moment.updateLocale('pt', {
     months : [
-        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho",
-        "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho",
+        "agosto", "setembro", "outubro", "novembro", "dezembro"
     ]
 });
+
+const numero = require('numero-por-extenso');
 
 export const VisualizacaoDaAta = () => {
     const [showEditarAta, setShowEditarAta] = useState(false);
@@ -57,7 +59,7 @@ export const VisualizacaoDaAta = () => {
 
         let dados_ata = await getAtas();
 
-        let data_da_reuniao = stateFormEditarAta.data_reuniao ? moment(stateFormEditarAta.data_reuniao).format("YYYY-MM-DD") : "";
+        let data_da_reuniao = dados_ata.data_reuniao ? dados_ata.data_reuniao : "";
 
         setStateFormEditarAta({
             comentarios:dados_ata.comentarios,
@@ -73,8 +75,6 @@ export const VisualizacaoDaAta = () => {
         })
 
         setDadosAta(dados_ata);
-
-        return dados_ata
     }
 
     const onHandleClose = () => {
@@ -151,24 +151,28 @@ export const VisualizacaoDaAta = () => {
         });
         valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
         return valor_formatado
+    };
+
+    const dataPorExtenso = (data)=>{
+        if (!data){
+            return "___ dias do mês de ___ de ___"
+        }else {
+            let dia_por_extenso = numero.porExtenso(moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD"));
+            let mes_por_extenso = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("MMMM");
+            let ano_por_extenso = numero.porExtenso(moment(new Date(data),"DD/MM/YYYY").year())
+            let data_por_extenso =  dia_por_extenso+" dias do mes de "+mes_por_extenso+" de "+ano_por_extenso;
+            return data_por_extenso;
+        }
     }
 
     const retornaDadosAtaFormatado = (campo) => {
-        console.log("retornaDadosAtaFormatado ", campo)
-        console.log(tabelas);
-
         if (campo === "tipo_reuniao"){
             let tipo_de_reuniao =  tabelas.tipos_reuniao.find(element => element.id === dadosAta.tipo_reuniao)
             return tipo_de_reuniao.nome ? tipo_de_reuniao.nome : "___";
         }else if (campo === "data_reuniao"){
-            if (!dadosAta.data_reuniao){
-                return "___ dias do mês de ___ de ___"
-            }else {
-                return moment(new Date(dadosAta.data_reuniao), "YYYY-MM-DD").add(1, 'days').format("DD [dias do mes de ] MMMM [de] YYYY");
-            }
+            return dataPorExtenso(dadosAta.data_reuniao);
         }
-
-    }
+    };
 
     return(
         <div className="col-12 container-visualizacao-da-ata mb-5">
