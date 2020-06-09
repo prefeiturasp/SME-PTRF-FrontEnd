@@ -8,3 +8,7 @@ const authHeader = {
         'Content-Type': 'application/json'
     }
 }
+
+export const atualizarInfoAta = async (uuid_ata, payload) => {
+    return (await api.patch(`/atas-associacao/${uuid_ata}/`, payload, authHeader))
+}
