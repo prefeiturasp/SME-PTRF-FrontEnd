@@ -6,6 +6,7 @@ import {
     ModalBootstrapSaldoInsuficienteDaconta,
     ModalBootstrapEditarAta
 } from "../componentes/ModalBootstrap";
+import {DatePickerField} from "../componentes/DatePickerField";
 
 export const AvisoCapitalModal = (propriedades) => {
     return (
@@ -375,11 +376,10 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
 
                     <div className='col-12 col-md-6'>
                         <label htmlFor="data_reuniao">Data</label>
-                        <input
-                            value={stateFormEditarAta.data_reuniao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                        <DatePickerField
                             name="data_reuniao"
-                            className="form-control"
+                            value={stateFormEditarAta.data_reuniao}
+                            onChange={onChange}
                         />
 
                         <label htmlFor="convocacao" className="mt-3">Abertura da reunião</label>

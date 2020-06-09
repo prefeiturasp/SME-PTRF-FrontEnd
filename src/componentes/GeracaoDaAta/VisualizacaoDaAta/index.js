@@ -81,6 +81,10 @@ export const VisualizacaoDaAta = () => {
     };
 
     const handleChangeEditarAta = (name, value) => {
+
+        console.log("handleChangeEditarAta name ", name)
+        console.log("handleChangeEditarAta value ", value)
+
         setStateFormEditarAta({
             ...stateFormEditarAta,
             [name]: value
