@@ -8,6 +8,7 @@ import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
 import {EditarAta, TextoCopiado} from "../../../utils/Modais";
 import {getInfoAta} from "../../../services/PrestacaoDeContas.service";
 import {getTabelasAtas, atualizarInfoAta, getAtas} from "../../../services/AtasAssociacao.service";
+import moment from "moment";
 
 export const VisualizacaoDaAta = () => {
     const [showEditarAta, setShowEditarAta] = useState(false);
@@ -39,7 +40,6 @@ export const VisualizacaoDaAta = () => {
 
         const tabelasAta = async ()=>{
             let tabelas = await getTabelasAtas();
-            console.log("Tabelas Ata ", tabelas)
             setTabelas(tabelas)
         }
 
@@ -51,7 +51,7 @@ export const VisualizacaoDaAta = () => {
 
         let dados_ata = await getAtas();
 
-        console.log("getDadosAta ", dados_ata)
+        let data_da_reuniao = stateFormEditarAta.data_reuniao ? moment(stateFormEditarAta.data_reuniao).format("YYYY-MM-DD") : "";
 
         setStateFormEditarAta({
             comentarios:dados_ata.comentarios,
@@ -60,7 +60,7 @@ export const VisualizacaoDaAta = () => {
             local_reuniao:dados_ata.local_reuniao,
             presidente_reuniao:dados_ata.presidente_reuniao,
             secretario_reuniao:dados_ata.secretario_reuniao,
-            data_reuniao:dados_ata.data_reuniao,
+            data_reuniao:data_da_reuniao,
             convocacao:dados_ata.convocacao,
             cargo_presidente_reuniao:dados_ata.cargo_presidente_reuniao,
             cargo_secretaria_reuniao:dados_ata.cargo_secretaria_reuniao,
@@ -81,10 +81,6 @@ export const VisualizacaoDaAta = () => {
     };
 
     const handleChangeEditarAta = (name, value) => {
-
-        console.log("handleChangeEditarAta name ", name)
-        console.log("handleChangeEditarAta value ", value)
-
         setStateFormEditarAta({
             ...stateFormEditarAta,
             [name]: value
@@ -119,12 +115,11 @@ export const VisualizacaoDaAta = () => {
     };
 
     const onSubmitEditarAta = async () =>{
-        console.log("onSubmitEditarAta ", stateFormEditarAta)
-
+        let data_da_reuniao = stateFormEditarAta.data_reuniao ? moment(stateFormEditarAta.data_reuniao).format("YYYY-MM-DD") : null;
         const payload = {
             "tipo_reuniao": stateFormEditarAta.tipo_reuniao,
             "convocacao": stateFormEditarAta.convocacao,
-            "data_reuniao": stateFormEditarAta.data_reuniao,
+            "data_reuniao": data_da_reuniao,
             "local_reuniao": stateFormEditarAta.local_reuniao,
             "presidente_reuniao": stateFormEditarAta.presidente_reuniao,
             "cargo_presidente_reuniao": stateFormEditarAta.cargo_presidente_reuniao,
@@ -135,8 +130,7 @@ export const VisualizacaoDaAta = () => {
         }
 
         try {
-            let atualizar_dados = await atualizarInfoAta(payload);
-            console.log("atualizar_dados ", atualizar_dados)
+            await atualizarInfoAta(payload);
             getDadosAta();
             setShowEditarAta(false);
         }catch (e) {
