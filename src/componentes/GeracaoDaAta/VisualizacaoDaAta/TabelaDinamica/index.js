@@ -1,5 +1,5 @@
 import React from "react";
-import {TextoDespesas} from "./TextoDespesas";
+import {TextoDespesas} from "../TextoDespesas";
 
 export const TabelaDinamica = ({infoAta, valorTemplate})=> {
     return(

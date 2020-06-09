@@ -387,7 +387,7 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <select
                             value={stateFormEditarAta.convocacao}
                             onChange={(e)=>onChange(e.target.name, e.target.value)}
-                            name="abertura_reuniao"
+                            name="convocacao"
                             className="form-control"
                         >
                             <option>1</option>
@@ -405,11 +405,11 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                             className="form-control"
                         />
 
-                        <label htmlFor="cargo_secretario_reuniao" className="mt-3">Cargo</label>
+                        <label htmlFor="cargo_secretaria_reuniao" className="mt-3">Cargo</label>
                         <input
-                            value={stateFormEditarAta.cargo_secretario_reuniao}
+                            value={stateFormEditarAta.cargo_secretaria_reuniao}
                             onChange={(e)=>onChange(e.target.name, e.target.value)}
-                            name="cargo_secretario_reuniao"
+                            name="cargo_secretaria_reuniao"
                             className="form-control"
                         />
 
@@ -425,7 +425,7 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                                 placeholder="Escreva seu texto aqui"
                                 value={stateFormEditarAta.comentarios}
                                 onChange={(e)=>onChange(e.target.name, e.target.value)}
-                                name="comentarios_ata"
+                                name="comentarios"
                                 className="form-control"
                             />
                         </div>
@@ -435,7 +435,7 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                             <select
                                 value={stateFormEditarAta.parecer_conselho}
                                 onChange={(e)=>onChange(e.target.name, e.target.value)}
-                                name="posicionamento"
+                                name="parecer_conselho"
                                 className="form-control"
                             >
                                 <option>1</option>

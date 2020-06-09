@@ -1,28 +1,6 @@
-import React, {useState} from "react";
+import React from "react";
 
 export const TextoDespesas = ({especificaoesDespesaCusteio, especificaoesDespesaCapital, despesasPeriodoCusteio, despesasPeriodoCapital, valorTemplate}) => {
-    console.log("TextoDespesas especificaoesDespesaCusteio ", especificaoesDespesaCusteio);
-    console.log("TextoDespesas especificaoesDespesaCapital ", especificaoesDespesaCapital);
-
-    const [itensDespesas, setItensDespesas] = useState(especificaoesDespesaCusteio);
-
-    /*const [itensDespesas, setItensDespesas] = useState([
-        "Assessoria Contábil ",
-        "Tarifa Fornec Cheque",
-        "Tarifa Processamento Cheque",
-        "Tarifa Pacote de Serviço ",
-        "Placa Eletrônica Principal",
-        "Manutenção de Aparelho de Ar Condicionado",
-        "Materiais Pedagógicos Diversos",
-        "Tarifa Adic. Cheque ",
-        "Refil de Tinta Ecotank ",
-        "Tarifa Renovação Cadastro",
-        "Assessoria Contábil ",
-        "Tarifa Fornec Cheque",
-        "Tarifa Processamento Cheque",
-        "Tarifa Pacote de Serviço ",
-    ]);*/
-
 
     const divideArrayColunas = (array, cols) => {
 
