@@ -9,6 +9,12 @@ import {EditarAta, TextoCopiado} from "../../../utils/Modais";
 import {getInfoAta} from "../../../services/PrestacaoDeContas.service";
 import {getTabelasAtas, atualizarInfoAta, getAtas} from "../../../services/AtasAssociacao.service";
 import moment from "moment";
+moment.updateLocale('pt', {
+    months : [
+        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho",
+        "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ]
+});
 
 export const VisualizacaoDaAta = () => {
     const [showEditarAta, setShowEditarAta] = useState(false);
@@ -155,11 +161,10 @@ export const VisualizacaoDaAta = () => {
             let tipo_de_reuniao =  tabelas.tipos_reuniao.find(element => element.id === dadosAta.tipo_reuniao)
             return tipo_de_reuniao.nome ? tipo_de_reuniao.nome : "___";
         }else if (campo === "data_reuniao"){
-            console.log("Data da reunião ", dadosAta.data_reuniao)
             if (!dadosAta.data_reuniao){
                 return "___ dias do mês de ___ de ___"
             }else {
-                return "TEM DATA"
+                return moment(new Date(dadosAta.data_reuniao), "YYYY-MM-DD").add(1, 'days').format("DD [dias do mes de ] MMMM [de] YYYY");
             }
         }
 
