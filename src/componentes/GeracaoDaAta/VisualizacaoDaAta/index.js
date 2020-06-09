@@ -147,7 +147,23 @@ export const VisualizacaoDaAta = () => {
         return valor_formatado
     }
 
+    const retornaDadosAtaFormatado = (campo) => {
+        console.log("retornaDadosAtaFormatado ", campo)
+        console.log(tabelas);
 
+        if (campo === "tipo_reuniao"){
+            let tipo_de_reuniao =  tabelas.tipos_reuniao.find(element => element.id === dadosAta.tipo_reuniao)
+            return tipo_de_reuniao.nome ? tipo_de_reuniao.nome : "___";
+        }else if (campo === "data_reuniao"){
+            console.log("Data da reunião ", dadosAta.data_reuniao)
+            if (!dadosAta.data_reuniao){
+                return "___ dias do mês de ___ de ___"
+            }else {
+                return "TEM DATA"
+            }
+        }
+
+    }
 
     return(
         <div className="col-12 container-visualizacao-da-ata mb-5">
@@ -163,6 +179,7 @@ export const VisualizacaoDaAta = () => {
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <TextoDinamicoSuperior
                         dadosAta={dadosAta}
+                        retornaDadosAtaFormatado={retornaDadosAtaFormatado}
                     />
                 }
 
