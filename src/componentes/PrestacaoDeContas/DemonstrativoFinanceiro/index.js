@@ -20,6 +20,9 @@ export const DemonstrativoFinanceiro = () => {
         const result = await getAcoes(associacao_uuid, periodo_uuid);
         
         let est_result = await Promise.all(result.info_acoes.map(async (info) => {
+
+            console.log("buscaAcoes ", info)
+
             const msg = await getDemonstrativoInfo(info.acao_associacao_uuid);
             return {
                 nomeAcao: info.acao_associacao_nome, 

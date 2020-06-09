@@ -12,16 +12,16 @@ export const VisualizacaoDaAta = () => {
     const [showEditarAta, setShowEditarAta] = useState(false);
     const [showTextoCopiado, setShowTextoCopiado] = useState(false);
     const [stateFormEditarAta, setStateFormEditarAta] = useState({
-        comentarios_ata:"Valor inicial comentário ata",
-        posicionamento:"3",
+        comentarios:"Valor inicial comentário ata",
+        parecer_conselho:"3",
         tipo_reuniao:"",
         local_reuniao:"",
         presidente_reuniao:"",
         secretario_reuniao:"",
         data_reuniao:"",
-        abertura_reuniao:"",
+        convocacao:"",
         cargo_presidente_reuniao:"",
-        cargo_secretario_reuniao:"",
+        cargo_secretaria_reuniao:"",
     });
 
     const [infoAta, setInfoAta]= useState({})

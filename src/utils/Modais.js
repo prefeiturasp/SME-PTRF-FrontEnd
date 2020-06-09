@@ -383,9 +383,9 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                             className="form-control"
                         />
 
-                        <label htmlFor="abertura_reuniao" className="mt-3">Abertura da reunião</label>
+                        <label htmlFor="convocacao" className="mt-3">Abertura da reunião</label>
                         <select
-                            value={stateFormEditarAta.abertura_reuniao}
+                            value={stateFormEditarAta.convocacao}
                             onChange={(e)=>onChange(e.target.name, e.target.value)}
                             name="abertura_reuniao"
                             className="form-control"
@@ -418,12 +418,12 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
 
                     <div className="col-12 mt-3">
                         <div className="form-group">
-                            <label htmlFor="comentarios_ata" className="mb-0">Manifestações, Comentários e Justificativas</label>
+                            <label htmlFor="comentarios" className="mb-0">Manifestações, Comentários e Justificativas</label>
                             <p><small>Utilize esse campo para registrar possíveis dúvidas, discussões, esclarecimentos aparecidos durante a reunião</small></p>
                             <textarea
                                 rows="3"
                                 placeholder="Escreva seu texto aqui"
-                                value={stateFormEditarAta.comentarios_ata}
+                                value={stateFormEditarAta.comentarios}
                                 onChange={(e)=>onChange(e.target.name, e.target.value)}
                                 name="comentarios_ata"
                                 className="form-control"
@@ -431,9 +431,9 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="posicionamento">Como os presentes se posicionam à prestação de contas apresentada?</label>
+                            <label htmlFor="parecer_conselho">Como os presentes se posicionam à prestação de contas apresentada?</label>
                             <select
-                                value={stateFormEditarAta.posicionamento}
+                                value={stateFormEditarAta.parecer_conselho}
                                 onChange={(e)=>onChange(e.target.name, e.target.value)}
                                 name="posicionamento"
                                 className="form-control"
