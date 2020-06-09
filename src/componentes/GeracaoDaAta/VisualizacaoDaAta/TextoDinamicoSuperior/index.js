@@ -1,6 +1,7 @@
 import React from "react";
 
-export const TextoDinamicoSuperior = () => {
+export const TextoDinamicoSuperior = ({dadosAta}) => {
+    console.log("TextoDinamicoSuperior ", dadosAta)
     return(
         <>
             <p>

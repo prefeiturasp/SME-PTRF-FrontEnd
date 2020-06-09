@@ -32,13 +32,9 @@ export const VisualizacaoDaAta = () => {
     useEffect(()=>{
         const infoAta = async ()=>{
             let info_ata = await getInfoAta();
-            console.log("Info Ata ", info_ata)
             setInfoAta(info_ata);
 
-            let dados_ata = await getDadosAta()
-            console.log("Dados Ata ", dados_ata)
-
-
+            await getDadosAta()
         }
 
         const tabelasAta = async ()=>{
@@ -54,6 +50,8 @@ export const VisualizacaoDaAta = () => {
     const getDadosAta = async () =>{
 
         let dados_ata = await getAtas();
+
+        console.log("getDadosAta ", dados_ata)
 
         setStateFormEditarAta({
             comentarios:dados_ata.comentarios,
@@ -151,6 +149,8 @@ export const VisualizacaoDaAta = () => {
         return valor_formatado
     }
 
+
+
     return(
         <div className="col-12 container-visualizacao-da-ata mb-5">
             <div className="col-12 mt-4">
@@ -162,7 +162,12 @@ export const VisualizacaoDaAta = () => {
             </div>
 
             <div id="copiar" className="col-12">
-                <TextoDinamicoSuperior/>
+                {dadosAta && Object.entries(dadosAta).length > 0 &&
+                    <TextoDinamicoSuperior
+                        dadosAta={dadosAta}
+                    />
+                }
+
                 {infoAta &&
                     <>
                     <TabelaDinamica
