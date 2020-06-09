@@ -327,7 +327,7 @@ export const PeriodoFechado = (propriedades) => {
     )
 };
 
-export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, stateFormEditarAta}) => {
+export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, stateFormEditarAta, tabelas}) => {
     const bodyTextarea = () => {
         return (
             <form className="form-group">
@@ -341,11 +341,10 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                             name="tipo_reuniao"
                             className="form-control"
                         >
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
+                            {tabelas && tabelas.tipos_reuniao && tabelas.tipos_reuniao.map((tipo)=>
+                                <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
+                            )}
+
                         </select>
 
                         <label htmlFor="local_reuniao" className="mt-3">Local da reunião</label>
@@ -390,11 +389,9 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                             name="convocacao"
                             className="form-control"
                         >
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
+                            {tabelas && tabelas.convocacoes && tabelas.convocacoes.map((tipo)=>
+                                <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
+                            )}
                         </select>
 
                         <label htmlFor="cargo_presidente_reuniao" className="mt-3">Cargo</label>
@@ -438,11 +435,9 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                                 name="parecer_conselho"
                                 className="form-control"
                             >
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                                <option>5</option>
+                                {tabelas && tabelas.pareceres && tabelas.pareceres.map((tipo)=>
+                                    <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
+                                )}
                             </select>
                         </div>
                     </div>

@@ -7,13 +7,14 @@ import {TabelaTotais} from "./TabelaTotais";
 import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
 import {EditarAta, TextoCopiado} from "../../../utils/Modais";
 import {getInfoAta} from "../../../services/PrestacaoDeContas.service";
+import {getTabelasAtas, atualizarInfoAta} from "../../../services/AtasAssociacao.service";
 
 export const VisualizacaoDaAta = () => {
     const [showEditarAta, setShowEditarAta] = useState(false);
     const [showTextoCopiado, setShowTextoCopiado] = useState(false);
     const [stateFormEditarAta, setStateFormEditarAta] = useState({
-        comentarios:"Valor inicial comentário ata",
-        parecer_conselho:"3",
+        comentarios:"",
+        parecer_conselho:"",
         tipo_reuniao:"",
         local_reuniao:"",
         presidente_reuniao:"",
@@ -25,6 +26,7 @@ export const VisualizacaoDaAta = () => {
     });
 
     const [infoAta, setInfoAta]= useState({})
+    const [tabelas, setTabelas]= useState({})
 
     useEffect(()=>{
         const infoAta = async ()=>{
@@ -32,7 +34,15 @@ export const VisualizacaoDaAta = () => {
             console.log("Info Ata ", info_ata)
             setInfoAta(info_ata)
         }
+
+        const tabelasAta = async ()=>{
+            let tabelas = await getTabelasAtas();
+            console.log("Tabelas Ata ", tabelas)
+            setTabelas(tabelas)
+        }
+
         infoAta();
+        tabelasAta();
     }, [])
 
     const onHandleClose = () => {
@@ -127,6 +137,7 @@ export const VisualizacaoDaAta = () => {
                     onSubmitEditarAta={onSubmitEditarAta}
                     onChange={handleChangeEditarAta}
                     stateFormEditarAta={stateFormEditarAta}
+                    tabelas={tabelas}
                 />
             </section>
 
