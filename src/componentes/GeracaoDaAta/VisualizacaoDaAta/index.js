@@ -171,26 +171,33 @@ export const VisualizacaoDaAta = () => {
 
     const retornaDadosAtaFormatado = (campo) => {
         if (campo === "tipo_reuniao"){
-            let tipo_de_reuniao =  tabelas.tipos_reuniao.find(element => element.id === dadosAta.tipo_reuniao);
+            let tipo_de_reuniao =  tabelas.tipos_reuniao ? tabelas.tipos_reuniao.find(element => element.id === dadosAta.tipo_reuniao) : "";
             return tipo_de_reuniao.nome ? tipo_de_reuniao.nome : "___";
+
         }else if (campo === "data_reuniao"){
             return dataPorExtenso(dadosAta.data_reuniao);
+
         }else if (campo === "data_reuniao_texto_inferior"){
-            let data = "São Paulo, dia "+moment(new Date(dadosAta.data_reuniao), "YYYY-MM-DD").add(1, 'days').format("DD [de] MMMM [de] YYYY");
+            let data = dadosAta.data_reuniao ? "São Paulo, dia "+moment(new Date(dadosAta.data_reuniao), "YYYY-MM-DD").add(1, 'days').format("DD [de] MMMM [de] YYYY") : "";
             return data;
+
         }else if (campo === "periodo.data_inicio_realizacao_despesas") {
-            return moment(new Date(dadosAta.periodo.data_inicio_realizacao_despesas), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY");
+            return dadosAta.periodo.data_inicio_realizacao_despesas ? moment(new Date(dadosAta.periodo.data_inicio_realizacao_despesas), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY") : "";
+
         }else if(campo === "periodo.data_fim_realizacao_despesas"){
-            return moment(new Date(dadosAta.periodo.data_fim_realizacao_despesas), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY");
+            return dadosAta.periodo.data_fim_realizacao_despesas ? moment(new Date(dadosAta.periodo.data_fim_realizacao_despesas), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY") : "";
+
         }else if(campo === "periodo.referencia"){
-            let periodo_referencia = dadosAta.periodo.referencia.split(".");
+            let periodo_referencia = dadosAta.periodo.referencia ? dadosAta.periodo.referencia.split(".") : "";
             let string = periodo_referencia[1]+"° repasse de "+periodo_referencia[0];
             return string;
+
         }else if (campo === "convocacao"){
-            let convocacao =  tabelas.convocacoes.find(element => element.id === dadosAta.convocacao);
+            let convocacao =  tabelas.convocacoes ? tabelas.convocacoes.find(element => element.id === dadosAta.convocacao): "";
             return convocacao.nome ? convocacao.nome : "___";
+
         }else if (campo === "parecer_conselho"){
-            let parecer_conselho =  tabelas.pareceres.find(element => element.id === dadosAta.parecer_conselho);
+            let parecer_conselho =  tabelas.pareceres ? tabelas.pareceres.find(element => element.id === dadosAta.parecer_conselho) : "";
             return parecer_conselho.nome ? parecer_conselho.nome : "___";
         }
 
