@@ -87,6 +87,10 @@ export const VisualizacaoDaAta = () => {
     };
 
     const handleChangeEditarAta = (name, value) => {
+
+        //console.log("handleChangeEditarAta name ", name);
+        console.log("handleChangeEditarAta value ", value);
+
         setStateFormEditarAta({
             ...stateFormEditarAta,
             [name]: value
@@ -172,8 +176,6 @@ export const VisualizacaoDaAta = () => {
         }else if (campo === "data_reuniao"){
             return dataPorExtenso(dadosAta.data_reuniao);
         }else if (campo === "periodo.data_inicio_realizacao_despesas") {
-            //let valor = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
-            //let valor = eval('moment(new Date(dadosAta.'+campo+'), "YYYY-MM-DD").add(1, "days").format("MMMM")');
             return moment(new Date(dadosAta.periodo.data_inicio_realizacao_despesas), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY");
         }else if(campo === "periodo.data_fim_realizacao_despesas"){
             return moment(new Date(dadosAta.periodo.data_fim_realizacao_despesas), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY");
@@ -182,9 +184,7 @@ export const VisualizacaoDaAta = () => {
             let string = periodo_referencia[1]+"° repasse de "+periodo_referencia[0];
             return string;
         }else if (campo === "convocacao"){
-            console.log(tabelas)
             let convocacao =  tabelas.convocacoes.find(element => element.id === dadosAta.convocacao);
-            console.log(convocacao)
             return convocacao.nome ? convocacao.nome : "___";
         }
 
@@ -222,7 +222,12 @@ export const VisualizacaoDaAta = () => {
                     </>
                 }
                 <br/>
-                <TextoDinamicoInferior/>
+                {dadosAta && Object.entries(dadosAta).length > 0 &&
+                    <TextoDinamicoInferior
+                        dadosAta={dadosAta}
+                        retornaDadosAtaFormatado={retornaDadosAtaFormatado}
+                    />
+                }
             </div>
 
             <section>
