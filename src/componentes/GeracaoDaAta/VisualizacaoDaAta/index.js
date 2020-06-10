@@ -34,9 +34,9 @@ export const VisualizacaoDaAta = () => {
         cargo_secretaria_reuniao:"",
     });
 
-    const [infoAta, setInfoAta]= useState({})
-    const [tabelas, setTabelas]= useState({})
-    const [dadosAta, setDadosAta]= useState({})
+    const [infoAta, setInfoAta]= useState({});
+    const [tabelas, setTabelas]= useState({});
+    const [dadosAta, setDadosAta]= useState({});
 
     useEffect(()=>{
         const infoAta = async ()=>{
@@ -44,16 +44,16 @@ export const VisualizacaoDaAta = () => {
             setInfoAta(info_ata);
 
             await getDadosAta()
-        }
+        };
 
         const tabelasAta = async ()=>{
             let tabelas = await getTabelasAtas();
             setTabelas(tabelas)
-        }
+        };
 
         infoAta();
         tabelasAta();
-    }, [])
+    }, []);
 
     const getDadosAta = async () =>{
 
@@ -72,10 +72,10 @@ export const VisualizacaoDaAta = () => {
             convocacao:dados_ata.convocacao,
             cargo_presidente_reuniao:dados_ata.cargo_presidente_reuniao,
             cargo_secretaria_reuniao:dados_ata.cargo_secretaria_reuniao,
-        })
+        });
 
         setDadosAta(dados_ata);
-    }
+    };
 
     const onHandleClose = () => {
         setShowEditarAta(false);
@@ -133,7 +133,7 @@ export const VisualizacaoDaAta = () => {
             "cargo_secretaria_reuniao": stateFormEditarAta.cargo_secretaria_reuniao,
             "parecer_conselho": stateFormEditarAta.parecer_conselho,
             "comentarios": stateFormEditarAta.comentarios,
-        }
+        };
 
         try {
             await atualizarInfoAta(payload);
@@ -159,19 +159,35 @@ export const VisualizacaoDaAta = () => {
         }else {
             let dia_por_extenso = numero.porExtenso(moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD"));
             let mes_por_extenso = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("MMMM");
-            let ano_por_extenso = numero.porExtenso(moment(new Date(data),"DD/MM/YYYY").year())
+            let ano_por_extenso = numero.porExtenso(moment(new Date(data),"DD/MM/YYYY").year());
             let data_por_extenso =  dia_por_extenso+" dias do mes de "+mes_por_extenso+" de "+ano_por_extenso;
             return data_por_extenso;
         }
-    }
+    };
 
     const retornaDadosAtaFormatado = (campo) => {
         if (campo === "tipo_reuniao"){
-            let tipo_de_reuniao =  tabelas.tipos_reuniao.find(element => element.id === dadosAta.tipo_reuniao)
+            let tipo_de_reuniao =  tabelas.tipos_reuniao.find(element => element.id === dadosAta.tipo_reuniao);
             return tipo_de_reuniao.nome ? tipo_de_reuniao.nome : "___";
         }else if (campo === "data_reuniao"){
             return dataPorExtenso(dadosAta.data_reuniao);
+        }else if (campo === "periodo.data_inicio_realizacao_despesas") {
+            //let valor = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
+            //let valor = eval('moment(new Date(dadosAta.'+campo+'), "YYYY-MM-DD").add(1, "days").format("MMMM")');
+            return moment(new Date(dadosAta.periodo.data_inicio_realizacao_despesas), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY");
+        }else if(campo === "periodo.data_fim_realizacao_despesas"){
+            return moment(new Date(dadosAta.periodo.data_fim_realizacao_despesas), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY");
+        }else if(campo === "periodo.referencia"){
+            let periodo_referencia = dadosAta.periodo.referencia.split(".");
+            let string = periodo_referencia[1]+"° repasse de "+periodo_referencia[0];
+            return string;
+        }else if (campo === "convocacao"){
+            console.log(tabelas)
+            let convocacao =  tabelas.convocacoes.find(element => element.id === dadosAta.convocacao);
+            console.log(convocacao)
+            return convocacao.nome ? convocacao.nome : "___";
         }
+
     };
 
     return(
