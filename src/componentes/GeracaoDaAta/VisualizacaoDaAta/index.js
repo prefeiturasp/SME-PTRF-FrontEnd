@@ -88,7 +88,6 @@ export const VisualizacaoDaAta = () => {
 
     const handleChangeEditarAta = (name, value) => {
 
-        //console.log("handleChangeEditarAta name ", name);
         console.log("handleChangeEditarAta value ", value);
 
         setStateFormEditarAta({
@@ -164,14 +163,14 @@ export const VisualizacaoDaAta = () => {
             let dia_por_extenso = numero.porExtenso(moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD"));
             let mes_por_extenso = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("MMMM");
             let ano_por_extenso = numero.porExtenso(moment(new Date(data),"DD/MM/YYYY").year());
-            let data_por_extenso =  dia_por_extenso+" dias do mes de "+mes_por_extenso+" de "+ano_por_extenso;
+            let data_por_extenso =  dia_por_extenso +" dias do mes de "+ mes_por_extenso +" de "+ ano_por_extenso;
             return data_por_extenso;
         }
     };
 
     const retornaDadosAtaFormatado = (campo) => {
         if (campo === "tipo_reuniao"){
-            let tipo_de_reuniao =  tabelas.tipos_reuniao ? tabelas.tipos_reuniao.find(element => element.id === dadosAta.tipo_reuniao) : "";
+            let tipo_de_reuniao = tabelas.tipos_reuniao ? tabelas.tipos_reuniao.find(element => element.id === dadosAta.tipo_reuniao) : "";
             return tipo_de_reuniao.nome ? tipo_de_reuniao.nome : "___";
 
         }else if (campo === "data_reuniao"){

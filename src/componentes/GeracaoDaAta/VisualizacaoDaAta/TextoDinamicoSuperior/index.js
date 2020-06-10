@@ -1,7 +1,7 @@
 import React from "react";
 
 export const TextoDinamicoSuperior = ({dadosAta, retornaDadosAtaFormatado}) => {
-    console.log("TextoDinamicoSuperior ", dadosAta)
+    //console.log("TextoDinamicoSuperior ", dadosAta)
     return(
         <>
             <p>

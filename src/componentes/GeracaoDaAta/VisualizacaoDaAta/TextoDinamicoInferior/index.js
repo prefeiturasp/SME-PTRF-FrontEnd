@@ -32,4 +32,4 @@ export const TextoDinamicoInferior = ({dadosAta, retornaDadosAtaFormatado, infoA
 
         </div>
     )
-}
+};
