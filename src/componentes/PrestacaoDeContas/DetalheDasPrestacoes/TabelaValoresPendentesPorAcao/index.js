@@ -33,7 +33,7 @@ export class TabelaValoresPendentesPorAcao extends Component {
         this._isMounted = false;
     }
 
-    getValorFormatado = (rowValue) => {
+    getValorFormatado = (rowValue, green=false) => {
         const valor = rowValue
             ? new Number(rowValue).toLocaleString('pt-BR', {
                 style: 'currency',
@@ -41,7 +41,7 @@ export class TabelaValoresPendentesPorAcao extends Component {
             })
             : 0
         const valorFormatado = (valor !== 0 && valor.includes('R$')) ? valor : `R$ ${valor}`
-        return (<span>{valorFormatado}</span>)
+        return (<span style={{color: valor === 0 && green ? 'green' : 'black'}}>{valorFormatado}</span>)
     }
 
     getTabelaValoresPendentes = async () => {
@@ -115,12 +115,12 @@ export class TabelaValoresPendentesPorAcao extends Component {
         <ColumnGroup>
         <Row>
             <Column className="detalhe-das-prestacoes-tabela-fundo-azul-claro" footer="Total"/>
-            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={`R$ ${this.state.totais.totalReceitas}`} />
-            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={`R$ ${this.state.totais.totalReceitasConciliadas}`} />
-            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={`R$ ${this.state.totais.totalReceitasNaoConciliadas}`} />
-            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={`R$ ${this.state.totais.totalDespesas}`} />
-            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={`R$ ${this.state.totais.totalDespesasConciliadas}`} />
-            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={`R$ ${this.state.totais.totalDespesasNaoConciliadas}`} />
+            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={this.getValorFormatado(this.state.totais.totalReceitas)} />
+            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={this.getValorFormatado(this.state.totais.totalReceitasConciliadas)} />
+            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={this.getValorFormatado(this.state.totais.totalReceitasNaoConciliadas)} />
+            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={this.getValorFormatado(this.state.totais.totalDespesas)} />
+            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={this.getValorFormatado(this.state.totais.totalDespesasConciliadas)} />
+            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={this.getValorFormatado(this.state.totais.totalDespesasNaoConciliadas)} />
         </Row>
         </ColumnGroup>);
     }
@@ -145,10 +145,10 @@ export class TabelaValoresPendentesPorAcao extends Component {
                             <Column className="detalhe-das-prestacoes-tabela-fundo-azul-claro" field="acao" />
                             <Column field="totalReceitas" body={(row, column) => (this.getValorFormatado(row['totalReceitas']))} />
                             <Column field="conciliadoReceitas" body={(row, column) => (this.getValorFormatado(row['totalReceitasConciliadas']))} />
-                            <Column field="aconciliarReceitas" body={(row, column) => (this.getValorFormatado(row['aconciliarReceitas']))} />
+                            <Column field="aconciliarReceitas" body={(row, column) => (this.getValorFormatado(row['aconciliarReceitas'], true))} />
                             <Column field="totalDespesas" body={(row, column) => (this.getValorFormatado(row['totalDespesas']))} />
                             <Column field="conciliadoDespesas" body={(row, column) => (this.getValorFormatado(row['conciliadoDespesas']))} />
-                            <Column field="aconciliarDespesas" body={(row, column) => (this.getValorFormatado(row['aconciliarDespesas']))} />
+                            <Column field="aconciliarDespesas" body={(row, column) => (this.getValorFormatado(row['aconciliarDespesas'], true))} />
                         </DataTable>
                     </div>
 
