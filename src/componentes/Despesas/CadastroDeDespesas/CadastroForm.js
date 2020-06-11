@@ -490,7 +490,6 @@ export const CadastroForm = ({verbo_http}) => {
                                             />
                                         )}
                                     </Field>
-                                    {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}
                                 </div>
                             </div>
 
@@ -622,6 +621,9 @@ export const CadastroForm = ({verbo_http}) => {
                                     ? <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button>
                                     : null}
                                 <button disabled={btnSubmitDisable || readOnlyBtnAcao} type="button" onClick={()=>onShowSaldoInsuficiente(values, errors, {resetForm})} className="btn btn-success mt-2">Salvar</button>
+                            </div>
+                            <div className="d-flex  justify-content-end">
+                                {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}
                             </div>
                             <section>
                                 <SaldoInsuficiente saldosInsuficientesDaAcao={saldosInsuficientesDaAcao} show={showSaldoInsuficiente} handleClose={onHandleClose} onSaldoInsuficienteTrue={()=>onSubmit(values, {resetForm})}/>
