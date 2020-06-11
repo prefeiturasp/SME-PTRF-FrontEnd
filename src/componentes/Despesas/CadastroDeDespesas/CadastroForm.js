@@ -241,7 +241,7 @@ export const CadastroForm = ({verbo_http}) => {
         var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio
 
         if (round(var_valor_recursos_acoes,2) !== round(var_valor_total_dos_rateios,2)) {
-            errors.valor_recusos_acoes = 'O total das classificações deve corresponder ao valor total da nota';
+            errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa.';
         }
         return errors;
     };
@@ -490,6 +490,7 @@ export const CadastroForm = ({verbo_http}) => {
                                             />
                                         )}
                                     </Field>
+                                    {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> Soma dos rateios não correspondem ao Valor do ptrf.</span>}
                                 </div>
                             </div>
 
@@ -557,6 +558,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                             especificacoes_custeio={especificacoes_custeio}
                                                             verboHttp={despesaContext.verboHttp}
                                                             disabled={readOnlyCampos}
+                                                            errors={errors}
                                                         />
                                                     ):
                                                     rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -568,6 +570,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                             especificaoes_capital={especificaoes_capital}
                                                             verboHttp={despesaContext.verboHttp}
                                                             disabled={readOnlyCampos}
+                                                            errors={errors}
                                                         />
                                                     ): null}
 
@@ -622,7 +625,7 @@ export const CadastroForm = ({verbo_http}) => {
                                     : null}
                                 <button disabled={btnSubmitDisable || readOnlyBtnAcao} type="button" onClick={()=>onShowSaldoInsuficiente(values, errors, {resetForm})} className="btn btn-success mt-2">Salvar</button>
                             </div>
-                            <div className="d-flex  justify-content-end">
+                            <div className="d-flex justify-content-end">
                                 {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}
                             </div>
                             <section>
