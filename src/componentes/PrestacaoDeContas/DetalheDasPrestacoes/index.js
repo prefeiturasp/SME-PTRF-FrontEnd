@@ -129,7 +129,7 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const conciliarReceitas = async (uuid_receita) => {
-        await getConciliarReceita(uuid_receita)
+        await getConciliarReceita(uuid_receita, localStorage.getItem('uuidPrestacaoConta'))
     }
 
     const desconciliarReceitas = async (uuid_receita) => {
@@ -137,7 +137,7 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const conciliarDespesas = async (uuid_receita) => {
-        await getConciliarDespesa(uuid_receita)
+        await getConciliarDespesa(uuid_receita, localStorage.getItem('uuidPrestacaoConta'))
     }
 
     const desconciliarDespesas = async (uuid_receita) => {
