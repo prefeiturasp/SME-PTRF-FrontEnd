@@ -66,7 +66,7 @@ export const PrestacaoDeContas = () => {
         const carregaPeriodos = async () => {
             let periodos = await getPeriodosNaoFuturos();
             setPeriodosAssociacao(periodos);
-        }
+        };
 
         carregaTabelas();
         carregaPeriodos();
@@ -84,7 +84,7 @@ export const PrestacaoDeContas = () => {
             setStatusPrestacaoConta(undefined)
             localStorage.setItem("uuidPrestacaoConta", undefined)
         }
-    }, [periodoConta])
+    }, [periodoConta]);
 
     const getPeriodoConta = () => {
         if (localStorage.getItem('periodoConta')) {
@@ -117,7 +117,6 @@ export const PrestacaoDeContas = () => {
         let data_preenchimento;
         try {
             data_preenchimento = await getDataPreenchimentoAta(status.uuid);
-            console.log("Data preenchimento ", data_preenchimento);
             localStorage.setItem("uuidAta", data_preenchimento.uuid);
             setCorBoxPrestacaoDeContasPorPeriodo("verde");
             setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
