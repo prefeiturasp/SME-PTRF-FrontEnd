@@ -158,8 +158,8 @@ export const VisualizacaoDaAta = () => {
             return "___ dias do mês de ___ de ___"
         }else {
             let dia_por_extenso = numero.porExtenso(moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD"));
-            let mes_por_extenso = moment(new Date(data), "YYYY-MM-DD").format("MMMM");
-            let ano_por_extenso = numero.porExtenso(moment(new Date(data),"DD/MM/YYYY").year());
+            let mes_por_extenso = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("MMMM");
+            let ano_por_extenso = numero.porExtenso(moment(new Date(data),"DD/MM/YYYY").add(1, 'days').year());
             let data_por_extenso =  dia_por_extenso +" dias do mes de "+ mes_por_extenso +" de "+ ano_por_extenso;
             return data_por_extenso;
         }
@@ -194,7 +194,14 @@ export const VisualizacaoDaAta = () => {
 
         }else if (campo === "parecer_conselho"){
             let parecer_conselho =  tabelas.pareceres ? tabelas.pareceres.find(element => element.id === dadosAta.parecer_conselho) : "";
-            return parecer_conselho.nome ? parecer_conselho.nome : "___";
+            if (parecer_conselho.id === "APROVADA"){
+                return "Os membros do Conselho Fiscal, à vista dos registros contábeis e verificando nos documentos apresentados a exatidão das despesas realizadas, julgaram exata a presente prestação de contas considerando-a em condições de ser aprovada e emitindo parecer favorável à sua aprovação."
+            }else if (parecer_conselho.id === "REJEITADA"){
+                return "Os membros do Conselho Fiscal, à vista dos registros contábeis e verificando nos documentos apresentados,  não consideram a presente prestação de contas em condições de ser aprovada emitindo parecer contrário à sua aprovação."
+            }else if (parecer_conselho.id === "RESSALVAS"){
+                return "Os membros do Conselho Fiscal, à vista dos registros contábeis e verificando nos documentos apresentados,  consideram a presente prestação de contas em condições de ser aprovada com ressalvas emitindo parecer favorável à sua aprovação com ressalvas."
+            }
+
         }
 
     };
