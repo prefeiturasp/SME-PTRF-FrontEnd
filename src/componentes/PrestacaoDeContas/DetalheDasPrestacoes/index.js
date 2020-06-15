@@ -3,6 +3,7 @@ import {TopoComBotoes} from "./TopoComBotoes";
 import {SelectAcaoLancamento} from "./SelectAcaoLancamento";
 import {TabelaDeLancamentosDespesas} from "./TabelaDeLancamentosDespesas";
 import {TabelaDeLancamentosReceitas} from "./TabelaDeLancamentosReceitas";
+import {TabelaValoresPendentesPorAcao} from "./TabelaValoresPendentesPorAcao";
 import {Justificativa} from "./Justivicativa";
 import {getTabelasReceita} from "../../../services/Receitas.service";
 import {
@@ -128,7 +129,7 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const conciliarReceitas = async (uuid_receita) => {
-        await getConciliarReceita(uuid_receita)
+        await getConciliarReceita(uuid_receita, localStorage.getItem('uuidPrestacaoConta'))
     }
 
     const desconciliarReceitas = async (uuid_receita) => {
@@ -136,7 +137,7 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const conciliarDespesas = async (uuid_receita) => {
-        await getConciliarDespesa(uuid_receita)
+        await getConciliarDespesa(uuid_receita, localStorage.getItem('uuidPrestacaoConta'))
     }
 
     const desconciliarDespesas = async (uuid_receita) => {
@@ -270,13 +271,13 @@ export const DetalheDasPrestacoes = () => {
                     onHandleClose={onHandleClose}
                 />
 
+                <TabelaValoresPendentesPorAcao/>
+
                 <SelectAcaoLancamento
                     acaoLancamento={acaoLancamento}
                     handleChangeSelectAcoes={handleChangeSelectAcoes}
                     acoesAssociacao={acoesAssociacao}
                 />
-
-                {/*<TabelaValoresPendentesPorAcao/>*/}
 
                 {!receitasNaoConferidas.length > 0 && !receitasConferidas.length > 0 && acaoLancamento.lancamento === "receitas-lancadas" &&
                 <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>

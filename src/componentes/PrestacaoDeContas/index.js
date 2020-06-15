@@ -18,7 +18,11 @@ import {
 } from "../../services/PrestacaoDeContas.service";
 import {exibeDateTimePT_BR, exibeDateTimePT_BR_Ata} from "../../utils/ValidacoesAdicionaisFormularios";
 import {ReverConciliacao} from "../../utils/Modais";
+
 import {BoxPrestacaoDeContasPorPeriodo} from "../GeracaoDaAta/BoxPrestacaoDeContasPorPeriodo";
+
+import RelacaoDeBens from "./RelacaoDeBens";
+
 
 export const PrestacaoDeContas = () => {
 
@@ -238,8 +242,12 @@ export const PrestacaoDeContas = () => {
                     handleClickBotaoConciliacao={handleClickBotaoConciliacao}
                 />
             </div>
+            
             {demonstrativoFinanceiro === true && statusPrestacaoConta !== undefined && (
-                <DemonstrativoFinanceiro/>
+                <>
+                    <DemonstrativoFinanceiro periodoConta={periodoConta}/>
+                    <RelacaoDeBens periodoConta={periodoConta}/>
+                </>
             )}
 
             {boxPrestacaoDeContasPorPeriodo === true && statusPrestacaoConta !== undefined && (

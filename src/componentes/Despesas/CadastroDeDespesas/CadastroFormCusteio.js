@@ -4,7 +4,7 @@ import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const CadastroFormCusteio = (propriedades) => {
 
-    const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled} = propriedades
+    const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors} = propriedades
 
     return (
         <>
@@ -121,6 +121,7 @@ export const CadastroFormCusteio = (propriedades) => {
                                 onChangeEvent={formikProps.handleChange}
                                 disabled={disabled}
                             />
+                            {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> Soma rateios inconsistente.</span>}
                         </div>
                     </div>
                 </div>
