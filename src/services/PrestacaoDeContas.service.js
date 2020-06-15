@@ -116,6 +116,17 @@ export const getSalvarPrestacaoDeConta = async (
   ).data
 }
 
+export const getDataPreenchimentoAta = async (uuidPrestacaoDeContas) => {
+    return (await api.get(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/ata/`,authHeader)).data
+}
+
+export const getIniciarAta = async (uuidPrestacaoDeContas) => {
+    return (await api.post(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/iniciar-ata/`,authHeader)).data
+}
+
+export const getInfoAta = async () => {
+    return (await api.get(`/api/prestacoes-contas/${localStorage.getItem("uuidPrestacaoConta")}/info-para-ata/`,authHeader)).data
+}
 export const getConcluirPrestacaoDeConta = async (
   uuidPrestacaoDeContas,
   payload

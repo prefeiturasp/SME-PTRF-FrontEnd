@@ -17,7 +17,7 @@ export class DemonstrativoFinanceiro extends Component {
         this._isMounted = true;
         this.buscaAcoes()
     }
-    
+
     componentDidUpdate(prevProps) {
         if (prevProps.periodoConta !== this.props.periodoConta) {
             this.buscaAcoes()
@@ -33,34 +33,34 @@ export class DemonstrativoFinanceiro extends Component {
         const conta_uuid = this.props.periodoConta.conta;
         const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
         const result = await getAcoes(associacao_uuid, periodo_uuid);
-        
+
         Promise.all(result.info_acoes.map(async (info) => {
             const msg = await getDemonstrativoInfo(info.acao_associacao_uuid, conta_uuid, periodo_uuid);
             return {
-                nomeAcao: info.acao_associacao_nome, 
+                nomeAcao: info.acao_associacao_nome,
                 acaoUuid: info.acao_associacao_uuid,
-                receitaDeclarada: info.receitas_no_periodo, 
+                receitaDeclarada: info.receitas_no_periodo,
                 despesaDeclarada: info.despesas_no_periodo,
                 mensagem: msg}
         })).then((result) => {
             if(this._isMounted) {
                 this.setState({estado: result});
             }
-            
+
         });
     }
 
     gerarPrevia = async (acaoUuid) => {
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo
         const conta_uuid = JSON.parse(localStorage.getItem('periodoConta')).conta
-        
+
         await previa(acaoUuid, conta_uuid, periodo_uuid);
     }
 
     gerarDocumentoFinal = async (acaoUuid) => {
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo
         const conta_uuid = JSON.parse(localStorage.getItem('periodoConta')).conta
-        
+
         await documentoFinal(acaoUuid, conta_uuid, periodo_uuid);
         await this.buscaAcoes();
     }
@@ -127,13 +127,13 @@ export class DemonstrativoFinanceiro extends Component {
                             header="Nome da ação"
                             body={this.getNomeAcao}
                         />
-                        <Column 
-                            field="receitaDeclarada" 
-                            header="Receita declarada" 
+                        <Column
+                            field="receitaDeclarada"
+                            header="Receita declarada"
                             body={this.valorReceita}/>
-                        <Column 
-                            field="despesaDeclarada" 
-                            header="Despesa declarada" 
+                        <Column
+                            field="despesaDeclarada"
+                            header="Despesa declarada"
                             body={this.valorDespesa}/>
                         <Column
                             field='botoes'

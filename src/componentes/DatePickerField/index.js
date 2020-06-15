@@ -10,10 +10,13 @@ registerLocale("pt", pt );
 
 
 export const DatePickerField = ({ name, about, value, onChange, disabled }) => {
+
     return (
         <DatePicker
             disabled={disabled}
-            selected={(value && new Date(moment(value).format('MMMM D, YYYY'))) || null}
+            //selected={(value && new Date(moment(value).format('MMMM D, YYYY'))) || null}
+            //selected={(value && new Date(value)) || null}
+            selected={(value && new Date(moment(value))) || null}
             onChange={val => {
                 onChange(name, val);
             }}

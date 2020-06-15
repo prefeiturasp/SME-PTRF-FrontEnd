@@ -72,8 +72,6 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
     }
   }
 
-
-
   // Quando é Alteração
   if (typeof values.associacao === "object"){
     values.associacao = localStorage.getItem(ASSOCIACAO_UUID)
@@ -195,6 +193,15 @@ export const exibeDateTimePT_BR = (data) => {
     data = moment(new Date(), "YYYY-MM-DD").format("DD/MM/YYYY [às] HH:mm:ss");
   }else {
     data =  moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY [às] HH:mm:ss");
+  }
+  return data
+}
+
+export const exibeDateTimePT_BR_Ata = (data) => {
+  if (data === 'None'){
+    data = moment(new Date(), "YYYY-MM-DD").format("DD/MM/YYYY [às] HH:mm");
+  }else {
+    data =  moment(new Date(data), "YYYY-MM-DD").format("DD/MM/YYYY [às] HH:mm");
   }
   return data
 }
