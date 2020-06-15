@@ -490,7 +490,7 @@ export const CadastroForm = ({verbo_http}) => {
                                             />
                                         )}
                                     </Field>
-                                    {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> Soma dos rateios não correspondem ao Valor do ptrf.</span>}
+                                    {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                                 </div>
                             </div>
 

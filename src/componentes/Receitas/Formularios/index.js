@@ -10,11 +10,13 @@ import moment from "moment";
 import {useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../services/auth.service';
 import {DeletarModalReceitas, CancelarModalReceitas, PeriodoFechado, ErroGeral} from "../../../utils/Modais";
+import Loading from "../../../utils/Loading";
 
 export const ReceitaForm = props => {
 
     let {origem} = useParams();
     let {uuid} = useParams();
+    const [loading, setLoading] = useState(true)
 
     const tabelaInicial = {
         tipos_receita: [],
@@ -82,6 +84,7 @@ export const ReceitaForm = props => {
         };
         carregaTabelas();
         buscaReceita();
+        setLoading(false);
     }, [])
 
     const onSubmit = async (values) => {
@@ -92,13 +95,14 @@ export const ReceitaForm = props => {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID)
         }
-
+        setLoading(true);
         if (uuid) {
             await atualizar(uuid, payload);
         } else {
             await cadastrar(payload);
         }
         getPath();
+        setLoading(false);
     }
 
     const cadastrar = async (payload) => {
