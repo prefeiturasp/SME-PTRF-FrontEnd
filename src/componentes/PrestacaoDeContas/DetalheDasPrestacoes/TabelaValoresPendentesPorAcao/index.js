@@ -45,7 +45,7 @@ export class TabelaValoresPendentesPorAcao extends Component {
     }
 
     getTabelaValoresPendentes = async () => {
-        tabelaValoresPendentes(this.state.periodo).then((result) => {
+        tabelaValoresPendentes(localStorage.getItem('uuidPrestacaoConta')).then((result) => {
             const valoresPendentes = result.map(tabelaInfo => (
                 {
                     acao: tabelaInfo.acao_associacao_nome, 
@@ -144,7 +144,7 @@ export class TabelaValoresPendentesPorAcao extends Component {
                         >
                             <Column className="detalhe-das-prestacoes-tabela-fundo-azul-claro" field="acao" />
                             <Column field="totalReceitas" body={(row, column) => (this.getValorFormatado(row['totalReceitas']))} />
-                            <Column field="conciliadoReceitas" body={(row, column) => (this.getValorFormatado(row['totalReceitasConciliadas']))} />
+                            <Column field="conciliadoReceitas" body={(row, column) => (this.getValorFormatado(row['conciliadoReceitas']))} />
                             <Column field="aconciliarReceitas" body={(row, column) => (this.getValorFormatado(row['aconciliarReceitas'], true))} />
                             <Column field="totalDespesas" body={(row, column) => (this.getValorFormatado(row['totalDespesas']))} />
                             <Column field="conciliadoDespesas" body={(row, column) => (this.getValorFormatado(row['conciliadoDespesas']))} />
