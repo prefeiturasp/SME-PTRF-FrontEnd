@@ -11,28 +11,12 @@ registerLocale("pt", pt );
 
 export const DatePickerField = ({ name, about, value, onChange, disabled }) => {
 
-    console.log("DatePickerField value: " + value);
-    console.log("DatePickerField new Date: " + new Date(value))
-    console.log("DatePickerField moment: " + new Date(moment(value)))
-    //console.log("DatePickerField moment: " + new Date(moment(value).format('MMMM D, YYYY')))
-
-    var myDate = new Date(value);
-
-    //add a day to the date
-    myDate.setDate(myDate.getDate());
-
-    //console.log("DatePickerField AMANAHA: " + value);
-
-
     return (
         <DatePicker
             disabled={disabled}
             //selected={(value && new Date(moment(value).format('MMMM D, YYYY'))) || null}
             //selected={(value && new Date(value)) || null}
-
             selected={(value && new Date(moment(value))) || null}
-
-
             onChange={val => {
                 onChange(name, val);
             }}
