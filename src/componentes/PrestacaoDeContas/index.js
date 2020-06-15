@@ -116,7 +116,6 @@ export const PrestacaoDeContas = () => {
         let data_preenchimento;
         try {
             data_preenchimento = await getDataPreenchimentoAta(status.uuid);
-            console.log("Data preenchimento ", data_preenchimento);
             localStorage.setItem("uuidAta", data_preenchimento.uuid);
             setCorBoxPrestacaoDeContasPorPeriodo("verde");
             setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
