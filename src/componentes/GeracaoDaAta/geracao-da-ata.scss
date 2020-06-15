@@ -1,0 +1,57 @@
+.titulo-box-prestacao-de-contas-por-periodo{
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.status-data-verde{
+  color: rgba(19, 139, 0, 0.97);
+}
+.status-data-vermelho{
+  color: #B40C02;
+}
+
+.container-visualizacao-da-ata{
+  margin-top: 69px;
+
+  .titulo-visualizacao-da-ata{
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .titulo-tabela-acoes{
+    color: #00585E;
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .tabela-acoes{
+    max-width: 100%;
+    .tr-titulo{
+      background-color: #E0F7F9;
+    }
+    td{
+      width: calc(100% / 4) !important;
+    }
+  }
+
+  .texto-despesas-titulo{
+    font-size: 14px;
+    font-weight: bold;
+
+    .texto-despesas-valor{
+      color: #00585e;
+    }
+
+  }
+
+  .tabela-totais{
+    .tr-titulo{
+      background-color: #2B7D83;
+      color: #fff;
+    }
+
+    td{
+      width: calc(100% / 4) !important;
+    }
+  }
+}

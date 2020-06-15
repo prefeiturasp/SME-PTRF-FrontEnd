@@ -9,17 +9,9 @@ const authHeader = {
     }
 }
 
-export const getAcoes = async (associacao_uuid, periodo_uuid) => {
-    return (await api.get(`/api/demonstrativo-financeiro/acoes/?associacao_uuid=${associacao_uuid}&periodo_uuid=${periodo_uuid}`, authHeader)).data
-}
-
-export const getDemonstrativoInfo = async (acao_associacao_uuid, conta_associacao_uuid, periodo_uuid) => {
-    return (await api.get(`/api/demonstrativo-financeiro/demonstrativo-info/?acao-associacao=${acao_associacao_uuid}&conta-associacao=${conta_associacao_uuid}&periodo=${periodo_uuid}`, authHeader)).data
-}
-
-export const previa = async (acao_associacao, conta_associacao, periodo) => {
+export const previa = async (conta_associacao, periodo) => {
     return api
-            .get(`/api/demonstrativo-financeiro/previa/?acao-associacao=${acao_associacao}&conta-associacao=${conta_associacao}&periodo=${periodo}`, {
+            .get(`/api/relacao-bens/previa/?conta-associacao=${conta_associacao}&periodo=${periodo}`, {
                 responseType: 'blob',
                 timeout: 30000,
               })
@@ -27,7 +19,7 @@ export const previa = async (acao_associacao, conta_associacao, periodo) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'demonstrativo_financeiro.xlsx');
+                link.setAttribute('download', 'relacao-bens.xlsx');
                 document.body.appendChild(link);
                 link.click();
             }).catch(error => {
@@ -35,9 +27,9 @@ export const previa = async (acao_associacao, conta_associacao, periodo) => {
             });
 }
 
-export const documentoFinal = async (acao_associacao, conta_associacao, periodo) => {
+export const documentoFinal = async (conta_associacao, periodo) => {
     return api
-            .get(`/api/demonstrativo-financeiro/documento-final/?acao-associacao=${acao_associacao}&conta-associacao=${conta_associacao}&periodo=${periodo}`, {
+            .get(`/api/relacao-bens/documento-final/?conta-associacao=${conta_associacao}&periodo=${periodo}`, {
                 responseType: 'blob',
                 timeout: 30000,
               })
@@ -45,10 +37,14 @@ export const documentoFinal = async (acao_associacao, conta_associacao, periodo)
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'demonstrativo_financeiro.xlsx');
+                link.setAttribute('download', 'relacao-bens.xlsx');
                 document.body.appendChild(link);
                 link.click();
             }).catch(error => {
                 return error.response;
             });
+}
+
+export const getRelacaoBensInfo = async (conta_associacao, periodo) => {
+    return (await api.get(`/api/relacao-bens/relacao-bens-info/?conta-associacao=${conta_associacao}&periodo=${periodo}`, authHeader)).data
 }

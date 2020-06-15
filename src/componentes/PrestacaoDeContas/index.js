@@ -10,12 +10,19 @@ import {DataUltimaConciliacao} from "./DataUltimaConciliacao";
 import {getTabelasReceita} from "../../services/Receitas.service";
 import {
     getPeriodos,
+    getPeriodosNaoFuturos,
     getStatus,
     getIniciarPrestacaoDeContas,
-    getReabrirPeriodo
+    getReabrirPeriodo,
+    getDataPreenchimentoAta,
+    getIniciarAta,
 } from "../../services/PrestacaoDeContas.service";
-import {exibeDateTimePT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
+import {exibeDateTimePT_BR, exibeDateTimePT_BR_Ata} from "../../utils/ValidacoesAdicionaisFormularios";
 import {ReverConciliacao} from "../../utils/Modais";
+
+import {BoxPrestacaoDeContasPorPeriodo} from "../GeracaoDaAta/BoxPrestacaoDeContasPorPeriodo";
+
+import RelacaoDeBens from "./RelacaoDeBens";
 
 
 export const PrestacaoDeContas = () => {
@@ -31,12 +38,17 @@ export const PrestacaoDeContas = () => {
     const [botaoConciliacaoReadonly, setBotaoConciliacaoReadonly] = useState(true);
     const [linkBotaoConciliacao, setLinkBotaoConciliacao] = useState('');
     const [demonstrativoFinanceiro, setDemonstrativoFinanceiro] = useState(false);
+    const [boxPrestacaoDeContasPorPeriodo, setBoxPrestacaoDeContasPorPeriodo] = useState(false);
 
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
 
     const [show, setShow] = useState(false);
     const [textareaModalReverConciliacao, setTextareaModalReverConciliacao] = useState("");
+
+    const [corBoxPrestacaoDeContasPorPeriodo, setCorBoxPrestacaoDeContasPorPeriodo] = useState("");
+    const [textoBoxPrestacaoDeContasPorPeriodo, setTextoBoxPrestacaoDeContasPorPeriodo] = useState("");
+    const [dataBoxPrestacaoDeContasPorPeriodo, setDataBoxPrestacaoDeContasPorPeriodo] = useState("");
 
     useEffect(() => {
         getPeriodoConta();
@@ -52,9 +64,9 @@ export const PrestacaoDeContas = () => {
         };
 
         const carregaPeriodos = async () => {
-            let periodos = await getPeriodos();
+            let periodos = await getPeriodosNaoFuturos();
             setPeriodosAssociacao(periodos);
-        }
+        };
 
         carregaTabelas();
         carregaPeriodos();
@@ -64,15 +76,15 @@ export const PrestacaoDeContas = () => {
         localStorage.setItem('periodoConta', JSON.stringify(periodoConta))
         if (periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== "") {
             setExibeMensagem(false)
-            //setDemonstrativoFinanceiro(true)
             getStatusPrestacaoDeConta(periodoConta.periodo, periodoConta.conta)
         } else {
             setExibeMensagem(true)
-            setDemonstrativoFinanceiro(false)
+            setDemonstrativoFinanceiro(false);
+            setBoxPrestacaoDeContasPorPeriodo(false);
             setStatusPrestacaoConta(undefined)
             localStorage.setItem("uuidPrestacaoConta", undefined)
         }
-    }, [periodoConta])
+    }, [periodoConta]);
 
     const getPeriodoConta = () => {
         if (localStorage.getItem('periodoConta')) {
@@ -92,12 +104,30 @@ export const PrestacaoDeContas = () => {
         setConfDataUltimaConciliacao(status);
         setBotaoConciliacaoReadonly(false);
 
-        if (localStorage.getItem('uuidPrestacaoConta') !== 'undefined' 
-            && localStorage.getItem('uuidPrestacaoConta') !== undefined 
-            && (status !== undefined ? (status.status === null || status.conciliado) : false)) {
-            setDemonstrativoFinanceiro(true)
+        if (localStorage.getItem('uuidPrestacaoConta') !== 'undefined' && localStorage.getItem('uuidPrestacaoConta') !== undefined && (status !== undefined ? (status.status === null || status.conciliado) : false)) {
+            setDemonstrativoFinanceiro(true);
+            setBoxPrestacaoDeContasPorPeriodo(true);
         } else {
-            setDemonstrativoFinanceiro(false)
+            setDemonstrativoFinanceiro(false);
+            setBoxPrestacaoDeContasPorPeriodo(false);
+        }
+    }
+
+    const setConfBoxPrestacaoDeContasPorPeriodo = async (status)=>{
+        let data_preenchimento;
+        try {
+            data_preenchimento = await getDataPreenchimentoAta(status.uuid);
+            localStorage.setItem("uuidAta", data_preenchimento.uuid);
+            setCorBoxPrestacaoDeContasPorPeriodo("verde");
+            setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
+            setDataBoxPrestacaoDeContasPorPeriodo("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
+
+        }catch (e) {
+            data_preenchimento = await getIniciarAta(status.uuid);
+            localStorage.setItem("uuidAta", data_preenchimento.uuid);
+            setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
+            setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
+            setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
         }
     }
 
@@ -105,9 +135,13 @@ export const PrestacaoDeContas = () => {
         if (status.status === "FECHADO") {
             setCorBarraDeStatusPrestacaoDeContas('verde');
             setTextoBarraDeStatusPrestacaoDeContas("A geração dos documentos da conciliação desse período foi efetuada, clique no botão “Rever conciliação” para fazer alterações")
+            setConfBoxPrestacaoDeContasPorPeriodo(status)
+
         } else if (status.status === "ABERTO" && status.conciliado) {
             setCorBarraDeStatusPrestacaoDeContas('amarelo')
             setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período está aberta.")
+            setConfBoxPrestacaoDeContasPorPeriodo(status)
+
         } else if (status.status === null || !status.conciliado) {
             setCorBarraDeStatusPrestacaoDeContas('vermelho')
             setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período ainda não foi iniciada.")
@@ -181,6 +215,7 @@ export const PrestacaoDeContas = () => {
         window.location.assign(linkBotaoConciliacao)
     }
 
+
     return (
         <>
             <BarraDeStatusPrestacaoDeContas
@@ -207,9 +242,22 @@ export const PrestacaoDeContas = () => {
                     handleClickBotaoConciliacao={handleClickBotaoConciliacao}
                 />
             </div>
+            
             {demonstrativoFinanceiro === true && statusPrestacaoConta !== undefined && (
-                <DemonstrativoFinanceiro/>
+                <>
+                    <DemonstrativoFinanceiro periodoConta={periodoConta}/>
+                    <RelacaoDeBens periodoConta={periodoConta}/>
+                </>
             )}
+
+            {boxPrestacaoDeContasPorPeriodo === true && statusPrestacaoConta !== undefined && (
+                <BoxPrestacaoDeContasPorPeriodo
+                    corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
+                    textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
+                    dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
+                />
+            )}
+
             {exibeMensagem && (
                 <MsgImgCentralizada
                     texto='Selecione um período e uma conta acima para visualizar as ações'
