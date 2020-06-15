@@ -117,10 +117,10 @@ export class TabelaValoresPendentesPorAcao extends Component {
             <Column className="detalhe-das-prestacoes-tabela-fundo-azul-claro" footer="Total"/>
             <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={this.getValorFormatado(this.state.totais.totalReceitas)} />
             <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={this.getValorFormatado(this.state.totais.totalReceitasConciliadas)} />
-            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={this.getValorFormatado(this.state.totais.totalReceitasNaoConciliadas)} />
+            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={this.getValorFormatado(this.state.totais.totalReceitasNaoConciliadas, true)} />
             <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={this.getValorFormatado(this.state.totais.totalDespesas)} />
             <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={this.getValorFormatado(this.state.totais.totalDespesasConciliadas)} />
-            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={this.getValorFormatado(this.state.totais.totalDespesasNaoConciliadas)} />
+            <Column className='detalhe-das-prestacoes-tabela-th-fundo-branco fonte-normal' footer={this.getValorFormatado(this.state.totais.totalDespesasNaoConciliadas, true)} />
         </Row>
         </ColumnGroup>);
     }
