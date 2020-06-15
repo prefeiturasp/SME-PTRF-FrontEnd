@@ -65,7 +65,7 @@ export const PrestacaoDeContas = () => {
         const carregaPeriodos = async () => {
             let periodos = await getPeriodos();
             setPeriodosAssociacao(periodos);
-        }
+        };
 
         carregaTabelas();
         carregaPeriodos();
@@ -83,7 +83,7 @@ export const PrestacaoDeContas = () => {
             setStatusPrestacaoConta(undefined)
             localStorage.setItem("uuidPrestacaoConta", undefined)
         }
-    }, [periodoConta])
+    }, [periodoConta]);
 
     const getPeriodoConta = () => {
         if (localStorage.getItem('periodoConta')) {
