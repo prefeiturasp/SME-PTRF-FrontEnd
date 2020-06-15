@@ -136,7 +136,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 onChangeEvent={formikProps.handleChange}
                                 disabled={disabled}
                             />
-                            {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> Soma rateios inconsistente.</span>}
+                            {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                         </div>
                     </div>
                 </div>
