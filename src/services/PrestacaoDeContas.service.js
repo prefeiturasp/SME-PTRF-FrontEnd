@@ -12,6 +12,10 @@ export const getPeriodos = async () => {
   return (await api.get(`/api/periodos/lookup/`, authHeader)).data
 }
 
+export const getPeriodosNaoFuturos = async () => {
+  return(await api.get('/api/periodos/lookup-until-now/', authHeader)).data
+}
+
 export const getStatus = async (periodo_uuid, conta_uuid) => {
   return (
     await api.get(

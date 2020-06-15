@@ -10,6 +10,7 @@ import {DataUltimaConciliacao} from "./DataUltimaConciliacao";
 import {getTabelasReceita} from "../../services/Receitas.service";
 import {
     getPeriodos,
+    getPeriodosNaoFuturos,
     getStatus,
     getIniciarPrestacaoDeContas,
     getReabrirPeriodo,
@@ -63,7 +64,7 @@ export const PrestacaoDeContas = () => {
         };
 
         const carregaPeriodos = async () => {
-            let periodos = await getPeriodos();
+            let periodos = await getPeriodosNaoFuturos();
             setPeriodosAssociacao(periodos);
         }
 
