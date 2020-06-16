@@ -160,7 +160,7 @@ export const VisualizacaoDaAta = () => {
             let dia_por_extenso = numero.porExtenso(moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD"));
             let mes_por_extenso = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("MMMM");
             let ano_por_extenso = numero.porExtenso(moment(new Date(data),"DD/MM/YYYY").add(1, 'days').year());
-            let data_por_extenso =  dia_por_extenso +" dias do mes de "+ mes_por_extenso +" de "+ ano_por_extenso;
+            let data_por_extenso =  dia_por_extenso +" dias do mês de "+ mes_por_extenso +" de "+ ano_por_extenso;
             return data_por_extenso;
         }
     };
