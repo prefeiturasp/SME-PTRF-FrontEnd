@@ -55,7 +55,7 @@ export default class RelacaoDeBens extends Component {
                 <p className="relacao-bens-title">Relação de Bens adquiridos ou produzidos por período</p>
                 <article>
                     <div className="info">
-                    <p className="title"><strong>Bens adquiridos ou produzidos</strong></p>
+                    <p className="fonte-14 mb-1"><strong>Bens adquiridos ou produzidos</strong></p>
                     <p className={mensagem.includes('pendente') ? "documento-pendente" :"documento-gerado"}>{mensagem}</p>
                     </div>
                     <div className="actions">
