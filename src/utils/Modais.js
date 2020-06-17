@@ -2,8 +2,11 @@ import React from "react";
 import {
     ModalBootstrap,
     ModalBootstrapReverConciliacao,
-    ModalBootstrapSaldoInsuficiente
+    ModalBootstrapSaldoInsuficiente,
+    ModalBootstrapSaldoInsuficienteDaconta,
+    ModalBootstrapEditarAta
 } from "../componentes/ModalBootstrap";
+import {DatePickerField} from "../componentes/DatePickerField";
 
 export const AvisoCapitalModal = (propriedades) => {
     return (
@@ -17,7 +20,7 @@ capital é a mesma utilizada no Sistema de Bens Patrimoniais Móveis (SBPM) da P
             primeiroBotaoTexto="Estou Ciente"
         />
     )
-}
+};
 
 export const CancelarModal = (propriedades) => {
     return (
@@ -32,7 +35,7 @@ export const CancelarModal = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const CancelarModalReceitas = (propriedades) => {
     return (
@@ -47,7 +50,7 @@ export const CancelarModalReceitas = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const DeletarModal = (propriedades) => {
     return (
@@ -62,7 +65,7 @@ export const DeletarModal = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 export const DeletarModalReceitas = (propriedades) => {
     return (
         <ModalBootstrap
@@ -76,7 +79,7 @@ export const DeletarModalReceitas = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const CancelarModalAssociacao = (propriedades) => {
     return (
@@ -91,7 +94,7 @@ export const CancelarModalAssociacao = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const SalvarModalAssociacao = (propriedades) => {
     return (
@@ -104,7 +107,7 @@ export const SalvarModalAssociacao = (propriedades) => {
             primeiroBotaoTexto="OK"
         />
     )
-}
+};
 
 export const RedirectModalTabelaLancamentos = (propriedades) => {
     return (
@@ -121,7 +124,7 @@ export const RedirectModalTabelaLancamentos = (propriedades) => {
             segundoBotaoCss="success"
         />
     )
-}
+};
 
 
 export const CancelarPrestacaoDeContas = (propriedades) => {
@@ -137,7 +140,7 @@ export const CancelarPrestacaoDeContas = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const SalvarPrestacaoDeContas = (propriedades) => {
     return (
@@ -152,7 +155,7 @@ export const SalvarPrestacaoDeContas = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const ConcluirPrestacaoDeContas = (propriedades) => {
     return (
@@ -167,7 +170,7 @@ export const ConcluirPrestacaoDeContas = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const ErroGeral = (propriedades) => {
     return (
@@ -180,7 +183,7 @@ export const ErroGeral = (propriedades) => {
             primeiroBotaoTexto="Fechar"
         />
     )
-}
+};
 
 export const ReverConciliacao = (propriedades) => {
     const bodyTextarea = () => {
@@ -196,13 +199,12 @@ export const ReverConciliacao = (propriedades) => {
                     value={propriedades.textareaModalReverConciliacao}
                     onChange={propriedades.handleChangeModalReverConciliacao}
                     name="reabrir-periodo"
-                    type='text'
                     className="form-control"
                 />
             </form>
         )
 
-    }
+    };
     return (
         <ModalBootstrapReverConciliacao
             show={propriedades.show}
@@ -219,7 +221,7 @@ export const ReverConciliacao = (propriedades) => {
         />
 
     )
-}
+};
 
 export const SaldoInsuficiente = (propriedades) => {
 
@@ -237,17 +239,23 @@ export const SaldoInsuficiente = (propriedades) => {
                                 <strong>Aplicacao:</strong> {item.aplicacao}
                             </li>
                             <li className="list-group-item p-0">
-                                <strong>Saldo Disponível:</strong> {item.saldo_disponivel}
+                                <strong>Saldo Disponível:</strong> {item.saldo_disponivel.toLocaleString('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                            })}
                             </li>
                             <li className="list-group-item p-0" key={index}>
-                                <strong>Total dos rateios:</strong> {item.total_rateios}
+                                <strong>Total dos rateios:</strong> {item.total_rateios.toLocaleString('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                            })}
                             </li>
                         </ul>
                     )
                 }
             </>
         )
-    }
+    };
     return (
         <ModalBootstrapSaldoInsuficiente
             show={propriedades.show}
@@ -260,7 +268,52 @@ export const SaldoInsuficiente = (propriedades) => {
             segundoBotaoTexto="Fechar"
         />
     )
-}
+};
+
+export const SaldoInsuficienteConta = (propriedades) => {
+
+    const listaDeSaldosInsuficientes = () => {
+
+        return (
+            <>
+                <p>Não há saldo disponível para a despesa cadastrada na conta selecionada. {propriedades.saldosInsuficientesDaConta.aceitar_lancamento ? "Deseja salvar assim mesmo?" : ""}</p>
+                {propriedades.saldosInsuficientesDaConta.saldos_insuficientes && propriedades.saldosInsuficientesDaConta.saldos_insuficientes.length > 0 && propriedades.saldosInsuficientesDaConta.saldos_insuficientes.map((item, index) =>
+                        <ul key={index} className="list-group list-group-flush mb-3">
+                            <li className="list-group-item p-0">
+                                <strong>Conta:</strong> {item.conta}
+                            </li>
+                            <li className="list-group-item p-0">
+                                <strong>Saldo Disponível:</strong> {item.saldo_disponivel.toLocaleString('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                            })}
+                            </li>
+                            <li className="list-group-item p-0" key={index}>
+                                <strong>Total dos rateios:</strong> {item.total_rateios.toLocaleString('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                            })}
+                            </li>
+                        </ul>
+                    )
+                }
+            </>
+        )
+    };
+    return (
+        <ModalBootstrapSaldoInsuficienteDaconta
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Saldo da Conta Insuficiente"
+            bodyText={listaDeSaldosInsuficientes()}
+            aceitarLancamento={propriedades.saldosInsuficientesDaConta.aceitar_lancamento}
+            primeiroBotaoOnclick={propriedades.onSaldoInsuficienteContaTrue}
+            primeiroBotaoTexto="OK"
+            segundoBotaoOnclick={propriedades.handleClose}
+            segundoBotaoTexto="Fechar"
+        />
+    )
+};
 
 export const PeriodoFechado = (propriedades) => {
     return (
@@ -273,4 +326,152 @@ export const PeriodoFechado = (propriedades) => {
             primeiroBotaoTexto="Fechar"
         />
     )
-}
+};
+
+export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, stateFormEditarAta, tabelas}) => {
+    const bodyTextarea = () => {
+        return (
+            <form className="form-group">
+                <div className="row">
+
+                    <div className='col-12 col-md-6'>
+                        <label htmlFor="tipo_reuniao">Tipo de Reunião</label>
+                        <select
+                            value={stateFormEditarAta.tipo_reuniao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            name="tipo_reuniao"
+                            className="form-control"
+                        >
+                            {tabelas && tabelas.tipos_reuniao && tabelas.tipos_reuniao.map((tipo)=>
+                                <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
+                            )}
+
+                        </select>
+
+                        <label htmlFor="local_reuniao" className="mt-3">Local da reunião</label>
+                        <input
+                            value={stateFormEditarAta.local_reuniao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            name="local_reuniao"
+                            className="form-control"
+                        />
+
+                        <label htmlFor="presidente_reuniao" className="mt-3">Presidente da reunião</label>
+                        <input
+                            value={stateFormEditarAta.presidente_reuniao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            name="presidente_reuniao"
+                            className="form-control"
+                        />
+
+                        <label htmlFor="secretario_reuniao" className="mt-3">Secretário da reunião</label>
+                        <input
+                            value={stateFormEditarAta.secretario_reuniao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            name="secretario_reuniao"
+                            className="form-control"
+                        />
+
+                    </div>
+
+                    <div className='col-12 col-md-6'>
+                        <label htmlFor="data_reuniao">Data</label>
+                        <DatePickerField
+                            name="data_reuniao"
+                            value={stateFormEditarAta.data_reuniao}
+                            onChange={onChange}
+                        />
+
+                        <label htmlFor="convocacao" className="mt-3">Abertura da reunião</label>
+                        <select
+                            value={stateFormEditarAta.convocacao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            name="convocacao"
+                            className="form-control"
+                        >
+                            {tabelas && tabelas.convocacoes && tabelas.convocacoes.map((tipo)=>
+                                <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
+                            )}
+                        </select>
+
+                        <label htmlFor="cargo_presidente_reuniao" className="mt-3">Cargo</label>
+                        <input
+                            value={stateFormEditarAta.cargo_presidente_reuniao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            name="cargo_presidente_reuniao"
+                            className="form-control"
+                        />
+
+                        <label htmlFor="cargo_secretaria_reuniao" className="mt-3">Cargo</label>
+                        <input
+                            value={stateFormEditarAta.cargo_secretaria_reuniao}
+                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            name="cargo_secretaria_reuniao"
+                            className="form-control"
+                        />
+
+                    </div>
+
+
+                    <div className="col-12 mt-3">
+                        <div className="form-group">
+                            <label htmlFor="comentarios" className="mb-0">Manifestações, Comentários e Justificativas</label>
+                            <p><small>Utilize esse campo para registrar possíveis dúvidas, discussões, esclarecimentos aparecidos durante a reunião</small></p>
+                            <textarea
+                                rows="3"
+                                placeholder="Escreva seu texto aqui"
+                                value={stateFormEditarAta.comentarios}
+                                onChange={(e)=>onChange(e.target.name, e.target.value)}
+                                name="comentarios"
+                                className="form-control"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="parecer_conselho">Como os presentes se posicionam à prestação de contas apresentada?</label>
+                            <select
+                                value={stateFormEditarAta.parecer_conselho}
+                                onChange={(e)=>onChange(e.target.name, e.target.value)}
+                                name="parecer_conselho"
+                                className="form-control"
+                            >
+                                {tabelas && tabelas.pareceres && tabelas.pareceres.map((tipo)=>
+                                    <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
+                                )}
+                            </select>
+                        </div>
+                    </div>
+
+                </div> {/*row*/}
+            </form>
+        )
+
+    };
+    return (
+        <ModalBootstrapEditarAta
+            show={show}
+            onHide={handleClose}
+            titulo="Editar Ata de apresentação"
+            bodyText={bodyTextarea()}
+            primeiroBotaoOnclick={handleClose}
+            primeiroBotaoTexto="Cancelar"
+            primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={onSubmitEditarAta}
+            segundoBotaoTexto="Salvar"
+            segundoBotaoCss="success"
+        />
+    )
+};
+
+export const TextoCopiado = ({show, handleClose}) => {
+    return (
+        <ModalBootstrap
+            show={show}
+            onHide={handleClose}
+            titulo="Texto copiado com sucesso"
+            bodyText='Digite as teclas CTRL + V para "colar" o conteúdo copiado onde desejar'
+            primeiroBotaoOnclick={handleClose}
+            primeiroBotaoTexto="Fechar"
+        />
+    )
+};

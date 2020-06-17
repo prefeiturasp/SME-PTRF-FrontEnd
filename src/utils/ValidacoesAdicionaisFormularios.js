@@ -28,6 +28,7 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
   data_documento: yup.string().nullable(),
   tipo_transacao: yup.string().nullable(),
   data_transacao: yup.string().nullable(),
+  documento_transacao: yup.string().nullable(),
   valor_total: yup.string().nullable(),
   valor_recursos_proprios: yup.string().nullable(),
   valor_total_dos_rateios:yup.string().nullable(),
@@ -62,7 +63,14 @@ export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFec
   }
 }
 
-export const validaPayloadDespesas = (values) => {
+export const validaPayloadDespesas = (values, despesasTabelas=null) => {
+
+  if (despesasTabelas){
+    let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(values.tipo_transacao))
+    if(!values.tipo_transacao || !exibe_documento_transacao.tem_documento){
+      values.documento_transacao ="";
+    }
+  }
 
   // Quando é Alteração
   if (typeof values.associacao === "object"){
@@ -185,6 +193,15 @@ export const exibeDateTimePT_BR = (data) => {
     data = moment(new Date(), "YYYY-MM-DD").format("DD/MM/YYYY [às] HH:mm:ss");
   }else {
     data =  moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY [às] HH:mm:ss");
+  }
+  return data
+}
+
+export const exibeDateTimePT_BR_Ata = (data) => {
+  if (data === 'None'){
+    data = moment(new Date(), "YYYY-MM-DD").format("DD/MM/YYYY [às] HH:mm");
+  }else {
+    data =  moment(new Date(data), "YYYY-MM-DD").format("DD/MM/YYYY [às] HH:mm");
   }
   return data
 }

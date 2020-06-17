@@ -25,7 +25,7 @@ export const ModalBootstrap = (propriedades) =>{
             </Modal>
         </Fragment>
     )
-}
+};
 
 export const ModalBootstrapReverConciliacao = (propriedades) =>{
     return (
@@ -50,7 +50,7 @@ export const ModalBootstrapReverConciliacao = (propriedades) =>{
             </Modal>
         </Fragment>
     )
-}
+};
 
 export const ModalBootstrapSaldoInsuficiente = (propriedades) =>{
     return (
@@ -75,4 +75,56 @@ export const ModalBootstrapSaldoInsuficiente = (propriedades) =>{
             </Modal>
         </Fragment>
     )
-}
+};
+
+export const ModalBootstrapSaldoInsuficienteDaconta = (propriedades) =>{
+    return (
+        <Fragment>
+            <Modal centered show={propriedades.show} onHide={propriedades.onHide}>
+                <Modal.Header>
+                    <Modal.Title>{propriedades.titulo}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {propriedades.bodyText}
+                </Modal.Body>
+                <Modal.Footer>
+                    {propriedades.aceitarLancamento &&
+                        <Button variant={propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"} onClick={propriedades.primeiroBotaoOnclick}>
+                            {propriedades.primeiroBotaoTexto}
+                        </Button>
+                    }
+                    {propriedades.segundoBotaoOnclick && propriedades.segundoBotaoTexto ? (
+                        <Button disabled={propriedades.segundoBotaoDisable} variant={propriedades.segundoBotaoCss ? propriedades.segundoBotaoCss : "primary"} onClick={propriedades.segundoBotaoOnclick}>
+                            {propriedades.segundoBotaoTexto}
+                        </Button>
+                    ):null}
+                </Modal.Footer>
+            </Modal>
+        </Fragment>
+    )
+};
+
+export const ModalBootstrapEditarAta = (propriedades) =>{
+    return (
+        <Fragment>
+            <Modal centered show={propriedades.show} onHide={propriedades.onHide}  size="lg">
+                <Modal.Header>
+                    <Modal.Title>{propriedades.titulo}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {propriedades.bodyText}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant={propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"} onClick={propriedades.primeiroBotaoOnclick}>
+                        {propriedades.primeiroBotaoTexto}
+                    </Button>
+                    {propriedades.segundoBotaoOnclick && propriedades.segundoBotaoTexto ? (
+                        <Button disabled={propriedades.segundoBotaoDisable} variant={propriedades.segundoBotaoCss ? propriedades.segundoBotaoCss : "primary"} onClick={propriedades.segundoBotaoOnclick}>
+                            {propriedades.segundoBotaoTexto}
+                        </Button>
+                    ):null}
+                </Modal.Footer>
+            </Modal>
+        </Fragment>
+    )
+};

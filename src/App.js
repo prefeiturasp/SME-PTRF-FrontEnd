@@ -14,7 +14,7 @@ export const App = () => {
         <section role="main" id="main" className="row">
             {pathName === '/login' ? (
                 <Rotas />
-            ) : pathName === '/detalhe-das-prestacoes' ? (
+            ) : pathName === '/detalhe-das-prestacoes' || pathName === "/visualizacao-da-ata"  ? (
                     <>
                         <Cabecalho />
                         <Rotas />

@@ -14,6 +14,7 @@ import Img404 from "../../../assets/img/img-404.svg";
 import "./lista-de-receitas.scss"
 import {FormFiltrosAvancados} from "../FormFiltrosAvancados";
 import Loading from "../../../utils/Loading";
+import { set } from "date-fns";
 
 export const ListaDeReceitas = () => {
 
@@ -24,7 +25,7 @@ export const ListaDeReceitas = () => {
     const [inputPesquisa, setInputPesquisa] = useState("")
     const [buscaUtilizandoFiltro, setBuscaUtilizandoFiltro] = useState(false)
     const [btnMaisFiltros, setBtnMaisFiltros] = useState(false)
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         buscaListaReceitas()
@@ -34,6 +35,8 @@ export const ListaDeReceitas = () => {
     const buscaListaReceitas = async () => {
         const listaReceitas = await getListaReceitas()
         setReceitas(listaReceitas)
+
+        setLoading(false);
     }
 
     const redirecionaDetalhe = value => {
