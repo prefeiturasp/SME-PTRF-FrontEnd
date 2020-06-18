@@ -153,11 +153,14 @@ export const CadastroForm = ({verbo_http}) => {
         }
     }
 
-    const onShowSaldoInsuficiente = async (values, errors) => {
+    const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
+
+        // Necessário atribuir o valor ao campo cpf_cnpj_fornecedor para chamar o YupSignupSchemaCadastroDespesa
+        setFieldValue("cpf_cnpj_fornecedor", values.cpf_cnpj_fornecedor);
 
         validaPayloadDespesas(values);
 
-        if (Object.entries(errors).length === 0) {
+        if (Object.entries(errors).length === 0 && values.cpf_cnpj_fornecedor) {
 
             let retorno_saldo = await verificarSaldo(values);
 
@@ -176,6 +179,7 @@ export const CadastroForm = ({verbo_http}) => {
     }
 
     const onSubmit = async (values) => {
+
         setBtnSubmitDisable(true);
         setShowSaldoInsuficiente(false);
 
@@ -207,7 +211,7 @@ export const CadastroForm = ({verbo_http}) => {
                     return
                 }
             } catch (error) {
-                console.log(error)
+                console.log(error);
                 return
             }
         }
@@ -623,7 +627,7 @@ export const CadastroForm = ({verbo_http}) => {
                                 {despesaContext.idDespesa
                                     ? <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button>
                                     : null}
-                                <button disabled={btnSubmitDisable || readOnlyBtnAcao} type="button" onClick={()=>onShowSaldoInsuficiente(values, errors, {resetForm})} className="btn btn-success mt-2">Salvar</button>
+                                <button disabled={btnSubmitDisable || readOnlyBtnAcao} type="button" onClick={()=>onShowSaldoInsuficiente(values, errors, setFieldValue, {resetForm})} className="btn btn-success mt-2">Salvar</button>
                             </div>
                             <div className="d-flex justify-content-end">
                                 {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}
