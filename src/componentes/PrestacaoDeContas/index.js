@@ -271,6 +271,7 @@ export const PrestacaoDeContas = () => {
 
                     {boxPrestacaoDeContasPorPeriodo === true && statusPrestacaoConta !== undefined && (
                         <BoxPrestacaoDeContasPorPeriodo
+                            setLoading={setLoading}
                             corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
                             textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
                             dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
