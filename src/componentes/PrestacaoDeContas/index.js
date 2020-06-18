@@ -268,7 +268,10 @@ export const PrestacaoDeContas = () => {
                                 setLoading={setLoading}
                                 periodoConta={periodoConta}
                             />
-                            <RelacaoDeBens periodoConta={periodoConta}/>
+                            <RelacaoDeBens
+                                periodoConta={periodoConta}
+                                setLoading={setLoading}
+                            />
                         </>
                     )}
 
