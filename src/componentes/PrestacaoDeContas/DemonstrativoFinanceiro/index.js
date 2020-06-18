@@ -51,18 +51,21 @@ export class DemonstrativoFinanceiro extends Component {
     }
 
     gerarPrevia = async (acaoUuid) => {
+        this.props.setLoading(true)
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo
         const conta_uuid = JSON.parse(localStorage.getItem('periodoConta')).conta
-
         await previa(acaoUuid, conta_uuid, periodo_uuid);
+        this.props.setLoading(false)
     }
 
     gerarDocumentoFinal = async (acaoUuid) => {
+        this.props.setLoading(true)
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo
         const conta_uuid = JSON.parse(localStorage.getItem('periodoConta')).conta
 
         await documentoFinal(acaoUuid, conta_uuid, periodo_uuid);
         await this.buscaAcoes();
+        this.props.setLoading(false)
     }
 
     getNomeAcao = (rowData) => {
