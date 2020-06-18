@@ -12,7 +12,7 @@ export const YupSignupSchemaLogin = yup.object().shape({
 
 export const YupSignupSchemaCadastroDespesa = yup.object().shape({
 
-  cpf_cnpj_fornecedor: yup.string()
+  cpf_cnpj_fornecedor: yup.string().required("Campo CPF é obrigatório")
   .test('test-name', 'Digite um CPF ou um CNPJ válido',
       function (value) {
 
