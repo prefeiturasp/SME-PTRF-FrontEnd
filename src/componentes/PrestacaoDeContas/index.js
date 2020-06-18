@@ -264,7 +264,10 @@ export const PrestacaoDeContas = () => {
 
                     {demonstrativoFinanceiro === true && statusPrestacaoConta !== undefined && (
                         <>
-                            <DemonstrativoFinanceiro periodoConta={periodoConta}/>
+                            <DemonstrativoFinanceiro
+                                setLoading={setLoading}
+                                periodoConta={periodoConta}
+                            />
                             <RelacaoDeBens periodoConta={periodoConta}/>
                         </>
                     )}
