@@ -180,24 +180,27 @@ export const ReceitaForm = props => {
 
         let qtdeAceitaClassificacao = [];
 
-        tabelas.categorias_receita.map((item, index)=>{
-            let id_categoria_receita_lower = item.id.toLowerCase();
-            let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
-            qtdeAceitaClassificacao.push(aceitaClassificacao);
+        if (id_tipo_receita) {
 
-            if (aceitaClassificacao){
-                setFieldValue("categoria_receita", item.id);
-                setreadOnlyClassificacaoReceita(true);
+            tabelas.categorias_receita.map((item, index) => {
+                let id_categoria_receita_lower = item.id.toLowerCase();
+                let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_' + id_categoria_receita_lower);
+                qtdeAceitaClassificacao.push(aceitaClassificacao);
+
+                if (aceitaClassificacao) {
+                    setFieldValue("categoria_receita", item.id);
+                    setreadOnlyClassificacaoReceita(true);
+                }
+            });
+
+            let resultado = qtdeAceitaClassificacao.filter((value) => {
+                return value === true;
+            }).length;
+
+            if (resultado > 1) {
+                setFieldValue("categoria_receita", "");
+                setreadOnlyClassificacaoReceita(false);
             }
-        });
-
-        let resultado = qtdeAceitaClassificacao.filter( (value) =>{
-            return value === true;
-        }).length;
-
-        if (resultado > 1 ){
-            setFieldValue("categoria_receita", "");
-            setreadOnlyClassificacaoReceita(false);
         }
     }
 
@@ -311,7 +314,7 @@ export const ReceitaForm = props => {
                                     >
                                         {receita.tipo_receita
                                             ? null
-                                            : <option>Selecione o tipo</option>}
+                                            : <option value="">Selecione o tipo</option>}
                                         {tabelas.tipos_receita !== undefined && tabelas.tipos_receita.length > 0 ? (tabelas.tipos_receita.map(item => (
                                             <option key={item.id} value={item.id}>{item.nome}</option>
                                         ))) : null}
