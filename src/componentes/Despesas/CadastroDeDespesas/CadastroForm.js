@@ -15,6 +15,7 @@ import CurrencyInput from "react-currency-input";
 import {AvisoCapitalModal, CancelarModal, DeletarModal, ErroGeral, PeriodoFechado, SaldoInsuficiente, SaldoInsuficienteConta} from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
+import Loading from "../../../utils/Loading";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -40,6 +41,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
     const [cssEscondeDocumentoTransacao, setCssEscondeDocumentoTransacao] = useState('escondeItem');
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
+    const [loading, setLoading] = useState(true)
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
@@ -76,6 +78,10 @@ export const CadastroForm = ({verbo_http}) => {
         })();
     }, []);
 
+    useEffect(()=>{
+        setLoading(false)
+    }, [])
+
     const initialValues = () => {
         return despesaContext.initialValues;
     }
@@ -88,18 +94,19 @@ export const CadastroForm = ({verbo_http}) => {
             path = `/detalhe-das-prestacoes`;
         }
         window.location.assign(path)
-    }
+    };
 
     const verificarSaldo = async (payload) => {
         let saldo = await getVerificarSaldo(payload, despesaContext.idDespesa);
         return saldo;
 
-    }
+    };
 
     const onCancelarTrue = () => {
         setShow(false);
+        setLoading(true)
         getPath();
-    }
+    };
 
     const onHandleClose = () => {
         setShow(false);
@@ -123,14 +130,16 @@ export const CadastroForm = ({verbo_http}) => {
     }
 
     const onDeletarTrue = () => {
+        setShowDelete(false);
+        setLoading(true)
         deleteDespesa(despesaContext.idDespesa)
         .then(response => {
             console.log("Despesa deletada com sucesso.");
-            setShowDelete(false);
             getPath();
         })
         .catch(error => {
             console.log(error);
+            setLoading(false)
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
         });
     }
@@ -154,7 +163,6 @@ export const CadastroForm = ({verbo_http}) => {
     }
 
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
-
         // Necessário atribuir o valor ao campo cpf_cnpj_fornecedor para chamar o YupSignupSchemaCadastroDespesa
         setFieldValue("cpf_cnpj_fornecedor", values.cpf_cnpj_fornecedor);
 
@@ -175,15 +183,16 @@ export const CadastroForm = ({verbo_http}) => {
                 onSubmit(values);
             }
         }
-
     }
 
     const onSubmit = async (values) => {
 
+        setLoading(true);
+
         setBtnSubmitDisable(true);
         setShowSaldoInsuficiente(false);
 
-        validaPayloadDespesas(values, despesasTabelas)
+        validaPayloadDespesas(values, despesasTabelas);
 
         if( despesaContext.verboHttp === "POST"){
             try {
@@ -193,10 +202,12 @@ export const CadastroForm = ({verbo_http}) => {
                     //resetForm({values: ""})
                     getPath();
                 } else {
+                    setLoading(false);
                     return
                 }
             } catch (error) {
                 console.log(error)
+                setLoading(false);
                 return
             }
         }else if(despesaContext.verboHttp === "PUT"){
@@ -208,10 +219,12 @@ export const CadastroForm = ({verbo_http}) => {
                     //resetForm({values: ""})
                     getPath();
                 } else {
+                    setLoading(false);
                     return
                 }
             } catch (error) {
                 console.log(error);
+                setLoading(false);
                 return
             }
         }
@@ -267,384 +280,422 @@ export const CadastroForm = ({verbo_http}) => {
 
     return (
         <>
-            <Formik
-                initialValues={initialValues()}
-                validationSchema={YupSignupSchemaCadastroDespesa}
-                validateOnBlur={true}
-                onSubmit={onSubmit}
-                //onSubmit={values => onSubmit(values)}
-                enableReinitialize={true}
-                validate={validateFormDespesas}
-            >
-                {props => {
-                    const {
-                        values,
-                        setFieldValue,
-                        resetForm,
-                        errors,
-                    } = props;
+            {loading ?
+                <Loading
+                    corGrafico="black"
+                    corFonte="dark"
+                    marginTop="50"
+                    marginBottom="0"
+                />
+                :
+                <Formik
+                    initialValues={initialValues()}
+                    validationSchema={YupSignupSchemaCadastroDespesa}
+                    validateOnBlur={true}
+                    onSubmit={onSubmit}
+                    //onSubmit={values => onSubmit(values)}
+                    enableReinitialize={true}
+                    validate={validateFormDespesas}
+                >
+                    {props => {
+                        const {
+                            values,
+                            setFieldValue,
+                            resetForm,
+                            errors,
+                        } = props;
 
-                    return (
-                        <>
-                        {props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
-                            <div className="col-12 barra-status-erros pt-1 pb-1">
-                                <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
-                            </div>
-                       }
-                        <form onSubmit={props.handleSubmit}>
-                            <div className="form-row">
-                                <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
-                                    <MaskedInput
-                                        disabled={readOnlyCampos}
-                                        mask={(valor) => cpfMaskContitional(valor)}
-                                        value={props.values.cpf_cnpj_fornecedor}
-                                        onChange={(e)=>{
-                                            props.handleChange(e);
-                                            get_nome_razao_social(e.target.value, setFieldValue)
-
-                                            }
-                                        }
-                                        onBlur={props.handleBlur}
-                                        name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
-                                        className={`${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                        placeholder="Digite o número do CNPJ ou CPF (apenas algarismos)"
-                                    />
-                                    {props.errors.cpf_cnpj_fornecedor && <span className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
+                        return (
+                            <>
+                                {props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
+                                <div className="col-12 barra-status-erros pt-1 pb-1">
+                                    <p className="titulo-status pt-1 pb-1 mb-0">O cadastro
+                                        possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode
+                                        completá-los agora ou terminar depois.</p>
                                 </div>
-                                <div className="col-12 col-md-6  mt-4">
-                                    <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
-                                    <input
-                                        value={props.values.nome_fornecedor}
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                        name="nome_fornecedor" id="nome_fornecedor" type="text"
-                                        className={`${!props.values.nome_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                        placeholder="Digite o nome"
-                                        disabled={readOnlyCampos}
-                                    />
-                                </div>
-                            </div>
+                                }
+                                <form onSubmit={props.handleSubmit}>
+                                    <div className="form-row">
+                                        <div className="col-12 col-md-6 mt-4">
+                                            <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
+                                            <MaskedInput
+                                                disabled={readOnlyCampos}
+                                                mask={(valor) => cpfMaskContitional(valor)}
+                                                value={props.values.cpf_cnpj_fornecedor}
+                                                onChange={(e) => {
+                                                    props.handleChange(e);
+                                                    get_nome_razao_social(e.target.value, setFieldValue)
 
-                            <div className="form-row">
-                                <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="tipo_documento">Tipo de documento</label>
-                                    <select
-                                        value={
-                                            props.values.tipo_documento !== null ? (
-                                                props.values.tipo_documento === "object" ? props.values.tipo_documento.id : props.values.tipo_documento.id
-                                            ) : ""
-                                        }
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                        name='tipo_documento'
-                                        id='tipo_documento'
-                                        className={`${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                        disabled={readOnlyCampos}
-                                    >
-                                        <option key={0} value="">Selecione o tipo</option>
-                                        {despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.map(item =>
-                                            <option key={item.id} value={item.id}>{item.nome}</option>
-                                        )
-                                        }
-                                    </select>
-                                </div>
-
-                                <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="data_documento">Data do documento</label>
-                                    <DatePickerField
-                                        //disabled={readOnlyCampos}
-                                        name="data_documento"
-                                        id="data_documento"
-                                        value={values.data_documento != null ? values.data_documento : ""}
-                                        onChange={setFieldValue}
-                                        about={despesaContext.verboHttp}
-
-                                    />
-                                    {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
-                                </div>
-
-                                <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="numero_documento">Número do documento</label>
-                                    <input
-                                        value={props.values.numero_documento}
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                        name="numero_documento"
-                                        id="numero_documento" type="text"
-                                        className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                        placeholder="Digite o número"
-                                        disabled={readOnlyCampos}
-                                    />
-                                </div>
-
-                                <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="tipo_transacao">Tipo de transação</label>
-                                    <select
-                                        value={
-                                            props.values.tipo_transacao !== null ? (
-                                                props.values.tipo_transacao === "object" ? props.values.tipo_transacao.id : props.values.tipo_transacao.id
-                                            ) : ""
-                                        }
-                                        //onChange={props.handleChange}
-                                        onChange={(e) => {
-                                            props.handleChange(e);
-                                            exibeDocumentoTransacao(e.target.value)
-                                        }}
-                                        onBlur={props.handleBlur}
-                                        name='tipo_transacao'
-                                        id='tipo_transacao'
-                                        className={`${!props.values.tipo_transacao && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                        disabled={readOnlyCampos}
-                                    >
-                                        <option key={0} value="">Selecione o tipo</option>
-                                        {despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map(item => (
-                                            <option key={item.id} value={item.id}>{item.nome}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="data_transacao">Data da transação</label>
-                                    <DatePickerField
-                                        name="data_transacao"
-                                        id="data_transacao"
-                                        value={values.data_transacao != null ? values.data_transacao : ""}
-                                        onChange={setFieldValue}
-                                        about={despesaContext.verboHttp}
-                                        disabled={readOnlyCampos}
-                                    />
-                                    {props.errors.data_transacao &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
-                                </div>
-
-                                <div className="col-12 col-md-3 mt-4">
-                                    <div className={cssEscondeDocumentoTransacao}>
-                                        <label htmlFor="documento_transacao">Número do {labelDocumentoTransacao}</label>
-                                        <input
-                                            value={props.values.documento_transacao}
-                                            onChange={props.handleChange}
-                                            onBlur={props.handleBlur}
-                                            name="documento_transacao"
-                                            id="documento_transacao"
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Digite o número do documento"
-                                            disabled={readOnlyCampos}
-                                        />
-                                        {props.errors.documento_transacao && <span className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
+                                                }
+                                                }
+                                                onBlur={props.handleBlur}
+                                                name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
+                                                className={`${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                placeholder="Digite o número do CNPJ ou CPF (apenas algarismos)"
+                                            />
+                                            {props.errors.cpf_cnpj_fornecedor && <span
+                                                className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
+                                        </div>
+                                        <div className="col-12 col-md-6  mt-4">
+                                            <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
+                                            <input
+                                                value={props.values.nome_fornecedor}
+                                                onChange={props.handleChange}
+                                                onBlur={props.handleBlur}
+                                                name="nome_fornecedor" id="nome_fornecedor" type="text"
+                                                className={`${!props.values.nome_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                placeholder="Digite o nome"
+                                                disabled={readOnlyCampos}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
 
-                            </div>
+                                    <div className="form-row">
+                                        <div className="col-12 col-md-3 mt-4">
+                                            <label htmlFor="tipo_documento">Tipo de documento</label>
+                                            <select
+                                                value={
+                                                    props.values.tipo_documento !== null ? (
+                                                        props.values.tipo_documento === "object" ? props.values.tipo_documento.id : props.values.tipo_documento.id
+                                                    ) : ""
+                                                }
+                                                onChange={props.handleChange}
+                                                onBlur={props.handleBlur}
+                                                name='tipo_documento'
+                                                id='tipo_documento'
+                                                className={`${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                disabled={readOnlyCampos}
+                                            >
+                                                <option key={0} value="">Selecione o tipo</option>
+                                                {despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.map(item =>
+                                                    <option key={item.id} value={item.id}>{item.nome}</option>
+                                                )
+                                                }
+                                            </select>
+                                        </div>
 
-                            <div className="form-row">
+                                        <div className="col-12 col-md-3 mt-4">
+                                            <label htmlFor="data_documento">Data do documento</label>
+                                            <DatePickerField
+                                                //disabled={readOnlyCampos}
+                                                name="data_documento"
+                                                id="data_documento"
+                                                value={values.data_documento != null ? values.data_documento : ""}
+                                                onChange={setFieldValue}
+                                                about={despesaContext.verboHttp}
+
+                                            />
+                                            {props.errors.data_documento && <span
+                                                className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
+                                        </div>
+
+                                        <div className="col-12 col-md-6 mt-4">
+                                            <label htmlFor="numero_documento">Número do documento</label>
+                                            <input
+                                                value={props.values.numero_documento}
+                                                onChange={props.handleChange}
+                                                onBlur={props.handleBlur}
+                                                name="numero_documento"
+                                                id="numero_documento" type="text"
+                                                className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                placeholder="Digite o número"
+                                                disabled={readOnlyCampos}
+                                            />
+                                        </div>
+
+                                        <div className="col-12 col-md-6 mt-4">
+                                            <label htmlFor="tipo_transacao">Tipo de transação</label>
+                                            <select
+                                                value={
+                                                    props.values.tipo_transacao !== null ? (
+                                                        props.values.tipo_transacao === "object" ? props.values.tipo_transacao.id : props.values.tipo_transacao.id
+                                                    ) : ""
+                                                }
+                                                //onChange={props.handleChange}
+                                                onChange={(e) => {
+                                                    props.handleChange(e);
+                                                    exibeDocumentoTransacao(e.target.value)
+                                                }}
+                                                onBlur={props.handleBlur}
+                                                name='tipo_transacao'
+                                                id='tipo_transacao'
+                                                className={`${!props.values.tipo_transacao && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                disabled={readOnlyCampos}
+                                            >
+                                                <option key={0} value="">Selecione o tipo</option>
+                                                {despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map(item => (
+                                                    <option key={item.id} value={item.id}>{item.nome}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="col-12 col-md-3 mt-4">
+                                            <label htmlFor="data_transacao">Data da transação</label>
+                                            <DatePickerField
+                                                name="data_transacao"
+                                                id="data_transacao"
+                                                value={values.data_transacao != null ? values.data_transacao : ""}
+                                                onChange={setFieldValue}
+                                                about={despesaContext.verboHttp}
+                                                disabled={readOnlyCampos}
+                                            />
+                                            {props.errors.data_transacao &&
+                                            <span
+                                                className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
+                                        </div>
+
+                                        <div className="col-12 col-md-3 mt-4">
+                                            <div className={cssEscondeDocumentoTransacao}>
+                                                <label htmlFor="documento_transacao">Número
+                                                    do {labelDocumentoTransacao}</label>
+                                                <input
+                                                    value={props.values.documento_transacao}
+                                                    onChange={props.handleChange}
+                                                    onBlur={props.handleBlur}
+                                                    name="documento_transacao"
+                                                    id="documento_transacao"
+                                                    type="text"
+                                                    className="form-control"
+                                                    placeholder="Digite o número do documento"
+                                                    disabled={readOnlyCampos}
+                                                />
+                                                {props.errors.documento_transacao && <span
+                                                    className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div className="form-row">
 
 
-                                <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="valor_total">Valor total do documento</label>
-                                    <CurrencyInput
-                                        allowNegative={false}
-                                        prefix='R$'
-                                        decimalSeparator=","
-                                        thousandSeparator="."
-                                        value={props.values.valor_total}
-                                        name="valor_total"
-                                        id="valor_total"
-                                        className={`${ trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                        onChangeEvent={props.handleChange}
-                                        disabled={readOnlyCampos}
-                                    />
-                                    {props.errors.valor_total && <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
-                                </div>
-
-                                <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="valor_recursos_proprios">Valor do recurso próprio</label>
-                                    <CurrencyInput
-                                        allowNegative={false}
-                                        prefix='R$'
-                                        decimalSeparator=","
-                                        thousandSeparator="."
-                                        value={props.values.valor_recursos_proprios}
-                                        name="valor_recursos_proprios"
-                                        id="valor_recursos_proprios"
-                                        className="form-control"
-                                        onChangeEvent={props.handleChange}
-                                        disabled={readOnlyCampos}
-                                    />
-                                    {props.errors.valor_recursos_proprios && <span className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
-                                </div>
-
-                                <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="valor_recusos_acoes">Valor do PTRF</label>
-                                    <Field name="valor_recusos_acoes">
-                                        {({ field, form, meta }) => (
+                                        <div className="col-12 col-md-3 mt-4">
+                                            <label htmlFor="valor_total">Valor total do documento</label>
                                             <CurrencyInput
                                                 allowNegative={false}
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
-                                                value={calculaValorRecursoAcoes(props)}
-                                                id="valor_recusos_acoes"
-                                                name="valor_recusos_acoes"
-                                                className="form-control"
+                                                value={props.values.valor_total}
+                                                name="valor_total"
+                                                id="valor_total"
+                                                className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 onChangeEvent={props.handleChange}
-                                                readOnly={true}
                                                 disabled={readOnlyCampos}
                                             />
-                                        )}
-                                    </Field>
-                                    {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
-                                </div>
-                            </div>
+                                            {props.errors.valor_total &&
+                                            <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
+                                        </div>
 
-                            <hr/>
-                            <h2 className="subtitulo-itens-painel">Dados do gasto</h2>
-                            <p>Esse gasto se encaixa em mais de um tipo de despesa ou ação?</p>
-                            <div className="form-row">
-                                <div className="col-12 col-md-3 ">
-                                    <select
-                                        value={props.values.mais_de_um_tipo_despesa}
-                                        onChange={props.handleChange}
-                                        name='mais_de_um_tipo_despesa'
-                                        id='mais_de_um_tipo_despesa'
-                                        className={`${!props.values.mais_de_um_tipo_despesa && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                        disabled={readOnlyCampos}
-                                    >
-                                        <option value="">Selecione</option>
-                                        <option value="nao">Não</option>
-                                        <option value="sim">Sim</option>
-                                    </select>
-                                </div>
-                            </div>
+                                        <div className="col-12 col-md-3 mt-4">
+                                            <label htmlFor="valor_recursos_proprios">Valor do recurso próprio</label>
+                                            <CurrencyInput
+                                                allowNegative={false}
+                                                prefix='R$'
+                                                decimalSeparator=","
+                                                thousandSeparator="."
+                                                value={props.values.valor_recursos_proprios}
+                                                name="valor_recursos_proprios"
+                                                id="valor_recursos_proprios"
+                                                className="form-control"
+                                                onChangeEvent={props.handleChange}
+                                                disabled={readOnlyCampos}
+                                            />
+                                            {props.errors.valor_recursos_proprios && <span
+                                                className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
+                                        </div>
 
-                            <FieldArray
-                                name="rateios"
-                                render={({insert, remove, push}) => (
-                                    <>
-                                        {values.rateios.length > 0 && values.rateios.map((rateio, index) => {
-                                            return (
-                                                <div key={index}>
-                                                    <div className="form-row">
+                                        <div className="col-12 col-md-3 mt-4">
+                                            <label htmlFor="valor_recusos_acoes">Valor do PTRF</label>
+                                            <Field name="valor_recusos_acoes">
+                                                {({field, form, meta}) => (
+                                                    <CurrencyInput
+                                                        allowNegative={false}
+                                                        prefix='R$'
+                                                        decimalSeparator=","
+                                                        thousandSeparator="."
+                                                        value={calculaValorRecursoAcoes(props)}
+                                                        id="valor_recusos_acoes"
+                                                        name="valor_recusos_acoes"
+                                                        className="form-control"
+                                                        onChangeEvent={props.handleChange}
+                                                        readOnly={true}
+                                                        disabled={readOnlyCampos}
+                                                    />
+                                                )}
+                                            </Field>
+                                            {errors.valor_recusos_acoes &&
+                                            <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                                        </div>
+                                    </div>
 
-                                                        <div className="col-12 mt-4 ml-0">
-                                                            <p className='mb-0'><strong>Despesa {index+1}</strong></p>
-                                                            <hr className='mt-0 mb-1'/>
-                                                        </div>
-                                                        <div className="col-12 col-md-6 mt-4">
+                                    <hr/>
+                                    <h2 className="subtitulo-itens-painel">Dados do gasto</h2>
+                                    <p>Esse gasto se encaixa em mais de um tipo de despesa ou ação?</p>
+                                    <div className="form-row">
+                                        <div className="col-12 col-md-3 ">
+                                            <select
+                                                value={props.values.mais_de_um_tipo_despesa}
+                                                onChange={props.handleChange}
+                                                name='mais_de_um_tipo_despesa'
+                                                id='mais_de_um_tipo_despesa'
+                                                className={`${!props.values.mais_de_um_tipo_despesa && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                disabled={readOnlyCampos}
+                                            >
+                                                <option value="">Selecione</option>
+                                                <option value="nao">Não</option>
+                                                <option value="sim">Sim</option>
+                                            </select>
+                                        </div>
+                                    </div>
 
-                                                            <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
-                                                            <select
-                                                                value={rateio.aplicacao_recurso}
-                                                                onChange={(e) => {
-                                                                    props.handleChange(e);
-                                                                    handleAvisoCapital(e.target.value)
-                                                                }}
-                                                                name={`rateios[${index}].aplicacao_recurso`}
-                                                                id='aplicacao_recurso'
-                                                                className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                                                disabled={readOnlyCampos}
-                                                            >
-                                                                <option key={0} value="">Escolha uma opção</option>
-                                                                {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map(item => (
-                                                                    <option key={item.id} value={item.id}>{item.nome}</option>
-                                                                ))}
-                                                            </select>
-                                                        </div>
-                                                    </div>
+                                    <FieldArray
+                                        name="rateios"
+                                        render={({insert, remove, push}) => (
+                                            <>
+                                                {values.rateios.length > 0 && values.rateios.map((rateio, index) => {
+                                                    return (
+                                                        <div key={index}>
+                                                            <div className="form-row">
 
-                                                    { rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CUSTEIO' ? (
-                                                        <CadastroFormCusteio
-                                                            formikProps={props}
-                                                            rateio={rateio}
-                                                            index={index}
-                                                            despesasTabelas={despesasTabelas}
-                                                            especificacoes_custeio={especificacoes_custeio}
-                                                            verboHttp={despesaContext.verboHttp}
-                                                            disabled={readOnlyCampos}
-                                                            errors={errors}
-                                                        />
-                                                    ):
-                                                    rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
-                                                        <CadastroFormCapital
-                                                            formikProps={props}
-                                                            rateio={rateio}
-                                                            index={index}
-                                                            despesasTabelas={despesasTabelas}
-                                                            especificaoes_capital={especificaoes_capital}
-                                                            verboHttp={despesaContext.verboHttp}
-                                                            disabled={readOnlyCampos}
-                                                            errors={errors}
-                                                        />
-                                                    ): null}
+                                                                <div className="col-12 mt-4 ml-0">
+                                                                    <p className='mb-0'><strong>Despesa {index + 1}</strong>
+                                                                    </p>
+                                                                    <hr className='mt-0 mb-1'/>
+                                                                </div>
+                                                                <div className="col-12 col-md-6 mt-4">
 
-                                                    {index >= 1 && values.rateios.length > 1 && (
-                                                        <div className="d-flex  justify-content-start mt-3 mb-3">
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn btn-outline-success mt-2 mr-2"
-                                                                onClick={() => remove(index )}
-                                                            >
-                                                                - Remover Despesa
-                                                            </button>
-                                                        </div>
-                                                    )}
+                                                                    <label htmlFor="aplicacao_recurso">Tipo de aplicação do
+                                                                        recurso</label>
+                                                                    <select
+                                                                        value={rateio.aplicacao_recurso}
+                                                                        onChange={(e) => {
+                                                                            props.handleChange(e);
+                                                                            handleAvisoCapital(e.target.value)
+                                                                        }}
+                                                                        name={`rateios[${index}].aplicacao_recurso`}
+                                                                        id='aplicacao_recurso'
+                                                                        className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                                        disabled={readOnlyCampos}
+                                                                    >
+                                                                        <option key={0} value="">Escolha uma opção</option>
+                                                                        {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map(item => (
+                                                                            <option key={item.id}
+                                                                                    value={item.id}>{item.nome}</option>
+                                                                        ))}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
 
-                                                </div> /*div key*/
-                                            )
-                                        })}
+                                                            {rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CUSTEIO' ? (
+                                                                    <CadastroFormCusteio
+                                                                        formikProps={props}
+                                                                        rateio={rateio}
+                                                                        index={index}
+                                                                        despesasTabelas={despesasTabelas}
+                                                                        especificacoes_custeio={especificacoes_custeio}
+                                                                        verboHttp={despesaContext.verboHttp}
+                                                                        disabled={readOnlyCampos}
+                                                                        errors={errors}
+                                                                    />
+                                                                ) :
+                                                                rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
+                                                                    <CadastroFormCapital
+                                                                        formikProps={props}
+                                                                        rateio={rateio}
+                                                                        index={index}
+                                                                        despesasTabelas={despesasTabelas}
+                                                                        especificaoes_capital={especificaoes_capital}
+                                                                        verboHttp={despesaContext.verboHttp}
+                                                                        disabled={readOnlyCampos}
+                                                                        errors={errors}
+                                                                    />
+                                                                ) : null}
 
-                                        {props.values.mais_de_um_tipo_despesa === "sim" &&
-                                            <div className="d-flex  justify-content-start mt-3 mb-3">
-                                                <button
-                                                    type="button"
-                                                    className="btn btn btn-outline-success mt-2 mr-2"
-                                                    onClick={() => push(
-                                                        {
-                                                            associacao: localStorage.getItem(ASSOCIACAO_UUID),
-                                                            conta_associacao: "",
-                                                            acao_associacao: "",
-                                                            aplicacao_recurso: "",
-                                                            tipo_custeio: "",
-                                                            especificacao_material_servico: "",
-                                                            valor_rateio: "",
-                                                            quantidade_itens_capital: "",
-                                                            valor_item_capital: "",
-                                                            numero_processo_incorporacao_capital: ""
-                                                        }
+                                                            {index >= 1 && values.rateios.length > 1 && (
+                                                                <div className="d-flex  justify-content-start mt-3 mb-3">
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn btn-outline-success mt-2 mr-2"
+                                                                        onClick={() => remove(index)}
+                                                                    >
+                                                                        - Remover Despesa
+                                                                    </button>
+                                                                </div>
+                                                            )}
+
+                                                        </div> /*div key*/
                                                     )
-                                                    }
-                                                >
-                                                    + Adicionar despesa parcial
-                                                </button>
-                                            </div>
-                                        }
-                                    </>
-                                )}
-                            />
-                            <div className="d-flex  justify-content-end pb-3 mt-3">
-                                <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
-                                {despesaContext.idDespesa
-                                    ? <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button>
-                                    : null}
-                                <button disabled={btnSubmitDisable || readOnlyBtnAcao} type="button" onClick={()=>onShowSaldoInsuficiente(values, errors, setFieldValue, {resetForm})} className="btn btn-success mt-2">Salvar</button>
-                            </div>
-                            <div className="d-flex justify-content-end">
-                                {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}
-                            </div>
-                            <section>
-                                <SaldoInsuficiente saldosInsuficientesDaAcao={saldosInsuficientesDaAcao} show={showSaldoInsuficiente} handleClose={onHandleClose} onSaldoInsuficienteTrue={()=>onSubmit(values, {resetForm})}/>
-                            </section>
-                            <section>
-                                <SaldoInsuficienteConta saldosInsuficientesDaConta={saldosInsuficientesDaConta} show={showSaldoInsuficienteConta} handleClose={onHandleClose} onSaldoInsuficienteContaTrue={()=>onSubmit(values, {resetForm})}/>
-                            </section>
-                        </form>
-                        </>
+                                                })}
 
-                    ); /*Return metodo principal*/
+                                                {props.values.mais_de_um_tipo_despesa === "sim" &&
+                                                <div className="d-flex  justify-content-start mt-3 mb-3">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn btn-outline-success mt-2 mr-2"
+                                                        onClick={() => push(
+                                                            {
+                                                                associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                                                                conta_associacao: "",
+                                                                acao_associacao: "",
+                                                                aplicacao_recurso: "",
+                                                                tipo_custeio: "",
+                                                                especificacao_material_servico: "",
+                                                                valor_rateio: "",
+                                                                quantidade_itens_capital: "",
+                                                                valor_item_capital: "",
+                                                                numero_processo_incorporacao_capital: ""
+                                                            }
+                                                        )
+                                                        }
+                                                    >
+                                                        + Adicionar despesa parcial
+                                                    </button>
+                                                </div>
+                                                }
+                                            </>
+                                        )}
+                                    />
+                                    <div className="d-flex  justify-content-end pb-3 mt-3">
+                                        <button type="reset" onClick={onShowModal}
+                                                className="btn btn btn-outline-success mt-2 mr-2">Cancelar
+                                        </button>
+                                        {despesaContext.idDespesa
+                                            ? <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal}
+                                                      className="btn btn btn-danger mt-2 mr-2">Deletar</button>
+                                            : null}
+                                        <button disabled={btnSubmitDisable || readOnlyBtnAcao} type="button"
+                                                onClick={() => onShowSaldoInsuficiente(values, errors, setFieldValue, {resetForm})}
+                                                className="btn btn-success mt-2">Salvar
+                                        </button>
+                                    </div>
+                                    <div className="d-flex justify-content-end">
+                                        {errors.valor_recusos_acoes &&
+                                        <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}
+                                    </div>
+                                    <section>
+                                        <SaldoInsuficiente
+                                            saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
+                                            show={showSaldoInsuficiente} handleClose={onHandleClose}
+                                            onSaldoInsuficienteTrue={() => onSubmit(values, {resetForm})}
+                                        />
+                                    </section>
+                                    <section>
+                                        <SaldoInsuficienteConta
+                                            saldosInsuficientesDaConta={saldosInsuficientesDaConta}
+                                            show={showSaldoInsuficienteConta}
+                                            handleClose={onHandleClose}
+                                            onSaldoInsuficienteContaTrue={() => onSubmit(values, {resetForm})}
+                                        />
+                                    </section>
+                                </form>
+                            </>
 
-                }}
-            </Formik>
+                        ); /*Return metodo principal*/
+
+                    }}
+                </Formik>
+            }
             <section>
                 <CancelarModal show={show} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
             </section>
