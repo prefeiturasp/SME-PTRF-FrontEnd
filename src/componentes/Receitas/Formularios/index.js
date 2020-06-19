@@ -180,8 +180,6 @@ export const ReceitaForm = props => {
 
     const getClassificacaoReceita = (id_tipo_receita, setFieldValue) =>{
 
-        console.log("getClassificacaoReceita ")
-
         let qtdeAceitaClassificacao = [];
 
         if (id_tipo_receita) {
@@ -268,12 +266,21 @@ export const ReceitaForm = props => {
                     errors.data = `Data inválida. A data tem que ser entre ${data_inicio.format("DD/MM/YYYY")} e ${data_fim.format("DD/MM/YYYY")}`;
                 }
 
-                let valor_da_receita;
+/*                let valor_da_receita;
                 if (values.categoria_receita === "CUSTEIO"){
                     valor_da_receita = repasse.valor_custeio
                 }else if(values.categoria_receita === "CAPITAL"){
                     valor_da_receita =  repasse.valor_capital
-                }
+                }*/
+
+                let id_categoria_receita_lower = values.categoria_receita.toLowerCase();
+
+                let valor_da_receita = eval('repasse.valor_'+id_categoria_receita_lower)
+                /*if (values.categoria_receita === "CUSTEIO"){
+                    valor_da_receita = repasse.valor_custeio
+                }else if(values.categoria_receita === "CAPITAL"){
+                    valor_da_receita =  repasse.valor_capital
+                }*/
 
 
                 const init = {
@@ -298,7 +305,7 @@ export const ReceitaForm = props => {
         return errors;
     }
 
-    const retornaRepasse = async (acao_associacao)=>{
+    const setaRepasse = async (acao_associacao)=>{
         let local_repasse;
         if (uuid){
             local_repasse = await getRepasse(acao_associacao, true);
@@ -311,7 +318,7 @@ export const ReceitaForm = props => {
 
     }
 
-    const retornaClassificacaoReceita = (values)=>{
+    const retornaClassificacaoReceita = (values, setFieldValue)=>{
 
         if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && Object.entries(repasse).length > 0 ){
 
@@ -455,7 +462,7 @@ export const ReceitaForm = props => {
                                                 value={props.values.acao_associacao}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
-                                                    retornaRepasse(e.target.value)
+                                                    setaRepasse(e.target.value)
                                                 }
                                                 }
                                                 onBlur={props.handleBlur}
@@ -488,7 +495,7 @@ export const ReceitaForm = props => {
                                             >
                                                 {receita.categorias_receita ? null : <option key={0} value="">Escolha a classificação</option>}
 
-                                                {retornaClassificacaoReceita(props.values)}
+                                                {retornaClassificacaoReceita(props.values, setFieldValue)}
 
                                             </select>
 
