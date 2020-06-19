@@ -11,6 +11,7 @@ import {useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../services/auth.service';
 import {DeletarModalReceitas, CancelarModalReceitas, PeriodoFechado, ErroGeral} from "../../../utils/Modais";
 import Loading from "../../../utils/Loading";
+import api from "../../../services/Api";
 
 export const ReceitaForm = props => {
 
@@ -46,6 +47,7 @@ export const ReceitaForm = props => {
 
     const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
+    const [repasse, setRepasse] = useState({});
 
 
 
@@ -266,8 +268,6 @@ export const ReceitaForm = props => {
                     errors.data = `Data inválida. A data tem que ser entre ${data_inicio.format("DD/MM/YYYY")} e ${data_fim.format("DD/MM/YYYY")}`;
                 }
 
-                let classiicacaoReceita = ""
-
                 let valor_da_receita;
                 if (values.categoria_receita === "CUSTEIO"){
                     valor_da_receita = repasse.valor_custeio
@@ -298,28 +298,57 @@ export const ReceitaForm = props => {
         return errors;
     }
 
+    const retornaRepasse = async (acao_associacao)=>{
+        let local_repasse;
+        if (uuid){
+            local_repasse = await getRepasse(acao_associacao, true);
+            setRepasse(local_repasse)
+        }else {
+            local_repasse =  await getRepasse(acao_associacao, false);
+            setRepasse(local_repasse)
+        }
+
+
+    }
+
     const retornaClassificacaoReceita = (values)=>{
+        //console.log("AGORA VAI REPASSE ", repasse)
 
-       return  tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 ? (
-           
 
-            tabelas.categorias_receita.map((item, key) => (
+        if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && repasse){
 
-                    tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)) && (
+            return tabelas.categorias_receita.map((item, index) => {
 
+                //console.log("categorias_receita AQUI ", item)
+
+                console.log("AGORA VAI REPASSE ", repasse)
+
+                let id_categoria_receita_lower = item.id.toLowerCase();
+
+                //let aceitaClassificacao = repasse.find((element=> element.valor_capital !== "0.00"))
+                //console.log("aceitaClassificacao AQUI ", aceitaClassificacao)
+
+
+                //let aceitaClassificacao = eval('repasse.find(element => valor_' + id_categoria_receita_lower + ')!== "0.00"');
+
+                //let aceitaClassificacao = eval('repasse.find(element => element.id === Number(id_tipo_receita)).aceita_' + id_categoria_receita_lower);
+
+                //console.log("aceitaClassificacao AQUI ", id_categoria_receita_lower)
+
+
+                if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))){
+                    return (
                         <option
                             style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
-                            //style={{display: (item.id === "CAPITAL" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_capital) || (item.id === "CUSTEIO" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_custeio)  ? "none": "block" }}
                             key={item.id}
                             value={item.id}
                         >
                             {item.nome}
                         </option>
-
-                    )
-                )
-            )
-        ) : null
+                    );
+                }
+            })
+        }
 
     }
 
@@ -426,6 +455,7 @@ export const ReceitaForm = props => {
                                                 value={props.values.acao_associacao}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
+                                                    retornaRepasse(e.target.value)
                                                 }
                                                 }
                                                 onBlur={props.handleBlur}
