@@ -4,7 +4,7 @@ import {Formik} from 'formik';
 import {DatePickerField} from '../../DatePickerField'
 import CurrencyInput from 'react-currency-input';
 import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita, getRepasse } from '../../../services/Receitas.service';
-import {round, trataNumericos, periodoFechado} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {round, trataNumericos, periodoFechado, exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
@@ -313,18 +313,30 @@ export const ReceitaForm = props => {
 
     const retornaClassificacaoReceita = (values)=>{
         //console.log("AGORA VAI REPASSE ", repasse)
+        //console.log("AGORA VAI tabelas ", tabelas)
+
+        //let aceitaClassificacao = tabelas.tipos_receita.find(element => element.id === Number(values.categoria_receita)).aceita_custeio
+        //console.log("aceitaClassificacao AQUI ", aceitaClassificacao)
 
 
-        if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && repasse){
+        if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && Object.entries(repasse).length > 0 ){
 
             return tabelas.categorias_receita.map((item, index) => {
 
                 //console.log("categorias_receita AQUI ", item)
+                //console.log("AGORA VAI tabelas ", tabelas)
+
 
                 console.log("AGORA VAI REPASSE ", repasse)
 
+
+
                 let id_categoria_receita_lower = item.id.toLowerCase();
 
+                //let aceitaClassificacao = repasse.find(element=> element.valor_custeio !== "0.00");
+
+
+                //let aceitaClassificacao = repasse.find(element=> element.acao_associacao.id === 17)
                 //let aceitaClassificacao = repasse.find((element=> element.valor_capital !== "0.00"))
                 //console.log("aceitaClassificacao AQUI ", aceitaClassificacao)
 
@@ -336,7 +348,7 @@ export const ReceitaForm = props => {
                 //console.log("aceitaClassificacao AQUI ", id_categoria_receita_lower)
 
 
-                if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))){
+                if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)) && eval('repasse.valor_'+id_categoria_receita_lower) !== "0.00"){
                     return (
                         <option
                             style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
