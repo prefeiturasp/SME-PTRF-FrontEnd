@@ -312,53 +312,41 @@ export const ReceitaForm = props => {
     }
 
     const retornaClassificacaoReceita = (values)=>{
-        //console.log("AGORA VAI REPASSE ", repasse)
-        //console.log("AGORA VAI tabelas ", tabelas)
-
-        //let aceitaClassificacao = tabelas.tipos_receita.find(element => element.id === Number(values.categoria_receita)).aceita_custeio
-        //console.log("aceitaClassificacao AQUI ", aceitaClassificacao)
-
 
         if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && Object.entries(repasse).length > 0 ){
 
             return tabelas.categorias_receita.map((item, index) => {
 
-                //console.log("categorias_receita AQUI ", item)
-                //console.log("AGORA VAI tabelas ", tabelas)
-
-
-                console.log("AGORA VAI REPASSE ", repasse)
-
-
-
                 let id_categoria_receita_lower = item.id.toLowerCase();
 
-                //let aceitaClassificacao = repasse.find(element=> element.valor_custeio !== "0.00");
+                // Quando a flag e_repasse for true eu checo também se o valor da classificacao_receita é !== "0.00"
+               if (tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_repasse){
 
+                   if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)) && eval('repasse.valor_'+id_categoria_receita_lower) !== "0.00"){
+                       return (
+                           <option
+                               style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
+                               key={item.id}
+                               value={item.id}
+                           >
+                               {item.nome}
+                           </option>
+                       );
+                   }
+               }else{
+                   if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))){
+                       return (
+                           <option
+                               style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
+                               key={item.id}
+                               value={item.id}
+                           >
+                               {item.nome}
+                           </option>
+                       );
+                   }
+               }
 
-                //let aceitaClassificacao = repasse.find(element=> element.acao_associacao.id === 17)
-                //let aceitaClassificacao = repasse.find((element=> element.valor_capital !== "0.00"))
-                //console.log("aceitaClassificacao AQUI ", aceitaClassificacao)
-
-
-                //let aceitaClassificacao = eval('repasse.find(element => valor_' + id_categoria_receita_lower + ')!== "0.00"');
-
-                //let aceitaClassificacao = eval('repasse.find(element => element.id === Number(id_tipo_receita)).aceita_' + id_categoria_receita_lower);
-
-                //console.log("aceitaClassificacao AQUI ", id_categoria_receita_lower)
-
-
-                if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)) && eval('repasse.valor_'+id_categoria_receita_lower) !== "0.00"){
-                    return (
-                        <option
-                            style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
-                            key={item.id}
-                            value={item.id}
-                        >
-                            {item.nome}
-                        </option>
-                    );
-                }
             })
         }
 
