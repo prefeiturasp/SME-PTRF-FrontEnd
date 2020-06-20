@@ -242,12 +242,7 @@ export const ReceitaForm = props => {
         if (e_repasse_tipo_receita !== false && e_repasse_acao !== "" && e_repasse_acao !== "Escolha uma ação") {
 
             try {
-                let repasse;
-                if (uuid){
-                    repasse = await getRepasse(e_repasse_acao, true);
-                }else {
-                    repasse = await getRepasse(e_repasse_acao, false);
-                }
+                let repasse = setaRepasse(props.values)
 
                 console.log("Repasse ", repasse)
                 //console.log("values ", values)
@@ -292,15 +287,23 @@ export const ReceitaForm = props => {
         return errors;
     }
 
-    const setaRepasse = async (acao_associacao)=>{
+    const setaRepasse = async (values)=>{
+        console.log("setaRepasse values ", values)
         let local_repasse;
-        if (uuid){
-            local_repasse = await getRepasse(acao_associacao, true);
-            setRepasse(local_repasse)
-        }else {
-            local_repasse =  await getRepasse(acao_associacao, false);
-            setRepasse(local_repasse)
+        if (values && values.acao_associacao && values.data){
+            let data_receita = moment(new Date(values.data), "YYYY-MM-DD").format("DD/MM/YYYY");
+            if (uuid){
+                local_repasse = await getRepasse(values.acao_associacao, data_receita, uuid);
+                setRepasse(local_repasse)
+            }else {
+                local_repasse =  await getRepasse(values.acao_associacao, data_receita);
+                setRepasse(local_repasse)
+            }
+
+            console.log("setaRepasse ", local_repasse)
+            return local_repasse;
         }
+
 
 
     }
@@ -451,7 +454,7 @@ export const ReceitaForm = props => {
                                                 value={props.values.acao_associacao}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
-                                                    setaRepasse(e.target.value)
+                                                    setaRepasse(values)
                                                 }
                                                 }
                                                 onBlur={props.handleBlur}
