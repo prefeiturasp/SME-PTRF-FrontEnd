@@ -321,7 +321,7 @@ export const ReceitaForm = props => {
 
     const retornaClassificacaoReceita = (values, setFieldValue)=>{
 
-        console.log("retornaClassificacaoReceita ", values)
+        //console.log("retornaClassificacaoReceita ", values)
 
         if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && Object.entries(repasse).length > 0 ){
 
@@ -358,6 +358,29 @@ export const ReceitaForm = props => {
                }
 
             })
+        }else{
+
+            if (tabelas.categorias_receita && tabelas.categorias_receita.length > 0){
+
+                let categoria_receita = tabelas.categorias_receita.find(element => element.id === values.categoria_receita)
+
+                if(categoria_receita){
+                    console.log("Nome  ", categoria_receita.nome)
+                    return (
+                        <option
+                            //style={{display: getDisplayOptionClassificacaoReceita(values.tipo_receita, values.tipo_receita)}}
+                            key={values.categoria_receita}
+                            value={values.categoria_receita}
+                        >
+                            {categoria_receita.nome}
+                        </option>
+                    );
+                }
+
+
+            }
+
+
         }
 
     }
