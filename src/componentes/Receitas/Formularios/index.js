@@ -48,9 +48,6 @@ export const ReceitaForm = props => {
     const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
     const [repasse, setRepasse] = useState({});
-    const [dataReceita, setDataReceita] = useState({});
-
-
 
     useEffect(() => {
         const carregaTabelas = async () => {
@@ -104,7 +101,7 @@ export const ReceitaForm = props => {
         } else {
             await cadastrar(payload);
         }
-        //getPath();
+        getPath();
         setLoading(false);
     }
 
@@ -181,15 +178,11 @@ export const ReceitaForm = props => {
 
     const getClassificacaoReceita = (id_tipo_receita, setFieldValue) =>{
 
-
-
         let qtdeAceitaClassificacao = [];
 
         if (id_tipo_receita) {
 
             tabelas.categorias_receita.map((item, index) => {
-
-                //debugger;
 
                 let id_categoria_receita_lower = item.id.toLowerCase();
                 let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_' + id_categoria_receita_lower);
@@ -247,10 +240,9 @@ export const ReceitaForm = props => {
         if (e_repasse_tipo_receita !== false && e_repasse_acao !== "" && e_repasse_acao !== "Escolha uma ação" && values.data) {
 
             try {
-                let repasse = await setaRepasse(values)
 
-                //console.log("Repasse ", repasse)
-                //console.log("values ", values)
+                //debugger
+                let repasse = await setaRepasse(values)
 
                 let data_digitada = moment(values.data);
                 let data_inicio = moment(repasse.periodo.data_inicio_realizacao_despesas);
@@ -278,6 +270,7 @@ export const ReceitaForm = props => {
                     acao_associacao: values.acao_associacao,
                     conta_associacao: repasse.conta_associacao.uuid,
                     categoria_receita: values.categoria_receita,
+                    descricao: values.descricao,
                     //valor: Number(repasse.valor_capital) + Number(repasse.valor_custeio)
 
                 }
@@ -302,11 +295,21 @@ export const ReceitaForm = props => {
         if (values && values !== undefined && values.acao_associacao && values.data){
             let data_receita = moment(new Date(values.data), "YYYY-MM-DD").format("DD/MM/YYYY");
             if (uuid){
-                local_repasse = await getRepasse(values.acao_associacao, data_receita, uuid);
-                setRepasse(local_repasse)
+                try {
+                    local_repasse = await getRepasse(values.acao_associacao, data_receita, uuid);
+                    setRepasse(local_repasse)
+                }catch (e) {
+                    console.log("Erro ao obter o repasse ", e)
+                }
+
             }else {
-                local_repasse =  await getRepasse(values.acao_associacao, data_receita);
-                setRepasse(local_repasse)
+                try {
+                    local_repasse =  await getRepasse(values.acao_associacao, data_receita);
+                    setRepasse(local_repasse)
+                }catch (e) {
+                    console.log("Erro ao obter o repasse ", e)
+                }
+
             }
 
             //console.log("setaRepasse ", local_repasse)
@@ -321,9 +324,8 @@ export const ReceitaForm = props => {
 
     const retornaClassificacaoReceita = (values, setFieldValue)=>{
 
-        //console.log("retornaClassificacaoReceita ", values)
 
-        if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && Object.entries(repasse).length > 0 ){
+        if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && values.tipo_receita && Object.entries(repasse).length > 0 ){
 
             return tabelas.categorias_receita.map((item, index) => {
 
@@ -376,11 +378,7 @@ export const ReceitaForm = props => {
                         </option>
                     );
                 }
-
-
             }
-
-
         }
 
     }
