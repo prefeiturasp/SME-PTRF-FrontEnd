@@ -48,6 +48,7 @@ export const ReceitaForm = props => {
     const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
     const [repasse, setRepasse] = useState({});
+    const [dataReceita, setDataReceita] = useState({});
 
 
 
@@ -180,11 +181,15 @@ export const ReceitaForm = props => {
 
     const getClassificacaoReceita = (id_tipo_receita, setFieldValue) =>{
 
+
+
         let qtdeAceitaClassificacao = [];
 
         if (id_tipo_receita) {
 
             tabelas.categorias_receita.map((item, index) => {
+
+                //debugger;
 
                 let id_categoria_receita_lower = item.id.toLowerCase();
                 let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_' + id_categoria_receita_lower);
@@ -242,9 +247,9 @@ export const ReceitaForm = props => {
         if (e_repasse_tipo_receita !== false && e_repasse_acao !== "" && e_repasse_acao !== "Escolha uma ação" && values.data) {
 
             try {
-                let repasse = setaRepasse(props.values)
+                let repasse = await setaRepasse(values)
 
-                console.log("Repasse ", repasse)
+                //console.log("Repasse ", repasse)
                 //console.log("values ", values)
 
                 let data_digitada = moment(values.data);
@@ -268,11 +273,13 @@ export const ReceitaForm = props => {
                 const init = {
                     ...initialValue,
                     tipo_receita: values.tipo_receita,
+                    data: values.data,
+                    valor: Number(valor_da_receita),
                     acao_associacao: values.acao_associacao,
                     conta_associacao: repasse.conta_associacao.uuid,
                     categoria_receita: values.categoria_receita,
                     //valor: Number(repasse.valor_capital) + Number(repasse.valor_custeio)
-                    valor: Number(valor_da_receita)
+
                 }
                 setInitialValue(init);
                 setReadOnlyValor(true);
@@ -288,7 +295,8 @@ export const ReceitaForm = props => {
     }
 
     const setaRepasse = async (values)=>{
-        console.log("setaRepasse values ", values)
+        //debugger
+        //console.log("setaRepasse values ", values)
         let local_repasse;
         //debugger;
         if (values && values !== undefined && values.acao_associacao && values.data){
@@ -301,8 +309,10 @@ export const ReceitaForm = props => {
                 setRepasse(local_repasse)
             }
 
-            console.log("setaRepasse ", local_repasse)
+            //console.log("setaRepasse ", local_repasse)
             return local_repasse;
+        }else {
+
         }
 
 
@@ -310,6 +320,8 @@ export const ReceitaForm = props => {
     }
 
     const retornaClassificacaoReceita = (values, setFieldValue)=>{
+
+        console.log("retornaClassificacaoReceita ", values)
 
         if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && Object.entries(repasse).length > 0 ){
 
@@ -319,8 +331,6 @@ export const ReceitaForm = props => {
 
                 // Quando a flag e_repasse for true eu checo também se o valor da classificacao_receita é !== "0.00"
                if (tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_repasse){
-
-                   console.log("Valor do 0 ", eval('repasse.valor_'+id_categoria_receita_lower))
 
                    if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)) && eval('repasse.valor_'+id_categoria_receita_lower) !== "0.00" ){
                        return (
@@ -378,9 +388,11 @@ export const ReceitaForm = props => {
                                         disabled={readOnlyCampos}
                                         value={props.values.tipo_receita}
                                         onChange={(e) => {
-                                            props.handleChange(e);
-                                            getClassificacaoReceita(e.target.value, setFieldValue)
-                                        }
+                                                props.handleChange(e);
+                                                setaRepasse(values);
+                                                getClassificacaoReceita(e.target.value, setFieldValue);
+
+                                            }
                                         }
                                         onBlur={props.handleBlur}
                                         className="form-control"
@@ -454,16 +466,16 @@ export const ReceitaForm = props => {
                                                 name="acao_associacao"
                                                 value={props.values.acao_associacao}
                                                 onChange={(e) => {
-                                                    props.handleChange(e);
-                                                    setaRepasse(values)
-                                                }
+                                                        props.handleChange(e);
+                                                        setaRepasse(values)
+                                                    }
                                                 }
                                                 onBlur={props.handleBlur}
                                                 className="form-control"
                                             >
                                                 {receita.acao_associacao
                                                     ? null
-                                                    : <option>Escolha uma ação</option>}
+                                                    : <option value="">Escolha uma ação</option>}
                                                 {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
                                                     <option key={key} value={item.uuid}>{item.nome}</option>
                                                 ))) : null}
