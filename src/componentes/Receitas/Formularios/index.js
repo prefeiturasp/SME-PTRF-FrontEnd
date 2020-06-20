@@ -266,22 +266,9 @@ export const ReceitaForm = props => {
                     errors.data = `Data inválida. A data tem que ser entre ${data_inicio.format("DD/MM/YYYY")} e ${data_fim.format("DD/MM/YYYY")}`;
                 }
 
-/*                let valor_da_receita;
-                if (values.categoria_receita === "CUSTEIO"){
-                    valor_da_receita = repasse.valor_custeio
-                }else if(values.categoria_receita === "CAPITAL"){
-                    valor_da_receita =  repasse.valor_capital
-                }*/
-
                 let id_categoria_receita_lower = values.categoria_receita.toLowerCase();
 
                 let valor_da_receita = eval('repasse.valor_'+id_categoria_receita_lower)
-                /*if (values.categoria_receita === "CUSTEIO"){
-                    valor_da_receita = repasse.valor_custeio
-                }else if(values.categoria_receita === "CAPITAL"){
-                    valor_da_receita =  repasse.valor_capital
-                }*/
-
 
                 const init = {
                     ...initialValue,
@@ -329,7 +316,9 @@ export const ReceitaForm = props => {
                 // Quando a flag e_repasse for true eu checo também se o valor da classificacao_receita é !== "0.00"
                if (tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_repasse){
 
-                   if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)) && eval('repasse.valor_'+id_categoria_receita_lower) !== "0.00"){
+                   console.log("Valor do 0 ", eval('repasse.valor_'+id_categoria_receita_lower))
+
+                   if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)) && eval('repasse.valor_'+id_categoria_receita_lower) !== "0.00" ){
                        return (
                            <option
                                style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
