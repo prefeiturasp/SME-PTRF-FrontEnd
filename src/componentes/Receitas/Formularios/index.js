@@ -239,7 +239,7 @@ export const ReceitaForm = props => {
 
         e_repasse_acao = values.acao_associacao;
 
-        if (e_repasse_tipo_receita !== false && e_repasse_acao !== "" && e_repasse_acao !== "Escolha uma ação") {
+        if (e_repasse_tipo_receita !== false && e_repasse_acao !== "" && e_repasse_acao !== "Escolha uma ação" && values.data) {
 
             try {
                 let repasse = setaRepasse(props.values)
@@ -290,7 +290,8 @@ export const ReceitaForm = props => {
     const setaRepasse = async (values)=>{
         console.log("setaRepasse values ", values)
         let local_repasse;
-        if (values && values.acao_associacao && values.data){
+        //debugger;
+        if (values && values !== undefined && values.acao_associacao && values.data){
             let data_receita = moment(new Date(values.data), "YYYY-MM-DD").format("DD/MM/YYYY");
             if (uuid){
                 local_repasse = await getRepasse(values.acao_associacao, data_receita, uuid);
