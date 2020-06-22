@@ -1,0 +1,25 @@
+.menu-interno {
+  padding-bottom: 1.5rem;
+  li {
+    border: none;
+
+    a{
+      font-weight: bold !important;
+      color: #A4A4A4;
+      padding-right: 0;
+      padding-left: 0;
+      padding-bottom: 1rem;
+      margin-right: 2rem;
+    }
+
+    a:hover{
+      color: #00585E !important;
+    }
+
+    .active{
+      font-weight: bold !important;
+      color: #00585E;
+      border-bottom: solid #00585E 4px;
+    }
+  }
+}
