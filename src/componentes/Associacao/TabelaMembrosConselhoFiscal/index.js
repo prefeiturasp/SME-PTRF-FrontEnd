@@ -1,12 +1,11 @@
 import React from "react";
-import "../associacao.scss"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faAngleDown, faAngleUp, faEdit} from '@fortawesome/free-solid-svg-icons'
 
-export const TabelaMembros = ({clickIconeToogle, setClickIconeToogle, setShowEditarMembro}) => {
-    return (
+export const TabelaMembrosConselhoFiscal = ({clickIconeToogle, setClickIconeToogle, setShowEditarMembro}) => {
+    return(
         <>
-            <p><strong>Diretoria Executiva</strong></p>
+            <p><strong>Conselho Fiscal</strong></p>
             <table className="table table-bordered tabela-membros">
                 <thead>
                 <tr className="cabecalho">

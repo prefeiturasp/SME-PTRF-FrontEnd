@@ -1,11 +1,13 @@
 import React, {useState} from "react";
 import {MenuInterno} from "../MenuInterno";
-import {TabelaMembros} from "../TabelaMembros";
+import {TabelaMembrosDiretoriaExecutiva} from "../TabelaMembrosDiretoriaExecutiva";
+import {TabelaMembrosConselhoFiscal} from "../TabelaMembrosConselhoFiscal";
+
 import {EditarMembro} from "../../../utils/Modais";
 
 export const MembrosDaAssociacao = () =>{
 
-    const [clickIconeToogle, setClickIconeToogle] = useState(false)
+    const [clickIconeToogle, setClickIconeToogle] = useState(false);
     const [showEditarMembro, setShowEditarMembro] = useState(false);
     const [stateFormEditarMembro, setStateFormEditarMembro] = useState({
         cargo_associacao:"",
@@ -30,18 +32,27 @@ export const MembrosDaAssociacao = () =>{
     const onSubmitEditarMembro = () =>{
         setShowEditarMembro(false);
         console.log("onSubmitEditarMembro ", stateFormEditarMembro)
-
-    }
+    };
 
     return(
         <div className="row">
             <div className="col-12">
-                <MenuInterno/>
-                <TabelaMembros
-                    clickIconeToogle={clickIconeToogle}
-                    setClickIconeToogle={setClickIconeToogle}
-                    setShowEditarMembro={setShowEditarMembro}
-                />
+                <>
+                    <MenuInterno/>
+                    <TabelaMembrosDiretoriaExecutiva
+                        clickIconeToogle={clickIconeToogle}
+                        setClickIconeToogle={setClickIconeToogle}
+                        setShowEditarMembro={setShowEditarMembro}
+                    />
+
+                    <hr/>
+
+                    <TabelaMembrosConselhoFiscal
+                        clickIconeToogle={clickIconeToogle}
+                        setClickIconeToogle={setClickIconeToogle}
+                        setShowEditarMembro={setShowEditarMembro}
+                    />
+                </>
             </div>
 
             <section>
@@ -57,4 +68,4 @@ export const MembrosDaAssociacao = () =>{
 
         </div>
     );
-}
+};
