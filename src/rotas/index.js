@@ -13,6 +13,7 @@ import {DadosDaAssociacaoPage} from "../paginas/Associacao";
 import {PrestacaoDeContasPage} from "../paginas/PrestacaoDeContas";
 import {DetalheDasPrestacoes} from "../componentes/PrestacaoDeContas/DetalheDasPrestacoes";
 import {VisualizacaoDaAta} from "../componentes/GeracaoDaAta/VisualizacaoDaAta";
+import {MembrosDaAssociacaoPage} from "../paginas/MembrosDaAssociacao";
 
 import { authService } from '../services/auth.service';
 
@@ -56,6 +57,11 @@ const routesConfig = [
       exact: true,
       path: "/dados-da-associacao",
       component: DadosDaAssociacaoPage
+    },
+    {
+      exact: true,
+      path: "/membros-da-associacao",
+      component: MembrosDaAssociacaoPage
     },
     {
       exact: true,

@@ -4,7 +4,8 @@ import {
     ModalBootstrapReverConciliacao,
     ModalBootstrapSaldoInsuficiente,
     ModalBootstrapSaldoInsuficienteDaconta,
-    ModalBootstrapEditarAta
+    ModalBootstrapEditarAta,
+    ModalBootstrapForm
 } from "../componentes/ModalBootstrap";
 import {DatePickerField} from "../componentes/DatePickerField";
 
@@ -229,29 +230,30 @@ export const SaldoInsuficiente = (propriedades) => {
 
         return (
             <>
-                <p>Não há saldo disponível para a despesa cadastrada, nas ações/aplicações abaixo. Você deseja cadastrá-la mesmo assim?</p>
+                <p>Não há saldo disponível para a despesa cadastrada, nas ações/aplicações abaixo. Você deseja
+                    cadastrá-la mesmo assim?</p>
                 {propriedades.saldosInsuficientesDaAcao && propriedades.saldosInsuficientesDaAcao.length > 0 && propriedades.saldosInsuficientesDaAcao.map((item, index) =>
-                        <ul key={index} className="list-group list-group-flush mb-3">
-                            <li className="list-group-item p-0">
-                                <strong>Ação:</strong> {item.acao}
-                            </li>
-                            <li className="list-group-item p-0">
-                                <strong>Aplicacao:</strong> {item.aplicacao}
-                            </li>
-                            <li className="list-group-item p-0">
-                                <strong>Saldo Disponível:</strong> {item.saldo_disponivel.toLocaleString('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL'
-                            })}
-                            </li>
-                            <li className="list-group-item p-0" key={index}>
-                                <strong>Total dos rateios:</strong> {item.total_rateios.toLocaleString('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL'
-                            })}
-                            </li>
-                        </ul>
-                    )
+                    <ul key={index} className="list-group list-group-flush mb-3">
+                        <li className="list-group-item p-0">
+                            <strong>Ação:</strong> {item.acao}
+                        </li>
+                        <li className="list-group-item p-0">
+                            <strong>Aplicacao:</strong> {item.aplicacao}
+                        </li>
+                        <li className="list-group-item p-0">
+                            <strong>Saldo Disponível:</strong> {item.saldo_disponivel.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        })}
+                        </li>
+                        <li className="list-group-item p-0" key={index}>
+                            <strong>Total dos rateios:</strong> {item.total_rateios.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        })}
+                        </li>
+                    </ul>
+                )
                 }
             </>
         )
@@ -276,26 +278,27 @@ export const SaldoInsuficienteConta = (propriedades) => {
 
         return (
             <>
-                <p>Não há saldo disponível para a despesa cadastrada na conta selecionada. {propriedades.saldosInsuficientesDaConta.aceitar_lancamento ? "Deseja salvar assim mesmo?" : ""}</p>
+                <p>Não há saldo disponível para a despesa cadastrada na conta
+                    selecionada. {propriedades.saldosInsuficientesDaConta.aceitar_lancamento ? "Deseja salvar assim mesmo?" : ""}</p>
                 {propriedades.saldosInsuficientesDaConta.saldos_insuficientes && propriedades.saldosInsuficientesDaConta.saldos_insuficientes.length > 0 && propriedades.saldosInsuficientesDaConta.saldos_insuficientes.map((item, index) =>
-                        <ul key={index} className="list-group list-group-flush mb-3">
-                            <li className="list-group-item p-0">
-                                <strong>Conta:</strong> {item.conta}
-                            </li>
-                            <li className="list-group-item p-0">
-                                <strong>Saldo Disponível:</strong> {item.saldo_disponivel.toLocaleString('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL'
-                            })}
-                            </li>
-                            <li className="list-group-item p-0" key={index}>
-                                <strong>Total dos rateios:</strong> {item.total_rateios.toLocaleString('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL'
-                            })}
-                            </li>
-                        </ul>
-                    )
+                    <ul key={index} className="list-group list-group-flush mb-3">
+                        <li className="list-group-item p-0">
+                            <strong>Conta:</strong> {item.conta}
+                        </li>
+                        <li className="list-group-item p-0">
+                            <strong>Saldo Disponível:</strong> {item.saldo_disponivel.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        })}
+                        </li>
+                        <li className="list-group-item p-0" key={index}>
+                            <strong>Total dos rateios:</strong> {item.total_rateios.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        })}
+                        </li>
+                    </ul>
+                )
                 }
             </>
         )
@@ -338,11 +341,11 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <label htmlFor="tipo_reuniao">Tipo de Reunião</label>
                         <select
                             value={stateFormEditarAta.tipo_reuniao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="tipo_reuniao"
                             className="form-control"
                         >
-                            {tabelas && tabelas.tipos_reuniao && tabelas.tipos_reuniao.map((tipo)=>
+                            {tabelas && tabelas.tipos_reuniao && tabelas.tipos_reuniao.map((tipo) =>
                                 <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
                             )}
 
@@ -351,7 +354,7 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <label htmlFor="local_reuniao" className="mt-3">Local da reunião</label>
                         <input
                             value={stateFormEditarAta.local_reuniao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="local_reuniao"
                             className="form-control"
                         />
@@ -359,7 +362,7 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <label htmlFor="presidente_reuniao" className="mt-3">Presidente da reunião</label>
                         <input
                             value={stateFormEditarAta.presidente_reuniao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="presidente_reuniao"
                             className="form-control"
                         />
@@ -367,7 +370,7 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <label htmlFor="secretario_reuniao" className="mt-3">Secretário da reunião</label>
                         <input
                             value={stateFormEditarAta.secretario_reuniao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="secretario_reuniao"
                             className="form-control"
                         />
@@ -385,11 +388,11 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <label htmlFor="convocacao" className="mt-3">Abertura da reunião</label>
                         <select
                             value={stateFormEditarAta.convocacao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="convocacao"
                             className="form-control"
                         >
-                            {tabelas && tabelas.convocacoes && tabelas.convocacoes.map((tipo)=>
+                            {tabelas && tabelas.convocacoes && tabelas.convocacoes.map((tipo) =>
                                 <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
                             )}
                         </select>
@@ -397,7 +400,7 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <label htmlFor="cargo_presidente_reuniao" className="mt-3">Cargo</label>
                         <input
                             value={stateFormEditarAta.cargo_presidente_reuniao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="cargo_presidente_reuniao"
                             className="form-control"
                         />
@@ -405,7 +408,7 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <label htmlFor="cargo_secretaria_reuniao" className="mt-3">Cargo</label>
                         <input
                             value={stateFormEditarAta.cargo_secretaria_reuniao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="cargo_secretaria_reuniao"
                             className="form-control"
                         />
@@ -415,13 +418,15 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
 
                     <div className="col-12 mt-3">
                         <div className="form-group">
-                            <label htmlFor="comentarios" className="mb-0">Manifestações, Comentários e Justificativas</label>
-                            <p><small>Utilize esse campo para registrar possíveis dúvidas, discussões, esclarecimentos aparecidos durante a reunião</small></p>
+                            <label htmlFor="comentarios" className="mb-0">Manifestações, Comentários e
+                                Justificativas</label>
+                            <p><small>Utilize esse campo para registrar possíveis dúvidas, discussões, esclarecimentos
+                                aparecidos durante a reunião</small></p>
                             <textarea
                                 rows="3"
                                 placeholder="Escreva seu texto aqui"
                                 value={stateFormEditarAta.comentarios}
-                                onChange={(e)=>onChange(e.target.name, e.target.value)}
+                                onChange={(e) => onChange(e.target.name, e.target.value)}
                                 name="comentarios"
                                 className="form-control"
                             />
@@ -431,18 +436,19 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                             <label htmlFor="parecer_conselho">Como os presentes se posicionam à prestação de contas apresentada?</label>
                             <select
                                 value={stateFormEditarAta.parecer_conselho}
-                                onChange={(e)=>onChange(e.target.name, e.target.value)}
+                                onChange={(e) => onChange(e.target.name, e.target.value)}
                                 name="parecer_conselho"
                                 className="form-control"
                             >
-                                {tabelas && tabelas.pareceres && tabelas.pareceres.map((tipo)=>
+                                {tabelas && tabelas.pareceres && tabelas.pareceres.map((tipo) =>
                                     <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
                                 )}
                             </select>
                         </div>
                     </div>
 
-                </div> {/*row*/}
+                </div>
+                {/*row*/}
             </form>
         )
 
@@ -472,6 +478,108 @@ export const TextoCopiado = ({show, handleClose}) => {
             bodyText='Digite as teclas CTRL + V para "colar" o conteúdo copiado onde desejar'
             primeiroBotaoOnclick={handleClose}
             primeiroBotaoTexto="Fechar"
+        />
+    )
+};
+
+export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, stateFormEditarMembro, tabelas}) => {
+
+    const bodyTextarea = () => {
+        return (
+            <form>
+                <div className='row'>
+                    <div className="col-12">
+                        <div className="form-group">
+                            <label htmlFor="cargo_associacao">Cargo na Associação</label>
+                            <input
+                                readOnly={true}
+                                type="text"
+                                value={stateFormEditarMembro.cargo_associacao}
+                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                name="cargo_associacao"
+                                className="form-control"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="col-12 col-md-6">
+                        <div className="form-group">
+                            <label htmlFor="representacao_associacao">Representação na associação</label>
+                            <select
+                                value={stateFormEditarMembro.representacao_associacao}
+                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                name="representacao_associacao"
+                                className="form-control"
+                            >
+                                <option value="estudante">Estudante</option>
+                                <option value='responsavel'>Pai ou responsável</option>
+                                <option value='servidor'>Servidor</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao_associacao !== 'servidor' && 'escondeItem'}`}>
+                        <div className="form-group">
+                            <label htmlFor="rf">Registro Funcional</label>
+                            <input
+                                type="text"
+                                value={stateFormEditarMembro.rf}
+                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                name="rf"
+                                className="form-control"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="row">
+                    <div className="col-12 col-md-6">
+                        <div className="form-group">
+                            <label htmlFor="cargo_associacao">Nome Completo</label>
+                            <input
+                                readOnly={stateFormEditarMembro.representacao_associacao !== 'responsavel'}
+                                type="text"
+                                value={stateFormEditarMembro.nome_completo}
+                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                name="nome_completo"
+                                className="form-control"
+                            />
+                        </div>
+                    </div>
+
+                    <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao_associacao !== 'servidor' && 'escondeItem'}`}>
+                        <div className="form-group">
+                            <label htmlFor="cargo_educacao">Cargo na educação</label>
+                            <select
+                                value={stateFormEditarMembro.cargo_educacao}
+                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                name="cargo_educacao"
+                                className="form-control"
+                            >
+                                <option value="coordenador">Coordenador</option>
+                                <option value='presidente'>Presidente</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+        )
+
+    };
+    return (
+        <ModalBootstrapForm
+            show={show}
+            onHide={handleClose}
+            titulo="Editar membro"
+            bodyText={bodyTextarea()}
+            primeiroBotaoOnclick={handleClose}
+            primeiroBotaoTexto="Cancelar"
+            primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={onSubmitEditarMembro}
+            segundoBotaoTexto="Salvar"
+            segundoBotaoCss="success"
         />
     )
 };

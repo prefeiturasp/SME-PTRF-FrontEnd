@@ -128,3 +128,28 @@ export const ModalBootstrapEditarAta = (propriedades) =>{
         </Fragment>
     )
 };
+
+export const ModalBootstrapForm = (propriedades) =>{
+    return (
+        <Fragment>
+            <Modal centered show={propriedades.show} onHide={propriedades.onHide}  size="lg">
+                <Modal.Header>
+                    <Modal.Title>{propriedades.titulo}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {propriedades.bodyText}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant={propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"} onClick={propriedades.primeiroBotaoOnclick}>
+                        {propriedades.primeiroBotaoTexto}
+                    </Button>
+                    {propriedades.segundoBotaoOnclick && propriedades.segundoBotaoTexto ? (
+                        <Button disabled={propriedades.segundoBotaoDisable} variant={propriedades.segundoBotaoCss ? propriedades.segundoBotaoCss : "primary"} onClick={propriedades.segundoBotaoOnclick}>
+                            {propriedades.segundoBotaoTexto}
+                        </Button>
+                    ):null}
+                </Modal.Footer>
+            </Modal>
+        </Fragment>
+    )
+};

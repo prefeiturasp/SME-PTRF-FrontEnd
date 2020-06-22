@@ -1,12 +1,16 @@
 import React, {useEffect, useState} from "react";
 import {getAssociacao, alterarAssociacao} from "../../../services/Associacao.service";
 import {CancelarModalAssociacao, SalvarModalAssociacao} from "../../../utils/Modais";
+import {MenuInterno} from "../MenuInterno";
+import "../associacao.scss"
 
 export const DadosDaAsssociacao = () => {
 
     const [stateAssociacao, setStateAssociacao] = useState(undefined);
     const [showModalReceitasCancelar, setShowModalReceitasCancelar] = useState(false);
     const [showModalReceitasSalvar, setShowModalReceitasSalvar] = useState(false);
+    const [activeClass, setActiveClass] = useState("");
+
 
     useEffect(()=> {
         buscaAssociacao();
@@ -68,13 +72,21 @@ export const DadosDaAsssociacao = () => {
 
     const onShowModalSalvar = () => {
         setShowModalReceitasSalvar(true);
+    };
+
+    const setAcitveItemMenu = () =>{
+
     }
 
     return (
         <>
             {stateAssociacao !== undefined ? (
+
                 <div className="row">
                     <div className="col-12">
+
+                        <MenuInterno/>
+
                         <form onSubmit={handleSubmit}>
                             <div className="form-row">
                                 <div className="form-group col-md-6">
