@@ -7,7 +7,7 @@ import {EditarMembro} from "../../../utils/Modais";
 
 export const MembrosDaAssociacao = () =>{
 
-    const [clickIconeToogle, setClickIconeToogle] = useState(false);
+    const [clickIconeToogle, setClickIconeToogle] = useState({});
     const [showEditarMembro, setShowEditarMembro] = useState(false);
     const [stateFormEditarMembro, setStateFormEditarMembro] = useState({
         cargo_associacao:"",
@@ -16,6 +16,13 @@ export const MembrosDaAssociacao = () =>{
         nome_completo:"",
         cargo_educacao:"",
     });
+
+    const toggleIcon = (id) => {
+        setClickIconeToogle({
+            ...clickIconeToogle,
+            [id]: !clickIconeToogle[id]
+        });
+    }
 
 
     const onHandleClose = () => {
@@ -41,7 +48,7 @@ export const MembrosDaAssociacao = () =>{
                     <MenuInterno/>
                     <TabelaMembrosDiretoriaExecutiva
                         clickIconeToogle={clickIconeToogle}
-                        setClickIconeToogle={setClickIconeToogle}
+                        toggleIcon={toggleIcon}
                         setShowEditarMembro={setShowEditarMembro}
                     />
 
