@@ -3,7 +3,7 @@ import "../associacao.scss"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faAngleDown, faAngleUp, faEdit} from '@fortawesome/free-solid-svg-icons'
 
-export const TabelaMembros = ({clickIconeToogle, setClickIconeToogle}) => {
+export const TabelaMembros = ({clickIconeToogle, setClickIconeToogle, setShowEditarMembro}) => {
     return (
         <>
             <p><strong>Diretoria Executiva</strong></p>
@@ -34,7 +34,7 @@ export const TabelaMembros = ({clickIconeToogle, setClickIconeToogle}) => {
                     <td>Otto</td>
                     <td>
                         <div className="d-flex justify-content-center">
-                            <a>
+                            <a onClick={()=>setShowEditarMembro(true)}>
                                 <FontAwesomeIcon
                                     style={{fontSize: '20px', marginRight:"0"}}
                                     icon={faEdit}
