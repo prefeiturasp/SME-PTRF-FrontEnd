@@ -22,8 +22,7 @@ export const MembrosDaAssociacao = () =>{
             ...clickIconeToogle,
             [id]: !clickIconeToogle[id]
         });
-    }
-
+    };
 
     const onHandleClose = () => {
         setShowEditarMembro(false);

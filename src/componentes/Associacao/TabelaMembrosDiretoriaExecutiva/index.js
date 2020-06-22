@@ -14,7 +14,7 @@ export const TabelaMembrosDiretoriaExecutiva = ({clickIconeToogle, toggleIcon, s
         {6:"Vogal"},
         {7:"Vogal"},
         {8:"Vogal"},
-    ]
+    ];
     return(
         <>
             <p><strong>Diretoria Executiva</strong></p>
@@ -24,7 +24,7 @@ export const TabelaMembrosDiretoriaExecutiva = ({clickIconeToogle, toggleIcon, s
                     <th scope="col">Cargo na associação</th>
                     <th scope="col">Nome completo</th>
                     <th scope="col">Representação na associação</th>
-                    <th scope="col"></th>
+                    <th scope="col">>&nbsp;</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -34,7 +34,7 @@ export const TabelaMembrosDiretoriaExecutiva = ({clickIconeToogle, toggleIcon, s
                             <tr>
                                 <td>
                                     <div className="d-flex justify-content-start">
-                                        <a onClick={()=>toggleIcon(index)} data-toggle="collapse" href={`#collapseExample_${index}`} role="button"aria-expanded="false" aria-controls="collapseExample">
+                                        <a onClick={()=>toggleIcon(index)} data-toggle="collapse" href={`#collapseExample_${index}`} role="button" aria-expanded="false" aria-controls="collapseExample">
                                             <FontAwesomeIcon
                                                 style={{fontSize: '30px', marginRight:'5px'}}
                                                 icon={clickIconeToogle[index] ? faAngleUp : faAngleDown}
@@ -70,4 +70,4 @@ export const TabelaMembrosDiretoriaExecutiva = ({clickIconeToogle, toggleIcon, s
             </table>
         </>
     );
-}
+};
