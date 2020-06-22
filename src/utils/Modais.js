@@ -5,7 +5,7 @@ import {
     ModalBootstrapSaldoInsuficiente,
     ModalBootstrapSaldoInsuficienteDaconta,
     ModalBootstrapEditarAta,
-    ModalBootstrapEditarMembro
+    ModalBootstrapForm
 } from "../componentes/ModalBootstrap";
 import {DatePickerField} from "../componentes/DatePickerField";
 
@@ -433,8 +433,7 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="parecer_conselho">Como os presentes se posicionam à prestação de contas
-                                apresentada?</label>
+                            <label htmlFor="parecer_conselho">Como os presentes se posicionam à prestação de contas apresentada?</label>
                             <select
                                 value={stateFormEditarAta.parecer_conselho}
                                 onChange={(e) => onChange(e.target.name, e.target.value)}
@@ -488,30 +487,89 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
     const bodyTextarea = () => {
         return (
             <form>
+                <div className='row'>
+                    <div className="col-12">
+                        <div className="form-group">
+                            <label htmlFor="cargo_associacao">Cargo na Associação</label>
+                            <input
+                                readOnly={true}
+                                type="text"
+                                value={stateFormEditarMembro.cargo_associacao}
+                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                name="cargo_associacao"
+                                className="form-control"
+                            />
+                        </div>
+                    </div>
 
-                <div className="form-group">
-                    <label htmlFor="cargo_associacao">Email address</label>
-                    <input
-                        type="text"
-                        value={stateFormEditarMembro.cargo_associacao}
-                        onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
-                        name="cargo_associacao"
-                        className="form-control"
-                    />
-                </div>
+                    <div className="col-12 col-md-6">
+                        <div className="form-group">
+                            <label htmlFor="representacao_associacao">Representação na associação</label>
+                            <select
+                                value={stateFormEditarMembro.representacao_associacao}
+                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                name="representacao_associacao"
+                                className="form-control"
+                            >
+                                <option value="estudante">Estudante</option>
+                                <option value='responsavel'>Pai ou responsável</option>
+                                <option value='servidor'>Servidor</option>
+                            </select>
+                        </div>
+                    </div>
 
-                <div className="form-group">
-                    <div className="form-group">
-                        <label htmlFor="exampleInputPassword1">Password</label>
-                        <input type="password" className="form-control" id="exampleInputPassword1"/>
+                    <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao_associacao !== 'servidor' && 'escondeItem'}`}>
+                        <div className="form-group">
+                            <label htmlFor="rf">Registro Funcional</label>
+                            <input
+                                type="text"
+                                value={stateFormEditarMembro.rf}
+                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                name="rf"
+                                className="form-control"
+                            />
+                        </div>
                     </div>
                 </div>
+
+                <div className="row">
+                    <div className="col-12 col-md-6">
+                        <div className="form-group">
+                            <label htmlFor="cargo_associacao">Nome Completo</label>
+                            <input
+                                readOnly={stateFormEditarMembro.representacao_associacao !== 'responsavel'}
+                                type="text"
+                                value={stateFormEditarMembro.nome_completo}
+                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                name="nome_completo"
+                                className="form-control"
+                            />
+                        </div>
+                    </div>
+
+                    <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao_associacao !== 'servidor' && 'escondeItem'}`}>
+                        <div className="form-group">
+                            <label htmlFor="cargo_educacao">Cargo na educação</label>
+                            <select
+                                value={stateFormEditarMembro.cargo_educacao}
+                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                name="cargo_educacao"
+                                className="form-control"
+                            >
+                                <option value="coordenador">Coordenador</option>
+                                <option value='presidente'>Presidente</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
             </form>
         )
 
     };
     return (
-        <ModalBootstrapEditarMembro
+        <ModalBootstrapForm
             show={show}
             onHide={handleClose}
             titulo="Editar membro"

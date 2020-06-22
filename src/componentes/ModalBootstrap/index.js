@@ -129,7 +129,7 @@ export const ModalBootstrapEditarAta = (propriedades) =>{
     )
 };
 
-export const ModalBootstrapEditarMembro = (propriedades) =>{
+export const ModalBootstrapForm = (propriedades) =>{
     return (
         <Fragment>
             <Modal centered show={propriedades.show} onHide={propriedades.onHide}  size="lg">
