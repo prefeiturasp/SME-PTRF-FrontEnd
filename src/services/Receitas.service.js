@@ -76,8 +76,9 @@ export const filtrosAvancadosReceitas = async (palavra, tipo_receita, acao_assoc
     return (await api.get(`api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&tipo_receita=${tipo_receita}&acao_associacao__uuid=${acao_associacao__uuid}&conta_associacao__uuid=${conta_associacao__uuid}`, authHeader)).data
 }
 
-export const getRepasse = async (acao_associacao_uuid, eAtualizacao=false) => {
-    return (await api.get(`api/repasses/pendentes/?acao-associacao=${acao_associacao_uuid}${eAtualizacao ? "&edit=True": ""}`, authHeader)).data
+export const getRepasse = async (acao_associacao_uuid, data_receita, uuid="") => {
+    return (await api.get(`/api/repasses/pendentes/?acao-associacao=${acao_associacao_uuid}&data=${data_receita}&uuid-receita=${uuid}`, authHeader)).data
+    //return (await api.get(`api/repasses/pendentes/?acao-associacao=${acao_associacao_uuid}${eAtualizacao ? "&edit=True": ""}`, authHeader)).data
 }
 
 export const getPeriodoFechadoReceita = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status) => {

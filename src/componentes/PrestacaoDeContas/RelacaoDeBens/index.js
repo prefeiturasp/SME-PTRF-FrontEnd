@@ -6,7 +6,7 @@ export default class RelacaoDeBens extends Component {
 
     state = {
         mensagem: "",
-    }
+    };
 
     async componentDidMount() {
         this._isMounted = true;
@@ -32,21 +32,23 @@ export default class RelacaoDeBens extends Component {
                 }
             }
         );
-        ;
-    }
+
+    };
     
     gerarPrevia = async () => {
+        this.props.setLoading(true);
         const {periodo, conta} = this.props.periodoConta;
-
         await previa(conta, periodo);
-    }
+        this.props.setLoading(false);
+    };
 
     gerarDocumentoFinal = async () => {
+        this.props.setLoading(true);
         const {periodo, conta} = this.props.periodoConta;
-        
         await documentoFinal(conta, periodo);
         await this.relacaoBensInfo();
-    }
+        this.props.setLoading(false);
+    };
 
     render() {
         const {mensagem} = this.state;

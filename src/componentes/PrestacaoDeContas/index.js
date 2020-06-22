@@ -19,10 +19,9 @@ import {
 } from "../../services/PrestacaoDeContas.service";
 import {exibeDateTimePT_BR, exibeDateTimePT_BR_Ata} from "../../utils/ValidacoesAdicionaisFormularios";
 import {ReverConciliacao} from "../../utils/Modais";
-
 import {BoxPrestacaoDeContasPorPeriodo} from "../GeracaoDaAta/BoxPrestacaoDeContasPorPeriodo";
-
 import RelacaoDeBens from "./RelacaoDeBens";
+import Loading from "../../utils/Loading";
 
 
 export const PrestacaoDeContas = () => {
@@ -49,6 +48,8 @@ export const PrestacaoDeContas = () => {
     const [corBoxPrestacaoDeContasPorPeriodo, setCorBoxPrestacaoDeContasPorPeriodo] = useState("");
     const [textoBoxPrestacaoDeContasPorPeriodo, setTextoBoxPrestacaoDeContasPorPeriodo] = useState("");
     const [dataBoxPrestacaoDeContasPorPeriodo, setDataBoxPrestacaoDeContasPorPeriodo] = useState("");
+
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         getPeriodoConta();
@@ -86,6 +87,10 @@ export const PrestacaoDeContas = () => {
         }
     }, [periodoConta]);
 
+    useEffect(()=>{
+        setLoading(false)
+    }, [])
+
     const getPeriodoConta = () => {
         if (localStorage.getItem('periodoConta')) {
             const files = JSON.parse(localStorage.getItem('periodoConta'))
@@ -96,6 +101,7 @@ export const PrestacaoDeContas = () => {
     }
 
     const getStatusPrestacaoDeConta = async (periodo_uuid, conta_uuid) => {
+        setLoading(true)
         let status = await getStatus(periodo_uuid, conta_uuid);
         setStatusPrestacaoConta(status);
         localStorage.setItem("uuidPrestacaoConta", status.uuid)
@@ -111,6 +117,8 @@ export const PrestacaoDeContas = () => {
             setDemonstrativoFinanceiro(false);
             setBoxPrestacaoDeContasPorPeriodo(false);
         }
+
+        setLoading(false)
     }
 
     const setConfBoxPrestacaoDeContasPorPeriodo = async (status)=>{
@@ -149,6 +157,7 @@ export const PrestacaoDeContas = () => {
     }
 
     const iniciarPrestacaoDeContas = async () => {
+        setLoading(true)
         if (!statusPrestacaoConta.uuid){
             let prestacao = await getIniciarPrestacaoDeContas(periodoConta.conta, periodoConta.periodo);
             localStorage.setItem("uuidPrestacaoConta", prestacao.uuid)
@@ -208,6 +217,7 @@ export const PrestacaoDeContas = () => {
 
     const reabrirPeriodo = async () => {
         setShow(false);
+        setLoading(true)
         let payload = {
             "motivo": textareaModalReverConciliacao
         }
@@ -218,45 +228,64 @@ export const PrestacaoDeContas = () => {
 
     return (
         <>
-            <BarraDeStatusPrestacaoDeContas
-                statusPrestacaoConta={statusPrestacaoConta}
-                corBarraDeStatusPrestacaoDeContas={corBarraDeStatusPrestacaoDeContas}
-                textoBarraDeStatusPrestacaoDeContas={textoBarraDeStatusPrestacaoDeContas}
-            />
-            <SelectPeriodoConta
-                periodoConta={periodoConta}
-                handleChangePeriodoConta={handleChangePeriodoConta}
-                periodosAssociacao={periodosAssociacao}
-                contasAssociacao={contasAssociacao}
-            />
-            <div className='row mt-5'>
-                <DataUltimaConciliacao
-                    statusPrestacaoConta={statusPrestacaoConta}
-                    dataUltimaConciliacao={dataUltimaConciliacao}
+            {loading ?
+                <Loading
+                    corGrafico="black"
+                    corFonte="dark"
+                    marginTop="50"
+                    marginBottom="0"
                 />
-                <BotaoConciliacao
-                    statusPrestacaoConta={statusPrestacaoConta}
-                    cssBotaoConciliacao={cssBotaoConciliacao}
-                    textoBotaoConciliacao={textoBotaoConciliacao}
-                    botaoConciliacaoReadonly={botaoConciliacaoReadonly}
-                    handleClickBotaoConciliacao={handleClickBotaoConciliacao}
-                />
-            </div>
-            
-            {demonstrativoFinanceiro === true && statusPrestacaoConta !== undefined && (
+                :
                 <>
-                    <DemonstrativoFinanceiro periodoConta={periodoConta}/>
-                    <RelacaoDeBens periodoConta={periodoConta}/>
-                </>
-            )}
+                    <BarraDeStatusPrestacaoDeContas
+                        statusPrestacaoConta={statusPrestacaoConta}
+                        corBarraDeStatusPrestacaoDeContas={corBarraDeStatusPrestacaoDeContas}
+                        textoBarraDeStatusPrestacaoDeContas={textoBarraDeStatusPrestacaoDeContas}
+                    />
+                    <SelectPeriodoConta
+                        periodoConta={periodoConta}
+                        handleChangePeriodoConta={handleChangePeriodoConta}
+                        periodosAssociacao={periodosAssociacao}
+                        contasAssociacao={contasAssociacao}
+                    />
+                    <div className='row mt-5'>
+                        <DataUltimaConciliacao
+                            statusPrestacaoConta={statusPrestacaoConta}
+                            dataUltimaConciliacao={dataUltimaConciliacao}
+                        />
+                        <BotaoConciliacao
+                            statusPrestacaoConta={statusPrestacaoConta}
+                            cssBotaoConciliacao={cssBotaoConciliacao}
+                            textoBotaoConciliacao={textoBotaoConciliacao}
+                            botaoConciliacaoReadonly={botaoConciliacaoReadonly}
+                            handleClickBotaoConciliacao={handleClickBotaoConciliacao}
+                        />
+                    </div>
 
-            {boxPrestacaoDeContasPorPeriodo === true && statusPrestacaoConta !== undefined && (
-                <BoxPrestacaoDeContasPorPeriodo
-                    corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
-                    textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
-                    dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
-                />
-            )}
+                    {demonstrativoFinanceiro === true && statusPrestacaoConta !== undefined && (
+                        <>
+                            <DemonstrativoFinanceiro
+                                setLoading={setLoading}
+                                periodoConta={periodoConta}
+                            />
+                            <RelacaoDeBens
+                                periodoConta={periodoConta}
+                                setLoading={setLoading}
+                            />
+                        </>
+                    )}
+
+                    {boxPrestacaoDeContasPorPeriodo === true && statusPrestacaoConta !== undefined && (
+                        <BoxPrestacaoDeContasPorPeriodo
+                            setLoading={setLoading}
+                            corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
+                            textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
+                            dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
+                        />
+                    )}
+
+                </>
+            }
 
             {exibeMensagem && (
                 <MsgImgCentralizada
@@ -275,4 +304,4 @@ export const PrestacaoDeContas = () => {
             </section>
         </>
     )
-}
+};

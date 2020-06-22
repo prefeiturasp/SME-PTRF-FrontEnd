@@ -1,9 +1,10 @@
 import React from "react";
 import "../geracao-da-ata.scss"
 
-export const BoxPrestacaoDeContasPorPeriodo = ({corBoxPrestacaoDeContasPorPeriodo, textoBoxPrestacaoDeContasPorPeriodo, dataBoxPrestacaoDeContasPorPeriodo}) => {
+export const BoxPrestacaoDeContasPorPeriodo = ({corBoxPrestacaoDeContasPorPeriodo, textoBoxPrestacaoDeContasPorPeriodo, dataBoxPrestacaoDeContasPorPeriodo, setLoading}) => {
 
     const onClickVisualizarAta = () =>{
+        setLoading(true)
         window.location.assign('/visualizacao-da-ata')
     }
 
