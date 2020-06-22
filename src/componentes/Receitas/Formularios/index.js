@@ -4,7 +4,7 @@ import {Formik} from 'formik';
 import {DatePickerField} from '../../DatePickerField'
 import CurrencyInput from 'react-currency-input';
 import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita, getRepasse } from '../../../services/Receitas.service';
-import {round, trataNumericos, periodoFechado, exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {round, trataNumericos, periodoFechado} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
@@ -174,7 +174,32 @@ export const ReceitaForm = props => {
             path = `/detalhe-das-prestacoes`;
         }
         window.location.assign(path)
-    }
+    };
+
+    const setaRepasse = async (values)=>{
+        let local_repasse;
+        if (values && values.acao_associacao && values.data){
+            let data_receita = moment(new Date(values.data), "YYYY-MM-DD").format("DD/MM/YYYY");
+            if (uuid){
+                try {
+                    local_repasse = await getRepasse(values.acao_associacao, data_receita, uuid);
+                    setRepasse(local_repasse)
+                }catch (e) {
+                    console.log("Erro ao obter o repasse ", e)
+                }
+
+            }else {
+                try {
+                    local_repasse =  await getRepasse(values.acao_associacao, data_receita);
+                    setRepasse(local_repasse)
+                }catch (e) {
+                    console.log("Erro ao obter o repasse ", e)
+                }
+
+            }
+            return local_repasse;
+        }
+    };
 
     const getClassificacaoReceita = (id_tipo_receita, setFieldValue) =>{
 
@@ -217,6 +242,64 @@ export const ReceitaForm = props => {
             return "block"
         }
     }
+
+    const retornaClassificacaoReceita = (values, setFieldValue)=>{
+
+        if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && values.tipo_receita && Object.entries(repasse).length > 0 ){
+
+            return tabelas.categorias_receita.map((item, index) => {
+
+                let id_categoria_receita_lower = item.id.toLowerCase();
+
+                // Quando a flag e_repasse for true eu checo também se o valor da classificacao_receita é !== "0.00"
+                if (tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_repasse){
+
+                    if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)) && eval('repasse.valor_'+id_categoria_receita_lower) !== "0.00" ){
+                        return (
+                            <option
+                                style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
+                                key={item.id}
+                                value={item.id}
+                            >
+                                {item.nome}
+                            </option>
+                        );
+                    }
+                }else{
+                    if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))){
+                        return (
+                            <option
+                                style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
+                                key={item.id}
+                                value={item.id}
+                            >
+                                {item.nome}
+                            </option>
+                        );
+                    }
+                }
+            })
+        }else{
+
+            if (tabelas.categorias_receita && tabelas.categorias_receita.length > 0){
+
+                let categoria_receita = tabelas.categorias_receita.find(element => element.id === values.categoria_receita)
+
+                if(categoria_receita){
+                    console.log("Nome  ", categoria_receita.nome)
+                    return (
+                        <option
+                            //style={{display: getDisplayOptionClassificacaoReceita(values.tipo_receita, values.tipo_receita)}}
+                            key={values.categoria_receita}
+                            value={values.categoria_receita}
+                        >
+                            {categoria_receita.nome}
+                        </option>
+                    );
+                }
+            }
+        }
+    };
 
     const validateFormReceitas = async (values) => {
         const errors = {};
@@ -285,102 +368,6 @@ export const ReceitaForm = props => {
         }
 
         return errors;
-    }
-
-    const setaRepasse = async (values)=>{
-        //debugger
-        //console.log("setaRepasse values ", values)
-        let local_repasse;
-        //debugger;
-        if (values && values !== undefined && values.acao_associacao && values.data){
-            let data_receita = moment(new Date(values.data), "YYYY-MM-DD").format("DD/MM/YYYY");
-            if (uuid){
-                try {
-                    local_repasse = await getRepasse(values.acao_associacao, data_receita, uuid);
-                    setRepasse(local_repasse)
-                }catch (e) {
-                    console.log("Erro ao obter o repasse ", e)
-                }
-
-            }else {
-                try {
-                    local_repasse =  await getRepasse(values.acao_associacao, data_receita);
-                    setRepasse(local_repasse)
-                }catch (e) {
-                    console.log("Erro ao obter o repasse ", e)
-                }
-
-            }
-
-            //console.log("setaRepasse ", local_repasse)
-            return local_repasse;
-        }else {
-
-        }
-
-
-
-    }
-
-    const retornaClassificacaoReceita = (values, setFieldValue)=>{
-
-
-        if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && values.tipo_receita && Object.entries(repasse).length > 0 ){
-
-            return tabelas.categorias_receita.map((item, index) => {
-
-                let id_categoria_receita_lower = item.id.toLowerCase();
-
-                // Quando a flag e_repasse for true eu checo também se o valor da classificacao_receita é !== "0.00"
-               if (tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_repasse){
-
-                   if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)) && eval('repasse.valor_'+id_categoria_receita_lower) !== "0.00" ){
-                       return (
-                           <option
-                               style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
-                               key={item.id}
-                               value={item.id}
-                           >
-                               {item.nome}
-                           </option>
-                       );
-                   }
-               }else{
-                   if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))){
-                       return (
-                           <option
-                               style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
-                               key={item.id}
-                               value={item.id}
-                           >
-                               {item.nome}
-                           </option>
-                       );
-                   }
-               }
-
-            })
-        }else{
-
-            if (tabelas.categorias_receita && tabelas.categorias_receita.length > 0){
-
-                let categoria_receita = tabelas.categorias_receita.find(element => element.id === values.categoria_receita)
-
-                if(categoria_receita){
-                    console.log("Nome  ", categoria_receita.nome)
-                    return (
-                        <option
-                            //style={{display: getDisplayOptionClassificacaoReceita(values.tipo_receita, values.tipo_receita)}}
-                            key={values.categoria_receita}
-                            value={values.categoria_receita}
-                        >
-                            {categoria_receita.nome}
-                        </option>
-                    );
-                }
-            }
-        }
-
     }
 
     return (
@@ -524,7 +511,6 @@ export const ReceitaForm = props => {
                                                 {retornaClassificacaoReceita(props.values, setFieldValue)}
 
                                             </select>
-
 
                                             {/*<select
                                                 id="categoria_receita"
