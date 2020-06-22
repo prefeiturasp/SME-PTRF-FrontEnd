@@ -34,12 +34,12 @@ export const TabelaMembros = ({clickIconeToogle, setClickIconeToogle, setShowEdi
                     <td>Otto</td>
                     <td>
                         <div className="d-flex justify-content-center">
-                            <a onClick={()=>setShowEditarMembro(true)}>
+                            <button className="btn-editar-membro" onClick={()=>setShowEditarMembro(true)}>
                                 <FontAwesomeIcon
                                     style={{fontSize: '20px', marginRight:"0"}}
                                     icon={faEdit}
                                 />
-                            </a>
+                            </button>
                         </div>
 
                     </td>

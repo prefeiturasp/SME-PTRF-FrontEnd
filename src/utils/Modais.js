@@ -230,29 +230,30 @@ export const SaldoInsuficiente = (propriedades) => {
 
         return (
             <>
-                <p>Não há saldo disponível para a despesa cadastrada, nas ações/aplicações abaixo. Você deseja cadastrá-la mesmo assim?</p>
+                <p>Não há saldo disponível para a despesa cadastrada, nas ações/aplicações abaixo. Você deseja
+                    cadastrá-la mesmo assim?</p>
                 {propriedades.saldosInsuficientesDaAcao && propriedades.saldosInsuficientesDaAcao.length > 0 && propriedades.saldosInsuficientesDaAcao.map((item, index) =>
-                        <ul key={index} className="list-group list-group-flush mb-3">
-                            <li className="list-group-item p-0">
-                                <strong>Ação:</strong> {item.acao}
-                            </li>
-                            <li className="list-group-item p-0">
-                                <strong>Aplicacao:</strong> {item.aplicacao}
-                            </li>
-                            <li className="list-group-item p-0">
-                                <strong>Saldo Disponível:</strong> {item.saldo_disponivel.toLocaleString('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL'
-                            })}
-                            </li>
-                            <li className="list-group-item p-0" key={index}>
-                                <strong>Total dos rateios:</strong> {item.total_rateios.toLocaleString('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL'
-                            })}
-                            </li>
-                        </ul>
-                    )
+                    <ul key={index} className="list-group list-group-flush mb-3">
+                        <li className="list-group-item p-0">
+                            <strong>Ação:</strong> {item.acao}
+                        </li>
+                        <li className="list-group-item p-0">
+                            <strong>Aplicacao:</strong> {item.aplicacao}
+                        </li>
+                        <li className="list-group-item p-0">
+                            <strong>Saldo Disponível:</strong> {item.saldo_disponivel.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        })}
+                        </li>
+                        <li className="list-group-item p-0" key={index}>
+                            <strong>Total dos rateios:</strong> {item.total_rateios.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        })}
+                        </li>
+                    </ul>
+                )
                 }
             </>
         )
@@ -277,26 +278,27 @@ export const SaldoInsuficienteConta = (propriedades) => {
 
         return (
             <>
-                <p>Não há saldo disponível para a despesa cadastrada na conta selecionada. {propriedades.saldosInsuficientesDaConta.aceitar_lancamento ? "Deseja salvar assim mesmo?" : ""}</p>
+                <p>Não há saldo disponível para a despesa cadastrada na conta
+                    selecionada. {propriedades.saldosInsuficientesDaConta.aceitar_lancamento ? "Deseja salvar assim mesmo?" : ""}</p>
                 {propriedades.saldosInsuficientesDaConta.saldos_insuficientes && propriedades.saldosInsuficientesDaConta.saldos_insuficientes.length > 0 && propriedades.saldosInsuficientesDaConta.saldos_insuficientes.map((item, index) =>
-                        <ul key={index} className="list-group list-group-flush mb-3">
-                            <li className="list-group-item p-0">
-                                <strong>Conta:</strong> {item.conta}
-                            </li>
-                            <li className="list-group-item p-0">
-                                <strong>Saldo Disponível:</strong> {item.saldo_disponivel.toLocaleString('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL'
-                            })}
-                            </li>
-                            <li className="list-group-item p-0" key={index}>
-                                <strong>Total dos rateios:</strong> {item.total_rateios.toLocaleString('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL'
-                            })}
-                            </li>
-                        </ul>
-                    )
+                    <ul key={index} className="list-group list-group-flush mb-3">
+                        <li className="list-group-item p-0">
+                            <strong>Conta:</strong> {item.conta}
+                        </li>
+                        <li className="list-group-item p-0">
+                            <strong>Saldo Disponível:</strong> {item.saldo_disponivel.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        })}
+                        </li>
+                        <li className="list-group-item p-0" key={index}>
+                            <strong>Total dos rateios:</strong> {item.total_rateios.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        })}
+                        </li>
+                    </ul>
+                )
                 }
             </>
         )
@@ -339,11 +341,11 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <label htmlFor="tipo_reuniao">Tipo de Reunião</label>
                         <select
                             value={stateFormEditarAta.tipo_reuniao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="tipo_reuniao"
                             className="form-control"
                         >
-                            {tabelas && tabelas.tipos_reuniao && tabelas.tipos_reuniao.map((tipo)=>
+                            {tabelas && tabelas.tipos_reuniao && tabelas.tipos_reuniao.map((tipo) =>
                                 <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
                             )}
 
@@ -352,7 +354,7 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <label htmlFor="local_reuniao" className="mt-3">Local da reunião</label>
                         <input
                             value={stateFormEditarAta.local_reuniao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="local_reuniao"
                             className="form-control"
                         />
@@ -360,7 +362,7 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <label htmlFor="presidente_reuniao" className="mt-3">Presidente da reunião</label>
                         <input
                             value={stateFormEditarAta.presidente_reuniao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="presidente_reuniao"
                             className="form-control"
                         />
@@ -368,7 +370,7 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <label htmlFor="secretario_reuniao" className="mt-3">Secretário da reunião</label>
                         <input
                             value={stateFormEditarAta.secretario_reuniao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="secretario_reuniao"
                             className="form-control"
                         />
@@ -386,11 +388,11 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <label htmlFor="convocacao" className="mt-3">Abertura da reunião</label>
                         <select
                             value={stateFormEditarAta.convocacao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="convocacao"
                             className="form-control"
                         >
-                            {tabelas && tabelas.convocacoes && tabelas.convocacoes.map((tipo)=>
+                            {tabelas && tabelas.convocacoes && tabelas.convocacoes.map((tipo) =>
                                 <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
                             )}
                         </select>
@@ -398,7 +400,7 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <label htmlFor="cargo_presidente_reuniao" className="mt-3">Cargo</label>
                         <input
                             value={stateFormEditarAta.cargo_presidente_reuniao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="cargo_presidente_reuniao"
                             className="form-control"
                         />
@@ -406,7 +408,7 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                         <label htmlFor="cargo_secretaria_reuniao" className="mt-3">Cargo</label>
                         <input
                             value={stateFormEditarAta.cargo_secretaria_reuniao}
-                            onChange={(e)=>onChange(e.target.name, e.target.value)}
+                            onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="cargo_secretaria_reuniao"
                             className="form-control"
                         />
@@ -416,34 +418,38 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
 
                     <div className="col-12 mt-3">
                         <div className="form-group">
-                            <label htmlFor="comentarios" className="mb-0">Manifestações, Comentários e Justificativas</label>
-                            <p><small>Utilize esse campo para registrar possíveis dúvidas, discussões, esclarecimentos aparecidos durante a reunião</small></p>
+                            <label htmlFor="comentarios" className="mb-0">Manifestações, Comentários e
+                                Justificativas</label>
+                            <p><small>Utilize esse campo para registrar possíveis dúvidas, discussões, esclarecimentos
+                                aparecidos durante a reunião</small></p>
                             <textarea
                                 rows="3"
                                 placeholder="Escreva seu texto aqui"
                                 value={stateFormEditarAta.comentarios}
-                                onChange={(e)=>onChange(e.target.name, e.target.value)}
+                                onChange={(e) => onChange(e.target.name, e.target.value)}
                                 name="comentarios"
                                 className="form-control"
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="parecer_conselho">Como os presentes se posicionam à prestação de contas apresentada?</label>
+                            <label htmlFor="parecer_conselho">Como os presentes se posicionam à prestação de contas
+                                apresentada?</label>
                             <select
                                 value={stateFormEditarAta.parecer_conselho}
-                                onChange={(e)=>onChange(e.target.name, e.target.value)}
+                                onChange={(e) => onChange(e.target.name, e.target.value)}
                                 name="parecer_conselho"
                                 className="form-control"
                             >
-                                {tabelas && tabelas.pareceres && tabelas.pareceres.map((tipo)=>
+                                {tabelas && tabelas.pareceres && tabelas.pareceres.map((tipo) =>
                                     <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
                                 )}
                             </select>
                         </div>
                     </div>
 
-                </div> {/*row*/}
+                </div>
+                {/*row*/}
             </form>
         )
 
@@ -477,24 +483,29 @@ export const TextoCopiado = ({show, handleClose}) => {
     )
 };
 
-export const EditarMembro = ({show, handleClose, onSubmitEditarAta, onChange, stateFormEditarAta, tabelas}) => {
+export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, stateFormEditarMembro, tabelas}) => {
+
     const bodyTextarea = () => {
         return (
             <form>
+
                 <div className="form-group">
-                    <label htmlFor="exampleInputEmail1">Email address</label>
-                    <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"/>
-                        <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
+                    <label htmlFor="cargo_associacao">Email address</label>
+                    <input
+                        type="text"
+                        value={stateFormEditarMembro.cargo_associacao}
+                        onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                        name="cargo_associacao"
+                        className="form-control"
+                    />
                 </div>
+
                 <div className="form-group">
-                    <label htmlFor="exampleInputPassword1">Password</label>
-                    <input type="password" className="form-control" id="exampleInputPassword1"/>
+                    <div className="form-group">
+                        <label htmlFor="exampleInputPassword1">Password</label>
+                        <input type="password" className="form-control" id="exampleInputPassword1"/>
+                    </div>
                 </div>
-                <div className="form-group form-check">
-                    <input type="checkbox" className="form-check-input" id="exampleCheck1"/>
-                        <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
-                </div>
-                <button type="submit" className="btn btn-primary">Submit</button>
             </form>
         )
 
@@ -508,7 +519,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarAta, onChange, st
             primeiroBotaoOnclick={handleClose}
             primeiroBotaoTexto="Cancelar"
             primeiroBotaoCss="outline-success"
-            segundoBotaoOnclick={onSubmitEditarAta}
+            segundoBotaoOnclick={onSubmitEditarMembro}
             segundoBotaoTexto="Salvar"
             segundoBotaoCss="success"
         />

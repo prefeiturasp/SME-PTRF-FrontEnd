@@ -7,10 +7,31 @@ export const MembrosDaAssociacao = () =>{
 
     const [clickIconeToogle, setClickIconeToogle] = useState(false)
     const [showEditarMembro, setShowEditarMembro] = useState(false);
+    const [stateFormEditarMembro, setStateFormEditarMembro] = useState({
+        cargo_associacao:"",
+        representacao_associacao:"",
+        rf:"",
+        nome_completo:"",
+        cargo_educacao:"",
+    });
+
 
     const onHandleClose = () => {
         setShowEditarMembro(false);
     };
+
+    const handleChangeEditarMembro = (name, value) => {
+        setStateFormEditarMembro({
+            ...stateFormEditarMembro,
+            [name]: value
+        });
+    };
+
+    const onSubmitEditarMembro = () =>{
+        setShowEditarMembro(false);
+        console.log("onSubmitEditarMembro ", stateFormEditarMembro)
+
+    }
 
     return(
         <div className="row">
@@ -27,9 +48,9 @@ export const MembrosDaAssociacao = () =>{
                 <EditarMembro
                     show={showEditarMembro}
                     handleClose={onHandleClose}
-                    //onSubmitEditarAta={onSubmitEditarAta}
-                    //onChange={handleChangeEditarAta}
-                    //stateFormEditarAta={stateFormEditarAta}
+                    onSubmitEditarMembro={onSubmitEditarMembro}
+                    handleChangeEditarMembro={handleChangeEditarMembro}
+                    stateFormEditarMembro={stateFormEditarMembro}
                     //tabelas={tabelas}
                 />
             </section>
