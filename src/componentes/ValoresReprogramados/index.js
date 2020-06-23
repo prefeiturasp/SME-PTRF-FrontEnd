@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
-import {YupSignupSchemaValoresReprogramados} from "../../utils/ValidacoesAdicionaisFormularios";
+import {trataNumericos, YupSignupSchemaValoresReprogramados} from "../../utils/ValidacoesAdicionaisFormularios";
 import {SalvarValoresReprogramados} from "../../utils/Modais";
-import {ASSOCIACAO_UUID} from "../../services/auth.service";
 import {getTabelasReceita} from "../../services/Receitas.service";
+import CurrencyInput from "react-currency-input";
 
 export const ValoresReprogramados = () => {
 
@@ -33,16 +33,26 @@ export const ValoresReprogramados = () => {
 
         carregaTabelas();
 
-    }, [])
+    }, []);
+
+    const serviceSalvarValoresReprogramados = async (values, errors, setFieldValue) =>{
+        setShowModalSalvar(false);
+        setFieldValue("periodo", values.periodo);
+
+        if (Object.entries(errors).length === 0 ) {
+            onSubmit(values)
+        }
+    };
+
+    const validateFormValoresReprogramados = async (values) => {
+        console.log('validateFormValoresReprogramados ', values);
+        console.log('validateFormValoresReprogramados ', values.rateios);
+        const errors = {}
+    };
 
     const onSubmit = async (values) => {
         setShowModalSalvar(false);
         console.log("onSubmit ", values)
-    };
-
-    const validateFormValoresReprogramados = async (values) => {
-        console.log('validateFormValoresReprogramados ', values)
-        const errors = {}
     };
 
     return (
@@ -77,7 +87,7 @@ export const ValoresReprogramados = () => {
                                         name="periodo"
                                         className="form-control"
                                     />
-                                    {props.errors.periodo && <div id="feedback">{props.errors.periodo}</div>}
+                                    {props.errors.periodo && <span className="text-danger mt-1">{props.errors.periodo}</span>}
                                 </div>
 
                                 <div className="col-12 col-md-6 mt-4">
@@ -90,7 +100,7 @@ export const ValoresReprogramados = () => {
                                         name="valor_total"
                                         className="form-control"
                                     />
-                                    {props.errors.valor_total && <div id="feedback">{props.errors.valor_total}</div>}
+                                    {props.errors.valor_total && <span className="text-danger mt-1">{props.errors.valor_total}</span>}
                                 </div>
 
                             </div>
@@ -108,8 +118,8 @@ export const ValoresReprogramados = () => {
                                                              <label htmlFor="acao_associacao">Ação</label>
                                                              <select
                                                                  id="acao_associacao"
-                                                                 name="acao_associacao"
-                                                                 value={props.values.acao_associacao}
+                                                                 name={`rateios[${index}].acao_associacao`}
+                                                                 value={rateio.acao_associacao}
                                                                  onChange={(e) => {
                                                                      props.handleChange(e);
                                                                  }
@@ -117,29 +127,80 @@ export const ValoresReprogramados = () => {
                                                                  onBlur={props.handleBlur}
                                                                  className="form-control"
                                                              >
+                                                                 <option value="">Escoha uma ação</option>
                                                                  {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
                                                                      <option key={key} value={item.uuid}>{item.nome}</option>
                                                                  ))) : null}
                                                              </select>
-                                                             {props.touched.acao_associacao && props.errors.acao_associacao &&
-                                                             <span className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
+                                                             {props.errors.acao_associacao && <span className="text-danger mt-1"> {props.errors.acao_associacao}</span>}
 
                                                         </div>
+
+                                                        <div className="col mt-4">
+                                                            <label htmlFor="conta_associacao">Tipo de conta</label>
+                                                            <select
+                                                                id="conta_associacao"
+                                                                name={`rateios[${index}].conta_associacao`}
+                                                                value={rateio.conta_associacao}
+                                                                onChange={props.handleChange}
+                                                                onBlur={props.handleBlur}
+                                                                className="form-control"
+                                                            >
+                                                                <option value="">Escoha o tipo de conta</option>
+                                                                {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
+                                                                    <option key={key} value={item.uuid}>{item.nome}</option>
+                                                                ))) : null}
+                                                            </select>
+                                                            {props.touched.conta_associacao && props.errors.conta_associacao && <span className="text-danger mt-1"> {props.errors.conta_associacao}</span>}
+                                                        </div>
+
+                                                        <div className="col mt-4">
+                                                            <label htmlFor="categoria_receita">Tipo de aplicação</label>
+                                                            <select
+                                                                id="categoria_receita"
+                                                                name={`rateios[${index}].categoria_receita`}
+                                                                value={rateio.categoria_receita}
+                                                                onChange={props.handleChange}
+                                                                onBlur={props.handleBlur}
+                                                                className="form-control"
+                                                            >
+                                                                <option value="">Escoha o tipo de aplicação</option>
+                                                                {tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 ? (tabelas.categorias_receita.map((item, key) => (
+                                                                    <option key={key} value={item.uuid}>{item.nome}</option>
+                                                                ))) : null}
+                                                            </select>
+                                                            {props.touched.categoria_receita && props.errors.categoria_receita && <span className="text-danger mt-1"> {props.errors.categoria_receita}</span>}
+                                                        </div>
+
+                                                        <div className="col mt-4">
+                                                            <label htmlFor="valor">Valor reprogramado</label>
+                                                            <CurrencyInput
+                                                                allowNegative={false}
+                                                                decimalSeparator=","
+                                                                thousandSeparator="."
+                                                                value={rateio.valor}
+                                                                name={`rateios[${index}].valor`}
+                                                                id="valor"
+                                                                className="form-control"
+                                                                onChangeEvent={props.handleChange}
+
+                                                            />
+                                                            {props.touched.valor && props.errors.valor && <span className="text-danger mt-1"> {props.errors.valor}</span>}
+                                                        </div>
+                                                        {index >= 0 && values.rateios.length > 0 && (
+                                                            <div className="col mt-4">
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn btn-outline-success mt-2 mr-2"
+                                                                    onClick={() => remove(index)}
+                                                                >
+                                                                    - Remover Despesa
+                                                                </button>
+                                                            </div>
+                                                        )}
                                                     </div>
 
 
-
-                                                    {index >= 1 && values.rateios.length > 1 && (
-                                                        <div className="d-flex  justify-content-start mt-3 mb-3">
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn btn-outline-success mt-2 mr-2"
-                                                                onClick={() => remove(index)}
-                                                            >
-                                                                - Remover Despesa
-                                                            </button>
-                                                        </div>
-                                                    )}
 
                                                 </div> /*div key*/
                                             )
@@ -152,12 +213,10 @@ export const ValoresReprogramados = () => {
                                                 className="btn btn btn-outline-success mt-2 mr-2"
                                                 onClick={() => push(
                                                     {
-                                                        categoria_receita: "",
                                                         acao_associacao: "",
                                                         conta_associacao: "",
-                                                        data: "",
+                                                        categoria_receita: "",
                                                         valor: "",
-                                                        descricao: "",
                                                     }
                                                 )
                                                 }
@@ -176,7 +235,7 @@ export const ValoresReprogramados = () => {
                             </div>
 
                             <section>
-                                <SalvarValoresReprogramados show={showModalSalvar} handleClose={()=>setShowModalSalvar(false)} onSalvarTrue={() => onSubmit(values, {resetForm})}/>
+                                <SalvarValoresReprogramados show={showModalSalvar} handleClose={()=>setShowModalSalvar(false)} onSalvarTrue={()=>serviceSalvarValoresReprogramados(values, errors, setFieldValue)}/>
                             </section>
 
                         </form>
