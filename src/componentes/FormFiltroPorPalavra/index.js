@@ -27,10 +27,10 @@ export const FormFiltroPorPalavra = (props) => {
 
     return (
         <form className="form-inline" onSubmit={handleSubmitFormFiltroPorPalavra}>
-            <div className="form-group container-form-filtro-por-palavra mr-0 mb-2">
+            <div className="d-flex align-items-center mr-2 mb-2 w-100">
                 <input value={inputPesquisa} onChange={(e)=>setInputPesquisa(e.target.value)} name="inputPesquisa" type="text" className="form-control w-100" id="inputPesquisa" placeholder="Escreva o termo que deseja filtrar"/>
+                <button type="submit" className="btn btn btn btn-success mr-0 mb-2 ml-md-2 mt-2">Filtrar</button>
             </div>
-            <button type="submit" className="btn btn btn btn-success mr-0 mb-2 ml-md-2 float-right">Filtrar</button>
         </form>
     )
 }

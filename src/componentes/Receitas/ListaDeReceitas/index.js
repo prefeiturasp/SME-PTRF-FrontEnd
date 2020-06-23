@@ -86,8 +86,7 @@ export const ListaDeReceitas = () => {
                         <div className="col-12">
                             <p>Filtrar por</p>
                         </div>
-                        <div
-                            className={`col-12 col-md-7 pr-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
+                        <div className={`col-12 col-md-5 pr-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
                             <FormFiltroPorPalavra
                                 inputPesquisa={inputPesquisa}
                                 setInputPesquisa={setInputPesquisa}
@@ -98,8 +97,7 @@ export const ListaDeReceitas = () => {
                                 origem="Receitas"
                             />
                         </div>
-                        <div
-                            className={`col-12 col-md-2 pl-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
+                        <div className={`col-12 col-md-2 mt-2 pl-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
                             <button
                                 onClick={onClickBtnMaisFiltros}
                                 type="button"
@@ -108,10 +106,9 @@ export const ListaDeReceitas = () => {
                                 Mais Filtros
                             </button>
                         </div>
-                        <div className={`${btnMaisFiltros ? "col-12" : "col-12 col-md-3"}`}>
-                            <button onClick={() => history.push('/cadastro-de-credito')} type="submit"
-                                    className="btn btn btn-outline-success float-right">Cadastrar crédito
-                            </button>
+                        <div className={`${btnMaisFiltros ? "col-12" : "col-12 col-md-5 mt-2"}`}>
+                            <button onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right">Cadastrar crédito</button>
+                            <button onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right mr-2">Valores reprogramados</button>
                         </div>
                     </div>
 
