@@ -43,6 +43,8 @@ export const ValoresReprogramados = () => {
         setShowModalSalvar(false);
         setFieldValue("periodo", values.periodo);
 
+        console.log("serviceSalvarValoresReprogramados ", errors)
+
         if (Object.entries(errors).length === 0 ) {
             onSubmit(values)
         }
@@ -51,23 +53,10 @@ export const ValoresReprogramados = () => {
     const validateFormValoresReprogramados = async (values) => {
         console.log('validateFormValoresReprogramados ', values);
 
-        var family = [{ name: "Mike", age: 10 }, { name: "Matt", age: 13 }, { name: "Nancy", age: 15 }, { name: "Adam", age: 22 }, { name: "Jenny", age: 85 }, { name: "Nancy", age: 15 }, { name: "Carl", age: 40 }],
-            unique = [...new Set(family.map(a => a.name && a.age))];
-
-        //console.log("Tamanho ", family.length);
-        //console.log("Unique", unique);
-
-        let tentativa = family.filter((item, index, array) => {
-            return array.map((mapItem) => mapItem['name']).indexOf(item['name']) === index
-        });
-
-
-        //console.log("Tentativa", tentativa);
-
         const errors = {}
 
         let valor_total_somado = 0;
-        let duplicado;
+
         if(values && values.rateios && values.rateios.length > 0){
             values.rateios.map((rateio)=>{
                 valor_total_somado = valor_total_somado + Number(rateio.valor.replace(/\./gi,'').replace(/,/gi,'.'))
@@ -78,7 +67,7 @@ export const ValoresReprogramados = () => {
         // ********* Funcionando *********
         if (values.rateios && values.rateios.length > 0) {
 
-            let myArray = values.rateios
+            let myArray = values.rateios;
 
             function checkDuplicateInObject(propertyName, inputArray) {
                 var seenDuplicate = false,
@@ -99,22 +88,17 @@ export const ValoresReprogramados = () => {
                 return seenDuplicate;
             }
 
-            console.log('Duplicate acao_associacao: ' + checkDuplicateInObject('acao_associacao', myArray));
-            console.log('Duplicate conta_associacao: ' + checkDuplicateInObject('conta_associacao', myArray));
-            console.log('Duplicate categoria_receita: ' + checkDuplicateInObject('categoria_receita', myArray));
-
+            if (checkDuplicateInObject('acao_associacao', myArray) && checkDuplicateInObject('conta_associacao', myArray) && checkDuplicateInObject('categoria_receita', myArray)){
+                errors.lancamemto_duplicado = 'Não é permitido o lançamento duplicado de valores para a mesma conta, ação e tipo de aplicação';
+            }
         }
 
-
+        return errors;
 
     };
 
     const onSubmit = async (values) => {
         setShowModalSalvar(false);
-
-
-
-
         console.log("onSubmit ", values)
     };
 
@@ -257,7 +241,6 @@ export const ValoresReprogramados = () => {
                                                                         props.handleChange(e);
                                                                     }
                                                                 }
-
                                                             />
                                                             {props.touched.valor && props.errors.valor && <span className="text-danger mt-1"> {props.errors.valor}</span>}
                                                         </div>
@@ -271,6 +254,11 @@ export const ValoresReprogramados = () => {
                                                                     </button>
                                                             </div>
                                                         )}
+
+                                                        <div className="col-12">
+                                                            {/*<input type="hidden" name={`rateios[${index}].lancamemto_duplicado[${index}]`}/>*/}
+                                                            {props.errors.lancamemto_duplicado && <span className="text-danger mt-1"> {props.errors.lancamemto_duplicado }</span>}
+                                                        </div>
                                                     </div>
                                                 </div> /*div key*/
                                             )
@@ -287,6 +275,7 @@ export const ValoresReprogramados = () => {
                                                         conta_associacao: "",
                                                         categoria_receita: "",
                                                         valor: "",
+                                                        //lancamemto_duplicado: "",
                                                     }
                                                 )
                                                 }
