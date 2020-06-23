@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
-import {trataNumericos, YupSignupSchemaValoresReprogramados} from "../../utils/ValidacoesAdicionaisFormularios";
+import {round, YupSignupSchemaValoresReprogramados} from "../../utils/ValidacoesAdicionaisFormularios";
 import {SalvarValoresReprogramados} from "../../utils/Modais";
 import {getTabelasReceita} from "../../services/Receitas.service";
 import CurrencyInput from "react-currency-input";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faTrashAlt} from '@fortawesome/free-solid-svg-icons'
+import "./valores-reprogramados.scss"
 
 export const ValoresReprogramados = () => {
 
@@ -15,7 +18,7 @@ export const ValoresReprogramados = () => {
 
     const initial = {
         periodo: "",
-        valor_total: "",
+        valor_total: 0,
     };
 
     const [tabelas, setTabelas] = useState(tabelaInicial);
@@ -35,6 +38,7 @@ export const ValoresReprogramados = () => {
 
     }, []);
 
+
     const serviceSalvarValoresReprogramados = async (values, errors, setFieldValue) =>{
         setShowModalSalvar(false);
         setFieldValue("periodo", values.periodo);
@@ -46,8 +50,20 @@ export const ValoresReprogramados = () => {
 
     const validateFormValoresReprogramados = async (values) => {
         console.log('validateFormValoresReprogramados ', values);
-        console.log('validateFormValoresReprogramados ', values.rateios);
+        
         const errors = {}
+
+        let valor_total_somado=0;
+        if(values && values.rateios && values.rateios.length > 0){
+            values.rateios.map((rateio)=>{
+                valor_total_somado = valor_total_somado + Number(rateio.valor.replace(/\./gi,'').replace(/,/gi,'.'))
+            })
+        }
+
+        console.log("valor_total_somado ", valor_total_somado)
+        values.valor_total = round(valor_total_somado, 2);
+
+
     };
 
     const onSubmit = async (values) => {
@@ -92,13 +108,20 @@ export const ValoresReprogramados = () => {
 
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="valor_total">Valor total reprogramado</label>
-                                    <input
-                                        type="text"
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
+                                    <CurrencyInput
+                                        allowNegative={false}
+                                        decimalSeparator=","
+                                        thousandSeparator="."
                                         value={props.values.valor_total}
                                         name="valor_total"
+                                        id="valor_total"
                                         className="form-control"
+                                        //onChangeEvent={props.handleChange}
+                                        onChangeEvent={(e) => {
+                                                props.handleChange(e);
+                                            }
+                                        }
+                                        readOnly={true}
                                     />
                                     {props.errors.valor_total && <span className="text-danger mt-1">{props.errors.valor_total}</span>}
                                 </div>
@@ -112,7 +135,7 @@ export const ValoresReprogramados = () => {
                                         {values.rateios && values.rateios.length > 0 && values.rateios.map((rateio, index) => {
                                             return (
                                                 <div key={index}>
-                                                    <div className="form-row">
+                                                    <div className="form-row container-campos-dinamicos">
 
                                                          <div className="col mt-4">
                                                              <label htmlFor="acao_associacao">Ação</label>
@@ -182,26 +205,26 @@ export const ValoresReprogramados = () => {
                                                                 name={`rateios[${index}].valor`}
                                                                 id="valor"
                                                                 className="form-control"
-                                                                onChangeEvent={props.handleChange}
+                                                                //onChangeEvent={props.handleChange}
+                                                                onChangeEvent={(e) => {
+                                                                        props.handleChange(e);
+                                                                    }
+                                                                }
 
                                                             />
                                                             {props.touched.valor && props.errors.valor && <span className="text-danger mt-1"> {props.errors.valor}</span>}
                                                         </div>
                                                         {index >= 0 && values.rateios.length > 0 && (
-                                                            <div className="col mt-4">
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn btn-outline-success mt-2 mr-2"
-                                                                    onClick={() => remove(index)}
-                                                                >
-                                                                    - Remover Despesa
-                                                                </button>
+                                                            <div className="col-1 mt-4 d-flex justify-content-center">
+                                                                    <button className="btn-excluir-valores-reprogramados mt-4 pt-2" onClick={() => remove(index)}>
+                                                                        <FontAwesomeIcon
+                                                                            style={{fontSize: '20px', marginRight:"0"}}
+                                                                            icon={faTrashAlt}
+                                                                        />
+                                                                    </button>
                                                             </div>
                                                         )}
                                                     </div>
-
-
-
                                                 </div> /*div key*/
                                             )
                                         })}
