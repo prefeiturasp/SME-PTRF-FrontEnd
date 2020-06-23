@@ -50,24 +50,71 @@ export const ValoresReprogramados = () => {
 
     const validateFormValoresReprogramados = async (values) => {
         console.log('validateFormValoresReprogramados ', values);
-        
+
+        var family = [{ name: "Mike", age: 10 }, { name: "Matt", age: 13 }, { name: "Nancy", age: 15 }, { name: "Adam", age: 22 }, { name: "Jenny", age: 85 }, { name: "Nancy", age: 15 }, { name: "Carl", age: 40 }],
+            unique = [...new Set(family.map(a => a.name && a.age))];
+
+        //console.log("Tamanho ", family.length);
+        //console.log("Unique", unique);
+
+        let tentativa = family.filter((item, index, array) => {
+            return array.map((mapItem) => mapItem['name']).indexOf(item['name']) === index
+        });
+
+
+        //console.log("Tentativa", tentativa);
+
         const errors = {}
 
-        let valor_total_somado=0;
+        let valor_total_somado = 0;
+        let duplicado;
         if(values && values.rateios && values.rateios.length > 0){
             values.rateios.map((rateio)=>{
                 valor_total_somado = valor_total_somado + Number(rateio.valor.replace(/\./gi,'').replace(/,/gi,'.'))
             })
         }
-
-        console.log("valor_total_somado ", valor_total_somado)
         values.valor_total = round(valor_total_somado, 2);
+
+        // ********* Funcionando *********
+        if (values.rateios && values.rateios.length > 0) {
+
+            let myArray = values.rateios
+
+            function checkDuplicateInObject(propertyName, inputArray) {
+                var seenDuplicate = false,
+                    testObject = {};
+
+                inputArray.map(function (item) {
+                    var itemPropertyName = item[propertyName];
+                    if (itemPropertyName in testObject) {
+                        testObject[itemPropertyName].duplicate = true;
+                        item.duplicate = true;
+                        seenDuplicate = true;
+                    } else {
+                        testObject[itemPropertyName] = item;
+                        delete item.duplicate;
+                    }
+                });
+
+                return seenDuplicate;
+            }
+
+            console.log('Duplicate acao_associacao: ' + checkDuplicateInObject('acao_associacao', myArray));
+            console.log('Duplicate conta_associacao: ' + checkDuplicateInObject('conta_associacao', myArray));
+            console.log('Duplicate categoria_receita: ' + checkDuplicateInObject('categoria_receita', myArray));
+
+        }
+
 
 
     };
 
     const onSubmit = async (values) => {
         setShowModalSalvar(false);
+
+
+
+
         console.log("onSubmit ", values)
     };
 
