@@ -28,11 +28,13 @@ export const ValoresReprogramados = () => {
     const [tabelas, setTabelas] = useState(tabelaInicial);
     const [initialValue, setInitialValue] = useState(initial);
     const [showModalSalvar, setShowModalSalvar] = useState(false);
+    const [btnAddValoresReprogramadosReadonly, setBtnAddValoresReprogramadosReadonly] = useState(false);
 
     useEffect(()=> {
         const carregaTabelas = async () => {
             getTabelasReceita().then(response => {
                 setTabelas(response.data);
+                console.log("getTabelas ", response.data)
             }).catch(error => {
                 console.log(error);
             });
@@ -73,23 +75,39 @@ export const ValoresReprogramados = () => {
 
         if(values && values.saldos && values.saldos.length > 0){
             values.saldos.map((item)=>{
-                valor_total_somado = valor_total_somado + Number(item.saldo.replace(/\./gi,'').replace(/,/gi,'.'))
+                if (typeof item.saldo === "string") {
+                    valor_total_somado = valor_total_somado + Number(item.saldo.replace(/\./gi, '').replace(/,/gi, '.'))
+                }
 
-/*                if (checkDuplicateInObject('acao_associacao', values.saldos) && checkDuplicateInObject('conta_associacao', values.saldos) && checkDuplicateInObject('aplicacao', values.saldos)){
-                    errors.lancamemto_duplicado = 'Não é permitido o lançamento duplicado de valores para a mesma conta, ação e tipo de aplicação';
-                }*/
+                if (item.acao_associacao && item.acao_associacao.uuid){
+                    item.acao_associacao = item.acao_associacao.uuid;
+                }else{
+                    item.acao_associacao = item.acao_associacao ? item.acao_associacao : null;
+                }
+
+                if (item.conta_associacao && item.conta_associacao.uuid){
+                    item.conta_associacao = item.conta_associacao.uuid;
+                }else{
+                    item.conta_associacao = item.conta_associacao ? item.conta_associacao : null;
+                }
 
             })
         }
         values.valor_total = round(valor_total_somado, 2);
         // Verificando Lançamentos Duplicados
-        const duplicates = findDuplicates(values.saldos, (a, b) => a.acao_associacao === b.acao_associacao && a.aplicacao === b.aplicacao && a.conta_associacao === b.conta_associacao);
+
+
+        let duplicates;
+
+        duplicates = findDuplicates(values.saldos, (a, b) => a.acao_associacao === b.acao_associacao && a.aplicacao === b.aplicacao && a.conta_associacao === b.conta_associacao);
         console.log("Duplicates",  duplicates);
 
         if (duplicates.length > 0){
             errors.lancamemto_duplicado = 'Não é permitido o lançamento duplicado de valores para a mesma conta, ação e tipo de aplicação';
+            setBtnAddValoresReprogramadosReadonly(true)
+        }else {
+            setBtnAddValoresReprogramadosReadonly(false)
         }
-
 
         return errors;
 
@@ -107,10 +125,19 @@ export const ValoresReprogramados = () => {
         setShowModalSalvar(false);
 
         values.saldos.map((saldo)=>{
-            saldo.acao_associacao = saldo.acao_associacao ? saldo.acao_associacao : null;
+            if (saldo.acao_associacao && saldo.acao_associacao.uuid){
+                saldo.acao_associacao = saldo.acao_associacao.uuid;
+            }else{
+                saldo.acao_associacao = saldo.acao_associacao ? saldo.acao_associacao : null;
+            }
+
+            if (saldo.conta_associacao && saldo.conta_associacao.uuid){
+                saldo.conta_associacao = saldo.conta_associacao.uuid;
+            }else{
+                saldo.conta_associacao = saldo.conta_associacao ? saldo.conta_associacao : null;
+            }
             saldo.aplicacao = saldo.aplicacao ? saldo.aplicacao : null;
-            saldo.conta_associacao = saldo.conta_associacao ? saldo.conta_associacao : null;
-            saldo.saldo = saldo.saldo ?  Number(saldo.saldo.replace(/\./gi,'').replace(/,/gi,'.')) : null;
+            saldo.saldo = saldo.saldo && typeof saldo.saldo === "string" ?  Number(saldo.saldo.replace(/\./gi,'').replace(/,/gi,'.')) : null;
         });
 
 
@@ -124,9 +151,14 @@ export const ValoresReprogramados = () => {
 
         try {
             const response = await criarValoresReprogramados(payload);
-            console.log("Salvar ", response)
-            console.log("Operação realizada com sucesso!");
-            //getPath();
+            if (response.status === 200 || response.status === 201 ){
+                console.log("Salvar ", response)
+                console.log("Operação realizada com sucesso!");
+                //getPath();
+            }else{
+                console.log("Erro")
+            }
+
         } catch (error) {
             console.log(error)
         }
@@ -202,7 +234,7 @@ export const ValoresReprogramados = () => {
                                                              <select
                                                                  id="acao_associacao"
                                                                  name={`saldos[${index}].acao_associacao`}
-                                                                 value={saldo.acao_associacao}
+                                                                 value={saldo.acao_associacao && saldo.acao_associacao.uuid ? saldo.acao_associacao.uuid : saldo.acao_associacao ? saldo.acao_associacao : "" }
                                                                  onChange={(e) => {
                                                                      props.handleChange(e);
                                                                  }
@@ -224,7 +256,7 @@ export const ValoresReprogramados = () => {
                                                             <select
                                                                 id="conta_associacao"
                                                                 name={`saldos[${index}].conta_associacao`}
-                                                                value={saldo.conta_associacao}
+                                                                value={saldo.conta_associacao && saldo.conta_associacao.uuid ? saldo.conta_associacao.uuid : saldo.conta_associacao ? saldo.conta_associacao : ""}
                                                                 onChange={props.handleChange}
                                                                 onBlur={props.handleBlur}
                                                                 className="form-control"
@@ -249,7 +281,7 @@ export const ValoresReprogramados = () => {
                                                             >
                                                                 <option value="">Escoha o tipo de aplicação</option>
                                                                 {tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 ? (tabelas.categorias_receita.map((item, key) => (
-                                                                    <option key={key} value={item.uuid}>{item.nome}</option>
+                                                                    <option key={key} value={item.id}>{item.nome}</option>
                                                                 ))) : null}
                                                             </select>
                                                             {props.touched.aplicacao && props.errors.aplicacao && <span className="text-danger mt-1"> {props.errors.aplicacao}</span>}
@@ -290,11 +322,15 @@ export const ValoresReprogramados = () => {
                                                 </div> /*div key*/
                                             )
                                         })}
-
-
+                                        {props.errors.lancamemto_duplicado &&
+                                        <div className="col-12 mt-2">
+                                            <span className="text-danger"> {props.errors.lancamemto_duplicado }</span>
+                                        </div>
+                                        }
                                         <div className="d-flex  justify-content-start mt-3 mb-3">
                                             <button
                                                 type="button"
+                                                disabled={btnAddValoresReprogramadosReadonly}
                                                 className="btn btn btn-outline-success mt-2 mr-2"
                                                 onClick={() => push(
                                                     {
@@ -302,7 +338,6 @@ export const ValoresReprogramados = () => {
                                                         conta_associacao: "",
                                                         aplicacao: "",
                                                         saldo: "",
-                                                        //lancamemto_duplicado: "",
                                                     }
                                                 )
                                                 }
@@ -310,14 +345,6 @@ export const ValoresReprogramados = () => {
                                                 + Adicionar valor reprogramado
                                             </button>
                                         </div>
-
-                                        {props.errors.lancamemto_duplicado &&
-                                            <div className="col-12">
-                                            <hr/>
-                                                <span className="text-danger mt-1"> {props.errors.lancamemto_duplicado }</span>
-                                            </div>
-                                        }
-
                                     </>
                                 )}
                             />
