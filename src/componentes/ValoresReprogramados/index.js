@@ -36,19 +36,16 @@ export const ValoresReprogramados = () => {
         const carregaTabelas = async () => {
             getTabelasReceita().then(response => {
                 setTabelas(response.data);
-                console.log("getTabelas ", response.data)
             }).catch(error => {
                 console.log(error);
             });
         };
         carregaTabelas();
-
     }, []);
 
     useEffect(()=> {
         const carregaSaldos = async () => {
             let saldos = await getSaldosValoresReprogramados();
-            console.log("carregaSaldos ", saldos)
             setInitialValue(saldos)
         };
         carregaSaldos();
@@ -63,7 +60,6 @@ export const ValoresReprogramados = () => {
     const serviceSalvarValoresReprogramados = async (values, errors, setFieldValue) =>{
         setShowModalSalvar(false);
         setFieldValue("periodo", values.periodo);
-
         if (Object.entries(errors).length === 0 ) {
             onSubmit(values)
         }
@@ -76,62 +72,52 @@ export const ValoresReprogramados = () => {
     };
 
     const validateFormValoresReprogramados = async (values) => {
-
         const errors = {};
-
         let valor_total_somado = 0;
 
         if(values && values.saldos && values.saldos.length > 0){
-            setSemSaldo(false)
+            setSemSaldo(false);
 
             values.saldos.map((item)=>{
-
                 if (!item.acao_associacao || !item.conta_associacao || !item.aplicacao || !item.saldo || item.saldo === "0,00"){
                     errors.campos_obrigatorios = "Todos os campos são obrigatórios"
                     setCamposObrigatorios(true)
                 }else {
                     setCamposObrigatorios(false)
                 }
-
                 if (typeof item.saldo === "string") {
                     valor_total_somado = valor_total_somado + Number(item.saldo.replace(/\./gi, '').replace(/,/gi, '.'))
                 }else {
                     valor_total_somado = valor_total_somado + item.saldo
                 }
-
                 if (item.acao_associacao && item.acao_associacao.uuid){
                     item.acao_associacao = item.acao_associacao.uuid;
                 }else{
                     item.acao_associacao = item.acao_associacao ? item.acao_associacao : null;
                 }
-
                 if (item.conta_associacao && item.conta_associacao.uuid){
                     item.conta_associacao = item.conta_associacao.uuid;
                 }else{
                     item.conta_associacao = item.conta_associacao ? item.conta_associacao : null;
                 }
-
             })
         }else{
             errors.sem_saldos = "É necessário ao menos um valor programado"
             setSemSaldo(true)
         }
+
         values.valor_total = round(valor_total_somado, 2);
 
         // Verificando Lançamentos Duplicados
         let duplicates;
         duplicates = findDuplicates(values.saldos, (a, b) => a.acao_associacao === b.acao_associacao && a.aplicacao === b.aplicacao && a.conta_associacao === b.conta_associacao);
-        //console.log("Duplicates",  duplicates);
-
         if (duplicates.length > 0){
             errors.lancamemto_duplicado = 'Não é permitido o lançamento duplicado de valores para a mesma conta, ação e tipo de aplicação';
             setBtnAddValoresReprogramadosReadonly(true)
         }else {
             setBtnAddValoresReprogramadosReadonly(false)
         }
-
         return errors;
-
     };
 
     const onSubmit = async (values) => {
@@ -143,12 +129,12 @@ export const ValoresReprogramados = () => {
             }else{
                 saldo.acao_associacao = saldo.acao_associacao ? saldo.acao_associacao : null;
             }
-
             if (saldo.conta_associacao && saldo.conta_associacao.uuid){
                 saldo.conta_associacao = saldo.conta_associacao.uuid;
             }else{
                 saldo.conta_associacao = saldo.conta_associacao ? saldo.conta_associacao : null;
             }
+
             saldo.aplicacao = saldo.aplicacao ? saldo.aplicacao : null;
 
             if (saldo.saldo && typeof saldo.saldo === "string"){
@@ -158,21 +144,17 @@ export const ValoresReprogramados = () => {
 
         const payload = {
             saldos: values.saldos
-
         };
-
-        console.log("payload ", payload);
 
         try {
             const response = await criarValoresReprogramados(payload);
             if (response.status === 200 || response.status === 201 ){
                 console.log("Salvar ", response)
                 console.log("Operação realizada com sucesso!");
-                //getPath();
+                getPath();
             }else{
                 console.log("Erro")
             }
-
         } catch (error) {
             console.log(error)
         }
@@ -192,7 +174,6 @@ export const ValoresReprogramados = () => {
                     const {
                         values,
                         setFieldValue,
-                        resetForm,
                         errors,
                     } = props;
                     return (
@@ -222,7 +203,6 @@ export const ValoresReprogramados = () => {
                                         name="valor_total"
                                         id="valor_total"
                                         className="form-control"
-                                        //onChangeEvent={props.handleChange}
                                         onChangeEvent={(e) => {
                                                 props.handleChange(e);
                                             }
@@ -231,7 +211,6 @@ export const ValoresReprogramados = () => {
                                     />
                                     {props.errors.valor_total && <span className="text-danger mt-1">{props.errors.valor_total}</span>}
                                 </div>
-
                             </div>
 
                             <FieldArray
@@ -262,7 +241,6 @@ export const ValoresReprogramados = () => {
                                                                  ))) : null}
                                                              </select>
                                                              {props.errors.acao_associacao && <span className="text-danger mt-1"> {props.errors.acao_associacao}</span>}
-
                                                         </div>
 
                                                         <div className="col mt-4">
@@ -323,15 +301,14 @@ export const ValoresReprogramados = () => {
                                                         <input type="hidden" name={`saldos[${index}].name`} />
                                                         {index >= 0 && values.saldos.length > 0 && (
                                                             <div className="col-1 mt-4 d-flex justify-content-center">
-                                                                    <button className="btn-excluir-valores-reprogramados mt-4 pt-2" onClick={() => remove(index)}>
-                                                                        <FontAwesomeIcon
-                                                                            style={{fontSize: '20px', marginRight:"0"}}
-                                                                            icon={faTrashAlt}
-                                                                        />
-                                                                    </button>
+                                                                <button className="btn-excluir-valores-reprogramados mt-4 pt-2" onClick={() => remove(index)}>
+                                                                    <FontAwesomeIcon
+                                                                        style={{fontSize: '20px', marginRight:"0"}}
+                                                                        icon={faTrashAlt}
+                                                                    />
+                                                                </button>
                                                             </div>
                                                         )}
-
                                                     </div>
                                                 </div> /*div key*/
                                             )
@@ -341,19 +318,16 @@ export const ValoresReprogramados = () => {
                                                 <span className="text-danger"> {props.errors.lancamemto_duplicado }</span>
                                             </div>
                                         }
-
                                         {props.errors.campos_obrigatorios &&
                                             <div className="col-12 mt-2">
                                                 <span className="text-danger"> {props.errors.campos_obrigatorios }</span>
                                             </div>
                                         }
-
                                         {props.errors.sem_saldos &&
                                             <div className="col-12 mt-2">
                                                 <span className="text-danger"> {props.errors.sem_saldos }</span>
                                             </div>
                                         }
-
                                         <div className="d-flex  justify-content-start mt-3 mb-3">
                                             <button
                                                 type="button"
@@ -389,7 +363,6 @@ export const ValoresReprogramados = () => {
                     )
                 }}
             </Formik>
-
         </>
     );
 };
