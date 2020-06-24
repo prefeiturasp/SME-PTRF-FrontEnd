@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Formik, FieldArray} from "formik";
-import {round, YupSignupSchemaValoresReprogramados, checkDuplicateInObject} from "../../utils/ValidacoesAdicionaisFormularios";
+import {round, YupSignupSchemaValoresReprogramados, checkDuplicateInObject, exibeDataPT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
 import {SalvarValoresReprogramados} from "../../utils/Modais";
 import {getTabelasReceita} from "../../services/Receitas.service";
 import {getSaldosValoresReprogramados} from "../../services/ValoresReprogramados.service";
@@ -19,7 +19,8 @@ export const ValoresReprogramados = () => {
 
     const initial = {
         associacao: "",
-        periodo: "",
+        periodo: {},
+        saldos:[],
         valor_total: 0,
     };
 
@@ -35,15 +36,17 @@ export const ValoresReprogramados = () => {
                 console.log(error);
             });
         };
+        carregaTabelas();
 
+    }, []);
+
+    useEffect(()=> {
         const carregaSaldos = async () => {
             let saldos = await getSaldosValoresReprogramados();
             console.log("carregaSaldos ", saldos)
+            setInitialValue(saldos)
         };
-
         carregaSaldos();
-        carregaTabelas();
-
     }, []);
 
 
@@ -65,13 +68,12 @@ export const ValoresReprogramados = () => {
 
         let valor_total_somado = 0;
 
-        if(values && values.rateios && values.rateios.length > 0){
-            values.rateios.map((rateio)=>{
-                valor_total_somado = valor_total_somado + Number(rateio.valor.replace(/\./gi,'').replace(/,/gi,'.'))
+        if(values && values.saldos && values.saldos.length > 0){
+            values.saldos.map((saldo)=>{
+                valor_total_somado = valor_total_somado + Number(saldo.valor.replace(/\./gi,'').replace(/,/gi,'.'))
 
-                if (checkDuplicateInObject('acao_associacao', values.rateios) && checkDuplicateInObject('conta_associacao', values.rateios) && checkDuplicateInObject('categoria_receita', values.rateios)){
-
-                    if (rateio.duplicate){
+                if (checkDuplicateInObject('acao_associacao', values.saldos) && checkDuplicateInObject('conta_associacao', values.saldos) && checkDuplicateInObject('categoria_receita', values.saldos)){
+                    if (saldo.duplicate){
                         errors.lancamemto_duplicado = 'Não é permitido o lançamento duplicado de valores para a mesma conta, ação e tipo de aplicação';
                     }
 
@@ -122,9 +124,10 @@ export const ValoresReprogramados = () => {
                                         type="text"
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                        value={props.values.periodo}
+                                        value={`${props.values.periodo.referencia} - ${props.values.periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(props.values.periodo.data_inicio_realizacao_despesas) : "-"} até ${props.values.periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(props.values.periodo.data_fim_realizacao_despesas) : "-"}`}
                                         name="periodo"
                                         className="form-control"
+                                        readOnly={true}
                                     />
                                     {props.errors.periodo && <span className="text-danger mt-1">{props.errors.periodo}</span>}
                                 </div>
@@ -152,10 +155,10 @@ export const ValoresReprogramados = () => {
                             </div>
 
                             <FieldArray
-                                name="rateios"
+                                name="saldos"
                                 render={({insert, remove, push}) => (
                                     <>
-                                        {values.rateios && values.rateios.length > 0 && values.rateios.map((rateio, index) => {
+                                        {values.saldos && values.saldos.length > 0 && values.saldos.map((saldo, index) => {
                                             return (
                                                 <div key={index}>
                                                     <div className="form-row container-campos-dinamicos">
@@ -164,8 +167,8 @@ export const ValoresReprogramados = () => {
                                                              <label htmlFor="acao_associacao">Ação</label>
                                                              <select
                                                                  id="acao_associacao"
-                                                                 name={`rateios[${index}].acao_associacao`}
-                                                                 value={rateio.acao_associacao}
+                                                                 name={`saldos[${index}].acao_associacao`}
+                                                                 value={saldo.acao_associacao}
                                                                  onChange={(e) => {
                                                                      props.handleChange(e);
                                                                  }
@@ -186,8 +189,8 @@ export const ValoresReprogramados = () => {
                                                             <label htmlFor="conta_associacao">Tipo de conta</label>
                                                             <select
                                                                 id="conta_associacao"
-                                                                name={`rateios[${index}].conta_associacao`}
-                                                                value={rateio.conta_associacao}
+                                                                name={`saldos[${index}].conta_associacao`}
+                                                                value={saldo.conta_associacao}
                                                                 onChange={props.handleChange}
                                                                 onBlur={props.handleBlur}
                                                                 className="form-control"
@@ -204,8 +207,8 @@ export const ValoresReprogramados = () => {
                                                             <label htmlFor="categoria_receita">Tipo de aplicação</label>
                                                             <select
                                                                 id="categoria_receita"
-                                                                name={`rateios[${index}].categoria_receita`}
-                                                                value={rateio.categoria_receita}
+                                                                name={`saldos[${index}].categoria_receita`}
+                                                                value={saldo.categoria_receita}
                                                                 onChange={props.handleChange}
                                                                 onBlur={props.handleBlur}
                                                                 className="form-control"
@@ -224,8 +227,8 @@ export const ValoresReprogramados = () => {
                                                                 allowNegative={false}
                                                                 decimalSeparator=","
                                                                 thousandSeparator="."
-                                                                value={rateio.valor}
-                                                                name={`rateios[${index}].valor`}
+                                                                value={saldo.valor}
+                                                                name={`saldos[${index}].valor`}
                                                                 id="valor"
                                                                 className="form-control"
                                                                 //onChangeEvent={props.handleChange}
@@ -237,8 +240,8 @@ export const ValoresReprogramados = () => {
                                                             {props.touched.valor && props.errors.valor && <span className="text-danger mt-1"> {props.errors.valor}</span>}
                                                         </div>
 
-                                                        <input type="hidden" name={`rateios[${index}].name`} />
-                                                        {index >= 0 && values.rateios.length > 0 && (
+                                                        <input type="hidden" name={`saldos[${index}].name`} />
+                                                        {index >= 0 && values.saldos.length > 0 && (
                                                             <div className="col-1 mt-4 d-flex justify-content-center">
                                                                     <button className="btn-excluir-valores-reprogramados mt-4 pt-2" onClick={() => remove(index)}>
                                                                         <FontAwesomeIcon
