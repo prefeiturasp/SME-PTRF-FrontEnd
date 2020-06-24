@@ -14,7 +14,7 @@ export const checkDuplicateInObject = (propertyName, inputArray) => {
   var seenDuplicate = false,
       testObject = {};
 
-  inputArray.map(function (item) {
+  inputArray.map((item) => {
     var itemPropertyName = item[propertyName];
     if (itemPropertyName in testObject) {
       testObject[itemPropertyName].duplicate = true;

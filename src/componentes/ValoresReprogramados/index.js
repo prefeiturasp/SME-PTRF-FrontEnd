@@ -8,8 +8,7 @@ import CurrencyInput from "react-currency-input";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons'
 import "./valores-reprogramados.scss"
-import HTTP_STATUS from "http-status-codes";
-import {ASSOCIACAO_UUID} from "../../services/auth.service";
+const findDuplicates = require('array-find-duplicates');
 
 export const ValoresReprogramados = () => {
 
@@ -76,15 +75,21 @@ export const ValoresReprogramados = () => {
             values.saldos.map((item)=>{
                 valor_total_somado = valor_total_somado + Number(item.saldo.replace(/\./gi,'').replace(/,/gi,'.'))
 
-                if (checkDuplicateInObject('acao_associacao', values.saldos) && checkDuplicateInObject('conta_associacao', values.saldos) && checkDuplicateInObject('aplicacao', values.saldos)){
-                    if (item.duplicate){
-                        errors.lancamemto_duplicado = 'Não é permitido o lançamento duplicado de valores para a mesma conta, ação e tipo de aplicação';
-                    }
+/*                if (checkDuplicateInObject('acao_associacao', values.saldos) && checkDuplicateInObject('conta_associacao', values.saldos) && checkDuplicateInObject('aplicacao', values.saldos)){
+                    errors.lancamemto_duplicado = 'Não é permitido o lançamento duplicado de valores para a mesma conta, ação e tipo de aplicação';
+                }*/
 
-                }
             })
         }
         values.valor_total = round(valor_total_somado, 2);
+        // Verificando Lançamentos Duplicados
+        const duplicates = findDuplicates(values.saldos, (a, b) => a.acao_associacao === b.acao_associacao && a.aplicacao === b.aplicacao && a.conta_associacao === b.conta_associacao);
+        console.log("Duplicates",  duplicates);
+
+        if (duplicates.length > 0){
+            errors.lancamemto_duplicado = 'Não é permitido o lançamento duplicado de valores para a mesma conta, ação e tipo de aplicação';
+        }
+
 
         return errors;
 
