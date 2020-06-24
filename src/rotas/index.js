@@ -14,15 +14,11 @@ import {PrestacaoDeContasPage} from "../paginas/PrestacaoDeContas";
 import {DetalheDasPrestacoes} from "../componentes/PrestacaoDeContas/DetalheDasPrestacoes";
 import {VisualizacaoDaAta} from "../componentes/GeracaoDaAta/VisualizacaoDaAta";
 import {MembrosDaAssociacaoPage} from "../paginas/MembrosDaAssociacao";
+import {ValoresReprogramadosPage} from "../paginas/ValoresReprogramados";
 
 import { authService } from '../services/auth.service';
 
 const routesConfig = [
-    {
-      exact: true,
-        path: "/edicao-de-receita/:uuid/:origem?",
-        component: EdicaoDeReceita
-    },
     {
         exact: true,
         path: "/dashboard",
@@ -49,9 +45,19 @@ const routesConfig = [
         component: CadastroDeReceita
     },
     {
+        exact: true,
+        path: "/edicao-de-receita/:uuid/:origem?",
+        component: EdicaoDeReceita
+    },
+    {
       exact: true,
       path: "/lista-de-receitas",
       component: ListaDeReceitasPage
+    },
+    {
+      exact: true,
+      path: "/cadastro-de-valores-reprogramados",
+      component: ValoresReprogramadosPage
     },
     {
       exact: true,

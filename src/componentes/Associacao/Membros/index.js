@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {MenuInterno} from "../MenuInterno";
+import {MenuInterno} from "../../MenuInterno";
 import {TabelaMembrosDiretoriaExecutiva} from "../TabelaMembrosDiretoriaExecutiva";
 import {TabelaMembrosConselhoFiscal} from "../TabelaMembrosConselhoFiscal";
 
@@ -16,6 +16,12 @@ export const MembrosDaAssociacao = () =>{
         nome_completo:"",
         cargo_educacao:"",
     });
+
+    const caminhos_menu_interno = [
+        {label: "Dados da Associação", url:"dados-da-associacao"},
+        {label: "Membros", url:"membros-da-associacao"},
+        {label: "Dados das contas", url:"lista-de-receitas"},
+    ];
 
     const toggleIcon = (id) => {
         setClickIconeToogle({
@@ -44,7 +50,9 @@ export const MembrosDaAssociacao = () =>{
         <div className="row">
             <div className="col-12">
                 <>
-                    <MenuInterno/>
+                    <MenuInterno
+                        caminhos_menu_interno={caminhos_menu_interno}
+                    />
                     <TabelaMembrosDiretoriaExecutiva
                         clickIconeToogle={clickIconeToogle}
                         toggleIcon={toggleIcon}

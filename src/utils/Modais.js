@@ -583,3 +583,20 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
         />
     )
 };
+
+export const SalvarValoresReprogramados = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Todos os dados estão corretos?"
+            bodyText="<p><strong>Já verificou se todos os itens cadastrados estão corretos?</strong></p>"
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Não, cancelar"
+            primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={propriedades.onSalvarTrue}
+            segundoBotaoTexto="Sim, salvar"
+            segundoBotaoCss="success"
+        />
+    )
+};

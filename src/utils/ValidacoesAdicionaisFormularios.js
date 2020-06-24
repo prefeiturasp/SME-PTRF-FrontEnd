@@ -5,6 +5,27 @@ import moment from "moment";
 import {ASSOCIACAO_UUID} from "../services/auth.service";
 import {getPeriodoFechado} from "../services/Associacao.service";
 
+export const checkDuplicateInObject = (propertyName, inputArray) => {
+
+  var seenDuplicate = false,
+      testObject = {};
+
+  inputArray.map((item) => {
+    var itemPropertyName = item[propertyName];
+    if (itemPropertyName in testObject) {
+      testObject[itemPropertyName].duplicate = true;
+      item.duplicate = true;
+      seenDuplicate = true;
+    } else {
+      testObject[itemPropertyName] = item;
+      delete item.duplicate;
+    }
+  });
+
+  return seenDuplicate;
+}
+
+
 export const YupSignupSchemaLogin = yup.object().shape({
   login: yup.string().required("Campo código RF é obrigatório"),
   senha: yup.string().required("Campo código Senha é obrigatório"),

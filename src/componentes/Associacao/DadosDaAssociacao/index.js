@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {getAssociacao, alterarAssociacao} from "../../../services/Associacao.service";
 import {CancelarModalAssociacao, SalvarModalAssociacao} from "../../../utils/Modais";
-import {MenuInterno} from "../MenuInterno";
+import {MenuInterno} from "../../MenuInterno";
 import "../associacao.scss"
 
 export const DadosDaAsssociacao = () => {
@@ -9,17 +9,21 @@ export const DadosDaAsssociacao = () => {
     const [stateAssociacao, setStateAssociacao] = useState(undefined);
     const [showModalReceitasCancelar, setShowModalReceitasCancelar] = useState(false);
     const [showModalReceitasSalvar, setShowModalReceitasSalvar] = useState(false);
-    const [activeClass, setActiveClass] = useState("");
-
 
     useEffect(()=> {
         buscaAssociacao();
-    }, [])
+    }, []);
+
+    const caminhos_menu_interno = [
+        {label: "Dados da Associação", url:"dados-da-associacao"},
+        {label: "Membros", url:"membros-da-associacao"},
+        {label: "Dados das contas", url:"lista-de-receitas"},
+    ];
 
     const buscaAssociacao = async () => {
         const associacao = await getAssociacao();
         setStateAssociacao(associacao)
-    }
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -29,7 +33,7 @@ export const DadosDaAsssociacao = () => {
             "presidente_associacao_rf": "",
             "presidente_conselho_fiscal_nome": stateAssociacao.presidente_conselho_fiscal_nome,
             "presidente_conselho_fiscal_rf": ""
-        }
+        };
 
         try {
             const response = await alterarAssociacao(payload);
@@ -37,46 +41,42 @@ export const DadosDaAsssociacao = () => {
                 console.log("Operação realizada com sucesso!");
                 onShowModalSalvar()
             } else {
-                console.log(response)
+                console.log(response);
                 return
             }
         } catch (error) {
             console.log(error)
             return
         }
-    }
+    };
 
     const handleChange = (name, value) => {
         setStateAssociacao({
             ...stateAssociacao,
             [name]: value
         });
-    }
+    };
 
     const onHandleClose = () => {
         setShowModalReceitasCancelar(false);
-    }
+    };
 
     const onCancelarAssociacaoTrue = () => {
         setShowModalReceitasCancelar(false);
         buscaAssociacao();
-    }
+    };
 
     const onShowModalCancelar = () => {
         setShowModalReceitasCancelar(true);
-    }
+    };
 
     const onSalvarAssociacaoTrue = () => {
         setShowModalReceitasSalvar(false);
-    }
+    };
 
     const onShowModalSalvar = () => {
         setShowModalReceitasSalvar(true);
     };
-
-    const setAcitveItemMenu = () =>{
-
-    }
 
     return (
         <>
@@ -85,7 +85,9 @@ export const DadosDaAsssociacao = () => {
                 <div className="row">
                     <div className="col-12">
 
-                        <MenuInterno/>
+                        <MenuInterno
+                            caminhos_menu_interno = {caminhos_menu_interno}
+                        />
 
                         <form onSubmit={handleSubmit}>
                             <div className="form-row">
@@ -137,4 +139,4 @@ export const DadosDaAsssociacao = () => {
             </section>
         </>
     );
-}
+};
