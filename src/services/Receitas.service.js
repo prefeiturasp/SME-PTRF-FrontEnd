@@ -7,7 +7,7 @@ const authHeader = {
         'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,  
         'Content-Type': 'application/json'
     }
-}
+};
 
 export const getTabelasReceita = async () => {
     return api
@@ -18,7 +18,7 @@ export const getTabelasReceita = async () => {
         .catch(error => {
             return error.response;
         });
-}
+};
 
 export const criarReceita = async payload => {
     return api
@@ -29,7 +29,7 @@ export const criarReceita = async payload => {
         .catch(error => {
             return error.response;
         });
-}
+};
 
 export const getReceita = async (uuid) => {
     return api
@@ -40,7 +40,7 @@ export const getReceita = async (uuid) => {
         .catch(error => {
             return error.response;
         });
-}
+};
 
 export const atualizaReceita = async (uuid, payload) => {
     return api
@@ -51,7 +51,7 @@ export const atualizaReceita = async (uuid, payload) => {
         .catch(error => {
             return error.response;
         });
-}
+};
 
 export const deletarReceita = async uuid => {
     return api
@@ -62,26 +62,26 @@ export const deletarReceita = async uuid => {
         .catch(error => {
             return error.response;
         });
-}
+};
 
 export const getListaReceitas = async () => {
     return (await api.get(`api/receitas/`, authHeader)).data
-}
+};
 
 export const filtroPorPalavraReceitas = async (palavra) => {
     return (await api.get(`api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
-}
+};
 
 export const filtrosAvancadosReceitas = async (palavra, tipo_receita, acao_associacao__uuid, conta_associacao__uuid) => {
     return (await api.get(`api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&tipo_receita=${tipo_receita}&acao_associacao__uuid=${acao_associacao__uuid}&conta_associacao__uuid=${conta_associacao__uuid}`, authHeader)).data
-}
+};
 
 export const getRepasse = async (acao_associacao_uuid, data_receita, uuid="") => {
     return (await api.get(`/api/repasses/pendentes/?acao-associacao=${acao_associacao_uuid}&data=${data_receita}&uuid-receita=${uuid}`, authHeader)).data
-    //return (await api.get(`api/repasses/pendentes/?acao-associacao=${acao_associacao_uuid}${eAtualizacao ? "&edit=True": ""}`, authHeader)).data
-}
+};
 
 export const getPeriodoFechadoReceita = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status) => {
     return (await api.get(`api/rateios-despesas/totais/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&acao_associacao__uuid=${acao_associacao__uuid}&despesa__status=${despesa__status}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
-}
+};
+
 
