@@ -318,7 +318,7 @@ export const ValoresReprogramados = () => {
                             />
 
                             <div className="d-flex  justify-content-end pb-3 mt-3">
-                                <button type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                                <button onClick={()=>getPath()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                                 <button onClick={()=>onShowModalSalvar(errors, values)} type="button" className="btn btn-success mt-2">Salvar</button>
                             </div>
 
