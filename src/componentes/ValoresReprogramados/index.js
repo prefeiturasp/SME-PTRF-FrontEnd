@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Formik, FieldArray} from "formik";
-import {round, YupSignupSchemaValoresReprogramados, checkDuplicateInObject, exibeDataPT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
+import {round, exibeDataPT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
 import {SalvarValoresReprogramados} from "../../utils/Modais";
 import {getTabelasReceita} from "../../services/Receitas.service";
 import {getSaldosValoresReprogramados, criarValoresReprogramados} from "../../services/ValoresReprogramados.service";
@@ -67,6 +67,12 @@ export const ValoresReprogramados = () => {
         }
     };
 
+    const onShowModalSalvar = (errors, values) =>{
+        if (Object.entries(errors).length <= 0){
+            setShowModalSalvar(true);
+        }
+    };
+
     const validateFormValoresReprogramados = async (values) => {
 
         const errors = {};
@@ -75,8 +81,11 @@ export const ValoresReprogramados = () => {
 
         if(values && values.saldos && values.saldos.length > 0){
             values.saldos.map((item)=>{
+
                 if (typeof item.saldo === "string") {
                     valor_total_somado = valor_total_somado + Number(item.saldo.replace(/\./gi, '').replace(/,/gi, '.'))
+                }else {
+                    valor_total_somado = valor_total_somado + item.saldo
                 }
 
                 if (item.acao_associacao && item.acao_associacao.uuid){
@@ -94,13 +103,11 @@ export const ValoresReprogramados = () => {
             })
         }
         values.valor_total = round(valor_total_somado, 2);
+
         // Verificando Lançamentos Duplicados
-
-
         let duplicates;
-
         duplicates = findDuplicates(values.saldos, (a, b) => a.acao_associacao === b.acao_associacao && a.aplicacao === b.aplicacao && a.conta_associacao === b.conta_associacao);
-        console.log("Duplicates",  duplicates);
+        //console.log("Duplicates",  duplicates);
 
         if (duplicates.length > 0){
             errors.lancamemto_duplicado = 'Não é permitido o lançamento duplicado de valores para a mesma conta, ação e tipo de aplicação';
@@ -110,14 +117,6 @@ export const ValoresReprogramados = () => {
         }
 
         return errors;
-
-    };
-
-    const onShowModalSalvar = (errors, values) =>{
-        if (Object.entries(errors).length <= 0){
-            setShowModalSalvar(true);
-            onSubmit(values)
-        }
 
     };
 
@@ -137,7 +136,10 @@ export const ValoresReprogramados = () => {
                 saldo.conta_associacao = saldo.conta_associacao ? saldo.conta_associacao : null;
             }
             saldo.aplicacao = saldo.aplicacao ? saldo.aplicacao : null;
-            saldo.saldo = saldo.saldo && typeof saldo.saldo === "string" ?  Number(saldo.saldo.replace(/\./gi,'').replace(/,/gi,'.')) : null;
+
+            if (saldo.saldo && typeof saldo.saldo === "string"){
+                saldo.saldo = Number(saldo.saldo.replace(/\./gi,'').replace(/,/gi,'.'))
+            }
         });
 
 
@@ -147,7 +149,7 @@ export const ValoresReprogramados = () => {
 
         };
 
-        console.log("onSubmit 2 ", payload);
+        console.log("payload ", payload);
 
         try {
             const response = await criarValoresReprogramados(payload);
@@ -351,7 +353,7 @@ export const ValoresReprogramados = () => {
 
                             <div className="d-flex  justify-content-end pb-3 mt-3">
                                 <button onClick={()=>getPath()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                                <button onClick={()=>onShowModalSalvar(errors, values)} type="button" className="btn btn-success mt-2">Salvar</button>
+                                <button onClick={()=>onShowModalSalvar(errors, values)} disabled={btnAddValoresReprogramadosReadonly} type="button" className="btn btn-success mt-2">Salvar</button>
                             </div>
 
                             <section>
