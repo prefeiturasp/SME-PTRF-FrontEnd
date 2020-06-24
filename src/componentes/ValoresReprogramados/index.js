@@ -51,12 +51,15 @@ export const ValoresReprogramados = () => {
         carregaSaldos();
     }, []);
 
+    const getPath = () => {
+        let path;
+        path = `/lista-de-receitas`;
+        window.location.assign(path)
+    };
 
     const serviceSalvarValoresReprogramados = async (values, errors, setFieldValue) =>{
         setShowModalSalvar(false);
         setFieldValue("periodo", values.periodo);
-
-        console.log("serviceSalvarValoresReprogramados ", errors)
 
         if (Object.entries(errors).length === 0 ) {
             onSubmit(values)
@@ -64,18 +67,17 @@ export const ValoresReprogramados = () => {
     };
 
     const validateFormValoresReprogramados = async (values) => {
-        //console.log('validateFormValoresReprogramados ', values);
 
         const errors = {};
 
         let valor_total_somado = 0;
 
         if(values && values.saldos && values.saldos.length > 0){
-            values.saldos.map((saldo)=>{
-                valor_total_somado = valor_total_somado + Number(saldo.saldo.replace(/\./gi,'').replace(/,/gi,'.'))
+            values.saldos.map((item)=>{
+                valor_total_somado = valor_total_somado + Number(item.saldo.replace(/\./gi,'').replace(/,/gi,'.'))
 
                 if (checkDuplicateInObject('acao_associacao', values.saldos) && checkDuplicateInObject('conta_associacao', values.saldos) && checkDuplicateInObject('aplicacao', values.saldos)){
-                    if (saldo.duplicate){
+                    if (item.duplicate){
                         errors.lancamemto_duplicado = 'Não é permitido o lançamento duplicado de valores para a mesma conta, ação e tipo de aplicação';
                     }
 
@@ -98,37 +100,31 @@ export const ValoresReprogramados = () => {
 
     const onSubmit = async (values) => {
         setShowModalSalvar(false);
-        console.log("onSubmit ", values);
 
         values.saldos.map((saldo)=>{
             saldo.acao_associacao = saldo.acao_associacao ? saldo.acao_associacao : null;
             saldo.aplicacao = saldo.aplicacao ? saldo.aplicacao : null;
-            saldo.conta_associacao = saldo.conta_associacao ? saldo.aplicacao : null;
+            saldo.conta_associacao = saldo.conta_associacao ? saldo.conta_associacao : null;
             saldo.saldo = saldo.saldo ?  Number(saldo.saldo.replace(/\./gi,'').replace(/,/gi,'.')) : null;
         });
 
-        console.log("onSubmit 2 ", values.saldos);
+
 
         const payload = {
-            //values.saldos
+            saldos: values.saldos
 
         };
 
-/*        try {
-            const response = await criarValoresReprogramados(values)
-            if (response.status === HTTP_STATUS.CREATED) {
-                console.log("Operação realizada com sucesso!");
-                //resetForm({values: ""})
-                //getPath();
-            } else {
-                //setLoading(false);
-                return
-            }
+        console.log("onSubmit 2 ", payload);
+
+        try {
+            const response = await criarValoresReprogramados(payload);
+            console.log("Salvar ", response)
+            console.log("Operação realizada com sucesso!");
+            //getPath();
         } catch (error) {
             console.log(error)
-           // setLoading(false);
-            return
-        }*/
+        }
     };
 
     return (
