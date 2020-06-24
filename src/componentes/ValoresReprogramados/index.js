@@ -3,6 +3,7 @@ import {Formik, FieldArray} from "formik";
 import {round, YupSignupSchemaValoresReprogramados, checkDuplicateInObject} from "../../utils/ValidacoesAdicionaisFormularios";
 import {SalvarValoresReprogramados} from "../../utils/Modais";
 import {getTabelasReceita} from "../../services/Receitas.service";
+import {getSaldosValoresReprogramados} from "../../services/ValoresReprogramados.service";
 import CurrencyInput from "react-currency-input";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons'
@@ -17,6 +18,7 @@ export const ValoresReprogramados = () => {
     };
 
     const initial = {
+        associacao: "",
         periodo: "",
         valor_total: 0,
     };
@@ -34,6 +36,12 @@ export const ValoresReprogramados = () => {
             });
         };
 
+        const carregaSaldos = async () => {
+            let saldos = await getSaldosValoresReprogramados();
+            console.log("carregaSaldos ", saldos)
+        };
+
+        carregaSaldos();
         carregaTabelas();
 
     }, []);

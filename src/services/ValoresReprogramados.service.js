@@ -12,3 +12,7 @@ const authHeader = {
 export const getBotaoValoresReprogramados = async () => {
     return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/permite-implantacao-saldos/`, authHeader)).data
 };
+
+export const getSaldosValoresReprogramados = async () => {
+    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/implantacao-saldos/`, authHeader)).data
+};

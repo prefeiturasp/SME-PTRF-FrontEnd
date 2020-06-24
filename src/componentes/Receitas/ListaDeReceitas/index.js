@@ -43,10 +43,7 @@ export const ListaDeReceitas = () => {
 
     const botaoValoresReprogramados = async () => {
         const botao = await getBotaoValoresReprogramados();
-
         setBtnValoresReprogramados(botao.permite_implantacao)
-
-        console.log("botaoValoresReprogramados ", botao)
     };
 
     const redirecionaDetalhe = value => {
