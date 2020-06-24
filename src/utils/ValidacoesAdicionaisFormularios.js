@@ -5,10 +5,6 @@ import moment from "moment";
 import {ASSOCIACAO_UUID} from "../services/auth.service";
 import {getPeriodoFechado} from "../services/Associacao.service";
 
-export const YupSignupSchemaValoresReprogramados = yup.object().shape({
-  periodo: yup.string().required("Período é Obrigatório"),
-});
-
 export const checkDuplicateInObject = (propertyName, inputArray) => {
 
   var seenDuplicate = false,

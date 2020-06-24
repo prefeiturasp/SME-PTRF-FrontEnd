@@ -29,6 +29,8 @@ export const ValoresReprogramados = () => {
     const [initialValue, setInitialValue] = useState(initial);
     const [showModalSalvar, setShowModalSalvar] = useState(false);
     const [btnAddValoresReprogramadosReadonly, setBtnAddValoresReprogramadosReadonly] = useState(false);
+    const [camposObrigatorios, setCamposObrigatorios] = useState(false);
+    const [semSaldo, setSemSaldo] = useState(false);
 
     useEffect(()=> {
         const carregaTabelas = async () => {
@@ -80,7 +82,16 @@ export const ValoresReprogramados = () => {
         let valor_total_somado = 0;
 
         if(values && values.saldos && values.saldos.length > 0){
+            setSemSaldo(false)
+
             values.saldos.map((item)=>{
+
+                if (!item.acao_associacao || !item.conta_associacao || !item.aplicacao || !item.saldo || item.saldo === "0,00"){
+                    errors.campos_obrigatorios = "Todos os campos são obrigatórios"
+                    setCamposObrigatorios(true)
+                }else {
+                    setCamposObrigatorios(false)
+                }
 
                 if (typeof item.saldo === "string") {
                     valor_total_somado = valor_total_somado + Number(item.saldo.replace(/\./gi, '').replace(/,/gi, '.'))
@@ -101,6 +112,9 @@ export const ValoresReprogramados = () => {
                 }
 
             })
+        }else{
+            errors.sem_saldos = "É necessário ao menos um valor programado"
+            setSemSaldo(true)
         }
         values.valor_total = round(valor_total_somado, 2);
 
@@ -142,8 +156,6 @@ export const ValoresReprogramados = () => {
             }
         });
 
-
-
         const payload = {
             saldos: values.saldos
 
@@ -170,7 +182,7 @@ export const ValoresReprogramados = () => {
         <>
             <Formik
                 initialValues={initialValue}
-                validationSchema={YupSignupSchemaValoresReprogramados}
+                //validationSchema={YupSignupSchemaValoresReprogramados}
                 enableReinitialize={true}
                 validateOnBlur={true}
                 validate={validateFormValoresReprogramados}
@@ -325,14 +337,27 @@ export const ValoresReprogramados = () => {
                                             )
                                         })}
                                         {props.errors.lancamemto_duplicado &&
-                                        <div className="col-12 mt-2">
-                                            <span className="text-danger"> {props.errors.lancamemto_duplicado }</span>
-                                        </div>
+                                            <div className="col-12 mt-2">
+                                                <span className="text-danger"> {props.errors.lancamemto_duplicado }</span>
+                                            </div>
                                         }
+
+                                        {props.errors.campos_obrigatorios &&
+                                            <div className="col-12 mt-2">
+                                                <span className="text-danger"> {props.errors.campos_obrigatorios }</span>
+                                            </div>
+                                        }
+
+                                        {props.errors.sem_saldos &&
+                                            <div className="col-12 mt-2">
+                                                <span className="text-danger"> {props.errors.sem_saldos }</span>
+                                            </div>
+                                        }
+
                                         <div className="d-flex  justify-content-start mt-3 mb-3">
                                             <button
                                                 type="button"
-                                                disabled={btnAddValoresReprogramadosReadonly}
+                                                disabled={btnAddValoresReprogramadosReadonly || camposObrigatorios}
                                                 className="btn btn btn-outline-success mt-2 mr-2"
                                                 onClick={() => push(
                                                     {
@@ -353,7 +378,7 @@ export const ValoresReprogramados = () => {
 
                             <div className="d-flex  justify-content-end pb-3 mt-3">
                                 <button onClick={()=>getPath()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                                <button onClick={()=>onShowModalSalvar(errors, values)} disabled={btnAddValoresReprogramadosReadonly} type="button" className="btn btn-success mt-2">Salvar</button>
+                                <button onClick={()=>onShowModalSalvar(errors, values)} disabled={btnAddValoresReprogramadosReadonly || camposObrigatorios || semSaldo} type="button" className="btn btn-success mt-2">Salvar</button>
                             </div>
 
                             <section>
