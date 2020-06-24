@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Formik, FieldArray, Field, Form} from "formik";
+import {Formik, FieldArray} from "formik";
 import {round, YupSignupSchemaValoresReprogramados, checkDuplicateInObject} from "../../utils/ValidacoesAdicionaisFormularios";
 import {SalvarValoresReprogramados} from "../../utils/Modais";
 import {getTabelasReceita} from "../../services/Receitas.service";
@@ -51,9 +51,9 @@ export const ValoresReprogramados = () => {
     };
 
     const validateFormValoresReprogramados = async (values) => {
-        console.log('validateFormValoresReprogramados ', values);
+        //console.log('validateFormValoresReprogramados ', values);
 
-        const errors = {}
+        const errors = {};
 
         let valor_total_somado = 0;
 
@@ -77,13 +77,11 @@ export const ValoresReprogramados = () => {
     };
 
     const onShowModalSalvar = (errors) =>{
-
-        console.log("onShowModalSalvar ", errors)
         if (Object.entries(errors).length <= 0){
             setShowModalSalvar(true)
         }
 
-    }
+    };
 
     const onSubmit = async (values) => {
         setShowModalSalvar(false);
@@ -92,70 +90,6 @@ export const ValoresReprogramados = () => {
 
     return (
         <>
-            <h1>Componente Valores Reprogramados</h1>
-
-            {/*<div>
-                <h1>Friend List</h1>
-                <Formik
-                    initialValues={{ lily: { friends: ["jared", "ian", "brent"] } }}
-                    onSubmit={values =>
-                        setTimeout(() => {
-                            alert(JSON.stringify(values, null, 2));
-                        }, 500)
-                    }
-                    validationSchema={YupSignupSchemaValoresReprogramados}
-                    render={({ values, errors }) => (
-                        <Form>
-                            <FieldArray
-                                name="lily.friends"
-                                render={arrayHelpers => (
-                                    <div>
-                                        <pre>{JSON.stringify(errors.lily, null, 2)}</pre>
-                                        {values.lily.friends && values.lily.friends.length > 0 ? (
-                                            values.lily.friends.map((friend, index) => (
-                                                <div key={index}>
-                                                    <Field name={`lily.friends.${index}`} />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
-                                                    >
-                                                        -
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => arrayHelpers.insert(index, "")} // insert an empty string at a position
-                                                    >
-                                                        +
-                                                    </button>
-                                                    <div className="row">
-                                                        {errors && errors.length > 0 && errors.map((item, index)=>{
-                                                            console.log("AQUI ", item)
-                                                            return(
-                                                                    <span className="text-danger mt-1">{item}</span>
-                                                                )
-
-                                                        })}
-                                                        {errors.lily && <span className="text-danger mt-1">{errors.lily}</span>}
-                                                    </div>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <button type="button" onClick={() => arrayHelpers.push("")}>
-                                                 show this when user has removed all friends from the list
-                                                Add a friend
-                                            </button>
-                                        )}
-                                        <div>
-                                            <button type="submit">Submit</button>
-                                        </div>
-                                    </div>
-                                )}
-                            />
-                        </Form>
-                    )}
-                />
-            </div>*/}
-
             <Formik
                 initialValues={initialValue}
                 validationSchema={YupSignupSchemaValoresReprogramados}
@@ -307,11 +241,6 @@ export const ValoresReprogramados = () => {
                                                             </div>
                                                         )}
 
-                                                        <div className="col-12">
-                                                            {/*{props.errors  && <span className="text-danger mt-1"> {props.errors }</span> }*/}
-                                                            {/*{JSON.stringify(errors) && <span className="text-danger mt-1"> {JSON.stringify(errors) }</span>}*/}
-                                                            {props.errors.lancamemto_duplicado && <span className="text-danger mt-1"> {props.errors.lancamemto_duplicado }</span>}
-                                                        </div>
                                                     </div>
                                                 </div> /*div key*/
                                             )
@@ -336,6 +265,13 @@ export const ValoresReprogramados = () => {
                                                 + Adicionar valor reprogramado
                                             </button>
                                         </div>
+
+                                        {props.errors.lancamemto_duplicado &&
+                                            <div className="col-12">
+                                            <hr/>
+                                                <span className="text-danger mt-1"> {props.errors.lancamemto_duplicado }</span>
+                                            </div>
+                                        }
 
                                     </>
                                 )}
