@@ -16,3 +16,13 @@ export const getBotaoValoresReprogramados = async () => {
 export const getSaldosValoresReprogramados = async () => {
     return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/implantacao-saldos/`, authHeader)).data
 };
+
+export const criarValoresReprogramados = async (payload) => {
+    //return api.post('api/despesas/', payload, authHeader).then(response => {
+    return api.post(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/implanta-saldos/`, payload, authHeader)
+    .then(response => {
+        return response;
+    }).catch(error => {
+        return error.response;
+    });
+}

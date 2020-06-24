@@ -3,11 +3,13 @@ import {Formik, FieldArray} from "formik";
 import {round, YupSignupSchemaValoresReprogramados, checkDuplicateInObject, exibeDataPT_BR} from "../../utils/ValidacoesAdicionaisFormularios";
 import {SalvarValoresReprogramados} from "../../utils/Modais";
 import {getTabelasReceita} from "../../services/Receitas.service";
-import {getSaldosValoresReprogramados} from "../../services/ValoresReprogramados.service";
+import {getSaldosValoresReprogramados, criarValoresReprogramados} from "../../services/ValoresReprogramados.service";
 import CurrencyInput from "react-currency-input";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons'
 import "./valores-reprogramados.scss"
+import HTTP_STATUS from "http-status-codes";
+import {ASSOCIACAO_UUID} from "../../services/auth.service";
 
 export const ValoresReprogramados = () => {
 
@@ -70,9 +72,9 @@ export const ValoresReprogramados = () => {
 
         if(values && values.saldos && values.saldos.length > 0){
             values.saldos.map((saldo)=>{
-                valor_total_somado = valor_total_somado + Number(saldo.valor.replace(/\./gi,'').replace(/,/gi,'.'))
+                valor_total_somado = valor_total_somado + Number(saldo.saldo.replace(/\./gi,'').replace(/,/gi,'.'))
 
-                if (checkDuplicateInObject('acao_associacao', values.saldos) && checkDuplicateInObject('conta_associacao', values.saldos) && checkDuplicateInObject('categoria_receita', values.saldos)){
+                if (checkDuplicateInObject('acao_associacao', values.saldos) && checkDuplicateInObject('conta_associacao', values.saldos) && checkDuplicateInObject('aplicacao', values.saldos)){
                     if (saldo.duplicate){
                         errors.lancamemto_duplicado = 'Não é permitido o lançamento duplicado de valores para a mesma conta, ação e tipo de aplicação';
                     }
@@ -86,16 +88,47 @@ export const ValoresReprogramados = () => {
 
     };
 
-    const onShowModalSalvar = (errors) =>{
+    const onShowModalSalvar = (errors, values) =>{
         if (Object.entries(errors).length <= 0){
-            setShowModalSalvar(true)
+            setShowModalSalvar(true);
+            onSubmit(values)
         }
 
     };
 
     const onSubmit = async (values) => {
         setShowModalSalvar(false);
-        console.log("onSubmit ", values)
+        console.log("onSubmit ", values);
+
+        values.saldos.map((saldo)=>{
+            saldo.acao_associacao = saldo.acao_associacao ? saldo.acao_associacao : null;
+            saldo.aplicacao = saldo.aplicacao ? saldo.aplicacao : null;
+            saldo.conta_associacao = saldo.conta_associacao ? saldo.aplicacao : null;
+            saldo.saldo = saldo.saldo ?  Number(saldo.saldo.replace(/\./gi,'').replace(/,/gi,'.')) : null;
+        });
+
+        console.log("onSubmit 2 ", values.saldos);
+
+        const payload = {
+            //values.saldos
+
+        };
+
+/*        try {
+            const response = await criarValoresReprogramados(values)
+            if (response.status === HTTP_STATUS.CREATED) {
+                console.log("Operação realizada com sucesso!");
+                //resetForm({values: ""})
+                //getPath();
+            } else {
+                //setLoading(false);
+                return
+            }
+        } catch (error) {
+            console.log(error)
+           // setLoading(false);
+            return
+        }*/
     };
 
     return (
@@ -204,11 +237,11 @@ export const ValoresReprogramados = () => {
                                                         </div>
 
                                                         <div className="col mt-4">
-                                                            <label htmlFor="categoria_receita">Tipo de aplicação</label>
+                                                            <label htmlFor="aplicacao">Tipo de aplicação</label>
                                                             <select
-                                                                id="categoria_receita"
-                                                                name={`saldos[${index}].categoria_receita`}
-                                                                value={saldo.categoria_receita}
+                                                                id="aplicacao"
+                                                                name={`saldos[${index}].aplicacao`}
+                                                                value={saldo.aplicacao}
                                                                 onChange={props.handleChange}
                                                                 onBlur={props.handleBlur}
                                                                 className="form-control"
@@ -218,18 +251,18 @@ export const ValoresReprogramados = () => {
                                                                     <option key={key} value={item.uuid}>{item.nome}</option>
                                                                 ))) : null}
                                                             </select>
-                                                            {props.touched.categoria_receita && props.errors.categoria_receita && <span className="text-danger mt-1"> {props.errors.categoria_receita}</span>}
+                                                            {props.touched.aplicacao && props.errors.aplicacao && <span className="text-danger mt-1"> {props.errors.aplicacao}</span>}
                                                         </div>
 
                                                         <div className="col mt-4">
-                                                            <label htmlFor="valor">Valor reprogramado</label>
+                                                            <label htmlFor="saldo">Valor reprogramado</label>
                                                             <CurrencyInput
                                                                 allowNegative={false}
                                                                 decimalSeparator=","
                                                                 thousandSeparator="."
-                                                                value={saldo.valor}
-                                                                name={`saldos[${index}].valor`}
-                                                                id="valor"
+                                                                value={saldo.saldo}
+                                                                name={`saldos[${index}].saldo`}
+                                                                id="saldo"
                                                                 className="form-control"
                                                                 //onChangeEvent={props.handleChange}
                                                                 onChangeEvent={(e) => {
@@ -237,7 +270,7 @@ export const ValoresReprogramados = () => {
                                                                     }
                                                                 }
                                                             />
-                                                            {props.touched.valor && props.errors.valor && <span className="text-danger mt-1"> {props.errors.valor}</span>}
+                                                            {props.touched.saldo && props.errors.saldo && <span className="text-danger mt-1"> {props.errors.saldo}</span>}
                                                         </div>
 
                                                         <input type="hidden" name={`saldos[${index}].name`} />
@@ -266,8 +299,8 @@ export const ValoresReprogramados = () => {
                                                     {
                                                         acao_associacao: "",
                                                         conta_associacao: "",
-                                                        categoria_receita: "",
-                                                        valor: "",
+                                                        aplicacao: "",
+                                                        saldo: "",
                                                         //lancamemto_duplicado: "",
                                                     }
                                                 )
@@ -290,7 +323,7 @@ export const ValoresReprogramados = () => {
 
                             <div className="d-flex  justify-content-end pb-3 mt-3">
                                 <button type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                                <button onClick={()=>onShowModalSalvar(errors)} type="button" className="btn btn-success mt-2">Salvar</button>
+                                <button onClick={()=>onShowModalSalvar(errors, values)} type="button" className="btn btn-success mt-2">Salvar</button>
                             </div>
 
                             <section>
