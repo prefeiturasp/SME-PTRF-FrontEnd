@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Formik, FieldArray, Field} from "formik";
-import {round, YupSignupSchemaValoresReprogramados} from "../../utils/ValidacoesAdicionaisFormularios";
+import {Formik, FieldArray, Field, Form} from "formik";
+import {round, YupSignupSchemaValoresReprogramados, checkDuplicateInObject} from "../../utils/ValidacoesAdicionaisFormularios";
 import {SalvarValoresReprogramados} from "../../utils/Modais";
 import {getTabelasReceita} from "../../services/Receitas.service";
 import CurrencyInput from "react-currency-input";
@@ -60,42 +60,30 @@ export const ValoresReprogramados = () => {
         if(values && values.rateios && values.rateios.length > 0){
             values.rateios.map((rateio)=>{
                 valor_total_somado = valor_total_somado + Number(rateio.valor.replace(/\./gi,'').replace(/,/gi,'.'))
+
+                if (checkDuplicateInObject('acao_associacao', values.rateios) && checkDuplicateInObject('conta_associacao', values.rateios) && checkDuplicateInObject('categoria_receita', values.rateios)){
+
+                    if (rateio.duplicate){
+                        errors.lancamemto_duplicado = 'Não é permitido o lançamento duplicado de valores para a mesma conta, ação e tipo de aplicação';
+                    }
+
+                }
             })
         }
         values.valor_total = round(valor_total_somado, 2);
 
-        // ********* Funcionando *********
-        if (values.rateios && values.rateios.length > 0) {
-
-            let myArray = values.rateios;
-
-            function checkDuplicateInObject(propertyName, inputArray) {
-                var seenDuplicate = false,
-                    testObject = {};
-
-                inputArray.map(function (item) {
-                    var itemPropertyName = item[propertyName];
-                    if (itemPropertyName in testObject) {
-                        testObject[itemPropertyName].duplicate = true;
-                        item.duplicate = true;
-                        seenDuplicate = true;
-                    } else {
-                        testObject[itemPropertyName] = item;
-                        delete item.duplicate;
-                    }
-                });
-
-                return seenDuplicate;
-            }
-
-            if (checkDuplicateInObject('acao_associacao', myArray) && checkDuplicateInObject('conta_associacao', myArray) && checkDuplicateInObject('categoria_receita', myArray)){
-                errors.lancamemto_duplicado = 'Não é permitido o lançamento duplicado de valores para a mesma conta, ação e tipo de aplicação';
-            }
-        }
-
         return errors;
 
     };
+
+    const onShowModalSalvar = (errors) =>{
+
+        console.log("onShowModalSalvar ", errors)
+        if (Object.entries(errors).length <= 0){
+            setShowModalSalvar(true)
+        }
+
+    }
 
     const onSubmit = async (values) => {
         setShowModalSalvar(false);
@@ -105,6 +93,68 @@ export const ValoresReprogramados = () => {
     return (
         <>
             <h1>Componente Valores Reprogramados</h1>
+
+            {/*<div>
+                <h1>Friend List</h1>
+                <Formik
+                    initialValues={{ lily: { friends: ["jared", "ian", "brent"] } }}
+                    onSubmit={values =>
+                        setTimeout(() => {
+                            alert(JSON.stringify(values, null, 2));
+                        }, 500)
+                    }
+                    validationSchema={YupSignupSchemaValoresReprogramados}
+                    render={({ values, errors }) => (
+                        <Form>
+                            <FieldArray
+                                name="lily.friends"
+                                render={arrayHelpers => (
+                                    <div>
+                                        <pre>{JSON.stringify(errors.lily, null, 2)}</pre>
+                                        {values.lily.friends && values.lily.friends.length > 0 ? (
+                                            values.lily.friends.map((friend, index) => (
+                                                <div key={index}>
+                                                    <Field name={`lily.friends.${index}`} />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
+                                                    >
+                                                        -
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => arrayHelpers.insert(index, "")} // insert an empty string at a position
+                                                    >
+                                                        +
+                                                    </button>
+                                                    <div className="row">
+                                                        {errors && errors.length > 0 && errors.map((item, index)=>{
+                                                            console.log("AQUI ", item)
+                                                            return(
+                                                                    <span className="text-danger mt-1">{item}</span>
+                                                                )
+
+                                                        })}
+                                                        {errors.lily && <span className="text-danger mt-1">{errors.lily}</span>}
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <button type="button" onClick={() => arrayHelpers.push("")}>
+                                                 show this when user has removed all friends from the list
+                                                Add a friend
+                                            </button>
+                                        )}
+                                        <div>
+                                            <button type="submit">Submit</button>
+                                        </div>
+                                    </div>
+                                )}
+                            />
+                        </Form>
+                    )}
+                />
+            </div>*/}
 
             <Formik
                 initialValues={initialValue}
@@ -244,6 +294,8 @@ export const ValoresReprogramados = () => {
                                                             />
                                                             {props.touched.valor && props.errors.valor && <span className="text-danger mt-1"> {props.errors.valor}</span>}
                                                         </div>
+
+                                                        <input type="hidden" name={`rateios[${index}].name`} />
                                                         {index >= 0 && values.rateios.length > 0 && (
                                                             <div className="col-1 mt-4 d-flex justify-content-center">
                                                                     <button className="btn-excluir-valores-reprogramados mt-4 pt-2" onClick={() => remove(index)}>
@@ -256,7 +308,8 @@ export const ValoresReprogramados = () => {
                                                         )}
 
                                                         <div className="col-12">
-                                                            {/*<input type="hidden" name={`rateios[${index}].lancamemto_duplicado[${index}]`}/>*/}
+                                                            {/*{props.errors  && <span className="text-danger mt-1"> {props.errors }</span> }*/}
+                                                            {/*{JSON.stringify(errors) && <span className="text-danger mt-1"> {JSON.stringify(errors) }</span>}*/}
                                                             {props.errors.lancamemto_duplicado && <span className="text-danger mt-1"> {props.errors.lancamemto_duplicado }</span>}
                                                         </div>
                                                     </div>
@@ -290,7 +343,7 @@ export const ValoresReprogramados = () => {
 
                             <div className="d-flex  justify-content-end pb-3 mt-3">
                                 <button type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                                <button onClick={()=>setShowModalSalvar(true)} type="button" className="btn btn-success mt-2">Salvar</button>
+                                <button onClick={()=>onShowModalSalvar(errors)} type="button" className="btn btn-success mt-2">Salvar</button>
                             </div>
 
                             <section>
