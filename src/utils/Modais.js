@@ -482,7 +482,9 @@ export const TextoCopiado = ({show, handleClose}) => {
     )
 };
 
-export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, stateFormEditarMembro, tabelas}) => {
+export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, stateFormEditarMembro, infosMembroSelecionado}) => {
+
+    console.log("Editar Membro ", infosMembroSelecionado)
 
     const bodyTextarea = () => {
         return (
@@ -539,7 +541,8 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                             <input
                                 readOnly={stateFormEditarMembro.representacao !== 'responsavel'}
                                 type="text"
-                                value={stateFormEditarMembro.nome_completo}
+                                value={infosMembroSelecionado ? infosMembroSelecionado.nome : ""}
+                                //value={stateFormEditarMembro.nome_completo}
                                 onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
                                 name="nome_completo"
                                 className="form-control"

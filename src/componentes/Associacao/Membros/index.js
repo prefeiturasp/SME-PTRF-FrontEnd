@@ -11,7 +11,7 @@ export const MembrosDaAssociacao = () =>{
         {label: "Membros", url:"membros-da-associacao"},
         {label: "Dados das contas", url:"lista-de-receitas"},
     ];
-    const init = [
+    const initDiretoria = [
         {id:"PRESIDENTE_DIRETORIA_EXECUTIVA", cargo:"Presidente"},
         {id:"VICE_PRESIDENTE_DIRETORIA_EXECUTIVA", cargo:"Vice Presidente"},
         {id:"SECRETARIO", cargo:"Secretário"},
@@ -23,10 +23,20 @@ export const MembrosDaAssociacao = () =>{
         {id:"VOGAL_5", cargo:"Vogal"},
     ];
 
+    const initConselho = [
+        {id:"PRESIDENTE_CONSELHO_FISCAL", cargo:"Presidente"},
+        {id:"CONSELHEIRO_1", cargo:"Conselheiro"},
+        {id:"CONSELHEIRO_2", cargo:"Conselheiro"},
+        {id:"CONSELHEIRO_3", cargo:"Conselheiro"},
+        {id:"CONSELHEIRO_4", cargo:"Conselheiro"},
+    ];
+
     const [clickIconeToogle, setClickIconeToogle] = useState({});
     const [showEditarMembro, setShowEditarMembro] = useState(false);
     const [membros, setMembros] = useState({});
-    const [initialValuesMembros, setInitialValuesMembros] = useState(init);
+    const [initialValuesMembrosDiretoria, setInitialValuesMembrosDiretoria] = useState(initDiretoria);
+    const [initialValuesMembrosConselho, setInitialValuesMembrosConselho] = useState(initConselho);
+    const [infosMembroSelecionado, setInfosMembroSelecionado] = useState(null);
     const [stateFormEditarMembro, setStateFormEditarMembro] = useState({
         uuid:"",
         nome_completo:"",
@@ -54,9 +64,10 @@ export const MembrosDaAssociacao = () =>{
     };
 
     const mesclaMembros = async ()=>{
-        let cargos_diretoria_executiva = []
+        let cargos_e_infos_diretoria = [];
+        let cargos_e_infos_conselho = [];
         if(membros && membros.length > 0){
-            cargos_diretoria_executiva = [
+            cargos_e_infos_diretoria = [
                 {id:"PRESIDENTE_DIRETORIA_EXECUTIVA", cargo:"Presidente", infos: buscaDadosMembros('PRESIDENTE_DIRETORIA_EXECUTIVA')},
                 {id:"VICE_PRESIDENTE_DIRETORIA_EXECUTIVA", cargo:"Vice Presidente", infos: buscaDadosMembros('VICE_PRESIDENTE_DIRETORIA_EXECUTIVA')},
                 {id:"SECRETARIO", cargo:"Secretário", infos: buscaDadosMembros('SECRETARIO')},
@@ -67,24 +78,54 @@ export const MembrosDaAssociacao = () =>{
                 {id:"VOGAL_4", cargo:"Vogal", infos: buscaDadosMembros('VOGAL_4')},
                 {id:"VOGAL_5", cargo:"Vogal", infos: buscaDadosMembros('VOGAL_5')},
             ];
+
+            cargos_e_infos_conselho = [
+                {id:"PRESIDENTE_CONSELHO_FISCAL", cargo:"Presidente", infos: buscaDadosMembros('PRESIDENTE_CONSELHO_FISCAL')},
+                {id:"CONSELHEIRO_1", cargo:"Conselheiro", infos: buscaDadosMembros('CONSELHEIRO_1')},
+                {id:"CONSELHEIRO_2", cargo:"Conselheiro", infos: buscaDadosMembros('CONSELHEIRO_2')},
+                {id:"CONSELHEIRO_3", cargo:"Conselheiro", infos: buscaDadosMembros('CONSELHEIRO_3')},
+                {id:"CONSELHEIRO_4", cargo:"Conselheiro", infos: buscaDadosMembros('CONSELHEIRO_4')},
+            ];
         }
-        setInitialValuesMembros(cargos_diretoria_executiva);
+        setInitialValuesMembrosDiretoria(cargos_e_infos_diretoria);
+        setInitialValuesMembrosConselho(cargos_e_infos_conselho);
     };
 
     const converteNomeRepresentacao = (id_representacao) =>{
-
         switch (id_representacao) {
             case 'SERVIDOR':
-                return "Servidor"
+                return "Servidor";
             case 'ESTUDANTE':
-                return "Estudante"
+                return "Estudante";
             case 'PAI_RESPONSAVEL':
-                return "Pai ou responsável"
+                return "Pai ou responsável";
             default:
                 return ""
         }
-
     };
+
+    const retornaDadosAdicionaisTabela = (infos) => {
+        if(infos.representacao === "SERVIDOR"){
+            return (
+                <p className="texto-dados-adicionais-tabela-membros">
+                    <span className="mr-5"><strong>Registro funcional:</strong> {infos.codigo_identificacao}</span>
+                    <span><strong>Cargo na educação: </strong> {infos.cargo_educacao}</span>
+                </p>
+            )
+        }else if (infos.representacao === "ESTUDANTE" || infos.representacao === "PAI_RESPONSAVEL"){
+            return (
+                <p className="texto-dados-adicionais-tabela-membros">
+                    <span className="mr-5"><strong>Código Eol do Aluno: </strong> {infos.codigo_identificacao}</span>
+                </p>
+            )
+        }
+    };
+
+    const onShowEditarMembro = (infos_membro_selecionado)=>{
+        setShowEditarMembro(true);
+        console.log("onShowEditarMembro", infos_membro_selecionado)
+        setInfosMembroSelecionado(infos_membro_selecionado)
+    }
 
     const toggleIcon = (id) => {
         setClickIconeToogle({
@@ -117,12 +158,13 @@ export const MembrosDaAssociacao = () =>{
                         caminhos_menu_interno={caminhos_menu_interno}
                     />
                     <TabelaMembros
+                        titulo="Diretoria Executiva"
                         clickIconeToogle={clickIconeToogle}
                         toggleIcon={toggleIcon}
-                        setShowEditarMembro={setShowEditarMembro}
-                        cargos={initialValuesMembros}
+                        onShowEditarMembro={onShowEditarMembro}
+                        cargos={initialValuesMembrosDiretoria}
                         converteNomeRepresentacao={converteNomeRepresentacao}
-                        titulo="Diretoria Executiva"
+                        retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
                     />
 
                     <hr/>
@@ -137,7 +179,7 @@ export const MembrosDaAssociacao = () =>{
                     onSubmitEditarMembro={onSubmitEditarMembro}
                     handleChangeEditarMembro={handleChangeEditarMembro}
                     stateFormEditarMembro={stateFormEditarMembro}
-                    //tabelas={tabelas}
+                    infosMembroSelecionado={infosMembroSelecionado}
                 />
             </section>
 

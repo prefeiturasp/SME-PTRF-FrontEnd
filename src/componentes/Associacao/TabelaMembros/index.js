@@ -2,7 +2,7 @@ import React, {Fragment} from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faAngleDown, faAngleUp, faEdit} from '@fortawesome/free-solid-svg-icons'
 
-export const TabelaMembros = ({clickIconeToogle, toggleIcon, setShowEditarMembro, cargos, converteNomeRepresentacao, titulo}) => {
+export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, onShowEditarMembro, cargos, converteNomeRepresentacao, retornaDadosAdicionaisTabela}) => {
 
     //console.log("Tabela Membros ", cargos)
     return(
@@ -19,7 +19,7 @@ export const TabelaMembros = ({clickIconeToogle, toggleIcon, setShowEditarMembro
                 </thead>
                 <tbody>
                 {cargos && cargos.length> 0 && cargos.map((item, index) => {
-                    console.log("ITEM ", item);
+                    //console.log("ITEM ", item);
                     return (
                         <Fragment key={index}>
                             <tr>
@@ -38,7 +38,7 @@ export const TabelaMembros = ({clickIconeToogle, toggleIcon, setShowEditarMembro
                                 <td><span>{item.infos && item.infos.representacao ? converteNomeRepresentacao(item.infos.representacao) : ""}</span></td>
                                 <td>
                                     <div className="d-flex justify-content-center">
-                                        <button className="btn-editar-membro" onClick={()=>setShowEditarMembro(true)}>
+                                        <button className="btn-editar-membro" onClick={()=>onShowEditarMembro(item.infos ? item.infos : null)}>
                                             <FontAwesomeIcon
                                                 style={{fontSize: '20px', marginRight:"0"}}
                                                 icon={faEdit}
@@ -50,8 +50,7 @@ export const TabelaMembros = ({clickIconeToogle, toggleIcon, setShowEditarMembro
                             </tr>
                             <tr className="collapse cabecalho" id={`collapseExample_${index}`}>
                                 <td colSpan="4" >
-                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid.
-                                    Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                                    {item.infos && retornaDadosAdicionaisTabela(item.infos) }
                                 </td>
                             </tr>
                         </Fragment>
