@@ -19,7 +19,7 @@ export const TabelaMembros = ({clickIconeToogle, toggleIcon, setShowEditarMembro
                 </thead>
                 <tbody>
                 {cargos && cargos.length> 0 && cargos.map((item, index) => {
-                    console.log("ITEM ", item)
+                    console.log("ITEM ", item);
                     return (
                         <Fragment key={index}>
                             <tr>
@@ -35,7 +35,7 @@ export const TabelaMembros = ({clickIconeToogle, toggleIcon, setShowEditarMembro
                                     </div>
                                 </td>
                                 <td><span>{item.infos && item.infos.nome ? item.infos.nome : ""}</span></td>
-                                <td></td>
+                                <td><span>{item.infos && item.infos.representacao ? item.infos.representacao : ""}</span></td>
                                 <td>
                                     <div className="d-flex justify-content-center">
                                         <button className="btn-editar-membro" onClick={()=>setShowEditarMembro(true)}>

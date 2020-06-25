@@ -504,11 +504,11 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
 
                     <div className="col-12 col-md-6">
                         <div className="form-group">
-                            <label htmlFor="representacao_associacao">Representação na associação</label>
+                            <label htmlFor="representacao">Representação na associação</label>
                             <select
-                                value={stateFormEditarMembro.representacao_associacao}
+                                value={stateFormEditarMembro.representacao}
                                 onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
-                                name="representacao_associacao"
+                                name="representacao"
                                 className="form-control"
                             >
                                 <option value="estudante">Estudante</option>
@@ -518,7 +518,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                         </div>
                     </div>
 
-                    <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao_associacao !== 'servidor' && 'escondeItem'}`}>
+                    <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao !== 'servidor' && 'escondeItem'}`}>
                         <div className="form-group">
                             <label htmlFor="codigo_identificacao">Registro Funcional</label>
                             <input
@@ -537,7 +537,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                         <div className="form-group">
                             <label htmlFor="cargo_associacao">Nome Completo</label>
                             <input
-                                readOnly={stateFormEditarMembro.representacao_associacao !== 'responsavel'}
+                                readOnly={stateFormEditarMembro.representacao !== 'responsavel'}
                                 type="text"
                                 value={stateFormEditarMembro.nome_completo}
                                 onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
@@ -547,7 +547,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                         </div>
                     </div>
 
-                    <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao_associacao !== 'servidor' && 'escondeItem'}`}>
+                    <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao !== 'servidor' && 'escondeItem'}`}>
                         <div className="form-group">
                             <label htmlFor="cargo_educacao">Cargo na educação</label>
                             <select
