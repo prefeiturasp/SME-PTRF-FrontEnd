@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {MenuInterno} from "../../MenuInterno";
 import {TabelaMembrosDiretoriaExecutiva} from "../TabelaMembrosDiretoriaExecutiva";
 import {TabelaMembrosConselhoFiscal} from "../TabelaMembrosConselhoFiscal";
+import {TabelaMembros} from "../TabelaMembros";
 
 import {EditarMembro} from "../../../utils/Modais";
 
@@ -21,6 +22,18 @@ export const MembrosDaAssociacao = () =>{
         {label: "Dados da Associação", url:"dados-da-associacao"},
         {label: "Membros", url:"membros-da-associacao"},
         {label: "Dados das contas", url:"lista-de-receitas"},
+    ];
+
+    const cargos_diretoria_executiva = [
+        {cargo:"Presidente", nome:"Presidente da Diretoria Executiva"},
+        {cargo:"Vice Presidente", nome:"Vice Presidente da Diretoria Executiva"},
+        {cargo:"Secretário", nome:"Secretário da Diretoria Executiva"},
+        {cargo:"Tesoureiro", nome:"Tesoureiro da Diretoria Executiva"},
+        {cargo:"Vogal", nome:"Vogal da Diretoria Executiva"},
+        {cargo:"Vogal", nome:"Vogal da Diretoria Executiva"},
+        {cargo:"Vogal", nome:"Vogal da Diretoria Executiva"},
+        {cargo:"Vogal", nome:"Vogal da Diretoria Executiva"},
+        {cargo:"Vogal", nome:"Vogal da Diretoria Executiva"},
     ];
 
     const toggleIcon = (id) => {
@@ -53,19 +66,16 @@ export const MembrosDaAssociacao = () =>{
                     <MenuInterno
                         caminhos_menu_interno={caminhos_menu_interno}
                     />
-                    <TabelaMembrosDiretoriaExecutiva
+                    <TabelaMembros
                         clickIconeToogle={clickIconeToogle}
                         toggleIcon={toggleIcon}
                         setShowEditarMembro={setShowEditarMembro}
+                        cargos={cargos_diretoria_executiva}
+                        titulo="Diretoria Executiva"
                     />
 
                     <hr/>
 
-                    <TabelaMembrosConselhoFiscal
-                        clickIconeToogle={clickIconeToogle}
-                        setClickIconeToogle={setClickIconeToogle}
-                        setShowEditarMembro={setShowEditarMembro}
-                    />
                 </>
             </div>
 
