@@ -31,6 +31,13 @@ export const YupSignupSchemaLogin = yup.object().shape({
   senha: yup.string().required("Campo código Senha é obrigatório"),
 });
 
+export const YupSignupSchemaMembros = yup.object().shape({
+  representacao: yup.string().required("Representação é obrigatório"),
+  codigo_identificacao: yup.string().required("Campo identificação é obrigatório"),
+  nome: yup.string().required("Nome é obrigatório"),
+  cargo_educacao: yup.string().required("Cargo educação é obrigatório"),
+});
+
 export const YupSignupSchemaCadastroDespesa = yup.object().shape({
 
   cpf_cnpj_fornecedor: yup.string().required("Campo CPF é obrigatório")

@@ -9,9 +9,6 @@ import {
 } from "../componentes/ModalBootstrap";
 import {DatePickerField} from "../componentes/DatePickerField";
 
-import {Formik} from 'formik';
-import {YupSignupSchemaMembros} from "./ValidacoesAdicionaisFormularios";
-
 export const AvisoCapitalModal = (propriedades) => {
     return (
         <ModalBootstrap
@@ -494,130 +491,89 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
 
             <>
                 {infosMembroSelecionado &&
-                <Formik
-                    initialValues={stateFormEditarMembro}
-                    validationSchema={YupSignupSchemaMembros}
-                    enableReinitialize={true}
-                    validateOnBlur={true}
-                    onSubmit={onSubmitEditarMembro}
-                    //validate={validateFormReceitas}
-                >
-                    {props => {
-                        return(
-                            <form method="POST" id="membrosForm" onSubmit={props.handleSubmit}>
-                                <div className='row'>
-                                    <div className="col-12">
-                                        <div className="form-group">
-                                            <label htmlFor="cargo_associacao">Cargo na Associação</label>
-                                            <input
-                                                readOnly={true}
-                                                type="text"
-                                                value={props.values.cargo_associacao ? props.values.cargo_associacao : ""}
-                                                //onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
-                                                onChange={(e) => {
-                                                        props.handleChange(e);
-                                                        handleChangeEditarMembro(e.target.name, e.target.value);
-                                                    }
-                                                }
-                                                name="cargo_associacao"
-                                                className="form-control"
-                                            />
-                                            {props.errors.cargo_associacao && <span className="span_erro text-danger mt-1"> {props.errors.cargo_associacao}</span>}
-                                        </div>
-                                    </div>
+                <form>
+                    <div className='row'>
+                        <div className="col-12">
+                            <div className="form-group">
+                                <label htmlFor="cargo_associacao">Cargo na Associação</label>
+                                <input
+                                    readOnly={true}
+                                    type="text"
+                                    value={stateFormEditarMembro.cargo_associacao ? stateFormEditarMembro.cargo_associacao : ""}
+                                    onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                    name="cargo_associacao"
+                                    className="form-control"
+                                />
+                            </div>
+                        </div>
 
-                                    <div className="col-12 col-md-6">
-                                        <div className="form-group">
-                                            <label htmlFor="representacao">Representação na associação</label>
-                                            <select
-                                                value={props.values.representacao ? props.values.representacao : ""}
-                                                onChange={(e) => {
-                                                    props.handleChange(e);
-                                                    handleChangeEditarMembro(e.target.name, e.target.value);
-                                                }
-                                                }
-                                                name="representacao"
-                                                className="form-control"
-                                            >
-                                                <option value="">Escolha a Representação</option>
-                                                <option value="ESTUDANTE">Estudante</option>
-                                                <option value='PAI_RESPONSAVEL'>Pai ou responsável</option>
-                                                <option value='SERVIDOR'>Servidor</option>
-                                            </select>
-                                            {props.errors.representacao && <span className="span_erro text-danger mt-1"> {props.errors.representacao}</span>}
-                                        </div>
-                                    </div>
+                        <div className="col-12 col-md-6">
+                            <div className="form-group">
+                                <label htmlFor="representacao">Representação na associação</label>
+                                <select
+                                    value={stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : ""}
+                                    onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                    name="representacao"
+                                    className="form-control"
+                                >
+                                    <option value="">Escolha a Representação</option>
+                                    <option value="ESTUDANTE">Estudante</option>
+                                    <option value='PAI_RESPONSAVEL'>Pai ou responsável</option>
+                                    <option value='SERVIDOR'>Servidor</option>
+                                </select>
+                            </div>
+                        </div>
 
-                                    <div className={`col-12 col-md-6 ${props.values.representacao !== 'SERVIDOR' && props.values.representacao !== 'ESTUDANTE' && 'escondeItem'}`}>
-                                        <div className="form-group">
-                                            <label htmlFor="codigo_identificacao">{props.values.representacao === 'SERVIDOR' ? "Registro Funcional" : "Código EOL"}</label>
-                                            <input
-                                                type="text"
-                                                value={props.values.codigo_identificacao ? props.values.codigo_identificacao : ""}
-                                                onChange={(e) => {
-                                                    props.handleChange(e);
-                                                    handleChangeEditarMembro(e.target.name, e.target.value);
-                                                }
-                                                }
-                                                name="codigo_identificacao"
-                                                className="form-control"
-                                            />
-                                            {props.errors.codigo_identificacao && <span className="span_erro text-danger mt-1"> {props.errors.codigo_identificacao}</span>}
-                                        </div>
-                                    </div>
-                                </div>
+                        <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao !== 'SERVIDOR' && stateFormEditarMembro.representacao !== 'ESTUDANTE' && 'escondeItem'}`}>
+                            <div className="form-group">
+                                <label htmlFor="codigo_identificacao">{stateFormEditarMembro.representacao === 'SERVIDOR' ? "Registro Funcional" : "Código EOL"}</label>
+                                <input
+                                    type="text"
+                                    value={stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : ""}
+                                    onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                    name="codigo_identificacao"
+                                    className="form-control"
+                                />
+                            </div>
+                        </div>
+                    </div>
 
-                                <div className="row">
-                                    <div className="col-12 col-md-6">
-                                        <div className="form-group">
-                                            <label htmlFor="cargo_associacao">Nome Completo</label>
-                                            <input
-                                                //readOnly={stateFormEditarMembro.representacao !== 'PAI_RESPONSAVEL'}
-                                                type="text"
-                                                value={props.values.nome ? props.values.nome : ""}
-                                                onChange={(e) => {
-                                                        props.handleChange(e);
-                                                        handleChangeEditarMembro(e.target.name, e.target.value);
-                                                    }
-                                                }
-                                                name="nome"
-                                                className="form-control"
-                                            />
-                                            {props.errors.nome && <span className="span_erro text-danger mt-1"> {props.errors.nome}</span>}
-                                        </div>
-                                    </div>
+                    <div className="row">
+                        <div className="col-12 col-md-6">
+                            <div className="form-group">
+                                <label htmlFor="cargo_associacao">Nome Completo</label>
+                                <input
+                                    //readOnly={stateFormEditarMembro.representacao !== 'PAI_RESPONSAVEL'}
+                                    type="text"
+                                    value={stateFormEditarMembro.nome ? stateFormEditarMembro.nome : ""}
+                                    onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                    name="nome"
+                                    className="form-control"
+                                />
+                            </div>
+                        </div>
 
-                                    <div className={`col-12 col-md-6 ${props.values.representacao !== 'SERVIDOR' && 'escondeItem'}`}>
-                                        <div className="form-group">
-                                            <label htmlFor="cargo_educacao">Cargo na educação</label>
-                                            <input
-                                                type="text"
-                                                value={props.values.cargo_educacao ? props.values.cargo_educacao : ""}
-                                                onChange={(e) => {
-                                                    props.handleChange(e);
-                                                    handleChangeEditarMembro(e.target.name, e.target.value);
-                                                }
-                                                }
-                                                name="cargo_educacao"
-                                                className="form-control"
-                                            />
-                                            {props.errors.cargo_educacao && <span className="span_erro text-danger mt-1"> {props.errors.cargo_educacao}</span>}
-                                        </div>
-                                    </div>
+                        <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao !== 'SERVIDOR' && 'escondeItem'}`}>
+                            <div className="form-group">
+                                <label htmlFor="cargo_educacao">Cargo na educação</label>
+                                <input
+                                    type="text"
+                                    value={stateFormEditarMembro.cargo_educacao ? stateFormEditarMembro.cargo_educacao : ""}
+                                    onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                    name="cargo_educacao"
+                                    className="form-control"
+                                />
+                            </div>
+                        </div>
 
-                                </div>
-                                <div className="d-flex  justify-content-end pb-3 mt-3">
+                    </div>
 
-                                    <button onClick={()=>handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                                    <button type="submit" className="btn btn-success mt-2">Salvar</button>
-                                </div>
-                            </form>
-                        );
-                    }}
-                </Formik>
+                </form>
                 }
+
             </>
         )
+
     };
     return (
         <ModalBootstrapFormMembros
@@ -625,6 +581,12 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
             onHide={handleClose}
             titulo="Editar membro"
             bodyText={bodyTextarea()}
+            primeiroBotaoOnclick={handleClose}
+            primeiroBotaoTexto="Cancelar"
+            primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={onSubmitEditarMembro}
+            segundoBotaoTexto="Salvar"
+            segundoBotaoCss="success"
         />
     )
 };

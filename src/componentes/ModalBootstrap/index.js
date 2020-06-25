@@ -129,7 +129,9 @@ export const ModalBootstrapEditarAta = (propriedades) =>{
     )
 };
 
-export const ModalBootstrapForm = (propriedades) =>{
+export const ModalBootstrapFormMembros = (propriedades) =>{
+
+    // Os botões de Cancelar e Salvar estão dentro do próprio form, pois utilizei Formik para validações
     return (
         <Fragment>
             <Modal centered show={propriedades.show} onHide={propriedades.onHide}  size="lg">
@@ -139,16 +141,6 @@ export const ModalBootstrapForm = (propriedades) =>{
                 <Modal.Body>
                     {propriedades.bodyText}
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant={propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"} onClick={propriedades.primeiroBotaoOnclick}>
-                        {propriedades.primeiroBotaoTexto}
-                    </Button>
-                    {propriedades.segundoBotaoOnclick && propriedades.segundoBotaoTexto ? (
-                        <Button disabled={propriedades.segundoBotaoDisable} variant={propriedades.segundoBotaoCss ? propriedades.segundoBotaoCss : "primary"} onClick={propriedades.segundoBotaoOnclick}>
-                            {propriedades.segundoBotaoTexto}
-                        </Button>
-                    ):null}
-                </Modal.Footer>
             </Modal>
         </Fragment>
     )
