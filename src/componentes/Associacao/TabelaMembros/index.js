@@ -4,7 +4,7 @@ import {faAngleDown, faAngleUp, faEdit} from '@fortawesome/free-solid-svg-icons'
 
 export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, onShowEditarMembro, cargos, converteNomeRepresentacao, retornaDadosAdicionaisTabela}) => {
 
-    //console.log("Tabela Membros ", cargos);
+    console.log("Tabela Membros ", cargos);
     return(
         <>
             <p><strong>{titulo}</strong></p>

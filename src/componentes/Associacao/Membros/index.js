@@ -50,17 +50,17 @@ export const MembrosDaAssociacao = () =>{
     const [stateFormEditarMembro, setStateFormEditarMembro] = useState(initFormMembro);
 
     useEffect(()=>{
-        const carregaMembros = async ()=>{
-            let membros = await getMembrosAssociacao();
-            console.log("getMembros ", membros);
-            setMembros(membros)
-        };
         carregaMembros();
     }, []);
 
     useEffect(()=>{
         mesclaMembros();
     }, [membros]);
+
+    const carregaMembros = async ()=>{
+        let membros = await getMembrosAssociacao();
+        setMembros(membros)
+    };
 
     const buscaDadosMembros = (id_cargo) =>{
         return membros.find(element => element.cargo_associacao === id_cargo);
@@ -89,9 +89,10 @@ export const MembrosDaAssociacao = () =>{
                 {id:"CONSELHEIRO_3", cargo:"Conselheiro", infos: buscaDadosMembros('CONSELHEIRO_3')},
                 {id:"CONSELHEIRO_4", cargo:"Conselheiro", infos: buscaDadosMembros('CONSELHEIRO_4')},
             ];
+            setInitialValuesMembrosDiretoria(cargos_e_infos_diretoria);
+            setInitialValuesMembrosConselho(cargos_e_infos_conselho);
         }
-        setInitialValuesMembrosDiretoria(cargos_e_infos_diretoria);
-        setInitialValuesMembrosConselho(cargos_e_infos_conselho);
+
     };
 
     const converteNomeRepresentacao = (id_representacao) =>{
@@ -185,7 +186,6 @@ export const MembrosDaAssociacao = () =>{
                 'cargo_educacao': stateFormEditarMembro.cargo_educacao ? stateFormEditarMembro.cargo_educacao : "",
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : ""
-
             };
         }else if(stateFormEditarMembro && stateFormEditarMembro.representacao === "ESTUDANTE"){
             payload = {
@@ -195,7 +195,6 @@ export const MembrosDaAssociacao = () =>{
                 'cargo_educacao': "",
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : ""
-
             };
         }else if (stateFormEditarMembro && stateFormEditarMembro.representacao === "PAI_RESPONSAVEL"){
             payload = {
@@ -212,28 +211,29 @@ export const MembrosDaAssociacao = () =>{
         if (stateFormEditarMembro.uuid){
             try {
                 const response = await editarMembroAssociacao(payload, stateFormEditarMembro.uuid);
-                console.log("Response ", response)
-                console.log("Operação realizada com sucesso!");
-                //resetForm({values: ""})
-                //getPath();
-
+                if (response.status === 200 || response.status === 201){
+                    console.log("Response ", response)
+                    console.log("Operação realizada com sucesso!");
+                    carregaMembros();
+                }else {
+                    console.log("Erro ao criar Membro")
+                }
             } catch (error) {
                 console.log(error)
-                //setLoading(false);
-                //return
             }
         }else{
             try {
                 const response = await criarMembroAssociacao(payload);
-                console.log("Response ", response)
-                console.log("Operação realizada com sucesso!");
-                //resetForm({values: ""})
-                //getPath();
+                if (response.status === 200 || response.status === 201) {
+                    console.log("Response ", response)
+                    console.log("Operação realizada com sucesso!");
+                    carregaMembros();
+                }else {
+                    console.log("Erro ao editar Membro")
+                }
 
             } catch (error) {
                 console.log(error)
-                //setLoading(false);
-                //return
             }
         }
     };

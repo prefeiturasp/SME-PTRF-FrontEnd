@@ -543,7 +543,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                             <div className="form-group">
                                 <label htmlFor="cargo_associacao">Nome Completo</label>
                                 <input
-                                    readOnly={stateFormEditarMembro.representacao !== 'PAI_RESPONSAVEL'}
+                                    //readOnly={stateFormEditarMembro.representacao !== 'PAI_RESPONSAVEL'}
                                     type="text"
                                     value={stateFormEditarMembro.nome ? stateFormEditarMembro.nome : ""}
                                     onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}

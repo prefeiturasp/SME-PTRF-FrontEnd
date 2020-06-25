@@ -30,21 +30,11 @@ export const getMembrosAssociacao = async () => {
 };
 
 export const criarMembroAssociacao = async (payload) => {
-    ///api/membros-associacao/
-    return api.post(`api/membros-associacao/`, payload, authHeader)
-    .then(response => {
-        return response;
-    }).catch(error => {
-        return error.response;
-    });
+    return (await api.post(`api/membros-associacao/`, payload, authHeader))
 };
 
 export const editarMembroAssociacao = async (payload, uuid) => {
     ///api/membros-associacao/
-    return api.put(`/api/membros-associacao/${uuid}`, payload, authHeader)
-    .then(response => {
-        return response;
-    }).catch(error => {
-        return error.response;
-    });
+    return (await api.put(`/api/membros-associacao/${uuid}`, payload, authHeader))
+
 };
