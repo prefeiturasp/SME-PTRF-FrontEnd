@@ -39,7 +39,7 @@ export const MembrosDaAssociacao = () =>{
     useEffect(()=>{
         const carregaMembros = async ()=>{
             let membros = await getMembrosAssociacao();
-            console.log("getMembros ", membros)
+            console.log("getMembros ", membros);
             setMembros(membros)
         };
         carregaMembros();
@@ -47,11 +47,10 @@ export const MembrosDaAssociacao = () =>{
 
     useEffect(()=>{
         mesclaMembros();
-    }, [membros])
+    }, [membros]);
 
     const buscaDadosMembros = (id_cargo) =>{
-        let info = membros.find(element => element.cargo_associacao === id_cargo);
-        return info
+        return membros.find(element => element.cargo_associacao === id_cargo);
     };
 
     const mesclaMembros = async ()=>{
@@ -70,6 +69,21 @@ export const MembrosDaAssociacao = () =>{
             ];
         }
         setInitialValuesMembros(cargos_diretoria_executiva);
+    };
+
+    const converteNomeRepresentacao = (id_representacao) =>{
+
+        switch (id_representacao) {
+            case 'SERVIDOR':
+                return "Servidor"
+            case 'ESTUDANTE':
+                return "Estudante"
+            case 'PAI_RESPONSAVEL':
+                return "Pai ou responsável"
+            default:
+                return ""
+        }
+
     };
 
     const toggleIcon = (id) => {
@@ -107,6 +121,7 @@ export const MembrosDaAssociacao = () =>{
                         toggleIcon={toggleIcon}
                         setShowEditarMembro={setShowEditarMembro}
                         cargos={initialValuesMembros}
+                        converteNomeRepresentacao={converteNomeRepresentacao}
                         titulo="Diretoria Executiva"
                     />
 

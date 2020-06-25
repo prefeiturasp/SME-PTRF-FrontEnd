@@ -2,7 +2,7 @@ import React, {Fragment} from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faAngleDown, faAngleUp, faEdit} from '@fortawesome/free-solid-svg-icons'
 
-export const TabelaMembros = ({clickIconeToogle, toggleIcon, setShowEditarMembro, cargos, titulo}) => {
+export const TabelaMembros = ({clickIconeToogle, toggleIcon, setShowEditarMembro, cargos, converteNomeRepresentacao, titulo}) => {
 
     //console.log("Tabela Membros ", cargos)
     return(
@@ -35,7 +35,7 @@ export const TabelaMembros = ({clickIconeToogle, toggleIcon, setShowEditarMembro
                                     </div>
                                 </td>
                                 <td><span>{item.infos && item.infos.nome ? item.infos.nome : ""}</span></td>
-                                <td><span>{item.infos && item.infos.representacao ? item.infos.representacao : ""}</span></td>
+                                <td><span>{item.infos && item.infos.representacao ? converteNomeRepresentacao(item.infos.representacao) : ""}</span></td>
                                 <td>
                                     <div className="d-flex justify-content-center">
                                         <button className="btn-editar-membro" onClick={()=>setShowEditarMembro(true)}>
