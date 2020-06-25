@@ -500,7 +500,6 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                     enableReinitialize={true}
                     validateOnBlur={true}
                     onSubmit={onSubmitEditarMembro}
-                    //validate={validateFormReceitas}
                 >
                     {props => {
                         return(
@@ -607,7 +606,6 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
 
                                 </div>
                                 <div className="d-flex  justify-content-end pb-3 mt-3">
-
                                     <button onClick={()=>handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                                     <button type="submit" className="btn btn-success mt-2">Salvar</button>
                                 </div>

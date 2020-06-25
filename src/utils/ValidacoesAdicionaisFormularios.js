@@ -33,9 +33,47 @@ export const YupSignupSchemaLogin = yup.object().shape({
 
 export const YupSignupSchemaMembros = yup.object().shape({
   representacao: yup.string().required("Representação é obrigatório"),
-  codigo_identificacao: yup.string().required("Campo identificação é obrigatório"),
+
+  codigo_identificacao: yup.string().required("Campo identificação é obrigatório")
+    .test('test-name', 'Não pode ultrapassar 10 caracteres',
+        function (value) {
+
+          const { representacao } = this.parent;
+          console.log("Representacao YUP ", representacao);
+          debugger
+          if(representacao === "SERVIDOR" || representacao === "ESTUDANTE"){
+            if (!value || value.trim() === ""){
+              return false
+            }else {
+              return true
+            }
+          }else {
+            return true
+          }
+
+         /* if(value && value.length > 10){
+            return false
+          }else {
+            return true
+          }*/
+      }),
+
   nome: yup.string().required("Nome é obrigatório"),
-  cargo_educacao: yup.string().required("Cargo educação é obrigatório"),
+
+  cargo_educacao: yup.string()
+  .test('test-name', 'É obrigatório e não pode ultrapassar 45 caracteres',
+      function (value) {
+        const { representacao } = this.parent;
+        if(representacao === "SERVIDOR"){
+            if (!value || value.trim() === "" || value.length > 45){
+              return false
+            }else {
+              return true
+            }
+        }else {
+          return true
+        }
+      }),
 });
 
 export const YupSignupSchemaCadastroDespesa = yup.object().shape({
@@ -43,7 +81,6 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
   cpf_cnpj_fornecedor: yup.string().required("Campo CPF é obrigatório")
   .test('test-name', 'Digite um CPF ou um CNPJ válido',
       function (value) {
-
         if(value !== undefined){
           return valida_cpf_cnpj(value)
         }else {
