@@ -7,11 +7,11 @@ const authHeader = {
         'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
         'Content-Type': 'application/json'
     }
-}
+};
 
 export const getAssociacao = async () => {
     return (await api.get(`api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
-}
+};
 
 export const alterarAssociacao = async (payload) => {
     return api.put(`api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/`, payload, authHeader).then(response => {
@@ -19,8 +19,12 @@ export const alterarAssociacao = async (payload) => {
     }).catch(error => {
         return error.response;
     });
-}
+};
 
 export const getPeriodoFechado = async (data_verificacao) => {
     return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/status-periodo/?data=${data_verificacao}`, authHeader)).data
-}
+};
+
+export const getMembrosAssociacao = async () => {
+    return (await api.get(`/api/membros-associacao/`, authHeader)).data
+};

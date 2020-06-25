@@ -4,7 +4,7 @@ import {faAngleDown, faAngleUp, faEdit} from '@fortawesome/free-solid-svg-icons'
 
 export const TabelaMembros = ({clickIconeToogle, toggleIcon, setShowEditarMembro, cargos, titulo}) => {
 
-
+    //console.log("Tabela Membros ", cargos)
     return(
         <>
             <p><strong>{titulo}</strong></p>
@@ -18,7 +18,8 @@ export const TabelaMembros = ({clickIconeToogle, toggleIcon, setShowEditarMembro
                 </tr>
                 </thead>
                 <tbody>
-                {cargos && cargos.map((item, index) => {
+                {cargos && cargos.length> 0 && cargos.map((item, index) => {
+                    console.log("ITEM ", item)
                     return (
                         <Fragment key={index}>
                             <tr>
@@ -33,8 +34,8 @@ export const TabelaMembros = ({clickIconeToogle, toggleIcon, setShowEditarMembro
                                         <span>{item.cargo}</span>
                                     </div>
                                 </td>
-                                <td><span>{item.nome}</span></td>
-                                <td>Otto</td>
+                                <td><span>{item.infos && item.infos.nome ? item.infos.nome : ""}</span></td>
+                                <td></td>
                                 <td>
                                     <div className="d-flex justify-content-center">
                                         <button className="btn-editar-membro" onClick={()=>setShowEditarMembro(true)}>

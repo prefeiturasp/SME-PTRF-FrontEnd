@@ -520,12 +520,12 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
 
                     <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao_associacao !== 'servidor' && 'escondeItem'}`}>
                         <div className="form-group">
-                            <label htmlFor="rf">Registro Funcional</label>
+                            <label htmlFor="codigo_identificacao">Registro Funcional</label>
                             <input
                                 type="text"
-                                value={stateFormEditarMembro.rf}
+                                value={stateFormEditarMembro.codigo_identificacao}
                                 onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
-                                name="rf"
+                                name="codigo_identificacao"
                                 className="form-control"
                             />
                         </div>
