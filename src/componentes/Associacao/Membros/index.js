@@ -92,7 +92,6 @@ export const MembrosDaAssociacao = () =>{
             setInitialValuesMembrosDiretoria(cargos_e_infos_diretoria);
             setInitialValuesMembrosConselho(cargos_e_infos_conselho);
         }
-
     };
 
     const converteNomeRepresentacao = (id_representacao) =>{
