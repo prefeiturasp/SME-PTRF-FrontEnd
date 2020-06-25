@@ -494,7 +494,6 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                 <form>
                     <div className='row'>
                         <div className="col-12">
-                            <input name="infos_membro_selecionado" type='hidden' value={JSON.stringify(stateFormEditarMembro.infos_membro_selecionado)}/>
                             <div className="form-group">
                                 <label htmlFor="cargo_associacao">Cargo na Associação</label>
                                 <input
@@ -517,6 +516,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                     name="representacao"
                                     className="form-control"
                                 >
+                                    <option value="">Escolha a Representação</option>
                                     <option value="ESTUDANTE">Estudante</option>
                                     <option value='PAI_RESPONSAVEL'>Pai ou responsável</option>
                                     <option value='SERVIDOR'>Servidor</option>
@@ -524,9 +524,9 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                             </div>
                         </div>
 
-                        <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao !== 'SERVIDOR' && 'escondeItem'}`}>
+                        <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao !== 'SERVIDOR' && stateFormEditarMembro.representacao !== 'ESTUDANTE' && 'escondeItem'}`}>
                             <div className="form-group">
-                                <label htmlFor="codigo_identificacao">Registro Funcional</label>
+                                <label htmlFor="codigo_identificacao">{stateFormEditarMembro.representacao === 'SERVIDOR' ? "Registro Funcional" : "Código EOL"}</label>
                                 <input
                                     type="text"
                                     value={stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : ""}
@@ -560,7 +560,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                     type="text"
                                     value={stateFormEditarMembro.cargo_educacao ? stateFormEditarMembro.cargo_educacao : ""}
                                     onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
-                                    name="nome"
+                                    name="cargo_educacao"
                                     className="form-control"
                                 />
                             </div>

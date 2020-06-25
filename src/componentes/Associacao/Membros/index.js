@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react";
 import {MenuInterno} from "../../MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
 import {EditarMembro} from "../../../utils/Modais";
-import {getMembrosAssociacao} from "../../../services/Associacao.service";
+import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao} from "../../../services/Associacao.service";
+import {ASSOCIACAO_UUID} from '../../../services/auth.service';
 
 export const MembrosDaAssociacao = () =>{
 
@@ -12,15 +13,15 @@ export const MembrosDaAssociacao = () =>{
         {label: "Dados das contas", url:"lista-de-receitas"},
     ];
     const initDiretoria = [
-        {id:"PRESIDENTE_DIRETORIA_EXECUTIVA", cargo:"Presidente"},
-        {id:"VICE_PRESIDENTE_DIRETORIA_EXECUTIVA", cargo:"Vice Presidente"},
-        {id:"SECRETARIO", cargo:"Secretário"},
-        {id:"TESOUREIRO", cargo:"Tesoureiro"},
-        {id:"VOGAL_1", cargo:"Vogal"},
-        {id:"VOGAL_2", cargo:"Vogal"},
-        {id:"VOGAL_3", cargo:"Vogal"},
-        {id:"VOGAL_4", cargo:"Vogal"},
-        {id:"VOGAL_5", cargo:"Vogal"},
+        {id:"PRESIDENTE_DIRETORIA_EXECUTIVA", cargo:"Presidente", cargo_exibe_form: "Presidente da Diretoria Executiva"},
+        {id:"VICE_PRESIDENTE_DIRETORIA_EXECUTIVA", cargo:"Vice Presidente", cargo_exibe_form: "Vice Presidente da Diretoria Executiva"},
+        {id:"SECRETARIO", cargo:"Secretário", cargo_exibe_form: "Secretário da Diretoria Executiva"},
+        {id:"TESOUREIRO", cargo:"Tesoureiro", cargo_exibe_form: "Tesoureiro da Diretoria Executiva"},
+        {id:"VOGAL_1", cargo:"Vogal", cargo_exibe_form: "Vogal da Diretoria Executiva"},
+        {id:"VOGAL_2", cargo:"Vogal", cargo_exibe_form: "Vogal da Diretoria Executiva"},
+        {id:"VOGAL_3", cargo:"Vogal", cargo_exibe_form: "Vogal da Diretoria Executiva"},
+        {id:"VOGAL_4", cargo:"Vogal", cargo_exibe_form: "Vogal da Diretoria Executiva"},
+        {id:"VOGAL_5", cargo:"Vogal", cargo_exibe_form: "Vogal da Diretoria Executiva"},
     ];
 
     const initConselho = [
@@ -38,7 +39,6 @@ export const MembrosDaAssociacao = () =>{
         cargo_educacao:"",
         representacao:"",
         codigo_identificacao:"",
-        infos_membro_selecionado:"",
     }
 
     const [clickIconeToogle, setClickIconeToogle] = useState({});
@@ -126,7 +126,7 @@ export const MembrosDaAssociacao = () =>{
 
     const onShowEditarMembro = (infoMembroSelecionado)=>{
         setShowEditarMembro(true);
-        console.log("onShowEditarMembro", infoMembroSelecionado);
+        //console.log("onShowEditarMembro", infoMembroSelecionado);
 
         let init = {};
         if (infoMembroSelecionado && infoMembroSelecionado.infos){
@@ -137,7 +137,6 @@ export const MembrosDaAssociacao = () =>{
                 cargo_educacao: infoMembroSelecionado.infos.cargo_educacao ? infoMembroSelecionado.infos.cargo_educacao : "",
                 representacao: infoMembroSelecionado.infos.representacao ? infoMembroSelecionado.infos.representacao : "",
                 codigo_identificacao: infoMembroSelecionado.infos.codigo_identificacao ? infoMembroSelecionado.infos.codigo_identificacao : "",
-                infos_membro_selecionado: infoMembroSelecionado,
             };
         }else {
             init = {
@@ -147,7 +146,6 @@ export const MembrosDaAssociacao = () =>{
                 cargo_educacao: "",
                 representacao: "",
                 codigo_identificacao: "",
-                infos_membro_selecionado: infoMembroSelecionado,
             };
         }
 
@@ -173,9 +171,71 @@ export const MembrosDaAssociacao = () =>{
         });
     };
 
-    const onSubmitEditarMembro = () =>{
+    const onSubmitEditarMembro = async () =>{
         setShowEditarMembro(false);
-        console.log("onSubmitEditarMembro ", stateFormEditarMembro)
+        console.log("Submit stateFormEditarMembro ", stateFormEditarMembro);
+
+        let payload = {};
+
+        if(stateFormEditarMembro && stateFormEditarMembro.representacao === "SERVIDOR"){
+            payload = {
+                'nome': stateFormEditarMembro.nome,
+                'associacao': localStorage.getItem(ASSOCIACAO_UUID),
+                'cargo_associacao': infosMembroSelecionado.id,
+                'cargo_educacao': stateFormEditarMembro.cargo_educacao ? stateFormEditarMembro.cargo_educacao : "",
+                'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
+                'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : ""
+
+            };
+        }else if(stateFormEditarMembro && stateFormEditarMembro.representacao === "ESTUDANTE"){
+            payload = {
+                'nome': stateFormEditarMembro.nome,
+                'associacao': localStorage.getItem(ASSOCIACAO_UUID),
+                'cargo_associacao': infosMembroSelecionado.id,
+                'cargo_educacao': "",
+                'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
+                'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : ""
+
+            };
+        }else if (stateFormEditarMembro && stateFormEditarMembro.representacao === "PAI_RESPONSAVEL"){
+            payload = {
+                'nome': stateFormEditarMembro.nome,
+                'associacao': localStorage.getItem(ASSOCIACAO_UUID),
+                'cargo_associacao': infosMembroSelecionado.id,
+                'cargo_educacao': "",
+                'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
+                'codigo_identificacao': ""
+            };
+        }
+        console.log("payload ", payload)
+
+        if (stateFormEditarMembro.uuid){
+            try {
+                const response = await editarMembroAssociacao(payload, stateFormEditarMembro.uuid);
+                console.log("Response ", response)
+                console.log("Operação realizada com sucesso!");
+                //resetForm({values: ""})
+                //getPath();
+
+            } catch (error) {
+                console.log(error)
+                //setLoading(false);
+                //return
+            }
+        }else{
+            try {
+                const response = await criarMembroAssociacao(payload);
+                console.log("Response ", response)
+                console.log("Operação realizada com sucesso!");
+                //resetForm({values: ""})
+                //getPath();
+
+            } catch (error) {
+                console.log(error)
+                //setLoading(false);
+                //return
+            }
+        }
     };
 
     return(

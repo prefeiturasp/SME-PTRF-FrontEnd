@@ -28,3 +28,23 @@ export const getPeriodoFechado = async (data_verificacao) => {
 export const getMembrosAssociacao = async () => {
     return (await api.get(`/api/membros-associacao/`, authHeader)).data
 };
+
+export const criarMembroAssociacao = async (payload) => {
+    ///api/membros-associacao/
+    return api.post(`api/membros-associacao/`, payload, authHeader)
+    .then(response => {
+        return response;
+    }).catch(error => {
+        return error.response;
+    });
+};
+
+export const editarMembroAssociacao = async (payload, uuid) => {
+    ///api/membros-associacao/
+    return api.put(`/api/membros-associacao/${uuid}`, payload, authHeader)
+    .then(response => {
+        return response;
+    }).catch(error => {
+        return error.response;
+    });
+};
