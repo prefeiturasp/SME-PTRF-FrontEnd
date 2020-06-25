@@ -4,7 +4,7 @@ import {faAngleDown, faAngleUp, faEdit} from '@fortawesome/free-solid-svg-icons'
 
 export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, onShowEditarMembro, cargos, converteNomeRepresentacao, retornaDadosAdicionaisTabela}) => {
 
-    //console.log("Tabela Membros ", cargos)
+    //console.log("Tabela Membros ", cargos);
     return(
         <>
             <p><strong>{titulo}</strong></p>
@@ -38,7 +38,7 @@ export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, onShowEdita
                                 <td><span>{item.infos && item.infos.representacao ? converteNomeRepresentacao(item.infos.representacao) : ""}</span></td>
                                 <td>
                                     <div className="d-flex justify-content-center">
-                                        <button className="btn-editar-membro" onClick={()=>onShowEditarMembro(item.infos ? item.infos : null)}>
+                                        <button className="btn-editar-membro" onClick={()=>onShowEditarMembro(item)}>
                                             <FontAwesomeIcon
                                                 style={{fontSize: '20px', marginRight:"0"}}
                                                 icon={faEdit}

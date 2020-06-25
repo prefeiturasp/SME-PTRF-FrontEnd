@@ -484,90 +484,94 @@ export const TextoCopiado = ({show, handleClose}) => {
 
 export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, stateFormEditarMembro, infosMembroSelecionado}) => {
 
-    console.log("Editar Membro ", infosMembroSelecionado)
+    //console.log("Editar Membro ", infosMembroSelecionado)
 
     const bodyTextarea = () => {
         return (
-            <form>
-                <div className='row'>
-                    <div className="col-12">
-                        <div className="form-group">
-                            <label htmlFor="cargo_associacao">Cargo na Associação</label>
-                            <input
-                                readOnly={true}
-                                type="text"
-                                value={stateFormEditarMembro.cargo_associacao}
-                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
-                                name="cargo_associacao"
-                                className="form-control"
-                            />
+
+            <>
+                {infosMembroSelecionado &&
+                <form>
+                    <div className='row'>
+                        <div className="col-12">
+                            <input name="infos_membro_selecionado" type='hidden' value={JSON.stringify(stateFormEditarMembro.infos_membro_selecionado)}/>
+                            <div className="form-group">
+                                <label htmlFor="cargo_associacao">Cargo na Associação</label>
+                                <input
+                                    readOnly={true}
+                                    type="text"
+                                    value={stateFormEditarMembro.cargo_associacao ? stateFormEditarMembro.cargo_associacao : ""}
+                                    onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                    name="cargo_associacao"
+                                    className="form-control"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="col-12 col-md-6">
+                            <div className="form-group">
+                                <label htmlFor="representacao">Representação na associação</label>
+                                <select
+                                    value={stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : ""}
+                                    onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                    name="representacao"
+                                    className="form-control"
+                                >
+                                    <option value="ESTUDANTE">Estudante</option>
+                                    <option value='PAI_RESPONSAVEL'>Pai ou responsável</option>
+                                    <option value='SERVIDOR'>Servidor</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao !== 'SERVIDOR' && 'escondeItem'}`}>
+                            <div className="form-group">
+                                <label htmlFor="codigo_identificacao">Registro Funcional</label>
+                                <input
+                                    type="text"
+                                    value={stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : ""}
+                                    onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                    name="codigo_identificacao"
+                                    className="form-control"
+                                />
+                            </div>
                         </div>
                     </div>
 
-                    <div className="col-12 col-md-6">
-                        <div className="form-group">
-                            <label htmlFor="representacao">Representação na associação</label>
-                            <select
-                                value={stateFormEditarMembro.representacao}
-                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
-                                name="representacao"
-                                className="form-control"
-                            >
-                                <option value="estudante">Estudante</option>
-                                <option value='responsavel'>Pai ou responsável</option>
-                                <option value='servidor'>Servidor</option>
-                            </select>
+                    <div className="row">
+                        <div className="col-12 col-md-6">
+                            <div className="form-group">
+                                <label htmlFor="cargo_associacao">Nome Completo</label>
+                                <input
+                                    readOnly={stateFormEditarMembro.representacao !== 'PAI_RESPONSAVEL'}
+                                    type="text"
+                                    value={stateFormEditarMembro.nome ? stateFormEditarMembro.nome : ""}
+                                    onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                    name="nome"
+                                    className="form-control"
+                                />
+                            </div>
                         </div>
+
+                        <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao !== 'SERVIDOR' && 'escondeItem'}`}>
+                            <div className="form-group">
+                                <label htmlFor="cargo_educacao">Cargo na educação</label>
+                                <input
+                                    type="text"
+                                    value={stateFormEditarMembro.cargo_educacao ? stateFormEditarMembro.cargo_educacao : ""}
+                                    onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
+                                    name="nome"
+                                    className="form-control"
+                                />
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao !== 'servidor' && 'escondeItem'}`}>
-                        <div className="form-group">
-                            <label htmlFor="codigo_identificacao">Registro Funcional</label>
-                            <input
-                                type="text"
-                                value={stateFormEditarMembro.codigo_identificacao}
-                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
-                                name="codigo_identificacao"
-                                className="form-control"
-                            />
-                        </div>
-                    </div>
-                </div>
+                </form>
+                }
 
-                <div className="row">
-                    <div className="col-12 col-md-6">
-                        <div className="form-group">
-                            <label htmlFor="cargo_associacao">Nome Completo</label>
-                            <input
-                                readOnly={stateFormEditarMembro.representacao !== 'responsavel'}
-                                type="text"
-                                value={infosMembroSelecionado ? infosMembroSelecionado.nome : ""}
-                                //value={stateFormEditarMembro.nome_completo}
-                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
-                                name="nome_completo"
-                                className="form-control"
-                            />
-                        </div>
-                    </div>
-
-                    <div className={`col-12 col-md-6 ${stateFormEditarMembro.representacao !== 'servidor' && 'escondeItem'}`}>
-                        <div className="form-group">
-                            <label htmlFor="cargo_educacao">Cargo na educação</label>
-                            <select
-                                value={stateFormEditarMembro.cargo_educacao}
-                                onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
-                                name="cargo_educacao"
-                                className="form-control"
-                            >
-                                <option value="coordenador">Coordenador</option>
-                                <option value='presidente'>Presidente</option>
-                            </select>
-                        </div>
-                    </div>
-
-                </div>
-
-            </form>
+            </>
         )
 
     };

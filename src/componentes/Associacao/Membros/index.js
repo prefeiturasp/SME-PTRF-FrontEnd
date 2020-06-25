@@ -31,20 +31,23 @@ export const MembrosDaAssociacao = () =>{
         {id:"CONSELHEIRO_4", cargo:"Conselheiro"},
     ];
 
+    const initFormMembro = {
+        uuid:"",
+        nome:"",
+        cargo_associacao:"",
+        cargo_educacao:"",
+        representacao:"",
+        codigo_identificacao:"",
+        infos_membro_selecionado:"",
+    }
+
     const [clickIconeToogle, setClickIconeToogle] = useState({});
     const [showEditarMembro, setShowEditarMembro] = useState(false);
     const [membros, setMembros] = useState({});
     const [initialValuesMembrosDiretoria, setInitialValuesMembrosDiretoria] = useState(initDiretoria);
     const [initialValuesMembrosConselho, setInitialValuesMembrosConselho] = useState(initConselho);
     const [infosMembroSelecionado, setInfosMembroSelecionado] = useState(null);
-    const [stateFormEditarMembro, setStateFormEditarMembro] = useState({
-        uuid:"",
-        nome_completo:"",
-        cargo_associacao:"",
-        cargo_educacao:"",
-        representacao:"",
-        codigo_identificacao:"",
-    });
+    const [stateFormEditarMembro, setStateFormEditarMembro] = useState(initFormMembro);
 
     useEffect(()=>{
         const carregaMembros = async ()=>{
@@ -68,15 +71,15 @@ export const MembrosDaAssociacao = () =>{
         let cargos_e_infos_conselho = [];
         if(membros && membros.length > 0){
             cargos_e_infos_diretoria = [
-                {id:"PRESIDENTE_DIRETORIA_EXECUTIVA", cargo:"Presidente", infos: buscaDadosMembros('PRESIDENTE_DIRETORIA_EXECUTIVA')},
-                {id:"VICE_PRESIDENTE_DIRETORIA_EXECUTIVA", cargo:"Vice Presidente", infos: buscaDadosMembros('VICE_PRESIDENTE_DIRETORIA_EXECUTIVA')},
-                {id:"SECRETARIO", cargo:"Secretário", infos: buscaDadosMembros('SECRETARIO')},
-                {id:"TESOUREIRO", cargo:"Tesoureiro", infos: buscaDadosMembros('TESOUREIRO')},
-                {id:"VOGAL_1", cargo:"Vogal", infos: buscaDadosMembros('VOGAL_1')},
-                {id:"VOGAL_2", cargo:"Vogal", infos: buscaDadosMembros('VOGAL_2')},
-                {id:"VOGAL_3", cargo:"Vogal", infos: buscaDadosMembros('VOGAL_3')},
-                {id:"VOGAL_4", cargo:"Vogal", infos: buscaDadosMembros('VOGAL_4')},
-                {id:"VOGAL_5", cargo:"Vogal", infos: buscaDadosMembros('VOGAL_5')},
+                {id:"PRESIDENTE_DIRETORIA_EXECUTIVA", cargo:"Presidente", cargo_exibe_form: "Presidente da Diretoria Executiva",  infos: buscaDadosMembros('PRESIDENTE_DIRETORIA_EXECUTIVA')},
+                {id:"VICE_PRESIDENTE_DIRETORIA_EXECUTIVA", cargo:"Vice Presidente", cargo_exibe_form: "Vice Presidente da Diretoria Executiva", infos: buscaDadosMembros('VICE_PRESIDENTE_DIRETORIA_EXECUTIVA')},
+                {id:"SECRETARIO", cargo:"Secretário", cargo_exibe_form: "Secretário da Diretoria Executiva", infos: buscaDadosMembros('SECRETARIO')},
+                {id:"TESOUREIRO", cargo:"Tesoureiro", cargo_exibe_form: "Tesoureiro da Diretoria Executiva", infos: buscaDadosMembros('TESOUREIRO')},
+                {id:"VOGAL_1", cargo:"Vogal", cargo_exibe_form: "Vogal da Diretoria Executiva", infos: buscaDadosMembros('VOGAL_1')},
+                {id:"VOGAL_2", cargo:"Vogal", cargo_exibe_form: "Vogal da Diretoria Executiva", infos: buscaDadosMembros('VOGAL_2')},
+                {id:"VOGAL_3", cargo:"Vogal", cargo_exibe_form: "Vogal da Diretoria Executiva", infos: buscaDadosMembros('VOGAL_3')},
+                {id:"VOGAL_4", cargo:"Vogal", cargo_exibe_form: "Vogal da Diretoria Executiva", infos: buscaDadosMembros('VOGAL_4')},
+                {id:"VOGAL_5", cargo:"Vogal", cargo_exibe_form: "Vogal da Diretoria Executiva", infos: buscaDadosMembros('VOGAL_5')},
             ];
 
             cargos_e_infos_conselho = [
@@ -121,10 +124,35 @@ export const MembrosDaAssociacao = () =>{
         }
     };
 
-    const onShowEditarMembro = (infos_membro_selecionado)=>{
+    const onShowEditarMembro = (infoMembroSelecionado)=>{
         setShowEditarMembro(true);
-        console.log("onShowEditarMembro", infos_membro_selecionado)
-        setInfosMembroSelecionado(infos_membro_selecionado)
+        console.log("onShowEditarMembro", infoMembroSelecionado);
+
+        let init = {};
+        if (infoMembroSelecionado && infoMembroSelecionado.infos){
+             init = {
+                uuid: infoMembroSelecionado.infos.uuid ? infoMembroSelecionado.infos.uuid : "",
+                nome: infoMembroSelecionado.infos.nome ? infoMembroSelecionado.infos.nome : "",
+                cargo_associacao: infoMembroSelecionado.cargo_exibe_form ? infoMembroSelecionado.cargo_exibe_form : "",
+                cargo_educacao: infoMembroSelecionado.infos.cargo_educacao ? infoMembroSelecionado.infos.cargo_educacao : "",
+                representacao: infoMembroSelecionado.infos.representacao ? infoMembroSelecionado.infos.representacao : "",
+                codigo_identificacao: infoMembroSelecionado.infos.codigo_identificacao ? infoMembroSelecionado.infos.codigo_identificacao : "",
+                infos_membro_selecionado: infoMembroSelecionado,
+            };
+        }else {
+            init = {
+                uuid: "",
+                nome: "",
+                cargo_associacao: infoMembroSelecionado.cargo_exibe_form ? infoMembroSelecionado.cargo_exibe_form : "",
+                cargo_educacao: "",
+                representacao: "",
+                codigo_identificacao: "",
+                infos_membro_selecionado: infoMembroSelecionado,
+            };
+        }
+
+        setStateFormEditarMembro(init)
+        setInfosMembroSelecionado(infoMembroSelecionado)
     }
 
     const toggleIcon = (id) => {
