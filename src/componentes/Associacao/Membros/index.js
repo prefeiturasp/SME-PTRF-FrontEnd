@@ -48,6 +48,7 @@ export const MembrosDaAssociacao = () =>{
     const [initialValuesMembrosConselho, setInitialValuesMembrosConselho] = useState(initConselho);
     const [infosMembroSelecionado, setInfosMembroSelecionado] = useState(null);
     const [stateFormEditarMembro, setStateFormEditarMembro] = useState(initFormMembro);
+    const [btnSalvarReadOnly, setBtnSalvarReadOnly] = useState(false);
 
     useEffect(()=>{
         carregaMembros();
@@ -173,29 +174,29 @@ export const MembrosDaAssociacao = () =>{
     const validateFormMembros = async (values) => {
         const errors = {};
         if (values.representacao === "SERVIDOR"){
-
+            setBtnSalvarReadOnly(true);
             try {
                 let rf = await consultarRF(values.codigo_identificacao.trim());
-                console.log("RF ", rf);
-                const init = {
-                    ...stateFormEditarMembro,
-                    nome: rf.data[0].nm_pessoa,
-                    codigo_identificacao: values.codigo_identificacao,
-                    cargo_associacao: values.cargo_associacao,
-                    cargo_educacao: values.cargo_educacao,
-                    representacao: values.representacao,
-                };
-                setStateFormEditarMembro(init)
+                if (rf.status === 200 || rf.status === 201) {
+                    const init = {
+                        ...stateFormEditarMembro,
+                        nome: rf.data[0].nm_pessoa,
+                        codigo_identificacao: values.codigo_identificacao,
+                        cargo_associacao: values.cargo_associacao,
+                        cargo_educacao: values.cargo_educacao,
+                        representacao: values.representacao,
+                    };
+                    setStateFormEditarMembro(init);
+                    setBtnSalvarReadOnly(false);
+                }
             }catch (e) {
                 errors.codigo_identificacao = "RF inválido"
             }
-
         }else if(values.representacao === "ESTUDANTE"){
+            setBtnSalvarReadOnly(true);
             try {
-                //debugger;
-                let cod_eol = await consultarCodEol(values.codigo_identificacao)
-                console.log("Código Eol ", cod_eol);
-
+                let cod_eol = await consultarCodEol(values.codigo_identificacao);
+                console.log("Cod Eol Retorno ", cod_eol)
                 if (cod_eol.status === 200 || cod_eol.status === 201){
                     const init = {
                         ...stateFormEditarMembro,
@@ -205,60 +206,19 @@ export const MembrosDaAssociacao = () =>{
                         cargo_educacao: "",
                         representacao: values.representacao,
                     };
-                    setStateFormEditarMembro(init)
+                    setStateFormEditarMembro(init);
+                    setBtnSalvarReadOnly(false);
                 }
             }catch (e) {
                 errors.codigo_identificacao = "Código Eol inválido"
             }
-    }
-        return errors
-    };
-
-    const handleBlurCodigoIdentificacao = async (errors, values, setFieldValue) => {
-        console.log("handleBlurCodigoIdentificacao errors ", errors);
-
-
-        //errors.codigo_identificacao = "AQUI O ERRO";
-        //console.log("handleBlurCodigoIdentificacao value ", values);
-        //debugger;
-        if (values.representacao === "SERVIDOR"){
-
-            try {
-                let rf = await consultarRF(values.codigo_identificacao);
-                console.log("RF ", rf)
-                //debugger;
-                if (rf.status === 200 || rf.status === 201){
-                    const init = {
-                        ...stateFormEditarMembro,
-                        nome: rf.data[0].nm_pessoa
-                    };
-                    errors = {};
-                    setStateFormEditarMembro(init)
-                }else {
-                    errors.codigo_identificacao = "RF inválido"
-                    const init = {
-                        ...stateFormEditarMembro,
-                    };
-                    setStateFormEditarMembro(init)
-                }
-            }catch (e) {
-                errors.codigo_identificacao = "RF inválido"
-            }
-
-        }else if(values.representacao === "ESTUDANTE"){
-            let cod_eol = await consultarCodEol(values.codigo_identificacao)
-            console.log("COD_EOL ", cod_eol)
-
         }
-
+        return errors
     };
 
     const onSubmitEditarMembro = async () =>{
         setShowEditarMembro(false);
-        console.log("Submit stateFormEditarMembro ", stateFormEditarMembro);
-
         let payload = {};
-
         if(stateFormEditarMembro && stateFormEditarMembro.representacao === "SERVIDOR"){
             payload = {
                 'nome': stateFormEditarMembro.nome,
@@ -287,13 +247,11 @@ export const MembrosDaAssociacao = () =>{
                 'codigo_identificacao': ""
             };
         }
-        console.log("payload ", payload);
 
         if (stateFormEditarMembro.uuid){
             try {
                 const response = await editarMembroAssociacao(payload, stateFormEditarMembro.uuid);
                 if (response.status === 200 || response.status === 201){
-                    console.log("Response ", response);
                     console.log("Operação realizada com sucesso!");
                     await carregaMembros();
                 }else {
@@ -306,13 +264,11 @@ export const MembrosDaAssociacao = () =>{
             try {
                 const response = await criarMembroAssociacao(payload);
                 if (response.status === 200 || response.status === 201) {
-                    console.log("Response ", response);
                     console.log("Operação realizada com sucesso!");
                     await carregaMembros();
                 }else {
                     console.log("Erro ao editar Membro")
                 }
-
             } catch (error) {
                 console.log(error)
             }
@@ -347,10 +303,10 @@ export const MembrosDaAssociacao = () =>{
                     handleClose={onHandleClose}
                     onSubmitEditarMembro={onSubmitEditarMembro}
                     handleChangeEditarMembro={handleChangeEditarMembro}
-                    handleBlurCodigoIdentificacao={handleBlurCodigoIdentificacao}
                     validateFormMembros={validateFormMembros}
                     stateFormEditarMembro={stateFormEditarMembro}
                     infosMembroSelecionado={infosMembroSelecionado}
+                    btnSalvarReadOnly={btnSalvarReadOnly}
                 />
             </section>
 
