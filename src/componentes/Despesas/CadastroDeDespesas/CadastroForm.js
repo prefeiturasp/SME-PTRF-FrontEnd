@@ -205,7 +205,7 @@ export const CadastroForm = ({verbo_http}) => {
                     console.log("Erro ao buscar despesa cadastrada ", e);
                 }
             } else {
-                //onSubmit(values);
+                onSubmit(values);
             }
         }
     };

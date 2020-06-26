@@ -58,7 +58,7 @@ export const getPeriodoFechadoDespesa = async (palavra, aplicacao_recurso, acao_
 };
 
 export const getDespesaCadastrada = async (tipo_documento, numero_documento, cpf_cnpj_fornecedor, despesa_uuid=null) => {
-    return (await api.get(`api/despesas/ja-lancada/?tipo_documento=${tipo_documento}&numero_documento=${numero_documento}&cpf_cnpj_fornecedor=${cpf_cnpj_fornecedor}${despesa_uuid ? '&despesa_uuid='+despesa_uuid : ''}`, authHeader)).data
+    return (await api.get(`api/despesas/ja-lancada/?tipo_documento=${tipo_documento}&numero_documento=${numero_documento}&cpf_cnpj_fornecedor=${cpf_cnpj_fornecedor}${despesa_uuid ? '&despesa_uuid='+despesa_uuid : ''}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
 
 
