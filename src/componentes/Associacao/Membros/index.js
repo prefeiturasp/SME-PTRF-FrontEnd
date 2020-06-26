@@ -122,6 +122,12 @@ export const MembrosDaAssociacao = () =>{
                     <span className="mr-5"><strong>Código Eol do Aluno: </strong> {infos.codigo_identificacao}</span>
                 </p>
             )
+        }else if(infos.representacao === "PAI_RESPONSAVEL"){
+            return (
+                <p className="texto-dados-adicionais-tabela-membros">
+                    <span className="mr-5"><strong>Não exitem informações adicionais</strong></span>
+                </p>
+            )
         }
     };
 

@@ -654,3 +654,20 @@ export const SalvarValoresReprogramados = (propriedades) => {
         />
     )
 };
+
+export const ChecarDespesaExistente = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Despesa já cadastrada"
+            bodyText="<p>Esta despesa já foi cadastrada. Deseja cadastrá-la novamente?</p>"
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Não, cancelar"
+            primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={propriedades.onSalvarDespesaCadastradaTrue}
+            segundoBotaoTexto="Sim, salvar"
+            segundoBotaoCss="success"
+        />
+    )
+};
