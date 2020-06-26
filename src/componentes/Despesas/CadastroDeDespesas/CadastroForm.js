@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
 import {YupSignupSchemaCadastroDespesa, validaPayloadDespesas, cpfMaskContitional, calculaValorRecursoAcoes, round, periodoFechado} from "../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import { getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial} from "../../../services/Despesas.service";
+import {getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial, getDespesaCadastrada} from "../../../services/Despesas.service";
 import {getVerificarSaldo} from "../../../services/RateiosDespesas.service";
 import {DatePickerField} from "../../DatePickerField";
 import {useParams} from 'react-router-dom';
@@ -30,9 +30,9 @@ export const CadastroForm = ({verbo_http}) => {
 
     let {origem} = useParams();
 
-    const despesaContext = useContext(DespesaContext)
+    const despesaContext = useContext(DespesaContext);
 
-    const [despesasTabelas, setDespesasTabelas] = useState([])
+    const [despesasTabelas, setDespesasTabelas] = useState([]);
     const [show, setShow] = useState(false);
     const [showAvisoCapital, setShowAvisoCapital] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
@@ -51,16 +51,16 @@ export const CadastroForm = ({verbo_http}) => {
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
     const [cssEscondeDocumentoTransacao, setCssEscondeDocumentoTransacao] = useState('escondeItem');
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
-            exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id)
+            exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id);
         }
         if (despesaContext.initialValues.data_documento && verbo_http === "PUT"){
-            periodoFechado(despesaContext.initialValues.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+            periodoFechado(despesaContext.initialValues.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
         }
-    }, [despesaContext.initialValues])
+    }, [despesaContext.initialValues]);
 
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
@@ -73,12 +73,12 @@ export const CadastroForm = ({verbo_http}) => {
             array_tipos_custeio.map( async (tipoCusteio, index) => {
                 const resposta = await getEspecificacoesCusteio(tipoCusteio.id)
                 let_especificacoes_custeio[tipoCusteio.id] = await resposta
-            })
+            });
 
             set_especificacoes_custeio(let_especificacoes_custeio)
         };
         carregaTabelasDespesas();
-    }, [])
+    }, []);
 
 
     useEffect(() => {
@@ -90,11 +90,11 @@ export const CadastroForm = ({verbo_http}) => {
 
     useEffect(()=>{
         setLoading(false)
-    }, [])
+    }, []);
 
     const initialValues = () => {
         return despesaContext.initialValues;
-    }
+    };
 
     const getPath = () => {
         let path;
@@ -114,7 +114,7 @@ export const CadastroForm = ({verbo_http}) => {
 
     const onCancelarTrue = () => {
         setShow(false);
-        setLoading(true)
+        setLoading(true);
         getPath();
     };
 
@@ -122,30 +122,26 @@ export const CadastroForm = ({verbo_http}) => {
         setShow(false);
         setShowDelete(false);
         setShowAvisoCapital(false);
-        setShowSaldoInsuficiente(false)
-        setShowPeriodoFechado(false)
-        setShowSaldoInsuficienteConta(false)
-    }
+        setShowSaldoInsuficiente(false);
+        setShowPeriodoFechado(false);
+        setShowSaldoInsuficienteConta(false);
+    };
 
     const onShowModal = () => {
         setShow(true);
-    }
+    };
 
     const onShowAvisoCapitalModal = () => {
         setShowAvisoCapital(true);
-    }
+    };
 
     const onShowDeleteModal = () => {
         setShowDelete(true);
-    }
-
-    const onShowDespesaCadastrada = () => {
-        setShowDespesaCadastrada(true);
-    }
+    };
 
     const onDeletarTrue = () => {
         setShowDelete(false);
-        setLoading(true)
+        setLoading(true);
         deleteDespesa(despesaContext.idDespesa)
         .then(response => {
             console.log("Despesa deletada com sucesso.");
@@ -156,25 +152,25 @@ export const CadastroForm = ({verbo_http}) => {
             setLoading(false)
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
         });
-    }
+    };
 
     const handleAvisoCapital = (value) => {
         if (value === "CAPITAL"){
             onShowAvisoCapitalModal()
         }
-    }
+    };
     const onShowErroGeral = () => {
         setShowErroGeral(true);
-    }
+    };
 
     const get_nome_razao_social = async (cpf_cnpj, setFieldValue) => {
-        let resp = await getNomeRazaoSocial(cpf_cnpj)
+        let resp = await getNomeRazaoSocial(cpf_cnpj);
         if (resp && resp.length > 0 && resp[0].nome){
-            setFieldValue("nome_fornecedor", resp[0].nome)
+            setFieldValue("nome_fornecedor", resp[0].nome);
         }else {
-            setFieldValue("nome_fornecedor", "")
+            setFieldValue("nome_fornecedor", "");
         }
-    }
+    };
 
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
         // Necessário atribuir o valor ao campo cpf_cnpj_fornecedor para chamar o YupSignupSchemaCadastroDespesa
@@ -192,17 +188,27 @@ export const CadastroForm = ({verbo_http}) => {
                 setShowSaldoInsuficienteConta(true)
 
             }else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
-                setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes)
+                setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes);
                 setShowSaldoInsuficiente(true);
+
             // Checando se depesa já foi cadastrada
             }else if (values.tipo_documento && values.numero_documento) {
-                console.log("Entrei checagem");
-                setShowDespesaCadastrada(true)
+                try {
+                    let despesa_cadastrada = await getDespesaCadastrada(values.tipo_documento, values.numero_documento, values.cpf_cnpj_fornecedor, despesaContext.idDespesa);
+                    console.log("Despesa Cadastrada ", despesa_cadastrada);
+                    if (despesa_cadastrada.despesa_ja_lancada){
+                        setShowDespesaCadastrada(true)
+                    }else {
+                        onSubmit(values);
+                    }
+                }catch (e) {
+                    console.log("Erro ao buscar despesa cadastrada ", e);
+                }
             } else {
                 onSubmit(values);
             }
         }
-    }
+    };
 
     const onSubmit = async (values) => {
 
@@ -222,12 +228,10 @@ export const CadastroForm = ({verbo_http}) => {
                     getPath();
                 } else {
                     setLoading(false);
-                    return
                 }
             } catch (error) {
                 console.log(error)
                 setLoading(false);
-                return
             }
         }else if(despesaContext.verboHttp === "PUT"){
 
@@ -239,16 +243,13 @@ export const CadastroForm = ({verbo_http}) => {
                     getPath();
                 } else {
                     setLoading(false);
-                    return
                 }
             } catch (error) {
                 console.log(error);
                 setLoading(false);
-                return
             }
         }
-
-    }
+    };
 
     const validateFormDespesas = async (values, props /* only available when using withFormik */) => {
 
@@ -256,7 +257,7 @@ export const CadastroForm = ({verbo_http}) => {
 
         // Verifica período fechado para a receita
         if (values.data_documento){
-            await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+            await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
         }
 
         const errors = {};
@@ -272,9 +273,9 @@ export const CadastroForm = ({verbo_http}) => {
             }else{
                 var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
             }
-        })
+        });
 
-        var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio
+        var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio;
 
         if (round(var_valor_recursos_acoes,2) !== round(var_valor_total_dos_rateios,2)) {
             errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa.';
@@ -295,7 +296,7 @@ export const CadastroForm = ({verbo_http}) => {
         }else {
             setCssEscondeDocumentoTransacao("escondeItem")
         }
-    }
+    };
 
     return (
         <>
