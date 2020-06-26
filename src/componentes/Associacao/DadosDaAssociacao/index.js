@@ -114,7 +114,7 @@ export const DadosDaAsssociacao = () => {
                                 </div>
                             </div>
 
-                            <div className="form-row">
+                            {/*<div className="form-row">
                                 <div className="form-group col-md-6">
                                     <label htmlFor="presidente_associacao_nome"><strong>Presidente da Associação</strong></label>
                                     <input value={stateAssociacao.presidente_associacao_nome ? stateAssociacao.presidente_associacao_nome : ""} onChange={(e)=>handleChange(e.target.name, e.target.value)} name="presidente_associacao_nome" id="presidente_associacao_nome" type="text" className="form-control" />
@@ -124,7 +124,7 @@ export const DadosDaAsssociacao = () => {
                                     <label htmlFor="presidente_conselho_fiscal_nome"><strong>Presidente do Conselho Fiscal</strong></label>
                                     <input value={stateAssociacao.presidente_conselho_fiscal_nome} onChange={(e)=>handleChange(e.target.name, e.target.value)} name="presidente_conselho_fiscal_nome" id="presidente_conselho_fiscal_nome" type="text" className="form-control" />
                                 </div>
-                            </div>
+                            </div>*/}
                             <div className="d-flex  justify-content-end pb-3">
                                 <button onClick={onShowModalCancelar} type="reset" className="btn btn btn-outline-success mt-2">Cancelar </button>
                                 <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
