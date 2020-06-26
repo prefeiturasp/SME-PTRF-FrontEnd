@@ -21,10 +21,8 @@ export const checkDuplicateInObject = (propertyName, inputArray) => {
       delete item.duplicate;
     }
   });
-
   return seenDuplicate;
-}
-
+};
 
 export const YupSignupSchemaLogin = yup.object().shape({
   login: yup.string().required("Campo código RF é obrigatório"),
@@ -39,11 +37,7 @@ export const YupSignupSchemaMembros = yup.object().shape({
         function (value) {
           const { representacao } = this.parent;
           if(representacao === "SERVIDOR" || representacao === "ESTUDANTE"){
-            if (!value || value.trim() === "" || value.length > 10){
-              return false
-            }else {
-              return true
-            }
+            return !(!value || value.trim() === "" || value.length > 10);
           }else {
             return true
           }
@@ -56,11 +50,7 @@ export const YupSignupSchemaMembros = yup.object().shape({
       function (value) {
         const { representacao } = this.parent;
         if(representacao === "SERVIDOR"){
-            if (!value || value.trim() === "" || value.length > 45){
-              return false
-            }else {
-              return true
-            }
+            return !(!value || value.trim() === "" || value.length > 45);
         }else {
           return true
         }

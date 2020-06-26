@@ -39,7 +39,7 @@ export const MembrosDaAssociacao = () =>{
         cargo_educacao:"",
         representacao:"",
         codigo_identificacao:"",
-    }
+    };
 
     const [clickIconeToogle, setClickIconeToogle] = useState({});
     const [showEditarMembro, setShowEditarMembro] = useState(false);
@@ -128,7 +128,7 @@ export const MembrosDaAssociacao = () =>{
         setShowEditarMembro(true);
         //console.log("onShowEditarMembro", infoMembroSelecionado);
 
-        let init = {};
+        let init;
         if (infoMembroSelecionado && infoMembroSelecionado.infos){
              init = {
                 uuid: infoMembroSelecionado.infos.uuid ? infoMembroSelecionado.infos.uuid : "",
@@ -149,9 +149,9 @@ export const MembrosDaAssociacao = () =>{
             };
         }
 
-        setStateFormEditarMembro(init)
+        setStateFormEditarMembro(init);
         setInfosMembroSelecionado(infoMembroSelecionado)
-    }
+    };
 
     const toggleIcon = (id) => {
         setClickIconeToogle({
@@ -205,15 +205,15 @@ export const MembrosDaAssociacao = () =>{
                 'codigo_identificacao': ""
             };
         }
-        console.log("payload ", payload)
+        console.log("payload ", payload);
 
         if (stateFormEditarMembro.uuid){
             try {
                 const response = await editarMembroAssociacao(payload, stateFormEditarMembro.uuid);
                 if (response.status === 200 || response.status === 201){
-                    console.log("Response ", response)
+                    console.log("Response ", response);
                     console.log("Operação realizada com sucesso!");
-                    carregaMembros();
+                    await carregaMembros();
                 }else {
                     console.log("Erro ao criar Membro")
                 }
@@ -224,9 +224,9 @@ export const MembrosDaAssociacao = () =>{
             try {
                 const response = await criarMembroAssociacao(payload);
                 if (response.status === 200 || response.status === 201) {
-                    console.log("Response ", response)
+                    console.log("Response ", response);
                     console.log("Operação realizada com sucesso!");
-                    carregaMembros();
+                    await carregaMembros();
                 }else {
                     console.log("Erro ao editar Membro")
                 }
