@@ -12,7 +12,16 @@ import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
-import {AvisoCapitalModal, CancelarModal, DeletarModal, ErroGeral, PeriodoFechado, SaldoInsuficiente, SaldoInsuficienteConta} from "../../../utils/Modais"
+import {
+    AvisoCapitalModal,
+    CancelarModal,
+    DeletarModal,
+    ErroGeral,
+    PeriodoFechado,
+    SaldoInsuficiente,
+    SaldoInsuficienteConta,
+    ChecarDespesaExistente,
+} from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
@@ -31,6 +40,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [showSaldoInsuficienteConta, setShowSaldoInsuficienteConta] = useState(false);
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
     const [showErroGeral, setShowErroGeral] = useState(false);
+    const [showDespesaCadastrada, setShowDespesaCadastrada] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
@@ -129,6 +139,10 @@ export const CadastroForm = ({verbo_http}) => {
         setShowDelete(true);
     }
 
+    const onShowDespesaCadastrada = () => {
+        setShowDespesaCadastrada(true);
+    }
+
     const onDeletarTrue = () => {
         setShowDelete(false);
         setLoading(true)
@@ -168,6 +182,7 @@ export const CadastroForm = ({verbo_http}) => {
 
         validaPayloadDespesas(values);
 
+
         if (Object.entries(errors).length === 0 && values.cpf_cnpj_fornecedor) {
 
             let retorno_saldo = await verificarSaldo(values);
@@ -179,6 +194,10 @@ export const CadastroForm = ({verbo_http}) => {
             }else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
                 setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes)
                 setShowSaldoInsuficiente(true);
+            // Checando se depesa já foi cadastrada
+            }else if (values.tipo_documento && values.numero_documento) {
+                console.log("Entrei checagem");
+                setShowDespesaCadastrada(true)
             } else {
                 onSubmit(values);
             }
@@ -687,6 +706,13 @@ export const CadastroForm = ({verbo_http}) => {
                                             handleClose={onHandleClose}
                                             onSaldoInsuficienteContaTrue={() => onSubmit(values, {resetForm})}
                                         />
+                                    </section>
+
+                                    <section>
+                                        <ChecarDespesaExistente
+                                            show={showDespesaCadastrada}
+                                            handleClose={()=>setShowDespesaCadastrada(false)}
+                                            onSalvarDespesaCadastradaTrue={ () => onSubmit(values, {resetForm}) }/>
                                     </section>
                                 </form>
                             </>
