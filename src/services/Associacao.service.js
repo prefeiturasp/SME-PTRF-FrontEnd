@@ -38,9 +38,9 @@ export const editarMembroAssociacao = async (payload, uuid) => {
 };
 
 export const consultarRF = async (rf) => {
-    return (await api.get(`/api/membros-associacao/codigo-identificacao/?rf=${rf}`, authHeader)).data
+    return (await api.get(`/api/membros-associacao/codigo-identificacao/?rf=${rf}`, authHeader))
 };
 
 export const consultarCodEol = async (cod_eol) => {
-    return (await api.get(`/api/membros-associacao/codigo-identificacao/?codigo-eol=${cod_eol}`, authHeader)).data
+    return (await api.get(`/api/membros-associacao/codigo-identificacao/?codigo-eol=${cod_eol}`, authHeader))
 };

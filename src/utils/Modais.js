@@ -505,6 +505,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                         const {
                             errors,
                             values,
+                            setFieldValue,
                         } = props;
                         return(
                             <form method="POST" id="membrosForm" onSubmit={props.handleSubmit}>
@@ -559,7 +560,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                                 value={props.values.codigo_identificacao ? props.values.codigo_identificacao : ""}
                                                 onBlur={(e) => {
                                                     props.handleBlur(e);
-                                                    handleBlurCodigoIdentificacao(errors, values);
+                                                    handleBlurCodigoIdentificacao(errors, values, setFieldValue);
                                                 }
                                                 }
                                                 onChange={(e) => {
@@ -580,7 +581,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                         <div className="form-group">
                                             <label htmlFor="cargo_associacao">Nome Completo</label>
                                             <input
-                                                //readOnly={stateFormEditarMembro.representacao !== 'PAI_RESPONSAVEL'}
+                                                readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
                                                 type="text"
                                                 value={props.values.nome ? props.values.nome : ""}
                                                 onChange={(e) => {

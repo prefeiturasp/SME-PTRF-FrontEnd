@@ -170,11 +170,45 @@ export const MembrosDaAssociacao = () =>{
         });
     };
 
-    const handleBlurCodigoIdentificacao = (errors, values) => {
+    const handleBlurCodigoIdentificacao = async (errors, values, setFieldValue) => {
         console.log("handleBlurCodigoIdentificacao errors ", errors);
 
-        errors.codigo_identificacao = "AQUI O ERRO";
-        console.log("handleBlurCodigoIdentificacao value ", values);
+        //errors.codigo_identificacao = "AQUI O ERRO";
+        //console.log("handleBlurCodigoIdentificacao value ", values);
+        //debugger;
+        if (values.representacao === "SERVIDOR"){
+
+            try {
+                let rf = await consultarRF(values.codigo_identificacao);
+                console.log("RF ", rf)
+                //debugger;
+                if (rf.status === 200 || rf.status === 201){
+                    const init = {
+                        ...stateFormEditarMembro,
+                        nome: rf.data[0].nm_pessoa
+                    };
+                    errors = {};
+                    setStateFormEditarMembro(init)
+                }else {
+                    errors.codigo_identificacao = "RF inválido"
+                    const init = {
+                        ...stateFormEditarMembro,
+                    };
+                    setStateFormEditarMembro(init)
+                }
+            }catch (e) {
+                errors.codigo_identificacao = "RF inválido"
+            }
+
+
+
+
+        }else if(values.representacao === "ESTUDANTE"){
+            let cod_eol = await consultarCodEol(values.codigo_identificacao)
+            console.log("COD_EOL ", cod_eol)
+
+        }
+
     };
 
     const onSubmitEditarMembro = async () =>{
