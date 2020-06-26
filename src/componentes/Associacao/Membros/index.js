@@ -25,11 +25,11 @@ export const MembrosDaAssociacao = () =>{
     ];
 
     const initConselho = [
-        {id:"PRESIDENTE_CONSELHO_FISCAL", cargo:"Presidente"},
-        {id:"CONSELHEIRO_1", cargo:"Conselheiro"},
-        {id:"CONSELHEIRO_2", cargo:"Conselheiro"},
-        {id:"CONSELHEIRO_3", cargo:"Conselheiro"},
-        {id:"CONSELHEIRO_4", cargo:"Conselheiro"},
+        {id:"PRESIDENTE_CONSELHO_FISCAL", cargo:"Presidente", cargo_exibe_form: "Presidente do Conselho Fiscal"},
+        {id:"CONSELHEIRO_1", cargo:"Conselheiro", cargo_exibe_form: "Conselheiro do Conselho Fiscal"},
+        {id:"CONSELHEIRO_2", cargo:"Conselheiro", cargo_exibe_form: "Conselheiro do Conselho Fiscal"},
+        {id:"CONSELHEIRO_3", cargo:"Conselheiro", cargo_exibe_form: "Conselheiro do Conselho Fiscal"},
+        {id:"CONSELHEIRO_4", cargo:"Conselheiro", cargo_exibe_form: "Conselheiro do Conselho Fiscal"},
     ];
 
     const initFormMembro = {
@@ -84,11 +84,11 @@ export const MembrosDaAssociacao = () =>{
             ];
 
             cargos_e_infos_conselho = [
-                {id:"PRESIDENTE_CONSELHO_FISCAL", cargo:"Presidente", infos: buscaDadosMembros('PRESIDENTE_CONSELHO_FISCAL')},
-                {id:"CONSELHEIRO_1", cargo:"Conselheiro", infos: buscaDadosMembros('CONSELHEIRO_1')},
-                {id:"CONSELHEIRO_2", cargo:"Conselheiro", infos: buscaDadosMembros('CONSELHEIRO_2')},
-                {id:"CONSELHEIRO_3", cargo:"Conselheiro", infos: buscaDadosMembros('CONSELHEIRO_3')},
-                {id:"CONSELHEIRO_4", cargo:"Conselheiro", infos: buscaDadosMembros('CONSELHEIRO_4')},
+                {id:"PRESIDENTE_CONSELHO_FISCAL", cargo:"Presidente", cargo_exibe_form: "Presidente do Conselho Fiscal", infos: buscaDadosMembros('PRESIDENTE_CONSELHO_FISCAL')},
+                {id:"CONSELHEIRO_1", cargo:"Conselheiro", cargo_exibe_form: "Conselheiro do Conselho Fiscal", infos: buscaDadosMembros('CONSELHEIRO_1')},
+                {id:"CONSELHEIRO_2", cargo:"Conselheiro", cargo_exibe_form: "Conselheiro do Conselho Fiscal", infos: buscaDadosMembros('CONSELHEIRO_2')},
+                {id:"CONSELHEIRO_3", cargo:"Conselheiro", cargo_exibe_form: "Conselheiro do Conselho Fiscal", infos: buscaDadosMembros('CONSELHEIRO_3')},
+                {id:"CONSELHEIRO_4", cargo:"Conselheiro", cargo_exibe_form: "Conselheiro do Conselho Fiscal", infos: buscaDadosMembros('CONSELHEIRO_4')},
             ];
             setInitialValuesMembrosDiretoria(cargos_e_infos_diretoria);
             setInitialValuesMembrosConselho(cargos_e_infos_conselho);
@@ -196,7 +196,6 @@ export const MembrosDaAssociacao = () =>{
             setBtnSalvarReadOnly(true);
             try {
                 let cod_eol = await consultarCodEol(values.codigo_identificacao);
-                console.log("Cod Eol Retorno ", cod_eol)
                 if (cod_eol.status === 200 || cod_eol.status === 201){
                     const init = {
                         ...stateFormEditarMembro,
@@ -212,6 +211,8 @@ export const MembrosDaAssociacao = () =>{
             }catch (e) {
                 errors.codigo_identificacao = "Código Eol inválido"
             }
+        }else {
+            setBtnSalvarReadOnly(false)
         }
         return errors
     };
@@ -291,9 +292,17 @@ export const MembrosDaAssociacao = () =>{
                         converteNomeRepresentacao={converteNomeRepresentacao}
                         retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
                     />
-
                     <hr/>
 
+                    <TabelaMembros
+                        titulo="Conselho Fiscal"
+                        clickIconeToogle={clickIconeToogle}
+                        toggleIcon={toggleIcon}
+                        onShowEditarMembro={onShowEditarMembro}
+                        cargos={initialValuesMembrosConselho}
+                        converteNomeRepresentacao={converteNomeRepresentacao}
+                        retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
+                    />
                 </>
             </div>
 
