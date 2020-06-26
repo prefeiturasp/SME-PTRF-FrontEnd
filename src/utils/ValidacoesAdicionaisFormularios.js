@@ -43,7 +43,11 @@ export const YupSignupSchemaMembros = yup.object().shape({
           }
       }),
 
-  nome: yup.string().required("Nome é obrigatório"),
+  nome: yup.string()
+  .test('test-name', 'É obrigatório e não pode ultrapassar 160 caracteres',
+      function (value) {
+        return !(!value || value.trim() === "" || value.length > 160);
+      }),
 
   cargo_educacao: yup.string()
   .test('test-name', 'É obrigatório e não pode ultrapassar 45 caracteres',

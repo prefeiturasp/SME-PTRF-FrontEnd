@@ -170,8 +170,53 @@ export const MembrosDaAssociacao = () =>{
         });
     };
 
+    const validateFormMembros = async (values) => {
+        const errors = {};
+        if (values.representacao === "SERVIDOR"){
+
+            try {
+                let rf = await consultarRF(values.codigo_identificacao.trim());
+                console.log("RF ", rf);
+                const init = {
+                    ...stateFormEditarMembro,
+                    nome: rf.data[0].nm_pessoa,
+                    codigo_identificacao: values.codigo_identificacao,
+                    cargo_associacao: values.cargo_associacao,
+                    cargo_educacao: values.cargo_educacao,
+                    representacao: values.representacao,
+                };
+                setStateFormEditarMembro(init)
+            }catch (e) {
+                errors.codigo_identificacao = "RF inválido"
+            }
+
+        }else if(values.representacao === "ESTUDANTE"){
+            try {
+                //debugger;
+                let cod_eol = await consultarCodEol(values.codigo_identificacao)
+                console.log("Código Eol ", cod_eol);
+
+                if (cod_eol.status === 200 || cod_eol.status === 201){
+                    const init = {
+                        ...stateFormEditarMembro,
+                        nome: cod_eol.data.nm_aluno,
+                        codigo_identificacao: values.codigo_identificacao,
+                        cargo_associacao: values.cargo_associacao,
+                        cargo_educacao: "",
+                        representacao: values.representacao,
+                    };
+                    setStateFormEditarMembro(init)
+                }
+            }catch (e) {
+                errors.codigo_identificacao = "Código Eol inválido"
+            }
+    }
+        return errors
+    };
+
     const handleBlurCodigoIdentificacao = async (errors, values, setFieldValue) => {
         console.log("handleBlurCodigoIdentificacao errors ", errors);
+
 
         //errors.codigo_identificacao = "AQUI O ERRO";
         //console.log("handleBlurCodigoIdentificacao value ", values);
@@ -199,9 +244,6 @@ export const MembrosDaAssociacao = () =>{
             }catch (e) {
                 errors.codigo_identificacao = "RF inválido"
             }
-
-
-
 
         }else if(values.representacao === "ESTUDANTE"){
             let cod_eol = await consultarCodEol(values.codigo_identificacao)
@@ -306,6 +348,7 @@ export const MembrosDaAssociacao = () =>{
                     onSubmitEditarMembro={onSubmitEditarMembro}
                     handleChangeEditarMembro={handleChangeEditarMembro}
                     handleBlurCodigoIdentificacao={handleBlurCodigoIdentificacao}
+                    validateFormMembros={validateFormMembros}
                     stateFormEditarMembro={stateFormEditarMembro}
                     infosMembroSelecionado={infosMembroSelecionado}
                 />

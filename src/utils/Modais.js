@@ -485,7 +485,7 @@ export const TextoCopiado = ({show, handleClose}) => {
     )
 };
 
-export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, handleBlurCodigoIdentificacao, stateFormEditarMembro, infosMembroSelecionado}) => {
+export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, validateFormMembros, handleBlurCodigoIdentificacao, stateFormEditarMembro, infosMembroSelecionado}) => {
 
     //console.log("Editar Membro ", infosMembroSelecionado)
 
@@ -497,6 +497,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                 <Formik
                     initialValues={stateFormEditarMembro}
                     validationSchema={YupSignupSchemaMembros}
+                    validate={validateFormMembros}
                     enableReinitialize={true}
                     validateOnBlur={true}
                     onSubmit={onSubmitEditarMembro}
@@ -558,11 +559,11 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                             <input
                                                 type="text"
                                                 value={props.values.codigo_identificacao ? props.values.codigo_identificacao : ""}
-                                                onBlur={(e) => {
+/*                                                onBlur={(e) => {
                                                     props.handleBlur(e);
                                                     handleBlurCodigoIdentificacao(errors, values, setFieldValue);
                                                 }
-                                                }
+                                                }*/
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                     handleChangeEditarMembro(e.target.name, e.target.value);
