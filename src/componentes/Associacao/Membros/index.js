@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {MenuInterno} from "../../MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
 import {EditarMembro} from "../../../utils/Modais";
-import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao} from "../../../services/Associacao.service";
+import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol} from "../../../services/Associacao.service";
 import {ASSOCIACAO_UUID} from '../../../services/auth.service';
 
 export const MembrosDaAssociacao = () =>{
@@ -126,7 +126,6 @@ export const MembrosDaAssociacao = () =>{
 
     const onShowEditarMembro = (infoMembroSelecionado)=>{
         setShowEditarMembro(true);
-        //console.log("onShowEditarMembro", infoMembroSelecionado);
 
         let init;
         if (infoMembroSelecionado && infoMembroSelecionado.infos){
@@ -169,6 +168,13 @@ export const MembrosDaAssociacao = () =>{
             ...stateFormEditarMembro,
             [name]: value
         });
+    };
+
+    const handleBlurCodigoIdentificacao = (errors, values) => {
+        console.log("handleBlurCodigoIdentificacao errors ", errors);
+
+        errors.codigo_identificacao = "AQUI O ERRO";
+        console.log("handleBlurCodigoIdentificacao value ", values);
     };
 
     const onSubmitEditarMembro = async () =>{
@@ -265,6 +271,7 @@ export const MembrosDaAssociacao = () =>{
                     handleClose={onHandleClose}
                     onSubmitEditarMembro={onSubmitEditarMembro}
                     handleChangeEditarMembro={handleChangeEditarMembro}
+                    handleBlurCodigoIdentificacao={handleBlurCodigoIdentificacao}
                     stateFormEditarMembro={stateFormEditarMembro}
                     infosMembroSelecionado={infosMembroSelecionado}
                 />

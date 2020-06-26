@@ -34,7 +34,13 @@ export const criarMembroAssociacao = async (payload) => {
 };
 
 export const editarMembroAssociacao = async (payload, uuid) => {
-    ///api/membros-associacao/
     return (await api.put(`/api/membros-associacao/${uuid}`, payload, authHeader))
+};
 
+export const consultarRF = async (rf) => {
+    return (await api.get(`/api/membros-associacao/codigo-identificacao/?rf=${rf}`, authHeader)).data
+};
+
+export const consultarCodEol = async (cod_eol) => {
+    return (await api.get(`/api/membros-associacao/codigo-identificacao/?codigo-eol=${cod_eol}`, authHeader)).data
 };
