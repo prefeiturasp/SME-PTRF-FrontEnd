@@ -195,7 +195,6 @@ export const CadastroForm = ({verbo_http}) => {
             }else if (values.tipo_documento && values.numero_documento) {
                 try {
                     let despesa_cadastrada = await getDespesaCadastrada(values.tipo_documento, values.numero_documento, values.cpf_cnpj_fornecedor, despesaContext.idDespesa);
-                    console.log("Despesa Cadastrada ", despesa_cadastrada);
                     if (despesa_cadastrada.despesa_ja_lancada){
                         setShowDespesaCadastrada(true)
                     }else {
