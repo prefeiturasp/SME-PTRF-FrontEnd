@@ -52,7 +52,6 @@ export const YupSignupSchemaMembros = yup.object().shape({
         }else {
           return true
         }
-
       }),
 
   cargo_educacao: yup.string()
@@ -68,7 +67,6 @@ export const YupSignupSchemaMembros = yup.object().shape({
 });
 
 export const YupSignupSchemaCadastroDespesa = yup.object().shape({
-
   cpf_cnpj_fornecedor: yup.string().required("Campo CPF é obrigatório")
   .test('test-name', 'Digite um CPF ou um CNPJ válido',
       function (value) {
@@ -91,12 +89,8 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
   valor_recusos_acoes:yup.string().nullable(),
 });
 
-// Synchronous validation
-
 export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral) =>{
-
   data = moment(data, "YYYY-MM-DD").format("YYYY-MM-DD");
-
   try {
     let periodo_fechado = await getPeriodoFechado(data);
 

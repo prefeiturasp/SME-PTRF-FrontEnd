@@ -116,7 +116,7 @@ export const MembrosDaAssociacao = () =>{
                     <span><strong>Cargo na educação: </strong> {infos.cargo_educacao}</span>
                 </p>
             )
-        }else if (infos.representacao === "ESTUDANTE" || infos.representacao === "PAI_RESPONSAVEL"){
+        }else if (infos.representacao === "ESTUDANTE"){
             return (
                 <p className="texto-dados-adicionais-tabela-membros">
                     <span className="mr-5"><strong>Código Eol do Aluno: </strong> {infos.codigo_identificacao}</span>
@@ -127,7 +127,6 @@ export const MembrosDaAssociacao = () =>{
 
     const onShowEditarMembro = (infoMembroSelecionado)=>{
         setShowEditarMembro(true);
-
         let init;
         if (infoMembroSelecionado && infoMembroSelecionado.infos){
              init = {
