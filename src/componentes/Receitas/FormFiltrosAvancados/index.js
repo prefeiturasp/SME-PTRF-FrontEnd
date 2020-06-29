@@ -125,6 +125,17 @@ export const FormFiltrosAvancados = (props) => {
                             Cancelar
                         </button>
                         <button
+                            onClick={(e)=>{
+                                iniciaLista();
+                                limpaFormulario()
+                            }
+                            }
+                            className="btn btn-outline-success mt-2 ml-2"
+                            type="button"
+                        >
+                            Limpar Filtros
+                        </button>
+                        <button
                             type="submit"
                             className="btn btn-success mt-2 ml-2"
                         >
