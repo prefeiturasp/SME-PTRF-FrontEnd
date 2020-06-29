@@ -4,7 +4,7 @@ import {Dashboard} from '../../componentes/Dashborard'
 import {getAcoesAssociacao,getAcoesAssociacaoPorPeriodo} from '../../services/Dashboard.service'
 import {exibeDataPT_BR, getCorStatusPeriodo, getTextoStatusPeriodo,} from '../../utils/ValidacoesAdicionaisFormularios'
 import {BarraDeStatusPeriodoAssociacao} from '../../componentes/Dashborard/BarraDeStatusPeriodoAssociacao'
-import {getPeriodos} from "../../services/PrestacaoDeContas.service";
+import {getPeriodosNaoFuturos} from "../../services/PrestacaoDeContas.service";
 import Loading from "../../utils/Loading";
 
 export const DashboardPage = () => {
@@ -17,7 +17,7 @@ export const DashboardPage = () => {
     }, []);
 
     const buscaListaAcoesAssociacao = async () => {
-        let periodos = await getPeriodos();
+        let periodos = await getPeriodosNaoFuturos();
         setPeriodosAssociacao(periodos);
 
         const listaAcoes = await getAcoesAssociacao();
