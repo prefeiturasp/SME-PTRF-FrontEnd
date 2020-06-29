@@ -304,6 +304,15 @@ export const cpfMaskContitional = (value) => {
   return mask
 }
 
+export const processoIncorporacaoMask = (value) => {
+  // 0000.0000/0000000-0
+  let processo = value.replace(/[^\d]+/g, "");
+
+  let mask = [/\d/, /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/]
+
+  return mask
+}
+
 function valida_cpf_cnpj ( valor ) {
 
   // Remove caracteres inválidos do valor

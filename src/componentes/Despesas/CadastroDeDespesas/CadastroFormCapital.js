@@ -1,7 +1,8 @@
 import React from "react";
 import NumberFormat from "react-number-format";
-import {calculaValorRateio, trataNumericos,} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {calculaValorRateio, cpfMaskContitional, trataNumericos, processoIncorporacaoMask} from "../../../utils/ValidacoesAdicionaisFormularios";
 import CurrencyInput from "react-currency-input";
+import MaskedInput from "react-text-mask";
 
 export const CadastroFormCapital = (propriedades) => {
     const {formikProps, rateio, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors} = propriedades
@@ -61,7 +62,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 name={`rateios[${index}].quantidade_itens_capital`}
                                 decimalScale={0}
                                 id="quantidade_itens_capital"
-                                className={`${ (!rateio.quantidade_itens_capital || rateio.quantidade_itens_capital === '0') && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                                className={`${(!rateio.quantidade_itens_capital || rateio.quantidade_itens_capital === '0') && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                                 disabled={disabled}
                             />
                         </div>
@@ -76,7 +77,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 value={rateio.valor_item_capital}
                                 name={`rateios[${index}].valor_item_capital`}
                                 id="valor_item_capital"
-                                className={`${ trataNumericos(rateio.valor_item_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                                className={`${trataNumericos(rateio.valor_item_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                                 onChangeEvent={formikProps.handleChange}
                                 disabled={disabled}
                             />
@@ -86,15 +87,15 @@ export const CadastroFormCapital = (propriedades) => {
 
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor="numero_processo_incorporacao_capital">Número do processo de incorporação</label>
-                    <input
-                        defaultValue={rateio.numero_processo_incorporacao_capital}
+                    <MaskedInput
+                        disabled={disabled}
+                        mask={(valor) => processoIncorporacaoMask(valor)}
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].numero_processo_incorporacao_capital`}
-                        type='text'
-                        id='numero_processo_incorporacao_capital'
                         className={`${!rateio.numero_processo_incorporacao_capital && verboHttp === "PUT" && "is_invalid "} form-control`}
                         placeholder="Escreva o número do processo"
-                        disabled={disabled}
+                        defaultValue={rateio.numero_processo_incorporacao_capital}
+                        id='numero_processo_incorporacao_capital'
                     />
                 </div>
 
@@ -136,7 +137,8 @@ export const CadastroFormCapital = (propriedades) => {
                                 onChangeEvent={formikProps.handleChange}
                                 disabled={disabled}
                             />
-                            {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                            {errors.valor_recusos_acoes &&
+                            <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                         </div>
                     </div>
                 </div>
