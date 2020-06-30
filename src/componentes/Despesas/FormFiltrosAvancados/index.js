@@ -44,7 +44,7 @@ export const FormFiltrosAvancados = (props) => {
         reusltadoSomaDosTotais(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status);
         let data_inicio = state.data_inicio ? moment(new Date(state.data_inicio), "YYYY-MM-DD").format("DD/MM/YYYY") : "";
         let data_fim = state.data_fim ? moment(new Date(state.data_fim), "YYYY-MM-DD").format("DD/MM/YYYY") : "";
-        const lista_retorno_api = await filtrosAvancadosRateios(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status)
+        const lista_retorno_api = await filtrosAvancadosRateios(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status, state.fornecedor, state.data_inicio, state.data_fim);
         setLista(lista_retorno_api)
         setBuscaUtilizandoFiltro(true)
 
