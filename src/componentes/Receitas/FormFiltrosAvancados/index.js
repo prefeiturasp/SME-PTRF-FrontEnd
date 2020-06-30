@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {getTabelasReceita} from "../../../services/Receitas.service";
 import {filtrosAvancadosReceitas} from "../../../services/Receitas.service";
+import {DatePickerField} from "../../DatePickerField";
 
 export const FormFiltrosAvancados = (props) => {
 
@@ -105,6 +106,31 @@ export const FormFiltrosAvancados = (props) => {
 
                             </div>
 
+                    </div>
+
+                    <div className="form-group col-md-6">
+                        <label htmlFor="data_inicio">Filtrar por periodo</label>
+                        <div className="row align-items-center">
+                            <div className="col-12 col-md-5 pr-0">
+                                <DatePickerField
+                                    name="data_inicio"
+                                    id="data_inicio"
+                                    value={state.data_inicio}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="col-12 col-md-2 p-0 text-md-center ">
+                                <span>Até</span>
+                            </div>
+                            <div className="col-12 col-md-5 pl-0">
+                                <DatePickerField
+                                    name="data_fim"
+                                    id="data_fim"
+                                    value={state.data_fim}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
                     </div>
 
 

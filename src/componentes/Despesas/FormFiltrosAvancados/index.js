@@ -108,7 +108,7 @@ export const FormFiltrosAvancados = (props) => {
                             />
                         </div>
                         <div className="form-group col-md-6">
-                            <label htmlFor="fornecedor">Filtrar por periodo</label>
+                            <label htmlFor="data_inicio">Filtrar por periodo</label>
                             <div className="row align-items-center">
                                 <div className="col-12 col-md-5 pr-0">
                                     <DatePickerField
