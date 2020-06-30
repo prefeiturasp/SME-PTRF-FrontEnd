@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {getDespesasTabelas} from "../../../services/Despesas.service";
 import {filtrosAvancadosRateios} from "../../../services/RateiosDespesas.service";
+import {DatePickerField} from '../../DatePickerField'
+import moment from "moment";
 
 export const FormFiltrosAvancados = (props) => {
 
@@ -10,6 +12,8 @@ export const FormFiltrosAvancados = (props) => {
         acao_associacao: "",
         despesa_status: "",
         fornecedor: "",
+        data_inicio: "",
+        data_fim: "",
     }
 
     const {btnMaisFiltros, onClickBtnMaisFiltros, setBuscaUtilizandoFiltro, setLista, iniciaLista, reusltadoSomaDosTotais, setLoading} = props;
@@ -31,13 +35,15 @@ export const FormFiltrosAvancados = (props) => {
             ...state,
             [name]: value
         });
-    }
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         //setLoading(true);
 
         reusltadoSomaDosTotais(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status);
+        let data_inicio = state.data_inicio ? moment(new Date(state.data_inicio), "YYYY-MM-DD").format("DD/MM/YYYY") : "";
+        let data_fim = state.data_fim ? moment(new Date(state.data_fim), "YYYY-MM-DD").format("DD/MM/YYYY") : "";
         const lista_retorno_api = await filtrosAvancadosRateios(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status)
         setLista(lista_retorno_api)
         setBuscaUtilizandoFiltro(true)
@@ -113,21 +119,15 @@ export const FormFiltrosAvancados = (props) => {
                         </div>
 
                         <div className="form-group col-md-6">
-
                             <label htmlFor="fornecedor">Filtrar por periodo</label>
-
-
                             <div className="row align-items-center">
 
                                 <div className="col-12 col-md-5 pr-0">
-                                    <input
-                                        value={state.fornecedor}
-                                        onChange={(e) => handleChange(e.target.name, e.target.value)}
-                                        name="fornecedor"
-                                        id="fornecedor"
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Escreva a razão social"
+                                    <DatePickerField
+                                        name="data_inicio"
+                                        id="data_inicio"
+                                        value={state.data_inicio}
+                                        onChange={handleChange}
                                     />
                                 </div>
 
@@ -138,14 +138,11 @@ export const FormFiltrosAvancados = (props) => {
                                 </div>
                                 <div className="col-12 col-md-5 pl-0">
 
-                                    <input
-                                        value={state.fornecedor}
-                                        onChange={(e) => handleChange(e.target.name, e.target.value)}
-                                        name="fornecedor"
-                                        id="fornecedor"
-                                        type="text"
-                                        className="form-control"
-                                        placeholder="Escreva a razão social"
+                                    <DatePickerField
+                                        name="data_fim"
+                                        id="data_fim"
+                                        value={state.data_fim}
+                                        onChange={handleChange}
                                     />
                                 </div>
 
