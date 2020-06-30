@@ -4,7 +4,6 @@ import {CancelarModalAssociacao, SalvarModalAssociacao} from "../../../utils/Mod
 import {MenuInterno} from "../../MenuInterno";
 import "../associacao.scss"
 import Loading from "../../../utils/Loading";
-import {PaginasContainer} from "../../../paginas/PaginasContainer";
 
 export const DadosDaAsssociacao = () => {
 
