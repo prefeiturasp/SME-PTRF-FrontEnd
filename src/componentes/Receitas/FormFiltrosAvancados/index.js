@@ -18,6 +18,8 @@ export const FormFiltrosAvancados = (props) => {
         tipo_receita: "",
         acao_associacao: "",
         conta_associacao: "",
+        data_inicio: "",
+        data_fim: "",
     };
 
     const [tabelas, setTabelas] = useState(tabelaInicial);
