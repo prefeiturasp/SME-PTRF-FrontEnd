@@ -29,7 +29,7 @@ export const DadosDaAsssociacao = () => {
     };
 
     const handleSubmit = async (event) => {
-        setLoading(true)
+        setLoading(true);
         event.preventDefault();
         const payload = {
             "nome": stateAssociacao.nome,
@@ -49,7 +49,7 @@ export const DadosDaAsssociacao = () => {
                 return
             }
         } catch (error) {
-            console.log(error)
+            console.log(error);
             return
         }
 
