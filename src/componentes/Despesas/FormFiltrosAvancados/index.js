@@ -14,11 +14,11 @@ export const FormFiltrosAvancados = (props) => {
         fornecedor: "",
         data_inicio: "",
         data_fim: "",
-    }
+    };
 
-    const {btnMaisFiltros, onClickBtnMaisFiltros, setBuscaUtilizandoFiltro, setLista, iniciaLista, reusltadoSomaDosTotais, setLoading} = props;
+    const {btnMaisFiltros, onClickBtnMaisFiltros, setBuscaUtilizandoFiltro, setLista, iniciaLista, reusltadoSomaDosTotais} = props;
 
-    const [despesasTabelas, setDespesasTabelas] = useState([])
+    const [despesasTabelas, setDespesasTabelas] = useState([]);
     const [state, setState] = useState(initialState);
 
     useEffect(() => {
@@ -28,7 +28,7 @@ export const FormFiltrosAvancados = (props) => {
         };
         carregaTabelasDespesas();
 
-    }, [])
+    }, []);
 
     const handleChange = (name, value) => {
         setState({
@@ -45,20 +45,20 @@ export const FormFiltrosAvancados = (props) => {
         let data_inicio = state.data_inicio ? moment(new Date(state.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
         let data_fim = state.data_fim ? moment(new Date(state.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
 
-        console.log("handleSubmit data_inicio ", data_inicio)
-        console.log("handleSubmit data_fim ", data_fim)
+        console.log("handleSubmit data_inicio ", data_inicio);
+        console.log("handleSubmit data_fim ", data_fim);
 
         const lista_retorno_api = await filtrosAvancadosRateios(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status, state.fornecedor, data_inicio, data_fim);
-        setLista(lista_retorno_api)
-        setBuscaUtilizandoFiltro(true)
+        setLista(lista_retorno_api);
+        setBuscaUtilizandoFiltro(true);
 
         // setLoading(false)
 
-    }
+    };
 
     const limpaFormulario = () => {
         setState(initialState);
-    }
+    };
 
     return (
         <div className={`row ${btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
@@ -183,4 +183,4 @@ export const FormFiltrosAvancados = (props) => {
             </div>
         </div>
     );
-}
+};
