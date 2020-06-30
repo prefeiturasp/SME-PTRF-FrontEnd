@@ -62,7 +62,6 @@ export const FormFiltrosAvancados = (props) => {
             <div className="col-12">
                 <form onSubmit={handleSubmit}>
                     <div className="form-row">
-
                         <div className="form-group col-lg-6">
                             <label htmlFor="filtrar_por_termo">Filtrar por um termo</label>
                             <input value={state.filtrar_por_termo}
@@ -70,11 +69,8 @@ export const FormFiltrosAvancados = (props) => {
                                    name="filtrar_por_termo" id="filtrar_por_termo" type="text" className="form-control"
                                    placeholder="Escreva o termo que deseja filtrar"/>
                         </div>
-
                         <div className="col-12 col-lg-6">
-
                             <div className="row">
-
                                 <div className="form-group col-12 col-md-6 pr-md-1">
                                     <label htmlFor="acao_associacao">Filtrar por tipo de crédito</label>
                                     <select value={state.tipo_receita}
@@ -86,7 +82,6 @@ export const FormFiltrosAvancados = (props) => {
                                         ))) : null}
                                     </select>
                                 </div>
-
                                 <div className="form-group col-12 col-md-6 pl-md-1">
                                     <label htmlFor="conta_associacao">Filtrar por tipo de conta</label>
                                     <select id="conta_associacao" name="conta_associacao" value={state.conta_associacao}
@@ -100,11 +95,8 @@ export const FormFiltrosAvancados = (props) => {
                                     </select>
                                 </div>
                             </div>
-
                         </div>
-
                         <div className="form-group col-12 col-lg-6">
-
                             <label htmlFor="acao_associacao">Ação</label>
                             <select id="acao_associacao" name="acao_associacao" value={state.acao_associacao}
                                     onChange={(e) => handleChange(e.target.name, e.target.value)}
@@ -115,7 +107,6 @@ export const FormFiltrosAvancados = (props) => {
                                     <option key={key} value={item.uuid}>{item.nome}</option>
                                 ))) : null}
                             </select>
-
                         </div>
                         <div className="form-group col-md-6">
                             <label htmlFor="data_inicio">Filtrar por periodo</label>
@@ -142,8 +133,6 @@ export const FormFiltrosAvancados = (props) => {
                             </div>
                         </div>
                     </div>
-
-
                     <div className="d-flex justify-content-end pb-3 mt-3">
                         <button
                             onClick={(e) => {
