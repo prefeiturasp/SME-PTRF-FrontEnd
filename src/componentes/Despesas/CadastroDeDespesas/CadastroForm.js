@@ -191,7 +191,7 @@ export const CadastroForm = ({verbo_http}) => {
                 setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes);
                 setShowSaldoInsuficiente(true);
 
-            // Checando se depesa já foi cadastrada
+                // Checando se depesa já foi cadastrada
             }else if (values.tipo_documento && values.numero_documento) {
                 try {
                     let despesa_cadastrada = await getDespesaCadastrada(values.tipo_documento, values.numero_documento, values.cpf_cnpj_fornecedor, despesaContext.idDespesa);
@@ -260,6 +260,22 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
         const errors = {};
+
+        // Validando se tipo de documento aceita apenas numéricos
+        if (values.tipo_documento && values.numero_documento){
+            let so_numeros;
+            if (values.tipo_documento.id){
+                so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
+            }else {
+                so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
+            }
+
+            if (so_numeros && so_numeros.apenas_digitos){
+                if (isNaN(values.numero_documento)){
+                    errors.numero_documento="Este campo deve conter apenas algarismos numéricos."
+                }
+            }
+        }
 
         let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
         let var_valor_total_dos_rateios = 0;
@@ -404,8 +420,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 about={despesaContext.verboHttp}
 
                                             />
-                                            {props.errors.data_documento && <span
-                                                className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
+                                            {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                         </div>
 
                                         <div className="col-12 col-md-6 mt-4">
@@ -420,6 +435,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                 placeholder="Digite o número"
                                                 disabled={readOnlyCampos}
                                             />
+                                            {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
+
                                         </div>
 
                                         <div className="col-12 col-md-6 mt-4">
