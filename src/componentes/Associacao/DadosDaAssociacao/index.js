@@ -3,15 +3,18 @@ import {getAssociacao, alterarAssociacao} from "../../../services/Associacao.ser
 import {CancelarModalAssociacao, SalvarModalAssociacao} from "../../../utils/Modais";
 import {MenuInterno} from "../../MenuInterno";
 import "../associacao.scss"
+import Loading from "../../../utils/Loading";
 
 export const DadosDaAsssociacao = () => {
 
     const [stateAssociacao, setStateAssociacao] = useState(undefined);
     const [showModalReceitasCancelar, setShowModalReceitasCancelar] = useState(false);
     const [showModalReceitasSalvar, setShowModalReceitasSalvar] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(()=> {
         buscaAssociacao();
+        setLoading(false)
     }, []);
 
     const caminhos_menu_interno = [
@@ -26,6 +29,7 @@ export const DadosDaAsssociacao = () => {
     };
 
     const handleSubmit = async (event) => {
+        setLoading(true)
         event.preventDefault();
         const payload = {
             "nome": stateAssociacao.nome,
@@ -48,6 +52,8 @@ export const DadosDaAsssociacao = () => {
             console.log(error)
             return
         }
+
+        setLoading(false)
     };
 
     const handleChange = (name, value) => {
@@ -80,7 +86,15 @@ export const DadosDaAsssociacao = () => {
 
     return (
         <>
-            {stateAssociacao !== undefined ? (
+            {loading ? (
+                    <Loading
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="0"
+                        marginBottom="0"
+                    />
+                ) :
+                stateAssociacao !== undefined ? (
 
                 <div className="row">
                     <div className="col-12">

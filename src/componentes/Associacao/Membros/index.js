@@ -4,6 +4,7 @@ import {TabelaMembros} from "../TabelaMembros";
 import {EditarMembro} from "../../../utils/Modais";
 import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol} from "../../../services/Associacao.service";
 import {ASSOCIACAO_UUID} from '../../../services/auth.service';
+import Loading from "../../../utils/Loading";
 
 export const MembrosDaAssociacao = () =>{
 
@@ -49,6 +50,7 @@ export const MembrosDaAssociacao = () =>{
     const [infosMembroSelecionado, setInfosMembroSelecionado] = useState(null);
     const [stateFormEditarMembro, setStateFormEditarMembro] = useState(initFormMembro);
     const [btnSalvarReadOnly, setBtnSalvarReadOnly] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(()=>{
         carregaMembros();
@@ -58,6 +60,10 @@ export const MembrosDaAssociacao = () =>{
         mesclaMembros();
     }, [membros]);
 
+    useEffect(()=>{
+        setLoading(false)
+    }, [])
+
     const carregaMembros = async ()=>{
         let membros = await getMembrosAssociacao();
         setMembros(membros)
@@ -66,6 +72,7 @@ export const MembrosDaAssociacao = () =>{
     const buscaDadosMembros = (id_cargo) =>{
         return membros.find(element => element.cargo_associacao === id_cargo);
     };
+
 
     const mesclaMembros = async ()=>{
         let cargos_e_infos_diretoria = [];
@@ -223,6 +230,7 @@ export const MembrosDaAssociacao = () =>{
     };
 
     const onSubmitEditarMembro = async () =>{
+        setLoading(true)
         setShowEditarMembro(false);
         let payload = {};
         if(stateFormEditarMembro && stateFormEditarMembro.representacao === "SERVIDOR"){
@@ -279,37 +287,49 @@ export const MembrosDaAssociacao = () =>{
                 console.log(error)
             }
         }
+
+        setLoading(false)
     };
 
     return(
         <div className="row">
-            <div className="col-12">
-                <>
-                    <MenuInterno
-                        caminhos_menu_interno={caminhos_menu_interno}
-                    />
-                    <TabelaMembros
-                        titulo="Diretoria Executiva"
-                        clickIconeToogle={clickIconeToogle}
-                        toggleIcon={toggleIcon}
-                        onShowEditarMembro={onShowEditarMembro}
-                        cargos={initialValuesMembrosDiretoria}
-                        converteNomeRepresentacao={converteNomeRepresentacao}
-                        retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
-                    />
-                    <hr/>
+                <div className="col-12">
+                    {loading ? (
+                            <Loading
+                                corGrafico="black"
+                                corFonte="dark"
+                                marginTop="0"
+                                marginBottom="0"
+                            />
+                        ) :
+                    <>
+                        <MenuInterno
+                            caminhos_menu_interno={caminhos_menu_interno}
+                        />
+                        <TabelaMembros
+                            titulo="Diretoria Executiva"
+                            clickIconeToogle={clickIconeToogle}
+                            toggleIcon={toggleIcon}
+                            onShowEditarMembro={onShowEditarMembro}
+                            cargos={initialValuesMembrosDiretoria}
+                            converteNomeRepresentacao={converteNomeRepresentacao}
+                            retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
+                        />
+                        <hr/>
 
-                    <TabelaMembros
-                        titulo="Conselho Fiscal"
-                        clickIconeToogle={clickIconeToogle}
-                        toggleIcon={toggleIcon}
-                        onShowEditarMembro={onShowEditarMembro}
-                        cargos={initialValuesMembrosConselho}
-                        converteNomeRepresentacao={converteNomeRepresentacao}
-                        retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
-                    />
-                </>
-            </div>
+                        <TabelaMembros
+                            titulo="Conselho Fiscal"
+                            clickIconeToogle={clickIconeToogle}
+                            toggleIcon={toggleIcon}
+                            onShowEditarMembro={onShowEditarMembro}
+                            cargos={initialValuesMembrosConselho}
+                            converteNomeRepresentacao={converteNomeRepresentacao}
+                            retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
+                        />
+                    </>
+                    }
+                </div>
+
 
             <section>
                 <EditarMembro
