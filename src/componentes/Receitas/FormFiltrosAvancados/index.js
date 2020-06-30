@@ -4,7 +4,7 @@ import {filtrosAvancadosReceitas} from "../../../services/Receitas.service";
 
 export const FormFiltrosAvancados = (props) => {
 
-    const { btnMaisFiltros, onClickBtnMaisFiltros, setLista, setBuscaUtilizandoFiltro, iniciaLista } = props
+    const { btnMaisFiltros, onClickBtnMaisFiltros, setLista, setBuscaUtilizandoFiltro, iniciaLista } = props;
 
     const tabelaInicial = {
         tipos_receita: [],
@@ -17,11 +17,10 @@ export const FormFiltrosAvancados = (props) => {
         tipo_receita: "",
         acao_associacao: "",
         conta_associacao: "",
-    }
+    };
 
     const [tabelas, setTabelas] = useState(tabelaInicial);
     const [state, setState] = useState(initialState);
-
 
     useEffect(() => {
         const carregaTabelas = async () => {
@@ -32,29 +31,27 @@ export const FormFiltrosAvancados = (props) => {
             .catch(error => {
                 console.log(error);
             });
-
         };
         carregaTabelas()
-    }, [])
-
+    }, []);
 
     const handleChange = (name, value) => {
         setState({
             ...state,
             [name]: value
         });
-    }
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const lista_retorno_api =  await filtrosAvancadosReceitas(state.filtrar_por_termo, state.tipo_receita, state.acao_associacao, state.conta_associacao)
-        setLista(lista_retorno_api)
+        const lista_retorno_api =  await filtrosAvancadosReceitas(state.filtrar_por_termo, state.tipo_receita, state.acao_associacao, state.conta_associacao);
+        setLista(lista_retorno_api);
         setBuscaUtilizandoFiltro(true)
-    }
+    };
 
     const limpaFormulario = () => {
         setState(initialState);
-    }
+    };
 
     return(
         <div className={`row ${btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
@@ -111,6 +108,7 @@ export const FormFiltrosAvancados = (props) => {
                     </div>
 
 
+
                     <div className="d-flex justify-content-end pb-3 mt-3">
                         <button
                             onClick={(e)=>{
@@ -146,4 +144,4 @@ export const FormFiltrosAvancados = (props) => {
             </div>
         </div>
     );
-}
+};
