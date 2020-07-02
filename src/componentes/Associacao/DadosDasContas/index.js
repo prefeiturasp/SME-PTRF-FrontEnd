@@ -47,6 +47,10 @@ export const DadosDasContas = () => {
         return errors
     };
 
+    const getPath = () =>{
+        window.location.assign("/dados-das-contas-da-associacao")
+    }
+
     const onSubmit = async (values) => {
         if (values.contas && values.contas.length > 0 ){
             let payload = [];
@@ -62,8 +66,9 @@ export const DadosDasContas = () => {
             });
             console.log("Payload ", payload);
             try {
-                let salvar_contas = await salvarContas(payload);
-                console.log("Salvando... ", salvar_contas)
+                await salvarContas(payload);
+                getPath();
+
             }catch (e) {
                 console.log("Erro ao salvar conta", e)
             }
