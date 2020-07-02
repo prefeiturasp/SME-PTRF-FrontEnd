@@ -28,7 +28,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit}) 
                                         {values.contas && values.contas.length > 0 && values.contas.map((conta, index) => {
                                             return (
                                                 <div className="row" key={index}>
-                                                    <div className="col-12 mt-4 mb-4 ml-0">
+                                                    <div className={`col-12 mt-${index === 0 ? "2" : 4} mb-4 ml-0`}>
                                                         <p className="mb-0">
                                                             <strong>Conta {index + 1}</strong>
                                                         </p>
