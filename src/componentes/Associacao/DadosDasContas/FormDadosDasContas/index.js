@@ -1,7 +1,7 @@
 import React from "react";
 import {Formik, FieldArray} from "formik";
 
-export const FormDadosDasContas = ({intialValues, setaCampoReadonly, YupSignupSchemaDadosDasContas, onSubmit}) => {
+export const FormDadosDasContas = ({intialValues, setaCampoReadonly, validateFormDadosDasContas, onSubmit}) => {
     console.log("Form ", intialValues);
     const valores_inciais = {
         contas: intialValues
@@ -10,6 +10,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, YupSignupSc
         <>
             <Formik
                 initialValues={valores_inciais}
+                validate={validateFormDadosDasContas}
                 enableReinitialize={true}
                 validateOnBlur={true}
                 onSubmit={onSubmit}
@@ -48,6 +49,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, YupSignupSc
                                                                 type="text"
                                                                 className="form-control"
                                                             />
+                                                            {props.errors.banco_nome && <span className="text-danger mt-1">{props.errors.banco_nome}</span>}
                                                         </div>
                                                     </div>
 
@@ -65,6 +67,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, YupSignupSc
                                                                 type="text"
                                                                 className="form-control"
                                                             />
+                                                            {props.errors.tipo_conta && <span className="text-danger mt-1">{props.errors.tipo_conta}</span>}
                                                         </div>
                                                     </div>
 
@@ -82,6 +85,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, YupSignupSc
                                                                 type="text"
                                                                 className="form-control"
                                                             />
+                                                            {props.errors.agencia && <span className="text-danger mt-1">{props.errors.agencia}</span>}
                                                         </div>
                                                     </div>
 
@@ -100,18 +104,24 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, YupSignupSc
                                                                 type="text"
                                                                 className="form-control"
                                                             />
+                                                            {props.errors.numero_conta && <span className="text-danger mt-1">{props.errors.numero_conta}</span>}
                                                         </div>
                                                     </div>
                                                 </div>
                                             )
                                         })}
+                                        {props.errors.campos_obrigatorios &&
+                                        <div className="col-12 mt-2">
+                                            <span className="text-danger"> {props.errors.campos_obrigatorios}</span>
+                                        </div>
+                                        }
                                     </>
                                 )}
                             >
                             </FieldArray>
 
                             <div className="d-flex  justify-content-end pb-3 mt-3">
-                                <button type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                                <button onClick={props.handleReset} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                                 <button type="submit" className="btn btn-success mt-2">Salvar</button>
                             </div>
 

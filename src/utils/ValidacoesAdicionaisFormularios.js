@@ -29,12 +29,6 @@ export const YupSignupSchemaLogin = yup.object().shape({
   senha: yup.string().required("Campo código Senha é obrigatório"),
 });
 
-export const YupSignupSchemaDadosDasContas = yup.object().shape({
-  tipo_conta: yup.string().required("Tipo de conta é obrigatório"),
-  banco_nome: yup.string().required("Banco é obrigatório"),
-  numero_conta: yup.string().required("Número da conta é obrigatório"),
-});
-
 export const YupSignupSchemaMembros = yup.object().shape({
   representacao: yup.string().required("Representação é obrigatório"),
 

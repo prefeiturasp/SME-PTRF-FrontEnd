@@ -4,7 +4,6 @@ import Loading from "../../../utils/Loading";
 import {MenuInterno} from "../../MenuInterno";
 import {getContas, salvarContas} from "../../../services/Associacao.service";
 import {FormDadosDasContas} from "./FormDadosDasContas";
-import {YupSignupSchemaDadosDasContas} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const DadosDasContas = () => {
 
@@ -16,15 +15,10 @@ export const DadosDasContas = () => {
         numero_conta: "",
     }];
 
-
     const [loading, setLoading] = useState(true);
     const [intialValues, setIntialValues] = useState(initial);
 
     useEffect(() =>{
-        const buscaContas = async ()=>{
-            let contas = await getContas();
-            setIntialValues(contas)
-        };
         buscaContas();
     }, []);
 
@@ -32,8 +26,25 @@ export const DadosDasContas = () => {
         setLoading(false)
     }, []);
 
+    const buscaContas = async ()=>{
+        let contas = await getContas();
+        setIntialValues(contas)
+    };
+
     const setaCampoReadonly=(nome_conta) =>{
         return nome_conta === "Cartão"
+    };
+
+    const validateFormDadosDasContas = async (values) => {
+        const errors = {};
+        if (values.contas && values.contas.length > 0 ){
+            values.contas.map((item)=>{
+                if (!item.tipo_conta || !item.banco_nome || !item.agencia || !item.numero_conta){
+                    errors.campos_obrigatorios = "Todos os campos são obrigatórios"
+                }
+            });
+        }
+        return errors
     };
 
     const onSubmit = async (values) => {
@@ -49,9 +60,9 @@ export const DadosDasContas = () => {
 
                 })
             });
-            console.log("Payload ", payload)
+            console.log("Payload ", payload);
             try {
-                let salvar_contas = await salvarContas(payload)
+                let salvar_contas = await salvarContas(payload);
                 console.log("Salvando... ", salvar_contas)
             }catch (e) {
                 console.log("Erro ao salvar conta", e)
@@ -78,9 +89,8 @@ export const DadosDasContas = () => {
                             intialValues={intialValues}
                             onSubmit={onSubmit}
                             setaCampoReadonly={setaCampoReadonly}
-                            YupSignupSchemaDadosDasContas={YupSignupSchemaDadosDasContas}
+                            validateFormDadosDasContas={validateFormDadosDasContas}
                         />
-
                     </div>
                 </div>
             }
