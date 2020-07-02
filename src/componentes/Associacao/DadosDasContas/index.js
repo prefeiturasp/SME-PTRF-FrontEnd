@@ -36,8 +36,6 @@ export const DadosDasContas = () => {
     };
 
     const onSubmit = async (values) => {
-        console.log("onSubmit ", values)
-
         if (values.contas && values.contas.length > 0 ){
             let payload = [];
             values.contas.map((value)=>{
@@ -49,9 +47,14 @@ export const DadosDasContas = () => {
                     "numero_conta": value.numero_conta
 
                 })
-            })
-
+            });
             console.log("Payload ", payload)
+            try {
+                let salvar_contas = await salvarContas(payload)
+                console.log("Salvando... ", salvar_contas)
+            }catch (e) {
+                console.log("Erro ao salvar conta", e)
+            }
         }
 
 
