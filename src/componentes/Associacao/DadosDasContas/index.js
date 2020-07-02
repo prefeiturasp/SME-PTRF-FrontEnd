@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import Loading from "../../../utils/Loading";
 import {MenuInterno} from "../../MenuInterno";
-import {getContas} from "../../../services/Associacao.service";
+import {getContas, salvarContas} from "../../../services/Associacao.service";
 import {FormDadosDasContas} from "./FormDadosDasContas";
 
 export const DadosDasContas = () => {
@@ -37,6 +37,34 @@ export const DadosDasContas = () => {
 
     const onSubmit = async (values) => {
         console.log("onSubmit ", values)
+
+        if (values.contas && values.contas.length > 0 ){
+            let payload = [];
+            values.contas.map((value)=>{
+                payload.push({
+                    "uuid": value.uuid,
+                    "tipo_conta": value.tipo_conta.id,
+                    "banco_nome": value.banco_nome,
+                    "agencia": value.agencia,
+                    "numero_conta": value.numero_conta
+
+                })
+            })
+
+            console.log("Payload ", payload)
+        }
+
+
+/*
+        const payload = {
+            "nome": stateAssociacao.nome,
+            "presidente_associacao_nome": stateAssociacao.presidente_associacao_nome,
+            "presidente_associacao_rf": "",
+            "presidente_conselho_fiscal_nome": stateAssociacao.presidente_conselho_fiscal_nome,
+            "presidente_conselho_fiscal_rf": ""
+        };
+*/
+
     };
 
     return (
