@@ -177,6 +177,7 @@ export const ReceitaForm = props => {
     };
 
     const setaRepasse = async (values)=>{
+        //debugger;
         let local_repasse;
         if (values && values.acao_associacao && values.data){
             let data_receita = moment(new Date(values.data), "YYYY-MM-DD").format("DD/MM/YYYY");
@@ -265,6 +266,7 @@ export const ReceitaForm = props => {
                             </option>
                         );
                     }
+
                 }else{
                     if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))){
                         return (
@@ -280,23 +282,17 @@ export const ReceitaForm = props => {
                 }
             })
         }else{
-
             if (tabelas.categorias_receita && tabelas.categorias_receita.length > 0){
-
-                let categoria_receita = tabelas.categorias_receita.find(element => element.id === values.categoria_receita)
-
-                if(categoria_receita){
-                    console.log("Nome  ", categoria_receita.nome)
+                return tabelas.categorias_receita.map((item)=>{
                     return (
                         <option
-                            //style={{display: getDisplayOptionClassificacaoReceita(values.tipo_receita, values.tipo_receita)}}
-                            key={values.categoria_receita}
-                            value={values.categoria_receita}
+                            key={item.id}
+                            value={item.id}
                         >
-                            {categoria_receita.nome}
+                            {item.nome}
                         </option>
                     );
-                }
+                })
             }
         }
     };
@@ -397,9 +393,8 @@ export const ReceitaForm = props => {
                                         value={props.values.tipo_receita}
                                         onChange={(e) => {
                                                 props.handleChange(e);
-                                                setaRepasse(values);
                                                 getClassificacaoReceita(e.target.value, setFieldValue);
-
+                                                //setaRepasse(values);
                                             }
                                         }
                                         onBlur={props.handleBlur}
@@ -475,7 +470,7 @@ export const ReceitaForm = props => {
                                                 value={props.values.acao_associacao}
                                                 onChange={(e) => {
                                                         props.handleChange(e);
-                                                        setaRepasse(values)
+                                                        //setaRepasse(values)
                                                     }
                                                 }
                                                 onBlur={props.handleBlur}
