@@ -46,5 +46,5 @@ export const consultarCodEol = async (cod_eol) => {
 };
 
 export const getContas = async (cod_eol) => {
-    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas/`, authHeader))
+    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas/`, authHeader)).data
 };
