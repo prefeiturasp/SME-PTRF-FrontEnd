@@ -25,7 +25,6 @@ export const DadosDasContas = () => {
             setIntialValues(contas)
         };
         buscaContas();
-
     }, []);
 
     useEffect(()=>{
@@ -33,12 +32,8 @@ export const DadosDasContas = () => {
     }, []);
 
     const setaCampoReadonly=(nome_conta) =>{
-
-        console.log("SETA ", nome_conta)
-
         return nome_conta === "Cartão"
-
-    }
+    };
 
     const onSubmit = async (values) => {
         console.log("onSubmit ", values)
