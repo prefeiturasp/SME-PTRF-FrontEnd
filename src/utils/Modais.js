@@ -671,3 +671,17 @@ export const ChecarDespesaExistente = (propriedades) => {
         />
     )
 };
+
+export const ModalConfirmaSalvar = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo={propriedades.titulo}
+            bodyText={`<p>${propriedades.texto}</p>`}
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoCss={propriedades.primeiroBotaoCss}
+            primeiroBotaoTexto="OK"
+        />
+    )
+};

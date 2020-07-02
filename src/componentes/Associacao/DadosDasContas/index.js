@@ -4,6 +4,7 @@ import Loading from "../../../utils/Loading";
 import {MenuInterno} from "../../MenuInterno";
 import {getContas, salvarContas} from "../../../services/Associacao.service";
 import {FormDadosDasContas} from "./FormDadosDasContas";
+import {ModalConfirmaSalvar} from "../../../utils/Modais";
 
 export const DadosDasContas = () => {
 
@@ -17,6 +18,7 @@ export const DadosDasContas = () => {
 
     const [loading, setLoading] = useState(true);
     const [intialValues, setIntialValues] = useState(initial);
+    const [showSalvar, setShowSalvar] = useState(false);
 
     useEffect(() =>{
         buscaContas();
@@ -47,12 +49,9 @@ export const DadosDasContas = () => {
         return errors
     };
 
-    const getPath = () =>{
-        window.location.assign("/dados-das-contas-da-associacao")
-    }
-
     const onSubmit = async (values) => {
         if (values.contas && values.contas.length > 0 ){
+            setLoading(true);
             let payload = [];
             values.contas.map((value)=>{
                 payload.push({
@@ -64,14 +63,14 @@ export const DadosDasContas = () => {
 
                 })
             });
-            console.log("Payload ", payload);
             try {
                 await salvarContas(payload);
-                getPath();
-
+                await buscaContas();
+                setShowSalvar(true)
             }catch (e) {
                 console.log("Erro ao salvar conta", e)
             }
+            setLoading(false)
         }
     };
 
@@ -97,6 +96,14 @@ export const DadosDasContas = () => {
                             validateFormDadosDasContas={validateFormDadosDasContas}
                         />
                     </div>
+
+                    <ModalConfirmaSalvar
+                        show={showSalvar}
+                        handleClose={()=>setShowSalvar(false)}
+                        titulo="Contas salvas"
+                        texto="A edição foi salva com sucesso"
+                        primeiroBotaoCss="success"
+                    />
                 </div>
             }
         </>
