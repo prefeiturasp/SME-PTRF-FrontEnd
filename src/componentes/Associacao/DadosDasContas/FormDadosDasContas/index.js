@@ -1,7 +1,7 @@
 import React from "react";
 import {Formik, FieldArray} from "formik";
 
-export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit}) => {
+export const FormDadosDasContas = ({intialValues, setaCampoReadonly, YupSignupSchemaDadosDasContas, onSubmit}) => {
     console.log("Form ", intialValues);
     const valores_inciais = {
         contas: intialValues

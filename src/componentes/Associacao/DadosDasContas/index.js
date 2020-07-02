@@ -4,6 +4,7 @@ import Loading from "../../../utils/Loading";
 import {MenuInterno} from "../../MenuInterno";
 import {getContas, salvarContas} from "../../../services/Associacao.service";
 import {FormDadosDasContas} from "./FormDadosDasContas";
+import {YupSignupSchemaDadosDasContas} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const DadosDasContas = () => {
 
@@ -56,18 +57,6 @@ export const DadosDasContas = () => {
                 console.log("Erro ao salvar conta", e)
             }
         }
-
-
-/*
-        const payload = {
-            "nome": stateAssociacao.nome,
-            "presidente_associacao_nome": stateAssociacao.presidente_associacao_nome,
-            "presidente_associacao_rf": "",
-            "presidente_conselho_fiscal_nome": stateAssociacao.presidente_conselho_fiscal_nome,
-            "presidente_conselho_fiscal_rf": ""
-        };
-*/
-
     };
 
     return (
@@ -89,6 +78,7 @@ export const DadosDasContas = () => {
                             intialValues={intialValues}
                             onSubmit={onSubmit}
                             setaCampoReadonly={setaCampoReadonly}
+                            YupSignupSchemaDadosDasContas={YupSignupSchemaDadosDasContas}
                         />
 
                     </div>
