@@ -25,7 +25,39 @@ export const DadosDasContas = () => {
                         <MenuInterno
                             caminhos_menu_interno = {UrlsMenuInterno}
                         />
-                        <h1>Dados da contas</h1>
+                        <form>
+                            <div className="row">
+                                <div className='col-12 col-md-3'>
+                                    <div className="form-group">
+                                        <label htmlFor="exampleInputEmail1">Email address</label>
+                                        <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"/>
+                                    </div>
+                                </div>
+                                <div className='col-12 col-md-3'>
+                                    <div className="form-group">
+                                        <label htmlFor="exampleInputEmail1">Email address</label>
+                                        <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"/>
+                                    </div>
+                                </div>
+                                <div className='col-12 col-md-3'>
+                                    <div className="form-group">
+                                        <label htmlFor="exampleInputEmail1">Email address</label>
+                                        <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"/>
+                                    </div>
+                                </div>
+                                <div className='col-12 col-md-3'>
+                                    <div className="form-group">
+                                        <label htmlFor="exampleInputEmail1">Email address</label>
+                                        <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="d-flex  justify-content-end pb-3 mt-3">
+                                <button type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                                <button type="button" className="btn btn-success mt-2">Salvar</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             }
