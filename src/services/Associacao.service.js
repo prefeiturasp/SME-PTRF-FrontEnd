@@ -44,3 +44,11 @@ export const consultarRF = async (rf) => {
 export const consultarCodEol = async (cod_eol) => {
     return (await api.get(`/api/membros-associacao/codigo-identificacao/?codigo-eol=${cod_eol}`, authHeader))
 };
+
+export const getContas = async () => {
+    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas/`, authHeader)).data
+};
+
+export const salvarContas = async (payload) => {
+    return (await api.post(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas-update/`, payload, authHeader))
+};

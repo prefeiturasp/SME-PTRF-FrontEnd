@@ -5,14 +5,10 @@ import {EditarMembro} from "../../../utils/Modais";
 import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol} from "../../../services/Associacao.service";
 import {ASSOCIACAO_UUID} from '../../../services/auth.service';
 import Loading from "../../../utils/Loading";
+import {UrlsMenuInterno} from "../UrlsMenuInterno";
 
 export const MembrosDaAssociacao = () =>{
 
-    const caminhos_menu_interno = [
-        {label: "Dados da Associação", url:"dados-da-associacao"},
-        {label: "Membros", url:"membros-da-associacao"},
-        {label: "Dados das contas", url:"lista-de-receitas"},
-    ];
     const initDiretoria = [
         {id:"PRESIDENTE_DIRETORIA_EXECUTIVA", cargo:"Presidente", cargo_exibe_form: "Presidente da Diretoria Executiva"},
         {id:"VICE_PRESIDENTE_DIRETORIA_EXECUTIVA", cargo:"Vice Presidente", cargo_exibe_form: "Vice Presidente da Diretoria Executiva"},
@@ -304,7 +300,7 @@ export const MembrosDaAssociacao = () =>{
                         ) :
                     <>
                         <MenuInterno
-                            caminhos_menu_interno={caminhos_menu_interno}
+                            caminhos_menu_interno={UrlsMenuInterno}
                         />
                         <TabelaMembros
                             titulo="Diretoria Executiva"

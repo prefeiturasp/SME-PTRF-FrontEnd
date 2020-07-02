@@ -396,9 +396,11 @@ export const ValoresReprogramados = () => {
                                 </div>
 
                                 <section>
-                                    <SalvarValoresReprogramados show={showModalSalvar}
-                                                                handleClose={() => setShowModalSalvar(false)}
-                                                                onSalvarTrue={() => serviceSalvarValoresReprogramados(values, errors, setFieldValue)}/>
+                                    <SalvarValoresReprogramados
+                                        show={showModalSalvar}
+                                        handleClose={() => setShowModalSalvar(false)}
+                                        onSalvarTrue={() => serviceSalvarValoresReprogramados(values, errors, setFieldValue)}
+                                    />
                                 </section>
 
                             </form>
