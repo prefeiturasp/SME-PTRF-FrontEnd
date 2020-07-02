@@ -4,6 +4,7 @@ import {CancelarModalAssociacao, SalvarModalAssociacao} from "../../../utils/Mod
 import {MenuInterno} from "../../MenuInterno";
 import "../associacao.scss"
 import Loading from "../../../utils/Loading";
+import {UrlsMenuInterno} from "../UrlsMenuInterno";
 
 export const DadosDaAsssociacao = () => {
 
@@ -16,12 +17,6 @@ export const DadosDaAsssociacao = () => {
         buscaAssociacao();
         setLoading(false)
     }, []);
-
-    const caminhos_menu_interno = [
-        {label: "Dados da Associação", url:"dados-da-associacao"},
-        {label: "Membros", url:"membros-da-associacao"},
-        {label: "Dados das contas", url:"lista-de-receitas"},
-    ];
 
     const buscaAssociacao = async () => {
         const associacao = await getAssociacao();
@@ -100,7 +95,7 @@ export const DadosDaAsssociacao = () => {
                     <div className="col-12">
 
                         <MenuInterno
-                            caminhos_menu_interno = {caminhos_menu_interno}
+                            caminhos_menu_interno = {UrlsMenuInterno}
                         />
 
                         <form onSubmit={handleSubmit}>
