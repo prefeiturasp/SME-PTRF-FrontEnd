@@ -476,7 +476,7 @@ export const ReceitaForm = props => {
                                             id="detalhe_tipo_receita"
                                             name="detalhe_tipo_receita"
                                             disabled={readOnlyCampos}
-                                            value={props.values.detalhe_tipo_receita ? props.values.detalhe_tipo_receita.id : null}
+                                            value={props.values.detalhe_tipo_receita ? props.values.detalhe_tipo_receita.id : ""}
                                             onChange={(e) => {
                                                 props.handleChange(e);
                                             }

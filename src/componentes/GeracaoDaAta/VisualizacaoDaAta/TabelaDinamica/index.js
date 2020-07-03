@@ -1,10 +1,10 @@
 import React from "react";
 import {TextoDespesas} from "../TextoDespesas";
 
-export const TabelaDinamica = ({infoAta, valorTemplate})=> {
-    return(
+export const TabelaDinamica = ({infoAta, valorTemplate}) => {
+    return (
         <>
-            {infoAta.acoes && infoAta.acoes.length > 0 && infoAta.acoes.map((info)=>(
+            {infoAta.acoes && infoAta.acoes.length > 0 && infoAta.acoes.map((info) => (
                 <div key={info.acao_associacao_uuid}>
                     <p className='titulo-tabela-acoes mt-5'>
                         {info.acao_associacao_nome}
@@ -15,7 +15,7 @@ export const TabelaDinamica = ({infoAta, valorTemplate})=> {
                             <th scope="col">&nbsp;</th>
                             <th scope="col">Custeio (R$)</th>
                             <th scope="col">Capital (R$)</th>
-                            <th scope="col">Total (R$) </th>
+                            <th scope="col">Total (R$)</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -60,6 +60,12 @@ export const TabelaDinamica = ({infoAta, valorTemplate})=> {
                             <td>{valorTemplate(info.receitas_nao_conciliadas_custeio)}</td>
                             <td>{valorTemplate(info.receitas_nao_conciliadas_capital)}</td>
                             <td>{valorTemplate(info.receitas_nao_conciliadas)}</td>
+                        </tr>
+                        <tr>
+                            <td>Crédito futuros</td>
+                            <td>{valorTemplate(info.repasses_nao_realizados_custeio)}</td>
+                            <td>{valorTemplate(info.repasses_nao_realizados_capital)}</td>
+                            <td>{valorTemplate(info.repasses_nao_realizados_custeio + info.repasses_nao_realizados_capital)}</td>
                         </tr>
                         </tbody>
                     </table>
