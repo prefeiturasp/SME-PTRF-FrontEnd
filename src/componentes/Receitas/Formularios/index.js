@@ -445,14 +445,13 @@ export const ReceitaForm = props => {
                                         disabled={readOnlyCampos}
                                         value={props.values.tipo_receita}
                                         onChange={(e) => {
-
                                             props.handleChange(e);
                                             //setaRepasse(values);
                                             getClassificacaoReceita(e.target.value, setFieldValue);
                                             setaDetalhesTipoReceita(e.target.value);
 
                                         }
-
+                                        }
                                         onBlur={props.handleBlur}
                                         className="form-control"
                                     >
