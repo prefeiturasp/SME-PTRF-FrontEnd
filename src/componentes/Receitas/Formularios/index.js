@@ -196,7 +196,9 @@ export const ReceitaForm = props => {
         window.location.assign(path)
     };
 
-    const setaRepasse = async (values) => {
+    const setaRepasse = async (values)=>{
+        //debugger;
+
         let local_repasse;
         if (values && values.acao_associacao && values.data) {
             let data_receita = moment(new Date(values.data), "YYYY-MM-DD").format("DD/MM/YYYY");
@@ -315,8 +317,10 @@ export const ReceitaForm = props => {
                             </option>
                         );
                     }
-                } else {
-                    if (tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))) {
+
+                }else{
+                    if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))){
+
                         return (
                             <option
                                 style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
@@ -329,24 +333,18 @@ export const ReceitaForm = props => {
                     }
                 }
             })
-        } else {
-
-            if (tabelas.categorias_receita && tabelas.categorias_receita.length > 0) {
-
-                let categoria_receita = tabelas.categorias_receita.find(element => element.id === values.categoria_receita)
-
-                if (categoria_receita) {
-                    console.log("Nome  ", categoria_receita.nome)
+        }else{
+            if (tabelas.categorias_receita && tabelas.categorias_receita.length > 0){
+                return tabelas.categorias_receita.map((item)=>{
                     return (
                         <option
-                            //style={{display: getDisplayOptionClassificacaoReceita(values.tipo_receita, values.tipo_receita)}}
-                            key={values.categoria_receita}
-                            value={values.categoria_receita}
+                            key={item.id}
+                            value={item.id}
                         >
-                            {categoria_receita.nome}
+                            {item.nome}
                         </option>
                     );
-                }
+                })
             }
         }
     };
@@ -447,13 +445,14 @@ export const ReceitaForm = props => {
                                         disabled={readOnlyCampos}
                                         value={props.values.tipo_receita}
                                         onChange={(e) => {
+
                                             props.handleChange(e);
-                                            setaRepasse(values);
+                                            //setaRepasse(values);
                                             getClassificacaoReceita(e.target.value, setFieldValue);
                                             setaDetalhesTipoReceita(e.target.value);
 
                                         }
-                                        }
+
                                         onBlur={props.handleBlur}
                                         className="form-control"
                                     >
@@ -627,6 +626,7 @@ export const ReceitaForm = props => {
                             </div>
 
                             {/*Botões*/}
+
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
                                 <button type="reset" onClick={onShowModal}
                                         className="btn btn btn-outline-success mt-2 mr-2">Cancelar
