@@ -3,7 +3,14 @@ import HTTP_STATUS from "http-status-codes";
 import {Formik} from 'formik';
 import {DatePickerField} from '../../DatePickerField'
 import CurrencyInput from 'react-currency-input';
-import { criarReceita, atualizaReceita, deletarReceita, getReceita, getTabelasReceita, getRepasse } from '../../../services/Receitas.service';
+import {
+    criarReceita,
+    atualizaReceita,
+    deletarReceita,
+    getReceita,
+    getTabelasReceita,
+    getRepasse
+} from '../../../services/Receitas.service';
 import {round, trataNumericos, periodoFechado} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
@@ -12,6 +19,7 @@ import {ASSOCIACAO_UUID} from '../../../services/auth.service';
 import {DeletarModalReceitas, CancelarModalReceitas, PeriodoFechado, ErroGeral} from "../../../utils/Modais";
 import Loading from "../../../utils/Loading";
 import api from "../../../services/Api";
+import {Login} from "../../../paginas/Login";
 
 export const ReceitaForm = props => {
 
@@ -27,12 +35,13 @@ export const ReceitaForm = props => {
 
     const initial = {
         tipo_receita: "",
+        detalhe_tipo_receita: "",
+        detalhe_outros: "",
         categoria_receita: "",
         acao_associacao: "",
         conta_associacao: "",
         data: "",
         valor: "",
-        descricao: "",
     };
 
     const [tabelas, setTabelas] = useState(tabelaInicial);
@@ -49,6 +58,8 @@ export const ReceitaForm = props => {
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
     const [repasse, setRepasse] = useState({});
 
+    const [idxTipoDespesa, setIdxTipoDespesa] = useState(0);
+
     useEffect(() => {
         const carregaTabelas = async () => {
             getTabelasReceita().then(response => {
@@ -64,6 +75,8 @@ export const ReceitaForm = props => {
                     const resp = response.data;
                     const init = {
                         tipo_receita: resp.tipo_receita.id,
+                        detalhe_tipo_receita: resp.detalhe_tipo_receita,
+                        detalhe_outros: resp.detalhe_outros,
                         categoria_receita: resp.categoria_receita,
                         acao_associacao: resp.acao_associacao.uuid,
                         conta_associacao: resp.conta_associacao.uuid,
@@ -72,7 +85,6 @@ export const ReceitaForm = props => {
                             style: 'currency',
                             currency: 'BRL'
                         }) : "",
-                        descricao: resp.descricao,
                     }
                     setInitialValue(init);
                     setReceita(resp);
@@ -87,13 +99,21 @@ export const ReceitaForm = props => {
         setLoading(false);
     }, [])
 
+    useEffect(() => {
+        if (tabelas.tipos_receita.length > 0 && initialValue.tipo_receita !== undefined) {
+            setaDetalhesTipoReceita(initialValue.tipo_receita);
+        }
+    }, [tabelas, initialValue.tipo_receita])
+
+
     const onSubmit = async (values) => {
 
         values.valor = round(trataNumericos(values.valor), 2);
         values.data = moment(values.data).format("YYYY-MM-DD");
         const payload = {
             ...values,
-            associacao: localStorage.getItem(ASSOCIACAO_UUID)
+            associacao: localStorage.getItem(ASSOCIACAO_UUID),
+            detalhe_tipo_receita: values.detalhe_tipo_receita.id !== undefined ? values.detalhe_tipo_receita.id : values.detalhe_tipo_receita
         }
         setLoading(true);
         if (uuid) {
@@ -124,7 +144,7 @@ export const ReceitaForm = props => {
             if (response.status === HTTP_STATUS.CREATED) {
                 console.log("Operação realizada com sucesso!");
             } else {
-                console.log(response)
+                console.log('UPDATE ==========>>>>>>', response)
             }
         } catch (error) {
             console.log(error)
@@ -168,9 +188,9 @@ export const ReceitaForm = props => {
 
     const getPath = () => {
         let path;
-        if (origem === undefined){
+        if (origem === undefined) {
             path = `/lista-de-receitas`;
-        }else {
+        } else {
             path = `/detalhe-das-prestacoes`;
         }
         window.location.assign(path)
@@ -178,22 +198,23 @@ export const ReceitaForm = props => {
 
     const setaRepasse = async (values)=>{
         //debugger;
+
         let local_repasse;
-        if (values && values.acao_associacao && values.data){
+        if (values && values.acao_associacao && values.data) {
             let data_receita = moment(new Date(values.data), "YYYY-MM-DD").format("DD/MM/YYYY");
-            if (uuid){
+            if (uuid) {
                 try {
                     local_repasse = await getRepasse(values.acao_associacao, data_receita, uuid);
                     setRepasse(local_repasse)
-                }catch (e) {
+                } catch (e) {
                     console.log("Erro ao obter o repasse ", e)
                 }
 
-            }else {
+            } else {
                 try {
-                    local_repasse =  await getRepasse(values.acao_associacao, data_receita);
+                    local_repasse = await getRepasse(values.acao_associacao, data_receita);
                     setRepasse(local_repasse)
-                }catch (e) {
+                } catch (e) {
                     console.log("Erro ao obter o repasse ", e)
                 }
 
@@ -202,7 +223,7 @@ export const ReceitaForm = props => {
         }
     };
 
-    const getClassificacaoReceita = (id_tipo_receita, setFieldValue) =>{
+    const getClassificacaoReceita = (id_tipo_receita, setFieldValue) => {
 
         let qtdeAceitaClassificacao = [];
 
@@ -232,30 +253,60 @@ export const ReceitaForm = props => {
         }
     }
 
+    const setaDetalhesTipoReceita = (id_tipo_receita) => {
+        if (id_tipo_receita) {
+            tabelas.tipos_receita.map((item, index) => {
+                if (item.id == id_tipo_receita && index != idxTipoDespesa) {
+                    setIdxTipoDespesa(index)
+                    const atuReceita = receita
+                    atuReceita.detalhe_tipo_receita = null
+                    setReceita(atuReceita)
+                }
+            })
+        }
+    }
+
     const getDisplayOptionClassificacaoReceita = (id_categoria_receita, id_tipo_receita) => {
 
         let id_categoria_receita_lower = id_categoria_receita.toLowerCase();
-        let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_'+id_categoria_receita_lower);
+        let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_' + id_categoria_receita_lower);
 
-        if ( !aceitaClassificacao ){
+        if (!aceitaClassificacao) {
             return "none"
-        }else {
+        } else {
             return "block"
         }
     }
 
-    const retornaClassificacaoReceita = (values, setFieldValue)=>{
+    const getOpcoesDetalhesTipoReceita = (values) => {
+        if (tabelas.tipos_receita[idxTipoDespesa] !== undefined && tabelas.tipos_receita[idxTipoDespesa].detalhes_tipo_receita !== undefined && tabelas.tipos_receita[idxTipoDespesa].detalhes_tipo_receita.length > 0) {
+            return tabelas.tipos_receita[idxTipoDespesa].detalhes_tipo_receita.map(item => {
+                return (
+                    <option key={item.id} value={item.id}>{item.nome}</option>
+                )
+            })
+        }
+    }
 
-        if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && values.tipo_receita && Object.entries(repasse).length > 0 ){
+    const temOpcoesDetalhesTipoReceita = (values) => {
+        if (tabelas.tipos_receita[idxTipoDespesa] !== undefined && tabelas.tipos_receita[idxTipoDespesa].detalhes_tipo_receita !== undefined) {
+            return (tabelas.tipos_receita[idxTipoDespesa].detalhes_tipo_receita.length > 0)
+        }
+        return false
+    }
+
+    const retornaClassificacaoReceita = (values, setFieldValue) => {
+
+        if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && values.tipo_receita && Object.entries(repasse).length > 0) {
 
             return tabelas.categorias_receita.map((item, index) => {
 
                 let id_categoria_receita_lower = item.id.toLowerCase();
 
                 // Quando a flag e_repasse for true eu checo também se o valor da classificacao_receita é !== "0.00"
-                if (tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_repasse){
+                if (tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_repasse) {
 
-                    if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)) && eval('repasse.valor_'+id_categoria_receita_lower) !== "0.00" ){
+                    if (tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)) && eval('repasse.valor_' + id_categoria_receita_lower) !== "0.00") {
                         return (
                             <option
                                 style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
@@ -269,6 +320,7 @@ export const ReceitaForm = props => {
 
                 }else{
                     if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))){
+
                         return (
                             <option
                                 style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
@@ -301,8 +353,8 @@ export const ReceitaForm = props => {
         const errors = {};
 
         // Verifica período fechado para a receita
-        if (values.data){
-            await  periodoFechado(values.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+        if (values.data) {
+            await periodoFechado(values.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
         }
 
         let e_repasse_tipo_receita = false;
@@ -327,30 +379,30 @@ export const ReceitaForm = props => {
                 let data_inicio = moment(repasse.periodo.data_inicio_realizacao_despesas);
                 let data_fim = repasse.periodo.data_fim_realizacao_despesas;
 
-                if (data_fim === null){
+                if (data_fim === null) {
                     data_fim = moment(new Date());
-                }else {
+                } else {
                     data_fim = moment(repasse.periodo.data_fim_realizacao_despesas);
                 }
 
-                if(data_digitada  > data_fim || data_digitada < data_inicio ){
+                if (data_digitada > data_fim || data_digitada < data_inicio) {
                     errors.data = `Data inválida. A data tem que ser entre ${data_inicio.format("DD/MM/YYYY")} e ${data_fim.format("DD/MM/YYYY")}`;
                 }
 
                 let id_categoria_receita_lower = values.categoria_receita.toLowerCase();
 
-                let valor_da_receita = eval('repasse.valor_'+id_categoria_receita_lower)
+                let valor_da_receita = eval('repasse.valor_' + id_categoria_receita_lower)
 
                 const init = {
                     ...initialValue,
                     tipo_receita: values.tipo_receita,
+                    detalhe_tipo_receita: values.detalhe_tipo_receita,
+                    detalhe_outros: values.detalhe_outros,
                     data: values.data,
                     valor: Number(valor_da_receita),
                     acao_associacao: values.acao_associacao,
                     conta_associacao: repasse.conta_associacao.uuid,
                     categoria_receita: values.categoria_receita,
-                    descricao: values.descricao,
-                    //valor: Number(repasse.valor_capital) + Number(repasse.valor_custeio)
 
                 }
                 setInitialValue(init);
@@ -359,7 +411,7 @@ export const ReceitaForm = props => {
                 console.log("Erro: ", e)
                 errors.acao_associacao = 'Não existem repasses pendentes para a Associação nesta ação';
             }
-        }else {
+        } else {
             setReadOnlyValor(false)
         }
 
@@ -384,19 +436,23 @@ export const ReceitaForm = props => {
                     return (
                         <form method="POST" id="receitaForm" onSubmit={props.handleSubmit}>
                             <div className="form-row">
+                                {/*Tipo de Receita */}
                                 <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="tipo_receita">Tipo de receita</label>
+                                    <label htmlFor="tipo_receita">Tipo do crédito</label>
                                     <select
                                         id="tipo_receita"
                                         name="tipo_receita"
                                         disabled={readOnlyCampos}
                                         value={props.values.tipo_receita}
                                         onChange={(e) => {
-                                                props.handleChange(e);
-                                                getClassificacaoReceita(e.target.value, setFieldValue);
-                                                //setaRepasse(values);
-                                            }
+
+                                            props.handleChange(e);
+                                            //setaRepasse(values);
+                                            getClassificacaoReceita(e.target.value, setFieldValue);
+                                            setaDetalhesTipoReceita(e.target.value);
+
                                         }
+
                                         onBlur={props.handleBlur}
                                         className="form-control"
                                     >
@@ -408,10 +464,53 @@ export const ReceitaForm = props => {
                                         ))) : null}
                                     </select>
                                     {props.touched.tipo_receita && props.errors.tipo_receita &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.tipo_receita}</span>}
+                                    <span
+                                        className="span_erro text-danger mt-1"> {props.errors.tipo_receita}</span>}
                                 </div>
+                                {/*Fim Tipo de Receita */}
 
-                                <div className="col-12 col-md-3 mt-4">
+                                {/*Detalhamento do Crédito */}
+                                <div className="col-12 col-md-6 mt-4">
+                                    <label htmlFor="tipo_receita">Detalhamento do crédito</label>
+                                    {temOpcoesDetalhesTipoReceita(props.values) ?
+                                        <select
+                                            id="detalhe_tipo_receita"
+                                            name="detalhe_tipo_receita"
+                                            disabled={readOnlyCampos}
+                                            value={props.values.detalhe_tipo_receita ? props.values.detalhe_tipo_receita.id : null}
+                                            onChange={(e) => {
+                                                props.handleChange(e);
+                                            }
+                                            }
+                                            onBlur={props.handleBlur}
+                                            className="form-control"
+                                        >
+                                            {receita.detalhe_tipo_receita
+                                                ? null
+                                                : <option value="">Selecione o detalhamento</option>}
+                                            {getOpcoesDetalhesTipoReceita(props.values)}
+
+                                        </select>
+                                        :
+                                        <input
+                                            value={props.values.detalhe_outros}
+                                            onChange={props.handleChange}
+                                            onBlur={props.handleBlur}
+                                            name="detalhe_outros" id="detalhe_outros" type="text"
+                                            className="form-control"
+                                            placeholder="Digite o detalhamento"
+                                            disabled={readOnlyCampos}
+                                        />
+
+                                    }
+                                    {props.touched.detalhe_tipo_receita && props.errors.detalhe_tipo_receita &&
+                                    <span
+                                        className="span_erro text-danger mt-1"> {props.errors.detalhe_tipo_receita}</span>}
+                                </div>
+                                {/*Fim Detalhamento do Crédito */}
+
+                                {/*Data da Receita */}
+                                <div className="col-12 col-md-4 mt-4">
                                     <label htmlFor="data">Data da receita</label>
                                     <DatePickerField
                                         name="data"
@@ -420,11 +519,93 @@ export const ReceitaForm = props => {
                                         onChange={setFieldValue}
                                         onBlur={props.handleBlur}
                                     />
-                                    {props.touched.data && props.errors.data && <span className="span_erro text-danger mt-1"> {props.errors.data}</span>}
+                                    {props.touched.data && props.errors.data &&
+                                    <span className="span_erro text-danger mt-1"> {props.errors.data}</span>}
                                 </div>
+                                {/*Fim Data da Receita */}
 
-                                <div className="col-12 col-md-3 mt-4">
-                                    <label htmlFor="valor">Valor da receita</label>
+                                {/*Tipo de Conta */}
+                                <div className="col-12 col-md-4 mt-4">
+                                    <label htmlFor="conta_associacao">Tipo de conta</label>
+                                    <select
+                                        id="conta_associacao"
+                                        name="conta_associacao"
+                                        value={props.values.conta_associacao}
+                                        onChange={props.handleChange}
+                                        onBlur={props.handleBlur}
+                                        className="form-control"
+                                        disabled={readOnlyValor || readOnlyCampos}
+                                    >
+                                        {receita.conta_associacao
+                                            ? null
+                                            : <option>Escolha uma conta</option>}
+                                        {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
+                                            <option key={key} value={item.uuid}>{item.nome}</option>
+                                        ))) : null}
+                                    </select>
+                                    {props.touched.conta_associacao && props.errors.conta_associacao &&
+                                    <span
+                                        className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
+                                </div>
+                                {/*Fim Tipo de Conta */}
+
+                                {/*Ação*/}
+                                <div className="col-12 col-md-4 mt-4">
+                                    <label htmlFor="acao_associacao">Ação</label>
+                                    <select
+                                        disabled={readOnlyCampos}
+                                        id="acao_associacao"
+                                        name="acao_associacao"
+                                        value={props.values.acao_associacao}
+                                        onChange={(e) => {
+                                            props.handleChange(e);
+                                            setaRepasse(values)
+                                        }
+                                        }
+                                        onBlur={props.handleBlur}
+                                        className="form-control"
+                                    >
+                                        {receita.acao_associacao
+                                            ? null
+                                            : <option value="">Escolha uma ação</option>}
+                                        {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
+                                            <option key={key} value={item.uuid}>{item.nome}</option>
+                                        ))) : null}
+                                    </select>
+                                    {props.touched.acao_associacao && props.errors.acao_associacao &&
+                                    <span
+                                        className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
+                                </div>
+                                {/*Fim Ação*/}
+
+                                {/*Classificação do Crédito*/}
+                                <div className="col-12 col-md-6 mt-4">
+                                    <label htmlFor="categoria_receita">Classificação do crédito</label>
+
+                                    <select
+                                        id="categoria_receita"
+                                        name="categoria_receita"
+                                        value={props.values.categoria_receita}
+                                        onChange={props.handleChange}
+                                        onBlur={props.handleBlur}
+                                        className="form-control"
+                                        disabled={readOnlyClassificacaoReceita || readOnlyCampos}
+                                    >
+                                        {receita.categorias_receita ? null :
+                                            <option key={0} value="">Escolha a classificação</option>}
+
+                                        {retornaClassificacaoReceita(props.values, setFieldValue)}
+
+                                    </select>
+
+                                    {props.touched.categoria_receita && props.errors.categoria_receita && <span
+                                        className="span_erro text-danger mt-1"> {props.errors.categoria_receita}</span>}
+                                </div>
+                                {/*Fim Classificação do Crédito*/}
+
+                                {/*Valor Total do Crédito */}
+                                <div className="col-12 col-md-6 mt-4">
+                                    <label htmlFor="valor">Valor total do crédito</label>
                                     <CurrencyInput
                                         disabled={readOnlyCampos}
                                         allowNegative={false}
@@ -438,142 +619,28 @@ export const ReceitaForm = props => {
                                         onChangeEvent={props.handleChange}
                                         readOnly={readOnlyValor}
                                     />
-                                    {props.touched.valor && props.errors.valor && <span className="span_erro text-danger mt-1"> {props.errors.valor}</span>}
+                                    {props.touched.valor && props.errors.valor &&
+                                    <span className="span_erro text-danger mt-1"> {props.errors.valor}</span>}
                                 </div>
+                                {/*Fim Valor Total do Crédito */}
                             </div>
 
-                            <div className="form-row">
-                                <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="descricao_receita">Descrição da receita</label>
-                                    <textarea
-                                        disabled={readOnlyCampos}
-                                        value={props.values.descricao}
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                        name="descricao"
-                                        id="descricao"
-                                        rows="9"
-                                        cols="50"
-                                        className="form-control"
-                                        placeholder="Escreva a descrição da receita"/>
-                                    {props.touched.descricao && props.errors.descricao && <span className="span_erro text-danger mt-1"> {props.errors.descricao}</span>}
-                                </div>
-                                <div className="col-12 col-md-6 mt-4">
+                            {/*Botões*/}
 
-                                    <div className="row">
-                                        <div className="col-12">
-                                            <label htmlFor="acao_associacao">Ação</label>
-                                            <select
-                                                disabled={readOnlyCampos}
-                                                id="acao_associacao"
-                                                name="acao_associacao"
-                                                value={props.values.acao_associacao}
-                                                onChange={(e) => {
-                                                        props.handleChange(e);
-                                                        //setaRepasse(values)
-                                                    }
-                                                }
-                                                onBlur={props.handleBlur}
-                                                className="form-control"
-                                            >
-                                                {receita.acao_associacao
-                                                    ? null
-                                                    : <option value="">Escolha uma ação</option>}
-                                                {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
-                                                    <option key={key} value={item.uuid}>{item.nome}</option>
-                                                ))) : null}
-                                            </select>
-                                            {props.touched.acao_associacao && props.errors.acao_associacao &&
-                                            <span className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
-                                        </div>
-                                    </div>
-
-                                    <div className="row mt-4">
-                                        <div className="col-12">
-                                            <label htmlFor="categoria_receita">Classificação da receita</label>
-
-                                            <select
-                                                id="categoria_receita"
-                                                name="categoria_receita"
-                                                value={props.values.categoria_receita}
-                                                onChange={props.handleChange}
-                                                onBlur={props.handleBlur}
-                                                className="form-control"
-                                                disabled={readOnlyClassificacaoReceita || readOnlyCampos}
-                                            >
-                                                {receita.categorias_receita ? null : <option key={0} value="">Escolha a classificação</option>}
-
-                                                {retornaClassificacaoReceita(props.values, setFieldValue)}
-
-                                            </select>
-
-                                            {/*<select
-                                                id="categoria_receita"
-                                                name="categoria_receita"
-                                                value={props.values.categoria_receita}
-                                                onChange={props.handleChange}
-                                                onBlur={props.handleBlur}
-                                                className="form-control"
-                                                disabled={readOnlyClassificacaoReceita || readOnlyCampos}
-                                            >
-                                                {receita.categorias_receita ? null : <option key={0} value="">Escolha a classificação</option>}
-
-                                                {tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 ? (
-
-                                                    tabelas.categorias_receita.map((item, key) => (
-
-                                                        tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)) && (
-
-                                                            <option
-                                                                style={{display: getDisplayOptionClassificacaoReceita(item.id, props.values.tipo_receita)}}
-                                                                //style={{display: (item.id === "CAPITAL" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_capital) || (item.id === "CUSTEIO" && !tabelas.tipos_receita.find(element => element.id === Number(props.values.tipo_receita)).aceita_custeio)  ? "none": "block" }}
-                                                                key={item.id}
-                                                                value={item.id}
-                                                            >
-                                                                {item.nome}
-                                                            </option>
-
-                                                        )
-                                                    )
-                                                )
-                                            ) : null}
-
-                                            </select>*/}
-                                            {props.touched.categoria_receita && props.errors.categoria_receita && <span className="span_erro text-danger mt-1"> {props.errors.categoria_receita}</span>}
-                                        </div>
-                                    </div>
-
-                                    <div className="row mt-4">
-                                        <div className="col-12">
-                                            <label htmlFor="conta_associacao">Tipo de conta</label>
-                                            <select
-                                                id="conta_associacao"
-                                                name="conta_associacao"
-                                                value={props.values.conta_associacao}
-                                                onChange={props.handleChange}
-                                                onBlur={props.handleBlur}
-                                                className="form-control"
-                                                disabled={readOnlyValor || readOnlyCampos}
-                                            >
-                                                {receita.conta_associacao
-                                                    ? null
-                                                    : <option>Escolha uma conta</option>}
-                                                {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
-                                                    <option key={key} value={item.uuid}>{item.nome}</option>
-                                                ))) : null}
-                                            </select>
-                                            {props.touched.conta_associacao && props.errors.conta_associacao &&
-                                            <span className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
-                                <button type="reset" onClick={onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Cancelar </button>
+                                <button type="reset" onClick={onShowModal}
+                                        className="btn btn btn-outline-success mt-2 mr-2">Cancelar
+                                </button>
                                 {uuid
-                                    ? <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
-                                <button disabled={readOnlyBtnAcao} type="submit" className="btn btn-success mt-2">Salvar</button>
+                                    ?
+                                    <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal}
+                                            className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
+                                <button disabled={readOnlyBtnAcao} type="submit"
+                                        className="btn btn-success mt-2">Salvar
+                                </button>
                             </div>
+                            {/*Fim Botões*/}
+
                         </form>
                     );
                 }}
@@ -583,7 +650,8 @@ export const ReceitaForm = props => {
             </section>
             {uuid
                 ?
-                <DeletarModalReceitas show={showDelete} handleClose={onHandleClose} onDeletarTrue={onDeletarTrue}/>
+                <DeletarModalReceitas show={showDelete} handleClose={onHandleClose}
+                                      onDeletarTrue={onDeletarTrue}/>
                 : null
             }
             <section>

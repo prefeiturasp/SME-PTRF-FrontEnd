@@ -16,5 +16,4 @@ export const ReceitaSchema = yup.object().shape({
         function (value) {
             return !(typeof(value) == undefined)
         }),
-    descricao: yup.string().required("Descrição é obrigatório."),
 });
