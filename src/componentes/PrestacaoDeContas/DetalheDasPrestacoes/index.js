@@ -15,7 +15,11 @@ import {
     getDesconciliarDespesa,
     getSalvarPrestacaoDeConta,
     getConcluirPrestacaoDeConta,
+    getObservacoes,
 } from "../../../services/PrestacaoDeContas.service";
+
+import {getContas} from "../../../services/Associacao.service";
+
 import Loading from "../../../utils/Loading";
 import {ErroGeral} from "../../../utils/Modais";
 
@@ -41,6 +45,9 @@ export const DetalheDasPrestacoes = () => {
     const [btnCadastrarTexto, setBtnCadastrarTexto] = useState("")
     const [btnCadastrarUrl, setBtnCadastrarUrl] = useState("")
     const [textareaJustificativa, setTextareaJustificativa] = useState("")
+    const [observacoes, setObservacoes] = useState([])
+    const [contaConciliacao, setContaConciliacao] = useState("")
+
 
     useEffect(() => {
         getAcaoLancamento();
@@ -84,11 +91,59 @@ export const DetalheDasPrestacoes = () => {
         const carregaTabelas = async () => {
             await getTabelasReceita().then(response => {
                 setAcoesAssociacao(response.data.acoes_associacao);
+                carregaObservacoes(response.data.acoes_associacao);
             }).catch(error => {
                 console.log(error);
             });
         };
+        
+        const carregaObservacoes = async (acoes) => {
+            await getObservacoes().then(response => {
+                let observs = acoes.map((acao) => (
+                    {
+                        acao_associacao_uuid: acao.uuid,
+                        observacao: ''
+                    }
+                ));
+                
+                if (response) {
+                    observs = observs.map((obs, idx) => {
+                        let obs_resp = response.find((acao) => acao.acao_associacao_uuid == obs.acao_associacao_uuid);
+
+                        return {
+                            ...obs,
+                            observacao: obs_resp !== undefined ? obs_resp.observacao : obs.observacao
+                        }
+                    })
+                    
+                    const files = JSON.parse(localStorage.getItem('acaoLancamento'));
+                    if (files.acao !== "") {
+                        const observacao = observs.find((acao) => acao.acao_associacao_uuid == files.acao);
+                        setTextareaJustificativa(observacao.observacao);
+                    }
+                } 
+                setObservacoes(observs);
+                
+            }).catch(error => {
+                console.log(error);
+            });
+        }
+
+        const carregaContas = async () => {
+            await getContas().then(response => {
+                console.log(response);
+                const files = JSON.parse(localStorage.getItem('periodoConta'));
+                if (files && files.conta !== "") {
+                    const conta = response.find(conta => conta.uuid === files.conta);
+                    setContaConciliacao(conta.tipo_conta.nome);
+                }
+            }).catch(error => {
+                console.log(error);
+            })
+        }
+
         carregaTabelas();
+        carregaContas();
     }, [])
 
     const getAcaoLancamento = () => {
@@ -149,6 +204,13 @@ export const DetalheDasPrestacoes = () => {
             ...acaoLancamento,
             [name]: value
         });
+
+        if (name === 'acao' && value !== '') {
+            const obs = observacoes.find((acao) => acao.acao_associacao_uuid == value);
+            setTextareaJustificativa(obs.observacao);
+        } else if(name === 'acao') {
+            setTextareaJustificativa('');
+        }
     }
 
     const handleClickCadastrar = () => {
@@ -178,7 +240,14 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const handleChangeTextareaJustificativa = (event) => {
-        setTextareaJustificativa(event.target.value)
+        const obs = observacoes.map((acao) => (
+            {
+                ...acao,
+                observacao: acao.acao_associacao_uuid == acaoLancamento.acao ? event.target.value : acao.observacao
+            }
+            ));
+        setObservacoes(obs);
+        setTextareaJustificativa(event.target.value);
     }
 
     const onShowCancelar = () => {
@@ -207,7 +276,7 @@ export const DetalheDasPrestacoes = () => {
         setShowSalvar(false);
         setShowConcluir(false);
         let payload = {
-            observacoes: textareaJustificativa,
+            observacoes: observacoes,
         }
         try {
             let retorno = await getSalvarPrestacaoDeConta(localStorage.getItem("uuidPrestacaoConta"), payload)
@@ -223,7 +292,7 @@ export const DetalheDasPrestacoes = () => {
         setShowSalvar(false);
         setShowConcluir(false);
         let payload = {
-            observacoes: textareaJustificativa,
+            observacoes: observacoes,
         }
 
         try {
@@ -269,6 +338,7 @@ export const DetalheDasPrestacoes = () => {
                     onSalvarTrue={onSalvarTrue}
                     onConcluirTrue={onConcluirTrue}
                     onHandleClose={onHandleClose}
+                    contaConciliacao={contaConciliacao}
                 />
 
                 <TabelaValoresPendentesPorAcao/>

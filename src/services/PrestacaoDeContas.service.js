@@ -143,3 +143,7 @@ export const getConcluirPrestacaoDeConta = async (
     )
   ).data
 }
+
+export const getObservacoes = async () => {
+  return (await api.get(`/api/prestacoes-contas/${localStorage.getItem("uuidPrestacaoConta")}/observacoes/`,authHeader)).data
+}
