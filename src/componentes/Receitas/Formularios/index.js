@@ -173,7 +173,7 @@ export const ReceitaForm = props => {
 
     const onDeletarTrue = () => {
         deletarReceita(uuid).then(response => {
-            console.log("Receita deletada com sucesso.");
+            console.log("Crédito deletado com sucesso.");
             setShowDelete(false);
             getPath();
         }).catch(error => {
@@ -510,7 +510,7 @@ export const ReceitaForm = props => {
 
                                 {/*Data da Receita */}
                                 <div className="col-12 col-md-4 mt-4">
-                                    <label htmlFor="data">Data da receita</label>
+                                    <label htmlFor="data">Data do crédito</label>
                                     <DatePickerField
                                         name="data"
                                         id="data"
@@ -628,7 +628,7 @@ export const ReceitaForm = props => {
 
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
                                 <button type="reset" onClick={onShowModal}
-                                        className="btn btn btn-outline-success mt-2 mr-2">Cancelar
+                                        className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                 </button>
                                 {uuid
                                     ?

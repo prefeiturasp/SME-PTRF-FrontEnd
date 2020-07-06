@@ -46,7 +46,7 @@ export const CancelarModalReceitas = (propriedades) => {
         <ModalBootstrap
             show={propriedades.show}
             onHide={propriedades.handleClose}
-            titulo="Deseja cancelar a inclusão de Receita?"
+            titulo="Deseja cancelar a inclusão de Crédito?"
             bodyText=""
             primeiroBotaoOnclick={propriedades.onCancelarTrue}
             primeiroBotaoTexto="OK"
@@ -75,8 +75,8 @@ export const DeletarModalReceitas = (propriedades) => {
         <ModalBootstrap
             show={propriedades.show}
             onHide={propriedades.handleClose}
-            titulo="Deseja excluir esta Receita?"
-            bodyText="<p>Tem certeza que deseja excluir esta Receita? A ação não poderá ser desfeita.</p>"
+            titulo="Deseja excluir este Crédito?"
+            bodyText="<p>Tem certeza que deseja excluir este crédito? A ação não poderá ser desfeita.</p>"
             primeiroBotaoOnclick={propriedades.onDeletarTrue}
             primeiroBotaoTexto="OK"
             segundoBotaoOnclick={propriedades.handleClose}
@@ -194,7 +194,7 @@ export const ReverConciliacao = (propriedades) => {
         return (
             <form className="form-group">
                 <p><strong>Revisão dos lançamentos realizados no período: Ao rever os lançamentos deste período, você
-                    permitirá que alterações sejam feitas nos dados da Associação e cadastro de receitas e
+                    permitirá que alterações sejam feitas nos dados da Associação e cadastro de créditos e
                     despesas.</strong></p>
                 <label htmlFor="reabrir-periodo">Escreva abaixo o motivo da revisão dos lançamentos</label>
                 <textarea
