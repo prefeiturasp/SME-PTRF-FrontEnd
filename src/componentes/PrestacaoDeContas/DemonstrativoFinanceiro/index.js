@@ -9,7 +9,7 @@ export class DemonstrativoFinanceiro extends Component {
     _isMounted = false;
 
     state = {
-        rowsPerPage: 7,
+        rowsPerPage: 30,
         estado: [],
     }
 
