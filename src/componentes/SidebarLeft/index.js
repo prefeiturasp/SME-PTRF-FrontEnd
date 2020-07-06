@@ -14,7 +14,7 @@ import IconeMenuDadosDaAssociacao from '../../assets/img/icone-menu-dados-da-ass
 import LogoSP from '../../assets/img/logo-menu.png'
 import { SidebarContext } from '../../context/Sidebar'
 import { useHistory } from 'react-router-dom'
-import { USUARIO_NOME, ASSOCIACAO_NOME } from '../../services/auth.service'
+import { USUARIO_NOME, ASSOCIACAO_NOME, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA } from '../../services/auth.service'
 import { Versao } from '../Versao'
 
 export const SidebarLeft = () => {
@@ -53,7 +53,11 @@ export const SidebarLeft = () => {
             </NavIcon>
             <NavText>
               <div className="container-nome-instituicao">
-                {localStorage.getItem(ASSOCIACAO_NOME)}
+              <span className="border border-white rounded-pill px-4 py-1">
+              {localStorage.getItem(USUARIO_NOME)
+                    ? localStorage.getItem(USUARIO_NOME).split(' ')[0]
+                    : ''}
+              </span>
               </div>
             </NavText>
           </NavItem>
@@ -69,11 +73,7 @@ export const SidebarLeft = () => {
             </NavIcon>
             <NavText>
               <div className="container-nome-instituicao mt-n4 mb-4">
-                <span className="border border-white rounded-pill px-4 py-1">
-                  {localStorage.getItem(USUARIO_NOME)
-                    ? localStorage.getItem(USUARIO_NOME).split(' ')[0]
-                    : ''}
-                </span>
+                  {`${localStorage.getItem(ASSOCIACAO_TIPO_ESCOLA)} ${localStorage.getItem(ASSOCIACAO_NOME_ESCOLA)}`}
               </div>
             </NavText>
           </NavItem>
