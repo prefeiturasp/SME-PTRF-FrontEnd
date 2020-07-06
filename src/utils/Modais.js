@@ -491,8 +491,6 @@ export const TextoCopiado = ({show, handleClose}) => {
 
 export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, validateFormMembros, stateFormEditarMembro, infosMembroSelecionado, btnSalvarReadOnly}) => {
 
-    //console.log("Editar Membro ", infosMembroSelecionado)
-
     const bodyTextarea = () => {
         return (
 
