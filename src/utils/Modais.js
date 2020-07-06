@@ -327,9 +327,13 @@ export const PeriodoFechado = (propriedades) => {
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Período Fechado"
-            bodyText="Este período está fechado, tente novamente."
+            bodyText="Este período está fechado, para inclusão ou edição de lançamentos (créditos ou despesas) é necessário reabrir o processo de prestação de contas. Deseja ir para a página de Prestação de Contas?"
             primeiroBotaoOnclick={propriedades.handleClose}
-            primeiroBotaoTexto="Fechar"
+            primeiroBotaoTexto="Não"
+            primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={() => {window.location.assign("/prestacao-de-contas")}}
+            segundoBotaoTexto="Sim"
+            segundoBotaoCss="success"
         />
     )
 };
