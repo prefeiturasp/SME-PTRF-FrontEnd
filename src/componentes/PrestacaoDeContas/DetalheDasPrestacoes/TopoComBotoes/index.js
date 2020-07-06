@@ -1,12 +1,12 @@
 import React from "react";
 import {CancelarPrestacaoDeContas, SalvarPrestacaoDeContas, ConcluirPrestacaoDeContas} from "../../../../utils/Modais";
 
-export const TopoComBotoes = ({handleClickCadastrar, btnCadastrarTexto, showCancelar, showSalvar, showConcluir, onHandleClose, onShowCancelar, onShowSalvar, onShowConcluir, onCancelarTrue, onSalvarTrue,  onConcluirTrue}) => {
+export const TopoComBotoes = ({handleClickCadastrar, btnCadastrarTexto, showCancelar, showSalvar, showConcluir, onHandleClose, onShowCancelar, onShowSalvar, onShowConcluir, onCancelarTrue, onSalvarTrue,  onConcluirTrue, contaConciliacao}) => {
 
     return (
         <div className="row">
             <div className='col-12 col-md-5 mt-2'>
-                <p className='detalhe-das-prestacoes-titulo'>Demonstrativo financeiro da conta cheque</p>
+                <p className='detalhe-das-prestacoes-titulo'>Conciliação Bancária da Conta {contaConciliacao}</p>
             </div>
             {btnCadastrarTexto &&
                 <div className='col-12 col-md-7 text-right'>
