@@ -75,7 +75,7 @@ export const DespesaContextProvider = ({children}) => {
                 associacao: localStorage.getItem(ASSOCIACAO_UUID),
                 conta_associacao: "",
                 acao_associacao: "",
-                aplicacao_recurso: "CUSTEIO",
+                aplicacao_recurso: "",
                 tipo_custeio: "",
                 especificacao_material_servico: "",
                 valor_rateio: "",
