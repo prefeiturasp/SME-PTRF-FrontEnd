@@ -694,7 +694,7 @@ export const CadastroForm = ({verbo_http}) => {
                                     />
                                     <div className="d-flex  justify-content-end pb-3 mt-3">
                                         <button type="reset" onClick={onShowModal}
-                                                className="btn btn btn-outline-success mt-2 mr-2">Cancelar
+                                                className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                         </button>
                                         {despesaContext.idDespesa
                                             ? <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal}
