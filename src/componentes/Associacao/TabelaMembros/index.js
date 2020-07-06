@@ -4,7 +4,6 @@ import {faAngleDown, faAngleUp, faEdit} from '@fortawesome/free-solid-svg-icons'
 
 export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, onShowEditarMembro, cargos, converteNomeRepresentacao, retornaDadosAdicionaisTabela}) => {
 
-    //console.log("Tabela Membros ", cargos);
     return(
         <>
             <p><strong>{titulo}</strong></p>
@@ -19,7 +18,6 @@ export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, onShowEdita
                 </thead>
                 <tbody>
                 {cargos && cargos.length> 0 && cargos.map((item, index) => {
-                    //console.log("ITEM ", item);
                     return (
                         <Fragment key={index}>
                             <tr>
