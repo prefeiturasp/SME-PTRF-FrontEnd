@@ -1,6 +1,6 @@
 import React from "react";
 import "./cabecalho.scss"
-import LogoPtrf from "../../assets/img/logo-ptrf.png"
+import LogoPtrf from "../../assets/img/logo-ptrf-verde.png"
 import IconeSair from "../../assets/img/sair.svg"
 
 import { authService } from '../../services/auth.service';
