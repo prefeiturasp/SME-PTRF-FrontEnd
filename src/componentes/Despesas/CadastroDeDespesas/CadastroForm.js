@@ -613,7 +613,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         id='aplicacao_recurso'
                                                                         className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                                         disabled={readOnlyCampos}
-                                                                    >
+                                                                    >   
                                                                         <option key={0} value="">Escolha uma opção</option>
                                                                         {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map(item => (
                                                                             <option key={item.id}
