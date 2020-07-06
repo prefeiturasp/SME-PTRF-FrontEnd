@@ -567,7 +567,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                     <hr/>
                                     <h2 className="subtitulo-itens-painel">Dados do gasto</h2>
-                                    <p>Esse gasto se encaixa em mais de um tipo de despesa ou ação?</p>
+                                    <p>Esse gasto se encaixa em mais de um tipo de despesa ou ação do programa?</p>
                                     <div className="form-row">
                                         <div className="col-12 col-md-3 ">
                                             <select

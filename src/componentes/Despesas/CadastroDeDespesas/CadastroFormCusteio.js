@@ -108,7 +108,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         </div>
 
                         <div className="col-12 col-md-6 mt-4">
-                            <label htmlFor="valor_rateio">Valor do custeio</label>
+                            <label htmlFor="valor_rateio">Valor</label>
                             <CurrencyInput
                                 allowNegative={false}
                                 prefix='R$'
