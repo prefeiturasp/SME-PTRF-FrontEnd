@@ -368,11 +368,17 @@ export const ReceitaForm = props => {
 
         e_repasse_acao = values.acao_associacao;
 
+        let hoje = moment(new Date());
+        let data_digitada = moment(values.data);
+
+        if (data_digitada > hoje){
+            errors.data = "Data do crédito não pode ser maior que a data de hoje"
+        }
+
         if (e_repasse_tipo_receita !== false && e_repasse_acao !== "" && e_repasse_acao !== "Escolha uma ação" && values.data) {
 
             try {
 
-                //debugger
                 let repasse = await setaRepasse(values)
 
                 let data_digitada = moment(values.data);
@@ -391,7 +397,7 @@ export const ReceitaForm = props => {
 
                 let id_categoria_receita_lower = values.categoria_receita.toLowerCase();
 
-                let valor_da_receita = eval('repasse.valor_' + id_categoria_receita_lower)
+                let valor_da_receita = eval('repasse.valor_' + id_categoria_receita_lower);
 
                 const init = {
                     ...initialValue,
