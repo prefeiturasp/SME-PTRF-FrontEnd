@@ -72,7 +72,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, validateFor
 
                                                     <div className='col-12 col-md-3'>
                                                         <div className="form-group">
-                                                            <label htmlFor="agencia">Agência {!setaCampoReadonly(conta.tipo_conta.nome) ? 'do programa' : ""}</label>
+                                                            <label htmlFor="agencia">Agência {setaCampoReadonly(conta.tipo_conta.nome) ? 'do programa' : ""}</label>
                                                             <input
                                                                 readOnly={setaCampoReadonly(conta.tipo_conta.nome)}
                                                                 name={`contas[${index}].agencia`}
@@ -90,7 +90,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, validateFor
 
                                                     <div className='col-12 col-md-3'>
                                                         <div className="form-group">
-                                                            <label htmlFor="numero_conta">Nº da conta com o dígito {!setaCampoReadonly(conta.tipo_conta.nome) ? 'do programa' : ""}</label>
+                                                            <label htmlFor="numero_conta">Nº da conta com o dígito {setaCampoReadonly(conta.tipo_conta.nome) ? 'do programa' : ""}</label>
                                                             <input
                                                                 readOnly={setaCampoReadonly(conta.tipo_conta.nome)}
                                                                 name={`contas[${index}].numero_conta`}
