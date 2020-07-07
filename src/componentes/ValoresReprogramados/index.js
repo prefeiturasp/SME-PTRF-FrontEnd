@@ -257,7 +257,7 @@ export const ValoresReprogramados = () => {
                                                                     onBlur={props.handleBlur}
                                                                     className="form-control"
                                                                 >
-                                                                    <option value="">Escoha uma ação</option>
+                                                                    <option value="">Escolha uma ação</option>
                                                                     {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
                                                                         <option key={key}
                                                                                 value={item.uuid}>{item.nome}</option>
@@ -277,7 +277,7 @@ export const ValoresReprogramados = () => {
                                                                     onBlur={props.handleBlur}
                                                                     className="form-control"
                                                                 >
-                                                                    <option value="">Escoha o tipo de conta</option>
+                                                                    <option value="">Escolha o tipo de conta</option>
                                                                     {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
                                                                         <option key={key}
                                                                                 value={item.uuid}>{item.nome}</option>
@@ -298,7 +298,7 @@ export const ValoresReprogramados = () => {
                                                                     onBlur={props.handleBlur}
                                                                     className="form-control"
                                                                 >
-                                                                    <option value="">Escoha o tipo de aplicação</option>
+                                                                    <option value="">Escolha o tipo de aplicação</option>
                                                                     {tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 ? (tabelas.categorias_receita.map((item, key) => (
                                                                         <option key={key}
                                                                                 value={item.id}>{item.nome}</option>
