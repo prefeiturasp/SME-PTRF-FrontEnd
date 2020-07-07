@@ -109,7 +109,7 @@ export const FormFiltrosAvancados = (props) => {
                             </select>
                         </div>
                         <div className="form-group col-md-6">
-                            <label htmlFor="data_inicio">Filtrar por periodo</label>
+                            <label htmlFor="data_inicio">Filtrar por período</label>
                             <div className="row align-items-center">
                                 <div className="col-12 col-md-5 pr-0">
                                     <DatePickerField
@@ -120,7 +120,7 @@ export const FormFiltrosAvancados = (props) => {
                                     />
                                 </div>
                                 <div className="col-12 col-md-2 p-0 text-md-center ">
-                                    <span>Até</span>
+                                    <span>até</span>
                                 </div>
                                 <div className="col-12 col-md-5 pl-0">
                                     <DatePickerField

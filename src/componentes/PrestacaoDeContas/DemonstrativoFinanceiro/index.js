@@ -112,7 +112,7 @@ export class DemonstrativoFinanceiro extends Component {
         const {estado, rowsPerPage} = this.state;
         return (
             <div className="demonstrativo-financeiro-container mt-5">
-                <p className="demonstrativo-financeiro-titulo">Demontrativo Financeiro</p>
+                <p className="demonstrativo-financeiro-titulo">Demonstrativo Financeiro</p>
 
                 <div className="content-section implementation">
                     <DataTable
