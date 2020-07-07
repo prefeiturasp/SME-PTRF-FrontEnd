@@ -6,9 +6,30 @@ Front da aplicação _SIG.Escola_ da Secretaria de Educação da cidade de São 
 
 License: MIT
 
-Versão: 0.4.0
+Versão: 0.5.0
 
 ## Release Notes
+
+### 0.5.0 - 07/07/2020 - Entregas da Sprint 6
+- Confirmação de repasses na entrada de créditos agora considera a classificação da receita em capital ou custeio;
+- Lançamento de saldos reprogramados (implantação de saldos);
+- Cadastramento de todos os cargos da Associação;
+- Cadastramento de dados das contas da Associação;
+- Verificação de duplicidade no lançamento de uma despesa;
+- CNPJ/CPF do fornecedor agora é brigatório no lançamento de uma despesa;
+- Períodos futuros não são mais exibidos no painel de ações;
+- Implementadas buscas por data e fornecedor na consulta de despesas;
+- Implementada busca por data na consulta de créditos;
+- Parametrização por tipo de documento para aceitar apenas dígitos no lançamento de despesas;
+- Exibição de "Carregando" nos módulos de despesas, prestações de contas e dados da associação;
+- Implementado botão para limpar filtros na consulta de créditos;
+- Implementado botão para limpar filtros na consulta de despesas;
+- O número do processo de incorporação recebeu uma máscara 0000.0000/0000000-0;
+- Criado campo para detalhamento de créditos parametrizavel por tipo de crédito;
+- O campo de observação da prestação de contas agora é vinculado à ação da associação;
+- Exibição de valores de créditos futuros na ata da prestação de contas;
+- Exibição do nome da escola abaixo do usuário em vez do nome da associação; 
+- Várias melhorias visuais no front (Ex: cor do logo, icones do menu, etc.);
 
 ### 0.4.0 - 16/06/2020 - Entregas da Sprint 5
 
