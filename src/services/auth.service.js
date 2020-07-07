@@ -6,6 +6,9 @@ export const TOKEN_ALIAS = "TOKEN";
 export const USUARIO_NOME = "NOME";
 export const ASSOCIACAO_UUID = "UUID";
 export const ASSOCIACAO_NOME = "ASSO_NOME";
+export const ASSOCIACAO_NOME_ESCOLA = "NOME_ESCOLA";
+export const ASSOCIACAO_TIPO_ESCOLA = "TIPO_ESCOLA";
+
 
 const authHeader = {
     'Content-Type': 'application/json'
@@ -37,6 +40,15 @@ const login = async (login, senha) => {
                 ASSOCIACAO_NOME,
                 resp.associacao.nome
             )
+            localStorage.setItem(
+                ASSOCIACAO_NOME_ESCOLA,
+                resp.associacao.nome_escola
+            )
+            localStorage.setItem(
+                ASSOCIACAO_TIPO_ESCOLA,
+                resp.associacao.tipo_escola
+            )
+
             const decoded = decode(resp.token);
             window.location.href = "/";
         } 
@@ -68,7 +80,8 @@ const logout = () => {
     localStorage.removeItem(USUARIO_NOME);
     localStorage.removeItem(ASSOCIACAO_UUID);
     localStorage.removeItem(ASSOCIACAO_NOME);
-    localStorage.removeItem(ASSOCIACAO_NOME);
+    localStorage.removeItem(ASSOCIACAO_NOME_ESCOLA);
+    localStorage.removeItem(ASSOCIACAO_TIPO_ESCOLA);
     localStorage.removeItem('periodoConta');
     localStorage.removeItem('uuidPrestacaoConta');
     localStorage.removeItem('acaoLancamento');

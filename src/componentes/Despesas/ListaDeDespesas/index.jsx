@@ -99,7 +99,7 @@ export class ListaDeDespesas extends Component {
                     <button
                         onClick={() => history.push('/cadastro-de-despesa')}
                         type="button"
-                        className="btn btn btn-outline-success float-right"
+                        className="btn btn btn-outline-success float-right mt-2"
                     >
                         Cadastrar despesa
                     </button>
@@ -142,10 +142,7 @@ export class ListaDeDespesas extends Component {
                                 </div>
                                 <Col lg={7} xl={7}
                                      className={`pr-0 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
-                                    <i
-                                        className="float-left fas fa-file-signature"
-                                        style={{marginRight: '5px', color: '#42474A'}}
-                                    ></i>
+                                    <i className="float-left fas fa-file-signature" style={{marginRight: '5px', color: '#42474A'}}></i>
 
                                     <FormFiltroPorPalavra
                                         inputPesquisa={this.state.inputPesquisa}
@@ -158,8 +155,7 @@ export class ListaDeDespesas extends Component {
                                         setLoading={(loading) => this.setState({loading})}
                                     />
                                 </Col>
-                                <Col lg={2} xl={2}
-                                     className={`pl-sm-0 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
+                                <Col lg={2} xl={2} className={`pl-sm-0 mt-2 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
                                     <button
                                         onClick={this.onClickBtnMaisFiltros}
                                         type="button"

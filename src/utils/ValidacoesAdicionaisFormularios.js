@@ -5,17 +5,71 @@ import moment from "moment";
 import {ASSOCIACAO_UUID} from "../services/auth.service";
 import {getPeriodoFechado} from "../services/Associacao.service";
 
+export const checkDuplicateInObject = (propertyName, inputArray) => {
+
+  var seenDuplicate = false,
+      testObject = {};
+
+  inputArray.map((item) => {
+    var itemPropertyName = item[propertyName];
+    if (itemPropertyName in testObject) {
+      testObject[itemPropertyName].duplicate = true;
+      item.duplicate = true;
+      seenDuplicate = true;
+    } else {
+      testObject[itemPropertyName] = item;
+      delete item.duplicate;
+    }
+  });
+  return seenDuplicate;
+};
+
 export const YupSignupSchemaLogin = yup.object().shape({
   login: yup.string().required("Campo código RF é obrigatório"),
   senha: yup.string().required("Campo código Senha é obrigatório"),
 });
 
-export const YupSignupSchemaCadastroDespesa = yup.object().shape({
+export const YupSignupSchemaMembros = yup.object().shape({
+  representacao: yup.string().required("Representação é obrigatório"),
 
+  codigo_identificacao: yup.string()
+    .test('test-name', 'É obrigatório e não pode ultrapassar 10 caracteres',
+        function (value) {
+          const { representacao } = this.parent;
+          if(representacao === "SERVIDOR" || representacao === "ESTUDANTE"){
+            return !(!value || value.trim() === "" || value.length > 10);
+          }else {
+            return true
+          }
+      }),
+
+  nome: yup.string()
+  .test('test-name', 'É obrigatório e não pode ultrapassar 160 caracteres',
+      function (value) {
+        const { representacao } = this.parent;
+        if(representacao === "PAI_RESPONSAVEL"){
+          return !(!value || value.trim() === "" || value.length > 160);
+        }else {
+          return true
+        }
+      }),
+
+  cargo_educacao: yup.string()
+  .test('test-name', 'É obrigatório e não pode ultrapassar 45 caracteres',
+      function (value) {
+        const { representacao } = this.parent;
+        if(representacao === "SERVIDOR"){
+            return !(!value || value.trim() === "" || value.length > 45);
+        }else {
+          return true
+        }
+      }),
+});
+
+export const YupSignupSchemaCadastroDespesa = yup.object().shape({
   cpf_cnpj_fornecedor: yup.string().required("Campo CPF é obrigatório")
   .test('test-name', 'Digite um CPF ou um CNPJ válido',
       function (value) {
-
         if(value !== undefined){
           return valida_cpf_cnpj(value)
         }else {
@@ -35,12 +89,8 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
   valor_recusos_acoes:yup.string().nullable(),
 });
 
-// Synchronous validation
-
 export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral) =>{
-
   data = moment(data, "YYYY-MM-DD").format("YYYY-MM-DD");
-
   try {
     let periodo_fechado = await getPeriodoFechado(data);
 
@@ -251,6 +301,15 @@ export const cpfMaskContitional = (value) => {
   }else if (cpfCnpj.length > 11){
     mask = [/\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, '-', /\d/,/\d/]
   }
+  return mask
+}
+
+export const processoIncorporacaoMask = (value) => {
+  // 0000.0000/0000000-0
+  let processo = value.replace(/[^\d]+/g, "");
+
+  let mask = [/\d/, /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/]
+
   return mask
 }
 

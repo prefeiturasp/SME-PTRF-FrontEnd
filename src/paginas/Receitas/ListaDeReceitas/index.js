@@ -7,7 +7,7 @@ export const ListaDeReceitasPage = props => {
 
     return (
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Créditos recebidos</h1>
+            <h1 className="titulo-itens-painel mt-5">Créditos da escola</h1>
             <div className="page-content-inner ">
                 <ListaDeReceitas {...props}/>
             </div>

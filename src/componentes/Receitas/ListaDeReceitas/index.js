@@ -7,6 +7,7 @@ import {useHistory} from 'react-router-dom';
 import '../../../paginas/404/pagina-404.scss'
 import moment from 'moment';
 import {getListaReceitas} from "../../../services/Receitas.service";
+import {getBotaoValoresReprogramados} from "../../../services/ValoresReprogramados.service";
 import {FormFiltroPorPalavra} from "../../FormFiltroPorPalavra";
 import {MsgImgCentralizada} from "../../Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../Mensagens/MsgImgLadoDireito";
@@ -14,35 +15,41 @@ import Img404 from "../../../assets/img/img-404.svg";
 import "./lista-de-receitas.scss"
 import {FormFiltrosAvancados} from "../FormFiltrosAvancados";
 import Loading from "../../../utils/Loading";
-import { set } from "date-fns";
 
 export const ListaDeReceitas = () => {
 
     let history = useHistory();
     const rowsPerPage = 7;
 
-    const [receitas, setReceitas] = useState([])
-    const [inputPesquisa, setInputPesquisa] = useState("")
-    const [buscaUtilizandoFiltro, setBuscaUtilizandoFiltro] = useState(false)
-    const [btnMaisFiltros, setBtnMaisFiltros] = useState(false)
-    const [loading, setLoading] = useState(true)
+    const [receitas, setReceitas] = useState([]);
+    const [inputPesquisa, setInputPesquisa] = useState("");
+    const [buscaUtilizandoFiltro, setBuscaUtilizandoFiltro] = useState(false);
+    const [btnMaisFiltros, setBtnMaisFiltros] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [btnValoresReprogramados, setBtnValoresReprogramados] = useState(false);
 
     useEffect(() => {
         buscaListaReceitas()
-    }, [])
+        botaoValoresReprogramados()
+    }, []);
 
 
     const buscaListaReceitas = async () => {
-        const listaReceitas = await getListaReceitas()
-        setReceitas(listaReceitas)
+        const listaReceitas = await getListaReceitas();
+        setReceitas(listaReceitas);
 
         setLoading(false);
-    }
+    };
+
+    const botaoValoresReprogramados = async () => {
+        const botao = await getBotaoValoresReprogramados();
+        setBtnValoresReprogramados(botao.permite_implantacao)
+    };
 
     const redirecionaDetalhe = value => {
-        const url = '/edicao-de-receita/' + value.uuid
+        const url = '/edicao-de-receita/' + value.uuid;
         history.push(url);
-    }
+    };
 
     const dataTemplate = (rowData, column) => {
         return (
@@ -53,7 +60,7 @@ export const ListaDeReceitas = () => {
                     : ''}
             </div>
         )
-    }
+    };
 
     const valorTemplate = (rowData, column) => {
         const valorFormatado = rowData['valor']
@@ -61,14 +68,14 @@ export const ListaDeReceitas = () => {
                 style: 'currency',
                 currency: 'BRL'
             })
-            : ''
+            : '';
         return (<span>{valorFormatado}</span>)
-    }
+    };
 
     const onClickBtnMaisFiltros = (event) => {
         setInputPesquisa("")
         setBtnMaisFiltros(!btnMaisFiltros)
-    }
+    };
 
 
     return (
@@ -86,8 +93,7 @@ export const ListaDeReceitas = () => {
                         <div className="col-12">
                             <p>Filtrar por</p>
                         </div>
-                        <div
-                            className={`col-12 col-md-7 pr-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
+                        <div className={`col-12 col-md-5 pr-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
                             <FormFiltroPorPalavra
                                 inputPesquisa={inputPesquisa}
                                 setInputPesquisa={setInputPesquisa}
@@ -98,8 +104,7 @@ export const ListaDeReceitas = () => {
                                 origem="Receitas"
                             />
                         </div>
-                        <div
-                            className={`col-12 col-md-2 pl-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
+                        <div className={`col-12 col-md-2 mt-2 pl-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
                             <button
                                 onClick={onClickBtnMaisFiltros}
                                 type="button"
@@ -108,10 +113,11 @@ export const ListaDeReceitas = () => {
                                 Mais Filtros
                             </button>
                         </div>
-                        <div className={`${btnMaisFiltros ? "col-12" : "col-12 col-md-3"}`}>
-                            <button onClick={() => history.push('/cadastro-de-credito')} type="submit"
-                                    className="btn btn btn-outline-success float-right">Cadastrar crédito
-                            </button>
+                        <div className={`${btnMaisFiltros ? "col-12" : "col-12 col-md-5 mt-2"}`}>
+                            <button onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right">Cadastrar crédito</button>
+                            {btnValoresReprogramados &&
+                                <button onClick={() => history.push('/cadastro-de-valores-reprogramados')} type="submit" className="btn btn btn-outline-success float-right mr-2">Valores reprogramados</button>
+                            }
                         </div>
                     </div>
 
