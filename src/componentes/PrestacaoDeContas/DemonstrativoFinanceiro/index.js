@@ -9,7 +9,7 @@ export class DemonstrativoFinanceiro extends Component {
     _isMounted = false;
 
     state = {
-        rowsPerPage: 7,
+        rowsPerPage: 30,
         estado: [],
     }
 
@@ -51,18 +51,21 @@ export class DemonstrativoFinanceiro extends Component {
     }
 
     gerarPrevia = async (acaoUuid) => {
+        this.props.setLoading(true)
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo
         const conta_uuid = JSON.parse(localStorage.getItem('periodoConta')).conta
-
         await previa(acaoUuid, conta_uuid, periodo_uuid);
+        this.props.setLoading(false)
     }
 
     gerarDocumentoFinal = async (acaoUuid) => {
+        this.props.setLoading(true)
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo
         const conta_uuid = JSON.parse(localStorage.getItem('periodoConta')).conta
 
         await documentoFinal(acaoUuid, conta_uuid, periodo_uuid);
         await this.buscaAcoes();
+        this.props.setLoading(false)
     }
 
     getNomeAcao = (rowData) => {
@@ -109,7 +112,7 @@ export class DemonstrativoFinanceiro extends Component {
         const {estado, rowsPerPage} = this.state;
         return (
             <div className="demonstrativo-financeiro-container mt-5">
-                <p className="demonstrativo-financeiro-titulo">Demontrativo Financeiro</p>
+                <p className="demonstrativo-financeiro-titulo">Demonstrativo Financeiro</p>
 
                 <div className="content-section implementation">
                     <DataTable

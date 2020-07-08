@@ -1,23 +1,30 @@
 import React, {useEffect, useState} from "react";
 import {getAssociacao, alterarAssociacao} from "../../../services/Associacao.service";
 import {CancelarModalAssociacao, SalvarModalAssociacao} from "../../../utils/Modais";
+import {MenuInterno} from "../../MenuInterno";
+import "../associacao.scss"
+import Loading from "../../../utils/Loading";
+import {UrlsMenuInterno} from "../UrlsMenuInterno";
 
 export const DadosDaAsssociacao = () => {
 
     const [stateAssociacao, setStateAssociacao] = useState(undefined);
     const [showModalReceitasCancelar, setShowModalReceitasCancelar] = useState(false);
     const [showModalReceitasSalvar, setShowModalReceitasSalvar] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(()=> {
         buscaAssociacao();
-    }, [])
+        setLoading(false)
+    }, []);
 
     const buscaAssociacao = async () => {
         const associacao = await getAssociacao();
         setStateAssociacao(associacao)
-    }
+    };
 
     const handleSubmit = async (event) => {
+        setLoading(true);
         event.preventDefault();
         const payload = {
             "nome": stateAssociacao.nome,
@@ -25,7 +32,7 @@ export const DadosDaAsssociacao = () => {
             "presidente_associacao_rf": "",
             "presidente_conselho_fiscal_nome": stateAssociacao.presidente_conselho_fiscal_nome,
             "presidente_conselho_fiscal_rf": ""
-        }
+        };
 
         try {
             const response = await alterarAssociacao(payload);
@@ -33,48 +40,64 @@ export const DadosDaAsssociacao = () => {
                 console.log("Operação realizada com sucesso!");
                 onShowModalSalvar()
             } else {
-                console.log(response)
+                console.log(response);
                 return
             }
         } catch (error) {
-            console.log(error)
+            console.log(error);
             return
         }
-    }
+
+        setLoading(false)
+    };
 
     const handleChange = (name, value) => {
         setStateAssociacao({
             ...stateAssociacao,
             [name]: value
         });
-    }
+    };
 
     const onHandleClose = () => {
         setShowModalReceitasCancelar(false);
-    }
+    };
 
     const onCancelarAssociacaoTrue = () => {
         setShowModalReceitasCancelar(false);
         buscaAssociacao();
-    }
+    };
 
     const onShowModalCancelar = () => {
         setShowModalReceitasCancelar(true);
-    }
+    };
 
     const onSalvarAssociacaoTrue = () => {
         setShowModalReceitasSalvar(false);
-    }
+    };
 
     const onShowModalSalvar = () => {
         setShowModalReceitasSalvar(true);
-    }
+    };
 
     return (
         <>
-            {stateAssociacao !== undefined ? (
+            {loading ? (
+                    <Loading
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="0"
+                        marginBottom="0"
+                    />
+                ) :
+                stateAssociacao !== undefined ? (
+
                 <div className="row">
                     <div className="col-12">
+
+                        <MenuInterno
+                            caminhos_menu_interno = {UrlsMenuInterno}
+                        />
+
                         <form onSubmit={handleSubmit}>
                             <div className="form-row">
                                 <div className="form-group col-md-6">
@@ -100,7 +123,7 @@ export const DadosDaAsssociacao = () => {
                                 </div>
                             </div>
 
-                            <div className="form-row">
+                            {/*<div className="form-row">
                                 <div className="form-group col-md-6">
                                     <label htmlFor="presidente_associacao_nome"><strong>Presidente da Associação</strong></label>
                                     <input value={stateAssociacao.presidente_associacao_nome ? stateAssociacao.presidente_associacao_nome : ""} onChange={(e)=>handleChange(e.target.name, e.target.value)} name="presidente_associacao_nome" id="presidente_associacao_nome" type="text" className="form-control" />
@@ -110,7 +133,7 @@ export const DadosDaAsssociacao = () => {
                                     <label htmlFor="presidente_conselho_fiscal_nome"><strong>Presidente do Conselho Fiscal</strong></label>
                                     <input value={stateAssociacao.presidente_conselho_fiscal_nome} onChange={(e)=>handleChange(e.target.name, e.target.value)} name="presidente_conselho_fiscal_nome" id="presidente_conselho_fiscal_nome" type="text" className="form-control" />
                                 </div>
-                            </div>
+                            </div>*/}
                             <div className="d-flex  justify-content-end pb-3">
                                 <button onClick={onShowModalCancelar} type="reset" className="btn btn btn-outline-success mt-2">Cancelar </button>
                                 <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
@@ -125,4 +148,4 @@ export const DadosDaAsssociacao = () => {
             </section>
         </>
     );
-}
+};

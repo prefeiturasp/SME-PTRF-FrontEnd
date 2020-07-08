@@ -1,0 +1,61 @@
+.menu-interno {
+  padding-bottom: 1.5rem;
+  li {
+    border: none;
+
+    a{
+      font-weight: bold !important;
+      color: #A4A4A4;
+      padding-right: 0;
+      padding-left: 0;
+      padding-bottom: 1rem;
+      margin-right: 2rem;
+    }
+
+    a:hover{
+      color: #00585E !important;
+      text-decoration: none;
+    }
+
+    .active{
+      font-weight: bold !important;
+      color: #00585E;
+      border-bottom: solid #00585E 4px;
+    }
+
+    svg{
+      fill: red !important;
+    }
+
+  }
+}
+
+.svg-inline--fa{
+  color: #00585E;
+}
+
+.tabela-membros{
+  .cabecalho{
+    background-color: #F3F3F3;
+  }
+
+  td{
+    width: calc(120% / 4) !important;
+  }
+
+}
+
+.btn-editar-membro,.btn-editar-membro:focus {
+  border: none;
+  background-color: transparent;
+  outline: none;
+}
+
+.escondeItem {
+  display: none !important;
+}
+
+.texto-dados-adicionais-tabela-membros{
+  font-size: 14px;
+  margin-bottom: 0;
+}
