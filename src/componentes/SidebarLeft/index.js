@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import SideNav, { NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav'
 import '@trendmicro/react-sidenav/dist/react-sidenav.css'
 import './siderbarLeft.scss'
@@ -46,7 +46,7 @@ export const SidebarLeft = () => {
                 navitemClassName={sidebarStatus.sideBarStatus ? 'navItemCustomizadoNome esconde-icone mb-n2' : 'navItemCustomizadoNome'}
                 eventKey="dashboard"
             >
-              <NavIcon></NavIcon>
+              <NavIcon>&nbsp;</NavIcon>
               <NavText>
                 <div className="container-nome-instituicao">
                 <span className="border border-white rounded-pill px-4 py-1">
@@ -62,7 +62,7 @@ export const SidebarLeft = () => {
                 navitemClassName="navItemCustomizadoNome"
                 eventKey="dashboard"
             >
-              <NavIcon></NavIcon>
+              <NavIcon>&nbsp;</NavIcon>
               <NavText>
                 <div className="container-nome-instituicao mt-n4 mb-4">
                     {`${localStorage.getItem(ASSOCIACAO_TIPO_ESCOLA)} ${localStorage.getItem(ASSOCIACAO_NOME_ESCOLA)}`}
@@ -74,7 +74,7 @@ export const SidebarLeft = () => {
 
             <NavItem
                 /*data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Dados da Associação" : ""}*/
-                data-tip={!sidebarStatus.sideBarStatus ? "Dados da Associação" : ""} data-for='dados_da_associacao'
+                data-tip="Dados da Associação" data-for='dados_da_associacao'
                 eventKey="dados-da-associacao"
             >
               <NavIcon>
@@ -82,10 +82,10 @@ export const SidebarLeft = () => {
               </NavIcon>
               <NavText>Dados da Associação</NavText>
             </NavItem>
-            <ReactTooltip id='dados_da_associacao'>{}</ReactTooltip>
+            <ReactTooltip disable={sidebarStatus.sideBarStatus} id='dados_da_associacao'>{}</ReactTooltip>
 
           <NavItem
-              data-tip={!sidebarStatus.sideBarStatus ? "Resumo dos recursos" : ""} data-for='resumo_dos_recursos'
+              data-tip="Resumo dos recursos" data-for='resumo_dos_recursos'
               eventKey="dashboard"
           >
             <NavIcon>
@@ -93,10 +93,10 @@ export const SidebarLeft = () => {
             </NavIcon>
             <NavText>Resumo dos recursos</NavText>
           </NavItem>
-          <ReactTooltip id='resumo_dos_recursos'>{}</ReactTooltip>
+          <ReactTooltip disable={sidebarStatus.sideBarStatus} id='resumo_dos_recursos'>{}</ReactTooltip>
 
           <NavItem
-              data-tip={!sidebarStatus.sideBarStatus ? "Créditos da escola" : ""} data-for='creditos_da_escola'
+              data-tip="Créditos da escola" data-for='creditos_da_escola'
               eventKey="lista-de-receitas"
           >
             <NavIcon>
@@ -104,10 +104,10 @@ export const SidebarLeft = () => {
             </NavIcon>
             <NavText>Créditos da escola</NavText>
           </NavItem>
-          <ReactTooltip id='creditos_da_escola'>{}</ReactTooltip>
+          <ReactTooltip disable={sidebarStatus.sideBarStatus} id='creditos_da_escola'>{}</ReactTooltip>
 
           <NavItem
-              data-tip={!sidebarStatus.sideBarStatus ? "Gastos da escola" : ""} data-for='gastos_da_escola'
+              data-tip="Gastos da escola" data-for='gastos_da_escola'
               eventKey="lista-de-despesas"
           >
             <NavIcon>
@@ -115,10 +115,10 @@ export const SidebarLeft = () => {
             </NavIcon>
             <NavText>Gastos da escola</NavText>
           </NavItem>
-          <ReactTooltip id='gastos_da_escola'>{}</ReactTooltip>
+          <ReactTooltip disable={sidebarStatus.sideBarStatus} id='gastos_da_escola'>{}</ReactTooltip>
 
           <NavItem
-              data-tip={!sidebarStatus.sideBarStatus ? "Prestação de contas" : ""} data-for='prestacao_de_contas'
+              data-tip="Prestação de contas"  data-for='prestacao_de_contas'
               eventKey="prestacao-de-contas"
           >
             <NavIcon>
@@ -126,8 +126,7 @@ export const SidebarLeft = () => {
             </NavIcon>
             <NavText>Prestação de contas</NavText>
           </NavItem>
-          <ReactTooltip id='prestacao_de_contas'>{}</ReactTooltip>
-
+          <ReactTooltip disable={sidebarStatus.sideBarStatus} id='prestacao_de_contas'>{}</ReactTooltip>
 
           <NavItem
             eventKey="dashboard"
@@ -137,7 +136,7 @@ export const SidebarLeft = () => {
                 : 'navItemCustomizadoNome'
             }
           >
-            <NavIcon></NavIcon>
+            <NavIcon>&nbsp;</NavIcon>
             <NavText>
               <div className="container-nome-instituicao mt-n4">
                 <img src={LogoSP} alt="" />
@@ -152,7 +151,7 @@ export const SidebarLeft = () => {
                 : 'navItemCustomizadoNome'
             }
           >
-            <NavIcon></NavIcon>
+            <NavIcon>&nbsp;</NavIcon>
             <NavText>
               <div>
                 <Versao />
