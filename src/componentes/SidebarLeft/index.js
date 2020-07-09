@@ -11,7 +11,7 @@ import IconeMenuCadastroDeDespesa from '../../assets/img/icone-menu-cadastro-de-
 import IconeMenuCadastroDeCredito from '../../assets/img/icone-menu-cadastro-de-credito.svg'
 import IconeMenuPrestacaoDeContas from '../../assets/img/icone-menu-prestacao-de-contas.svg'
 import IconeMenuDadosDaAssociacao from '../../assets/img/icone-menu-dados-da-associacao.svg'
-import LogoSP from '../../assets/img/logo-menu.png'
+import LogoSP from '../../assets/img/logo-menu-tratado.png'
 import { SidebarContext } from '../../context/Sidebar'
 import { useHistory } from 'react-router-dom'
 import { USUARIO_NOME, ASSOCIACAO_NOME, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA } from '../../services/auth.service'
