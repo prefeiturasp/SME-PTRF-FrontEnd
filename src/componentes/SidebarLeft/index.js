@@ -82,9 +82,8 @@ export const SidebarLeft = () => {
           </>
           }
 
-          <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Tooltip!</Tooltip>}>
+          <OverlayTrigger overlay={!sidebarStatus.sideBarStatus ? <Tooltip id="tooltip-disabled">Dados da Associação</Tooltip> : <span>&nbsp;</span>}>
             <NavItem
-                //navitemClassName="tooltip"  role="tooltip"
                 /*data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Dados da Associação" : ""}*/
                 eventKey="dados-da-associacao"
             >
