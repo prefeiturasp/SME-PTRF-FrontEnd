@@ -7,23 +7,21 @@ import { faUser, faSchool } from '@fortawesome/free-solid-svg-icons'
 import IconeMenuPainel from '../../assets/img/icone-menu-painel.svg'
 import IconeMenuGastosDaEscola from '../../assets/img/icone-menu-gastos-da-escola.svg'
 import IconeMenuCreditosDaEscola from '../../assets/img/icone-menu-creditos-da-escola.svg'
-import IconeMenuCadastroDeDespesa from '../../assets/img/icone-menu-cadastro-de-despesa.svg'
-import IconeMenuCadastroDeCredito from '../../assets/img/icone-menu-cadastro-de-credito.svg'
 import IconeMenuPrestacaoDeContas from '../../assets/img/icone-menu-prestacao-de-contas.svg'
 import IconeMenuDadosDaAssociacao from '../../assets/img/icone-menu-dados-da-associacao.svg'
 import LogoSP from '../../assets/img/logo-menu-tratado.png'
 import { SidebarContext } from '../../context/Sidebar'
 import { useHistory } from 'react-router-dom'
-import { USUARIO_NOME, ASSOCIACAO_NOME, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA } from '../../services/auth.service'
+import { USUARIO_NOME, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA } from '../../services/auth.service'
 import { Versao } from '../Versao'
 
 export const SidebarLeft = () => {
-  const sidebarStatus = useContext(SidebarContext)
-  let history = useHistory()
+  const sidebarStatus = useContext(SidebarContext);
+  let history = useHistory();
 
   const onToggle = () => {
     sidebarStatus.setSideBarStatus(!sidebarStatus.sideBarStatus)
-  }
+  };
 
   return (
     <>
@@ -32,7 +30,7 @@ export const SidebarLeft = () => {
         className="sideNavCustomizado"
         expanded={sidebarStatus.sideBarStatus}
         onSelect={(selected) => {
-          const to = '/' + selected
+          const to = '/' + selected;
           if (history.location.pathname !== to) {
             history.push(to)
           }
@@ -146,4 +144,4 @@ export const SidebarLeft = () => {
       </SideNav>
     </>
   )
-}
+};
