@@ -54,7 +54,7 @@ export default class RelacaoDeBens extends Component {
         const {mensagem} = this.state;
         return (
             <div className="relacao-bens-container mt-5">
-                <p className="relacao-bens-title">Relação de Bens adquiridos ou produzidos por período</p>
+                <p className="relacao-bens-title">Relação de Bens adquiridos ou produzidos</p>
                 <article>
                     <div className="info">
                     <p className="fonte-14 mb-1"><strong>Bens adquiridos ou produzidos</strong></p>

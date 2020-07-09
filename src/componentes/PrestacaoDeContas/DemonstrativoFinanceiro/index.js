@@ -88,23 +88,23 @@ export class DemonstrativoFinanceiro extends Component {
 
     valorReceita = (rowData, column) => {
         const valor = rowData['receitaDeclarada']
-            ? new Number(rowData['receitaDeclarada']).toLocaleString('pt-BR', {
+            ? Number(rowData['receitaDeclarada']).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
-            : 0
-        const valorFormatado = `R$ ${valor}`
+            : 'R$ 0';
+        const valorFormatado = `${valor}`
         return (<span>{valorFormatado}</span>)
     }
 
     valorDespesa = (rowData, column) => {
         const valor = rowData['despesaDeclarada']
-            ? new Number(rowData['despesaDeclarada']).toLocaleString('pt-BR', {
+            ? Number(rowData['despesaDeclarada']).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
-            : 0
-        const valorFormatado = `R$ ${valor}`
+            : 'R$ 0';
+        const valorFormatado = `${valor}`
         return (<span>{valorFormatado}</span>)
     }
 
@@ -112,7 +112,7 @@ export class DemonstrativoFinanceiro extends Component {
         const {estado, rowsPerPage} = this.state;
         return (
             <div className="demonstrativo-financeiro-container mt-5">
-                <p className="demonstrativo-financeiro-titulo">Demontrativo Financeiro</p>
+                <p className="demonstrativo-financeiro-titulo">Demonstrativo Financeiro</p>
 
                 <div className="content-section implementation">
                     <DataTable
