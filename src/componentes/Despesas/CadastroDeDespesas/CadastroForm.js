@@ -604,7 +604,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     <label htmlFor="aplicacao_recurso">Tipo de aplicação do
                                                                         recurso</label>
                                                                     <select
-                                                                        value={rateio.aplicacao_recurso}
+                                                                        value={rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ""}
                                                                         onChange={(e) => {
                                                                             props.handleChange(e);
                                                                             handleAvisoCapital(e.target.value)
