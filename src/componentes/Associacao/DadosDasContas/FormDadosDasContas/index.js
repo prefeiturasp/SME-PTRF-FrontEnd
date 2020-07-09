@@ -28,7 +28,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, validateFor
                                         {values.contas && values.contas.length > 0 && values.contas.map((conta, index) => {
                                             return (
                                                 <div className="row" key={index}>
-                                                    <div className={`col-12 mt-${index === 0 ? "2" : 4} mb-4 ml-0`}>
+                                                    <div className={`col-12 mt-${index === 0 ? "2" : 4} mb-md-5 mb-xl-4 ml-0`}>
                                                         <p className="mb-0">
                                                             <strong>Conta {index + 1}</strong>
                                                         </p>
@@ -72,7 +72,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, validateFor
 
                                                     <div className='col-12 col-md-3'>
                                                         <div className="form-group">
-                                                            <label htmlFor="agencia">Agência {setaCampoReadonly(conta.tipo_conta.nome) ? 'do programa' : ""}</label>
+                                                            <label htmlFor="agencia">Agência {setaCampoReadonly(conta.tipo_conta.nome) ? 'do Programa' : ""}</label>
                                                             <input
                                                                 readOnly={setaCampoReadonly(conta.tipo_conta.nome)}
                                                                 name={`contas[${index}].agencia`}
@@ -90,7 +90,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, validateFor
 
                                                     <div className='col-12 col-md-3'>
                                                         <div className="form-group">
-                                                            <label htmlFor="numero_conta">Nº da conta com o dígito {setaCampoReadonly(conta.tipo_conta.nome) ? 'do programa' : ""}</label>
+                                                            <label className='mt-md-n5' htmlFor="numero_conta">Nº da conta {setaCampoReadonly(conta.tipo_conta.nome) ? 'do Programa' : ""} com o dígito</label>
                                                             <input
                                                                 readOnly={setaCampoReadonly(conta.tipo_conta.nome)}
                                                                 name={`contas[${index}].numero_conta`}
