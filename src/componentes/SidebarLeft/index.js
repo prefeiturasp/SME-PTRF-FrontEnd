@@ -40,7 +40,14 @@ export const SidebarLeft = () => {
 
           {sidebarStatus.sideBarStatus &&
           <>
-            <NavItem navitemClassName={sidebarStatus.sideBarStatus ? 'navItemCustomizadoNome esconde-icone mb-n2' : 'navItemCustomizadoNome'}  eventKey="dashboard">
+            <button type="button" className="btn btn-secondary" data-toggle="tooltip" data-placement="top"
+                    title="Tooltip on top">
+              Tooltip on top
+            </button>
+            <NavItem
+                navitemClassName={sidebarStatus.sideBarStatus ? 'navItemCustomizadoNome esconde-icone mb-n2' : 'navItemCustomizadoNome'}
+                eventKey="dashboard"
+            >
               <NavIcon></NavIcon>
               <NavText>
                 <div className="container-nome-instituicao">
@@ -53,7 +60,10 @@ export const SidebarLeft = () => {
               </NavText>
             </NavItem>
 
-            <NavItem navitemClassName="navItemCustomizadoNome" eventKey="dashboard">
+            <NavItem
+                navitemClassName="navItemCustomizadoNome"
+                eventKey="dashboard"
+            >
               <NavIcon></NavIcon>
               <NavText>
                 <div className="container-nome-instituicao mt-n4 mb-4">
@@ -64,37 +74,50 @@ export const SidebarLeft = () => {
           </>
           }
 
-          <NavItem eventKey="dados-da-associacao">
+          <NavItem
+              data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Dados da Associação" : ""}
+              eventKey="dados-da-associacao"
+          >
             <NavIcon>
               <img src={IconeMenuDadosDaAssociacao} alt="" />
             </NavIcon>
             <NavText>Dados da Associação</NavText>
           </NavItem>
 
-          <NavItem eventKey="dashboard">
+          <NavItem
+              data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Resumo dos recursos" : ""}
+              eventKey="dashboard"
+          >
             <NavIcon>
               <img src={IconeMenuPainel} alt="" />
             </NavIcon>
             <NavText>Resumo dos recursos</NavText>
           </NavItem>
 
-          <NavItem eventKey="lista-de-receitas">
+          <NavItem
+              data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Créditos da escolas" : ""}
+              eventKey="lista-de-receitas"
+          >
             <NavIcon>
               <img src={IconeMenuCreditosDaEscola} alt="" />
             </NavIcon>
             <NavText>Créditos da escola</NavText>
           </NavItem>
 
-          <NavItem eventKey="lista-de-despesas">
+          <NavItem
+              data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Gastos da escola" : ""}
+              eventKey="lista-de-despesas"
+          >
             <NavIcon>
               <img src={IconeMenuGastosDaEscola} alt="" />
             </NavIcon>
             <NavText>Gastos da escola</NavText>
           </NavItem>
 
-
-
-          <NavItem eventKey="prestacao-de-contas">
+          <NavItem
+              data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Prestação de contas" : ""}
+              eventKey="prestacao-de-contas"
+          >
             <NavIcon>
               <img src={IconeMenuPrestacaoDeContas} alt="" />
             </NavIcon>
