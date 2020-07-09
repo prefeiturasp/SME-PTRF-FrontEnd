@@ -52,6 +52,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [cssEscondeDocumentoTransacao, setCssEscondeDocumentoTransacao] = useState('escondeItem');
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
     const [loading, setLoading] = useState(true);
+    const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
@@ -176,6 +177,12 @@ export const CadastroForm = ({verbo_http}) => {
         // Necessário atribuir o valor ao campo cpf_cnpj_fornecedor para chamar o YupSignupSchemaCadastroDespesa
         setFieldValue("cpf_cnpj_fornecedor", values.cpf_cnpj_fornecedor);
 
+        if (errors && errors.valor_recusos_acoes){
+            setExibeMsgErroValorRecursos(true)
+        }else {
+            setExibeMsgErroValorRecursos(false)
+        }
+
         validaPayloadDespesas(values);
 
 
@@ -251,6 +258,8 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const validateFormDespesas = async (values, props /* only available when using withFormik */) => {
+
+        setExibeMsgErroValorRecursos(false)
 
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
@@ -560,8 +569,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                     />
                                                 )}
                                             </Field>
-                                            {errors.valor_recusos_acoes &&
-                                            <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                                            {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                                         </div>
                                     </div>
 
@@ -604,7 +612,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     <label htmlFor="aplicacao_recurso">Tipo de aplicação do
                                                                         recurso</label>
                                                                     <select
-                                                                        value={rateio.aplicacao_recurso}
+                                                                        value={rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ""}
                                                                         onChange={(e) => {
                                                                             props.handleChange(e);
                                                                             handleAvisoCapital(e.target.value)
@@ -633,6 +641,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         verboHttp={despesaContext.verboHttp}
                                                                         disabled={readOnlyCampos}
                                                                         errors={errors}
+                                                                        exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
                                                                     />
                                                                 ) :
                                                                 rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -645,6 +654,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         verboHttp={despesaContext.verboHttp}
                                                                         disabled={readOnlyCampos}
                                                                         errors={errors}
+                                                                        exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
                                                                     />
                                                                 ) : null}
 
@@ -706,8 +716,7 @@ export const CadastroForm = ({verbo_http}) => {
                                         </button>
                                     </div>
                                     <div className="d-flex justify-content-end">
-                                        {errors.valor_recusos_acoes &&
-                                        <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}
+                                        {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}
                                     </div>
                                     <section>
                                         <SaldoInsuficiente
