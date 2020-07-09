@@ -76,10 +76,9 @@ export const DashboardCard = ({acoesAssociacao}) => {
                                                 {acao.acao_associacao_nome.trim() === 'PTRF' ? (
                                                     <p className="pt-1 pb-1 mb-0">
                                                         Próx. repasse a partir de:{' '}
+
                                                         <strong>
-                                                            {exibeDataPT_BR(
-                                                                acoesAssociacao.data_prevista_repasse
-                                                            )}
+                                                            {acoesAssociacao.data_prevista_repasse !== 'None' ? exibeDataPT_BR(acoesAssociacao.data_prevista_repasse) : ""}
                                                         </strong>
                                                     </p>
                                                 ) : null}
