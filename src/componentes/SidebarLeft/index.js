@@ -2,8 +2,6 @@ import React, { useContext } from 'react'
 import SideNav, { NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav'
 import '@trendmicro/react-sidenav/dist/react-sidenav.css'
 import './siderbarLeft.scss'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser, faSchool } from '@fortawesome/free-solid-svg-icons'
 import IconeMenuPainel from '../../assets/img/icone-menu-painel.svg'
 import IconeMenuGastosDaEscola from '../../assets/img/icone-menu-gastos-da-escola.svg'
 import IconeMenuCreditosDaEscola from '../../assets/img/icone-menu-creditos-da-escola.svg'
@@ -40,54 +38,44 @@ export const SidebarLeft = () => {
         <SideNav.Toggle />
         <SideNav.Nav defaultSelected="dashboard">
 
-          <NavItem navitemClassName={sidebarStatus.sideBarStatus ? 'navItemCustomizadoNome esconde-icone mb-n2' : 'navItemCustomizadoNome'}  eventKey="dashboard">
-            <NavIcon>
-              <FontAwesomeIcon
-                style={{ fontSize: '25px'}}
-                className={sidebarStatus.sideBarStatus ? 'escondeItem' : ''}
-                src={IconeMenuDadosDaAssociacao}
-                icon={faUser}
-              />
-            </NavIcon>
-            <NavText>
-              <div className="container-nome-instituicao">
-              <span className="border border-white rounded-pill px-4 py-1">
-              {localStorage.getItem(USUARIO_NOME)
-                    ? localStorage.getItem(USUARIO_NOME).split(' ')[0]
-                    : ''}
-              </span>
-              </div>
-            </NavText>
-          </NavItem>
+          {sidebarStatus.sideBarStatus &&
+          <>
+            <NavItem navitemClassName={sidebarStatus.sideBarStatus ? 'navItemCustomizadoNome esconde-icone mb-n2' : 'navItemCustomizadoNome'}  eventKey="dashboard">
+              <NavIcon></NavIcon>
+              <NavText>
+                <div className="container-nome-instituicao">
+                <span className="border border-white rounded-pill px-4 py-1">
+                {localStorage.getItem(USUARIO_NOME)
+                      ? localStorage.getItem(USUARIO_NOME).split(' ')[0]
+                      : ''}
+                </span>
+                </div>
+              </NavText>
+            </NavItem>
 
-          <NavItem navitemClassName="navItemCustomizadoNome" eventKey="dashboard">
+            <NavItem navitemClassName="navItemCustomizadoNome" eventKey="dashboard">
+              <NavIcon></NavIcon>
+              <NavText>
+                <div className="container-nome-instituicao mt-n4 mb-4">
+                    {`${localStorage.getItem(ASSOCIACAO_TIPO_ESCOLA)} ${localStorage.getItem(ASSOCIACAO_NOME_ESCOLA)}`}
+                </div>
+              </NavText>
+            </NavItem>
+          </>
+          }
+
+          <NavItem eventKey="dados-da-associacao">
             <NavIcon>
-              <FontAwesomeIcon
-                style={{ fontSize: '25px' }}
-                className={sidebarStatus.sideBarStatus ? 'escondeItem' : ''}
-                src={IconeMenuDadosDaAssociacao}
-                icon={faSchool}
-              />
+              <img src={IconeMenuDadosDaAssociacao} alt="" />
             </NavIcon>
-            <NavText>
-              <div className="container-nome-instituicao mt-n4 mb-4">
-                  {`${localStorage.getItem(ASSOCIACAO_TIPO_ESCOLA)} ${localStorage.getItem(ASSOCIACAO_NOME_ESCOLA)}`}
-              </div>
-            </NavText>
+            <NavText>Dados da Associação</NavText>
           </NavItem>
 
           <NavItem eventKey="dashboard">
             <NavIcon>
               <img src={IconeMenuPainel} alt="" />
             </NavIcon>
-            <NavText>Painel</NavText>
-          </NavItem>
-
-          <NavItem eventKey="lista-de-despesas">
-            <NavIcon>
-              <img src={IconeMenuGastosDaEscola} alt="" />
-            </NavIcon>
-            <NavText>Gastos da escola</NavText>
+            <NavText>Resumo dos recursos</NavText>
           </NavItem>
 
           <NavItem eventKey="lista-de-receitas">
@@ -97,6 +85,15 @@ export const SidebarLeft = () => {
             <NavText>Créditos da escola</NavText>
           </NavItem>
 
+          <NavItem eventKey="lista-de-despesas">
+            <NavIcon>
+              <img src={IconeMenuGastosDaEscola} alt="" />
+            </NavIcon>
+            <NavText>Gastos da escola</NavText>
+          </NavItem>
+
+
+
           <NavItem eventKey="prestacao-de-contas">
             <NavIcon>
               <img src={IconeMenuPrestacaoDeContas} alt="" />
@@ -104,12 +101,7 @@ export const SidebarLeft = () => {
             <NavText>Prestação de contas</NavText>
           </NavItem>
 
-          <NavItem eventKey="dados-da-associacao">
-            <NavIcon>
-              <img src={IconeMenuDadosDaAssociacao} alt="" />
-            </NavIcon>
-            <NavText>Dados da Associação</NavText>
-          </NavItem>
+
           <NavItem
             eventKey="dashboard"
             navitemClassName={
