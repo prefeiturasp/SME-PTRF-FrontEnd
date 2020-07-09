@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import SideNav, { NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav'
 import '@trendmicro/react-sidenav/dist/react-sidenav.css'
 import './siderbarLeft.scss'
@@ -13,17 +13,33 @@ import { useHistory } from 'react-router-dom'
 import { USUARIO_NOME, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA } from '../../services/auth.service'
 import { Versao } from '../Versao'
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
+import ReactTooltip from "react-tooltip";
 
 export const SidebarLeft = () => {
   const sidebarStatus = useContext(SidebarContext);
   let history = useHistory();
 
+
+
   const onToggle = () => {
     sidebarStatus.setSideBarStatus(!sidebarStatus.sideBarStatus)
   };
 
+  useEffect(()=>{
+    const script = document.createElement('script');
+    script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js';
+    script.async = true;
+    document.body.appendChild(script);
+    const $ = () => window.$;
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+
+  },[]);
+
   return (
     <>
+
       <SideNav
         id="sideBarLeft"
         className="sideNavCustomizado"
@@ -41,16 +57,6 @@ export const SidebarLeft = () => {
 
           {sidebarStatus.sideBarStatus &&
           <>
-
-            <>
-              <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Tooltip!</Tooltip>}>
-                <span className="d-inline-block">
-                  <button type="button" className="btn btn-secondary">Tooltip on top</button>
-                </span>
-              </OverlayTrigger>
-            </>
-
-
 
             <NavItem
                 navitemClassName={sidebarStatus.sideBarStatus ? 'navItemCustomizadoNome esconde-icone mb-n2' : 'navItemCustomizadoNome'}
@@ -82,7 +88,7 @@ export const SidebarLeft = () => {
           </>
           }
 
-          <OverlayTrigger overlay={!sidebarStatus.sideBarStatus ? <Tooltip id="tooltip-disabled">Dados da Associação</Tooltip> : <span>&nbsp;</span>}>
+          <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Dados da Associação</Tooltip>}>
             <NavItem
                 /*data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Dados da Associação" : ""}*/
                 eventKey="dados-da-associacao"
@@ -92,10 +98,13 @@ export const SidebarLeft = () => {
               </NavIcon>
               <NavText>Dados da Associação</NavText>
             </NavItem>
-          </OverlayTrigger>
+          </OverlayTrigger>{' '}
+
+
 
           <NavItem
-              data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Resumo dos recursos" : ""}
+              //data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Resumo dos recursos" : ""}
+              data-tip={!sidebarStatus.sideBarStatus ? "Resumo dos recursos" : ""} data-for='test'
               eventKey="dashboard"
           >
             <NavIcon>
@@ -103,6 +112,7 @@ export const SidebarLeft = () => {
             </NavIcon>
             <NavText>Resumo dos recursos</NavText>
           </NavItem>
+          <ReactTooltip id='test'>{}</ReactTooltip>
 
           <NavItem
               data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Créditos da escolas" : ""}

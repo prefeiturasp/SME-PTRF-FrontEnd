@@ -62,3 +62,50 @@
   }
 
 }
+[data-tooltip] {
+  position: relative;
+
+  &::before,
+  &::after {
+    opacity: 0;
+    visbility: hidden;
+    margin-top: -0.5em;
+  }
+
+  &::before {
+    content: attr(data-tooltip);
+    display: block;
+    position: absolute;
+    top: -200%;
+    left: 50%;
+    margin-left: -4.75em;
+    width: 8em;
+    text-align: center;
+    border-radius: 4px;
+    background: black;
+    color: white;
+    font-size: 0.8em;
+    line-height: 1.1;
+    padding: 0.75em 0.95em;
+  }
+
+  &::after {
+    content: "";
+    border: 10px solid transparent;
+    border-top-color: black;
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    margin-left: -10px;
+  }
+
+  &:hover {
+    cursor: help;
+  }
+
+  &:hover::before,
+  &:hover::after {
+    opacity: 1;
+    visiblity: visible;
+  }
+}
