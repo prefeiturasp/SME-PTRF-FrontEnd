@@ -12,6 +12,7 @@ import { SidebarContext } from '../../context/Sidebar'
 import { useHistory } from 'react-router-dom'
 import { USUARIO_NOME, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA } from '../../services/auth.service'
 import { Versao } from '../Versao'
+import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
 export const SidebarLeft = () => {
   const sidebarStatus = useContext(SidebarContext);
@@ -40,10 +41,17 @@ export const SidebarLeft = () => {
 
           {sidebarStatus.sideBarStatus &&
           <>
-            <button type="button" className="btn btn-secondary" data-toggle="tooltip" data-placement="top"
-                    title="Tooltip on top">
-              Tooltip on top
-            </button>
+
+            <>
+              <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Tooltip!</Tooltip>}>
+                <span className="d-inline-block">
+                  <button type="button" className="btn btn-secondary">Tooltip on top</button>
+                </span>
+              </OverlayTrigger>
+            </>
+
+
+
             <NavItem
                 navitemClassName={sidebarStatus.sideBarStatus ? 'navItemCustomizadoNome esconde-icone mb-n2' : 'navItemCustomizadoNome'}
                 eventKey="dashboard"
@@ -74,15 +82,18 @@ export const SidebarLeft = () => {
           </>
           }
 
-          <NavItem
-              data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Dados da Associação" : ""}
-              eventKey="dados-da-associacao"
-          >
-            <NavIcon>
-              <img src={IconeMenuDadosDaAssociacao} alt="" />
-            </NavIcon>
-            <NavText>Dados da Associação</NavText>
-          </NavItem>
+          <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Tooltip!</Tooltip>}>
+            <NavItem
+                //navitemClassName="tooltip"  role="tooltip"
+                /*data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Dados da Associação" : ""}*/
+                eventKey="dados-da-associacao"
+            >
+              <NavIcon>
+                <img src={IconeMenuDadosDaAssociacao} alt="" />
+              </NavIcon>
+              <NavText>Dados da Associação</NavText>
+            </NavItem>
+          </OverlayTrigger>
 
           <NavItem
               data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Resumo dos recursos" : ""}
