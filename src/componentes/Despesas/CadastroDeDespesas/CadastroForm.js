@@ -281,10 +281,8 @@ export const CadastroForm = ({verbo_http}) => {
 
     };
 
-    const validateFormDespesas = async (values, setFieldValue /* only available when using withFormik */) => {
-
+    const validateFormDespesas = async (values, props /* only available when using withFormik */) => {
         setExibeMsgErroValorRecursos(false);
-
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
         // Verifica período fechado para a receita
@@ -334,7 +332,6 @@ export const CadastroForm = ({verbo_http}) => {
     const exibeDocumentoTransacao = (valor) => {
         if (valor){
             let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor));
-
             if (exibe_documento_transacao.tem_documento){
                 setCssEscondeDocumentoTransacao("");
                 setLabelDocumentoTransacao(exibe_documento_transacao.nome);
@@ -515,8 +512,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                         <div className="col-12 col-md-3 mt-4">
                                             <div className={cssEscondeDocumentoTransacao}>
-                                                <label htmlFor="documento_transacao">Número
-                                                    do {labelDocumentoTransacao}</label>
+                                                <label htmlFor="documento_transacao">Número do {labelDocumentoTransacao}</label>
                                                 <input
                                                     value={props.values.documento_transacao}
                                                     onChange={props.handleChange}
