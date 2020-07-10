@@ -53,6 +53,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
     const [loading, setLoading] = useState(true);
     const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
+    const [stateAplicacaoRecurso, setStateAplicacaoRecurso] = useState("");
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
@@ -161,20 +162,6 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
-    const setaValoresCusteioCapital = (value, values, setFieldValue) =>{
-        console.log("setaValoresCusteioCapital ", values)
-
-        if (values.mais_de_um_tipo_despesa === 'nao'){
-            setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values))
-            if (value === 'CAPITAL'){
-                setFieldValue('rateios[0].quantidade_itens_capital', 1)
-                setFieldValue('rateios[0].valor_item_capital', calculaValorRecursoAcoes(values))
-            }
-
-        }
-
-    };
-
     const onShowErroGeral = () => {
         setShowErroGeral(true);
     };
@@ -272,7 +259,24 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
-    const validateFormDespesas = async (values, props /* only available when using withFormik */) => {
+    const setaValoresCusteioCapital = (value=null, values, setFieldValue) =>{
+
+        console.log("set Valores stateAplicacaoRecurso ", stateAplicacaoRecurso);
+        console.log("set Valores value ", value);
+
+        if (values.mais_de_um_tipo_despesa === 'nao'){
+            setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values))
+            if (value === 'CAPITAL'){
+                setFieldValue('rateios[0].quantidade_itens_capital', 1)
+                setFieldValue('rateios[0].valor_item_capital', calculaValorRecursoAcoes(values))
+            }
+
+        }
+
+    };
+
+    const validateFormDespesas = async (values, setFieldValue /* only available when using withFormik */) => {
+
 
         setExibeMsgErroValorRecursos(false)
 
@@ -540,7 +544,12 @@ export const CadastroForm = ({verbo_http}) => {
                                                 name="valor_total"
                                                 id="valor_total"
                                                 className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                                onChangeEvent={props.handleChange}
+                                                //onChangeEvent={props.handleChange}
+                                                onChangeEvent={(e) => {
+                                                    props.handleChange(e);
+                                                    setaValoresCusteioCapital(null, values, setFieldValue)
+
+                                                }}
                                                 disabled={readOnlyCampos}
                                             />
                                             {props.errors.valor_total &&
@@ -624,14 +633,15 @@ export const CadastroForm = ({verbo_http}) => {
                                                                 </div>
                                                                 <div className="col-12 col-md-6 mt-4">
 
-                                                                    <label htmlFor="aplicacao_recurso">Tipo de aplicação do
-                                                                        recurso</label>
+                                                                    <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
                                                                     <select
                                                                         value={rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ""}
                                                                         onChange={(e) => {
                                                                             props.handleChange(e);
                                                                             handleAvisoCapital(e.target.value);
+                                                                            setStateAplicacaoRecurso(e.target.value)
                                                                             setaValoresCusteioCapital(e.target.value, values, setFieldValue)
+
                                                                         }}
                                                                         name={`rateios[${index}].aplicacao_recurso`}
                                                                         id='aplicacao_recurso'

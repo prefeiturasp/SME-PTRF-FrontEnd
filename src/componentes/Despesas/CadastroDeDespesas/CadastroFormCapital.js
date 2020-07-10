@@ -135,7 +135,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 id="valor_rateio"
                                 className="form-control"
                                 onChangeEvent={formikProps.handleChange}
-                                disabled={disabled}
+                                disabled={true}
                             />
                             {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                         </div>

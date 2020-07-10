@@ -287,7 +287,7 @@ export const calculaValorRateio = (valor1, valor2) => {
 }
 export const calculaValorRecursoAcoes = (values) => {
 
-  console.log("Calcula Valor ", values)
+  //console.log("Calcula Valor ", values)
 
   let valor_totalTratado = trataNumericos(values.valor_total)
   let valor_recursos_propriosTratado = trataNumericos(values.valor_recursos_proprios)
