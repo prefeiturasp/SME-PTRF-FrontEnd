@@ -12,16 +12,7 @@ import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
-import {
-    AvisoCapitalModal,
-    CancelarModal,
-    DeletarModal,
-    ErroGeral,
-    PeriodoFechado,
-    SaldoInsuficiente,
-    SaldoInsuficienteConta,
-    ChecarDespesaExistente,
-} from "../../../utils/Modais"
+import { AvisoCapitalModal, CancelarModal, DeletarModal, ErroGeral, PeriodoFechado, SaldoInsuficiente, SaldoInsuficienteConta, ChecarDespesaExistente, } from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
@@ -75,12 +66,10 @@ export const CadastroForm = ({verbo_http}) => {
                 const resposta = await getEspecificacoesCusteio(tipoCusteio.id)
                 let_especificacoes_custeio[tipoCusteio.id] = await resposta
             });
-
             set_especificacoes_custeio(let_especificacoes_custeio)
         };
         carregaTabelasDespesas();
     }, []);
-
 
     useEffect(() => {
         (async function get_especificacoes_capital() {
@@ -110,7 +99,6 @@ export const CadastroForm = ({verbo_http}) => {
     const verificarSaldo = async (payload) => {
         let saldo = await getVerificarSaldo(payload, despesaContext.idDespesa);
         return saldo;
-
     };
 
     const onCancelarTrue = () => {
@@ -150,7 +138,7 @@ export const CadastroForm = ({verbo_http}) => {
         })
         .catch(error => {
             console.log(error);
-            setLoading(false)
+            setLoading(false);
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
         });
     };
@@ -160,6 +148,7 @@ export const CadastroForm = ({verbo_http}) => {
             onShowAvisoCapitalModal()
         }
     };
+
     const onShowErroGeral = () => {
         setShowErroGeral(true);
     };
@@ -185,13 +174,12 @@ export const CadastroForm = ({verbo_http}) => {
 
         validaPayloadDespesas(values);
 
-
         if (Object.entries(errors).length === 0 && values.cpf_cnpj_fornecedor) {
 
             let retorno_saldo = await verificarSaldo(values);
 
             if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente"){
-                setSaldosInsuficientesDaConta(retorno_saldo)
+                setSaldosInsuficientesDaConta(retorno_saldo);
                 setShowSaldoInsuficienteConta(true)
 
             }else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
@@ -227,7 +215,7 @@ export const CadastroForm = ({verbo_http}) => {
 
         if( despesaContext.verboHttp === "POST"){
             try {
-                const response = await criarDespesa(values)
+                const response = await criarDespesa(values);
                 if (response.status === HTTP_STATUS.CREATED) {
                     console.log("Operação realizada com sucesso!");
                     //resetForm({values: ""})
@@ -236,13 +224,13 @@ export const CadastroForm = ({verbo_http}) => {
                     setLoading(false);
                 }
             } catch (error) {
-                console.log(error)
+                console.log(error);
                 setLoading(false);
             }
         }else if(despesaContext.verboHttp === "PUT"){
 
             try {
-                const response = await alterarDespesa(values, despesaContext.idDespesa)
+                const response = await alterarDespesa(values, despesaContext.idDespesa);
                 if (response.status === 200) {
                     console.log("Operação realizada com sucesso!");
                     //resetForm({values: ""})
@@ -257,10 +245,20 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
+    const setaValoresCusteioCapital = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
+        if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
+            setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
+            setFieldValue('rateios[0].quantidade_itens_capital', 1);
+            setFieldValue('rateios[0].valor_item_capital', calculaValorRecursoAcoes(values));
+        }else {
+            setFieldValue('rateios[0].valor_rateio', 0);
+            setFieldValue('rateios[0].quantidade_itens_capital', "");
+            setFieldValue('rateios[0].valor_item_capital', 0);
+        }
+    };
+
     const validateFormDespesas = async (values, props /* only available when using withFormik */) => {
-
-        setExibeMsgErroValorRecursos(false)
-
+        setExibeMsgErroValorRecursos(false);
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
         // Verifica período fechado para a receita
@@ -309,16 +307,15 @@ export const CadastroForm = ({verbo_http}) => {
 
     const exibeDocumentoTransacao = (valor) => {
         if (valor){
-            let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor))
-
+            let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor));
             if (exibe_documento_transacao.tem_documento){
-                setCssEscondeDocumentoTransacao("")
-                setLabelDocumentoTransacao(exibe_documento_transacao.nome)
+                setCssEscondeDocumentoTransacao("");
+                setLabelDocumentoTransacao(exibe_documento_transacao.nome);
             }else {
-                setCssEscondeDocumentoTransacao("escondeItem")
+                setCssEscondeDocumentoTransacao("escondeItem");
             }
         }else {
-            setCssEscondeDocumentoTransacao("escondeItem")
+            setCssEscondeDocumentoTransacao("escondeItem");
         }
     };
 
@@ -491,8 +488,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                         <div className="col-12 col-md-3 mt-4">
                                             <div className={cssEscondeDocumentoTransacao}>
-                                                <label htmlFor="documento_transacao">Número
-                                                    do {labelDocumentoTransacao}</label>
+                                                <label htmlFor="documento_transacao">Número do {labelDocumentoTransacao}</label>
                                                 <input
                                                     value={props.values.documento_transacao}
                                                     onChange={props.handleChange}
@@ -559,7 +555,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                         prefix='R$'
                                                         decimalSeparator=","
                                                         thousandSeparator="."
-                                                        value={calculaValorRecursoAcoes(props)}
+                                                        value={calculaValorRecursoAcoes(values)}
                                                         id="valor_recusos_acoes"
                                                         name="valor_recusos_acoes"
                                                         className="form-control"
@@ -580,7 +576,11 @@ export const CadastroForm = ({verbo_http}) => {
                                         <div className="col-12 col-md-3 ">
                                             <select
                                                 value={props.values.mais_de_um_tipo_despesa}
-                                                onChange={props.handleChange}
+                                                //onChange={props.handleChange}
+                                                onChange={(e) => {
+                                                    props.handleChange(e);
+                                                    setaValoresCusteioCapital(e.target.value, values, setFieldValue);
+                                                }}
                                                 name='mais_de_um_tipo_despesa'
                                                 id='mais_de_um_tipo_despesa'
                                                 className={`${!props.values.mais_de_um_tipo_despesa && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
@@ -609,13 +609,13 @@ export const CadastroForm = ({verbo_http}) => {
                                                                 </div>
                                                                 <div className="col-12 col-md-6 mt-4">
 
-                                                                    <label htmlFor="aplicacao_recurso">Tipo de aplicação do
-                                                                        recurso</label>
+                                                                    <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
                                                                     <select
                                                                         value={rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ""}
                                                                         onChange={(e) => {
                                                                             props.handleChange(e);
-                                                                            handleAvisoCapital(e.target.value)
+                                                                            handleAvisoCapital(e.target.value);
+                                                                            setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
                                                                         }}
                                                                         name={`rateios[${index}].aplicacao_recurso`}
                                                                         id='aplicacao_recurso'
@@ -669,7 +669,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     </button>
                                                                 </div>
                                                             )}
-
                                                         </div> /*div key*/
                                                     )
                                                 })}
@@ -733,7 +732,6 @@ export const CadastroForm = ({verbo_http}) => {
                                             onSaldoInsuficienteContaTrue={() => onSubmit(values, {resetForm})}
                                         />
                                     </section>
-
                                     <section>
                                         <ChecarDespesaExistente
                                             show={showDespesaCadastrada}
@@ -742,9 +740,7 @@ export const CadastroForm = ({verbo_http}) => {
                                     </section>
                                 </form>
                             </>
-
                         ); /*Return metodo principal*/
-
                     }}
                 </Formik>
             }
@@ -767,4 +763,4 @@ export const CadastroForm = ({verbo_http}) => {
             </section>
         </>
     );
-}
+};

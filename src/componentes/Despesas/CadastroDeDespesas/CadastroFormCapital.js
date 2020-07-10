@@ -57,7 +57,7 @@ export const CadastroFormCapital = (propriedades) => {
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="quantidade_itens_capital">Quantidade de itens</label>
                             <NumberFormat
-                                defaultValue={rateio.quantidade_itens_capital}
+                                value={rateio.quantidade_itens_capital}
                                 onChange={formikProps.handleChange}
                                 name={`rateios[${index}].quantidade_itens_capital`}
                                 decimalScale={0}
@@ -135,7 +135,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 id="valor_rateio"
                                 className="form-control"
                                 onChangeEvent={formikProps.handleChange}
-                                disabled={disabled}
+                                disabled={true}
                             />
                             {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                         </div>
