@@ -10,17 +10,22 @@ export const TextoDinamicoInferior = ({dadosAta, retornaDadosAtaFormatado, infoA
                 <p>{retornaDadosAtaFormatado("data_reuniao_texto_inferior")}</p>
             </div>
 
-            <div className='col-12 col-md-6 mt-5'>
-                <div className='row'>
-                    <div className="col-12 col-md-5">
+
+                <div className='row mt-5'>
+                    <div className="col ml-3">
                         <p className="mb-0 text-center">_____________________________________________</p>
                         <p className="mb-0 text-center"><strong>{dadosAta.presidente_reuniao ? dadosAta.presidente_reuniao : "___"}</strong></p>
                         <p className="mb-0 text-center">{dadosAta.cargo_presidente_reuniao ? dadosAta.cargo_presidente_reuniao : "___"}</p>
                     </div>
+                    <div className="col">
+                        <p className="mb-0 text-center">_____________________________________________</p>
+                        <p className="mb-0 text-center"><strong>{dadosAta.secretario_reuniao ? dadosAta.secretario_reuniao : "___"}</strong></p>
+                        <p className="mb-0 text-center">{dadosAta.cargo_secretaria_reuniao ? dadosAta.cargo_secretaria_reuniao : "___"}</p>
+                    </div>
                 </div>
-            </div>
 
-            <div className='col-12 col-md-6 mt-5'>
+
+            {/*<div className='col-12 col-md-6 mt-5'>
                 <div className='row'>
                     <div className="col-12 col-md-5">
                         <p className="mb-0 text-center">_____________________________________________</p>
@@ -28,7 +33,7 @@ export const TextoDinamicoInferior = ({dadosAta, retornaDadosAtaFormatado, infoA
                         <p className="mb-0 text-center">{dadosAta.cargo_secretaria_reuniao ? dadosAta.cargo_secretaria_reuniao : "___"}</p>
                     </div>
                 </div>
-            </div>
+            </div>*/}
         </div>
     )
 };
