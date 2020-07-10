@@ -12,16 +12,7 @@ import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
-import {
-    AvisoCapitalModal,
-    CancelarModal,
-    DeletarModal,
-    ErroGeral,
-    PeriodoFechado,
-    SaldoInsuficiente,
-    SaldoInsuficienteConta,
-    ChecarDespesaExistente,
-} from "../../../utils/Modais"
+import { AvisoCapitalModal, CancelarModal, DeletarModal, ErroGeral, PeriodoFechado, SaldoInsuficiente, SaldoInsuficienteConta, ChecarDespesaExistente, } from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
@@ -75,12 +66,10 @@ export const CadastroForm = ({verbo_http}) => {
                 const resposta = await getEspecificacoesCusteio(tipoCusteio.id)
                 let_especificacoes_custeio[tipoCusteio.id] = await resposta
             });
-
             set_especificacoes_custeio(let_especificacoes_custeio)
         };
         carregaTabelasDespesas();
     }, []);
-
 
     useEffect(() => {
         (async function get_especificacoes_capital() {
@@ -110,7 +99,6 @@ export const CadastroForm = ({verbo_http}) => {
     const verificarSaldo = async (payload) => {
         let saldo = await getVerificarSaldo(payload, despesaContext.idDespesa);
         return saldo;
-
     };
 
     const onCancelarTrue = () => {
@@ -186,7 +174,6 @@ export const CadastroForm = ({verbo_http}) => {
 
         validaPayloadDespesas(values);
 
-
         if (Object.entries(errors).length === 0 && values.cpf_cnpj_fornecedor) {
 
             let retorno_saldo = await verificarSaldo(values);
@@ -259,9 +246,6 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const setaValoresCusteioCapital = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
-
-        console.log('setaValoresCusteioCapital ', mais_de_um_tipo_de_despesa);
-
         if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
             setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
             setFieldValue('rateios[0].quantidade_itens_capital', 1);
@@ -271,14 +255,6 @@ export const CadastroForm = ({verbo_http}) => {
             setFieldValue('rateios[0].quantidade_itens_capital', "");
             setFieldValue('rateios[0].valor_item_capital', 0);
         }
-
-
-/*        if (values.mais_de_um_tipo_despesa === 'nao'){
-            setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
-            setFieldValue('rateios[0].quantidade_itens_capital', 1);
-            setFieldValue('rateios[0].valor_item_capital', calculaValorRecursoAcoes(values));
-        }*/
-
     };
 
     const validateFormDespesas = async (values, props /* only available when using withFormik */) => {
@@ -604,7 +580,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                     setaValoresCusteioCapital(e.target.value, values, setFieldValue);
-
                                                 }}
                                                 name='mais_de_um_tipo_despesa'
                                                 id='mais_de_um_tipo_despesa'
@@ -641,7 +616,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                                             props.handleChange(e);
                                                                             handleAvisoCapital(e.target.value);
                                                                             setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
-
                                                                         }}
                                                                         name={`rateios[${index}].aplicacao_recurso`}
                                                                         id='aplicacao_recurso'
@@ -695,7 +669,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     </button>
                                                                 </div>
                                                             )}
-
                                                         </div> /*div key*/
                                                     )
                                                 })}
@@ -759,7 +732,6 @@ export const CadastroForm = ({verbo_http}) => {
                                             onSaldoInsuficienteContaTrue={() => onSubmit(values, {resetForm})}
                                         />
                                     </section>
-
                                     <section>
                                         <ChecarDespesaExistente
                                             show={showDespesaCadastrada}
@@ -768,9 +740,7 @@ export const CadastroForm = ({verbo_http}) => {
                                     </section>
                                 </form>
                             </>
-
                         ); /*Return metodo principal*/
-
                     }}
                 </Formik>
             }
@@ -793,4 +763,4 @@ export const CadastroForm = ({verbo_http}) => {
             </section>
         </>
     );
-}
+};
