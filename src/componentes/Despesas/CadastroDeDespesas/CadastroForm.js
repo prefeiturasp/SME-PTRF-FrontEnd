@@ -53,7 +53,6 @@ export const CadastroForm = ({verbo_http}) => {
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
     const [loading, setLoading] = useState(true);
     const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
-    const [stateAplicacaoRecurso, setStateAplicacaoRecurso] = useState("");
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
@@ -259,19 +258,26 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
-    const setaValoresCusteioCapital = (value=null, values, setFieldValue) =>{
+    const setaValoresCusteioCapital = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
 
-        console.log("set Valores stateAplicacaoRecurso ", stateAplicacaoRecurso);
-        console.log("set Valores value ", value);
+        console.log('setaValoresCusteioCapital ', mais_de_um_tipo_de_despesa)
 
-        if (values.mais_de_um_tipo_despesa === 'nao'){
-            setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values))
-            if (value === 'CAPITAL'){
-                setFieldValue('rateios[0].quantidade_itens_capital', 1)
-                setFieldValue('rateios[0].valor_item_capital', calculaValorRecursoAcoes(values))
-            }
-
+        if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
+            setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
+            setFieldValue('rateios[0].quantidade_itens_capital', 1);
+            setFieldValue('rateios[0].valor_item_capital', calculaValorRecursoAcoes(values));
+        }else {
+            setFieldValue('rateios[0].valor_rateio', 0);
+            setFieldValue('rateios[0].quantidade_itens_capital', 0);
+            setFieldValue('rateios[0].valor_item_capital', 0);
         }
+
+
+/*        if (values.mais_de_um_tipo_despesa === 'nao'){
+            setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
+            setFieldValue('rateios[0].quantidade_itens_capital', 1);
+            setFieldValue('rateios[0].valor_item_capital', calculaValorRecursoAcoes(values));
+        }*/
 
     };
 
@@ -544,12 +550,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 name="valor_total"
                                                 id="valor_total"
                                                 className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                                //onChangeEvent={props.handleChange}
-                                                onChangeEvent={(e) => {
-                                                    props.handleChange(e);
-                                                    setaValoresCusteioCapital(null, values, setFieldValue)
-
-                                                }}
+                                                onChangeEvent={props.handleChange}
                                                 disabled={readOnlyCampos}
                                             />
                                             {props.errors.valor_total &&
@@ -604,7 +605,12 @@ export const CadastroForm = ({verbo_http}) => {
                                         <div className="col-12 col-md-3 ">
                                             <select
                                                 value={props.values.mais_de_um_tipo_despesa}
-                                                onChange={props.handleChange}
+                                                //onChange={props.handleChange}
+                                                onChange={(e) => {
+                                                    props.handleChange(e);
+                                                    setaValoresCusteioCapital(e.target.value, values, setFieldValue);
+
+                                                }}
                                                 name='mais_de_um_tipo_despesa'
                                                 id='mais_de_um_tipo_despesa'
                                                 className={`${!props.values.mais_de_um_tipo_despesa && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
@@ -639,8 +645,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         onChange={(e) => {
                                                                             props.handleChange(e);
                                                                             handleAvisoCapital(e.target.value);
-                                                                            setStateAplicacaoRecurso(e.target.value)
-                                                                            setaValoresCusteioCapital(e.target.value, values, setFieldValue)
+                                                                            setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
 
                                                                         }}
                                                                         name={`rateios[${index}].aplicacao_recurso`}
