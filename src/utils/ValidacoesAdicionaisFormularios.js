@@ -285,10 +285,12 @@ export const calculaValorRateio = (valor1, valor2) => {
 
   return valor_total;
 }
-export const calculaValorRecursoAcoes = (props) => {
+export const calculaValorRecursoAcoes = (values) => {
 
-  let valor_totalTratado = trataNumericos(props.values.valor_total)
-  let valor_recursos_propriosTratado = trataNumericos(props.values.valor_recursos_proprios)
+  console.log("Calcula Valor ", values)
+
+  let valor_totalTratado = trataNumericos(values.valor_total)
+  let valor_recursos_propriosTratado = trataNumericos(values.valor_recursos_proprios)
   let valor_total = valor_totalTratado - valor_recursos_propriosTratado;
   return valor_total;
 }

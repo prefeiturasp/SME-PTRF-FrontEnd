@@ -166,7 +166,7 @@ export const CadastroForm = ({verbo_http}) => {
 
         if (values.mais_de_um_tipo_despesa === 'nao'){
             if (value === "CUSTEIO"){
-                setFieldValue('rateios[0].valor_rateio', values.valor_recusos_acoes)
+                setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values))
             }
         }
 
@@ -571,7 +571,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                         prefix='R$'
                                                         decimalSeparator=","
                                                         thousandSeparator="."
-                                                        value={calculaValorRecursoAcoes(props)}
+                                                        value={calculaValorRecursoAcoes(values)}
                                                         id="valor_recusos_acoes"
                                                         name="valor_recusos_acoes"
                                                         className="form-control"
