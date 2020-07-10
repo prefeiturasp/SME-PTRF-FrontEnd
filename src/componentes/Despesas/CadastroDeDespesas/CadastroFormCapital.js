@@ -57,7 +57,7 @@ export const CadastroFormCapital = (propriedades) => {
                         <div className="col-12 col-md-6 mt-4">
                             <label htmlFor="quantidade_itens_capital">Quantidade de itens</label>
                             <NumberFormat
-                                defaultValue={rateio.quantidade_itens_capital}
+                                value={rateio.quantidade_itens_capital}
                                 onChange={formikProps.handleChange}
                                 name={`rateios[${index}].quantidade_itens_capital`}
                                 decimalScale={0}

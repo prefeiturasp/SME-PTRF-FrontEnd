@@ -150,7 +150,7 @@ export const CadastroForm = ({verbo_http}) => {
         })
         .catch(error => {
             console.log(error);
-            setLoading(false)
+            setLoading(false);
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
         });
     };
@@ -192,7 +192,7 @@ export const CadastroForm = ({verbo_http}) => {
             let retorno_saldo = await verificarSaldo(values);
 
             if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente"){
-                setSaldosInsuficientesDaConta(retorno_saldo)
+                setSaldosInsuficientesDaConta(retorno_saldo);
                 setShowSaldoInsuficienteConta(true)
 
             }else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
@@ -228,7 +228,7 @@ export const CadastroForm = ({verbo_http}) => {
 
         if( despesaContext.verboHttp === "POST"){
             try {
-                const response = await criarDespesa(values)
+                const response = await criarDespesa(values);
                 if (response.status === HTTP_STATUS.CREATED) {
                     console.log("Operação realizada com sucesso!");
                     //resetForm({values: ""})
@@ -237,13 +237,13 @@ export const CadastroForm = ({verbo_http}) => {
                     setLoading(false);
                 }
             } catch (error) {
-                console.log(error)
+                console.log(error);
                 setLoading(false);
             }
         }else if(despesaContext.verboHttp === "PUT"){
 
             try {
-                const response = await alterarDespesa(values, despesaContext.idDespesa)
+                const response = await alterarDespesa(values, despesaContext.idDespesa);
                 if (response.status === 200) {
                     console.log("Operação realizada com sucesso!");
                     //resetForm({values: ""})
@@ -260,7 +260,7 @@ export const CadastroForm = ({verbo_http}) => {
 
     const setaValoresCusteioCapital = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
 
-        console.log('setaValoresCusteioCapital ', mais_de_um_tipo_de_despesa)
+        console.log('setaValoresCusteioCapital ', mais_de_um_tipo_de_despesa);
 
         if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
             setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
@@ -268,7 +268,7 @@ export const CadastroForm = ({verbo_http}) => {
             setFieldValue('rateios[0].valor_item_capital', calculaValorRecursoAcoes(values));
         }else {
             setFieldValue('rateios[0].valor_rateio', 0);
-            setFieldValue('rateios[0].quantidade_itens_capital', 0);
+            setFieldValue('rateios[0].quantidade_itens_capital', "");
             setFieldValue('rateios[0].valor_item_capital', 0);
         }
 
@@ -283,8 +283,7 @@ export const CadastroForm = ({verbo_http}) => {
 
     const validateFormDespesas = async (values, setFieldValue /* only available when using withFormik */) => {
 
-
-        setExibeMsgErroValorRecursos(false)
+        setExibeMsgErroValorRecursos(false);
 
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
@@ -334,16 +333,16 @@ export const CadastroForm = ({verbo_http}) => {
 
     const exibeDocumentoTransacao = (valor) => {
         if (valor){
-            let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor))
+            let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor));
 
             if (exibe_documento_transacao.tem_documento){
-                setCssEscondeDocumentoTransacao("")
-                setLabelDocumentoTransacao(exibe_documento_transacao.nome)
+                setCssEscondeDocumentoTransacao("");
+                setLabelDocumentoTransacao(exibe_documento_transacao.nome);
             }else {
-                setCssEscondeDocumentoTransacao("escondeItem")
+                setCssEscondeDocumentoTransacao("escondeItem");
             }
         }else {
-            setCssEscondeDocumentoTransacao("escondeItem")
+            setCssEscondeDocumentoTransacao("escondeItem");
         }
     };
 
