@@ -165,9 +165,12 @@ export const CadastroForm = ({verbo_http}) => {
         console.log("setaValoresCusteioCapital ", values)
 
         if (values.mais_de_um_tipo_despesa === 'nao'){
-            if (value === "CUSTEIO"){
-                setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values))
+            setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values))
+            if (value === 'CAPITAL'){
+                setFieldValue('rateios[0].quantidade_itens_capital', 1)
+                setFieldValue('rateios[0].valor_item_capital', calculaValorRecursoAcoes(values))
             }
+
         }
 
     };

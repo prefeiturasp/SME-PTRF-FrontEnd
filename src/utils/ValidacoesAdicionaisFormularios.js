@@ -291,7 +291,7 @@ export const calculaValorRecursoAcoes = (values) => {
 
   let valor_totalTratado = trataNumericos(values.valor_total)
   let valor_recursos_propriosTratado = trataNumericos(values.valor_recursos_proprios)
-  let valor_total = valor_totalTratado - valor_recursos_propriosTratado;
+  let valor_total = round(valor_totalTratado - valor_recursos_propriosTratado, 2);
   return valor_total;
 }
 
