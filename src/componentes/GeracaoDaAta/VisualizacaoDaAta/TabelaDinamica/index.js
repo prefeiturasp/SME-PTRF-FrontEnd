@@ -81,4 +81,4 @@ export const TabelaDinamica = ({infoAta, valorTemplate}) => {
 
         </>
     )
-}
+};
