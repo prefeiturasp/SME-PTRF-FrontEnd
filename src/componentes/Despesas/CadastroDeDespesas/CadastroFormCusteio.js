@@ -116,7 +116,7 @@ export const CadastroFormCusteio = (propriedades) => {
                                 thousandSeparator="."
                                 value={rateio.valor_rateio}
                                 name={`rateios[${index}].valor_rateio`}
-                                id="valor_recusos_acoes"
+                                id="valor_rateio"
                                 className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                                 onChangeEvent={formikProps.handleChange}
                                 disabled={disabled}

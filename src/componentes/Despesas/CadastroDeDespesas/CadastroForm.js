@@ -160,6 +160,18 @@ export const CadastroForm = ({verbo_http}) => {
             onShowAvisoCapitalModal()
         }
     };
+
+    const setaValoresCusteioCapital = (value, values, setFieldValue) =>{
+        console.log("setaValoresCusteioCapital ", values)
+
+        if (values.mais_de_um_tipo_despesa === 'nao'){
+            if (value === "CUSTEIO"){
+                setFieldValue('rateios[0].valor_rateio', values.valor_recusos_acoes)
+            }
+        }
+
+    };
+
     const onShowErroGeral = () => {
         setShowErroGeral(true);
     };
@@ -615,7 +627,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         value={rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ""}
                                                                         onChange={(e) => {
                                                                             props.handleChange(e);
-                                                                            handleAvisoCapital(e.target.value)
+                                                                            handleAvisoCapital(e.target.value);
+                                                                            setaValoresCusteioCapital(e.target.value, values, setFieldValue)
                                                                         }}
                                                                         name={`rateios[${index}].aplicacao_recurso`}
                                                                         id='aplicacao_recurso'
