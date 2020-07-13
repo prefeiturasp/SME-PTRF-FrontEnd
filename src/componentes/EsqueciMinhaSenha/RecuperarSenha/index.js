@@ -1,8 +1,7 @@
-import React, {useState} from "react";
-import {YupSignupSchemaLogin} from "../../../utils/ValidacoesAdicionaisFormularios";
+import React from "react";
 import {Formik} from "formik";
 
-export const RecuperarMinhaSenha = ({initialValuesRecuperarSenha, onSubmitReuperarSenha}) => {
+export const RecuperarMinhaSenha = ({initialValuesRecuperarSenha, onSubmitReuperarSenha, YupSignupSchemaRecuperarSenha}) => {
     return (
         <>
         <div className="esqueci-minha-senha-inner-texto">
@@ -13,7 +12,7 @@ export const RecuperarMinhaSenha = ({initialValuesRecuperarSenha, onSubmitReuper
         <div className='col-12'>
             <Formik
                 initialValues={initialValuesRecuperarSenha}
-                //validationSchema={YupSignupSchemaLogin}
+                validationSchema={YupSignupSchemaRecuperarSenha}
                 validateOnBlur={true}
                 enableReinitialize={true}
                 onSubmit={onSubmitReuperarSenha}

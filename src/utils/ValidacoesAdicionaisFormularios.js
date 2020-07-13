@@ -24,6 +24,10 @@ export const checkDuplicateInObject = (propertyName, inputArray) => {
   return seenDuplicate;
 };
 
+export const YupSignupSchemaRecuperarSenha = yup.object().shape({
+  usuario: yup.string().required("Campo Usuário é obrigatório"),
+});
+
 export const YupSignupSchemaLogin = yup.object().shape({
   login: yup.string().required("Campo código RF é obrigatório"),
   senha: yup.string().required("Campo código Senha é obrigatório"),

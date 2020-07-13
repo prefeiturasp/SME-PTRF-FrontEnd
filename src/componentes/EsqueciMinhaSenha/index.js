@@ -3,6 +3,7 @@ import {useParams} from "react-router-dom";
 import {RecuperarMinhaSenha} from "./RecuperarSenha";
 import {RecuperacaoDeEmail} from "./RecuperacaoDeEmail";
 import "./esqueci-minha-senha.scss"
+import {YupSignupSchemaRecuperarSenha} from "../../utils/ValidacoesAdicionaisFormularios";
 
 export const EsqueciMinhaSenha = () =>{
     const {service} = useParams();
@@ -17,14 +18,13 @@ export const EsqueciMinhaSenha = () =>{
         console.log("onSubmitReuperarSenha ", values)
     };
 
-
-
     return(
         <div className='container-esqueci-minha-senha'>
             {service === 'recuperar-minha-senha' &&
                 <RecuperarMinhaSenha
                     initialValuesRecuperarSenha={initialValuesRecuperarSenha}
                     onSubmitReuperarSenha={onSubmitReuperarSenha}
+                    YupSignupSchemaRecuperarSenha={YupSignupSchemaRecuperarSenha}
                 />
             }
             {service === 'recuperacao-de-email' &&
