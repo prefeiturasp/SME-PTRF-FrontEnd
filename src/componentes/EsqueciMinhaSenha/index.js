@@ -1,7 +1,7 @@
 import React from "react";
 import {useParams} from "react-router-dom";
 import {RecuperarMinhaSenha} from "./RecuperarSenha";
-import {LinnkRecuperacaoEmail} from "./RecuperacaoDeEmail";
+import {RecuperacaoDeEmail} from "./RecuperacaoDeEmail";
 
 export const EsqueciMinhaSenha = () =>{
     const {service} = useParams();
@@ -14,7 +14,7 @@ export const EsqueciMinhaSenha = () =>{
                 <RecuperarMinhaSenha/>
             }
             {service === 'recuperacao-de-email' &&
-                <LinnkRecuperacaoEmail/>
+                <RecuperacaoDeEmail/>
             }
         </>
     );

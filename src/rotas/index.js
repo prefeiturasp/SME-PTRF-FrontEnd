@@ -119,7 +119,7 @@ export const Rotas = (props) => {
     return(
         <Switch>
             <Route path="/login" component={Login}/>
-            <Route path="/esqueci-minha-senha/:service" component={EsqueciMinhaSenhaPage}/>
+            <Route exact={true} path="/esqueci-minha-senha/:service/" component={EsqueciMinhaSenhaPage}/>
             {routesConfig.map(
                 (value, key) => {
                 return (
