@@ -66,7 +66,7 @@ export const LoginForm = () => {
                 )}
             </Formik>
             <div className='text-center mt-2'>
-                <button type="button" onClick={()=>window.location.assign('/recuperar-senha')} className="btn btn-link">Esqueci minha senha</button>
+                <button type="button" onClick={()=>window.location.assign('/esqueci-minha-senha/recuperar-minha-senha')} className="btn btn-link">Esqueci minha senha</button>
             </div>
         </div>
     )

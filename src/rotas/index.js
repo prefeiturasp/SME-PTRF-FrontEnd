@@ -16,7 +16,7 @@ import {VisualizacaoDaAta} from "../componentes/GeracaoDaAta/VisualizacaoDaAta";
 import {MembrosDaAssociacaoPage} from "../paginas/MembrosDaAssociacao";
 import {ValoresReprogramadosPage} from "../paginas/ValoresReprogramados";
 import {DadosDasContasPage} from "../paginas/DadosDasContasAssociacao";
-import {RecuperarSenhaPage} from "../paginas/EsqueciMinhaSenha/recuperarSenhaPage";
+import {EsqueciMinhaSenhaPage} from "../paginas/EsqueciMinhaSenha";
 
 import { authService } from '../services/auth.service';
 
@@ -115,11 +115,11 @@ const PrivateRouter = (
     />
   );
 
-export const Rotas = () => {
+export const Rotas = (props) => {
     return(
         <Switch>
             <Route path="/login" component={Login}/>
-            <Route path="/recuperar-senha" component={RecuperarSenhaPage}/>
+            <Route path="/esqueci-minha-senha/:service" component={EsqueciMinhaSenhaPage}/>
             {routesConfig.map(
                 (value, key) => {
                 return (

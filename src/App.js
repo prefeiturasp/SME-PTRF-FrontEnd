@@ -12,7 +12,10 @@ export const App = () => {
     const pathName = useHistory().location.pathname;
     return (
         <section role="main" id="main" className="row">
-            {pathName === '/login' || pathName === '/recuperar-senha' ? (
+            {pathName === '/login' ||
+            pathName === '/esqueci-minha-senha' ||
+            pathName === '/esqueci-minha-senha/recuperar-minha-senha' ||
+            pathName === '/esqueci-minha-senha/recuperacao-de-email' ? (
                 <Rotas/>
             ) : pathName === '/detalhe-das-prestacoes' || pathName === "/visualizacao-da-ata" ? (
                     <>
