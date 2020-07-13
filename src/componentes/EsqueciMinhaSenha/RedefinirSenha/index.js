@@ -12,21 +12,39 @@ export const RedefinirSenha = () => {
         confirmacao_senha: "",
     };
 
-    const [cssMedidorSenha, setcssMedidorSenha] = useState("");
+    const [iconeMedidorSenha, setIconeMedidorSenha] = useState("");
 
     const onSubmit = (values) =>{
         console.log("on Submit ", values)
     };
 
-    const validateFormRedefinirSenha = async (values ) => {
-
+    const medidorForcaSenha = (values) => {
         let usuario = values.senha;
+        let contador_forca_senha = 0;
         let letra_minuscula = document.getElementById("letra_minuscula");
+        let letra_maiuscula = document.getElementById("letra_maiuscula");
+
         if (usuario && usuario.match( /(?=.*[a-z])/) ){
             letra_minuscula.classList.add("forca-senha-validada");
+            contador_forca_senha +=1
         }else {
             letra_minuscula.classList.remove('forca-senha-validada')
         }
+
+        if (usuario && usuario.match( /(?=.*[A-Z])/) ){
+            letra_maiuscula.classList.add("forca-senha-validada");
+            contador_forca_senha +=1
+        }else {
+            letra_maiuscula.classList.remove('forca-senha-validada')
+        }
+
+        console.log("Contador forca senha ", contador_forca_senha)
+    };
+
+
+    const validateFormRedefinirSenha = async (values ) => {
+
+        medidorForcaSenha(values)
 
     }
 
@@ -79,8 +97,8 @@ export const RedefinirSenha = () => {
                                 </div>
                                 <div className='form-group'>
                                     <p className='requisitos-seguranca-senha requisitos-seguranca-senha-validado'><strong>Requisitos de seguranca da senha:</strong></p>
-                                    <p id='letra_minuscula' className='requisitos-seguranca-senha'>Uma letra maiúscula</p>
-                                    <p className='requisitos-seguranca-senha'>Uma letra minúscula</p>
+                                    <p className='requisitos-seguranca-senha'><span id='letra_minuscula' className='pr-4'>Uma letra maiúscula</span></p>
+                                    <p className='requisitos-seguranca-senha'><span id='letra_maiuscula' className='pr-4'>Uma letra minúsculaminúsculaminúsculaminúscula</span></p>
                                     <p className='requisitos-seguranca-senha'>As senhas devem ser iguais</p>
                                     <p className='requisitos-seguranca-senha'>Não pode conter espaço em branco</p>
                                     <p className='requisitos-seguranca-senha'>Não podem conter caracteres acentuados</p>
