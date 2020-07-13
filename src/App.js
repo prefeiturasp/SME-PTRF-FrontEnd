@@ -10,11 +10,14 @@ import {SidebarLeft} from './componentes/SidebarLeft'
 
 export const App = () => {
     const pathName = useHistory().location.pathname;
+    console.log("Path Name ", pathName)
     return (
         <section role="main" id="main" className="row">
             {pathName === '/login' ||
             pathName === '/esqueci-minha-senha/recuperar-minha-senha/' ||
-            pathName === '/esqueci-minha-senha/recuperacao-de-email/' ? (
+            pathName === '/esqueci-minha-senha/recuperacao-de-email/' ||
+            //pathName === '/redefinir-senha/:uuid/' ||
+            pathName.match(/\/redefinir-senha\//)  ? (
                 <Rotas/>
             ) : pathName === '/detalhe-das-prestacoes' || pathName === "/visualizacao-da-ata" ? (
                     <>

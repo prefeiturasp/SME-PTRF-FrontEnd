@@ -3,7 +3,6 @@ import {RecuperarMinhaSenha} from "./RecuperarSenha";
 import {RecuperacaoDeEmail} from "./RecuperacaoDeEmail";
 import "./esqueci-minha-senha.scss"
 import {YupSignupSchemaRecuperarSenha} from "../../utils/ValidacoesAdicionaisFormularios";
-import {replace} from "formik";
 
 export const EsqueciMinhaSenha = () =>{
 
