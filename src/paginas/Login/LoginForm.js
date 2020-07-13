@@ -66,6 +66,9 @@ export const LoginForm = () => {
                     </form>
                 )}
             </Formik>
+            <div className='text-center mt-3'>
+                <a href='#' className="text-center">Esqueci minha senha</a>
+            </div>
         </div>
 
 
