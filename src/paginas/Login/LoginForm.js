@@ -2,15 +2,13 @@ import React, {useState} from "react";
 import {Formik} from "formik";
 import {YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
 import { authService } from "../../services/auth.service";
-import {RecuperarSenhaPage} from "../EsqueciMinhaSenha/recuperarSenhaPage";
-
 
 export const LoginForm = () => {
     const [mensagem, setMensagem] = useState('');
 
     const initialValues = () => (
         {login: "", senha: ""}
-    )
+    );
 
     const onSubmit = async (values) => {
         try {
@@ -19,7 +17,7 @@ export const LoginForm = () => {
         }catch (e) {
             setMensagem("Senha incorreta")
         }
-    }
+    };
 
     return (
         <div className="w-75">
@@ -67,12 +65,9 @@ export const LoginForm = () => {
                     </form>
                 )}
             </Formik>
-            <div className='text-center mt-3'>
+            <div className='text-center mt-2'>
                 <button type="button" onClick={()=>window.location.assign('/recuperar-senha')} className="btn btn-link">Esqueci minha senha</button>
             </div>
         </div>
-
-
     )
-
 };
