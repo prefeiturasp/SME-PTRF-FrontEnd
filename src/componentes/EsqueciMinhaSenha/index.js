@@ -1,21 +1,28 @@
-import React from "react";
-import {useParams} from "react-router-dom";
+import React, {useEffect, useState} from "react";
 import {RecuperarMinhaSenha} from "./RecuperarSenha";
 import {RecuperacaoDeEmail} from "./RecuperacaoDeEmail";
 import "./esqueci-minha-senha.scss"
 import {YupSignupSchemaRecuperarSenha} from "../../utils/ValidacoesAdicionaisFormularios";
 
 export const EsqueciMinhaSenha = () =>{
-    const {service} = useParams();
 
-    console.log("Rota ", service)
+    const [service, setService] = useState(false);
+    const [recuperacaoDeEmail, setRecuperacaoDeEmail] = useState({});
+    useEffect(()=>{
+        setService('recuperar-minha-senha')
+    }, []);
 
     const initialValuesRecuperarSenha = {
             usuario: ""
         };
 
     const onSubmitReuperarSenha = async (values) =>{
-        console.log("onSubmitReuperarSenha ", values)
+        console.log("onSubmitReuperarSenha ", values);
+        setRecuperacaoDeEmail({
+            usuario:values.usuario,
+            encontrado:true,
+        })
+        setService('recuperacao-de-email')
     };
 
     return(
@@ -27,9 +34,13 @@ export const EsqueciMinhaSenha = () =>{
                     YupSignupSchemaRecuperarSenha={YupSignupSchemaRecuperarSenha}
                 />
             }
+
             {service === 'recuperacao-de-email' &&
-                <RecuperacaoDeEmail/>
+                <RecuperacaoDeEmail
+                    recuperacaoDeEmail={recuperacaoDeEmail}
+                />
             }
+
         </div>
     );
 };
