@@ -18,7 +18,6 @@ export const EsqueciMinhaSenha = () =>{
         };
 
     const onSubmitReuperarSenha = async (values) =>{
-        console.log("onSubmitReuperarSenha ", values);
         setRecuperacaoDeEmail({
             usuario:values.usuario,
             encontrado:true,
