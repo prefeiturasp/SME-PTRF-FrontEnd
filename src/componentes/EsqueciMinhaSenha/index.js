@@ -9,10 +9,23 @@ export const EsqueciMinhaSenha = () =>{
 
     console.log("Rota ", service)
 
+    const initialValuesRecuperarSenha = {
+            usuario: ""
+        };
+
+    const onSubmitReuperarSenha = async (values) =>{
+        console.log("onSubmitReuperarSenha ", values)
+    };
+
+
+
     return(
         <div className='container-esqueci-minha-senha'>
             {service === 'recuperar-minha-senha' &&
-                <RecuperarMinhaSenha/>
+                <RecuperarMinhaSenha
+                    initialValuesRecuperarSenha={initialValuesRecuperarSenha}
+                    onSubmitReuperarSenha={onSubmitReuperarSenha}
+                />
             }
             {service === 'recuperacao-de-email' &&
                 <RecuperacaoDeEmail/>
