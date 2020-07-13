@@ -16,6 +16,7 @@ import {VisualizacaoDaAta} from "../componentes/GeracaoDaAta/VisualizacaoDaAta";
 import {MembrosDaAssociacaoPage} from "../paginas/MembrosDaAssociacao";
 import {ValoresReprogramadosPage} from "../paginas/ValoresReprogramados";
 import {DadosDasContasPage} from "../paginas/DadosDasContasAssociacao";
+import {RecuperarSenhaPage} from "../paginas/EsqueciMinhaSenha/recuperarSenhaPage";
 
 import { authService } from '../services/auth.service';
 
@@ -118,6 +119,7 @@ export const Rotas = () => {
     return(
         <Switch>
             <Route path="/login" component={Login}/>
+            <Route path="/recuperar-senha" component={RecuperarSenhaPage}/>
             {routesConfig.map(
                 (value, key) => {
                 return (
