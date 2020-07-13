@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Formik} from "formik";
 import {YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
 import { authService } from "../../services/auth.service";
+import {RecuperarSenhaPage} from "../EsqueciMinhaSenha/recuperarSenhaPage";
 
 
 export const LoginForm = () => {
