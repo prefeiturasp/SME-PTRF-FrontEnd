@@ -7,7 +7,7 @@ export const RespostaErro = () => {
 
     const [btnDisabled, setBtnDisabled] = useState(false);
     const [loading, setLoading] = useState(false);
-    
+
     const handleClick = () => {
         setLoading(true);
         setBtnDisabled(true);
