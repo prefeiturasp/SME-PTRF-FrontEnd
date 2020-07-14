@@ -3,7 +3,7 @@ import {Formik} from "formik";
 import {YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
 import { authService } from "../../services/auth.service";
 
-export const LoginForm = () => {
+export const LoginForm = ({redefinicaoDeSenha}) => {
     const [mensagem, setMensagem] = useState('');
 
     const initialValues = () => (
@@ -68,6 +68,17 @@ export const LoginForm = () => {
             <div className='text-center mt-2'>
                 <button type="button" onClick={()=>window.location.assign('/esqueci-minha-senha/')} className="btn btn-link">Esqueci minha senha</button>
             </div>
+
+            {redefinicaoDeSenha && redefinicaoDeSenha.msg && redefinicaoDeSenha.alertCss &&
+                <div className='text-center mt-2'>
+                    <div className={`${redefinicaoDeSenha.alertCss} alert-dismissible fade show`} role="alert">
+                        {redefinicaoDeSenha.msg}
+                        <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            }
         </div>
     )
 };

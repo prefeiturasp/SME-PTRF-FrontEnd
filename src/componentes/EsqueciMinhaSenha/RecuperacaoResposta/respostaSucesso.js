@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCheckCircle} from '@fortawesome/free-solid-svg-icons'
 
@@ -14,7 +15,18 @@ export const RespostaSucesso = ({emailComMascara}) =>{
                 Seu link de recuperação de senha foi enviado para: <br/>{emailComMascara}
             </p>
             <p className="mb-5">Verifique sua caixa de entrada!</p>
-            <button onClick={()=>window.location.assign("/login")} className="btn btn-success btn-block">Continuar</button>
+            <Link
+                to={{
+                    pathname: "/login",
+                    redefinicaoDeSenha: {
+                        msg: "Senha redefinida com sucesso",
+                        alertCss: "alert alert-success"
+                    }
+                }}
+                className="btn btn-success btn-block"
+            >
+                Continuar
+            </Link>
         </>
     );
 };
