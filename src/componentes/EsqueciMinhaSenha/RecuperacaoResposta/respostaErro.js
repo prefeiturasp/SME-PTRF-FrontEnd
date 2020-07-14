@@ -16,25 +16,25 @@ export const RespostaErro = () => {
 
     return (
         <>
-            {loading ? (
-                    <Loading
-                        corGrafico="black"
-                        corFonte="dark"
-                        marginTop="0"
-                        marginBottom="0"
-                    />
-                ) :
-                <>
-                    <FontAwesomeIcon
-                        style={{fontSize: '80px', marginRight: "0", color: "red"}}
-                        icon={faTimesCircle}
-                    />
-                    < p className='mt-3'>
-                        Um erro ocorreu. Não encontramos o usuário solicitado, tente novamente
-                    </p>
-                    <button type="button" disabled={btnDisabled} onClick={() => {handleClick()}} className="btn btn-success btn-block">Continuar</button>
-                </>
-            }
+        {loading ? (
+            <Loading
+                corGrafico="black"
+                corFonte="dark"
+                marginTop="0"
+                marginBottom="0"
+            />
+            ) :
+            <>
+            <FontAwesomeIcon
+                style={{fontSize: '80px', marginRight: "0", color: "red"}}
+                icon={faTimesCircle}
+            />
+            <p className='mt-3'>
+                Um erro ocorreu. Não encontramos o usuário solicitado, tente novamente
+            </p>
+            <button type="button" disabled={btnDisabled} onClick={() => {handleClick()}} className="btn btn-success btn-block">Continuar</button>
+            </>
+        }
         </>
     );
 };
