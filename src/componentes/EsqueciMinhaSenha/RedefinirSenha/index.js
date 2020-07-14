@@ -18,9 +18,26 @@ export const RedefinirSenha = () => {
         console.log("on Submit ", values)
     };
 
+    const medidorForcaSenhaVerifica = (senha, regex, id_container_msg) =>{
+
+        if (id_container_msg === 'senhas_iguais'){
+
+        }
+
+        if (senha && senha.match(regex) ){
+            id_container_msg.classList.remove("forca-senha-invalida");
+            id_container_msg.classList.add("forca-senha-valida");
+            return true
+        }else {
+            id_container_msg.classList.add("forca-senha-invalida");
+            return false
+        }
+    };
+
     const medidorForcaSenha = (values) => {
         let senha = values.senha;
         let confirmacao_senha = values.confirmacao_senha;
+        let container;
 
         let contador_forca_senha = 0;
         let letra_minuscula = document.getElementById("letra_minuscula");
@@ -31,21 +48,12 @@ export const RedefinirSenha = () => {
         let numero_ou_caracter_especial = document.getElementById("numero_ou_caracter_especial");
         let entre_oito_ate_doze = document.getElementById("entre_oito_ate_doze");
 
-        if (senha && senha.match( /(?=.*[a-z])/) ){
-            letra_minuscula.classList.remove("forca-senha-invalida");
-            letra_minuscula.classList.add("forca-senha-valida");
-            contador_forca_senha +=1
-        }else {
-            letra_minuscula.classList.add("forca-senha-invalida");
-        }
 
-        if (senha && senha.match( /(?=.*[A-Z])/) ){
-            letra_maiuscula.classList.remove("forca-senha-invalida");
-            letra_maiuscula.classList.add("forca-senha-valida");
-            contador_forca_senha +=1
-        }else {
-            letra_maiuscula.classList.add("forca-senha-invalida");
-        }
+        container = medidorForcaSenhaVerifica(senha, /(?=.*[a-z])/, letra_minuscula) ? contador_forca_senha +=1 :"";
+        container = medidorForcaSenhaVerifica(senha, /(?=.*[A-Z])/, letra_maiuscula) ? contador_forca_senha +=1 : "";
+        container = medidorForcaSenhaVerifica(senha, /^(?!.*[ ]).*$/, espaco_em_branco) ? contador_forca_senha +=1 : "";
+        container = medidorForcaSenhaVerifica(senha, /^(?!.*[à-úÀ-Ú]).*$/, caracteres_acentuados) ? contador_forca_senha +=1 : "";
+        container = medidorForcaSenhaVerifica(senha, /[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/, numero_ou_caracter_especial) || medidorForcaSenhaVerifica(senha, /[0-9]/, numero_ou_caracter_especial) ? contador_forca_senha +=1 : "";
 
         if (senha === confirmacao_senha){
             senhas_iguais.classList.remove("forca-senha-invalida");
@@ -54,31 +62,6 @@ export const RedefinirSenha = () => {
         }else {
             senhas_iguais.classList.add("forca-senha-invalida");
         }
-
-        if (senha && !senha.match( /[ ]/) ){
-            espaco_em_branco.classList.remove("forca-senha-invalida");
-            espaco_em_branco.classList.add("forca-senha-valida");
-            contador_forca_senha +=1
-        }else {
-            espaco_em_branco.classList.add("forca-senha-invalida");
-        }
-
-        if (senha && !senha.match( /[à-úÀ-Ú]/) ){
-            caracteres_acentuados.classList.remove("forca-senha-invalida");
-            caracteres_acentuados.classList.add("forca-senha-valida");
-            contador_forca_senha +=1
-        }else {
-            caracteres_acentuados.classList.add("forca-senha-invalida");
-        }
-
-        if (senha && senha.match(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/) || senha.match(/[0-9]/) ){
-            numero_ou_caracter_especial.classList.remove("forca-senha-invalida");
-            numero_ou_caracter_especial.classList.add("forca-senha-valida");
-            contador_forca_senha +=1
-        }else {
-            numero_ou_caracter_especial.classList.add("forca-senha-invalida");
-        }
-
         if (senha && (senha.length > 7 && senha.length <= 12 )){
             entre_oito_ate_doze.classList.remove("forca-senha-invalida");
             entre_oito_ate_doze.classList.add("forca-senha-valida");
@@ -87,20 +70,13 @@ export const RedefinirSenha = () => {
             entre_oito_ate_doze.classList.add("forca-senha-invalida");
         }
 
-        if (contador_forca_senha >= 7 ){
-            setBtnOnsubmitReadOnly(false)
-        }else {
-            setBtnOnsubmitReadOnly(true)
-        }
+        container = contador_forca_senha >= 7 ? setBtnOnsubmitReadOnly(false) : setBtnOnsubmitReadOnly(true);
 
-        console.log("Contador forca senha ", contador_forca_senha)
     };
 
 
     const validateFormRedefinirSenha = async (values ) => {
-
         medidorForcaSenha(values)
-
     };
 
     return (
