@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import {useParams} from 'react-router-dom';
 import {Formik} from "formik";
-import {YupSignupSchemaLogin} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const RedefinirSenha = () => {
     let {uuid} = useParams();
@@ -12,7 +11,7 @@ export const RedefinirSenha = () => {
         confirmacao_senha: "",
     };
 
-    const [btnOnsubmitReadOnly, setBtnOnsubmitReadOnly] = useState(true)
+    const [btnOnsubmitReadOnly, setBtnOnsubmitReadOnly] = useState(true);
 
     const onSubmit = (values) =>{
         console.log("on Submit ", values)
@@ -21,6 +20,7 @@ export const RedefinirSenha = () => {
     const medidorForcaSenhaVerifica = (senha, regex=null, id_container_msg, confirmacao_senha=null) =>{
 
         if (id_container_msg.id === 'senhas_iguais'){
+
             if (senha === confirmacao_senha) {
                 id_container_msg.classList.remove("forca-senha-invalida");
                 id_container_msg.classList.add("forca-senha-valida");
@@ -29,7 +29,9 @@ export const RedefinirSenha = () => {
                 id_container_msg.classList.add("forca-senha-invalida");
                 return false
             }
+
         }else if(id_container_msg.id === 'entre_oito_ate_doze'){
+
             if (senha && (senha.length > 7 && senha.length <= 12 )){
                 id_container_msg.classList.remove("forca-senha-invalida");
                 id_container_msg.classList.add("forca-senha-valida");
@@ -70,7 +72,8 @@ export const RedefinirSenha = () => {
         container = medidorForcaSenhaVerifica(senha, /[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/, numero_ou_caracter_especial) || medidorForcaSenhaVerifica(senha, /[0-9]/, numero_ou_caracter_especial) ? contador_forca_senha +=1 : "";
         container = medidorForcaSenhaVerifica(senha, null, senhas_iguais, confirmacao_senha)  ? contador_forca_senha +=1 : "";
         container = medidorForcaSenhaVerifica(senha, null, entre_oito_ate_doze, null)  ? contador_forca_senha +=1 : "";
-        container = contador_forca_senha >= 7 ? setBtnOnsubmitReadOnly(false) : setBtnOnsubmitReadOnly(true);
+
+        contador_forca_senha >= 7 ? setBtnOnsubmitReadOnly(false) : setBtnOnsubmitReadOnly(true);
     };
 
 
