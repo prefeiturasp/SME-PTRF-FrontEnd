@@ -72,7 +72,6 @@ export const RedefinirSenha = () => {
         container = medidorForcaSenhaVerifica(senha, /[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/, numero_ou_caracter_especial) || medidorForcaSenhaVerifica(senha, /[0-9]/, numero_ou_caracter_especial) ? contador_forca_senha +=1 : "";
         container = medidorForcaSenhaVerifica(senha, null, senhas_iguais, confirmacao_senha)  ? contador_forca_senha +=1 : "";
         container = medidorForcaSenhaVerifica(senha, null, entre_oito_ate_doze, null)  ? contador_forca_senha +=1 : "";
-
         contador_forca_senha >= 7 ? setBtnOnsubmitReadOnly(false) : setBtnOnsubmitReadOnly(true);
     };
 
