@@ -3,6 +3,7 @@ import {RecuperarMinhaSenha} from "./RecuperarSenha";
 import {RecuperacaoResposta} from "./RecuperacaoResposta";
 import "./esqueci-minha-senha.scss"
 import {YupSignupSchemaRecuperarSenha} from "../../utils/ValidacoesAdicionaisFormularios";
+import {esqueciMinhaSenha} from "../../services/auth.service";
 
 export const EsqueciMinhaSenha = () =>{
 
@@ -19,12 +20,22 @@ export const EsqueciMinhaSenha = () =>{
         };
 
     const onSubmitReuperarSenha = async (values) =>{
-        setRecuperacaoResposta({
+
+        const payload = {
+            username: values.usuario
+        };
+
+
+        let resposta = await esqueciMinhaSenha(payload, values.usuario);
+        console.log("onSubmitReuperarSenha ", resposta)
+
+
+/*        setRecuperacaoResposta({
             usuario:values.usuario,
             encontrado:true,
         });
         setEmailComMascara(mascaraExibicaoEmail(values.usuario));
-        setService('recuperacao-de-email')
+        setService('recuperacao-de-email')*/
     };
 
     const mascaraExibicaoEmail = (email) =>{

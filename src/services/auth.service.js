@@ -12,17 +12,17 @@ export const ASSOCIACAO_TIPO_ESCOLA = "TIPO_ESCOLA";
 
 const authHeader = {
     'Content-Type': 'application/json'
-}
+};
 
 const login = async (login, senha) => {
     let payload = {
         login: login,
         senha: senha
-    }
+    };
 
     try {
-        const response = (await api.post('api/login', payload, authHeader))
-        const resp = response.data
+        const response = (await api.post('api/login', payload, authHeader));
+        const resp = response.data;
         if (response.status === HTTP_STATUS.OK) {
             if (resp.detail) {
                 return "RF incorreto"
@@ -31,23 +31,23 @@ const login = async (login, senha) => {
             localStorage.setItem(
                 USUARIO_NOME,
                 resp.nome
-            )
+            );
             localStorage.setItem(
                 ASSOCIACAO_UUID,
                 resp.associacao.uuid
-            )
+            );
             localStorage.setItem(
                 ASSOCIACAO_NOME,
                 resp.associacao.nome
-            )
+            );
             localStorage.setItem(
                 ASSOCIACAO_NOME_ESCOLA,
                 resp.associacao.nome_escola
-            )
+            );
             localStorage.setItem(
                 ASSOCIACAO_TIPO_ESCOLA,
                 resp.associacao.tipo_escola
-            )
+            );
 
             const decoded = decode(resp.token);
             window.location.href = "/";
@@ -90,10 +90,15 @@ const logout = () => {
     window.location.assign("/login")
 };
 
+export const esqueciMinhaSenha = async (payload, rf) => {
+    return (await api.put(`/api/esqueci-minha-senha/${rf}/`, payload, authHeader))
+};
+
 
 export const authService = {
     login,
     logout,
     getToken,
     isLoggedIn,
+    esqueciMinhaSenha,
 };
