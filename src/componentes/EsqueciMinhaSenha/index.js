@@ -25,17 +25,18 @@ export const EsqueciMinhaSenha = () =>{
             username: values.usuario
         };
 
-
-        let resposta = await esqueciMinhaSenha(payload, values.usuario);
-        console.log("onSubmitReuperarSenha ", resposta)
-
-
-/*        setRecuperacaoResposta({
-            usuario:values.usuario,
-            encontrado:true,
-        });
-        setEmailComMascara(mascaraExibicaoEmail(values.usuario));
-        setService('recuperacao-de-email')*/
+        try {
+            let resposta = await esqueciMinhaSenha(payload, values.usuario);
+            console.log("onSubmitReuperarSenha ", resposta)
+            setRecuperacaoResposta({
+                usuario:resposta.username,
+                email:resposta.email,
+            });
+            setEmailComMascara(mascaraExibicaoEmail(resposta.email));
+        }catch (e) {
+            console.log("Erro ao recuperar usuário")
+        }
+        setService('recuperacao-resposta')
     };
 
     const mascaraExibicaoEmail = (email) =>{
@@ -57,7 +58,7 @@ export const EsqueciMinhaSenha = () =>{
                 />
             }
 
-            {service === 'recuperacao-de-email' &&
+            {service === 'recuperacao-resposta' &&
                 <RecuperacaoResposta
                     recuperacaoResposta={recuperacaoResposta}
                     emailComMascara={emailComMascara}

@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {useParams} from 'react-router-dom';
 import {Formik} from "formik";
+import {redefinirMinhaSenha} from "../../../services/auth.service";
 
 export const RedefinirSenha = () => {
     let {uuid} = useParams();
@@ -13,8 +14,21 @@ export const RedefinirSenha = () => {
 
     const [btnOnsubmitReadOnly, setBtnOnsubmitReadOnly] = useState(true);
 
-    const onSubmit = (values) =>{
-        console.log("on Submit ", values)
+    const onSubmit = async (values) =>{
+
+        console.log("on Submit values", values)
+        console.log("on Submit uuid", uuid)
+
+        const payload ={
+            "hash_redefinicao":uuid,
+            "password": values.senha,
+            "password2": values.confirmacao_senha
+        };
+
+        let redefinir_senha = await redefinirMinhaSenha(payload);
+
+        console.log("Redefinir senha ", redefinir_senha)
+
     };
 
     const medidorForcaSenhaVerifica = (senha, regex=null, id_container_msg, confirmacao_senha=null) =>{

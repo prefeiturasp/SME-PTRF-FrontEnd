@@ -91,7 +91,11 @@ const logout = () => {
 };
 
 export const esqueciMinhaSenha = async (payload, rf) => {
-    return (await api.put(`/api/esqueci-minha-senha/${rf}/`, payload, authHeader))
+    return (await api.put(`/api/esqueci-minha-senha/${rf}/`, payload, authHeader)).data
+};
+
+export const redefinirMinhaSenha = async (payload) => {
+    return (await api.post(`/api/redefinir-senha/`, payload, authHeader)).data
 };
 
 
