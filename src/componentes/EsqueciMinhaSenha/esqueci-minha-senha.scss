@@ -12,9 +12,16 @@
     font-size: 12px;
     margin-bottom: 0;
   }
-  .forca-senha-validada{
+  .forca-senha-valida{
     color: #227b32;
     background-image: url("../../assets/img/icone-forca-senha-validate.png");
+    background-repeat: no-repeat;
+    background-position: 100% 50%;
+  }
+
+  .forca-senha-invalida{
+    color: #89071a;
+    background-image: url("../../assets/img/icone-forca-senha-invalidate.png");
     background-repeat: no-repeat;
     background-position: 100% 50%;
   }
