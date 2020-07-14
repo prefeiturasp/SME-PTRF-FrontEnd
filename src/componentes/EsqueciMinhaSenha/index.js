@@ -1,14 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {RecuperarMinhaSenha} from "./RecuperarSenha";
-import {RecuperacaoDeEmail} from "./RecuperacaoDeEmail";
+import {RecuperacaoResposta} from "./RecuperacaoResposta";
 import "./esqueci-minha-senha.scss"
 import {YupSignupSchemaRecuperarSenha} from "../../utils/ValidacoesAdicionaisFormularios";
 
 export const EsqueciMinhaSenha = () =>{
 
     const [service, setService] = useState('');
-    const [recuperacaoDeEmail, setRecuperacaoDeEmail] = useState({});
+    const [recuperacaoResposta, setRecuperacaoResposta] = useState({});
     const [emailComMascara, setEmailComMascara] = useState({});
+
     useEffect(()=>{
         setService('recuperar-minha-senha')
     }, []);
@@ -18,7 +19,7 @@ export const EsqueciMinhaSenha = () =>{
         };
 
     const onSubmitReuperarSenha = async (values) =>{
-        setRecuperacaoDeEmail({
+        setRecuperacaoResposta({
             usuario:values.usuario,
             encontrado:true,
         });
@@ -46,8 +47,8 @@ export const EsqueciMinhaSenha = () =>{
             }
 
             {service === 'recuperacao-de-email' &&
-                <RecuperacaoDeEmail
-                    recuperacaoDeEmail={recuperacaoDeEmail}
+                <RecuperacaoResposta
+                    recuperacaoResposta={recuperacaoResposta}
                     emailComMascara={emailComMascara}
                 />
             }
