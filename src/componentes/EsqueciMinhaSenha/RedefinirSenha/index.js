@@ -12,30 +12,78 @@ export const RedefinirSenha = () => {
         confirmacao_senha: "",
     };
 
-    const [iconeMedidorSenha, setIconeMedidorSenha] = useState("");
+    const [btnOnsubmitReadOnly, setBtnOnsubmitReadOnly] = useState(true)
 
     const onSubmit = (values) =>{
         console.log("on Submit ", values)
     };
 
     const medidorForcaSenha = (values) => {
-        let usuario = values.senha;
+        let senha = values.senha;
+        let confirmacao_senha = values.confirmacao_senha;
+
         let contador_forca_senha = 0;
         let letra_minuscula = document.getElementById("letra_minuscula");
         let letra_maiuscula = document.getElementById("letra_maiuscula");
+        let senhas_iguais = document.getElementById("senhas_iguais");
+        let espaco_em_branco = document.getElementById("espaco_em_branco");
+        let caracteres_acentuados = document.getElementById("caracteres_acentuados");
+        let numero_ou_caracter_especial = document.getElementById("numero_ou_caracter_especial");
+        let entre_oito_ate_doze = document.getElementById("entre_oito_ate_doze");
 
-        if (usuario && usuario.match( /(?=.*[a-z])/) ){
+        if (senha && senha.match( /(?=.*[a-z])/) ){
             letra_minuscula.classList.add("forca-senha-validada");
             contador_forca_senha +=1
         }else {
             letra_minuscula.classList.remove('forca-senha-validada')
         }
 
-        if (usuario && usuario.match( /(?=.*[A-Z])/) ){
+        if (senha && senha.match( /(?=.*[A-Z])/) ){
             letra_maiuscula.classList.add("forca-senha-validada");
             contador_forca_senha +=1
         }else {
             letra_maiuscula.classList.remove('forca-senha-validada')
+        }
+
+        if (senha === confirmacao_senha){
+            senhas_iguais.classList.add("forca-senha-validada");
+            contador_forca_senha +=1
+        }else {
+            senhas_iguais.classList.remove('forca-senha-validada')
+        }
+
+        if (senha && !senha.match( /[ ]/) ){
+            espaco_em_branco.classList.add("forca-senha-validada");
+            contador_forca_senha +=1
+        }else {
+            espaco_em_branco.classList.remove('forca-senha-validada')
+        }
+
+        if (senha && !senha.match( /[à-úÀ-Ú]/) ){
+            caracteres_acentuados.classList.add("forca-senha-validada");
+            contador_forca_senha +=1
+        }else {
+            caracteres_acentuados.classList.remove('forca-senha-validada')
+        }
+
+        if (senha && senha.match(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/) || senha.match(/[0-9]/) ){
+            numero_ou_caracter_especial.classList.add("forca-senha-validada");
+            contador_forca_senha +=1
+        }else {
+            numero_ou_caracter_especial.classList.remove('forca-senha-validada')
+        }
+
+        if (senha && (senha.length > 7 && senha.length <= 12 )){
+            entre_oito_ate_doze.classList.add("forca-senha-validada");
+            contador_forca_senha +=1
+        }else {
+            entre_oito_ate_doze.classList.remove('forca-senha-validada')
+        }
+
+        if (contador_forca_senha >= 7 ){
+            setBtnOnsubmitReadOnly(false)
+        }else {
+            setBtnOnsubmitReadOnly(true)
         }
 
         console.log("Contador forca senha ", contador_forca_senha)
@@ -46,7 +94,7 @@ export const RedefinirSenha = () => {
 
         medidorForcaSenha(values)
 
-    }
+    };
 
     return (
         <>
@@ -98,17 +146,17 @@ export const RedefinirSenha = () => {
                                 <div className='form-group'>
                                     <p className='requisitos-seguranca-senha requisitos-seguranca-senha-validado'><strong>Requisitos de seguranca da senha:</strong></p>
                                     <p className='requisitos-seguranca-senha'><span id='letra_minuscula' className='pr-4'>Uma letra maiúscula</span></p>
-                                    <p className='requisitos-seguranca-senha'><span id='letra_maiuscula' className='pr-4'>Uma letra minúsculaminúsculaminúsculaminúscula</span></p>
-                                    <p className='requisitos-seguranca-senha'>As senhas devem ser iguais</p>
-                                    <p className='requisitos-seguranca-senha'>Não pode conter espaço em branco</p>
-                                    <p className='requisitos-seguranca-senha'>Não podem conter caracteres acentuados</p>
-                                    <p className='requisitos-seguranca-senha'>Um número ou símbolo (caracter especial)</p>
-                                    <p className='requisitos-seguranca-senha'>Deve ter no mínimo 8 e no máximo 12 caracteres</p>
+                                    <p className='requisitos-seguranca-senha'><span id='letra_maiuscula' className='pr-4'>Uma letra minúscula</span></p>
+                                    <p className='requisitos-seguranca-senha'><span id='senhas_iguais' className='pr-4'>As senhas devem ser iguais</span></p>
+                                    <p className='requisitos-seguranca-senha'><span id='espaco_em_branco' className='pr-4'>Não pode conter espaço em branco</span></p>
+                                    <p className='requisitos-seguranca-senha'><span id='caracteres_acentuados' className='pr-4'>Não podem conter caracteres acentuados</span></p>
+                                    <p className='requisitos-seguranca-senha'><span id='numero_ou_caracter_especial' className='pr-4'>Um número ou símbolo (caracter especial)</span></p>
+                                    <p className='requisitos-seguranca-senha'><span id='entre_oito_ate_doze' className='pr-4'>Deve ter no mínimo 8 e no máximo 12 caracteres</span></p>
                                 </div>
 
                                 <div className="d-flex  justify-content-end pb-3 mt-3">
                                     <button onClick={() => window.location.assign("/login")} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
-                                    <button type="submit" className="btn btn-success mt-2">Continuar</button>
+                                    <button disabled={btnOnsubmitReadOnly} type="submit" className="btn btn-success mt-2">Continuar</button>
                                 </div>
                             </form>
                         )}
