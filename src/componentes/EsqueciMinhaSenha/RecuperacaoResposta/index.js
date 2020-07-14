@@ -3,7 +3,6 @@ import {RespostaSucesso} from "./respostaSucesso";
 import {RespostaErro} from "./respostaErro";
 
 export const RecuperacaoResposta = ({recuperacaoResposta, emailComMascara}) =>{
-    console.log("RecuperacaoResposta ", recuperacaoResposta);
     return (
         <>
             <div className="esqueci-minha-senha-inner-texto">

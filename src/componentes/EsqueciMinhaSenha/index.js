@@ -4,22 +4,26 @@ import {RecuperacaoResposta} from "./RecuperacaoResposta";
 import "./esqueci-minha-senha.scss"
 import {YupSignupSchemaRecuperarSenha} from "../../utils/ValidacoesAdicionaisFormularios";
 import {esqueciMinhaSenha} from "../../services/auth.service";
+import Loading from "../../utils/Loading";
 
-export const EsqueciMinhaSenha = () =>{
+export const EsqueciMinhaSenha = () => {
 
     const [service, setService] = useState('');
     const [recuperacaoResposta, setRecuperacaoResposta] = useState({});
     const [emailComMascara, setEmailComMascara] = useState({});
+    const [loading, setLoading] = useState(true);
 
-    useEffect(()=>{
-        setService('recuperar-minha-senha')
+    useEffect(() => {
+        setService('recuperar-minha-senha');
+        setLoading(false);
     }, []);
 
     const initialValuesRecuperarSenha = {
-            usuario: ""
-        };
+        usuario: ""
+    };
 
-    const onSubmitReuperarSenha = async (values) =>{
+    const onSubmitReuperarSenha = async (values) => {
+        setLoading(true)
 
         const payload = {
             username: values.usuario
@@ -27,43 +31,54 @@ export const EsqueciMinhaSenha = () =>{
 
         try {
             let resposta = await esqueciMinhaSenha(payload, values.usuario);
-            console.log("onSubmitReuperarSenha ", resposta)
             setRecuperacaoResposta({
-                usuario:resposta.username,
-                email:resposta.email,
+                usuario: resposta.username,
+                email: resposta.email,
             });
             setEmailComMascara(mascaraExibicaoEmail(resposta.email));
-        }catch (e) {
+        } catch (e) {
             console.log("Erro ao recuperar usuário")
         }
         setService('recuperacao-resposta')
+        setLoading(false);
     };
 
-    const mascaraExibicaoEmail = (email) =>{
+    const mascaraExibicaoEmail = (email) => {
         let pos_arroba = email.indexOf("@");
-        let iniciais_email = email.substr(0,3);
-        let conteudo_arroba = email.substr(3, pos_arroba -3 );
+        let iniciais_email = email.substr(0, 3);
+        let conteudo_arroba = email.substr(3, pos_arroba - 3);
         let assinatura_email = email.substr(pos_arroba);
         let email_com_mascara = iniciais_email + conteudo_arroba.replace(/\w/gim, "*") + assinatura_email;
         return email_com_mascara
     };
 
-    return(
-        <div className='container-esqueci-minha-senha'>
-            {service === 'recuperar-minha-senha' &&
-                <RecuperarMinhaSenha
-                    initialValuesRecuperarSenha={initialValuesRecuperarSenha}
-                    onSubmitReuperarSenha={onSubmitReuperarSenha}
-                    YupSignupSchemaRecuperarSenha={YupSignupSchemaRecuperarSenha}
-                />
-            }
+    return (
+        <>
+            {loading ? (
+                    <Loading
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="0"
+                        marginBottom="0"
+                    />
+                ) :
+                <div className='container-esqueci-minha-senha'>
+                    {service === 'recuperar-minha-senha' &&
+                    <RecuperarMinhaSenha
+                        initialValuesRecuperarSenha={initialValuesRecuperarSenha}
+                        onSubmitReuperarSenha={onSubmitReuperarSenha}
+                        YupSignupSchemaRecuperarSenha={YupSignupSchemaRecuperarSenha}
+                    />
+                    }
 
-            {service === 'recuperacao-resposta' &&
-                <RecuperacaoResposta
-                    recuperacaoResposta={recuperacaoResposta}
-                    emailComMascara={emailComMascara}
-                />
+                    {service === 'recuperacao-resposta' &&
+                    <RecuperacaoResposta
+                        recuperacaoResposta={recuperacaoResposta}
+                        emailComMascara={emailComMascara}
+                    />
+                    }
+                </div>
             }
-        </div>
+        </>
     );
 };

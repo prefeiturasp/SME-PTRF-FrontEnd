@@ -1,11 +1,11 @@
 import React, {useState} from "react";
-import {useParams} from 'react-router-dom';
+import {Redirect, useParams} from 'react-router-dom';
 import {Formik} from "formik";
 import {redefinirMinhaSenha} from "../../../services/auth.service";
 
 export const RedefinirSenha = () => {
+
     let {uuid} = useParams();
-    console.log("Redefinir Senha uuid ", uuid);
 
     const initialValues = {
         senha: "",
@@ -13,21 +13,21 @@ export const RedefinirSenha = () => {
     };
 
     const [btnOnsubmitReadOnly, setBtnOnsubmitReadOnly] = useState(true);
+    const [senhaRedefinida, setSenhaRedefinida] = useState(false);
 
     const onSubmit = async (values) =>{
-
-        console.log("on Submit values", values)
-        console.log("on Submit uuid", uuid)
-
         const payload ={
             "hash_redefinicao":uuid,
             "password": values.senha,
             "password2": values.confirmacao_senha
         };
 
-        let redefinir_senha = await redefinirMinhaSenha(payload);
-
-        console.log("Redefinir senha ", redefinir_senha)
+        try {
+            await redefinirMinhaSenha(payload);
+            setSenhaRedefinida(true)
+        }catch (e) {
+            console.log("Erro ao redefinir senha")
+        }
 
     };
 
@@ -160,6 +160,18 @@ export const RedefinirSenha = () => {
                                 <div className="d-flex  justify-content-end pb-3 mt-3">
                                     <button onClick={() => window.location.assign("/login")} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
                                     <button disabled={btnOnsubmitReadOnly} type="submit" className="btn btn-success mt-2">Continuar</button>
+                                    {senhaRedefinida &&
+                                        <Redirect
+                                            to={{
+                                                pathname: "/login",
+                                                redefinicaoDeSenha: {
+                                                    msg: "Senha redefinida com sucesso",
+                                                    alertCss: "alert alert-success"
+                                                }
+                                            }}
+                                            className="btn btn-success btn-block"
+                                        />
+                                    }
                                 </div>
                             </form>
                         )}
