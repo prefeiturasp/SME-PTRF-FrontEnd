@@ -23,7 +23,6 @@ export const RedefinirSenha = () => {
             "password": values.senha,
             "password2": values.confirmacao_senha
         };
-
         try {
             await redefinirMinhaSenha(payload);
             setSenhaRedefinida(true);
@@ -49,7 +48,6 @@ export const RedefinirSenha = () => {
                 <div className='col-12'>
                     <Formik
                         initialValues={initialValues}
-                        //validationSchema={YupSignupSchemaLogin}
                         validateOnBlur={true}
                         enableReinitialize={true}
                         onSubmit={onSubmit}
@@ -83,7 +81,6 @@ export const RedefinirSenha = () => {
                                         onBlur={props.handleBlur}
                                     />
                                     {props.touched.confirmacao_senha && props.errors.confirmacao_senha && <span className="span_erro text-danger mt-1"> {props.errors.confirmacao_senha} </span>}
-
                                 </div>
                                 <div className='form-group'>
                                     <p className='requisitos-seguranca-senha requisitos-seguranca-senha-validado'><strong>Requisitos de seguranca da senha:</strong></p>
@@ -98,9 +95,7 @@ export const RedefinirSenha = () => {
                                     {btnOnsubmitReadOnly &&
                                         <p className="forca-senha-msg mt-3 p-2 text-center">Sua nova senha deve conter letras maiúsculas, minúsculas, números e símbolos. Por favor, digite outra senha</p>
                                     }
-
                                 </div>
-
                                 <div className="d-flex  justify-content-end pb-3 mt-3">
                                     <button onClick={() => window.location.assign("/login")} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
                                     <button disabled={btnOnsubmitReadOnly} type="submit" className="btn btn-success mt-2">Continuar</button>
@@ -120,7 +115,6 @@ export const RedefinirSenha = () => {
                             </form>
                         )}
                     </Formik>
-
                     {msgErro &&
                         <div className="alert alert-danger alert-dismissible fade show text-center" role="alert">
                             Erro ao redefinir a senha, tente novamente
