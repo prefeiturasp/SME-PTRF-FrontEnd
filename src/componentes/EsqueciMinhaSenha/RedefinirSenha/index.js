@@ -14,6 +14,7 @@ export const RedefinirSenha = () => {
 
     const [btnOnsubmitReadOnly, setBtnOnsubmitReadOnly] = useState(true);
     const [senhaRedefinida, setSenhaRedefinida] = useState(false);
+    const [msgErro, setMsgErro] = useState(false);
 
     const onSubmit = async (values) =>{
         const payload ={
@@ -25,8 +26,10 @@ export const RedefinirSenha = () => {
         try {
             await redefinirMinhaSenha(payload);
             setSenhaRedefinida(true)
+            setMsgErro(false)
         }catch (e) {
-            console.log("Erro ao redefinir senha")
+            console.log("Erro ao redefinir senha ", e);
+            setMsgErro(true)
         }
 
     };
@@ -161,21 +164,30 @@ export const RedefinirSenha = () => {
                                     <button onClick={() => window.location.assign("/login")} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
                                     <button disabled={btnOnsubmitReadOnly} type="submit" className="btn btn-success mt-2">Continuar</button>
                                     {senhaRedefinida &&
-                                        <Redirect
-                                            to={{
-                                                pathname: "/login",
-                                                redefinicaoDeSenha: {
-                                                    msg: "Senha redefinida com sucesso",
-                                                    alertCss: "alert alert-success"
-                                                }
-                                            }}
-                                            className="btn btn-success btn-block"
-                                        />
+                                    <Redirect
+                                        to={{
+                                            pathname: "/login",
+                                            redefinicaoDeSenha: {
+                                                msg: "Senha redefinida com sucesso",
+                                                alertCss: "alert alert-success"
+                                            }
+                                        }}
+                                        className="btn btn-success btn-block"
+                                    />
                                     }
                                 </div>
                             </form>
                         )}
                     </Formik>
+
+                    {msgErro &&
+                        <div className="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                            Erro ao redefinir a senha, tente novamente
+                            <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    }
                 </div>
             </div>
         </>
