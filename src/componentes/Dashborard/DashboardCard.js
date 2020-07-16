@@ -39,6 +39,12 @@ export const DashboardCard = ({acoesAssociacao}) => {
                                                             {exibeValorFormatadoPT_BR(acao.saldo_atual_capital)}
                                                         </strong>
                                                     </p>
+                                                    <p className="pt-1 mb-1">
+                                                        RLA:{' '}
+                                                        <strong>
+                                                            {exibeValorFormatadoPT_BR(acao.saldo_atual_livre)}
+                                                        </strong>
+                                                    </p>
                                                     <p className="pt-1 pb-1 mb-0">
                                                         Total:{' '}
                                                         <strong>
