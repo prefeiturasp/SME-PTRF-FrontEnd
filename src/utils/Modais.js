@@ -5,9 +5,11 @@ import {
     ModalBootstrapSaldoInsuficiente,
     ModalBootstrapSaldoInsuficienteDaconta,
     ModalBootstrapEditarAta,
-    ModalBootstrapFormMembros
+    ModalBootstrapFormMembros,
+    ModalBootstrapFormMeusDadosEmail
 } from "../componentes/ModalBootstrap";
 import {DatePickerField} from "../componentes/DatePickerField";
+import {FormRedefinirSenha} from "./EdicaoDeSenha/FormRedefinirSenha";
 
 import {Formik} from 'formik';
 import {YupSignupSchemaMembros} from "./ValidacoesAdicionaisFormularios";
@@ -670,6 +672,35 @@ export const ChecarDespesaExistente = (propriedades) => {
             segundoBotaoOnclick={propriedades.onSalvarDespesaCadastradaTrue}
             segundoBotaoTexto="Sim, salvar"
             segundoBotaoCss="success"
+        />
+    )
+};
+
+export const EditarEmailMeusDados = ({show, handleClose}) => {
+
+    const bodyTextarea = () => {
+        return (
+
+            <>
+                <div className='col-12'>
+                    <FormRedefinirSenha
+                        textoValidacaoDentroDoForm={true}
+                        redirectUrlSucesso={'/login'}
+                        textoSucesso={'Senha redefinida com sucesso'}
+                        cssAlertSucesso={'alert alert-success'}
+                        textoErro={'Erro ao redefinir a senha, tente novamente'}
+                        cssAlertErro={'alert alert-danger'}
+                    />
+                </div>
+            </>
+        )
+    };
+    return (
+        <ModalBootstrapFormMeusDadosEmail
+            show={show}
+            onHide={handleClose}
+            titulo="Editar E-mail"
+            bodyText={bodyTextarea()}
         />
     )
 };
