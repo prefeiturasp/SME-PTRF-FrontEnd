@@ -713,14 +713,11 @@ export const AlterarEmailMeusDados = ({show, handleClose}) => {
 
     const bodyTextarea = () => {
         return (
-
             <>
                 <div className="col-12">
-
                     <FormAlterarEmail
                         handleClose={handleClose}
                     />
-
                 </div>
             </>
         )

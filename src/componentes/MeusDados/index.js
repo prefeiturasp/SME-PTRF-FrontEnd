@@ -10,6 +10,7 @@ export const MeusDados = () => {
 
     const onHandleClose = () => {
         setShowEditarSenha(false);
+        setShowEditarEmail(false);
     };
     return (
         <>
