@@ -36,9 +36,7 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=n
             }else {
                 setMsgErro(e.response.data.detail)
             }
-
         }
-
     };
 
     const validateFormAlterarSenha = async (values ) => {
@@ -70,9 +68,7 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=n
                                 onBlur={props.handleBlur}
                             />
                             {props.touched.senha_atual && props.errors.senha_atual && <span className="span_erro text-danger mt-1"> {props.errors.senha_atual} </span>}
-
                         </div>
-
                         <div className="form-group">
                             <label htmlFor="login">Nova Senha</label>
                             <input
@@ -85,7 +81,6 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=n
                                 onBlur={props.handleBlur}
                             />
                             {props.touched.senha && props.errors.senha && <span className="span_erro text-danger mt-1"> {props.errors.senha} </span>}
-
                         </div>
                         <div className="form-group">
                             <label htmlFor="confirmacao_senha">Confirmação da Nova Senha</label>
@@ -114,7 +109,6 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=n
             </Formik>
 
             <div className="container-mensagens">
-
                 {senhaRedefinida &&
                 <div className={`alert alert-success alert-dismissible fade show text-center col-12`} role="alert">
                     Senha alterada com sucesso
@@ -123,7 +117,6 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=n
                     </button>
                 </div>
                 }
-
                 {msgErro &&
                     <div className="d-flex">
                         <div className={`alert alert-danger alert-dismissible fade show text-center col-12`} role="alert">
@@ -137,6 +130,4 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=n
             </div>
         </>
     )
-
-
 };

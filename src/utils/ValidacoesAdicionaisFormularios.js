@@ -31,6 +31,12 @@ export const YupSignupSchemaAlterarSenha = yup.object().shape({
   .oneOf([yup.ref('senha'), null], 'As senhas precisam ser iguais'),
 });
 
+export const YupSignupSchemaAlterarEmail = yup.object().shape({
+  email: yup.string().required("Campo email é obrigatório"),
+  confirmacao_email: yup.string().required("Campo confirmação do email é obrigatório")
+  .oneOf([yup.ref('senha'), null], 'Os emails precisam ser iguais'),
+});
+
 export const YupSignupSchemaRedefinirSenha = yup.object().shape({
   senha: yup.string().required("Campo nova senha é obrigatório"),
   confirmacao_senha: yup.string().required("Campo confirmação da nova senha é obrigatório")
