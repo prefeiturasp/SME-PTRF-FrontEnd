@@ -67,8 +67,8 @@ export const SidebarLeft = () => {
                     >
                         <NavIcon>{!sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} alt=""/> : ""} </NavIcon>
                         <NavText>
-                            <div className="container-meus-dados mt-n4">
-                                {sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} alt=""/> : ""} Meus Dados
+                            <div className="container-meus-dados mt-n4 d-flex justify-content-center align-items-center">
+                                {sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} className="mr-1" alt=""/> : ""} Meus Dados
                             </div>
                         </NavText>
                     </NavItem>
@@ -92,6 +92,7 @@ export const SidebarLeft = () => {
 
 
                     <NavItem
+                        navitemClassName="d-flex align-items-end"
                         /*data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Dados da Associação" : ""}*/
                         data-tip="Dados da Associação" data-for='dados_da_associacao'
                         eventKey="dados-da-associacao"
@@ -104,6 +105,7 @@ export const SidebarLeft = () => {
                     <ReactTooltip disable={sidebarStatus.sideBarStatus} id='dados_da_associacao'>{}</ReactTooltip>
 
                     <NavItem
+                        navitemClassName="d-flex align-items-end"
                         data-tip="Resumo dos recursos" data-for='resumo_dos_recursos'
                         eventKey="dashboard"
                     >
@@ -115,6 +117,7 @@ export const SidebarLeft = () => {
                     <ReactTooltip disable={sidebarStatus.sideBarStatus} id='resumo_dos_recursos'>{}</ReactTooltip>
 
                     <NavItem
+                        navitemClassName="d-flex align-items-end"
                         data-tip="Créditos da escola" data-for='creditos_da_escola'
                         eventKey="lista-de-receitas"
                     >
@@ -126,6 +129,7 @@ export const SidebarLeft = () => {
                     <ReactTooltip disable={sidebarStatus.sideBarStatus} id='creditos_da_escola'>{}</ReactTooltip>
 
                     <NavItem
+                        navitemClassName="d-flex align-items-end"
                         data-tip="Gastos da escola" data-for='gastos_da_escola'
                         eventKey="lista-de-despesas"
                     >
@@ -137,6 +141,7 @@ export const SidebarLeft = () => {
                     <ReactTooltip disable={sidebarStatus.sideBarStatus} id='gastos_da_escola'>{}</ReactTooltip>
 
                     <NavItem
+                        navitemClassName="d-flex align-items-end"
                         data-tip="Prestação de contas" data-for='prestacao_de_contas'
                         eventKey="prestacao-de-contas"
                     >
