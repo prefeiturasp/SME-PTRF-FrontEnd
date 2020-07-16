@@ -26,11 +26,7 @@
     background-color: #00585E;
   }
 
-  .navItemCustomizadoMeuPerfil{
-    text-align: center;
-  }
-
-  .container-nome-instituicao{
+  .container-nome-instituicao, .container-meus-dados{
     text-align: center;
     display: inline-block;
     width: 220px;
@@ -42,6 +38,13 @@
 
     span{
       font-weight: normal;
+    }
+  }
+
+  .container-meus-dados{
+    font-size: 11px;
+    img{
+      width: 13px;
     }
   }
 
