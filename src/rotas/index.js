@@ -18,6 +18,7 @@ import {ValoresReprogramadosPage} from "../paginas/ValoresReprogramados";
 import {DadosDasContasPage} from "../paginas/DadosDasContasAssociacao";
 import {EsqueciMinhaSenhaPage} from "../paginas/Login/EsqueciMinhaSenha";
 import {RedefinirSenhaPage} from "../paginas/Login/RedefinirMinhaSenha";
+import {MeusDadosPage} from "../paginas/MeusDados";
 
 import { authService } from '../services/auth.service';
 
@@ -91,6 +92,11 @@ const routesConfig = [
       exact: true,
       path: "/visualizacao-da-ata",
       component: VisualizacaoDaAta
+    },
+    {
+      exact: true,
+      path: "/meus-dados",
+      component: MeusDadosPage
     },
     {
         exact: true,

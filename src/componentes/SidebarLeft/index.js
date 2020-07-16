@@ -63,12 +63,12 @@ export const SidebarLeft = () => {
 
                     <NavItem
                         data-tip="Meus Dados" data-for='meus_dados'
-                        eventKey="dados-da-associacao"
+                        eventKey="meus-dados"
                     >
                         <NavIcon>{!sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} alt=""/> : ""} </NavIcon>
                         <NavText>
                             <div className="container-meus-dados mt-n4">
-                                {sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} alt=""/> : ""} Meu Perfil
+                                {sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} alt=""/> : ""} Meus Dados
                             </div>
                         </NavText>
                     </NavItem>
