@@ -1,31 +1,7 @@
-import React, {useState} from "react";
-import {useParams} from 'react-router-dom';
-import {redefinirMinhaSenha} from "../../../services/auth.service";
+import React from "react";
 import {FormRedefinirSenha} from "../../../utils/FormRedefinirSenha";
 
 export const RedefinirSenha = () => {
-
-    let {uuid} = useParams();
-
-    const [senhaRedefinida, setSenhaRedefinida] = useState(false);
-    const [msgErro, setMsgErro] = useState(false);
-
-    const onSubmit = async (values) =>{
-        const payload ={
-            "hash_redefinicao":uuid,
-            "password": values.senha,
-            "password2": values.confirmacao_senha
-        };
-        try {
-            let texto = await redefinirMinhaSenha(payload);
-            console.log("OnSubmit ", texto)
-            setSenhaRedefinida(true);
-            setMsgErro(false)
-        }catch (e) {
-            console.log("Erro ao redefinir senha ", e);
-            setMsgErro(true)
-        }
-    };
 
     return (
         <>
@@ -37,10 +13,7 @@ export const RedefinirSenha = () => {
 
                 <div className='col-12'>
                     <FormRedefinirSenha
-                        onSubmit={onSubmit}
-                        senhaRedefinida={senhaRedefinida}
                         textoValidacaoDentroDoForm={true}
-                        msgErro={msgErro}
                     />
                 </div>
             </div>

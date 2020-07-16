@@ -1,11 +1,36 @@
 import React, {useState} from "react";
+import {useParams} from 'react-router-dom';
+import {redefinirMinhaSenha} from "../../services/auth.service";
 import {Formik} from "formik";
 import {Redirect} from "react-router-dom";
 import "./form-redefinir-senha.scss"
 import {medidorForcaSenha} from "../MedidorForcaSenha";
 import {TextosDeValidacao} from "./textosDeValidacao";
 
-export const FormRedefinirSenha = ({onSubmit, senhaRedefinida=null, msgErro=null, textoValidacaoDentroDoForm=null}) => {
+export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null}) => {
+
+    let {uuid} = useParams();
+
+    const [msgErro, setMsgErro] = useState(false);
+
+    const onSubmit = async (values) =>{
+        const payload ={
+            "hash_redefinicao":uuid,
+            "password": values.senha,
+            "password2": values.confirmacao_senha
+        };
+        try {
+            let texto = await redefinirMinhaSenha(payload);
+            console.log("OnSubmit ", texto);
+            setSenhaRedefinida(true);
+            setMsgErro(false)
+        }catch (e) {
+            console.log("Erro ao redefinir senha ", e);
+            setMsgErro(true)
+        }
+    };
+
+    const [senhaRedefinida, setSenhaRedefinida] = useState(false);
 
     const initialValues = {
         senha: "",
@@ -59,7 +84,6 @@ export const FormRedefinirSenha = ({onSubmit, senhaRedefinida=null, msgErro=null
                             <TextosDeValidacao/>
                         }
 
-
                         <div className="d-flex  justify-content-end pb-3 mt-3">
                             <button onClick={() => window.location.assign("/login")} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
                             <button disabled={localStorage.getItem("medidorSenha") < 7} type="submit" className="btn btn-success mt-2">Continuar</button>
@@ -90,5 +114,4 @@ export const FormRedefinirSenha = ({onSubmit, senhaRedefinida=null, msgErro=null
             }
         </>
     )
-
 };
