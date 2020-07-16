@@ -6,6 +6,7 @@ import {Redirect} from "react-router-dom";
 import "../validacao-de-senha.scss"
 import {medidorForcaSenha} from "../../MedidorForcaSenha";
 import {TextoValidacaoSenha} from "../TextoValidacaoSenha/textoValidacaoSenha";
+import {YupSignupSchemaRedefinirSenha} from "../../ValidacoesAdicionaisFormularios";
 
 export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrlSucesso, textoSucesso, cssAlertSucesso, textoErro, cssAlertErro}) => {
 
@@ -45,6 +46,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
             <Formik
                 initialValues={initialValues}
                 validateOnBlur={true}
+                validationSchema={YupSignupSchemaRedefinirSenha}
                 enableReinitialize={true}
                 onSubmit={onSubmit}
                 validate={validateFormRedefinirSenha}
