@@ -8,9 +8,9 @@ export const ASSOCIACAO_UUID = "UUID";
 export const ASSOCIACAO_NOME = "ASSO_NOME";
 export const ASSOCIACAO_NOME_ESCOLA = "NOME_ESCOLA";
 export const ASSOCIACAO_TIPO_ESCOLA = "TIPO_ESCOLA";
-export const ASSOCIACAO_EMAIL = "EMAIL";
-export const ASSOCIACAO_CPF = "CPF";
-export const ASSOCIACAO_LOGIN = "LOGIN";
+export const USUARIO_EMAIL = "EMAIL";
+export const USUARIO_CPF = "CPF";
+export const USUARIO_LOGIN = "LOGIN";
 
 
 const authHeader = {
@@ -55,15 +55,15 @@ const login = async (login, senha) => {
                 resp.associacao.tipo_escola
             );
             localStorage.setItem(
-                ASSOCIACAO_EMAIL,
+                USUARIO_EMAIL,
                 resp.email
             );
             localStorage.setItem(
-                ASSOCIACAO_LOGIN,
+                USUARIO_LOGIN,
                 resp.login
             );
             localStorage.setItem(
-                ASSOCIACAO_CPF,
+                USUARIO_CPF,
                 resp.cpf
             );
 
@@ -104,9 +104,9 @@ const logout = () => {
     localStorage.removeItem('uuidPrestacaoConta');
     localStorage.removeItem('acaoLancamento');
     localStorage.removeItem('uuidAta');
-    localStorage.removeItem(ASSOCIACAO_EMAIL);
-    localStorage.removeItem(ASSOCIACAO_LOGIN);
-    localStorage.removeItem(ASSOCIACAO_CPF);
+    localStorage.removeItem(USUARIO_EMAIL);
+    localStorage.removeItem(USUARIO_LOGIN);
+    localStorage.removeItem(USUARIO_CPF);
     //window.location.reload();
     window.location.assign("/login")
 };

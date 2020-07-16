@@ -1,4 +1,5 @@
 .container-meus-dados{
+  padding: 1rem;
 
   .container-meus-dados-esquerda{
     text-align: center;
@@ -9,9 +10,14 @@
       text-transform: uppercase;
     }
 
+    .dados-complementares{
+      font-size: 14px;
+    }
+
   }
 
   .container-meus-dados-direita{
+    border-left: solid 1px #ccc;
 
   }
 
