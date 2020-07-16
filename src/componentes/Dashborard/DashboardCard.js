@@ -36,12 +36,16 @@ export const DashboardCard = ({acoesAssociacao}) => {
                                                         </p>
                                                     ): null}
 
-                                                    <p className="pt-1 mb-1">
-                                                        Capital:{' '}
-                                                        <strong>
-                                                            {exibeValorFormatadoPT_BR(acao.saldo_atual_capital)}
-                                                        </strong>
-                                                    </p>
+                                                    {acao.saldo_atual_capital ? (
+                                                        <p className="pt-1 mb-1">
+                                                            Capital:{' '}
+                                                            <strong>
+                                                                {exibeValorFormatadoPT_BR(acao.saldo_atual_capital)}
+                                                            </strong>
+                                                        </p>
+                                                    ) : null}
+
+
                                                     <p className="pt-1 mb-1">
                                                         RLA:{' '}
                                                         <strong>
