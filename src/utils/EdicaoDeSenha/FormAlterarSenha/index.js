@@ -4,6 +4,7 @@ import "../validacao-de-senha.scss"
 import {medidorForcaSenha} from "../../MedidorForcaSenha";
 import {TextoValidacaoSenha} from "../TextoValidacaoSenha/textoValidacaoSenha";
 import {alterarMinhaSenha, USUARIO_LOGIN} from "../../../services/auth.service";
+import {YupSignupSchemaAlterarSenha} from "../../ValidacoesAdicionaisFormularios";
 
 export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=null})=>{
 
@@ -49,6 +50,7 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=n
             <Formik
                 initialValues={initialValues}
                 validateOnBlur={true}
+                validationSchema={YupSignupSchemaAlterarSenha}
                 enableReinitialize={true}
                 onSubmit={onSubmit}
                 validate={validateFormAlterarSenha}
