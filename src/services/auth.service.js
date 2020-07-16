@@ -8,6 +8,9 @@ export const ASSOCIACAO_UUID = "UUID";
 export const ASSOCIACAO_NOME = "ASSO_NOME";
 export const ASSOCIACAO_NOME_ESCOLA = "NOME_ESCOLA";
 export const ASSOCIACAO_TIPO_ESCOLA = "TIPO_ESCOLA";
+export const ASSOCIACAO_EMAIL = "EMAIL";
+export const ASSOCIACAO_CPF = "CPF";
+export const ASSOCIACAO_LOGIN = "LOGIN";
 
 
 const authHeader = {
@@ -23,6 +26,9 @@ const login = async (login, senha) => {
     try {
         const response = (await api.post('api/login', payload, authHeader));
         const resp = response.data;
+
+        console.log("Dados do Login ", resp)
+
         if (response.status === HTTP_STATUS.OK) {
             if (resp.detail) {
                 return "RF incorreto"
@@ -47,6 +53,18 @@ const login = async (login, senha) => {
             localStorage.setItem(
                 ASSOCIACAO_TIPO_ESCOLA,
                 resp.associacao.tipo_escola
+            );
+            localStorage.setItem(
+                ASSOCIACAO_EMAIL,
+                resp.email
+            );
+            localStorage.setItem(
+                ASSOCIACAO_LOGIN,
+                resp.login
+            );
+            localStorage.setItem(
+                ASSOCIACAO_CPF,
+                resp.cpf
             );
 
             const decoded = decode(resp.token);
@@ -86,6 +104,9 @@ const logout = () => {
     localStorage.removeItem('uuidPrestacaoConta');
     localStorage.removeItem('acaoLancamento');
     localStorage.removeItem('uuidAta');
+    localStorage.removeItem(ASSOCIACAO_EMAIL);
+    localStorage.removeItem(ASSOCIACAO_LOGIN);
+    localStorage.removeItem(ASSOCIACAO_CPF);
     //window.location.reload();
     window.location.assign("/login")
 };
