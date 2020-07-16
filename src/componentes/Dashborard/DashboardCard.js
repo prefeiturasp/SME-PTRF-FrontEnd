@@ -27,12 +27,15 @@ export const DashboardCard = ({acoesAssociacao}) => {
                                         <div className="row">
                                             <div className="col-12 col-md-5 align-self-center">
                                                 <div className="col-12 container-lado-esquerdo pt-1 pb-1">
-                                                    <p className="pt-1 mb-1">
-                                                        Custeio:{' '}
-                                                        <strong>
-                                                            {exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}
-                                                        </strong>
-                                                    </p>
+                                                    {acao.saldo_atual_custeio ? (
+                                                        <p className="pt-1 mb-1">
+                                                            Custeio:{' '}
+                                                            <strong>
+                                                                {exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}
+                                                            </strong>
+                                                        </p>
+                                                    ): null}
+
                                                     <p className="pt-1 mb-1">
                                                         Capital:{' '}
                                                         <strong>
