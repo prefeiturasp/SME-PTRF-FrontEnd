@@ -25,13 +25,17 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=n
         };
 
         try {
-            let alterar_senha = await alterarMinhaSenha(localStorage.getItem(USUARIO_LOGIN), payload);
-            console.log("On submit ", alterar_senha);
+            await alterarMinhaSenha(localStorage.getItem(USUARIO_LOGIN), payload);
             setSenhaRedefinida(true);
             setMsgErro(false)
         }catch (e) {
             console.log("Erro ao redefinir senha ", e.response);
-            setMsgErro("Erro: " + e.response.data.detail)
+            if (e.response.data.detail === "{'detail': ErrorDetail(string='Senha atual incorreta', code='invalid')}"){
+                setMsgErro("Senha atual incorreta")
+            }else {
+                setMsgErro(e.response.data.detail)
+            }
+
         }
 
     };
@@ -101,8 +105,7 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=n
 
                         <div className="d-flex  justify-content-end pb-3 mt-3">
                             <button onClick={() => handleClose()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
-                            {/*<button disabled={localStorage.getItem("medidorSenha") < 7} type="submit" className="btn btn-success mt-2">Continuar</button>*/}
-                            <button type="submit" className="btn btn-success mt-2">Continuar</button>
+                            <button disabled={localStorage.getItem("medidorSenha") < 7} type="submit" className="btn btn-success mt-2">Continuar</button>
                         </div>
                     </form>
                 )}
