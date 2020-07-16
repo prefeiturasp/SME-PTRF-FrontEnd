@@ -72,6 +72,18 @@ export const SidebarLeft = () => {
           </>
           }
 
+          <NavItem
+              /*data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Dados da Associação" : ""}*/
+              data-tip="Dados da Associação" data-for='dados_da_associacao'
+              eventKey="dados-da-associacao"
+          >
+            <NavIcon>
+              <img src={IconeMenuDadosDaAssociacao} alt="" />
+            </NavIcon>
+            <NavText>Dados da Associação</NavText>
+          </NavItem>
+          <ReactTooltip disable={sidebarStatus.sideBarStatus} id='dados_da_associacao'>{}</ReactTooltip>
+
             <NavItem
                 /*data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Dados da Associação" : ""}*/
                 data-tip="Dados da Associação" data-for='dados_da_associacao'
