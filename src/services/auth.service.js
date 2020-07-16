@@ -121,7 +121,7 @@ export const redefinirMinhaSenha = async (payload) => {
 };
 
 export const alterarMinhaSenha = async (usuario, payload) => {
-    return (await api.post(`/api/usuarios/${usuario}/altera-senha/`, payload, authHeader)).data
+    return (await api.patch(`/api/usuarios/${usuario}/altera-senha/`, payload, authHeader))
 };
 
 

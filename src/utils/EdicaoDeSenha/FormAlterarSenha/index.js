@@ -1,14 +1,13 @@
 import React, {useState} from "react";
 import {Formik} from "formik";
-import {Redirect} from "react-router-dom";
 import "../validacao-de-senha.scss"
 import {medidorForcaSenha} from "../../MedidorForcaSenha";
 import {TextoValidacaoSenha} from "../TextoValidacaoSenha/textoValidacaoSenha";
 import {alterarMinhaSenha, USUARIO_LOGIN} from "../../../services/auth.service";
 
-export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, redirectUrlSucesso, textoSucesso, cssAlertSucesso, textoErro, cssAlertErro, handleClose=null})=>{
+export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=null})=>{
 
-    const [msgErro, setMsgErro] = useState(false);
+    const [msgErro, setMsgErro] = useState("");
     const [senhaRedefinida, setSenhaRedefinida] = useState(false);
 
     const initialValues = {
@@ -31,8 +30,8 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, redirectUrlSu
             setSenhaRedefinida(true);
             setMsgErro(false)
         }catch (e) {
-            console.log("Erro ao redefinir senha ", e);
-            setMsgErro(true)
+            console.log("Erro ao redefinir senha ", e.response);
+            setMsgErro("Erro: " + e.response.data.detail)
         }
 
     };
@@ -102,27 +101,25 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, redirectUrlSu
 
                         <div className="d-flex  justify-content-end pb-3 mt-3">
                             <button onClick={() => handleClose()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
-                            <button disabled={localStorage.getItem("medidorSenha") < 7} type="submit" className="btn btn-success mt-2">Continuar</button>
-                            {senhaRedefinida &&
-                            <Redirect
-                                to={{
-                                    pathname: redirectUrlSucesso,
-                                    redefinicaoDeSenha: {
-                                        msg: textoSucesso,
-                                        alertCss: cssAlertSucesso
-                                    }
-                                }}
-                                className="btn btn-success btn-block"
-                            />
-                            }
+                            {/*<button disabled={localStorage.getItem("medidorSenha") < 7} type="submit" className="btn btn-success mt-2">Continuar</button>*/}
+                            <button type="submit" className="btn btn-success mt-2">Continuar</button>
                         </div>
                     </form>
                 )}
             </Formik>
 
+            {senhaRedefinida &&
+            <div className={`alert alert-success alert-dismissible fade show text-center col-12`} role="alert">
+                Senha alterada com sucesso
+                <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            }
+
             {msgErro &&
-            <div className={`alert ${cssAlertErro} lert-dismissible fade show text-center col-12`} role="alert">
-                {textoErro}
+            <div className={`alert alert-danger alert-dismissible fade show text-center col-12`} role="alert">
+                {msgErro}
                 <button type="button" className="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

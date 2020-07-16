@@ -687,11 +687,6 @@ export const AlterarSenhaMeusDados = ({show, handleClose}) => {
                     <div className='col'>
                         <FormAlterarSenha
                             textoValidacaoDentroDoForm={false}
-                            redirectUrlSucesso={'/login'}
-                            textoSucesso={'Senha redefinida com sucesso'}
-                            cssAlertSucesso={'alert alert-success'}
-                            textoErro={'Erro ao redefinir a senha, tente novamente'}
-                            cssAlertErro={'alert alert-danger'}
                             handleClose={handleClose}
                         />
                     </div>
