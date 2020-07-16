@@ -1,11 +1,11 @@
 import React, {useState} from "react";
 import {useParams} from 'react-router-dom';
-import {redefinirMinhaSenha} from "../../services/auth.service";
+import {redefinirMinhaSenha} from "../../../services/auth.service";
 import {Formik} from "formik";
 import {Redirect} from "react-router-dom";
-import "./form-redefinir-senha.scss"
-import {medidorForcaSenha} from "../MedidorForcaSenha";
-import {TextosDeValidacao} from "./textosDeValidacao";
+import "../validacao-de-senha.scss"
+import {medidorForcaSenha} from "../../MedidorForcaSenha";
+import {TextoValidacaoSenha} from "../TextoValidacaoSenha/textoValidacaoSenha";
 
 export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrlSucesso, textoSucesso, cssAlertSucesso, textoErro, cssAlertErro}) => {
 
@@ -81,7 +81,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
                         </div>
 
                         {textoValidacaoDentroDoForm &&
-                            <TextosDeValidacao/>
+                            <TextoValidacaoSenha/>
                         }
 
                         <div className="d-flex  justify-content-end pb-3 mt-3">

@@ -1,5 +1,5 @@
 import React from "react";
-import {FormRedefinirSenha} from "../../../utils/FormRedefinirSenha";
+import {FormRedefinirSenha} from "../../../utils/EdicaoDeSenha/FormRedefinirSenha";
 
 export const RedefinirSenha = () => {
 
