@@ -146,7 +146,7 @@ export const ModalBootstrapFormMembros = (propriedades) =>{
     )
 };
 
-export const ModalBootstrapFormMeusDadosEmail = (propriedades) =>{
+export const ModalBootstrapFormMeusDadosSenha = (propriedades) =>{
 
     // Os botões de Cancelar e Salvar estão dentro do próprio form, pois utilizei Formik para validações
     return (

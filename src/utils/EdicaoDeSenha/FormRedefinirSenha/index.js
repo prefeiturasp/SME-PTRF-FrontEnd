@@ -12,6 +12,12 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
     let {uuid} = useParams();
 
     const [msgErro, setMsgErro] = useState(false);
+    const [senhaRedefinida, setSenhaRedefinida] = useState(false);
+
+    const initialValues = {
+        senha: "",
+        confirmacao_senha: "",
+    };
 
     const onSubmit = async (values) =>{
         const payload ={
@@ -28,13 +34,6 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
             console.log("Erro ao redefinir senha ", e);
             setMsgErro(true)
         }
-    };
-
-    const [senhaRedefinida, setSenhaRedefinida] = useState(false);
-
-    const initialValues = {
-        senha: "",
-        confirmacao_senha: "",
     };
 
     const validateFormRedefinirSenha = async (values ) => {

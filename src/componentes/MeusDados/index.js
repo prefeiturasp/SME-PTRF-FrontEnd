@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 import "./meus-dados.scss"
 import {USUARIO_NOME, USUARIO_LOGIN, USUARIO_EMAIL, USUARIO_CPF} from "../../services/auth.service";
-import {EditarEmailMeusDados, EditarMembro} from "../../utils/Modais";
+import {AlterarSenhaMeusDados, EditarMembro} from "../../utils/Modais";
 
 export const MeusDados = () => {
-    const [showEditarEmail, setShowEditarEmail] = useState(false);
+    const [showEditarSenha, setShowEditarSenha] = useState(false);
     const onHandleClose = () => {
-        setShowEditarEmail(false);
+        setShowEditarSenha(false);
     };
     return (
         <>
@@ -30,7 +30,7 @@ export const MeusDados = () => {
                             </div>
                             <div className='col-2'>
                                 <div className="form-group">
-                                    <button onClick={()=>setShowEditarEmail(true)} type="button" className="btn btn-outline-success">Editar</button>
+                                    <button type="button" className="btn btn-outline-success">Editar</button>
                                 </div>
                             </div>
 
@@ -45,15 +45,15 @@ export const MeusDados = () => {
                             </div>
                             <div className='col-2'>
                                 <div className="form-group">
-                                    <button type="button" className="btn btn-outline-success">Editar</button>
+                                    <button onClick={()=>setShowEditarSenha(true)}  type="button" className="btn btn-outline-success">Editar</button>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
                 <section>
-                    <EditarEmailMeusDados
-                        show={showEditarEmail}
+                    <AlterarSenhaMeusDados
+                        show={showEditarSenha}
                         handleClose={onHandleClose}
                     />
                 </section>
