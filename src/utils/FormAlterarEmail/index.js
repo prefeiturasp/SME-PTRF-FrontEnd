@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Formik} from "formik";
-
 import {YupSignupSchemaAlterarEmail} from "../ValidacoesAdicionaisFormularios";
+import {alterarMeuEmail, USUARIO_LOGIN} from "../../services/auth.service";
 
 export const FormAlterarEmail = ({handleClose})=>{
 
@@ -20,19 +20,14 @@ export const FormAlterarEmail = ({handleClose})=>{
             "email2": values.confirmacao_email,
         };
 
-        console.log("Form Editar Email ", values)
-
         try {
-            //await alterarMinhaSenha(localStorage.getItem(USUARIO_LOGIN), payload);
+            let alterar_email = await alterarMeuEmail(localStorage.getItem(USUARIO_LOGIN), payload);
+            console.log("Alterar Email ", alterar_email);
             setEmailRedefinido(true);
             setMsgErro(false)
         }catch (e) {
-            console.log("Erro ao redefinir senha ", e.response);
-            if (e.response.data.detail === "{'detail': ErrorDetail(string='Senha atual incorreta', code='invalid')}"){
-                setMsgErro("Senha atual incorreta")
-            }else {
-                setMsgErro(e.response.data.detail)
-            }
+            console.log("Erro ao alterar email ", e.response);
+            setMsgErro(e.response.data.detail)
         }
     };
     return(
