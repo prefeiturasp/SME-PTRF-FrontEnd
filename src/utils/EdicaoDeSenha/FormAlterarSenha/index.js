@@ -4,6 +4,7 @@ import {Redirect} from "react-router-dom";
 import "../validacao-de-senha.scss"
 import {medidorForcaSenha} from "../../MedidorForcaSenha";
 import {TextoValidacaoSenha} from "../TextoValidacaoSenha/textoValidacaoSenha";
+import {alterarMinhaSenha, USUARIO_LOGIN} from "../../../services/auth.service";
 
 export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, redirectUrlSucesso, textoSucesso, cssAlertSucesso, textoErro, cssAlertErro})=>{
 
@@ -24,9 +25,17 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, redirectUrlSu
             "password2": values.confirmacao_senha
         };
 
-        console.log("On submit ", payload)
+        try {
+            let alterar_senha = await alterarMinhaSenha(localStorage.getItem(USUARIO_LOGIN), payload);
+            console.log("On submit ", alterar_senha);
+            setSenhaRedefinida(true);
+            setMsgErro(false)
+        }catch (e) {
+            console.log("Erro ao redefinir senha ", e);
+            setMsgErro(true)
+        }
 
-    }
+    };
 
     const validateFormAlterarSenha = async (values ) => {
         medidorForcaSenha(values)

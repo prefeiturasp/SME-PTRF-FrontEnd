@@ -120,6 +120,10 @@ export const redefinirMinhaSenha = async (payload) => {
     return (await api.post(`/api/redefinir-senha/`, payload, authHeader)).data
 };
 
+export const alterarMinhaSenha = async (usuario, payload) => {
+    return (await api.post(`/api/usuarios/${usuario}/altera-senha/`, payload, authHeader)).data
+};
+
 
 export const authService = {
     login,

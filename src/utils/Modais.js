@@ -10,6 +10,7 @@ import {
 } from "../componentes/ModalBootstrap";
 import {DatePickerField} from "../componentes/DatePickerField";
 import {FormAlterarSenha} from "./EdicaoDeSenha/FormAlterarSenha";
+import {TextoValidacaoSenha} from "./EdicaoDeSenha/TextoValidacaoSenha/textoValidacaoSenha";
 
 import {Formik} from 'formik';
 import {YupSignupSchemaMembros} from "./ValidacoesAdicionaisFormularios";
@@ -682,15 +683,20 @@ export const AlterarSenhaMeusDados = ({show, handleClose}) => {
         return (
 
             <>
-                <div className='col-12'>
-                    <FormAlterarSenha
-                        textoValidacaoDentroDoForm={true}
-                        redirectUrlSucesso={'/login'}
-                        textoSucesso={'Senha redefinida com sucesso'}
-                        cssAlertSucesso={'alert alert-success'}
-                        textoErro={'Erro ao redefinir a senha, tente novamente'}
-                        cssAlertErro={'alert alert-danger'}
-                    />
+                <div className="row">
+                    <div className='col'>
+                        <FormAlterarSenha
+                            textoValidacaoDentroDoForm={false}
+                            redirectUrlSucesso={'/login'}
+                            textoSucesso={'Senha redefinida com sucesso'}
+                            cssAlertSucesso={'alert alert-success'}
+                            textoErro={'Erro ao redefinir a senha, tente novamente'}
+                            cssAlertErro={'alert alert-danger'}
+                        />
+                    </div>
+                    <div className='col'>
+                        <TextoValidacaoSenha/>
+                    </div>
                 </div>
             </>
         )

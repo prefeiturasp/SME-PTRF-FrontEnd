@@ -26,8 +26,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
             "password2": values.confirmacao_senha
         };
         try {
-            let texto = await redefinirMinhaSenha(payload);
-            console.log("OnSubmit ", texto);
+            await redefinirMinhaSenha(payload);
             setSenhaRedefinida(true);
             setMsgErro(false)
         }catch (e) {
