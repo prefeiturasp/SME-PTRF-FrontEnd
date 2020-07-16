@@ -26,60 +26,42 @@ export const DashboardCard = ({acoesAssociacao}) => {
                                         <div className="row">
                                             <div className="col-12 col-md-5 align-self-center">
                                                 <div className="col-12 container-lado-esquerdo pt-1 pb-1">
-                                                    <p className="pt-1 mb-1">
-                                                        Custeio:{' '}
-                                                        <strong>
-                                                            {exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}
-                                                        </strong>
-                                                    </p>
-                                                    <p className="pt-1 mb-1">
-                                                        Capital:{' '}
-                                                        <strong>
-                                                            {exibeValorFormatadoPT_BR(acao.saldo_atual_capital)}
-                                                        </strong>
-                                                    </p>
+                                                    {acao.saldo_atual_custeio ? (
+                                                        <p className="pt-1 mb-1">
+                                                            Custeio: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}</strong>
+                                                        </p>
+                                                    ) : null}
+                                                    {acao.saldo_atual_capital ? (
+                                                        <p className="pt-1 mb-1">
+                                                            Capital: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_capital)}</strong>
+                                                        </p>
+                                                    ) : null}
+                                                    {acao.saldo_atual_livre ? (
+                                                        <p className="pt-1 mb-1">
+                                                            RLA: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_livre)}</strong>
+                                                        </p>
+                                                    ) : null}
                                                     <p className="pt-1 pb-1 mb-0">
-                                                        Total:{' '}
-                                                        <strong>
-                                                            {exibeValorFormatadoPT_BR(acao.saldo_atual_total)}
-                                                        </strong>
+                                                        Total: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_total)}</strong>
                                                     </p>
                                                 </div>
                                             </div>
                                             <div className="col-12 col-md-7 container-lado-direito align-self-center ">
                                                 <p className="pt-1 mb-1">
-                                                    Saldo reprogramado:{' '}
-                                                    <strong>
-                                                        {exibeValorFormatadoPT_BR(acao.saldo_reprogramado)}
-                                                    </strong>
+                                                    Saldo reprogramado: <strong>{exibeValorFormatadoPT_BR(acao.saldo_reprogramado)}</strong>
                                                 </p>
                                                 <p className="pt-1 mb-1">
-                                                    Repasses no período:{' '}
-                                                    <strong>
-                                                        {exibeValorFormatadoPT_BR(acao.repasses_no_periodo)}
-                                                    </strong>
+                                                    Repasses no período: <strong>{exibeValorFormatadoPT_BR(acao.repasses_no_periodo)}</strong>
                                                 </p>
                                                 <p className="pt-1 mb-1">
-                                                    Outras receitas:{' '}
-                                                    <strong>
-                                                        {exibeValorFormatadoPT_BR(
-                                                            acao.outras_receitas_no_periodo
-                                                        )}
-                                                    </strong>
+                                                    Outras receitas: <strong>{exibeValorFormatadoPT_BR(acao.outras_receitas_no_periodo)}</strong>
                                                 </p>
                                                 <p className="pt-1 pb-1 mb-0">
-                                                    Despesa declarada:{' '}
-                                                    <strong>
-                                                        {exibeValorFormatadoPT_BR(acao.despesas_no_periodo)}
-                                                    </strong>
+                                                    Despesa declarada: <strong>{exibeValorFormatadoPT_BR(acao.despesas_no_periodo)}</strong>
                                                 </p>
                                                 {acao.acao_associacao_nome.trim() === 'PTRF' ? (
                                                     <p className="pt-1 pb-1 mb-0">
-                                                        Próx. repasse a partir de:{' '}
-
-                                                        <strong>
-                                                            {acoesAssociacao.data_prevista_repasse !== 'None' ? exibeDataPT_BR(acoesAssociacao.data_prevista_repasse) : ""}
-                                                        </strong>
+                                                        Próx. repasse a partir de: <strong>{acoesAssociacao.data_prevista_repasse !== 'None' ? exibeDataPT_BR(acoesAssociacao.data_prevista_repasse) : ""}</strong>
                                                     </p>
                                                 ) : null}
                                             </div>
@@ -90,7 +72,6 @@ export const DashboardCard = ({acoesAssociacao}) => {
                         ))}
                     </div>
                 ) :
-
                 <MsgImgLadoDireito
                     texto="A sua escola não possui ações ativas nesse período."
                     img={Img404}
@@ -104,4 +85,4 @@ export const DashboardCard = ({acoesAssociacao}) => {
             </div>
         </>
     )
-}
+};
