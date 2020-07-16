@@ -7,6 +7,7 @@ import IconeMenuGastosDaEscola from '../../assets/img/icone-menu-gastos-da-escol
 import IconeMenuCreditosDaEscola from '../../assets/img/icone-menu-creditos-da-escola.svg'
 import IconeMenuPrestacaoDeContas from '../../assets/img/icone-menu-prestacao-de-contas.svg'
 import IconeMenuDadosDaAssociacao from '../../assets/img/icone-menu-dados-da-associacao.svg'
+import IconeMenuMeuPerfil from '../../assets/img/icone-menu-meu-perfil.png'
 import LogoSP from '../../assets/img/logo-menu-tratado.png'
 import { SidebarContext } from '../../context/Sidebar'
 import { useHistory } from 'react-router-dom'
@@ -57,14 +58,32 @@ export const SidebarLeft = () => {
                 </div>
               </NavText>
             </NavItem>
+          </>
+          }
 
             <NavItem
+                navitemClassName="navItemCustomizadoMeuPerfil"
+                data-tip="Meus Dados" data-for='meus_dados'
+                eventKey="dados-da-associacao"
+            >
+              <NavIcon>{!sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} alt="" /> : ""} </NavIcon>
+              <NavText>
+                <div className="container-nome-instituicao mt-n4">
+                  {sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} alt="" /> : ""} Meu Perfil
+                </div>
+              </NavText>
+            </NavItem>
+            <ReactTooltip disable={sidebarStatus.sideBarStatus} id='meus_dados'>{}</ReactTooltip>
+
+          {sidebarStatus.sideBarStatus &&
+          <>
+          <NavItem
                 navitemClassName="navItemCustomizadoNome"
                 eventKey="dashboard"
             >
               <NavIcon>&nbsp;</NavIcon>
               <NavText>
-                <div className="container-nome-instituicao mt-n4 mb-4">
+                <div className="container-nome-instituicao mt-n4 my-0">
                     {`${localStorage.getItem(ASSOCIACAO_TIPO_ESCOLA)} ${localStorage.getItem(ASSOCIACAO_NOME_ESCOLA)}`}
                 </div>
               </NavText>
@@ -72,17 +91,9 @@ export const SidebarLeft = () => {
           </>
           }
 
-          <NavItem
-              /*data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Dados da Associação" : ""}*/
-              data-tip="Dados da Associação" data-for='dados_da_associacao'
-              eventKey="dados-da-associacao"
-          >
-            <NavIcon>
-              <img src={IconeMenuDadosDaAssociacao} alt="" />
-            </NavIcon>
-            <NavText>Dados da Associação</NavText>
-          </NavItem>
-          <ReactTooltip disable={sidebarStatus.sideBarStatus} id='dados_da_associacao'>{}</ReactTooltip>
+
+
+
 
             <NavItem
                 /*data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Dados da Associação" : ""}*/

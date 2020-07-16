@@ -22,16 +22,12 @@
     font-weight: 500;
   }
 
-  .navItemCustomizado:hover{
+  .navItemCustomizado:hover, .navItemCustomizadoNome:hover, .navItemCustomizadoNome{
     background-color: #00585E;
   }
 
-  .navItemCustomizadoNome:hover{
-    background-color: #00585e;
-  }
-
-  .navItemCustomizadoNome{
-    background-color: #00585e;
+  .navItemCustomizadoMeuPerfil{
+    text-align: center;
   }
 
   .container-nome-instituicao{
