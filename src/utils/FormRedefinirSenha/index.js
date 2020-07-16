@@ -1,8 +1,20 @@
-import React from "react";
+import React, {useState} from "react";
 import {Formik} from "formik";
 import {Redirect} from "react-router-dom";
+import "./form-redefinir-senha.scss"
+import {medidorForcaSenha} from "../MedidorForcaSenha";
+import {TextosDeValidacao} from "./textosDeValidacao";
 
-export const FormRedefinirSenha = ({initialValues, onSubmit, validateFormRedefinirSenha, senhaRedefinida, btnOnsubmitReadOnly}) => {
+export const FormRedefinirSenha = ({onSubmit, senhaRedefinida=null, msgErro=null, textoValidacaoDentroDoForm=null}) => {
+
+    const initialValues = {
+        senha: "",
+        confirmacao_senha: "",
+    };
+
+    const validateFormRedefinirSenha = async (values ) => {
+        medidorForcaSenha(values)
+    };
 
     return (
         <>
@@ -42,23 +54,15 @@ export const FormRedefinirSenha = ({initialValues, onSubmit, validateFormRedefin
                             />
                             {props.touched.confirmacao_senha && props.errors.confirmacao_senha && <span className="span_erro text-danger mt-1"> {props.errors.confirmacao_senha} </span>}
                         </div>
-                        <div className='form-group'>
-                            <p className='requisitos-seguranca-senha requisitos-seguranca-senha-validado'><strong>Requisitos de seguranca da senha:</strong></p>
-                            <p className='requisitos-seguranca-senha'><span id='letra_minuscula' className='pr-4'>Uma letra minúscula</span></p>
-                            <p className='requisitos-seguranca-senha'><span id='letra_maiuscula' className='pr-4'>Uma letra maiúscula</span></p>
-                            <p className='requisitos-seguranca-senha'><span id='senhas_iguais' className='pr-4'>As senhas devem ser iguais</span></p>
-                            <p className='requisitos-seguranca-senha'><span id='espaco_em_branco' className='pr-4'>Não pode conter espaço em branco</span></p>
-                            <p className='requisitos-seguranca-senha'><span id='caracteres_acentuados' className='pr-4'>Não podem conter caracteres acentuados</span></p>
-                            <p className='requisitos-seguranca-senha'><span id='numero_ou_caracter_especial' className='pr-4'>Um número ou símbolo (caracter especial)</span></p>
-                            <p className='requisitos-seguranca-senha'><span id='entre_oito_ate_doze' className='pr-4'>Deve ter no mínimo 8 e no máximo 12 caracteres</span></p>
 
-                            {btnOnsubmitReadOnly &&
-                            <p className="forca-senha-msg mt-3 p-2 text-center">Sua nova senha deve conter letras maiúsculas, minúsculas, números e símbolos. Por favor, digite outra senha</p>
-                            }
-                        </div>
+                        {textoValidacaoDentroDoForm &&
+                            <TextosDeValidacao/>
+                        }
+
+
                         <div className="d-flex  justify-content-end pb-3 mt-3">
                             <button onClick={() => window.location.assign("/login")} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
-                            <button disabled={btnOnsubmitReadOnly} type="submit" className="btn btn-success mt-2">Continuar</button>
+                            <button disabled={localStorage.getItem("medidorSenha") < 7} type="submit" className="btn btn-success mt-2">Continuar</button>
                             {senhaRedefinida &&
                             <Redirect
                                 to={{
@@ -75,6 +79,15 @@ export const FormRedefinirSenha = ({initialValues, onSubmit, validateFormRedefin
                     </form>
                 )}
             </Formik>
+
+            {msgErro &&
+            <div className="alert alert-danger alert-dismissible fade show text-center col-12" role="alert">
+                Erro ao redefinir a senha, tente novamente
+                <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            }
         </>
     )
 

@@ -66,6 +66,7 @@ const login = async (login, senha) => {
                 USUARIO_CPF,
                 resp.cpf
             );
+            localStorage.removeItem('medidorSenha');
 
             const decoded = decode(resp.token);
             window.location.href = "/";
