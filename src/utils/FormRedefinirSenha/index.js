@@ -7,7 +7,7 @@ import "./form-redefinir-senha.scss"
 import {medidorForcaSenha} from "../MedidorForcaSenha";
 import {TextosDeValidacao} from "./textosDeValidacao";
 
-export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null}) => {
+export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrlSucesso, textoSucesso, cssAlertSucesso, textoErro, cssAlertErro}) => {
 
     let {uuid} = useParams();
 
@@ -90,10 +90,10 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null}) => {
                             {senhaRedefinida &&
                             <Redirect
                                 to={{
-                                    pathname: "/login",
+                                    pathname: redirectUrlSucesso,
                                     redefinicaoDeSenha: {
-                                        msg: "Senha redefinida com sucesso",
-                                        alertCss: "alert alert-success"
+                                        msg: textoSucesso,
+                                        alertCss: cssAlertSucesso
                                     }
                                 }}
                                 className="btn btn-success btn-block"
@@ -105,8 +105,8 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null}) => {
             </Formik>
 
             {msgErro &&
-            <div className="alert alert-danger alert-dismissible fade show text-center col-12" role="alert">
-                Erro ao redefinir a senha, tente novamente
+            <div className={`alert ${cssAlertErro} lert-dismissible fade show text-center col-12`} role="alert">
+                {textoErro}
                 <button type="button" className="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
