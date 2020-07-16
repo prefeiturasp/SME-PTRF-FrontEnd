@@ -45,13 +45,15 @@ export const DashboardCard = ({acoesAssociacao}) => {
                                                         </p>
                                                     ) : null}
 
+                                                    {acao.saldo_atual_livre ? (
+                                                        <p className="pt-1 mb-1">
+                                                            RLA:{' '}
+                                                            <strong>
+                                                                {exibeValorFormatadoPT_BR(acao.saldo_atual_livre)}
+                                                            </strong>
+                                                        </p>
+                                                    ) : null}
 
-                                                    <p className="pt-1 mb-1">
-                                                        RLA:{' '}
-                                                        <strong>
-                                                            {exibeValorFormatadoPT_BR(acao.saldo_atual_livre)}
-                                                        </strong>
-                                                    </p>
                                                     <p className="pt-1 pb-1 mb-0">
                                                         Total:{' '}
                                                         <strong>
