@@ -58,7 +58,7 @@ export const RedefinirSenha = () => {
                                 <div className="form-group">
                                     <label htmlFor="login">Nova Senha</label>
                                     <input
-                                        type="text"
+                                        type="password"
                                         value={props.values.senha}
                                         name="senha"
                                         id="senha"

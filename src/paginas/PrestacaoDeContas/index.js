@@ -16,4 +16,4 @@ export const PrestacaoDeContasPage = () => {
             </div>
         </PaginasContainer>
     )
-}
+};
