@@ -6,11 +6,13 @@ import {
     ModalBootstrapSaldoInsuficienteDaconta,
     ModalBootstrapEditarAta,
     ModalBootstrapFormMembros,
-    ModalBootstrapFormMeusDadosSenha
+    ModalBootstrapFormMeusDadosSenha,
+    ModalBootstrapFormMeusDadosEmail
 } from "../componentes/ModalBootstrap";
 import {DatePickerField} from "../componentes/DatePickerField";
 import {FormAlterarSenha} from "./EdicaoDeSenha/FormAlterarSenha";
 import {TextoValidacaoSenha} from "./EdicaoDeSenha/TextoValidacaoSenha/textoValidacaoSenha";
+import {FormAlterarEmail} from "./FormAlterarEmail";
 
 import {Formik} from 'formik';
 import {YupSignupSchemaMembros} from "./ValidacoesAdicionaisFormularios";
@@ -699,6 +701,32 @@ export const AlterarSenhaMeusDados = ({show, handleClose}) => {
     };
     return (
         <ModalBootstrapFormMeusDadosSenha
+            show={show}
+            onHide={handleClose}
+            titulo="Editar Senha"
+            bodyText={bodyTextarea()}
+        />
+    )
+};
+
+export const AlterarEmailMeusDados = ({show, handleClose}) => {
+
+    const bodyTextarea = () => {
+        return (
+
+            <>
+                <div className="col-12">
+
+                    <FormAlterarEmail
+                        handleClose={handleClose}
+                    />
+
+                </div>
+            </>
+        )
+    };
+    return (
+        <ModalBootstrapFormMeusDadosEmail
             show={show}
             onHide={handleClose}
             titulo="Editar E-mail"

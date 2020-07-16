@@ -5,7 +5,7 @@ import {Formik} from "formik";
 import {alterarMinhaSenha, USUARIO_LOGIN} from "../../services/auth.service";
 import {YupSignupSchemaAlterarEmail} from "../ValidacoesAdicionaisFormularios";
 
-export const FormAlterarEmail = ({textoValidacaoDentroDoForm=null, handleClose=null})=>{
+export const FormAlterarEmail = ({handleClose})=>{
 
     const [msgErro, setMsgErro] = useState("");
     const [emailRedefinido, setEmailRedefinido] = useState(false);

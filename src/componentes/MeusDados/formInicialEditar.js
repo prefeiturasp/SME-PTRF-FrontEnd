@@ -1,6 +1,6 @@
 import React from "react";
 
-export const FormInicialEdiar = ({setShowEditarSenha}) => {
+export const FormInicialEdiar = ({setShowEditarEmail, setShowEditarSenha}) => {
 
     return(
         <form>
@@ -15,7 +15,7 @@ export const FormInicialEdiar = ({setShowEditarSenha}) => {
                 </div>
                 <div className='col-2'>
                     <div className="form-group">
-                        <button type="button" className="btn btn-outline-success">Editar</button>
+                        <button onClick={()=>setShowEditarEmail(true)} type="button" className="btn btn-outline-success">Editar</button>
                     </div>
                 </div>
 

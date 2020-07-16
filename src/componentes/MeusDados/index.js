@@ -1,11 +1,13 @@
 import React, {useState} from "react";
 import "./meus-dados.scss"
 import {USUARIO_NOME, USUARIO_LOGIN, USUARIO_EMAIL, USUARIO_CPF} from "../../services/auth.service";
-import {AlterarSenhaMeusDados} from "../../utils/Modais";
+import {AlterarSenhaMeusDados, AlterarEmailMeusDados} from "../../utils/Modais";
 import {FormInicialEdiar} from "./formInicialEditar";
 
 export const MeusDados = () => {
+    const [showEditarEmail, setShowEditarEmail] = useState(false);
     const [showEditarSenha, setShowEditarSenha] = useState(false);
+
     const onHandleClose = () => {
         setShowEditarSenha(false);
     };
@@ -20,6 +22,7 @@ export const MeusDados = () => {
 
                 <div className="col-12 col-md-8 px-5 py-4 align-self-center container-meus-dados-direita">
                     <FormInicialEdiar
+                        setShowEditarEmail={setShowEditarEmail}
                         setShowEditarSenha={setShowEditarSenha}
                     />
 
@@ -27,6 +30,13 @@ export const MeusDados = () => {
                 <section>
                     <AlterarSenhaMeusDados
                         show={showEditarSenha}
+                        handleClose={onHandleClose}
+                    />
+                </section>
+
+                <section>
+                    <AlterarEmailMeusDados
+                        show={showEditarEmail}
                         handleClose={onHandleClose}
                     />
                 </section>
