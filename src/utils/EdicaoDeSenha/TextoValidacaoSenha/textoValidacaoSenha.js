@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TextoValidacaoSenha = ({btnOnsubmitReadOnly}) =>{
+export const TextoValidacaoSenha = () =>{
     return(
         <div className='form-group'>
             <p className='requisitos-seguranca-senha requisitos-seguranca-senha-validado'><strong>Requisitos de seguranca da senha:</strong></p>

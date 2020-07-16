@@ -108,23 +108,28 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=n
                 )}
             </Formik>
 
-            {senhaRedefinida &&
-            <div className={`alert alert-success alert-dismissible fade show text-center col-12`} role="alert">
-                Senha alterada com sucesso
-                <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            }
+            <div className="container-mensagens">
 
-            {msgErro &&
-            <div className={`alert alert-danger alert-dismissible fade show text-center col-12`} role="alert">
-                {msgErro}
-                <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                {senhaRedefinida &&
+                <div className={`alert alert-success alert-dismissible fade show text-center col-12`} role="alert">
+                    Senha alterada com sucesso
+                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                }
+
+                {msgErro &&
+                    <div className="d-flex">
+                        <div className={`alert alert-danger alert-dismissible fade show text-center col-12`} role="alert">
+                            {msgErro}
+                            <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
+                }
             </div>
-            }
         </>
     )
 

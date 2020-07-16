@@ -86,7 +86,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
                         <div className="d-flex  justify-content-end pb-3 mt-3">
                             <button onClick={() => window.location.assign("/login")} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
                             <button disabled={localStorage.getItem("medidorSenha") < 7} type="submit" className="btn btn-success mt-2">Continuar</button>
-                            {/*{senhaRedefinida &&
+                            {senhaRedefinida &&
                             <Redirect
                                 to={{
                                     pathname: redirectUrlSucesso,
@@ -97,7 +97,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
                                 }}
                                 className="btn btn-success btn-block"
                             />
-                            }*/}
+                            }
                         </div>
                     </form>
                 )}

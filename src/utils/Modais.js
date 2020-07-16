@@ -683,7 +683,7 @@ export const AlterarSenhaMeusDados = ({show, handleClose}) => {
         return (
 
             <>
-                <div className="row">
+                <div className="row padding-bottom-50">
                     <div className='col'>
                         <FormAlterarSenha
                             textoValidacaoDentroDoForm={false}
