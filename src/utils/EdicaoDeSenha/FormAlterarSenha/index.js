@@ -6,7 +6,7 @@ import {medidorForcaSenha} from "../../MedidorForcaSenha";
 import {TextoValidacaoSenha} from "../TextoValidacaoSenha/textoValidacaoSenha";
 import {alterarMinhaSenha, USUARIO_LOGIN} from "../../../services/auth.service";
 
-export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, redirectUrlSucesso, textoSucesso, cssAlertSucesso, textoErro, cssAlertErro})=>{
+export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, redirectUrlSucesso, textoSucesso, cssAlertSucesso, textoErro, cssAlertErro, handleClose=null})=>{
 
     const [msgErro, setMsgErro] = useState(false);
     const [senhaRedefinida, setSenhaRedefinida] = useState(false);
@@ -101,7 +101,7 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, redirectUrlSu
                         }
 
                         <div className="d-flex  justify-content-end pb-3 mt-3">
-                            <button onClick={() => window.location.assign("/login")} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
+                            <button onClick={() => handleClose()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
                             <button disabled={localStorage.getItem("medidorSenha") < 7} type="submit" className="btn btn-success mt-2">Continuar</button>
                             {senhaRedefinida &&
                             <Redirect

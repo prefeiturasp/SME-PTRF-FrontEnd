@@ -692,6 +692,7 @@ export const AlterarSenhaMeusDados = ({show, handleClose}) => {
                             cssAlertSucesso={'alert alert-success'}
                             textoErro={'Erro ao redefinir a senha, tente novamente'}
                             cssAlertErro={'alert alert-danger'}
+                            handleClose={handleClose}
                         />
                     </div>
                     <div className='col'>
