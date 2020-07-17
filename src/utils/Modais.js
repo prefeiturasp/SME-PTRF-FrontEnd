@@ -5,9 +5,14 @@ import {
     ModalBootstrapSaldoInsuficiente,
     ModalBootstrapSaldoInsuficienteDaconta,
     ModalBootstrapEditarAta,
-    ModalBootstrapFormMembros
+    ModalBootstrapFormMembros,
+    ModalBootstrapFormMeusDadosSenha,
+    ModalBootstrapFormMeusDadosEmail
 } from "../componentes/ModalBootstrap";
 import {DatePickerField} from "../componentes/DatePickerField";
+import {FormAlterarSenha} from "./EdicaoDeSenha/FormAlterarSenha";
+import {TextoValidacaoSenha} from "./EdicaoDeSenha/TextoValidacaoSenha/textoValidacaoSenha";
+import {FormAlterarEmail} from "./FormAlterarEmail";
 
 import {Formik} from 'formik';
 import {YupSignupSchemaMembros} from "./ValidacoesAdicionaisFormularios";
@@ -670,6 +675,58 @@ export const ChecarDespesaExistente = (propriedades) => {
             segundoBotaoOnclick={propriedades.onSalvarDespesaCadastradaTrue}
             segundoBotaoTexto="Sim, salvar"
             segundoBotaoCss="success"
+        />
+    )
+};
+
+export const AlterarSenhaMeusDados = ({show, handleClose}) => {
+
+    const bodyTextarea = () => {
+        return (
+            <>
+                <div className="row padding-bottom-50">
+                    <div className='col'>
+                        <FormAlterarSenha
+                            textoValidacaoDentroDoForm={false}
+                            handleClose={handleClose}
+                        />
+                    </div>
+                    <div className='col'>
+                        <TextoValidacaoSenha/>
+                    </div>
+                </div>
+            </>
+        )
+    };
+    return (
+        <ModalBootstrapFormMeusDadosSenha
+            show={show}
+            onHide={handleClose}
+            titulo="Editar Senha"
+            bodyText={bodyTextarea()}
+        />
+    )
+};
+
+export const AlterarEmailMeusDados = ({show, handleClose}) => {
+
+    const bodyTextarea = () => {
+        return (
+            <>
+                <div className="col-12">
+                    <FormAlterarEmail
+                        handleClose={handleClose}
+                    />
+                </div>
+            </>
+        )
+    };
+    return (
+        <ModalBootstrapFormMeusDadosEmail
+            show={show}
+            onHide={handleClose}
+            titulo="Editar E-mail"
+            bodyText={bodyTextarea()}
         />
     )
 };

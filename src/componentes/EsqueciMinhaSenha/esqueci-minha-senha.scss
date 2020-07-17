@@ -8,28 +8,4 @@
     }
 
   }
-  .requisitos-seguranca-senha{
-    font-size: 12px;
-    margin-bottom: 0;
-  }
-  .forca-senha-valida{
-    color: #227b32;
-    background-image: url("../../assets/img/icone-forca-senha-validate.png");
-    background-repeat: no-repeat;
-    background-position: 100% 50%;
-  }
-
-  .forca-senha-invalida{
-    color: #89071a;
-    background-image: url("../../assets/img/icone-forca-senha-invalidate.png");
-    background-repeat: no-repeat;
-    background-position: 100% 50%;
-  }
-
-  .forca-senha-msg{
-    color: #89071a;
-    border: solid 1px #89071a;
-    border-radius: 5px;
-  }
-
 }

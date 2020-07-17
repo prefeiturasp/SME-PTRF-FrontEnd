@@ -1,0 +1,24 @@
+.container-meus-dados{
+  padding: 1rem;
+
+  .container-meus-dados-esquerda{
+    text-align: center;
+
+    .nome-usuario{
+      font-size: 18px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .dados-complementares{
+      font-size: 14px;
+    }
+
+  }
+
+  .container-meus-dados-direita{
+    border-left: solid 1px #ccc;
+
+  }
+
+}

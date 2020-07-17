@@ -41,7 +41,7 @@ export const medidorForcaSenhaVerifica = (senha, regex=null, id_container_msg, c
     }
 };
 
-export const medidorForcaSenha = (values, setBtnOnsubmitReadOnly) => {
+export const medidorForcaSenha = (values) => {
     let senha = values.senha;
     let confirmacao_senha = values.confirmacao_senha;
     let container;
@@ -62,5 +62,6 @@ export const medidorForcaSenha = (values, setBtnOnsubmitReadOnly) => {
     container = medidorForcaSenhaVerifica(senha, /[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/, numero_ou_caracter_especial) || medidorForcaSenhaVerifica(senha, /[0-9]/, numero_ou_caracter_especial) ? contador_forca_senha +=1 : "";
     container = medidorForcaSenhaVerifica(senha, null, senhas_iguais, confirmacao_senha)  ? contador_forca_senha +=1 : "";
     container = medidorForcaSenhaVerifica(senha, null, entre_oito_ate_doze, null)  ? contador_forca_senha +=1 : "";
-    contador_forca_senha >= 7 ? setBtnOnsubmitReadOnly(false) : setBtnOnsubmitReadOnly(true);
+    localStorage.setItem("medidorSenha",  contador_forca_senha)
+
 };
