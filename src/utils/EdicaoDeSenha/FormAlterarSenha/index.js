@@ -95,11 +95,9 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=n
                             />
                             {props.touched.confirmacao_senha && props.errors.confirmacao_senha && <span className="span_erro text-danger mt-1"> {props.errors.confirmacao_senha} </span>}
                         </div>
-
                         {textoValidacaoDentroDoForm &&
-                        <TextoValidacaoSenha/>
+                            <TextoValidacaoSenha/>
                         }
-
                         <div className="d-flex  justify-content-end pb-3 mt-3">
                             <button onClick={() => handleClose()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
                             <button disabled={localStorage.getItem("medidorSenha") < 7} type="submit" className="btn btn-success mt-2">Continuar</button>
@@ -107,7 +105,6 @@ export const FormAlterarSenha = ({textoValidacaoDentroDoForm=null, handleClose=n
                     </form>
                 )}
             </Formik>
-
             <div className="container-mensagens">
                 {senhaRedefinida &&
                 <div className={`alert alert-success alert-dismissible fade show text-center col-12`} role="alert">

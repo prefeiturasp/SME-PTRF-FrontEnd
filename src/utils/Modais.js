@@ -683,7 +683,6 @@ export const AlterarSenhaMeusDados = ({show, handleClose}) => {
 
     const bodyTextarea = () => {
         return (
-
             <>
                 <div className="row padding-bottom-50">
                     <div className='col'>

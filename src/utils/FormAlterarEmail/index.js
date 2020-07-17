@@ -14,7 +14,6 @@ export const FormAlterarEmail = ({handleClose})=>{
     };
 
     const onSubmit = async (values) =>{
-
         const payload ={
             "email":values.email,
             "email2": values.confirmacao_email,
@@ -41,7 +40,6 @@ export const FormAlterarEmail = ({handleClose})=>{
             >
                 {props => (
                     <form onSubmit={props.handleSubmit}>
-
                         <div className="form-group">
                             <label htmlFor="login">Email</label>
                             <input
@@ -75,7 +73,6 @@ export const FormAlterarEmail = ({handleClose})=>{
                     </form>
                 )}
             </Formik>
-
                 {emailRedefinido &&
                     <div className={`alert alert-success alert-dismissible fade show text-center col-12`} role="alert">
                         Email alterado com sucesso
@@ -94,7 +91,6 @@ export const FormAlterarEmail = ({handleClose})=>{
                         </div>
                     </div>
                 }
-
         </>
     )
 };

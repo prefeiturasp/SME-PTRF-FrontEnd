@@ -27,8 +27,6 @@ const login = async (login, senha) => {
         const response = (await api.post('api/login', payload, authHeader));
         const resp = response.data;
 
-        console.log("Dados do Login ", resp)
-
         if (response.status === HTTP_STATUS.OK) {
             if (resp.detail) {
                 return "RF incorreto"

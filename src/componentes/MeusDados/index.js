@@ -21,13 +21,11 @@ export const MeusDados = () => {
                     <p className="dados-complentares mb-0"><strong>Associação:</strong> {localStorage.getItem(ASSOCIACAO_NOME)}</p>
                     <p className="dados-complentares mb-0"><strong>Email:</strong> {localStorage.getItem(USUARIO_EMAIL)}</p>
                 </div>
-
                 <div className="col-12 col-md-8 px-5 py-4 align-self-center container-meus-dados-direita">
                     <FormInicialEdiar
                         setShowEditarEmail={setShowEditarEmail}
                         setShowEditarSenha={setShowEditarSenha}
                     />
-
                 </div>
                 <section>
                     <AlterarEmailMeusDados
