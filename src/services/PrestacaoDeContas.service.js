@@ -147,3 +147,7 @@ export const getConcluirPrestacaoDeConta = async (
 export const getObservacoes = async () => {
   return (await api.get(`/api/prestacoes-contas/${localStorage.getItem("uuidPrestacaoConta")}/observacoes/`,authHeader)).data
 }
+
+export const getFiqueDeOlho = async () => {
+  return (await api.get(`/api/prestacoes-contas/fique-de-olho/`,authHeader)).data
+}
