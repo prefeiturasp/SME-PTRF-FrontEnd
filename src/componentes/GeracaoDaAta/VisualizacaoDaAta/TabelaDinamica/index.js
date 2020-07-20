@@ -46,7 +46,7 @@ export const TabelaDinamica = ({infoAta, valorTemplate}) => {
                             <td>Despesas</td>
                             <td>{valorTemplate(info.despesas_no_periodo_custeio)}</td>
                             <td>{valorTemplate(info.despesas_no_periodo_capital)}</td>
-                            <td>-</td>
+                            <td className="td-livre-aplicacao-ausente">-</td>
                             <td>{valorTemplate(info.despesas_no_periodo)}</td>
                         </tr>
                         <tr>
@@ -60,7 +60,7 @@ export const TabelaDinamica = ({infoAta, valorTemplate}) => {
                             <td>Pagamentos a compensar</td>
                             <td>{valorTemplate(info.despesas_nao_conciliadas_custeio)}</td>
                             <td>{valorTemplate(info.despesas_nao_conciliadas_capital)}</td>
-                            <td>-</td>
+                            <td className="td-livre-aplicacao-ausente">-</td>
                             <td>{valorTemplate(info.despesas_nao_conciliadas)}</td>
                         </tr>
                         <tr>
