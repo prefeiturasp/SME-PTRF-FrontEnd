@@ -44,6 +44,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
     const [loading, setLoading] = useState(true);
     const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
+    const [numreoDocumentoReadOnly, setNumreoDocumentoReadOnly] = useState(false);
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
@@ -277,6 +278,12 @@ export const CadastroForm = ({verbo_http}) => {
                 so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
             }else {
                 so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
+            }
+
+            exibe_campo_numero_documento = so_numeros;
+
+            if (exibe_campo_numero_documento && !exibe_campo_numero_documento.numero_documento_digitado){
+
             }
 
             if (so_numeros && so_numeros.apenas_digitos){
