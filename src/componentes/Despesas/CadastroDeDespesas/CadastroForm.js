@@ -44,6 +44,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
     const [loading, setLoading] = useState(true);
     const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
+    const [numreoDocumentoReadOnly, setNumreoDocumentoReadOnly] = useState(false);
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
@@ -62,8 +63,8 @@ export const CadastroForm = ({verbo_http}) => {
             const array_tipos_custeio = resp.tipos_custeio;
             let let_especificacoes_custeio = [];
 
-            array_tipos_custeio.map( async (tipoCusteio, index) => {
-                const resposta = await getEspecificacoesCusteio(tipoCusteio.id)
+            array_tipos_custeio.map( async (tipoCusteio) => {
+                const resposta = await getEspecificacoesCusteio(tipoCusteio.id);
                 let_especificacoes_custeio[tipoCusteio.id] = await resposta
             });
             set_especificacoes_custeio(let_especificacoes_custeio)
@@ -97,8 +98,7 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const verificarSaldo = async (payload) => {
-        let saldo = await getVerificarSaldo(payload, despesaContext.idDespesa);
-        return saldo;
+        return await getVerificarSaldo(payload, despesaContext.idDespesa);
     };
 
     const onCancelarTrue = () => {
@@ -257,7 +257,7 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
-    const validateFormDespesas = async (values, props /* only available when using withFormik */) => {
+    const validateFormDespesas = async (values) => {
         setExibeMsgErroValorRecursos(false);
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
@@ -268,8 +268,9 @@ export const CadastroForm = ({verbo_http}) => {
 
         const errors = {};
 
-        // Validando se tipo de documento aceita apenas numéricos
-        if (values.tipo_documento && values.numero_documento){
+        // Validando se tipo de documento aceita apenas numéricos e se exibe campo Número do Documento
+        if (values.tipo_documento){
+            let exibe_campo_numero_documento;
             let so_numeros;
             if (values.tipo_documento.id){
                 so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
@@ -277,7 +278,16 @@ export const CadastroForm = ({verbo_http}) => {
                 so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
             }
 
-            if (so_numeros && so_numeros.apenas_digitos){
+            // Verificando se exibe campo Número do Documento
+            exibe_campo_numero_documento = so_numeros;
+            if (exibe_campo_numero_documento && !exibe_campo_numero_documento.numero_documento_digitado){
+                values.numero_documento = "";
+                setNumreoDocumentoReadOnly(true)
+            }else {
+                setNumreoDocumentoReadOnly(false)
+            }
+
+            if (so_numeros && so_numeros.apenas_digitos && values.numero_documento){
                 if (isNaN(values.numero_documento)){
                     errors.numero_documento="Este campo deve conter apenas algarismos numéricos."
                 }
@@ -334,7 +344,6 @@ export const CadastroForm = ({verbo_http}) => {
                     validationSchema={YupSignupSchemaCadastroDespesa}
                     validateOnBlur={true}
                     onSubmit={onSubmit}
-                    //onSubmit={values => onSubmit(values)}
                     enableReinitialize={true}
                     validate={validateFormDespesas}
                 >
@@ -439,7 +448,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 id="numero_documento" type="text"
                                                 className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 placeholder="Digite o número"
-                                                disabled={readOnlyCampos}
+                                                disabled={readOnlyCampos || numreoDocumentoReadOnly}
                                             />
                                             {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
 
@@ -595,7 +604,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                     <FieldArray
                                         name="rateios"
-                                        render={({insert, remove, push}) => (
+                                        render={({remove, push}) => (
                                             <>
                                                 {values.rateios.length > 0 && values.rateios.map((rateio, index) => {
                                                     return (

@@ -1,6 +1,6 @@
 import React from "react";
 
-export const FormInicialEdiar = ({setShowEditarEmail, setShowEditarSenha}) => {
+export const FormInicialEditar = ({setShowEditarEmail, setShowEditarSenha}) => {
 
     return(
         <form>
