@@ -63,8 +63,8 @@ export const CadastroForm = ({verbo_http}) => {
             const array_tipos_custeio = resp.tipos_custeio;
             let let_especificacoes_custeio = [];
 
-            array_tipos_custeio.map( async (tipoCusteio, index) => {
-                const resposta = await getEspecificacoesCusteio(tipoCusteio.id)
+            array_tipos_custeio.map( async (tipoCusteio) => {
+                const resposta = await getEspecificacoesCusteio(tipoCusteio.id);
                 let_especificacoes_custeio[tipoCusteio.id] = await resposta
             });
             set_especificacoes_custeio(let_especificacoes_custeio)
@@ -278,10 +278,9 @@ export const CadastroForm = ({verbo_http}) => {
                 so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
             }
 
+            // Verificando se exibe campo Número do Documento
             exibe_campo_numero_documento = so_numeros;
-
             if (exibe_campo_numero_documento && !exibe_campo_numero_documento.numero_documento_digitado){
-                console.log("Exibe numero documento ", exibe_campo_numero_documento);
                 values.numero_documento = "";
                 setNumreoDocumentoReadOnly(true)
             }else {
@@ -345,7 +344,6 @@ export const CadastroForm = ({verbo_http}) => {
                     validationSchema={YupSignupSchemaCadastroDespesa}
                     validateOnBlur={true}
                     onSubmit={onSubmit}
-                    //onSubmit={values => onSubmit(values)}
                     enableReinitialize={true}
                     validate={validateFormDespesas}
                 >
