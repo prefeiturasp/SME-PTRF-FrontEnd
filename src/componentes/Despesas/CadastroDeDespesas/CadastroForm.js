@@ -284,6 +284,7 @@ export const CadastroForm = ({verbo_http}) => {
 
             if (exibe_campo_numero_documento && !exibe_campo_numero_documento.numero_documento_digitado){
                 console.log("Exibe numero documento ", exibe_campo_numero_documento);
+                values.numero_documento = "";
                 setNumreoDocumentoReadOnly(true)
             }else {
                 setNumreoDocumentoReadOnly(false)
