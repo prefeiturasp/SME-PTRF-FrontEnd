@@ -57,6 +57,7 @@ export const CadastroForm = ({verbo_http}) => {
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
             const resp = await getDespesasTabelas();
+            console.log("Tabelas ", resp)
             setDespesasTabelas(resp);
 
             const array_tipos_custeio = resp.tipos_custeio;
@@ -268,8 +269,9 @@ export const CadastroForm = ({verbo_http}) => {
 
         const errors = {};
 
-        // Validando se tipo de documento aceita apenas numéricos
+        // Validando se tipo de documento aceita apenas numéricos e se exibe campo Número do Documento
         if (values.tipo_documento && values.numero_documento){
+            let exibe_campo_numero_documento;
             let so_numeros;
             if (values.tipo_documento.id){
                 so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
