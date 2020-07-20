@@ -448,7 +448,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 id="numero_documento" type="text"
                                                 className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 placeholder="Digite o número"
-                                                disabled={readOnlyCampos}
+                                                disabled={readOnlyCampos || numreoDocumentoReadOnly}
                                             />
                                             {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
 
