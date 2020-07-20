@@ -271,7 +271,7 @@ export const CadastroForm = ({verbo_http}) => {
         const errors = {};
 
         // Validando se tipo de documento aceita apenas numéricos e se exibe campo Número do Documento
-        if (values.tipo_documento && values.numero_documento){
+        if (values.tipo_documento){
             let exibe_campo_numero_documento;
             let so_numeros;
             if (values.tipo_documento.id){
@@ -281,12 +281,12 @@ export const CadastroForm = ({verbo_http}) => {
             }
 
             exibe_campo_numero_documento = so_numeros;
-
             if (exibe_campo_numero_documento && !exibe_campo_numero_documento.numero_documento_digitado){
-
+                console.log("Exibe numero documento ", exibe_campo_numero_documento)
+                setNumreoDocumentoReadOnly(true)
             }
 
-            if (so_numeros && so_numeros.apenas_digitos){
+            if (so_numeros && so_numeros.apenas_digitos && values.numero_documento){
                 if (isNaN(values.numero_documento)){
                     errors.numero_documento="Este campo deve conter apenas algarismos numéricos."
                 }
