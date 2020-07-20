@@ -58,7 +58,6 @@ export const CadastroForm = ({verbo_http}) => {
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
             const resp = await getDespesasTabelas();
-            console.log("Tabelas ", resp)
             setDespesasTabelas(resp);
 
             const array_tipos_custeio = resp.tipos_custeio;
