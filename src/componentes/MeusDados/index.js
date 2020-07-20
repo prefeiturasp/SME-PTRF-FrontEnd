@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import "./meus-dados.scss"
 import {USUARIO_NOME, USUARIO_LOGIN, USUARIO_EMAIL, USUARIO_CPF, ASSOCIACAO_NOME} from "../../services/auth.service";
 import {AlterarSenhaMeusDados, AlterarEmailMeusDados} from "../../utils/Modais";
-import {FormInicialEdiar} from "./formInicialEditar";
+import {FormInicialEditar} from "./formInicialEditar";
 
 export const MeusDados = () => {
     const [showEditarEmail, setShowEditarEmail] = useState(false);
@@ -22,7 +22,7 @@ export const MeusDados = () => {
                     <p className="dados-complentares mb-0"><strong>Email:</strong> {localStorage.getItem(USUARIO_EMAIL)}</p>
                 </div>
                 <div className="col-12 col-md-8 px-5 py-4 align-self-center container-meus-dados-direita">
-                    <FormInicialEdiar
+                    <FormInicialEditar
                         setShowEditarEmail={setShowEditarEmail}
                         setShowEditarSenha={setShowEditarSenha}
                     />
