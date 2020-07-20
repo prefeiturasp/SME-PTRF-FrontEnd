@@ -98,8 +98,7 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const verificarSaldo = async (payload) => {
-        let saldo = await getVerificarSaldo(payload, despesaContext.idDespesa);
-        return saldo;
+        return await getVerificarSaldo(payload, despesaContext.idDespesa);
     };
 
     const onCancelarTrue = () => {
@@ -258,7 +257,7 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
-    const validateFormDespesas = async (values, props /* only available when using withFormik */) => {
+    const validateFormDespesas = async (values) => {
         setExibeMsgErroValorRecursos(false);
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
@@ -607,7 +606,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                     <FieldArray
                                         name="rateios"
-                                        render={({insert, remove, push}) => (
+                                        render={({remove, push}) => (
                                             <>
                                                 {values.rateios.length > 0 && values.rateios.map((rateio, index) => {
                                                     return (
