@@ -35,8 +35,11 @@
     .tr-titulo{
       background-color: #E0F7F9;
     }
-    td{
-      width: calc(100% / 4) !important;
+    td, .td-livre-aplicacao-ausente{
+      width: calc(100% / 5) !important;
+    }
+    .td-livre-aplicacao-ausente{
+      background-color: #00585e;
     }
   }
 
