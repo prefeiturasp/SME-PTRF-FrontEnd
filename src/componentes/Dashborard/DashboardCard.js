@@ -10,6 +10,10 @@ import {
 } from '../../utils/ValidacoesAdicionaisFormularios'
 
 export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
+
+    let status = statusPeriodoAssociacao
+    console.log("Status ", status)
+
     return (
         <>
             {acoesAssociacao.info_acoes && acoesAssociacao.info_acoes.length > 0 ? (
@@ -53,10 +57,10 @@ export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
                                                 <p className="pt-1 mb-1">
                                                     Repasses no período: <strong>{exibeValorFormatadoPT_BR(acao.repasses_no_periodo)}</strong>
                                                 </p>
-                                                <p className="pt-1 mb-1 texto-com-icone">
+                                                <p className={`pt-1 mb-1 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>
                                                     Outras receitas: <strong>{exibeValorFormatadoPT_BR(acao.outras_receitas_no_periodo)}</strong>
                                                 </p>
-                                                <p className="pt-1 pb-1 mb-0">
+                                                <p className={`pt-1 mb-0 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>
                                                     Despesa declarada: <strong>{exibeValorFormatadoPT_BR(acao.despesas_no_periodo)}</strong>
                                                 </p>
                                                 {acao.acao_associacao_nome.trim() === 'PTRF' ? (
