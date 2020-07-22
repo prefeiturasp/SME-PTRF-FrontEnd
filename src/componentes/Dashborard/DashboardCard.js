@@ -10,10 +10,7 @@ import {
 } from '../../utils/ValidacoesAdicionaisFormularios'
 
 export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
-
-    let status = statusPeriodoAssociacao
-    console.log("Status ", status)
-
+    let status = statusPeriodoAssociacao;
     return (
         <>
             {acoesAssociacao.info_acoes && acoesAssociacao.info_acoes.length > 0 ? (
