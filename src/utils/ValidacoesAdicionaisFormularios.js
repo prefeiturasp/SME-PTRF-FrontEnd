@@ -496,7 +496,7 @@ function valida_cnpj ( valor ) {
 
 export const getTextoStatusPeriodo = (statusId) => {
   if (statusId === 'EM_ANDAMENTO') {
-    status = 'O período está em andamento'
+    status = 'O período está em andamento, os dados apresentados estão em atualização sendo cadastrados.'
   } else if (statusId === 'PENDENTE') {
     status = 'O período está pendente'
   } else if (statusId === 'CONCILIADO') {
