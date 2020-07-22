@@ -9,7 +9,7 @@ import {
     exibeValorFormatadoPT_BR,
 } from '../../utils/ValidacoesAdicionaisFormularios'
 
-export const DashboardCard = ({acoesAssociacao}) => {
+export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
     return (
         <>
             {acoesAssociacao.info_acoes && acoesAssociacao.info_acoes.length > 0 ? (
