@@ -53,7 +53,7 @@ export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
                                                 <p className="pt-1 mb-1">
                                                     Repasses no período: <strong>{exibeValorFormatadoPT_BR(acao.repasses_no_periodo)}</strong>
                                                 </p>
-                                                <p className="pt-1 mb-1">
+                                                <p className="pt-1 mb-1 texto-com-icone">
                                                     Outras receitas: <strong>{exibeValorFormatadoPT_BR(acao.outras_receitas_no_periodo)}</strong>
                                                 </p>
                                                 <p className="pt-1 pb-1 mb-0">
