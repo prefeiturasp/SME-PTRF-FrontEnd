@@ -75,8 +75,6 @@ export const ReceitaForm = props => {
             if (uuid) {
                 getReceita(uuid).then(response => {
                     const resp = response.data;
-
-                    console.log("Busca receita ", resp)
                     const init = {
                         tipo_receita: resp.tipo_receita.id,
                         detalhe_tipo_receita: resp.detalhe_tipo_receita,
@@ -90,7 +88,7 @@ export const ReceitaForm = props => {
                             style: 'currency',
                             currency: 'BRL'
                         }) : "",
-                    }
+                    };
                     setInitialValue(init);
                     setReceita(resp);
                     periodoFechado(resp.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
@@ -102,21 +100,18 @@ export const ReceitaForm = props => {
         carregaTabelas();
         buscaReceita();
         setLoading(false);
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (tabelas.tipos_receita.length > 0 && initialValue.tipo_receita !== undefined) {
             setaDetalhesTipoReceita(initialValue.tipo_receita);
         }
-    }, [tabelas, initialValue.tipo_receita])
+    }, [tabelas, initialValue.tipo_receita]);
 
 
     const onSubmit = async (values) => {
 
-        console.log("Onsubmit ", values)
-
-        // Removendo e_devolucao{
-
+        // Removendo e_devolucao
         if (!verificaSeDevolucao(values.tipo_receita)){
             delete values.referencia_devolucao
         }else if (uuid){
@@ -132,7 +127,7 @@ export const ReceitaForm = props => {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID),
             detalhe_tipo_receita: values.detalhe_tipo_receita && values.detalhe_tipo_receita.id !== undefined ? values.detalhe_tipo_receita.id : values.detalhe_tipo_receita
-        }
+        };
         setLoading(true);
         if (uuid) {
             await atualizar(uuid, payload);
@@ -141,11 +136,11 @@ export const ReceitaForm = props => {
         }
         getPath();
         setLoading(false);
-    }
+    };
 
     const cadastrar = async (payload) => {
         try {
-            const response = await criarReceita(payload)
+            const response = await criarReceita(payload);
             if (response.status === HTTP_STATUS.CREATED) {
                 console.log("Operação realizada com sucesso!");
             } else {
@@ -154,11 +149,11 @@ export const ReceitaForm = props => {
         } catch (error) {
             console.log(error)
         }
-    }
+    };
 
     const atualizar = async (uid, payload) => {
         try {
-            const response = await atualizaReceita(uuid, payload)
+            const response = await atualizaReceita(uuid, payload);
             if (response.status === HTTP_STATUS.CREATED) {
                 console.log("Operação realizada com sucesso!");
             } else {
@@ -172,22 +167,22 @@ export const ReceitaForm = props => {
     const onCancelarTrue = () => {
         setShow(false);
         getPath();
-    }
+    };
 
     const onHandleClose = () => {
         setShow(false);
         setShowDelete(false);
         setShowPeriodoFechado(false);
         setShowErroGeral(false);
-    }
+    };
 
     const onShowModal = () => {
         setShow(true);
-    }
+    };
 
     const onShowDeleteModal = () => {
         setShowDelete(true);
-    }
+    };
 
     const onDeletarTrue = () => {
         deletarReceita(uuid).then(response => {
@@ -198,11 +193,11 @@ export const ReceitaForm = props => {
             console.log(error);
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
         });
-    }
+    };
 
     const onShowErroGeral = () => {
         setShowErroGeral(true);
-    }
+    };
 
     const getPath = () => {
         let path;
@@ -269,20 +264,20 @@ export const ReceitaForm = props => {
                 setreadOnlyClassificacaoReceita(false);
             }
         }
-    }
+    };
 
     const setaDetalhesTipoReceita = (id_tipo_receita) => {
         if (id_tipo_receita) {
             tabelas.tipos_receita.map((item, index) => {
                 if (item.id == id_tipo_receita && index != idxTipoDespesa) {
-                    setIdxTipoDespesa(index)
-                    const atuReceita = receita
-                    atuReceita.detalhe_tipo_receita = null
-                    setReceita(atuReceita)
+                    setIdxTipoDespesa(index);
+                    const atuReceita = receita;
+                    atuReceita.detalhe_tipo_receita = null;
+                    setReceita(atuReceita);
                 }
             })
         }
-    }
+    };
 
     const getDisplayOptionClassificacaoReceita = (id_categoria_receita, id_tipo_receita) => {
 
@@ -294,7 +289,7 @@ export const ReceitaForm = props => {
         } else {
             return "block"
         }
-    }
+    };
 
     const getOpcoesDetalhesTipoReceita = (values) => {
         if (tabelas.tipos_receita[idxTipoDespesa] !== undefined && tabelas.tipos_receita[idxTipoDespesa].detalhes_tipo_receita !== undefined && tabelas.tipos_receita[idxTipoDespesa].detalhes_tipo_receita.length > 0) {
@@ -304,14 +299,14 @@ export const ReceitaForm = props => {
                 )
             })
         }
-    }
+    };
 
     const temOpcoesDetalhesTipoReceita = (values) => {
         if (tabelas.tipos_receita[idxTipoDespesa] !== undefined && tabelas.tipos_receita[idxTipoDespesa].detalhes_tipo_receita !== undefined) {
             return (tabelas.tipos_receita[idxTipoDespesa].detalhes_tipo_receita.length > 0)
         }
         return false
-    }
+    };
 
     const retornaClassificacaoReceita = (values, setFieldValue) => {
 
@@ -372,7 +367,6 @@ export const ReceitaForm = props => {
 
 
         // Verifica se é devolucao
-
         if (verificaSeDevolucao(values.tipo_receita)  && !values.referencia_devolucao){
             errors.referencia_devolucao = "Campo período é obrigatório"
         }
@@ -389,7 +383,7 @@ export const ReceitaForm = props => {
             if (item.id === Number(values.tipo_receita)) {
                 e_repasse_tipo_receita = item.e_repasse
             }
-        })
+        });
 
         e_repasse_acao = values.acao_associacao;
 
@@ -404,7 +398,7 @@ export const ReceitaForm = props => {
 
             try {
 
-                let repasse = await setaRepasse(values)
+                let repasse = await setaRepasse(values);
 
                 let data_digitada = moment(values.data);
                 let data_inicio = moment(repasse.periodo.data_inicio_realizacao_despesas);
@@ -436,36 +430,28 @@ export const ReceitaForm = props => {
                     categoria_receita: values.categoria_receita,
                     referencia_devolucao: values.referencia_devolucao,
 
-                }
+                };
                 setInitialValue(init);
                 setReadOnlyValor(true);
             } catch (e) {
-                console.log("Erro: ", e)
+                console.log("Erro: ", e);
                 errors.acao_associacao = 'Não existem repasses pendentes para a Associação nesta ação';
             }
         } else {
             setReadOnlyValor(false)
         }
-
         return errors;
     };
 
     const verificaSeDevolucao = (tipoDeReceitaId) =>{
-
-        console.log("tipoDeCredito ", tipoDeReceitaId);
         let e_devolucao = undefined;
-
-        //debugger;
-
         if (tipoDeReceitaId){
-            let e_devolucao = tabelas.tipos_receita.find(element=> element.id === Number(tipoDeReceitaId))
-            console.log("e_devolucao ", e_devolucao);
+            let e_devolucao = tabelas.tipos_receita.find(element=> element.id === Number(tipoDeReceitaId));
             if (e_devolucao){
                 return e_devolucao.e_devolucao
             }else {
                 return e_devolucao
             }
-
         }else {
             return e_devolucao
         }
@@ -561,7 +547,6 @@ export const ReceitaForm = props => {
                                 {/*Fim Detalhamento do Crédito */}
 
                                 {/*Periodo Devolução */}
-
                                 {verificaSeDevolucao(props.values.tipo_receita) &&
                                     <div className="col-12 col-md-6 mt-4">
                                         <label htmlFor="referencia_devolucao">Período de referência da devolução</label>
@@ -584,8 +569,6 @@ export const ReceitaForm = props => {
                                         {props.touched.referencia_devolucao && props.errors.referencia_devolucao && <span className="span_erro text-danger mt-1"> {props.errors.referencia_devolucao}</span>}
                                     </div>
                                 }
-
-
                                 {/*Periodo Devolução */}
 
                                 {/*Data da Receita */}
@@ -729,8 +712,11 @@ export const ReceitaForm = props => {
             </section>
             {uuid
                 ?
-                <DeletarModalReceitas show={showDelete} handleClose={onHandleClose}
-                                      onDeletarTrue={onDeletarTrue}/>
+                <DeletarModalReceitas
+                    show={showDelete}
+                    handleClose={onHandleClose}
+                  onDeletarTrue={onDeletarTrue}
+                />
                 : null
             }
             <section>
@@ -741,4 +727,4 @@ export const ReceitaForm = props => {
             </section>
         </>
     );
-}
+};
