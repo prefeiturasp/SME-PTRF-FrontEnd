@@ -520,16 +520,24 @@ export const ReceitaForm = props => {
 
                                 {/*Periodo Devolução */}
                                 <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="data">Data do crédito</label>
-                                    <DatePickerField
-                                        name="data"
-                                        id="data"
-                                        value={values.data}
-                                        onChange={setFieldValue}
+                                    <label htmlFor="referencia_devolucao">Período de referência da devolução</label>
+                                    <select
+                                        id="referencia_devolucao"
+                                        name="referencia_devolucao"
+                                        value={props.values.referencia_devolucao}
+                                        onChange={props.handleChange}
                                         onBlur={props.handleBlur}
-                                    />
-                                    {props.touched.data && props.errors.data &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.data}</span>}
+                                        className="form-control"
+                                        disabled={readOnlyValor || readOnlyCampos}
+                                    >
+                                        {receita.referencia_devolucao
+                                            ? null
+                                            : <option>Selecione um período</option>}
+                                        {tabelas.periodos !== undefined && tabelas.periodos.length > 0 ? (tabelas.periodos.map((item, key) => (
+                                            <option key={key} value={item.uuid}>{item.referencia_por_extenso}</option>
+                                        ))) : null}
+                                    </select>
+                                    {props.touched.referencia_devolucao && props.errors.referencia_devolucao && <span className="span_erro text-danger mt-1"> {props.errors.referencia_devolucao}</span>}
                                 </div>
                                 {/*Periodo Devolução */}
 
