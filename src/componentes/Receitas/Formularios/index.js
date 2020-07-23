@@ -373,9 +373,9 @@ export const ReceitaForm = props => {
 
         // Verifica se é devolucao
 
-        // if (verificaSeDevolucao(values.tipo_receita)  && !values.referencia_devolucao){
-        //     errors.referencia_devolucao = "Campo périodo é obrigatório"
-        // }
+        if (verificaSeDevolucao(values.tipo_receita)  && !values.referencia_devolucao){
+            errors.referencia_devolucao = "Campo período é obrigatório"
+        }
 
         // Verifica período fechado para a receita
         if (values.data) {
@@ -568,7 +568,7 @@ export const ReceitaForm = props => {
                                         <select
                                             id="referencia_devolucao"
                                             name="referencia_devolucao"
-                                            value={props.values.referencia_devolucao  && props.values.referencia_devolucao.uuid ? props.values.referencia_devolucao.uuid : props.values.referencia_devolucao}
+                                            value={props.values.referencia_devolucao  && props.values.referencia_devolucao.uuid ? props.values.referencia_devolucao.uuid : props.values.referencia_devolucao ? props.values.referencia_devolucao : ""}
                                             onChange={props.handleChange}
                                             onBlur={props.handleBlur}
                                             className="form-control"
