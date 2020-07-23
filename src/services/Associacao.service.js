@@ -34,7 +34,7 @@ export const criarMembroAssociacao = async (payload) => {
 };
 
 export const editarMembroAssociacao = async (payload, uuid) => {
-    return (await api.put(`/api/membros-associacao/${uuid}`, payload, authHeader))
+    return (await api.put(`/api/membros-associacao/${uuid}/`, payload, authHeader))
 };
 
 export const consultarRF = async (rf) => {

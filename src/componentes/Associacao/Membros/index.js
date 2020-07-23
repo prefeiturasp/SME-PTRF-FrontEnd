@@ -117,19 +117,21 @@ export const MembrosDaAssociacao = () =>{
             return (
                 <p className="texto-dados-adicionais-tabela-membros">
                     <span className="mr-5"><strong>Registro funcional:</strong> {infos.codigo_identificacao}</span>
-                    <span><strong>Cargo na educação: </strong> {infos.cargo_educacao}</span>
+                    <span className="mr-5"><strong>Cargo na educação: </strong> {infos.cargo_educacao}</span>
+                    <span><strong>Email: </strong> {infos.email}</span>
                 </p>
             )
         }else if (infos.representacao === "ESTUDANTE"){
             return (
                 <p className="texto-dados-adicionais-tabela-membros">
                     <span className="mr-5"><strong>Código Eol do Aluno: </strong> {infos.codigo_identificacao}</span>
+                    <span><strong>Email: </strong> {infos.email}</span>
                 </p>
             )
         }else if(infos.representacao === "PAI_RESPONSAVEL"){
             return (
                 <p className="texto-dados-adicionais-tabela-membros">
-                    <span className="mr-5"><strong>Não exitem informações adicionais</strong></span>
+                    <span><strong>Email: </strong> {infos.email}</span>
                 </p>
             )
         }
