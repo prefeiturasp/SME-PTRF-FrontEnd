@@ -518,8 +518,23 @@ export const ReceitaForm = props => {
                                 </div>
                                 {/*Fim Detalhamento do Crédito */}
 
+                                {/*Periodo Devolução */}
+                                <div className="col-12 col-md-6 mt-4">
+                                    <label htmlFor="data">Data do crédito</label>
+                                    <DatePickerField
+                                        name="data"
+                                        id="data"
+                                        value={values.data}
+                                        onChange={setFieldValue}
+                                        onBlur={props.handleBlur}
+                                    />
+                                    {props.touched.data && props.errors.data &&
+                                    <span className="span_erro text-danger mt-1"> {props.errors.data}</span>}
+                                </div>
+                                {/*Periodo Devolução */}
+
                                 {/*Data da Receita */}
-                                <div className="col-12 col-md-4 mt-4">
+                                <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="data">Data do crédito</label>
                                     <DatePickerField
                                         name="data"
@@ -534,7 +549,7 @@ export const ReceitaForm = props => {
                                 {/*Fim Data da Receita */}
 
                                 {/*Tipo de Conta */}
-                                <div className="col-12 col-md-4 mt-4">
+                                <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="conta_associacao">Tipo de conta</label>
                                     <select
                                         id="conta_associacao"
@@ -559,7 +574,7 @@ export const ReceitaForm = props => {
                                 {/*Fim Tipo de Conta */}
 
                                 {/*Ação*/}
-                                <div className="col-12 col-md-4 mt-4">
+                                <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="acao_associacao">Ação</label>
                                     <select
                                         disabled={readOnlyCampos}
