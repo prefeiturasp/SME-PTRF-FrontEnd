@@ -428,10 +428,18 @@ export const ReceitaForm = props => {
         return errors;
     };
 
-    const verificaSeDevolucao = (tipoDeReceita) =>{
+    const verificaSeDevolucao = (tipoDeReceitaId) =>{
 
-        console.log("tipoDeCredito ", tipoDeReceita)
+        console.log("tipoDeCredito ", tipoDeReceitaId)
+        let e_devolucao = undefined;
 
+        if (tipoDeReceitaId){
+            let e_devolucao = tabelas.tipos_receita.find(element=> element.id === Number(tipoDeReceitaId))
+            console.log("tipoDeCredito ", e_devolucao)
+            return e_devolucao.e_devolucao
+        }else {
+            return e_devolucao
+        }
     };
 
     return (
@@ -526,26 +534,31 @@ export const ReceitaForm = props => {
                                 {/*Fim Detalhamento do Crédito */}
 
                                 {/*Periodo Devolução */}
-                                <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="referencia_devolucao">Período de referência da devolução</label>
-                                    <select
-                                        id="referencia_devolucao"
-                                        name="referencia_devolucao"
-                                        value={props.values.referencia_devolucao}
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                        className="form-control"
-                                        disabled={readOnlyValor || readOnlyCampos}
-                                    >
-                                        {receita.referencia_devolucao
-                                            ? null
-                                            : <option>Selecione um período</option>}
-                                        {tabelas.periodos !== undefined && tabelas.periodos.length > 0 ? (tabelas.periodos.map((item, key) => (
-                                            <option key={key} value={item.uuid}>{item.referencia_por_extenso}</option>
-                                        ))) : null}
-                                    </select>
-                                    {props.touched.referencia_devolucao && props.errors.referencia_devolucao && <span className="span_erro text-danger mt-1"> {props.errors.referencia_devolucao}</span>}
-                                </div>
+
+                                {verificaSeDevolucao(props.values.tipo_receita) &&
+                                    <div className="col-12 col-md-6 mt-4">
+                                        <label htmlFor="referencia_devolucao">Período de referência da devolução</label>
+                                        <select
+                                            id="referencia_devolucao"
+                                            name="referencia_devolucao"
+                                            value={props.values.referencia_devolucao}
+                                            onChange={props.handleChange}
+                                            onBlur={props.handleBlur}
+                                            className="form-control"
+                                            disabled={readOnlyValor || readOnlyCampos}
+                                        >
+                                            {receita.referencia_devolucao
+                                                ? null
+                                                : <option>Selecione um período</option>}
+                                            {tabelas.periodos !== undefined && tabelas.periodos.length > 0 ? (tabelas.periodos.map((item, key) => (
+                                                <option key={key} value={item.uuid}>{item.referencia_por_extenso}</option>
+                                            ))) : null}
+                                        </select>
+                                        {props.touched.referencia_devolucao && props.errors.referencia_devolucao && <span className="span_erro text-danger mt-1"> {props.errors.referencia_devolucao}</span>}
+                                    </div>
+                                }
+
+
                                 {/*Periodo Devolução */}
 
                                 {/*Data da Receita */}
