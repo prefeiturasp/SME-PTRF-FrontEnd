@@ -20,6 +20,7 @@ export const DadosDaAsssociacao = () => {
 
     const buscaAssociacao = async () => {
         const associacao = await getAssociacao();
+        console.log("Associacao ", associacao)
         setStateAssociacao(associacao)
     };
 
@@ -31,7 +32,9 @@ export const DadosDaAsssociacao = () => {
             "presidente_associacao_nome": stateAssociacao.presidente_associacao_nome,
             "presidente_associacao_rf": "",
             "presidente_conselho_fiscal_nome": stateAssociacao.presidente_conselho_fiscal_nome,
-            "presidente_conselho_fiscal_rf": ""
+            "presidente_conselho_fiscal_rf": "",
+            "ccm": stateAssociacao.ccm,
+            "email": stateAssociacao.email,
         };
 
         try {
@@ -120,6 +123,18 @@ export const DadosDaAsssociacao = () => {
                                 <div className="form-group col-md-6">
                                     <label htmlFor="cnpj"><strong>Número do CNPJ</strong></label>
                                     <input readOnly={true} value={stateAssociacao.cnpj} onChange={(e)=>handleChange(e.target.name, e.target.value)} name="cnpj" id="cnpj" type="text" className="form-control" />
+                                </div>
+                            </div>
+
+                            <div className="form-row">
+                                <div className="form-group col-md-6">
+                                    <label htmlFor="ccm"><strong>CCM</strong></label>
+                                    <input value={stateAssociacao && stateAssociacao.ccm ? stateAssociacao.ccm : "" } onChange={(e)=>handleChange(e.target.name, e.target.value)} name="ccm" id="ccm" type="text" className="form-control" />
+                                </div>
+
+                                <div className="form-group col-md-6">
+                                    <label htmlFor="email"><strong>Email da associação</strong></label>
+                                    <input value={stateAssociacao.email} onChange={(e)=>handleChange(e.target.name, e.target.value)} name="email" id="email" type="text" className="form-control" />
                                 </div>
                             </div>
 
