@@ -428,9 +428,9 @@ export const ReceitaForm = props => {
         return errors;
     };
 
-    const verificaSeDevolucao = (tipoDeCredito) =>{
+    const verificaSeDevolucao = (tipoDeReceita) =>{
 
-        console.log("tipoDeCredito ", tipoDeCredito)
+        console.log("tipoDeCredito ", tipoDeReceita)
 
     };
 
@@ -465,6 +465,7 @@ export const ReceitaForm = props => {
                                             //setaRepasse(values);
                                             getClassificacaoReceita(e.target.value, setFieldValue);
                                             setaDetalhesTipoReceita(e.target.value);
+                                            verificaSeDevolucao(e.target.value)
 
                                         }
                                         }
