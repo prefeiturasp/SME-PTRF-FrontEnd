@@ -426,7 +426,13 @@ export const ReceitaForm = props => {
         }
 
         return errors;
-    }
+    };
+
+    const verificaSeDevolucao = (tipoDeCredito) =>{
+
+        console.log("tipoDeCredito ", tipoDeCredito)
+
+    };
 
     return (
         <>
