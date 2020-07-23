@@ -42,6 +42,8 @@ export const ReceitaForm = props => {
         conta_associacao: "",
         data: "",
         valor: "",
+        referencia_devolucao: "",
+
     };
 
     const [tabelas, setTabelas] = useState(tabelaInicial);
@@ -64,6 +66,7 @@ export const ReceitaForm = props => {
         const carregaTabelas = async () => {
             getTabelasReceita().then(response => {
                 setTabelas(response.data);
+                console.log("Tabelas Receitas ", response.data)
             }).catch(error => {
                 console.log(error);
             });
@@ -80,6 +83,7 @@ export const ReceitaForm = props => {
                         categoria_receita: resp.categoria_receita,
                         acao_associacao: resp.acao_associacao.uuid,
                         conta_associacao: resp.conta_associacao.uuid,
+                        referencia_devolucao: resp.referencia_devolucao,
                         data: resp.data,
                         valor: resp.valor ? new Number(resp.valor).toLocaleString('pt-BR', {
                             style: 'currency',
