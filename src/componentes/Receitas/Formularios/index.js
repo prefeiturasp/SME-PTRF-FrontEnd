@@ -43,7 +43,6 @@ export const ReceitaForm = props => {
         data: "",
         valor: "",
         referencia_devolucao: "",
-
     };
 
     const [tabelas, setTabelas] = useState(tabelaInicial);
@@ -108,18 +107,14 @@ export const ReceitaForm = props => {
         }
     }, [tabelas, initialValue.tipo_receita]);
 
-
     const onSubmit = async (values) => {
-
-        // Removendo e_devolucao
+        // Validando e ou removendo e_devolucao
         if (!verificaSeDevolucao(values.tipo_receita)){
             delete values.referencia_devolucao
         }else if (uuid){
-
             if (values.referencia_devolucao && values.referencia_devolucao.uuid){
                 values.referencia_devolucao = values.referencia_devolucao.uuid
             }
-
         }
         values.valor = round(trataNumericos(values.valor), 2);
         values.data = moment(values.data).format("YYYY-MM-DD");
@@ -210,8 +205,6 @@ export const ReceitaForm = props => {
     };
 
     const setaRepasse = async (values)=>{
-        //debugger;
-
         let local_repasse;
         if (values && values.acao_associacao && values.data) {
             let data_receita = moment(new Date(values.data), "YYYY-MM-DD").format("DD/MM/YYYY");
@@ -222,7 +215,6 @@ export const ReceitaForm = props => {
                 } catch (e) {
                     console.log("Erro ao obter o repasse ", e)
                 }
-
             } else {
                 try {
                     local_repasse = await getRepasse(values.acao_associacao, data_receita);
@@ -230,25 +222,18 @@ export const ReceitaForm = props => {
                 } catch (e) {
                     console.log("Erro ao obter o repasse ", e)
                 }
-
             }
             return local_repasse;
         }
     };
 
     const getClassificacaoReceita = (id_tipo_receita, setFieldValue) => {
-
         let qtdeAceitaClassificacao = [];
-
         if (id_tipo_receita) {
-
             tabelas.categorias_receita.map((item, index) => {
-
                 let id_categoria_receita_lower = item.id.toLowerCase();
                 let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_' + id_categoria_receita_lower);
-
                 qtdeAceitaClassificacao.push(aceitaClassificacao);
-
                 if (aceitaClassificacao) {
                     setFieldValue("categoria_receita", item.id);
                     setreadOnlyClassificacaoReceita(true);
@@ -365,8 +350,7 @@ export const ReceitaForm = props => {
     const validateFormReceitas = async (values) => {
         const errors = {};
 
-
-        // Verifica se é devolucao
+        // Verifica se é devolucao e setando erro caso referencia devolucao vazio
         if (verificaSeDevolucao(values.tipo_receita)  && !values.referencia_devolucao){
             errors.referencia_devolucao = "Campo período é obrigatório"
         }
@@ -429,7 +413,6 @@ export const ReceitaForm = props => {
                     conta_associacao: repasse.conta_associacao.uuid,
                     categoria_receita: values.categoria_receita,
                     referencia_devolucao: values.referencia_devolucao,
-
                 };
                 setInitialValue(init);
                 setReadOnlyValor(true);
@@ -538,11 +521,8 @@ export const ReceitaForm = props => {
                                             placeholder="Digite o detalhamento"
                                             disabled={readOnlyCampos}
                                         />
-
                                     }
-                                    {props.touched.detalhe_tipo_receita && props.errors.detalhe_tipo_receita &&
-                                    <span
-                                        className="span_erro text-danger mt-1"> {props.errors.detalhe_tipo_receita}</span>}
+                                    {props.touched.detalhe_tipo_receita && props.errors.detalhe_tipo_receita && <span className="span_erro text-danger mt-1"> {props.errors.detalhe_tipo_receita}</span>}
                                 </div>
                                 {/*Fim Detalhamento do Crédito */}
 
@@ -643,7 +623,6 @@ export const ReceitaForm = props => {
                                 {/*Classificação do Crédito*/}
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="categoria_receita">Classificação do crédito</label>
-
                                     <select
                                         id="categoria_receita"
                                         name="categoria_receita"
@@ -657,11 +636,9 @@ export const ReceitaForm = props => {
                                             <option key={0} value="">Escolha a classificação</option>}
 
                                         {retornaClassificacaoReceita(props.values, setFieldValue)}
-
                                     </select>
 
-                                    {props.touched.categoria_receita && props.errors.categoria_receita && <span
-                                        className="span_erro text-danger mt-1"> {props.errors.categoria_receita}</span>}
+                                    {props.touched.categoria_receita && props.errors.categoria_receita && <span className="span_erro text-danger mt-1"> {props.errors.categoria_receita}</span>}
                                 </div>
                                 {/*Fim Classificação do Crédito*/}
 
@@ -688,7 +665,6 @@ export const ReceitaForm = props => {
                             </div>
 
                             {/*Botões*/}
-
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
                                 <button type="reset" onClick={onShowModal}
                                         className="btn btn btn-outline-success mt-2 mr-2">Voltar
@@ -702,7 +678,6 @@ export const ReceitaForm = props => {
                                 </button>
                             </div>
                             {/*Fim Botões*/}
-
                         </form>
                     );
                 }}
