@@ -66,7 +66,6 @@ export const ReceitaForm = props => {
         const carregaTabelas = async () => {
             getTabelasReceita().then(response => {
                 setTabelas(response.data);
-                console.log("Tabelas Receitas ", response.data)
             }).catch(error => {
                 console.log(error);
             });
@@ -76,6 +75,8 @@ export const ReceitaForm = props => {
             if (uuid) {
                 getReceita(uuid).then(response => {
                     const resp = response.data;
+
+                    console.log("Busca receita ", resp)
                     const init = {
                         tipo_receita: resp.tipo_receita.id,
                         detalhe_tipo_receita: resp.detalhe_tipo_receita,
@@ -112,12 +113,25 @@ export const ReceitaForm = props => {
 
     const onSubmit = async (values) => {
 
+        console.log("Onsubmit ", values)
+
+        // Removendo e_devolucao{
+
+        if (!verificaSeDevolucao(values.tipo_receita)){
+            delete values.referencia_devolucao
+        }else if (uuid){
+
+            if (values.referencia_devolucao && values.referencia_devolucao.uuid){
+                values.referencia_devolucao = values.referencia_devolucao.uuid
+            }
+
+        }
         values.valor = round(trataNumericos(values.valor), 2);
         values.data = moment(values.data).format("YYYY-MM-DD");
         const payload = {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID),
-            detalhe_tipo_receita: values.detalhe_tipo_receita.id !== undefined ? values.detalhe_tipo_receita.id : values.detalhe_tipo_receita
+            detalhe_tipo_receita: values.detalhe_tipo_receita && values.detalhe_tipo_receita.id !== undefined ? values.detalhe_tipo_receita.id : values.detalhe_tipo_receita
         }
         setLoading(true);
         if (uuid) {
@@ -153,7 +167,7 @@ export const ReceitaForm = props => {
         } catch (error) {
             console.log(error)
         }
-    }
+    };
 
     const onCancelarTrue = () => {
         setShow(false);
@@ -359,9 +373,9 @@ export const ReceitaForm = props => {
 
         // Verifica se é devolucao
 
-        if (verificaSeDevolucao(values.tipo_receita)  && !values.referencia_devolucao){
-            errors.referencia_devolucao = "Campo périodo é obrigatório"
-        }
+        // if (verificaSeDevolucao(values.tipo_receita)  && !values.referencia_devolucao){
+        //     errors.referencia_devolucao = "Campo périodo é obrigatório"
+        // }
 
         // Verifica período fechado para a receita
         if (values.data) {
@@ -441,10 +455,17 @@ export const ReceitaForm = props => {
         console.log("tipoDeCredito ", tipoDeReceitaId);
         let e_devolucao = undefined;
 
+        //debugger;
+
         if (tipoDeReceitaId){
             let e_devolucao = tabelas.tipos_receita.find(element=> element.id === Number(tipoDeReceitaId))
-            console.log("tipoDeCredito ", e_devolucao);
-            return e_devolucao.e_devolucao
+            console.log("e_devolucao ", e_devolucao);
+            if (e_devolucao){
+                return e_devolucao.e_devolucao
+            }else {
+                return e_devolucao
+            }
+
         }else {
             return e_devolucao
         }
@@ -547,7 +568,7 @@ export const ReceitaForm = props => {
                                         <select
                                             id="referencia_devolucao"
                                             name="referencia_devolucao"
-                                            value={props.values.referencia_devolucao}
+                                            value={props.values.referencia_devolucao  && props.values.referencia_devolucao.uuid ? props.values.referencia_devolucao.uuid : props.values.referencia_devolucao}
                                             onChange={props.handleChange}
                                             onBlur={props.handleBlur}
                                             className="form-control"
@@ -555,7 +576,7 @@ export const ReceitaForm = props => {
                                         >
                                             {receita.referencia_devolucao
                                                 ? null
-                                                : <option>Selecione um período</option>}
+                                                : <option value="">Selecione um período</option>}
                                             {tabelas.periodos !== undefined && tabelas.periodos.length > 0 ? (tabelas.periodos.map((item, key) => (
                                                 <option key={key} value={item.uuid}>{item.referencia_por_extenso}</option>
                                             ))) : null}
