@@ -356,6 +356,13 @@ export const ReceitaForm = props => {
     const validateFormReceitas = async (values) => {
         const errors = {};
 
+
+        // Verifica se é devolucao
+
+        if (verificaSeDevolucao(values.tipo_receita)  && !values.referencia_devolucao){
+            errors.referencia_devolucao = "Campo périodo é obrigatório"
+        }
+
         // Verifica período fechado para a receita
         if (values.data) {
             await periodoFechado(values.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
@@ -413,6 +420,7 @@ export const ReceitaForm = props => {
                     acao_associacao: values.acao_associacao,
                     conta_associacao: repasse.conta_associacao.uuid,
                     categoria_receita: values.categoria_receita,
+                    referencia_devolucao: values.referencia_devolucao,
 
                 }
                 setInitialValue(init);
@@ -430,12 +438,12 @@ export const ReceitaForm = props => {
 
     const verificaSeDevolucao = (tipoDeReceitaId) =>{
 
-        console.log("tipoDeCredito ", tipoDeReceitaId)
+        console.log("tipoDeCredito ", tipoDeReceitaId);
         let e_devolucao = undefined;
 
         if (tipoDeReceitaId){
             let e_devolucao = tabelas.tipos_receita.find(element=> element.id === Number(tipoDeReceitaId))
-            console.log("tipoDeCredito ", e_devolucao)
+            console.log("tipoDeCredito ", e_devolucao);
             return e_devolucao.e_devolucao
         }else {
             return e_devolucao
@@ -473,8 +481,6 @@ export const ReceitaForm = props => {
                                             //setaRepasse(values);
                                             getClassificacaoReceita(e.target.value, setFieldValue);
                                             setaDetalhesTipoReceita(e.target.value);
-                                            verificaSeDevolucao(e.target.value)
-
                                         }
                                         }
                                         onBlur={props.handleBlur}
