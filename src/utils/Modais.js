@@ -622,6 +622,25 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                         </div>
                                     </div>
 
+                                    <div className="col-12">
+                                        <div className="form-group">
+                                            <label htmlFor="email">Email</label>
+                                            <input
+                                                type="text"
+                                                value={props.values.email ? props.values.email : ""}
+                                                onChange={(e) => {
+                                                    props.handleChange(e);
+                                                    handleChangeEditarMembro(e.target.name, e.target.value);
+                                                }
+                                                }
+                                                name="email"
+                                                className="form-control"
+                                                placeholder="Insira seu email se desejar"
+                                            />
+                                            {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
+                                        </div>
+                                    </div>
+
                                 </div>
                                 <div className="d-flex  justify-content-end pb-3 mt-3">
                                     <button onClick={()=>handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
