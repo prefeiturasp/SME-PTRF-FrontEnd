@@ -6,19 +6,9 @@ import "../associacao.scss"
 import Loading from "../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {Formik} from "formik";
+import {YupSignupSchemaDadosDaAssociacao} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const DadosDaAsssociacao = () => {
-
-    let initialValues = {
-        nome: "",
-        codigo_eol: "",
-        presidente_associacao_nome: "",
-        presidente_associacao_rf: "",
-        presidente_conselho_fiscal_nome: "",
-        presidente_conselho_fiscal_rf: "",
-        ccm: "",
-        email: "",
-    };
 
     const [stateAssociacao, setStateAssociacao] = useState({
         nome: "",
@@ -35,7 +25,6 @@ export const DadosDaAsssociacao = () => {
     const [showModalReceitasCancelar, setShowModalDadosAssociacaoCancelar] = useState(false);
     const [showModalReceitasSalvar, setShowModalDadosAssociacaoSalvar] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [emailValido, setEmailValido] = useState(false);
 
     useEffect(()=> {
         buscaAssociacao();
@@ -44,7 +33,6 @@ export const DadosDaAsssociacao = () => {
 
     const buscaAssociacao = async () => {
         const associacao = await getAssociacao();
-        console.log("Associacao ", associacao);
         setStateAssociacao(associacao)
     };
 
@@ -82,16 +70,12 @@ export const DadosDaAsssociacao = () => {
     };
 
     const onCancelarAssociacaoTrue = async (props) => {
-        props.handleReset()
+        props.handleReset();
         setShowModalDadosAssociacaoCancelar(false);
     };
 
-    const onShowModalCancelar = () => {
-        setShowModalDadosAssociacaoCancelar(true);
-    };
-
     const onSalvarAssociacaoTrue = async () => {
-        await buscaAssociacao()
+        await buscaAssociacao();
         setShowModalDadosAssociacaoSalvar(false);
     };
 
@@ -117,18 +101,15 @@ export const DadosDaAsssociacao = () => {
                             caminhos_menu_interno = {UrlsMenuInterno}
                         />
 
-
-
                         <Formik
                             initialValues={stateAssociacao}
                             validateOnBlur={true}
-                            //validationSchema={YupSignupSchemaAlterarEmail}
+                            validationSchema={YupSignupSchemaDadosDaAssociacao}
                             enableReinitialize={true}
                             onSubmit={handleSubmit}
                         >
                             {props => (
                                 <form onSubmit={props.handleSubmit}>
-                                    {console.log("State ", props.values)}
                                     <div className="form-row">
                                         <div className="form-group col-md-6">
                                             <label htmlFor="nome"><strong>Nome da Associação</strong></label>
@@ -221,7 +202,7 @@ export const DadosDaAsssociacao = () => {
                                         </div>
                                     </div>
                                     <div className="d-flex  justify-content-end pb-3">
-                                        <button onClick={async ()=>onShowModalCancelar(props.handleReset)} type="reset" className="btn btn btn-outline-success mt-2">Cancelar </button>
+                                        <button onClick={()=>setShowModalDadosAssociacaoCancelar(true)} type="reset" className="btn btn btn-outline-success mt-2">Cancelar </button>
                                         <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
                                     </div>
 
@@ -235,7 +216,6 @@ export const DadosDaAsssociacao = () => {
                     </div>
                 </div>
             ): null}
-
         </>
     );
 };
