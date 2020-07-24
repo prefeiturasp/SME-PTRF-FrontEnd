@@ -54,6 +54,7 @@ export const YupSignupSchemaLogin = yup.object().shape({
 
 export const YupSignupSchemaMembros = yup.object().shape({
   representacao: yup.string().required("Representação é obrigatório"),
+  email: yup.string().email("Digite um email válido"),
 
   codigo_identificacao: yup.string()
     .test('test-name', 'É obrigatório e não pode ultrapassar 10 caracteres',
