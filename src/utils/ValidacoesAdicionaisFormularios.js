@@ -24,6 +24,10 @@ export const checkDuplicateInObject = (propertyName, inputArray) => {
   return seenDuplicate;
 };
 
+export const YupSignupSchemaDadosDaAssociacao = yup.object().shape({
+  email: yup.string().email("Digite um email válido"),
+});
+
 export const YupSignupSchemaAlterarSenha = yup.object().shape({
   senha_atual: yup.string().required("Campo senha atual é obrigatório"),
   senha: yup.string().required("Campo nova senha é obrigatório"),
@@ -54,6 +58,7 @@ export const YupSignupSchemaLogin = yup.object().shape({
 
 export const YupSignupSchemaMembros = yup.object().shape({
   representacao: yup.string().required("Representação é obrigatório"),
+  email: yup.string().email("Digite um email válido"),
 
   codigo_identificacao: yup.string()
     .test('test-name', 'É obrigatório e não pode ultrapassar 10 caracteres',
