@@ -22,10 +22,10 @@ export const Tags = ({formikProps, index, rateio, rateios, verboHttp, disabled, 
                 <div className="col-auto">
                     <div className="form-check form-check-inline">
                         <input
-                            name={`escolhaTags${index}`}
+                            name={`rateios[${index}].escolha_tags`}
                             onChange={(e) => {
                                 formikProps.handleChange(e);
-                                changeEscolhaTags(index, 'sim')
+                                //changeEscolhaTags(index, 'sim')
                             }}
 
                             className={`${!rateio.tag && verboHttp === "PUT" && "is_invalid "} form-check-input`}
@@ -33,7 +33,7 @@ export const Tags = ({formikProps, index, rateio, rateios, verboHttp, disabled, 
                             id={`tag_sim_${index}`}
                             value="sim"
                             disabled={disabled}
-                            //defaultChecked={rateio.tag !== null || escolhaTags[index] === 'sim' ? true : false }
+                            checked={rateios[index].escolha_tags === 'sim' || rateio.tag !== null}
 
                         />
                         <label className="form-check-label" htmlFor={`tag_sim_${index}`}>Sim</label>
@@ -41,17 +41,17 @@ export const Tags = ({formikProps, index, rateio, rateios, verboHttp, disabled, 
 
                     <div className="form-check form-check-inline">
                         <input
-                            name={`escolhaTags${index}`}
+                            name={`rateios[${index}].escolha_tags`}
                             onChange={(e) => {
                                 formikProps.handleChange(e);
-                                changeEscolhaTags(index, 'nao')
+                                //changeEscolhaTags(index, 'nao')
                             }}
                             className={`${!rateio.tag && verboHttp === "PUT" && "is_invalid "} form-check-input`}
                             type="radio"
                             id={`tag_nao_${index}`}
                             value="nao"
                             disabled={disabled}
-                            defaultChecked
+                            checked={rateios[index].escolha_tags === 'nao' || rateio.tag === null}
 
                         />
                         <label className="form-check-label" htmlFor={`tag_nao_${index}`}>Não</label>
@@ -61,7 +61,7 @@ export const Tags = ({formikProps, index, rateio, rateios, verboHttp, disabled, 
                 {console.log("escolhaTags ", escolhaTags[index])}
                 {console.log("TAGS ", rateio.tag)}
 
-                {escolhaTags[index] === 'sim' ?
+                {rateios[index].escolha_tags === 'sim' || rateio.tag !== null ?
                     <div className="col-auto">
                         <select
                             value={

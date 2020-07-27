@@ -40,6 +40,7 @@ export const DespesaContextProvider = ({children}) => {
         rateios: [
             {
                 associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                escolha_tags:"",
                 tag:"",
                 conta_associacao: "",
                 acao_associacao: "",
@@ -74,6 +75,7 @@ export const DespesaContextProvider = ({children}) => {
         rateios: [
             {
                 associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                escolha_tags:"",
                 tag:"",
                 conta_associacao: "",
                 acao_associacao: "",
