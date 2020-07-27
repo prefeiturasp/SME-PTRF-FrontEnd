@@ -16,6 +16,7 @@ import { AvisoCapitalModal, CancelarModal, DeletarModal, ErroGeral, PeriodoFecha
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
+import {Tags} from "../Tags";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -616,6 +617,19 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     </p>
                                                                     <hr className='mt-0 mb-1'/>
                                                                 </div>
+                                                                <div className="col-12">
+                                                                    <Tags
+                                                                        formikProps={props}
+                                                                        rateio={rateio}
+                                                                        rateios={values.rateios}
+                                                                        index={index}
+                                                                        verboHttp={despesaContext.verboHttp}
+                                                                        disabled={readOnlyCampos}
+                                                                        errors={errors}
+                                                                        setFieldValue={setFieldValue}
+                                                                        despesasTabelas={despesasTabelas}
+                                                                    />
+                                                                </div>
                                                                 <div className="col-12 col-md-6 mt-4">
 
                                                                     <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
@@ -690,6 +704,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                         onClick={() => push(
                                                             {
                                                                 associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                                                                escolha_tags:"",
+                                                                tag:"",
                                                                 conta_associacao: "",
                                                                 acao_associacao: "",
                                                                 aplicacao_recurso: "",
