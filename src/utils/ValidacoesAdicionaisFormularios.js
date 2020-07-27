@@ -235,7 +235,7 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
     if (typeof rateio.tag === "object" && rateio.tag !== null){
       rateio.tag = rateio.tag.uuid
     }else {
-      if (rateio.tag === "0" || rateio.tag === "" || rateio.tag === 0) {
+      if ( rateio.tag === "" || rateio.escolha_tags === 'nao' ) {
         rateio.tag = null
       }
     }

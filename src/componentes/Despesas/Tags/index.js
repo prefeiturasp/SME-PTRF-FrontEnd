@@ -61,7 +61,7 @@ export const Tags = ({formikProps, index, rateio, rateios, verboHttp, disabled, 
                 {console.log("escolhaTags ", escolhaTags[index])}
                 {console.log("TAGS ", rateio.tag)}
 
-                {rateios[index].escolha_tags === 'sim' || rateio.tag !== null ?
+                {rateios[index].escolha_tags === 'sim' || rateio.tag !== null && rateios[index].escolha_tags !== 'nao' ?
                     <div className="col-auto">
                         <select
                             value={
