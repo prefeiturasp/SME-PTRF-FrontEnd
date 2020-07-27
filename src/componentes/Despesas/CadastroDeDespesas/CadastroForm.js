@@ -625,6 +625,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     <Tags
                                                                         formikProps={props}
                                                                         rateio={rateio}
+                                                                        rateios={values.rateios}
                                                                         index={index}
                                                                         verboHttp={despesaContext.verboHttp}
                                                                         disabled={readOnlyCampos}
