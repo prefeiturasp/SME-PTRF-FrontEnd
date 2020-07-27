@@ -59,7 +59,6 @@ export const CadastroForm = ({verbo_http}) => {
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
             const resp = await getDespesasTabelas();
-            console.log("Tabela despesas ", resp)
             setDespesasTabelas(resp);
 
             const array_tipos_custeio = resp.tipos_custeio;
@@ -86,7 +85,6 @@ export const CadastroForm = ({verbo_http}) => {
     }, []);
 
     const initialValues = () => {
-        console.log("Initial Values ", despesaContext.initialValues)
         return despesaContext.initialValues;
     };
 
@@ -208,8 +206,6 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const onSubmit = async (values) => {
-
-        console.log("onSubmit ", values)
 
         setLoading(true);
 

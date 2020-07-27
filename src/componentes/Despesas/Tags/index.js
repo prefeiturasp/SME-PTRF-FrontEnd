@@ -1,21 +1,18 @@
 import React, {useState, useEffect} from "react";
 import "./tags.scss"
 
-export const Tags = ({formikProps, index, rateio, rateios, verboHttp, disabled, despesasTabelas}) => {
+export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasTabelas}) => {
 
     const [escolhaTags, setEscolhaTags] = useState({});
 
     useEffect(()=>{
-        //console.log("changeEscolhaTags ", formikProps.values)
         if ( (formikProps.values.rateios[index].tag || formikProps.values.rateios[index].escolha_tags === 'sim') && formikProps.values.rateios[index].escolha_tags !== 'nao'){
             setEscolhaTags(true)
         }else {
             setEscolhaTags(false)
         }
 
-
-    }, [formikProps])
-
+    }, [formikProps, index]);
 
     return (
         <div className="container-tags mt-4">
@@ -32,15 +29,12 @@ export const Tags = ({formikProps, index, rateio, rateios, verboHttp, disabled, 
                                 formikProps.setFieldValue(`rateios[${index}].escolha_tags`, "sim")
 
                             }}
-
                             className={`${!rateio.tag && verboHttp === "PUT" && "is_invalid "} form-check-input`}
                             type="radio"
                             id={`tag_sim_${index}`}
                             value="sim"
                             disabled={disabled}
-                            //checked={rateios[index].escolha_tags === 'sim' || rateio.tag !== null}
                             checked={escolhaTags}
-
                         />
                         <label className="form-check-label" htmlFor={`tag_sim_${index}`}>Sim</label>
                     </div>
@@ -57,9 +51,7 @@ export const Tags = ({formikProps, index, rateio, rateios, verboHttp, disabled, 
                             id={`tag_nao_${index}`}
                             value="nao"
                             disabled={disabled}
-                            //checked={rateios[index].escolha_tags === 'nao' || rateio.tag === null}
                             checked={!escolhaTags}
-
                         />
                         <label className="form-check-label" htmlFor={`tag_nao_${index}`}>Não</label>
                     </div>
