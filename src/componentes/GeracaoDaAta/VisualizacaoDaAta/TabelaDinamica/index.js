@@ -77,11 +77,11 @@ export const TabelaDinamica = ({infoAta, valorTemplate}) => {
                             <td>{valorTemplate(info.repasses_nao_realizados_custeio + info.repasses_nao_realizados_capital + info.repasses_nao_realizados_livre)}</td>
                         </tr>
                         <tr>
-                            <td>Crédito futuros</td>
-                            <td>{valorTemplate(info.repasses_nao_realizados_custeio)}</td>
-                            <td>{valorTemplate(info.repasses_nao_realizados_capital)}</td>
-                            <td>{valorTemplate(info.repasses_nao_realizados_livre)}</td>
-                            <td>{valorTemplate(info.repasses_nao_realizados_custeio + info.repasses_nao_realizados_capital + info.repasses_nao_realizados_livre)}</td>
+                            <td>Devolução a conta do PTRF</td>
+                            <td>{valorTemplate(info.receitas_devolucao_no_periodo_custeio)}</td>
+                            <td>{valorTemplate(info.receitas_devolucao_no_periodo_capital)}</td>
+                            <td>{valorTemplate(info.receitas_devolucao_no_periodo_livre)}</td>
+                            <td>{valorTemplate(info.receitas_devolucao_no_periodo)}</td>
                         </tr>
                         </tbody>
                     </table>
