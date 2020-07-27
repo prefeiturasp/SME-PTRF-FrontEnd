@@ -16,6 +16,7 @@ import { AvisoCapitalModal, CancelarModal, DeletarModal, ErroGeral, PeriodoFecha
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
+import {Tags} from "../Tags";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -58,6 +59,7 @@ export const CadastroForm = ({verbo_http}) => {
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
             const resp = await getDespesasTabelas();
+            console.log("Tabela despesas ", resp)
             setDespesasTabelas(resp);
 
             const array_tipos_custeio = resp.tipos_custeio;
@@ -615,6 +617,9 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     <p className='mb-0'><strong>Despesa {index + 1}</strong>
                                                                     </p>
                                                                     <hr className='mt-0 mb-1'/>
+                                                                </div>
+                                                                <div className="col-12">
+                                                                    <Tags/>
                                                                 </div>
                                                                 <div className="col-12 col-md-6 mt-4">
 
