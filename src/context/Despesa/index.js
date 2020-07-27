@@ -33,7 +33,7 @@ export const DespesaContextProvider = ({children}) => {
         valor_total: "",
         valor_recursos_proprios: "",
         // Auxiliares
-        mais_de_um_tipo_despesa: "nao",
+        mais_de_um_tipo_despesa: "",
         valor_recusos_acoes:0,
         valor_total_dos_rateios:0,
         // Fim Auxiliares
@@ -68,7 +68,7 @@ export const DespesaContextProvider = ({children}) => {
         valor_total: "",
         valor_recursos_proprios: "",
         // Auxiliares
-        mais_de_um_tipo_despesa: "nao",
+        mais_de_um_tipo_despesa: "",
         valor_recusos_acoes:0,
         valor_total_dos_rateios:0,
         // Fim Auxiliares

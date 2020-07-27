@@ -224,7 +224,7 @@ export const CadastroForm = ({verbo_http}) => {
                 if (response.status === HTTP_STATUS.CREATED) {
                     console.log("Operação realizada com sucesso!");
                     //resetForm({values: ""})
-                    //getPath();
+                    getPath();
                 } else {
                     setLoading(false);
                 }
@@ -239,7 +239,7 @@ export const CadastroForm = ({verbo_http}) => {
                 if (response.status === 200) {
                     console.log("Operação realizada com sucesso!");
                     //resetForm({values: ""})
-                    //getPath();
+                    getPath();
                 } else {
                     setLoading(false);
                 }

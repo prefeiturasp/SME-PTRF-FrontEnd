@@ -1,16 +1,20 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import "./tags.scss"
 
 export const Tags = ({formikProps, index, rateio, rateios, verboHttp, disabled, despesasTabelas}) => {
 
-    const [escolhaTags, setEscolhaTags] = useState({})
+    const [escolhaTags, setEscolhaTags] = useState({});
 
-    const changeEscolhaTags = (id, valor) => {
-        setEscolhaTags({
-            ...escolhaTags,
-            [id]: valor
-        });
-    };
+    useEffect(()=>{
+        //console.log("changeEscolhaTags ", formikProps.values)
+        if ( (formikProps.values.rateios[index].tag || formikProps.values.rateios[index].escolha_tags === 'sim') && formikProps.values.rateios[index].escolha_tags !== 'nao'){
+            setEscolhaTags(true)
+        }else {
+            setEscolhaTags(false)
+        }
+
+
+    }, [formikProps])
 
 
     return (
@@ -25,7 +29,8 @@ export const Tags = ({formikProps, index, rateio, rateios, verboHttp, disabled, 
                             name={`rateios[${index}].escolha_tags`}
                             onChange={(e) => {
                                 formikProps.handleChange(e);
-                                //changeEscolhaTags(index, 'sim')
+                                formikProps.setFieldValue(`rateios[${index}].escolha_tags`, "sim")
+
                             }}
 
                             className={`${!rateio.tag && verboHttp === "PUT" && "is_invalid "} form-check-input`}
@@ -33,7 +38,8 @@ export const Tags = ({formikProps, index, rateio, rateios, verboHttp, disabled, 
                             id={`tag_sim_${index}`}
                             value="sim"
                             disabled={disabled}
-                            checked={rateios[index].escolha_tags === 'sim' || rateio.tag !== null}
+                            //checked={rateios[index].escolha_tags === 'sim' || rateio.tag !== null}
+                            checked={escolhaTags}
 
                         />
                         <label className="form-check-label" htmlFor={`tag_sim_${index}`}>Sim</label>
@@ -44,24 +50,22 @@ export const Tags = ({formikProps, index, rateio, rateios, verboHttp, disabled, 
                             name={`rateios[${index}].escolha_tags`}
                             onChange={(e) => {
                                 formikProps.handleChange(e);
-                                //changeEscolhaTags(index, 'nao')
+                                formikProps.setFieldValue(`rateios[${index}].escolha_tags`, "nao")
                             }}
                             className={`${!rateio.tag && verboHttp === "PUT" && "is_invalid "} form-check-input`}
                             type="radio"
                             id={`tag_nao_${index}`}
                             value="nao"
                             disabled={disabled}
-                            checked={rateios[index].escolha_tags === 'nao' || rateio.tag === null}
+                            //checked={rateios[index].escolha_tags === 'nao' || rateio.tag === null}
+                            checked={!escolhaTags}
 
                         />
                         <label className="form-check-label" htmlFor={`tag_nao_${index}`}>Não</label>
                     </div>
                 </div>
 
-                {console.log("escolhaTags ", escolhaTags[index])}
-                {console.log("TAGS ", rateio.tag)}
-
-                {rateios[index].escolha_tags === 'sim' || rateio.tag !== null && rateios[index].escolha_tags !== 'nao' ?
+                {escolhaTags ?
                     <div className="col-auto">
                         <select
                             value={
