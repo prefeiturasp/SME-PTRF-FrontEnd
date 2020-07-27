@@ -175,6 +175,9 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
     }
   }
 
+
+
+
   values.valor_total = trataNumericos(values.valor_total);
   values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
   values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)
@@ -226,6 +229,14 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
         }else {
           rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
         }
+      }
+    }
+
+    if (typeof rateio.tag === "object" && rateio.tag !== null){
+      rateio.tag = rateio.tag.uuid
+    }else {
+      if (rateio.tag === "0" || rateio.tag === "" || rateio.tag === 0) {
+        rateio.tag = null
       }
     }
 

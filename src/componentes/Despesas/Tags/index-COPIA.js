@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import "./tags.scss"
 
-export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasTabelas}) => {
+export const Tags = ({formikProps, index, rateio, verboHttp, disabled}) => {
 
     const [escolhaTags, setEscolhaTags] = useState({})
 
@@ -34,7 +34,7 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
                             id={`tag_sim_${index}`}
                             value="sim"
                             disabled={disabled}
-                            //checked={escolhaTags[index] === 'sim' || rateio.tag !== null}
+                            checked={escolhaTags[index] === 'sim'}
                         />
                         <label className="form-check-label" htmlFor={`tag_sim_${index}`}>Sim</label>
                     </div>
@@ -51,32 +51,14 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
                             id={`tag_nao_${index}`}
                             value="nao"
                             disabled={disabled}
-                            //checked={escolhaTags[index] === 'nao' || rateio.tag === null}
+                            checked={escolhaTags[index] === 'nao'}
                         />
                         <label className="form-check-label" htmlFor={`tag_nao_${index}`}>Não</label>
                     </div>
                 </div>
                 {escolhaTags[index] === 'sim' &&
                 <div className="col-auto">
-                    {console.log("XXXXXXXXXXXXXXXXXXXXXX ", rateio.tag)}
-                    <select
-
-                        value={
-                            rateio.tag !== null ? (
-                                typeof rateio.tag === "object" ? rateio.tag.uuid : rateio.tag
-                            ) : ""
-                        }
-                        onChange={formikProps.handleChange}
-                        name={`rateios[${index}].tag`}
-                        id='tag'
-                        className={`${!rateio.tag && verboHttp === "PUT" && "is_invalid "} form-control`}
-                        disabled={disabled}
-                    >
-                        <option key={0} value="">Selecione uma ação</option>
-                        {despesasTabelas.tags && despesasTabelas.tags.map(item => (
-                            <option key={item.uuid} value={item.uuid}>{item.nome}</option>
-                        ))}
-                    </select>
+                    <p><strong>TRUE</strong></p>
                 </div>
                 }
             </div>

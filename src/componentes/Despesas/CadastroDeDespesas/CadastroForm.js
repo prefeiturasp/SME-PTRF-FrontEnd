@@ -86,6 +86,7 @@ export const CadastroForm = ({verbo_http}) => {
     }, []);
 
     const initialValues = () => {
+        console.log("Initial Values ", despesaContext.initialValues)
         return despesaContext.initialValues;
     };
 
@@ -207,6 +208,8 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const onSubmit = async (values) => {
+
+        console.log("onSubmit ", values)
 
         setLoading(true);
 
@@ -619,7 +622,16 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     <hr className='mt-0 mb-1'/>
                                                                 </div>
                                                                 <div className="col-12">
-                                                                    <Tags/>
+                                                                    <Tags
+                                                                        formikProps={props}
+                                                                        rateio={rateio}
+                                                                        index={index}
+                                                                        verboHttp={despesaContext.verboHttp}
+                                                                        disabled={readOnlyCampos}
+                                                                        errors={errors}
+                                                                        setFieldValue={setFieldValue}
+                                                                        despesasTabelas={despesasTabelas}
+                                                                    />
                                                                 </div>
                                                                 <div className="col-12 col-md-6 mt-4">
 
