@@ -76,6 +76,13 @@ export const TabelaDinamica = ({infoAta, valorTemplate}) => {
                             <td>{valorTemplate(info.repasses_nao_realizados_livre)}</td>
                             <td>{valorTemplate(info.repasses_nao_realizados_custeio + info.repasses_nao_realizados_capital + info.repasses_nao_realizados_livre)}</td>
                         </tr>
+                        <tr>
+                            <td>Crédito futuros</td>
+                            <td>{valorTemplate(info.repasses_nao_realizados_custeio)}</td>
+                            <td>{valorTemplate(info.repasses_nao_realizados_capital)}</td>
+                            <td>{valorTemplate(info.repasses_nao_realizados_livre)}</td>
+                            <td>{valorTemplate(info.repasses_nao_realizados_custeio + info.repasses_nao_realizados_capital + info.repasses_nao_realizados_livre)}</td>
+                        </tr>
                         </tbody>
                     </table>
                     <TextoDespesas
