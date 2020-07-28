@@ -73,7 +73,14 @@ export const TabelaTotais = ({infoAta, valorTemplate}) => {
                         <td>{valorTemplate(infoAta.totais.repasses_nao_realizados_custeio)}</td>
                         <td>{valorTemplate(infoAta.totais.repasses_nao_realizados_capital)}</td>
                         <td>{valorTemplate(infoAta.totais.repasses_nao_realizados_livre)}</td>
-                        <td>{valorTemplate(infoAta.totais.repasses_nao_realizados_capital + infoAta.totais.repasses_nao_realizados_capital + infoAta.totais.repasses_nao_realizados_livre)}</td>
+                        <td>{valorTemplate(infoAta.totais.repasses_nao_realizados_custeio + infoAta.totais.repasses_nao_realizados_capital + infoAta.totais.repasses_nao_realizados_livre)}</td>
+                    </tr>
+                    <tr>
+                        <td>Devolução a conta do PTRF</td>
+                        <td>{valorTemplate(infoAta.totais.receitas_devolucao_no_periodo_custeio)}</td>
+                        <td>{valorTemplate(infoAta.totais.receitas_devolucao_no_periodo_capital)}</td>
+                        <td>{valorTemplate(infoAta.totais.receitas_devolucao_no_periodo_livre)}</td>
+                        <td>{valorTemplate(infoAta.totais.receitas_devolucao_no_periodo_custeio + infoAta.totais.receitas_devolucao_no_periodo_capital + infoAta.totais.receitas_devolucao_no_periodo_livre)}</td>
                     </tr>
                     </tbody>
                 </table>
