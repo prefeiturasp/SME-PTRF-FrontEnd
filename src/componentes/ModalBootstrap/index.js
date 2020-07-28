@@ -145,3 +145,37 @@ export const ModalBootstrapFormMembros = (propriedades) =>{
         </Fragment>
     )
 };
+
+export const ModalBootstrapFormMeusDadosEmail = (propriedades) =>{
+
+    // Os botões de Cancelar e Salvar estão dentro do próprio form, pois utilizei Formik para validações
+    return (
+        <Fragment>
+            <Modal centered show={propriedades.show} onHide={propriedades.onHide} >
+                <Modal.Header>
+                    <Modal.Title>{propriedades.titulo}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {propriedades.bodyText}
+                </Modal.Body>
+            </Modal>
+        </Fragment>
+    )
+};
+
+export const ModalBootstrapFormMeusDadosSenha = (propriedades) =>{
+
+    // Os botões de Cancelar e Salvar estão dentro do próprio form, pois utilizei Formik para validações
+    return (
+        <Fragment>
+            <Modal centered show={propriedades.show} onHide={propriedades.onHide}  size="lg">
+                <Modal.Header>
+                    <Modal.Title>{propriedades.titulo}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {propriedades.bodyText}
+                </Modal.Body>
+            </Modal>
+        </Fragment>
+    )
+};

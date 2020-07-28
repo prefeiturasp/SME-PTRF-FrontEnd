@@ -73,7 +73,10 @@ export const DashboardPage = () => {
                         textoBarraDeStatusPeriodoAssociacao={getTextoStatusPeriodo(acoesAssociacao.periodo_status)}
                     />
                     <div className="page-content-inner bg-transparent p-0">
-                        <Dashboard acoesAssociacao={acoesAssociacao}/>
+                        <Dashboard
+                            acoesAssociacao={acoesAssociacao}
+                            statusPeriodoAssociacao={acoesAssociacao.periodo_status}
+                        />
                     </div>
                 </>
             }

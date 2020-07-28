@@ -42,6 +42,7 @@ export const ReceitaForm = props => {
         conta_associacao: "",
         data: "",
         valor: "",
+        referencia_devolucao: "",
     };
 
     const [tabelas, setTabelas] = useState(tabelaInicial);
@@ -80,12 +81,13 @@ export const ReceitaForm = props => {
                         categoria_receita: resp.categoria_receita,
                         acao_associacao: resp.acao_associacao.uuid,
                         conta_associacao: resp.conta_associacao.uuid,
+                        referencia_devolucao: resp.referencia_devolucao,
                         data: resp.data,
                         valor: resp.valor ? new Number(resp.valor).toLocaleString('pt-BR', {
                             style: 'currency',
                             currency: 'BRL'
                         }) : "",
-                    }
+                    };
                     setInitialValue(init);
                     setReceita(resp);
                     periodoFechado(resp.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
@@ -97,24 +99,30 @@ export const ReceitaForm = props => {
         carregaTabelas();
         buscaReceita();
         setLoading(false);
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (tabelas.tipos_receita.length > 0 && initialValue.tipo_receita !== undefined) {
             setaDetalhesTipoReceita(initialValue.tipo_receita);
         }
-    }, [tabelas, initialValue.tipo_receita])
-
+    }, [tabelas, initialValue.tipo_receita]);
 
     const onSubmit = async (values) => {
-
+        // Validando e ou removendo e_devolucao
+        if (!verificaSeDevolucao(values.tipo_receita)){
+            delete values.referencia_devolucao
+        }else if (uuid){
+            if (values.referencia_devolucao && values.referencia_devolucao.uuid){
+                values.referencia_devolucao = values.referencia_devolucao.uuid
+            }
+        }
         values.valor = round(trataNumericos(values.valor), 2);
         values.data = moment(values.data).format("YYYY-MM-DD");
         const payload = {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID),
-            detalhe_tipo_receita: values.detalhe_tipo_receita.id !== undefined ? values.detalhe_tipo_receita.id : values.detalhe_tipo_receita
-        }
+            detalhe_tipo_receita: values.detalhe_tipo_receita && values.detalhe_tipo_receita.id !== undefined ? values.detalhe_tipo_receita.id : values.detalhe_tipo_receita
+        };
         setLoading(true);
         if (uuid) {
             await atualizar(uuid, payload);
@@ -123,11 +131,11 @@ export const ReceitaForm = props => {
         }
         getPath();
         setLoading(false);
-    }
+    };
 
     const cadastrar = async (payload) => {
         try {
-            const response = await criarReceita(payload)
+            const response = await criarReceita(payload);
             if (response.status === HTTP_STATUS.CREATED) {
                 console.log("Operação realizada com sucesso!");
             } else {
@@ -136,11 +144,11 @@ export const ReceitaForm = props => {
         } catch (error) {
             console.log(error)
         }
-    }
+    };
 
     const atualizar = async (uid, payload) => {
         try {
-            const response = await atualizaReceita(uuid, payload)
+            const response = await atualizaReceita(uuid, payload);
             if (response.status === HTTP_STATUS.CREATED) {
                 console.log("Operação realizada com sucesso!");
             } else {
@@ -149,27 +157,27 @@ export const ReceitaForm = props => {
         } catch (error) {
             console.log(error)
         }
-    }
+    };
 
     const onCancelarTrue = () => {
         setShow(false);
         getPath();
-    }
+    };
 
     const onHandleClose = () => {
         setShow(false);
         setShowDelete(false);
         setShowPeriodoFechado(false);
         setShowErroGeral(false);
-    }
+    };
 
     const onShowModal = () => {
         setShow(true);
-    }
+    };
 
     const onShowDeleteModal = () => {
         setShowDelete(true);
-    }
+    };
 
     const onDeletarTrue = () => {
         deletarReceita(uuid).then(response => {
@@ -180,11 +188,11 @@ export const ReceitaForm = props => {
             console.log(error);
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
         });
-    }
+    };
 
     const onShowErroGeral = () => {
         setShowErroGeral(true);
-    }
+    };
 
     const getPath = () => {
         let path;
@@ -197,8 +205,6 @@ export const ReceitaForm = props => {
     };
 
     const setaRepasse = async (values)=>{
-        //debugger;
-
         let local_repasse;
         if (values && values.acao_associacao && values.data) {
             let data_receita = moment(new Date(values.data), "YYYY-MM-DD").format("DD/MM/YYYY");
@@ -209,7 +215,6 @@ export const ReceitaForm = props => {
                 } catch (e) {
                     console.log("Erro ao obter o repasse ", e)
                 }
-
             } else {
                 try {
                     local_repasse = await getRepasse(values.acao_associacao, data_receita);
@@ -217,25 +222,18 @@ export const ReceitaForm = props => {
                 } catch (e) {
                     console.log("Erro ao obter o repasse ", e)
                 }
-
             }
             return local_repasse;
         }
     };
 
     const getClassificacaoReceita = (id_tipo_receita, setFieldValue) => {
-
         let qtdeAceitaClassificacao = [];
-
         if (id_tipo_receita) {
-
             tabelas.categorias_receita.map((item, index) => {
-
                 let id_categoria_receita_lower = item.id.toLowerCase();
                 let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_' + id_categoria_receita_lower);
-
                 qtdeAceitaClassificacao.push(aceitaClassificacao);
-
                 if (aceitaClassificacao) {
                     setFieldValue("categoria_receita", item.id);
                     setreadOnlyClassificacaoReceita(true);
@@ -251,20 +249,20 @@ export const ReceitaForm = props => {
                 setreadOnlyClassificacaoReceita(false);
             }
         }
-    }
+    };
 
     const setaDetalhesTipoReceita = (id_tipo_receita) => {
         if (id_tipo_receita) {
             tabelas.tipos_receita.map((item, index) => {
                 if (item.id == id_tipo_receita && index != idxTipoDespesa) {
-                    setIdxTipoDespesa(index)
-                    const atuReceita = receita
-                    atuReceita.detalhe_tipo_receita = null
-                    setReceita(atuReceita)
+                    setIdxTipoDespesa(index);
+                    const atuReceita = receita;
+                    atuReceita.detalhe_tipo_receita = null;
+                    setReceita(atuReceita);
                 }
             })
         }
-    }
+    };
 
     const getDisplayOptionClassificacaoReceita = (id_categoria_receita, id_tipo_receita) => {
 
@@ -276,7 +274,7 @@ export const ReceitaForm = props => {
         } else {
             return "block"
         }
-    }
+    };
 
     const getOpcoesDetalhesTipoReceita = (values) => {
         if (tabelas.tipos_receita[idxTipoDespesa] !== undefined && tabelas.tipos_receita[idxTipoDespesa].detalhes_tipo_receita !== undefined && tabelas.tipos_receita[idxTipoDespesa].detalhes_tipo_receita.length > 0) {
@@ -286,14 +284,14 @@ export const ReceitaForm = props => {
                 )
             })
         }
-    }
+    };
 
     const temOpcoesDetalhesTipoReceita = (values) => {
         if (tabelas.tipos_receita[idxTipoDespesa] !== undefined && tabelas.tipos_receita[idxTipoDespesa].detalhes_tipo_receita !== undefined) {
             return (tabelas.tipos_receita[idxTipoDespesa].detalhes_tipo_receita.length > 0)
         }
         return false
-    }
+    };
 
     const retornaClassificacaoReceita = (values, setFieldValue) => {
 
@@ -352,6 +350,11 @@ export const ReceitaForm = props => {
     const validateFormReceitas = async (values) => {
         const errors = {};
 
+        // Verifica se é devolucao e setando erro caso referencia devolucao vazio
+        if (verificaSeDevolucao(values.tipo_receita)  && !values.referencia_devolucao){
+            errors.referencia_devolucao = "Campo período é obrigatório"
+        }
+
         // Verifica período fechado para a receita
         if (values.data) {
             await periodoFechado(values.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
@@ -364,7 +367,7 @@ export const ReceitaForm = props => {
             if (item.id === Number(values.tipo_receita)) {
                 e_repasse_tipo_receita = item.e_repasse
             }
-        })
+        });
 
         e_repasse_acao = values.acao_associacao;
 
@@ -379,7 +382,7 @@ export const ReceitaForm = props => {
 
             try {
 
-                let repasse = await setaRepasse(values)
+                let repasse = await setaRepasse(values);
 
                 let data_digitada = moment(values.data);
                 let data_inicio = moment(repasse.periodo.data_inicio_realizacao_despesas);
@@ -409,20 +412,33 @@ export const ReceitaForm = props => {
                     acao_associacao: values.acao_associacao,
                     conta_associacao: repasse.conta_associacao.uuid,
                     categoria_receita: values.categoria_receita,
-
-                }
+                    referencia_devolucao: values.referencia_devolucao,
+                };
                 setInitialValue(init);
                 setReadOnlyValor(true);
             } catch (e) {
-                console.log("Erro: ", e)
+                console.log("Erro: ", e);
                 errors.acao_associacao = 'Não existem repasses pendentes para a Associação nesta ação';
             }
         } else {
             setReadOnlyValor(false)
         }
-
         return errors;
-    }
+    };
+
+    const verificaSeDevolucao = (tipoDeReceitaId) =>{
+        let e_devolucao = undefined;
+        if (tipoDeReceitaId){
+            let e_devolucao = tabelas.tipos_receita.find(element=> element.id === Number(tipoDeReceitaId));
+            if (e_devolucao){
+                return e_devolucao.e_devolucao
+            }else {
+                return e_devolucao
+            }
+        }else {
+            return e_devolucao
+        }
+    };
 
     return (
         <>
@@ -455,7 +471,6 @@ export const ReceitaForm = props => {
                                             //setaRepasse(values);
                                             getClassificacaoReceita(e.target.value, setFieldValue);
                                             setaDetalhesTipoReceita(e.target.value);
-
                                         }
                                         }
                                         onBlur={props.handleBlur}
@@ -506,16 +521,38 @@ export const ReceitaForm = props => {
                                             placeholder="Digite o detalhamento"
                                             disabled={readOnlyCampos}
                                         />
-
                                     }
-                                    {props.touched.detalhe_tipo_receita && props.errors.detalhe_tipo_receita &&
-                                    <span
-                                        className="span_erro text-danger mt-1"> {props.errors.detalhe_tipo_receita}</span>}
+                                    {props.touched.detalhe_tipo_receita && props.errors.detalhe_tipo_receita && <span className="span_erro text-danger mt-1"> {props.errors.detalhe_tipo_receita}</span>}
                                 </div>
                                 {/*Fim Detalhamento do Crédito */}
 
+                                {/*Periodo Devolução */}
+                                {verificaSeDevolucao(props.values.tipo_receita) &&
+                                    <div className="col-12 col-md-6 mt-4">
+                                        <label htmlFor="referencia_devolucao">Período de referência da devolução</label>
+                                        <select
+                                            id="referencia_devolucao"
+                                            name="referencia_devolucao"
+                                            value={props.values.referencia_devolucao  && props.values.referencia_devolucao.uuid ? props.values.referencia_devolucao.uuid : props.values.referencia_devolucao ? props.values.referencia_devolucao : ""}
+                                            onChange={props.handleChange}
+                                            onBlur={props.handleBlur}
+                                            className="form-control"
+                                            disabled={readOnlyValor || readOnlyCampos}
+                                        >
+                                            {receita.referencia_devolucao
+                                                ? null
+                                                : <option value="">Selecione um período</option>}
+                                            {tabelas.periodos !== undefined && tabelas.periodos.length > 0 ? (tabelas.periodos.map((item, key) => (
+                                                <option key={key} value={item.uuid}>{item.referencia_por_extenso}</option>
+                                            ))) : null}
+                                        </select>
+                                        {props.touched.referencia_devolucao && props.errors.referencia_devolucao && <span className="span_erro text-danger mt-1"> {props.errors.referencia_devolucao}</span>}
+                                    </div>
+                                }
+                                {/*Periodo Devolução */}
+
                                 {/*Data da Receita */}
-                                <div className="col-12 col-md-4 mt-4">
+                                <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="data">Data do crédito</label>
                                     <DatePickerField
                                         name="data"
@@ -530,7 +567,7 @@ export const ReceitaForm = props => {
                                 {/*Fim Data da Receita */}
 
                                 {/*Tipo de Conta */}
-                                <div className="col-12 col-md-4 mt-4">
+                                <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="conta_associacao">Tipo de conta</label>
                                     <select
                                         id="conta_associacao"
@@ -555,7 +592,7 @@ export const ReceitaForm = props => {
                                 {/*Fim Tipo de Conta */}
 
                                 {/*Ação*/}
-                                <div className="col-12 col-md-4 mt-4">
+                                <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="acao_associacao">Ação</label>
                                     <select
                                         disabled={readOnlyCampos}
@@ -586,7 +623,6 @@ export const ReceitaForm = props => {
                                 {/*Classificação do Crédito*/}
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="categoria_receita">Classificação do crédito</label>
-
                                     <select
                                         id="categoria_receita"
                                         name="categoria_receita"
@@ -600,11 +636,9 @@ export const ReceitaForm = props => {
                                             <option key={0} value="">Escolha a classificação</option>}
 
                                         {retornaClassificacaoReceita(props.values, setFieldValue)}
-
                                     </select>
 
-                                    {props.touched.categoria_receita && props.errors.categoria_receita && <span
-                                        className="span_erro text-danger mt-1"> {props.errors.categoria_receita}</span>}
+                                    {props.touched.categoria_receita && props.errors.categoria_receita && <span className="span_erro text-danger mt-1"> {props.errors.categoria_receita}</span>}
                                 </div>
                                 {/*Fim Classificação do Crédito*/}
 
@@ -631,7 +665,6 @@ export const ReceitaForm = props => {
                             </div>
 
                             {/*Botões*/}
-
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
                                 <button type="reset" onClick={onShowModal}
                                         className="btn btn btn-outline-success mt-2 mr-2">Voltar
@@ -645,7 +678,6 @@ export const ReceitaForm = props => {
                                 </button>
                             </div>
                             {/*Fim Botões*/}
-
                         </form>
                     );
                 }}
@@ -655,8 +687,11 @@ export const ReceitaForm = props => {
             </section>
             {uuid
                 ?
-                <DeletarModalReceitas show={showDelete} handleClose={onHandleClose}
-                                      onDeletarTrue={onDeletarTrue}/>
+                <DeletarModalReceitas
+                    show={showDelete}
+                    handleClose={onHandleClose}
+                  onDeletarTrue={onDeletarTrue}
+                />
                 : null
             }
             <section>
@@ -667,4 +702,4 @@ export const ReceitaForm = props => {
             </section>
         </>
     );
-}
+};

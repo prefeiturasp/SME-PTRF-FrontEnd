@@ -16,6 +16,9 @@ import {VisualizacaoDaAta} from "../componentes/GeracaoDaAta/VisualizacaoDaAta";
 import {MembrosDaAssociacaoPage} from "../paginas/MembrosDaAssociacao";
 import {ValoresReprogramadosPage} from "../paginas/ValoresReprogramados";
 import {DadosDasContasPage} from "../paginas/DadosDasContasAssociacao";
+import {EsqueciMinhaSenhaPage} from "../paginas/Login/EsqueciMinhaSenha";
+import {RedefinirSenhaPage} from "../paginas/Login/RedefinirMinhaSenha";
+import {MeusDadosPage} from "../paginas/MeusDados";
 
 import { authService } from '../services/auth.service';
 
@@ -91,6 +94,11 @@ const routesConfig = [
       component: VisualizacaoDaAta
     },
     {
+      exact: true,
+      path: "/meus-dados",
+      component: MeusDadosPage
+    },
+    {
         exact: true,
         path: "/",
         component: DashboardPage
@@ -114,10 +122,12 @@ const PrivateRouter = (
     />
   );
 
-export const Rotas = () => {
+export const Rotas = (props) => {
     return(
         <Switch>
             <Route path="/login" component={Login}/>
+            <Route strict path="/esqueci-minha-senha/" component={EsqueciMinhaSenhaPage}/>
+            <Route exact={true} path="/redefinir-senha/:uuid/" component={RedefinirSenhaPage}/>
             {routesConfig.map(
                 (value, key) => {
                 return (

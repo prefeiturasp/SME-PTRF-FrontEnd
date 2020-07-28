@@ -22,19 +22,11 @@
     font-weight: 500;
   }
 
-  .navItemCustomizado:hover{
+  .navItemCustomizado:hover, .navItemCustomizadoNome:hover, .navItemCustomizadoNome{
     background-color: #00585E;
   }
 
-  .navItemCustomizadoNome:hover{
-    background-color: #00585e;
-  }
-
-  .navItemCustomizadoNome{
-    background-color: #00585e;
-  }
-
-  .container-nome-instituicao{
+  .container-nome-instituicao, .container-meus-dados{
     text-align: center;
     display: inline-block;
     width: 220px;
@@ -46,6 +38,14 @@
 
     span{
       font-weight: normal;
+    }
+  }
+
+  .container-meus-dados{
+    font-size: 11px;
+    margin-top: -37px !important;
+    img{
+      width: 13px;
     }
   }
 
