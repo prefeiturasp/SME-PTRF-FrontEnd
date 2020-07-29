@@ -8,11 +8,11 @@ import {
     ModalBootstrapFormMembros,
     ModalBootstrapFormMeusDadosSenha,
     ModalBootstrapFormMeusDadosEmail
-} from "../componentes/globais/ModalBootstrap";
-import {DatePickerField} from "../componentes/globais/DatePickerField";
-import {FormAlterarSenha} from "../componentes/globais/EdicaoDeSenha/FormAlterarSenha";
-import {TextoValidacaoSenha} from "../componentes/globais/MedidorForcaSenha/textoValidacaoSenha";
-import {FormAlterarEmail} from "../componentes/globais/FormAlterarEmail";
+} from "../componentes/Globais/ModalBootstrap";
+import {DatePickerField} from "../componentes/Globais/DatePickerField";
+import {FormAlterarSenha} from "../componentes/Globais/EdicaoDeSenha/FormAlterarSenha";
+import {TextoValidacaoSenha} from "../componentes/Globais/MedidorForcaSenha/textoValidacaoSenha";
+import {FormAlterarEmail} from "../componentes/Globais/FormAlterarEmail";
 
 import {Formik} from 'formik';
 import {YupSignupSchemaMembros} from "./ValidacoesAdicionaisFormularios";

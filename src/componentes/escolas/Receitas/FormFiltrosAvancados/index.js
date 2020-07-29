@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {getTabelasReceita} from "../../../../services/escolas/Receitas.service";
 import {filtrosAvancadosReceitas} from "../../../../services/escolas/Receitas.service";
-import {DatePickerField} from "../../../globais/DatePickerField";
+import {DatePickerField} from "../../../Globais/DatePickerField";
 import moment from "moment";
 
 export const FormFiltrosAvancados = (props) => {

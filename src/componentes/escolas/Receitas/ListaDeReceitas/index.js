@@ -8,9 +8,9 @@ import '../../../../paginas/escolas/404/pagina-404.scss'
 import moment from 'moment';
 import {getListaReceitas} from "../../../../services/escolas/Receitas.service";
 import {getBotaoValoresReprogramados} from "../../../../services/escolas/ValoresReprogramados.service";
-import {FormFiltroPorPalavra} from "../../../globais/FormFiltroPorPalavra";
-import {MsgImgLadoDireito} from "../../../globais/Mensagens/MsgImgLadoDireito"
-import {MsgImgCentralizada} from "../../../globais/Mensagens/MsgImgCentralizada";
+import {FormFiltroPorPalavra} from "../../../Globais/FormFiltroPorPalavra";
+import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito"
+import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
 import "./lista-de-receitas.scss"
 import {FormFiltrosAvancados} from "../FormFiltrosAvancados";

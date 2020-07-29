@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {SelectPeriodoConta} from "./SelectPeriodoConta";
-import {MsgImgCentralizada} from "../../globais/Mensagens/MsgImgCentralizada";
+import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import "../../../assets/img/img-404.svg"
 import Img404 from "../../../assets/img/img-404.svg";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";

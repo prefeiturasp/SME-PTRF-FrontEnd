@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import Loading from "../../../../utils/Loading";
-import {MenuInterno} from "../../../globais/MenuInterno";
+import {MenuInterno} from "../../../Globais/MenuInterno";
 import {getContas, salvarContas} from "../../../../services/escolas/Associacao.service";
 import {FormDadosDasContas} from "./FormDadosDasContas";
 import {ModalConfirmaSalvar} from "../../../../utils/Modais";
