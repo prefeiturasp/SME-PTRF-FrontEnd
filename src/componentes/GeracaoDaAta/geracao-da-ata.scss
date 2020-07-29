@@ -16,6 +16,7 @@
 
 .container-visualizacao-da-ata{
   margin-top: 69px;
+  color: #000 !important;
 
   .titulo-visualizacao-da-ata{
     font-size: 24px;
@@ -30,11 +31,15 @@
 
   .tabela-acoes{
     max-width: 100%;
+    color: #000 !important;
     .tr-titulo{
       background-color: #E0F7F9;
     }
-    td{
-      width: calc(100% / 4) !important;
+    td, .td-livre-aplicacao-ausente{
+      width: calc(100% / 5) !important;
+    }
+    .td-livre-aplicacao-ausente{
+      background-color: #E5E5E5;
     }
   }
 
@@ -49,13 +54,17 @@
   }
 
   .tabela-totais{
+    color: #000 !important;
     .tr-titulo{
       background-color: #2B7D83;
       color: #fff;
     }
 
-    td{
-      width: calc(100% / 4) !important;
+    td, .td-livre-aplicacao-ausente{
+      width: calc(100% / 5) !important;
+    }
+    .td-livre-aplicacao-ausente{
+      background-color: #E5E5E5;
     }
   }
 }

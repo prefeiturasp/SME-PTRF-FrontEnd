@@ -8,21 +8,25 @@ export const ASSOCIACAO_UUID = "UUID";
 export const ASSOCIACAO_NOME = "ASSO_NOME";
 export const ASSOCIACAO_NOME_ESCOLA = "NOME_ESCOLA";
 export const ASSOCIACAO_TIPO_ESCOLA = "TIPO_ESCOLA";
+export const USUARIO_EMAIL = "EMAIL";
+export const USUARIO_CPF = "CPF";
+export const USUARIO_LOGIN = "LOGIN";
 
 
 const authHeader = {
     'Content-Type': 'application/json'
-}
+};
 
 const login = async (login, senha) => {
     let payload = {
         login: login,
         senha: senha
-    }
+    };
 
     try {
-        const response = (await api.post('api/login', payload, authHeader))
-        const resp = response.data
+        const response = (await api.post('api/login', payload, authHeader));
+        const resp = response.data;
+
         if (response.status === HTTP_STATUS.OK) {
             if (resp.detail) {
                 return "RF incorreto"
@@ -31,23 +35,36 @@ const login = async (login, senha) => {
             localStorage.setItem(
                 USUARIO_NOME,
                 resp.nome
-            )
+            );
             localStorage.setItem(
                 ASSOCIACAO_UUID,
                 resp.associacao.uuid
-            )
+            );
             localStorage.setItem(
                 ASSOCIACAO_NOME,
                 resp.associacao.nome
-            )
+            );
             localStorage.setItem(
                 ASSOCIACAO_NOME_ESCOLA,
                 resp.associacao.nome_escola
-            )
+            );
             localStorage.setItem(
                 ASSOCIACAO_TIPO_ESCOLA,
                 resp.associacao.tipo_escola
-            )
+            );
+            localStorage.setItem(
+                USUARIO_EMAIL,
+                resp.email
+            );
+            localStorage.setItem(
+                USUARIO_LOGIN,
+                resp.login
+            );
+            localStorage.setItem(
+                USUARIO_CPF,
+                resp.cpf
+            );
+            localStorage.removeItem('medidorSenha');
 
             const decoded = decode(resp.token);
             window.location.href = "/";
@@ -86,8 +103,27 @@ const logout = () => {
     localStorage.removeItem('uuidPrestacaoConta');
     localStorage.removeItem('acaoLancamento');
     localStorage.removeItem('uuidAta');
+    localStorage.removeItem(USUARIO_EMAIL);
+    localStorage.removeItem(USUARIO_LOGIN);
+    localStorage.removeItem(USUARIO_CPF);
     //window.location.reload();
     window.location.assign("/login")
+};
+
+export const esqueciMinhaSenha = async (payload, rf) => {
+    return (await api.put(`/api/esqueci-minha-senha/${rf}/`, payload, authHeader)).data
+};
+
+export const redefinirMinhaSenha = async (payload) => {
+    return (await api.post(`/api/redefinir-senha/`, payload, authHeader)).data
+};
+
+export const alterarMeuEmail = async (usuario, payload) => {
+    return (await api.patch(`api/usuarios/${usuario}/altera-email/`, payload, authHeader))
+};
+
+export const alterarMinhaSenha = async (usuario, payload) => {
+    return (await api.patch(`/api/usuarios/${usuario}/altera-senha/`, payload, authHeader))
 };
 
 
@@ -96,4 +132,5 @@ export const authService = {
     logout,
     getToken,
     isLoggedIn,
+    esqueciMinhaSenha,
 };

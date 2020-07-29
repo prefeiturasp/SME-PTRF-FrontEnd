@@ -24,6 +24,33 @@ export const checkDuplicateInObject = (propertyName, inputArray) => {
   return seenDuplicate;
 };
 
+export const YupSignupSchemaDadosDaAssociacao = yup.object().shape({
+  email: yup.string().email("Digite um email válido"),
+});
+
+export const YupSignupSchemaAlterarSenha = yup.object().shape({
+  senha_atual: yup.string().required("Campo senha atual é obrigatório"),
+  senha: yup.string().required("Campo nova senha é obrigatório"),
+  confirmacao_senha: yup.string().required("Campo confirmação da nova senha é obrigatório")
+  .oneOf([yup.ref('senha'), null], 'As senhas precisam ser iguais'),
+});
+
+export const YupSignupSchemaAlterarEmail = yup.object().shape({
+  email: yup.string().required("Campo email é obrigatório"),
+  confirmacao_email: yup.string().required("Campo confirmação do email é obrigatório")
+  .oneOf([yup.ref('email'), null], 'Os emails precisam ser iguais'),
+});
+
+export const YupSignupSchemaRedefinirSenha = yup.object().shape({
+  senha: yup.string().required("Campo nova senha é obrigatório"),
+  confirmacao_senha: yup.string().required("Campo confirmação da nova senha é obrigatório")
+  .oneOf([yup.ref('senha'), null], 'As Senhas precisam ser iguais'),
+});
+
+export const YupSignupSchemaRecuperarSenha = yup.object().shape({
+  usuario: yup.string().required("Campo usuário é obrigatório"),
+});
+
 export const YupSignupSchemaLogin = yup.object().shape({
   login: yup.string().required("Campo código RF é obrigatório"),
   senha: yup.string().required("Campo código Senha é obrigatório"),
@@ -31,6 +58,7 @@ export const YupSignupSchemaLogin = yup.object().shape({
 
 export const YupSignupSchemaMembros = yup.object().shape({
   representacao: yup.string().required("Representação é obrigatório"),
+  email: yup.string().email("Digite um email válido"),
 
   codigo_identificacao: yup.string()
     .test('test-name', 'É obrigatório e não pode ultrapassar 10 caracteres',
@@ -147,6 +175,9 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
     }
   }
 
+
+
+
   values.valor_total = trataNumericos(values.valor_total);
   values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
   values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)
@@ -198,6 +229,14 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
         }else {
           rateio.tipo_custeio = convertToNumber(rateio.tipo_custeio)
         }
+      }
+    }
+
+    if (typeof rateio.tag === "object" && rateio.tag !== null){
+      rateio.tag = rateio.tag.uuid
+    }else {
+      if ( rateio.tag === "" || rateio.escolha_tags === 'nao' ) {
+        rateio.tag = null
       }
     }
 
@@ -285,11 +324,13 @@ export const calculaValorRateio = (valor1, valor2) => {
 
   return valor_total;
 }
-export const calculaValorRecursoAcoes = (props) => {
+export const calculaValorRecursoAcoes = (values) => {
 
-  let valor_totalTratado = trataNumericos(props.values.valor_total)
-  let valor_recursos_propriosTratado = trataNumericos(props.values.valor_recursos_proprios)
-  let valor_total = valor_totalTratado - valor_recursos_propriosTratado;
+  //console.log("Calcula Valor ", values)
+
+  let valor_totalTratado = trataNumericos(values.valor_total)
+  let valor_recursos_propriosTratado = trataNumericos(values.valor_recursos_proprios)
+  let valor_total = round(valor_totalTratado - valor_recursos_propriosTratado, 2);
   return valor_total;
 }
 
@@ -471,7 +512,7 @@ function valida_cnpj ( valor ) {
 
 export const getTextoStatusPeriodo = (statusId) => {
   if (statusId === 'EM_ANDAMENTO') {
-    status = 'O período está em andamento'
+    status = 'O período está em andamento, os dados apresentados estão em atualização sendo cadastrados.'
   } else if (statusId === 'PENDENTE') {
     status = 'O período está pendente'
   } else if (statusId === 'CONCILIADO') {

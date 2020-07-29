@@ -12,19 +12,11 @@ import {DespesaContext} from "../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
-import {
-    AvisoCapitalModal,
-    CancelarModal,
-    DeletarModal,
-    ErroGeral,
-    PeriodoFechado,
-    SaldoInsuficiente,
-    SaldoInsuficienteConta,
-    ChecarDespesaExistente,
-} from "../../../utils/Modais"
+import { AvisoCapitalModal, CancelarModal, DeletarModal, ErroGeral, PeriodoFechado, SaldoInsuficiente, SaldoInsuficienteConta, ChecarDespesaExistente, } from "../../../utils/Modais"
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
+import {Tags} from "../Tags";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -52,6 +44,8 @@ export const CadastroForm = ({verbo_http}) => {
     const [cssEscondeDocumentoTransacao, setCssEscondeDocumentoTransacao] = useState('escondeItem');
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
     const [loading, setLoading] = useState(true);
+    const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
+    const [numreoDocumentoReadOnly, setNumreoDocumentoReadOnly] = useState(false);
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
@@ -70,16 +64,14 @@ export const CadastroForm = ({verbo_http}) => {
             const array_tipos_custeio = resp.tipos_custeio;
             let let_especificacoes_custeio = [];
 
-            array_tipos_custeio.map( async (tipoCusteio, index) => {
-                const resposta = await getEspecificacoesCusteio(tipoCusteio.id)
+            array_tipos_custeio.map( async (tipoCusteio) => {
+                const resposta = await getEspecificacoesCusteio(tipoCusteio.id);
                 let_especificacoes_custeio[tipoCusteio.id] = await resposta
             });
-
             set_especificacoes_custeio(let_especificacoes_custeio)
         };
         carregaTabelasDespesas();
     }, []);
-
 
     useEffect(() => {
         (async function get_especificacoes_capital() {
@@ -107,9 +99,7 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const verificarSaldo = async (payload) => {
-        let saldo = await getVerificarSaldo(payload, despesaContext.idDespesa);
-        return saldo;
-
+        return await getVerificarSaldo(payload, despesaContext.idDespesa);
     };
 
     const onCancelarTrue = () => {
@@ -149,7 +139,7 @@ export const CadastroForm = ({verbo_http}) => {
         })
         .catch(error => {
             console.log(error);
-            setLoading(false)
+            setLoading(false);
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
         });
     };
@@ -159,6 +149,7 @@ export const CadastroForm = ({verbo_http}) => {
             onShowAvisoCapitalModal()
         }
     };
+
     const onShowErroGeral = () => {
         setShowErroGeral(true);
     };
@@ -176,15 +167,20 @@ export const CadastroForm = ({verbo_http}) => {
         // Necessário atribuir o valor ao campo cpf_cnpj_fornecedor para chamar o YupSignupSchemaCadastroDespesa
         setFieldValue("cpf_cnpj_fornecedor", values.cpf_cnpj_fornecedor);
 
-        validaPayloadDespesas(values);
+        if (errors && errors.valor_recusos_acoes){
+            setExibeMsgErroValorRecursos(true)
+        }else {
+            setExibeMsgErroValorRecursos(false)
+        }
 
+        validaPayloadDespesas(values);
 
         if (Object.entries(errors).length === 0 && values.cpf_cnpj_fornecedor) {
 
             let retorno_saldo = await verificarSaldo(values);
 
             if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente"){
-                setSaldosInsuficientesDaConta(retorno_saldo)
+                setSaldosInsuficientesDaConta(retorno_saldo);
                 setShowSaldoInsuficienteConta(true)
 
             }else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
@@ -220,7 +216,7 @@ export const CadastroForm = ({verbo_http}) => {
 
         if( despesaContext.verboHttp === "POST"){
             try {
-                const response = await criarDespesa(values)
+                const response = await criarDespesa(values);
                 if (response.status === HTTP_STATUS.CREATED) {
                     console.log("Operação realizada com sucesso!");
                     //resetForm({values: ""})
@@ -229,13 +225,13 @@ export const CadastroForm = ({verbo_http}) => {
                     setLoading(false);
                 }
             } catch (error) {
-                console.log(error)
+                console.log(error);
                 setLoading(false);
             }
         }else if(despesaContext.verboHttp === "PUT"){
 
             try {
-                const response = await alterarDespesa(values, despesaContext.idDespesa)
+                const response = await alterarDespesa(values, despesaContext.idDespesa);
                 if (response.status === 200) {
                     console.log("Operação realizada com sucesso!");
                     //resetForm({values: ""})
@@ -250,8 +246,20 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
-    const validateFormDespesas = async (values, props /* only available when using withFormik */) => {
+    const setaValoresCusteioCapital = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
+        if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
+            setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
+            setFieldValue('rateios[0].quantidade_itens_capital', 1);
+            setFieldValue('rateios[0].valor_item_capital', calculaValorRecursoAcoes(values));
+        }else {
+            setFieldValue('rateios[0].valor_rateio', 0);
+            setFieldValue('rateios[0].quantidade_itens_capital', "");
+            setFieldValue('rateios[0].valor_item_capital', 0);
+        }
+    };
 
+    const validateFormDespesas = async (values) => {
+        setExibeMsgErroValorRecursos(false);
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
         // Verifica período fechado para a receita
@@ -261,8 +269,9 @@ export const CadastroForm = ({verbo_http}) => {
 
         const errors = {};
 
-        // Validando se tipo de documento aceita apenas numéricos
-        if (values.tipo_documento && values.numero_documento){
+        // Validando se tipo de documento aceita apenas numéricos e se exibe campo Número do Documento
+        if (values.tipo_documento){
+            let exibe_campo_numero_documento;
             let so_numeros;
             if (values.tipo_documento.id){
                 so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
@@ -270,7 +279,16 @@ export const CadastroForm = ({verbo_http}) => {
                 so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
             }
 
-            if (so_numeros && so_numeros.apenas_digitos){
+            // Verificando se exibe campo Número do Documento
+            exibe_campo_numero_documento = so_numeros;
+            if (exibe_campo_numero_documento && !exibe_campo_numero_documento.numero_documento_digitado){
+                values.numero_documento = "";
+                setNumreoDocumentoReadOnly(true)
+            }else {
+                setNumreoDocumentoReadOnly(false)
+            }
+
+            if (so_numeros && so_numeros.apenas_digitos && values.numero_documento){
                 if (isNaN(values.numero_documento)){
                     errors.numero_documento="Este campo deve conter apenas algarismos numéricos."
                 }
@@ -300,16 +318,15 @@ export const CadastroForm = ({verbo_http}) => {
 
     const exibeDocumentoTransacao = (valor) => {
         if (valor){
-            let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor))
-
+            let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor));
             if (exibe_documento_transacao.tem_documento){
-                setCssEscondeDocumentoTransacao("")
-                setLabelDocumentoTransacao(exibe_documento_transacao.nome)
+                setCssEscondeDocumentoTransacao("");
+                setLabelDocumentoTransacao(exibe_documento_transacao.nome);
             }else {
-                setCssEscondeDocumentoTransacao("escondeItem")
+                setCssEscondeDocumentoTransacao("escondeItem");
             }
         }else {
-            setCssEscondeDocumentoTransacao("escondeItem")
+            setCssEscondeDocumentoTransacao("escondeItem");
         }
     };
 
@@ -328,7 +345,6 @@ export const CadastroForm = ({verbo_http}) => {
                     validationSchema={YupSignupSchemaCadastroDespesa}
                     validateOnBlur={true}
                     onSubmit={onSubmit}
-                    //onSubmit={values => onSubmit(values)}
                     enableReinitialize={true}
                     validate={validateFormDespesas}
                 >
@@ -433,7 +449,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 id="numero_documento" type="text"
                                                 className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 placeholder="Digite o número"
-                                                disabled={readOnlyCampos}
+                                                disabled={readOnlyCampos || numreoDocumentoReadOnly}
                                             />
                                             {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
 
@@ -482,8 +498,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                         <div className="col-12 col-md-3 mt-4">
                                             <div className={cssEscondeDocumentoTransacao}>
-                                                <label htmlFor="documento_transacao">Número
-                                                    do {labelDocumentoTransacao}</label>
+                                                <label htmlFor="documento_transacao">Número do {labelDocumentoTransacao}</label>
                                                 <input
                                                     value={props.values.documento_transacao}
                                                     onChange={props.handleChange}
@@ -550,7 +565,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                         prefix='R$'
                                                         decimalSeparator=","
                                                         thousandSeparator="."
-                                                        value={calculaValorRecursoAcoes(props)}
+                                                        value={calculaValorRecursoAcoes(values)}
                                                         id="valor_recusos_acoes"
                                                         name="valor_recusos_acoes"
                                                         className="form-control"
@@ -560,8 +575,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                     />
                                                 )}
                                             </Field>
-                                            {errors.valor_recusos_acoes &&
-                                            <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                                            {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                                         </div>
                                     </div>
 
@@ -572,7 +586,11 @@ export const CadastroForm = ({verbo_http}) => {
                                         <div className="col-12 col-md-3 ">
                                             <select
                                                 value={props.values.mais_de_um_tipo_despesa}
-                                                onChange={props.handleChange}
+                                                //onChange={props.handleChange}
+                                                onChange={(e) => {
+                                                    props.handleChange(e);
+                                                    setaValoresCusteioCapital(e.target.value, values, setFieldValue);
+                                                }}
                                                 name='mais_de_um_tipo_despesa'
                                                 id='mais_de_um_tipo_despesa'
                                                 className={`${!props.values.mais_de_um_tipo_despesa && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
@@ -587,7 +605,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                     <FieldArray
                                         name="rateios"
-                                        render={({insert, remove, push}) => (
+                                        render={({remove, push}) => (
                                             <>
                                                 {values.rateios.length > 0 && values.rateios.map((rateio, index) => {
                                                     return (
@@ -599,15 +617,28 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     </p>
                                                                     <hr className='mt-0 mb-1'/>
                                                                 </div>
+                                                                <div className="col-12">
+                                                                    <Tags
+                                                                        formikProps={props}
+                                                                        rateio={rateio}
+                                                                        rateios={values.rateios}
+                                                                        index={index}
+                                                                        verboHttp={despesaContext.verboHttp}
+                                                                        disabled={readOnlyCampos}
+                                                                        errors={errors}
+                                                                        setFieldValue={setFieldValue}
+                                                                        despesasTabelas={despesasTabelas}
+                                                                    />
+                                                                </div>
                                                                 <div className="col-12 col-md-6 mt-4">
 
-                                                                    <label htmlFor="aplicacao_recurso">Tipo de aplicação do
-                                                                        recurso</label>
+                                                                    <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
                                                                     <select
-                                                                        value={rateio.aplicacao_recurso}
+                                                                        value={rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ""}
                                                                         onChange={(e) => {
                                                                             props.handleChange(e);
-                                                                            handleAvisoCapital(e.target.value)
+                                                                            handleAvisoCapital(e.target.value);
+                                                                            setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
                                                                         }}
                                                                         name={`rateios[${index}].aplicacao_recurso`}
                                                                         id='aplicacao_recurso'
@@ -633,6 +664,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         verboHttp={despesaContext.verboHttp}
                                                                         disabled={readOnlyCampos}
                                                                         errors={errors}
+                                                                        exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
                                                                     />
                                                                 ) :
                                                                 rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -645,6 +677,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         verboHttp={despesaContext.verboHttp}
                                                                         disabled={readOnlyCampos}
                                                                         errors={errors}
+                                                                        exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
                                                                     />
                                                                 ) : null}
 
@@ -659,7 +692,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     </button>
                                                                 </div>
                                                             )}
-
                                                         </div> /*div key*/
                                                     )
                                                 })}
@@ -672,6 +704,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                         onClick={() => push(
                                                             {
                                                                 associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                                                                escolha_tags:"",
+                                                                tag:"",
                                                                 conta_associacao: "",
                                                                 acao_associacao: "",
                                                                 aplicacao_recurso: "",
@@ -706,8 +740,7 @@ export const CadastroForm = ({verbo_http}) => {
                                         </button>
                                     </div>
                                     <div className="d-flex justify-content-end">
-                                        {errors.valor_recusos_acoes &&
-                                        <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}
+                                        {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}
                                     </div>
                                     <section>
                                         <SaldoInsuficiente
@@ -724,7 +757,6 @@ export const CadastroForm = ({verbo_http}) => {
                                             onSaldoInsuficienteContaTrue={() => onSubmit(values, {resetForm})}
                                         />
                                     </section>
-
                                     <section>
                                         <ChecarDespesaExistente
                                             show={showDespesaCadastrada}
@@ -733,9 +765,7 @@ export const CadastroForm = ({verbo_http}) => {
                                     </section>
                                 </form>
                             </>
-
                         ); /*Return metodo principal*/
-
                     }}
                 </Formik>
             }
@@ -758,4 +788,4 @@ export const CadastroForm = ({verbo_http}) => {
             </section>
         </>
     );
-}
+};

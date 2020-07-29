@@ -4,7 +4,7 @@ import {trataNumericos} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const CadastroFormCusteio = (propriedades) => {
 
-    const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors} = propriedades
+    const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos} = propriedades
 
     return (
         <>
@@ -116,12 +116,12 @@ export const CadastroFormCusteio = (propriedades) => {
                                 thousandSeparator="."
                                 value={rateio.valor_rateio}
                                 name={`rateios[${index}].valor_rateio`}
-                                id="valor_recusos_acoes"
+                                id="valor_rateio"
                                 className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                                 onChangeEvent={formikProps.handleChange}
                                 disabled={disabled}
                             />
-                            {errors.valor_recusos_acoes && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                            {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                         </div>
                     </div>
                 </div>

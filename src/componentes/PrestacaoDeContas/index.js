@@ -126,9 +126,15 @@ export const PrestacaoDeContas = () => {
         try {
             data_preenchimento = await getDataPreenchimentoAta(status.uuid);
             localStorage.setItem("uuidAta", data_preenchimento.uuid);
-            setCorBoxPrestacaoDeContasPorPeriodo("verde");
             setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
-            setDataBoxPrestacaoDeContasPorPeriodo("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
+            if (data_preenchimento.alterado_em === null){
+                setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
+                setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
+            }
+            else {
+                setCorBoxPrestacaoDeContasPorPeriodo("verde");
+                setDataBoxPrestacaoDeContasPorPeriodo("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
+            }
 
         }catch (e) {
             data_preenchimento = await getIniciarAta(status.uuid);
