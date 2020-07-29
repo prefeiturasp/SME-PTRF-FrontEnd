@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {getAssociacao, alterarAssociacao} from "../../../../services/escolas/Associacao.service";
 import {CancelarModalAssociacao, SalvarModalAssociacao} from "../../../../utils/Modais";
-import {MenuInterno} from "../../../globais/MenuInterno";
+import {MenuInterno} from "../../../Globais/MenuInterno";
 import "../associacao.scss"
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";

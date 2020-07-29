@@ -1,7 +1,7 @@
 import React from 'react'
 import './dashboard.scss'
 import '../../../paginas/escolas/404/pagina-404.scss'
-import {MsgImgLadoDireito} from "../../globais/Mensagens/MsgImgLadoDireito";
+import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
 import Img404 from '../../../assets/img/img-404.svg'
 import {
     exibeDataPT_BR,

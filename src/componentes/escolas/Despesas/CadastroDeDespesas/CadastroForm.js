@@ -4,7 +4,7 @@ import {YupSignupSchemaCadastroDespesa, validaPayloadDespesas, cpfMaskContitiona
 import MaskedInput from 'react-text-mask'
 import {getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial, getDespesaCadastrada} from "../../../../services/escolas/Despesas.service";
 import {getVerificarSaldo} from "../../../../services/escolas/RateiosDespesas.service";
-import {DatePickerField} from "../../../globais/DatePickerField";
+import {DatePickerField} from "../../../Globais/DatePickerField";
 import {useParams} from 'react-router-dom';
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
 import {CadastroFormCapital} from "./CadastroFormCapital";

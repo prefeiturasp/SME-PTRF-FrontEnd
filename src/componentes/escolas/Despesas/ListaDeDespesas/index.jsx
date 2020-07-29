@@ -7,10 +7,10 @@ import {redirect} from '../../../../utils/redirect.js'
 import '../../../../paginas/escolas/404/pagina-404.scss'
 import {Route} from 'react-router-dom'
 import moment from 'moment'
-import {FormFiltroPorPalavra} from "../../../globais/FormFiltroPorPalavra";
+import {FormFiltroPorPalavra} from "../../../Globais/FormFiltroPorPalavra";
 import Img404 from "../../../../assets/img/img-404.svg"
-import {MsgImgLadoDireito} from "../../../globais/Mensagens/MsgImgLadoDireito"
-import {MsgImgCentralizada} from "../../../globais/Mensagens/MsgImgCentralizada";
+import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito"
+import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
 import "./lista-de-despesas.scss"
 import {FormFiltrosAvancados} from "../FormFiltrosAvancados";
 import {SomaDasDespesas} from "../SomaDasDespesas";

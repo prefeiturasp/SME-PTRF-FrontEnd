@@ -1,6 +1,6 @@
 import React from "react";
 import {LoginContainer} from "../../LoginContainer";
-import {EsqueciMinhaSenha} from "../../../componentes/globais/EsqueciMinhaSenha";
+import {EsqueciMinhaSenha} from "../../../componentes/Globais/EsqueciMinhaSenha";
 
 export const EsqueciMinhaSenhaPage = () =>{
 

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import HTTP_STATUS from "http-status-codes";
 import {Formik} from 'formik';
-import {DatePickerField} from '../../../globais/DatePickerField'
+import {DatePickerField} from '../../../Globais/DatePickerField'
 import CurrencyInput from 'react-currency-input';
 import {
     criarReceita,

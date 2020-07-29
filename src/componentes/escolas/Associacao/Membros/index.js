@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {MenuInterno} from "../../../globais/MenuInterno";
+import {MenuInterno} from "../../../Globais/MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
 import {EditarMembro} from "../../../../utils/Modais";
 import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol} from "../../../../services/escolas/Associacao.service";
