@@ -3,7 +3,7 @@
 import * as yup from "yup";
 import moment from "moment";
 import {ASSOCIACAO_UUID} from "../services/auth.service";
-import {getPeriodoFechado} from "../services/Associacao.service";
+import {getPeriodoFechado} from "../services/escolas/Associacao.service";
 
 export const checkDuplicateInObject = (propertyName, inputArray) => {
 
