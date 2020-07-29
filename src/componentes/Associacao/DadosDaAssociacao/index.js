@@ -6,7 +6,8 @@ import "../associacao.scss"
 import Loading from "../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {Formik} from "formik";
-import {YupSignupSchemaDadosDaAssociacao} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {cpfMaskContitional, YupSignupSchemaDadosDaAssociacao} from "../../../utils/ValidacoesAdicionaisFormularios";
+import MaskedInput from "react-text-mask";
 
 export const DadosDaAsssociacao = () => {
 
@@ -174,8 +175,9 @@ export const DadosDaAsssociacao = () => {
 
                                     <div className="form-row">
                                         <div className="form-group col-md-6">
-                                            <label htmlFor="ccm"><strong>CCM</strong></label>
-                                            <input
+                                            <label htmlFor="ccm"><strong>Cadastro de Contribuintes Mobiliários (CCM)</strong></label>
+                                            <MaskedInput
+                                                mask = {[/\d/,'.', /\d/, /\d/,/\d/, '.', /\d/, /\d/, /\d/, '-', /\d/]}
                                                 type="text"
                                                 value={props.values.ccm  ? props.values.ccm :  ""}
                                                 name="ccm"
