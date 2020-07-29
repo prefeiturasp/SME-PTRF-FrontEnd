@@ -1,5 +1,5 @@
 import decode from "jwt-decode";
-import api from './Api';
+import api from './api';
 import HTTP_STATUS from "http-status-codes";
 
 export const TOKEN_ALIAS = "TOKEN";
