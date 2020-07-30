@@ -25,7 +25,26 @@ const setDadosUsuariosLogados = async (resp)=>{
     localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(dados_do_usuario_logado ))
 };
 
+const alternaVisoes = (visao) =>{
+
+    console.log("CLIQEI")
+    let dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
+
+    if (dados_usuario_logado){
+        let alternar_visao = {
+            ...dados_usuario_logado,
+            visao_selecionada:{
+                nome:visao
+            },
+        };
+        localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(alternar_visao ))
+        window.location.reload()
+    }
+
+};
+
 export const visoesService ={
     setDadosUsuariosLogados,
+    alternaVisoes,
 };
 

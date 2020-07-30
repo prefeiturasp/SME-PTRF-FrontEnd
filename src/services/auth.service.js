@@ -1,7 +1,7 @@
 import decode from "jwt-decode";
 import api from './api';
 import HTTP_STATUS from "http-status-codes";
-import {visoesService} from "./visoes/visoes.service";
+import {visoesService} from "./visoes.service";
 
 export const TOKEN_ALIAS = "TOKEN";
 export const USUARIO_NOME = "NOME";
@@ -12,8 +12,6 @@ export const ASSOCIACAO_TIPO_ESCOLA = "TIPO_ESCOLA";
 export const USUARIO_EMAIL = "EMAIL";
 export const USUARIO_CPF = "CPF";
 export const USUARIO_LOGIN = "LOGIN";
-export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
-
 
 const authHeader = {
     'Content-Type': 'application/json'
