@@ -26,11 +26,9 @@ export const SidebarLeft = () => {
 
     let urls = getUrls.GetUrls();
 
-
-
     return (
         <>
-            {}
+            {console.log(urls)}
             <SideNav
                 id="sideBarLeft"
                 className="sideNavCustomizado"
@@ -56,8 +54,8 @@ export const SidebarLeft = () => {
                             <NavText>
                                 <div className="container-nome-instituicao">
                                   <span className="border border-white rounded-pill px-4 py-1">
-                                  {localStorage.getItem(USUARIO_NOME)
-                                      ? localStorage.getItem(USUARIO_NOME).split(' ')[0]
+                                  {urls
+                                      ? urls.dados_iniciais.usuario
                                       : ''}
                                   </span>
                                 </div>
@@ -72,7 +70,8 @@ export const SidebarLeft = () => {
                         <NavIcon>{!sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} alt=""/> : ""} </NavIcon>
                         <NavText>
                             <div className="container-meus-dados mt-n4 d-flex justify-content-center align-items-center">
-                                {sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} className="mr-1" alt=""/> : ""} Meus Dados
+                                {sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} className="mr-1" alt=""/> : ""}
+                                Meus Dados
                             </div>
                         </NavText>
                     </NavItem>
@@ -87,15 +86,16 @@ export const SidebarLeft = () => {
                             <NavIcon>&nbsp;</NavIcon>
                             <NavText>
                                 <div className="container-nome-instituicao mt-n4 mb-4">
-                                    {`${localStorage.getItem(ASSOCIACAO_TIPO_ESCOLA)} ${localStorage.getItem(ASSOCIACAO_NOME_ESCOLA)}`}
+                                    {`${urls ? urls.dados_iniciais.associacao_tipo_escola : ""} ${urls ? urls.dados_iniciais.associacao_nome_escola : ""}`}
                                 </div>
                             </NavText>
                         </NavItem>
                     </>
                     }
 
-                    {urls && urls.length > 0 && urls.map((url, index)=>
+                    {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index)=>
                         <NavItem
+                            key={index}
                             navitemClassName="d-flex align-items-end"
                             data-tip={url.label}  data-for={url.dataFor}
                             eventKey={url.url}
