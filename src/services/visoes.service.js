@@ -8,6 +8,11 @@ const getUsuarioLogin = () => {
 
 const getDadosDoUsuarioLogado = () =>{
     let dados_usuario_logado = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO));
+
+    console.log("getDadosDoUsuarioLogado ", dados_usuario_logado)
+
+    //debugger
+
     return  eval('dados_usuario_logado.usuario_'+getUsuarioLogin())
 };
 
@@ -16,7 +21,9 @@ const setDadosUsuariosLogados = async (resp)=>{
     let usuario_login = resp.login;
     console.log("user login ", usuario_login);
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
-    let dados_usuario_logado = getDadosDoUsuarioLogado();
+
+    let usuario_logado = getDadosDoUsuarioLogado()
+    console.log("XXXXXXXXXXXX setDadosUsuariosLogados ", usuario_logado)
 
     let novos_dados_do_usuario_logado = {
         ...todos_os_dados_usuario_logado,
@@ -31,7 +38,7 @@ const setDadosUsuariosLogados = async (resp)=>{
             {tipo:"sme", label:"SME"},
         ],
         visao_selecionada:{
-            nome: dados_usuario_logado ? dados_usuario_logado.visao_selecionada.nome : "",
+            nome: usuario_logado ? usuario_logado.visao_selecionada.nome : "",
             //nome: "dres",
         },
         unidades:[
