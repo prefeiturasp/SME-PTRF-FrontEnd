@@ -1,7 +1,7 @@
 import React from "react";
 
 import {USUARIO_LOGIN, USUARIO_NOME, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA} from '../../../services/auth.service'
-import {DADOS_USUARIO_LOGADO} from "../../../services/visoes.service";
+import {DADOS_USUARIO_LOGADO, visoesService} from "../../../services/visoes.service";
 import IconeMenuDadosDaAssociacao from '../../../assets/img/icone-menu-dados-da-associacao.svg'
 import IconeMenuPainel from '../../../assets/img/icone-menu-painel.svg'
 import IconeMenuCreditosDaEscola from '../../../assets/img/icone-menu-creditos-da-escola.svg'
@@ -63,22 +63,21 @@ const UrlsMenuSme ={
 
 const GetUrls = () =>{
     let login_usuario = localStorage.getItem(USUARIO_LOGIN)
-    let dados_usuario_logado = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO));
-    console.log("login_usuario ", login_usuario)
-    console.log("GetUrls ", dados_usuario_logado)
+    let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado(login_usuario);
 
-    if (eval('dados_usuario_logado.usuario_'+login_usuario).visao_selecionada.nome === 'escolas'){
+
+    if (dados_usuario_logado.visao_selecionada.nome === 'escolas'){
         return UrlsMenuEscolas
-    }else if(eval('dados_usuario_logado.usuario_'+login_usuario).visao_selecionada.nome === 'dres'){
+    }else if(dados_usuario_logado.visao_selecionada.nome === 'dres'){
         return UrlsMenuDres
-    }else if (eval('dados_usuario_logado.usuario_'+login_usuario).visao_selecionada.nome === 'sme'){
+    }else if (dados_usuario_logado.visao_selecionada.nome === 'sme'){
         return UrlsMenuSme
     }else {
-        if ( eval('dados_usuario_logado.usuario_'+login_usuario).visoes.find(visao=> visao.tipo === 'escolas')){
+        if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'escolas')){
             return UrlsMenuEscolas
-        }else if (eval('dados_usuario_logado.usuario_'+login_usuario).visoes.find(visao=> visao.tipo === 'dres')){
+        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'dres')){
             return UrlsMenuDres
-        }else if (eval('dados_usuario_logado.usuario_'+login_usuario).visoes.find(visao=> visao.tipo === 'sme')){
+        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'sme')){
             return UrlsMenuSme
         }else {
             return UrlsMenuEscolas

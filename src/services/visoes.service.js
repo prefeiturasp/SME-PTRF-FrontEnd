@@ -1,6 +1,12 @@
 
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
 
+const getDadosDoUsuarioLogado = (login_usuario) =>{
+    let dados_usuario_logado = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO));
+    console.log("DADOS YYYYYYYYY ", eval('dados_usuario_logado.usuario_'+login_usuario))
+    return  eval('dados_usuario_logado.usuario_'+login_usuario)
+}
+
 const setDadosUsuariosLogados = async (resp)=>{
     //debugger
     let usuario_login = resp.login
@@ -53,5 +59,6 @@ const alternaVisoes = (visao) =>{
 export const visoesService ={
     setDadosUsuariosLogados,
     alternaVisoes,
+    getDadosDoUsuarioLogado,
 };
 
