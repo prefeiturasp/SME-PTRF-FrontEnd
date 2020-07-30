@@ -1,6 +1,7 @@
 import decode from "jwt-decode";
 import api from './api';
 import HTTP_STATUS from "http-status-codes";
+import {visoesService} from "./visoes/visoes.service";
 
 export const TOKEN_ALIAS = "TOKEN";
 export const USUARIO_NOME = "NOME";
@@ -33,26 +34,7 @@ const login = async (login, senha) => {
                 return "RF incorreto"
             }
 
-            let dados_do_usuario_logado = {
-                usuario_logado: {
-                    login: resp.login,
-                    nome:resp.nome
-                },
-                visoes:[
-                    {tipo:"escolas"},
-                    {tipo:"dres"},
-                    {tipo:"sme"},
-                ],
-                visao_selecionada:{
-                  nome:""
-                },
-                unidades:[
-                    {nome:"Dre Ipiranga"},
-                    {nome:"Dre Butantã"},
-                ]
-            };
-
-            localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(dados_do_usuario_logado ))
+            await visoesService.setDadosUsuariosLogados(resp);
 
             localStorage.setItem(TOKEN_ALIAS, resp.token);
             localStorage.setItem(

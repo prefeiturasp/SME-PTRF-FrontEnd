@@ -9,6 +9,8 @@ import {Formik} from "formik";
 import {cpfMaskContitional, YupSignupSchemaDadosDaAssociacao} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from "react-text-mask";
 
+import {DADOS_USUARIO_LOGADO} from "../../../../services/auth.service";
+
 export const DadosDaAsssociacao = () => {
 
     const [stateAssociacao, setStateAssociacao] = useState({
@@ -83,6 +85,22 @@ export const DadosDaAsssociacao = () => {
     const onShowModalSalvar = () => {
         setShowModalDadosAssociacaoSalvar(true);
     };
+
+    const testeAlternarVisao = ()=>{
+        console.log("CLIQEI")
+        let dados_usuario_logado = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO))
+        let alternar_visao = {
+            ...dados_usuario_logado,
+            visao_selecionada:{
+                nome:"dres"
+            },
+        }
+
+        localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(alternar_visao ))
+
+        window.location.reload()
+    };
+
     return (
         <>
             {loading ? (
@@ -101,6 +119,8 @@ export const DadosDaAsssociacao = () => {
                         <MenuInterno
                             caminhos_menu_interno = {UrlsMenuInterno}
                         />
+
+                        <button onClick={()=>testeAlternarVisao()} type="button">Alternar visao</button>
 
                         <Formik
                             initialValues={stateAssociacao}
