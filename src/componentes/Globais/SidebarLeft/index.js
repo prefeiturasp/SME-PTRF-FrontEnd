@@ -109,41 +109,7 @@ export const SidebarLeft = () => {
                         )
                     }
 
-                    {/*<NavItem
-                        navitemClassName="d-flex align-items-end"
-                        data-tip="Resumo dos recursos" data-for='resumo_dos_recursos'
-                        eventKey="dashboard"
-                    >
-                        <NavIcon>
-                            <img src={IconeMenuPainel} alt=""/>
-                        </NavIcon>
-                        <NavText>Resumo dos recursos</NavText>
-                    </NavItem>
-                    <ReactTooltip disable={sidebarStatus.sideBarStatus} id='resumo_dos_recursos'>{}</ReactTooltip>
-
-                    <NavItem
-                        navitemClassName="d-flex align-items-end"
-                        data-tip="Créditos da escola" data-for='creditos_da_escola'
-                        eventKey="lista-de-receitas"
-                    >
-                        <NavIcon>
-                            <img src={IconeMenuCreditosDaEscola} alt=""/>
-                        </NavIcon>
-                        <NavText>Créditos da escola</NavText>
-                    </NavItem>
-                    <ReactTooltip disable={sidebarStatus.sideBarStatus} id='creditos_da_escola'>{}</ReactTooltip>
-
-                    <NavItem
-                        navitemClassName="d-flex align-items-end"
-                        data-tip="Gastos da escola" data-for='gastos_da_escola'
-                        eventKey="lista-de-despesas"
-                    >
-                        <NavIcon>
-                            <img src={IconeMenuGastosDaEscola} alt=""/>
-                        </NavIcon>
-                        <NavText>Gastos da escola</NavText>
-                    </NavItem>
-                    <ReactTooltip disable={sidebarStatus.sideBarStatus} id='gastos_da_escola'>{}</ReactTooltip>
+                    {/*
 
                     <NavItem
                         navitemClassName="d-flex align-items-end"
