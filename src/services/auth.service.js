@@ -11,6 +11,7 @@ export const ASSOCIACAO_TIPO_ESCOLA = "TIPO_ESCOLA";
 export const USUARIO_EMAIL = "EMAIL";
 export const USUARIO_CPF = "CPF";
 export const USUARIO_LOGIN = "LOGIN";
+export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
 
 
 const authHeader = {
@@ -31,6 +32,28 @@ const login = async (login, senha) => {
             if (resp.detail) {
                 return "RF incorreto"
             }
+
+            let dados_do_usuario_logado = {
+                usuario_logado: {
+                    login: resp.login,
+                    nome:resp.nome
+                },
+                visoes:[
+                    {tipo:"escolas"},
+                    {tipo:"dres"},
+                    {tipo:"sme"},
+                ],
+                visao_selecionada:{
+                  nome:""
+                },
+                unidades:[
+                    {nome:"Dre Ipiranga"},
+                    {nome:"Dre Butantã"},
+                ]
+            };
+
+            localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(dados_do_usuario_logado ))
+
             localStorage.setItem(TOKEN_ALIAS, resp.token);
             localStorage.setItem(
                 USUARIO_NOME,
