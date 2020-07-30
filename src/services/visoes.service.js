@@ -2,14 +2,13 @@
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
 
 const setDadosUsuariosLogados = async (resp)=>{
-    debugger
+    //debugger
     let usuario_login = resp.login
     console.log("user login ", usuario_login)
     let dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
 
     let novos_dados_do_usuario_logado = {
         ...dados_usuario_logado,
-        //[resp.login]:{
         [`usuario_${usuario_login}`]:{
         usuario_logado: {
             login: resp.login,
@@ -22,7 +21,7 @@ const setDadosUsuariosLogados = async (resp)=>{
         ],
         visao_selecionada:{
             //nome: dados_usuario_logado ? dados_usuario_logado.visao_selecionada.nome : "",
-            nome: "",
+            nome: "dres",
         },
         unidades:[
             {nome:"Dre Ipiranga"},

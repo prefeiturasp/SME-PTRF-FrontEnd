@@ -10,8 +10,8 @@ import IconeMenuPrestacaoDeContas from '../../../assets/img/icone-menu-prestacao
 
 
 const getDadosUsuario = () =>{
-    let usuario = JSON.parse(localStorage.getItem(USUARIO_NOME));
-    return usuario ? usuario.usuario_logado.nome.split(' ')[0] : ''
+    let usuario = localStorage.getItem(USUARIO_NOME);
+    return usuario ? usuario.split(' ')[0] : ''
 };
 
 const getDadosUnidade = () =>{
@@ -24,8 +24,7 @@ const getDadosUnidade = () =>{
 const UrlsMenuEscolas ={
     dados_iniciais: {
         default_selected: "dados-da-associacao",
-        usuario: "Ollyver",
-        //usuario: getDadosUsuario(),
+        usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
@@ -38,8 +37,7 @@ const UrlsMenuEscolas ={
 const UrlsMenuDres ={
     dados_iniciais: {
         default_selected: "lista-de-receitas",
-        usuario: "Pietra",
-        //usuario: getDadosUsuario(),
+        usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
@@ -53,8 +51,7 @@ const UrlsMenuDres ={
 const UrlsMenuSme ={
     dados_iniciais: {
         default_selected: "dashboard",
-        usuario: "Susi",
-        //usuario: getDadosUsuario(),
+        usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
