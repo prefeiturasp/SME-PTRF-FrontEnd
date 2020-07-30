@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 
 import {DADOS_USUARIO_LOGADO, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA} from '../../../services/auth.service'
 import IconeMenuDadosDaAssociacao from '../../../assets/img/icone-menu-dados-da-associacao.svg'
@@ -22,7 +22,7 @@ const getDadosUnidade = () =>{
 
 const UrlsMenuEscolas ={
     dados_iniciais: {
-        default_selected: "dashboard",
+        default_selected: "dados-da-associacao",
         usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
@@ -35,7 +35,7 @@ const UrlsMenuEscolas ={
 
 const UrlsMenuDres ={
     dados_iniciais: {
-        default_selected: "dashboard",
+        default_selected: "lista-de-receitas",
         usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
@@ -62,9 +62,6 @@ const UrlsMenuSme ={
 
 const GetUrls = () =>{
     let dados_usuario_logado = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO));
-    let visao;
-
-    console.log("XXXXXXXXXXXXXX ", dados_usuario_logado)
 
     if (dados_usuario_logado.visao_selecionada.nome === 'escolas'){
         return UrlsMenuEscolas
@@ -82,12 +79,6 @@ const GetUrls = () =>{
         }
     }
 
-
-    if (visao === "escolas"){
-        return UrlsMenuEscolas
-    }else if (visao=== "dres"){
-        return UrlsMenuDres
-    }
 };
 
 export const getUrls = {

@@ -41,7 +41,7 @@ export const SidebarLeft = () => {
                 onToggle={onToggle}
             >
                 <SideNav.Toggle/>
-                <SideNav.Nav defaultSelected="dashboard">
+                <SideNav.Nav defaultSelected={urls.dados_iniciais.default_selected}>
 
                     {sidebarStatus.sideBarStatus &&
                     <>
@@ -107,6 +107,7 @@ export const SidebarLeft = () => {
                         </NavItem>
                         )
                     }
+                    
 
                     {/*
 
