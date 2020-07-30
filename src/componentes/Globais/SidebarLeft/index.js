@@ -24,7 +24,7 @@ export const SidebarLeft = () => {
         sidebarStatus.setSideBarStatus(!sidebarStatus.sideBarStatus)
     };
 
-    let urls = getUrls.GetUrls()
+    let urls = getUrls.GetUrls();
 
 
 
@@ -95,28 +95,19 @@ export const SidebarLeft = () => {
                     }
 
                     {urls && urls.length > 0 && urls.map((url, index)=>
-
-                            <Fragment key={index}>
-                                <NavItem
-                                    navitemClassName="d-flex align-items-end"
-                                    /*data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Dados da Associação" : ""}*/
-                                    data-tip={url.label}  data-for='dados_da_associacao'
-                                    eventKey="dados-da-associacao"
-                                >
-                                    <NavIcon>
-                                        <img src={IconeMenuDadosDaAssociacao} alt=""/>
-                                    </NavIcon>
-                                    <NavText>{url.label}</NavText>
-                                </NavItem>
-                                <ReactTooltip disable={sidebarStatus.sideBarStatus} id='dados_da_associacao'>{}</ReactTooltip>
-                            </Fragment>
-
-
-                    )
-
+                        <NavItem
+                            navitemClassName="d-flex align-items-end"
+                            data-tip={url.label}  data-for={url.dataFor}
+                            eventKey={url.url}
+                        >
+                            <NavIcon>
+                                <img src={url.icone} alt=""/>
+                            </NavIcon>
+                            <NavText>{url.label}</NavText>
+                            <ReactTooltip disable={sidebarStatus.sideBarStatus} id={url.dataFor}>{}</ReactTooltip>
+                        </NavItem>
+                        )
                     }
-
-
 
                     {/*<NavItem
                         navitemClassName="d-flex align-items-end"
