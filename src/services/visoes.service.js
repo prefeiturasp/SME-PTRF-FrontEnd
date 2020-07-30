@@ -9,9 +9,9 @@ const setDadosUsuariosLogados = async (resp)=>{
             nome:resp.nome
         },
         visoes:[
-            {tipo:"escolas"},
-            {tipo:"dres"},
-            {tipo:"sme"},
+            {tipo:"escolas", label:"Escolas"},
+            {tipo:"dres", label:"Dres"},
+            {tipo:"sme", label:"SME"},
         ],
         visao_selecionada:{
             nome: visao_selecionada ? visao_selecionada.visao_selecionada.nome : "",

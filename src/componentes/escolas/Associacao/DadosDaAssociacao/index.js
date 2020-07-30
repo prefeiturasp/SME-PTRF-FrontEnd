@@ -6,10 +6,8 @@ import "../associacao.scss"
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {Formik} from "formik";
-import {cpfMaskContitional, YupSignupSchemaDadosDaAssociacao} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaDadosDaAssociacao} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from "react-text-mask";
-
-import {visoesService} from "../../../../services/visoes.service";
 
 export const DadosDaAsssociacao = () => {
 
@@ -103,8 +101,6 @@ export const DadosDaAsssociacao = () => {
                         <MenuInterno
                             caminhos_menu_interno = {UrlsMenuInterno}
                         />
-
-                        <button onClick={()=>visoesService.alternaVisoes("dres")} type="button">Alternar visao</button>
 
                         <Formik
                             initialValues={stateAssociacao}
