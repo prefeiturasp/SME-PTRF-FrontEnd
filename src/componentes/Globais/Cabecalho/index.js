@@ -20,7 +20,7 @@ export const Cabecalho = () => {
 
                 <ul className="navbar-nav ml-auto">
 
-                    <li className="nav-item dropdown">
+                   {/* <li className="nav-item dropdown">
                         <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Visões
                         </a>
@@ -33,7 +33,7 @@ export const Cabecalho = () => {
                             </li>
                         }
 
-                    </li>
+                    </li>*/}
                     <li className="nav-item text-center">
                         <button className="btn-sair" onClick={logout}><img className="img-fluid icone-sair" src={IconeSair} alt=""/></button>
                         <p className="mb-">Sair</p>

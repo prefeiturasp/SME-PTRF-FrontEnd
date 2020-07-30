@@ -32,8 +32,6 @@ const login = async (login, senha) => {
                 return "RF incorreto"
             }
 
-            await visoesService.setDadosUsuariosLogados(resp);
-
             localStorage.setItem(TOKEN_ALIAS, resp.token);
             localStorage.setItem(
                 USUARIO_NOME,
@@ -68,6 +66,8 @@ const login = async (login, senha) => {
                 resp.cpf
             );
             localStorage.removeItem('medidorSenha');
+
+            await visoesService.setDadosUsuariosLogados(resp);
 
             const decoded = decode(resp.token);
             window.location.href = "/";

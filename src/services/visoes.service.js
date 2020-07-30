@@ -1,9 +1,16 @@
+
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
 
 const setDadosUsuariosLogados = async (resp)=>{
-    let visao_selecionada = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
+    debugger
+    let usuario_login = resp.login
+    console.log("user login ", usuario_login)
+    let dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
 
-    let dados_do_usuario_logado = {
+    let novos_dados_do_usuario_logado = {
+        ...dados_usuario_logado,
+        //[resp.login]:{
+        [`usuario_${usuario_login}`]:{
         usuario_logado: {
             login: resp.login,
             nome:resp.nome
@@ -14,15 +21,16 @@ const setDadosUsuariosLogados = async (resp)=>{
             {tipo:"sme", label:"SME"},
         ],
         visao_selecionada:{
-            nome: visao_selecionada ? visao_selecionada.visao_selecionada.nome : "",
+            //nome: dados_usuario_logado ? dados_usuario_logado.visao_selecionada.nome : "",
+            nome: "",
         },
         unidades:[
             {nome:"Dre Ipiranga"},
             {nome:"Dre Butantã"},
         ]
-    };
-
-    localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(dados_do_usuario_logado ))
+    }
+    }
+    localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(novos_dados_do_usuario_logado ))
 };
 
 const alternaVisoes = (visao) =>{

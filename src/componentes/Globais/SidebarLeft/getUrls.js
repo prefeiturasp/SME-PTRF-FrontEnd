@@ -1,6 +1,6 @@
 import React from "react";
 
-import {ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA} from '../../../services/auth.service'
+import {USUARIO_LOGIN, USUARIO_NOME, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA} from '../../../services/auth.service'
 import {DADOS_USUARIO_LOGADO} from "../../../services/visoes.service";
 import IconeMenuDadosDaAssociacao from '../../../assets/img/icone-menu-dados-da-associacao.svg'
 import IconeMenuPainel from '../../../assets/img/icone-menu-painel.svg'
@@ -10,7 +10,7 @@ import IconeMenuPrestacaoDeContas from '../../../assets/img/icone-menu-prestacao
 
 
 const getDadosUsuario = () =>{
-    let usuario = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO));
+    let usuario = JSON.parse(localStorage.getItem(USUARIO_NOME));
     return usuario ? usuario.usuario_logado.nome.split(' ')[0] : ''
 };
 
@@ -24,7 +24,8 @@ const getDadosUnidade = () =>{
 const UrlsMenuEscolas ={
     dados_iniciais: {
         default_selected: "dados-da-associacao",
-        usuario: getDadosUsuario(),
+        usuario: "Ollyver",
+        //usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
@@ -37,7 +38,8 @@ const UrlsMenuEscolas ={
 const UrlsMenuDres ={
     dados_iniciais: {
         default_selected: "lista-de-receitas",
-        usuario: getDadosUsuario(),
+        usuario: "Pietra",
+        //usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
@@ -51,7 +53,8 @@ const UrlsMenuDres ={
 const UrlsMenuSme ={
     dados_iniciais: {
         default_selected: "dashboard",
-        usuario: getDadosUsuario(),
+        usuario: "Susi",
+        //usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
@@ -62,21 +65,26 @@ const UrlsMenuSme ={
 
 
 const GetUrls = () =>{
+    let login_usuario = localStorage.getItem(USUARIO_LOGIN)
     let dados_usuario_logado = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO));
+    console.log("login_usuario ", login_usuario)
+    console.log("GetUrls ", dados_usuario_logado)
 
-    if (dados_usuario_logado.visao_selecionada.nome === 'escolas'){
+    if (eval('dados_usuario_logado.usuario_'+login_usuario).visao_selecionada.nome === 'escolas'){
         return UrlsMenuEscolas
-    }else if(dados_usuario_logado.visao_selecionada.nome === 'dres'){
+    }else if(eval('dados_usuario_logado.usuario_'+login_usuario).visao_selecionada.nome === 'dres'){
         return UrlsMenuDres
-    }else if (dados_usuario_logado.visao_selecionada.nome === 'sme'){
+    }else if (eval('dados_usuario_logado.usuario_'+login_usuario).visao_selecionada.nome === 'sme'){
         return UrlsMenuSme
     }else {
-        if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'escolas')){
+        if ( eval('dados_usuario_logado.usuario_'+login_usuario).visoes.find(visao=> visao.tipo === 'escolas')){
             return UrlsMenuEscolas
-        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'dres')){
+        }else if (eval('dados_usuario_logado.usuario_'+login_usuario).visoes.find(visao=> visao.tipo === 'dres')){
             return UrlsMenuDres
-        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'sme')){
+        }else if (eval('dados_usuario_logado.usuario_'+login_usuario).visoes.find(visao=> visao.tipo === 'sme')){
             return UrlsMenuSme
+        }else {
+            return UrlsMenuEscolas
         }
     }
 
