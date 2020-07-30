@@ -13,7 +13,8 @@ const getDadosDoUsuarioLogado = () =>{
 
     //debugger
 
-    return  eval('dados_usuario_logado.usuario_'+getUsuarioLogin())
+    return dados_usuario_logado ? eval('dados_usuario_logado.usuario_'+getUsuarioLogin()) : null
+
 };
 
 const setDadosUsuariosLogados = async (resp)=>{
