@@ -62,8 +62,8 @@ const UrlsMenuSme ={
 
 
 const GetUrls = () =>{
-    let login_usuario = localStorage.getItem(USUARIO_LOGIN)
-    let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado(login_usuario);
+
+    let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
 
 
     if (dados_usuario_logado.visao_selecionada.nome === 'escolas'){

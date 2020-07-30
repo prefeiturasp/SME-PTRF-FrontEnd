@@ -1,20 +1,25 @@
+import {USUARIO_LOGIN} from "./auth.service";
 
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
 
-const getDadosDoUsuarioLogado = (login_usuario) =>{
+const getUsuarioLogin = () => {
+    return localStorage.getItem(USUARIO_LOGIN)
+};
+
+const getDadosDoUsuarioLogado = () =>{
     let dados_usuario_logado = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO));
-    console.log("DADOS YYYYYYYYY ", eval('dados_usuario_logado.usuario_'+login_usuario))
-    return  eval('dados_usuario_logado.usuario_'+login_usuario)
-}
+    return  eval('dados_usuario_logado.usuario_'+getUsuarioLogin())
+};
 
 const setDadosUsuariosLogados = async (resp)=>{
     //debugger
-    let usuario_login = resp.login
-    console.log("user login ", usuario_login)
-    let dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
+    let usuario_login = resp.login;
+    console.log("user login ", usuario_login);
+    let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
+    let dados_usuario_logado = getDadosDoUsuarioLogado();
 
     let novos_dados_do_usuario_logado = {
-        ...dados_usuario_logado,
+        ...todos_os_dados_usuario_logado,
         [`usuario_${usuario_login}`]:{
         usuario_logado: {
             login: resp.login,
@@ -26,31 +31,39 @@ const setDadosUsuariosLogados = async (resp)=>{
             {tipo:"sme", label:"SME"},
         ],
         visao_selecionada:{
-            //nome: dados_usuario_logado ? dados_usuario_logado.visao_selecionada.nome : "",
-            nome: "dres",
+            nome: dados_usuario_logado ? dados_usuario_logado.visao_selecionada.nome : "",
+            //nome: "dres",
         },
         unidades:[
             {nome:"Dre Ipiranga"},
             {nome:"Dre Butantã"},
         ]
     }
-    }
+    };
     localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(novos_dados_do_usuario_logado ))
 };
 
 const alternaVisoes = (visao) =>{
 
-    console.log("CLIQEI")
-    let dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
+    let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
+    let dados_usuario_logado = getDadosDoUsuarioLogado();
+
+    console.log("CLIQEI ", dados_usuario_logado);
 
     if (dados_usuario_logado){
         let alternar_visao = {
-            ...dados_usuario_logado,
-            visao_selecionada:{
-                nome:visao
-            },
+            ...todos_os_dados_usuario_logado,
+            [`usuario_${getUsuarioLogin()}`]: {
+                ...dados_usuario_logado,
+                visao_selecionada: {
+                    nome: visao
+                },
+            }
         };
-        localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(alternar_visao ))
+
+        console.log("alternar_visao ", alternar_visao)
+
+        localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(alternar_visao ));
         window.location.reload()
     }
 
