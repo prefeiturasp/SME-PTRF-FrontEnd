@@ -7,7 +7,7 @@ import IconeMenuPainel from '../../../assets/img/icone-menu-painel.svg'
 import IconeMenuCreditosDaEscola from '../../../assets/img/icone-menu-creditos-da-escola.svg'
 import IconeMenuGastosDaEscola from '../../../assets/img/icone-menu-gastos-da-escola.svg'
 import IconeMenuPrestacaoDeContas from '../../../assets/img/icone-menu-prestacao-de-contas.svg'
-
+import {redirect} from "../../../utils/redirect";
 
 const getDadosUsuario = () =>{
     let usuario = localStorage.getItem(USUARIO_NOME);
@@ -46,8 +46,6 @@ const UrlsMenuDres ={
     },
     lista_de_urls:[
         {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola},
-        {label: "Gastos da escola", url: "lista-de-despesas", dataFor:"gastos_da_escola", icone:IconeMenuGastosDaEscola},
-        {label: "Prestação de contas", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:IconeMenuPrestacaoDeContas},
     ]
 };
 
@@ -63,11 +61,9 @@ const UrlsMenuSme ={
     ]
 };
 
-
 const GetUrls = () =>{
 
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
-
 
     if (dados_usuario_logado.visao_selecionada.nome === 'escolas'){
         return UrlsMenuEscolas
@@ -86,7 +82,6 @@ const GetUrls = () =>{
             return UrlsMenuEscolas
         }
     }
-
 };
 
 export const getUrls = {

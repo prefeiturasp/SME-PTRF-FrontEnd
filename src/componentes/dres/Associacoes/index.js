@@ -36,7 +36,6 @@ export const Associacoes = () =>{
     const buscaTabelaAssociacoes = async ()=>{
         let tabela_associacoes = await getTabelaAssociacoes();
         setTabelaAssociacoes(tabela_associacoes);
-        console.log("Tabela Associacoes ", tabela_associacoes);
     };
 
     const buscaAssociacoes = async ()=>{
@@ -75,7 +74,7 @@ export const Associacoes = () =>{
                         <button className="btn-acoes"><span className="btn-acoes-dots">...</span></button>
                     </a>
 
-                    <div className="dropdown-menu" aria-labelledby="linkDropdownAcoes">
+                    <div className="dropdown-menu dropdown-menu-opcoes " aria-labelledby="linkDropdownAcoes">
                         <NavLink
                             className="dropdown-item"
                             to="/faq"

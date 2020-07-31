@@ -20,8 +20,24 @@ import {EsqueciMinhaSenhaPage} from "../paginas/Login/EsqueciMinhaSenha";
 import {RedefinirSenhaPage} from "../paginas/Login/RedefinirMinhaSenha";
 import {MeusDadosPage} from "../paginas/escolas/MeusDados";
 import {AssociacoesPage} from "../paginas/dres/Associacoes";
+import {visoesService} from "../services/visoes.service";
 
 import { authService } from '../services/auth.service';
+import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
+
+const visao = visoesService.getDadosDoUsuarioLogado();
+const rotaInicial = ()=>{
+
+    return  visoesService.getDadosDoUsuarioLogado();
+   /* if (visao === 'escolas'){
+        return "DadosDaAssociacaoPage"
+    }else if(visao === 'dres'){
+        return "AssociacoesPage"
+    }else if (visao==='sme'){
+        return "PrestacaoDeContasPage"
+    }*/
+
+}
 
 const routesConfig = [
     {
@@ -101,13 +117,13 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/",
-        component: DadosDaAssociacaoPage
+        path: "/dre-associacoes",
+        component: AssociacoesPage
     },
     {
         exact: true,
-        path: "/dre-associacoes",
-        component: AssociacoesPage
+        path: "/",
+        component: RedirectLoginVisaoUe
     },
 ];
 
