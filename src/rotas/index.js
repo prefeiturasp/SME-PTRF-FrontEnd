@@ -19,6 +19,7 @@ import {DadosDasContasPage} from "../paginas/escolas/DadosDasContasAssociacao";
 import {EsqueciMinhaSenhaPage} from "../paginas/Login/EsqueciMinhaSenha";
 import {RedefinirSenhaPage} from "../paginas/Login/RedefinirMinhaSenha";
 import {MeusDadosPage} from "../paginas/escolas/MeusDados";
+import {AssociacoesPage} from "../paginas/dres/Associacoes";
 
 import { authService } from '../services/auth.service';
 
@@ -103,7 +104,12 @@ const routesConfig = [
         path: "/",
         component: DadosDaAssociacaoPage
     },
-]
+    {
+        exact: true,
+        path: "/dre-associacoes",
+        component: AssociacoesPage
+    },
+];
 
 const PrivateRouter = (
     { component: Component, ...rest } // eslint-disable-line
