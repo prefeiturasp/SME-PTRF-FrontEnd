@@ -1,19 +1,14 @@
-import React, {useContext} from 'react'
+import React, {useContext, Fragment} from 'react'
 import SideNav, {NavItem, NavIcon, NavText} from '@trendmicro/react-sidenav'
 import '@trendmicro/react-sidenav/dist/react-sidenav.css'
 import './siderbarLeft.scss'
-import IconeMenuPainel from '../../../assets/img/icone-menu-painel.svg'
-import IconeMenuGastosDaEscola from '../../../assets/img/icone-menu-gastos-da-escola.svg'
-import IconeMenuCreditosDaEscola from '../../../assets/img/icone-menu-creditos-da-escola.svg'
-import IconeMenuPrestacaoDeContas from '../../../assets/img/icone-menu-prestacao-de-contas.svg'
-import IconeMenuDadosDaAssociacao from '../../../assets/img/icone-menu-dados-da-associacao.svg'
 import IconeMenuMeuPerfil from '../../../assets/img/icone-menu-meu-perfil.png'
 import LogoSP from '../../../assets/img/logo-menu-tratado.png'
 import {SidebarContext} from '../../../context/Sidebar'
 import {useHistory} from 'react-router-dom'
-import {USUARIO_NOME, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA} from '../../../services/auth.service'
 import {Versao} from '../Versao'
 import ReactTooltip from "react-tooltip";
+import {getUrls} from "./getUrls";
 
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
@@ -23,9 +18,10 @@ export const SidebarLeft = () => {
         sidebarStatus.setSideBarStatus(!sidebarStatus.sideBarStatus)
     };
 
+    let urls = getUrls.GetUrls();
+
     return (
         <>
-
             <SideNav
                 id="sideBarLeft"
                 className="sideNavCustomizado"
@@ -39,7 +35,7 @@ export const SidebarLeft = () => {
                 onToggle={onToggle}
             >
                 <SideNav.Toggle/>
-                <SideNav.Nav defaultSelected="dashboard">
+                <SideNav.Nav defaultSelected={urls.dados_iniciais.default_selected}>
 
                     {sidebarStatus.sideBarStatus &&
                     <>
@@ -51,8 +47,8 @@ export const SidebarLeft = () => {
                             <NavText>
                                 <div className="container-nome-instituicao">
                                   <span className="border border-white rounded-pill px-4 py-1">
-                                  {localStorage.getItem(USUARIO_NOME)
-                                      ? localStorage.getItem(USUARIO_NOME).split(' ')[0]
+                                  {urls
+                                      ? urls.dados_iniciais.usuario
                                       : ''}
                                   </span>
                                 </div>
@@ -60,7 +56,6 @@ export const SidebarLeft = () => {
                         </NavItem>
                     </>
                     }
-
                     <NavItem
                         data-tip="Meus Dados" data-for='meus_dados'
                         eventKey="meus-dados"
@@ -68,7 +63,8 @@ export const SidebarLeft = () => {
                         <NavIcon>{!sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} alt=""/> : ""} </NavIcon>
                         <NavText>
                             <div className="container-meus-dados mt-n4 d-flex justify-content-center align-items-center">
-                                {sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} className="mr-1" alt=""/> : ""} Meus Dados
+                                {sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} className="mr-1" alt=""/> : ""}
+                                Meus Dados
                             </div>
                         </NavText>
                     </NavItem>
@@ -83,62 +79,31 @@ export const SidebarLeft = () => {
                             <NavIcon>&nbsp;</NavIcon>
                             <NavText>
                                 <div className="container-nome-instituicao mt-n4 mb-4">
-                                    {`${localStorage.getItem(ASSOCIACAO_TIPO_ESCOLA)} ${localStorage.getItem(ASSOCIACAO_NOME_ESCOLA)}`}
+                                    {`${urls ? urls.dados_iniciais.associacao_tipo_escola : ""} ${urls ? urls.dados_iniciais.associacao_nome_escola : ""}`}
                                 </div>
                             </NavText>
                         </NavItem>
                     </>
                     }
 
+                    {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index)=>
+                        <NavItem
+                            key={index}
+                            navitemClassName="d-flex align-items-end"
+                            data-tip={url.label}  data-for={url.dataFor}
+                            eventKey={url.url}
+                        >
+                            <NavIcon>
+                                <img src={url.icone} alt=""/>
+                            </NavIcon>
+                            <NavText>{url.label}</NavText>
+                            <ReactTooltip disable={sidebarStatus.sideBarStatus} id={url.dataFor}>{}</ReactTooltip>
+                        </NavItem>
+                        )
+                    }
 
-                    <NavItem
-                        navitemClassName="d-flex align-items-end"
-                        /*data-toggle="tooltip" data-placement="top" title={!sidebarStatus.sideBarStatus ? "Dados da Associação" : ""}*/
-                        data-tip="Dados da Associação" data-for='dados_da_associacao'
-                        eventKey="dados-da-associacao"
-                    >
-                        <NavIcon>
-                            <img src={IconeMenuDadosDaAssociacao} alt=""/>
-                        </NavIcon>
-                        <NavText>Dados da Associação</NavText>
-                    </NavItem>
-                    <ReactTooltip disable={sidebarStatus.sideBarStatus} id='dados_da_associacao'>{}</ReactTooltip>
 
-                    <NavItem
-                        navitemClassName="d-flex align-items-end"
-                        data-tip="Resumo dos recursos" data-for='resumo_dos_recursos'
-                        eventKey="dashboard"
-                    >
-                        <NavIcon>
-                            <img src={IconeMenuPainel} alt=""/>
-                        </NavIcon>
-                        <NavText>Resumo dos recursos</NavText>
-                    </NavItem>
-                    <ReactTooltip disable={sidebarStatus.sideBarStatus} id='resumo_dos_recursos'>{}</ReactTooltip>
-
-                    <NavItem
-                        navitemClassName="d-flex align-items-end"
-                        data-tip="Créditos da escola" data-for='creditos_da_escola'
-                        eventKey="lista-de-receitas"
-                    >
-                        <NavIcon>
-                            <img src={IconeMenuCreditosDaEscola} alt=""/>
-                        </NavIcon>
-                        <NavText>Créditos da escola</NavText>
-                    </NavItem>
-                    <ReactTooltip disable={sidebarStatus.sideBarStatus} id='creditos_da_escola'>{}</ReactTooltip>
-
-                    <NavItem
-                        navitemClassName="d-flex align-items-end"
-                        data-tip="Gastos da escola" data-for='gastos_da_escola'
-                        eventKey="lista-de-despesas"
-                    >
-                        <NavIcon>
-                            <img src={IconeMenuGastosDaEscola} alt=""/>
-                        </NavIcon>
-                        <NavText>Gastos da escola</NavText>
-                    </NavItem>
-                    <ReactTooltip disable={sidebarStatus.sideBarStatus} id='gastos_da_escola'>{}</ReactTooltip>
+                    {/*
 
                     <NavItem
                         navitemClassName="d-flex align-items-end"
@@ -150,7 +115,7 @@ export const SidebarLeft = () => {
                         </NavIcon>
                         <NavText>Prestação de contas</NavText>
                     </NavItem>
-                    <ReactTooltip disable={sidebarStatus.sideBarStatus} id='prestacao_de_contas'>{}</ReactTooltip>
+                    <ReactTooltip disable={sidebarStatus.sideBarStatus} id='prestacao_de_contas'>{}</ReactTooltip>*/}
 
                     <NavItem
                         eventKey="dashboard"

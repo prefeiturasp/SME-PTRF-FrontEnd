@@ -1,6 +1,7 @@
 import decode from "jwt-decode";
 import api from './api';
 import HTTP_STATUS from "http-status-codes";
+import {visoesService} from "./visoes.service";
 
 export const TOKEN_ALIAS = "TOKEN";
 export const USUARIO_NOME = "NOME";
@@ -11,7 +12,6 @@ export const ASSOCIACAO_TIPO_ESCOLA = "TIPO_ESCOLA";
 export const USUARIO_EMAIL = "EMAIL";
 export const USUARIO_CPF = "CPF";
 export const USUARIO_LOGIN = "LOGIN";
-
 
 const authHeader = {
     'Content-Type': 'application/json'
@@ -31,6 +31,7 @@ const login = async (login, senha) => {
             if (resp.detail) {
                 return "RF incorreto"
             }
+
             localStorage.setItem(TOKEN_ALIAS, resp.token);
             localStorage.setItem(
                 USUARIO_NOME,
@@ -65,6 +66,8 @@ const login = async (login, senha) => {
                 resp.cpf
             );
             localStorage.removeItem('medidorSenha');
+
+            await visoesService.setDadosUsuariosLogados(resp);
 
             const decoded = decode(resp.token);
             window.location.href = "/";

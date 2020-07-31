@@ -101,7 +101,7 @@ const routesConfig = [
     {
         exact: true,
         path: "/",
-        component: DashboardPage
+        component: DadosDaAssociacaoPage
     },
 ]
 

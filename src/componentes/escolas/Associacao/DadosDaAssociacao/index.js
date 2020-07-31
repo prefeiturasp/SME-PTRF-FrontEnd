@@ -6,7 +6,7 @@ import "../associacao.scss"
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {Formik} from "formik";
-import {cpfMaskContitional, YupSignupSchemaDadosDaAssociacao} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaDadosDaAssociacao} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from "react-text-mask";
 
 export const DadosDaAsssociacao = () => {
