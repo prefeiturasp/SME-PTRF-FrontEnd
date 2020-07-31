@@ -39,13 +39,13 @@ const UrlsMenuEscolas ={
 
 const UrlsMenuDres ={
     dados_iniciais: {
-        default_selected: "lista-de-receitas",
+        default_selected: "dre-associacoes",
         usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
     lista_de_urls:[
-        {label: "Créditos da escola", url: "lista-de-receitas", dataFor:"creditos_da_escola", icone:IconeMenuCreditosDaEscola},
+        {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola},
         {label: "Gastos da escola", url: "lista-de-despesas", dataFor:"gastos_da_escola", icone:IconeMenuGastosDaEscola},
         {label: "Prestação de contas", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:IconeMenuPrestacaoDeContas},
     ]
