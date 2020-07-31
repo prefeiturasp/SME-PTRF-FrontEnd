@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {NavLink } from "react-router-dom";
-import {getTabelaAssociacoes, getAssociacoes} from "../../../services/dres/Associacoes.service";
+import {getTabelaAssociacoes, getAssociacoes, filtrosAssociacoes} from "../../../services/dres/Associacoes.service";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FiltrosAssociacoes} from "./FiltrosAssociacoes";
@@ -120,10 +120,21 @@ export const Associacoes = () =>{
         });
     };
 
-    const handleSubmitFiltrosAssociacao = (event)=>{
-        event.preventDefault()
-        console.log("handleSubmitFiltrosAssociacao ", stateFiltros)
-    }
+    const handleSubmitFiltrosAssociacao = async (event)=>{
+        setLoading(true)
+        event.preventDefault();
+        let resultado_filtros = await filtrosAssociacoes(stateFiltros.unidade_escolar_ou_associacao, stateFiltros.regularidade, stateFiltros.tipo_de_unidade)
+        console.log("Resultado Filtros ", resultado_filtros)
+        setAssociacoes(resultado_filtros)
+        setLoading(false)
+    };
+
+    const limpaFiltros = async () => {
+        setLoading(true)
+        setStateFiltros(initialStateFiltros);
+        await buscaAssociacoes()
+        setLoading(false)
+    };
 
     return(
         <>
@@ -131,9 +142,8 @@ export const Associacoes = () =>{
                 tabelaAssociacoes={tabelaAssociacoes}
                 stateFiltros={stateFiltros}
                 handleChangeFiltrosAssociacao={handleChangeFiltrosAssociacao}
-                setStateFiltros={setStateFiltros}
-                initialStateFiltros={initialStateFiltros}
                 handleSubmitFiltrosAssociacao={handleSubmitFiltrosAssociacao}
+                limpaFiltros={limpaFiltros}
             />
             {loading ? (
                     <Loading

@@ -1,6 +1,6 @@
 import React from "react";
 
-export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChangeFiltrosAssociacao, setStateFiltros, initialStateFiltros, handleSubmitFiltrosAssociacao}) =>{
+export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChangeFiltrosAssociacao, handleSubmitFiltrosAssociacao, limpaFiltros}) =>{
     //console.log("Filtros ", tabelaAssociacoes)
     return(
         <>
@@ -54,7 +54,7 @@ export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChang
                     </div>
                 </div>
                 <div className="d-flex  justify-content-end pb-3 mt-3">
-                    <button onClick={()=>setStateFiltros(initialStateFiltros)} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                    <button onClick={()=>limpaFiltros()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                     <button type="bu" className="btn btn-success mt-2">Salvar</button>
                 </div>
             </form>
