@@ -8,3 +8,7 @@ const authHeader = {
         'Content-Type': 'application/json'
     }
 };
+
+export const getAssociacoes = async () => {
+    return (await api.get(`api/associacoes/`, authHeader)).data
+};
