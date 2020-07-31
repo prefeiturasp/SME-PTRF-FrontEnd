@@ -29,9 +29,33 @@ export const Associacoes = () =>{
     };
 
     const statusRegularidadeTemplate = (rowData, column) =>{
+        let label_status_reguralidade;
+        if (rowData['status_regularidade'] === "PENDENTE"){
+            label_status_reguralidade = "Pendente"
+        }else if (rowData['status_regularidade'] === "REGULAR"){
+            label_status_reguralidade = "Regular"
+        }
+        return (
+            <div className={`status-regularidade-${rowData['status_regularidade'].toLowerCase()}`}>
+                {rowData['status_regularidade'] ? <strong>{label_status_reguralidade}</strong> : ''}
+            </div>
+        )
+    };
+
+    const acoesTemplate = (rowData, column) =>{
         return (
             <div>
-                {rowData['status_regularidade'] ? <strong>{rowData['status_regularidade']}</strong> : ''}
+                {/*<button className="btn-acoes"><span className="btn-acoes-dots">...</span></button>*/}
+                <li className="nav-item dropdown link-acoes">
+                    <a href="#" id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button className="btn-acoes"><span className="btn-acoes-dots">...</span></button>
+                    </a>
+                    <div className="dropdown-menu" aria-labelledby="linkDropdownAcoes">
+                        <a className="dropdown-item" href="#">Ver dados unidade</a>
+                        <a className="dropdown-item" href="#">Ver regularidade</a>
+                        <a className="dropdown-item" href="#">Ver situação financeira</a>
+                    </div>
+                </li>
             </div>
         )
     };
@@ -60,7 +84,10 @@ export const Associacoes = () =>{
                     header="Regularidade"
                     body={statusRegularidadeTemplate}
                 />
-                <Column field="color" header="Ações" />
+                <Column
+                    header="Ações"
+                    body={acoesTemplate}
+                />
             </DataTable>
 
         </>
