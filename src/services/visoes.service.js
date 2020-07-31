@@ -72,6 +72,7 @@ const alternaVisoes = (visao) =>{
 
 export const visoesService ={
     setDadosUsuariosLogados,
+    alternaVisoes,
     getDadosDoUsuarioLogado,
 };
 
