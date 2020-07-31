@@ -5,6 +5,8 @@ import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FiltrosAssociacoes} from "./FiltrosAssociacoes";
 import Loading from "../../../utils/Loading";
+import Img404 from "../../../assets/img/img-404.svg";
+import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 
 export const Associacoes = () =>{
 
@@ -165,7 +167,11 @@ export const Associacoes = () =>{
                             acoesTemplate={acoesTemplate}
                         />
                     </>
-                ) : null
+                ) :
+                    <MsgImgCentralizada
+                        texto='Não encontramos resultados, verifique os filtros e tente novamente.'
+                        img={Img404}
+                    />
             }
 
         </>
