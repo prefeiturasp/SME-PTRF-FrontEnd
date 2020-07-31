@@ -7,6 +7,7 @@ import {FiltrosAssociacoes} from "./FiltrosAssociacoes";
 import Loading from "../../../utils/Loading";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
+import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
 
 export const Associacoes = () =>{
 
@@ -22,6 +23,7 @@ export const Associacoes = () =>{
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
     const [associacoes, setAssociacoes] = useState([]);
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
+    const [buscaUtilizandoFiltros, setBuscaUtilizandoFiltros] = useState(false);
 
     useEffect(()=>{
         buscaTabelaAssociacoes();
@@ -39,7 +41,6 @@ export const Associacoes = () =>{
 
     const buscaAssociacoes = async ()=>{
         let associacoes = await getAssociacoes();
-        console.log("Associacoes ", associacoes)
         setAssociacoes(associacoes);
         setLoading(false)
     };
@@ -114,8 +115,6 @@ export const Associacoes = () =>{
     };
 
     const handleChangeFiltrosAssociacao = (name, value) => {
-        //console.log("handleChangeFiltrosAssociacao ", name)
-        //console.log("handleChangeFiltrosAssociacao ", value)
         setStateFiltros({
             ...stateFiltros,
             [name]: value
@@ -123,18 +122,18 @@ export const Associacoes = () =>{
     };
 
     const handleSubmitFiltrosAssociacao = async (event)=>{
-        setLoading(true)
+        setLoading(true);
+        setBuscaUtilizandoFiltros(true);
         event.preventDefault();
-        let resultado_filtros = await filtrosAssociacoes(stateFiltros.unidade_escolar_ou_associacao, stateFiltros.regularidade, stateFiltros.tipo_de_unidade)
-        console.log("Resultado Filtros ", resultado_filtros)
-        setAssociacoes(resultado_filtros)
+        let resultado_filtros = await filtrosAssociacoes(stateFiltros.unidade_escolar_ou_associacao, stateFiltros.regularidade, stateFiltros.tipo_de_unidade);
+        setAssociacoes(resultado_filtros);
         setLoading(false)
     };
 
     const limpaFiltros = async () => {
-        setLoading(true)
+        setLoading(true);
         setStateFiltros(initialStateFiltros);
-        await buscaAssociacoes()
+        await buscaAssociacoes();
         setLoading(false)
     };
 
@@ -157,8 +156,6 @@ export const Associacoes = () =>{
                 ) :
                 associacoes && associacoes.length > 0 ? (
                     <>
-
-
                         <TabelaAssociacoes
                             associacoes={associacoes}
                             rowsPerPage={rowsPerPage}
@@ -168,10 +165,16 @@ export const Associacoes = () =>{
                         />
                     </>
                 ) :
-                    <MsgImgCentralizada
-                        texto='Não encontramos resultados, verifique os filtros e tente novamente.'
-                        img={Img404}
-                    />
+                    buscaUtilizandoFiltros ?
+                        <MsgImgCentralizada
+                            texto='Não encontramos resultados, verifique os filtros e tente novamente.'
+                            img={Img404}
+                        />
+                    :
+                        <MsgImgLadoDireito
+                            texto='Não encontramos nenhuma Associação com este perfil, tente novamente'
+                            img={Img404}
+                        />
             }
 
         </>
