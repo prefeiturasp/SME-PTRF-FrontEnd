@@ -1,5 +1,5 @@
 import React from "react";
-import {Route, Switch, Redirect} from 'react-router-dom'
+import {Route, Switch} from 'react-router-dom'
 import {Login} from "../paginas/Login";
 import {Pagina404} from "../paginas/escolas/404";
 import {DashboardPage} from "../paginas/escolas/Dashboard";
@@ -20,24 +20,9 @@ import {EsqueciMinhaSenhaPage} from "../paginas/Login/EsqueciMinhaSenha";
 import {RedefinirSenhaPage} from "../paginas/Login/RedefinirMinhaSenha";
 import {MeusDadosPage} from "../paginas/escolas/MeusDados";
 import {AssociacoesPage} from "../paginas/dres/Associacoes";
-import {visoesService} from "../services/visoes.service";
-
 import { authService } from '../services/auth.service';
+// Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
-
-const visao = visoesService.getDadosDoUsuarioLogado();
-const rotaInicial = ()=>{
-
-    return  visoesService.getDadosDoUsuarioLogado();
-   /* if (visao === 'escolas'){
-        return "DadosDaAssociacaoPage"
-    }else if(visao === 'dres'){
-        return "AssociacoesPage"
-    }else if (visao==='sme'){
-        return "PrestacaoDeContasPage"
-    }*/
-
-}
 
 const routesConfig = [
     {
@@ -144,7 +129,7 @@ const PrivateRouter = (
     />
   );
 
-export const Rotas = (props) => {
+export const Rotas = () => {
     return(
         <Switch>
             <Route path="/login" component={Login}/>
@@ -164,5 +149,5 @@ export const Rotas = (props) => {
             <Route path="*" component={Pagina404}/>
         </Switch>
     )
-}
+};
 
