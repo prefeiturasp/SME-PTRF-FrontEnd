@@ -20,6 +20,8 @@ export const Cabecalho = () => {
             <img className="img-fluid logo-cabecalho ml-3" src={LogoPtrf} alt=""/>
 
                 <ul className="navbar-nav ml-auto">
+                    <li className="nav-item dropdown">
+                    </li>
                     <li className="nav-item text-center">
                         <button className="btn-sair" onClick={logout}><img className="img-fluid icone-sair" src={IconeSair} alt=""/></button>
                         <p className="mb-">Sair</p>
