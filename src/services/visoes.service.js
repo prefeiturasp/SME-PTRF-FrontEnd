@@ -45,8 +45,30 @@ const setDadosUsuariosLogados = async (resp)=>{
 };
 
 const alternaVisoes = (visao) =>{
-    console.log("Visao ", visao)
-}
+
+    let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
+    let dados_usuario_logado = getDadosDoUsuarioLogado();
+
+    console.log("CLIQEI ", dados_usuario_logado);
+
+    if (dados_usuario_logado){
+        let alternar_visao = {
+            ...todos_os_dados_usuario_logado,
+            [`usuario_${getUsuarioLogin()}`]: {
+                ...dados_usuario_logado,
+                visao_selecionada: {
+                    nome: visao
+                },
+            }
+        };
+
+        console.log("alternar_visao ", alternar_visao)
+
+        localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(alternar_visao ));
+        window.location.reload()
+    }
+
+};
 
 export const visoesService ={
     setDadosUsuariosLogados,
