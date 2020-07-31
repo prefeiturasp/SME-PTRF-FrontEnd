@@ -9,6 +9,10 @@ const authHeader = {
     }
 };
 
+export const getTabelaAssociacoes = async () => {
+    return (await api.get(`/api/associacoes/tabelas `, authHeader)).data
+};
+
 export const getAssociacoes = async () => {
     return (await api.get(`api/associacoes/`, authHeader)).data
 };

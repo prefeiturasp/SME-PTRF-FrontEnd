@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {NavLink } from "react-router-dom";
-import {getAssociacoes} from "../../../services/dres/Associacoes.service";
+import {getTabelaAssociacoes, getAssociacoes} from "../../../services/dres/Associacoes.service";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
+import {FiltrosAssociacoes} from "./FiltrosAssociacoes";
 import Loading from "../../../utils/Loading";
 
 export const Associacoes = () =>{
@@ -10,11 +11,23 @@ export const Associacoes = () =>{
     const rowsPerPage = 15;
 
     const [loading, setLoading] = useState(true);
+    const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
     const [associacoes, setAssociacoes] = useState([]);
+
+    useEffect(()=>{
+        buscaTabelaAssociacoes();
+    }, []);
 
     useEffect(()=>{
         buscaAssociacoes();
     }, []);
+
+    const buscaTabelaAssociacoes = async ()=>{
+        let tabela_associacoes = await getTabelaAssociacoes();
+        setTabelaAssociacoes(tabela_associacoes);
+        console.log("Tabela Associacoes ", tabela_associacoes);
+
+    };
 
     const buscaAssociacoes = async ()=>{
         let associacoes = await getAssociacoes();
@@ -101,14 +114,21 @@ export const Associacoes = () =>{
                         marginBottom="0"
                     />
                 ) :
+                associacoes && associacoes.length > 0 ? (
+                    <>
+                        <FiltrosAssociacoes
+                            tabelaAssociacoes={tabelaAssociacoes}
+                        />
 
-                <TabelaAssociacoes
-                    associacoes={associacoes}
-                    rowsPerPage={rowsPerPage}
-                    unidadeEscolarTemplate={unidadeEscolarTemplate}
-                    statusRegularidadeTemplate={statusRegularidadeTemplate}
-                    acoesTemplate={acoesTemplate}
-                />
+                        <TabelaAssociacoes
+                            associacoes={associacoes}
+                            rowsPerPage={rowsPerPage}
+                            unidadeEscolarTemplate={unidadeEscolarTemplate}
+                            statusRegularidadeTemplate={statusRegularidadeTemplate}
+                            acoesTemplate={acoesTemplate}
+                        />
+                    </>
+                ) : null
             }
 
         </>
