@@ -44,6 +44,10 @@ const setDadosUsuariosLogados = async (resp)=>{
     localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(novos_dados_do_usuario_logado ))
 };
 
+const alternaVisoes = (visao) =>{
+    console.log("Visao ", visao)
+}
+
 export const visoesService ={
     setDadosUsuariosLogados,
     getDadosDoUsuarioLogado,
