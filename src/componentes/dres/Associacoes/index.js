@@ -10,9 +10,16 @@ export const Associacoes = () =>{
 
     const rowsPerPage = 15;
 
+    const initialStateFiltros = {
+        unidade_escolar_ou_associacao: "",
+        regularidade: "",
+        tipo_de_unidade: "",
+    };
+
     const [loading, setLoading] = useState(true);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
     const [associacoes, setAssociacoes] = useState([]);
+    const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
 
     useEffect(()=>{
         buscaTabelaAssociacoes();
@@ -26,11 +33,11 @@ export const Associacoes = () =>{
         let tabela_associacoes = await getTabelaAssociacoes();
         setTabelaAssociacoes(tabela_associacoes);
         console.log("Tabela Associacoes ", tabela_associacoes);
-
     };
 
     const buscaAssociacoes = async ()=>{
         let associacoes = await getAssociacoes();
+        console.log("Associacoes ", associacoes)
         setAssociacoes(associacoes);
         setLoading(false)
     };
@@ -104,8 +111,30 @@ export const Associacoes = () =>{
         )
     };
 
+    const handleChangeFiltrosAssociacao = (name, value) => {
+        //console.log("handleChangeFiltrosAssociacao ", name)
+        //console.log("handleChangeFiltrosAssociacao ", value)
+        setStateFiltros({
+            ...stateFiltros,
+            [name]: value
+        });
+    };
+
+    const handleSubmitFiltrosAssociacao = (event)=>{
+        event.preventDefault()
+        console.log("handleSubmitFiltrosAssociacao ", stateFiltros)
+    }
+
     return(
         <>
+            <FiltrosAssociacoes
+                tabelaAssociacoes={tabelaAssociacoes}
+                stateFiltros={stateFiltros}
+                handleChangeFiltrosAssociacao={handleChangeFiltrosAssociacao}
+                setStateFiltros={setStateFiltros}
+                initialStateFiltros={initialStateFiltros}
+                handleSubmitFiltrosAssociacao={handleSubmitFiltrosAssociacao}
+            />
             {loading ? (
                     <Loading
                         corGrafico="black"
@@ -116,9 +145,7 @@ export const Associacoes = () =>{
                 ) :
                 associacoes && associacoes.length > 0 ? (
                     <>
-                        <FiltrosAssociacoes
-                            tabelaAssociacoes={tabelaAssociacoes}
-                        />
+
 
                         <TabelaAssociacoes
                             associacoes={associacoes}

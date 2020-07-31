@@ -14,5 +14,5 @@ export const getTabelaAssociacoes = async () => {
 };
 
 export const getAssociacoes = async () => {
-    return (await api.get(`api/associacoes/`, authHeader)).data
+    return (await api.get(`api/associacoes/?unidade__dre__uuid=82b460c6-7b6a-4de6-9376-d66a47f8d6b1`, authHeader)).data
 };
