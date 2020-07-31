@@ -21,6 +21,18 @@ export const Cabecalho = () => {
 
                 <ul className="navbar-nav ml-auto">
                     <li className="nav-item dropdown">
+                        <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Visões
+                        </a>
+                        {dados_usuario_logado && dados_usuario_logado.visoes.length > 0 &&
+                        <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                            {dados_usuario_logado.visoes.map((visao, index)=>
+                                <button key={index} onClick={()=>visoesService.alternaVisoes(visao.tipo)} className="dropdown-item">{visao.label}</button>
+                            )}
+
+                        </div>
+                        }
+
                     </li>
                     <li className="nav-item text-center">
                         <button className="btn-sair" onClick={logout}><img className="img-fluid icone-sair" src={IconeSair} alt=""/></button>
