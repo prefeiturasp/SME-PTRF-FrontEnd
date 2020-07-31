@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
+import {NavLink } from "react-router-dom";
 import {getAssociacoes} from "../../../services/dres/Associacoes.service";
-import {DataTable} from 'primereact/datatable';
-import {Column} from 'primereact/column';
 import "./associacoes.scss"
+import {TabelaAssociacoes} from "./TabelaAssociacoes";
 
 export const Associacoes = () =>{
 
@@ -50,10 +50,40 @@ export const Associacoes = () =>{
                     <a href="#" id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <button className="btn-acoes"><span className="btn-acoes-dots">...</span></button>
                     </a>
+
                     <div className="dropdown-menu" aria-labelledby="linkDropdownAcoes">
-                        <a className="dropdown-item" href="#">Ver dados unidade</a>
-                        <a className="dropdown-item" href="#">Ver regularidade</a>
-                        <a className="dropdown-item" href="#">Ver situação financeira</a>
+                        <NavLink
+                            className="dropdown-item"
+                            to="/faq"
+                            activeStyle={{
+                                fontWeight: "bold",
+                                color: "red"
+                            }}
+                        >
+                            Ver dados unidade
+                        </NavLink>
+
+                        <NavLink
+                            className="dropdown-item"
+                            to="/faq"
+                            activeStyle={{
+                                fontWeight: "bold",
+                                color: "red"
+                            }}
+                        >
+                            Ver regularidade
+                        </NavLink>
+
+                        <NavLink
+                            className="dropdown-item"
+                            to="/faq"
+                            activeStyle={{
+                                fontWeight: "bold",
+                                color: "red"
+                            }}
+                        >
+                            Ver situação financeira
+                        </NavLink>
                     </div>
                 </li>
             </div>
@@ -63,32 +93,13 @@ export const Associacoes = () =>{
     return(
         <>
 
-            <DataTable
-                value={associacoes}
-                className="mt-3 container-tabela-associacoes"
-                paginator={associacoes.length > rowsPerPage}
-                rows={rowsPerPage}
-                paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                //paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                autoLayout={true}
-                selectionMode="single"
-            >
-                <Column field="unidade.codigo_eol" header="Código Eol" />
-                <Column
-                    field="nome"
-                    header="Unidade escolar"
-                    body={unidadeEscolarTemplate}
-                />
-                <Column
-                    field="status_regularidade"
-                    header="Regularidade"
-                    body={statusRegularidadeTemplate}
-                />
-                <Column
-                    header="Ações"
-                    body={acoesTemplate}
-                />
-            </DataTable>
+            <TabelaAssociacoes
+                associacoes={associacoes}
+                rowsPerPage={rowsPerPage}
+                unidadeEscolarTemplate={unidadeEscolarTemplate}
+                statusRegularidadeTemplate={statusRegularidadeTemplate}
+                acoesTemplate={acoesTemplate}
+            />
 
         </>
     )
