@@ -2,11 +2,6 @@ import React, {useContext, Fragment} from 'react'
 import SideNav, {NavItem, NavIcon, NavText} from '@trendmicro/react-sidenav'
 import '@trendmicro/react-sidenav/dist/react-sidenav.css'
 import './siderbarLeft.scss'
-import IconeMenuPainel from '../../../assets/img/icone-menu-painel.svg'
-import IconeMenuGastosDaEscola from '../../../assets/img/icone-menu-gastos-da-escola.svg'
-import IconeMenuCreditosDaEscola from '../../../assets/img/icone-menu-creditos-da-escola.svg'
-import IconeMenuPrestacaoDeContas from '../../../assets/img/icone-menu-prestacao-de-contas.svg'
-import IconeMenuDadosDaAssociacao from '../../../assets/img/icone-menu-dados-da-associacao.svg'
 import IconeMenuMeuPerfil from '../../../assets/img/icone-menu-meu-perfil.png'
 import LogoSP from '../../../assets/img/logo-menu-tratado.png'
 import {SidebarContext} from '../../../context/Sidebar'
@@ -27,7 +22,6 @@ export const SidebarLeft = () => {
 
     return (
         <>
-            {console.log(urls)}
             <SideNav
                 id="sideBarLeft"
                 className="sideNavCustomizado"

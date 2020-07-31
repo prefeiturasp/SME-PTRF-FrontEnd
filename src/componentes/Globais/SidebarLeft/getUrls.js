@@ -1,7 +1,7 @@
 import React from "react";
 
-import {USUARIO_LOGIN, USUARIO_NOME, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA} from '../../../services/auth.service'
-import {DADOS_USUARIO_LOGADO, visoesService} from "../../../services/visoes.service";
+import {USUARIO_NOME, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA} from '../../../services/auth.service'
+import {visoesService} from "../../../services/visoes.service";
 import IconeMenuDadosDaAssociacao from '../../../assets/img/icone-menu-dados-da-associacao.svg'
 import IconeMenuPainel from '../../../assets/img/icone-menu-painel.svg'
 import IconeMenuCreditosDaEscola from '../../../assets/img/icone-menu-creditos-da-escola.svg'
