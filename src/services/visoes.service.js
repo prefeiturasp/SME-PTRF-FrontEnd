@@ -60,7 +60,7 @@ const alternaVisoes = (visao) =>{
             }
         };
         localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(alternar_visao ));
-        window.location.reload()
+        window.location.assign("/")
     }
 };
 

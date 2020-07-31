@@ -3,11 +3,13 @@ import {NavLink } from "react-router-dom";
 import {getAssociacoes} from "../../../services/dres/Associacoes.service";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
+import Loading from "../../../utils/Loading";
 
 export const Associacoes = () =>{
 
     const rowsPerPage = 15;
 
+    const [loading, setLoading] = useState(true);
     const [associacoes, setAssociacoes] = useState([]);
 
     useEffect(()=>{
@@ -17,10 +19,10 @@ export const Associacoes = () =>{
     const buscaAssociacoes = async ()=>{
         let associacoes = await getAssociacoes();
         setAssociacoes(associacoes);
-        console.log("buscaAssociacoes ", associacoes)
+        setLoading(false)
     };
 
-    const unidadeEscolarTemplate = (rowData, column) =>{
+    const unidadeEscolarTemplate = (rowData) =>{
         return (
             <div>
                 {rowData['nome'] ? <strong>{rowData['nome']}</strong> : ''}
@@ -28,7 +30,7 @@ export const Associacoes = () =>{
         )
     };
 
-    const statusRegularidadeTemplate = (rowData, column) =>{
+    const statusRegularidadeTemplate = (rowData) =>{
         let label_status_reguralidade;
         if (rowData['status_regularidade'] === "PENDENTE"){
             label_status_reguralidade = "Pendente"
@@ -42,10 +44,9 @@ export const Associacoes = () =>{
         )
     };
 
-    const acoesTemplate = (rowData, column) =>{
+    const acoesTemplate = () =>{
         return (
             <div>
-                {/*<button className="btn-acoes"><span className="btn-acoes-dots">...</span></button>*/}
                 <li className="nav-item dropdown link-acoes">
                     <a href="#" id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <button className="btn-acoes"><span className="btn-acoes-dots">...</span></button>
@@ -92,14 +93,23 @@ export const Associacoes = () =>{
 
     return(
         <>
+            {loading ? (
+                    <Loading
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="0"
+                        marginBottom="0"
+                    />
+                ) :
 
-            <TabelaAssociacoes
-                associacoes={associacoes}
-                rowsPerPage={rowsPerPage}
-                unidadeEscolarTemplate={unidadeEscolarTemplate}
-                statusRegularidadeTemplate={statusRegularidadeTemplate}
-                acoesTemplate={acoesTemplate}
-            />
+                <TabelaAssociacoes
+                    associacoes={associacoes}
+                    rowsPerPage={rowsPerPage}
+                    unidadeEscolarTemplate={unidadeEscolarTemplate}
+                    statusRegularidadeTemplate={statusRegularidadeTemplate}
+                    acoesTemplate={acoesTemplate}
+                />
+            }
 
         </>
     )
