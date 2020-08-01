@@ -109,6 +109,7 @@ const logout = () => {
     localStorage.removeItem(USUARIO_EMAIL);
     localStorage.removeItem(USUARIO_LOGIN);
     localStorage.removeItem(USUARIO_CPF);
+    localStorage.removeItem("DADOS_DA_ASSOCIACAO");
     //window.location.reload();
     window.location.assign("/login")
 };

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Redirect, NavLink } from "react-router-dom";
+import {Redirect} from "react-router-dom";
 import {getTabelaAssociacoes, getAssociacoesPorUnidade, filtrosAssociacoes, getAssociacao} from "../../../services/dres/Associacoes.service";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
@@ -8,7 +8,6 @@ import Loading from "../../../utils/Loading";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
-import {DADOS_USUARIO_LOGADO} from "../../../services/visoes.service";
 
 export const Associacoes = () =>{
 
@@ -87,7 +86,6 @@ export const Associacoes = () =>{
     };
 
     const acoesTemplate = (rowData) =>{
-
         return (
             <div>
                 <li className="nav-item dropdown link-acoes">
