@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {NavLink, Link } from "react-router-dom";
-import {getTabelaAssociacoes, getAssociacoes, filtrosAssociacoes} from "../../../services/dres/Associacoes.service";
+import {Redirect, NavLink } from "react-router-dom";
+import {getTabelaAssociacoes, getAssociacoesPorUnidade, filtrosAssociacoes, getAssociacao} from "../../../services/dres/Associacoes.service";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FiltrosAssociacoes} from "./FiltrosAssociacoes";
@@ -8,7 +8,7 @@ import Loading from "../../../utils/Loading";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
-import {UrlsMenuInterno} from "./UrlsMenuInterno";
+import {DADOS_USUARIO_LOGADO} from "../../../services/visoes.service";
 
 export const Associacoes = () =>{
 
@@ -25,13 +25,14 @@ export const Associacoes = () =>{
     const [associacoes, setAssociacoes] = useState([]);
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [buscaUtilizandoFiltros, setBuscaUtilizandoFiltros] = useState(false);
+    const [urlRedirect, setRrlRedirect] = useState('');
 
     useEffect(()=>{
         buscaTabelaAssociacoes();
     }, []);
 
     useEffect(()=>{
-        buscaAssociacoes();
+        buscaAssociacoesPorUnidade();
     }, []);
 
     const buscaTabelaAssociacoes = async ()=>{
@@ -39,11 +40,28 @@ export const Associacoes = () =>{
         setTabelaAssociacoes(tabela_associacoes);
     };
 
-    const buscaAssociacoes = async ()=>{
-        let associacoes = await getAssociacoes();
-        //console.log("Associacoes ", associacoes)
-        setAssociacoes(associacoes);
+    const buscaAssociacoesPorUnidade = async ()=>{
+        try {
+            let associacoes = await getAssociacoesPorUnidade();
+            console.log("Associacoes ", associacoes);
+            setAssociacoes(associacoes);
+        }catch (e) {
+            console.log("Erro ao buscar associacoes ", e)
+        }
+
         setLoading(false)
+    };
+
+    const buscaAssociacao = async (uuid_associacao, url_redirect)=>{
+        setLoading(true);
+        try {
+            let associacao = await getAssociacao(uuid_associacao);
+            localStorage.setItem("DADOS_DA_ASSOCIACAO", JSON.stringify(associacao ));
+            setRrlRedirect(url_redirect)
+        }catch (e) {
+            console.log("Erro ao buscar associacoes ", e)
+        }
+        setLoading(false);
     };
 
     const unidadeEscolarTemplate = (rowData) =>{
@@ -69,7 +87,7 @@ export const Associacoes = () =>{
     };
 
     const acoesTemplate = (rowData) =>{
-        console.log("Acoes Template", rowData.uuid)
+
         return (
             <div>
                 <li className="nav-item dropdown link-acoes">
@@ -78,22 +96,15 @@ export const Associacoes = () =>{
                     </a>
 
                     <div className="dropdown-menu dropdown-menu-opcoes " aria-labelledby="linkDropdownAcoes">
-                        {UrlsMenuInterno && UrlsMenuInterno.length > 0 && UrlsMenuInterno.map((url, index)=>
-                            <Link
-                                key={index}
-                                className="dropdown-item"
+                        <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-dados-da-associacao")} className="btn btn-link dropdown-item" type="button">Ver dados unidade</button>
+                        <button onClick={()=>buscaAssociacao(rowData.uuid, "/cadastro-de-despesa")} className="btn btn-link dropdown-item" type="button">Ver regularidade</button>
+                        {urlRedirect &&
+                            <Redirect
                                 to={{
-                                    pathname: url.url,
-                                    props: {
-                                        uuid: rowData.uuid,
-                                        nome: rowData.nome,
-                                    }
+                                    pathname: urlRedirect,
                                 }}
-                            >
-                                {url.label}
-                            </Link>
-                        )}
-
+                            />
+                        }
 
                         {/*<NavLink
                             className="dropdown-item"
@@ -141,7 +152,7 @@ export const Associacoes = () =>{
     const limpaFiltros = async () => {
         setLoading(true);
         setStateFiltros(initialStateFiltros);
-        await buscaAssociacoes();
+        await buscaAssociacoesPorUnidade();
         setLoading(false)
     };
 

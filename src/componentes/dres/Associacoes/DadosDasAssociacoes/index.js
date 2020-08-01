@@ -1,32 +1,27 @@
 import React from "react";
-import {Link, useLocation, Redirect} from "react-router-dom";
+import {useLocation, Redirect} from "react-router-dom";
+import {TopoComBotoes} from "./TopoComBotoes";
+import {MenuInterno} from "../../../Globais/MenuInterno";
+import {UrlsMenuInterno} from "../UrlsMenuInterno";
 
 export const DadosDasAssociacoes = () =>{
 
-    const {props} = useLocation()
+    let dados_da_associacao = JSON.parse(localStorage.getItem("DADOS_DA_ASSOCIACAO"));
+
+    const {props} = useLocation();
 
     console.log("Props", props);
     return (
       <>
-          {props ? (
+          {dados_da_associacao ? (
               <>
-                  <div className="d-flex bd-highlight">
-                      <div className="p-2 flex-grow-1 bd-highlight">
-                          <h1 className="titulo-itens-painel mt-5">{props.nome}</h1>
-                      </div>
-                      <div className="p-2 bd-highlight mt-5">
-                          <button type="button" className="btn btn-outline-success">Ver situação financeira</button>
-                      </div>
-                      <div className="p-2 bd-highlight mt-5">
-                          <button type="button" className="btn btn btn-outline-success">Ver regularidade</button>
-                      </div>
-                      <div className="p-2 bd-highlight mt-5">
-                          <Link to="/dre-associacoes" className="btn btn btn-success">Voltar</Link>
-                      </div>
-                  </div>
-
+                  <TopoComBotoes
+                      dados_da_associacao={dados_da_associacao}
+                  />
                   <div className="page-content-inner">
-                      <h1>Dados das associacoes Componente</h1>
+                      <MenuInterno
+                          caminhos_menu_interno = {UrlsMenuInterno}
+                      />
                   </div>
               </>
           ) :
