@@ -1,4 +1,5 @@
 import {USUARIO_LOGIN} from "./auth.service";
+import {redirect} from "../utils/redirect";
 
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
 
@@ -8,20 +9,18 @@ const getUsuarioLogin = () => {
 
 const getDadosDoUsuarioLogado = () =>{
     let dados_usuario_logado = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO));
-    return dados_usuario_logado ? eval('dados_usuario_logado.usuario_'+getUsuarioLogin()) : null
+    return dados_usuario_logado ? eval('dados_usuario_logado.usuario_' + getUsuarioLogin() ) : null
 };
 
 const setDadosUsuariosLogados = async (resp)=>{
-    //debugger
-    let usuario_login = resp.login;
 
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
 
-    let usuario_logado = getDadosDoUsuarioLogado()
+    let usuario_logado = getDadosDoUsuarioLogado();
 
     let novos_dados_do_usuario_logado = {
         ...todos_os_dados_usuario_logado,
-        [`usuario_${usuario_login}`]:{
+        [`usuario_${getUsuarioLogin()}`]: {
         usuario_logado: {
             login: resp.login,
             nome:resp.nome
@@ -60,7 +59,28 @@ const alternaVisoes = (visao) =>{
             }
         };
         localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(alternar_visao ));
-        window.location.reload()
+        redirectVisao(visao)
+    }
+};
+
+const redirectVisao = (visao=null) =>{
+    let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
+    if (visao === 'escolas'){
+        redirect('/dados-da-associacao')
+    }else if(visao === 'dres'){
+        redirect('/dre-associacoes')
+    }else if (visao==='sme'){
+        redirect('/prestacao-de-contas')
+    }else {
+        if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'escolas')){
+            redirect('/dados-da-associacao')
+        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'dres')){
+            redirect('/dre-associacoes')
+        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'sme')){
+            redirect('/prestacao-de-contas')
+        }else {
+            redirect('/dados-da-associacao')
+        }
     }
 };
 
@@ -68,5 +88,6 @@ export const visoesService ={
     setDadosUsuariosLogados,
     alternaVisoes,
     getDadosDoUsuarioLogado,
+    redirectVisao,
 };
 

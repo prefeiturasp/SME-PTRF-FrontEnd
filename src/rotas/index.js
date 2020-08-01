@@ -1,5 +1,5 @@
 import React from "react";
-import {Route, Switch, Redirect} from 'react-router-dom'
+import {Route, Switch} from 'react-router-dom'
 import {Login} from "../paginas/Login";
 import {Pagina404} from "../paginas/escolas/404";
 import {DashboardPage} from "../paginas/escolas/Dashboard";
@@ -19,8 +19,10 @@ import {DadosDasContasPage} from "../paginas/escolas/DadosDasContasAssociacao";
 import {EsqueciMinhaSenhaPage} from "../paginas/Login/EsqueciMinhaSenha";
 import {RedefinirSenhaPage} from "../paginas/Login/RedefinirMinhaSenha";
 import {MeusDadosPage} from "../paginas/escolas/MeusDados";
-
+import {AssociacoesPage} from "../paginas/dres/Associacoes";
 import { authService } from '../services/auth.service';
+// Faz o redirect de acordo com a Visao Selecionada
+import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
 
 const routesConfig = [
     {
@@ -100,10 +102,15 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/",
-        component: DadosDaAssociacaoPage
+        path: "/dre-associacoes",
+        component: AssociacoesPage
     },
-]
+    {
+        exact: true,
+        path: "/",
+        component: RedirectLoginVisaoUe
+    },
+];
 
 const PrivateRouter = (
     { component: Component, ...rest } // eslint-disable-line
@@ -122,7 +129,7 @@ const PrivateRouter = (
     />
   );
 
-export const Rotas = (props) => {
+export const Rotas = () => {
     return(
         <Switch>
             <Route path="/login" component={Login}/>
@@ -142,5 +149,5 @@ export const Rotas = (props) => {
             <Route path="*" component={Pagina404}/>
         </Switch>
     )
-}
+};
 

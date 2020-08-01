@@ -7,7 +7,7 @@ import IconeMenuPainel from '../../../assets/img/icone-menu-painel.svg'
 import IconeMenuCreditosDaEscola from '../../../assets/img/icone-menu-creditos-da-escola.svg'
 import IconeMenuGastosDaEscola from '../../../assets/img/icone-menu-gastos-da-escola.svg'
 import IconeMenuPrestacaoDeContas from '../../../assets/img/icone-menu-prestacao-de-contas.svg'
-
+import {redirect} from "../../../utils/redirect";
 
 const getDadosUsuario = () =>{
     let usuario = localStorage.getItem(USUARIO_NOME);
@@ -31,20 +31,21 @@ const UrlsMenuEscolas ={
     lista_de_urls:[
         {label: "Dados da Associação", url: "dados-da-associacao", dataFor:"dados_da_associacao", icone:IconeMenuDadosDaAssociacao},
         {label: "Resumo dos recursos", url: "dashboard", dataFor:"resumo_dos_recursos", icone:IconeMenuPainel},
+        {label: "Créditos da escola", url: "lista-de-receitas", dataFor:"creditos_da_escola", icone:IconeMenuCreditosDaEscola},
+        {label: "Gastos da escola", url: "lista-de-despesas", dataFor:"gastos_da_escola", icone:IconeMenuGastosDaEscola},
+        {label: "Prestação de contas", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:IconeMenuPrestacaoDeContas},
     ]
 };
 
 const UrlsMenuDres ={
     dados_iniciais: {
-        default_selected: "lista-de-receitas",
+        default_selected: "dre-associacoes",
         usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
     lista_de_urls:[
-        {label: "Créditos da escola", url: "lista-de-receitas", dataFor:"creditos_da_escola", icone:IconeMenuCreditosDaEscola},
-        {label: "Gastos da escola", url: "lista-de-despesas", dataFor:"gastos_da_escola", icone:IconeMenuGastosDaEscola},
-        {label: "Prestação de contas", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:IconeMenuPrestacaoDeContas},
+        {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola},
     ]
 };
 
@@ -60,11 +61,9 @@ const UrlsMenuSme ={
     ]
 };
 
-
 const GetUrls = () =>{
 
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
-
 
     if (dados_usuario_logado.visao_selecionada.nome === 'escolas'){
         return UrlsMenuEscolas
@@ -83,7 +82,6 @@ const GetUrls = () =>{
             return UrlsMenuEscolas
         }
     }
-
 };
 
 export const getUrls = {

@@ -17,6 +17,9 @@ export const SidebarLeft = () => {
     const onToggle = () => {
         sidebarStatus.setSideBarStatus(!sidebarStatus.sideBarStatus)
     };
+    const safeLink= (event)=>{
+        event.preventDefault()
+    };
 
     let urls = getUrls.GetUrls();
 
@@ -41,15 +44,13 @@ export const SidebarLeft = () => {
                     <>
                         <NavItem
                             navitemClassName={sidebarStatus.sideBarStatus ? 'navItemCustomizadoNome esconde-icone mb-n2' : 'navItemCustomizadoNome'}
-                            eventKey="dashboard"
+                            eventKey={urls.dados_iniciais.default_selected}
                         >
                             <NavIcon>&nbsp;</NavIcon>
                             <NavText>
                                 <div className="container-nome-instituicao">
                                   <span className="border border-white rounded-pill px-4 py-1">
-                                  {urls
-                                      ? urls.dados_iniciais.usuario
-                                      : ''}
+                                    {urls ? urls.dados_iniciais.usuario : ''}
                                   </span>
                                 </div>
                             </NavText>
@@ -118,7 +119,7 @@ export const SidebarLeft = () => {
                     <ReactTooltip disable={sidebarStatus.sideBarStatus} id='prestacao_de_contas'>{}</ReactTooltip>*/}
 
                     <NavItem
-                        eventKey="dashboard"
+                        eventKey={urls.dados_iniciais.default_selected}
                         navitemClassName={
                             !sidebarStatus.sideBarStatus
                                 ? 'escondeItem'
@@ -133,12 +134,8 @@ export const SidebarLeft = () => {
                         </NavText>
                     </NavItem>
                     <NavItem
-                        eventKey="dashboard"
-                        navitemClassName={
-                            !sidebarStatus.sideBarStatus
-                                ? 'escondeItem'
-                                : 'navItemCustomizadoNome'
-                        }
+                        navitemClassName={ !sidebarStatus.sideBarStatus ? 'escondeItem' : 'navItemCustomizadoNome' }
+                        eventKey={urls.dados_iniciais.default_selected}
                     >
                         <NavIcon>&nbsp;</NavIcon>
                         <NavText>
