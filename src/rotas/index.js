@@ -108,7 +108,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/dre-dados-da-associacao",
+        path: "/dre-dados-da-unidade-educacional",
         component: DadosDasAssociacoesPage
     },
     {

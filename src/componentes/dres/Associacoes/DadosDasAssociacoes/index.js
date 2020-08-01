@@ -2,8 +2,8 @@ import React from "react";
 import {Redirect} from "react-router-dom";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {MenuInterno} from "../../../Globais/MenuInterno";
-import {UrlsMenuInterno} from "../UrlsMenuInterno";
-import {InfosUnidadeEducacional} from "./InfosUnidadeEducacional";
+import {UrlsMenuInterno} from "./UrlsMenuInterno";
+import {InfosUnidadeEducacional} from "./DadosDaUnidadeEducacional/InfosUnidadeEducacional";
 
 export const DadosDasAssociacoes = () =>{
     let dadosDaAssociacao = JSON.parse(localStorage.getItem("DADOS_DA_ASSOCIACAO"));
@@ -19,13 +19,10 @@ export const DadosDasAssociacoes = () =>{
                       <MenuInterno
                           caminhos_menu_interno = {UrlsMenuInterno}
                       />
-
                       <InfosUnidadeEducacional
                           dadosDaAssociacao={dadosDaAssociacao}
                       />
-
                   </div>
-
               </>
           ) :
               <Redirect

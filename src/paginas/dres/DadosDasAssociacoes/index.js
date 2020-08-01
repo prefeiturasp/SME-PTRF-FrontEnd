@@ -1,11 +1,11 @@
 import React from "react";
 import {PaginasContainer} from "../../PaginasContainer";
-import {DadosDasAssociacoes} from "../../../componentes/dres/Associacoes/DadosDasAssociacoes";
+import {DadosDaUnidadeEducacional} from "../../../componentes/dres/Associacoes/DadosDasAssociacoes/DadosDaUnidadeEducacional";
 
 export const DadosDasAssociacoesPage = () =>{
     return (
         <PaginasContainer>
-            <DadosDasAssociacoes/>
+            <DadosDaUnidadeEducacional/>
         </PaginasContainer>
     )
 };
