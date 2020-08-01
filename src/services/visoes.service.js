@@ -20,7 +20,6 @@ const setDadosUsuariosLogados = async (resp)=>{
 
     let novos_dados_do_usuario_logado = {
         ...todos_os_dados_usuario_logado,
-        //[`usuario_${usuario_login}`]:{
         [`usuario_${getUsuarioLogin()}`]: {
         usuario_logado: {
             login: resp.login,
@@ -48,8 +47,6 @@ const alternaVisoes = (visao) =>{
 
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
     let dados_usuario_logado = getDadosDoUsuarioLogado();
-
-    console.log("alternaVisoes ", visao);
 
     if (dados_usuario_logado){
         let alternar_visao = {
