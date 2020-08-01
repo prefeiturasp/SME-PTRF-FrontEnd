@@ -8,6 +8,7 @@ import Loading from "../../../utils/Loading";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
+import {DADOS_DA_ASSOCIACAO} from "../../../services/auth.service";
 
 export const Associacoes = () =>{
 
@@ -55,7 +56,7 @@ export const Associacoes = () =>{
         setLoading(true);
         try {
             let associacao = await getAssociacao(uuid_associacao);
-            localStorage.setItem("DADOS_DA_ASSOCIACAO", JSON.stringify(associacao ));
+            localStorage.setItem(DADOS_DA_ASSOCIACAO, JSON.stringify(associacao ));
             setRrlRedirect(url_redirect)
         }catch (e) {
             console.log("Erro ao buscar associacoes ", e)

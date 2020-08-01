@@ -12,6 +12,7 @@ export const ASSOCIACAO_TIPO_ESCOLA = "TIPO_ESCOLA";
 export const USUARIO_EMAIL = "EMAIL";
 export const USUARIO_CPF = "CPF";
 export const USUARIO_LOGIN = "LOGIN";
+export const DADOS_DA_ASSOCIACAO = "DADOS_DA_ASSOCIACAO";
 
 const authHeader = {
     'Content-Type': 'application/json'
@@ -109,7 +110,7 @@ const logout = () => {
     localStorage.removeItem(USUARIO_EMAIL);
     localStorage.removeItem(USUARIO_LOGIN);
     localStorage.removeItem(USUARIO_CPF);
-    localStorage.removeItem("DADOS_DA_ASSOCIACAO");
+    localStorage.removeItem(DADOS_DA_ASSOCIACAO);
     //window.location.reload();
     window.location.assign("/login")
 };
