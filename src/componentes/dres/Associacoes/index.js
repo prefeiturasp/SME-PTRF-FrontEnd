@@ -84,7 +84,7 @@ export const Associacoes = () =>{
                                 className="dropdown-item"
                                 to={{
                                     pathname: url.url,
-                                    propriedades: {
+                                    props: {
                                         uuid: rowData.uuid,
                                         nome: rowData.nome,
                                     }

@@ -1,18 +1,41 @@
 import React from "react";
-import {NavLink, Link, useLocation } from "react-router-dom";
+import {Link, useLocation, Redirect} from "react-router-dom";
 
-export const DadosDasAssociacoes = (state) =>{
+export const DadosDasAssociacoes = () =>{
 
-    let location = useLocation();
-    console.log("Location", location);
+    const {props} = useLocation()
 
-    console.log("Props ", state)
+    console.log("Props", props);
     return (
       <>
-          <h1 className="titulo-itens-painel mt-5">Dados da Associação</h1>
-          <div className="page-content-inner">
-              <h1>Dados das associacoes page</h1>
-          </div>
+          {props ? (
+              <>
+                  <div className="d-flex bd-highlight">
+                      <div className="p-2 flex-grow-1 bd-highlight">
+                          <h1 className="titulo-itens-painel mt-5">{props.nome}</h1>
+                      </div>
+                      <div className="p-2 bd-highlight mt-5">
+                          <button type="button" className="btn btn-outline-success">Ver situação financeira</button>
+                      </div>
+                      <div className="p-2 bd-highlight mt-5">
+                          <button type="button" className="btn btn btn-outline-success">Ver regularidade</button>
+                      </div>
+                      <div className="p-2 bd-highlight mt-5">
+                          <Link to="/dre-associacoes" className="btn btn btn-success">Voltar</Link>
+                      </div>
+                  </div>
+
+                  <div className="page-content-inner">
+                      <h1>Dados das associacoes Componente</h1>
+                  </div>
+              </>
+          ) :
+              <Redirect
+                  to={{
+                      pathname: "/dre-associacoes",
+                  }}
+              />
+          }
       </>
     );
 };
