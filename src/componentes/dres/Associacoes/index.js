@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {NavLink } from "react-router-dom";
+import {NavLink, Link } from "react-router-dom";
 import {getTabelaAssociacoes, getAssociacoes, filtrosAssociacoes} from "../../../services/dres/Associacoes.service";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
@@ -8,6 +8,7 @@ import Loading from "../../../utils/Loading";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
+import {UrlsMenuInterno} from "./UrlsMenuInterno";
 
 export const Associacoes = () =>{
 
@@ -77,18 +78,24 @@ export const Associacoes = () =>{
                     </a>
 
                     <div className="dropdown-menu dropdown-menu-opcoes " aria-labelledby="linkDropdownAcoes">
-                        <NavLink
-                            className="dropdown-item"
-                            to="/dre-dados-da-associacao"
-                            props={{
-                                fontWeight: "bold",
-                                color: "red"
-                            }}
-                        >
-                            Ver dados unidade
-                        </NavLink>
+                        {UrlsMenuInterno && UrlsMenuInterno.length > 0 && UrlsMenuInterno.map((url, index)=>
+                            <Link
+                                key={index}
+                                className="dropdown-item"
+                                to={{
+                                    pathname: url.url,
+                                    propriedades: {
+                                        uuid: rowData.uuid,
+                                        nome: rowData.nome,
+                                    }
+                                }}
+                            >
+                                {url.label}
+                            </Link>
+                        )}
 
-                        <NavLink
+
+                        {/*<NavLink
                             className="dropdown-item"
                             to="/faq"
                             activeStyle={{
@@ -108,7 +115,7 @@ export const Associacoes = () =>{
                             }}
                         >
                             Ver situação financeira
-                        </NavLink>
+                        </NavLink>*/}
                     </div>
                 </li>
             </div>
