@@ -23,7 +23,8 @@ import {AssociacoesPage} from "../paginas/dres/Associacoes";
 import { authService } from '../services/auth.service';
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
-import {DadosDasAssociacoesPage} from "../paginas/dres/DadosDasAssociacoes";
+import {DadosDaUnidadeEducacionalPage} from "../paginas/dres/DadosDaUnidadeEducacional";
+import {DadosDaAssociacaoDrePage} from "../paginas/dres/DadosDaAssociacao";
 
 const routesConfig = [
     {
@@ -109,7 +110,12 @@ const routesConfig = [
     {
         exact: true,
         path: "/dre-dados-da-unidade-educacional",
-        component: DadosDasAssociacoesPage
+        component: DadosDaUnidadeEducacionalPage
+    },
+    {
+        exact: true,
+        path: "/dre-dados-da-associacao",
+        component: DadosDaAssociacaoDrePage
     },
     {
         exact: true,
