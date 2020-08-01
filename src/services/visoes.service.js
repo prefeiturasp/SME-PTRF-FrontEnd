@@ -66,13 +66,24 @@ const alternaVisoes = (visao) =>{
     }
 };
 
-const redirectVisao = (visao) =>{
+const redirectVisao = (visao=null) =>{
+    let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
     if (visao === 'escolas'){
         redirect('/dados-da-associacao')
     }else if(visao === 'dres'){
         redirect('/dre-associacoes')
     }else if (visao==='sme'){
         redirect('/prestacao-de-contas')
+    }else {
+        if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'escolas')){
+            redirect('/dados-da-associacao')
+        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'dres')){
+            redirect('/dre-associacoes')
+        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'sme')){
+            redirect('/prestacao-de-contas')
+        }else {
+            redirect('/dados-da-associacao')
+        }
     }
 };
 
