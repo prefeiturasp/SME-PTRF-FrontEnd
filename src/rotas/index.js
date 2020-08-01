@@ -23,6 +23,7 @@ import {AssociacoesPage} from "../paginas/dres/Associacoes";
 import { authService } from '../services/auth.service';
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
+import {DadosDasAssociacoesPage} from "../paginas/dres/DadosDasAssociacoes";
 
 const routesConfig = [
     {
@@ -104,6 +105,11 @@ const routesConfig = [
         exact: true,
         path: "/dre-associacoes",
         component: AssociacoesPage
+    },
+    {
+        exact: true,
+        path: "/dre-dados-da-associacao",
+        component: DadosDasAssociacoesPage
     },
     {
         exact: true,

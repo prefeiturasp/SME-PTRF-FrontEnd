@@ -40,6 +40,7 @@ export const Associacoes = () =>{
 
     const buscaAssociacoes = async ()=>{
         let associacoes = await getAssociacoes();
+        //console.log("Associacoes ", associacoes)
         setAssociacoes(associacoes);
         setLoading(false)
     };
@@ -66,7 +67,8 @@ export const Associacoes = () =>{
         )
     };
 
-    const acoesTemplate = () =>{
+    const acoesTemplate = (rowData) =>{
+        console.log("Acoes Template", rowData.uuid)
         return (
             <div>
                 <li className="nav-item dropdown link-acoes">
@@ -77,8 +79,8 @@ export const Associacoes = () =>{
                     <div className="dropdown-menu dropdown-menu-opcoes " aria-labelledby="linkDropdownAcoes">
                         <NavLink
                             className="dropdown-item"
-                            to="/faq"
-                            activeStyle={{
+                            to="/dre-dados-da-associacao"
+                            props={{
                                 fontWeight: "bold",
                                 color: "red"
                             }}

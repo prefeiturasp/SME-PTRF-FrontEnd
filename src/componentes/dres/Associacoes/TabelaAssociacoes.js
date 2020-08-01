@@ -26,6 +26,7 @@ export const TabelaAssociacoes = ({associacoes, rowsPerPage, unidadeEscolarTempl
               body={statusRegularidadeTemplate}
           />
           <Column
+              field="uuid"
               header="Ações"
               body={acoesTemplate}
           />
