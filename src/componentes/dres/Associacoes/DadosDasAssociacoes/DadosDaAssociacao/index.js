@@ -3,14 +3,13 @@ import {Redirect} from "react-router-dom";
 import {TopoComBotoes} from "../TopoComBotoes";
 import {MenuInterno} from "../../../../Globais/MenuInterno";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
-import {InfosUnidadeEducacional} from "../DadosDaUnidadeEducacional/InfosUnidadeEducacional";
+import {InfosAssociacao} from "./InfosAssociacao";
 
 export const DadosDaAssociacao = () =>{
     let dadosDaAssociacao = JSON.parse(localStorage.getItem("DADOS_DA_ASSOCIACAO"));
 
     return (
         <>
-            <h1>Estou Dados da Associacao dentro de DRE</h1>
             {dadosDaAssociacao ? (
                     <>
                         <TopoComBotoes
@@ -20,7 +19,7 @@ export const DadosDaAssociacao = () =>{
                             <MenuInterno
                                 caminhos_menu_interno = {UrlsMenuInterno}
                             />
-                            <InfosUnidadeEducacional
+                            <InfosAssociacao
                                 dadosDaAssociacao={dadosDaAssociacao}
                             />
                         </div>
