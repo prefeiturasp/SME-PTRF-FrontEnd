@@ -9,7 +9,7 @@ const authHeader = {
 };
 
 export const getTabelaAssociacoes = async () => {
-    return (await api.get(`/api/associacoes/tabelas `, authHeader)).data
+    return (await api.get(`/api/associacoes/tabelas`, authHeader)).data
 };
 
 export const getAssociacoesPorUnidade = async () => {
@@ -22,4 +22,8 @@ export const filtrosAssociacoes = async (nome=null, status_regularidade=null, un
 
 export const getAssociacao = async (uuid_associacao) => {
     return (await api.get(`api/associacoes/${uuid_associacao}`, authHeader)).data
+};
+
+export const getContasAssociacao = async (uuid_associacao) => {
+    return (await api.get(`api/associacoes/${uuid_associacao}/contas`, authHeader)).data
 };

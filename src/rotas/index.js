@@ -23,8 +23,9 @@ import {AssociacoesPage} from "../paginas/dres/Associacoes";
 import { authService } from '../services/auth.service';
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
-import {DadosDaUnidadeEducacionalPage} from "../paginas/dres/DadosDaUnidadeEducacional";
-import {DadosDaAssociacaoDrePage} from "../paginas/dres/DadosDaAssociacao";
+import {DadosDaUnidadeEducacionalPage} from "../paginas/dres/Associacoes/DadosDaUnidadeEducacional";
+import {DadosDaAssociacaoDrePage} from "../paginas/dres/Associacoes/DadosDaAssociacao";
+import {DadosDaContaDrePage} from "../paginas/dres/Associacoes/DadosDaConta";
 
 const routesConfig = [
     {
@@ -116,6 +117,11 @@ const routesConfig = [
         exact: true,
         path: "/dre-dados-da-associacao",
         component: DadosDaAssociacaoDrePage
+    },
+    {
+        exact: true,
+        path: "/dre-dados-das-contas",
+        component: DadosDaContaDrePage
     },
     {
         exact: true,

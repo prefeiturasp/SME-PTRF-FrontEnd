@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Redirect} from "react-router-dom";
-import {getTabelaAssociacoes, getAssociacoesPorUnidade, filtrosAssociacoes, getAssociacao} from "../../../services/dres/Associacoes.service";
+import {getTabelaAssociacoes, getAssociacoesPorUnidade, filtrosAssociacoes, getAssociacao, getContasAssociacao} from "../../../services/dres/Associacoes.service";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FiltrosAssociacoes} from "./FiltrosAssociacoes";
@@ -56,7 +56,17 @@ export const Associacoes = () =>{
         setLoading(true);
         try {
             let associacao = await getAssociacao(uuid_associacao);
-            localStorage.setItem(DADOS_DA_ASSOCIACAO, JSON.stringify(associacao ));
+            let contas = await getContasAssociacao(uuid_associacao);
+            console.log("Contas ", contas);
+
+            let dados_da_associacao = {
+                dados_da_associacao:{
+                    ...associacao,
+                    contas
+                }
+            };
+
+            localStorage.setItem(DADOS_DA_ASSOCIACAO, JSON.stringify(dados_da_associacao ));
             setRrlRedirect(url_redirect)
         }catch (e) {
             console.log("Erro ao buscar associacoes ", e)

@@ -4,13 +4,13 @@ export const InfosUnidadeEducacional = ({dadosDaAssociacao}) =>{
     console.log("InfosUnidadeEducacional ", dadosDaAssociacao);
     const getEnderecoCompleto = () =>{
         let endereco;
-        endereco = dadosDaAssociacao.unidade.tipo_logradouro + " ";
-        endereco += dadosDaAssociacao.unidade.logradouro ? dadosDaAssociacao.unidade.logradouro + ", " : "";
-        endereco += dadosDaAssociacao.unidade.numero ? dadosDaAssociacao.unidade.numero + " - " : "";
-        endereco += dadosDaAssociacao.unidade.complemento ? dadosDaAssociacao.unidade.complemento + " - " : "";
-        endereco += dadosDaAssociacao.unidade.bairro ? dadosDaAssociacao.unidade.bairro + ", " : "";
+        endereco = dadosDaAssociacao.dados_da_associacao.unidade.tipo_logradouro + " ";
+        endereco += dadosDaAssociacao.dados_da_associacao.unidade.logradouro ? dadosDaAssociacao.dados_da_associacao.unidade.logradouro + ", " : "";
+        endereco += dadosDaAssociacao.dados_da_associacao.unidade.numero ? dadosDaAssociacao.dados_da_associacao.unidade.numero + " - " : "";
+        endereco += dadosDaAssociacao.dados_da_associacao.unidade.complemento ? dadosDaAssociacao.dados_da_associacao.unidade.complemento + " - " : "";
+        endereco += dadosDaAssociacao.dados_da_associacao.unidade.bairro ? dadosDaAssociacao.dados_da_associacao.unidade.bairro + ", " : "";
         endereco += " São Paulo - SP, ";
-        endereco += dadosDaAssociacao.unidade.cep ? dadosDaAssociacao.unidade.cep : "";
+        endereco += dadosDaAssociacao.dados_da_associacao.unidade.cep ? dadosDaAssociacao.dados_da_associacao.unidade.cep : "";
         return endereco
 
     };
@@ -18,27 +18,27 @@ export const InfosUnidadeEducacional = ({dadosDaAssociacao}) =>{
         <div className="row">
             <div className="col-12 col-md-6">
                 <p className="mb-1"><strong>Nome da Unidade Educacional</strong></p>
-                <p>{dadosDaAssociacao.unidade.nome}</p>
+                <p>{dadosDaAssociacao.dados_da_associacao.unidade.nome}</p>
             </div>
             <div className="col-12 col-md-6">
                 <p className="mb-1"><strong>Código EOL da Unidade Escolar</strong></p>
-                <p>{dadosDaAssociacao.unidade.codigo_eol}</p>
+                <p>{dadosDaAssociacao.dados_da_associacao.unidade.codigo_eol}</p>
             </div>
             <div className="col-12 col-md-6 mt-3">
                 <p className="mb-1"><strong>E-mail da Unidade Escolar</strong></p>
-                <p>{dadosDaAssociacao.unidade.email}</p>
+                <p>{dadosDaAssociacao.dados_da_associacao.unidade.email}</p>
             </div>
             <div className="col-12 col-md-6 mt-3">
                 <p className="mb-1"><strong>Número de estudantes</strong></p>
-                <p>{dadosDaAssociacao.unidade.qtd_alunos}</p>
+                <p>{dadosDaAssociacao.dados_da_associacao.unidade.qtd_alunos}</p>
             </div>
             <div className="col-12 col-md-6 mt-3">
                 <p className="mb-1"><strong>Nome do Diretor</strong></p>
-                <p>{dadosDaAssociacao.unidade.diretor_nome}</p>
+                <p>{dadosDaAssociacao.dados_da_associacao.unidade.diretor_nome}</p>
             </div>
             <div className="col-12 col-md-6 mt-3">
                 <p className="mb-1"><strong>Telefone da Unidade Educacional</strong></p>
-                <p>{dadosDaAssociacao.unidade.telefone}</p>
+                <p>{dadosDaAssociacao.dados_da_associacao.unidade.telefone}</p>
             </div>
             <div className="col-12 mt-3">
                 <p className="mb-1"><strong>Endereço da Unidade Educacional</strong></p>
