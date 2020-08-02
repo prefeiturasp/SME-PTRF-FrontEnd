@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {MsgImgCentralizada} from "../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../assets/img/img-404.svg";
 
@@ -7,33 +7,30 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
         <div className="row">
             {dadosDaAssociacao.dados_da_associacao.contas &&
             dadosDaAssociacao.dados_da_associacao.contas.length > 0 ?
-            dadosDaAssociacao.dados_da_associacao.contas.map((conta)=>
-                <>
-                    <div className="col-12 col-md-6">
-                        <p className="mb-1"><strong>Nome da Unidade Educacional</strong></p>
-                        <p>{dadosDaAssociacao.dados_da_associacao.unidade.nome}</p>
+            dadosDaAssociacao.dados_da_associacao.contas.map((conta, index)=>
+                <Fragment key={index}>
+                    <div className={`col-12 mt-${index === 0 ? "2" : 4} mb-xs-4 mb-md-4 mb-xl-4 ml-0`}>
+                        <p className="mb-0">
+                            <span className="contador-conta"><strong>Conta {index + 1}</strong></span> <span className="divisor"></span>
+                        </p>
                     </div>
-                    <div className="col-12 col-md-6">
-                        <p className="mb-1"><strong>Código EOL da Unidade Escolar</strong></p>
-                        <p>{dadosDaAssociacao.dados_da_associacao.unidade.codigo_eol}</p>
+                    <div className="col-12 col-md-3">
+                        <p><strong>Banco</strong></p>
+                        <p>{conta.banco_nome}</p>
                     </div>
-                    <div className="col-12 col-md-6 mt-3">
-                        <p className="mb-1"><strong>E-mail da Unidade Escolar</strong></p>
-                        <p>{dadosDaAssociacao.dados_da_associacao.unidade.email}</p>
+                    <div className="col-12 col-md-3">
+                        <p><strong>Tipo de conta</strong></p>
+                        <p>{conta.tipo_conta.nome}</p>
                     </div>
-                    <div className="col-12 col-md-6 mt-3">
-                        <p className="mb-1"><strong>Número de estudantes</strong></p>
-                        <p>{dadosDaAssociacao.dados_da_associacao.unidade.qtd_alunos}</p>
+                    <div className="col-12 col-md-3">
+                        <p><strong>Agência</strong></p>
+                        <p>{conta.agencia}</p>
                     </div>
-                    <div className="col-12 col-md-6 mt-3">
-                        <p className="mb-1"><strong>Nome do Diretor</strong></p>
-                        <p>{dadosDaAssociacao.dados_da_associacao.unidade.diretor_nome}</p>
+                    <div className="col-12 col-md-3">
+                        <p><strong>Nº da conta com o dígito</strong></p>
+                        <p>{conta.numero_conta}</p>
                     </div>
-                    <div className="col-12 col-md-6 mt-3">
-                        <p className="mb-1"><strong>Telefone da Unidade Educacional</strong></p>
-                        <p>{dadosDaAssociacao.dados_da_associacao.unidade.telefone}</p>
-                    </div>
-                </>
+                </Fragment>
             ):
                 <MsgImgCentralizada
                     texto='Não encontramos nenhuma conta, tente novamente'
