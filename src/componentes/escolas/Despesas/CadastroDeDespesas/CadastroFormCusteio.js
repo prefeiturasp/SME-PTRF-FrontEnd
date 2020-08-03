@@ -63,7 +63,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         }
                     </select>
                 </div>
-                <div className="col-12 col-md-6 mt-4">
+                <div className="col-12 col-md-3 mt-4">
                     <label htmlFor="acao_associacao">Ação</label>
                     <select
                         value={
@@ -83,10 +83,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         ))}
                     </select>
                 </div>
-                <div className="col-12 col-md-6">
-                    <div className='row'>
-
-                        <div className="col-12 col-md-6 mt-4">
+                        <div className="col-12 col-md-3 mt-4">
                             <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
                             <select
                                 value={
@@ -107,7 +104,7 @@ export const CadastroFormCusteio = (propriedades) => {
                             </select>
                         </div>
 
-                        <div className="col-12 col-md-6 mt-4">
+                        <div className="col-12 col-md-3 mt-4">
                             <label htmlFor="valor_rateio">Valor</label>
                             <CurrencyInput
                                 allowNegative={false}
@@ -123,9 +120,26 @@ export const CadastroFormCusteio = (propriedades) => {
                             />
                             {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                         </div>
+
+                        <div className="col-12 col-md-3 mt-4">
+                            <label htmlFor="valor_original">Valor do ORIGINAL</label>
+                            <CurrencyInput
+                                allowNegative={false}
+                                prefix='R$'
+                                decimalSeparator=","
+                                thousandSeparator="."
+                                value={rateio.valor_original}
+                                name={`rateios[${index}].valor_original`}
+                                id="valor_original"
+                                className={`${ trataNumericos(rateio.valor_original) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                                onChangeEvent={formikProps.handleChange}
+                                disabled={disabled}
+                            />
+                            {errors.valor_original && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                        </div>
+
                     </div>
-                </div>
-            </div>
+
         </>
 
     );

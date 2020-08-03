@@ -39,13 +39,18 @@ export const EdicaoDeDespesa = ()=>{
                     item.valor_rateio = item.valor_rateio ? Number(item.valor_rateio).toLocaleString('pt-BR', {
                         style: 'currency',
                         currency: 'BRL'
-                    }) : ""
+                    }) : "";
 
                     item.valor_item_capital = item.valor_item_capital ? Number(item.valor_item_capital).toLocaleString('pt-BR', {
                         style: 'currency',
                         currency: 'BRL'
+                    }) : "";
+
+                    item.valor_original = item.valor_original ? Number(item.valor_original).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
                     }) : ""
-                })
+                });
 
                 const init = {
                     ...resp,
