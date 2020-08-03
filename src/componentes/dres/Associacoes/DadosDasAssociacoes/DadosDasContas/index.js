@@ -5,12 +5,10 @@ import {MenuInterno} from "../../../../Globais/MenuInterno";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {InfosContas} from "./InfosContas";
 
-export const DadosDasContas = () =>{
+export const DadosDasContas = () => {
     let dadosDaAssociacao = JSON.parse(localStorage.getItem("DADOS_DA_ASSOCIACAO"));
-
     return (
         <>
-            <h1>Estou em dados das contas</h1>
             {dadosDaAssociacao ? (
                     <>
                         <TopoComBotoes
@@ -18,7 +16,7 @@ export const DadosDasContas = () =>{
                         />
                         <div className="page-content-inner">
                             <MenuInterno
-                                caminhos_menu_interno = {UrlsMenuInterno}
+                                caminhos_menu_interno={UrlsMenuInterno}
                             />
                             <InfosContas
                                 dadosDaAssociacao={dadosDaAssociacao}

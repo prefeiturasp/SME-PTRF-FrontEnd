@@ -27,8 +27,6 @@ export const InfosAssociacao = ({dadosDaAssociacao}) =>{
                 <p className="mb-1"><strong>E-mail do presidente da associação</strong></p>
                 <p>{dadosDaAssociacao.dados_da_associacao.presidente_associacao.email}</p>
             </div>
-
-
             <div className="col-12 col-md-6 mt-3">
                 <p className="mb-1"><strong>Nome do presidente do conselho fiscal</strong></p>
                 <p>{dadosDaAssociacao.dados_da_associacao.presidente_conselho_fiscal.nome}</p>

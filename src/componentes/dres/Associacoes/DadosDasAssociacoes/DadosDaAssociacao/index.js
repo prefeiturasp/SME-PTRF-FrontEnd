@@ -7,7 +7,6 @@ import {InfosAssociacao} from "./InfosAssociacao";
 
 export const DadosDaAssociacao = () =>{
     let dadosDaAssociacao = JSON.parse(localStorage.getItem("DADOS_DA_ASSOCIACAO"));
-
     return (
         <>
             {dadosDaAssociacao ? (
