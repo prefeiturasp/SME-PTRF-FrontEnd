@@ -99,49 +99,63 @@ export const CadastroFormCapital = (propriedades) => {
                     />
                 </div>
 
-                <div className="col-12 col-md-6">
-                    <div className='row'>
 
-                        <div className="col-12 col-md-6 mt-4">
-                            <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
-                            <select
-                                value={
-                                    rateio.conta_associacao !== null ? (
-                                        typeof rateio.conta_associacao === "object" ? rateio.conta_associacao.uuid : rateio.conta_associacao
-                                    ) : ""
-                                }
-                                onChange={formikProps.handleChange}
-                                name={`rateios[${index}].conta_associacao`}
-                                id='conta_associacao'
-                                className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
-                                disabled={disabled}
-                            >
-                                <option key={0} value="">Selecione uma conta</option>
-                                {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
-                                    <option key={item.uuid} value={item.uuid}>{item.nome}</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="col-12 col-md-6 mt-4">
-                            <label htmlFor="valor_rateio">Valor</label>
-                            <CurrencyInput
-                                allowNegative={false}
-                                prefix='R$'
-                                decimalSeparator=","
-                                thousandSeparator="."
-                                value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
-                                name={`rateios[${index}].valor_rateio`}
-                                id="valor_rateio"
-                                className="form-control"
-                                onChangeEvent={formikProps.handleChange}
-                                disabled={true}
-                            />
-                            {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
-                        </div>
+                    <div className="col-12 col-md-6 mt-4">
+                        <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
+                        <select
+                            value={
+                                rateio.conta_associacao !== null ? (
+                                    typeof rateio.conta_associacao === "object" ? rateio.conta_associacao.uuid : rateio.conta_associacao
+                                ) : ""
+                            }
+                            onChange={formikProps.handleChange}
+                            name={`rateios[${index}].conta_associacao`}
+                            id='conta_associacao'
+                            className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
+                            disabled={disabled}
+                        >
+                            <option key={0} value="">Selecione uma conta</option>
+                            {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
+                                <option key={item.uuid} value={item.uuid}>{item.nome}</option>
+                            ))}
+                        </select>
                     </div>
+
+                    <div className="col-12 col-md-6 mt-4">
+                        <label htmlFor="valor_rateio">Valor</label>
+                        <CurrencyInput
+                            allowNegative={false}
+                            prefix='R$'
+                            decimalSeparator=","
+                            thousandSeparator="."
+                            value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
+                            name={`rateios[${index}].valor_rateio`}
+                            id="valor_rateio"
+                            className="form-control"
+                            onChangeEvent={formikProps.handleChange}
+                            disabled={true}
+                        />
+                        {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                    </div>
+                    <div className="col-12 col-md-6 mt-4">
+                        <label htmlFor="valor_original">Valor do ORIGINAL</label>
+                        <CurrencyInput
+                            allowNegative={false}
+                            prefix='R$'
+                            decimalSeparator=","
+                            thousandSeparator="."
+                            value={rateio.valor_original}
+                            name={`rateios[${index}].valor_original`}
+                            id="valor_original"
+                            className={`${ trataNumericos(rateio.valor_original) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                            onChangeEvent={formikProps.handleChange}
+                            disabled={disabled}
+                        />
+                        {errors.valor_original && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                    </div>
+
                 </div>
-            </div>
+
         </>
     )
 }
