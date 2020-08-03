@@ -85,6 +85,7 @@ export const CadastroForm = ({verbo_http}) => {
     }, []);
 
     const initialValues = () => {
+        console.log("Initial Values ", despesaContext.initialValues);
         return despesaContext.initialValues;
     };
 
@@ -577,8 +578,30 @@ export const CadastroForm = ({verbo_http}) => {
                                             </Field>
                                             {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                                         </div>
-                                    </div>
 
+                                        <div className="col-12 col-md-3 mt-4">
+                                            <label htmlFor="valor_original">Valor do ORIGINAL</label>
+                                            <Field name="valor_original">
+                                                {({field, form, meta}) => (
+                                                    <CurrencyInput
+                                                        allowNegative={false}
+                                                        prefix='R$'
+                                                        decimalSeparator=","
+                                                        thousandSeparator="."
+                                                        value={calculaValorRecursoAcoes(values)}
+                                                        id="valor_original"
+                                                        name="valor_original"
+                                                        className="form-control"
+                                                        onChangeEvent={props.handleChange}
+                                                        readOnly={true}
+                                                        disabled={readOnlyCampos}
+                                                    />
+                                                )}
+                                            </Field>
+                                            {errors.valor_original && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                                        </div>
+                                    </div>
+                                    
                                     <hr/>
                                     <h2 className="subtitulo-itens-painel">Dados do gasto</h2>
                                     <p>Esse gasto se encaixa em mais de um tipo de despesa ou ação do programa?</p>
@@ -714,6 +737,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                 valor_rateio: "",
                                                                 quantidade_itens_capital: "",
                                                                 valor_item_capital: "",
+                                                                valor_original: "",
                                                                 numero_processo_incorporacao_capital: ""
                                                             }
                                                         )
