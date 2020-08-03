@@ -5,6 +5,8 @@ import {Column} from "primereact/column";
 import IconeNaoConciliado from "../../../../../assets/img/icone-nao-conciliado.svg"
 import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
 import moment from "moment";
+import IconeNaoDemonstrado from "../../../../../assets/img/icone-nao-demonstrado.svg";
+import ReactTooltip from "react-tooltip";
 
 export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDespesas, handleChangeCheckboxDespesas}) => {
 
@@ -32,6 +34,10 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
     const redirecionaDetalhe = value => {
         setUuid(value.despesa)
         onShowModal();
+    }
+
+    const notificarNaoConciliado = (notificarDiasNaoConferido) => {
+        return notificarDiasNaoConferido > 0 ? {color: 'red', fontWeight: 'bold'} : {color: 'black'}
     }
 
     const conferidoTemplate = (rowData) => {
@@ -62,9 +68,9 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
 
     }
 
-    const dataDocumento = (rowData, column) => {
+    const dataDocumentoTemplate = (rowData, column) => {
         return (
-            <div>
+            <div style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
                 {rowData['data_documento']
                     ? moment(rowData['data_documento']).format('DD/MM/YYYY')
                     : ''}
@@ -72,9 +78,9 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
         )
     }
 
-    const dataTransacao = (rowData, column) => {
+    const dataTransacaoTemplate = (rowData, column) => {
         return (
-            <div>
+            <div style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
                 {rowData['data_transacao']
                     ? moment(rowData['data_transacao']).format('DD/MM/YYYY')
                     : ''}
@@ -89,8 +95,41 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
                 currency: 'BRL'
             })
             : ''
-        return (<span>{valorFormatado}</span>)
+        return (<span style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>{valorFormatado}</span>)
     }
+
+    const cnpjTemplate = (rowData, column) => {
+        return (
+            rowData['notificar_dias_nao_conferido'] > 0 ?
+                <div data-tip={`Não demonstrado por ${rowData['notificar_dias_nao_conferido']} dias.`}>
+                    <img
+                        src={IconeNaoDemonstrado}
+                        alt=""
+                        className="img-fluid"
+                    />
+                    <span style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
+                        {"  " + rowData['cpf_cnpj_fornecedor']}
+                    </span>
+                    <ReactTooltip />
+                </div>
+                :
+                <span style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
+                    {rowData['cpf_cnpj_fornecedor']}
+                </span>
+
+        )
+    }
+
+    const genericTemplate = (rowData, column) => {
+        return (<span
+            style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>{rowData[column.field]}</span>)
+    }
+
+    const especificacaoTemplate = (rowData, column) => {
+        return (<span
+            style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>{rowData['especificacao_material_servico'].descricao}</span>)
+    }
+
 
     return (
         <div className="row mt-4">
@@ -107,24 +146,24 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
                         selectionMode="single"
                         onRowClick={e => redirecionaDetalhe(e.data)}
                     >
-                        <Column field="cpf_cnpj_fornecedor" header="CNPJ ou CPF do fornecedor" />
-                        <Column field="nome_fornecedor" header="Razão social do fornecedor"/>
-                        <Column field="tipo_documento_nome" header="Tipo de documento"/>
-                        <Column field="numero_documento" header="Número do documento"/>
+                        <Column field="cpf_cnpj_fornecedor" header="CNPJ ou CPF do fornecedor" body={cnpjTemplate}/>
+                        <Column field="nome_fornecedor" header="Razão social do fornecedor" body={genericTemplate}/>
+                        <Column field="tipo_documento_nome" header="Tipo de documento" body={genericTemplate}/>
+                        <Column field="numero_documento" header="Número do documento" body={genericTemplate}/>
                         <Column
                             field="data_documento"
                             header="Data do documento"
-                            body={dataDocumento}
+                            body={dataDocumentoTemplate}
                         />
-                        <Column field="tipo_transacao_nome" header="Tipo de transação" />
+                        <Column field="tipo_transacao_nome" header="Tipo de transação" body={genericTemplate} />
                         <Column
                             field="data_transacao"
                             header="Data da transação"
-                            body={dataTransacao}
+                            body={dataTransacaoTemplate}
 
                         />
-                        <Column field="aplicacao_recurso" header="Aplicação do recurso"/>
-                        <Column field="especificacao_material_servico.descricao" header="Especificação do material ou serviço"/>
+                        <Column field="aplicacao_recurso" header="Aplicação do recurso" body={genericTemplate}/>
+                        <Column field="especificacao_material_servico.descricao" header="Especificação do material ou serviço" body={especificacaoTemplate}/>
                         <Column
                             field="valor_total"
                             header="Valor"
