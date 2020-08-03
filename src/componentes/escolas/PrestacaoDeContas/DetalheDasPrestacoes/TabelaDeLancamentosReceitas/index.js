@@ -4,6 +4,9 @@ import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import moment from "moment";
 import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
+import IconeNaoConciliado from "../../../../../assets/img/icone-nao-conciliado.svg";
+import IconeNaoDemonstrado from "../../../../../assets/img/icone-nao-demonstrado.svg";
+import ReactTooltip from "react-tooltip";
 
 export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxReceitas, handleChangeCheckboxReceitas}) => {
 
@@ -26,9 +29,12 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
         history.push(url);
     }
 
+    const notificarNaoConciliado = (notificarDiasNaoConferido) => {
+        return notificarDiasNaoConferido > 0 ? {color: 'red', fontWeight: 'bold'} : {color: 'black'}
+    }
     const dataTemplate = (rowData, column) => {
         return (
-            <div>
+            <div style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
                 {rowData['data']
                     ? moment(rowData['data']).format('DD/MM/YYYY')
                     : ''}
@@ -43,7 +49,7 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
                 currency: 'BRL'
             })
             : ''
-        return (<span>{valorFormatado}</span>)
+        return (<span style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>{valorFormatado}</span>)
     }
 
     const conferidoTemplate = (rowData) => {
@@ -53,11 +59,43 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
                     checked={conciliados}
                     type="checkbox"
                     value={checkboxReceitas}
-                    onChange={(e)=>handleChangeCheckboxReceitas(e, rowData.uuid)}
+                    onChange={(e) => handleChangeCheckboxReceitas(e, rowData.uuid)}
                     name="checkConferido"
                     id="checkConferido"
                 />
             </div>
+        )
+    }
+
+    const acaoTemplate = (rowData, column) => {
+        return (<span
+            style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>{rowData['acao_associacao'].nome}</span>)
+    }
+
+    const contaTemplate = (rowData, column) => {
+        return (<span
+            style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>{rowData['conta_associacao'].nome}</span>)
+    }
+
+    const tipoTemplate = (rowData, column) => {
+        return (
+            rowData['notificar_dias_nao_conferido'] > 0 ?
+                <div data-tip={`Não demonstrado por ${rowData['notificar_dias_nao_conferido']} dias.`}>
+                    <img
+                        src={IconeNaoDemonstrado}
+                        alt=""
+                        className="img-fluid"
+                    />
+                    <span style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
+                        {"  " + rowData['tipo_receita'].nome}
+                    </span>
+                    <ReactTooltip />
+                </div>
+                :
+                <span style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
+                    {rowData['tipo_receita'].nome}
+                </span>
+
         )
     }
 
@@ -84,9 +122,9 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
                             //resizableColumns={false}
                             //columnResizeMode="fit"
                         >
-                            <Column field='tipo_receita.nome' header='Tipo'/>
-                            <Column field='conta_associacao.nome' header='Conta'/>
-                            <Column field='acao_associacao.nome' header='Ação'/>
+                            <Column field='tipo_receita.nome' header='Tipo' body={tipoTemplate}/>
+                            <Column field='conta_associacao.nome' header='Conta' body={contaTemplate}/>
+                            <Column field='acao_associacao.nome' header='Ação' body={acaoTemplate}/>
                             <Column
                                 field='data'
                                 header='Data'
@@ -108,7 +146,8 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
                 </div>
             </div>
             <section>
-                <RedirectModalTabelaLancamentos show={showModal} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+                <RedirectModalTabelaLancamentos show={showModal} handleClose={onHandleClose}
+                                                onCancelarTrue={onCancelarTrue}/>
             </section>
         </div>
     )
