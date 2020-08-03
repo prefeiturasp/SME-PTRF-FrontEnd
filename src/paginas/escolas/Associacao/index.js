@@ -4,7 +4,6 @@ import {DadosDaAsssociacao} from "../../../componentes/escolas/Associacao/DadosD
 
 
 export const DadosDaAssociacaoPage = () =>{
-
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Dados da Associação</h1>
@@ -13,5 +12,4 @@ export const DadosDaAssociacaoPage = () =>{
             </div>
         </PaginasContainer>
     )
-
-}
+};

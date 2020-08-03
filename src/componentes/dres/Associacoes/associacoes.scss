@@ -50,3 +50,24 @@
 
   }
 }
+.contador-conta{
+  color: #2B7D83;
+}
+.divisor::after {
+  content: '';
+  width: 85%;
+  border-top: 1px solid #DADADA;
+  display: inline-block;
+  position: absolute;
+  top: 12px;
+  left: 90px;
+  @media (min-width: 768px) and (max-width: 950px) {
+    width: 75%;
+  }
+  @media (min-width: 650px) and (max-width: 765px) {
+    width: 65%;
+  }
+  @media (min-width: 300px) and (max-width: 649px) {
+    width: 50%;
+  }
+}

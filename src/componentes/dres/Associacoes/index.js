@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {NavLink } from "react-router-dom";
-import {getTabelaAssociacoes, getAssociacoes, filtrosAssociacoes} from "../../../services/dres/Associacoes.service";
+import {Redirect} from "react-router-dom";
+import {getTabelaAssociacoes, getAssociacoesPorUnidade, filtrosAssociacoes, getAssociacao, getContasAssociacao} from "../../../services/dres/Associacoes.service";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FiltrosAssociacoes} from "./FiltrosAssociacoes";
@@ -8,6 +8,7 @@ import Loading from "../../../utils/Loading";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
+import {DADOS_DA_ASSOCIACAO} from "../../../services/auth.service";
 
 export const Associacoes = () =>{
 
@@ -24,13 +25,14 @@ export const Associacoes = () =>{
     const [associacoes, setAssociacoes] = useState([]);
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [buscaUtilizandoFiltros, setBuscaUtilizandoFiltros] = useState(false);
+    const [urlRedirect, setRrlRedirect] = useState('');
 
     useEffect(()=>{
         buscaTabelaAssociacoes();
     }, []);
 
     useEffect(()=>{
-        buscaAssociacoes();
+        buscaAssociacoesPorUnidade();
     }, []);
 
     const buscaTabelaAssociacoes = async ()=>{
@@ -38,10 +40,38 @@ export const Associacoes = () =>{
         setTabelaAssociacoes(tabela_associacoes);
     };
 
-    const buscaAssociacoes = async ()=>{
-        let associacoes = await getAssociacoes();
-        setAssociacoes(associacoes);
+    const buscaAssociacoesPorUnidade = async ()=>{
+        try {
+            let associacoes = await getAssociacoesPorUnidade();
+            console.log("Associacoes ", associacoes);
+            setAssociacoes(associacoes);
+        }catch (e) {
+            console.log("Erro ao buscar associacoes ", e)
+        }
         setLoading(false)
+    };
+
+    const buscaAssociacao = async (uuid_associacao, url_redirect)=>{
+        setLoading(true);
+        try {
+            let associacao = await getAssociacao(uuid_associacao);
+            console.log("DADOS XXXXXXXXXXXXXXXXXXXX ", associacao);
+            let contas = await getContasAssociacao(uuid_associacao);
+            console.log("Contas ", contas);
+
+            let dados_da_associacao = {
+                dados_da_associacao:{
+                    ...associacao,
+                    contas
+                }
+            };
+
+            localStorage.setItem(DADOS_DA_ASSOCIACAO, JSON.stringify(dados_da_associacao ));
+            setRrlRedirect(url_redirect)
+        }catch (e) {
+            console.log("Erro ao buscar associacoes ", e)
+        }
+        setLoading(false);
     };
 
     const unidadeEscolarTemplate = (rowData) =>{
@@ -66,7 +96,7 @@ export const Associacoes = () =>{
         )
     };
 
-    const acoesTemplate = () =>{
+    const acoesTemplate = (rowData) =>{
         return (
             <div>
                 <li className="nav-item dropdown link-acoes">
@@ -75,38 +105,16 @@ export const Associacoes = () =>{
                     </a>
 
                     <div className="dropdown-menu dropdown-menu-opcoes " aria-labelledby="linkDropdownAcoes">
-                        <NavLink
-                            className="dropdown-item"
-                            to="/faq"
-                            activeStyle={{
-                                fontWeight: "bold",
-                                color: "red"
-                            }}
-                        >
-                            Ver dados unidade
-                        </NavLink>
-
-                        <NavLink
-                            className="dropdown-item"
-                            to="/faq"
-                            activeStyle={{
-                                fontWeight: "bold",
-                                color: "red"
-                            }}
-                        >
-                            Ver regularidade
-                        </NavLink>
-
-                        <NavLink
-                            className="dropdown-item"
-                            to="/faq"
-                            activeStyle={{
-                                fontWeight: "bold",
-                                color: "red"
-                            }}
-                        >
-                            Ver situação financeira
-                        </NavLink>
+                        <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-dados-da-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver dados unidade</button>
+                        <button onClick={()=>buscaAssociacao(rowData.uuid, "/cadastro-de-despesa")} className="btn btn-link dropdown-item" type="button">Ver regularidade</button>
+                        <button onClick={()=>buscaAssociacao(rowData.uuid, "/cadastro-de-despesa")} className="btn btn-link dropdown-item" type="button">Ver situação financeira</button>
+                        {urlRedirect &&
+                            <Redirect
+                                to={{
+                                    pathname: urlRedirect,
+                                }}
+                            />
+                        }
                     </div>
                 </li>
             </div>
@@ -132,7 +140,7 @@ export const Associacoes = () =>{
     const limpaFiltros = async () => {
         setLoading(true);
         setStateFiltros(initialStateFiltros);
-        await buscaAssociacoes();
+        await buscaAssociacoesPorUnidade();
         setLoading(false)
     };
 
@@ -154,26 +162,26 @@ export const Associacoes = () =>{
                     />
                 ) :
                 associacoes && associacoes.length > 0 ? (
-                    <>
-                        <TabelaAssociacoes
-                            associacoes={associacoes}
-                            rowsPerPage={rowsPerPage}
-                            unidadeEscolarTemplate={unidadeEscolarTemplate}
-                            statusRegularidadeTemplate={statusRegularidadeTemplate}
-                            acoesTemplate={acoesTemplate}
-                        />
-                    </>
+                <>
+                    <TabelaAssociacoes
+                        associacoes={associacoes}
+                        rowsPerPage={rowsPerPage}
+                        unidadeEscolarTemplate={unidadeEscolarTemplate}
+                        statusRegularidadeTemplate={statusRegularidadeTemplate}
+                        acoesTemplate={acoesTemplate}
+                    />
+                </>
                 ) :
-                    buscaUtilizandoFiltros ?
-                        <MsgImgCentralizada
-                            texto='Não encontramos resultados, verifique os filtros e tente novamente.'
-                            img={Img404}
-                        />
-                    :
-                        <MsgImgLadoDireito
-                            texto='Não encontramos nenhuma Associação com este perfil, tente novamente'
-                            img={Img404}
-                        />
+                buscaUtilizandoFiltros ?
+                    <MsgImgCentralizada
+                        texto='Não encontramos resultados, verifique os filtros e tente novamente.'
+                        img={Img404}
+                    />
+                :
+                    <MsgImgLadoDireito
+                        texto='Não encontramos nenhuma Associação com este perfil, tente novamente'
+                        img={Img404}
+                    />
             }
 
         </>
