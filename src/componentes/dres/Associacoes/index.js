@@ -48,7 +48,6 @@ export const Associacoes = () =>{
         }catch (e) {
             console.log("Erro ao buscar associacoes ", e)
         }
-
         setLoading(false)
     };
 
@@ -56,6 +55,7 @@ export const Associacoes = () =>{
         setLoading(true);
         try {
             let associacao = await getAssociacao(uuid_associacao);
+            console.log("DADOS XXXXXXXXXXXXXXXXXXXX ", associacao);
             let contas = await getContasAssociacao(uuid_associacao);
             console.log("Contas ", contas);
 
@@ -115,28 +115,6 @@ export const Associacoes = () =>{
                                 }}
                             />
                         }
-
-                        {/*<NavLink
-                            className="dropdown-item"
-                            to="/faq"
-                            activeStyle={{
-                                fontWeight: "bold",
-                                color: "red"
-                            }}
-                        >
-                            Ver regularidade
-                        </NavLink>
-
-                        <NavLink
-                            className="dropdown-item"
-                            to="/faq"
-                            activeStyle={{
-                                fontWeight: "bold",
-                                color: "red"
-                            }}
-                        >
-                            Ver situação financeira
-                        </NavLink>*/}
                     </div>
                 </li>
             </div>
@@ -184,26 +162,26 @@ export const Associacoes = () =>{
                     />
                 ) :
                 associacoes && associacoes.length > 0 ? (
-                    <>
-                        <TabelaAssociacoes
-                            associacoes={associacoes}
-                            rowsPerPage={rowsPerPage}
-                            unidadeEscolarTemplate={unidadeEscolarTemplate}
-                            statusRegularidadeTemplate={statusRegularidadeTemplate}
-                            acoesTemplate={acoesTemplate}
-                        />
-                    </>
+                <>
+                    <TabelaAssociacoes
+                        associacoes={associacoes}
+                        rowsPerPage={rowsPerPage}
+                        unidadeEscolarTemplate={unidadeEscolarTemplate}
+                        statusRegularidadeTemplate={statusRegularidadeTemplate}
+                        acoesTemplate={acoesTemplate}
+                    />
+                </>
                 ) :
-                    buscaUtilizandoFiltros ?
-                        <MsgImgCentralizada
-                            texto='Não encontramos resultados, verifique os filtros e tente novamente.'
-                            img={Img404}
-                        />
-                    :
-                        <MsgImgLadoDireito
-                            texto='Não encontramos nenhuma Associação com este perfil, tente novamente'
-                            img={Img404}
-                        />
+                buscaUtilizandoFiltros ?
+                    <MsgImgCentralizada
+                        texto='Não encontramos resultados, verifique os filtros e tente novamente.'
+                        img={Img404}
+                    />
+                :
+                    <MsgImgLadoDireito
+                        texto='Não encontramos nenhuma Associação com este perfil, tente novamente'
+                        img={Img404}
+                    />
             }
 
         </>

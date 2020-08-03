@@ -9,7 +9,7 @@ export const  InfosContas = ({dadosDaAssociacao}) =>{
             dadosDaAssociacao.dados_da_associacao.contas.length > 0 ?
             dadosDaAssociacao.dados_da_associacao.contas.map((conta, index)=>
                 <Fragment key={index}>
-                    <div className={`col-12 mt-${index === 0 ? "2" : 4} mb-xs-4 mb-md-4 mb-xl-4 ml-0`}>
+                    <div className={`col-12 mt-${index === 0 ? "2" : 4} mb-xs-4 mb-md-4 mb-xl-3 ml-0`}>
                         <p className="mb-0">
                             <span className="contador-conta"><strong>Conta {index + 1}</strong></span> <span className="divisor"></span>
                         </p>

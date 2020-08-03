@@ -7,7 +7,7 @@ export const InfosAssociacao = ({dadosDaAssociacao}) =>{
                 <p className="mb-1"><strong>Nome da associação</strong></p>
                 <p>{dadosDaAssociacao.dados_da_associacao.nome}</p>
             </div>
-            <div className="col-12 col-md-6">
+            <div className="col-12 col-md-6 mt-3">
                 <p className="mb-1"><strong>CNPJ</strong></p>
                 <p>{dadosDaAssociacao.dados_da_associacao.cnpj}</p>
             </div>
@@ -21,7 +21,7 @@ export const InfosAssociacao = ({dadosDaAssociacao}) =>{
             </div>
             <div className="col-12 col-md-6 mt-3">
                 <p className="mb-1"><strong>Cargo do presidente da associação</strong></p>
-                <p></p>
+                <p>{dadosDaAssociacao.dados_da_associacao.presidente_associacao.cargo_educacao}</p>
             </div>
             <div className="col-12 mt-3">
                 <p className="mb-1"><strong>E-mail do presidente da associação</strong></p>
@@ -35,7 +35,7 @@ export const InfosAssociacao = ({dadosDaAssociacao}) =>{
             </div>
             <div className="col-12 col-md-6 mt-3">
                 <p className="mb-1"><strong>Cargo do presidente do conselho fiscal</strong></p>
-                <p></p>
+                <p>{dadosDaAssociacao.dados_da_associacao.presidente_conselho_fiscal.cargo_educacao}</p>
             </div>
             <div className="col-12 mt-3">
                 <p className="mb-1"><strong>E-mail do presidente do conselho fiscal</strong></p>

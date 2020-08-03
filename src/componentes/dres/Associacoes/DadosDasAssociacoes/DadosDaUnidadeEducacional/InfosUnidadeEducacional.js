@@ -1,7 +1,6 @@
 import React from "react";
 
 export const InfosUnidadeEducacional = ({dadosDaAssociacao}) =>{
-    console.log("InfosUnidadeEducacional ", dadosDaAssociacao);
     const getEnderecoCompleto = () =>{
         let endereco;
         endereco = dadosDaAssociacao.dados_da_associacao.unidade.tipo_logradouro + " ";
@@ -12,15 +11,14 @@ export const InfosUnidadeEducacional = ({dadosDaAssociacao}) =>{
         endereco += " São Paulo - SP, ";
         endereco += dadosDaAssociacao.dados_da_associacao.unidade.cep ? dadosDaAssociacao.dados_da_associacao.unidade.cep : "";
         return endereco
-
     };
     return(
         <div className="row">
-            <div className="col-12 col-md-6">
+            <div className="col-12 col-md-6 mt-3">
                 <p className="mb-1"><strong>Nome da Unidade Educacional</strong></p>
                 <p>{dadosDaAssociacao.dados_da_associacao.unidade.nome}</p>
             </div>
-            <div className="col-12 col-md-6">
+            <div className="col-12 col-md-6 mt-3">
                 <p className="mb-1"><strong>Código EOL da Unidade Escolar</strong></p>
                 <p>{dadosDaAssociacao.dados_da_associacao.unidade.codigo_eol}</p>
             </div>
