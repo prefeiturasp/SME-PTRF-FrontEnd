@@ -62,6 +62,11 @@ export const EdicaoDeDespesa = ()=>{
                         currency: 'BRL'
                     }) : "",
 
+                    valor_original: resp.valor_original ? Number(resp.valor_original).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    }) : "",
+
                     valor_total_dos_rateios: resp.valor_total_dos_rateios ? Number(resp.valor_total_dos_rateios).toLocaleString('pt-BR', {
                         style: 'currency',
                         currency: 'BRL'

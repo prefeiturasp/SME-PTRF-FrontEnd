@@ -175,10 +175,16 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
     }
   }
 
-
-
+  console.log("Valor Original ", values.valor_original)
+  console.log("Valor Total ", values.valor_total)
 
   values.valor_total = trataNumericos(values.valor_total);
+  values.valor_original = trataNumericos(values.valor_original);
+
+  console.log("Valor Total ", values.valor_total)
+  console.log("Valor Original ", values.valor_original)
+
+
   values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
   values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)
 
@@ -243,6 +249,7 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
     rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital)
     rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)
     rateio.valor_rateio = round(trataNumericos(rateio.valor_rateio),2)
+    rateio.valor_original = round(trataNumericos(rateio.valor_original),2)
 
     if (rateio.aplicacao_recurso === "0" || rateio.aplicacao_recurso === "" || rateio.aplicacao_recurso === 0){
       rateio.aplicacao_recurso = null

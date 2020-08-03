@@ -493,8 +493,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 disabled={readOnlyCampos}
                                             />
                                             {props.errors.data_transacao &&
-                                            <span
-                                                className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
+                                            <span className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
                                         </div>
 
                                         <div className="col-12 col-md-3 mt-4">
@@ -581,23 +580,18 @@ export const CadastroForm = ({verbo_http}) => {
 
                                         <div className="col-12 col-md-3 mt-4">
                                             <label htmlFor="valor_original">Valor do ORIGINAL</label>
-                                            <Field name="valor_original">
-                                                {({field, form, meta}) => (
-                                                    <CurrencyInput
-                                                        allowNegative={false}
-                                                        prefix='R$'
-                                                        decimalSeparator=","
-                                                        thousandSeparator="."
-                                                        value={calculaValorRecursoAcoes(values)}
-                                                        id="valor_original"
-                                                        name="valor_original"
-                                                        className="form-control"
-                                                        onChangeEvent={props.handleChange}
-                                                        readOnly={true}
-                                                        disabled={readOnlyCampos}
-                                                    />
-                                                )}
-                                            </Field>
+                                            <CurrencyInput
+                                                allowNegative={false}
+                                                prefix='R$'
+                                                decimalSeparator=","
+                                                thousandSeparator="."
+                                                value={props.values.valor_original}
+                                                name="valor_original"
+                                                id="valor_original"
+                                                className="form-control"
+                                                onChangeEvent={props.handleChange}
+                                                disabled={readOnlyCampos}
+                                            />
                                             {errors.valor_original && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                                         </div>
                                     </div>
