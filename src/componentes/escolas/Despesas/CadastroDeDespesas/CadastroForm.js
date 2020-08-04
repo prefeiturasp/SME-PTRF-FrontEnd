@@ -87,7 +87,6 @@ export const CadastroForm = ({verbo_http}) => {
     }, []);
 
     const initialValues = () => {
-        console.log("Initial Values ", despesaContext.initialValues);
         return despesaContext.initialValues;
     };
 
@@ -267,6 +266,32 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
+    const setValoresRateiosOriginal = (values) =>{
+        let valor_original = values.valor_original;
+        let valor_ptfr_original;
+        let valor_rateio;
+
+        if (verbo_http === "POST"){
+            if (!valorOriginalAlterado){
+                valor_ptfr_original = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
+            }else{
+                valor_ptfr_original = trataNumericos(values.valor_original)
+            }
+        }else{
+            valor_ptfr_original = trataNumericos(values.valor_original)
+        }
+
+        console.log("setValoresRateiosOriginal ", values);
+        valor_rateio = valor_ptfr_original / values.rateios.length;
+
+        values.rateios.map((rateio)=>{
+            rateio.valor_original = valor_rateio
+        })
+
+        //values.rateios[0].valor_original = 333
+
+    };
+
     const getErroValorOriginalRateios = (values) =>{
         let valor_ptfr_original;
 
@@ -324,6 +349,8 @@ export const CadastroForm = ({verbo_http}) => {
 
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
+        setValoresRateiosOriginal(values);
+
         // Verifica período fechado para a receita
         if (values.data_documento){
             await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
@@ -358,11 +385,9 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
         // Verificando erros nos valores de rateios e rateios original
-
         if (getErroValorRealizadoRateios(values)){
             errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa.';
         }
-
         if (getErroValorOriginalRateios(values)){
             errors.valor_original = "ERRO VALOR ORIGINAL"
         }
