@@ -275,13 +275,11 @@ export const CadastroForm = ({verbo_http}) => {
             values.rateios.map((rateio)=>{
                 console.log('Dentro do array ', rateio.valor_original)
                 valor_dos_rateios_original = valor_dos_rateios_original + trataNumericos(rateio.valor_original)
-            })
+            });
 
             console.log('setValorOriginal ', valor_dos_rateios_original)
             values.valor_original = valor_dos_rateios_original
         }
-
-
 
     };
 
@@ -827,7 +825,13 @@ export const CadastroForm = ({verbo_http}) => {
                                                     <button
                                                         type="button"
                                                         className="btn btn btn-outline-success mt-2 mr-2"
-                                                        onClick={() => push(
+                                                        onChange={(e) => {
+                                                            props.handleChange(e);
+                                                            handleAvisoCapital(e.target.value);
+                                                            setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+                                                        }}
+                                                        onClick={() =>  {
+                                                            push(
                                                             {
                                                                 associacao: localStorage.getItem(ASSOCIACAO_UUID),
                                                                 escolha_tags:"",
@@ -843,8 +847,9 @@ export const CadastroForm = ({verbo_http}) => {
                                                                 valor_original: "",
                                                                 numero_processo_incorporacao_capital: ""
                                                             }
-                                                        )
-                                                        }
+                                                        );
+                                                            setValorRateioOriginalAlterado(false)
+                                                        }}
                                                     >
                                                         + Adicionar despesa parcial
                                                     </button>
