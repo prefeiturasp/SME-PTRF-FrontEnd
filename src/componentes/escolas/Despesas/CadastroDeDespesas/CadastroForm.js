@@ -267,7 +267,6 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const setValoresRateiosOriginal = (values) =>{
-        let valor_original = values.valor_original;
         let valor_ptfr_original;
         let valor_rateio;
 
@@ -281,15 +280,13 @@ export const CadastroForm = ({verbo_http}) => {
             valor_ptfr_original = trataNumericos(values.valor_original)
         }
 
-        console.log("setValoresRateiosOriginal ", values);
         valor_rateio = valor_ptfr_original / values.rateios.length;
 
         values.rateios.map((rateio)=>{
-            rateio.valor_original = valor_rateio
+            if (rateio.aplicacao_recurso){
+                rateio.valor_original = valor_rateio
+            }
         })
-
-        //values.rateios[0].valor_original = 333
-
     };
 
     const getErroValorOriginalRateios = (values) =>{
