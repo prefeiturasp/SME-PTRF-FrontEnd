@@ -138,7 +138,7 @@ export const CadastroFormCapital = (propriedades) => {
                         {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                     </div>
                     <div className="col-12 col-md-6 mt-4">
-                        <label htmlFor="valor_original">Valor do ORIGINAL</label>
+                        <label htmlFor="valor_original">Valor RATEIO ORIGINAL</label>
                         <CurrencyInput
                             allowNegative={false}
                             prefix='R$'
