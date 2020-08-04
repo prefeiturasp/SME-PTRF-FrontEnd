@@ -1,5 +1,5 @@
 import api from '../api'
-import { TOKEN_ALIAS } from '../auth.service.js';
+import {TOKEN_ALIAS} from '../auth.service.js';
 import {ASSOCIACAO_UUID} from "../auth.service";
 
 const authHeader = {
@@ -52,3 +52,22 @@ export const getContas = async () => {
 export const salvarContas = async (payload) => {
     return (await api.post(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/contas-update/`, payload, authHeader))
 };
+
+export const exportarDadosAssociacao = async () => {
+    return api
+            .get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/exportar`, {
+                responseType: 'blob',
+                timeout: 30000,
+              })
+            .then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'associacao.xlsx');
+                document.body.appendChild(link);
+                link.click();
+            }).catch(error => {
+                return error.response;
+            });
+}
+

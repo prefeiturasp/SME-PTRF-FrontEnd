@@ -5,6 +5,7 @@ import {MenuInterno} from "../../../Globais/MenuInterno";
 import {getContas, salvarContas} from "../../../../services/escolas/Associacao.service";
 import {FormDadosDasContas} from "./FormDadosDasContas";
 import {ModalConfirmaSalvar} from "../../../../utils/Modais";
+import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao";
 
 export const DadosDasContas = () => {
 
@@ -89,6 +90,7 @@ export const DadosDasContas = () => {
                         <MenuInterno
                             caminhos_menu_interno = {UrlsMenuInterno}
                         />
+                        <ExportaDadosDaAsssociacao/>
                         <FormDadosDasContas
                             intialValues={intialValues}
                             onSubmit={onSubmit}
