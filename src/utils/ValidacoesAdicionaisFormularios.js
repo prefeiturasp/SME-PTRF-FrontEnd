@@ -330,16 +330,14 @@ export const calculaValorRateio = (valor1, valor2) => {
   let valor_total = valor1Tratado * valor2Tratado;
 
   return valor_total;
-}
+};
 export const calculaValorRecursoAcoes = (values) => {
 
-  //console.log("Calcula Valor ", values)
-
-  let valor_totalTratado = trataNumericos(values.valor_total)
-  let valor_recursos_propriosTratado = trataNumericos(values.valor_recursos_proprios)
+  let valor_totalTratado = trataNumericos(values.valor_total);
+  let valor_recursos_propriosTratado = trataNumericos(values.valor_recursos_proprios);
   let valor_total = round(valor_totalTratado - valor_recursos_propriosTratado, 2);
   return valor_total;
-}
+};
 
 export const cpfMaskContitional = (value) => {
   let cpfCnpj = value.replace(/[^\d]+/g, "");

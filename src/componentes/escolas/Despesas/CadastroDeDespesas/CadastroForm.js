@@ -45,6 +45,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
     const [loading, setLoading] = useState(true);
     const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
+    const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
     const [numreoDocumentoReadOnly, setNumreoDocumentoReadOnly] = useState(false);
 
     useEffect(()=>{
@@ -259,6 +260,33 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
+    const getErroValorOriginalRateios = (values) =>{
+        console.log("getValoresRateiosOriginais ", values)
+
+    }
+
+    const getErroValorRealizadoRateios = (values) =>{
+        console.log("getValorRealizado ", values)
+
+        let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
+        let var_valor_total_dos_rateios = 0;
+        let var_valor_total_dos_rateios_capital = 0;
+        let var_valor_total_dos_rateios_custeio = 0;
+
+        values.rateios.map((rateio) => {
+            if (rateio.aplicacao_recurso === "CAPITAL"){
+                var_valor_total_dos_rateios_capital = var_valor_total_dos_rateios_capital + trataNumericos(rateio.quantidade_itens_capital) * trataNumericos(rateio.valor_item_capital)
+            }else{
+                var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
+            }
+        });
+
+        var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio;
+
+        return round(var_valor_recursos_acoes, 2) !== round(var_valor_total_dos_rateios, 2);
+
+    }
+
     const validateFormDespesas = async (values) => {
         setExibeMsgErroValorRecursos(false);
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
@@ -296,24 +324,11 @@ export const CadastroForm = ({verbo_http}) => {
             }
         }
 
-        let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
-        let var_valor_total_dos_rateios = 0;
-        let var_valor_total_dos_rateios_capital = 0;
-        let var_valor_total_dos_rateios_custeio = 0;
-
-        values.rateios.map((rateio) => {
-            if (rateio.aplicacao_recurso === "CAPITAL"){
-                var_valor_total_dos_rateios_capital = var_valor_total_dos_rateios_capital + trataNumericos(rateio.quantidade_itens_capital) * trataNumericos(rateio.valor_item_capital)
-            }else{
-                var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
-            }
-        });
-
-        var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio;
-
-        if (round(var_valor_recursos_acoes,2) !== round(var_valor_total_dos_rateios,2)) {
+        if (getErroValorRealizadoRateios(values)){
             errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa.';
         }
+
+
         return errors;
     };
 
@@ -510,8 +525,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                     placeholder="Digite o número do documento"
                                                     disabled={readOnlyCampos}
                                                 />
-                                                {props.errors.documento_transacao && <span
-                                                    className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
+                                                {props.errors.documento_transacao && <span className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
                                             </div>
                                         </div>
 
