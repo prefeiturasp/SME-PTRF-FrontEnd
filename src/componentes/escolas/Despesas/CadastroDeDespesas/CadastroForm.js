@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
-import {YupSignupSchemaCadastroDespesa, validaPayloadDespesas, cpfMaskContitional, calculaValorRecursoAcoes, round, periodoFechado} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaCadastroDespesa, validaPayloadDespesas, cpfMaskContitional, calculaValorRecursoAcoes, round, periodoFechado, calculaValorOriginal} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import {getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial, getDespesaCadastrada} from "../../../../services/escolas/Despesas.service";
 import {getVerificarSaldo} from "../../../../services/escolas/RateiosDespesas.service";
@@ -47,6 +47,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
     const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
     const [numreoDocumentoReadOnly, setNumreoDocumentoReadOnly] = useState(false);
+    const [valorOriginalAlterado, setValorOriginalAlterado] = useState(false);
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
@@ -267,11 +268,17 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const getErroValorOriginalRateios = (values) =>{
+        let valor_ptfr_original;
 
-
-        let valor_ptfr_original = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
-
-        console.log("var_valor_ptfr_original ", valor_ptfr_original);
+        if (verbo_http === "POST"){
+            if (!valorOriginalAlterado){
+                valor_ptfr_original = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
+            }else{
+                valor_ptfr_original = trataNumericos(values.valor_original)
+            }
+        }else{
+            valor_ptfr_original = trataNumericos(values.valor_original)
+        }
 
         let valor_total_dos_rateios_original = 0;
         let valor_total_dos_rateios_capital_original = 0;
@@ -283,7 +290,7 @@ export const CadastroForm = ({verbo_http}) => {
             }else{
                 valor_total_dos_rateios_custeio_original = valor_total_dos_rateios_custeio_original + trataNumericos(rateio.valor_original)
             }
-        })
+        });
 
         valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original
         return round(valor_ptfr_original, 2) !== round(valor_total_dos_rateios_original, 2)
@@ -348,6 +355,8 @@ export const CadastroForm = ({verbo_http}) => {
             }
         }
 
+        // Verificando erros nos valores de rateios e rateios original
+
         if (getErroValorRealizadoRateios(values)){
             errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa.';
         }
@@ -355,8 +364,6 @@ export const CadastroForm = ({verbo_http}) => {
         if (getErroValorOriginalRateios(values)){
             errors.valor_original = "ERRO VALOR ORIGINAL"
         }
-
-
 
         return errors;
     };
@@ -628,11 +635,16 @@ export const CadastroForm = ({verbo_http}) => {
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
-                                                value={props.values.valor_original}
+                                                //value={props.values.valor_original }
+                                                value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado ? calculaValorRecursoAcoes(values) :props.values.valor_original }
                                                 name="valor_original"
                                                 id="valor_original"
                                                 className="form-control"
-                                                onChangeEvent={props.handleChange}
+                                                //onChangeEvent={props.handleChange}
+                                                onChangeEvent={(e) => {
+                                                    props.handleChange(e);
+                                                    setValorOriginalAlterado(true)
+                                                }}
                                                 disabled={readOnlyCampos}
                                             />
                                             {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> ERRO VALOR ORIGINAL DENTRO DO SPAN CADASTRO FORM</span>}

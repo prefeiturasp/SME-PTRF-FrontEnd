@@ -174,16 +174,8 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
       values.tipo_transacao = null
     }
   }
-
-  console.log("Valor Original ", values.valor_original)
-  console.log("Valor Total ", values.valor_total)
-
   values.valor_total = trataNumericos(values.valor_total);
   values.valor_original = trataNumericos(values.valor_original);
-
-  console.log("Valor Total ", values.valor_total)
-  console.log("Valor Original ", values.valor_original)
-
 
   values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
   values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)
@@ -336,6 +328,14 @@ export const calculaValorRecursoAcoes = (values) => {
   let valor_totalTratado = trataNumericos(values.valor_total);
   let valor_recursos_propriosTratado = trataNumericos(values.valor_recursos_proprios);
   let valor_total = round(valor_totalTratado - valor_recursos_propriosTratado, 2);
+  return valor_total;
+};
+
+export const calculaValorOriginal = (values) => {
+
+  let valor_total_ratado = trataNumericos(values.valor_original);
+  let valor_recursos_proprios_tratado = trataNumericos(values.valor_recursos_proprios);
+  let valor_total = round(valor_total_ratado - valor_recursos_proprios_tratado, 2);
   return valor_total;
 };
 
