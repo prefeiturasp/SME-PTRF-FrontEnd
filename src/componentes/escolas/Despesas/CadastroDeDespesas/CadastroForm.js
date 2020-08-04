@@ -320,6 +320,8 @@ export const CadastroForm = ({verbo_http}) => {
 
     const validateFormDespesas = async (values) => {
         setExibeMsgErroValorRecursos(false);
+        setExibeMsgErroValorOriginal(false);
+
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
         // Verifica período fechado para a receita
@@ -636,7 +638,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 //value={props.values.valor_original }
-                                                value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado ? calculaValorRecursoAcoes(values) :props.values.valor_original }
+                                                value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado ? calculaValorRecursoAcoes(values) : props.values.valor_original }
                                                 name="valor_original"
                                                 id="valor_original"
                                                 className="form-control"
