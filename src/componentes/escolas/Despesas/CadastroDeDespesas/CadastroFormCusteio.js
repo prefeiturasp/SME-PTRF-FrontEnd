@@ -4,7 +4,7 @@ import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios"
 
 export const CadastroFormCusteio = (propriedades) => {
 
-    const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos} = propriedades
+    const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal} = propriedades
 
     return (
         <>
@@ -135,7 +135,7 @@ export const CadastroFormCusteio = (propriedades) => {
                                 onChangeEvent={formikProps.handleChange}
                                 disabled={disabled}
                             />
-                            {errors.valor_original && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                            {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> ERRO VALOR ORIGINAL DENTRO DO SPAN CADASTRO FORM CUSTEIO</span>}
                         </div>
 
                     </div>

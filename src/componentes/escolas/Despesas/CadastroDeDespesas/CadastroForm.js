@@ -175,6 +175,12 @@ export const CadastroForm = ({verbo_http}) => {
             setExibeMsgErroValorRecursos(false)
         }
 
+        if (errors && errors.valor_original){
+            setExibeMsgErroValorOriginal(true)
+        }else {
+            setExibeMsgErroValorOriginal(false)
+        }
+
         validaPayloadDespesas(values);
 
         if (Object.entries(errors).length === 0 && values.cpf_cnpj_fornecedor) {
@@ -261,12 +267,30 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const getErroValorOriginalRateios = (values) =>{
-        console.log("getValoresRateiosOriginais ", values)
 
-    }
+
+        let valor_ptfr_original = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
+
+        console.log("var_valor_ptfr_original ", valor_ptfr_original);
+
+        let valor_total_dos_rateios_original = 0;
+        let valor_total_dos_rateios_capital_original = 0;
+        let valor_total_dos_rateios_custeio_original = 0;
+
+        values.rateios.map((rateio)=>{
+            if (rateio.aplicacao_recurso === "CAPITAL"){
+                valor_total_dos_rateios_capital_original = valor_total_dos_rateios_capital_original + trataNumericos(rateio.valor_original)
+            }else{
+                valor_total_dos_rateios_custeio_original = valor_total_dos_rateios_custeio_original + trataNumericos(rateio.valor_original)
+            }
+        })
+
+        valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original
+        return round(valor_ptfr_original, 2) !== round(valor_total_dos_rateios_original, 2)
+
+    };
 
     const getErroValorRealizadoRateios = (values) =>{
-        console.log("getValorRealizado ", values)
 
         let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
         let var_valor_total_dos_rateios = 0;
@@ -285,7 +309,7 @@ export const CadastroForm = ({verbo_http}) => {
 
         return round(var_valor_recursos_acoes, 2) !== round(var_valor_total_dos_rateios, 2);
 
-    }
+    };
 
     const validateFormDespesas = async (values) => {
         setExibeMsgErroValorRecursos(false);
@@ -327,6 +351,11 @@ export const CadastroForm = ({verbo_http}) => {
         if (getErroValorRealizadoRateios(values)){
             errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa.';
         }
+
+        if (getErroValorOriginalRateios(values)){
+            errors.valor_original = "ERRO VALOR ORIGINAL"
+        }
+
 
 
         return errors;
@@ -606,7 +635,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onChangeEvent={props.handleChange}
                                                 disabled={readOnlyCampos}
                                             />
-                                            {errors.valor_original && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                                            {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> ERRO VALOR ORIGINAL DENTRO DO SPAN CADASTRO FORM</span>}
                                         </div>
                                     </div>
                                     
@@ -696,6 +725,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         disabled={readOnlyCampos}
                                                                         errors={errors}
                                                                         exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
+                                                                        exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
                                                                     />
                                                                 ) :
                                                                 rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -709,6 +739,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         disabled={readOnlyCampos}
                                                                         errors={errors}
                                                                         exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
+                                                                        exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
                                                                     />
                                                                 ) : null}
 

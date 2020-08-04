@@ -1,11 +1,11 @@
 import React from "react";
 import NumberFormat from "react-number-format";
-import {calculaValorRateio, cpfMaskContitional, trataNumericos, processoIncorporacaoMask} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {calculaValorRateio, trataNumericos, processoIncorporacaoMask} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import CurrencyInput from "react-currency-input";
 import MaskedInput from "react-text-mask";
 
 export const CadastroFormCapital = (propriedades) => {
-    const {formikProps, rateio, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors, exibeMsgErroValorRecursos} = propriedades
+    const {formikProps, rateio, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal} = propriedades;
 
     return (
         <>
@@ -151,7 +151,7 @@ export const CadastroFormCapital = (propriedades) => {
                             onChangeEvent={formikProps.handleChange}
                             disabled={disabled}
                         />
-                        {errors.valor_original && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                        {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> ERRO VALOR ORIGINAL DENTRO DO SPAN CADASTRO FORM CAPITAL</span>}
                     </div>
 
                 </div>
