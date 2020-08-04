@@ -684,7 +684,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 //value={props.values.valor_original }
-                                                value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado ? calculaValorRecursoAcoes(values) : props.values.valor_original }
+                                                value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado && !valorRateioOriginalAlterado ? calculaValorRecursoAcoes(values) : props.values.valor_original }
                                                 name="valor_original"
                                                 id="valor_original"
                                                 className="form-control"
