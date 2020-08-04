@@ -4,7 +4,7 @@ import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios"
 
 export const CadastroFormCusteio = (propriedades) => {
 
-    const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal} = propriedades
+    const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal, setValorRateioOriginalAlterado} = propriedades
 
     return (
         <>
@@ -132,7 +132,10 @@ export const CadastroFormCusteio = (propriedades) => {
                                 name={`rateios[${index}].valor_original`}
                                 id="valor_original"
                                 className={`${ trataNumericos(rateio.valor_original) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
-                                onChangeEvent={formikProps.handleChange}
+                                onChangeEvent={(e) => {
+                                    formikProps.handleChange(e);
+                                    setValorRateioOriginalAlterado(true);
+                                }}
                                 disabled={disabled}
                             />
                             {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> ERRO VALOR ORIGINAL DENTRO DO SPAN CADASTRO FORM CUSTEIO</span>}

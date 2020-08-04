@@ -48,6 +48,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
     const [numreoDocumentoReadOnly, setNumreoDocumentoReadOnly] = useState(false);
     const [valorOriginalAlterado, setValorOriginalAlterado] = useState(false);
+    const [valorRateioOriginalAlterado, setValorRateioOriginalAlterado] = useState(false);
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
@@ -266,27 +267,51 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
-    const setValoresRateiosOriginal = (values) =>{
-        let valor_ptfr_original;
-        let valor_rateio;
 
-        if (verbo_http === "POST"){
-            if (!valorOriginalAlterado){
-                valor_ptfr_original = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
+    const setValorOriginal = (values)=>{
+        //debugger
+        let valor_dos_rateios_original=0;
+        if (valorRateioOriginalAlterado){
+            values.rateios.map((rateio)=>{
+                console.log('Dentro do array ', rateio.valor_original)
+                valor_dos_rateios_original = valor_dos_rateios_original + trataNumericos(rateio.valor_original)
+            })
+
+            console.log('setValorOriginal ', valor_dos_rateios_original)
+            values.valor_original = valor_dos_rateios_original
+        }
+
+
+
+    };
+
+
+    const setValoresRateiosOriginal = (values) =>{
+
+        if (!valorRateioOriginalAlterado){
+            let valor_ptfr_original;
+            let valor_rateio;
+
+            if (verbo_http === "POST"){
+                if (!valorOriginalAlterado){
+                    valor_ptfr_original = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
+                }else{
+                    valor_ptfr_original = trataNumericos(values.valor_original)
+                }
             }else{
                 valor_ptfr_original = trataNumericos(values.valor_original)
             }
-        }else{
-            valor_ptfr_original = trataNumericos(values.valor_original)
+
+            valor_rateio = valor_ptfr_original / values.rateios.length;
+
+            values.rateios.map((rateio)=>{
+                if (rateio.aplicacao_recurso){
+                    rateio.valor_original = valor_rateio
+                }
+            })
         }
 
-        valor_rateio = valor_ptfr_original / values.rateios.length;
 
-        values.rateios.map((rateio)=>{
-            if (rateio.aplicacao_recurso){
-                rateio.valor_original = valor_rateio
-            }
-        })
     };
 
     const getErroValorOriginalRateios = (values) =>{
@@ -347,6 +372,7 @@ export const CadastroForm = ({verbo_http}) => {
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
         setValoresRateiosOriginal(values);
+        setValorOriginal(values)
 
         // Verifica período fechado para a receita
         if (values.data_documento){
@@ -668,6 +694,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
                                                     setValorOriginalAlterado(true)
+                                                    setValorRateioOriginalAlterado(false)
                                                 }}
                                                 disabled={readOnlyCampos}
                                             />
@@ -762,6 +789,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         errors={errors}
                                                                         exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
                                                                         exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
+                                                                        setValorRateioOriginalAlterado={setValorRateioOriginalAlterado}
                                                                     />
                                                                 ) :
                                                                 rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
