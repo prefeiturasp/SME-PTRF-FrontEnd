@@ -270,10 +270,15 @@ export const CadastroForm = ({verbo_http}) => {
 
     const setValorOriginal = (values)=>{
         //debugger
+
+        let valor_atual_original = values.valor_original
+
+        console.log("Valor Atual Original ", valor_atual_original)
+
         let valor_dos_rateios_original=0;
         if (valorRateioOriginalAlterado){
             values.rateios.map((rateio)=>{
-                console.log('Dentro do array ', rateio.valor_original)
+                console.log('Dentro do array ', rateio.valor_original);
                 valor_dos_rateios_original = valor_dos_rateios_original + trataNumericos(rateio.valor_original)
             });
 
@@ -370,7 +375,7 @@ export const CadastroForm = ({verbo_http}) => {
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
         setValoresRateiosOriginal(values);
-        setValorOriginal(values)
+        setValorOriginal(values);
 
         // Verifica período fechado para a receita
         if (values.data_documento){
