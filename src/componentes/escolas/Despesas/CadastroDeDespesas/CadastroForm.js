@@ -330,8 +330,6 @@ export const CadastroForm = ({verbo_http}) => {
             }
         });
 
-        console.log()
-
         valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original
         return round(valor_ptfr_original, 2) !== round(valor_total_dos_rateios_original, 2)
 
@@ -345,7 +343,7 @@ export const CadastroForm = ({verbo_http}) => {
 
         values.rateios.map((rateio) => {
             if (rateio.aplicacao_recurso === "CAPITAL"){
-                var_valor_total_dos_rateios_capital = var_valor_total_dos_rateios_capital + trataNumericos(rateio.quantidade_itens_capital) * trataNumericos(rateio.valor_item_capital)
+                var_valor_total_dos_rateios_capital = var_valor_total_dos_rateios_capital + trataNumericos(rateio.valor_rateio)
             }else{
                 var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
             }
@@ -806,6 +804,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         errors={errors}
                                                                         exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
                                                                         exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
+                                                                        setValorRateioOriginalAlterado={setValorRateioOriginalAlterado}
                                                                     />
                                                                 ) : null}
 

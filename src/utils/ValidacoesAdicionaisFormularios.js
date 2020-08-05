@@ -180,6 +180,9 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
   values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
   values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)
 
+
+  console.log("Valor Recurso Açoes ", values.valor_recusos_acoes)
+
   if (values.data_documento !== "" && values.data_documento !== null){
     values.data_documento = moment(values.data_documento).format("YYYY-MM-DD");
   }else {
@@ -243,6 +246,9 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
     rateio.valor_rateio = round(trataNumericos(rateio.valor_rateio),2)
     rateio.valor_original = round(trataNumericos(rateio.valor_original),2)
 
+
+    console.log("Valor Rateio ", rateio.valor_rateio)
+
     if (rateio.aplicacao_recurso === "0" || rateio.aplicacao_recurso === "" || rateio.aplicacao_recurso === 0){
       rateio.aplicacao_recurso = null
     }
@@ -252,7 +258,7 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
     }
 
     if (rateio.aplicacao_recurso === "CAPITAL"){
-      rateio.valor_rateio = round(rateio.quantidade_itens_capital * rateio.valor_item_capital, 2)
+      //rateio.valor_rateio = round(rateio.quantidade_itens_capital * rateio.valor_item_capital, 2)
     }
 
   })

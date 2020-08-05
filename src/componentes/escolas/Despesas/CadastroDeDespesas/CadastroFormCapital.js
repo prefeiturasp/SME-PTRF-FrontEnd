@@ -140,7 +140,7 @@ export const CadastroFormCapital = (propriedades) => {
                     </div>
 
                     <div className="col-12 col-md-6 mt-4">
-                        <label htmlFor="valor_rateio">Valor</label>
+                        <label htmlFor="valor_rateio">Valor - {rateio.valor_rateio}</label>
                         <CurrencyInput
                             allowNegative={false}
                             prefix='R$'
