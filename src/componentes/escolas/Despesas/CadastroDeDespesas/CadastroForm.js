@@ -259,9 +259,9 @@ export const CadastroForm = ({verbo_http}) => {
 
     const setaValoresCusteioCapital = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
         if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
-            setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values, valorRealizadolAlterado));
+            setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
             setFieldValue('rateios[0].quantidade_itens_capital', 1);
-            setFieldValue('rateios[0].valor_item_capital', calculaValorRecursoAcoes(values, valorRealizadolAlterado));
+            setFieldValue('rateios[0].valor_item_capital', calculaValorRecursoAcoes(values));
         }else {
             setFieldValue('rateios[0].valor_rateio', 0);
             setFieldValue('rateios[0].quantidade_itens_capital', "");
@@ -274,7 +274,7 @@ export const CadastroForm = ({verbo_http}) => {
         console.log("setValoresRateiosOriginal ", mais_de_um_tipo_de_despesa)
 
         if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
-            setFieldValue('rateios[0].valor_original', calculaValorRecursoAcoes(values, valorRealizadolAlterado));
+            setFieldValue('rateios[0].valor_original', calculaValorRecursoAcoes(values));
         }else {
             setFieldValue('rateios[0].valor_original', 0);
         }
@@ -299,6 +299,10 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
     };
+
+    const setValorRealizado = (setFieldValue, valor) =>{
+        setFieldValue("valor_total", trataNumericos(valor))
+    }
 
 
 
@@ -333,13 +337,11 @@ export const CadastroForm = ({verbo_http}) => {
 
     };
 
-    const getErroValorRealizadoRateios = (values, valorRealizadolAlterado) =>{
+    const getErroValorRealizadoRateios = (values) =>{
         let var_valor_recursos_acoes;
-        if(valorRealizadolAlterado){
+
             var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
-        }else {
-            var_valor_recursos_acoes = trataNumericos(values.valor_original) - trataNumericos(values.valor_recursos_proprios);
-        }
+
 
         let var_valor_total_dos_rateios = 0;
         let var_valor_total_dos_rateios_capital = 0;
@@ -402,7 +404,7 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
         // Verificando erros nos valores de rateios e rateios original
-        if (getErroValorRealizadoRateios(values, valorRealizadolAlterado)){
+        if (getErroValorRealizadoRateios(values)){
             errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa.';
         }
         if (getErroValorOriginalRateios(values)){
@@ -629,6 +631,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                     props.handleChange(e);
                                                     setValorOriginalAlterado(true)
                                                     setValorRateioOriginalAlterado(false)
+                                                    setValorRealizado(setFieldValue, e.target.value)
                                                 }}
                                                 disabled={readOnlyCampos}
                                             />
@@ -642,7 +645,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
-                                                value={valorRealizadolAlterado ? props.values.valor_total : props.values.valor_original}
+                                                value={values.valor_total}
                                                 //value={props.values.valor_total}
                                                 name="valor_total"
                                                 id="valor_total"
@@ -650,7 +653,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                 //onChangeEvent={props.handleChange}
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
-                                                    setValorRealizadoAlterado(true)
                                                 }}
 
                                                 disabled={readOnlyCampos}
@@ -686,7 +688,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                         prefix='R$'
                                                         decimalSeparator=","
                                                         thousandSeparator="."
-                                                        value={calculaValorRecursoAcoes(values, valorRealizadolAlterado)}
+                                                        value={calculaValorRecursoAcoes(values)}
                                                         id="valor_recusos_acoes"
                                                         name="valor_recusos_acoes"
                                                         className="form-control"

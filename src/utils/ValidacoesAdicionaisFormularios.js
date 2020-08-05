@@ -323,24 +323,10 @@ export const calculaValorRateio = (valor1, valor2) => {
 
   return valor_total;
 };
-export const calculaValorRecursoAcoes = (values, valorRealizadolAlterado) => {
-
-  //debugger
-
+export const calculaValorRecursoAcoes = (values) => {
   let valor_totalTratado = trataNumericos(values.valor_total);
   let valor_recursos_propriosTratado = trataNumericos(values.valor_recursos_proprios);
-  let valor_original = trataNumericos(values.valor_original);
-
-/*  console.log("valorRealizadolAlterado ", valorRealizadolAlterado);
-  console.log("valor_totalTratado ", valor_totalTratado);
-  console.log("valor_original ", valor_original);*/
-
-  if (valorRealizadolAlterado){
-    return round(valor_totalTratado - valor_recursos_propriosTratado, 2);
-  }else{
-    return round(valor_original - valor_recursos_propriosTratado, 2);
-  }
-
+  return round(valor_totalTratado - valor_recursos_propriosTratado, 2);
 };
 
 export const calculaValorOriginal = (values) => {
