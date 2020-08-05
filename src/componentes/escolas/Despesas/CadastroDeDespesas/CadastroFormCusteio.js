@@ -105,23 +105,6 @@ export const CadastroFormCusteio = (propriedades) => {
                         </div>
 
                         <div className="col-12 col-md-3 mt-4">
-                            <label htmlFor="valor_rateio">Valor</label>
-                            <CurrencyInput
-                                allowNegative={false}
-                                prefix='R$'
-                                decimalSeparator=","
-                                thousandSeparator="."
-                                value={rateio.valor_rateio}
-                                name={`rateios[${index}].valor_rateio`}
-                                id="valor_rateio"
-                                className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
-                                onChangeEvent={formikProps.handleChange}
-                                disabled={disabled}
-                            />
-                            {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
-                        </div>
-
-                        <div className="col-12 col-md-3 mt-4">
                             <label htmlFor="valor_original">Valor RATEIO ORIGINAL</label>
                             <CurrencyInput
                                 allowNegative={false}
@@ -140,6 +123,25 @@ export const CadastroFormCusteio = (propriedades) => {
                             />
                             {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> ERRO VALOR ORIGINAL DENTRO DO SPAN CADASTRO FORM CUSTEIO</span>}
                         </div>
+
+                        <div className="col-12 col-md-3 mt-4">
+                            <label htmlFor="valor_rateio">Valor RATEIO REALIZADO</label>
+                            <CurrencyInput
+                                allowNegative={false}
+                                prefix='R$'
+                                decimalSeparator=","
+                                thousandSeparator="."
+                                value={rateio.valor_rateio}
+                                name={`rateios[${index}].valor_rateio`}
+                                id="valor_rateio"
+                                className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                                onChangeEvent={formikProps.handleChange}
+                                disabled={disabled}
+                            />
+                            {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                        </div>
+
+
 
                     </div>
 
