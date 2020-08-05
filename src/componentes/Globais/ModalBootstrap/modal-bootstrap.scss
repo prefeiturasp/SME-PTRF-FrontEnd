@@ -1,0 +1,17 @@
+@import "../../../assets/css/variaveis";
+
+.btn-success {
+  background-color: $corBtnSuccess;
+  border-color: $corBtnSuccess;
+}
+
+.btn-outline-success {
+  border-color: $corBtnSuccess;
+  color: $corBtnSuccess;
+}
+
+.btn-outline-success:hover, .btn-success:hover {
+  color: #fff;
+  background-color: $corBtnSuccess;
+  border-color: $corBtnSuccess;
+}

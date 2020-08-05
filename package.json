@@ -1,6 +1,6 @@
 {
   "name": "ptrf",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.27",
@@ -10,6 +10,7 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "@trendmicro/react-sidenav": "^0.5.0",
+    "antd": "^4.5.2",
     "array-find-duplicates": "^2.0.1",
     "axios": "^0.19.2",
     "date-fns": "^2.11.0",
