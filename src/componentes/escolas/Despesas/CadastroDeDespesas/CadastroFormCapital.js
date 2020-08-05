@@ -128,12 +128,13 @@ export const CadastroFormCapital = (propriedades) => {
                             prefix='R$'
                             decimalSeparator=","
                             thousandSeparator="."
-                            value={rateio.valor_original}
+                            value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
+                            //value={rateio.valor_original}
                             name={`rateios[${index}].valor_original`}
                             id="valor_original"
                             className={`${ trataNumericos(rateio.valor_original) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                             onChangeEvent={formikProps.handleChange}
-                            disabled={disabled}
+                            disabled={true}
                         />
                         {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> ERRO VALOR ORIGINAL DENTRO DO SPAN CADASTRO FORM CAPITAL</span>}
                     </div>
@@ -145,12 +146,13 @@ export const CadastroFormCapital = (propriedades) => {
                             prefix='R$'
                             decimalSeparator=","
                             thousandSeparator="."
-                            value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
+                            value={rateio.valor_rateio}
+                            //value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
                             name={`rateios[${index}].valor_rateio`}
                             id="valor_rateio"
                             className="form-control"
                             onChangeEvent={formikProps.handleChange}
-                            disabled={true}
+
                         />
                         {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                     </div>

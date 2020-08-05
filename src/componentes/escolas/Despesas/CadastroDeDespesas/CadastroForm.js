@@ -324,11 +324,13 @@ export const CadastroForm = ({verbo_http}) => {
 
         values.rateios.map((rateio)=>{
             if (rateio.aplicacao_recurso === "CAPITAL"){
-                valor_total_dos_rateios_capital_original = valor_total_dos_rateios_capital_original + trataNumericos(rateio.valor_original)
+                valor_total_dos_rateios_capital_original = valor_total_dos_rateios_capital_original + trataNumericos(rateio.quantidade_itens_capital) * trataNumericos(rateio.valor_item_capital)
             }else{
                 valor_total_dos_rateios_custeio_original = valor_total_dos_rateios_custeio_original + trataNumericos(rateio.valor_original)
             }
         });
+
+        console.log()
 
         valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original
         return round(valor_ptfr_original, 2) !== round(valor_total_dos_rateios_original, 2)
