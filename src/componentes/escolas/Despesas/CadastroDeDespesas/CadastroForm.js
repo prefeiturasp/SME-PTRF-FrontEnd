@@ -269,13 +269,23 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
+    const setValoresRateiosOriginal = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
+
+        console.log("setValoresRateiosOriginal ", mais_de_um_tipo_de_despesa)
+
+        if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
+            setFieldValue('rateios[0].valor_original', calculaValorRecursoAcoes(values, valorRealizadolAlterado));
+        }else {
+            setFieldValue('rateios[0].valor_original', 0);
+        }
+
+    };
+
 
     const setValorOriginal = (values)=>{
         //debugger
 
         let valor_atual_original = values.valor_original
-
-        console.log("Valor Atual Original ", valor_atual_original)
 
         let valor_dos_rateios_original=0;
         if (valorRateioOriginalAlterado){
@@ -291,33 +301,7 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
 
-    const setValoresRateiosOriginal = (values) =>{
 
-        if (!valorRateioOriginalAlterado){
-            let valor_ptfr_original;
-            let valor_rateio;
-
-            if (verbo_http === "POST"){
-                if (!valorOriginalAlterado){
-                    valor_ptfr_original = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
-                }else{
-                    valor_ptfr_original = trataNumericos(values.valor_original)
-                }
-            }else{
-                valor_ptfr_original = trataNumericos(values.valor_original)
-            }
-
-            valor_rateio = valor_ptfr_original / values.rateios.length;
-
-            values.rateios.map((rateio)=>{
-                if (rateio.aplicacao_recurso){
-                    rateio.valor_original = valor_rateio
-                }
-            })
-        }
-
-
-    };
 
     const getErroValorOriginalRateios = (values) =>{
         let valor_ptfr_original;
@@ -381,8 +365,8 @@ export const CadastroForm = ({verbo_http}) => {
 
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
-        setValoresRateiosOriginal(values);
-        setValorOriginal(values);
+        //setValoresRateiosOriginal(values);
+        //setValorOriginal(values);
 
         // Verifica período fechado para a receita
         if (values.data_documento){
@@ -729,6 +713,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                     setaValoresCusteioCapital(e.target.value, values, setFieldValue);
+                                                    setValoresRateiosOriginal(e.target.value, values, setFieldValue);
                                                 }}
                                                 name='mais_de_um_tipo_despesa'
                                                 id='mais_de_um_tipo_despesa'
@@ -778,6 +763,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                                             props.handleChange(e);
                                                                             handleAvisoCapital(e.target.value);
                                                                             setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+                                                                            setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+
                                                                         }}
                                                                         name={`rateios[${index}].aplicacao_recurso`}
                                                                         id='aplicacao_recurso'
@@ -847,6 +834,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                             props.handleChange(e);
                                                             handleAvisoCapital(e.target.value);
                                                             setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+                                                            setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
                                                         }}
                                                         onClick={() =>  {
                                                             push(

@@ -6,6 +6,16 @@ export const CadastroFormCusteio = (propriedades) => {
 
     const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal, setValorRateioOriginalAlterado} = propriedades
 
+    const setValorRateioRealizado=(setFieldValue, index, valor)=>{
+
+        console.log("setValorRateioRealizado ", setFieldValue)
+        console.log("setValorRateioRealizado index ", setFieldValue)
+        console.log("setValorRateioRealizado valor ", valor)
+
+        setFieldValue(`rateios[${index}].valor_rateio`, trataNumericos(valor))
+
+    }
+
     return (
         <>
             <div className="form-row">
@@ -118,6 +128,7 @@ export const CadastroFormCusteio = (propriedades) => {
                                 onChangeEvent={(e) => {
                                     formikProps.handleChange(e);
                                     setValorRateioOriginalAlterado(true);
+                                    setValorRateioRealizado(formikProps.setFieldValue, index, e.target.value)
                                 }}
                                 disabled={disabled}
                             />
@@ -125,13 +136,14 @@ export const CadastroFormCusteio = (propriedades) => {
                         </div>
 
                         <div className="col-12 col-md-3 mt-4">
-                            <label htmlFor="valor_rateio">Valor RATEIO REALIZADO</label>
+                            <label htmlFor="valor_rateio">Valor RATEIO REALIZADO - {rateio.valor_rateio}</label>
                             <CurrencyInput
                                 allowNegative={false}
                                 prefix='R$'
                                 decimalSeparator=","
                                 thousandSeparator="."
                                 value={rateio.valor_rateio}
+                                //value={rateio.valor_rateio === "R$0,00" || rateio.valor_rateio === "0" || rateio.valor_rateio === 0 ? rateio.valor_original : rateio.valor_rateio}
                                 name={`rateios[${index}].valor_rateio`}
                                 id="valor_rateio"
                                 className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
