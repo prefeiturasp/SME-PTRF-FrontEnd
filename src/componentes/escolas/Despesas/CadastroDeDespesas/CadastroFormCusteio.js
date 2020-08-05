@@ -7,14 +7,8 @@ export const CadastroFormCusteio = (propriedades) => {
     const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal, setValorRateioOriginalAlterado} = propriedades
 
     const setValorRateioRealizado=(setFieldValue, index, valor)=>{
-
-        console.log("setValorRateioRealizado ", setFieldValue)
-        console.log("setValorRateioRealizado index ", setFieldValue)
-        console.log("setValorRateioRealizado valor ", valor)
-
         setFieldValue(`rateios[${index}].valor_rateio`, trataNumericos(valor))
-
-    }
+    };
 
     return (
         <>

@@ -50,8 +50,6 @@ export const CadastroForm = ({verbo_http}) => {
     const [valorOriginalAlterado, setValorOriginalAlterado] = useState(false);
     const [valorRateioOriginalAlterado, setValorRateioOriginalAlterado] = useState(false);
 
-    const [valorRealizadolAlterado, setValorRealizadoAlterado] = useState(false);
-
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
             exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id);
@@ -274,7 +272,7 @@ export const CadastroForm = ({verbo_http}) => {
         console.log("setValoresRateiosOriginal ", mais_de_um_tipo_de_despesa)
 
         if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
-            setFieldValue('rateios[0].valor_original', calculaValorRecursoAcoes(values));
+            setFieldValue('rateios[0].valor_original', values.valor_original);
         }else {
             setFieldValue('rateios[0].valor_original', 0);
         }
@@ -338,11 +336,7 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const getErroValorRealizadoRateios = (values) =>{
-        let var_valor_recursos_acoes;
-
-            var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
-
-
+        let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
         let var_valor_total_dos_rateios = 0;
         let var_valor_total_dos_rateios_capital = 0;
         let var_valor_total_dos_rateios_custeio = 0;
@@ -356,6 +350,7 @@ export const CadastroForm = ({verbo_http}) => {
         });
 
         var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio;
+
 
         return round(var_valor_recursos_acoes, 2) !== round(var_valor_total_dos_rateios, 2);
 
