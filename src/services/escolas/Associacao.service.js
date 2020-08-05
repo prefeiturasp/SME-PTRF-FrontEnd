@@ -71,3 +71,7 @@ export const exportarDadosAssociacao = async () => {
             });
 }
 
+export const getPeriodosDePrestacaoDeContasDaAssociacao = async () => {
+    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/periodos-para-prestacao-de-contas/`, authHeader)).data
+};
+
