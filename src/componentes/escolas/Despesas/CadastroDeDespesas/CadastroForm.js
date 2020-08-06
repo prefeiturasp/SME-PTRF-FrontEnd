@@ -259,7 +259,7 @@ export const CadastroForm = ({verbo_http}) => {
         if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
             setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
             setFieldValue('rateios[0].quantidade_itens_capital', 1);
-            setFieldValue('rateios[0].valor_item_capital', calculaValorRecursoAcoes(values));
+            setFieldValue('rateios[0].valor_item_capital', calculaValorOriginal(values));
         }else {
             setFieldValue('rateios[0].valor_rateio', 0);
             setFieldValue('rateios[0].quantidade_itens_capital', "");
@@ -268,41 +268,16 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const setValoresRateiosOriginal = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
-
-        console.log("setValoresRateiosOriginal ", mais_de_um_tipo_de_despesa)
-
         if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
-            setFieldValue('rateios[0].valor_original', values.valor_original);
+            setFieldValue('rateios[0].valor_original', calculaValorOriginal(values));
         }else {
             setFieldValue('rateios[0].valor_original', 0);
         }
-
-    };
-
-
-    const setValorOriginal = (values)=>{
-        //debugger
-
-        let valor_atual_original = values.valor_original
-
-        let valor_dos_rateios_original=0;
-        if (valorRateioOriginalAlterado){
-            values.rateios.map((rateio)=>{
-                console.log('Dentro do array ', rateio.valor_original);
-                valor_dos_rateios_original = valor_dos_rateios_original + trataNumericos(rateio.valor_original)
-            });
-
-            console.log('setValorOriginal ', valor_dos_rateios_original)
-            values.valor_original = valor_dos_rateios_original
-        }
-
     };
 
     const setValorRealizado = (setFieldValue, valor) =>{
         setFieldValue("valor_total", trataNumericos(valor))
-    }
-
-
+    };
 
 
     const getErroValorOriginalRateios = (values) =>{
@@ -342,18 +317,10 @@ export const CadastroForm = ({verbo_http}) => {
         let var_valor_total_dos_rateios_custeio = 0;
 
         values.rateios.map((rateio) => {
-            if (rateio.aplicacao_recurso === "CAPITAL"){
-                var_valor_total_dos_rateios_capital = var_valor_total_dos_rateios_capital + trataNumericos(rateio.valor_rateio)
-            }else{
-                var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
-            }
+            var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
         });
-
         var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio;
-
-
         return round(var_valor_recursos_acoes, 2) !== round(var_valor_total_dos_rateios, 2);
-
     };
 
     const validateFormDespesas = async (values) => {
@@ -361,9 +328,6 @@ export const CadastroForm = ({verbo_http}) => {
         setExibeMsgErroValorOriginal(false);
 
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
-
-        //setValoresRateiosOriginal(values);
-        //setValorOriginal(values);
 
         // Verifica período fechado para a receita
         if (values.data_documento){
@@ -617,7 +581,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 //value={props.values.valor_original }
-                                                value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado && !valorRateioOriginalAlterado ? calculaValorRecursoAcoes(values) : props.values.valor_original }
+                                                value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado && !valorRateioOriginalAlterado ? calculaValorOriginal(values) : props.values.valor_original }
                                                 name="valor_original"
                                                 id="valor_original"
                                                 className="form-control"
