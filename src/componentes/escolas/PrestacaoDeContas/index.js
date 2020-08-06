@@ -9,8 +9,6 @@ import {BotaoConciliacao} from "./BotaoConciliacao";
 import {DataUltimaConciliacao} from "./DataUltimaConciliacao";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {
-    getPeriodos,
-    getPeriodosNaoFuturos,
     getStatus,
     getIniciarPrestacaoDeContas,
     getReabrirPeriodo,
@@ -22,6 +20,7 @@ import {ReverConciliacao} from "../../../utils/Modais";
 import {BoxPrestacaoDeContasPorPeriodo} from "../../escolas/GeracaoDaAta/BoxPrestacaoDeContasPorPeriodo";
 import RelacaoDeBens from "./RelacaoDeBens";
 import Loading from "../../../utils/Loading";
+import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/escolas/Associacao.service"
 
 
 export const PrestacaoDeContas = () => {
@@ -65,7 +64,7 @@ export const PrestacaoDeContas = () => {
         };
 
         const carregaPeriodos = async () => {
-            let periodos = await getPeriodosNaoFuturos();
+            let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
             setPeriodosAssociacao(periodos);
         };
 

@@ -6,6 +6,7 @@ import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, con
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
+import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao";
 
 export const MembrosDaAssociacao = () =>{
 
@@ -312,6 +313,7 @@ export const MembrosDaAssociacao = () =>{
                         <MenuInterno
                             caminhos_menu_interno={UrlsMenuInterno}
                         />
+                        <ExportaDadosDaAsssociacao/>
                         <TabelaMembros
                             titulo="Diretoria Executiva"
                             clickIconeToogle={clickIconeToogle}
