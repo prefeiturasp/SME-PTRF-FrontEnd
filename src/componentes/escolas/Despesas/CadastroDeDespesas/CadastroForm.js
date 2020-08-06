@@ -316,7 +316,7 @@ export const CadastroForm = ({verbo_http}) => {
         });
 
         valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original
-        return round(valor_ptfr_original, 2) !== round(valor_total_dos_rateios_original, 2)
+        return round(valor_ptfr_original, 2) - round(valor_total_dos_rateios_original, 2)
 
     };
 
@@ -330,7 +330,7 @@ export const CadastroForm = ({verbo_http}) => {
             var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
         });
         var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio;
-        return round(var_valor_recursos_acoes, 2) !== round(var_valor_total_dos_rateios, 2);
+        return round(var_valor_recursos_acoes, 2) - round(var_valor_total_dos_rateios, 2);
     };
 
     const validateFormDespesas = async (values) => {
@@ -373,11 +373,19 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
         // Verificando erros nos valores de rateios e rateios original
-        if (getErroValorRealizadoRateios(values)){
-            errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa.';
+        if (getErroValorRealizadoRateios(values) !== 0){
+            let diferenca = Number(getErroValorRealizadoRateios(values)).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa. Difrerença de  R$ '+ diferenca;
         }
-        if (getErroValorOriginalRateios(values)){
-            errors.valor_original = "ERRO VALOR ORIGINAL"
+        if (getErroValorOriginalRateios(values) !== 0){
+            let diferenca = Number(getErroValorOriginalRateios(values)).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            errors.valor_original = "O total das despesas originais deve corresponder ao valor total dos recursos originais. Difrerença de  R$ " + diferenca
         }
 
         return errors;
@@ -395,6 +403,10 @@ export const CadastroForm = ({verbo_http}) => {
         }else {
             setCssEscondeDocumentoTransacao("escondeItem");
         }
+    };
+
+    const getDiferencaValores = (valor_a, valor_b) => {
+        let diferenca = valor_a - valor_b
     };
 
     return (
@@ -594,7 +606,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 selectAllOnFocus={true}
                                                 onChangeEvent={(e) => {
-                                                    setFieldValue("valor_recursos_proprios", 0)
+                                                    setFieldValue("valor_recursos_proprios", 0);
                                                     props.handleChange(e);
                                                     setValorRealizado(setFieldValue, e.target.value);
                                                     setValorOriginalAlterado(true);
@@ -603,7 +615,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 }}
                                                 disabled={readOnlyCampos}
                                             />
-                                            {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> ERRO VALOR ORIGINAL DENTRO DO SPAN CADASTRO FORM</span>}
+                                            {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
                                         </div>
 
                                         <div className="col-12 col-md-3 mt-4">
@@ -849,8 +861,12 @@ export const CadastroForm = ({verbo_http}) => {
                                         </button>
                                     </div>
                                     <div className="d-flex justify-content-end">
-                                        {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}
+                                        <p>{errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}</p>
                                     </div>
+                                    <div className="d-flex justify-content-end">
+                                        <p>{errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> {errors.valor_original}</span>}</p>
+                                    </div>
+
                                     <section>
                                         <SaldoInsuficiente
                                             saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}

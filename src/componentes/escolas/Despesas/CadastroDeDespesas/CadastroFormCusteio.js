@@ -125,7 +125,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         }}
                         disabled={disabled}
                     />
-                    {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> ERRO VALOR ORIGINAL DENTRO DO SPAN CADASTRO FORM CUSTEIO</span>}
+                    {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
                 </div>
 
                 <div className="col-12 col-md-3 mt-4">
