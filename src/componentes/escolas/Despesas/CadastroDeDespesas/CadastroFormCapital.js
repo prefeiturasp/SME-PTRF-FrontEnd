@@ -122,14 +122,13 @@ export const CadastroFormCapital = (propriedades) => {
                     </div>
 
                     <div className="col-12 col-md-6 mt-4">
-                        <label htmlFor="valor_original">Valor RATEIO ORIGINAL</label>
+                        <label htmlFor="valor_original">Valor total do capital</label>
                         <CurrencyInput
                             allowNegative={false}
                             prefix='R$'
                             decimalSeparator=","
                             thousandSeparator="."
                             value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
-                            //value={rateio.valor_original}
                             name={`rateios[${index}].valor_original`}
                             id="valor_original"
                             className={`${ trataNumericos(rateio.valor_original) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
@@ -140,26 +139,21 @@ export const CadastroFormCapital = (propriedades) => {
                     </div>
 
                     <div className="col-12 col-md-6 mt-4">
-                        <label htmlFor="valor_rateio">Valor - {rateio.valor_rateio}</label>
+                        <label htmlFor="valor_rateio" className="label-valor-realizado">Valor realizado</label>
                         <CurrencyInput
                             allowNegative={false}
                             prefix='R$'
                             decimalSeparator=","
                             thousandSeparator="."
                             value={rateio.valor_rateio}
-                            //value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
                             name={`rateios[${index}].valor_rateio`}
                             id="valor_rateio"
-                            className="form-control"
+                            className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control ${trataNumericos(rateio.valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
                             onChangeEvent={formikProps.handleChange}
-
                         />
                         {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                     </div>
-
-
                 </div>
-
         </>
     )
 }

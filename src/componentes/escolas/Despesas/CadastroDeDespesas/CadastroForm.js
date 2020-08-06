@@ -495,13 +495,11 @@ export const CadastroForm = ({verbo_http}) => {
                                         <div className="col-12 col-md-3 mt-4">
                                             <label htmlFor="data_documento">Data do documento</label>
                                             <DatePickerField
-                                                //disabled={readOnlyCampos}
                                                 name="data_documento"
                                                 id="data_documento"
                                                 value={values.data_documento != null ? values.data_documento : ""}
                                                 onChange={setFieldValue}
                                                 about={despesaContext.verboHttp}
-
                                             />
                                             {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                         </div>
@@ -530,7 +528,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                         props.values.tipo_transacao === "object" ? props.values.tipo_transacao.id : props.values.tipo_transacao.id
                                                     ) : ""
                                                 }
-                                                //onChange={props.handleChange}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                     exibeDocumentoTransacao(e.target.value)
@@ -584,19 +581,17 @@ export const CadastroForm = ({verbo_http}) => {
 
                                     <div className="form-row">
                                         <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="valor_original">Valor ORIGINAL - {values.valor_original_total}</label>
+                                            <label htmlFor="valor_original">Valor total do documento</label>
                                             <CurrencyInput
                                                 allowNegative={false}
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
-                                                //value={props.values.valor_original }
                                                 //value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado && !valorRateioOriginalAlterado ? calculaValorOriginal(values) : props.values.valor_original }
                                                 value={ props.values.valor_original_total }
                                                 name="valor_original"
                                                 id="valor_original"
-                                                className="form-control"
-                                                //onChangeEvent={props.handleChange}
+                                                className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 selectAllOnFocus={true}
                                                 onChangeEvent={(e) => {
                                                     setFieldValue("valor_recursos_proprios", 0)
@@ -612,18 +607,16 @@ export const CadastroForm = ({verbo_http}) => {
                                         </div>
 
                                         <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="valor_total">Valor REALIZADO</label>
+                                            <label htmlFor="valor_total" className="label-valor-realizado">Valor realizado</label>
                                             <CurrencyInput
                                                 allowNegative={false}
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 value={values.valor_total}
-                                                //value={props.values.valor_total}
                                                 name="valor_total"
                                                 id="valor_total"
-                                                className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                                //onChangeEvent={props.handleChange}
+                                                className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control ${trataNumericos(props.values.valor_total) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
                                                 selectAllOnFocus={true}
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
@@ -690,7 +683,6 @@ export const CadastroForm = ({verbo_http}) => {
                                         <div className="col-12 col-md-3 ">
                                             <select
                                                 value={props.values.mais_de_um_tipo_despesa}
-                                                //onChange={props.handleChange}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                     setaValoresCusteioCapital(e.target.value, values, setFieldValue);
