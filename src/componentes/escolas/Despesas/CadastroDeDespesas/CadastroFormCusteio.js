@@ -146,6 +146,5 @@ export const CadastroFormCusteio = (propriedades) => {
                 </div>
             </div>
         </>
-
     );
 }

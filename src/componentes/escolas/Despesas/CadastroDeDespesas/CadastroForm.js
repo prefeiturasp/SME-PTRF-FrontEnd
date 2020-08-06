@@ -48,8 +48,6 @@ export const CadastroForm = ({verbo_http}) => {
     const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
     const [numreoDocumentoReadOnly, setNumreoDocumentoReadOnly] = useState(false);
 
-    const [valorOriginalAlterado, setValorOriginalAlterado] = useState(false);
-
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
             exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id);
@@ -275,27 +273,9 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
-    const setValorOriginalTotal = (valor_original, valor_recursos_proprios,  setFieldValue, valorOriginalAlterado=null, values=null) =>{
-
-/*        console.log("Ollyver valor_original ", valor_original)
-        console.log("Ollyver valor_recursos_proprios ", valor_recursos_proprios)*/
-
-        /*if (valorOriginalAlterado){
-            setFieldValue("valor_recursos_proprios", 0)
-        }*/
-
-
-
-        let valor = trataNumericos(valor_original) - trataNumericos(valor_recursos_proprios)
-
-        setFieldValue("valor_original_total", valor)
-
-
-    }
     const setValorRealizado = (setFieldValue, valor) =>{
         setFieldValue("valor_total", trataNumericos(valor))
     };
-
 
     const getErroValorOriginalRateios = (values) =>{
         let valor_ptfr_original;
@@ -613,12 +593,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                 className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 selectAllOnFocus={true}
                                                 onChangeEvent={(e) => {
-                                                    setFieldValue("valor_recursos_proprios", 0);
                                                     props.handleChange(e);
                                                     setValorRealizado(setFieldValue, e.target.value);
-                                                    //setValorOriginalAlterado(true);
-                                                    //setValorOriginalTotal(e.target.value, values.valor_recursos_proprios, setFieldValue, valorOriginalAlterado, values)
-
                                                 }}
                                                 disabled={readOnlyCampos}
                                             />
@@ -661,8 +637,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                 selectAllOnFocus={true}
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
-                                                    //setValorOriginalTotal(values.valor_original, e.target.value,  setFieldValue)
-                                                    //setValorOriginalAlterado(false)
                                                 }}
                                                 disabled={readOnlyCampos}
                                             />

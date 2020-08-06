@@ -156,4 +156,4 @@ export const CadastroFormCapital = (propriedades) => {
                 </div>
         </>
     )
-}
+};
