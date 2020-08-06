@@ -37,6 +37,7 @@ export const DespesaContextProvider = ({children}) => {
         valor_recusos_acoes:0,
         valor_total_dos_rateios:0,
         valor_original:"",
+        valor_original_total:"",
         // Fim Auxiliares
         rateios: [
             {
@@ -74,6 +75,7 @@ export const DespesaContextProvider = ({children}) => {
         valor_recusos_acoes:0,
         valor_total_dos_rateios:0,
         valor_original:"",
+        valor_original_total:"",
         // Fim Auxiliares
         rateios: [
             {

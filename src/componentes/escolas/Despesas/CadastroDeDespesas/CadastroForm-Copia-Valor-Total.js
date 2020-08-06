@@ -48,8 +48,6 @@ export const CadastroForm = ({verbo_http}) => {
     const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
     const [numreoDocumentoReadOnly, setNumreoDocumentoReadOnly] = useState(false);
 
-    const [valorOriginalAlterado, setValorOriginalAlterado] = useState(false);
-
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
             exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id);
@@ -275,21 +273,12 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
-    const setValorOriginalTotal = (valor_original, valor_recursos_proprios,  setFieldValue, valorOriginalAlterado=null, values=null) =>{
-
-/*        console.log("Ollyver valor_original ", valor_original)
-        console.log("Ollyver valor_recursos_proprios ", valor_recursos_proprios)*/
-
-        /*if (valorOriginalAlterado){
-            setFieldValue("valor_recursos_proprios", 0)
-        }*/
-
-
+    const setValorOriginalTotal = (valor_original, valor_recursos_proprios,  setFieldValue) =>{
 
         let valor = trataNumericos(valor_original) - trataNumericos(valor_recursos_proprios)
 
         setFieldValue("valor_original_total", valor)
-
+        //setFieldValue("valor_original", valor)
 
     }
     const setValorRealizado = (setFieldValue, valor) =>{
@@ -300,7 +289,7 @@ export const CadastroForm = ({verbo_http}) => {
     const getErroValorOriginalRateios = (values) =>{
         let valor_ptfr_original;
 
-        valor_ptfr_original = trataNumericos(values.valor_original_total);
+        valor_ptfr_original = trataNumericos(values.valor_original_total)
 
 
         let valor_total_dos_rateios_original = 0;
@@ -592,19 +581,15 @@ export const CadastroForm = ({verbo_http}) => {
                                                 thousandSeparator="."
                                                 //value={props.values.valor_original }
                                                 //value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado && !valorRateioOriginalAlterado ? calculaValorOriginal(values) : props.values.valor_original }
-                                                value={ props.values.valor_original_total }
+                                                value={ values.valor_original_total }
                                                 name="valor_original"
                                                 id="valor_original"
                                                 className="form-control"
                                                 //onChangeEvent={props.handleChange}
-                                                selectAllOnFocus={true}
                                                 onChangeEvent={(e) => {
-                                                    setFieldValue("valor_recursos_proprios", 0)
                                                     props.handleChange(e);
-                                                    setValorRealizado(setFieldValue, e.target.value);
-                                                    setValorOriginalAlterado(true);
-                                                    setValorOriginalTotal(e.target.value, values.valor_recursos_proprios, setFieldValue, valorOriginalAlterado, values)
-
+                                                    setValorRealizado(setFieldValue, e.target.value)
+                                                    setValorOriginalTotal(e.target.value, values.valor_recursos_proprios, setFieldValue)
                                                 }}
                                                 disabled={readOnlyCampos}
                                             />
@@ -624,7 +609,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                 id="valor_total"
                                                 className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 //onChangeEvent={props.handleChange}
-                                                selectAllOnFocus={true}
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
                                                 }}
@@ -642,15 +626,14 @@ export const CadastroForm = ({verbo_http}) => {
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
-                                                value={valorOriginalAlterado ? 0 : values.valor_recursos_proprios}
+                                                value={props.values.valor_recursos_proprios}
                                                 name="valor_recursos_proprios"
                                                 id="valor_recursos_proprios"
                                                 className="form-control"
-                                                selectAllOnFocus={true}
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
                                                     setValorOriginalTotal(values.valor_original, e.target.value,  setFieldValue)
-                                                    setValorOriginalAlterado(false)
+                                                    //setValorOriginalTotal(props.values, setFieldValue)
                                                 }}
                                                 disabled={readOnlyCampos}
                                             />
@@ -682,7 +665,7 @@ export const CadastroForm = ({verbo_http}) => {
 
 
                                     </div>
-
+                                    
                                     <hr/>
                                     <h2 className="subtitulo-itens-painel">Dados do gasto</h2>
                                     <p>Esse gasto se encaixa em mais de um tipo de despesa ou ação do programa?</p>
@@ -751,7 +734,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         id='aplicacao_recurso'
                                                                         className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                                         disabled={readOnlyCampos}
-                                                                    >
+                                                                    >   
                                                                         <option key={0} value="">Escolha uma opção</option>
                                                                         {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map(item => (
                                                                             <option key={item.id}
@@ -818,22 +801,22 @@ export const CadastroForm = ({verbo_http}) => {
                                                         }}
                                                         onClick={() =>  {
                                                             push(
-                                                                {
-                                                                    associacao: localStorage.getItem(ASSOCIACAO_UUID),
-                                                                    escolha_tags:"",
-                                                                    tag:"",
-                                                                    conta_associacao: "",
-                                                                    acao_associacao: "",
-                                                                    aplicacao_recurso: "",
-                                                                    tipo_custeio: "",
-                                                                    especificacao_material_servico: "",
-                                                                    valor_rateio: "",
-                                                                    quantidade_itens_capital: "",
-                                                                    valor_item_capital: "",
-                                                                    valor_original: "",
-                                                                    numero_processo_incorporacao_capital: ""
-                                                                }
-                                                            );
+                                                            {
+                                                                associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                                                                escolha_tags:"",
+                                                                tag:"",
+                                                                conta_associacao: "",
+                                                                acao_associacao: "",
+                                                                aplicacao_recurso: "",
+                                                                tipo_custeio: "",
+                                                                especificacao_material_servico: "",
+                                                                valor_rateio: "",
+                                                                quantidade_itens_capital: "",
+                                                                valor_item_capital: "",
+                                                                valor_original: "",
+                                                                numero_processo_incorporacao_capital: ""
+                                                            }
+                                                        );
                                                         }}
                                                     >
                                                         + Adicionar despesa parcial
