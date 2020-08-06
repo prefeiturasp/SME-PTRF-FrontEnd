@@ -175,7 +175,7 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
     }
   }
   values.valor_total = trataNumericos(values.valor_total);
-  values.valor_original = trataNumericos(values.valor_original_total);
+  values.valor_original = trataNumericos(values.valor_original);
 
   values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
   values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)

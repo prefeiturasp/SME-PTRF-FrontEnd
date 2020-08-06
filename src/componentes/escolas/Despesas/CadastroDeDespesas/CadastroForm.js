@@ -259,7 +259,7 @@ export const CadastroForm = ({verbo_http}) => {
         if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
             setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
             setFieldValue('rateios[0].quantidade_itens_capital', 1);
-            setFieldValue('rateios[0].valor_item_capital', values.valor_original_total);
+            setFieldValue('rateios[0].valor_item_capital', calculaValorOriginal(values));
         }else {
             setFieldValue('rateios[0].valor_rateio', 0);
             setFieldValue('rateios[0].quantidade_itens_capital', "");
@@ -269,7 +269,7 @@ export const CadastroForm = ({verbo_http}) => {
 
     const setValoresRateiosOriginal = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
         if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
-            setFieldValue('rateios[0].valor_original', values.valor_original_total);
+            setFieldValue('rateios[0].valor_original', calculaValorOriginal(values));
         }else {
             setFieldValue('rateios[0].valor_original', 0);
         }
@@ -300,7 +300,9 @@ export const CadastroForm = ({verbo_http}) => {
     const getErroValorOriginalRateios = (values) =>{
         let valor_ptfr_original;
 
-        valor_ptfr_original = trataNumericos(values.valor_original_total);
+        valor_ptfr_original = calculaValorOriginal(values);
+
+        console.log("getErroValorOriginalRateios valor_ptfr_original ", valor_ptfr_original)
 
 
         let valor_total_dos_rateios_original = 0;
@@ -316,6 +318,10 @@ export const CadastroForm = ({verbo_http}) => {
         });
 
         valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original
+
+
+        console.log("getErroValorOriginalRateios var_valor_total_dos_rateios ", valor_total_dos_rateios_original)
+
         return round(valor_ptfr_original, 2) - round(valor_total_dos_rateios_original, 2)
 
     };
@@ -330,6 +336,7 @@ export const CadastroForm = ({verbo_http}) => {
             var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
         });
         var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio;
+
         return round(var_valor_recursos_acoes, 2) - round(var_valor_total_dos_rateios, 2);
     };
 
@@ -600,7 +607,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 //value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado && !valorRateioOriginalAlterado ? calculaValorOriginal(values) : props.values.valor_original }
-                                                value={ props.values.valor_original_total }
+                                                value={ props.values.valor_original }
                                                 name="valor_original"
                                                 id="valor_original"
                                                 className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
@@ -609,8 +616,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                     setFieldValue("valor_recursos_proprios", 0);
                                                     props.handleChange(e);
                                                     setValorRealizado(setFieldValue, e.target.value);
-                                                    setValorOriginalAlterado(true);
-                                                    setValorOriginalTotal(e.target.value, values.valor_recursos_proprios, setFieldValue, valorOriginalAlterado, values)
+                                                    //setValorOriginalAlterado(true);
+                                                    //setValorOriginalTotal(e.target.value, values.valor_recursos_proprios, setFieldValue, valorOriginalAlterado, values)
 
                                                 }}
                                                 disabled={readOnlyCampos}
@@ -647,15 +654,15 @@ export const CadastroForm = ({verbo_http}) => {
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
-                                                value={valorOriginalAlterado ? 0 : values.valor_recursos_proprios}
+                                                value={values.valor_recursos_proprios}
                                                 name="valor_recursos_proprios"
                                                 id="valor_recursos_proprios"
                                                 className="form-control"
                                                 selectAllOnFocus={true}
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
-                                                    setValorOriginalTotal(values.valor_original, e.target.value,  setFieldValue)
-                                                    setValorOriginalAlterado(false)
+                                                    //setValorOriginalTotal(values.valor_original, e.target.value,  setFieldValue)
+                                                    //setValorOriginalAlterado(false)
                                                 }}
                                                 disabled={readOnlyCampos}
                                             />
