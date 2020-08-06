@@ -4,7 +4,7 @@ import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios"
 
 export const CadastroFormCusteio = (propriedades) => {
 
-    const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal, setValorRateioOriginalAlterado} = propriedades
+    const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal} = propriedades
 
     const setValorRateioRealizado=(setFieldValue, index, valor)=>{
         setFieldValue(`rateios[${index}].valor_rateio`, trataNumericos(valor))
@@ -121,7 +121,6 @@ export const CadastroFormCusteio = (propriedades) => {
                                 className={`${ trataNumericos(rateio.valor_original) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                                 onChangeEvent={(e) => {
                                     formikProps.handleChange(e);
-                                    setValorRateioOriginalAlterado(true);
                                     setValorRateioRealizado(formikProps.setFieldValue, index, e.target.value)
                                 }}
                                 disabled={disabled}

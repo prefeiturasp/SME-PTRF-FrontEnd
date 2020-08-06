@@ -48,7 +48,6 @@ export const CadastroForm = ({verbo_http}) => {
     const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
     const [numreoDocumentoReadOnly, setNumreoDocumentoReadOnly] = useState(false);
     const [valorOriginalAlterado, setValorOriginalAlterado] = useState(false);
-    const [valorRateioOriginalAlterado, setValorRateioOriginalAlterado] = useState(false);
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
@@ -259,7 +258,7 @@ export const CadastroForm = ({verbo_http}) => {
         if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
             setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
             setFieldValue('rateios[0].quantidade_itens_capital', 1);
-            setFieldValue('rateios[0].valor_item_capital', calculaValorOriginal(values));
+            setFieldValue('rateios[0].valor_item_capital', values.valor_original);
         }else {
             setFieldValue('rateios[0].valor_rateio', 0);
             setFieldValue('rateios[0].quantidade_itens_capital', "");
@@ -269,9 +268,17 @@ export const CadastroForm = ({verbo_http}) => {
 
     const setValoresRateiosOriginal = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
         if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
-            setFieldValue('rateios[0].valor_original', calculaValorOriginal(values));
+            setFieldValue('rateios[0].valor_original', values.valor_original);
         }else {
             setFieldValue('rateios[0].valor_original', 0);
+        }
+    };
+
+    const getValorOriginal = (values)=>{
+        if (values.valor_recursos_proprios !== "R$0,00" || values.valor_recursos_proprios !== "" || values.valor_recursos_proprios !== 0){
+            return values.valor_original - values.valor_recursos_proprios
+        }else {
+            return values.valor_original
         }
     };
 
@@ -581,7 +588,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 //value={props.values.valor_original }
-                                                value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado && !valorRateioOriginalAlterado ? calculaValorOriginal(values) : props.values.valor_original }
+                                                //value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado && !valorRateioOriginalAlterado ? calculaValorOriginal(values) : props.values.valor_original }
+                                                value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado  ? calculaValorOriginal(values) : props.values.valor_original }
                                                 name="valor_original"
                                                 id="valor_original"
                                                 className="form-control"
@@ -589,7 +597,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
                                                     setValorOriginalAlterado(true)
-                                                    setValorRateioOriginalAlterado(false)
                                                     setValorRealizado(setFieldValue, e.target.value)
                                                 }}
                                                 disabled={readOnlyCampos}
@@ -753,7 +760,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         errors={errors}
                                                                         exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
                                                                         exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
-                                                                        setValorRateioOriginalAlterado={setValorRateioOriginalAlterado}
                                                                     />
                                                                 ) :
                                                                 rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -768,7 +774,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         errors={errors}
                                                                         exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
                                                                         exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
-                                                                        setValorRateioOriginalAlterado={setValorRateioOriginalAlterado}
                                                                     />
                                                                 ) : null}
 
@@ -816,7 +821,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                                 numero_processo_incorporacao_capital: ""
                                                             }
                                                         );
-                                                            setValorRateioOriginalAlterado(false)
                                                         }}
                                                     >
                                                         + Adicionar despesa parcial
