@@ -47,7 +47,6 @@ export const CadastroForm = ({verbo_http}) => {
     const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
     const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
     const [numreoDocumentoReadOnly, setNumreoDocumentoReadOnly] = useState(false);
-    const [valorOriginalAlterado, setValorOriginalAlterado] = useState(false);
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
@@ -290,15 +289,8 @@ export const CadastroForm = ({verbo_http}) => {
     const getErroValorOriginalRateios = (values) =>{
         let valor_ptfr_original;
 
-        if (verbo_http === "POST"){
-            if (!valorOriginalAlterado){
-                valor_ptfr_original = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
-            }else{
-                valor_ptfr_original = trataNumericos(values.valor_original)
-            }
-        }else{
-            valor_ptfr_original = trataNumericos(values.valor_original)
-        }
+        valor_ptfr_original = trataNumericos(values.valor_original)
+
 
         let valor_total_dos_rateios_original = 0;
         let valor_total_dos_rateios_capital_original = 0;
@@ -589,14 +581,13 @@ export const CadastroForm = ({verbo_http}) => {
                                                 thousandSeparator="."
                                                 //value={props.values.valor_original }
                                                 //value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado && !valorRateioOriginalAlterado ? calculaValorOriginal(values) : props.values.valor_original }
-                                                value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado  ? calculaValorOriginal(values) : props.values.valor_original }
+                                                value={ props.values.valor_original }
                                                 name="valor_original"
                                                 id="valor_original"
                                                 className="form-control"
                                                 //onChangeEvent={props.handleChange}
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
-                                                    setValorOriginalAlterado(true)
                                                     setValorRealizado(setFieldValue, e.target.value)
                                                 }}
                                                 disabled={readOnlyCampos}
