@@ -24,3 +24,21 @@ input[data-state="invalid"] {
   background-color: #C65D00;
   border-radius: 3px;
 }
+
+.link-exportar, .texto-link-exportar{
+  color: #00585E;
+}
+.link-exportar:hover{
+  cursor: pointer;
+}
+
+.label-valor-realizado{
+  color: #A4A4A4;
+}
+
+.input-valor-realizado-vazio{
+  color: #A4A4A4;
+}
+.input-valor-realizado-preenchido{
+  color: #495057;
+}
