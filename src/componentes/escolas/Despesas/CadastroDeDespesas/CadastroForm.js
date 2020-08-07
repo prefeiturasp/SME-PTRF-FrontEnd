@@ -358,7 +358,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                 disabled={readOnlyCampos || numreoDocumentoReadOnly}
                                             />
                                             {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
-
                                         </div>
 
                                         <div className="col-12 col-md-6 mt-4">
@@ -417,7 +416,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                 {props.errors.documento_transacao && <span className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
                                             </div>
                                         </div>
-
                                     </div>
 
                                     <div className="form-row">
@@ -458,7 +456,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
                                                 }}
-
                                                 disabled={readOnlyCampos}
                                             />
                                             {props.errors.valor_total &&
