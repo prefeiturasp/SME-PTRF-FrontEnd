@@ -20,7 +20,7 @@ export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChang
                     <div className="col-12 col-md-6">
                         <div className="row">
                             <div className="col-md-6">
-                                <label htmlFor="regularidade">Filtrar por ação</label>
+                                <label htmlFor="regularidade">Filtrar por regularidade</label>
                                 <select
                                     value={stateFiltros.regularidade}
                                     onChange={(e) => handleChangeFiltrosAssociacao(e.target.name, e.target.value)}
@@ -28,14 +28,14 @@ export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChang
                                     id="regularidade"
                                     className="form-control"
                                 >
-                                    <option value="">Selecione uma ação</option>
+                                    <option value="">Selecione um status</option>
                                     {tabelaAssociacoes.status_regularidade && tabelaAssociacoes.status_regularidade.length > 0 && tabelaAssociacoes.status_regularidade.map(item => (
                                         <option key={item.id} value={item.id}>{item.nome}</option>
                                     ))}
                                 </select>
                             </div>
                             <div className="col-md-6">
-                                <label htmlFor="tipo_de_unidade">Filtrar por ação</label>
+                                <label htmlFor="tipo_de_unidade">Filtrar por tipo de unidade</label>
                                 <select
                                     value={stateFiltros.tipo_de_unidade}
                                     onChange={(e) => handleChangeFiltrosAssociacao(e.target.name, e.target.value)}
@@ -43,7 +43,7 @@ export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChang
                                     id="tipo_de_unidade"
                                     className="form-control"
                                 >
-                                    <option value="">Selecione uma ação</option>
+                                    <option value="">Selecione um tipo</option>
                                     {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.map(item => (
                                         <option key={item.id} value={item.id}>{item.nome}</option>
                                     ))}

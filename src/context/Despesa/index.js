@@ -33,9 +33,11 @@ export const DespesaContextProvider = ({children}) => {
         valor_total: "",
         valor_recursos_proprios: "",
         // Auxiliares
-        mais_de_um_tipo_despesa: "",
+        mais_de_um_tipo_despesa: "nao",
         valor_recusos_acoes:0,
         valor_total_dos_rateios:0,
+        valor_original:"",
+        valor_original_total:"",
         // Fim Auxiliares
         rateios: [
             {
@@ -50,6 +52,7 @@ export const DespesaContextProvider = ({children}) => {
                 valor_rateio: "",
                 quantidade_itens_capital: "",
                 valor_item_capital: "",
+                valor_original: "",
                 numero_processo_incorporacao_capital: "",
             }
         ],
@@ -68,9 +71,11 @@ export const DespesaContextProvider = ({children}) => {
         valor_total: "",
         valor_recursos_proprios: "",
         // Auxiliares
-        mais_de_um_tipo_despesa: "",
+        mais_de_um_tipo_despesa: "nao",
         valor_recusos_acoes:0,
         valor_total_dos_rateios:0,
+        valor_original:"",
+        valor_original_total:"",
         // Fim Auxiliares
         rateios: [
             {
@@ -85,6 +90,7 @@ export const DespesaContextProvider = ({children}) => {
                 valor_rateio: "",
                 quantidade_itens_capital: "",
                 valor_item_capital: "",
+                valor_original: "",
                 numero_processo_incorporacao_capital: "",
             }
         ],

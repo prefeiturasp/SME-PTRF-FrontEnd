@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
-import {YupSignupSchemaCadastroDespesa, validaPayloadDespesas, cpfMaskContitional, calculaValorRecursoAcoes, round, periodoFechado} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaCadastroDespesa, validaPayloadDespesas, cpfMaskContitional, calculaValorRecursoAcoes, round, periodoFechado, calculaValorOriginal} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import {getDespesasTabelas, criarDespesa, alterarDespesa, deleteDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getNomeRazaoSocial, getDespesaCadastrada} from "../../../../services/escolas/Despesas.service";
 import {getVerificarSaldo} from "../../../../services/escolas/RateiosDespesas.service";
@@ -45,6 +45,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
     const [loading, setLoading] = useState(true);
     const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
+    const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
     const [numreoDocumentoReadOnly, setNumreoDocumentoReadOnly] = useState(false);
 
     useEffect(()=>{
@@ -173,6 +174,12 @@ export const CadastroForm = ({verbo_http}) => {
             setExibeMsgErroValorRecursos(false)
         }
 
+        if (errors && errors.valor_original){
+            setExibeMsgErroValorOriginal(true)
+        }else {
+            setExibeMsgErroValorOriginal(false)
+        }
+
         validaPayloadDespesas(values);
 
         if (Object.entries(errors).length === 0 && values.cpf_cnpj_fornecedor) {
@@ -250,7 +257,7 @@ export const CadastroForm = ({verbo_http}) => {
         if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
             setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
             setFieldValue('rateios[0].quantidade_itens_capital', 1);
-            setFieldValue('rateios[0].valor_item_capital', calculaValorRecursoAcoes(values));
+            setFieldValue('rateios[0].valor_item_capital', calculaValorOriginal(values));
         }else {
             setFieldValue('rateios[0].valor_rateio', 0);
             setFieldValue('rateios[0].quantidade_itens_capital', "");
@@ -258,8 +265,65 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
+    const setValoresRateiosOriginal = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
+        if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
+            setFieldValue('rateios[0].valor_original', calculaValorOriginal(values));
+        }else {
+            setFieldValue('rateios[0].valor_original', 0);
+        }
+    };
+
+    const setValorRealizado = (setFieldValue, valor) =>{
+        setFieldValue("valor_total", trataNumericos(valor))
+    };
+
+    const getErroValorOriginalRateios = (values) =>{
+        let valor_ptfr_original;
+
+        valor_ptfr_original = calculaValorOriginal(values);
+
+        console.log("getErroValorOriginalRateios valor_ptfr_original ", valor_ptfr_original)
+
+
+        let valor_total_dos_rateios_original = 0;
+        let valor_total_dos_rateios_capital_original = 0;
+        let valor_total_dos_rateios_custeio_original = 0;
+
+        values.rateios.map((rateio)=>{
+            if (rateio.aplicacao_recurso === "CAPITAL"){
+                valor_total_dos_rateios_capital_original = valor_total_dos_rateios_capital_original + trataNumericos(rateio.quantidade_itens_capital) * trataNumericos(rateio.valor_item_capital)
+            }else{
+                valor_total_dos_rateios_custeio_original = valor_total_dos_rateios_custeio_original + trataNumericos(rateio.valor_original)
+            }
+        });
+
+        valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original
+
+
+        console.log("getErroValorOriginalRateios var_valor_total_dos_rateios ", valor_total_dos_rateios_original)
+
+        return round(valor_ptfr_original, 2) - round(valor_total_dos_rateios_original, 2)
+
+    };
+
+    const getErroValorRealizadoRateios = (values) =>{
+        let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
+        let var_valor_total_dos_rateios = 0;
+        let var_valor_total_dos_rateios_capital = 0;
+        let var_valor_total_dos_rateios_custeio = 0;
+
+        values.rateios.map((rateio) => {
+            var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
+        });
+        var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio;
+
+        return round(var_valor_recursos_acoes, 2) - round(var_valor_total_dos_rateios, 2);
+    };
+
     const validateFormDespesas = async (values) => {
         setExibeMsgErroValorRecursos(false);
+        setExibeMsgErroValorOriginal(false);
+
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
         // Verifica período fechado para a receita
@@ -295,24 +359,22 @@ export const CadastroForm = ({verbo_http}) => {
             }
         }
 
-        let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
-        let var_valor_total_dos_rateios = 0;
-        let var_valor_total_dos_rateios_capital = 0;
-        let var_valor_total_dos_rateios_custeio = 0;
-
-        values.rateios.map((rateio) => {
-            if (rateio.aplicacao_recurso === "CAPITAL"){
-                var_valor_total_dos_rateios_capital = var_valor_total_dos_rateios_capital + trataNumericos(rateio.quantidade_itens_capital) * trataNumericos(rateio.valor_item_capital)
-            }else{
-                var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
-            }
-        });
-
-        var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio;
-
-        if (round(var_valor_recursos_acoes,2) !== round(var_valor_total_dos_rateios,2)) {
-            errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa.';
+        // Verificando erros nos valores de rateios e rateios original
+        if (getErroValorRealizadoRateios(values) !== 0){
+            let diferenca = Number(getErroValorRealizadoRateios(values)).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa. Difrerença de  R$ '+ diferenca;
         }
+        if (getErroValorOriginalRateios(values) !== 0){
+            let diferenca = Number(getErroValorOriginalRateios(values)).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            errors.valor_original = "O total das despesas originais deve corresponder ao valor total dos recursos originais. Difrerença de  R$ " + diferenca
+        }
+
         return errors;
     };
 
@@ -328,6 +390,10 @@ export const CadastroForm = ({verbo_http}) => {
         }else {
             setCssEscondeDocumentoTransacao("escondeItem");
         }
+    };
+
+    const getDiferencaValores = (valor_a, valor_b) => {
+        let diferenca = valor_a - valor_b
     };
 
     return (
@@ -428,13 +494,11 @@ export const CadastroForm = ({verbo_http}) => {
                                         <div className="col-12 col-md-3 mt-4">
                                             <label htmlFor="data_documento">Data do documento</label>
                                             <DatePickerField
-                                                //disabled={readOnlyCampos}
                                                 name="data_documento"
                                                 id="data_documento"
                                                 value={values.data_documento != null ? values.data_documento : ""}
                                                 onChange={setFieldValue}
                                                 about={despesaContext.verboHttp}
-
                                             />
                                             {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                         </div>
@@ -463,7 +527,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                         props.values.tipo_transacao === "object" ? props.values.tipo_transacao.id : props.values.tipo_transacao.id
                                                     ) : ""
                                                 }
-                                                //onChange={props.handleChange}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                     exibeDocumentoTransacao(e.target.value)
@@ -492,8 +555,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 disabled={readOnlyCampos}
                                             />
                                             {props.errors.data_transacao &&
-                                            <span
-                                                className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
+                                            <span className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
                                         </div>
 
                                         <div className="col-12 col-md-3 mt-4">
@@ -510,28 +572,51 @@ export const CadastroForm = ({verbo_http}) => {
                                                     placeholder="Digite o número do documento"
                                                     disabled={readOnlyCampos}
                                                 />
-                                                {props.errors.documento_transacao && <span
-                                                    className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
+                                                {props.errors.documento_transacao && <span className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
                                             </div>
                                         </div>
 
                                     </div>
 
                                     <div className="form-row">
-
-
                                         <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="valor_total">Valor total do documento</label>
+                                            <label htmlFor="valor_original">Valor total do documento</label>
                                             <CurrencyInput
                                                 allowNegative={false}
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
-                                                value={props.values.valor_total}
+                                                //value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado && !valorRateioOriginalAlterado ? calculaValorOriginal(values) : props.values.valor_original }
+                                                value={ props.values.valor_original }
+                                                name="valor_original"
+                                                id="valor_original"
+                                                className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                selectAllOnFocus={true}
+                                                onChangeEvent={(e) => {
+                                                    props.handleChange(e);
+                                                    setValorRealizado(setFieldValue, e.target.value);
+                                                }}
+                                                disabled={readOnlyCampos}
+                                            />
+                                            {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
+                                        </div>
+
+                                        <div className="col-12 col-md-3 mt-4">
+                                            <label htmlFor="valor_total" className="label-valor-realizado">Valor realizado</label>
+                                            <CurrencyInput
+                                                allowNegative={false}
+                                                prefix='R$'
+                                                decimalSeparator=","
+                                                thousandSeparator="."
+                                                value={values.valor_total}
                                                 name="valor_total"
                                                 id="valor_total"
-                                                className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                                onChangeEvent={props.handleChange}
+                                                className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control ${trataNumericos(props.values.valor_total) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
+                                                selectAllOnFocus={true}
+                                                onChangeEvent={(e) => {
+                                                    props.handleChange(e);
+                                                }}
+
                                                 disabled={readOnlyCampos}
                                             />
                                             {props.errors.valor_total &&
@@ -545,11 +630,14 @@ export const CadastroForm = ({verbo_http}) => {
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
-                                                value={props.values.valor_recursos_proprios}
+                                                value={values.valor_recursos_proprios}
                                                 name="valor_recursos_proprios"
                                                 id="valor_recursos_proprios"
                                                 className="form-control"
-                                                onChangeEvent={props.handleChange}
+                                                selectAllOnFocus={true}
+                                                onChangeEvent={(e) => {
+                                                    props.handleChange(e);
+                                                }}
                                                 disabled={readOnlyCampos}
                                             />
                                             {props.errors.valor_recursos_proprios && <span
@@ -577,6 +665,8 @@ export const CadastroForm = ({verbo_http}) => {
                                             </Field>
                                             {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                                         </div>
+
+
                                     </div>
 
                                     <hr/>
@@ -586,10 +676,10 @@ export const CadastroForm = ({verbo_http}) => {
                                         <div className="col-12 col-md-3 ">
                                             <select
                                                 value={props.values.mais_de_um_tipo_despesa}
-                                                //onChange={props.handleChange}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                     setaValoresCusteioCapital(e.target.value, values, setFieldValue);
+                                                    setValoresRateiosOriginal(e.target.value, values, setFieldValue);
                                                 }}
                                                 name='mais_de_um_tipo_despesa'
                                                 id='mais_de_um_tipo_despesa'
@@ -639,12 +729,14 @@ export const CadastroForm = ({verbo_http}) => {
                                                                             props.handleChange(e);
                                                                             handleAvisoCapital(e.target.value);
                                                                             setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+                                                                            setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+
                                                                         }}
                                                                         name={`rateios[${index}].aplicacao_recurso`}
                                                                         id='aplicacao_recurso'
                                                                         className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                                         disabled={readOnlyCampos}
-                                                                    >   
+                                                                    >
                                                                         <option key={0} value="">Escolha uma opção</option>
                                                                         {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map(item => (
                                                                             <option key={item.id}
@@ -665,6 +757,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         disabled={readOnlyCampos}
                                                                         errors={errors}
                                                                         exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
+                                                                        exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
                                                                     />
                                                                 ) :
                                                                 rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -678,6 +771,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         disabled={readOnlyCampos}
                                                                         errors={errors}
                                                                         exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
+                                                                        exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
                                                                     />
                                                                 ) : null}
 
@@ -701,23 +795,31 @@ export const CadastroForm = ({verbo_http}) => {
                                                     <button
                                                         type="button"
                                                         className="btn btn btn-outline-success mt-2 mr-2"
-                                                        onClick={() => push(
-                                                            {
-                                                                associacao: localStorage.getItem(ASSOCIACAO_UUID),
-                                                                escolha_tags:"",
-                                                                tag:"",
-                                                                conta_associacao: "",
-                                                                acao_associacao: "",
-                                                                aplicacao_recurso: "",
-                                                                tipo_custeio: "",
-                                                                especificacao_material_servico: "",
-                                                                valor_rateio: "",
-                                                                quantidade_itens_capital: "",
-                                                                valor_item_capital: "",
-                                                                numero_processo_incorporacao_capital: ""
-                                                            }
-                                                        )
-                                                        }
+                                                        onChange={(e) => {
+                                                            props.handleChange(e);
+                                                            handleAvisoCapital(e.target.value);
+                                                            setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+                                                            setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+                                                        }}
+                                                        onClick={() =>  {
+                                                            push(
+                                                                {
+                                                                    associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                                                                    escolha_tags:"",
+                                                                    tag:"",
+                                                                    conta_associacao: "",
+                                                                    acao_associacao: "",
+                                                                    aplicacao_recurso: "",
+                                                                    tipo_custeio: "",
+                                                                    especificacao_material_servico: "",
+                                                                    valor_rateio: "",
+                                                                    quantidade_itens_capital: "",
+                                                                    valor_item_capital: "",
+                                                                    valor_original: "",
+                                                                    numero_processo_incorporacao_capital: ""
+                                                                }
+                                                            );
+                                                        }}
                                                     >
                                                         + Adicionar despesa parcial
                                                     </button>
@@ -740,8 +842,12 @@ export const CadastroForm = ({verbo_http}) => {
                                         </button>
                                     </div>
                                     <div className="d-flex justify-content-end">
-                                        {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}
+                                        <p>{errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}</p>
                                     </div>
+                                    <div className="d-flex justify-content-end">
+                                        <p>{errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> {errors.valor_original}</span>}</p>
+                                    </div>
+
                                     <section>
                                         <SaldoInsuficiente
                                             saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}

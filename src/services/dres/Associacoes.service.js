@@ -8,18 +8,28 @@ const authHeader = {
     }
 };
 
+const url = window.location.href;
+
+const getUuidPorUrl = () => {
+    if (url === "http://localhost:3000/dre-associacoes"){
+        return "a3867d38-4b3d-4b5a-8fbd-c0cfb1625ebb"
+    }else if (url === "https://dev-sig.escola.sme.prefeitura.sp.gov.br/dre-associacoes"){
+        return "82b460c6-7b6a-4de6-9376-d66a47f8d6b1"
+    }else if (url === "https://hom-sig.escola.sme.prefeitura.sp.gov.br/dre-associacoes"){
+        return "707e5ccb-5937-4ea7-9140-94a7039fcd73"
+    }
+};
+
 export const getTabelaAssociacoes = async () => {
     return (await api.get(`/api/associacoes/tabelas`, authHeader)).data
 };
 
 export const getAssociacoesPorUnidade = async () => {
-    //DEV return (await api.get(`api/associacoes/?unidade__dre__uuid=82b460c6-7b6a-4de6-9376-d66a47f8d6b1`, authHeader)).data
-    return (await api.get(`api/associacoes/?unidade__dre__uuid=707e5ccb-5937-4ea7-9140-94a7039fcd73`, authHeader)).data
+    return (await api.get(`api/associacoes/?unidade__dre__uuid=${getUuidPorUrl()}`, authHeader)).data // DEV
 };
 
 export const filtrosAssociacoes = async (nome=null, status_regularidade=null, unidade__tipo_unidade=null) => {
-    //DEV return (await api.get(`api/associacoes/?unidade__dre__uuid=82b460c6-7b6a-4de6-9376-d66a47f8d6b1&nome=${nome}&status_regularidade=${status_regularidade}&unidade__tipo_unidade=${unidade__tipo_unidade}`, authHeader)).data
-    return (await api.get(`api/associacoes/?unidade__dre__uuid=707e5ccb-5937-4ea7-9140-94a7039fcd73&nome=${nome}&status_regularidade=${status_regularidade}&unidade__tipo_unidade=${unidade__tipo_unidade}`, authHeader)).data
+    return (await api.get(`api/associacoes/?unidade__dre__uuid=${getUuidPorUrl()}&nome=${nome}&status_regularidade=${status_regularidade}&unidade__tipo_unidade=${unidade__tipo_unidade}`, authHeader)).data // DEV
 };
 
 export const getAssociacao = async (uuid_associacao) => {
