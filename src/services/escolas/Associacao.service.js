@@ -26,7 +26,7 @@ export const getPeriodoFechado = async (data_verificacao) => {
 };
 
 export const getMembrosAssociacao = async () => {
-    return (await api.get(`/api/membros-associacao/`, authHeader)).data
+    return (await api.get(`/api/membros-associacao/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
 
 export const criarMembroAssociacao = async (payload) => {
@@ -34,7 +34,7 @@ export const criarMembroAssociacao = async (payload) => {
 };
 
 export const editarMembroAssociacao = async (payload, uuid) => {
-    return (await api.put(`/api/membros-associacao/${uuid}/`, payload, authHeader))
+    return (await api.put(`/api/membros-associacao/${uuid}/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, payload, authHeader))
 };
 
 export const consultarRF = async (rf) => {
@@ -74,4 +74,3 @@ export const exportarDadosAssociacao = async () => {
 export const getPeriodosDePrestacaoDeContasDaAssociacao = async () => {
     return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/periodos-para-prestacao-de-contas/`, authHeader)).data
 };
-
