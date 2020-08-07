@@ -254,7 +254,8 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const setaValoresCusteioCapital = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
-        if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
+        console.log("setaValoresCusteioCapital ", values)
+        if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao' && values.rateios.length <=1){
             setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
             setFieldValue('rateios[0].quantidade_itens_capital', 1);
             setFieldValue('rateios[0].valor_item_capital', calculaValorOriginal(values));
@@ -266,7 +267,7 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const setValoresRateiosOriginal = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
-        if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
+        if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao' && values.rateios.length <=1 ){
             setFieldValue('rateios[0].valor_original', calculaValorOriginal(values));
         }else {
             setFieldValue('rateios[0].valor_original', 0);
@@ -282,9 +283,6 @@ export const CadastroForm = ({verbo_http}) => {
 
         valor_ptfr_original = calculaValorOriginal(values);
 
-        console.log("getErroValorOriginalRateios valor_ptfr_original ", valor_ptfr_original)
-
-
         let valor_total_dos_rateios_original = 0;
         let valor_total_dos_rateios_capital_original = 0;
         let valor_total_dos_rateios_custeio_original = 0;
@@ -298,9 +296,6 @@ export const CadastroForm = ({verbo_http}) => {
         });
 
         valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original
-
-
-        console.log("getErroValorOriginalRateios var_valor_total_dos_rateios ", valor_total_dos_rateios_original)
 
         return round(valor_ptfr_original, 2) - round(valor_total_dos_rateios_original, 2)
 
@@ -728,8 +723,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         onChange={(e) => {
                                                                             props.handleChange(e);
                                                                             handleAvisoCapital(e.target.value);
-                                                                            setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
-                                                                            setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+                                                                            //setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+                                                                            //setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
 
                                                                         }}
                                                                         name={`rateios[${index}].aplicacao_recurso`}
@@ -798,8 +793,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                         onChange={(e) => {
                                                             props.handleChange(e);
                                                             handleAvisoCapital(e.target.value);
-                                                            setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
-                                                            setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+                                                            //setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+                                                            //setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
                                                         }}
                                                         onClick={() =>  {
                                                             push(
