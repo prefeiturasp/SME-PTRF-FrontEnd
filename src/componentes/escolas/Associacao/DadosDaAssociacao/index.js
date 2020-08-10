@@ -35,6 +35,7 @@ export const DadosDaAsssociacao = () => {
 
     const buscaAssociacao = async () => {
         const associacao = await getAssociacao();
+        console.log("getAssociacao ", associacao)
         setStateAssociacao(associacao)
     };
 
@@ -148,20 +149,18 @@ export const DadosDaAsssociacao = () => {
                                         </div>
                                         <div className="form-row">
                                             <div className="form-group col-md-6">
-                                                <label htmlFor="dre"><strong>Diretoria Regional de
-                                                    Educação</strong></label>
+                                                <label htmlFor="dre"><strong>Diretoria Regional de Educação</strong></label>
                                                 <input
                                                     readOnly={true}
                                                     type="text"
-                                                    value={props.values.unidade && props.values.unidade.dre.nome ? props.values.unidade.dre.nome : ""}
+                                                    value={props.values.unidade && props.values.unidade.dre && props.values.unidade.dre.nome ? props.values.unidade.dre.nome : ""}
                                                     name="dre"
                                                     id="dre"
                                                     className="form-control"
                                                     onChange={props.handleChange}
                                                     onBlur={props.handleBlur}
                                                 />
-                                                {props.touched.dre && props.errors.dre && <span
-                                                    className="span_erro text-danger mt-1"> {props.errors.dre} </span>}
+                                                {props.touched.dre && props.errors.dre.nome && <span className="span_erro text-danger mt-1"> {props.errors.dre} </span>}
 
                                             </div>
 
