@@ -7,7 +7,7 @@ import IconeMenuPainel from '../../../assets/img/icone-menu-painel.svg'
 import IconeMenuCreditosDaEscola from '../../../assets/img/icone-menu-creditos-da-escola.svg'
 import IconeMenuGastosDaEscola from '../../../assets/img/icone-menu-gastos-da-escola.svg'
 import IconeMenuPrestacaoDeContas from '../../../assets/img/icone-menu-prestacao-de-contas.svg'
-import {redirect} from "../../../utils/redirect";
+import IconeDadosDaDiretoria from '../../../assets/img/icone-dados-da-diretoria.svg'
 
 const getDadosUsuario = () =>{
     let usuario = localStorage.getItem(USUARIO_NOME);
@@ -46,6 +46,7 @@ const UrlsMenuDres ={
     },
     lista_de_urls:[
         {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola},
+        {label: "Dados da Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria},
     ]
 };
 
