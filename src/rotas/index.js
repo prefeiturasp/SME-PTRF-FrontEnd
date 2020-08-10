@@ -26,6 +26,7 @@ import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
 import {DadosDaUnidadeEducacionalPage} from "../paginas/dres/Associacoes/DadosDaUnidadeEducacional";
 import {DadosDaAssociacaoDrePage} from "../paginas/dres/Associacoes/DadosDaAssociacao";
 import {DadosDasContasDrePage} from "../paginas/dres/Associacoes/DadosDasContas";
+import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
 
 const routesConfig = [
     {
@@ -122,6 +123,11 @@ const routesConfig = [
         exact: true,
         path: "/dre-dados-das-contas",
         component: DadosDasContasDrePage
+    },
+    {
+        exact: true,
+        path: "/dre-dados-da-diretoria",
+        component: DadosDaDiretoriaDrePage
     },
     {
         exact: true,
