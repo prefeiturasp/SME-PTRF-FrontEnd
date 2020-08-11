@@ -4,11 +4,14 @@ import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {Formik} from "formik";
+import MaskedInput from 'react-text-mask'
 import {salvaDadosDiretoria} from "../../../../services/dres/Unidades.service";
 import {YupSignupSchemaDreDadosDiretoria} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {consultarRF} from "../../../../services/escolas/Associacao.service";
+import Loading from "../../../../utils/Loading";
 
 export const DadosDaDiretoria = () => {
+    const [loading, setLoading] = useState(true);
     const [dadosDiretoria, setDadosDiretoria] = useState(null);
     const [stateFormDiretoria, setStateFormDiretoria] = useState({
         dre_cnpj: "",
@@ -24,7 +27,6 @@ export const DadosDaDiretoria = () => {
 
     const buscaDiretoria = async () => {
         let diretoria = await getAssociacao(localStorage.getItem(ASSOCIACAO_UUID));
-        console.log("Diretoria ", diretoria.unidade)
         setDadosDiretoria(diretoria.unidade)
         setStateFormDiretoria({
             dre_cnpj: diretoria.unidade.dre_cnpj,
@@ -33,26 +35,8 @@ export const DadosDaDiretoria = () => {
             dre_designacao_portaria: diretoria.unidade.dre_designacao_portaria,
             dre_designacao_ano: diretoria.unidade.dre_designacao_ano,
         })
+        setLoading(false)
     };
-
-    const onChangeRf = async (values, errors) =>{
-        try {
-            let rf = await consultarRF(values.dre_diretor_regional_rf.trim());
-            if (rf.status === 200 || rf.status === 201) {
-                const init = {
-                    dre_cnpj: values.dre_cnpj,
-                    dre_diretor_regional_rf: values.dre_diretor_regional_rf,
-                    dre_diretor_regional_nome: rf.data[0].nm_pessoa,
-                    dre_designacao_portaria: values.dre_designacao_portaria,
-                    dre_designacao_ano: values.dre_designacao_ano,
-                };
-                setStateFormDiretoria(init);
-            }
-        }catch (e) {
-            errors.dre_diretor_regional_rf = "RF inválido"
-        }
-        return errors
-    }
 
     const validateFormDiretoria = async (values) => {
         const errors = {};
@@ -75,6 +59,7 @@ export const DadosDaDiretoria = () => {
     };
 
     const handleSubmit = async (values) => {
+        setLoading(true)
         const payload = {
             "dre_cnpj": values.dre_cnpj,
             "dre_diretor_regional_rf": values.dre_diretor_regional_rf,
@@ -90,18 +75,27 @@ export const DadosDaDiretoria = () => {
                 await buscaDiretoria();
             } else {
                 console.log(response);
-                return
             }
         } catch (error) {
-            console.log(error);
-            return
+            console.log("Erro ao salvar os dados ", error);
         }
 
+        setLoading(false)
     };
 
     return (
         <>
-            {dadosDiretoria ? (
+            {loading ? (
+                    <div className="mt-5">
+                        <Loading
+                            corGrafico="black"
+                            corFonte="dark"
+                            marginTop="0"
+                            marginBottom="0"
+                        />
+                    </div>
+                ) :
+                dadosDiretoria ? (
                 <>
                     <div className="d-flex bd-highlight">
                         <div className="p-2 flex-grow-1 bd-highlight">
@@ -111,11 +105,9 @@ export const DadosDaDiretoria = () => {
                     <div className="page-content-inner">
                         <div className="row">
                             <div className="col-12">
-
                                 <MenuInterno
                                     caminhos_menu_interno={UrlsMenuInterno}
                                 />
-
                                 <Formik
                                     initialValues={stateFormDiretoria}
                                     validateOnBlur={true}
@@ -135,7 +127,8 @@ export const DadosDaDiretoria = () => {
                                             <div className="form-row">
                                                 <div className="form-group col-12">
                                                     <label htmlFor="dre_cnpj">Número do CNPJ</label>
-                                                    <input
+                                                    <MaskedInput
+                                                        mask = {[/\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, '-', /\d/,/\d/]}
                                                         type="text"
                                                         value={props.values.dre_cnpj}
                                                         name="dre_cnpj"
@@ -223,4 +216,4 @@ export const DadosDaDiretoria = () => {
             ) : null}
         </>
     )
-}
+};

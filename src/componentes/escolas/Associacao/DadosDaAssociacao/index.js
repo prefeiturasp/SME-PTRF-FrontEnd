@@ -35,7 +35,6 @@ export const DadosDaAsssociacao = () => {
 
     const buscaAssociacao = async () => {
         const associacao = await getAssociacao();
-        console.log("getAssociacao ", associacao)
         setStateAssociacao(associacao)
     };
 
