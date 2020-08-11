@@ -20,6 +20,7 @@ import {EsqueciMinhaSenhaPage} from "../paginas/Login/EsqueciMinhaSenha";
 import {RedefinirSenhaPage} from "../paginas/Login/RedefinirMinhaSenha";
 import {MeusDadosPage} from "../paginas/escolas/MeusDados";
 import {AssociacoesPage} from "../paginas/dres/Associacoes";
+import {ProcessosSeiPage} from "../paginas/dres/Associacoes/ProcessosSei";
 import { authService } from '../services/auth.service';
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
@@ -126,6 +127,11 @@ const routesConfig = [
     },
     {
         exact: true,
+        path: "/dre-processos-sei",
+        component: ProcessosSeiPage
+    },
+    {
+        exact: true,      
         path: "/dre-dados-da-diretoria",
         component: DadosDaDiretoriaDrePage
     },
