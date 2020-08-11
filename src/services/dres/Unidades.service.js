@@ -9,5 +9,9 @@ const authHeader = {
 };
 
 export const getUnidade = async (uuid_unidade) => {
-    return (await api.get(`api/associacoes/00188676-7465-4270-87d8-1ebc3ed1fbda`, authHeader)).data
+    return (await api.get(`api/unidades/00188676-7465-4270-87d8-1ebc3ed1fbda`, authHeader)).data
+};
+
+export const salvaDadosDiretoria = async (uuid_unidade, payload) => {
+    return (await api.patch(`api/unidades/${uuid_unidade}/`, payload, authHeader)).data
 };

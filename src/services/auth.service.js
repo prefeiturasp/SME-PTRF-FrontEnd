@@ -27,6 +27,7 @@ const login = async (login, senha) => {
     try {
         const response = (await api.post('api/login', payload, authHeader));
         const resp = response.data;
+        console.log("LOGIN ", resp)
 
         if (response.status === HTTP_STATUS.OK) {
             if (resp.detail) {
