@@ -48,3 +48,7 @@ export const updateAssociacao = async (uuid_associacao, payload) => {
         return error.response;
     });
 };
+
+export const getProcessosAssociacao = async (uuid_associacao) => {
+    return (await api.get(`api/associacoes/${uuid_associacao}/processos`, authHeader)).data
+};

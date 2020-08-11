@@ -4,6 +4,7 @@ import {TopoComBotoes} from "../TopoComBotoes";
 import {MenuInterno} from "../../../../Globais/MenuInterno";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {ProcessoSeiRegularidade} from "./ProcessoSeiRegularidade";
+import {ProcessosSeiPrestacaoDeContas} from "./ProcessosSeiPrestacaoDeContas";
 
 export const ProcessosSei = () =>{
     let dadosDaAssociacao = JSON.parse(localStorage.getItem("DADOS_DA_ASSOCIACAO"));
@@ -19,6 +20,9 @@ export const ProcessosSei = () =>{
                                 caminhos_menu_interno = {UrlsMenuInterno}
                             />
                             <ProcessoSeiRegularidade
+                                dadosDaAssociacao={dadosDaAssociacao}
+                            />
+                            <ProcessosSeiPrestacaoDeContas
                                 dadosDaAssociacao={dadosDaAssociacao}
                             />
                         </div>
