@@ -5,6 +5,8 @@ import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {Formik} from "formik";
 import {salvaDadosDiretoria} from "../../../../services/dres/Unidades.service";
+import {YupSignupSchemaDreDadosDiretoria} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {consultarRF} from "../../../../services/escolas/Associacao.service";
 
 export const DadosDaDiretoria = () => {
     const [dadosDiretoria, setDadosDiretoria] = useState(null);
@@ -22,7 +24,7 @@ export const DadosDaDiretoria = () => {
 
     const buscaDiretoria = async () => {
         let diretoria = await getAssociacao(localStorage.getItem(ASSOCIACAO_UUID));
-        console.log("Diretoria ", diretoria.unidade.dre.nome)
+        console.log("Diretoria ", diretoria.unidade)
         setDadosDiretoria(diretoria.unidade)
         setStateFormDiretoria({
             dre_cnpj: diretoria.unidade.dre_cnpj,
@@ -33,10 +35,46 @@ export const DadosDaDiretoria = () => {
         })
     };
 
+    const onChangeRf = async (values, errors) =>{
+        try {
+            let rf = await consultarRF(values.dre_diretor_regional_rf.trim());
+            if (rf.status === 200 || rf.status === 201) {
+                const init = {
+                    dre_cnpj: values.dre_cnpj,
+                    dre_diretor_regional_rf: values.dre_diretor_regional_rf,
+                    dre_diretor_regional_nome: rf.data[0].nm_pessoa,
+                    dre_designacao_portaria: values.dre_designacao_portaria,
+                    dre_designacao_ano: values.dre_designacao_ano,
+                };
+                setStateFormDiretoria(init);
+            }
+        }catch (e) {
+            errors.dre_diretor_regional_rf = "RF inválido"
+        }
+        return errors
+    }
+
+    const validateFormDiretoria = async (values) => {
+        const errors = {};
+        try {
+            let rf = await consultarRF(values.dre_diretor_regional_rf.trim());
+            if (rf.status === 200 || rf.status === 201) {
+                const init = {
+                    dre_cnpj: values.dre_cnpj,
+                    dre_diretor_regional_rf: values.dre_diretor_regional_rf,
+                    dre_diretor_regional_nome: rf.data[0].nm_pessoa,
+                    dre_designacao_portaria: values.dre_designacao_portaria,
+                    dre_designacao_ano: values.dre_designacao_ano,
+                };
+                setStateFormDiretoria(init);
+            }
+        }catch (e) {
+            errors.dre_diretor_regional_rf = "RF inválido"
+        }
+        return errors
+    };
+
     const handleSubmit = async (values) => {
-
-        console.log("handleSubmit ", values)
-
         const payload = {
             "dre_cnpj": values.dre_cnpj,
             "dre_diretor_regional_rf": values.dre_diretor_regional_rf,
@@ -47,7 +85,6 @@ export const DadosDaDiretoria = () => {
 
         try {
             const response = await salvaDadosDiretoria(dadosDiretoria.uuid, payload);
-            console.log("SALVA ", response)
             if (response.status === 200) {
                 console.log("Operação realizada com sucesso!");
                 await buscaDiretoria();
@@ -82,11 +119,18 @@ export const DadosDaDiretoria = () => {
                                 <Formik
                                     initialValues={stateFormDiretoria}
                                     validateOnBlur={true}
-                                    //validationSchema={YupSignupSchemaDadosDaAssociacao}
+                                    validate={validateFormDiretoria}
+                                    validationSchema={YupSignupSchemaDreDadosDiretoria}
                                     enableReinitialize={true}
                                     onSubmit={handleSubmit}
                                 >
-                                    {props => (
+                                    {props => {
+                                        const {
+                                            errors,
+                                            values,
+                                            setFieldValue,
+                                        } = props;
+                                        return(
                                         <form onSubmit={props.handleSubmit}>
                                             <div className="form-row">
                                                 <div className="form-group col-12">
@@ -110,8 +154,9 @@ export const DadosDaDiretoria = () => {
                                                         name="dre_diretor_regional_rf"
                                                         id="dre_diretor_regional_rf"
                                                         className="form-control"
-                                                        onChange={props.handleChange}
-                                                        onBlur={props.handleBlur}
+                                                        onChange={(e)=>{
+                                                            props.handleChange(e);
+                                                        }}
                                                     />
                                                     {props.touched.dre_diretor_regional_rf && props.errors.dre_diretor_regional_rf && <span className="span_erro text-danger mt-1"> {props.errors.dre_diretor_regional_rf} </span>}
                                                 </div>
@@ -167,7 +212,8 @@ export const DadosDaDiretoria = () => {
                                             </div>
 
                                         </form>
-                                    )}
+                                        );
+                                    }}
                                 </Formik>
 
                             </div>

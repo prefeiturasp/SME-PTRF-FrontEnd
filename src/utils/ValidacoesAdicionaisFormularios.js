@@ -24,6 +24,23 @@ export const checkDuplicateInObject = (propertyName, inputArray) => {
   return seenDuplicate;
 };
 
+export const YupSignupSchemaDreDadosDiretoria = yup.object().shape({
+
+  dre_diretor_regional_rf: yup.string()
+  .test('test-name', 'É obrigatório e não pode ultrapassar 10 caracteres',
+      function (value) {
+        return !(!value || value.trim() === "" || value.length > 10);
+      }),
+
+  dre_cnpj: yup.string()
+  .test('test-name', 'Digite um CNPJ Válido',
+      function (value) {
+        if (value){
+          return valida_cnpj(value)
+        }
+      }),
+});
+
 export const YupSignupSchemaDadosDaAssociacao = yup.object().shape({
   email: yup.string().email("Digite um email válido"),
 });
