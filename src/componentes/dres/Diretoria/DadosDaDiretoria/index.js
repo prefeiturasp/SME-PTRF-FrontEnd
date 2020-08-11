@@ -38,9 +38,7 @@ export const DadosDaDiretoria = () => {
         setLoading(false)
     };
 
-
     const handleSubmit = async (values) => {
-
         const payload = {
             "dre_cnpj": values.dre_cnpj,
             "dre_diretor_regional_rf": values.dre_diretor_regional_rf,
@@ -56,20 +54,16 @@ export const DadosDaDiretoria = () => {
             if (response.status === 200) {
                 console.log("Operação realizada com sucesso!");
                 await buscaDiretoria();
-            } else {
-                console.log(response);
             }
         } catch (error) {
             console.log("Erro ao salvar os dados ", error);
         }
-
         setLoading(false)
     };
 
      const validateRf = async (value, setFieldValue) =>{
          try {
              let rf = await consultarRF(value);
-             console.log("STATUS ", rf);
              if (rf.status === 200 || rf.status === 201) {
                  let nome = rf.data[0].nm_pessoa;
                  setFieldValue("dre_diretor_regional_nome", nome)
@@ -146,9 +140,9 @@ export const DadosDaDiretoria = () => {
                                                             validateRf(e.target.value, setFieldValue)
                                                         }}
                                                     />
-                                                    {props.touched.dre_diretor_regional_rf && props.errors.dre_diretor_regional_rf && <span className="span_erro text-danger mt-1"> {props.errors.dre_diretor_regional_rf} </span>}
+                                                    {/*{props.touched.dre_diretor_regional_rf && props.errors.dre_diretor_regional_rf && <span className="span_erro text-danger mt-1"> {props.errors.dre_diretor_regional_rf} </span>}*/}
+                                                    {props.touched.dre_diretor_regional_nome && props.errors.dre_diretor_regional_nome && <span className="span_erro text-danger mt-1"> {props.errors.dre_diretor_regional_nome} </span>}
                                                 </div>
-
                                                 <div className="form-group col-md-6 mt-3">
                                                     <label htmlFor="dre_diretor_regional_nome">Nome do Diretor Regional</label>
                                                     <input
@@ -161,9 +155,7 @@ export const DadosDaDiretoria = () => {
                                                         onChange={props.handleChange}
                                                         onBlur={props.handleBlur}
                                                     />
-                                                    {props.touched.dre_diretor_regional_nome && props.errors.dre_diretor_regional_nome && <span className="span_erro text-danger mt-1"> {props.errors.dre_diretor_regional_nome} </span>}
                                                 </div>
-
                                                 <div className="form-group col-md-6 mt-3">
                                                     <label htmlFor="dre_designacao_portaria">Designação Portaria</label>
                                                     <input
@@ -177,7 +169,6 @@ export const DadosDaDiretoria = () => {
                                                     />
                                                     {props.touched.dre_designacao_portaria && props.errors.dre_designacao_portaria && <span className="span_erro text-danger mt-1"> {props.errors.dre_designacao_portaria} </span>}
                                                 </div>
-
                                                 <div className="form-group col-md-6 mt-3">
                                                     <label htmlFor="dre_designacao_ano">Designação Ano</label>
                                                     <input
@@ -191,19 +182,15 @@ export const DadosDaDiretoria = () => {
                                                     />
                                                     {props.touched.dre_designacao_ano && props.errors.dre_designacao_ano && <span className="span_erro text-danger mt-1"> {props.errors.dre_designacao_ano} </span>}
                                                 </div>
-
                                             </div>
-
                                             <div className="d-flex  justify-content-end pb-3">
                                                 <button onClick={props.handleReset} type="reset" className="btn btn btn-outline-success mt-2">Cancelar</button>
                                                 <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
                                             </div>
-
                                         </form>
                                         );
                                     }}
                                 </Formik>
-
                             </div>
                         </div>
                     </div>
