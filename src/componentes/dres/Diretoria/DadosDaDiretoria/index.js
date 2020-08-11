@@ -27,39 +27,20 @@ export const DadosDaDiretoria = () => {
 
     const buscaDiretoria = async () => {
         let diretoria = await getAssociacao(localStorage.getItem(ASSOCIACAO_UUID));
-        setDadosDiretoria(diretoria.unidade)
+        setDadosDiretoria(diretoria.unidade);
         setStateFormDiretoria({
             dre_cnpj: diretoria.unidade.dre_cnpj,
             dre_diretor_regional_rf: diretoria.unidade.dre_diretor_regional_rf,
             dre_diretor_regional_nome: diretoria.unidade.dre_diretor_regional_nome,
             dre_designacao_portaria: diretoria.unidade.dre_designacao_portaria,
             dre_designacao_ano: diretoria.unidade.dre_designacao_ano,
-        })
+        });
         setLoading(false)
     };
 
-    const validateFormDiretoria = async (values) => {
-        const errors = {};
-        try {
-            let rf = await consultarRF(values.dre_diretor_regional_rf.trim());
-            if (rf.status === 200 || rf.status === 201) {
-                const init = {
-                    dre_cnpj: values.dre_cnpj,
-                    dre_diretor_regional_rf: values.dre_diretor_regional_rf,
-                    dre_diretor_regional_nome: rf.data[0].nm_pessoa,
-                    dre_designacao_portaria: values.dre_designacao_portaria,
-                    dre_designacao_ano: values.dre_designacao_ano,
-                };
-                setStateFormDiretoria(init);
-            }
-        }catch (e) {
-            errors.dre_diretor_regional_rf = "RF inválido"
-        }
-        return errors
-    };
 
     const handleSubmit = async (values) => {
-        setLoading(true)
+
         const payload = {
             "dre_cnpj": values.dre_cnpj,
             "dre_diretor_regional_rf": values.dre_diretor_regional_rf,
@@ -67,6 +48,8 @@ export const DadosDaDiretoria = () => {
             "dre_designacao_portaria": values.dre_designacao_portaria,
             "dre_designacao_ano": values.dre_designacao_ano,
         };
+        setStateFormDiretoria(payload);
+        setLoading(true);
 
         try {
             const response = await salvaDadosDiretoria(dadosDiretoria.uuid, payload);
@@ -81,6 +64,19 @@ export const DadosDaDiretoria = () => {
         }
 
         setLoading(false)
+    };
+
+     const validateRf = async (value, setFieldValue) =>{
+         try {
+             let rf = await consultarRF(value);
+             console.log("STATUS ", rf);
+             if (rf.status === 200 || rf.status === 201) {
+                 let nome = rf.data[0].nm_pessoa;
+                 setFieldValue("dre_diretor_regional_nome", nome)
+             }
+         }catch (e) {
+             setFieldValue("dre_diretor_regional_nome", "")
+         }
     };
 
     return (
@@ -111,15 +107,13 @@ export const DadosDaDiretoria = () => {
                                 <Formik
                                     initialValues={stateFormDiretoria}
                                     validateOnBlur={true}
-                                    validate={validateFormDiretoria}
+                                    //validate={validateFormDiretoria}
                                     validationSchema={YupSignupSchemaDreDadosDiretoria}
                                     enableReinitialize={true}
                                     onSubmit={handleSubmit}
                                 >
                                     {props => {
                                         const {
-                                            errors,
-                                            values,
                                             setFieldValue,
                                         } = props;
                                         return(
@@ -149,6 +143,7 @@ export const DadosDaDiretoria = () => {
                                                         className="form-control"
                                                         onChange={(e)=>{
                                                             props.handleChange(e);
+                                                            validateRf(e.target.value, setFieldValue)
                                                         }}
                                                     />
                                                     {props.touched.dre_diretor_regional_rf && props.errors.dre_diretor_regional_rf && <span className="span_erro text-danger mt-1"> {props.errors.dre_diretor_regional_rf} </span>}

@@ -26,8 +26,10 @@ export const checkDuplicateInObject = (propertyName, inputArray) => {
 
 export const YupSignupSchemaDreDadosDiretoria = yup.object().shape({
 
+  dre_diretor_regional_nome:yup.string().required("Digite um RF válido para exibir o nome"),
+
   dre_diretor_regional_rf: yup.string()
-  .test('test-name', 'É obrigatório e não pode ultrapassar 10 caracteres',
+  .test('test-name', 'Digite um RF válido',
       function (value) {
         return !(!value || value.trim() === "" || value.length > 10);
       }),
