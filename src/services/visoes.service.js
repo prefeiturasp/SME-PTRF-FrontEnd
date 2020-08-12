@@ -12,6 +12,7 @@ const getDadosDoUsuarioLogado = () =>{
     return dados_usuario_logado ? eval('dados_usuario_logado.usuario_' + getUsuarioLogin() ) : null
 };
 
+
 const setDadosUsuariosLogados = async (resp)=>{
 
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
@@ -62,19 +63,19 @@ const alternaVisoes = (visao) =>{
 
 const redirectVisao = (visao=null) =>{
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
-    if (visao === 'escolas'){
-        redirect('/dados-da-associacao')
+    if (visao === 'sme'){
+        redirect('/prestacao-de-contas')
     }else if(visao === 'dres'){
         redirect('/dre-associacoes')
-    }else if (visao==='sme'){
-        redirect('/prestacao-de-contas')
+    }else if (visao==='escolas'){
+        redirect('/dados-da-associacao')
     }else {
-        if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'escolas')){
-            redirect('/dados-da-associacao')
+        if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'sme')){
+            redirect('/prestacao-de-contas')
         }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'dres')){
             redirect('/dre-associacoes')
-        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'sme')){
-            redirect('/prestacao-de-contas')
+        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'escolas')){
+            redirect('/dados-da-associacao')
         }else {
             redirect('/dados-da-associacao')
         }

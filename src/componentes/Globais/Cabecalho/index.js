@@ -30,7 +30,7 @@ export const Cabecalho = () => {
                     </div>
                     <div className="p-2 bd-highlight container-select-visoes">
                         <select
-                            value={dados_usuario_logado.visao_selecionada.tipo}
+                            value={dados_usuario_logado.visao_selecionada.nome}
                             onChange={(e)=>onChangeVisao(e.target.value)}
                             className="form-control"
                         >
