@@ -34,10 +34,7 @@ const setDadosUsuariosLogados = async (resp)=>{
             nome: usuario_logado ? usuario_logado.visao_selecionada.nome : "",
             //nome: "dres",
         },
-        unidades:[
-            {nome:"Dre Ipiranga"},
-            {nome:"Dre Butantã"},
-        ]
+        unidades:resp.unidades
     }
     };
     localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(novos_dados_do_usuario_logado ))

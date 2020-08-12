@@ -15,30 +15,37 @@ export const Cabecalho = () => {
     let login_usuario = localStorage.getItem(USUARIO_LOGIN)
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado(login_usuario);
 
+    const onChangeVisao = (value) =>{
+        console.log("onChangeVisao ", value);
+        visoesService.alternaVisoes(value)
+    };
+
     return (
-        <nav className="cabecalho navbar navbar-expand-lg fixed-top pb-0">
-            <img className="img-fluid logo-cabecalho ml-3" src={LogoPtrf} alt=""/>
+        <>
+            <div className="col-12 cabecalho fixed-top pb-0">
 
-                <ul className="navbar-nav ml-auto">
-                    <li className="nav-item dropdown">
-                        <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Visões
-                        </a>
-                        {dados_usuario_logado && dados_usuario_logado.visoes.length > 0 &&
-                        <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                <div className="d-flex justify-content-between bd-highlight align-items-center">
+                    <div className="p-2 bd-highlight">
+                        <img className="img-fluid logo-cabecalho ml-3" src={LogoPtrf} alt=""/>
+                    </div>
+                    <div className="p-2 bd-highlight container-select-visoes">
+                        <select
+                            value={dados_usuario_logado.visao_selecionada.tipo}
+                            onChange={(e)=>onChangeVisao(e.target.value)}
+                            className="form-control"
+                        >
+                            <option value="" className="dropdown-item">Escolha uma opção</option>
                             {dados_usuario_logado.visoes.map((visao, index)=>
-                                <button key={index} onClick={()=>visoesService.alternaVisoes(visao.tipo)} className="dropdown-item">{visao.label}</button>
+                                <option value={visao.tipo} key={index} className="dropdown-item">{visao.label}</option>
                             )}
-
-                        </div>
-                        }
-
-                    </li>
-                    <li className="nav-item text-center">
+                        </select>
+                    </div>
+                    <div className="p-2 bd-highlight text-center ">
                         <button className="btn-sair" onClick={logout}><img className="img-fluid icone-sair" src={IconeSair} alt=""/></button>
                         <p className="mb-">Sair</p>
-                    </li>
-                </ul>
-        </nav>
+                    </div>
+                </div>
+            </div>
+        </>
     );
 }
