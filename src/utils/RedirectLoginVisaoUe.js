@@ -5,7 +5,7 @@ export const RedirectLoginVisaoUe = () =>{
     if (visao && visao.visao_selecionada.nome){
         visoesService.redirectVisao(visao.visao_selecionada.nome);
     }else {
-        visoesService.redirectVisao("escolas");
+        visoesService.redirectVisao("UE");
     }
 
     return null

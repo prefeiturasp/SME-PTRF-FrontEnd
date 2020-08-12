@@ -66,19 +66,19 @@ const GetUrls = () =>{
 
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
 
-    if (dados_usuario_logado.visao_selecionada.nome === 'escolas'){
-        return UrlsMenuEscolas
-    }else if(dados_usuario_logado.visao_selecionada.nome === 'dres'){
-        return UrlsMenuDres
-    }else if (dados_usuario_logado.visao_selecionada.nome === 'sme'){
+    if (dados_usuario_logado.visao_selecionada.nome === 'SME'){
         return UrlsMenuSme
+    }else if(dados_usuario_logado.visao_selecionada.nome === 'DRE'){
+        return UrlsMenuDres
+    }else if (dados_usuario_logado.visao_selecionada.nome === 'UE'){
+        return UrlsMenuEscolas
     }else {
-        if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'escolas')){
-            return UrlsMenuEscolas
-        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'dres')){
-            return UrlsMenuDres
-        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'sme')){
+        if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'SME')){
             return UrlsMenuSme
+        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'DRE')){
+            return UrlsMenuDres
+        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'UE')){
+            return UrlsMenuEscolas
         }else {
             return UrlsMenuEscolas
         }

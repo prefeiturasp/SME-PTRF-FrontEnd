@@ -15,6 +15,10 @@ export const Cabecalho = () => {
     let login_usuario = localStorage.getItem(USUARIO_LOGIN)
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado(login_usuario);
 
+    dados_usuario_logado.visoes.map((visao)=>{
+        console.log("XXXXXXXXXXXXX ",visao)
+    })
+
     const onChangeVisao = (value) =>{
         console.log("onChangeVisao ", value);
         visoesService.alternaVisoes(value)
@@ -35,9 +39,12 @@ export const Cabecalho = () => {
                             className="form-control"
                         >
                             <option value="" className="dropdown-item">Escolha uma opção</option>
-                            {dados_usuario_logado.visoes.map((visao, index)=>
-                                <option value={visao.tipo} key={index} className="dropdown-item">{visao.label}</option>
+                            {dados_usuario_logado.unidades.map((unidade, index)=>
+                                <option value={unidade.tipo_unidade} key={index} className="dropdown-item">{unidade.nome}</option>
                             )}
+{/*                            {dados_usuario_logado.visoes.map((visao, index)=>
+                                <option value={visao} key={index} className="dropdown-item">{visao}</option>
+                            )}*/}
                         </select>
                     </div>
                     <div className="p-2 bd-highlight text-center ">

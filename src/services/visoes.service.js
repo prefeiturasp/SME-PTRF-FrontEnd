@@ -12,7 +12,6 @@ const getDadosDoUsuarioLogado = () =>{
     return dados_usuario_logado ? eval('dados_usuario_logado.usuario_' + getUsuarioLogin() ) : null
 };
 
-
 const setDadosUsuariosLogados = async (resp)=>{
 
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
@@ -26,14 +25,11 @@ const setDadosUsuariosLogados = async (resp)=>{
             login: resp.login,
             nome:resp.nome
         },
-        visoes:[
-            {tipo:"escolas", label:"Escolas"},
-            {tipo:"dres", label:"Dres"},
-            {tipo:"sme", label:"SME"},
-        ],
+        visoes: resp.visoes,
+
         visao_selecionada:{
             nome: usuario_logado ? usuario_logado.visao_selecionada.nome : "",
-            //nome: "dres",
+            //nome: "DRE",
         },
         unidades:resp.unidades
     }
@@ -63,18 +59,18 @@ const alternaVisoes = (visao) =>{
 
 const redirectVisao = (visao=null) =>{
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
-    if (visao === 'sme'){
+    if (visao === 'SME'){
         redirect('/prestacao-de-contas')
-    }else if(visao === 'dres'){
+    }else if(visao === 'DRE'){
         redirect('/dre-associacoes')
-    }else if (visao==='escolas'){
+    }else if (visao==='UE'){
         redirect('/dados-da-associacao')
     }else {
-        if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'sme')){
+        if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'SME')){
             redirect('/prestacao-de-contas')
-        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'dres')){
+        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'DRE')){
             redirect('/dre-associacoes')
-        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'escolas')){
+        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'UE')){
             redirect('/dados-da-associacao')
         }else {
             redirect('/dados-da-associacao')
