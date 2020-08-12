@@ -30,20 +30,31 @@ const setDadosUsuariosLogados = async (resp) => {
 
             visao_selecionada: {
                 nome: usuario_logado ? usuario_logado.visao_selecionada.nome : "",
-                //nome: "DRE",
             },
             unidades: resp.unidades,
 
             unidade_selecionada: {
                 uuid: usuario_logado ? usuario_logado.unidade_selecionada.uuid : "",
-                //nome: "DRE",
             },
         }
     };
     localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(novos_dados_do_usuario_logado))
 };
 
+const converteNomeVisao = (visao) => {
+    if (visao !== "UE" && visao !== "DRE" && visao !== "SME"){
+        return "UE"
+    }else {
+        return visao
+    }
+};
+
 const alternaVisoes = (visao, uuid_unidade = null) => {
+
+    let minha_visao = converteNomeVisao(visao)
+
+
+    console.log("Visao Convertida ", minha_visao)
 
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
     let dados_usuario_logado = getDadosDoUsuarioLogado();
@@ -55,6 +66,7 @@ const alternaVisoes = (visao, uuid_unidade = null) => {
                 ...dados_usuario_logado,
                 visao_selecionada: {
                     nome: visao
+                    //nome: converteNomeVisao(visao)
                 },
 
                 unidade_selecionada: {
@@ -90,6 +102,7 @@ const redirectVisao = (visao = null) => {
 
 export const visoesService = {
     setDadosUsuariosLogados,
+    converteNomeVisao,
     alternaVisoes,
     getDadosDoUsuarioLogado,
     redirectVisao,
