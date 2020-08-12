@@ -4,7 +4,7 @@ import LogoPtrf from "../../../assets/img/logo-ptrf-verde.png"
 import IconeSair from "../../../assets/img/sair.svg"
 
 import { authService, USUARIO_LOGIN } from '../../../services/auth.service';
-import {DADOS_USUARIO_LOGADO, visoesService} from "../../../services/visoes.service";
+import {visoesService} from "../../../services/visoes.service";
 
 export const Cabecalho = () => {
 
@@ -12,16 +12,12 @@ export const Cabecalho = () => {
         authService.logout()
     };
 
-    let login_usuario = localStorage.getItem(USUARIO_LOGIN)
+    let login_usuario = localStorage.getItem(USUARIO_LOGIN);
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado(login_usuario);
 
-    dados_usuario_logado.visoes.map((visao)=>{
-        console.log("XXXXXXXXXXXXX ",visao)
-    })
-
-    const onChangeVisao = (value) =>{
-        console.log("onChangeVisao ", value);
-        visoesService.alternaVisoes(value)
+    const onChangeVisao = (e) =>{
+        let obj = JSON.parse(e.target.value);
+        visoesService.alternaVisoes(obj.visao, obj.uuid);
     };
 
     return (
@@ -34,17 +30,19 @@ export const Cabecalho = () => {
                     </div>
                     <div className="p-2 bd-highlight container-select-visoes">
                         <select
-                            value={dados_usuario_logado.visao_selecionada.nome}
-                            onChange={(e)=>onChangeVisao(e.target.value)}
+                            value={ JSON.stringify({visao: dados_usuario_logado.visao_selecionada.nome , uuid:dados_usuario_logado.unidade_selecionada.uuid}) }
+                            onChange={(e)=>onChangeVisao(e)}
                             className="form-control"
                         >
                             <option value="" className="dropdown-item">Escolha uma opção</option>
                             {dados_usuario_logado.unidades.map((unidade, index)=>
-                                <option value={unidade.tipo_unidade} key={index} className="dropdown-item">{unidade.nome}</option>
+                                <option
+                                    key={index}
+                                    value={JSON.stringify({visao:unidade.tipo_unidade, uuid:unidade.uuid})}
+                                >
+                                    {unidade.tipo_unidade} - {unidade.nome}
+                                </option>
                             )}
-{/*                            {dados_usuario_logado.visoes.map((visao, index)=>
-                                <option value={visao} key={index} className="dropdown-item">{visao}</option>
-                            )}*/}
                         </select>
                     </div>
                     <div className="p-2 bd-highlight text-center ">
@@ -55,4 +53,4 @@ export const Cabecalho = () => {
             </div>
         </>
     );
-}
+};

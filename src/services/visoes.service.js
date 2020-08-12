@@ -7,12 +7,12 @@ const getUsuarioLogin = () => {
     return localStorage.getItem(USUARIO_LOGIN)
 };
 
-const getDadosDoUsuarioLogado = () =>{
+const getDadosDoUsuarioLogado = () => {
     let dados_usuario_logado = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO));
-    return dados_usuario_logado ? eval('dados_usuario_logado.usuario_' + getUsuarioLogin() ) : null
+    return dados_usuario_logado ? eval('dados_usuario_logado.usuario_' + getUsuarioLogin()) : null
 };
 
-const setDadosUsuariosLogados = async (resp)=>{
+const setDadosUsuariosLogados = async (resp) => {
 
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
 
@@ -21,28 +21,34 @@ const setDadosUsuariosLogados = async (resp)=>{
     let novos_dados_do_usuario_logado = {
         ...todos_os_dados_usuario_logado,
         [`usuario_${getUsuarioLogin()}`]: {
-        usuario_logado: {
-            login: resp.login,
-            nome:resp.nome
-        },
-        visoes: resp.visoes,
 
-        visao_selecionada:{
-            nome: usuario_logado ? usuario_logado.visao_selecionada.nome : "",
-            //nome: "DRE",
-        },
-        unidades:resp.unidades
-    }
+            usuario_logado: {
+                login: resp.login,
+                nome: resp.nome
+            },
+            visoes: resp.visoes,
+
+            visao_selecionada: {
+                nome: usuario_logado ? usuario_logado.visao_selecionada.nome : "",
+                //nome: "DRE",
+            },
+            unidades: resp.unidades,
+
+            unidade_selecionada: {
+                uuid: usuario_logado ? usuario_logado.unidade_selecionada.uuid : "",
+                //nome: "DRE",
+            },
+        }
     };
-    localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(novos_dados_do_usuario_logado ))
+    localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(novos_dados_do_usuario_logado))
 };
 
-const alternaVisoes = (visao) =>{
+const alternaVisoes = (visao, uuid_unidade = null) => {
 
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
     let dados_usuario_logado = getDadosDoUsuarioLogado();
 
-    if (dados_usuario_logado){
+    if (dados_usuario_logado) {
         let alternar_visao = {
             ...todos_os_dados_usuario_logado,
             [`usuario_${getUsuarioLogin()}`]: {
@@ -50,35 +56,39 @@ const alternaVisoes = (visao) =>{
                 visao_selecionada: {
                     nome: visao
                 },
+
+                unidade_selecionada: {
+                    uuid: uuid_unidade
+                },
             }
         };
-        localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(alternar_visao ));
+        localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(alternar_visao));
         redirectVisao(visao)
     }
 };
 
-const redirectVisao = (visao=null) =>{
+const redirectVisao = (visao = null) => {
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
-    if (visao === 'SME'){
+    if (visao === 'SME') {
         redirect('/prestacao-de-contas')
-    }else if(visao === 'DRE'){
+    } else if (visao === 'DRE') {
         redirect('/dre-associacoes')
-    }else if (visao==='UE'){
+    } else if (visao === 'UE') {
         redirect('/dados-da-associacao')
-    }else {
-        if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'SME')){
+    } else {
+        if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'SME')) {
             redirect('/prestacao-de-contas')
-        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'DRE')){
+        } else if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'DRE')) {
             redirect('/dre-associacoes')
-        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'UE')){
+        } else if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'UE')) {
             redirect('/dados-da-associacao')
-        }else {
+        } else {
             redirect('/dados-da-associacao')
         }
     }
 };
 
-export const visoesService ={
+export const visoesService = {
     setDadosUsuariosLogados,
     alternaVisoes,
     getDadosDoUsuarioLogado,
