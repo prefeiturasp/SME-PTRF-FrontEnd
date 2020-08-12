@@ -12,7 +12,7 @@ export const Cabecalho = () => {
         authService.logout()
     };
 
-    let login_usuario = localStorage.getItem(USUARIO_LOGIN)
+    let login_usuario = localStorage.getItem(USUARIO_LOGIN);
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado(login_usuario);
 
     return (
