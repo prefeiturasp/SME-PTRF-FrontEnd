@@ -1,4 +1,10 @@
-import {USUARIO_LOGIN, ASSOCIACAO_UUID, ASSOCIACAO_TIPO_ESCOLA, ASSOCIACAO_NOME_ESCOLA} from "./auth.service";
+import {
+    USUARIO_LOGIN,
+    ASSOCIACAO_UUID,
+    ASSOCIACAO_TIPO_ESCOLA,
+    ASSOCIACAO_NOME_ESCOLA,
+    ASSOCIACAO_NOME
+} from "./auth.service";
 import {redirect} from "../utils/redirect";
 
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
@@ -10,6 +16,38 @@ const getUsuarioLogin = () => {
 const getDadosDoUsuarioLogado = () => {
     let dados_usuario_logado = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO));
     return dados_usuario_logado ? eval('dados_usuario_logado.usuario_' + getUsuarioLogin()) : null
+};
+
+const setDadosPrimeiroAcesso = async (resp) =>{
+
+    console.log("DADOS USUARIO LOGADO ", getDadosDoUsuarioLogado());
+
+    let usuario_logado = getDadosDoUsuarioLogado();
+
+    if (usuario_logado.associacao_selecionada.uuid){
+        localStorage.setItem(ASSOCIACAO_UUID, usuario_logado.associacao_selecionada.uuid);
+    }else {
+
+    }
+
+    if (usuario_logado.unidade_selecionada.nome){
+        localStorage.setItem(ASSOCIACAO_NOME_ESCOLA, usuario_logado.unidade_selecionada.nome);
+    }else{
+
+    }
+
+    if (usuario_logado.unidade_selecionada.tipo_unidade){
+        localStorage.setItem(ASSOCIACAO_TIPO_ESCOLA, usuario_logado.unidade_selecionada.tipo_unidade);
+    }else {
+
+    }
+
+    localStorage.setItem(
+        ASSOCIACAO_NOME,
+        resp.associacao.nome
+    );
+
+
 };
 
 const setDadosUsuariosLogados = async (resp) => {
@@ -111,6 +149,7 @@ const redirectVisao = (visao = null) => {
 
 export const visoesService = {
     setDadosUsuariosLogados,
+    setDadosPrimeiroAcesso,
     converteNomeVisao,
     alternaVisoes,
     getDadosDoUsuarioLogado,

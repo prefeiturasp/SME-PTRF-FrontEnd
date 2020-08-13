@@ -40,22 +40,6 @@ const login = async (login, senha) => {
                 resp.nome
             );
             localStorage.setItem(
-                ASSOCIACAO_UUID,
-                resp.associacao.uuid
-            );
-            localStorage.setItem(
-                ASSOCIACAO_NOME,
-                resp.associacao.nome
-            );
-            localStorage.setItem(
-                ASSOCIACAO_NOME_ESCOLA,
-                resp.associacao.nome_escola
-            );
-            localStorage.setItem(
-                ASSOCIACAO_TIPO_ESCOLA,
-                resp.associacao.tipo_escola
-            );
-            localStorage.setItem(
                 USUARIO_EMAIL,
                 resp.email
             );
@@ -68,6 +52,8 @@ const login = async (login, senha) => {
                 resp.cpf
             );
             localStorage.removeItem('medidorSenha');
+
+            await visoesService.setDadosPrimeiroAcesso(resp);
 
             await visoesService.setDadosUsuariosLogados(resp);
 
