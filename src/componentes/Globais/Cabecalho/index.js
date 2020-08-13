@@ -86,7 +86,7 @@ export const Cabecalho = () => {
                                             unidade.nome,
                                         )}
                                 >
-                                    {unidade.tipo_unidade} - {unidade.nome}
+                                    {visoesService.converteNomeVisao(unidade.tipo_unidade)} - {unidade.nome}
                                 </option>
                             )}
                         </select>
