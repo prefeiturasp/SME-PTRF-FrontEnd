@@ -20,6 +20,11 @@ export const Cabecalho = () => {
         visoesService.alternaVisoes(obj.visao, obj.uuid);
     };
 
+    const retornaVisaoConvertida = (visao, uuid) =>{
+        let visao_convertida = visoesService.converteNomeVisao(visao)
+        return JSON.stringify({visao: visao_convertida , uuid:uuid})
+    };
+
     return (
         <>
             <div className="col-12 cabecalho fixed-top pb-0">
@@ -30,7 +35,7 @@ export const Cabecalho = () => {
                     </div>
                     <div className="p-2 bd-highlight container-select-visoes">
                         <select
-                            value={ JSON.stringify({visao: dados_usuario_logado.visao_selecionada.nome , uuid:dados_usuario_logado.unidade_selecionada.uuid}) }
+                            value={retornaVisaoConvertida(dados_usuario_logado.visao_selecionada.nome ,dados_usuario_logado.unidade_selecionada.uuid)}
                             onChange={(e)=>onChangeVisao(e)}
                             className="form-control"
                         >
@@ -38,7 +43,7 @@ export const Cabecalho = () => {
                             {dados_usuario_logado.unidades.map((unidade, index)=>
                                 <option
                                     key={index}
-                                    value={JSON.stringify({visao:unidade.tipo_unidade, uuid:unidade.uuid})}
+                                    value={retornaVisaoConvertida(unidade.tipo_unidade, unidade.uuid) }
                                 >
                                     {unidade.tipo_unidade} - {unidade.nome}
                                 </option>
