@@ -72,7 +72,7 @@ const login = async (login, senha) => {
             await visoesService.setDadosUsuariosLogados(resp);
 
             const decoded = decode(resp.token);
-            //window.location.href = "/";
+            window.location.href = "/";
         } 
     } catch (error) {
         console.log('ERROR');

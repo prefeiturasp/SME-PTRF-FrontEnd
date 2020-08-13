@@ -51,11 +51,6 @@ const converteNomeVisao = (visao) => {
 
 const alternaVisoes = (visao, uuid_unidade = null) => {
 
-    let minha_visao = converteNomeVisao(visao)
-
-
-    console.log("Visao Convertida ", minha_visao)
-
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
     let dados_usuario_logado = getDadosDoUsuarioLogado();
 
@@ -66,7 +61,6 @@ const alternaVisoes = (visao, uuid_unidade = null) => {
                 ...dados_usuario_logado,
                 visao_selecionada: {
                     nome: visao
-                    //nome: converteNomeVisao(visao)
                 },
 
                 unidade_selecionada: {

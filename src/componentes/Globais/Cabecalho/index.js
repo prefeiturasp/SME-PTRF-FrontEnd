@@ -21,7 +21,7 @@ export const Cabecalho = () => {
     };
 
     const retornaVisaoConvertida = (visao, uuid) =>{
-        let visao_convertida = visoesService.converteNomeVisao(visao)
+        let visao_convertida = visoesService.converteNomeVisao(visao);
         return JSON.stringify({visao: visao_convertida , uuid:uuid})
     };
 
