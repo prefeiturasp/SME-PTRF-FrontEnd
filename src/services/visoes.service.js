@@ -42,7 +42,7 @@ const setDadosPrimeiroAcesso = async (resp) =>{
         //localStorage.setItem(ASSOCIACAO_UUID, usuario_logado.associacao_selecionada.uuid);
 
         visao=usuario_logado.visao_selecionada.nome
-        uuid_unidade = usuario_logado.associacao_selecionada.uuid
+        uuid_unidade = usuario_logado.unidade_selecionada.uuid
         uuid_associacao = usuario_logado.associacao_selecionada.uuid
 
     }else {
@@ -162,7 +162,7 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, unidade_tipo, unida
             [`usuario_${getUsuarioLogin()}`]: {
                 ...dados_usuario_logado,
                 visao_selecionada: {
-                    nome: visao
+                    nome: converteNomeVisao(visao)
                 },
 
                 unidade_selecionada: {

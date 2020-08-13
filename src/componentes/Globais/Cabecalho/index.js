@@ -15,6 +15,8 @@ export const Cabecalho = () => {
     let login_usuario = localStorage.getItem(USUARIO_LOGIN);
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado(login_usuario);
 
+    console.log("Cabecalho ", dados_usuario_logado)
+
     const onChangeVisao = (e) =>{
         let obj = JSON.parse(e.target.value);
         console.log("OBJ ", obj)
@@ -53,16 +55,16 @@ export const Cabecalho = () => {
     return (
         <>
             <div className="col-12 cabecalho fixed-top pb-0">
-
                 <div className="d-flex justify-content-between bd-highlight align-items-center">
                     <div className="p-2 bd-highlight">
                         <img className="img-fluid logo-cabecalho ml-3" src={LogoPtrf} alt=""/>
                     </div>
                     <div className="p-2 bd-highlight container-select-visoes">
+
                         <select
                             value={
                                 retornaVisaoConvertida(
-                                    dados_usuario_logado.visao_selecionada.nome ,
+                                    dados_usuario_logado.visao_selecionada.nome,
                                     dados_usuario_logado.unidade_selecionada.uuid,
                                     dados_usuario_logado.associacao_selecionada.uuid,
                                     dados_usuario_logado.unidade_selecionada.tipo_unidade,
