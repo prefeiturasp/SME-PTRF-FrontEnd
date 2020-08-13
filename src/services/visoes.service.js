@@ -12,7 +12,34 @@ const getDadosDoUsuarioLogado = () => {
     return dados_usuario_logado ? eval('dados_usuario_logado.usuario_' + getUsuarioLogin()) : null
 };
 
+const getDadosPrimeiroAcesso = (resp, campo_verificar, campo_setar_usuario_logado, campo_setar_usuario_nao_logado) => {
+    debugger
+
+    let usuario_logado = getDadosDoUsuarioLogado();
+
+    if (usuario_logado && eval('usuario_logado.'+ campo_verificar)) {
+        console.log(eval('usuario_logado.'+ campo_verificar))
+        return eval('usuario_logado.' + campo_setar_usuario_logado)
+    }else {
+        if (resp.visoes.find(visao=> visao === 'DRE')){
+            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
+            return eval(campo_setar_usuario_nao_logado)
+        }else if (resp.visoes.find(visao=> visao === 'UE')){
+            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade !== "DRE");
+            return eval(campo_setar_usuario_nao_logado)
+        }
+    }
+
+
+};
+
 const setDadosPrimeiroAcesso = async (resp) =>{
+/*
+    let get_visao = getDadosPrimeiroAcesso(resp, "associacao_selecionada.uuid", "visao_selecionada.nome", "resp.visoes[0]")
+    console.log("RESPOSTA GET DADOS get_visao | ", get_visao)
+
+    let get_uuid_unidade = getDadosPrimeiroAcesso(resp, "associacao_selecionada.uuid", "unidade_selecionada.uuid")
+    console.log("RESPOSTA GET DADOS get_uuid_unidade | ", get_uuid_unidade)*/
 
     let visao, uuid_unidade, uuid_associacao, unidade_tipo, unidade_nome;
     let usuario_logado = getDadosDoUsuarioLogado();
