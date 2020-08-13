@@ -1,7 +1,7 @@
 import decode from "jwt-decode";
 import api from './api';
 import HTTP_STATUS from "http-status-codes";
-import {visoesService} from "./visoes.service";
+import {visoesService, DADOS_USUARIO_LOGADO} from "./visoes.service";
 
 export const TOKEN_ALIAS = "TOKEN";
 export const USUARIO_NOME = "NOME";

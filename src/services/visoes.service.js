@@ -27,53 +27,83 @@ const getDadosPrimeiroAcesso = (resp) => {
 
 const setDadosPrimeiroAcesso = async (resp) =>{
 
+    //debugger;
+
     let visao, uuid_unidade, uuid_associacao, unidade_tipo, unidade_nome
 
     let usuario_logado = getDadosDoUsuarioLogado();
-
-    if (usuario_logado && usuario_logado.associacao_selecionada.uuid){
-        localStorage.setItem(ASSOCIACAO_UUID, usuario_logado.associacao_selecionada.uuid);
-    }else {
-        if (resp.visoes.find(visao=> visao === 'DRE')){
-            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
-            localStorage.setItem(ASSOCIACAO_UUID, unidade.uuid);
-        }else if (resp.visoes.find(visao=> visao === 'UE')){
-            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade !== "DRE");
-            localStorage.setItem(ASSOCIACAO_UUID, unidade.associacao.uuid);
-        }
-    }
-
-    if (usuario_logado && usuario_logado.unidade_selecionada.nome){
-        localStorage.setItem(ASSOCIACAO_NOME_ESCOLA, usuario_logado.unidade_selecionada.nome);
-    }else{
-        if (resp.visoes.find(visao=> visao === 'DRE')){
-            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
-            localStorage.setItem(ASSOCIACAO_NOME_ESCOLA, unidade.nome);
-        }else if (resp.visoes.find(visao=> visao === 'UE')){
-            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade !== "DRE");
-            localStorage.setItem(ASSOCIACAO_NOME_ESCOLA, unidade.associacao.nome);
-        }
-    }
-
-    debugger
-    if (usuario_logado && usuario_logado.unidade_selecionada.tipo_unidade){
-        localStorage.setItem(ASSOCIACAO_TIPO_ESCOLA, usuario_logado.unidade_selecionada.tipo_unidade);
-    }else {
-        if (resp.visoes.find(visao=> visao === 'DRE')){
-            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
-            localStorage.setItem(ASSOCIACAO_TIPO_ESCOLA, unidade.tipo_unidade);
-        }else if (resp.visoes.find(visao=> visao === 'UE')){
-            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade !== "DRE");
-            localStorage.setItem(ASSOCIACAO_TIPO_ESCOLA, unidade.tipo_unidade);
-        }
-    }
-
-    redirectVisao("DRE");
 
     localStorage.setItem(
         ASSOCIACAO_NOME,
         resp.associacao.nome
     );
+
+    if (usuario_logado && usuario_logado.associacao_selecionada.uuid){
+        //localStorage.setItem(ASSOCIACAO_UUID, usuario_logado.associacao_selecionada.uuid);
+
+        visao=usuario_logado.visao_selecionada.nome
+        uuid_unidade = usuario_logado.associacao_selecionada.uuid
+        uuid_associacao = usuario_logado.associacao_selecionada.uuid
+
+    }else {
+        if (resp.visoes.find(visao=> visao === 'DRE')){
+            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
+            //localStorage.setItem(ASSOCIACAO_UUID, unidade.uuid);
+            visao="DRE";
+            uuid_unidade = unidade.uuid
+            uuid_associacao = unidade.uuid
+
+        }else if (resp.visoes.find(visao=> visao === 'UE')){
+            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade !== "DRE");
+            //localStorage.setItem(ASSOCIACAO_UUID, unidade.associacao.uuid);
+            visao="UE";
+            uuid_unidade = unidade.uuid
+            uuid_associacao = unidade.associacao.uuid
+        }
+    }
+
+    if (usuario_logado && usuario_logado.unidade_selecionada.nome){
+        //localStorage.setItem(ASSOCIACAO_NOME_ESCOLA, usuario_logado.unidade_selecionada.nome);
+        visao=usuario_logado.visao_selecionada.nome
+        unidade_nome = usuario_logado.unidade_selecionada.nome
+
+    }else{
+        if (resp.visoes.find(visao=> visao === 'DRE')){
+            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
+            //localStorage.setItem(ASSOCIACAO_NOME_ESCOLA, unidade.nome);
+            visao="DRE";
+            unidade_nome = unidade.nome
+
+        }else if (resp.visoes.find(visao=> visao === 'UE')){
+            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade !== "DRE");
+            //localStorage.setItem(ASSOCIACAO_NOME_ESCOLA, unidade.associacao.nome);
+            visao="UE";
+            unidade_nome = unidade.associacao.nome
+        }
+    }
+
+    if (usuario_logado && usuario_logado.unidade_selecionada.tipo_unidade){
+        //localStorage.setItem(ASSOCIACAO_TIPO_ESCOLA, usuario_logado.unidade_selecionada.tipo_unidade);
+        visao=usuario_logado.visao_selecionada.nome
+        unidade_tipo = usuario_logado.unidade_selecionada.tipo_unidade
+    }else {
+        if (resp.visoes.find(visao=> visao === 'DRE')){
+            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
+            //localStorage.setItem(ASSOCIACAO_TIPO_ESCOLA, unidade.tipo_unidade);
+            visao="DRE";
+            unidade_tipo = unidade.tipo_unidade
+        }else if (resp.visoes.find(visao=> visao === 'UE')){
+            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade !== "DRE");
+            //localStorage.setItem(ASSOCIACAO_TIPO_ESCOLA, unidade.tipo_unidade);
+            visao="UE";
+            unidade_tipo = unidade.tipo_unidade
+        }
+    }
+
+    //redirectVisao("DRE");
+    alternaVisoes(visao, uuid_unidade, uuid_associacao, unidade_tipo, unidade_nome)
+
+
 
 
 };
@@ -155,8 +185,6 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, unidade_tipo, unida
 };
 
 const redirectVisao = (visao = null) => {
-
-    debugger
 
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
     if (visao === 'SME') {
