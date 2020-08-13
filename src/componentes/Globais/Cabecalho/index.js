@@ -17,12 +17,19 @@ export const Cabecalho = () => {
 
     const onChangeVisao = (e) =>{
         let obj = JSON.parse(e.target.value);
-        visoesService.alternaVisoes(obj.visao, obj.uuid);
+        console.log("OBJ ", obj)
+        visoesService.alternaVisoes(obj.visao, obj.uuid_unidade, obj.uuid_associacao);
     };
 
-    const retornaVisaoConvertida = (visao, uuid) =>{
+    const retornaVisaoConvertida = (visao, uuid_unidade, uuid_associacao) =>{
         let visao_convertida = visoesService.converteNomeVisao(visao);
-        return JSON.stringify({visao: visao_convertida , uuid:uuid})
+        let obj;
+        if (visao === "DRE"){
+            obj = JSON.stringify({visao: visao_convertida , uuid_unidade:uuid_unidade, uuid_associacao:uuid_unidade})
+        }else {
+            obj = JSON.stringify({visao: visao_convertida , uuid_unidade:uuid_unidade, uuid_associacao:uuid_associacao})
+        }
+        return obj
     };
 
     return (
@@ -35,7 +42,7 @@ export const Cabecalho = () => {
                     </div>
                     <div className="p-2 bd-highlight container-select-visoes">
                         <select
-                            value={retornaVisaoConvertida(dados_usuario_logado.visao_selecionada.nome ,dados_usuario_logado.unidade_selecionada.uuid)}
+                            value={retornaVisaoConvertida(dados_usuario_logado.visao_selecionada.nome ,dados_usuario_logado.unidade_selecionada.uuid, dados_usuario_logado.associacao_selecionada.uuid)}
                             onChange={(e)=>onChangeVisao(e)}
                             className="form-control"
                         >
@@ -43,7 +50,7 @@ export const Cabecalho = () => {
                             {dados_usuario_logado.unidades.map((unidade, index)=>
                                 <option
                                     key={index}
-                                    value={retornaVisaoConvertida(unidade.tipo_unidade, unidade.uuid) }
+                                    value={retornaVisaoConvertida(unidade.tipo_unidade, unidade.uuid, unidade.associacao.uuid) }
                                 >
                                     {unidade.tipo_unidade} - {unidade.nome}
                                 </option>

@@ -13,7 +13,7 @@ const url = window.location.href;
 const getUuidPorUrl = () => {
     if (url === "http://localhost:3000/dre-associacoes"){
         // Ollyver return "a3867d38-4b3d-4b5a-8fbd-c0cfb1625ebb"
-        return "934ee9d4-7320-4ecf-9932-7c6aca952e86"
+        return "a3867d38-4b3d-4b5a-8fbd-c0cfb1625ebb"
     }else if (url === "https://dev-sig.escola.sme.prefeitura.sp.gov.br/dre-associacoes"){
         return "82b460c6-7b6a-4de6-9376-d66a47f8d6b1"
     }else if (url === "https://hom-sig.escola.sme.prefeitura.sp.gov.br/dre-associacoes"){

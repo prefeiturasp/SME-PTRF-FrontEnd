@@ -1,4 +1,4 @@
-import {USUARIO_LOGIN} from "./auth.service";
+import {USUARIO_LOGIN, ASSOCIACAO_UUID} from "./auth.service";
 import {redirect} from "../utils/redirect";
 
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
@@ -36,6 +36,10 @@ const setDadosUsuariosLogados = async (resp) => {
             unidade_selecionada: {
                 uuid: usuario_logado ? usuario_logado.unidade_selecionada.uuid : "",
             },
+
+            associacao_selecionada: {
+                uuid: usuario_logado ? usuario_logado.associacao_selecionada.uuid : "",
+            },
         }
     };
     localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(novos_dados_do_usuario_logado))
@@ -49,7 +53,7 @@ const converteNomeVisao = (visao) => {
     }
 };
 
-const alternaVisoes = (visao, uuid_unidade = null) => {
+const alternaVisoes = (visao, uuid_unidade, uuid_associacao) => {
 
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
     let dados_usuario_logado = getDadosDoUsuarioLogado();
@@ -66,9 +70,14 @@ const alternaVisoes = (visao, uuid_unidade = null) => {
                 unidade_selecionada: {
                     uuid: uuid_unidade
                 },
+
+                associacao_selecionada: {
+                    uuid: uuid_associacao
+                },
             }
         };
         localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(alternar_visao));
+        localStorage.setItem(ASSOCIACAO_UUID, uuid_associacao);
         redirectVisao(visao)
     }
 };
