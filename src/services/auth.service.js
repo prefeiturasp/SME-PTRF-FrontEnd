@@ -53,9 +53,9 @@ const login = async (login, senha) => {
             );
             localStorage.removeItem('medidorSenha');
 
-            await visoesService.setDadosPrimeiroAcesso(resp);
-
             await visoesService.setDadosUsuariosLogados(resp);
+
+            await visoesService.setDadosPrimeiroAcesso(resp);
 
             const decoded = decode(resp.token);
             window.location.href = "/";
