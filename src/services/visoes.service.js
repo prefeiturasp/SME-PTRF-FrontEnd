@@ -74,7 +74,7 @@ const setDadosPrimeiroAcesso = async (resp) =>{
             unidade_nome = unidade.nome;
         }else if (resp.visoes.find(visao=> visao === 'UE')){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade !== "DRE");
-            unidade_nome = unidade.associacao.nome;
+            unidade_nome = unidade.nome;
         }
     }
 
