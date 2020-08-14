@@ -1,7 +1,7 @@
 import decode from "jwt-decode";
 import api from './api';
 import HTTP_STATUS from "http-status-codes";
-import {visoesService, DADOS_USUARIO_LOGADO} from "./visoes.service";
+import {visoesService} from "./visoes.service";
 
 export const TOKEN_ALIAS = "TOKEN";
 export const USUARIO_NOME = "NOME";
@@ -27,7 +27,6 @@ const login = async (login, senha) => {
     try {
         const response = (await api.post('api/login', payload, authHeader));
         const resp = response.data;
-        console.log("LOGIN ", resp)
 
         if (response.status === HTTP_STATUS.OK) {
             if (resp.detail) {

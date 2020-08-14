@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {getUnidade} from "../../../../services/dres/Unidades.service";
-import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {Formik} from "formik";
@@ -27,7 +26,6 @@ export const DadosDaDiretoria = () => {
 
     const buscaDiretoria = async () => {
         let diretoria = await getUnidade();
-        console.log("buscaDiretoria ", diretoria)
         setDadosDiretoria(diretoria);
         setStateFormDiretoria({
             dre_cnpj: diretoria.dre_cnpj,
