@@ -38,7 +38,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
 
     const [associacaoUuid, setAssociacaoUuid] = useState(dadosDaAssociacao.dados_da_associacao.uuid);
 
-    const [processosList, setProcessosList] = useState([])
+    const [processosList, setProcessosList] = useState([]);
 
     const [showProcessoForm, setShowProcessoForm] = useState(false);
 
@@ -50,7 +50,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
     };
 
     const deleteProcesso = async () => {
-        setLoading(true)
+        setLoading(true);
         if (stateProcessoForm.uuid) {
             try {
                 const response = await deleteProcessoAssociacao(stateProcessoForm.uuid);
@@ -66,12 +66,12 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
         }
         setLoading(false)
 
-    }
+    };
 
     const handleAddProcessoAction = () => {
-        setStateProcessoForm(initProcessoForm)
-        setShowProcessoForm(true)
-    }
+        setStateProcessoForm(initProcessoForm);
+        setShowProcessoForm(true);
+    };
 
     const handleEditProcessoAction = (processo) => {
         const initFormProcesso = {
@@ -79,9 +79,9 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
             numero_processo: processo.numero_processo,
             ano: processo.ano,
         };
-        setShowProcessoForm(true)
+        setShowProcessoForm(true);
         setStateProcessoForm(initFormProcesso)
-    }
+    };
 
     const handleDeleteProcessoAction = (processo) => {
         const initFormProcesso = {
@@ -89,22 +89,22 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
             numero_processo: processo.numero_processo,
             ano: processo.ano,
         };
-        setStateProcessoForm(initFormProcesso)
-        setShowConfirmDelete(true)
-    }
+        setStateProcessoForm(initFormProcesso);
+        setShowConfirmDelete(true);
+    };
 
     const handleCloseProcessoForm = () => {
         setShowProcessoForm(false);
     };
 
     const handleSubmitProcessoForm = async () => {
-        setLoading(true)
+        setLoading(true);
         setShowProcessoForm(false);
         const payload = {
             'associacao': associacaoUuid,
             'numero_processo': stateProcessoForm.numero_processo,
             'ano': stateProcessoForm.ano
-        }
+        };
 
         if (stateProcessoForm.uuid) {
             try {
@@ -148,13 +148,13 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
 
 
     const handleDeleteConfirmation = () => {
-        setShowConfirmDelete(false)
-        deleteProcesso()
-    }
+        setShowConfirmDelete(false);
+        deleteProcesso();
+    };
 
     const closeConfirmDeleteDialog = () => {
-        setShowConfirmDelete(false)
-    }
+        setShowConfirmDelete(false);
+    };
 
     const tableActionsTemplate = (rowData, column) => {
         return (
@@ -251,7 +251,6 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                                 onConfirmDelete={handleDeleteConfirmation}
                             />
                         </section>
-
                     </div>
                 ) : null}
         </>

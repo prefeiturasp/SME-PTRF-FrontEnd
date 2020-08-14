@@ -63,7 +63,6 @@ export const Associacoes = () =>{
                     contas
                 }
             };
-
             localStorage.setItem(DADOS_DA_ASSOCIACAO, JSON.stringify(dados_da_associacao ));
             setRrlRedirect(url_redirect)
         }catch (e) {
