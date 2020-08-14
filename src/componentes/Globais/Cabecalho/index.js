@@ -2,7 +2,6 @@ import React from "react";
 import "./cabecalho.scss"
 import LogoPtrf from "../../../assets/img/logo-ptrf-verde.png"
 import IconeSair from "../../../assets/img/sair.svg"
-
 import { authService, USUARIO_LOGIN } from '../../../services/auth.service';
 import {visoesService} from "../../../services/visoes.service";
 
@@ -15,11 +14,8 @@ export const Cabecalho = () => {
     let login_usuario = localStorage.getItem(USUARIO_LOGIN);
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado(login_usuario);
 
-    console.log("Cabecalho ", dados_usuario_logado)
-
     const onChangeVisao = (e) =>{
         let obj = JSON.parse(e.target.value);
-        console.log("OBJ ", obj)
         visoesService.alternaVisoes(
             obj.visao,
             obj.uuid_unidade,
@@ -60,7 +56,6 @@ export const Cabecalho = () => {
                         <img className="img-fluid logo-cabecalho ml-3" src={LogoPtrf} alt=""/>
                     </div>
                     <div className="p-2 bd-highlight container-select-visoes">
-
                         <select
                             value={
                                 retornaVisaoConvertida(

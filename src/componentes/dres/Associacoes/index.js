@@ -43,7 +43,6 @@ export const Associacoes = () =>{
     const buscaAssociacoesPorUnidade = async ()=>{
         try {
             let associacoes = await getAssociacoesPorUnidade();
-            console.log("Associacoes ", associacoes);
             setAssociacoes(associacoes);
         }catch (e) {
             console.log("Erro ao buscar associacoes ", e)
