@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getAssociacao} from "../../../../services/dres/Associacoes.service";
+import {getUnidade} from "../../../../services/dres/Unidades.service";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {MenuInterno} from "../../../Globais/MenuInterno";
@@ -26,14 +26,15 @@ export const DadosDaDiretoria = () => {
     }, []);
 
     const buscaDiretoria = async () => {
-        let diretoria = await getAssociacao(localStorage.getItem(ASSOCIACAO_UUID));
-        setDadosDiretoria(diretoria.unidade);
+        let diretoria = await getUnidade();
+        console.log("buscaDiretoria ", diretoria)
+        setDadosDiretoria(diretoria);
         setStateFormDiretoria({
-            dre_cnpj: diretoria.unidade.dre_cnpj,
-            dre_diretor_regional_rf: diretoria.unidade.dre_diretor_regional_rf,
-            dre_diretor_regional_nome: diretoria.unidade.dre_diretor_regional_nome,
-            dre_designacao_portaria: diretoria.unidade.dre_designacao_portaria,
-            dre_designacao_ano: diretoria.unidade.dre_designacao_ano,
+            dre_cnpj: diretoria.dre_cnpj,
+            dre_diretor_regional_rf: diretoria.dre_diretor_regional_rf,
+            dre_diretor_regional_nome: diretoria.dre_diretor_regional_nome,
+            dre_designacao_portaria: diretoria.dre_designacao_portaria,
+            dre_designacao_ano: diretoria.dre_designacao_ano,
         });
         setLoading(false)
     };
@@ -89,7 +90,7 @@ export const DadosDaDiretoria = () => {
                 <>
                     <div className="d-flex bd-highlight">
                         <div className="p-2 flex-grow-1 bd-highlight">
-                            <h1 className="titulo-itens-painel mt-5">Dados da diretoria {dadosDiretoria.dre.nome}</h1>
+                            <h1 className="titulo-itens-painel mt-5">Dados da diretoria {dadosDiretoria.nome}</h1>
                         </div>
                     </div>
                     <div className="page-content-inner">
@@ -131,7 +132,7 @@ export const DadosDaDiretoria = () => {
                                                     <label htmlFor="dre_diretor_regional_rf">Registro funcional do Diretor Regional</label>
                                                     <input
                                                         type="text"
-                                                        value={props.values.dre_diretor_regional_rf}
+                                                        value={props.values.dre_diretor_regional_rf ? props.values.dre_diretor_regional_rf : ""}
                                                         name="dre_diretor_regional_rf"
                                                         id="dre_diretor_regional_rf"
                                                         className="form-control"
