@@ -187,6 +187,12 @@ const redirectVisao = (visao = null) => {
     }
 };
 
+const getItemUsuarioLogado = (indice) =>{
+    let usuario_logado = getDadosDoUsuarioLogado();
+    return eval('usuario_logado.' + indice)
+};
+
+
 export const visoesService = {
     setDadosUsuariosLogados,
     setDadosPrimeiroAcesso,
@@ -194,5 +200,6 @@ export const visoesService = {
     alternaVisoes,
     getDadosDoUsuarioLogado,
     redirectVisao,
+    getItemUsuarioLogado,
 };
 
