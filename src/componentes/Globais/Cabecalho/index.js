@@ -20,12 +20,13 @@ export const Cabecalho = () => {
             obj.visao,
             obj.uuid_unidade,
             obj.uuid_associacao,
+            obj.nome_associacao,
             obj.unidade_tipo,
             obj.unidade_nome,
         );
     };
 
-    const retornaVisaoConvertida = (visao, uuid_unidade, uuid_associacao, unidade_tipo, unidade_nome) =>{
+    const retornaVisaoConvertida = (visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome) =>{
         let visao_convertida = visoesService.converteNomeVisao(visao);
         let obj;
         if (visao === "DRE"){
@@ -33,6 +34,7 @@ export const Cabecalho = () => {
                 visao: visao_convertida ,
                 uuid_unidade:uuid_unidade,
                 uuid_associacao:uuid_unidade,
+                nome_associacao:nome_associacao,
                 unidade_tipo:unidade_tipo,
                 unidade_nome:unidade_nome,
             })
@@ -41,6 +43,7 @@ export const Cabecalho = () => {
                 visao: visao_convertida ,
                 uuid_unidade:uuid_unidade,
                 uuid_associacao:uuid_associacao,
+                nome_associacao:nome_associacao,
                 unidade_tipo:unidade_tipo,
                 unidade_nome:unidade_nome,
             })
@@ -62,6 +65,7 @@ export const Cabecalho = () => {
                                     dados_usuario_logado.visao_selecionada.nome,
                                     dados_usuario_logado.unidade_selecionada.uuid,
                                     dados_usuario_logado.associacao_selecionada.uuid,
+                                    dados_usuario_logado.associacao_selecionada.nome,
                                     dados_usuario_logado.unidade_selecionada.tipo_unidade,
                                     dados_usuario_logado.unidade_selecionada.nome
                                 )}
@@ -77,6 +81,7 @@ export const Cabecalho = () => {
                                             unidade.tipo_unidade,
                                             unidade.uuid,
                                             unidade.associacao.uuid,
+                                            unidade.tipo_unidade === "DRE" ? unidade.nome : unidade.associacao.nome,
                                             unidade.tipo_unidade,
                                             unidade.nome,
                                         )}

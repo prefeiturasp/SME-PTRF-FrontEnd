@@ -41,25 +41,28 @@ const setDadosPrimeiroAcesso = async (resp) =>{
     let get_uuid_unidade = getDadosPrimeiroAcesso(resp, "associacao_selecionada.uuid", "unidade_selecionada.uuid")
     console.log("RESPOSTA GET DADOS get_uuid_unidade | ", get_uuid_unidade)*/
 
-    let visao, uuid_unidade, uuid_associacao, unidade_tipo, unidade_nome;
+    let visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome;
     let usuario_logado = getDadosDoUsuarioLogado();
-    localStorage.setItem(ASSOCIACAO_NOME,resp.associacao.nome);
+
 
     if (usuario_logado && usuario_logado.associacao_selecionada.uuid){
         visao=usuario_logado.visao_selecionada.nome;
         uuid_unidade = usuario_logado.unidade_selecionada.uuid;
         uuid_associacao = usuario_logado.associacao_selecionada.uuid;
+        nome_associacao = usuario_logado.associacao_selecionada.nome;
     }else {
         if (resp.visoes.find(visao=> visao === 'DRE')){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
             visao="DRE";
             uuid_unidade = unidade.uuid;
             uuid_associacao = unidade.uuid;
+            nome_associacao = unidade.nome;
         }else if (resp.visoes.find(visao=> visao === 'UE')){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade !== "DRE");
             visao="UE";
             uuid_unidade = unidade.uuid;
             uuid_associacao = unidade.associacao.uuid;
+            nome_associacao = unidade.associacao.nome;
         }
     }
 
@@ -86,7 +89,7 @@ const setDadosPrimeiroAcesso = async (resp) =>{
             unidade_tipo = unidade.tipo_unidade;
         }
     }
-    alternaVisoes(visao, uuid_unidade, uuid_associacao, unidade_tipo, unidade_nome)
+    alternaVisoes(visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome)
 };
 
 const setDadosUsuariosLogados = async (resp) => {
@@ -118,6 +121,7 @@ const setDadosUsuariosLogados = async (resp) => {
 
             associacao_selecionada: {
                 uuid: usuario_logado ? usuario_logado.associacao_selecionada.uuid : "",
+                nome: usuario_logado ? usuario_logado.associacao_selecionada.nome : "",
             },
         }
     };
@@ -132,7 +136,7 @@ const converteNomeVisao = (visao) => {
     }
 };
 
-const alternaVisoes = (visao, uuid_unidade, uuid_associacao, unidade_tipo, unidade_nome) => {
+const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome) => {
 
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
     let dados_usuario_logado = getDadosDoUsuarioLogado();
@@ -153,12 +157,15 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, unidade_tipo, unida
                 },
 
                 associacao_selecionada: {
-                    uuid: uuid_associacao
+                    uuid: uuid_associacao,
+                    nome: nome_associacao,
                 },
             }
         };
         localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(alternar_visao));
+
         localStorage.setItem(ASSOCIACAO_UUID, uuid_associacao);
+        localStorage.setItem(ASSOCIACAO_NOME,nome_associacao);
         localStorage.setItem(ASSOCIACAO_TIPO_ESCOLA, unidade_tipo);
         localStorage.setItem(ASSOCIACAO_NOME_ESCOLA, unidade_nome);
         redirectVisao(visao)
