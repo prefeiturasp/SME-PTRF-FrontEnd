@@ -55,7 +55,6 @@ export const Associacoes = () =>{
         try {
             let associacao = await getAssociacao(uuid_associacao);
             let contas = await getContasAssociacao(uuid_associacao);
-            console.log("Contas ", contas);
 
             let dados_da_associacao = {
                 dados_da_associacao:{
