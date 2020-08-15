@@ -72,7 +72,6 @@ export const Cabecalho = () => {
                             onChange={(e)=>onChangeVisao(e)}
                             className="form-control"
                         >
-                            {/*<option value="" className="dropdown-item" disabled>Escolha uma opção</option>*/}
                             {dados_usuario_logado.unidades.map((unidade, index)=>
                                 <option
                                     key={index}
