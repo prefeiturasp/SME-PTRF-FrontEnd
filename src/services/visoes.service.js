@@ -135,7 +135,6 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
             }
         };
         localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(alternar_visao));
-
         localStorage.setItem(ASSOCIACAO_UUID, uuid_associacao);
         localStorage.setItem(ASSOCIACAO_NOME,nome_associacao);
         localStorage.setItem(ASSOCIACAO_TIPO_ESCOLA, unidade_tipo);
