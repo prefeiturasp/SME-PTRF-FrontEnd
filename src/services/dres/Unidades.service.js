@@ -1,5 +1,6 @@
 import api from '../api'
 import { TOKEN_ALIAS } from '../auth.service.js';
+import {visoesService} from "../visoes.service";
 
 const authHeader = {
     headers: {
@@ -8,8 +9,8 @@ const authHeader = {
     }
 };
 
-export const getUnidade = async (uuid_unidade) => {
-    return (await api.get(`api/unidades/00188676-7465-4270-87d8-1ebc3ed1fbda`, authHeader)).data
+export const getUnidade = async () => {
+    return (await api.get(`api/unidades/${visoesService.getItemUsuarioLogado('unidade_selecionada.uuid')}`, authHeader)).data
 };
 
 export const salvaDadosDiretoria = async (uuid_unidade, payload) => {

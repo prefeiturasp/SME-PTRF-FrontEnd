@@ -43,7 +43,6 @@ export const Associacoes = () =>{
     const buscaAssociacoesPorUnidade = async ()=>{
         try {
             let associacoes = await getAssociacoesPorUnidade();
-            console.log("Associacoes ", associacoes);
             setAssociacoes(associacoes);
         }catch (e) {
             console.log("Erro ao buscar associacoes ", e)
@@ -56,7 +55,6 @@ export const Associacoes = () =>{
         try {
             let associacao = await getAssociacao(uuid_associacao);
             let contas = await getContasAssociacao(uuid_associacao);
-            console.log("Contas ", contas);
 
             let dados_da_associacao = {
                 dados_da_associacao:{
@@ -64,7 +62,6 @@ export const Associacoes = () =>{
                     contas
                 }
             };
-
             localStorage.setItem(DADOS_DA_ASSOCIACAO, JSON.stringify(dados_da_associacao ));
             setRrlRedirect(url_redirect)
         }catch (e) {

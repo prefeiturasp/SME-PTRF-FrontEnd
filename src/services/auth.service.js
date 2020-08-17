@@ -27,7 +27,6 @@ const login = async (login, senha) => {
     try {
         const response = (await api.post('api/login', payload, authHeader));
         const resp = response.data;
-        console.log("LOGIN ", resp)
 
         if (response.status === HTTP_STATUS.OK) {
             if (resp.detail) {
@@ -38,22 +37,6 @@ const login = async (login, senha) => {
             localStorage.setItem(
                 USUARIO_NOME,
                 resp.nome
-            );
-            localStorage.setItem(
-                ASSOCIACAO_UUID,
-                resp.associacao.uuid
-            );
-            localStorage.setItem(
-                ASSOCIACAO_NOME,
-                resp.associacao.nome
-            );
-            localStorage.setItem(
-                ASSOCIACAO_NOME_ESCOLA,
-                resp.associacao.nome_escola
-            );
-            localStorage.setItem(
-                ASSOCIACAO_TIPO_ESCOLA,
-                resp.associacao.tipo_escola
             );
             localStorage.setItem(
                 USUARIO_EMAIL,
@@ -71,8 +54,10 @@ const login = async (login, senha) => {
 
             await visoesService.setDadosUsuariosLogados(resp);
 
+            await visoesService.setDadosPrimeiroAcesso(resp);
+
             const decoded = decode(resp.token);
-            //window.location.href = "/";
+            window.location.href = "/";
         } 
     } catch (error) {
         console.log('ERROR');
