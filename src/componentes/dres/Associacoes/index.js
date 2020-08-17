@@ -105,7 +105,7 @@ export const Associacoes = () =>{
 
                     <div className="dropdown-menu dropdown-menu-opcoes " aria-labelledby="linkDropdownAcoes">
                         <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-dados-da-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver dados unidade</button>
-                        <button onClick={()=>buscaAssociacao(rowData.uuid, "/cadastro-de-despesa")} className="btn btn-link dropdown-item" type="button">Ver regularidade</button>
+                        <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-regularidade-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver regularidade</button>
                         <button onClick={()=>buscaAssociacao(rowData.uuid, "/cadastro-de-despesa")} className="btn btn-link dropdown-item" type="button">Ver situação financeira</button>
                         {urlRedirect &&
                             <Redirect
