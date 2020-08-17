@@ -23,7 +23,12 @@ const setDadosPrimeiroAcesso = async (resp) =>{
         uuid_associacao = usuario_logado.associacao_selecionada.uuid;
         nome_associacao = usuario_logado.associacao_selecionada.nome;
     }else {
-        if (resp.visoes.find(visao=> visao === 'DRE')){
+        if (resp.visoes.find(visao=> visao === 'SME')){
+            visao="SME";
+            uuid_unidade = "";
+            uuid_associacao = "";
+            nome_associacao = "ASSOCIACAO SME";
+        }else if (resp.visoes.find(visao=> visao === 'DRE')){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
             visao="DRE";
             uuid_unidade = unidade.uuid;
@@ -41,7 +46,9 @@ const setDadosPrimeiroAcesso = async (resp) =>{
     if (usuario_logado && usuario_logado.unidade_selecionada.nome){
         unidade_nome = usuario_logado.unidade_selecionada.nome;
     }else{
-        if (resp.visoes.find(visao=> visao === 'DRE')){
+        if (resp.visoes.find(visao=> visao === 'SME')){
+            unidade_nome = "Unidade Visão SME";
+        }else if (resp.visoes.find(visao=> visao === 'DRE')){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
             unidade_nome = unidade.nome;
         }else if (resp.visoes.find(visao=> visao === 'UE')){
@@ -53,7 +60,9 @@ const setDadosPrimeiroAcesso = async (resp) =>{
     if (usuario_logado && usuario_logado.unidade_selecionada.tipo_unidade){
         unidade_tipo = usuario_logado.unidade_selecionada.tipo_unidade;
     }else {
-        if (resp.visoes.find(visao=> visao === 'DRE')){
+        if (resp.visoes.find(visao=> visao === 'SME')){
+            unidade_tipo = "SME";
+        }else if (resp.visoes.find(visao=> visao === 'DRE')){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
             unidade_tipo = unidade.tipo_unidade;
         }else if (resp.visoes.find(visao=> visao === 'UE')){
@@ -148,14 +157,14 @@ const redirectVisao = (visao = null) => {
 
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
     if (visao === 'SME') {
-        redirect('/prestacao-de-contas')
+        redirect('/dashboard')
     } else if (visao === 'DRE') {
         redirect('/dre-associacoes')
     } else if (visao === 'UE') {
         redirect('/dados-da-associacao')
     } else {
         if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'SME')) {
-            redirect('/prestacao-de-contas')
+            redirect('/dashboard')
         } else if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'DRE')) {
             redirect('/dre-associacoes')
         } else if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'UE')) {
