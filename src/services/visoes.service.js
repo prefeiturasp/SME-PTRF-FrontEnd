@@ -157,14 +157,14 @@ const redirectVisao = (visao = null) => {
 
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
     if (visao === 'SME') {
-        redirect('/dashboard')
+        redirect('/undefined')
     } else if (visao === 'DRE') {
         redirect('/dre-associacoes')
     } else if (visao === 'UE') {
         redirect('/dados-da-associacao')
     } else {
         if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'SME')) {
-            redirect('/dashboard')
+            redirect('/undefined')
         } else if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'DRE')) {
             redirect('/dre-associacoes')
         } else if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'UE')) {
