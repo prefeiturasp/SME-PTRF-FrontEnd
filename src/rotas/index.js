@@ -29,6 +29,7 @@ import {DadosDaAssociacaoDrePage} from "../paginas/dres/Associacoes/DadosDaAssoc
 import {DadosDasContasDrePage} from "../paginas/dres/Associacoes/DadosDasContas";
 import {PaginaRegularidadeUnidadeEducacional} from "../paginas/dres/Associacoes/RegularidadeUnidadeEducacional"
 import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
+import {TecnicosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/TecnicosDaDiretoria";
 
 const routesConfig = [
     {
@@ -140,6 +141,11 @@ const routesConfig = [
       exact: true,
       path: "/dre-regularidade-unidade-educacional",
       component: PaginaRegularidadeUnidadeEducacional
+    },
+    {
+        exact: true,
+        path: "/dre-tecnicos-da-diretoria",
+        component: TecnicosDaDiretoriaDrePage
     },
     {
         exact: true,
