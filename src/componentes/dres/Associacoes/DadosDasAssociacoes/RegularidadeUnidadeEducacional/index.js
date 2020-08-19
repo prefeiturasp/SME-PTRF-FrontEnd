@@ -107,6 +107,7 @@ export const RegularidadeUnidadeEducacional = () => {
         return {uuid: item.uuid, regular: item.regular}
       })
       salvarItensRegularidade(dadosDaAssociacao.dados_da_associacao.uuid, itens).then(response => {
+        alert('Dados Salvos com Sucesso!')
         console.log("OK, Salvo com sucesso");
       })
     }
