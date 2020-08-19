@@ -6,7 +6,7 @@ import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrash, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faTrash, faPlus, faIdCard} from "@fortawesome/free-solid-svg-icons";
 
 import Img404 from "../../../../assets/img/img-404.svg";
 import Loading from "../../../../utils/Loading";
@@ -15,13 +15,16 @@ import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
 import {
     getTecnicosDre,
     createTecnicoDre,
-    deleteTecnicoDre
+    deleteTecnicoDre,
+    getTecnicoDrePorRf
 } from "../../../../services/dres/TecnicosDre.service";
 
 import {TecnicoDreForm} from "./TecnicoDreForm";
 import {ConfirmaDeleteTecnico} from "./ConfirmaDeleteTecnicoDialog";
+import {consultarRF} from "../../../../services/escolas/Associacao.service";
 
 export const CadastroTecnicosDre = ({dadosDaDre}) => {
+
 
     const rowsPerPage = 7;
 
@@ -43,12 +46,14 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
 
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
+    const [btnSalvarReadOnly, setBtnSalvarReadOnly] = useState(false);
+
     const carregaTecnicos = async () => {
         let tecnicos = await getTecnicosDre(dreUuid);
         setTecnicosList(tecnicos)
     };
 
-    const deleteTecnico= async () => {
+    const deleteTecnico = async () => {
         setLoading(true);
         if (stateTecnicoForm.uuid) {
             try {
@@ -71,7 +76,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         setStateTecnicoForm(initTecnicoForm);
         setShowTecnicoForm(true);
     };
-    
+
     const handleDeleteTecnicoAction = (tecnico) => {
         const initFormTecnico = {
             uuid: tecnico.uuid,
@@ -103,8 +108,13 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                 if (response.status === 201) {
                     console.log("Técnico criado com sucesso!");
                     await carregaTecnicos();
+                } else if (response.status === 400 && response.data.rf) {
+                    // data:
+                    // rf: ["Técnico de DRE com este RF já existe."]
+                    console.log("Técnico já existe")
                 } else {
                     console.log("Erro ao criar Tecnico")
+                    console.log(response)
                 }
             } catch (error) {
                 console.log(error)
@@ -122,6 +132,30 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
 
     const validateTecnicoForm = async (values) => {
         const errors = {};
+
+        setBtnSalvarReadOnly(true);
+        try {
+            let rf = await consultarRF(values.rf.trim());
+            if (rf.status === 200 || rf.status === 201) {
+                const init = {
+                    ...stateTecnicoForm,
+                    nome: rf.data[0].nm_pessoa,
+                    rf: values.rf
+                };
+                setStateTecnicoForm(init);
+
+                const tecnico_existente = await getTecnicoDrePorRf(values.rf.trim())
+
+                if (tecnico_existente.length > 0) {
+                    errors.rf = "Técnico já cadastrado"
+                } else {
+                    setBtnSalvarReadOnly(false);
+                }
+            }
+        } catch (e) {
+            errors.rf = "RF inválido"
+        }
+
         return errors
     };
 
@@ -134,6 +168,21 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     const closeConfirmDeleteDialog = () => {
         setShowConfirmDelete(false);
     };
+
+    const conferirAtribuicoesTemplate = (rowData, column) => {
+        return (
+            <div>
+                <a className="link-green" onClick={() => {}}>
+                    <FontAwesomeIcon
+                        style={{fontSize: '15px', marginRight: "0"}}
+                        icon={faIdCard}
+                    />
+                    <span> Conferir atribuições</span>
+                </a>
+            </div>
+        )
+    };
+
 
     const tableActionsTemplate = (rowData, column) => {
         return (
@@ -193,7 +242,12 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                                     >
                                         <Column field='rf' header='Registro funcional'/>
                                         <Column field='nome' header='Nome completo'/>
-                                        <Column body={tableActionsTemplate} header='Ações' style={{textAlign: 'center', width: '8em'}}/>
+
+                                        <Column body={conferirAtribuicoesTemplate} header='Unidades escolares atribuidas'
+                                                style={{textAlign: 'center'}}/>
+
+                                        <Column body={tableActionsTemplate} header='Ações'
+                                                style={{textAlign: 'center', width: '8em'}}/>
                                     </DataTable>)
                                     : (
                                         <MsgImgLadoDireito
@@ -214,6 +268,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                                 handleChange={handleChangesInTecnicoForm}
                                 validateForm={validateTecnicoForm}
                                 initialValues={stateTecnicoForm}
+                                btnSalvarReadOnly={btnSalvarReadOnly}
                             />
                         </section>
 

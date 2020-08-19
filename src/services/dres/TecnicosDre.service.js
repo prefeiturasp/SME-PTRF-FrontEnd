@@ -30,3 +30,11 @@ export const deleteTecnicoDre = async (uuid_tecnico) => {
         return error.response;
     });
 };
+
+export const getTecnicoDre = async (uuid_tecnico) => {
+    return (await api.get(`api/tecnicos-dre/${uuid_tecnico}/`, authHeader)).data
+};
+
+export const getTecnicoDrePorRf = async (rf) => {
+    return (await api.get(`api/tecnicos-dre/?rf=${rf}`, authHeader)).data
+};
