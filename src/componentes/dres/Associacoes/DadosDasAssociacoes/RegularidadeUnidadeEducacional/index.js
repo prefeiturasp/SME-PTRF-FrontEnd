@@ -3,9 +3,9 @@ import {Redirect} from "react-router-dom";
 import {Accordion, Card, Button, Form }from 'react-bootstrap';
 import {TopoComBotoes} from "../TopoComBotoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faChevronCircleUp, faChevronCircleDown, faExclamationTriangle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
+import {faChevronUp, faChevronDown, faExclamationTriangle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import {verificacaoRegularidade, salvarItensRegularidade} from "../../../../../services/dres/RegularidadeUnidadeEducaional.service";
-
+import {ModalConfirmaSalvar} from "../../../../../utils/Modais";
 
 export const RegularidadeUnidadeEducacional = () => {
     let dadosDaAssociacao = JSON.parse(localStorage.getItem("DADOS_DA_ASSOCIACAO"));
@@ -15,6 +15,7 @@ export const RegularidadeUnidadeEducacional = () => {
     const [statusChecklist, setStatusChecklists] = useState({});
     const [dicionarioDeItens, setDicionarioDeItens] = useState({});
     const [expandir, setExpandir] = useState({});
+    const [showSalvar, setShowSalvar] = useState(false);
 
     useEffect(() => {
       const buscaDadosRegularidade = async () => {
@@ -35,7 +36,7 @@ export const RegularidadeUnidadeEducacional = () => {
                 dicionarioItens[item.uuid] = item
               })
             })
-          })
+            })
           setChecklists(dicionarioItensListaVerificacao);
           setDicionarioDeItens(dicionarioItens);
           setStatusChecklists(status);
@@ -107,7 +108,7 @@ export const RegularidadeUnidadeEducacional = () => {
         return {uuid: item.uuid, regular: item.regular}
       })
       salvarItensRegularidade(dadosDaAssociacao.dados_da_associacao.uuid, itens).then(response => {
-        alert('Dados Salvos com Sucesso!')
+        setShowSalvar(true);
         console.log("OK, Salvo com sucesso");
       })
     }
@@ -129,10 +130,12 @@ export const RegularidadeUnidadeEducacional = () => {
                       <span style={{marginRight: "0", fontSize: '17px'}}>{statusChecklist[obj.uuid]}</span>
                   </div>
                   <div className="col-1" style={{ paddingLeft:"0px" }}>
+                    <span style={{ backgroundColor:"#c7c9c8", borderRadius: '67px', border: 'solid 1px #c7c9c8', padding: '4px 7px'}}>
                     <FontAwesomeIcon
-                        style={{fontSize: '30px', marginRight: "0", color:"#c7c9c8"}}
-                        icon={expandir[obj.uuid] === true ? faChevronCircleUp : faChevronCircleDown}
+                        style={{marginRight: "0", color: 'black'}}
+                        icon={expandir[obj.uuid] === true ? faChevronUp : faChevronDown}
                       />
+                    </span>
                   </div>
               </div>
             </Accordion.Toggle>
@@ -193,6 +196,13 @@ export const RegularidadeUnidadeEducacional = () => {
                             montaGrupo(grupo, index)
                           ))
                         ) : null}
+                        <ModalConfirmaSalvar
+                          show={showSalvar}
+                          handleClose={()=>setShowSalvar(false)}
+                          titulo="Itens salvos!"
+                          texto="Os dados foram salvos com sucesso."
+                          primeiroBotaoCss="success"
+                        />
                         </div>
                     </>
                 ) :
