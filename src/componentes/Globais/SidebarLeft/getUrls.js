@@ -58,7 +58,7 @@ const UrlsMenuDres ={
 
 const UrlsMenuSme ={
     dados_iniciais: {
-        default_selected: "dashboard",
+        default_selected: "undefined",
         usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
