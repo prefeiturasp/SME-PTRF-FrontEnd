@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import "./cabecalho.scss"
 import LogoPtrf from "../../../assets/img/logo-ptrf-verde.png"
 import IconeSair from "../../../assets/img/sair.svg"
@@ -7,12 +7,24 @@ import {visoesService} from "../../../services/visoes.service";
 
 export const Cabecalho = () => {
 
+    const [exibeMenu, setExibeMenu] = useState(true);
+
     const logout = () => {
         authService.logout()
     };
 
     let login_usuario = localStorage.getItem(USUARIO_LOGIN);
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado(login_usuario);
+
+
+
+    console.log("CAbecalho ", dados_usuario_logado.visoes)
+
+    useEffect(()=>{
+        if (dados_usuario_logado.visoes.find(visao=> visao === 'SME')){
+            setExibeMenu(false);
+        }
+    }, [])
 
     const onChangeVisao = (e) =>{
         let obj = JSON.parse(e.target.value);
@@ -58,6 +70,7 @@ export const Cabecalho = () => {
                     <div className="p-2 bd-highlight">
                         <img className="img-fluid logo-cabecalho ml-3" src={LogoPtrf} alt=""/>
                     </div>
+                    {exibeMenu &&
                     <div className="p-2 bd-highlight container-select-visoes">
                         <select
                             value={
@@ -90,6 +103,8 @@ export const Cabecalho = () => {
                             )}
                         </select>
                     </div>
+                    }
+
                     <div className="p-2 bd-highlight text-center ">
                         <button className="btn-sair" onClick={logout}><img className="img-fluid icone-sair" src={IconeSair} alt=""/></button>
                         <p className="mb-">Sair</p>
