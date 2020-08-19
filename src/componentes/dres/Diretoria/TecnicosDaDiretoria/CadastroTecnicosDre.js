@@ -6,7 +6,7 @@ import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrash, faPlus, faIdCard} from "@fortawesome/free-solid-svg-icons";
+import {faTrash, faPlus, faClipboardList} from "@fortawesome/free-solid-svg-icons";
 
 import Img404 from "../../../../assets/img/img-404.svg";
 import Loading from "../../../../utils/Loading";
@@ -175,7 +175,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                 <a className="link-green" onClick={() => {}}>
                     <FontAwesomeIcon
                         style={{fontSize: '15px', marginRight: "0"}}
-                        icon={faIdCard}
+                        icon={faClipboardList}
                     />
                     <span> Conferir atribuições</span>
                 </a>
