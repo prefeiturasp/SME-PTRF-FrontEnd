@@ -43,7 +43,6 @@ export const Associacoes = () =>{
     const buscaAssociacoesPorUnidade = async ()=>{
         try {
             let associacoes = await getAssociacoesPorUnidade();
-            console.log("Associacoes ", associacoes);
             setAssociacoes(associacoes);
         }catch (e) {
             console.log("Erro ao buscar associacoes ", e)
@@ -56,7 +55,6 @@ export const Associacoes = () =>{
         try {
             let associacao = await getAssociacao(uuid_associacao);
             let contas = await getContasAssociacao(uuid_associacao);
-            console.log("Contas ", contas);
 
             let dados_da_associacao = {
                 dados_da_associacao:{
@@ -64,7 +62,6 @@ export const Associacoes = () =>{
                     contas
                 }
             };
-
             localStorage.setItem(DADOS_DA_ASSOCIACAO, JSON.stringify(dados_da_associacao ));
             setRrlRedirect(url_redirect)
         }catch (e) {
@@ -105,7 +102,7 @@ export const Associacoes = () =>{
 
                     <div className="dropdown-menu dropdown-menu-opcoes " aria-labelledby="linkDropdownAcoes">
                         <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-dados-da-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver dados unidade</button>
-                        <button onClick={()=>buscaAssociacao(rowData.uuid, "/cadastro-de-despesa")} className="btn btn-link dropdown-item" type="button">Ver regularidade</button>
+                        <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-regularidade-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver regularidade</button>
                         <button onClick={()=>buscaAssociacao(rowData.uuid, "/cadastro-de-despesa")} className="btn btn-link dropdown-item" type="button">Ver situação financeira</button>
                         {urlRedirect &&
                             <Redirect

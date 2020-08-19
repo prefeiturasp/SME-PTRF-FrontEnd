@@ -7,7 +7,10 @@ import IconeMenuPainel from '../../../assets/img/icone-menu-painel.svg'
 import IconeMenuCreditosDaEscola from '../../../assets/img/icone-menu-creditos-da-escola.svg'
 import IconeMenuGastosDaEscola from '../../../assets/img/icone-menu-gastos-da-escola.svg'
 import IconeMenuPrestacaoDeContas from '../../../assets/img/icone-menu-prestacao-de-contas.svg'
-import {redirect} from "../../../utils/redirect";
+import IconeDadosDaDiretoria from '../../../assets/img/icone-dados-da-diretoria.svg'
+import IconeAcompanhamento from "../../../assets/img/icone-menu-dre-acompanhamento.svg"
+import IconePainel from "../../../assets/img/icone-menu-dre-painel.svg"
+import IconeRelatorio from "../../../assets/img/icone-menu-dre-relatorio.svg"
 
 const getDadosUsuario = () =>{
     let usuario = localStorage.getItem(USUARIO_NOME);
@@ -45,7 +48,11 @@ const UrlsMenuDres ={
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
     lista_de_urls:[
+        {label: "Painel", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconePainel},
         {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola},
+        {label: "Acompanhamento", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeAcompanhamento},
+        {label: "Relatório consolidado", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeRelatorio},
+        {label: "Dados da Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria},
     ]
 };
 
@@ -65,19 +72,19 @@ const GetUrls = () =>{
 
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
 
-    if (dados_usuario_logado.visao_selecionada.nome === 'escolas'){
-        return UrlsMenuEscolas
-    }else if(dados_usuario_logado.visao_selecionada.nome === 'dres'){
-        return UrlsMenuDres
-    }else if (dados_usuario_logado.visao_selecionada.nome === 'sme'){
+    if (dados_usuario_logado.visao_selecionada.nome === 'SME'){
         return UrlsMenuSme
+    }else if(dados_usuario_logado.visao_selecionada.nome === 'DRE'){
+        return UrlsMenuDres
+    }else if (dados_usuario_logado.visao_selecionada.nome === 'UE'){
+        return UrlsMenuEscolas
     }else {
-        if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'escolas')){
-            return UrlsMenuEscolas
-        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'dres')){
-            return UrlsMenuDres
-        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'sme')){
+        if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'SME')){
             return UrlsMenuSme
+        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'DRE')){
+            return UrlsMenuDres
+        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'UE')){
+            return UrlsMenuEscolas
         }else {
             return UrlsMenuEscolas
         }

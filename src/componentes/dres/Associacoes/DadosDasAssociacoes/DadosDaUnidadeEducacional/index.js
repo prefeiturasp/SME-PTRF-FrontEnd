@@ -4,9 +4,10 @@ import {TopoComBotoes} from "../TopoComBotoes";
 import {MenuInterno} from "../../../../Globais/MenuInterno";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {InfosUnidadeEducacional} from "./InfosUnidadeEducacional";
+import {DADOS_DA_ASSOCIACAO} from "../../../../../services/auth.service";
 
 export const DadosDaUnidadeEducacional = () =>{
-    let dadosDaAssociacao = JSON.parse(localStorage.getItem("DADOS_DA_ASSOCIACAO"));
+    let dadosDaAssociacao = JSON.parse(localStorage.getItem(DADOS_DA_ASSOCIACAO));
 
     return (
         <>

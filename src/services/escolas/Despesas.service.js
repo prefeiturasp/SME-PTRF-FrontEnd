@@ -14,7 +14,7 @@ export const deleteDespesa = async uuid => {
 };
 
 export const getDespesasTabelas = async () => {
-    return (await api.get(`api/despesas/tabelas/`, authHeader)).data
+    return (await api.get(`api/despesas/tabelas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
 
 export const getEspecificacoesCapital = async () => {

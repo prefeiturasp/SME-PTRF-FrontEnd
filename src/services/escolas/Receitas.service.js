@@ -11,7 +11,7 @@ const authHeader = {
 
 export const getTabelasReceita = async () => {
     return api
-        .get('api/receitas/tabelas/', authHeader)
+        .get(`api/receitas/tabelas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)
         .then(response => {
             return response;
         })
@@ -22,7 +22,7 @@ export const getTabelasReceita = async () => {
 
 export const criarReceita = async payload => {
     return api
-        .post('api/receitas/', payload, authHeader)
+        .post(`api/receitas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, payload, authHeader)
         .then(response => {
             return response;
         })
@@ -33,7 +33,7 @@ export const criarReceita = async payload => {
 
 export const getReceita = async (uuid) => {
     return api
-        .get(`api/receitas/${uuid}/`, authHeader)
+        .get(`api/receitas/${uuid}/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)
         .then(response => {
             return response;
         })
@@ -44,7 +44,7 @@ export const getReceita = async (uuid) => {
 
 export const atualizaReceita = async (uuid, payload) => {
     return api
-        .put(`api/receitas/${uuid}/`, payload, authHeader)
+        .put(`api/receitas/${uuid}/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, payload, authHeader)
         .then(response => {
             return response;
         })
@@ -55,7 +55,7 @@ export const atualizaReceita = async (uuid, payload) => {
 
 export const deletarReceita = async uuid => {
     return api
-        .delete(`api/receitas/${uuid}/`, authHeader)
+        .delete(`api/receitas/${uuid}/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)
         .then(response => {
             return response;
         })
@@ -65,7 +65,7 @@ export const deletarReceita = async uuid => {
 };
 
 export const getListaReceitas = async () => {
-    return (await api.get(`api/receitas/`, authHeader)).data
+    return (await api.get(`api/receitas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
 
 export const filtroPorPalavraReceitas = async (palavra) => {

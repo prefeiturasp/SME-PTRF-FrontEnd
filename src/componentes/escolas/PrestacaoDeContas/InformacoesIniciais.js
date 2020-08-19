@@ -12,7 +12,6 @@ export const InformacoesIniciais = () => {
 
     const buscaFiqueDeOlho = async () => {
         await getFiqueDeOlho().then((response) => {
-            console.log(response);
             setFiqueDeOlho(response.detail);
         }).catch((error) => {
             console.log(error);

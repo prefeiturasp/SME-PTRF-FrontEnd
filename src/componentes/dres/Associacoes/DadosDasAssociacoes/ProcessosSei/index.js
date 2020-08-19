@@ -3,10 +3,11 @@ import {Redirect} from "react-router-dom";
 import {TopoComBotoes} from "../TopoComBotoes";
 import {MenuInterno} from "../../../../Globais/MenuInterno";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
-import {InfosAssociacao} from "./InfosAssociacao";
+import {ProcessoSeiRegularidade} from "./ProcessoSeiRegularidade";
+import {ProcessosSeiPrestacaoDeContas} from "./ProcessosSeiPrestacaoDeContas";
 import {DADOS_DA_ASSOCIACAO} from "../../../../../services/auth.service";
 
-export const DadosDaAssociacao = () =>{
+export const ProcessosSei = () =>{
     let dadosDaAssociacao = JSON.parse(localStorage.getItem(DADOS_DA_ASSOCIACAO));
     return (
         <>
@@ -19,7 +20,10 @@ export const DadosDaAssociacao = () =>{
                             <MenuInterno
                                 caminhos_menu_interno = {UrlsMenuInterno}
                             />
-                            <InfosAssociacao
+                            <ProcessoSeiRegularidade
+                                dadosDaAssociacao={dadosDaAssociacao}
+                            />
+                            <ProcessosSeiPrestacaoDeContas
                                 dadosDaAssociacao={dadosDaAssociacao}
                             />
                         </div>
