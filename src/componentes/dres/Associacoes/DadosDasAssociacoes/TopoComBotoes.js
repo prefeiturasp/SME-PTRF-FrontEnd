@@ -11,7 +11,7 @@ export const TopoComBotoes = ({dadosDaAssociacao}) =>{
                 <button type="button" className="btn btn-outline-success">Ver situação financeira</button>
             </div>
             <div className="p-2 bd-highlight mt-5">
-                <button type="button" className="btn btn btn-outline-success">Ver regularidade</button>
+                <Link to="/dre-regularidade-unidade-educacional" className="btn btn btn-outline-success">Ver regularidade</Link>
             </div>
             <div className="p-2 bd-highlight mt-5">
                 <Link to="/dre-associacoes" className="btn btn btn-success">Voltar</Link>

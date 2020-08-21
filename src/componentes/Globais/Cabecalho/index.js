@@ -16,15 +16,11 @@ export const Cabecalho = () => {
     let login_usuario = localStorage.getItem(USUARIO_LOGIN);
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado(login_usuario);
 
-
-
-    console.log("CAbecalho ", dados_usuario_logado.visoes)
-
     useEffect(()=>{
         if (dados_usuario_logado.visoes.find(visao=> visao === 'SME')){
             setExibeMenu(false);
         }
-    }, [])
+    }, []);
 
     const onChangeVisao = (e) =>{
         let obj = JSON.parse(e.target.value);

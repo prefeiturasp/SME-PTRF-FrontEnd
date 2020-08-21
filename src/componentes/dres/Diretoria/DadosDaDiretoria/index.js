@@ -170,7 +170,8 @@ export const DadosDaDiretoria = () => {
                                                 </div>
                                                 <div className="form-group col-md-6 mt-3">
                                                     <label htmlFor="dre_designacao_ano">Designação Ano</label>
-                                                    <input
+                                                    <MaskedInput
+                                                        mask = {[/\d/, /\d/, /\d/, /\d/]}
                                                         type="text"
                                                         value={props.values.dre_designacao_ano}
                                                         name="dre_designacao_ano"
