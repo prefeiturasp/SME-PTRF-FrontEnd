@@ -71,7 +71,7 @@ export const SidebarLeft = () => {
                     </NavItem>
                     <ReactTooltip disable={sidebarStatus.sideBarStatus} id='meus_dados'>{}</ReactTooltip>
 
-                    {sidebarStatus.sideBarStatus &&
+{/*                    {sidebarStatus.sideBarStatus &&
                     <>
                         <NavItem
                             navitemClassName="navItemCustomizadoNome"
@@ -85,7 +85,7 @@ export const SidebarLeft = () => {
                             </NavText>
                         </NavItem>
                     </>
-                    }
+                    }*/}
 
                     {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index)=>
                         <NavItem
