@@ -3,7 +3,7 @@
 import * as yup from "yup";
 import moment from "moment";
 import {ASSOCIACAO_UUID} from "../services/auth.service";
-import {getPeriodoFechado} from "../services/Associacao.service";
+import {getPeriodoFechado} from "../services/escolas/Associacao.service";
 
 export const checkDuplicateInObject = (propertyName, inputArray) => {
 
@@ -23,6 +23,25 @@ export const checkDuplicateInObject = (propertyName, inputArray) => {
   });
   return seenDuplicate;
 };
+
+export const YupSignupSchemaDreDadosDiretoria = yup.object().shape({
+
+  dre_diretor_regional_nome:yup.string().required("Digite um RF válido para exibir o nome"),
+
+  dre_diretor_regional_rf: yup.string()
+  .test('test-name', 'Digite um RF válido',
+      function (value) {
+        return !(!value || value.trim() === "" || value.length > 10);
+      }),
+
+  dre_cnpj: yup.string()
+  .test('test-name', 'Digite um CNPJ Válido',
+      function (value) {
+        if (value){
+          return valida_cnpj(value)
+        }
+      }),
+});
 
 export const YupSignupSchemaDadosDaAssociacao = yup.object().shape({
   email: yup.string().email("Digite um email válido"),
@@ -174,13 +193,14 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
       values.tipo_transacao = null
     }
   }
-
-
-
-
   values.valor_total = trataNumericos(values.valor_total);
+  values.valor_original = trataNumericos(values.valor_original);
+
   values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
   values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)
+
+
+  console.log("Valor Recurso Açoes ", values.valor_recusos_acoes)
 
   if (values.data_documento !== "" && values.data_documento !== null){
     values.data_documento = moment(values.data_documento).format("YYYY-MM-DD");
@@ -243,6 +263,10 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
     rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital)
     rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)
     rateio.valor_rateio = round(trataNumericos(rateio.valor_rateio),2)
+    rateio.valor_original = round(trataNumericos(rateio.valor_original),2)
+
+
+    console.log("Valor Rateio ", rateio.valor_rateio)
 
     if (rateio.aplicacao_recurso === "0" || rateio.aplicacao_recurso === "" || rateio.aplicacao_recurso === 0){
       rateio.aplicacao_recurso = null
@@ -253,7 +277,7 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
     }
 
     if (rateio.aplicacao_recurso === "CAPITAL"){
-      rateio.valor_rateio = round(rateio.quantidade_itens_capital * rateio.valor_item_capital, 2)
+      //rateio.valor_rateio = round(rateio.quantidade_itens_capital * rateio.valor_item_capital, 2)
     }
 
   })
@@ -323,16 +347,20 @@ export const calculaValorRateio = (valor1, valor2) => {
   let valor_total = valor1Tratado * valor2Tratado;
 
   return valor_total;
-}
+};
 export const calculaValorRecursoAcoes = (values) => {
+  let valor_totalTratado = trataNumericos(values.valor_total);
+  let valor_recursos_propriosTratado = trataNumericos(values.valor_recursos_proprios);
+  return round(valor_totalTratado - valor_recursos_propriosTratado, 2);
+};
 
-  //console.log("Calcula Valor ", values)
+export const calculaValorOriginal = (values) => {
 
-  let valor_totalTratado = trataNumericos(values.valor_total)
-  let valor_recursos_propriosTratado = trataNumericos(values.valor_recursos_proprios)
-  let valor_total = round(valor_totalTratado - valor_recursos_propriosTratado, 2);
+  let valor_total_ratado = trataNumericos(values.valor_original);
+  let valor_recursos_proprios_tratado = trataNumericos(values.valor_recursos_proprios);
+  let valor_total = round(valor_total_ratado - valor_recursos_proprios_tratado, 2);
   return valor_total;
-}
+};
 
 export const cpfMaskContitional = (value) => {
   let cpfCnpj = value.replace(/[^\d]+/g, "");

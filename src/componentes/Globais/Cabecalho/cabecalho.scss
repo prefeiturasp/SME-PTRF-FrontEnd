@@ -1,0 +1,29 @@
+.cabecalho{
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
+  height: 80px;
+  .logo-cabecalho{
+    width: 100px;
+  }
+
+  .btn-sair{
+    background: transparent;
+    border: none;
+  }
+
+  .icone-sair{
+    width: 25px;
+  }
+
+  .container-select-visoes{
+    width: 72%;
+  }
+
+  .span-tipo-de-unidade{
+    border-radius: 25px;
+    background-color: #2B7D83;
+  }
+}
+
+
+

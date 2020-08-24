@@ -1,4 +1,4 @@
-import api from './Api'
+import api from './api'
 
 const authHeader = {
   'Content-Type': 'application/json',

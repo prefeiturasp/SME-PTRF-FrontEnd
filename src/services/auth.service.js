@@ -1,6 +1,7 @@
 import decode from "jwt-decode";
-import api from './Api';
+import api from './api';
 import HTTP_STATUS from "http-status-codes";
+import {visoesService} from "./visoes.service";
 
 export const TOKEN_ALIAS = "TOKEN";
 export const USUARIO_NOME = "NOME";
@@ -11,7 +12,7 @@ export const ASSOCIACAO_TIPO_ESCOLA = "TIPO_ESCOLA";
 export const USUARIO_EMAIL = "EMAIL";
 export const USUARIO_CPF = "CPF";
 export const USUARIO_LOGIN = "LOGIN";
-
+export const DADOS_DA_ASSOCIACAO = "DADOS_DA_ASSOCIACAO";
 
 const authHeader = {
     'Content-Type': 'application/json'
@@ -31,26 +32,11 @@ const login = async (login, senha) => {
             if (resp.detail) {
                 return "RF incorreto"
             }
+
             localStorage.setItem(TOKEN_ALIAS, resp.token);
             localStorage.setItem(
                 USUARIO_NOME,
                 resp.nome
-            );
-            localStorage.setItem(
-                ASSOCIACAO_UUID,
-                resp.associacao.uuid
-            );
-            localStorage.setItem(
-                ASSOCIACAO_NOME,
-                resp.associacao.nome
-            );
-            localStorage.setItem(
-                ASSOCIACAO_NOME_ESCOLA,
-                resp.associacao.nome_escola
-            );
-            localStorage.setItem(
-                ASSOCIACAO_TIPO_ESCOLA,
-                resp.associacao.tipo_escola
             );
             localStorage.setItem(
                 USUARIO_EMAIL,
@@ -65,6 +51,10 @@ const login = async (login, senha) => {
                 resp.cpf
             );
             localStorage.removeItem('medidorSenha');
+
+            await visoesService.setDadosUsuariosLogados(resp);
+
+            await visoesService.setDadosPrimeiroAcesso(resp);
 
             const decoded = decode(resp.token);
             window.location.href = "/";
@@ -106,6 +96,7 @@ const logout = () => {
     localStorage.removeItem(USUARIO_EMAIL);
     localStorage.removeItem(USUARIO_LOGIN);
     localStorage.removeItem(USUARIO_CPF);
+    localStorage.removeItem(DADOS_DA_ASSOCIACAO);
     //window.location.reload();
     window.location.assign("/login")
 };

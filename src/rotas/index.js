@@ -1,26 +1,35 @@
 import React from "react";
-import {Route, Switch, Redirect} from 'react-router-dom'
+import {Route, Switch} from 'react-router-dom'
 import {Login} from "../paginas/Login";
-import {Pagina404} from "../paginas/404";
-import {DashboardPage} from "../paginas/Dashboard";
-import {CadastroDeDespesa} from "../paginas/Despesas/CadastroDeDespesas";
-import {EdicaoDeDespesa} from "../paginas/Despesas/EdicaoDeDespesa";
-import { ListaDeDespesasPage } from '../paginas/Despesas/ListaDeDespesas'
-import { CadastroDeReceita } from '../paginas/Receitas/CadastroReceita';
-import { EdicaoDeReceita } from '../paginas/Receitas/EdicaoReceita';
-import { ListaDeReceitasPage } from "../paginas/Receitas/ListaDeReceitas";
-import {DadosDaAssociacaoPage} from "../paginas/Associacao";
-import {PrestacaoDeContasPage} from "../paginas/PrestacaoDeContas";
-import {DetalheDasPrestacoes} from "../componentes/PrestacaoDeContas/DetalheDasPrestacoes";
-import {VisualizacaoDaAta} from "../componentes/GeracaoDaAta/VisualizacaoDaAta";
-import {MembrosDaAssociacaoPage} from "../paginas/MembrosDaAssociacao";
-import {ValoresReprogramadosPage} from "../paginas/ValoresReprogramados";
-import {DadosDasContasPage} from "../paginas/DadosDasContasAssociacao";
+import {Pagina404} from "../paginas/escolas/404";
+import {DashboardPage} from "../paginas/escolas/Dashboard";
+import {CadastroDeDespesa} from "../paginas/escolas/Despesas/CadastroDeDespesas";
+import {EdicaoDeDespesa} from "../paginas/escolas/Despesas/EdicaoDeDespesa";
+import { ListaDeDespesasPage } from '../paginas/escolas/Despesas/ListaDeDespesas'
+import { CadastroDeReceita } from '../paginas/escolas/Receitas/CadastroReceita';
+import { EdicaoDeReceita } from '../paginas/escolas/Receitas/EdicaoReceita';
+import { ListaDeReceitasPage } from "../paginas/escolas/Receitas/ListaDeReceitas";
+import {DadosDaAssociacaoPage} from "../paginas/escolas/Associacao";
+import {PrestacaoDeContasPage} from "../paginas/escolas/PrestacaoDeContas";
+import {DetalheDasPrestacoes} from "../componentes/escolas/PrestacaoDeContas/DetalheDasPrestacoes";
+import {VisualizacaoDaAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta";
+import {MembrosDaAssociacaoPage} from "../paginas/escolas/MembrosDaAssociacao";
+import {ValoresReprogramadosPage} from "../paginas/escolas/ValoresReprogramados";
+import {DadosDasContasPage} from "../paginas/escolas/DadosDasContasAssociacao";
 import {EsqueciMinhaSenhaPage} from "../paginas/Login/EsqueciMinhaSenha";
 import {RedefinirSenhaPage} from "../paginas/Login/RedefinirMinhaSenha";
-import {MeusDadosPage} from "../paginas/MeusDados";
-
+import {MeusDadosPage} from "../paginas/escolas/MeusDados";
+import {AssociacoesPage} from "../paginas/dres/Associacoes";
+import {ProcessosSeiPage} from "../paginas/dres/Associacoes/ProcessosSei";
 import { authService } from '../services/auth.service';
+// Faz o redirect de acordo com a Visao Selecionada
+import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
+import {DadosDaUnidadeEducacionalPage} from "../paginas/dres/Associacoes/DadosDaUnidadeEducacional";
+import {DadosDaAssociacaoDrePage} from "../paginas/dres/Associacoes/DadosDaAssociacao";
+import {DadosDasContasDrePage} from "../paginas/dres/Associacoes/DadosDasContas";
+import {PaginaRegularidadeUnidadeEducacional} from "../paginas/dres/Associacoes/RegularidadeUnidadeEducacional"
+import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
+import {TecnicosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/TecnicosDaDiretoria";
 
 const routesConfig = [
     {
@@ -100,10 +109,50 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/",
-        component: DashboardPage
+        path: "/dre-associacoes",
+        component: AssociacoesPage
     },
-]
+    {
+        exact: true,
+        path: "/dre-dados-da-unidade-educacional",
+        component: DadosDaUnidadeEducacionalPage
+    },
+    {
+        exact: true,
+        path: "/dre-dados-da-associacao",
+        component: DadosDaAssociacaoDrePage
+    },
+    {
+        exact: true,
+        path: "/dre-dados-das-contas",
+        component: DadosDasContasDrePage
+    },
+    {
+        exact: true,
+        path: "/dre-processos-sei",
+        component: ProcessosSeiPage
+    },
+    {
+        exact: true,      
+        path: "/dre-dados-da-diretoria",
+        component: DadosDaDiretoriaDrePage
+    },
+    {
+      exact: true,
+      path: "/dre-regularidade-unidade-educacional",
+      component: PaginaRegularidadeUnidadeEducacional
+    },
+    {
+        exact: true,
+        path: "/dre-tecnicos-da-diretoria",
+        component: TecnicosDaDiretoriaDrePage
+    },
+    {
+        exact: true,
+        path: "/",
+        component: RedirectLoginVisaoUe
+    },
+];
 
 const PrivateRouter = (
     { component: Component, ...rest } // eslint-disable-line
@@ -122,7 +171,7 @@ const PrivateRouter = (
     />
   );
 
-export const Rotas = (props) => {
+export const Rotas = () => {
     return(
         <Switch>
             <Route path="/login" component={Login}/>
@@ -142,5 +191,5 @@ export const Rotas = (props) => {
             <Route path="*" component={Pagina404}/>
         </Switch>
     )
-}
+};
 
