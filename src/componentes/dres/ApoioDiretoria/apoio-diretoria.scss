@@ -11,3 +11,20 @@
     font-weight: 500;
   }
 }
+
+.btn-container-pergunta{
+  color: #00585E;
+}
+
+.btn-container-pergunta:hover, .btn-container-pergunta:active, .btn-container-pergunta:focus{
+  text-decoration: none;
+  color: #00585E;
+}
+
+.span-icone-toogle{
+  background-color: rgb(199, 201, 200);
+  border-radius: 67px;
+  border: 1px solid rgb(199, 201, 200);
+  padding: 8px 12px;
+  font-size: 16px;
+}

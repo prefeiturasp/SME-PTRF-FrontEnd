@@ -1,6 +1,8 @@
 import React, {useEffect, useState, Fragment} from "react";
 import {getFaqCategorias, getFaqPorCategoria} from "../../../../services/dres/ApoioDiretoria.service";
 import '../apoio-diretoria.scss'
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faChevronUp, faChevronDown} from "@fortawesome/free-solid-svg-icons";
 
 export const Faq = () => {
 
@@ -62,13 +64,20 @@ export const Faq = () => {
                         <div className="card-header" id="headingOne">
                             <h2 className="mb-0">
                                 <div className="row">
-                                    <div className="col-10">
-                                        <button onClick={()=>toggleBtnFaq(index)} className="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target={`#collapse${index}`} aria-expanded="true" aria-controls={`collapse${index}`}>
+                                    <div className="col-11">
+                                        <button onClick={()=>toggleBtnFaq(index)} className="btn btn-link btn-block text-left btn-container-pergunta pl-0" type="button" data-toggle="collapse" data-target={`#collapse${index}`} aria-expanded="true" aria-controls={`collapse${index}`}>
                                             {faq.pergunta}
                                         </button>
                                     </div>
-                                    <div className="col-2">
-                                        {clickBtnFaq[index] ? "Seta Pra Cima" : "Seta Pra Baixo"}
+                                    <div className="col-1">
+                                        <button onClick={()=>toggleBtnFaq(index)} className="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target={`#collapse${index}`} aria-expanded="true" aria-controls={`collapse${index}`}>
+                                            <span className='span-icone-toogle'>
+                                                <FontAwesomeIcon
+                                                    style={{marginRight: "0", color: 'black'}}
+                                                    icon={clickBtnFaq[index] ? faChevronUp : faChevronDown}
+                                                />
+                                            </span>
+                                        </button>
                                     </div>
                                 </div>
 
