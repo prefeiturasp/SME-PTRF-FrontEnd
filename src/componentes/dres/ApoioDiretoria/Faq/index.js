@@ -64,7 +64,7 @@ export const Faq = () => {
                     />
                 ) :
                 <>
-                    <ul className="nav nav-pills mt-5 container-faq-categorias">
+                    <ul className="nav nav-pills mt-4 container-faq-categorias">
                         {faqCategorias && faqCategorias.length > 0 && faqCategorias.map((categoria, index) =>
                             <Fragment key={index}>
                                 <li className="nav-item">
