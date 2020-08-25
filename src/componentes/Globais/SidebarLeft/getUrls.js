@@ -61,7 +61,7 @@ const UrlsMenuDres ={
             icone:IconeApoioDiretoria,
             subItens: [
                 {
-                    label: "Perguntas Frequentes", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria
+                    label: "Perguntas Frequentes", url: "dre-faq", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria
                 }
             ]
         },

@@ -77,7 +77,7 @@ export const SidebarLeft = () => {
                     {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index)=>
                         <NavItem
                             key={index}
-                            navitemClassName="d-flex align-items-end"
+                            navitemClassName={`d-flex align-items-end ${url.subItens && url.subItens.length > 0 ? "sub-menu" : ""}`}
                             data-tip={url.label}  data-for={url.dataFor}
                             eventKey={url.url}
                         >
@@ -87,40 +87,18 @@ export const SidebarLeft = () => {
                             <NavText>{url.label}</NavText>
                             <ReactTooltip disable={sidebarStatus.sideBarStatus} id={url.dataFor}>{}</ReactTooltip>
                             {url.subItens && url.subItens.length > 0 && url.subItens.map((subItem, index)=>
-                                <NavItem eventKey="charts/linechart">
+                                <NavItem
+                                    navitemClassName="sub-menu-item"
+                                    eventKey={subItem.url}
+                                >
                                     <NavText>
-                                        Line Chart
+                                        {subItem.label}
                                     </NavText>
                                 </NavItem>
                             )}
                         </NavItem>
                         )
                     }
-
-                    <NavItem
-                        eventKey="charts"
-                        navitemClassName="sub-menu"
-                    >
-                        <NavIcon>
-                            <FontAwesomeIcon
-                                style={{fontSize: '20px', marginRight:"0"}}
-                                icon={faEdit}
-                            />
-                        </NavIcon>
-                        <NavText>Charts</NavText>
-                        <NavItem
-                            navitemClassName="sub-menu-item"
-                            eventKey="linechart"
-                        >
-                            <NavText>Line Chart</NavText>
-                        </NavItem>
-                        <NavItem
-                            eventKey="barchart"
-                            navitemClassName="sub-menu-item"
-                        >
-                            <NavText>Bar Chart</NavText>
-                        </NavItem>
-                    </NavItem>
                     <NavItem
                         eventKey={urls.dados_iniciais.default_selected}
                         navitemClassName={
