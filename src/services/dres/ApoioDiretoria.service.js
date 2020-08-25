@@ -11,3 +11,7 @@ const authHeader = {
 export const getFaqCategorias = async () => {
     return (await api.get(`/api/faq-categorias/`, authHeader)).data
 };
+
+export const getFaqPorCategoria = async (categoria__uuid) => {
+    return (await api.get(`/api/faqs/?categoria__uuid=${categoria__uuid}`, authHeader)).data
+};

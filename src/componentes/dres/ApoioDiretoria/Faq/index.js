@@ -1,10 +1,11 @@
 import React, {useEffect, useState, Fragment} from "react";
-import {getFaqCategorias} from "../../../../services/dres/ApoioDiretoria.service";
+import {getFaqCategorias, getFaqPorCategoria} from "../../../../services/dres/ApoioDiretoria.service";
 import '../apoio-diretoria.scss'
 
 export const Faq = ()=>{
 
     const [faqCategorias, setFaqCategorias] = useState([]);
+    const [faqsPorCategoria, setFaqsPorCategoria] = useState([]);
     const [clickBtnEscolheCategoria, setClickBtnEscolheCategoria] = useState(false);
 
     useEffect(()=>{
@@ -17,9 +18,11 @@ export const Faq = ()=>{
         setFaqCategorias(categorias);
     };
 
-    const getFaqCategoria = async ()=>{
-        
-    }
+    const getFaqCategoria = async (categoria__uuid)=>{
+        let faqs = await getFaqPorCategoria(categoria__uuid);
+        console.log("Faqs ", faqs)
+        setFaqsPorCategoria(faqs)
+    };
 
     const toggleIcon = (id) => {
         setClickBtnEscolheCategoria({
@@ -35,7 +38,8 @@ export const Faq = ()=>{
                   <li className="nav-item">
                       <button
                           onClick={()=>{
-                          toggleIcon(index)
+                            toggleIcon(index);
+                              getFaqCategoria(categoria.uuid)
                         }}
                           className= {`nav-link btn-escolhe-categoria mr-3 ${clickBtnEscolheCategoria[index] ? "btn-escolhe-categoria-active" : ""}`}
                       >
