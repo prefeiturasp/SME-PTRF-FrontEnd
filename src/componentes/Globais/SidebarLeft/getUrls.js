@@ -54,7 +54,17 @@ const UrlsMenuDres ={
         {label: "Acompanhamento", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeAcompanhamento},
         {label: "Relatório consolidado", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeRelatorio},
         {label: "Dados da Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria},
-        {label: "Apoio à Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeApoioDiretoria},
+        {
+            label: "Apoio à Diretoria",
+            url: "dre-dados-da-diretoria",
+            dataFor:"dre_dados_da_diretoria",
+            icone:IconeApoioDiretoria,
+            subItens: [
+                {
+                    label: "Perguntas Frequentes", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria
+                }
+            ]
+        },
     ]
 };
 
