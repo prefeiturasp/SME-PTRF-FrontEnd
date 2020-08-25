@@ -8,23 +8,30 @@ export const Faq = () => {
 
     const [faqCategorias, setFaqCategorias] = useState([]);
     const [faqsPorCategoria, setFaqsPorCategoria] = useState([]);
-    const [clickBtnEscolheCategoria, setClickBtnEscolheCategoria] = useState(false);
+    const [clickBtnEscolheCategoria, setClickBtnEscolheCategoria] = useState({0: true});
     const [clickBtnFaq, setClickBtnFaq] = useState(false);
 
     useEffect(() => {
         getCategorias();
+        getPrimeiraFaqCategoria()
+
     }, []);
 
     const getCategorias = async () => {
         let categorias = await getFaqCategorias();
-        console.log("Categorias ", categorias);
         setFaqCategorias(categorias);
     };
 
-    const getFaqCategoria = async (categoria__uuid) => {
+    const getFaqsDeUmaCategoria = async (categoria__uuid) => {
         let faqs = await getFaqPorCategoria(categoria__uuid);
-        console.log("Faqs ", faqs)
         setFaqsPorCategoria(faqs)
+    };
+
+    const getPrimeiraFaqCategoria = async ()=>{
+        let categorias = await getFaqCategorias();
+        if (categorias && categorias.length > 0){
+            getFaqsDeUmaCategoria(categorias[0].uuid)
+        }
     };
 
     const toggleBtnEscolheCategoria = (id) => {
@@ -48,7 +55,7 @@ export const Faq = () => {
                             <button
                                 onClick={() => {
                                     toggleBtnEscolheCategoria(index);
-                                    getFaqCategoria(categoria.uuid)
+                                    getFaqsDeUmaCategoria(categoria.uuid)
                                 }}
                                 className={`nav-link btn-escolhe-categoria mr-3 ${clickBtnEscolheCategoria[index] ? "btn-escolhe-categoria-active" : ""}`}
                             >
