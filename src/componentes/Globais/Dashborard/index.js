@@ -8,6 +8,7 @@ import {exibeDataPT_BR, getCorStatusPeriodo, getTextoStatusPeriodo} from "../../
 import Loading from "../../../utils/Loading";
 import {BarraDeStatusPeriodoAssociacao} from "./BarraDeStatusPeriodoAssociacao";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
+import "./dashboard.scss"
 
 export const Dashboard = () => {
     const [acoesAssociacao, setAcoesAssociacao] = useState({});
@@ -18,18 +19,24 @@ export const Dashboard = () => {
     const [selectConta, setSelectConta] = useState(false);
 
     useEffect(() => {
+        buscaPeriodos();
         buscaListaAcoesAssociacao()
     }, []);
 
-    const buscaListaAcoesAssociacao = async () => {
+
+    const buscaPeriodos = async () => {
         let periodos = await getPeriodosNaoFuturos();
         setPeriodosAssociacao(periodos);
+    };
 
+
+    const buscaListaAcoesAssociacao = async () => {
         const listaAcoes = await getAcoesAssociacao();
         setAcoesAssociacao(listaAcoes);
 
         setLoading(false);
     };
+
 
     useEffect(() => {
         const carregaTabelas = async () => {
@@ -50,7 +57,8 @@ export const Dashboard = () => {
         setLoading(false);
     };
 
-    const handleChangeAcao = async (value) => {
+    const handleChangeConta = async (value) => {
+        await buscaPeriodos();
         setLoading(true);
         setSelectConta(false);
         if (value) {
@@ -68,7 +76,7 @@ export const Dashboard = () => {
                 periodosAssociacao={periodosAssociacao}
                 handleChangePeriodo={handleChangePeriodo}
                 tiposConta={tiposConta}
-                handleChangeAcao={handleChangeAcao}
+                handleChangeConta={handleChangeConta}
                 exibeDataPT_BR={exibeDataPT_BR}
                 selectConta={selectConta}
             />
@@ -90,6 +98,7 @@ export const Dashboard = () => {
                     <DashboardCardInfoConta
                         acoesAssociacao={acoesAssociacao}
                         statusPeriodoAssociacao={acoesAssociacao.periodo_status}
+                        corIconeFonte={getCorStatusPeriodo(acoesAssociacao.periodo_status)}
                     />
                     <DashboardCard
                         acoesAssociacao={acoesAssociacao}

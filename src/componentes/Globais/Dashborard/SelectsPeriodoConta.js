@@ -1,6 +1,9 @@
 import React from "react";
 
-export const SelectsPeriodoConta = ({periodosAssociacao, handleChangePeriodo, tiposConta, handleChangeAcao, exibeDataPT_BR, selectConta}) =>{
+export const SelectsPeriodoConta = ({periodosAssociacao, handleChangePeriodo, tiposConta, handleChangeConta, exibeDataPT_BR, selectConta}) =>{
+
+    console.log("SelectsPeriodoConta ", periodosAssociacao)
+
     return(
         <>
             <div className="form-row align-items-center mb-3">
@@ -28,7 +31,7 @@ export const SelectsPeriodoConta = ({periodosAssociacao, handleChangePeriodo, ti
                 <div className="col-auto my-1">
                     <select
                         value={!selectConta ? tiposConta.uuid : ""}
-                        onChange={(e) => handleChangeAcao(e.target.value)}
+                        onChange={(e) => handleChangeConta(e.target.value)}
                         name="periodo"
                         id="periodo"
                         className="form-control"

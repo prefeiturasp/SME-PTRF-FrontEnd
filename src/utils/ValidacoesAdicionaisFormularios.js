@@ -561,7 +561,7 @@ export const getCorStatusPeriodo = (statusId) => {
   console.log("getCorStatusPeriodo ", statusId)
   let cor = ''
   if (statusId === 'EM_ANDAMENTO') {
-    cor = 'cinza'
+    cor = 'amarelo'
   } else if (statusId === 'PENDENTE') {
     cor = 'vermelho'
   } else if (statusId === 'CONCILIADO') {

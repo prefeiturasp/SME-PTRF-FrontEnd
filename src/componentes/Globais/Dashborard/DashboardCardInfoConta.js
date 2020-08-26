@@ -1,9 +1,10 @@
 import React from "react";
 import {exibeValorFormatadoPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 
-export const DashboardCardInfoConta = ({acoesAssociacao, statusPeriodoAssociacao}) =>{
+export const DashboardCardInfoConta = ({acoesAssociacao, statusPeriodoAssociacao, corIconeFonte}) =>{
     let status = statusPeriodoAssociacao;
     let info = acoesAssociacao.info_conta;
+    console.log("Cor Icone Fonte ", corIconeFonte)
     return(
         <>
             {info &&
@@ -26,10 +27,11 @@ export const DashboardCardInfoConta = ({acoesAssociacao, statusPeriodoAssociacao
                                             <p className="pt-1 mb-2">
                                                 Repasses no período: <strong>{exibeValorFormatadoPT_BR(info.repasses_no_periodo)}</strong>
                                             </p>
-                                            <p className={`pt-1 mb-2 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>
+                                            <p className={`pt-1 mb-2 texto-com-icone-${corIconeFonte}`}>
+                                            {/*<p className={`pt-1 mb-2 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>*/}
                                                 Outras receitas: <strong>{exibeValorFormatadoPT_BR(info.outras_receitas_no_periodo)}</strong>
                                             </p>
-                                            <p className={`pt-1 mb-0 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>
+                                            <p className={`pt-1 mb-0 texto-com-icone-${corIconeFonte}`}>
                                                 Despesa declarada: <strong>{exibeValorFormatadoPT_BR(info.despesas_no_periodo)}</strong>
                                             </p>
                                         </div>

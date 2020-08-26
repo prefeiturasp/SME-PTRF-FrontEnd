@@ -21,13 +21,22 @@
   font-size: 14px;
 }
 
-.texto-com-icone{
+.texto-com-icone-amarelo{
   color: #C65D00;
   background-image: url("../../../assets/img/icone-nao-conciliado.svg");
   background-repeat: no-repeat;
   padding-left: 1.3rem;
   background-position: 0 80%;
 }
+
+.texto-com-icone-vermelho{
+  color: #C65D00;
+  background-image: url("../../../assets/img/dashborard-icone-pendente.svg");
+  background-repeat: no-repeat;
+  padding-left: 1.3rem;
+  background-position: 0 80%;
+}
+
 
 // Fontes
 .fonte-12 {
@@ -47,4 +56,20 @@
   width: 80%;
   position: absolute;
   top: 5px;
+}
+
+.barra-status-dashboard-verde {
+  background-color: #289B00;
+}
+
+.barra-status-dashboard-amarelo {
+  background-color: #D06D12;
+}
+
+.barra-status-dashboard-vermelho {
+  background-color: #B40C02;
+}
+
+.barra-status-dashboard-cinza {
+  background-color: #A4A4A4;
 }
