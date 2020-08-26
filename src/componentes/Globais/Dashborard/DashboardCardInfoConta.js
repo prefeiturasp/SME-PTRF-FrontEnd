@@ -19,45 +19,55 @@ export const DashboardCardInfoConta = ({acoesAssociacao, statusPeriodoAssociacao
                                     }
                                 </div>
                                 <div className="card-body">
-                                    <div className="row">
-                                        <div className="col-12 col-md-6 mr-4 align-self-center container-lado-esquerdo">
-                                            <p className="pt-1 mb-4">
+                                    <div className="row ">
+                                        <div className="col-12 col-md-5 mr-5 align-self-center container-lado-esquerdo">
+                                            <p className="pt-1 mb-2">
                                                 Saldo reprogramado: <strong>{exibeValorFormatadoPT_BR(info.saldo_reprogramado)}</strong>
                                             </p>
-                                            <p className="pt-1 mb-4">
+                                            <p className="pt-1 mb-2">
                                                 Repasses no período: <strong>{exibeValorFormatadoPT_BR(info.repasses_no_periodo)}</strong>
                                             </p>
-                                            <p className={`pt-1 mb-4 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>
+                                            <p className={`pt-1 mb-2 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>
                                                 Outras receitas: <strong>{exibeValorFormatadoPT_BR(info.outras_receitas_no_periodo)}</strong>
                                             </p>
                                             <p className={`pt-1 mb-0 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>
                                                 Despesa declarada: <strong>{exibeValorFormatadoPT_BR(info.despesas_no_periodo)}</strong>
                                             </p>
                                         </div>
-                                        <div className="col-12 col-md-5 pt-1 pb-1 container-lado-direito d-flex align-items-center">
+                                        <div className="col-12 col-md-6 pt-1 pb-1 ml-xl-4 container-lado-direito d-flex align-items-center">
                                             <p className="texto-saldo">Saldo</p>
-                                            <div className="row ">
+                                            <div className="row float-right">
                                                 <div className="col-12">
 
                                                     <div className='mt-5'></div>
-                                                    {info.saldo_atual_custeio ? (
-                                                        <p className="pt-1">
-                                                            Custeio: <strong>{exibeValorFormatadoPT_BR(info.saldo_atual_custeio)}</strong>
-                                                        </p>
-                                                    ) : null}
-                                                    {info.saldo_atual_capital ? (
-                                                        <p className="pt-1">
-                                                            Capital: <strong>{exibeValorFormatadoPT_BR(info.saldo_atual_capital)}</strong>
-                                                        </p>
-                                                    ) : null}
-                                                    {info.saldo_atual_livre ? (
-                                                        <p className="pt-1">
-                                                            RLA: <strong>{exibeValorFormatadoPT_BR(info.saldo_atual_livre)}</strong>
-                                                        </p>
-                                                    ) : null}
-                                                    <p className="pt-0">
-                                                        Total: <strong>{exibeValorFormatadoPT_BR(info.saldo_atual_total)}</strong>
-                                                    </p>
+                                                    <div className="row">
+                                                        {info.saldo_atual_custeio ? (
+                                                            <div className="col-12 col-md-6">
+                                                                <p className="pt-1">
+                                                                    Custeio: <strong>{exibeValorFormatadoPT_BR(info.saldo_atual_custeio)}</strong>
+                                                                </p>
+                                                            </div>
+                                                        ) : null}
+                                                        {info.saldo_atual_capital ? (
+                                                            <div className="col-12 col-md-6">
+                                                                <p className="pt-1">
+                                                                    Capital: <strong>{exibeValorFormatadoPT_BR(info.saldo_atual_capital)}</strong>
+                                                                </p>
+                                                            </div>
+                                                        ) : null}
+                                                        {info.saldo_atual_livre ? (
+                                                            <div className="col-12 col-md-6">
+                                                                <p className="pt-1">
+                                                                    RLA: <strong>{exibeValorFormatadoPT_BR(info.saldo_atual_livre)}</strong>
+                                                                </p>
+                                                            </div>
+                                                        ) : null}
+                                                        <div className="col-12 col-md-6">
+                                                            <p className="pt-0">
+                                                                Total: <strong>{exibeValorFormatadoPT_BR(info.saldo_atual_total)}</strong>
+                                                            </p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
