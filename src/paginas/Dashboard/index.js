@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react'
-import {PaginasContainer} from '../../PaginasContainer'
-import {Dashboard} from '../../../componentes/escolas/Dashborard'
-import {getAcoesAssociacao,getAcoesAssociacaoPorPeriodo} from '../../../services/escolas/Dashboard.service'
-import {exibeDataPT_BR, getCorStatusPeriodo, getTextoStatusPeriodo,} from '../../../utils/ValidacoesAdicionaisFormularios'
-import {BarraDeStatusPeriodoAssociacao} from '../../../componentes/escolas/Dashborard/BarraDeStatusPeriodoAssociacao'
-import {getPeriodosNaoFuturos} from "../../../services/escolas/PrestacaoDeContas.service";
-import Loading from "../../../utils/Loading";
+import {PaginasContainer} from '../PaginasContainer'
+import {Dashboard} from '../../componentes/Globais/Dashborard'
+import {getAcoesAssociacao,getAcoesAssociacaoPorPeriodo} from '../../services/Dashboard.service'
+import {exibeDataPT_BR, getCorStatusPeriodo, getTextoStatusPeriodo,} from '../../utils/ValidacoesAdicionaisFormularios'
+import {BarraDeStatusPeriodoAssociacao} from '../../componentes/Globais/Dashborard/BarraDeStatusPeriodoAssociacao'
+import {getPeriodosNaoFuturos} from "../../services/escolas/PrestacaoDeContas.service";
+import Loading from "../../utils/Loading";
 
 export const DashboardPage = () => {
     const [acoesAssociacao, setAcoesAssociacao] = useState({});

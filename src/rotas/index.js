@@ -2,7 +2,7 @@ import React from "react";
 import {Route, Switch} from 'react-router-dom'
 import {Login} from "../paginas/Login";
 import {Pagina404} from "../paginas/escolas/404";
-import {DashboardPage} from "../paginas/escolas/Dashboard";
+import {DashboardPage} from "../paginas/Dashboard";
 import {CadastroDeDespesa} from "../paginas/escolas/Despesas/CadastroDeDespesas";
 import {EdicaoDeDespesa} from "../paginas/escolas/Despesas/EdicaoDeDespesa";
 import { ListaDeDespesasPage } from '../paginas/escolas/Despesas/ListaDeDespesas'

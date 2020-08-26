@@ -10,7 +10,6 @@ export const BarraDeStatusPeriodoAssociacao = ({ statusPeriodoAssociacao, corBar
             {textoBarraDeStatusPeriodoAssociacao}
           </p>
         </div>
-
     )
   )
-}
+};
