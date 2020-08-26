@@ -25,8 +25,29 @@ export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
                                     </div>
                                     <div className="card-body">
                                         <div className="row">
+
+                                            <div className="col-12 col-md-7 container-lado-direito align-self-center ">
+                                                <p className="pt-1 mb-4">
+                                                    Saldo reprogramado: <strong>{exibeValorFormatadoPT_BR(acao.saldo_reprogramado)}</strong>
+                                                </p>
+                                                <p className="pt-1 mb-4">
+                                                    Repasses no período: <strong>{exibeValorFormatadoPT_BR(acao.repasses_no_periodo)}</strong>
+                                                </p>
+                                                <p className={`pt-1 mb-4 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>
+                                                    Outras receitas: <strong>{exibeValorFormatadoPT_BR(acao.outras_receitas_no_periodo)}</strong>
+                                                </p>
+                                                <p className={`pt-1 mb-4 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>
+                                                    Despesa declarada: <strong>{exibeValorFormatadoPT_BR(acao.despesas_no_periodo)}</strong>
+                                                </p>
+                                                {acao.acao_associacao_nome.trim() === 'PTRF' ? (
+                                                    <p className="pt-1 pb-1 mb-0">
+                                                        Próx. repasse a partir de: <strong>{acoesAssociacao.data_prevista_repasse !== 'None' ? exibeDataPT_BR(acoesAssociacao.data_prevista_repasse) : ""}</strong>
+                                                    </p>
+                                                ) : null}
+                                            </div>
                                             <div className="col-12 col-md-5 align-self-center">
                                                 <div className="col-12 container-lado-esquerdo pt-1 pb-1">
+                                                    <p className="texto-saldo mb-1">Saldo</p>
                                                     {acao.saldo_atual_custeio ? (
                                                         <p className="pt-1 mb-1">
                                                             Custeio: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}</strong>
@@ -46,25 +67,6 @@ export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
                                                         Total: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_total)}</strong>
                                                     </p>
                                                 </div>
-                                            </div>
-                                            <div className="col-12 col-md-7 container-lado-direito align-self-center ">
-                                                <p className="pt-1 mb-1">
-                                                    Saldo reprogramado: <strong>{exibeValorFormatadoPT_BR(acao.saldo_reprogramado)}</strong>
-                                                </p>
-                                                <p className="pt-1 mb-1">
-                                                    Repasses no período: <strong>{exibeValorFormatadoPT_BR(acao.repasses_no_periodo)}</strong>
-                                                </p>
-                                                <p className={`pt-1 mb-1 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>
-                                                    Outras receitas: <strong>{exibeValorFormatadoPT_BR(acao.outras_receitas_no_periodo)}</strong>
-                                                </p>
-                                                <p className={`pt-1 mb-0 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>
-                                                    Despesa declarada: <strong>{exibeValorFormatadoPT_BR(acao.despesas_no_periodo)}</strong>
-                                                </p>
-                                                {acao.acao_associacao_nome.trim() === 'PTRF' ? (
-                                                    <p className="pt-1 pb-1 mb-0">
-                                                        Próx. repasse a partir de: <strong>{acoesAssociacao.data_prevista_repasse !== 'None' ? exibeDataPT_BR(acoesAssociacao.data_prevista_repasse) : ""}</strong>
-                                                    </p>
-                                                ) : null}
                                             </div>
                                         </div>
                                     </div>
