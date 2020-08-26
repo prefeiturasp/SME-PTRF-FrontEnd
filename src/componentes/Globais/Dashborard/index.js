@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {DashboardCard} from "./DashboardCard";
 import {DashboardCardInfoConta} from "./DashboardCardInfoConta";
-import {SelectsPeriodoAcao} from "./SelectsPeriodoAcao";
+import {SelectsPeriodoConta} from "./SelectsPeriodoConta";
 import {getPeriodosNaoFuturos} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getAcoesAssociacao, getAcoesAssociacaoPorPeriodo, getAcoesAssociacaoPorConta} from "../../../services/Dashboard.service";
 import {exibeDataPT_BR, getCorStatusPeriodo, getTextoStatusPeriodo} from "../../../utils/ValidacoesAdicionaisFormularios";
@@ -14,6 +14,8 @@ export const Dashboard = () => {
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [loading, setLoading] = useState(true);
     const [tiposConta, setTiposConta] = useState([]);
+    // Lógica para "zerar" o select de Contas
+    const [selectConta, setSelectConta] = useState(false);
 
     useEffect(() => {
         buscaListaAcoesAssociacao()
@@ -41,7 +43,7 @@ export const Dashboard = () => {
         setLoading(true);
         if (value) {
             let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodo(value);
-            await handleChangeAcao("")
+            setSelectConta(true);
             setAcoesAssociacao(acoesPorPeriodo);
 
         }
@@ -50,25 +52,25 @@ export const Dashboard = () => {
 
     const handleChangeAcao = async (value) => {
         setLoading(true);
-
+        setSelectConta(false);
         if (value) {
-            if (value === 'todas_contas'){
-                await buscaListaAcoesAssociacao()
-            }else {
-                let acoesPorConta =  await getAcoesAssociacaoPorConta(value);
-                setAcoesAssociacao(acoesPorConta);
-            }
+            let acoesPorConta =  await getAcoesAssociacaoPorConta(value);
+            setAcoesAssociacao(acoesPorConta);
+        }else {
+            await buscaListaAcoesAssociacao()
         }
         setLoading(false);
     };
 
     return (
         <>
-            <SelectsPeriodoAcao
+            <SelectsPeriodoConta
                 periodosAssociacao={periodosAssociacao}
                 handleChangePeriodo={handleChangePeriodo}
                 tiposConta={tiposConta}
                 handleChangeAcao={handleChangeAcao}
+                exibeDataPT_BR={exibeDataPT_BR}
+                selectConta={selectConta}
             />
 
             {loading ? (
@@ -95,8 +97,6 @@ export const Dashboard = () => {
                     />
                 </>
             }
-
-
         </>
     );
-}
+};

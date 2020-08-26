@@ -2,7 +2,6 @@ import React from "react";
 import {exibeValorFormatadoPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const DashboardCardInfoConta = ({acoesAssociacao, statusPeriodoAssociacao}) =>{
-    console.log("acoesPorConta ", acoesAssociacao);
     let status = statusPeriodoAssociacao;
     let info = acoesAssociacao.info_conta;
     return(

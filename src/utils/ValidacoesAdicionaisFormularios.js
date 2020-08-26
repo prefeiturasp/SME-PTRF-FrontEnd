@@ -558,6 +558,7 @@ export const getTextoStatusPeriodo = (statusId) => {
 }
 
 export const getCorStatusPeriodo = (statusId) => {
+  console.log("getCorStatusPeriodo ", statusId)
   let cor = ''
   if (statusId === 'EM_ANDAMENTO') {
     cor = 'cinza'
