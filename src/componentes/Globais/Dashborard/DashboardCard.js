@@ -52,21 +52,21 @@ export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
                                                         <div className='mt-5'></div>
                                                         {acao.saldo_atual_custeio ? (
                                                             <p className="pt-1">
-                                                                Custeio: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}</strong>
+                                                                Custeio: <strong className="texto-cor-verde">{exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}</strong>
                                                             </p>
                                                         ) : null}
                                                         {acao.saldo_atual_capital ? (
                                                             <p className="pt-1">
-                                                                Capital: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_capital)}</strong>
+                                                                Capital: <strong className="texto-cor-verde">{exibeValorFormatadoPT_BR(acao.saldo_atual_capital)}</strong>
                                                             </p>
                                                         ) : null}
                                                         {acao.saldo_atual_livre ? (
                                                             <p className="pt-1">
-                                                                RLA: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_livre)}</strong>
+                                                                RLA: <strong className="texto-cor-verde">{exibeValorFormatadoPT_BR(acao.saldo_atual_livre)}</strong>
                                                             </p>
                                                         ) : null}
                                                         <p className="pt-0">
-                                                            Total: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_total)}</strong>
+                                                            Total: <strong className="texto-cor-verde">{exibeValorFormatadoPT_BR(acao.saldo_atual_total)}</strong>
                                                         </p>
                                                     </div>
                                                 </div>

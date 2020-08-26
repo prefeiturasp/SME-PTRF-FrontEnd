@@ -3,8 +3,11 @@
 }
 .container-lado-direito{
   background-color: #F3F3F3;
-  color: #00585E;
   border-radius: 3px;
+
+  .texto-cor-verde{
+    color: #00585E;
+  }
 }
 
 .container-lado-esquerdo {
