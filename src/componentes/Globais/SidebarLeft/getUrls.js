@@ -11,6 +11,7 @@ import IconeDadosDaDiretoria from '../../../assets/img/icone-dados-da-diretoria.
 import IconeAcompanhamento from "../../../assets/img/icone-menu-dre-acompanhamento.svg"
 import IconePainel from "../../../assets/img/icone-menu-dre-painel.svg"
 import IconeRelatorio from "../../../assets/img/icone-menu-dre-relatorio.svg"
+import IconeApoioDiretoria from "../../../assets/img/icone-apoio-a-diretoria.svg"
 
 const getDadosUsuario = () =>{
     let usuario = localStorage.getItem(USUARIO_NOME);
@@ -53,6 +54,17 @@ const UrlsMenuDres ={
         {label: "Acompanhamento", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeAcompanhamento},
         {label: "Relatório consolidado", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeRelatorio},
         {label: "Dados da Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria},
+        {
+            label: "Apoio à Diretoria",
+            url: "dre-dados-da-diretoria",
+            dataFor:"dre_dados_da_diretoria",
+            icone:IconeApoioDiretoria,
+            subItens: [
+                {
+                    label: "Perguntas Frequentes", url: "dre-faq", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria
+                }
+            ]
+        },
     ]
 };
 
