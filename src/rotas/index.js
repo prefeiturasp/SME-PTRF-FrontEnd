@@ -30,7 +30,7 @@ import {DadosDasContasDrePage} from "../paginas/dres/Associacoes/DadosDasContas"
 import {PaginaRegularidadeUnidadeEducacional} from "../paginas/dres/Associacoes/RegularidadeUnidadeEducacional"
 import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
 import {TecnicosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/TecnicosDaDiretoria";
-import {FaqDrePage} from "../paginas/ApoioDiretoria/Faq";
+import {FaqDrePage} from "../paginas/dres/ApoioDiretoria/Faq";
 
 const routesConfig = [
     {

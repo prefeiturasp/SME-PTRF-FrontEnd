@@ -1,6 +1,6 @@
 import React from "react";
-import {PaginasContainer} from "../../PaginasContainer";
-import {Faq} from "../../../componentes/dres/ApoioDiretoria/Faq"
+import {PaginasContainer} from "../../../PaginasContainer";
+import {Faq} from "../../../../componentes/dres/ApoioDiretoria/Faq"
 
 
 export const FaqDrePage = () =>{
