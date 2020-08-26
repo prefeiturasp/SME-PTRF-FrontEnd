@@ -1,21 +1,21 @@
 import React from "react";
-import {exibeDataPT_BR, exibeValorFormatadoPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {exibeValorFormatadoPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const DashboardCardInfoConta = ({acoesAssociacao, statusPeriodoAssociacao}) =>{
     console.log("acoesPorConta ", acoesAssociacao);
     let status = statusPeriodoAssociacao;
-    let info = acoesAssociacao.info_conta
+    let info = acoesAssociacao.info_conta;
     return(
         <>
             {info &&
                 <>
-                    <h1 className="titulo-itens-painel mt-5">Conta {info.conta_associacao_nome}</h1>
+                    <h1 className="titulo-itens-painel mt-3 mb-3">Conta {info.conta_associacao_nome}</h1>
                     <div className="row row-cols-1">
                         <div className="col mb-4 container-dashboard-card">
                             <div className="card h-100">
                                 <div className="card-header bg-white">
                                     {info.conta_associacao_nome &&
-                                        <span><strong>{info.conta_associacao_nome}</strong>{' '}</span>
+                                        <span><strong>Resumo geral da conta</strong></span>
                                     }
                                 </div>
                                 <div className="card-body">

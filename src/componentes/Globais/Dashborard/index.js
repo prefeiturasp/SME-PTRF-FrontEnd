@@ -40,16 +40,23 @@ export const Dashboard = () => {
         setLoading(true);
         if (value) {
             let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodo(value);
+            await handleChangeAcao("")
             setAcoesAssociacao(acoesPorPeriodo);
+
         }
         setLoading(false);
     };
 
     const handleChangeAcao = async (value) => {
         setLoading(true);
+
         if (value) {
-            let acoesPorConta =  await getAcoesAssociacaoPorConta(value)
-            setAcoesAssociacao(acoesPorConta);
+            if (value === 'todas_contas'){
+                await buscaListaAcoesAssociacao()
+            }else {
+                let acoesPorConta =  await getAcoesAssociacaoPorConta(value);
+                setAcoesAssociacao(acoesPorConta);
+            }
         }
         setLoading(false);
     };
@@ -88,6 +95,7 @@ export const Dashboard = () => {
                         className="form-control"
                     >
                         <option value="">Escolha uma conta</option>
+                        <option value="todas_contas">Todas as contas</option>
                         {tiposConta && tiposConta.map((conta) =>
                             <option key={conta.uuid} value={conta.uuid}>{conta.nome}</option>
                         )}
