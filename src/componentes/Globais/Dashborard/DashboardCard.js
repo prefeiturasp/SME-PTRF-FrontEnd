@@ -45,12 +45,10 @@ export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
                                                     </p>
                                                 ) : null}
                                             </div>
-                                            <div className="col-12 col-md-5 container-lado-esquerdo align-items-stretch">
-                                                <div className="d-flex flex-wrap">
-                                                    <p className="texto-saldo mb-1 mt-1">Saldo</p>
-                                                </div>
+                                            <div className="col-12 col-md-5 container-lado-esquerdo d-flex align-items-center">
 
-                                                <div className="col-12  pt-1 pb-1 align-self-center">
+                                                <div className="col-12  pt-1 pb-1">
+                                                    <p className="texto-saldo mb-1 mt-1">Saldo</p>
                                                     {acao.saldo_atual_custeio ? (
                                                         <p className="pt-2">
                                                             Custeio: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}</strong>
