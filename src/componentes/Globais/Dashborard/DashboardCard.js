@@ -52,21 +52,21 @@ export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
 
                                                 <div className="col-12  pt-1 pb-1 align-self-center">
                                                     {acao.saldo_atual_custeio ? (
-                                                        <p className="pt-3">
+                                                        <p className="pt-2">
                                                             Custeio: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}</strong>
                                                         </p>
                                                     ) : null}
                                                     {acao.saldo_atual_capital ? (
-                                                        <p className="pt-3">
+                                                        <p className="pt-2">
                                                             Capital: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_capital)}</strong>
                                                         </p>
                                                     ) : null}
                                                     {acao.saldo_atual_livre ? (
-                                                        <p className="pt-3">
+                                                        <p className="pt-2">
                                                             RLA: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_livre)}</strong>
                                                         </p>
                                                     ) : null}
-                                                    <p className="pt-3">
+                                                    <p className="pt-2">
                                                         Total: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_total)}</strong>
                                                     </p>
                                                 </div>
