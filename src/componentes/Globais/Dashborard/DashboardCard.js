@@ -26,7 +26,7 @@ export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
                                     <div className="card-body">
                                         <div className="row">
 
-                                            <div className="col-12 col-md-7 container-lado-direito align-self-center ">
+                                            <div className="col-12 col-md-7 container-lado-direito ">
                                                 <p className="pt-1 mb-4">
                                                     Saldo reprogramado: <strong>{exibeValorFormatadoPT_BR(acao.saldo_reprogramado)}</strong>
                                                 </p>
@@ -45,25 +45,28 @@ export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
                                                     </p>
                                                 ) : null}
                                             </div>
-                                            <div className="col-12 col-md-5 align-self-center">
-                                                <div className="col-12 container-lado-esquerdo pt-1 pb-1">
-                                                    <p className="texto-saldo mb-1">Saldo</p>
+                                            <div className="col-12 col-md-5 container-lado-esquerdo align-items-stretch">
+                                                <div className="d-flex flex-wrap">
+                                                    <p className="texto-saldo mb-1 mt-1">Saldo</p>
+                                                </div>
+
+                                                <div className="col-12  pt-1 pb-1 align-self-center">
                                                     {acao.saldo_atual_custeio ? (
-                                                        <p className="pt-1 mb-1">
+                                                        <p className="pt-3">
                                                             Custeio: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}</strong>
                                                         </p>
                                                     ) : null}
                                                     {acao.saldo_atual_capital ? (
-                                                        <p className="pt-1 mb-1">
+                                                        <p className="pt-3">
                                                             Capital: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_capital)}</strong>
                                                         </p>
                                                     ) : null}
                                                     {acao.saldo_atual_livre ? (
-                                                        <p className="pt-1 mb-1">
+                                                        <p className="pt-3">
                                                             RLA: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_livre)}</strong>
                                                         </p>
                                                     ) : null}
-                                                    <p className="pt-1 pb-1 mb-0">
+                                                    <p className="pt-3">
                                                         Total: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_total)}</strong>
                                                     </p>
                                                 </div>
