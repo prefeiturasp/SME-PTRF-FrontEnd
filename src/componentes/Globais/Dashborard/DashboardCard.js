@@ -26,7 +26,7 @@ export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
                                     <div className="card-body">
                                         <div className="row">
 
-                                            <div className="col-12 col-md-7 container-lado-direito ">
+                                            <div className="col-12 col-md-7  align-self-center">
                                                 <p className="pt-1 mb-4">
                                                     Saldo reprogramado: <strong>{exibeValorFormatadoPT_BR(acao.saldo_reprogramado)}</strong>
                                                 </p>
@@ -36,37 +36,40 @@ export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
                                                 <p className={`pt-1 mb-4 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>
                                                     Outras receitas: <strong>{exibeValorFormatadoPT_BR(acao.outras_receitas_no_periodo)}</strong>
                                                 </p>
-                                                <p className={`pt-1 mb-4 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>
+                                                <p className={`pt-1 mb-0 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>
                                                     Despesa declarada: <strong>{exibeValorFormatadoPT_BR(acao.despesas_no_periodo)}</strong>
                                                 </p>
                                                 {acao.acao_associacao_nome.trim() === 'PTRF' ? (
-                                                    <p className="pt-1 pb-1 mb-0">
+                                                    <p className="pt-1 pb-1 mb-0 mt-4">
                                                         Próx. repasse a partir de: <strong>{acoesAssociacao.data_prevista_repasse !== 'None' ? exibeDataPT_BR(acoesAssociacao.data_prevista_repasse) : ""}</strong>
                                                     </p>
                                                 ) : null}
                                             </div>
-                                            <div className="col-12 col-md-5 container-lado-esquerdo d-flex align-items-center">
+                                            <div className="col-12 col-md-5 container-lado-direito d-flex align-items-center">
+                                                <p className="texto-saldo">Saldo</p>
+                                                <div className="row pt-1 pb-1">
+                                                    <div className="col-12">
 
-                                                <div className="col-12  pt-1 pb-1">
-                                                    <p className="texto-saldo mb-1 mt-1">Saldo</p>
-                                                    {acao.saldo_atual_custeio ? (
-                                                        <p className="pt-2">
-                                                            Custeio: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}</strong>
+                                                        <div className='mt-5'></div>
+                                                        {acao.saldo_atual_custeio ? (
+                                                            <p className="pt-1">
+                                                                Custeio: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}</strong>
+                                                            </p>
+                                                        ) : null}
+                                                        {acao.saldo_atual_capital ? (
+                                                            <p className="pt-1">
+                                                                Capital: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_capital)}</strong>
+                                                            </p>
+                                                        ) : null}
+                                                        {acao.saldo_atual_livre ? (
+                                                            <p className="pt-1">
+                                                                RLA: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_livre)}</strong>
+                                                            </p>
+                                                        ) : null}
+                                                        <p className="pt-0">
+                                                            Total: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_total)}</strong>
                                                         </p>
-                                                    ) : null}
-                                                    {acao.saldo_atual_capital ? (
-                                                        <p className="pt-2">
-                                                            Capital: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_capital)}</strong>
-                                                        </p>
-                                                    ) : null}
-                                                    {acao.saldo_atual_livre ? (
-                                                        <p className="pt-2">
-                                                            RLA: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_livre)}</strong>
-                                                        </p>
-                                                    ) : null}
-                                                    <p className="pt-2">
-                                                        Total: <strong>{exibeValorFormatadoPT_BR(acao.saldo_atual_total)}</strong>
-                                                    </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

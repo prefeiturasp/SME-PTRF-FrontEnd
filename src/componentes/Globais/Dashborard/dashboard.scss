@@ -1,13 +1,13 @@
 .container-dashboard-card {
 
 }
-.container-lado-esquerdo{
+.container-lado-direito{
   background-color: #F3F3F3;
   color: #00585E;
   border-radius: 3px;
 }
 
-.container-lado-direito{
+.container-lado-esquerdo {
   font-size: 14px;
   color: #42474A;
 }
@@ -41,5 +41,7 @@
 
 .texto-saldo{
   border-bottom: solid 1px #DADADA;
-  width: 100%;
+  width: 80%;
+  position: absolute;
+  top: 5px;
 }
