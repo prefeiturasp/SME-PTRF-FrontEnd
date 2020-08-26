@@ -25,8 +25,7 @@ export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
                                     </div>
                                     <div className="card-body">
                                         <div className="row">
-
-                                            <div className="col-12 col-md-7  align-self-center">
+                                            <div className="col-12 col-md-6 mr-4 align-self-center container-lado-esquerdo">
                                                 <p className="pt-1 mb-4">
                                                     Saldo reprogramado: <strong>{exibeValorFormatadoPT_BR(acao.saldo_reprogramado)}</strong>
                                                 </p>
@@ -45,9 +44,9 @@ export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao}) => {
                                                     </p>
                                                 ) : null}
                                             </div>
-                                            <div className="col-12 col-md-5 container-lado-direito d-flex align-items-center">
+                                            <div className="col-12 col-md-5 pt-1 pb-1 container-lado-direito d-flex align-items-center">
                                                 <p className="texto-saldo">Saldo</p>
-                                                <div className="row pt-1 pb-1">
+                                                <div className="row ">
                                                     <div className="col-12">
 
                                                         <div className='mt-5'></div>
