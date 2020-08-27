@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {DashboardCard} from "./DashboardCard";
 import {DashboardCardInfoConta} from "./DashboardCardInfoConta";
-import {SelectsPeriodoConta} from "./SelectsPeriodoConta";
+import {SelectPeriodo} from "./SelectPeriodo";
+import {SelectConta} from "./SelectConta";
 import {getPeriodosNaoFuturos} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getAcoesAssociacao, getAcoesAssociacaoPorPeriodo, getAcoesAssociacaoPorConta} from "../../../services/Dashboard.service";
 import {exibeDataPT_BR, getCorStatusPeriodo, getTextoStatusPeriodo} from "../../../utils/ValidacoesAdicionaisFormularios";
@@ -33,10 +34,8 @@ export const Dashboard = () => {
     const buscaListaAcoesAssociacao = async () => {
         const listaAcoes = await getAcoesAssociacao();
         setAcoesAssociacao(listaAcoes);
-
         setLoading(false);
     };
-
 
     useEffect(() => {
         const carregaTabelas = async () => {
@@ -72,15 +71,19 @@ export const Dashboard = () => {
 
     return (
         <>
-            <SelectsPeriodoConta
-                periodosAssociacao={periodosAssociacao}
-                handleChangePeriodo={handleChangePeriodo}
-                tiposConta={tiposConta}
-                handleChangeConta={handleChangeConta}
-                exibeDataPT_BR={exibeDataPT_BR}
-                selectConta={selectConta}
-                selectPeriodo={selectPeriodo}
-            />
+            <div className="form-row align-items-center mb-3">
+                <SelectPeriodo
+                    periodosAssociacao={periodosAssociacao}
+                    handleChangePeriodo={handleChangePeriodo}
+                    selectPeriodo={selectPeriodo}
+                    exibeDataPT_BR={exibeDataPT_BR}
+                />
+                <SelectConta
+                    handleChangeConta={handleChangeConta}
+                    selectConta={selectConta}
+                    tiposConta={tiposConta}
+                />
+            </div>
 
             {loading ? (
                     <Loading
