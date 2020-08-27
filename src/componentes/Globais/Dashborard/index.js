@@ -25,7 +25,6 @@ export const Dashboard = () => {
         buscaListaAcoesAssociacao()
     }, []);
 
-
     const buscaPeriodos = async () => {
         let periodos = await getPeriodosNaoFuturos();
         setPeriodosAssociacao(periodos);
@@ -47,7 +46,7 @@ export const Dashboard = () => {
 
     const handleChangePeriodo = async (value) => {
         setLoading(true);
-        setSelectPeriodo(false)
+        setSelectPeriodo(false);
         if (value) {
             let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodo(value);
             setSelectConta(true);
@@ -59,12 +58,12 @@ export const Dashboard = () => {
     const handleChangeConta = async (value) => {
         setLoading(true);
         setSelectConta(false);
-        setSelectPeriodo(true)
+        setSelectPeriodo(true);
         if (value) {
             let acoesPorConta =  await getAcoesAssociacaoPorConta(value);
             setAcoesAssociacao(acoesPorConta);
         }else {
-            await buscaListaAcoesAssociacao()
+            await buscaListaAcoesAssociacao();
         }
         setLoading(false);
     };
@@ -107,6 +106,7 @@ export const Dashboard = () => {
                     <DashboardCard
                         acoesAssociacao={acoesAssociacao}
                         statusPeriodoAssociacao={acoesAssociacao.periodo_status}
+                        corIconeFonte={getCorStatusPeriodo(acoesAssociacao.periodo_status)}
                     />
                 </>
             }
