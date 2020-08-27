@@ -6,7 +6,6 @@ export const SelectConta = ({handleChangeConta, selectConta, tiposConta}) =>{
             <div className="col-auto ml-3 my-1">
                 <h2 className="subtitulo-itens-painel-out mb-0">Tipo de conta:</h2>
             </div>
-
             <div className="col-auto my-1">
                 <select
                     value={!selectConta ? tiposConta.uuid : ""}

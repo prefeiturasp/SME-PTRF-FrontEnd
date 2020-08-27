@@ -4,8 +4,7 @@ import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
 import Img404 from '../../../assets/img/img-404.svg'
 import {exibeDataPT_BR, exibeDateTimePT_BR, exibeValorFormatadoPT_BR} from '../../../utils/ValidacoesAdicionaisFormularios'
 
-export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao, corIconeFonte}) => {
-    let status = statusPeriodoAssociacao;
+export const DashboardCard = ({acoesAssociacao, corIconeFonte}) => {
     return (
         <>
             {acoesAssociacao.info_acoes && acoesAssociacao.info_acoes.length > 0 ? (
@@ -44,7 +43,7 @@ export const DashboardCard = ({acoesAssociacao, statusPeriodoAssociacao, corIcon
                                                 <div className="row ">
                                                     <div className="col-12">
 
-                                                        <div className='mt-5'></div>
+                                                        <div className='mt-3'>&nbsp;</div>
                                                         {acao.saldo_atual_custeio ? (
                                                             <p className="pt-1">
                                                                 Custeio: <strong className="texto-cor-verde">{exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}</strong>

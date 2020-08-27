@@ -1,10 +1,8 @@
 import React from "react";
 import {exibeValorFormatadoPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 
-export const DashboardCardInfoConta = ({acoesAssociacao, statusPeriodoAssociacao, corIconeFonte}) =>{
-    let status = statusPeriodoAssociacao;
+export const DashboardCardInfoConta = ({acoesAssociacao, corIconeFonte}) =>{
     let info = acoesAssociacao.info_conta;
-    console.log("Cor Icone Fonte ", corIconeFonte)
     return(
         <>
             {info &&
@@ -28,7 +26,6 @@ export const DashboardCardInfoConta = ({acoesAssociacao, statusPeriodoAssociacao
                                                 Repasses no período: <strong>{exibeValorFormatadoPT_BR(info.repasses_no_periodo)}</strong>
                                             </p>
                                             <p className={`pt-1 mb-2 texto-com-icone-${corIconeFonte}`}>
-                                            {/*<p className={`pt-1 mb-2 ${status==="EM_ANDAMENTO" && "texto-com-icone"}`}>*/}
                                                 Outras receitas: <strong>{exibeValorFormatadoPT_BR(info.outras_receitas_no_periodo)}</strong>
                                             </p>
                                             <p className={`pt-1 mb-0 texto-com-icone-${corIconeFonte}`}>
@@ -39,7 +36,7 @@ export const DashboardCardInfoConta = ({acoesAssociacao, statusPeriodoAssociacao
                                             <p className="texto-saldo">Saldo</p>
                                             <div className="row w-100">
                                                 <div className="col-12">
-                                                    <div className='mt-5'></div>
+                                                    <div className='mt-5'>&nbsp;</div>
                                                     <div className="row">
                                                         {info.saldo_atual_custeio ? (
                                                             <div className="col-12 col-md-6">
@@ -78,7 +75,6 @@ export const DashboardCardInfoConta = ({acoesAssociacao, statusPeriodoAssociacao
                     </div>
                 </>
             }
-
         </>
     )
-}
+};

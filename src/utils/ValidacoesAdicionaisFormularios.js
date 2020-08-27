@@ -554,7 +554,7 @@ export const getTextoStatusPeriodo = (statusId) => {
     status = 'O período está com status indefinido'
   }
   return status
-}
+};
 
 export const getCorStatusPeriodo = (statusId) => {
   console.log("getCorStatusPeriodo ", statusId)
@@ -573,4 +573,4 @@ export const getCorStatusPeriodo = (statusId) => {
     cor = 'vermelho'
   }
   return cor
-}
+};

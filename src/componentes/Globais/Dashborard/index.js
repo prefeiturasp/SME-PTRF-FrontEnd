@@ -100,12 +100,10 @@ export const Dashboard = () => {
                     />
                     <DashboardCardInfoConta
                         acoesAssociacao={acoesAssociacao}
-                        statusPeriodoAssociacao={acoesAssociacao.periodo_status}
                         corIconeFonte={getCorStatusPeriodo(acoesAssociacao.periodo_status)}
                     />
                     <DashboardCard
                         acoesAssociacao={acoesAssociacao}
-                        statusPeriodoAssociacao={acoesAssociacao.periodo_status}
                         corIconeFonte={getCorStatusPeriodo(acoesAssociacao.periodo_status)}
                     />
                 </>
