@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Formik} from "formik";
 import {YupSignupSchemaAlterarEmail} from "../../../utils/ValidacoesAdicionaisFormularios";
-import {alterarMeuEmail, USUARIO_LOGIN} from "../../../services/auth.service";
+import {alterarMeuEmail, USUARIO_EMAIL, USUARIO_LOGIN} from "../../../services/auth.service";
 
 export const FormAlterarEmail = ({handleClose})=>{
 
@@ -24,8 +24,10 @@ export const FormAlterarEmail = ({handleClose})=>{
             console.log("Alterar Email ", alterar_email);
             setEmailRedefinido(true);
             setMsgErro(false)
+           // localStorage.setItem(USUARIO_EMAIL, '')
         }catch (e) {
             console.log("Erro ao alterar email ", e.response);
+            localStorage.setItem(USUARIO_EMAIL, 'email.alterado@gmail.com');
             setMsgErro(e.response.data.detail)
         }
     };
@@ -75,18 +77,18 @@ export const FormAlterarEmail = ({handleClose})=>{
             </Formik>
                 {emailRedefinido &&
                     <div className={`alert alert-success alert-dismissible fade show text-center col-12`} role="alert">
-                        Email alterado com sucesso
+                        Email alterado com sucesso, clique no X para continuar
                         <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                            <span onClick={()=>window.location.reload()} aria-hidden="true">&times;</span>
                         </button>
                     </div>
                 }
                 {msgErro &&
                     <div className="d-flex">
                         <div className={`alert alert-danger alert-dismissible fade show text-center col-12`} role="alert">
-                            {msgErro}
+                            {msgErro}, clique no X para continuar
                             <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
+                                <span onClick={()=>window.location.reload()} aria-hidden="true">&times;</span>
                             </button>
                         </div>
                     </div>
