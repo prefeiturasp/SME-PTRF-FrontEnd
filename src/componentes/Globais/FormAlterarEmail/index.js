@@ -27,7 +27,8 @@ export const FormAlterarEmail = ({handleClose})=>{
            // localStorage.setItem(USUARIO_EMAIL, '')
         }catch (e) {
             console.log("Erro ao alterar email ", e.response);
-            localStorage.setItem(USUARIO_EMAIL, 'email.alterado@gmail.com');
+            console.log("Erro ao alterar email ", e.response.config.data);
+            localStorage.setItem(USUARIO_EMAIL, e.response.config.data);
             setMsgErro(e.response.data.detail)
         }
     };
@@ -69,8 +70,10 @@ export const FormAlterarEmail = ({handleClose})=>{
                             {props.touched.confirmacao_email && props.errors.confirmacao_email && <span className="span_erro text-danger mt-1"> {props.errors.confirmacao_email} </span>}
                         </div>
                         <div className="d-flex  justify-content-end pb-3 mt-3">
-                            <button onClick={() => handleClose()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
-                            <button disabled={!props.values.email || !props.values.confirmacao_email || props.errors.email || props.errors.confirmacao_email} type="submit" className="btn btn-success mt-2">Continuar</button>
+                            <button onClick={()=>{handleClose()}} type="reset" className="btn btn btn-outline-success mt-2 mr-2">
+                                Sair
+                            </button>
+                            <button disabled={emailRedefinido || msgErro || !props.values.email || !props.values.confirmacao_email || props.errors.email || props.errors.confirmacao_email} type="submit" className="btn btn-success mt-2">Continuar</button>
                         </div>
                     </form>
                 )}
@@ -79,16 +82,16 @@ export const FormAlterarEmail = ({handleClose})=>{
                     <div className={`alert alert-success alert-dismissible fade show text-center col-12`} role="alert">
                         Email alterado com sucesso, clique no X para continuar
                         <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                            <span onClick={()=>window.location.reload()} aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                 }
                 {msgErro &&
                     <div className="d-flex">
                         <div className={`alert alert-danger alert-dismissible fade show text-center col-12`} role="alert">
-                            {msgErro}, clique no X para continuar
+                            <p>{msgErro}</p>
                             <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                                <span onClick={()=>window.location.reload()} aria-hidden="true">&times;</span>
+                                <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                     </div>
