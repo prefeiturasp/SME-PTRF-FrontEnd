@@ -10,9 +10,6 @@ import {Versao} from '../Versao'
 import ReactTooltip from "react-tooltip";
 import {getUrls} from "./getUrls";
 
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faAngleDown, faAngleUp, faEdit} from '@fortawesome/free-solid-svg-icons'
-
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
     let history = useHistory();

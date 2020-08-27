@@ -4,13 +4,12 @@ export const BarraDeStatusPeriodoAssociacao = ({ statusPeriodoAssociacao, corBar
 }) => {
   return (
     statusPeriodoAssociacao !== undefined && (
-        <div className={`col-12 barra-status-${corBarraDeStatusPeriodoAssociacao}`}
+        <div className={`col-12 barra-status-dashboard-${corBarraDeStatusPeriodoAssociacao} mb-3`}
         >
           <p className="titulo-status pt-1 pb-1 mb-0">
             {textoBarraDeStatusPeriodoAssociacao}
           </p>
         </div>
-
     )
   )
-}
+};

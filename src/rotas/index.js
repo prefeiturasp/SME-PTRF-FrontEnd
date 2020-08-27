@@ -2,7 +2,7 @@ import React from "react";
 import {Route, Switch} from 'react-router-dom'
 import {Login} from "../paginas/Login";
 import {Pagina404} from "../paginas/escolas/404";
-import {DashboardPage} from "../paginas/escolas/Dashboard";
+import {DashboardPage} from "../paginas/Dashboard";
 import {CadastroDeDespesa} from "../paginas/escolas/Despesas/CadastroDeDespesas";
 import {EdicaoDeDespesa} from "../paginas/escolas/Despesas/EdicaoDeDespesa";
 import { ListaDeDespesasPage } from '../paginas/escolas/Despesas/ListaDeDespesas'
@@ -30,7 +30,7 @@ import {DadosDasContasDrePage} from "../paginas/dres/Associacoes/DadosDasContas"
 import {PaginaRegularidadeUnidadeEducacional} from "../paginas/dres/Associacoes/RegularidadeUnidadeEducacional"
 import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
 import {TecnicosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/TecnicosDaDiretoria";
-import {FaqDrePage} from "../paginas/ApoioDiretoria/Faq";
+import {FaqDrePage} from "../paginas/dres/ApoioDiretoria/Faq";
 
 const routesConfig = [
     {

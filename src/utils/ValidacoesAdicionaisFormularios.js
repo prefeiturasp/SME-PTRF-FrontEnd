@@ -544,10 +544,9 @@ export const getTextoStatusPeriodo = (statusId) => {
   } else if (statusId === 'PENDENTE') {
     status = 'O período está pendente'
   } else if (statusId === 'CONCILIADO') {
-    status = 'O período foi conferido pela Associação'
+    status = 'O período foi conferido e fechado pela Associação de Pais e Mestres'
   } else if (statusId === 'APROVADO') {
-    status =
-        'O período está fechado e foi aprovado pela Diretoria Regional de Educação'
+    status = 'O período está fechado e foi aprovado pela Diretoria Regional de Educação'
   } else if (statusId === 'REJEITADO') {
     status =
         'O período está fechado e foi rejeitado pela Diretoria Regional de Educação'
@@ -555,16 +554,17 @@ export const getTextoStatusPeriodo = (statusId) => {
     status = 'O período está com status indefinido'
   }
   return status
-}
+};
 
 export const getCorStatusPeriodo = (statusId) => {
+  console.log("getCorStatusPeriodo ", statusId)
   let cor = ''
   if (statusId === 'EM_ANDAMENTO') {
-    cor = 'cinza'
+    cor = 'amarelo'
   } else if (statusId === 'PENDENTE') {
     cor = 'vermelho'
   } else if (statusId === 'CONCILIADO') {
-    cor = 'amarelo'
+    cor = 'azul'
   } else if (statusId === 'APROVADO') {
     cor = 'verde'
   } else if (statusId === 'REJEITADO') {
@@ -573,4 +573,4 @@ export const getCorStatusPeriodo = (statusId) => {
     cor = 'vermelho'
   }
   return cor
-}
+};
