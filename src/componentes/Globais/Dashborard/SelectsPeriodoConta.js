@@ -1,6 +1,6 @@
 import React from "react";
 
-export const SelectsPeriodoConta = ({periodosAssociacao, handleChangePeriodo, tiposConta, handleChangeConta, exibeDataPT_BR, selectConta}) =>{
+export const SelectsPeriodoConta = ({periodosAssociacao, handleChangePeriodo, tiposConta, handleChangeConta, exibeDataPT_BR, selectConta, selectPeriodo}) =>{
 
     console.log("SelectsPeriodoConta ", periodosAssociacao)
 
@@ -12,7 +12,7 @@ export const SelectsPeriodoConta = ({periodosAssociacao, handleChangePeriodo, ti
                 </div>
                 <div className="col-auto my-1">
                     <select
-                        value={periodosAssociacao.uuid}
+                        value={!selectPeriodo ? periodosAssociacao.uuid : ""}
                         onChange={(e) => handleChangePeriodo(e.target.value)}
                         name="periodo"
                         id="periodo"

@@ -15,8 +15,9 @@ export const Dashboard = () => {
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [loading, setLoading] = useState(true);
     const [tiposConta, setTiposConta] = useState([]);
-    // Lógica para "zerar" o select de Contas
+    // Lógica para "zerar" o select de Contas e Periodos
     const [selectConta, setSelectConta] = useState(false);
+    const [selectPeriodo, setSelectPeriodo] = useState(false);
 
     useEffect(() => {
         buscaPeriodos();
@@ -28,7 +29,6 @@ export const Dashboard = () => {
         let periodos = await getPeriodosNaoFuturos();
         setPeriodosAssociacao(periodos);
     };
-
 
     const buscaListaAcoesAssociacao = async () => {
         const listaAcoes = await getAcoesAssociacao();
@@ -48,19 +48,19 @@ export const Dashboard = () => {
 
     const handleChangePeriodo = async (value) => {
         setLoading(true);
+        setSelectPeriodo(false)
         if (value) {
             let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodo(value);
             setSelectConta(true);
             setAcoesAssociacao(acoesPorPeriodo);
-
         }
         setLoading(false);
     };
 
     const handleChangeConta = async (value) => {
-        await buscaPeriodos();
         setLoading(true);
         setSelectConta(false);
+        setSelectPeriodo(true)
         if (value) {
             let acoesPorConta =  await getAcoesAssociacaoPorConta(value);
             setAcoesAssociacao(acoesPorConta);
@@ -79,6 +79,7 @@ export const Dashboard = () => {
                 handleChangeConta={handleChangeConta}
                 exibeDataPT_BR={exibeDataPT_BR}
                 selectConta={selectConta}
+                selectPeriodo={selectPeriodo}
             />
 
             {loading ? (
