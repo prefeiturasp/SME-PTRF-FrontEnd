@@ -4,14 +4,25 @@ import {DashboardCardInfoConta} from "./DashboardCardInfoConta";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
 import {getPeriodosNaoFuturos} from "../../../services/escolas/PrestacaoDeContas.service";
-import {getAcoesAssociacao, getAcoesAssociacaoPorPeriodo, getAcoesAssociacaoPorConta} from "../../../services/Dashboard.service";
+import {getAcoesAssociacao, getAcoesAssociacaoPorPeriodo, getAcoesAssociacaoPorConta, getTabelas} from "../../../services/Dashboard.service";
 import {exibeDataPT_BR, getCorStatusPeriodo, getTextoStatusPeriodo} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
 import {BarraDeStatusPeriodoAssociacao} from "./BarraDeStatusPeriodoAssociacao";
-import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import "./dashboard.scss"
+import {ASSOCIACAO_UUID} from "../../../services/auth.service";
+import {visoesService} from "../../../services/visoes.service";
 
 export const Dashboard = () => {
+    let uuid_associacao;
+    let visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
+
+    if (visao_selecionada === "UE"){
+        uuid_associacao = localStorage.getItem(ASSOCIACAO_UUID);
+    }else if (visao_selecionada === "DRE"){
+        let dadosDaAssociacao = JSON.parse(localStorage.getItem("DADOS_DA_ASSOCIACAO"));
+        uuid_associacao = dadosDaAssociacao.dados_da_associacao.uuid;
+    }
+
     const [acoesAssociacao, setAcoesAssociacao] = useState({});
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -31,15 +42,15 @@ export const Dashboard = () => {
     };
 
     const buscaListaAcoesAssociacao = async () => {
-        const listaAcoes = await getAcoesAssociacao();
+        const listaAcoes = await getAcoesAssociacao(uuid_associacao);
         setAcoesAssociacao(listaAcoes);
         setLoading(false);
     };
 
     useEffect(() => {
         const carregaTabelas = async () => {
-            let tabela =  await getTabelasReceita();
-            setTiposConta(tabela.data.contas_associacao);
+            let tabela =  await getTabelas(uuid_associacao);
+            setTiposConta(tabela.contas_associacao);
         };
         carregaTabelas()
     }, []);
@@ -48,7 +59,7 @@ export const Dashboard = () => {
         setLoading(true);
         setSelectPeriodo(false);
         if (value) {
-            let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodo(value);
+            let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodo(uuid_associacao, value);
             setSelectConta(true);
             setAcoesAssociacao(acoesPorPeriodo);
         }
@@ -60,7 +71,7 @@ export const Dashboard = () => {
         setSelectConta(false);
         setSelectPeriodo(true);
         if (value) {
-            let acoesPorConta =  await getAcoesAssociacaoPorConta(value);
+            let acoesPorConta =  await getAcoesAssociacaoPorConta(uuid_associacao, value);
             setAcoesAssociacao(acoesPorConta);
         }else {
             await buscaListaAcoesAssociacao();
@@ -83,7 +94,6 @@ export const Dashboard = () => {
                     tiposConta={tiposConta}
                 />
             </div>
-
             {loading ? (
                     <Loading
                         corGrafico="black"
