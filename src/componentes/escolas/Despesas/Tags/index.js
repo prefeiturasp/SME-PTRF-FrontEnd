@@ -18,7 +18,7 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
         <div className="container-tags mt-4">
             <div className="form-row align-items-center box-escolha-tag">
                 <div className="col-auto">
-                    <p className='mb-0 mr-4 font-weight-normal'>Esse gasto possui vínculo a alguma etiqueta?</p>
+                    <p className='mb-0 mr-4 font-weight-normal'>Esse gasto possui vínculo com alguma atividade específica?</p>
                 </div>
                 <div className="col-auto">
                     <div className="form-check form-check-inline">
@@ -72,7 +72,7 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
                             disabled={disabled}
 
                         >
-                            <option value="">Selecione uma ação</option>
+                            <option value="">Selecione uma atividade</option>
                             {despesasTabelas.tags && despesasTabelas.tags.map(item => (
                                 <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                             ))}
