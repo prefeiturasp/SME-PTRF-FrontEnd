@@ -1,11 +1,11 @@
 import React from 'react';
 import {PaginasContainer} from "../../../PaginasContainer";
-import {RegularidadeUnidadeEducacional} from "../../../../componentes/dres/Associacoes/DadosDasAssociacoes/RegularidadeUnidadeEducacional";
+import {SituacaoFinanceiraUnidadeEducacional} from "../../../../componentes/dres/Associacoes/DadosDasAssociacoes/SituacaoFinanceiraUnidadeEducacional";
 
 export const SituacaoFinanceiraUnidadeEducacionalPage = () => {
     return (
         <PaginasContainer>
-            <h1>Situacao financeira page</h1>
+            <SituacaoFinanceiraUnidadeEducacional/>
         </PaginasContainer>
     )
 };
