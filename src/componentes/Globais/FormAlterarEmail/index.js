@@ -19,16 +19,16 @@ export const FormAlterarEmail = ({handleClose})=>{
             "email2": values.confirmacao_email,
         };
 
+        console.log("PAYLOAD ", payload.email)
+
         try {
             let alterar_email = await alterarMeuEmail(localStorage.getItem(USUARIO_LOGIN), payload);
             console.log("Alterar Email ", alterar_email);
+            localStorage.setItem(USUARIO_EMAIL, payload.email);
             setEmailRedefinido(true);
             setMsgErro(false)
-           // localStorage.setItem(USUARIO_EMAIL, '')
         }catch (e) {
             console.log("Erro ao alterar email ", e.response);
-            console.log("Erro ao alterar email ", e.response.config.data);
-            localStorage.setItem(USUARIO_EMAIL, e.response.config.data);
             setMsgErro(e.response.data.detail)
         }
     };
