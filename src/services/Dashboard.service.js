@@ -1,5 +1,6 @@
 import api from './api'
 import { TOKEN_ALIAS } from './auth.service.js';
+import {ASSOCIACAO_UUID} from "./auth.service";
 
 const authHeader = {
     headers: {
@@ -18,4 +19,8 @@ export const getAcoesAssociacaoPorPeriodo = async (associacao_uuid, uuid_periodo
 
 export const getAcoesAssociacaoPorConta = async (associacao_uuid, conta_associacao_uuid) =>{
     return (await api.get(`/api/associacoes/${associacao_uuid}/painel-acoes/?conta=${conta_associacao_uuid}`, authHeader)).data
+};
+
+export const getTabelas = async (associacao_uuid) =>{
+    return (await api.get(`api/receitas/tabelas/?associacao_uuid=${associacao_uuid}`, authHeader)).data
 };
