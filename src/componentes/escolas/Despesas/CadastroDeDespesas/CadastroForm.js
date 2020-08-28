@@ -544,19 +544,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     </p>
                                                                     <hr className='mt-0 mb-1'/>
                                                                 </div>
-                                                                <div className="col-12">
-                                                                    <Tags
-                                                                        formikProps={props}
-                                                                        rateio={rateio}
-                                                                        rateios={values.rateios}
-                                                                        index={index}
-                                                                        verboHttp={despesaContext.verboHttp}
-                                                                        disabled={readOnlyCampos}
-                                                                        errors={errors}
-                                                                        setFieldValue={setFieldValue}
-                                                                        despesasTabelas={despesasTabelas}
-                                                                    />
-                                                                </div>
+
                                                                 <div className="col-12 col-md-6 mt-4">
 
                                                                     <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
@@ -587,6 +575,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     <CadastroFormCusteio
                                                                         formikProps={props}
                                                                         rateio={rateio}
+                                                                        rateios={values.rateios}
                                                                         index={index}
                                                                         despesasTabelas={despesasTabelas}
                                                                         especificacoes_custeio={especificacoes_custeio}
