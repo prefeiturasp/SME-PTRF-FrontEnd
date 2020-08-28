@@ -11,7 +11,6 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
         }else {
             setEscolhaTags(false)
         }
-
     }, [formikProps, index]);
 
     return (
@@ -27,7 +26,6 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
                             onChange={(e) => {
                                 formikProps.handleChange(e);
                                 formikProps.setFieldValue(`rateios[${index}].escolha_tags`, "sim")
-
                             }}
                             className={`${!rateio.tag && verboHttp === "PUT" && "is_invalid "} form-check-input`}
                             type="radio"
@@ -70,7 +68,6 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
                             id='tag'
                             className={`form-control`}
                             disabled={disabled}
-
                         >
                             <option value="">Selecione uma atividade</option>
                             {despesasTabelas.tags && despesasTabelas.tags.map(item => (
