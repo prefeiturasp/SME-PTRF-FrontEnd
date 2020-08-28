@@ -1,7 +1,6 @@
 import React from "react";
 
 export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChangeFiltrosAssociacao, handleSubmitFiltrosAssociacao, limpaFiltros}) =>{
-    //console.log("Filtros ", tabelaAssociacoes)
     return(
         <>
             <form onSubmit={handleSubmitFiltrosAssociacao}>
