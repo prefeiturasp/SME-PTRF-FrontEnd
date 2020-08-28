@@ -590,6 +590,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     <CadastroFormCapital
                                                                         formikProps={props}
                                                                         rateio={rateio}
+                                                                        rateios={values.rateios}
                                                                         index={index}
                                                                         despesasTabelas={despesasTabelas}
                                                                         especificaoes_capital={especificaoes_capital}

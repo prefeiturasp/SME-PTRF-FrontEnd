@@ -5,7 +5,7 @@ import CurrencyInput from "react-currency-input";
 import MaskedInput from "react-text-mask";
 
 export const CadastroFormCapital = (propriedades) => {
-    const {formikProps, rateio, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal} = propriedades;
+    const {formikProps, rateio, rateios, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal} = propriedades;
 
     return (
         <>
