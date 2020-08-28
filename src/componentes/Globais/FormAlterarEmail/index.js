@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Formik} from "formik";
 import {YupSignupSchemaAlterarEmail} from "../../../utils/ValidacoesAdicionaisFormularios";
-import {alterarMeuEmail, USUARIO_LOGIN} from "../../../services/auth.service";
+import {alterarMeuEmail, USUARIO_EMAIL, USUARIO_LOGIN} from "../../../services/auth.service";
 
 export const FormAlterarEmail = ({handleClose})=>{
 
@@ -19,9 +19,12 @@ export const FormAlterarEmail = ({handleClose})=>{
             "email2": values.confirmacao_email,
         };
 
+        console.log("PAYLOAD ", payload.email)
+
         try {
             let alterar_email = await alterarMeuEmail(localStorage.getItem(USUARIO_LOGIN), payload);
             console.log("Alterar Email ", alterar_email);
+            localStorage.setItem(USUARIO_EMAIL, payload.email);
             setEmailRedefinido(true);
             setMsgErro(false)
         }catch (e) {
@@ -67,15 +70,17 @@ export const FormAlterarEmail = ({handleClose})=>{
                             {props.touched.confirmacao_email && props.errors.confirmacao_email && <span className="span_erro text-danger mt-1"> {props.errors.confirmacao_email} </span>}
                         </div>
                         <div className="d-flex  justify-content-end pb-3 mt-3">
-                            <button onClick={() => handleClose()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Sair</button>
-                            <button disabled={!props.values.email || !props.values.confirmacao_email || props.errors.email || props.errors.confirmacao_email} type="submit" className="btn btn-success mt-2">Continuar</button>
+                            <button onClick={()=>{handleClose()}} type="reset" className="btn btn btn-outline-success mt-2 mr-2">
+                                Sair
+                            </button>
+                            <button disabled={emailRedefinido || msgErro || !props.values.email || !props.values.confirmacao_email || props.errors.email || props.errors.confirmacao_email} type="submit" className="btn btn-success mt-2">Continuar</button>
                         </div>
                     </form>
                 )}
             </Formik>
                 {emailRedefinido &&
                     <div className={`alert alert-success alert-dismissible fade show text-center col-12`} role="alert">
-                        Email alterado com sucesso
+                        Email alterado com sucesso, clique no X para continuar
                         <button type="button" className="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -84,7 +89,7 @@ export const FormAlterarEmail = ({handleClose})=>{
                 {msgErro &&
                     <div className="d-flex">
                         <div className={`alert alert-danger alert-dismissible fade show text-center col-12`} role="alert">
-                            {msgErro}
+                            <p>{msgErro}</p>
                             <button type="button" className="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
