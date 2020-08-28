@@ -10,8 +10,12 @@ import Loading from "../../../utils/Loading";
 import {BarraDeStatusPeriodoAssociacao} from "./BarraDeStatusPeriodoAssociacao";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import "./dashboard.scss"
+import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 
 export const Dashboard = () => {
+
+    let uuid_associacao = localStorage.getItem(ASSOCIACAO_UUID);
+
     const [acoesAssociacao, setAcoesAssociacao] = useState({});
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -31,7 +35,7 @@ export const Dashboard = () => {
     };
 
     const buscaListaAcoesAssociacao = async () => {
-        const listaAcoes = await getAcoesAssociacao();
+        const listaAcoes = await getAcoesAssociacao(uuid_associacao);
         setAcoesAssociacao(listaAcoes);
         setLoading(false);
     };
@@ -48,7 +52,7 @@ export const Dashboard = () => {
         setLoading(true);
         setSelectPeriodo(false);
         if (value) {
-            let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodo(value);
+            let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodo(uuid_associacao, value);
             setSelectConta(true);
             setAcoesAssociacao(acoesPorPeriodo);
         }
@@ -60,7 +64,7 @@ export const Dashboard = () => {
         setSelectConta(false);
         setSelectPeriodo(true);
         if (value) {
-            let acoesPorConta =  await getAcoesAssociacaoPorConta(value);
+            let acoesPorConta =  await getAcoesAssociacaoPorConta(uuid_associacao, value);
             setAcoesAssociacao(acoesPorConta);
         }else {
             await buscaListaAcoesAssociacao();
