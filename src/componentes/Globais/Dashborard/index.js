@@ -94,7 +94,6 @@ export const Dashboard = () => {
                     tiposConta={tiposConta}
                 />
             </div>
-
             {loading ? (
                     <Loading
                         corGrafico="black"
