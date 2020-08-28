@@ -3,9 +3,10 @@ import NumberFormat from "react-number-format";
 import {calculaValorRateio, trataNumericos, processoIncorporacaoMask} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import CurrencyInput from "react-currency-input";
 import MaskedInput from "react-text-mask";
+import {Tags} from "../Tags";
 
 export const CadastroFormCapital = (propriedades) => {
-    const {formikProps, rateio, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal} = propriedades;
+    const {formikProps, rateio, rateios, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal} = propriedades;
 
     return (
         <>
@@ -152,6 +153,19 @@ export const CadastroFormCapital = (propriedades) => {
                             onChangeEvent={formikProps.handleChange}
                         />
                         {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                    </div>
+                    <div className="col-12">
+                        <Tags
+                            formikProps={formikProps}
+                            rateio={rateio}
+                            rateios={rateios}
+                            index={index}
+                            verboHttp={verboHttp}
+                            disabled={disabled}
+                            errors={errors}
+                            setFieldValue={formikProps.setFieldValue}
+                            despesasTabelas={despesasTabelas}
+                        />
                     </div>
                 </div>
         </>
