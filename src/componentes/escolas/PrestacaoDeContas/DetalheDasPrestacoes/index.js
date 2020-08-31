@@ -99,44 +99,36 @@ export const DetalheDasPrestacoes = () => {
         };
 
         const carregaObservacoes = async (acoes) => {
-            console.log("carregaObservacoes ", acoes);
 
-            let uuid_prestacao_conta = localStorage.getItem("uuidPrestacaoConta")
-
-            debugger
-            if (uuid_prestacao_conta !== "undefined"){
-                await getObservacoes().then(response => {
-                    let observs = acoes.map((acao) => (
-                        {
-                            acao_associacao_uuid: acao.uuid,
-                            observacao: ''
-                        }
-                    ));
-
-                    if (response) {
-                        observs = observs.map((obs, idx) => {
-                            let obs_resp = response.find((acao) => acao.acao_associacao_uuid == obs.acao_associacao_uuid);
-
-                            return {
-                                ...obs,
-                                observacao: obs_resp !== undefined ? obs_resp.observacao : obs.observacao
-                            }
-                        })
-
-                        const files = JSON.parse(localStorage.getItem('acaoLancamento'));
-                        if (files.acao !== "") {
-                            const observacao = observs.find((acao) => acao.acao_associacao_uuid == files.acao);
-                            setTextareaJustificativa(observacao.observacao);
-                        }
+            await getObservacoes().then(response => {
+                let observs = acoes.map((acao) => (
+                    {
+                        acao_associacao_uuid: acao.uuid,
+                        observacao: ''
                     }
-                    setObservacoes(observs);
+                ));
 
-                }).catch(error => {
-                    console.log(error);
-                });
-            }
+                if (response) {
+                    observs = observs.map((obs, idx) => {
+                        let obs_resp = response.find((acao) => acao.acao_associacao_uuid == obs.acao_associacao_uuid);
 
+                        return {
+                            ...obs,
+                            observacao: obs_resp !== undefined ? obs_resp.observacao : obs.observacao
+                        }
+                    })
 
+                    const files = JSON.parse(localStorage.getItem('acaoLancamento'));
+                    if (files.acao !== "") {
+                        const observacao = observs.find((acao) => acao.acao_associacao_uuid == files.acao);
+                        setTextareaJustificativa(observacao.observacao);
+                    }
+                }
+                setObservacoes(observs);
+
+            }).catch(error => {
+                console.log(error);
+            });
         }
 
         const carregaContas = async () => {
@@ -395,6 +387,7 @@ export const DetalheDasPrestacoes = () => {
             [name]: value
         });
     };
+
 
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
