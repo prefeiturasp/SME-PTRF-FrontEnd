@@ -96,7 +96,7 @@ export const DetalheDasPrestacoes = () => {
                 console.log(error);
             });
         };
-        
+
         const carregaObservacoes = async (acoes) => {
             await getObservacoes().then(response => {
                 let observs = acoes.map((acao) => (
@@ -105,7 +105,7 @@ export const DetalheDasPrestacoes = () => {
                         observacao: ''
                     }
                 ));
-                
+
                 if (response) {
                     observs = observs.map((obs, idx) => {
                         let obs_resp = response.find((acao) => acao.acao_associacao_uuid == obs.acao_associacao_uuid);
@@ -115,15 +115,15 @@ export const DetalheDasPrestacoes = () => {
                             observacao: obs_resp !== undefined ? obs_resp.observacao : obs.observacao
                         }
                     })
-                    
+
                     const files = JSON.parse(localStorage.getItem('acaoLancamento'));
                     if (files.acao !== "") {
                         const observacao = observs.find((acao) => acao.acao_associacao_uuid == files.acao);
                         setTextareaJustificativa(observacao.observacao);
                     }
-                } 
+                }
                 setObservacoes(observs);
-                
+
             }).catch(error => {
                 console.log(error);
             });
@@ -245,7 +245,7 @@ export const DetalheDasPrestacoes = () => {
                 ...acao,
                 observacao: acao.acao_associacao_uuid == acaoLancamento.acao ? event.target.value : acao.observacao
             }
-            ));
+        ));
         setObservacoes(obs);
         setTextareaJustificativa(event.target.value);
     }
@@ -312,15 +312,7 @@ export const DetalheDasPrestacoes = () => {
     }
 
     return (
-        <div className="detalhe-das-prestacoes-container mb-5 mt-5">
-            <div className="row">
-                <div className="col-12">
-                    <div className="detalhe-das-prestacoes-texto-cabecalho mb-4">
-                        <h1 className="mt-4">Conciliação Bancária</h1>
-                    </div>
-                </div>
-            </div>
-
+        <div className="col-12 detalhe-das-prestacoes-container mb-5">
             {
                 loading && (
                     <Loading
