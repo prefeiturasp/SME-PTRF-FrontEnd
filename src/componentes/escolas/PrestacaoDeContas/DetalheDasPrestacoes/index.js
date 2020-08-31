@@ -312,7 +312,15 @@ export const DetalheDasPrestacoes = () => {
     }
 
     return (
-        <div className="col-12 detalhe-das-prestacoes-container mb-5">
+        <div className="detalhe-das-prestacoes-container mb-5 mt-5">
+            <div className="row">
+                <div className="col-12">
+                    <div className="detalhe-das-prestacoes-texto-cabecalho mb-4">
+                        <h1 className="mt-4">Conciliação Bancária</h1>
+                    </div>
+                </div>
+            </div>
+
             {
                 loading && (
                     <Loading

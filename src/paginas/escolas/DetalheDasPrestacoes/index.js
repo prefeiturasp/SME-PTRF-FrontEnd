@@ -6,7 +6,6 @@ import {DetalheDasPrestacoes} from "../../../componentes/escolas/PrestacaoDeCont
 export const DetalhedasPrestacoesPage = () => {
     return (
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5 mb-4">Conciliação Bancária</h1>
             <div className="page-content-inner pt-0">
                 <DetalheDasPrestacoes/>
             </div>

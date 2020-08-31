@@ -128,9 +128,12 @@
 }
 
 .detalhe-das-prestacoes-container {
-  margin-top: 69px;
-  padding: 15px 30px;
 
+  .detalhe-das-prestacoes-texto-cabecalho h1{
+    font-size: 28px;
+    padding-bottom: 10px;
+    border-bottom: solid 1px #ccc;
+  }
   .detalhe-das-prestacoes-titulo,
   .detalhe-das-prestacoes-titulo-lancamentos {
     font-size: 24px;
