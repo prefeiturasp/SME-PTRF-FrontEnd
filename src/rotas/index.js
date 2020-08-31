@@ -5,13 +5,13 @@ import {Pagina404} from "../paginas/escolas/404";
 import {DashboardPage} from "../paginas/Dashboard";
 import {CadastroDeDespesa} from "../paginas/escolas/Despesas/CadastroDeDespesas";
 import {EdicaoDeDespesa} from "../paginas/escolas/Despesas/EdicaoDeDespesa";
-import { ListaDeDespesasPage } from '../paginas/escolas/Despesas/ListaDeDespesas'
-import { CadastroDeReceita } from '../paginas/escolas/Receitas/CadastroReceita';
-import { EdicaoDeReceita } from '../paginas/escolas/Receitas/EdicaoReceita';
-import { ListaDeReceitasPage } from "../paginas/escolas/Receitas/ListaDeReceitas";
+import {ListaDeDespesasPage} from '../paginas/escolas/Despesas/ListaDeDespesas'
+import {CadastroDeReceita} from '../paginas/escolas/Receitas/CadastroReceita';
+import {EdicaoDeReceita} from '../paginas/escolas/Receitas/EdicaoReceita';
+import {ListaDeReceitasPage } from "../paginas/escolas/Receitas/ListaDeReceitas";
 import {DadosDaAssociacaoPage} from "../paginas/escolas/Associacao";
 import {PrestacaoDeContasPage} from "../paginas/escolas/PrestacaoDeContas";
-import {DetalheDasPrestacoes} from "../componentes/escolas/PrestacaoDeContas/DetalheDasPrestacoes";
+import {DetalhedasPrestacoesPage} from "../paginas/escolas/DetalheDasPrestacoes";
 import {VisualizacaoDaAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta";
 import {MembrosDaAssociacaoPage} from "../paginas/escolas/MembrosDaAssociacao";
 import {ValoresReprogramadosPage} from "../paginas/escolas/ValoresReprogramados";
@@ -97,7 +97,7 @@ const routesConfig = [
     {
       exact: true,
       path: "/detalhe-das-prestacoes",
-      component: DetalheDasPrestacoes
+      component: DetalhedasPrestacoesPage
     },
     {
       exact: true,
