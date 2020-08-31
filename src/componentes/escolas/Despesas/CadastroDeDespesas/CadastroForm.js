@@ -613,6 +613,22 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     </button>
                                                                 </div>
                                                             )}
+                                                            <div className="row">
+                                                                <div className="col-12">
+
+                                                                    <Tags
+                                                                        formikProps={props}
+                                                                        rateio={rateio}
+                                                                        rateios={values.rateios}
+                                                                        index={index}
+                                                                        verboHttp={despesaContext.verboHttp}
+                                                                        disabled={readOnlyCampos}
+                                                                        errors={errors}
+                                                                        setFieldValue={setFieldValue}
+                                                                        despesasTabelas={despesasTabelas}
+                                                                    />
+                                                                </div>
+                                                            </div>
                                                         </div> /*div key*/
                                                     )
                                                 })}

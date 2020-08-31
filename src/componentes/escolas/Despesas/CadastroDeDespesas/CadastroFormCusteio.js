@@ -145,20 +145,7 @@ export const CadastroFormCusteio = (propriedades) => {
                     />
                     {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                 </div>
-                <div className="col-12">
-                    <Tags
-                        formikProps={formikProps}
-                        rateio={rateio}
-                        rateios={rateios}
-                        index={index}
-                        verboHttp={verboHttp}
-                        disabled={disabled}
-                        errors={errors}
-                        setFieldValue={formikProps.setFieldValue}
-                        despesasTabelas={despesasTabelas}
-                    />
-                </div>
             </div>
         </>
     );
-}
+};
