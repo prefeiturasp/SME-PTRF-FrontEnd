@@ -1,0 +1,13 @@
+.container-btn-broup-categorias{
+  display: block;
+  padding-bottom: 30px;
+  border-bottom: solid 1px #ccc;
+
+  label{
+    color: #000;
+    border-color:#DADADA;
+  }
+  .btn-outline-light:not(:disabled):not(.disabled).active, .btn-outline-light:not(:disabled):not(.disabled):active, .show>.btn-outline-light.dropdown-toggle{
+    background-color: #DADADA !important;
+  }
+}
