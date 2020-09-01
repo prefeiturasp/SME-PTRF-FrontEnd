@@ -6,53 +6,67 @@ export const CardNotificacoes = ({toggleBtnNotificacoes, clickBtnNotificacoes}) 
 
 
     const notificacoes = [{
-            data:"Hoje dia 01 de setembro de 2020",
+            data:"Hoje, 10 Ago. 2020",
             infos: [
                 {
                 uuid:"28b3422a",
-                status: "urgente",
+                tipo: "urgente",
                 titulo: "Documentos faltantes na prestação de contas",
                 remetente: "DRE",
                 categoria: "Prestação de Contas",
-                mensagem: "A prestação de contas foi recebida pela Diretoria Regional de Educação Ipiranga, porém o Demonstrativo Financeiro do PTRF não consta no SEI. A prestação foi devolvida para acertos.",
+                descricao: "A prestação de contas foi recebida pela Diretoria Regional de Educação Ipiranga, porém o Demonstrativo Financeiro do PTRF não consta no SEI. A prestação foi devolvida para acertos.",
             },
             {
                 uuid:"-3b33-",
-                status: "2 - urgente",
-                titulo: "2 - Documentos faltantes na prestação de contas",
+                tipo: "informacao",
+                titulo: "Atualização do Sig_Escola realizada. Versão 2.02.111.01",
                 remetente: "2 - DRE",
                 categoria: "2 - Prestação de Contas",
-                mensagem: "2 - A prestação de contas foi recebida pela Diretoria Regional de Educação Ipiranga, porém o Demonstrativo Financeiro do PTRF não consta no SEI. A prestação foi devolvida para acertos.",
+                descricao: "2 - A prestação de contas foi recebida pela Diretoria Regional de Educação Ipiranga, porém o Demonstrativo Financeiro do PTRF não consta no SEI. A prestação foi devolvida para acertos.",
             }
             ],
         },
         {
-            data:"Hoje dia 25 de DEZEMBRO de 2020",
+            data:"Quarta, 05 Ago. 2020",
             infos: [
                 {
                     uuid: "48c9-8af5",
-                    status: "3 - urgente",
-                    titulo: "3 - Documentos faltantes na prestação de contas",
+                    tipo: "aviso",
+                    titulo: "O repasse no ano 2021 será feito em parcela única",
                     remetente: "3 - DRE",
                     categoria: "3 - Prestação de Contas",
-                    mensagem: "3 - A prestação de contas foi recebida pela Diretoria Regional de Educação Ipiranga, porém o Demonstrativo Financeiro do PTRF não consta no SEI. A prestação foi devolvida para acertos.",
+                    descricao: "3 - A prestação de contas foi recebida pela Diretoria Regional de Educação Ipiranga, porém o Demonstrativo Financeiro do PTRF não consta no SEI. A prestação foi devolvida para acertos.",
                 },
                 {
                     uuid:"-d6d78e",
-                    status: "4 - urgente",
-                    titulo: "4 - Documentos faltantes na prestação de contas",
+                    tipo: "alerta",
+                    titulo: "Nova funcionalidade no Resumo de Recursos",
                     remetente: "4 - DRE",
                     categoria: "4 - Prestação de Contas",
-                    mensagem: "4 - A prestação de contas foi recebida pela Diretoria Regional de Educação Ipiranga, porém o Demonstrativo Financeiro do PTRF não consta no SEI. A prestação foi devolvida para acertos.",
+                    descricao: "4 - A prestação de contas foi recebida pela Diretoria Regional de Educação Ipiranga, porém o Demonstrativo Financeiro do PTRF não consta no SEI. A prestação foi devolvida para acertos.",
                 },
                 {
                     uuid: "7faf31",
-                    status: "5 - urgente",
-                    titulo: "5 - Documentos faltantes na prestação de contas",
+                    tipo: "urgente",
+                    titulo: "Último dia para o fechamento do período de prestação de contas",
                     remetente: "5 - DRE",
                     categoria: "5 - Prestação de Contas",
-                    mensagem: "5 - A prestação de contas foi recebida pela Diretoria Regional de Educação Ipiranga, porém o Demonstrativo Financeiro do PTRF não consta no SEI. A prestação foi devolvida para acertos.",
+                    descricao: "5 - A prestação de contas foi recebida pela Diretoria Regional de Educação Ipiranga, porém o Demonstrativo Financeiro do PTRF não consta no SEI. A prestação foi devolvida para acertos.",
                 }
+            ],
+        },
+        {
+            data:"Sexta, 31 Jul. 2020",
+            infos: [
+                {
+                    uuid: "48c9-8af5z",
+                    tipo: "aviso",
+                    titulo: "O repasse no ano 2021 será feito em parcela única",
+                    remetente: "3 - DRE",
+                    categoria: "3 - Prestação de Contas",
+                    descricao: "3 - A prestação de contas foi recebida pela Diretoria Regional de Educação Ipiranga, porém o Demonstrativo Financeiro do PTRF não consta no SEI. A prestação foi devolvida para acertos.",
+                },
+
             ],
         }
     ];
@@ -73,14 +87,14 @@ export const CardNotificacoes = ({toggleBtnNotificacoes, clickBtnNotificacoes}) 
                         {notificacao.infos && notificacao.infos.length > 0 && notificacao.infos.map((info, index)=>
 
                             <div className="card mt-3" key={info.uuid}>
-                                <div className="card-header card-status-urgente" id={`heading_${info.uuid}`}>
+                                <div className={`card-header card-tipo-${info.tipo}`} id={`heading_${info.uuid}`}>
 
                                     <div className="row">
                                         <div className="col-11">
 
                                             <div className="row">
                                                 <div className="col-md-3 col-xl-2 align-self-center">
-                                                    <span className={`span-status-${info.status}`}>{info.status}</span>
+                                                    <span className={`span-tipo-${info.tipo}`}>{info.tipo}</span>
                                                 </div>
                                                 <div className="col-md-9 col-xl-10">
                                                     <p className="mb-0 titulo-notificacao">{info.titulo}</p>
@@ -109,7 +123,7 @@ export const CardNotificacoes = ({toggleBtnNotificacoes, clickBtnNotificacoes}) 
 
                                 <div id={`collapse_${info.uuid}`} className="collapse" aria-labelledby="headingOne" data-parent="#accordionNotificacoes">
                                     <div className="card-body">
-                                        {info.mensagem}
+                                        {info.descricao}
                                     </div>
                                 </div>
                             </div>

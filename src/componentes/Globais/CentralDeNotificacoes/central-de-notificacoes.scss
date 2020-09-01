@@ -47,21 +47,45 @@
   font-weight: 700;
 }
 
-.span-status-urgente{
+.span-tipo-urgente, .span-tipo-informacao, .span-tipo-aviso, .span-tipo-alerta{
   background-repeat: no-repeat;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding-left: 1.9rem;
+  padding-right: 1rem;
   background-position: 0 80%;
   font-size: 16px;
   font-weight: 700;
   border-right: solid 2px #42474A;
 }
 
-.card-status-urgente{
+.card-tipo-urgente{
   border-left: #B40C02 solid 8px;
 }
-
-.span-status-urgente{
+.span-tipo-urgente{
   color: #B40C02;
   background-image: url("../../../assets/img/icones-central-notificacoes/exclamation-triangle-solid.svg");
 }
+
+.span-tipo-informacao{
+  color: #086397;
+  background-image: url("../../../assets/img/icones-central-notificacoes/info-circle-solid.svg");
+}
+.card-tipo-informacao{
+  border-left: #086397 solid 8px;
+}
+
+.span-tipo-aviso{
+  color: #2B7D83;
+  background-image: url("../../../assets/img/icones-central-notificacoes/info-circle-solid.svg");
+}
+.card-tipo-aviso{
+  border-left: #2B7D83 solid 8px;
+}
+
+.span-tipo-alerta{
+  color: #D06D12;
+  background-image: url("../../../assets/img/icones-central-notificacoes/exclamation-circle-solid.svg");
+}
+.card-tipo-alerta{
+  border-left: #D06D12 solid 8px;
+}
+
