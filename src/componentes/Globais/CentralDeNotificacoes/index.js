@@ -13,7 +13,12 @@ export const CentralDeNotificacoes = () => {
     };
 
     const handleClickBtnCategorias = (e) => {
-        console.log("Cliquei ", e.target.id)
+        console.log("Cliquei handleClickBtnCategorias ", e.target.id)
+    };
+
+    const handleChangeMarcarComoLida = (e, uuid) => {
+        console.log("Cliquei handleChangeMarcarComoLida e ", e.target.checked)
+        console.log("Cliquei handleChangeMarcarComoLida uuid ", uuid)
     };
 
     return (
@@ -24,6 +29,7 @@ export const CentralDeNotificacoes = () => {
             <CardNotificacoes
                 toggleBtnNotificacoes={toggleBtnNotificacoes}
                 clickBtnNotificacoes={clickBtnNotificacoes}
+                handleChangeMarcarComoLida={handleChangeMarcarComoLida}
             />
         </>
     );

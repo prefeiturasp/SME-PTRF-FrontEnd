@@ -2,8 +2,7 @@ import React, {Fragment} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronUp, faChevronDown, faUser} from "@fortawesome/free-solid-svg-icons";
 
-export const CardNotificacoes = ({toggleBtnNotificacoes, clickBtnNotificacoes}) => {
-
+export const CardNotificacoes = ({toggleBtnNotificacoes, clickBtnNotificacoes, handleChangeMarcarComoLida}) => {
 
     const notificacoes = [{
             data:"Hoje, 10 Ago. 2020",
@@ -66,12 +65,9 @@ export const CardNotificacoes = ({toggleBtnNotificacoes, clickBtnNotificacoes}) 
                     categoria: "3 - Prestação de Contas",
                     descricao: "3 - A prestação de contas foi recebida pela Diretoria Regional de Educação Ipiranga, porém o Demonstrativo Financeiro do PTRF não consta no SEI. A prestação foi devolvida para acertos.",
                 },
-
             ],
         }
     ];
-
-    console.log("Notificacoes ", notificacoes)
 
     return (
         <>
@@ -84,7 +80,7 @@ export const CardNotificacoes = ({toggleBtnNotificacoes, clickBtnNotificacoes}) 
 
                         <p className="data-notificacoes mt-3">{notificacao.data}</p>
 
-                        {notificacao.infos && notificacao.infos.length > 0 && notificacao.infos.map((info, index)=>
+                        {notificacao.infos && notificacao.infos.length > 0 && notificacao.infos.map((info)=>
 
                             <div className="card mt-3" key={info.uuid}>
                                 <div className={`card-header card-tipo-${info.tipo}`} id={`heading_${info.uuid}`}>
@@ -123,7 +119,24 @@ export const CardNotificacoes = ({toggleBtnNotificacoes, clickBtnNotificacoes}) 
 
                                 <div id={`collapse_${info.uuid}`} className="collapse" aria-labelledby="headingOne" data-parent="#accordionNotificacoes">
                                     <div className="card-body">
-                                        {info.descricao}
+                                        <div className="row">
+                                            <div className="col-10">
+                                                {info.descricao}
+                                            </div>
+                                            <div className="col-2 align-self-center">
+                                                <input
+                                                    //checked={conciliados}
+                                                    type="checkbox"
+                                                    //value={checkboxDespesas}
+                                                    onChange={(e)=>handleChangeMarcarComoLida(e, info.uuid)}
+                                                    name="checkConferido"
+                                                    id="exampleCheck1"
+                                                    className="form-check-input"
+                                                />
+                                                <label className="form-check-label marcar-como-lida" htmlFor="exampleCheck1">Marcar como lida</label>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
