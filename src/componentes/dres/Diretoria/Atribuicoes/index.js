@@ -1,12 +1,11 @@
-import React, {Fragment, useEffect, useState} from "react";
-import {Modal} from "react-bootstrap";
+import React, {useEffect, useState} from "react";
 import Toast from 'react-bootstrap/Toast'
 import Dropdown from 'react-bootstrap/Dropdown';
 import "../../../Globais/ModalBootstrap/modal-bootstrap.scss"
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {getUnidade} from "../../../../services/dres/Unidades.service";
-import {atribuirTecnicos, getUnidadesParaAtribuir, filtrosUnidadesParaAtribuir, retirarAtribuicoes} from "../../../../services/dres/Atribuicoes.service";
+import {atribuirTecnicos, copiarPeriodo, getUnidadesParaAtribuir, filtrosUnidadesParaAtribuir, retirarAtribuicoes} from "../../../../services/dres/Atribuicoes.service";
 import {getPeriodosNaoFuturos} from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelaAssociacoes} from "../../../../services/dres/Associacoes.service";
 import {getTecnicosDre} from "../../../../services/dres/TecnicosDre.service";
@@ -20,10 +19,13 @@ import {MsgImgCentralizada} from  "../../../Globais/Mensagens/MsgImgCentralizada
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSignInAlt} from "@fortawesome/free-solid-svg-icons";
+import {
+    ModalAtribuir, 
+    ModalConfirmarRetiradaAtribuicoes,
+    ModalInformativoCopiaPeriodo} from "./Modais";
 import "./atribuicoes.scss";
 
 
-// Dropdown needs access to the DOM node in order to position the Menu
 const CustomToast = (propriedades) => {
     return (
         <Toast 
@@ -49,92 +51,6 @@ const CustomToast = (propriedades) => {
     )
 }
 
-export const ModalAtribuir = (propriedades) => {
-    return (
-        <Fragment>
-            <Modal centered show={propriedades.show} onHide={propriedades.onHide}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{propriedades.titulo}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <div className="row">
-                         <div className="col-12" style={{paddingBottom:"20px"}}>
-                            <strong>Você possui <span style={{color: "#00585E", fontWeight:"bold"}}>{propriedades.quantidadeSelecionada} {propriedades.quantidadeSelecionada === 1 ? "unidade" : "unidades"}</span> {propriedades.quantidadeSelecionada === 1 ? "selecionada" : "selecionadas"}</strong>
-                         </div>
-                    </div>
-                    <div className="row">
-                    <div className="form-group col-12">
-                            <label htmlFor="tecnico">Novo técnico responsável</label>
-                            <select 
-                                    onChange={(e) => propriedades.selecionarTecnico(e.target.value)} 
-                                    name="tecnico"
-                                    id="tecnico" 
-                                    className="form-control"
-                                    >
-                                <option key={0} value="">Selecione uma opção</option>
-                                {propriedades.tecnicosList && propriedades.tecnicosList.map(item => (
-                                    <option key={item.uuid} value={item.uuid}>{item.nome}</option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                </Modal.Body>
-                <Modal.Footer>
-                <button
-                    onClick={(e) => propriedades.onHide()}
-                    className="btn btn-outline-success mt-2"
-                    type="button"
-                >
-                Cancelar
-                </button>
-                <button disabled={propriedades.tecnico !== "" ? false: true}
-                    onClick={(e) => propriedades.primeiroBotaoOnclick()}
-                    type="submit"
-                    className="btn btn-success mt-2"
-                >
-                Atribuir
-                </button>
-                </Modal.Footer>
-            </Modal>
-        </Fragment>
-    )
-}
-
-export const ModalConfirmarRetiradaAtribuicoes = (propriedades) => {
-    return (
-        <Fragment>
-            <Modal centered show={propriedades.show} onHide={propriedades.onHide}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{propriedades.titulo}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <div className="row">
-                         <div className="col-12" style={{paddingBottom:"20px"}}>
-                            <strong>Você deseja retirar as atribuições selecionadas?</strong>
-                         </div>
-                    </div>
-                </Modal.Body>
-                <Modal.Footer>
-                <button
-                    onClick={(e) => propriedades.onHide()}
-                    className="btn btn-outline-success mt-2"
-                    type="button"
-                >
-                Cancelar
-                </button>
-                <button disabled={propriedades.tecnico !== "" ? false: true}
-                    onClick={(e) => propriedades.primeiroBotaoOnclick()}
-                    type="submit"
-                    className="btn btn-success mt-2"
-                >
-                Confirmar
-                </button>
-                </Modal.Footer>
-            </Modal>
-        </Fragment>
-    )
-}
-
 
 export const Atribuicoes = () => {
     const rowsPerPage = 10;
@@ -149,9 +65,9 @@ export const Atribuicoes = () => {
     const [loading, setLoading] = useState(true);
     const [dadosDiretoria, setDadosDiretoria] = useState(null);
     const [periodos, setPeriodos] = useState(false);
-    const [periodoAtual, setPeriodoAtual] = useState(null)
+    const [periodoAtual, setPeriodoAtual] = useState(null);
     const [dreUuid, setDreUuid] = useState(null);
-    const [unidades, setUnidades] = useState([])
+    const [unidades, setUnidades] = useState([]);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
     const [tecnicosList, setTecnicosList] = useState([]);
     const [estadoFiltros, setEstadoFiltros] = useState(estadoInicialFiltros);
@@ -160,8 +76,11 @@ export const Atribuicoes = () => {
     const [show, setShow] = useState(false);
     const [showConfirma, setShowConfirma] = useState(false);
     const [showToast, setShowToast] = useState(false);
+    const [showInformativoCopia, setShowInformativoCopia] = useState(false);
     const [tecnico, setTecnico] = useState("");
     const [copiaUnidades, setCopiaUnidades] = useState([]);
+    const [escolhaTags, setEscolhaTags] = useState(false);
+    const [periodoACopiar, setPeriodoACopiar] = useState(null);
 
     useEffect(() => {
         buscaDadosDiretoriaEPeriodos()
@@ -185,6 +104,7 @@ export const Atribuicoes = () => {
             setPeriodoAtual(periodoAtual);
         } else {
             setPeriodoAtual(periodos[0]);
+            setPeriodoACopiar(periodos[1]);
         }
 
         return {dre: diretoria.uuid, periodo: periodoAtual !== null ? periodoAtual.uuid : periodos[0].uuid}
@@ -219,6 +139,14 @@ export const Atribuicoes = () => {
             await buscarUnidadesParaAtribuicao(dreUuid, value);
             let periodo = periodos.filter((item) => (item.uuid === value));
             setPeriodoAtual(periodo[0])
+            setPeriodoACopiar(periodos.filter((item) => (item.uuid !== value))[0]);
+        }
+    };
+
+    const selecaoPeriodoACopiar = async (value) => {
+        if (value){
+            let periodo = periodos.filter((item) => (item.uuid === value));
+            setPeriodoACopiar(periodo[0])
         }
     };
 
@@ -253,6 +181,34 @@ export const Atribuicoes = () => {
         await buscarUnidadesParaAtribuicao(dreUuid, periodoAtual.uuid);
         setLoading(false)
     };
+
+    const copiarAtribuicoesPeriodo = async (e) => {
+        setLoading(true);
+        e.preventDefault()
+        let trocaPeriodoData = {
+            "periodo_atual": periodoAtual.uuid,
+            "periodo_copiado": periodoACopiar.uuid,
+            "dre_uuid": dreUuid
+        }
+        copiarPeriodo(trocaPeriodoData)
+        .then(response => {
+            console.log("Período copiado com sucesso!");
+            buscarUnidadesParaAtribuicao(dreUuid, periodoAtual.uuid);
+            setEscolhaTags(false);
+            setLoading(false);
+            setShowInformativoCopia(true);
+        })
+        .catch(error => {
+            console.log("Erro ao copiar período");
+            console.log(error);
+            setLoading(false);
+        });
+        
+    }
+
+    const fechaModalInformativo = () => {
+        setShowInformativoCopia(false);
+    }
 
     const selecionarTodos = (event) => {
         event.preventDefault();
@@ -551,7 +507,6 @@ export const Atribuicoes = () => {
                         <div className="col-7">
                             <select
                                 value={periodoAtual !== null ? periodoAtual.uuid : ""}
-                                //defaultValue=""
                                 onChange={(e) => mudancasPeriodo(e.target.value)}
                                 name="periodo"
                                 id="periodo"
@@ -563,6 +518,79 @@ export const Atribuicoes = () => {
                             </select>
                         </div>
                     </div>
+                    {/* Inicio Tags */}
+                    <div className="row align-items-center mb-3">
+                        <div className="col-12">
+                            <div className="container-tags mt-4">
+                                <div className="form-row align-items-center">
+                                    <div className="col-5">
+                                        <p className='mb-0 mr-4 font-weight-normal'>Deseja replicar atribuições de outro período?</p>
+                                    </div>
+                                    <div className="col-2">
+                                        <div className="form-check form-check-inline">
+                                            <input
+                                                name="check_sim"
+                                                onChange={(e) => {
+                                                    setEscolhaTags(true);
+                                                }}
+                                                type="radio"
+                                                id="sim"
+                                                value="sim"
+                                                checked={escolhaTags}
+                                            />
+                                            <label className="form-check-label" htmlFor="{`tag_sim_${index}`}">Sim</label>
+                                        </div>
+                                
+                                        <div className="form-check form-check-inline">
+                                            <input
+                                                onChange={(e) => {
+                                                    setEscolhaTags(false);
+
+                                                }}
+                                                type="radio"
+                                                id="nao"
+                                                value="nao"
+                                                checked={!escolhaTags}
+                                            />
+                                            <label className="form-check-label" htmlFor="{`tag_nao_${index}`}">Não</label>
+                                        </div>
+                                    </div>
+                                    <div className="col-5">
+                                        {escolhaTags ?
+                                                <select
+                                                    value={periodoACopiar !== null ? periodoACopiar.uuid : ""}
+                                                    onChange={(e) => selecaoPeriodoACopiar(e.target.value)}
+                                                    name="periodoacopiar"
+                                                    id="periodoacopiar"
+                                                    className="form-control"
+                                                >
+                                                    {periodos && periodos.filter(p => p.uuid !== periodoAtual.uuid).map((periodo)=>
+                                                        <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}</option>
+                                                    )}
+                                                </select>
+                                        : null
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {escolhaTags ? (
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="d-flex justify-content-end pb-3 mt-3">
+                                <button
+                                    type="submit"
+                                    className="btn btn-success mt-2 ml-2"
+                                    onClick={(e) => copiarAtribuicoesPeriodo(e)}
+                                >
+                                    Confirmar
+                                </button>
+                            </div>
+                        </div>
+                    </div>)
+                    : null}
+                    {/* Fim Tags */}
                     <hr />
                     <Filtros
                         estadoFiltros={estadoFiltros}
@@ -596,6 +624,13 @@ export const Atribuicoes = () => {
                         fecharToast={fecharToast}
                         tecnico={tecnico !== "" ? montaNome(tecnicosList.filter(t => t.uuid === tecnico)[0].nome) : ""}
                         desfazer={desfazer}
+                    />
+
+                    <ModalInformativoCopiaPeriodo
+                        show={showInformativoCopia}
+                        onHide={fechaModalInformativo}
+                        titulo="Cópia de períodos"
+                        periodo={periodoACopiar}
                     />
 
                     {quantidadeSelecionada > 0 ?
