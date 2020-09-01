@@ -108,7 +108,7 @@ export const Cabecalho = () => {
 
                     <div className="col-1">
                         <div className="p-2 text-center">
-                            <button className="btn-sair ml-lg-4 ml-xl-0"><img className="icone-sair" src={IconeSair} alt=""/><span className="span-notificacoes">3</span></button>
+                            <button className="btn-sair ml-lg-4 ml-xl-0"><img className="icone-sair" src={IconeSair} alt=""/><span className="span-notificacoes-maior-que-10">15</span></button>
                             <p>Notificações</p>
                         </div>
                     </div>
