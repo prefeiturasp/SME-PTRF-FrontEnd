@@ -32,6 +32,14 @@ export const retirarAtribuicoes = async (payload) => {
     });
 };
 
+export const copiarPeriodo = async (payload) => {
+    return api.post('api/atribuicoes/copia-periodo/', payload, authHeader).then(response => {
+        return response;
+    }).catch(error => {
+        return error.response;
+    });
+};
+
 export const atribuirTecnico = async (payload) => {
     return api.post('api/atribuicoes/', payload, authHeader).then(response => {
         return response;
