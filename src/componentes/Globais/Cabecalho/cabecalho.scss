@@ -16,12 +16,25 @@
   }
 
   .container-select-visoes{
-    width: 72%;
+    width: 90%;
   }
 
   .span-tipo-de-unidade{
     border-radius: 25px;
     background-color: #2B7D83;
+  }
+
+  .span-notificacoes{
+    position: absolute;
+    top: 0;
+    background-color: #B40C02;
+    border-radius: 67px;
+    padding: 2px 7px;
+    font-size: 11px;
+    color: #fff;
+    display: block;
+    margin-left: 14px;
+    margin-top: 2px;
   }
 }
 

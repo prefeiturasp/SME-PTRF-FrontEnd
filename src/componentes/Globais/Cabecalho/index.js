@@ -62,50 +62,65 @@ export const Cabecalho = () => {
     return (
         <>
             <div className="col-12 cabecalho fixed-top pb-0">
-                <div className="d-flex justify-content-between bd-highlight align-items-center">
-                    <div className="p-2 bd-highlight">
-                        <img className="img-fluid logo-cabecalho ml-3" src={LogoPtrf} alt=""/>
-                    </div>
-                    {exibeMenu &&
-                    <div className="p-2 bd-highlight container-select-visoes">
-                        <select
-                            value={
-                                retornaVisaoConvertida(
-                                    dados_usuario_logado.visao_selecionada.nome,
-                                    dados_usuario_logado.unidade_selecionada.uuid,
-                                    dados_usuario_logado.associacao_selecionada.uuid,
-                                    dados_usuario_logado.associacao_selecionada.nome,
-                                    dados_usuario_logado.unidade_selecionada.tipo_unidade,
-                                    dados_usuario_logado.unidade_selecionada.nome
-                                )}
-                            onChange={(e)=>onChangeVisao(e)}
-                            className="form-control"
-                        >
-                            {dados_usuario_logado.unidades.map((unidade, index)=>
-                                <option
-                                    key={index}
-                                    value={
-                                        retornaVisaoConvertida(
-                                            unidade.tipo_unidade,
-                                            unidade.uuid,
-                                            unidade.associacao.uuid,
-                                            unidade.tipo_unidade === "DRE" ? unidade.nome : unidade.associacao.nome,
-                                            unidade.tipo_unidade,
-                                            unidade.nome,
-                                        )}
-                                >
-                                    {visoesService.converteNomeVisao(unidade.tipo_unidade)} - {unidade.nome}
-                                </option>
-                            )}
-                        </select>
-                    </div>
-                    }
 
-                    <div className="p-2 bd-highlight text-center ">
-                        <button className="btn-sair" onClick={logout}><img className="img-fluid icone-sair" src={IconeSair} alt=""/></button>
-                        <p className="mb-">Sair</p>
+                <div className="row">
+                    <div className='col-lg-3 col-xl-2 '>
+                        <div className="p-3">
+                            <img className="logo-cabecalho ml-3" src={LogoPtrf} alt=""/>
+                        </div>
+                    </div>
+                    <div className="col-lg-7 col-xl-8 mt-2 pl-lg-0 pl-xl-3">
+                        {exibeMenu &&
+                        <div className="pt-2 container-select-visoes">
+                            <select
+                                value={
+                                    retornaVisaoConvertida(
+                                        dados_usuario_logado.visao_selecionada.nome,
+                                        dados_usuario_logado.unidade_selecionada.uuid,
+                                        dados_usuario_logado.associacao_selecionada.uuid,
+                                        dados_usuario_logado.associacao_selecionada.nome,
+                                        dados_usuario_logado.unidade_selecionada.tipo_unidade,
+                                        dados_usuario_logado.unidade_selecionada.nome
+                                    )}
+                                onChange={(e)=>onChangeVisao(e)}
+                                className="form-control w-100"
+                            >
+                                {dados_usuario_logado.unidades.map((unidade, index)=>
+                                    <option
+                                        key={index}
+                                        value={
+                                            retornaVisaoConvertida(
+                                                unidade.tipo_unidade,
+                                                unidade.uuid,
+                                                unidade.associacao.uuid,
+                                                unidade.tipo_unidade === "DRE" ? unidade.nome : unidade.associacao.nome,
+                                                unidade.tipo_unidade,
+                                                unidade.nome,
+                                            )}
+                                    >
+                                        {visoesService.converteNomeVisao(unidade.tipo_unidade)} - {unidade.nome}
+                                    </option>
+                                )}
+                            </select>
+                        </div>
+                        }
+                    </div>
+
+                    <div className="col-1">
+                        <div className="p-2 text-center">
+                            <button className="btn-sair ml-lg-4 ml-xl-0"><img className="icone-sair" src={IconeSair} alt=""/><span className="span-notificacoes">3</span></button>
+                            <p>Notificações</p>
+                        </div>
+                    </div>
+
+                    <div className="col-1">
+                        <div className="p-2 text-center">
+                            <button className="btn-sair" onClick={logout}><img className="icone-sair" src={IconeSair} alt=""/></button>
+                            <p>Sair</p>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </>
     );
