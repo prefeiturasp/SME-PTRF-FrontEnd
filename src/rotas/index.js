@@ -33,6 +33,8 @@ import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretori
 import {TecnicosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/TecnicosDaDiretoria";
 import {FaqDrePage} from "../paginas/dres/ApoioDiretoria/Faq";
 import {SituacaoFinanceiraUnidadeEducacionalPage} from "../paginas/dres/Associacoes/SituacaoFinanceiraUnidadeEducacional";
+import {AtribuicoesPage} from "../paginas/dres/Diretoria/Atribuicoes";
+
 
 const routesConfig = [
     {
@@ -164,6 +166,11 @@ const routesConfig = [
         exact: true,
         path: "/central-de-notificacoes",
         component: CentralDeNotificacoesPage
+    },
+    {
+        exact: true,
+        path: "/dre-atribuicoes",
+        component: AtribuicoesPage
     },
     {
         exact: true,
