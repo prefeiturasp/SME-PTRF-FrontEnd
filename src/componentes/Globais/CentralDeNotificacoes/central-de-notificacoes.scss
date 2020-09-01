@@ -1,0 +1,95 @@
+.container-btn-broup-categorias{
+  display: block;
+  padding-bottom: 30px;
+  border-bottom: solid 1px #ccc;
+
+  label{
+    color: #000;
+    border-color:#DADADA;
+  }
+  .btn-outline-light:not(:disabled):not(.disabled).active, .btn-outline-light:not(:disabled):not(.disabled):active, .show>.btn-outline-light.dropdown-toggle{
+    background-color: #DADADA !important;
+  }
+}
+
+.span-icone-toogle{
+  background-color: rgb(199, 201, 200);
+  border-radius: 67px;
+  border: 1px solid rgb(199, 201, 200);
+  padding: 8px 12px;
+  font-size: 16px;
+}
+
+#accordionNotificacoes >.card >.card-header {
+  border-radius: 5px;
+  margin-bottom: 0;
+  background-color: #fff;
+}
+
+#accordionNotificacoes .card-header, #accordionNotificacoes .card-body{
+  border-bottom: 1px solid rgba(0,0,0,.125);
+  background-color: #F3F3F3;
+}
+
+.data-notificacoes{
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.titulo-notificacao{
+  color: #42474A;
+  font-weight: 700;
+}
+
+.remetente-categoria{
+  color: #7D7D7D;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.span-tipo-urgente, .span-tipo-informacao, .span-tipo-aviso, .span-tipo-alerta{
+  background-repeat: no-repeat;
+  padding-left: 1.9rem;
+  padding-right: 1rem;
+  background-position: 0 80%;
+  font-size: 16px;
+  font-weight: 700;
+  border-right: solid 2px #42474A;
+}
+
+.card-tipo-urgente{
+  border-left: #B40C02 solid 8px;
+}
+.span-tipo-urgente{
+  color: #B40C02;
+  background-image: url("../../../assets/img/icones-central-notificacoes/exclamation-triangle-solid.svg");
+}
+
+.span-tipo-informacao{
+  color: #086397;
+  background-image: url("../../../assets/img/icones-central-notificacoes/info-circle-solid.svg");
+}
+.card-tipo-informacao{
+  border-left: #086397 solid 8px;
+}
+
+.span-tipo-aviso{
+  color: #2B7D83;
+  background-image: url("../../../assets/img/icones-central-notificacoes/info-circle-solid.svg");
+}
+.card-tipo-aviso{
+  border-left: #2B7D83 solid 8px;
+}
+
+.span-tipo-alerta{
+  color: #D06D12;
+  background-image: url("../../../assets/img/icones-central-notificacoes/exclamation-circle-solid.svg");
+}
+.card-tipo-alerta{
+  border-left: #D06D12 solid 8px;
+}
+
+.marcar-como-lida{
+  color: #00585e;
+}
+

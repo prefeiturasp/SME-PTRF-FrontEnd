@@ -21,6 +21,7 @@ import {RedefinirSenhaPage} from "../paginas/Login/RedefinirMinhaSenha";
 import {MeusDadosPage} from "../paginas/escolas/MeusDados";
 import {AssociacoesPage} from "../paginas/dres/Associacoes";
 import {ProcessosSeiPage} from "../paginas/dres/Associacoes/ProcessosSei";
+import {CentralDeNotificacoesPage} from "../paginas/CentralDeNotificacoes";
 import { authService } from '../services/auth.service';
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
@@ -160,6 +161,11 @@ const routesConfig = [
         exact: true,
         path: "/dre-faq",
         component: FaqDrePage
+    },
+    {
+        exact: true,
+        path: "/central-de-notificacoes",
+        component: CentralDeNotificacoesPage
     },
     {
         exact: true,
