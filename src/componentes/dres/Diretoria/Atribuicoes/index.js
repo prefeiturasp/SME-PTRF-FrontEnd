@@ -1,11 +1,12 @@
 import React, {Fragment, useEffect, useState} from "react";
-import {Button, Modal} from "react-bootstrap";
-import {ModalBootstrap} from "../../../Globais/ModalBootstrap";
+import {Modal} from "react-bootstrap";
+import Toast from 'react-bootstrap/Toast'
+import Dropdown from 'react-bootstrap/Dropdown';
 import "../../../Globais/ModalBootstrap/modal-bootstrap.scss"
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {getUnidade} from "../../../../services/dres/Unidades.service";
-import {atribuirTecnicos, getUnidadesParaAtribuir, filtrosUnidadesParaAtribuir} from "../../../../services/dres/Atribuicoes.service";
+import {atribuirTecnicos, getUnidadesParaAtribuir, filtrosUnidadesParaAtribuir, retirarAtribuicoes} from "../../../../services/dres/Atribuicoes.service";
 import {getPeriodosNaoFuturos} from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelaAssociacoes} from "../../../../services/dres/Associacoes.service";
 import {getTecnicosDre} from "../../../../services/dres/TecnicosDre.service";
@@ -19,7 +20,34 @@ import {MsgImgCentralizada} from  "../../../Globais/Mensagens/MsgImgCentralizada
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSignInAlt} from "@fortawesome/free-solid-svg-icons";
+import "./atribuicoes.scss";
 
+
+// Dropdown needs access to the DOM node in order to position the Menu
+const CustomToast = (propriedades) => {
+    return (
+        <Toast 
+            show={propriedades.show} 
+            onClose={propriedades.fecharToast} 
+            className="text-white bg-dark bg-gradient"
+            style={{
+                maxWidth: "600px"
+          }}>
+          <Toast.Header 
+            className="text-white bg-dark bg-gradient"
+           >
+            <img
+              src="holder.js/20x20?text=%20"
+              className="rounded mr-2"
+              alt=""
+            />
+            
+            <div>Unidades escolares atribuidas para "{propriedades.tecnico}".</div>
+            <a onClick={e => propriedades.desfazer()} style={{marginLeft: "30px", marginRight: "30px", textDecoration: "underline", color: "#17a2b8", cursor:"pointer"}}><strong>Desfazer</strong></a>
+          </Toast.Header>
+        </Toast>
+    )
+}
 
 export const ModalAtribuir = (propriedades) => {
     return (
@@ -42,7 +70,6 @@ export const ModalAtribuir = (propriedades) => {
                                     name="tecnico"
                                     id="tecnico" 
                                     className="form-control"
-                                    //value={estadoFiltros.filtrar_por_tecnico}
                                     >
                                 <option key={0} value="">Selecione uma opção</option>
                                 {propriedades.tecnicosList && propriedades.tecnicosList.map(item => (
@@ -73,6 +100,42 @@ export const ModalAtribuir = (propriedades) => {
     )
 }
 
+export const ModalConfirmarRetiradaAtribuicoes = (propriedades) => {
+    return (
+        <Fragment>
+            <Modal centered show={propriedades.show} onHide={propriedades.onHide}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{propriedades.titulo}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="row">
+                         <div className="col-12" style={{paddingBottom:"20px"}}>
+                            <strong>Você deseja retirar as atribuições selecionadas?</strong>
+                         </div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                <button
+                    onClick={(e) => propriedades.onHide()}
+                    className="btn btn-outline-success mt-2"
+                    type="button"
+                >
+                Cancelar
+                </button>
+                <button disabled={propriedades.tecnico !== "" ? false: true}
+                    onClick={(e) => propriedades.primeiroBotaoOnclick()}
+                    type="submit"
+                    className="btn btn-success mt-2"
+                >
+                Confirmar
+                </button>
+                </Modal.Footer>
+            </Modal>
+        </Fragment>
+    )
+}
+
+
 export const Atribuicoes = () => {
     const rowsPerPage = 10;
 
@@ -95,7 +158,10 @@ export const Atribuicoes = () => {
     const [buscaUtilizandoFiltros, setBuscaUtilizandoFiltros] = useState(false);
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
     const [show, setShow] = useState(false);
+    const [showConfirma, setShowConfirma] = useState(false);
+    const [showToast, setShowToast] = useState(false);
     const [tecnico, setTecnico] = useState("");
+    const [copiaUnidades, setCopiaUnidades] = useState([]);
 
     useEffect(() => {
         buscaDadosDiretoriaEPeriodos()
@@ -107,10 +173,6 @@ export const Atribuicoes = () => {
         buscaTabelaAssociacoes();
         setLoading(false);
     }, []);
-        
-    // useEffect(() =>{
-        
-    // }, []);
 
     const buscaDadosDiretoriaEPeriodos = async () => {
         let diretoria = await getUnidade();
@@ -192,6 +254,53 @@ export const Atribuicoes = () => {
         setLoading(false)
     };
 
+    const selecionarTodos = (event) => {
+        event.preventDefault();
+        let result = unidades.reduce((acc, o) => {
+
+            let obj = Object.assign(o, { selecionado: true }) ;
+        
+            acc.push(obj);
+        
+            return acc;
+        
+        }, []);
+        setUnidades(result);
+        setQuantidadeSelecionada(unidades.length);
+    }
+
+    const desmarcarTodos = (event) => {
+        event.preventDefault();
+        let result = unidades.reduce((acc, o) => {
+
+            let obj = Object.assign(o, { selecionado: false }) ;
+        
+            acc.push(obj);
+        
+            return acc;
+        
+        }, []);
+        setUnidades(result);
+        setQuantidadeSelecionada(0);
+    }
+
+    const selecionarApenasUesNaoSemAtribuicao = (event) => {
+        event.preventDefault();
+        let cont = quantidadeSelecionada;
+        let result = unidades.reduce((acc, o) => {    
+            let obj = o.atribuicao.id === "" ? Object.assign(o, { selecionado: true }) : o;
+            if (obj.selecionado) {
+                cont = cont + 1;
+            }
+            acc.push(obj);
+        
+            return acc;
+        
+        }, []);
+        setUnidades(result);
+        setQuantidadeSelecionada(cont);
+    }
+
     const selecionarTemplate = (rowData) => {
         return (
             <div className="align-middle text-center">
@@ -203,6 +312,32 @@ export const Atribuicoes = () => {
                     name="checkAtribuido"
                     id="checkAtribuido"
                 />
+            </div>
+        )
+    }
+
+    const selecionarHeader = () => {
+        return (
+            <div className="align-middle text-center">
+            <Dropdown>
+              <Dropdown.Toggle id="dropdown-basic">
+              <input
+                    checked={false}
+                    type="checkbox"
+                    value=""
+                    onChange={(e) => e}
+                    name="checkHeader"
+                    id="checkHeader"
+                />
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={(e) => selecionarTodos(e)}>Selecionar todos</Dropdown.Item>
+                <Dropdown.Item onClick={(e) => desmarcarTodos(e)}>Desmarcar todos</Dropdown.Item>
+                <Dropdown.Item onClick={(e) => modalConfirmarRetirada(e)}>Retirar Atribuições</Dropdown.Item>
+                <Dropdown.Item onClick={(e) => selecionarApenasUesNaoSemAtribuicao(e)}>Selecionar apenas UEs sem atribuição</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
             </div>
         )
     }
@@ -293,6 +428,7 @@ export const Atribuicoes = () => {
         }
 
         let unis = unidades.filter(u => u.selecionado === true).map(item => {return {uuid: item.uuid}});
+        setCopiaUnidades(unidades.filter(u => u.selecionado === true));
         atribuirData.unidades = unis;
         try {
             let response = await atribuirTecnicos(atribuirData);
@@ -302,10 +438,83 @@ export const Atribuicoes = () => {
             console.log("erro ao atribuir");
             console.log(e);
         }
+        setLoading(false);
+        setShowToast(true);
+    }
+
+    const modalConfirmarRetirada = () => {
+        if (quantidadeSelecionada) {
+            setShowConfirma(true);
+        } else {
+            alert("Nenhuma unidade selecionada!");
+        }
+    }
+
+    const onHideConfirma = () => {
+        setShowConfirma(false);
+    }
+
+    const fecharToast = () => {
+        setShowToast(false);
         setTecnico("");
+        setCopiaUnidades([]);
+    }
+
+    const retiraAtribuicoes = async () => {
+        setLoading(true);
+        let unidadesData = {
+            periodo: periodoAtual.uuid,
+            unidades: []
+        }
+
+        let unis = unidades.filter(u => u.selecionado === true).map(item => {return {uuid: item.uuid}});
+        unidadesData.unidades = unis;
+        try {
+            let response = await retirarAtribuicoes(unidadesData);
+            buscarUnidadesParaAtribuicao(dreUuid, periodoAtual.uuid);
+            console.log("Atribuições retiradas com sucesso!");
+        } catch(e) {
+            console.log("erro ao retirar atribuições");
+            console.log(e);
+        }
+        setShowConfirma(false);
         setLoading(false);
     }
+
+    const montaNome = (nomeTecnico) => {
+        let nome = nomeTecnico.split(" ");
+        return nome.length > 1 ? `${nome[0]} ${nome[1]}`: nome[0] 
+    }
     
+    const desfazer = async () => {
+        console.log("Desfazendo Atribuições");
+        setLoading(true);
+        let unidadesData = {
+            periodo: periodoAtual.uuid,
+            unidades: []
+        } 
+        let unidadesAtribuidas = copiaUnidades.filter(u => u.atribuicao.id !== "")
+        const promisses = unidadesAtribuidas.map(async (unidade) => {
+            await atribuirTecnicos({
+                periodo: periodoAtual.uuid,
+                tecnico: unidade.atribuicao.tecnico.uuid,
+                unidades: [{uuid: unidade.uuid}]
+            }) 
+        });
+
+        await Promise.all(promisses);
+        let unidadesNaoAtribuidas = copiaUnidades.filter(u => u.atribuicao.id === "").map(item => {return {uuid: item.uuid}});
+        unidadesData.unidades = unidadesNaoAtribuidas;
+        await retirarAtribuicoes(unidadesData);
+        buscarUnidadesParaAtribuicao(dreUuid, periodoAtual.uuid).then(response => {
+            setLoading(false);
+            setShowToast(false);
+            setCopiaUnidades([]);
+        });
+        
+        
+    }
+
     return (
         <>  
             {loading ? (
@@ -373,6 +582,22 @@ export const Atribuicoes = () => {
                         quantidadeSelecionada={quantidadeSelecionada}
                         primeiroBotaoOnclick={atribuir}
                         primeiroBotaoTexto="OK"/>
+                    
+                    <ModalConfirmarRetiradaAtribuicoes
+                        show={showConfirma} 
+                        onHide={onHideConfirma} 
+                        titulo="Retirada de Atribuições"
+                        primeiroBotaoOnclick={retiraAtribuicoes}
+                        primeiroBotaoTexto="OK"
+                    />
+                    
+                    <CustomToast 
+                        show={showToast}
+                        fecharToast={fecharToast}
+                        tecnico={tecnico !== "" ? montaNome(tecnicosList.filter(t => t.uuid === tecnico)[0].nome) : ""}
+                        desfazer={desfazer}
+                    />
+
                     {quantidadeSelecionada > 0 ?
                         (montagemAtribuir()):
                         (mensagemQuantidadeExibida())
@@ -389,16 +614,10 @@ export const Atribuicoes = () => {
                                 autoLayout={true}
                                 selectionMode="single"
                             >
-                                <Column header="checks" body={selecionarTemplate}/>
+                                <Column header={selecionarHeader()} body={selecionarTemplate}/>
                                 <Column field='codigo_eol' header='Código Eol'/>
                                 <Column field='nome' header='Nome completo'/>
                                 <Column field='atribuicao.tecnico.nome' header='Nome completo'/>
-
-                                {/* <Column body={conferirAtribuicoesTemplate} header='Unidades escolares atribuidas'
-                                        style={{textAlign: 'center'}}/>
-
-                                <Column body={tableActionsTemplate} header='Ações'
-                                        style={{textAlign: 'center', width: '8em'}}/> */}
                             </DataTable>
                             ) : buscaUtilizandoFiltros ?
                                 <MsgImgCentralizada
@@ -417,4 +636,4 @@ export const Atribuicoes = () => {
             : null}
         </>
     )
-} 
+}

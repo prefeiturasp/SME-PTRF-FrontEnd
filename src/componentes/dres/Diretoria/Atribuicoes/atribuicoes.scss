@@ -1,0 +1,31 @@
+#dropdown-basic{
+    background: none;
+    color: black;
+    border: none;
+}
+
+#dropdown-basic:hover {
+    border: none;
+}
+
+.show>.btn-primary.dropdown-toggle {
+    color: none;
+    background: none;
+    border: none;
+    border-color: none;
+}
+#dropdown-basic:focus {
+    border-color: none;
+    box-shadow: none;
+}
+
+// Para o botão do Toast
+.close {
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color:#fff;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+}

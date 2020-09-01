@@ -23,3 +23,19 @@ export const atribuirTecnicos = async (payload) => {
         return error.response;
     });
 };
+
+export const retirarAtribuicoes = async (payload) => {
+    return api.post('api/atribuicoes/desfazer-lote/', payload, authHeader).then(response => {
+        return response;
+    }).catch(error => {
+        return error.response;
+    });
+};
+
+export const atribuirTecnico = async (payload) => {
+    return api.post('api/atribuicoes/', payload, authHeader).then(response => {
+        return response;
+    }).catch(error => {
+        return error.response;
+    });
+};
