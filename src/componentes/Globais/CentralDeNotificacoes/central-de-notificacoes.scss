@@ -23,9 +23,45 @@
 #accordionNotificacoes >.card >.card-header {
   border-radius: 5px;
   margin-bottom: 0;
+  background-color: #fff;
 }
 
 #accordionNotificacoes .card-header, #accordionNotificacoes .card-body{
   border-bottom: 1px solid rgba(0,0,0,.125);
+  background-color: #F3F3F3;
+}
 
+.data-notificacoes{
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.titulo-notificacao{
+  color: #42474A;
+  font-weight: 700;
+}
+
+.remetente-categoria{
+  color: #7D7D7D;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.span-status-urgente{
+  background-repeat: no-repeat;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  background-position: 0 80%;
+  font-size: 16px;
+  font-weight: 700;
+  border-right: solid 2px #42474A;
+}
+
+.card-status-urgente{
+  border-left: #B40C02 solid 8px;
+}
+
+.span-status-urgente{
+  color: #B40C02;
+  background-image: url("../../../assets/img/icones-central-notificacoes/exclamation-triangle-solid.svg");
 }

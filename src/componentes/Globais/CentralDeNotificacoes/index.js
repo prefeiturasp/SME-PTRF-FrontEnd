@@ -6,9 +6,9 @@ import {CardNotificacoes} from "./CardNotificacoes";
 export const CentralDeNotificacoes = () => {
     const [clickBtnNotificacoes, setClickBtnNotificacoes] = useState(false);
 
-    const toggleBtnNotificacoes = (id) => {
+    const toggleBtnNotificacoes = (uuid) => {
         setClickBtnNotificacoes({
-            [id]: !clickBtnNotificacoes[id]
+            [uuid]: !clickBtnNotificacoes[uuid]
         });
     };
 
