@@ -14,19 +14,18 @@ import {
     getConciliarDespesa,
     getDesconciliarDespesa,
     getSalvarPrestacaoDeConta,
-    getConcluirPrestacaoDeConta,
-    getObservacoes, getStatus, getIniciarPrestacaoDeContas,
+    getObservacoes,
 } from "../../../../services/escolas/PrestacaoDeContas.service";
-
 import {getContas, getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../../services/escolas/Associacao.service";
-
 import Loading from "../../../../utils/Loading";
-import {ErroGeral} from "../../../../utils/Modais";
 import {SelectPeriodoConta} from "../SelectPeriodoConta";
+import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
+import Img404 from "../../../../assets/img/img-404.svg";
 
 export const DetalheDasPrestacoes = () => {
 
     // Alteracoes
+    const [loading, setLoading] = useState(true);
     const [showSalvar, setShowSalvar] = useState(false);
     const [periodoConta, setPeriodoConta] = useState("");
     const [contasAssociacao, setContasAssociacao] = useState(false);
@@ -98,6 +97,10 @@ export const DetalheDasPrestacoes = () => {
         }
     }, [acaoLancamento]);
 
+    useEffect(()=>{
+        setLoading(false)
+    }, []);
+
 
     const getPeriodoConta = () => {
         if (localStorage.getItem('periodoConta')) {
@@ -158,7 +161,6 @@ export const DetalheDasPrestacoes = () => {
         setDespesasNaoConferidas(naoConferidas);
     };
 
-
     const getDespesasConferidas = async () => {
         const conferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"True")
         setDespesasConferidas(conferidas);
@@ -209,7 +211,6 @@ export const DetalheDasPrestacoes = () => {
             let conta_uuid = periodoConta.conta;
 
             await getObservacoes(periodo_uuid, conta_uuid).then(response => {
-
                 let observs = acoes.map((acao) => (
                     {
                         acao_associacao_uuid: acao.uuid,
@@ -217,31 +218,22 @@ export const DetalheDasPrestacoes = () => {
                     }
                 ));
 
-                console.log("AÇAO XXXXXXXX ", observs)
-
                 if (response) {
-
-
-
                     observs = observs.map((obs, idx) => {
+                        let obs_resp = response.find((acao) => acao.acao_associacao_uuid == obs.acao_associacao_uuid);
 
-                        let obs_resp = response.find((acao) => acao.acao_associacao_uuid === obs.acao_associacao_uuid);
-                        console.log("obs_resp XXXXXXXX ", obs_resp);
                         return {
                             ...obs,
                             observacao: obs_resp !== undefined ? obs_resp.observacao : obs.observacao
                         }
-                    });
+                    })
 
                     const files = JSON.parse(localStorage.getItem('acaoLancamento'));
                     if (files.acao !== "") {
-                        const observacao = observs.find((acao) => acao.acao_associacao_uuid === files.acao);
+                        const observacao = observs.find((acao) => acao.acao_associacao_uuid == files.acao);
                         setTextareaJustificativa(observacao.observacao);
                     }
                 }
-
-
-
                 setObservacoes(observs);
 
             }).catch(error => {
@@ -288,22 +280,16 @@ export const DetalheDasPrestacoes = () => {
     const onSalvarTrue = async () => {
         setShowSalvar(false);
 
-        console.log("onSalvarTrue ", observacoes);
 
         let payload = {
-            periodo_uuid: periodoConta.periodo,
-            conta_associacao_uuid: periodoConta.conta,
-            observacoes: [{
-                acao_associacao_uuid: acaoLancamento.acao,
-                observacao: observacoes
-            }]
+            "periodo_uuid": periodoConta.periodo,
+            "conta_associacao_uuid": periodoConta.conta,
+            "observacoes": observacoes
         };
 
         try {
             let retorno = await getSalvarPrestacaoDeConta(periodoConta.periodo, periodoConta.conta, payload);
-
-            console.log("SALVAR XXXX ", retorno);
-            //window.location.assign('/prestacao-de-contas')
+            window.location.assign('/prestacao-de-contas')
         } catch (e) {
             console.log("Erro: ", e.message)
         }
@@ -328,91 +314,105 @@ export const DetalheDasPrestacoes = () => {
                     </div>
                 </div>
             </div>
+            {loading ? (
+                    <Loading
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="0"
+                        marginBottom="0"
+                    />
+                ) :
 
-            <>
-                <SelectPeriodoConta
-                    periodoConta={periodoConta}
-                    handleChangePeriodoConta={handleChangePeriodoConta}
-                    periodosAssociacao={periodosAssociacao}
-                    contasAssociacao={contasAssociacao}
-                />
-
-                {periodoConta.periodo && periodoConta.conta &&
-                    <>
-                    <TopoComBotoes
-                        handleClickCadastrar={handleClickCadastrar}
-                        btnCadastrarTexto={btnCadastrarTexto}
-                        setShowSalvar={setShowSalvar}
-                        showSalvar={showSalvar}
-                        onSalvarTrue={onSalvarTrue}
-                        onHandleClose={onHandleClose}
-                        contaConciliacao={contaConciliacao}
+                <>
+                    <SelectPeriodoConta
+                        periodoConta={periodoConta}
+                        handleChangePeriodoConta={handleChangePeriodoConta}
+                        periodosAssociacao={periodosAssociacao}
+                        contasAssociacao={contasAssociacao}
                     />
 
-                    <TabelaValoresPendentesPorAcao
-                        periodo={periodoConta.periodo}
-                        conta={periodoConta.conta}
-                    />
+                    {periodoConta.periodo && periodoConta.conta ? (
+                        <>
+                            <TopoComBotoes
+                                handleClickCadastrar={handleClickCadastrar}
+                                btnCadastrarTexto={btnCadastrarTexto}
+                                setShowSalvar={setShowSalvar}
+                                showSalvar={showSalvar}
+                                onSalvarTrue={onSalvarTrue}
+                                onHandleClose={onHandleClose}
+                                contaConciliacao={contaConciliacao}
+                            />
 
-                    <SelectAcaoLancamento
-                        acaoLancamento={acaoLancamento}
-                        handleChangeSelectAcoes={handleChangeSelectAcoes}
-                        acoesAssociacao={acoesAssociacao}
-                    />
+                            <TabelaValoresPendentesPorAcao
+                                periodo={periodoConta.periodo}
+                                conta={periodoConta.conta}
+                            />
 
-                    {!receitasNaoConferidas.length > 0 && !receitasConferidas.length > 0 && acaoLancamento.lancamento === "receitas-lancadas" &&
-                        <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
+                            <SelectAcaoLancamento
+                                acaoLancamento={acaoLancamento}
+                                handleChangeSelectAcoes={handleChangeSelectAcoes}
+                                acoesAssociacao={acoesAssociacao}
+                            />
+
+                            {!receitasNaoConferidas.length > 0 && !receitasConferidas.length > 0 && acaoLancamento.lancamento === "receitas-lancadas" &&
+                            <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
+                            }
+
+                            {receitasNaoConferidas && receitasNaoConferidas.length > 0 && (
+                                <TabelaDeLancamentosReceitas
+                                    conciliados={false}
+                                    receitas={receitasNaoConferidas}
+                                    checkboxReceitas={checkboxReceitas}
+                                    handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
+
+                                />
+                            )}
+
+                            {receitasConferidas && receitasConferidas.length > 0 && (
+                                <TabelaDeLancamentosReceitas
+                                    conciliados={true}
+                                    receitas={receitasConferidas}
+                                    checkboxReceitas={checkboxReceitas}
+                                    handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
+                                />
+                            )}
+
+                            {!despesasNaoConferidas.length > 0 && !despesasConferidas.length > 0 && acaoLancamento.lancamento === "despesas-lancadas" &&
+                            <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
+                            }
+
+                            {despesasNaoConferidas && despesasNaoConferidas.length > 0 &&
+                            <TabelaDeLancamentosDespesas
+                                conciliados={false}
+                                despesas={despesasNaoConferidas}
+                                checkboxDespesas={checkboxDespesas}
+                                handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
+                            />
+                            }
+
+                            {despesasConferidas && despesasConferidas.length > 0 &&
+                            <TabelaDeLancamentosDespesas
+                                conciliados={true}
+                                despesas={despesasConferidas}
+                                checkboxDespesas={checkboxDespesas}
+                                handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
+                            />
+                            }
+
+                            <Justificativa
+                                textareaJustificativa={textareaJustificativa}
+                                handleChangeTextareaJustificativa={handleChangeTextareaJustificativa}
+                            />
+                        </>
+                    ):
+                        <MsgImgCentralizada
+                            texto='Selecione um período e uma conta acima para visualizar os demonstrativos'
+                            img={Img404}
+                        />
                     }
 
-                    {receitasNaoConferidas && receitasNaoConferidas.length > 0 && (
-                        <TabelaDeLancamentosReceitas
-                            conciliados={false}
-                            receitas={receitasNaoConferidas}
-                            checkboxReceitas={checkboxReceitas}
-                            handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
-
-                        />
-                    )}
-
-                    {receitasConferidas && receitasConferidas.length > 0 && (
-                        <TabelaDeLancamentosReceitas
-                            conciliados={true}
-                            receitas={receitasConferidas}
-                            checkboxReceitas={checkboxReceitas}
-                            handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
-                        />
-                    )}
-
-                    {!despesasNaoConferidas.length > 0 && !despesasConferidas.length > 0 && acaoLancamento.lancamento === "despesas-lancadas" &&
-                        <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
-                    }
-
-                    {despesasNaoConferidas && despesasNaoConferidas.length > 0 &&
-                        <TabelaDeLancamentosDespesas
-                            conciliados={false}
-                            despesas={despesasNaoConferidas}
-                            checkboxDespesas={checkboxDespesas}
-                            handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
-                        />
-                    }
-
-                    {despesasConferidas && despesasConferidas.length > 0 &&
-                        <TabelaDeLancamentosDespesas
-                            conciliados={true}
-                            despesas={despesasConferidas}
-                            checkboxDespesas={checkboxDespesas}
-                            handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
-                        />
-                    }
-
-                        <Justificativa
-                            textareaJustificativa={textareaJustificativa}
-                            handleChangeTextareaJustificativa={handleChangeTextareaJustificativa}
-                        />
                 </>
-                }
-
-            </>
+            }
         </div>
 
     )
