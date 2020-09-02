@@ -11,13 +11,14 @@ import "./styles.css";
 export class TabelaValoresPendentesPorAcao extends Component {
     _isMounted = false
 
-    constructor() {
+    constructor({periodo, conta}) {
         super();
 
         this.state = {
             sales: [],
             rowsPerPage: 7,
-            periodo: JSON.parse(localStorage.getItem('periodoConta')).periodo,
+            periodo: periodo,
+            conta: conta,
             totais: {},
             expandedRows: false,
             chevron: "pi pi-chevron-right"
@@ -45,7 +46,16 @@ export class TabelaValoresPendentesPorAcao extends Component {
     }
 
     getTabelaValoresPendentes = async () => {
-        tabelaValoresPendentes(localStorage.getItem('uuidPrestacaoConta')).then((result) => {
+
+        const periodoConta = JSON.parse(localStorage.getItem('periodoConta'));
+
+        console.log("periodoConta ", periodoConta);
+
+        let valores_pendentes = await tabelaValoresPendentes(this.state.periodo, this.state.conta);
+
+        console.log("Valores Pendentes ", valores_pendentes);
+
+/*        tabelaValoresPendentes(localStorage.getItem('uuidPrestacaoConta')).then((result) => {
             const valoresPendentes = result.map(tabelaInfo => (
                 {
                     acao: tabelaInfo.acao_associacao_nome, 
@@ -70,8 +80,8 @@ export class TabelaValoresPendentesPorAcao extends Component {
                 this.setState({totais: totais});
             }
             
-        })
-    }
+        })*/
+    };
 
     openBody = () => {
         this.setState({

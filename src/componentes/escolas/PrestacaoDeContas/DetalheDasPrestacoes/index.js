@@ -132,19 +132,26 @@ export const DetalheDasPrestacoes = () => {
                 />
 
                 {periodoConta.periodo && periodoConta.conta &&
-                <TopoComBotoes
-                    //handleClickCadastrar={handleClickCadastrar}
-                    //btnCadastrarTexto={btnCadastrarTexto}
+                    <>
+                    <TopoComBotoes
+                        //handleClickCadastrar={handleClickCadastrar}
+                        //btnCadastrarTexto={btnCadastrarTexto}
 
-                    setShowSalvar={setShowSalvar}
+                        setShowSalvar={setShowSalvar}
 
-                    showSalvar={showSalvar}
+                        showSalvar={showSalvar}
 
-                    onSalvarTrue={onSalvarTrue}
+                        onSalvarTrue={onSalvarTrue}
 
-                    onHandleClose={onHandleClose}
-                    contaConciliacao={contaConciliacao}
-                />
+                        onHandleClose={onHandleClose}
+                        contaConciliacao={contaConciliacao}
+                    />
+
+                    <TabelaValoresPendentesPorAcao
+                        periodo={periodoConta.periodo}
+                        conta={periodoConta.conta}
+                    />
+                </>
                 }
 
             </>
