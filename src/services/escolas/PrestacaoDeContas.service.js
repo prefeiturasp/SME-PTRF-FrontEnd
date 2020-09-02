@@ -62,17 +62,13 @@ export const getDesconciliarDespesa = async (rateio_uuid, periodo_uuid) => {
   return (await api.patch(`/api/rateios-despesas/${rateio_uuid}/desconciliar/?periodo=${periodo_uuid}`, authHeader)).data
 };
 
-export const getSalvarPrestacaoDeConta = async (
-  uuidPrestacaoDeContas,
-  payload
-) => {
-  return (
-    await api.patch(
-      `/api/prestacoes-contas/${uuidPrestacaoDeContas}/salvar/`,
-      payload,
-      authHeader
-    )
-  ).data
+export const getObservacoes = async (periodo_uuid, conta_uuid) => {
+  return (await api.get(`/api/conciliacoes/observacoes/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}`,authHeader)).data
+};
+
+
+export const getSalvarPrestacaoDeConta = async (periodo_uuid, conta_uuid, payload) => {
+  return (await api.patch(`/api/conciliacoes/salvar-observacoes/`, payload, authHeader)).data
 };
 
 export const getDataPreenchimentoAta = async (uuidPrestacaoDeContas) => {
@@ -99,9 +95,6 @@ export const getConcluirPrestacaoDeConta = async (
   ).data
 };
 
-export const getObservacoes = async () => {
-  return (await api.get(`/api/prestacoes-contas/${localStorage.getItem("uuidPrestacaoConta")}/observacoes/`,authHeader)).data
-};
 
 export const getFiqueDeOlho = async () => {
   return (await api.get(`/api/prestacoes-contas/fique-de-olho/`,authHeader)).data
