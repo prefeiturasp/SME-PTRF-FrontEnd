@@ -160,6 +160,43 @@ export const DetalheDasPrestacoes = () => {
         setDespesasConferidas(conferidas);
     };
 
+    const conciliarReceitas = async (receita_uuid) => {
+        await getConciliarReceita(receita_uuid, periodoConta.periodo)
+    };
+
+    const desconciliarReceitas = async (receita_uuid) => {
+        await getDesconciliarReceita(receita_uuid, periodoConta.periodo)
+    }
+
+    const handleChangeCheckboxReceitas = async (event, receita_uuid) => {
+        if (event.target.checked) {
+            await conciliarReceitas(receita_uuid);
+        } else if (!event.target.checked) {
+            await desconciliarReceitas(receita_uuid)
+        }
+
+        await getReceitasNaoConferidas();
+        await getReceitasConferidas();
+    };
+
+    const conciliarDespesas = async (rateio_uuid) => {
+        await getConciliarDespesa(rateio_uuid, periodoConta.periodo)
+    };
+
+    const desconciliarDespesas = async (rateio_uuid) => {
+        await getDesconciliarDespesa(rateio_uuid, periodoConta.periodo)
+    }
+
+    const handleChangeCheckboxDespesas = async (event, rateio_uuid) => {
+        if (event.target.checked) {
+            await conciliarDespesas(rateio_uuid);
+        } else if (!event.target.checked) {
+            await desconciliarDespesas(rateio_uuid)
+        }
+
+        await getDespesasNaoConferidas();
+        await getDespesasConferidas();
+    }
 
     const handleChangePeriodoConta = (name, value) => {
         setPeriodoConta({
@@ -206,7 +243,9 @@ export const DetalheDasPrestacoes = () => {
 
     const handleClickCadastrar = () => {
         window.location.assign(btnCadastrarUrl)
-    }
+    };
+
+
 
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
@@ -248,6 +287,51 @@ export const DetalheDasPrestacoes = () => {
                         handleChangeSelectAcoes={handleChangeSelectAcoes}
                         acoesAssociacao={acoesAssociacao}
                     />
+
+                    {!receitasNaoConferidas.length > 0 && !receitasConferidas.length > 0 && acaoLancamento.lancamento === "receitas-lancadas" &&
+                        <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
+                    }
+
+                    {receitasNaoConferidas && receitasNaoConferidas.length > 0 && (
+                        <TabelaDeLancamentosReceitas
+                            conciliados={false}
+                            receitas={receitasNaoConferidas}
+                            checkboxReceitas={checkboxReceitas}
+                            handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
+
+                        />
+                    )}
+
+                    {receitasConferidas && receitasConferidas.length > 0 && (
+                        <TabelaDeLancamentosReceitas
+                            conciliados={true}
+                            receitas={receitasConferidas}
+                            checkboxReceitas={checkboxReceitas}
+                            handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
+                        />
+                    )}
+
+                    {!despesasNaoConferidas.length > 0 && !despesasConferidas.length > 0 && acaoLancamento.lancamento === "despesas-lancadas" &&
+                        <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
+                    }
+
+                    {despesasNaoConferidas && despesasNaoConferidas.length > 0 &&
+                        <TabelaDeLancamentosDespesas
+                            conciliados={false}
+                            despesas={despesasNaoConferidas}
+                            checkboxDespesas={checkboxDespesas}
+                            handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
+                        />
+                    }
+
+                    {despesasConferidas && despesasConferidas.length > 0 &&
+                        <TabelaDeLancamentosDespesas
+                            conciliados={true}
+                            despesas={despesasConferidas}
+                            checkboxDespesas={checkboxDespesas}
+                            handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
+                        />
+                    }
                 </>
                 }
 
