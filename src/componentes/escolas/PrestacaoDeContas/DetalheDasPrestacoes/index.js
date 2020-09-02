@@ -30,13 +30,14 @@ export const DetalheDasPrestacoes = () => {
     const [periodoConta, setPeriodoConta] = useState("");
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
-    const [contaConciliacao, setContaConciliacao] = useState("")
+    const [contaConciliacao, setContaConciliacao] = useState("");
+    const [btnCadastrarUrl, setBtnCadastrarUrl] = useState("");
+    const [showSalvar, setShowSalvar] = useState(false);
 
     useEffect(()=>{
         getPeriodoConta();
         carregaTabelas();
         carregaPeriodos();
-        carregaContas();
     }, []);
 
     useEffect(() => {
@@ -44,6 +45,7 @@ export const DetalheDasPrestacoes = () => {
         if (periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== "") {
             console.log('Estou aqui', localStorage.getItem('periodoConta'))
         }
+        carregaContas();
     }, [periodoConta]);
 
 
@@ -71,7 +73,6 @@ export const DetalheDasPrestacoes = () => {
 
     const carregaContas = async () => {
         await getContas().then(response => {
-            console.log(response);
             const files = JSON.parse(localStorage.getItem('periodoConta'));
             if (files && files.conta !== "") {
                 const conta = response.find(conta => conta.uuid === files.conta);
@@ -80,7 +81,7 @@ export const DetalheDasPrestacoes = () => {
         }).catch(error => {
             console.log(error);
         })
-    }
+    };
 
 
     const handleChangePeriodoConta = (name, value) => {
@@ -90,6 +91,27 @@ export const DetalheDasPrestacoes = () => {
         });
     };
 
+
+    const onSalvarTrue = async () => {
+        setShowSalvar(false);
+
+        console.log("onSalvarTrue ")
+
+        /*let payload = {
+            observacoes: observacoes,
+        }
+        try {
+            let retorno = await getSalvarPrestacaoDeConta(localStorage.getItem("uuidPrestacaoConta"), payload)
+            window.location.assign('/prestacao-de-contas')
+        } catch (e) {
+
+            console.log("Erro: ", e.message)
+        }*/
+    };
+
+    const onHandleClose = () => {
+        setShowSalvar(false);
+    };
 
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
@@ -111,17 +133,15 @@ export const DetalheDasPrestacoes = () => {
 
                 {periodoConta.periodo && periodoConta.conta &&
                 <TopoComBotoes
-                    handleClickCadastrar={handleClickCadastrar}
-                    btnCadastrarTexto={btnCadastrarTexto}
-                    showCancelar={showCancelar}
+                    //handleClickCadastrar={handleClickCadastrar}
+                    //btnCadastrarTexto={btnCadastrarTexto}
+
+                    setShowSalvar={setShowSalvar}
+
                     showSalvar={showSalvar}
-                    showConcluir={showConcluir}
-                    onShowCancelar={onShowCancelar}
-                    onShowSalvar={onShowSalvar}
-                    onShowConcluir={onShowConcluir}
-                    onCancelarTrue={onCancelarTrue}
+
                     onSalvarTrue={onSalvarTrue}
-                    onConcluirTrue={onConcluirTrue}
+
                     onHandleClose={onHandleClose}
                     contaConciliacao={contaConciliacao}
                 />
