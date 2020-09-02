@@ -58,7 +58,7 @@ export const getDespesasPrestacaoDeContas = async (
 export const getReceitasPrestacaoDeContas = async (uuidPrestacaoDeContas, acao_associacao__uuid, conferido) => {
 
   //  /api/conciliacoes/receitas/?periodo={uuid}&conta_associacao={uuid}&acao_associacao={uuid}&conferido=
-  
+
   return ( await api.get(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/receitas/?acao_associacao_uuid=${acao_associacao__uuid}&conferido=${conferido}`,authHeader)).data
 };
 
