@@ -41,7 +41,10 @@ const UrlsMenuEscolas ={
             subItens: [
                 {
                     label: "Conciliação Bancária", url: "detalhe-das-prestacoes", dataFor:"detalhe_das_prestacoes", icone:""
-                }
+                },
+                {
+                    label: "Geração de documentos", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:""
+                },
             ]
         },
     ]
