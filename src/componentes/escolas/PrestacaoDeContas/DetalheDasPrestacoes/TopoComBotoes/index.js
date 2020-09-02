@@ -8,12 +8,12 @@ export const TopoComBotoes = ({handleClickCadastrar, btnCadastrarTexto, showCanc
             <div className='col-12 col-md-6 mt-2'>
                 <p className='detalhe-das-prestacoes-titulo'>Demonstrativo financeiro da conta {contaConciliacao}</p>
             </div>
-            {/*{btnCadastrarTexto &&*/}
+            {btnCadastrarTexto &&
                 <div className='col-12 col-md-6 text-right'>
-                    <button type="button" className="btn btn-outline-success mr-2 mt-2"> <strong>{/*{btnCadastrarTexto}*/} Cadastrar Alguma coisa</strong></button>
+                    <button type="button" onClick={handleClickCadastrar} className="btn btn-outline-success mr-2 mt-2"> <strong>{btnCadastrarTexto}</strong></button>
                     <button type="button" onClick={()=>setShowSalvar(true)} className="btn btn-outline-success mt-2"><strong>Salvar</strong></button>
                 </div>
-          {/*  }*/}
+            }
             <section>
                 <SalvarPrestacaoDeContas show={showSalvar} handleClose={onHandleClose} onSalvarTrue={onSalvarTrue}/>
             </section>

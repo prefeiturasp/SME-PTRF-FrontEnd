@@ -27,26 +27,72 @@ import {SelectPeriodoConta} from "../SelectPeriodoConta";
 export const DetalheDasPrestacoes = () => {
 
     // Alteracoes
+    const [showSalvar, setShowSalvar] = useState(false);
     const [periodoConta, setPeriodoConta] = useState("");
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [contaConciliacao, setContaConciliacao] = useState("");
+    const [btnCadastrarTexto, setBtnCadastrarTexto] = useState("");
     const [btnCadastrarUrl, setBtnCadastrarUrl] = useState("");
-    const [showSalvar, setShowSalvar] = useState(false);
+    const [acaoLancamento, setAcaoLancamento] = useState("");
+    const [acoesAssociacao, setAcoesAssociacao] = useState(false);
+
+    const [receitasNaoConferidas, setReceitasNaoConferidas] = useState([])
+    const [receitasConferidas, setReceitasConferidas] = useState([])
+    const [checkboxReceitas, setCheckboxReceitas] = useState(false)
+
+    const [despesasNaoConferidas, setDespesasNaoConferidas] = useState([])
+    const [despesasConferidas, setDespesasConferidas] = useState([])
+    const [checkboxDespesas, setCheckboxDespesas] = useState(false)
 
     useEffect(()=>{
         getPeriodoConta();
+        getAcaoLancamento();
         carregaTabelas();
         carregaPeriodos();
     }, []);
 
     useEffect(() => {
-        localStorage.setItem('periodoConta', JSON.stringify(periodoConta))
+        localStorage.setItem('periodoConta', JSON.stringify(periodoConta));
         if (periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== "") {
-            console.log('Estou aqui', localStorage.getItem('periodoConta'))
+            console.log('Estou aqui', localStorage.getItem('periodoConta'));
         }
         carregaContas();
     }, [periodoConta]);
+
+    useEffect(() => {
+
+        localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento));
+
+        if (acaoLancamento.acao && acaoLancamento.lancamento) {
+            setReceitasConferidas([]);
+            setReceitasNaoConferidas([]);
+
+            if (acaoLancamento.lancamento === 'receitas-lancadas') {
+                setBtnCadastrarTexto("Cadastrar Receita");
+                setBtnCadastrarUrl("/cadastro-de-credito/tabela-de-lancamentos-receitas");
+                setDespesasNaoConferidas([]);
+                setDespesasConferidas([]);
+                getReceitasNaoConferidas();
+                getReceitasConferidas();
+            } else if (acaoLancamento.lancamento === 'despesas-lancadas') {
+                setReceitasNaoConferidas([]);
+                setReceitasConferidas([]);
+                setBtnCadastrarTexto("Cadastrar Despesa");
+                setBtnCadastrarUrl("/cadastro-de-despesa/tabela-de-lancamentos-despesas");
+                getDespesasNaoConferidas();
+                getDespesasConferidas();
+            }
+        } else {
+            setBtnCadastrarTexto("")
+            setReceitasNaoConferidas([])
+            setReceitasConferidas([])
+            setDespesasNaoConferidas([]);
+            setDespesasConferidas([]);
+        }
+
+
+    }, [acaoLancamento])
 
 
     const getPeriodoConta = () => {
@@ -58,9 +104,19 @@ export const DetalheDasPrestacoes = () => {
         }
     };
 
+    const getAcaoLancamento = () => {
+        if (localStorage.getItem('acaoLancamento')) {
+            const files = JSON.parse(localStorage.getItem('acaoLancamento'))
+            setAcaoLancamento(files)
+        } else {
+            setAcaoLancamento({acao: "", lancamento: ""})
+        }
+    }
+
     const carregaTabelas = async () => {
         await getTabelasReceita().then(response => {
             setContasAssociacao(response.data.contas_associacao);
+            setAcoesAssociacao(response.data.acoes_associacao);
         }).catch(error => {
             console.log(error);
         });
@@ -83,6 +139,27 @@ export const DetalheDasPrestacoes = () => {
         })
     };
 
+    const getReceitasNaoConferidas = async () => {
+        const naoConferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False")
+        setReceitasNaoConferidas(naoConferidas);
+    };
+
+    const getReceitasConferidas = async () => {
+        const conferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True")
+        setReceitasConferidas(conferidas);
+    };
+
+    const getDespesasNaoConferidas = async () => {
+        const naoConferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False")
+        setDespesasNaoConferidas(naoConferidas);
+    };
+
+
+    const getDespesasConferidas = async () => {
+        const conferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"True")
+        setDespesasConferidas(conferidas);
+    };
+
 
     const handleChangePeriodoConta = (name, value) => {
         setPeriodoConta({
@@ -90,6 +167,20 @@ export const DetalheDasPrestacoes = () => {
             [name]: value
         });
     };
+
+    const handleChangeSelectAcoes = (name, value) => {
+        setAcaoLancamento({
+            ...acaoLancamento,
+            [name]: value
+        });
+
+        /*if (name === 'acao' && value !== '') {
+            const obs = observacoes.find((acao) => acao.acao_associacao_uuid == value);
+            setTextareaJustificativa(obs.observacao);
+        } else if(name === 'acao') {
+            setTextareaJustificativa('');
+        }*/
+    }
 
 
     const onSalvarTrue = async () => {
@@ -113,6 +204,10 @@ export const DetalheDasPrestacoes = () => {
         setShowSalvar(false);
     };
 
+    const handleClickCadastrar = () => {
+        window.location.assign(btnCadastrarUrl)
+    }
+
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
             <div className="row">
@@ -134,15 +229,11 @@ export const DetalheDasPrestacoes = () => {
                 {periodoConta.periodo && periodoConta.conta &&
                     <>
                     <TopoComBotoes
-                        //handleClickCadastrar={handleClickCadastrar}
-                        //btnCadastrarTexto={btnCadastrarTexto}
-
+                        handleClickCadastrar={handleClickCadastrar}
+                        btnCadastrarTexto={btnCadastrarTexto}
                         setShowSalvar={setShowSalvar}
-
                         showSalvar={showSalvar}
-
                         onSalvarTrue={onSalvarTrue}
-
                         onHandleClose={onHandleClose}
                         contaConciliacao={contaConciliacao}
                     />
@@ -151,6 +242,12 @@ export const DetalheDasPrestacoes = () => {
                         periodo={periodoConta.periodo}
                         conta={periodoConta.conta}
                     />
+
+                    <SelectAcaoLancamento
+                        acaoLancamento={acaoLancamento}
+                        handleChangeSelectAcoes={handleChangeSelectAcoes}
+                        acoesAssociacao={acoesAssociacao}
+                    />
                 </>
                 }
 
@@ -158,4 +255,4 @@ export const DetalheDasPrestacoes = () => {
         </div>
 
     )
-}
+};
