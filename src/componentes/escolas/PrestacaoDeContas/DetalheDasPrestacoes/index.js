@@ -209,6 +209,7 @@ export const DetalheDasPrestacoes = () => {
             let conta_uuid = periodoConta.conta;
 
             await getObservacoes(periodo_uuid, conta_uuid).then(response => {
+
                 let observs = acoes.map((acao) => (
                     {
                         acao_associacao_uuid: acao.uuid,
@@ -216,10 +217,16 @@ export const DetalheDasPrestacoes = () => {
                     }
                 ));
 
-                if (response) {
-                    observs = observs.map((obs, idx) => {
-                        let obs_resp = response.find((acao) => acao.acao_associacao_uuid == obs.acao_associacao_uuid);
+                console.log("AÇAO XXXXXXXX ", observs)
 
+                if (response) {
+
+
+
+                    observs = observs.map((obs, idx) => {
+
+                        let obs_resp = response.find((acao) => acao.acao_associacao_uuid === obs.acao_associacao_uuid);
+                        console.log("obs_resp XXXXXXXX ", obs_resp);
                         return {
                             ...obs,
                             observacao: obs_resp !== undefined ? obs_resp.observacao : obs.observacao
@@ -232,6 +239,9 @@ export const DetalheDasPrestacoes = () => {
                         setTextareaJustificativa(observacao.observacao);
                     }
                 }
+
+
+
                 setObservacoes(observs);
 
             }).catch(error => {
@@ -272,23 +282,22 @@ export const DetalheDasPrestacoes = () => {
         ));
         setObservacoes(obs);
         setTextareaJustificativa(event.target.value);
-    }
+    };
 
 
     const onSalvarTrue = async () => {
         setShowSalvar(false);
 
-        console.log("onSalvarTrue ");
+        console.log("onSalvarTrue ", observacoes);
 
         let payload = {
-            "periodo_uuid": periodoConta.periodo,
-            "conta_associacao_uuid": periodoConta.conta,
-            "observacoes": [{
-                "acao_associacao_uuid": acaoLancamento.acao,
-                "observacao": observacoes
+            periodo_uuid: periodoConta.periodo,
+            conta_associacao_uuid: periodoConta.conta,
+            observacoes: [{
+                acao_associacao_uuid: acaoLancamento.acao,
+                observacao: observacoes
             }]
-
-        }
+        };
 
         try {
             let retorno = await getSalvarPrestacaoDeConta(periodoConta.periodo, periodoConta.conta, payload);

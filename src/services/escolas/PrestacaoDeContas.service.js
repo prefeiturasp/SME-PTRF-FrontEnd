@@ -66,7 +66,6 @@ export const getObservacoes = async (periodo_uuid, conta_uuid) => {
   return (await api.get(`/api/conciliacoes/observacoes/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}`,authHeader)).data
 };
 
-
 export const getSalvarPrestacaoDeConta = async (periodo_uuid, conta_uuid, payload) => {
   return (await api.patch(`/api/conciliacoes/salvar-observacoes/`, payload, authHeader)).data
 };
