@@ -38,11 +38,11 @@ export const DetalheDasPrestacoes = () => {
 
     const [receitasNaoConferidas, setReceitasNaoConferidas] = useState([]);
     const [receitasConferidas, setReceitasConferidas] = useState([]);
-    const [checkboxReceitas, setCheckboxReceitas] = useState(false);
+    const [checkboxReceitas] = useState(false);
 
     const [despesasNaoConferidas, setDespesasNaoConferidas] = useState([]);
     const [despesasConferidas, setDespesasConferidas] = useState([]);
-    const [checkboxDespesas, setCheckboxDespesas] = useState(false);
+    const [checkboxDespesas] = useState(false);
 
     const [observacoes, setObservacoes] = useState([]);
     const [textareaJustificativa, setTextareaJustificativa] = useState("");
@@ -89,13 +89,13 @@ export const DetalheDasPrestacoes = () => {
                 getDespesasConferidas();
             }
         } else {
-            setBtnCadastrarTexto("")
-            setReceitasNaoConferidas([])
-            setReceitasConferidas([])
+            setBtnCadastrarTexto("");
+            setReceitasNaoConferidas([]);
+            setReceitasConferidas([]);
             setDespesasNaoConferidas([]);
             setDespesasConferidas([]);
         }
-    }, [acaoLancamento]);
+    }, [acaoLancamento, periodoConta, acoesAssociacao]);
 
     useEffect(()=>{
         setLoading(false)
@@ -104,7 +104,7 @@ export const DetalheDasPrestacoes = () => {
 
     const getPeriodoConta = () => {
         if (localStorage.getItem('periodoConta')) {
-            const files = JSON.parse(localStorage.getItem('periodoConta'))
+            const files = JSON.parse(localStorage.getItem('periodoConta'));
             setPeriodoConta(files)
         } else {
             setPeriodoConta({periodo: "", conta: ""})
@@ -113,8 +113,8 @@ export const DetalheDasPrestacoes = () => {
 
     const getAcaoLancamento = () => {
         if (localStorage.getItem('acaoLancamento')) {
-            const files = JSON.parse(localStorage.getItem('acaoLancamento'))
-            setAcaoLancamento(files)
+            const files = JSON.parse(localStorage.getItem('acaoLancamento'));
+            setAcaoLancamento(files);
         } else {
             setAcaoLancamento({acao: "", lancamento: ""})
         }
@@ -147,22 +147,22 @@ export const DetalheDasPrestacoes = () => {
     };
 
     const getReceitasNaoConferidas = async () => {
-        const naoConferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False")
+        const naoConferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False");
         setReceitasNaoConferidas(naoConferidas);
     };
 
     const getReceitasConferidas = async () => {
-        const conferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True")
+        const conferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
         setReceitasConferidas(conferidas);
     };
 
     const getDespesasNaoConferidas = async () => {
-        const naoConferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False")
+        const naoConferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False");
         setDespesasNaoConferidas(naoConferidas);
     };
 
     const getDespesasConferidas = async () => {
-        const conferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"True")
+        const conferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"True");
         setDespesasConferidas(conferidas);
     };
 
@@ -172,7 +172,7 @@ export const DetalheDasPrestacoes = () => {
 
     const desconciliarReceitas = async (receita_uuid) => {
         await getDesconciliarReceita(receita_uuid, periodoConta.periodo)
-    }
+    };
 
     const handleChangeCheckboxReceitas = async (event, receita_uuid) => {
         if (event.target.checked) {
@@ -219,18 +219,18 @@ export const DetalheDasPrestacoes = () => {
                 ));
 
                 if (response) {
-                    observs = observs.map((obs, idx) => {
-                        let obs_resp = response.find((acao) => acao.acao_associacao_uuid == obs.acao_associacao_uuid);
+                    observs = observs.map((obs) => {
+                        let obs_resp = response.find((acao) => acao.acao_associacao_uuid === obs.acao_associacao_uuid);
 
                         return {
                             ...obs,
                             observacao: obs_resp !== undefined ? obs_resp.observacao : obs.observacao
                         }
-                    })
+                    });
 
                     const files = JSON.parse(localStorage.getItem('acaoLancamento'));
                     if (files.acao !== "") {
-                        const observacao = observs.find((acao) => acao.acao_associacao_uuid == files.acao);
+                        const observacao = observs.find((acao) => acao.acao_associacao_uuid === files.acao);
                         setTextareaJustificativa(observacao.observacao);
                     }
                 }
@@ -240,8 +240,6 @@ export const DetalheDasPrestacoes = () => {
                 console.log(error);
             });
         }
-
-
     };
 
     const handleChangePeriodoConta = (name, value) => {
@@ -258,7 +256,7 @@ export const DetalheDasPrestacoes = () => {
         });
 
         if (name === 'acao' && value !== '') {
-            const obs = observacoes.find((acao) => acao.acao_associacao_uuid == value);
+            const obs = observacoes.find((acao) => acao.acao_associacao_uuid === value);
             setTextareaJustificativa(obs.observacao);
         } else if(name === 'acao') {
             setTextareaJustificativa('');
@@ -288,7 +286,7 @@ export const DetalheDasPrestacoes = () => {
         };
 
         try {
-            let retorno = await getSalvarPrestacaoDeConta(periodoConta.periodo, periodoConta.conta, payload);
+            await getSalvarPrestacaoDeConta(periodoConta.periodo, periodoConta.conta, payload);
             window.location.assign('/prestacao-de-contas')
         } catch (e) {
             console.log("Erro: ", e.message)
