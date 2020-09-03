@@ -156,8 +156,8 @@ export const SalvarPrestacaoDeContas = (propriedades) => {
         <ModalBootstrap
             show={propriedades.show}
             onHide={propriedades.handleClose}
-            titulo="Deseja salvar a conciliação?"
-            bodyText=""
+            titulo="Salvar informações"
+            bodyText="<p>Deseja salvar as informações da conciliação bancária?</p>"
             primeiroBotaoOnclick={propriedades.onSalvarTrue}
             primeiroBotaoTexto="OK"
             segundoBotaoOnclick={propriedades.handleClose}

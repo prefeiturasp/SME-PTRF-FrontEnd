@@ -146,31 +146,49 @@ export const DetalheDasPrestacoes = () => {
         })
     };
 
+    const checaCondicoes = () =>{
+        let periodo_e_conta = JSON.parse(localStorage.getItem('periodoConta'));
+        if (periodo_e_conta && periodo_e_conta.periodo && periodo_e_conta.conta){
+            return true
+        }else {
+            return false
+        }
+    }
+
     const getReceitasNaoConferidas = async () => {
         setLoading(true);
-        const naoConferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False");
-        setReceitasNaoConferidas(naoConferidas);
+
+        if (checaCondicoes()){
+            const naoConferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False");
+            setReceitasNaoConferidas(naoConferidas);
+        }
         setLoading(false);
     };
 
     const getReceitasConferidas = async () => {
         setLoading(true);
-        const conferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
-        setReceitasConferidas(conferidas);
+        if (checaCondicoes()) {
+            const conferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
+            setReceitasConferidas(conferidas);
+        }
         setLoading(false);
     };
 
     const getDespesasNaoConferidas = async () => {
         setLoading(true);
-        const naoConferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False");
-        setDespesasNaoConferidas(naoConferidas);
+        if (checaCondicoes()) {
+            const naoConferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "False");
+            setDespesasNaoConferidas(naoConferidas);
+        }
         setLoading(false);
     };
 
     const getDespesasConferidas = async () => {
         setLoading(true);
-        const conferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"True");
-        setDespesasConferidas(conferidas);
+        if (checaCondicoes()) {
+            const conferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
+            setDespesasConferidas(conferidas);
+        }
         setLoading(false);
     };
 

@@ -12,10 +12,7 @@ export class TabelaValoresPendentesPorAcao extends Component {
     _isMounted = false;
 
     constructor(props) {
-
-
         super(props);
-
         this.state = {
             sales: [],
             rowsPerPage: 7,
@@ -24,19 +21,20 @@ export class TabelaValoresPendentesPorAcao extends Component {
             totais: {},
             expandedRows: false,
             chevron: "pi pi-chevron-right"
-        }
-
-
+        };
+        this.getTabelaValoresPendentes();
     }
 
     componentDidMount() {
         this._isMounted = true;
-        this.getTabelaValoresPendentes()
-
     }
 
     componentWillUnmount() {
         this._isMounted = false;
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.getTabelaValoresPendentes();
     }
 
     getValorFormatado = (rowValue, green=false) => {
@@ -52,9 +50,9 @@ export class TabelaValoresPendentesPorAcao extends Component {
 
     getTabelaValoresPendentes = async () => {
 
-        let periodo_conta = JSON.parse(localStorage.getItem("periodoConta"))
+        let periodo_conta = JSON.parse(localStorage.getItem("periodoConta"));
 
-        if (periodo_conta){
+        if (periodo_conta && periodo_conta.periodo && periodo_conta.conta){
             tabelaValoresPendentes(periodo_conta.periodo, periodo_conta.conta).then((result) => {
                 const valoresPendentes = result.map(tabelaInfo => (
                     {
