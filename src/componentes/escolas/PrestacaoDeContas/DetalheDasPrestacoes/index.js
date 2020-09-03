@@ -38,11 +38,11 @@ export const DetalheDasPrestacoes = () => {
 
     const [receitasNaoConferidas, setReceitasNaoConferidas] = useState([]);
     const [receitasConferidas, setReceitasConferidas] = useState([]);
-    const [checkboxReceitas] = useState(false);
+    const [checkboxReceitas, setCheckboxReceitas] = useState(false);
 
     const [despesasNaoConferidas, setDespesasNaoConferidas] = useState([]);
     const [despesasConferidas, setDespesasConferidas] = useState([]);
-    const [checkboxDespesas] = useState(false);
+    const [checkboxDespesas, setCheckboxDespesas] = useState(false);
 
     const [observacoes, setObservacoes] = useState([]);
     const [textareaJustificativa, setTextareaJustificativa] = useState("");
@@ -147,23 +147,31 @@ export const DetalheDasPrestacoes = () => {
     };
 
     const getReceitasNaoConferidas = async () => {
+        setLoading(true);
         const naoConferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False");
         setReceitasNaoConferidas(naoConferidas);
+        setLoading(false);
     };
 
     const getReceitasConferidas = async () => {
+        setLoading(true);
         const conferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
         setReceitasConferidas(conferidas);
+        setLoading(false);
     };
 
     const getDespesasNaoConferidas = async () => {
+        setLoading(true);
         const naoConferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False");
         setDespesasNaoConferidas(naoConferidas);
+        setLoading(false);
     };
 
     const getDespesasConferidas = async () => {
+        setLoading(true);
         const conferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"True");
         setDespesasConferidas(conferidas);
+        setLoading(false);
     };
 
     const conciliarReceitas = async (receita_uuid) => {
@@ -171,10 +179,11 @@ export const DetalheDasPrestacoes = () => {
     };
 
     const desconciliarReceitas = async (receita_uuid) => {
-        await getDesconciliarReceita(receita_uuid, periodoConta.periodo)
+        await getDesconciliarReceita(receita_uuid, periodoConta.periodo);
     };
 
     const handleChangeCheckboxReceitas = async (event, receita_uuid) => {
+        setCheckboxReceitas(event.target.checked)
         if (event.target.checked) {
             await conciliarReceitas(receita_uuid);
         } else if (!event.target.checked) {
@@ -186,14 +195,15 @@ export const DetalheDasPrestacoes = () => {
     };
 
     const conciliarDespesas = async (rateio_uuid) => {
-        await getConciliarDespesa(rateio_uuid, periodoConta.periodo)
+        await getConciliarDespesa(rateio_uuid, periodoConta.periodo);
     };
 
     const desconciliarDespesas = async (rateio_uuid) => {
-        await getDesconciliarDespesa(rateio_uuid, periodoConta.periodo)
+        await getDesconciliarDespesa(rateio_uuid, periodoConta.periodo);
     };
 
     const handleChangeCheckboxDespesas = async (event, rateio_uuid) => {
+        setCheckboxDespesas(event.target.checked);
         if (event.target.checked) {
             await conciliarDespesas(rateio_uuid);
         } else if (!event.target.checked) {
@@ -201,6 +211,38 @@ export const DetalheDasPrestacoes = () => {
         }
         await getDespesasNaoConferidas();
         await getDespesasConferidas();
+    };
+
+    const handleChangePeriodoConta = (name, value) => {
+        setPeriodoConta({
+            ...periodoConta,
+            [name]: value
+        });
+    };
+
+    const handleChangeSelectAcoes = (name, value) => {
+        setAcaoLancamento({
+            ...acaoLancamento,
+            [name]: value
+        });
+
+        if (name === 'acao' && value !== '') {
+            const obs = observacoes.find((acao) => acao.acao_associacao_uuid === value);
+            setTextareaJustificativa(obs.observacao);
+        } else if(name === 'acao') {
+            setTextareaJustificativa('');
+        }
+    };
+
+    const handleChangeTextareaJustificativa = (event) => {
+        const obs = observacoes.map((acao) => (
+            {
+                ...acao,
+                observacao: acao.acao_associacao_uuid === acaoLancamento.acao ? event.target.value : acao.observacao
+            }
+        ));
+        setObservacoes(obs);
+        setTextareaJustificativa(event.target.value);
     };
 
     const carregaObservacoes = async () => {
@@ -240,38 +282,6 @@ export const DetalheDasPrestacoes = () => {
                 console.log(error);
             });
         }
-    };
-
-    const handleChangePeriodoConta = (name, value) => {
-        setPeriodoConta({
-            ...periodoConta,
-            [name]: value
-        });
-    };
-
-    const handleChangeSelectAcoes = (name, value) => {
-        setAcaoLancamento({
-            ...acaoLancamento,
-            [name]: value
-        });
-
-        if (name === 'acao' && value !== '') {
-            const obs = observacoes.find((acao) => acao.acao_associacao_uuid === value);
-            setTextareaJustificativa(obs.observacao);
-        } else if(name === 'acao') {
-            setTextareaJustificativa('');
-        }
-    };
-
-    const handleChangeTextareaJustificativa = (event) => {
-        const obs = observacoes.map((acao) => (
-            {
-                ...acao,
-                observacao: acao.acao_associacao_uuid === acaoLancamento.acao ? event.target.value : acao.observacao
-            }
-        ));
-        setObservacoes(obs);
-        setTextareaJustificativa(event.target.value);
     };
 
 

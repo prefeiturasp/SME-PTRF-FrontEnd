@@ -31,15 +31,12 @@ export class TabelaValoresPendentesPorAcao extends Component {
 
     componentDidMount() {
         this._isMounted = true;
+        this.getTabelaValoresPendentes()
 
     }
 
     componentWillUnmount() {
         this._isMounted = false;
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.getTabelaValoresPendentes(nextProps.periodo, nextProps.conta);
     }
 
     getValorFormatado = (rowValue, green=false) => {
@@ -53,36 +50,40 @@ export class TabelaValoresPendentesPorAcao extends Component {
         return (<span style={{color: valor === 0 && green ? 'green' : 'black'}}>{valorFormatado}</span>)
     };
 
-    getTabelaValoresPendentes = async (periodo, conta) => {
+    getTabelaValoresPendentes = async () => {
 
+        let periodo_conta = JSON.parse(localStorage.getItem("periodoConta"))
 
-
-        tabelaValoresPendentes(periodo, conta).then((result) => {
-            const valoresPendentes = result.map(tabelaInfo => (
-                {
-                    acao: tabelaInfo.acao_associacao_nome, 
-                    totalReceitas: tabelaInfo.receitas_no_periodo,
-                    conciliadoReceitas: tabelaInfo.receitas_no_periodo - tabelaInfo.receitas_nao_conciliadas, 
-                    aconciliarReceitas: tabelaInfo.receitas_nao_conciliadas,
-                    totalDespesas: tabelaInfo.despesas_no_periodo,
-                    conciliadoDespesas: tabelaInfo.despesas_no_periodo - tabelaInfo.despesas_nao_conciliadas,
-                    aconciliarDespesas: tabelaInfo.despesas_nao_conciliadas
+        if (periodo_conta){
+            tabelaValoresPendentes(periodo_conta.periodo, periodo_conta.conta).then((result) => {
+                const valoresPendentes = result.map(tabelaInfo => (
+                    {
+                        acao: tabelaInfo.acao_associacao_nome,
+                        totalReceitas: tabelaInfo.receitas_no_periodo,
+                        conciliadoReceitas: tabelaInfo.receitas_no_periodo - tabelaInfo.receitas_nao_conciliadas,
+                        aconciliarReceitas: tabelaInfo.receitas_nao_conciliadas,
+                        totalDespesas: tabelaInfo.despesas_no_periodo,
+                        conciliadoDespesas: tabelaInfo.despesas_no_periodo - tabelaInfo.despesas_nao_conciliadas,
+                        aconciliarDespesas: tabelaInfo.despesas_nao_conciliadas
+                    }
+                ));
+                if(this._isMounted){
+                    this.setState({sales: valoresPendentes});
+                    const totais = {
+                        totalReceitas: this.state.sales.map(sale => (sale.totalReceitas)).reduce((a,b) => a+b, 0),
+                        totalReceitasConciliadas: this.state.sales.map(sale => (sale.conciliadoReceitas)).reduce((a,b) => a+b, 0),
+                        totalReceitasNaoConciliadas: this.state.sales.map(sale => (sale.aconciliarReceitas)).reduce((a,b) => a+b, 0),
+                        totalDespesas: this.state.sales.map(sale => (sale.totalDespesas)).reduce((a,b) => a+b, 0),
+                        totalDespesasConciliadas: this.state.sales.map(sale => (sale.conciliadoDespesas)).reduce((a,b) => a+b, 0),
+                        totalDespesasNaoConciliadas: this.state.sales.map(sale => (sale.aconciliarDespesas)).reduce((a,b) => a+b, 0),
+                    };
+                    this.setState({totais: totais});
                 }
-            ));
-            if(this._isMounted){
-                this.setState({sales: valoresPendentes});
-                const totais = {
-                    totalReceitas: this.state.sales.map(sale => (sale.totalReceitas)).reduce((a,b) => a+b, 0),
-                    totalReceitasConciliadas: this.state.sales.map(sale => (sale.conciliadoReceitas)).reduce((a,b) => a+b, 0),
-                    totalReceitasNaoConciliadas: this.state.sales.map(sale => (sale.aconciliarReceitas)).reduce((a,b) => a+b, 0),
-                    totalDespesas: this.state.sales.map(sale => (sale.totalDespesas)).reduce((a,b) => a+b, 0),
-                    totalDespesasConciliadas: this.state.sales.map(sale => (sale.conciliadoDespesas)).reduce((a,b) => a+b, 0),
-                    totalDespesasNaoConciliadas: this.state.sales.map(sale => (sale.aconciliarDespesas)).reduce((a,b) => a+b, 0),
-                };
-                this.setState({totais: totais});
-            }
-            
-        })
+
+            })
+        }
+
+
     };
 
     openBody = () => {
