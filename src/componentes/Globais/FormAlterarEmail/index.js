@@ -19,12 +19,9 @@ export const FormAlterarEmail = ({handleClose})=>{
             "email2": values.confirmacao_email,
         };
 
-        console.log("PAYLOAD ", payload.email)
-
         try {
             let alterar_email = await alterarMeuEmail(localStorage.getItem(USUARIO_LOGIN), payload);
-            console.log("Alterar Email ", alterar_email);
-            localStorage.setItem(USUARIO_EMAIL, payload.email);
+            localStorage.setItem(USUARIO_EMAIL, alterar_email.data.email);
             setEmailRedefinido(true);
             setMsgErro(false)
         }catch (e) {
@@ -80,7 +77,7 @@ export const FormAlterarEmail = ({handleClose})=>{
             </Formik>
                 {emailRedefinido &&
                     <div className={`alert alert-success alert-dismissible fade show text-center col-12`} role="alert">
-                        Email alterado com sucesso, clique no X para continuar
+                        Email alterado com sucesso.
                         <button type="button" className="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
