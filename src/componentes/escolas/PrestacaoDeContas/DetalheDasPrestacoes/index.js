@@ -62,7 +62,7 @@ export const DetalheDasPrestacoes = () => {
 
     useEffect(()=>{
         carregaObservacoes();
-    }, [periodoConta, acoesAssociacao]);
+    }, [periodoConta, acoesAssociacao, acaoLancamento]);
 
 
     useEffect(() => {
