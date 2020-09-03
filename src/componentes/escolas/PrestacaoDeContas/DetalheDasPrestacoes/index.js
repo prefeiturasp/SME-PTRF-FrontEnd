@@ -21,6 +21,7 @@ import Loading from "../../../../utils/Loading";
 import {SelectPeriodoConta} from "../SelectPeriodoConta";
 import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
+import {ModalConfirmaSalvar} from "../../../../utils/Modais";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -59,11 +60,9 @@ export const DetalheDasPrestacoes = () => {
         carregaContas();
     }, [periodoConta]);
 
-
     useEffect(()=>{
         carregaObservacoes();
     }, [periodoConta, acoesAssociacao, acaoLancamento]);
-
 
     useEffect(() => {
 
@@ -100,7 +99,6 @@ export const DetalheDasPrestacoes = () => {
     useEffect(()=>{
         setLoading(false)
     }, []);
-
 
     const getPeriodoConta = () => {
         if (localStorage.getItem('periodoConta')) {
@@ -148,16 +146,11 @@ export const DetalheDasPrestacoes = () => {
 
     const checaCondicoes = () =>{
         let periodo_e_conta = JSON.parse(localStorage.getItem('periodoConta'));
-        if (periodo_e_conta && periodo_e_conta.periodo && periodo_e_conta.conta){
-            return true
-        }else {
-            return false
-        }
-    }
+        return !!(periodo_e_conta && periodo_e_conta.periodo && periodo_e_conta.conta);
+    };
 
     const getReceitasNaoConferidas = async () => {
         setLoading(true);
-
         if (checaCondicoes()){
             const naoConferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False");
             setReceitasNaoConferidas(naoConferidas);
@@ -201,13 +194,12 @@ export const DetalheDasPrestacoes = () => {
     };
 
     const handleChangeCheckboxReceitas = async (event, receita_uuid) => {
-        setCheckboxReceitas(event.target.checked)
+        setCheckboxReceitas(event.target.checked);
         if (event.target.checked) {
             await conciliarReceitas(receita_uuid);
         } else if (!event.target.checked) {
             await desconciliarReceitas(receita_uuid)
         }
-
         await getReceitasNaoConferidas();
         await getReceitasConferidas();
     };
@@ -302,10 +294,7 @@ export const DetalheDasPrestacoes = () => {
         }
     };
 
-
     const onSalvarTrue = async () => {
-        setShowSalvar(false);
-
 
         let payload = {
             "periodo_uuid": periodoConta.periodo,
@@ -314,8 +303,8 @@ export const DetalheDasPrestacoes = () => {
         };
 
         try {
-            await getSalvarPrestacaoDeConta(periodoConta.periodo, periodoConta.conta, payload);
-            window.location.assign('/prestacao-de-contas')
+           await getSalvarPrestacaoDeConta(periodoConta.periodo, periodoConta.conta, payload);
+            setShowSalvar(true)
         } catch (e) {
             console.log("Erro: ", e.message)
         }
@@ -328,8 +317,6 @@ export const DetalheDasPrestacoes = () => {
     const handleClickCadastrar = () => {
         window.location.assign(btnCadastrarUrl)
     };
-
-
 
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
@@ -390,7 +377,6 @@ export const DetalheDasPrestacoes = () => {
                                     receitas={receitasNaoConferidas}
                                     checkboxReceitas={checkboxReceitas}
                                     handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
-
                                 />
                             )}
 
@@ -436,10 +422,18 @@ export const DetalheDasPrestacoes = () => {
                             img={Img404}
                         />
                     }
-
+                    <section>
+                        <ModalConfirmaSalvar
+                            show={showSalvar}
+                            handleClose={()=>setShowSalvar(false)}
+                            titulo="Salvar informações"
+                            texto="Informações da conciliação bancária salvas com sucesso"
+                            primeiroBotaoCss="success"
+                            primeiroBotaoTexto="Fechar"
+                        />
+                    </section>
                 </>
             }
         </div>
-
     )
 };

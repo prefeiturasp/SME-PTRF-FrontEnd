@@ -759,7 +759,7 @@ export const ModalConfirmaSalvar = (propriedades) => {
             bodyText={`<p>${propriedades.texto}</p>`}
             primeiroBotaoOnclick={propriedades.handleClose}
             primeiroBotaoCss={propriedades.primeiroBotaoCss}
-            primeiroBotaoTexto="OK"
+            primeiroBotaoTexto={propriedades.primeiroBotaoTexto ? propriedades.primeiroBotaoTexto : "OK"}
         />
     )
 };

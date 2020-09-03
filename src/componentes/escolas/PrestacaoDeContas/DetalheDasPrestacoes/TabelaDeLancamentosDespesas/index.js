@@ -133,10 +133,10 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
         <div className="row mt-4">
             <div className="col-12">
                 <p className="detalhe-das-prestacoes-titulo-lancamentos">Lançamentos {conciliados ? "conciliados" : "pendentes de conciliação"}</p>
-                <div className="content-section implementation">
+                <div className="datatable-responsive-demo">
                     <DataTable
                         value={despesas}
-                        className="mt-3 tabela-lancamentos-despesas"
+                        className="mt-3 tabela-lancamentos-despesas p-datatable-responsive-demo"
                         paginator={despesas.length > rowsPerPage}
                         rows={rowsPerPage}
                         paginatorTemplate="PrevPageLink PageLinks NextPageLink"

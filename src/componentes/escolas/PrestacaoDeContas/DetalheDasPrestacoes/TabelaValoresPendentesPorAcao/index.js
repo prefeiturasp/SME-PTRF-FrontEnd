@@ -77,11 +77,8 @@ export class TabelaValoresPendentesPorAcao extends Component {
                     };
                     this.setState({totais: totais});
                 }
-
             })
         }
-
-
     };
 
     openBody = () => {
@@ -162,7 +159,6 @@ export class TabelaValoresPendentesPorAcao extends Component {
                             <Column field="aconciliarDespesas" body={(row) => (this.getValorFormatado(row['aconciliarDespesas'], true))} />
                         </DataTable>
                     </div>
-
                 </div>
             </div>    
         )
