@@ -4,7 +4,6 @@ import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import moment from "moment";
 import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
-import IconeNaoConciliado from "../../../../../assets/img/icone-nao-conciliado.svg";
 import IconeNaoDemonstrado from "../../../../../assets/img/icone-nao-demonstrado.svg";
 import ReactTooltip from "react-tooltip";
 
@@ -17,22 +16,22 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
 
     const onShowModal = () => {
         setShowModal(true);
-    }
+    };
 
     const onHandleClose = () => {
         setShowModal(false);
-    }
+    };
 
     const onCancelarTrue = () => {
         setShowModal(false);
-        const url = '/edicao-de-receita/' + uuid + '/tabela-de-lancamentos-receitas'
+        const url = '/edicao-de-receita/' + uuid + '/tabela-de-lancamentos-receitas';
         history.push(url);
-    }
+    };
 
     const notificarNaoConciliado = (notificarDiasNaoConferido) => {
         return notificarDiasNaoConferido > 0 ? {color: 'red', fontWeight: 'bold'} : {color: 'black'}
-    }
-    const dataTemplate = (rowData, column) => {
+    };
+    const dataTemplate = (rowData) => {
         return (
             <div style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
                 {rowData['data']
@@ -40,17 +39,17 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
                     : ''}
             </div>
         )
-    }
+    };
 
-    const valorTemplate = (rowData, column) => {
+    const valorTemplate = (rowData) => {
         const valorFormatado = rowData['valor']
             ? Number(rowData['valor']).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
-            : ''
+            : '';
         return (<span style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>{valorFormatado}</span>)
-    }
+    };
 
     const conferidoTemplate = (rowData) => {
         return (
@@ -65,19 +64,19 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
                 />
             </div>
         )
-    }
+    };
 
-    const acaoTemplate = (rowData, column) => {
+    const acaoTemplate = (rowData) => {
         return (<span
             style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>{rowData['acao_associacao'].nome}</span>)
-    }
+    };
 
-    const contaTemplate = (rowData, column) => {
+    const contaTemplate = (rowData) => {
         return (<span
             style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>{rowData['conta_associacao'].nome}</span>)
-    }
+    };
 
-    const tipoTemplate = (rowData, column) => {
+    const tipoTemplate = (rowData) => {
         return (
             rowData['notificar_dias_nao_conferido'] > 0 ?
                 <div data-tip={`Não demonstrado por ${rowData['notificar_dias_nao_conferido']} dias.`}>
@@ -95,32 +94,30 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
                 <span style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
                     {rowData['tipo_receita'].nome}
                 </span>
-
         )
-    }
+    };
 
     const redirecionaDetalhe = value => {
-        setUuid(value.uuid)
+        setUuid(value.uuid);
         onShowModal();
-    }
+    };
 
     return (
         <div className="row mt-4">
             <div className="col-12">
                 <p className="detalhe-das-prestacoes-titulo-lancamentos">Lançamentos {conciliados ? "conciliados" : "pendentes de conciliação"}</p>
-                <div className="content-section implementation">
+                <div className="datatable-responsive-demo">
+
                     {receitas && receitas.length > 0 ? (
                         <DataTable
                             value={receitas}
-                            className="mt-3 datatable-footer-coad tabela-lancamentos-receitas"
+                            className="mt-3 datatable-footer-coad tabela-lancamentos-receitas p-datatable-responsive-demo"
                             paginator={receitas.length > rowsPerPage}
                             rows={rowsPerPage}
                             paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                             autoLayout={true}
                             selectionMode="single"
                             onRowClick={e => redirecionaDetalhe(e.data)}
-                            //resizableColumns={false}
-                            //columnResizeMode="fit"
                         >
                             <Column field='tipo_receita.nome' header='Tipo' body={tipoTemplate}/>
                             <Column field='conta_associacao.nome' header='Conta' body={contaTemplate}/>
@@ -146,9 +143,12 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
                 </div>
             </div>
             <section>
-                <RedirectModalTabelaLancamentos show={showModal} handleClose={onHandleClose}
-                                                onCancelarTrue={onCancelarTrue}/>
+                <RedirectModalTabelaLancamentos
+                    show={showModal}
+                    handleClose={onHandleClose}
+                    onCancelarTrue={onCancelarTrue}
+                />
             </section>
         </div>
     )
-}
+};

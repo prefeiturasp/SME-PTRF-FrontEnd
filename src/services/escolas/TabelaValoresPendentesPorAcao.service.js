@@ -10,6 +10,6 @@ const authHeader = {
 }
 
 
-export const tabelaValoresPendentes = async (prestacaoContaUuid) => {
-    return (await api.get(`/api/prestacoes-contas/${prestacaoContaUuid}/tabela-valores-pendentes/`, authHeader)).data
+export const tabelaValoresPendentes = async (periodo_uuid, conta_uuid) => {
+    return (await api.get(`/api/conciliacoes/tabela-valores-pendentes/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}`, authHeader)).data
 }

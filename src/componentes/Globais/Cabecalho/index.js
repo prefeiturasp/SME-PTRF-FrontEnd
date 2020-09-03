@@ -72,12 +72,12 @@ export const Cabecalho = () => {
             <div className="col-12 cabecalho fixed-top pb-0">
 
                 <div className="row">
-                    <div className='col-md-2 col-lg-3 col-xl-2 '>
+                    <div className='col col-md-2 col-lg-3 col-xl-2 '>
                         <div className="p-3">
                             <img className="logo-cabecalho ml-3" src={LogoPtrf} alt=""/>
                         </div>
                     </div>
-                    <div className="col-md-4 col-lg-7 col-xl-8 mt-2 pl-lg-0 pl-xl-3">
+                    <div className="col col-md-4 col-lg-7 col-xl-8 mt-2 pl-lg-0 pl-xl-3">
                         {exibeMenu &&
                         <div className="pt-2 container-select-visoes">
                             <select
@@ -114,14 +114,14 @@ export const Cabecalho = () => {
                         }
                     </div>
 
-                    <div className="col-md-2 col-lg-1">
+                    <div className="col col-md-2 col-lg-1">
                         <div className="p-2 text-center">
                             <button onClick={()=>redirectCentralDeNotificacoes()} className="btn-sair ml-lg-4 ml-xl-0"><img className="icone-sair" src={IconeSair} alt=""/><span className="span-notificacoes-maior-que-10">15</span></button>
                             <p>Notificações</p>
                         </div>
                     </div>
 
-                    <div className="col-1">
+                    <div className="col col-md-1">
                         <div className="p-2 text-center">
                             <button className="btn-sair" onClick={logout}><img className="icone-sair" src={IconeSair} alt=""/></button>
                             <p>Sair</p>
