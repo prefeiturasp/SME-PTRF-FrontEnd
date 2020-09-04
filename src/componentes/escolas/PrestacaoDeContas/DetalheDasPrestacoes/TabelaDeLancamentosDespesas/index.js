@@ -115,7 +115,6 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
                 <span style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
                     {rowData['cpf_cnpj_fornecedor']}
                 </span>
-
         )
     };
 
@@ -125,8 +124,11 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
     };
 
     const especificacaoTemplate = (rowData) => {
-        return (<span
-            style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>{rowData['especificacao_material_servico'].descricao}</span>)
+        return (
+            <span style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
+                {rowData['especificacao_material_servico'] && rowData['especificacao_material_servico'].descricao ? rowData['especificacao_material_servico'].descricao : ""}
+            </span>
+        )
     };
 
     return (
