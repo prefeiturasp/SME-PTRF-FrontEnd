@@ -110,7 +110,8 @@ export const DetalheDasPrestacoes = () => {
     };
 
     const getAcaoLancamento = () => {
-        if (localStorage.getItem('acaoLancamento')) {
+        let acao_lancamento = JSON.parse(localStorage.getItem('acaoLancamento'));
+        if (acao_lancamento) {
             const files = JSON.parse(localStorage.getItem('acaoLancamento'));
             setAcaoLancamento(files);
         } else {
@@ -237,8 +238,16 @@ export const DetalheDasPrestacoes = () => {
         });
 
         if (name === 'acao' && value !== '') {
-            const obs = observacoes.find((acao) => acao.acao_associacao_uuid === value);
-            setTextareaJustificativa(obs.observacao);
+            if (observacoes && observacoes.length > 0){
+                const obs = observacoes.find((acao) => acao.acao_associacao_uuid === value);
+                if (obs && obs.observacao){
+                    setTextareaJustificativa(obs.observacao);
+                }else {
+                    setTextareaJustificativa('');
+                }
+            }
+
+
         } else if(name === 'acao') {
             setTextareaJustificativa('');
         }
@@ -368,7 +377,7 @@ export const DetalheDasPrestacoes = () => {
                             />
 
                             {!receitasNaoConferidas.length > 0 && !receitasConferidas.length > 0 && acaoLancamento.lancamento === "receitas-lancadas" &&
-                            <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
+                                <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
                             }
 
                             {receitasNaoConferidas && receitasNaoConferidas.length > 0 && (
@@ -390,7 +399,7 @@ export const DetalheDasPrestacoes = () => {
                             )}
 
                             {!despesasNaoConferidas.length > 0 && !despesasConferidas.length > 0 && acaoLancamento.lancamento === "despesas-lancadas" &&
-                            <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
+                                <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
                             }
 
                             {despesasNaoConferidas && despesasNaoConferidas.length > 0 &&
