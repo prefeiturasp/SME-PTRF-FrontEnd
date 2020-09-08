@@ -53,8 +53,7 @@ export const PrestacaoDeContas = () => {
         if (value){
             let valor = JSON.parse(value);
             setPeriodoPrestacaoDeConta(valor);
-            let status = await getStatusPeriodoPorData(valor.data_inicial)
-            console.log("Status ", status)
+            let status = await getStatusPeriodoPorData(valor.data_inicial);
             setStatusPrestacaoDeConta(status)
         }
     };
@@ -73,6 +72,7 @@ export const PrestacaoDeContas = () => {
                 handleChangePeriodoPrestacaoDeConta={handleChangePeriodoPrestacaoDeConta}
                 periodosAssociacao={periodosAssociacao}
                 retornaObjetoPeriodoPrestacaoDeConta={retornaObjetoPeriodoPrestacaoDeConta}
+                statusPrestacaoDeConta={statusPrestacaoDeConta}
             />
         </>
     )
