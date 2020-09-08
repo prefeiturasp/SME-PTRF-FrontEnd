@@ -246,3 +246,57 @@
     }
   }
 }
+
+.menu-interno {
+  padding-bottom: 1.5rem;
+  li {
+    border: none;
+
+    .btn-escolhe-acao{
+      font-weight: bold !important;
+      color: #A4A4A4;
+      padding-bottom: 1rem;
+      margin-right: 2rem;
+      border: none;
+      outline: 0;
+      background-color: transparent;
+      padding-right: 0;
+      padding-left: 0;
+    }
+
+    .btn-escolhe-acao:hover{
+      color: #00585E !important;
+      text-decoration: none;
+    }
+
+    .btn-escolhe-acao-active{
+      font-weight: bold !important;
+      color: #00585E;
+      border-bottom: solid #00585E 4px;
+    }
+
+    svg{
+      fill: red !important;
+    }
+
+  }
+}
+/*.btn-escolhe-acao {
+    font-weight: bold !important;
+    color: #A4A4A4;
+    padding-right: 0;
+    padding-left: 0;
+    padding-bottom: 1rem;
+    margin-right: 2rem;
+}
+
+.btn-escolhe-acao:hover{
+    color: #00585E !important;
+    text-decoration: none;
+  }
+
+.btn-escolhe-acao-active{
+    font-weight: bold !important;
+    color: #00585E;
+    border-bottom: solid #00585E 4px;
+  }*/
