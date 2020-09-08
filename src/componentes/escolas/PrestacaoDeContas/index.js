@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, Fragment} from "react";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
 import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/escolas/Associacao.service"
 import {getStatusPeriodoPorData} from "../../../services/escolas/PrestacaoDeContas.service";
+import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 
 export const PrestacaoDeContas = () => {
@@ -9,10 +10,12 @@ export const PrestacaoDeContas = () => {
     const [periodoPrestacaoDeConta, setPeriodoPrestacaoDeConta] = useState("");
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [statusPrestacaoDeConta, setStatusPrestacaoDeConta] = useState(false);
+    const [contasAssociacao, setContasAssociacao] = useState(false);
 
     useEffect(() => {
         getPeriodoPrestacaoDeConta();
         carregaPeriodos();
+        carregaTabelas();
         getStatusPrestacaoDeConta();
     }, []);
 
@@ -27,6 +30,15 @@ export const PrestacaoDeContas = () => {
     const carregaPeriodos = async () => {
         let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
         setPeriodosAssociacao(periodos);
+    };
+
+    const carregaTabelas = async () => {
+        await getTabelasReceita().then(response => {
+            console.log("Tabelas ", response.data.contas_associacao);
+            setContasAssociacao(response.data.contas_associacao);
+        }).catch(error => {
+            console.log(error);
+        });
     };
 
     const getPeriodoPrestacaoDeConta = () => {
@@ -68,7 +80,6 @@ export const PrestacaoDeContas = () => {
 
     return (
         <>
-
             {statusPrestacaoDeConta &&
                 <BarraDeStatusPrestacaoDeContas
                     statusPrestacaoDeConta={statusPrestacaoDeConta}
@@ -82,6 +93,14 @@ export const PrestacaoDeContas = () => {
                 retornaObjetoPeriodoPrestacaoDeConta={retornaObjetoPeriodoPrestacaoDeConta}
                 statusPrestacaoDeConta={statusPrestacaoDeConta}
             />
+
+            {contasAssociacao && contasAssociacao.length > 0 && contasAssociacao.map((conta, index)=>
+                <Fragment key={index}>
+                    <button className="btn btn-primary mr-2">{conta.nome}</button>
+                </Fragment>
+
+            )}
+
         </>
     )
 };
