@@ -91,6 +91,8 @@ const logout = () => {
     localStorage.removeItem(ASSOCIACAO_TIPO_ESCOLA);
     localStorage.removeItem('periodoConta');
     localStorage.removeItem('uuidPrestacaoConta');
+    localStorage.removeItem('periodoPrestacaoDeConta');
+    localStorage.removeItem('statusPrestacaoDeConta');
     localStorage.removeItem('acaoLancamento');
     localStorage.removeItem('uuidAta');
     localStorage.removeItem(USUARIO_EMAIL);
