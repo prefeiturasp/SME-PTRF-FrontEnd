@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {SelectPeriodoConta} from "./SelectPeriodoConta";
+import {SelectPeriodoPestacaoDeConta} from "./SelectPeriodoPestacaoDeConta";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import "../../../assets/img/img-404.svg"
 import Img404 from "../../../assets/img/img-404.svg";
@@ -30,7 +30,7 @@ export const PrestacaoDeContas = () => {
     const [statusPrestacaoConta, setStatusPrestacaoConta] = useState(undefined);
     const [corBarraDeStatusPrestacaoDeContas, setCorBarraDeStatusPrestacaoDeContas] = useState("");
     const [textoBarraDeStatusPrestacaoDeContas, setTextoBarraDeStatusPrestacaoDeContas] = useState("");
-    const [dataUltimaConciliacao, setDataUltimaConciliacao] = useState('')
+    const [dataUltimaConciliacao, setDataUltimaConciliacao] = useState('');
     const [cssBotaoConciliacao, setCssBotaoConciliacao] = useState("");
     const [textoBotaoConciliacao, setTextoBotaoConciliacao] = useState("");
     const [botaoConciliacaoReadonly, setBotaoConciliacaoReadonly] = useState(true);
@@ -48,11 +48,11 @@ export const PrestacaoDeContas = () => {
     const [textoBoxPrestacaoDeContasPorPeriodo, setTextoBoxPrestacaoDeContasPorPeriodo] = useState("");
     const [dataBoxPrestacaoDeContasPorPeriodo, setDataBoxPrestacaoDeContasPorPeriodo] = useState("");
 
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         getPeriodoConta();
-    }, [])
+    }, []);
 
     useEffect(() => {
         const carregaTabelas = async () => {
@@ -70,40 +70,40 @@ export const PrestacaoDeContas = () => {
 
         carregaTabelas();
         carregaPeriodos();
-    }, [])
+    }, []);
 
     useEffect(() => {
-        localStorage.setItem('periodoConta', JSON.stringify(periodoConta))
+        localStorage.setItem('periodoConta', JSON.stringify(periodoConta));
         if (periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== "") {
-            setExibeMensagem(false)
-            getStatusPrestacaoDeConta(periodoConta.periodo, periodoConta.conta)
+            setExibeMensagem(false);
+            getStatusPrestacaoDeConta(periodoConta.periodo, periodoConta.conta);
         } else {
-            setExibeMensagem(true)
+            setExibeMensagem(true);
             setDemonstrativoFinanceiro(false);
             setBoxPrestacaoDeContasPorPeriodo(false);
-            setStatusPrestacaoConta(undefined)
-            localStorage.setItem("uuidPrestacaoConta", undefined)
+            setStatusPrestacaoConta(undefined);
+            localStorage.setItem("uuidPrestacaoConta", undefined);
         }
     }, [periodoConta]);
 
     useEffect(()=>{
         setLoading(false)
-    }, [])
+    }, []);
 
     const getPeriodoConta = () => {
         if (localStorage.getItem('periodoConta')) {
-            const files = JSON.parse(localStorage.getItem('periodoConta'))
+            const files = JSON.parse(localStorage.getItem('periodoConta'));
             setPeriodoConta(files)
         } else {
             setPeriodoConta({periodo: "", conta: ""})
         }
-    }
+    };
 
     const getStatusPrestacaoDeConta = async (periodo_uuid, conta_uuid) => {
-        setLoading(true)
+        setLoading(true);
         let status = await getStatus(periodo_uuid, conta_uuid);
         setStatusPrestacaoConta(status);
-        localStorage.setItem("uuidPrestacaoConta", status.uuid)
+        localStorage.setItem("uuidPrestacaoConta", status.uuid);
         setConfBarraStatus(status);
         setConfBotaoConciliacao(status);
         setConfDataUltimaConciliacao(status);
@@ -118,7 +118,7 @@ export const PrestacaoDeContas = () => {
         }
 
         setLoading(false)
-    }
+    };
 
     const setConfBoxPrestacaoDeContasPorPeriodo = async (status)=>{
         let data_preenchimento;
@@ -142,33 +142,33 @@ export const PrestacaoDeContas = () => {
             setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
             setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
         }
-    }
+    };
 
     const setConfBarraStatus = (status) => {
         if (status.status === "FECHADO") {
             setCorBarraDeStatusPrestacaoDeContas('verde');
-            setTextoBarraDeStatusPrestacaoDeContas("A geração dos documentos da conciliação desse período foi efetuada, clique no botão “Rever conciliação” para fazer alterações")
+            setTextoBarraDeStatusPrestacaoDeContas("A geração dos documentos da conciliação desse período foi efetuada, clique no botão “Rever conciliação” para fazer alterações");
             setConfBoxPrestacaoDeContasPorPeriodo(status)
 
         } else if (status.status === "ABERTO" && status.conciliado) {
-            setCorBarraDeStatusPrestacaoDeContas('amarelo')
-            setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período está aberta.")
+            setCorBarraDeStatusPrestacaoDeContas('amarelo');
+            setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período está aberta.");
             setConfBoxPrestacaoDeContasPorPeriodo(status)
 
         } else if (status.status === null || !status.conciliado) {
-            setCorBarraDeStatusPrestacaoDeContas('vermelho')
-            setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período ainda não foi iniciada.")
+            setCorBarraDeStatusPrestacaoDeContas('vermelho');
+            setTextoBarraDeStatusPrestacaoDeContas("A prestação de contas deste período ainda não foi iniciada.");
         }
-    }
+    };
 
     const iniciarPrestacaoDeContas = async () => {
-        setLoading(true)
+        setLoading(true);
         if (!statusPrestacaoConta.uuid){
             let prestacao = await getIniciarPrestacaoDeContas(periodoConta.conta, periodoConta.periodo);
             localStorage.setItem("uuidPrestacaoConta", prestacao.uuid)
         }
         window.location.assign(linkBotaoConciliacao)
-    }
+    };
 
     const setConfDataUltimaConciliacao = (status) => {
         if (status.conciliado_em) {
@@ -176,7 +176,7 @@ export const PrestacaoDeContas = () => {
         } else {
             setDataUltimaConciliacao("-")
         }
-    }
+    };
 
     const setConfBotaoConciliacao = (status) => {
         if ( (status.status === "ABERTO" && status.conciliado) || status.status === "FECHADO") {
@@ -184,11 +184,11 @@ export const PrestacaoDeContas = () => {
             setTextoBotaoConciliacao("Rever conciliação");
             setLinkBotaoConciliacao("/detalhe-das-prestacoes");
         } else if (status.status === null || !status.conciliado ) {
-            setCssBotaoConciliacao("btn-success")
+            setCssBotaoConciliacao("btn-success");
             setTextoBotaoConciliacao("Iniciar a prestação de contas");
             setLinkBotaoConciliacao("/detalhe-das-prestacoes");
         }
-    }
+    };
 
     const handleChangePeriodoConta = (name, value) => {
         setBotaoConciliacaoReadonly(true);
@@ -196,7 +196,7 @@ export const PrestacaoDeContas = () => {
             ...periodoConta,
             [name]: value
         });
-    }
+    };
 
     const handleClickBotaoConciliacao = () => {
         setBotaoConciliacaoReadonly(true);
@@ -205,30 +205,30 @@ export const PrestacaoDeContas = () => {
         } else if (statusPrestacaoConta.status === null || !statusPrestacaoConta.conciliado ) {
             iniciarPrestacaoDeContas()
         }
-    }
+    };
 
     const handleChangeModalReverConciliacao = (event) => {
         setTextareaModalReverConciliacao(event.target.value)
-    }
+    };
 
     const onShowModal = () => {
         setShow(true);
-    }
+    };
 
     const onHandleClose = () => {
         setShow(false);
         setBotaoConciliacaoReadonly(false);
-    }
+    };
 
     const reabrirPeriodo = async () => {
         setShow(false);
-        setLoading(true)
+        setLoading(true);
         let payload = {
             "motivo": textareaModalReverConciliacao
-        }
-        await getReabrirPeriodo(statusPrestacaoConta.uuid, payload)
-        window.location.assign(linkBotaoConciliacao)
-    }
+        };
+        await getReabrirPeriodo(statusPrestacaoConta.uuid, payload);
+        window.location.assign(linkBotaoConciliacao);
+    };
 
 
     return (
@@ -242,12 +242,13 @@ export const PrestacaoDeContas = () => {
                 />
                 :
                 <>
+                    <h1>Estou aqui</h1>
                     <BarraDeStatusPrestacaoDeContas
                         statusPrestacaoConta={statusPrestacaoConta}
                         corBarraDeStatusPrestacaoDeContas={corBarraDeStatusPrestacaoDeContas}
                         textoBarraDeStatusPrestacaoDeContas={textoBarraDeStatusPrestacaoDeContas}
                     />
-                    <SelectPeriodoConta
+                    <SelectPeriodoPestacaoDeConta
                         periodoConta={periodoConta}
                         handleChangePeriodoConta={handleChangePeriodoConta}
                         periodosAssociacao={periodosAssociacao}
