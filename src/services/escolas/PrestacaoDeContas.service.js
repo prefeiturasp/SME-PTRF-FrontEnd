@@ -8,6 +8,9 @@ const authHeader = {
   },
 };
 
+// Prestação de Contas
+
+
 export const getPeriodosNaoFuturos = async () => {
   return(await api.get('/api/periodos/lookup-until-now/', authHeader)).data
 };
@@ -38,6 +41,7 @@ export const getReabrirPeriodo = async (uuid, payload) => {
   )
 };
 
+// Detalhe Prestação de Contas
 export const getDespesasPrestacaoDeContas = async (periodo_uuid, conta_uuid, acao_associacao_uuid, conferido) => {
   return (await api.get(`/api/conciliacoes/despesas/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&acao_associacao=${acao_associacao_uuid}&conferido=${conferido}`, authHeader)).data
 };
