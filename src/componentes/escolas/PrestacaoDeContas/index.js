@@ -7,12 +7,10 @@ export const PrestacaoDeContas = () => {
     const [periodoPrestacaoDeConta, setPeriodoPrestacaoDeConta] = useState("");
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
 
-
     useEffect(() => {
         getPeriodoPrestacaoDeConta();
         carregaPeriodos();
     }, []);
-
 
     useEffect(() => {
         localStorage.setItem('periodoPrestacaoDeConta', JSON.stringify(periodoPrestacaoDeConta));
@@ -20,10 +18,8 @@ export const PrestacaoDeContas = () => {
 
     const carregaPeriodos = async () => {
         let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
-        console.log("Periodos ", periodos)
         setPeriodosAssociacao(periodos);
     };
-
 
     const getPeriodoPrestacaoDeConta = () => {
         if (localStorage.getItem('periodoPrestacaoDeConta')) {
