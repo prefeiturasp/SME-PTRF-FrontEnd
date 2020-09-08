@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
 import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/escolas/Associacao.service"
 import {getStatusPeriodoPorData} from "../../../services/escolas/PrestacaoDeContas.service";
+import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 
 export const PrestacaoDeContas = () => {
 
@@ -67,6 +68,13 @@ export const PrestacaoDeContas = () => {
 
     return (
         <>
+
+            {statusPrestacaoDeConta &&
+                <BarraDeStatusPrestacaoDeContas
+                    statusPrestacaoDeConta={statusPrestacaoDeConta}
+                />
+            }
+
             <TopoSelectPeriodoBotaoConcluir
                 periodoPrestacaoDeConta={periodoPrestacaoDeConta}
                 handleChangePeriodoPrestacaoDeConta={handleChangePeriodoPrestacaoDeConta}
