@@ -18,27 +18,26 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
 
     const onShowModal = () => {
         setShowModal(true);
-    }
+    };
 
     const onHandleClose = () => {
         setShowModal(false);
-    }
+    };
 
     const onCancelarTrue = () => {
         setShowModal(false);
-        const url = '/edicao-de-despesa/' + uuid + '/tabela-de-lancamentos-despesas'
+        const url = '/edicao-de-despesa/' + uuid + '/tabela-de-lancamentos-despesas';
         history.push(url);
-    }
-
+    };
 
     const redirecionaDetalhe = value => {
-        setUuid(value.despesa)
+        setUuid(value.despesa);
         onShowModal();
-    }
+    };
 
     const notificarNaoConciliado = (notificarDiasNaoConferido) => {
         return notificarDiasNaoConferido > 0 ? {color: 'red', fontWeight: 'bold'} : {color: 'black'}
-    }
+    };
 
     const conferidoTemplate = (rowData) => {
         if (rowData.status_despesa === "COMPLETO"){
@@ -66,9 +65,9 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
             )
         }
 
-    }
+    };
 
-    const dataDocumentoTemplate = (rowData, column) => {
+    const dataDocumentoTemplate = (rowData) => {
         return (
             <div style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
                 {rowData['data_documento']
@@ -76,9 +75,9 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
                     : ''}
             </div>
         )
-    }
+    };
 
-    const dataTransacaoTemplate = (rowData, column) => {
+    const dataTransacaoTemplate = (rowData) => {
         return (
             <div style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
                 {rowData['data_transacao']
@@ -86,19 +85,19 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
                     : ''}
             </div>
         )
-    }
+    };
 
-    const valorTemplate = (rowData, column) => {
+    const valorTemplate = (rowData) => {
         const valorFormatado = rowData['valor_total']
-            ? new Number(rowData['valor_total']).toLocaleString('pt-BR', {
+            ? Number(rowData['valor_total']).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
-            : ''
+            : '';
         return (<span style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>{valorFormatado}</span>)
-    }
+    };
 
-    const cnpjTemplate = (rowData, column) => {
+    const cnpjTemplate = (rowData) => {
         return (
             rowData['notificar_dias_nao_conferido'] > 0 ?
                 <div data-tip={`Não demonstrado por ${rowData['notificar_dias_nao_conferido']} dias.`}>
@@ -116,29 +115,30 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
                 <span style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
                     {rowData['cpf_cnpj_fornecedor']}
                 </span>
-
         )
-    }
+    };
 
     const genericTemplate = (rowData, column) => {
         return (<span
             style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>{rowData[column.field]}</span>)
-    }
+    };
 
-    const especificacaoTemplate = (rowData, column) => {
-        return (<span
-            style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>{rowData['especificacao_material_servico'].descricao}</span>)
-    }
-
+    const especificacaoTemplate = (rowData) => {
+        return (
+            <span style={notificarNaoConciliado(rowData['notificar_dias_nao_conferido'])}>
+                {rowData['especificacao_material_servico'] && rowData['especificacao_material_servico'].descricao ? rowData['especificacao_material_servico'].descricao : ""}
+            </span>
+        )
+    };
 
     return (
         <div className="row mt-4">
             <div className="col-12">
                 <p className="detalhe-das-prestacoes-titulo-lancamentos">Lançamentos {conciliados ? "conciliados" : "pendentes de conciliação"}</p>
-                <div className="content-section implementation">
+                <div className="datatable-responsive-demo">
                     <DataTable
                         value={despesas}
-                        className="mt-3 tabela-lancamentos-despesas"
+                        className="mt-3 tabela-lancamentos-despesas p-datatable-responsive-demo"
                         paginator={despesas.length > rowsPerPage}
                         rows={rowsPerPage}
                         paginatorTemplate="PrevPageLink PageLinks NextPageLink"
@@ -181,6 +181,5 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
                 <RedirectModalTabelaLancamentos show={showModal} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
             </section>
         </div>
-
     )
-}
+};

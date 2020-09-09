@@ -1,10 +1,11 @@
 import React from "react";
 import CurrencyInput from "react-currency-input";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {Tags} from "../Tags";
 
 export const CadastroFormCusteio = (propriedades) => {
 
-    const {formikProps, rateio, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal} = propriedades
+    const {formikProps, rateio, rateios, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal} = propriedades
 
     const setValorRateioRealizado=(setFieldValue, index, valor)=>{
         setFieldValue(`rateios[${index}].valor_rateio`, trataNumericos(valor))
@@ -147,4 +148,4 @@ export const CadastroFormCusteio = (propriedades) => {
             </div>
         </>
     );
-}
+};

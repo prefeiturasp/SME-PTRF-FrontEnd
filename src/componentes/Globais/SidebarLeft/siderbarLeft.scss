@@ -3,6 +3,16 @@
   height: 35px !important;
 }
 
+.sidenav---sidenav---_2tBP.sidenav---expanded---1KdUL .sidenav---sidenav-subnav---1EN61 > .sidenav---sidenav-subnavitem---1cD47.sidenav---selected---1EK3y > .sidenav---navitem---9uL5T::before {
+  border: none !important;
+}
+
+.sidenav---selected---1EK3y{
+  background-color: #003538 !important;
+  color: #fff !important;
+}
+
+
 .esconde-icone > div{
   line-height: 0 !important;
   height: 0 !important;
@@ -13,13 +23,30 @@
   letter-spacing: 0.01em;
   font-weight: 500;
   margin-top: 77px;
-  overflow-y: auto;
-  overflow-x: hidden;
-
+  //overflow-y: auto;
+  //overflow-x: hidden;
 
   .sidenav---navtext---1AE_f{
+    font-size: 14px;
+    letter-spacing: 0.16px;
+  }
+  .sidenav---expanded---1KdUL .sidenav---navtext---1AE_f{
     color: #fff !important;
     font-weight: 500;
+  }
+
+  .sidenav---sidenav-subnavitem---1cD47{
+    color: #00585E;
+    font-weight: bold !important;
+  }
+
+  .sub-menu-item  div{
+    color: #00585E !important;
+    font-weight: 500 !important;
+  }
+
+  .sidenav---expanded---1KdUL .sub-menu-item  div{
+    margin-left: 50px;
   }
 
   .navItemCustomizado:hover, .navItemCustomizadoNome:hover, .navItemCustomizadoNome{

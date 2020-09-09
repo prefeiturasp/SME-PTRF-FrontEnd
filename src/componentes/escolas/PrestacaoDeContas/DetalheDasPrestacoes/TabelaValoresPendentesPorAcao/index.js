@@ -9,83 +9,91 @@ import {tabelaValoresPendentes} from '../../../../../services/escolas/TabelaValo
 import "./styles.css";
 
 export class TabelaValoresPendentesPorAcao extends Component {
-    _isMounted = false
+    _isMounted = false;
 
-    constructor() {
-        super();
-
+    constructor(props) {
+        super(props);
         this.state = {
             sales: [],
             rowsPerPage: 7,
-            periodo: JSON.parse(localStorage.getItem('periodoConta')).periodo,
+            periodo: props.periodo,
+            conta:  props.conta,
             totais: {},
             expandedRows: false,
             chevron: "pi pi-chevron-right"
-        }
+        };
+        this.getTabelaValoresPendentes();
     }
 
     componentDidMount() {
         this._isMounted = true;
-        this.getTabelaValoresPendentes();
     }
 
     componentWillUnmount() {
         this._isMounted = false;
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.getTabelaValoresPendentes();
+    }
+
     getValorFormatado = (rowValue, green=false) => {
         const valor = rowValue
-            ? new Number(rowValue).toLocaleString('pt-BR', {
+            ? Number(rowValue).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
-            : 0
-        const valorFormatado = (valor !== 0 && valor.includes('R$')) ? valor : `R$ ${valor}`
+            : 0;
+        const valorFormatado = (valor !== 0 && valor.includes('R$')) ? valor : `R$ ${valor}`;
         return (<span style={{color: valor === 0 && green ? 'green' : 'black'}}>{valorFormatado}</span>)
-    }
+    };
 
     getTabelaValoresPendentes = async () => {
-        tabelaValoresPendentes(localStorage.getItem('uuidPrestacaoConta')).then((result) => {
-            const valoresPendentes = result.map(tabelaInfo => (
-                {
-                    acao: tabelaInfo.acao_associacao_nome, 
-                    totalReceitas: tabelaInfo.receitas_no_periodo,
-                    conciliadoReceitas: tabelaInfo.receitas_no_periodo - tabelaInfo.receitas_nao_conciliadas, 
-                    aconciliarReceitas: tabelaInfo.receitas_nao_conciliadas,
-                    totalDespesas: tabelaInfo.despesas_no_periodo,
-                    conciliadoDespesas: tabelaInfo.despesas_no_periodo - tabelaInfo.despesas_nao_conciliadas,
-                    aconciliarDespesas: tabelaInfo.despesas_nao_conciliadas
+
+        let periodo_conta = JSON.parse(localStorage.getItem("periodoConta"));
+
+        if (periodo_conta && periodo_conta.periodo && periodo_conta.conta){
+            tabelaValoresPendentes(periodo_conta.periodo, periodo_conta.conta).then((result) => {
+                const valoresPendentes = result.map(tabelaInfo => (
+                    {
+                        acao: tabelaInfo.acao_associacao_nome,
+                        totalReceitas: tabelaInfo.receitas_no_periodo,
+                        conciliadoReceitas: tabelaInfo.receitas_no_periodo - tabelaInfo.receitas_nao_conciliadas,
+                        aconciliarReceitas: tabelaInfo.receitas_nao_conciliadas,
+                        totalDespesas: tabelaInfo.despesas_no_periodo,
+                        conciliadoDespesas: tabelaInfo.despesas_no_periodo - tabelaInfo.despesas_nao_conciliadas,
+                        aconciliarDespesas: tabelaInfo.despesas_nao_conciliadas
+                    }
+                ));
+                if(this._isMounted){
+                    this.setState({sales: valoresPendentes});
+                    const totais = {
+                        totalReceitas: this.state.sales.map(sale => (sale.totalReceitas)).reduce((a,b) => a+b, 0),
+                        totalReceitasConciliadas: this.state.sales.map(sale => (sale.conciliadoReceitas)).reduce((a,b) => a+b, 0),
+                        totalReceitasNaoConciliadas: this.state.sales.map(sale => (sale.aconciliarReceitas)).reduce((a,b) => a+b, 0),
+                        totalDespesas: this.state.sales.map(sale => (sale.totalDespesas)).reduce((a,b) => a+b, 0),
+                        totalDespesasConciliadas: this.state.sales.map(sale => (sale.conciliadoDespesas)).reduce((a,b) => a+b, 0),
+                        totalDespesasNaoConciliadas: this.state.sales.map(sale => (sale.aconciliarDespesas)).reduce((a,b) => a+b, 0),
+                    };
+                    this.setState({totais: totais});
                 }
-            ))
-            if(this._isMounted){
-                this.setState({sales: valoresPendentes});
-                const totais = {
-                    totalReceitas: this.state.sales.map(sale => (sale.totalReceitas)).reduce((a,b) => a+b, 0),
-                    totalReceitasConciliadas: this.state.sales.map(sale => (sale.conciliadoReceitas)).reduce((a,b) => a+b, 0),
-                    totalReceitasNaoConciliadas: this.state.sales.map(sale => (sale.aconciliarReceitas)).reduce((a,b) => a+b, 0),
-                    totalDespesas: this.state.sales.map(sale => (sale.totalDespesas)).reduce((a,b) => a+b, 0),
-                    totalDespesasConciliadas: this.state.sales.map(sale => (sale.conciliadoDespesas)).reduce((a,b) => a+b, 0),
-                    totalDespesasNaoConciliadas: this.state.sales.map(sale => (sale.aconciliarDespesas)).reduce((a,b) => a+b, 0),
-                }
-                this.setState({totais: totais});
-            }
-            
-        })
-    }
+            })
+        }
+    };
 
     openBody = () => {
         this.setState({
             expandedRows: !this.state.expandedRows,
             chevron: (!this.state.expandedRows ? "pi pi-chevron-down": "pi pi-chevron-right")
         });
-    }
+    };
 
     header = () => {
         return (
             <div onClick={this.openBody} className="datatable-header-cursor">
                 <i className={this.state.chevron}/>Ação
             </div>)
-    }
+    };
 
     headerGroup() {
         return (
@@ -143,15 +151,14 @@ export class TabelaValoresPendentesPorAcao extends Component {
                             autoLayout={true}
                         >
                             <Column className="detalhe-das-prestacoes-tabela-fundo-azul-claro" field="acao" />
-                            <Column field="totalReceitas" body={(row, column) => (this.getValorFormatado(row['totalReceitas']))} />
-                            <Column field="conciliadoReceitas" body={(row, column) => (this.getValorFormatado(row['conciliadoReceitas']))} />
-                            <Column field="aconciliarReceitas" body={(row, column) => (this.getValorFormatado(row['aconciliarReceitas'], true))} />
-                            <Column field="totalDespesas" body={(row, column) => (this.getValorFormatado(row['totalDespesas']))} />
-                            <Column field="conciliadoDespesas" body={(row, column) => (this.getValorFormatado(row['conciliadoDespesas']))} />
-                            <Column field="aconciliarDespesas" body={(row, column) => (this.getValorFormatado(row['aconciliarDespesas'], true))} />
+                            <Column field="totalReceitas" body={(row) => (this.getValorFormatado(row['totalReceitas']))} />
+                            <Column field="conciliadoReceitas" body={(row) => (this.getValorFormatado(row['conciliadoReceitas']))} />
+                            <Column field="aconciliarReceitas" body={(row) => (this.getValorFormatado(row['aconciliarReceitas'], true))} />
+                            <Column field="totalDespesas" body={(row) => (this.getValorFormatado(row['totalDespesas']))} />
+                            <Column field="conciliadoDespesas" body={(row) => (this.getValorFormatado(row['conciliadoDespesas']))} />
+                            <Column field="aconciliarDespesas" body={(row) => (this.getValorFormatado(row['aconciliarDespesas'], true))} />
                         </DataTable>
                     </div>
-
                 </div>
             </div>    
         )
