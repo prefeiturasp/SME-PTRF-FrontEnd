@@ -11,7 +11,7 @@ export class DemonstrativoFinanceiro extends Component {
     state = {
         rowsPerPage: 30,
         estado: [],
-    }
+    };
 
     componentDidMount() {
         this._isMounted = true;
@@ -35,6 +35,7 @@ export class DemonstrativoFinanceiro extends Component {
 
         if (periodo_uuid && conta_uuid && associacao_uuid){
             const result = await getAcoes(associacao_uuid, periodo_uuid);
+
             Promise.all(result.info_acoes.map(async (info) => {
                 const msg = await getDemonstrativoInfo(info.acao_associacao_uuid, conta_uuid, periodo_uuid);
                 return {
@@ -53,20 +54,20 @@ export class DemonstrativoFinanceiro extends Component {
 
     gerarPrevia = async (acaoUuid) => {
         this.props.setLoading(true);
-        const periodo_uuid = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta')).periodo_uuid
-        const conta_uuid = JSON.parse(localStorage.getItem('contaPrestacaoDeConta')).conta_uuid
+        const periodo_uuid = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta')).periodo_uuid;
+        const conta_uuid = JSON.parse(localStorage.getItem('contaPrestacaoDeConta')).conta_uuid;
         await previa(acaoUuid, conta_uuid, periodo_uuid);
         this.props.setLoading(false);
-    }
+    };
 
     gerarDocumentoFinal = async (acaoUuid) => {
         this.props.setLoading(true);
-        const periodo_uuid = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta')).periodo_uuid
-        const conta_uuid = JSON.parse(localStorage.getItem('contaPrestacaoDeConta')).conta_uuid
+        const periodo_uuid = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta')).periodo_uuid;
+        const conta_uuid = JSON.parse(localStorage.getItem('contaPrestacaoDeConta')).conta_uuid;
         await documentoFinal(acaoUuid, conta_uuid, periodo_uuid);
         await this.buscaAcoes();
         this.props.setLoading(false);
-    }
+    };
 
     getNomeAcao = (rowData) => {
         return (
@@ -75,32 +76,32 @@ export class DemonstrativoFinanceiro extends Component {
                 <p className={rowData['mensagem'].includes('pendente') ? "demonstrativo-financeiro-documento-pendente" :"demonstrativo-financeiro-documento-gerado"}  >{rowData['mensagem']}</p>
             </div>
         )
-    }
+    };
 
     getBotoes = (rowData) => {
         return (
             <div className="text-right">
-                {this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.periodo_encerrado &&
-                    <button type="button" disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && this.props.statusPrestacaoDeConta.prestacao_contas_status.periodo_encerrado} className="btn btn-outline-success mr-2">prévia </button>
+                {this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
+                    <button type="button" disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className="btn btn-outline-success mr-2">prévia </button>
                 }
                 {/*<button type="button" onClick={(e) => this.gerarPrevia(rowData['acaoUuid'])} className="btn btn-outline-success mr-2">prévia </button>*/}
-                <button disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.periodo_encerrado} onClick={(e) => this.gerarDocumentoFinal(rowData['acaoUuid'])} type="button" className="btn btn-success">documento final</button>
+                <button disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} onClick={(e) => this.gerarDocumentoFinal(rowData['acaoUuid'])} type="button" className="btn btn-success">documento final</button>
             </div>
         )
-    }
+    };
 
-    valorReceita = (rowData, column) => {
+    valorReceita = (rowData) => {
         const valor = rowData['receitaDeclarada']
             ? Number(rowData['receitaDeclarada']).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
             : 'R$ 0';
-        const valorFormatado = `${valor}`
+        const valorFormatado = `${valor}`;
         return (<span>{valorFormatado}</span>)
-    }
+    };
 
-    valorDespesa = (rowData, column) => {
+    valorDespesa = (rowData) => {
         const valor = rowData['despesaDeclarada']
             ? Number(rowData['despesaDeclarada']).toLocaleString('pt-BR', {
                 style: 'currency',
@@ -109,45 +110,54 @@ export class DemonstrativoFinanceiro extends Component {
             : 'R$ 0';
         const valorFormatado = `${valor}`;
         return (<span>{valorFormatado}</span>)
-    }
+    };
 
     render() {
         const {estado, rowsPerPage} = this.state;
         return (
-            <div className="demonstrativo-financeiro-container mt-5">
-                <p className="demonstrativo-financeiro-titulo">Demonstrativo Financeiro</p>
+            <>
+                {estado && estado.length > 0 ? (
+                    <div className="demonstrativo-financeiro-container mt-5">
+                        <p className="demonstrativo-financeiro-titulo">Demonstrativo Financeiro</p>
 
-                <div className="content-section implementation">
-                    <DataTable
-                        value={estado}
-                        className="mt-3 datatable-footer-coad"
-                        paginator={estado.length > rowsPerPage}
-                        rows={rowsPerPage}
-                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                        autoLayout={true}
-                        selectionMode="single"
-                        //onRowClick={e => redirecionaDetalhe(e.data)}
-                    >
-                        <Column
-                            field="nomeAcao"
-                            header="Nome da ação"
-                            body={this.getNomeAcao}
-                        />
-                        <Column
-                            field="receitaDeclarada"
-                            header="Receita declarada"
-                            body={this.valorReceita}/>
-                        <Column
-                            field="despesaDeclarada"
-                            header="Despesa declarada"
-                            body={this.valorDespesa}/>
-                        <Column
-                            field='botoes'
-                            header=''
-                            body={this.getBotoes}
-                        />
-                    </DataTable>
-                </div>
-            </div>);
+                        <div className="content-section implementation">
+                            <DataTable
+                                value={estado}
+                                className="mt-3 datatable-footer-coad"
+                                paginator={estado.length > rowsPerPage}
+                                rows={rowsPerPage}
+                                paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                                autoLayout={true}
+                                selectionMode="single"
+                                //onRowClick={e => redirecionaDetalhe(e.data)}
+                            >
+                                <Column
+                                    field="nomeAcao"
+                                    header="Nome da ação"
+                                    body={this.getNomeAcao}
+                                />
+                                <Column
+                                    field="receitaDeclarada"
+                                    header="Receita declarada"
+                                    body={this.valorReceita}/>
+                                <Column
+                                    field="despesaDeclarada"
+                                    header="Despesa declarada"
+                                    body={this.valorDespesa}/>
+                                <Column
+                                    field='botoes'
+                                    header=''
+                                    body={this.getBotoes}
+                                />
+                            </DataTable>
+                        </div>
+                    </div>
+                ):
+                    <p><strong>Não existem ações a serem exibidas</strong></p>
+                }
+
+            </>
+
+        );
     }
 }

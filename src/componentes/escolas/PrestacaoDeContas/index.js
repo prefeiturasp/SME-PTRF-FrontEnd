@@ -89,7 +89,6 @@ export const PrestacaoDeContas = () => {
     const getPrimeiraContaPrestacaoDeConta = async ()=>{
         await getTabelasReceita()
         .then(response => {
-            console.log("getPrimeiraContaPrestacaoDeConta ", response)
             if (response.data.contas_associacao && response.data.contas_associacao.length > 0 ){
                 setContaPrestacaoDeContas({
                     conta_uuid: response.data.contas_associacao[0].uuid
