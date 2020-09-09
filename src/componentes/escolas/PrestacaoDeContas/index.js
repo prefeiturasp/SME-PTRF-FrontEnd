@@ -20,7 +20,6 @@ export const PrestacaoDeContas = () => {
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [loading, setLoading] = useState(true);
 
-
     useEffect(() => {
         getPeriodoPrestacaoDeConta();
         carregaPeriodos();
@@ -119,12 +118,13 @@ export const PrestacaoDeContas = () => {
     };
 
     const handleClickBtnConcluirPeriodo = async () =>{
-        console.log("Cliquei")
-
+        console.log("Cliquei");
+        setLoading(true);
         let concluir = await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
-
+        let status = await getStatusPeriodoPorData(periodoPrestacaoDeConta.data_inicial);
+        setStatusPrestacaoDeConta(status);
+        setLoading(false);
         console.log("Concluir ", concluir)
-
     };
 
     const retornaObjetoPeriodoPrestacaoDeConta = (periodo_uuid, data_inicial) => {
@@ -213,7 +213,6 @@ export const PrestacaoDeContas = () => {
                     }
                 </>
             }
-
         </>
     )
 };

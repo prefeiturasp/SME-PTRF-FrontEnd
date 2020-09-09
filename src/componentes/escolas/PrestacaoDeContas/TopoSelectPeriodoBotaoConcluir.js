@@ -42,8 +42,8 @@ export const TopoSelectPeriodoBotaoConcluir = ({periodoPrestacaoDeConta, handleC
                         </div>
                     </div>
                     <div className="col-md-12 col-lg-5 col-xl-7 mb-md-2 text-right">
-                        {checkCondicaoExibicao(periodoPrestacaoDeConta) && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && !statusPrestacaoDeConta.prestacao_contas_status.periodo_encerrado &&
-                            <button onClick={handleClickBtnConcluirPeriodo} disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.periodo_encerrado} className='btn btn-success' type="button">Concluir período</button>
+                        {checkCondicaoExibicao(periodoPrestacaoDeConta) && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && !statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
+                            <button onClick={handleClickBtnConcluirPeriodo} disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className='btn btn-success' type="button">Concluir período</button>
                         }
                     </div>
                 </div>
