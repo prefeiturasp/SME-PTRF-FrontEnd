@@ -19,7 +19,7 @@ export class DemonstrativoFinanceiro extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.periodoConta !== this.props.periodoConta) {
+        if (prevProps.periodoPrestacaoDeConta !== this.props.periodoPrestacaoDeConta || prevProps.contaPrestacaoDeContas !== this.props.contaPrestacaoDeContas) {
             this.buscaAcoes()
         }
     }
@@ -29,39 +29,43 @@ export class DemonstrativoFinanceiro extends Component {
     }
 
     buscaAcoes = async () => {
-        const periodo_uuid = this.props.periodoConta.periodo;
-        const conta_uuid = this.props.periodoConta.conta;
+        const periodo_uuid = this.props.periodoPrestacaoDeConta.periodo_uuid;
+        const conta_uuid = this.props.contaPrestacaoDeContas.conta_uuid;
         const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
-        const result = await getAcoes(associacao_uuid, periodo_uuid);
 
-        Promise.all(result.info_acoes.map(async (info) => {
-            const msg = await getDemonstrativoInfo(info.acao_associacao_uuid, conta_uuid, periodo_uuid);
-            return {
-                nomeAcao: info.acao_associacao_nome,
-                acaoUuid: info.acao_associacao_uuid,
-                receitaDeclarada: info.receitas_no_periodo,
-                despesaDeclarada: info.despesas_no_periodo,
-                mensagem: msg}
-        })).then((result) => {
-            if(this._isMounted) {
-                this.setState({estado: result});
-            }
+        if (periodo_uuid && conta_uuid && associacao_uuid){
+            const result = await getAcoes(associacao_uuid, periodo_uuid);
 
-        });
-    }
+            Promise.all(result.info_acoes.map(async (info) => {
+                const msg = await getDemonstrativoInfo(info.acao_associacao_uuid, conta_uuid, periodo_uuid);
+                return {
+                    nomeAcao: info.acao_associacao_nome,
+                    acaoUuid: info.acao_associacao_uuid,
+                    receitaDeclarada: info.receitas_no_periodo,
+                    despesaDeclarada: info.despesas_no_periodo,
+                    mensagem: msg}
+            })).then((result) => {
+                if(this._isMounted) {
+                    this.setState({estado: result});
+                }
+
+            });
+        }
+
+    };
 
     gerarPrevia = async (acaoUuid) => {
         this.props.setLoading(true)
-        const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo
-        const conta_uuid = JSON.parse(localStorage.getItem('periodoConta')).conta
+        const periodo_uuid = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta')).periodo_uuid
+        const conta_uuid = JSON.parse(localStorage.getItem('contaPrestacaoDeConta')).conta_uuid
         await previa(acaoUuid, conta_uuid, periodo_uuid);
         this.props.setLoading(false)
     }
 
     gerarDocumentoFinal = async (acaoUuid) => {
-        this.props.setLoading(true)
-        const periodo_uuid = JSON.parse(localStorage.getItem('periodoConta')).periodo
-        const conta_uuid = JSON.parse(localStorage.getItem('periodoConta')).conta
+        //this.props.setLoading(true)
+        const periodo_uuid = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta')).periodo_uuid
+        const conta_uuid = JSON.parse(localStorage.getItem('contaPrestacaoDeConta')).conta_uuid
 
         await documentoFinal(acaoUuid, conta_uuid, periodo_uuid);
         await this.buscaAcoes();

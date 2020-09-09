@@ -1,7 +1,6 @@
 import React from "react";
 
 export const BarraDeStatusPrestacaoDeContas = ({statusPrestacaoDeConta}) =>{
-    console.log("BarraDeStatusPrestacaoDeContas ", statusPrestacaoDeConta  )
     return(
         statusPrestacaoDeConta && Object.entries(statusPrestacaoDeConta).length > 0  && (
             <div className="row">
@@ -11,4 +10,4 @@ export const BarraDeStatusPrestacaoDeContas = ({statusPrestacaoDeConta}) =>{
             </div>
         )
     );
-}
+};

@@ -4,6 +4,7 @@ import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/esco
 import {getStatusPeriodoPorData} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
+import {DemonstrativoFinanceiro} from "./DemonstrativoFinanceiro";
 
 export const PrestacaoDeContas = () => {
 
@@ -146,6 +147,12 @@ export const PrestacaoDeContas = () => {
                 )}
             </nav>
             }
+
+            <DemonstrativoFinanceiro
+                periodoPrestacaoDeConta={periodoPrestacaoDeConta}
+                statusPrestacaoDeConta={statusPrestacaoDeConta}
+                contaPrestacaoDeContas={contaPrestacaoDeContas}
+            />
         </>
     )
 };
