@@ -13,6 +13,10 @@ export const getStatusPeriodoPorData = async (data_incial_periodo) => {
   return(await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/status-periodo/?data=${data_incial_periodo}`, authHeader)).data
 };
 
+export const getConcluirPeriodo = async (periodo_uuid) => {
+  return(await api.post(`/api/prestacoes-contas/concluir/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo_uuid=${periodo_uuid}`, authHeader)).data
+};
+
 
 export const getPeriodosNaoFuturos = async () => {
   return(await api.get('/api/periodos/lookup-until-now/', authHeader)).data

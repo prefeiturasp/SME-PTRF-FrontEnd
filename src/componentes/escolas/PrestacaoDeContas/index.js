@@ -1,7 +1,7 @@
 import React, {useEffect, useState, Fragment} from "react";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
 import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/escolas/Associacao.service"
-import {getStatusPeriodoPorData} from "../../../services/escolas/PrestacaoDeContas.service";
+import {getStatusPeriodoPorData, getConcluirPeriodo} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import {DemonstrativoFinanceiro} from "./DemonstrativoFinanceiro";
@@ -118,6 +118,15 @@ export const PrestacaoDeContas = () => {
         setLoading(false);
     };
 
+    const handleClickBtnConcluirPeriodo = async () =>{
+        console.log("Cliquei")
+
+        let concluir = await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
+
+        console.log("Concluir ", concluir)
+
+    };
+
     const retornaObjetoPeriodoPrestacaoDeConta = (periodo_uuid, data_inicial) => {
         return JSON.stringify({
             periodo_uuid: periodo_uuid,
@@ -161,6 +170,7 @@ export const PrestacaoDeContas = () => {
                         retornaObjetoPeriodoPrestacaoDeConta={retornaObjetoPeriodoPrestacaoDeConta}
                         statusPrestacaoDeConta={statusPrestacaoDeConta}
                         checkCondicaoExibicao={checkCondicaoExibicao}
+                        handleClickBtnConcluirPeriodo={handleClickBtnConcluirPeriodo}
                     />
                     {checkCondicaoExibicao(periodoPrestacaoDeConta)  ? (
                             <>

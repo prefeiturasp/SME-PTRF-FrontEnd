@@ -1,7 +1,7 @@
 import React from "react";
 import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 
-export const TopoSelectPeriodoBotaoConcluir = ({periodoPrestacaoDeConta, handleChangePeriodoPrestacaoDeConta, periodosAssociacao, retornaObjetoPeriodoPrestacaoDeConta, statusPrestacaoDeConta, checkCondicaoExibicao}) => {
+export const TopoSelectPeriodoBotaoConcluir = ({periodoPrestacaoDeConta, handleChangePeriodoPrestacaoDeConta, periodosAssociacao, retornaObjetoPeriodoPrestacaoDeConta, statusPrestacaoDeConta, checkCondicaoExibicao, handleClickBtnConcluirPeriodo}) => {
     return (
         <>
             <form id="periodo_conta">
@@ -43,7 +43,7 @@ export const TopoSelectPeriodoBotaoConcluir = ({periodoPrestacaoDeConta, handleC
                     </div>
                     <div className="col-md-12 col-lg-5 col-xl-7 mb-md-2 text-right">
                         {checkCondicaoExibicao(periodoPrestacaoDeConta) && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && !statusPrestacaoDeConta.prestacao_contas_status.periodo_encerrado &&
-                            <button disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.periodo_encerrado} className='btn btn-success' type="button">Concluir período</button>
+                            <button onClick={handleClickBtnConcluirPeriodo} disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.periodo_encerrado} className='btn btn-success' type="button">Concluir período</button>
                         }
                     </div>
                 </div>
