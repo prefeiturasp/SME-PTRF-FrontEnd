@@ -93,6 +93,7 @@ const logout = () => {
     localStorage.removeItem('uuidPrestacaoConta');
     localStorage.removeItem('periodoPrestacaoDeConta');
     localStorage.removeItem('statusPrestacaoDeConta');
+    localStorage.removeItem('contaPrestacaoDeConta');
     localStorage.removeItem('acaoLancamento');
     localStorage.removeItem('uuidAta');
     localStorage.removeItem(USUARIO_EMAIL);

@@ -152,6 +152,7 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
         localStorage.removeItem('acaoLancamento');
         localStorage.removeItem('periodoPrestacaoDeConta');
         localStorage.removeItem('statusPrestacaoDeConta');
+        localStorage.removeItem('contaPrestacaoDeConta');
         redirectVisao(visao)
     }
 };

@@ -43,7 +43,6 @@ export const PrestacaoDeContas = () => {
 
     const carregaTabelas = async () => {
         await getTabelasReceita().then(response => {
-            console.log("Tabelas ", response.data.contas_associacao);
             setContasAssociacao(response.data.contas_associacao);
         }).catch(error => {
             console.log(error);
@@ -90,7 +89,6 @@ export const PrestacaoDeContas = () => {
     };
 
     const handleClickContaPrestacaoDeContas = (uuid_conta) =>{
-        console.log("handleClickContaPrestacaoDeContas ", uuid_conta)
         setContaPrestacaoDeContas({
             conta_uuid: uuid_conta
         })

@@ -36,8 +36,12 @@ export class DemonstrativoFinanceiro extends Component {
         if (periodo_uuid && conta_uuid && associacao_uuid){
             const result = await getAcoes(associacao_uuid, periodo_uuid);
 
+
+
             Promise.all(result.info_acoes.map(async (info) => {
+
                 const msg = await getDemonstrativoInfo(info.acao_associacao_uuid, conta_uuid, periodo_uuid);
+
                 return {
                     nomeAcao: info.acao_associacao_nome,
                     acaoUuid: info.acao_associacao_uuid,
@@ -46,6 +50,7 @@ export class DemonstrativoFinanceiro extends Component {
                     mensagem: msg}
             })).then((result) => {
                 if(this._isMounted) {
+
                     this.setState({estado: result});
                 }
 
@@ -55,11 +60,17 @@ export class DemonstrativoFinanceiro extends Component {
     };
 
     gerarPrevia = async (acaoUuid) => {
-        this.props.setLoading(true)
+
+
+        //this.props.setLoading(true)
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta')).periodo_uuid
         const conta_uuid = JSON.parse(localStorage.getItem('contaPrestacaoDeConta')).conta_uuid
+
+        console.log("gerarPrevia periodo_uuid ", periodo_uuid)
+        console.log("gerarPrevia conta_uuid ", conta_uuid)
+
         await previa(acaoUuid, conta_uuid, periodo_uuid);
-        this.props.setLoading(false)
+        //this.props.setLoading(false)
     }
 
     gerarDocumentoFinal = async (acaoUuid) => {
@@ -69,7 +80,7 @@ export class DemonstrativoFinanceiro extends Component {
 
         await documentoFinal(acaoUuid, conta_uuid, periodo_uuid);
         await this.buscaAcoes();
-        this.props.setLoading(false)
+        //this.props.setLoading(false)
     }
 
     getNomeAcao = (rowData) => {
