@@ -179,6 +179,8 @@ export const Atribuicoes = () => {
         setLoading(true);
         setEstadoFiltros(estadoInicialFiltros);
         await buscarUnidadesParaAtribuicao(dreUuid, periodoAtual.uuid);
+        setShowToast(false);
+        setTecnico("");
         setLoading(false)
     };
 
@@ -194,6 +196,8 @@ export const Atribuicoes = () => {
         .then(response => {
             console.log("Período copiado com sucesso!");
             buscarUnidadesParaAtribuicao(dreUuid, periodoAtual.uuid);
+            setShowToast(false);
+            setTecnico("");
             setEscolhaTags(false);
             setLoading(false);
             setShowInformativoCopia(true);
@@ -300,6 +304,11 @@ export const Atribuicoes = () => {
 
     const tratarSelecionado = (e, unidadeUuid) => {
         console.log("Selecionado");
+        if (showToast === true) {
+            alert("A mensagem para Desfazer atribuições está aberta, feche a mensagem  no 'x' ou clique  em 'Desfazer' para liberar a seleção das unidades.");
+            return 
+        }
+
         let cont = quantidadeSelecionada;
         if (e.target.checked) {
             cont = cont + 1
@@ -340,7 +349,7 @@ export const Atribuicoes = () => {
                         <div className="col-7">
                             <div className="row">
                                 <div className="col-12">
-                                    <a className="float-right" onClick={(e) => e} style={{textDecoration:"underline", cursor:"pointer"}}>
+                                    <a className="float-right" onClick={(e) => desmarcarTodos(e)} style={{textDecoration:"underline", cursor:"pointer"}}>
                                         <strong>Cancelar</strong>
                                     </a>
                                     <div className="float-right" style={{padding: "0px 10px"}}>|</div>
@@ -411,6 +420,7 @@ export const Atribuicoes = () => {
     }
 
     const fecharToast = () => {
+        console.log("Fechando Toast");
         setShowToast(false);
         setTecnico("");
         setCopiaUnidades([]);
@@ -460,14 +470,18 @@ export const Atribuicoes = () => {
 
         await Promise.all(promisses);
         let unidadesNaoAtribuidas = copiaUnidades.filter(u => u.atribuicao.id === "").map(item => {return {uuid: item.uuid}});
-        unidadesData.unidades = unidadesNaoAtribuidas;
-        await retirarAtribuicoes(unidadesData);
+        
+        if (unidadesNaoAtribuidas.length > 0) {
+            unidadesData.unidades = unidadesNaoAtribuidas;
+            await retirarAtribuicoes(unidadesData);
+        }
+        
         buscarUnidadesParaAtribuicao(dreUuid, periodoAtual.uuid).then(response => {
             setLoading(false);
             setShowToast(false);
             setCopiaUnidades([]);
+            setTecnico("");
         });
-        
         
     }
 
