@@ -80,8 +80,11 @@ export class DemonstrativoFinanceiro extends Component {
     getBotoes = (rowData) => {
         return (
             <div className="text-right">
-                <button type="button" onClick={(e) => this.gerarPrevia(rowData['acaoUuid'])} className="btn btn-outline-success mr-2">prévia </button>
-                <button disabled={false} onClick={(e) => this.gerarDocumentoFinal(rowData['acaoUuid'])} type="button" className="btn btn-success">documento final</button>
+                {this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.periodo_encerrado &&
+                    <button type="button" disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && this.props.statusPrestacaoDeConta.prestacao_contas_status.periodo_encerrado} className="btn btn-outline-success mr-2">prévia </button>
+                }
+                {/*<button type="button" onClick={(e) => this.gerarPrevia(rowData['acaoUuid'])} className="btn btn-outline-success mr-2">prévia </button>*/}
+                <button disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.periodo_encerrado} onClick={(e) => this.gerarDocumentoFinal(rowData['acaoUuid'])} type="button" className="btn btn-success">documento final</button>
             </div>
         )
     }
@@ -104,7 +107,7 @@ export class DemonstrativoFinanceiro extends Component {
                 currency: 'BRL'
             })
             : 'R$ 0';
-        const valorFormatado = `${valor}`
+        const valorFormatado = `${valor}`;
         return (<span>{valorFormatado}</span>)
     }
 
