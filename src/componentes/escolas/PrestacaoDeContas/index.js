@@ -4,8 +4,6 @@ import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/esco
 import {getStatusPeriodoPorData} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
-import {getAcoesAssociacaoPorConta} from "../../../services/Dashboard.service";
-import {NavLink} from "react-router-dom";
 
 export const PrestacaoDeContas = () => {
 
@@ -13,6 +11,7 @@ export const PrestacaoDeContas = () => {
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [statusPrestacaoDeConta, setStatusPrestacaoDeConta] = useState(false);
     const [contasAssociacao, setContasAssociacao] = useState(false);
+    const [contaPrestacaoDeContas, setContaPrestacaoDeContas] = useState(false);
     const [clickBtnEscolheCategoria, setClickBtnEscolheCategoria] = useState({0: true});
 
 
@@ -21,6 +20,7 @@ export const PrestacaoDeContas = () => {
         carregaPeriodos();
         carregaTabelas();
         getStatusPrestacaoDeConta();
+        getContaPrestacaoDeConta();
     }, []);
 
     useEffect(() => {
@@ -30,6 +30,10 @@ export const PrestacaoDeContas = () => {
     useEffect(() => {
         localStorage.setItem('statusPrestacaoDeConta', JSON.stringify(statusPrestacaoDeConta));
     }, [statusPrestacaoDeConta]);
+
+    useEffect(() => {
+        localStorage.setItem('contaPrestacaoDeConta', JSON.stringify(contaPrestacaoDeContas));
+    }, [contaPrestacaoDeContas]);
 
     const carregaPeriodos = async () => {
         let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
@@ -66,6 +70,15 @@ export const PrestacaoDeContas = () => {
         }
     };
 
+    const getContaPrestacaoDeConta = () => {
+        if (localStorage.getItem('contaPrestacaoDeConta')) {
+            const files = JSON.parse(localStorage.getItem('contaPrestacaoDeConta'));
+            setContaPrestacaoDeContas(files)
+        } else {
+            setContaPrestacaoDeContas({})
+        }
+    };
+
     const handleChangePeriodoPrestacaoDeConta = async (name, value) => {
         if (value){
             let valor = JSON.parse(value);
@@ -73,6 +86,13 @@ export const PrestacaoDeContas = () => {
             let status = await getStatusPeriodoPorData(valor.data_inicial);
             setStatusPrestacaoDeConta(status)
         }
+    };
+
+    const handleClickContaPrestacaoDeContas = (uuid_conta) =>{
+        console.log("handleClickContaPrestacaoDeContas ", uuid_conta)
+        setContaPrestacaoDeContas({
+            conta_uuid: uuid_conta
+        })
     };
 
     const retornaObjetoPeriodoPrestacaoDeConta = (periodo_uuid, data_inicial) => {
@@ -88,9 +108,7 @@ export const PrestacaoDeContas = () => {
         });
     };
 
-    const getAcoesPorConta = (uuid_conta) =>{
-        console.log("getAcoesPorConta ", uuid_conta)
-    };
+
 
     return (
         <>
@@ -117,7 +135,7 @@ export const PrestacaoDeContas = () => {
                             <button
                                 onClick={() => {
                                     toggleBtnEscolheCategoria(index);
-                                    getAcoesPorConta(conta.uuid);
+                                    handleClickContaPrestacaoDeContas(conta.uuid);
                                 }}
                                 className={`nav-link btn-escolhe-acao mr-3 ${clickBtnEscolheCategoria[index] ? "btn-escolhe-acao-active" : ""}`}
                             >
