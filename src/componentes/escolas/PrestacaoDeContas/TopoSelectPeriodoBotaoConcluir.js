@@ -1,8 +1,7 @@
 import React from "react";
 import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 
-export const TopoSelectPeriodoBotaoConcluir = ({periodoPrestacaoDeConta, handleChangePeriodoPrestacaoDeConta, periodosAssociacao, retornaObjetoPeriodoPrestacaoDeConta, statusPrestacaoDeConta}) => {
-    //console.log("TopoSelectPeriodoBotaoConcluir Status ", statusPrestacaoDeConta)
+export const TopoSelectPeriodoBotaoConcluir = ({periodoPrestacaoDeConta, handleChangePeriodoPrestacaoDeConta, periodosAssociacao, retornaObjetoPeriodoPrestacaoDeConta, statusPrestacaoDeConta, checkCondicaoExibicao}) => {
     return (
         <>
             <form id="periodo_conta">
@@ -43,7 +42,9 @@ export const TopoSelectPeriodoBotaoConcluir = ({periodoPrestacaoDeConta, handleC
                         </div>
                     </div>
                     <div className="col-md-12 col-lg-5 col-xl-7 mb-md-2 text-right">
-                        <button disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.periodo_encerrado} className='btn btn-success' type="button">Concluir período</button>
+                        {checkCondicaoExibicao(periodoPrestacaoDeConta) &&
+                            <button disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.periodo_encerrado} className='btn btn-success' type="button">Concluir período</button>
+                        }
                     </div>
                 </div>
             </form>

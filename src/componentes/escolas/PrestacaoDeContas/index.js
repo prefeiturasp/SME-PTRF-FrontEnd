@@ -5,6 +5,8 @@ import {getStatusPeriodoPorData} from "../../../services/escolas/PrestacaoDeCont
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import {DemonstrativoFinanceiro} from "./DemonstrativoFinanceiro";
+import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
+import Img404 from "../../../assets/img/img-404.svg";
 
 export const PrestacaoDeContas = () => {
 
@@ -22,6 +24,7 @@ export const PrestacaoDeContas = () => {
         carregaTabelas();
         getStatusPrestacaoDeConta();
         getContaPrestacaoDeConta();
+        getPrimeiraContaPrestacaoDeConta();
     }, []);
 
     useEffect(() => {
@@ -54,10 +57,7 @@ export const PrestacaoDeContas = () => {
             const files = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta'));
             setPeriodoPrestacaoDeConta(files)
         } else {
-            setPeriodoPrestacaoDeConta({
-                periodo_uuid: "",
-                data_inicial: "",
-            })
+            setPeriodoPrestacaoDeConta({})
         }
     };
 
@@ -77,6 +77,20 @@ export const PrestacaoDeContas = () => {
         } else {
             setContaPrestacaoDeContas({})
         }
+    };
+
+    const getPrimeiraContaPrestacaoDeConta = async ()=>{
+        await getTabelasReceita()
+        .then(response => {
+            console.log("getPrimeiraContaPrestacaoDeConta ", response)
+            if (response.data.contas_associacao && response.data.contas_associacao.length > 0 ){
+                setContaPrestacaoDeContas({
+                    conta_uuid: response.data.contas_associacao[0].uuid
+                })
+            }
+        }).catch(error => {
+            console.log("Erro getPrimeiraContaPrestacaoDeConta ", error);
+        });
     };
 
     const handleChangePeriodoPrestacaoDeConta = async (name, value) => {
@@ -107,11 +121,13 @@ export const PrestacaoDeContas = () => {
         });
     };
 
-
+    const checkCondicaoExibicao = (obj) =>{
+        return obj && Object.entries(obj).length > 0
+    };
 
     return (
         <>
-            {statusPrestacaoDeConta && Object.entries(statusPrestacaoDeConta).length > 0  &&
+            {checkCondicaoExibicao(statusPrestacaoDeConta) &&
                 <BarraDeStatusPrestacaoDeContas
                     statusPrestacaoDeConta={statusPrestacaoDeConta}
                 />
@@ -123,34 +139,40 @@ export const PrestacaoDeContas = () => {
                 periodosAssociacao={periodosAssociacao}
                 retornaObjetoPeriodoPrestacaoDeConta={retornaObjetoPeriodoPrestacaoDeConta}
                 statusPrestacaoDeConta={statusPrestacaoDeConta}
+                checkCondicaoExibicao={checkCondicaoExibicao}
             />
 
-            {statusPrestacaoDeConta && Object.entries(statusPrestacaoDeConta).length > 0  &&
-
-            <nav className="nav mb-4 mt-2 menu-interno">
-                {contasAssociacao && contasAssociacao.length > 0 && contasAssociacao.map((conta, index) =>
-                    <Fragment key={index}>
-                        <li className="nav-item">
-                            <button
-                                onClick={() => {
-                                    toggleBtnEscolheCategoria(index);
-                                    handleClickContaPrestacaoDeContas(conta.uuid);
-                                }}
-                                className={`nav-link btn-escolhe-acao mr-3 ${clickBtnEscolheCategoria[index] ? "btn-escolhe-acao-active" : ""}`}
-                            >
-                                Conta {conta.nome}
-                            </button>
-                        </li>
-                    </Fragment>
-                )}
-            </nav>
+            {checkCondicaoExibicao(periodoPrestacaoDeConta)  ? (
+                <>
+                    <nav className="nav mb-4 mt-2 menu-interno">
+                        {contasAssociacao && contasAssociacao.length > 0 && contasAssociacao.map((conta, index) =>
+                            <Fragment key={index}>
+                                <li className="nav-item">
+                                    <button
+                                        onClick={() => {
+                                            toggleBtnEscolheCategoria(index);
+                                            handleClickContaPrestacaoDeContas(conta.uuid);
+                                        }}
+                                        className={`nav-link btn-escolhe-acao mr-3 ${clickBtnEscolheCategoria[index] ? "btn-escolhe-acao-active" : ""}`}
+                                    >
+                                        Conta {conta.nome}
+                                    </button>
+                                </li>
+                            </Fragment>
+                        )}
+                    </nav>
+                    <DemonstrativoFinanceiro
+                        periodoPrestacaoDeConta={periodoPrestacaoDeConta}
+                        statusPrestacaoDeConta={statusPrestacaoDeConta}
+                        contaPrestacaoDeContas={contaPrestacaoDeContas}
+                    />
+                </>
+            ):
+                <MsgImgCentralizada
+                    texto='Selecione um período acima para visualizar as ações'
+                    img={Img404}
+                />
             }
-
-            <DemonstrativoFinanceiro
-                periodoPrestacaoDeConta={periodoPrestacaoDeConta}
-                statusPrestacaoDeConta={statusPrestacaoDeConta}
-                contaPrestacaoDeContas={contaPrestacaoDeContas}
-            />
         </>
     )
 };

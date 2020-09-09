@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from "react";
+import React, {Component} from "react";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
@@ -61,13 +61,9 @@ export class DemonstrativoFinanceiro extends Component {
 
     gerarPrevia = async (acaoUuid) => {
 
-
         //this.props.setLoading(true)
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta')).periodo_uuid
         const conta_uuid = JSON.parse(localStorage.getItem('contaPrestacaoDeConta')).conta_uuid
-
-        console.log("gerarPrevia periodo_uuid ", periodo_uuid)
-        console.log("gerarPrevia conta_uuid ", conta_uuid)
 
         await previa(acaoUuid, conta_uuid, periodo_uuid);
         //this.props.setLoading(false)
