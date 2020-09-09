@@ -5,6 +5,7 @@ import {getStatusPeriodoPorData} from "../../../services/escolas/PrestacaoDeCont
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import {DemonstrativoFinanceiro} from "./DemonstrativoFinanceiro";
+import RelacaoDeBens from "./RelacaoDeBens";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../assets/img/img-404.svg";
 import Loading from "../../../utils/Loading";
@@ -182,6 +183,13 @@ export const PrestacaoDeContas = () => {
                                     )}
                                 </nav>
                                 <DemonstrativoFinanceiro
+                                    periodoPrestacaoDeConta={periodoPrestacaoDeConta}
+                                    statusPrestacaoDeConta={statusPrestacaoDeConta}
+                                    contaPrestacaoDeContas={contaPrestacaoDeContas}
+                                    setLoading={setLoading}
+                                />
+
+                                <RelacaoDeBens
                                     periodoPrestacaoDeConta={periodoPrestacaoDeConta}
                                     statusPrestacaoDeConta={statusPrestacaoDeConta}
                                     contaPrestacaoDeContas={contaPrestacaoDeContas}

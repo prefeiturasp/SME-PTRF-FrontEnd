@@ -14,7 +14,7 @@ export default class RelacaoDeBens extends Component {
     }
 
     async componentDidUpdate(prevProps) {
-        if (prevProps.periodoConta !== this.props.periodoConta) {
+        if (prevProps.periodoPrestacaoDeConta !== this.props.periodoPrestacaoDeConta || prevProps.contaPrestacaoDeContas !== this.props.contaPrestacaoDeContas) {
             await this.relacaoBensInfo();
         }
     }
@@ -24,7 +24,9 @@ export default class RelacaoDeBens extends Component {
     }
 
     relacaoBensInfo = async () => {
-        const {periodo, conta} = this.props.periodoConta;
+        const periodo = this.props.periodoPrestacaoDeConta.periodo_uuid;
+        const conta = this.props.contaPrestacaoDeContas.conta_uuid;
+
         getRelacaoBensInfo(conta, periodo).then(
             (mensagem) => {
                 if(this._isMounted) {
@@ -37,14 +39,16 @@ export default class RelacaoDeBens extends Component {
     
     gerarPrevia = async () => {
         this.props.setLoading(true);
-        const {periodo, conta} = this.props.periodoConta;
+        const periodo = this.props.periodoPrestacaoDeConta.periodo_uuid;
+        const conta = this.props.contaPrestacaoDeContas.conta_uuid;
         await previa(conta, periodo);
         this.props.setLoading(false);
     };
 
     gerarDocumentoFinal = async () => {
         this.props.setLoading(true);
-        const {periodo, conta} = this.props.periodoConta;
+        const periodo = this.props.periodoPrestacaoDeConta.periodo_uuid;
+        const conta = this.props.contaPrestacaoDeContas.conta_uuid;
         await documentoFinal(conta, periodo);
         await this.relacaoBensInfo();
         this.props.setLoading(false);
