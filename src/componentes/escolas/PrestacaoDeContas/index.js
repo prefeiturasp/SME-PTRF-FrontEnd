@@ -4,6 +4,7 @@ import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/esco
 import {getStatusPeriodoPorData, getConcluirPeriodo} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
+import {BoxPrestacaoDeContasPorPeriodo} from "../GeracaoDaAta/BoxPrestacaoDeContasPorPeriodo";
 import {DemonstrativoFinanceiro} from "./DemonstrativoFinanceiro";
 import RelacaoDeBens from "./RelacaoDeBens";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
@@ -12,7 +13,7 @@ import Loading from "../../../utils/Loading";
 
 export const PrestacaoDeContas = () => {
 
-    const [periodoPrestacaoDeConta, setPeriodoPrestacaoDeConta] = useState("");
+    const [periodoPrestacaoDeConta, setPeriodoPrestacaoDeConta] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [statusPrestacaoDeConta, setStatusPrestacaoDeConta] = useState(false);
     const [contasAssociacao, setContasAssociacao] = useState(false);
@@ -67,12 +68,20 @@ export const PrestacaoDeContas = () => {
         }
     };
 
-    const getStatusPrestacaoDeConta = () => {
-        if (localStorage.getItem('statusPrestacaoDeConta')) {
-            const files = JSON.parse(localStorage.getItem('statusPrestacaoDeConta'));
-            setStatusPrestacaoDeConta(files)
-        } else {
-            setStatusPrestacaoDeConta({})
+    const getStatusPrestacaoDeConta = async () => {
+        let periodo_prestacao_de_contas = JSON.parse(localStorage.getItem("periodoPrestacaoDeConta"));
+
+        if (periodo_prestacao_de_contas && periodo_prestacao_de_contas.periodo_uuid){
+            let data_inicial = periodo_prestacao_de_contas.data_inicial;
+            let status = await getStatusPeriodoPorData(data_inicial);
+            setStatusPrestacaoDeConta(status)
+        }else {
+            if (localStorage.getItem('statusPrestacaoDeConta')) {
+                const files = JSON.parse(localStorage.getItem('statusPrestacaoDeConta'));
+                setStatusPrestacaoDeConta(files)
+            } else {
+                setStatusPrestacaoDeConta({})
+            }
         }
     };
 
@@ -118,13 +127,11 @@ export const PrestacaoDeContas = () => {
     };
 
     const handleClickBtnConcluirPeriodo = async () =>{
-        console.log("Cliquei");
         setLoading(true);
-        let concluir = await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
+        await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
         let status = await getStatusPeriodoPorData(periodoPrestacaoDeConta.data_inicial);
         setStatusPrestacaoDeConta(status);
         setLoading(false);
-        console.log("Concluir ", concluir)
     };
 
     const retornaObjetoPeriodoPrestacaoDeConta = (periodo_uuid, data_inicial) => {
@@ -158,11 +165,10 @@ export const PrestacaoDeContas = () => {
             ):
                 <>
                     {checkCondicaoExibicao(statusPrestacaoDeConta) &&
-                    <BarraDeStatusPrestacaoDeContas
-                        statusPrestacaoDeConta={statusPrestacaoDeConta}
-                    />
+                        <BarraDeStatusPrestacaoDeContas
+                            statusPrestacaoDeConta={statusPrestacaoDeConta}
+                        />
                     }
-
                     <TopoSelectPeriodoBotaoConcluir
                         periodoPrestacaoDeConta={periodoPrestacaoDeConta}
                         handleChangePeriodoPrestacaoDeConta={handleChangePeriodoPrestacaoDeConta}
@@ -197,13 +203,20 @@ export const PrestacaoDeContas = () => {
                                     contaPrestacaoDeContas={contaPrestacaoDeContas}
                                     setLoading={setLoading}
                                 />
-
                                 <RelacaoDeBens
                                     periodoPrestacaoDeConta={periodoPrestacaoDeConta}
                                     statusPrestacaoDeConta={statusPrestacaoDeConta}
                                     contaPrestacaoDeContas={contaPrestacaoDeContas}
                                     setLoading={setLoading}
                                 />
+
+                                {/*<BoxPrestacaoDeContasPorPeriodo
+                                    setLoading={setLoading}
+                                    corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
+                                    textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
+                                    dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
+                                />*/}
+
                             </>
                         ):
                         <MsgImgCentralizada
