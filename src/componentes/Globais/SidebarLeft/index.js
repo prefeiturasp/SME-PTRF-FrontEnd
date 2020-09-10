@@ -9,9 +9,11 @@ import {useHistory} from 'react-router-dom'
 import {Versao} from '../Versao'
 import ReactTooltip from "react-tooltip";
 import {getUrls} from "./getUrls";
+import {NotificacaoContext} from "../../../context/Notificacoes";
 
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
+    const notificacaoContext = useContext(NotificacaoContext)
     let history = useHistory();
 
     const onToggle = () => {
@@ -23,6 +25,10 @@ export const SidebarLeft = () => {
 
     let urls = getUrls.GetUrls();
 
+    const qtdeNotificacoesNaoLidas = async () =>{
+        await notificacaoContext.getQtdeNotificacoesNaoLidas()
+    };
+
     return (
         <>
             <SideNav
@@ -30,6 +36,7 @@ export const SidebarLeft = () => {
                 className="sideNavCustomizado"
                 expanded={sidebarStatus.sideBarStatus}
                 onSelect={(selected) => {
+                    qtdeNotificacoesNaoLidas();
                     const to = '/' + selected;
                     if (history.location.pathname !== to) {
                         history.push(to)
