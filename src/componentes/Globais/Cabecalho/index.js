@@ -6,6 +6,7 @@ import IconeSair from "../../../assets/img/sair.svg"
 import { authService, USUARIO_LOGIN } from '../../../services/auth.service';
 import {visoesService} from "../../../services/visoes.service";
 import {NotificacaoContext} from "../../../context/Notificacoes";
+import {ModalConfirmaLogout} from "./ModalConfirmaLogout";
 
 export const Cabecalho = () => {
 
@@ -16,9 +17,10 @@ export const Cabecalho = () => {
     let login_usuario = localStorage.getItem(USUARIO_LOGIN);
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado(login_usuario);
 
-    const notificacaoContext = useContext(NotificacaoContext)
+    const notificacaoContext = useContext(NotificacaoContext);
 
     const [exibeMenu, setExibeMenu] = useState(true);
+    const [show, setShow] = useState(false);
 
     useEffect(()=>{
         const qtdeNotificacoesNaoLidas = async () =>{
@@ -74,6 +76,29 @@ export const Cabecalho = () => {
     const redirectCentralDeNotificacoes = () =>{
         let path = `/central-de-notificacoes`;
         history.push(path);
+    };
+
+    const onShow = () =>{
+        let qtde = notificacaoContext.qtdeNotificacoesNaoLidas
+        if(qtde > 0){
+            setShow(true);
+        }else {
+            logout();
+        }
+    };
+
+    const onLogoutTrue = () =>{
+        setShow(false);
+        logout();
+    };
+
+    const onHandleClose = () => {
+        setShow(false);
+    };
+
+    const onRedirectNotificacoes = () => {
+        setShow(false);
+        window.location.assign('/central-de-notificacoes')
     };
 
     return (
@@ -137,13 +162,22 @@ export const Cabecalho = () => {
 
                     <div className="col col-md-1">
                         <div className="p-2 text-center">
-                            <button className="btn-sair" onClick={logout}><img className="icone-sair" src={IconeSair} alt=""/></button>
+                            <button className="btn-sair" onClick={()=>onShow()}><img className="icone-sair" src={IconeSair} alt=""/></button>
                             <p>Sair</p>
                         </div>
                     </div>
                 </div>
-
             </div>
+            <section>
+                <ModalConfirmaLogout
+                    show={show}
+                    handleClose={onHandleClose}
+                    onRedirectNotificacoes={onRedirectNotificacoes}
+                    onLogoutTrue={onLogoutTrue}
+                    titulo="Existem notificações não lidas"
+                    texto="<p>Deseja ver as notificações ou sair do sistema</p>"
+                />
+            </section>
         </>
     );
 };
