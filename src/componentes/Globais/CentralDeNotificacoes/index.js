@@ -1,13 +1,15 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import "./central-de-notificacoes.scss"
 import {BotoesCategoriasNotificacoes} from "./BotoesCategoriasNotificacoes";
 import {CardNotificacoes} from "./CardNotificacoes";
 import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesmarcarLida} from "../../../services/Notificacoes.service";
 import Loading from "../../../utils/Loading";
+import {NotificacaoContext} from "../../../context/Notificacoes";
 
 
 export const CentralDeNotificacoes = () => {
 
+    const notificacaoContext = useContext(NotificacaoContext);
 
     const [clickBtnNotificacoes, setClickBtnNotificacoes] = useState(false);
     const [notificacoes, setNotificacoes] = useState(false);
@@ -17,19 +19,27 @@ export const CentralDeNotificacoes = () => {
         trazerNotificacoes();
     }, []);
 
+    useEffect(()=>{
+        qtdeNotificacoesNaoLidas()
+    }, [clickBtnNotificacoes]);
+
 
     const trazerNotificacoes = async () =>{
-        setLoading(true);
+        //setLoading(true);
         let notificacoes = await getNotificacoes();
         setNotificacoes(notificacoes);
         setLoading(false);
     };
 
     const trazerNotificacoesLidasNaoLidas = async (lidas) =>{
-        setLoading(true);
+        //setLoading(true);
         let notificacoes = await getNotificacoesLidasNaoLidas(lidas);
         setNotificacoes(notificacoes);
         setLoading(false);
+    };
+
+    const qtdeNotificacoesNaoLidas = async () =>{
+        await notificacaoContext.getQtdeNotificacoesNaoLidas()
     };
 
     const toggleBtnNotificacoes = (uuid) => {

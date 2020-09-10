@@ -47,7 +47,7 @@
   font-weight: 700;
 }
 
-.span-tipo-urgente, .span-tipo-informacoes, .span-tipo-avisos, .span-tipo-alerta{
+.span-tipo-urgente, .span-tipo-informacao, .span-tipo-aviso, .span-tipo-alerta{
   background-repeat: no-repeat;
   padding-left: 1.9rem;
   padding-right: 1rem;
@@ -65,19 +65,19 @@
   background-image: url("../../../assets/img/icones-central-notificacoes/exclamation-triangle-solid.svg");
 }
 
-.span-tipo-informacoes{
+.span-tipo-informacao{
   color: #086397;
   background-image: url("../../../assets/img/icones-central-notificacoes/info-circle-solid.svg");
 }
-.card-tipo-informacoes{
+.card-tipo-informacao{
   border-left: #086397 solid 8px;
 }
 
-.span-tipo-avisos{
+.span-tipo-aviso{
   color: #2B7D83;
   background-image: url("../../../assets/img/icones-central-notificacoes/book-reader-solid.svg");
 }
-.card-tipo-avisos{
+.card-tipo-aviso{
   border-left: #2B7D83 solid 8px;
 }
 
