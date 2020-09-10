@@ -209,14 +209,12 @@ export const PrestacaoDeContas = () => {
                                     contaPrestacaoDeContas={contaPrestacaoDeContas}
                                     setLoading={setLoading}
                                 />
-
                                 {/*<BoxPrestacaoDeContasPorPeriodo
                                     setLoading={setLoading}
                                     corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
                                     textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
                                     dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
                                 />*/}
-
                             </>
                         ):
                         <MsgImgCentralizada
