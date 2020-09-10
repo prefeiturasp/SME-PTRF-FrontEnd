@@ -1,23 +1,32 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useHistory } from "react-router-dom";
 import "./cabecalho.scss"
 import LogoPtrf from "../../../assets/img/logo-ptrf-verde.png"
 import IconeSair from "../../../assets/img/sair.svg"
 import { authService, USUARIO_LOGIN } from '../../../services/auth.service';
 import {visoesService} from "../../../services/visoes.service";
+import {NotificacaoContext} from "../../../context/Notificacoes";
 
 export const Cabecalho = () => {
 
     const history = useHistory();
-
-    const [exibeMenu, setExibeMenu] = useState(true);
-
     const logout = () => {
         authService.logout()
     };
-
     let login_usuario = localStorage.getItem(USUARIO_LOGIN);
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado(login_usuario);
+
+    const notificacaoContext = useContext(NotificacaoContext)
+
+    const [exibeMenu, setExibeMenu] = useState(true);
+
+    useEffect(()=>{
+        const qtdeNotificacoesNaoLidas = async () =>{
+            await notificacaoContext.getQtdeNotificacoesNaoLidas()
+        };
+        qtdeNotificacoesNaoLidas()
+    }, []);
+
 
     useEffect(()=>{
         if (dados_usuario_logado.visoes.find(visao=> visao === 'SME')){
@@ -116,7 +125,7 @@ export const Cabecalho = () => {
 
                     <div className="col col-md-2 col-lg-1">
                         <div className="p-2 text-center">
-                            <button onClick={()=>redirectCentralDeNotificacoes()} className="btn-sair ml-lg-4 ml-xl-0"><img className="icone-sair" src={IconeSair} alt=""/><span className="span-notificacoes-maior-que-10">15</span></button>
+                            <button onClick={()=>redirectCentralDeNotificacoes()} className="btn-sair ml-lg-4 ml-xl-0"><img className="icone-sair" src={IconeSair} alt=""/><span className="span-notificacoes-maior-que-10">{notificacaoContext.qtdeNotificacoesNaoLidas}</span></button>
                             <p>Notificações</p>
                         </div>
                     </div>
