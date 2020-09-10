@@ -10,12 +10,12 @@ export const CentralDeNotificacoes = () => {
 
     useEffect(()=> {
         trazerNotificacoes();
-    }, [])
+    }, []);
 
 
     const trazerNotificacoes = async () =>{
         let notificacoes = await getNotificacoes();
-        setNotificacoes(notificacoes)
+        setNotificacoes(notificacoes);
         console.log("Notificacoes ", notificacoes)
 
     };

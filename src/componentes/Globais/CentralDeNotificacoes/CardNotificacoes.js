@@ -23,14 +23,14 @@ export const CardNotificacoes = ({notificacoes, toggleBtnNotificacoes, clickBtnN
                         {notificacao.infos && notificacao.infos.length > 0 && notificacao.infos.map((info)=>
 
                             <div className="card mt-3" key={info.uuid}>
-                                <div className={`card-header card-tipo-${info.tipo}`} id={`heading_${info.uuid}`}>
+                                <div className={`card-header card-tipo-${slugify(info.tipo)}`} id={`heading_${info.uuid}`}>
 
                                     <div className="row">
                                         <div className="col-11">
 
                                             <div className="row">
                                                 <div className="col-md-3 col-xl-2 align-self-center">
-                                                    <span className={`span-tipo-${info.tipo}`}>{info.tipo}</span>
+                                                    <span className={`span-tipo-${slugify(info.tipo)}`}>{info.tipo}</span>
                                                 </div>
                                                 <div className="col-md-9 col-xl-10">
                                                     <p className="mb-0 titulo-notificacao">{info.titulo}</p>
