@@ -14,7 +14,7 @@ export default class RelacaoDeBens extends Component {
     }
 
     async componentDidUpdate(prevProps) {
-        if (prevProps.periodoConta !== this.props.periodoConta) {
+        if (prevProps.periodoPrestacaoDeConta !== this.props.periodoPrestacaoDeConta || prevProps.contaPrestacaoDeContas !== this.props.contaPrestacaoDeContas) {
             await this.relacaoBensInfo();
         }
     }
@@ -24,7 +24,9 @@ export default class RelacaoDeBens extends Component {
     }
 
     relacaoBensInfo = async () => {
-        const {periodo, conta} = this.props.periodoConta;
+        const periodo = this.props.periodoPrestacaoDeConta.periodo_uuid;
+        const conta = this.props.contaPrestacaoDeContas.conta_uuid;
+
         getRelacaoBensInfo(conta, periodo).then(
             (mensagem) => {
                 if(this._isMounted) {
@@ -37,14 +39,16 @@ export default class RelacaoDeBens extends Component {
     
     gerarPrevia = async () => {
         this.props.setLoading(true);
-        const {periodo, conta} = this.props.periodoConta;
+        const periodo = this.props.periodoPrestacaoDeConta.periodo_uuid;
+        const conta = this.props.contaPrestacaoDeContas.conta_uuid;
         await previa(conta, periodo);
         this.props.setLoading(false);
     };
 
     gerarDocumentoFinal = async () => {
         this.props.setLoading(true);
-        const {periodo, conta} = this.props.periodoConta;
+        const periodo = this.props.periodoPrestacaoDeConta.periodo_uuid;
+        const conta = this.props.contaPrestacaoDeContas.conta_uuid;
         await documentoFinal(conta, periodo);
         await this.relacaoBensInfo();
         this.props.setLoading(false);
@@ -61,8 +65,12 @@ export default class RelacaoDeBens extends Component {
                     <p className={`fonte-12 mb-1 ${mensagem.includes('pendente') ? "documento-pendente" :"documento-gerado"}`}>{mensagem}</p>
                     </div>
                     <div className="actions">
-                        <button type="button" onClick={this.gerarPrevia} className="btn btn-outline-success mr-2">prévia </button>
-                        <button disabled={false} onClick={this.gerarDocumentoFinal} type="button" className="btn btn-success">documento final</button>
+                        {this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
+                            <button type="button" disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className="btn btn-outline-success mr-2">prévia </button>
+                        }
+                        {/*<button type="button" onClick={this.gerarPrevia} className="btn btn-outline-success mr-2">prévia </button>*/}
+                        <button disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} onClick={this.gerarDocumentoFinal} type="button" className="btn btn-success">documento final</button>
+                        {/*<button disabled={false} onClick={this.gerarDocumentoFinal} type="button" className="btn btn-success">documento final</button>*/}
                     </div>
                 </article>
             </div>

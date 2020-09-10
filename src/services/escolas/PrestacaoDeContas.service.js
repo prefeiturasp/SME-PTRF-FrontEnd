@@ -1,5 +1,5 @@
 import api from '../api'
-import { TOKEN_ALIAS } from '../auth.service'
+import { TOKEN_ALIAS, ASSOCIACAO_UUID } from '../auth.service'
 
 const authHeader = {
   headers: {
@@ -7,6 +7,16 @@ const authHeader = {
     'Content-Type': 'application/json',
   },
 };
+
+// Prestação de Contas
+export const getStatusPeriodoPorData = async (data_incial_periodo) => {
+  return(await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/status-periodo/?data=${data_incial_periodo}`, authHeader)).data
+};
+
+export const getConcluirPeriodo = async (periodo_uuid) => {
+  return(await api.post(`/api/prestacoes-contas/concluir/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo_uuid=${periodo_uuid}`, authHeader)).data
+};
+
 
 export const getPeriodosNaoFuturos = async () => {
   return(await api.get('/api/periodos/lookup-until-now/', authHeader)).data
@@ -38,6 +48,7 @@ export const getReabrirPeriodo = async (uuid, payload) => {
   )
 };
 
+// Detalhe Prestação de Contas
 export const getDespesasPrestacaoDeContas = async (periodo_uuid, conta_uuid, acao_associacao_uuid, conferido) => {
   return (await api.get(`/api/conciliacoes/despesas/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&acao_associacao=${acao_associacao_uuid}&conferido=${conferido}`, authHeader)).data
 };
