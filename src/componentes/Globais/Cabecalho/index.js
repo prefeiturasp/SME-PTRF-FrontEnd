@@ -23,9 +23,6 @@ export const Cabecalho = () => {
     const [show, setShow] = useState(false);
 
     useEffect(()=>{
-        const qtdeNotificacoesNaoLidas = async () =>{
-            await notificacaoContext.getQtdeNotificacoesNaoLidas()
-        };
         qtdeNotificacoesNaoLidas()
     }, []);
 
@@ -35,6 +32,10 @@ export const Cabecalho = () => {
             setExibeMenu(false);
         }
     }, []);
+
+    const qtdeNotificacoesNaoLidas = async () =>{
+        await notificacaoContext.getQtdeNotificacoesNaoLidas()
+    };
 
     const onChangeVisao = (e) =>{
         let obj = JSON.parse(e.target.value);
@@ -78,8 +79,8 @@ export const Cabecalho = () => {
         history.push(path);
     };
 
-    const onShow = () =>{
-        let qtde = notificacaoContext.qtdeNotificacoesNaoLidas
+    const onShow = async () =>{
+        let qtde = await notificacaoContext.getQtdeNotificacoesNaoLidas();
         if(qtde > 0){
             setShow(true);
         }else {
@@ -154,7 +155,7 @@ export const Cabecalho = () => {
                                 onClick={()=>redirectCentralDeNotificacoes()}
                                 className="btn-sair ml-lg-4 ml-xl-0">
                                 <img className="icone-sair" src={IconeSair} alt=""/>
-                                <span className={notificacaoContext.qtdeNotificacoesNaoLidas && notificacaoContext.qtdeNotificacoesNaoLidas >= 10 ? `span-notificacoes-maior-que-10` : 'span-notificacoes-menor-que-10'} >{notificacaoContext.qtdeNotificacoesNaoLidas}</span>
+                                <span className={notificacaoContext.qtdeNotificacoesNaoLidas && notificacaoContext.qtdeNotificacoesNaoLidas >= 10 ? `span-notificacoes-maior-que-10` : 'span-notificacoes-menor-que-10'} >{notificacaoContext.qtdeNotificacoesNaoLidas ? notificacaoContext.qtdeNotificacoesNaoLidas : 0}</span>
                             </button>
                             <p>Notificações</p>
                         </div>

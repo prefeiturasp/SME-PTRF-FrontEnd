@@ -10,7 +10,7 @@ export const ModalConfirmaLogout = (props) =>{
             bodyText={props.texto}
             primeiroBotaoOnclick={props.onRedirectNotificacoes}
             primeiroBotaoTexto="Ver notificações"
-            primeiroBotaoCss="danger"
+            primeiroBotaoCss="outline-success"
             segundoBotaoOnclick={props.onLogoutTrue}
             segundoBotaoCss="success"
             segundoBotaoTexto="Sair do sistema"

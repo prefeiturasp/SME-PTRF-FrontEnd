@@ -14,6 +14,7 @@ export const NotificacaoContextProvider = ({children}) => {
     const getQtdeNotificacoesNaoLidas = async () =>{
         let qtde = await notificacoesService.getQuantidadeNaoLidas();
         setQtdeNotificacoesNaoLidas(qtde.quantidade_nao_lidos);
+        return qtde.quantidade_nao_lidos;
     };
 
     return (
