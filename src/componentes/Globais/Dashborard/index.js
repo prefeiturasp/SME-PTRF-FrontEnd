@@ -5,7 +5,7 @@ import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
 import {getPeriodosNaoFuturos, getStatusPeriodoPorData} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getAcoesAssociacao, getAcoesAssociacaoPorPeriodo, getAcoesAssociacaoPorConta, getTabelas} from "../../../services/Dashboard.service";
-import {exibeDataPT_BR, getCorStatusPeriodo, getTextoStatusPeriodo} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {exibeDataPT_BR, getCorStatusPeriodo} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
 import {BarraDeStatusPeriodoAssociacao} from "./BarraDeStatusPeriodoAssociacao";
 import "./dashboard.scss"
@@ -27,7 +27,7 @@ export const Dashboard = () => {
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [loading, setLoading] = useState(true);
     const [tiposConta, setTiposConta] = useState([]);
-    const [statusPrestacaoDeConta, setStatusPrestacaoDeConta] = useState(false);
+    const [statusPeriodoAssociacao, setStatusPeriodoAssociacao] = useState(false);
     // Lógica para "zerar" o select de Contas e Periodos
     const [selectConta, setSelectConta] = useState(false);
     const [selectPeriodo, setSelectPeriodo] = useState(false);
@@ -50,7 +50,7 @@ export const Dashboard = () => {
             if (acoesAssociacao && acoesAssociacao.data_inicio_realizacao_despesas){
                 let data_inicial = acoesAssociacao.data_inicio_realizacao_despesas;
                 let status = await getStatusPeriodoPorData(data_inicial);
-                setStatusPrestacaoDeConta(status)
+                setStatusPeriodoAssociacao(status)
             }
         };
         getStatus();
@@ -116,7 +116,7 @@ export const Dashboard = () => {
                 ) :
                 <>
                     <BarraDeStatusPeriodoAssociacao
-                        statusPrestacaoDeConta={statusPrestacaoDeConta}
+                        statusPeriodoAssociacao={statusPeriodoAssociacao}
                     />
                     <DashboardCardInfoConta
                         acoesAssociacao={acoesAssociacao}

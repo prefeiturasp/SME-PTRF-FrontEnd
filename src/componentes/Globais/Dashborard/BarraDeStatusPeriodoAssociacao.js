@@ -1,9 +1,9 @@
 import React from 'react'
-export const BarraDeStatusPeriodoAssociacao = ({ statusPrestacaoDeConta}) => {
+export const BarraDeStatusPeriodoAssociacao = ({ statusPeriodoAssociacao}) => {
     return(
-        statusPrestacaoDeConta && Object.entries(statusPrestacaoDeConta).length > 0  && (
-            <div className={`col-12 mb-3 barra-status-legenda-cor-${statusPrestacaoDeConta.prestacao_contas_status.legenda_cor ? statusPrestacaoDeConta.prestacao_contas_status.legenda_cor : ""}`}>
-                <p className="titulo-status pt-1 pb-1 mb-0">{statusPrestacaoDeConta.prestacao_contas_status.texto_status ? statusPrestacaoDeConta.prestacao_contas_status.texto_status : ""}</p>
+        statusPeriodoAssociacao && Object.entries(statusPeriodoAssociacao).length > 0  && (
+            <div className={`col-12 mb-3 barra-status-legenda-cor-${statusPeriodoAssociacao.prestacao_contas_status.legenda_cor ? statusPeriodoAssociacao.prestacao_contas_status.legenda_cor : ""}`}>
+                <p className="titulo-status pt-1 pb-1 mb-0">{statusPeriodoAssociacao.prestacao_contas_status.texto_status ? statusPeriodoAssociacao.prestacao_contas_status.texto_status : ""}</p>
             </div>
         )
     );
