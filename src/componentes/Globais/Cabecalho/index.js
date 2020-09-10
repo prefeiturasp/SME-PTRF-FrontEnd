@@ -125,7 +125,12 @@ export const Cabecalho = () => {
 
                     <div className="col col-md-2 col-lg-1">
                         <div className="p-2 text-center">
-                            <button onClick={()=>redirectCentralDeNotificacoes()} className="btn-sair ml-lg-4 ml-xl-0"><img className="icone-sair" src={IconeSair} alt=""/><span className="span-notificacoes-maior-que-10">{notificacaoContext.qtdeNotificacoesNaoLidas}</span></button>
+                            <button
+                                onClick={()=>redirectCentralDeNotificacoes()}
+                                className="btn-sair ml-lg-4 ml-xl-0">
+                                <img className="icone-sair" src={IconeSair} alt=""/>
+                                <span className={notificacaoContext.qtdeNotificacoesNaoLidas && notificacaoContext.qtdeNotificacoesNaoLidas >= 10 ? `span-notificacoes-maior-que-10` : 'span-notificacoes-menor-que-10'} >{notificacaoContext.qtdeNotificacoesNaoLidas}</span>
+                            </button>
                             <p>Notificações</p>
                         </div>
                     </div>
