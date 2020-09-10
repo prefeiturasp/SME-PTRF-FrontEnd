@@ -1,12 +1,14 @@
 import React, {Fragment} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronUp, faChevronDown, faUser} from "@fortawesome/free-solid-svg-icons";
-import {ObjetoDeNotificacoes} from "./ObjetoDeNotificacoes"
+import {slugify} from "../../../utils/ValidacoesAdicionaisFormularios";
 
-export const CardNotificacoes = ({toggleBtnNotificacoes, clickBtnNotificacoes, handleChangeMarcarComoLida}) => {
+export const CardNotificacoes = ({notificacoes, toggleBtnNotificacoes, clickBtnNotificacoes, handleChangeMarcarComoLida}) => {
 
-    const notificacoes = ObjetoDeNotificacoes;
+    var frase = "Informação e Informações do  site Código Fonte é o melhor da tecnologia de [a-Z].";
+    var url = slugify(frase);
 
+    console.log("FRASE ", url)
     return (
         <>
             <div className="accordion mt-1" id="accordionNotificacoes">

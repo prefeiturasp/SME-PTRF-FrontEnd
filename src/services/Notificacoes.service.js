@@ -8,11 +8,10 @@ const authHeader = {
     }
 };
 
-
-const getQuantidadeNaoLidas = async () =>{
+export const getQuantidadeNaoLidas = async () =>{
     return (await api.get(`/api/notificacoes/quantidade-nao-lidos/`, authHeader)).data
 };
 
-export const notificacoesService = {
-    getQuantidadeNaoLidas,
+export const getNotificacoes = async () =>{
+    return (await api.get(`/api/notificacoes/`, authHeader)).data
 };

@@ -1,5 +1,5 @@
 import React, {useState, createContext} from "react";
-import {notificacoesService} from "../../services/Notificacoes.service";
+import {getQuantidadeNaoLidas} from "../../services/Notificacoes.service";
 
 export const NotificacaoContext = createContext( {
     qtdeNotificacoesNaoLidas: '',
@@ -12,7 +12,7 @@ export const NotificacaoContextProvider = ({children}) => {
     const [qtdeNotificacoesNaoLidas, setQtdeNotificacoesNaoLidas] = useState(true);
 
     const getQtdeNotificacoesNaoLidas = async () =>{
-        let qtde = await notificacoesService.getQuantidadeNaoLidas();
+        let qtde = await getQuantidadeNaoLidas();
         setQtdeNotificacoesNaoLidas(qtde.quantidade_nao_lidos);
         return qtde.quantidade_nao_lidos;
     };
