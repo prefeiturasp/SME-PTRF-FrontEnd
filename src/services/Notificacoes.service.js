@@ -15,3 +15,11 @@ export const getQuantidadeNaoLidas = async () =>{
 export const getNotificacoes = async () =>{
     return (await api.get(`/api/notificacoes/`, authHeader)).data
 };
+
+export const getNotificacoesLidasNaoLidas = async (lidas) =>{
+    return (await api.get(`/api/notificacoes/?lido=${lidas}`, authHeader)).data
+};
+
+export const getNotificacaoMarcarDesmarcarLida = async (payload) =>{
+    return await api.put(`/api/notificacoes/marcar-lido/`,payload, authHeader).data
+};

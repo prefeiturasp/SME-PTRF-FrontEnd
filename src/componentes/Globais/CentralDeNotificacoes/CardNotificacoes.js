@@ -5,10 +5,8 @@ import {slugify} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const CardNotificacoes = ({notificacoes, toggleBtnNotificacoes, clickBtnNotificacoes, handleChangeMarcarComoLida}) => {
 
-    var frase = "Informação e Informações do  site Código Fonte é o melhor da tecnologia de [a-Z].";
-    var url = slugify(frase);
+    console.log("Card Noticacoes ", notificacoes)
 
-    console.log("FRASE ", url)
     return (
         <>
             <div className="accordion mt-1" id="accordionNotificacoes">
@@ -71,6 +69,7 @@ export const CardNotificacoes = ({notificacoes, toggleBtnNotificacoes, clickBtnN
                                                     name="checkConferido"
                                                     id="exampleCheck1"
                                                     className="form-check-input"
+                                                    defaultChecked={info.lido}
                                                 />
                                                 <label className="form-check-label marcar-como-lida" htmlFor="exampleCheck1">Marcar como lida</label>
                                             </div>

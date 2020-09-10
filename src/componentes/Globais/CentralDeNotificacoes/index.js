@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import "./central-de-notificacoes.scss"
 import {BotoesCategoriasNotificacoes} from "./BotoesCategoriasNotificacoes";
 import {CardNotificacoes} from "./CardNotificacoes";
-import {getNotificacoes} from "../../../services/Notificacoes.service";
+import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesmarcarLida} from "../../../services/Notificacoes.service";
 
 export const CentralDeNotificacoes = () => {
     const [clickBtnNotificacoes, setClickBtnNotificacoes] = useState(false);
@@ -16,8 +16,11 @@ export const CentralDeNotificacoes = () => {
     const trazerNotificacoes = async () =>{
         let notificacoes = await getNotificacoes();
         setNotificacoes(notificacoes);
-        console.log("Notificacoes ", notificacoes)
+    };
 
+    const trazerNotificacoesLidasNaoLidas = async (lidas) =>{
+        let notificacoes = await getNotificacoesLidasNaoLidas(lidas);
+        setNotificacoes(notificacoes);
     };
 
     const toggleBtnNotificacoes = (uuid) => {
@@ -26,13 +29,31 @@ export const CentralDeNotificacoes = () => {
         });
     };
 
-    const handleClickBtnCategorias = (e) => {
-        console.log("Cliquei handleClickBtnCategorias ", e.target.id);
+    const handleClickBtnCategorias = async (e) => {
+        let lidas = e.target.id;
+        if (lidas === 'nao_lidas'){
+            await trazerNotificacoesLidasNaoLidas("False")
+        }else if (lidas === "lidas"){
+            await trazerNotificacoesLidasNaoLidas("True")
+        }else if (lidas === 'todas'){
+            await trazerNotificacoes();
+        }
     };
 
-    const handleChangeMarcarComoLida = (e, uuid) => {
+    const handleChangeMarcarComoLida = async (e, uuid) => {
         console.log("Cliquei handleChangeMarcarComoLida e ", e.target.checked);
         console.log("Cliquei handleChangeMarcarComoLida uuid ", uuid)
+
+        const payload = {
+            "uuid": uuid,
+            "lido": e.target.checked
+        }
+
+        let marcar_desmarcar = await getNotificacaoMarcarDesmarcarLida(payload);
+
+        console.log("Marcar / Desmarcar ", marcar_desmarcar)
+
+
     };
 
     return (
