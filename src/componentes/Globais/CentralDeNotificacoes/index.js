@@ -3,6 +3,7 @@ import "./central-de-notificacoes.scss"
 import {BotoesCategoriasNotificacoes} from "./BotoesCategoriasNotificacoes";
 import {CardNotificacoes} from "./CardNotificacoes";
 import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesmarcarLida} from "../../../services/Notificacoes.service";
+import Loading from "../../../utils/Loading";
 
 
 export const CentralDeNotificacoes = () => {
@@ -10,6 +11,7 @@ export const CentralDeNotificacoes = () => {
 
     const [clickBtnNotificacoes, setClickBtnNotificacoes] = useState(false);
     const [notificacoes, setNotificacoes] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(()=> {
         trazerNotificacoes();
@@ -17,13 +19,17 @@ export const CentralDeNotificacoes = () => {
 
 
     const trazerNotificacoes = async () =>{
+        setLoading(true);
         let notificacoes = await getNotificacoes();
         setNotificacoes(notificacoes);
+        setLoading(false);
     };
 
     const trazerNotificacoesLidasNaoLidas = async (lidas) =>{
+        setLoading(true);
         let notificacoes = await getNotificacoesLidasNaoLidas(lidas);
         setNotificacoes(notificacoes);
+        setLoading(false);
     };
 
     const toggleBtnNotificacoes = (uuid) => {
@@ -56,15 +62,26 @@ export const CentralDeNotificacoes = () => {
 
     return (
         <>
-            <BotoesCategoriasNotificacoes
-                handleClickBtnCategorias={handleClickBtnCategorias}
-            />
-            <CardNotificacoes
-                notificacoes={notificacoes}
-                toggleBtnNotificacoes={toggleBtnNotificacoes}
-                clickBtnNotificacoes={clickBtnNotificacoes}
-                handleChangeMarcarComoLida={handleChangeMarcarComoLida}
-            />
+            {loading ? (
+                    <Loading
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="0"
+                        marginBottom="0"
+                    />
+                ) :
+                <>
+                    <BotoesCategoriasNotificacoes
+                        handleClickBtnCategorias={handleClickBtnCategorias}
+                    />
+                    <CardNotificacoes
+                        notificacoes={notificacoes}
+                        toggleBtnNotificacoes={toggleBtnNotificacoes}
+                        clickBtnNotificacoes={clickBtnNotificacoes}
+                        handleChangeMarcarComoLida={handleChangeMarcarComoLida}
+                    />
+                </>
+            }
         </>
     );
 };
