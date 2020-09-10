@@ -10,6 +10,7 @@ import RelacaoDeBens from "./RelacaoDeBens";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../assets/img/img-404.svg";
 import Loading from "../../../utils/Loading";
+import {ModalConcluirPeriodo} from "./ModalConcluirPeriodo";
 
 export const PrestacaoDeContas = () => {
 
@@ -20,6 +21,7 @@ export const PrestacaoDeContas = () => {
     const [contaPrestacaoDeContas, setContaPrestacaoDeContas] = useState(false);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [loading, setLoading] = useState(true);
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
         getPeriodoPrestacaoDeConta();
@@ -126,14 +128,6 @@ export const PrestacaoDeContas = () => {
         setLoading(false);
     };
 
-    const handleClickBtnConcluirPeriodo = async () =>{
-        setLoading(true);
-        await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
-        let status = await getStatusPeriodoPorData(periodoPrestacaoDeConta.data_inicial);
-        setStatusPrestacaoDeConta(status);
-        setLoading(false);
-    };
-
     const retornaObjetoPeriodoPrestacaoDeConta = (periodo_uuid, data_inicial) => {
         return JSON.stringify({
             periodo_uuid: periodo_uuid,
@@ -151,6 +145,23 @@ export const PrestacaoDeContas = () => {
 
     const checkCondicaoExibicao = (obj) =>{
         return obj && Object.entries(obj).length > 0
+    };
+
+    const concluirPeriodo = async () =>{
+        setLoading(true);
+        await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
+        let status = await getStatusPeriodoPorData(periodoPrestacaoDeConta.data_inicial);
+        setStatusPrestacaoDeConta(status);
+        setLoading(false);
+    };
+
+    const onSalvarTrue = () =>{
+        setShow(false);
+        concluirPeriodo();
+    };
+
+    const onHandleClose = () => {
+        setShow(false);
     };
 
     return (
@@ -176,7 +187,8 @@ export const PrestacaoDeContas = () => {
                         retornaObjetoPeriodoPrestacaoDeConta={retornaObjetoPeriodoPrestacaoDeConta}
                         statusPrestacaoDeConta={statusPrestacaoDeConta}
                         checkCondicaoExibicao={checkCondicaoExibicao}
-                        handleClickBtnConcluirPeriodo={handleClickBtnConcluirPeriodo}
+                        concluirPeriodo={concluirPeriodo}
+                        setShow={setShow}
                     />
                     {checkCondicaoExibicao(periodoPrestacaoDeConta)  ? (
                             <>
@@ -222,6 +234,18 @@ export const PrestacaoDeContas = () => {
                             img={Img404}
                         />
                     }
+                    <section>
+                        <ModalConcluirPeriodo
+                            show={show}
+                            handleClose={onHandleClose}
+                            onSalvarTrue={onSalvarTrue}
+                            titulo="Concluir Prestação de Contas"
+                            texto="<p>Ao concluir a Prestação de Contas, o período será <strong>bloqueado</strong>
+                            para cadastro ou edição de qualquer lançamento de crédito ou despesa.
+                            Se quiser conferir as informações cadastradas, sem bloqueio do sistema neste período, por favor, gere um documento prévio.
+                            <strong>Você confirma a conclusão dessa Prestação de Contas?</strong></p>"
+                        />
+                    </section>
                 </>
             }
         </>
