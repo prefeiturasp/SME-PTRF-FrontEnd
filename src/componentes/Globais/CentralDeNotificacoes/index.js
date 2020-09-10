@@ -4,7 +4,10 @@ import {BotoesCategoriasNotificacoes} from "./BotoesCategoriasNotificacoes";
 import {CardNotificacoes} from "./CardNotificacoes";
 import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesmarcarLida} from "../../../services/Notificacoes.service";
 
+
 export const CentralDeNotificacoes = () => {
+
+
     const [clickBtnNotificacoes, setClickBtnNotificacoes] = useState(false);
     const [notificacoes, setNotificacoes] = useState(false);
 
@@ -30,6 +33,7 @@ export const CentralDeNotificacoes = () => {
     };
 
     const handleClickBtnCategorias = async (e) => {
+        setClickBtnNotificacoes(false);
         let lidas = e.target.id;
         if (lidas === 'nao_lidas'){
             await trazerNotificacoesLidasNaoLidas("False")
@@ -41,19 +45,13 @@ export const CentralDeNotificacoes = () => {
     };
 
     const handleChangeMarcarComoLida = async (e, uuid) => {
-        console.log("Cliquei handleChangeMarcarComoLida e ", e.target.checked);
-        console.log("Cliquei handleChangeMarcarComoLida uuid ", uuid)
-
+        setClickBtnNotificacoes(false);
+        let checado = e.target.checked;
         const payload = {
             "uuid": uuid,
-            "lido": e.target.checked
-        }
-
-        let marcar_desmarcar = await getNotificacaoMarcarDesmarcarLida(payload);
-
-        console.log("Marcar / Desmarcar ", marcar_desmarcar)
-
-
+            "lido": checado
+        };
+        await getNotificacaoMarcarDesmarcarLida(payload);
     };
 
     return (
