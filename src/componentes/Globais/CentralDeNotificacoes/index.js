@@ -8,6 +8,7 @@ import Loading from "../../../utils/Loading";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import moment from "moment";
 import {Paginacao} from "./Paginacao";
+import {gerarUuid} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const CentralDeNotificacoes = () => {
 
@@ -30,6 +31,7 @@ export const CentralDeNotificacoes = () => {
     const [totalDePaginas, setTotalDePaginas] = useState(0);
     const [paginacaoAtual, setPaginacaoAtual] = useState(1);
     const [categoriaLidaNaoLida, setCategoriaLidaNaoLida] = useState('todas');
+    const [forcarPrimeiraPagina, setForcarPrimeiraPagina] = useState('todas');
 
     useEffect(()=> {
         trazerNotificacoes();
@@ -100,6 +102,7 @@ export const CentralDeNotificacoes = () => {
         }else if (lidas === 'todas'){
             await trazerNotificacoes();
         }
+        setForcarPrimeiraPagina(gerarUuid)
     };
 
     const handleChangeMarcarComoLida = async (e, uuid) => {
@@ -173,6 +176,7 @@ export const CentralDeNotificacoes = () => {
                                     trazerNotificacoesPaginacao={trazerNotificacoesPaginacao}
                                     trazerNotificacoesLidasNaoLidasPaginacao={trazerNotificacoesLidasNaoLidasPaginacao}
                                     categoriaLidaNaoLida={categoriaLidaNaoLida}
+                                    forcarPrimeiraPagina={forcarPrimeiraPagina}
                                 />
                             }
                         </>

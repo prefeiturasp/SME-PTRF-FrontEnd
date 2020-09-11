@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import UltimatePagination from 'react-ultimate-pagination-bootstrap-4'
 
-export const Paginacao = ({paginacaoPaginasTotal, trazerNotificacoesPaginacao, trazerNotificacoesLidasNaoLidasPaginacao, categoriaLidaNaoLida}) => {
+export const Paginacao = ({paginacaoPaginasTotal, trazerNotificacoesPaginacao, trazerNotificacoesLidasNaoLidasPaginacao, categoriaLidaNaoLida, forcarPrimeiraPagina}) => {
     const [page, setPage] = useState(1);
 
     useEffect(()=>{
         setPage(1)
-    }, [categoriaLidaNaoLida]);
+    }, [forcarPrimeiraPagina]);
 
     const onPageChange = (page) => {
         setPage(page);
