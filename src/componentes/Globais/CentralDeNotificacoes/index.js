@@ -7,8 +7,6 @@ import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesma
 import Loading from "../../../utils/Loading";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import moment from "moment";
-import {gerarUuid} from "../../../utils/ValidacoesAdicionaisFormularios";
-
 
 export const CentralDeNotificacoes = () => {
 
@@ -25,11 +23,9 @@ export const CentralDeNotificacoes = () => {
 
     const [clickBtnNotificacoes, setClickBtnNotificacoes] = useState(false);
     const [notificacoes, setNotificacoes] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [tabelaNotificacoes, setTabelaNotificacoes] = useState(true);
     const [stateFormFiltros, setStateFormFiltros] = useState(initialStateFormFiltros);
-    const [categoriaLida, setCategoriaLida] = useState("todas");
-    const [checkBoxMarcadoDesmarcado, setCheckBoxMarcadoDesmarcado] = useState("");
 
     useEffect(()=> {
         trazerNotificacoes();
@@ -41,33 +37,21 @@ export const CentralDeNotificacoes = () => {
     }, [clickBtnNotificacoes]);
 
     useEffect(()=>{
-        trazNotificacoesDeAcordoComEscolhido();
-    }, [checkBoxMarcadoDesmarcado]);
-
-
-    const trazNotificacoesDeAcordoComEscolhido = async () =>{
-        let escolhido = categoriaLida;
-        if (escolhido === 'nao_lidas'){
-            await trazerNotificacoesLidasNaoLidas("False")
-        }else if (escolhido === "lidas"){
-            await trazerNotificacoesLidasNaoLidas("True")
-        }else if (escolhido === 'todas'){
-            await trazerNotificacoes();
-        }
-    };
+        setLoading(false)
+    }, []);
 
     const trazerNotificacoes = async () =>{
         //setLoading(true);
         let notificacoes = await getNotificacoes();
         setNotificacoes(notificacoes);
-        setLoading(false);
+        //setLoading(false);
     };
 
     const trazerNotificacoesLidasNaoLidas = async (lidas) =>{
         //setLoading(true);
         let notificacoes = await getNotificacoesLidasNaoLidas(lidas);
         setNotificacoes(notificacoes);
-        setLoading(false);
+        //setLoading(false);
     };
 
     const qtdeNotificacoesNaoLidas = async () =>{
@@ -88,9 +72,7 @@ export const CentralDeNotificacoes = () => {
 
     const handleClickBtnCategorias = async (e) => {
         let lidas = e.target.id;
-        setCategoriaLida(lidas);
         setClickBtnNotificacoes(false);
-
         if (lidas === 'nao_lidas'){
             await trazerNotificacoesLidasNaoLidas("False")
         }else if (lidas === "lidas"){
@@ -108,8 +90,6 @@ export const CentralDeNotificacoes = () => {
             "lido": checado
         };
         await getNotificacaoMarcarDesmarcarLida(payload);
-        // Gero um uuid aleatório para sempre mudar o estado de checkBoxMarcadoDesmarcado, para chamar o useEffect correpondente e executar trazNotificacoesDeAcordoComEscolhido
-        setCheckBoxMarcadoDesmarcado(gerarUuid());
     };
 
     const handleChangeFormFiltros = (name, value) => {
@@ -154,13 +134,17 @@ export const CentralDeNotificacoes = () => {
                         handleSubmitFormFiltros={handleSubmitFormFiltros}
                         limpaFormulario={limpaFormulario}
                     />
+                    {notificacoes && notificacoes.length > 0 ? (
+                        <CardNotificacoes
+                            notificacoes={notificacoes}
+                            toggleBtnNotificacoes={toggleBtnNotificacoes}
+                            clickBtnNotificacoes={clickBtnNotificacoes}
+                            handleChangeMarcarComoLida={handleChangeMarcarComoLida}
+                        />
+                    ):
+                        <p className="mt-5"><strong>Não existem notificações a serem exibidas</strong></p>
+                    }
 
-                    <CardNotificacoes
-                        notificacoes={notificacoes}
-                        toggleBtnNotificacoes={toggleBtnNotificacoes}
-                        clickBtnNotificacoes={clickBtnNotificacoes}
-                        handleChangeMarcarComoLida={handleChangeMarcarComoLida}
-                    />
                 </>
             }
         </>
