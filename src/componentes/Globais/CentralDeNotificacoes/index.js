@@ -7,7 +7,6 @@ import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesma
 import Loading from "../../../utils/Loading";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import moment from "moment";
-import {filtrosAvancadosReceitas} from "../../../services/escolas/Receitas.service";
 
 
 export const CentralDeNotificacoes = () => {
@@ -59,7 +58,6 @@ export const CentralDeNotificacoes = () => {
 
     const getTabelaNotificacoes = async () =>{
         let tabela_notitficacoes = await getNotificacoesTabela()
-        console.log("TABELA ", tabela_notitficacoes)
         setTabelaNotificacoes(tabela_notitficacoes);
     };
 
@@ -100,9 +98,15 @@ export const CentralDeNotificacoes = () => {
 
     const handleSubmitFormFiltros = async (event) => {
         event.preventDefault();
+        let data_inicio = stateFormFiltros.data_inicio ? moment(new Date(stateFormFiltros.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let data_fim = stateFormFiltros.data_fim ? moment(new Date(stateFormFiltros.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let lista_retorno_filtros = await getNotificacoesFiltros(stateFormFiltros.tipo_notificacao, stateFormFiltros.remetente, stateFormFiltros.categoria, stateFormFiltros.lido, data_inicio, data_fim)
+        setNotificacoes(lista_retorno_filtros)
+    };
 
-        console.log("SUBMIT ", stateFormFiltros)
-
+    const limpaFormulario = async () => {
+        setStateFormFiltros(initialStateFormFiltros);
+        await trazerNotificacoes();
     };
 
     return (
@@ -125,6 +129,7 @@ export const CentralDeNotificacoes = () => {
                         stateFormFiltros={stateFormFiltros}
                         handleChangeFormFiltros={handleChangeFormFiltros}
                         handleSubmitFormFiltros={handleSubmitFormFiltros}
+                        limpaFormulario={limpaFormulario}
                     />
 
                     <CardNotificacoes

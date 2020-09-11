@@ -1,11 +1,11 @@
 import React from "react";
 import {DatePickerField} from "../DatePickerField";
 
-export const FormFiltrosNotificacoes = ({tabelaNotificacoes, stateFormFiltros, handleChangeFormFiltros, handleSubmitFormFiltros}) => {
+export const FormFiltrosNotificacoes = ({tabelaNotificacoes, stateFormFiltros, handleChangeFormFiltros, handleSubmitFormFiltros, limpaFormulario}) => {
     return (
         <>
             {tabelaNotificacoes &&
-            <div className="container-form-filtros mt-4">
+            <div className="container-form-filtros mt-4 pb-3">
                 <h5>Filtros</h5>
                 <form onSubmit={handleSubmitFormFiltros}>
                     <div className="form-row">
@@ -79,7 +79,17 @@ export const FormFiltrosNotificacoes = ({tabelaNotificacoes, stateFormFiltros, h
                                 </div>
 
                             </div>
-                            <div className="d-flex justify-content-end pb-3 mt-3">
+                            <div className="d-flex justify-content-end mt-3">
+                                <button
+                                    onClick={(e) => {
+                                        limpaFormulario()
+                                    }
+                                    }
+                                    className="btn btn-outline-success mr-2"
+                                    type="reset"
+                                >
+                                    Limpar Filtros
+                                </button>
                                 <button className="btn btn-success">Filtrar</button>
                             </div>
                         </div>

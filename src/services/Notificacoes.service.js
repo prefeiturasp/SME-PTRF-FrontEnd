@@ -28,6 +28,6 @@ export const getNotificacoesTabela = async () =>{
     return (await api.get(`/api/notificacoes/tabelas/`, authHeader)).data
 };
 
-export const getNotificacoesFiltros = async (tipo, remetente, categoria, lido, data_inicio, data_fim) =>{
-    return (await api.get(`/api/notificacoes/?tipo=2&remetente=1&categoria=1&lido=True&data_inicio=2020-08-09&data_fim=2020-09-01`, authHeader)).data
+export const getNotificacoesFiltros = async (tipo=null, remetente=null, categoria=null, lido=null, data_inicio=null, data_fim=null) =>{
+    return (await api.get(`/api/notificacoes/?${tipo ? 'tipo=' + tipo : ""}${remetente ? '&remetente='+remetente: ""}${categoria ? '&categoria='+categoria : ""}${lido ? '&lido='+lido : ""}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}`, authHeader)).data
 };
