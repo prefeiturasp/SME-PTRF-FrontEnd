@@ -2,8 +2,9 @@ import React, {Fragment} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronUp, faChevronDown, faUser} from "@fortawesome/free-solid-svg-icons";
 import {slugify} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {Paginacao} from "./Paginacao";
 
-export const CardNotificacoes = ({notificacoes, toggleBtnNotificacoes, clickBtnNotificacoes, handleChangeMarcarComoLida}) => {
+export const CardNotificacoes = ({notificacoes, toggleBtnNotificacoes, clickBtnNotificacoes, handleChangeMarcarComoLida, paginacaoPaginasTotal, metodoQueBuscaInfos}) => {
 
     return (
         <>
@@ -83,11 +84,13 @@ export const CardNotificacoes = ({notificacoes, toggleBtnNotificacoes, clickBtnN
                                     </div>
                                 </div>
                             </div>
-
                         )}
+
                     </Fragment>
                 )}
+
             </div>
+
         </>
     );
 };

@@ -1,12 +1,13 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {Fragment, useContext, useEffect, useState} from "react";
 import "./central-de-notificacoes.scss"
 import {BotoesCategoriasNotificacoes} from "./BotoesCategoriasNotificacoes";
 import {CardNotificacoes} from "./CardNotificacoes";
 import {FormFiltrosNotificacoes} from "./FormFiltrosNotificacoes";
-import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesmarcarLida, getNotificacoesTabela, getNotificacoesFiltros} from "../../../services/Notificacoes.service";
+import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesmarcarLida, getNotificacoesTabela, getNotificacoesFiltros, getNotificacoesPaginacao, getNotificacoesLidasNaoLidasPaginacao} from "../../../services/Notificacoes.service";
 import Loading from "../../../utils/Loading";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import moment from "moment";
+import {Paginacao} from "./Paginacao";
 
 export const CentralDeNotificacoes = () => {
 
@@ -26,6 +27,9 @@ export const CentralDeNotificacoes = () => {
     const [loading, setLoading] = useState(true);
     const [tabelaNotificacoes, setTabelaNotificacoes] = useState(true);
     const [stateFormFiltros, setStateFormFiltros] = useState(initialStateFormFiltros);
+    const [totalDePaginas, setTotalDePaginas] = useState(0);
+    const [paginacaoAtual, setPaginacaoAtual] = useState(1);
+    const [categoriaLidaNaoLida, setCategoriaLidaNaoLida] = useState('todas');
 
     useEffect(()=> {
         trazerNotificacoes();
@@ -41,17 +45,33 @@ export const CentralDeNotificacoes = () => {
     }, []);
 
     const trazerNotificacoes = async () =>{
-        //setLoading(true);
         let notificacoes = await getNotificacoes();
-        setNotificacoes(notificacoes);
-        //setLoading(false);
+        setNotificacoes(notificacoes.results);
+        let numeroDePaginas = notificacoes.count;
+        setTotalDePaginas(Math.ceil((numeroDePaginas)/10));
+    };
+
+    const trazerNotificacoesPaginacao = async (page) =>{
+        setPaginacaoAtual(page);
+        let notificacoes = await getNotificacoesPaginacao(page);
+        setNotificacoes(notificacoes.results);
+        let numeroDePaginas = notificacoes.count;
+        setTotalDePaginas(Math.ceil((numeroDePaginas)/10));
     };
 
     const trazerNotificacoesLidasNaoLidas = async (lidas) =>{
-        //setLoading(true);
         let notificacoes = await getNotificacoesLidasNaoLidas(lidas);
-        setNotificacoes(notificacoes);
-        //setLoading(false);
+        setNotificacoes(notificacoes.results);
+        let numeroDePaginas = notificacoes.count;
+        setTotalDePaginas(Math.ceil((numeroDePaginas)/10));
+    };
+
+    const trazerNotificacoesLidasNaoLidasPaginacao = async (lidas, page) =>{
+        setPaginacaoAtual(page);
+        let notificacoes = await getNotificacoesLidasNaoLidasPaginacao(lidas, page);
+        setNotificacoes(notificacoes.results);
+        let numeroDePaginas = notificacoes.count;
+        setTotalDePaginas(Math.ceil((numeroDePaginas)/10));
     };
 
     const qtdeNotificacoesNaoLidas = async () =>{
@@ -69,9 +89,9 @@ export const CentralDeNotificacoes = () => {
         });
     };
 
-
     const handleClickBtnCategorias = async (e) => {
         let lidas = e.target.id;
+        setCategoriaLidaNaoLida(lidas);
         setClickBtnNotificacoes(false);
         if (lidas === 'nao_lidas'){
             await trazerNotificacoesLidasNaoLidas("False")
@@ -135,16 +155,30 @@ export const CentralDeNotificacoes = () => {
                         limpaFormulario={limpaFormulario}
                     />
                     {notificacoes && notificacoes.length > 0 ? (
-                        <CardNotificacoes
-                            notificacoes={notificacoes}
-                            toggleBtnNotificacoes={toggleBtnNotificacoes}
-                            clickBtnNotificacoes={clickBtnNotificacoes}
-                            handleChangeMarcarComoLida={handleChangeMarcarComoLida}
-                        />
+                            <>
+                            <CardNotificacoes
+                                notificacoes={notificacoes}
+                                toggleBtnNotificacoes={toggleBtnNotificacoes}
+                                clickBtnNotificacoes={clickBtnNotificacoes}
+                                handleChangeMarcarComoLida={handleChangeMarcarComoLida}
+                                paginacaoPaginasTotal={totalDePaginas}
+                                metodoQueBuscaInfos={trazerNotificacoesPaginacao}
+                            />
+
+                            <p>Total de paginas | {totalDePaginas}</p>
+
+                            {totalDePaginas > 1 && totalDePaginas >= paginacaoAtual &&
+                                <Paginacao
+                                    paginacaoPaginasTotal={totalDePaginas}
+                                    trazerNotificacoesPaginacao={trazerNotificacoesPaginacao}
+                                    trazerNotificacoesLidasNaoLidasPaginacao={trazerNotificacoesLidasNaoLidasPaginacao}
+                                    categoriaLidaNaoLida={categoriaLidaNaoLida}
+                                />
+                            }
+                        </>
                     ):
                         <p className="mt-5"><strong>Não existem notificações a serem exibidas</strong></p>
                     }
-
                 </>
             }
         </>

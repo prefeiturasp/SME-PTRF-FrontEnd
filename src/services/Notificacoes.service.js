@@ -16,8 +16,16 @@ export const getNotificacoes = async () =>{
     return (await api.get(`/api/notificacoes/`, authHeader)).data
 };
 
+export const getNotificacoesPaginacao = async (page) =>{
+    return (await api.get(`/api/notificacoes/?page=${page}`, authHeader)).data
+};
+
 export const getNotificacoesLidasNaoLidas = async (lidas) =>{
     return (await api.get(`/api/notificacoes/?lido=${lidas}`, authHeader)).data
+};
+
+export const getNotificacoesLidasNaoLidasPaginacao = async (lidas, page) =>{
+    return (await api.get(`/api/notificacoes/?lido=${lidas}&page=${page}`, authHeader)).data
 };
 
 export const getNotificacaoMarcarDesmarcarLida = async (payload) =>{
@@ -30,4 +38,8 @@ export const getNotificacoesTabela = async () =>{
 
 export const getNotificacoesFiltros = async (tipo=null, remetente=null, categoria=null, lido=null, data_inicio=null, data_fim=null) =>{
     return (await api.get(`/api/notificacoes/?${tipo ? 'tipo=' + tipo : ""}${remetente ? '&remetente='+remetente: ""}${categoria ? '&categoria='+categoria : ""}${lido ? '&lido='+lido : ""}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}`, authHeader)).data
+};
+
+export const getTestePaginacao = async (page=null) =>{
+    return (await api.get(`https://hom-escolaaberta.sme.prefeitura.sp.gov.br/api/escolas/${page ? '?page='+page : ''}`, authHeader)).data
 };

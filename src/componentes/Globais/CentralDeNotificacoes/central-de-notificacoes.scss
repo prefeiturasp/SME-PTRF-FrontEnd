@@ -101,3 +101,20 @@
   border-bottom: solid 1px #ccc;
 }
 
+/* Paginacao */
+.container-paginacao{
+
+  .pagination .page-item .page-link{
+    padding: 10px 15px;
+    color: #42474A;
+  }
+
+  .page-item.active .page-link {
+    padding: 10px 15px;
+    border: 1px solid #00585E;
+    background-color: #00585E;
+    color: #fff;
+  }
+
+}
+
