@@ -23,3 +23,7 @@ export const getNotificacoesLidasNaoLidas = async (lidas) =>{
 export const getNotificacaoMarcarDesmarcarLida = async (payload) =>{
     return await api.put(`/api/notificacoes/marcar-lido/`,payload, authHeader).data
 };
+
+export const getFiltros = async (tipo, remetente, categoria, lido, data_inicio, data_fim) =>{
+    return (await api.get(`/api/notificacoes/?tipo=2&remetente=1&categoria=1&lido=True&data_inicio=2020-08-09&data_fim=2020-09-01`, authHeader)).data
+};

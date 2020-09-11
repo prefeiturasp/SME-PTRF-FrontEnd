@@ -2,7 +2,8 @@ import React, {useContext, useEffect, useState} from "react";
 import "./central-de-notificacoes.scss"
 import {BotoesCategoriasNotificacoes} from "./BotoesCategoriasNotificacoes";
 import {CardNotificacoes} from "./CardNotificacoes";
-import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesmarcarLida} from "../../../services/Notificacoes.service";
+import {FormFiltrosNotificacoes} from "./FormFiltrosNotificacoes";
+import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesmarcarLida, getFiltros} from "../../../services/Notificacoes.service";
 import Loading from "../../../utils/Loading";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 
@@ -84,6 +85,9 @@ export const CentralDeNotificacoes = () => {
                     <BotoesCategoriasNotificacoes
                         handleClickBtnCategorias={handleClickBtnCategorias}
                     />
+
+                    <FormFiltrosNotificacoes/>
+
                     <CardNotificacoes
                         notificacoes={notificacoes}
                         toggleBtnNotificacoes={toggleBtnNotificacoes}
