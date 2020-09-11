@@ -40,6 +40,6 @@ export const getNotificacoesFiltros = async (tipo=null, remetente=null, categori
     return (await api.get(`/api/notificacoes/?${tipo ? 'tipo=' + tipo : ""}${remetente ? '&remetente='+remetente: ""}${categoria ? '&categoria='+categoria : ""}${lido ? '&lido='+lido : ""}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}`, authHeader)).data
 };
 
-export const getTestePaginacao = async (page=null) =>{
-    return (await api.get(`https://hom-escolaaberta.sme.prefeitura.sp.gov.br/api/escolas/${page ? '?page='+page : ''}`, authHeader)).data
+export const getNotificacoesFiltrosPaginacao = async (tipo=null, remetente=null, categoria=null, lido=null, data_inicio=null, data_fim=null, page) =>{
+    return (await api.get(`/api/notificacoes/?${tipo ? 'tipo=' + tipo : ""}${remetente ? '&remetente='+remetente: ""}${categoria ? '&categoria='+categoria : ""}${lido ? '&lido='+lido : ""}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&page=${page}`, authHeader)).data
 };

@@ -1,9 +1,9 @@
-import React, {Fragment, useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import "./central-de-notificacoes.scss"
 import {BotoesCategoriasNotificacoes} from "./BotoesCategoriasNotificacoes";
 import {CardNotificacoes} from "./CardNotificacoes";
 import {FormFiltrosNotificacoes} from "./FormFiltrosNotificacoes";
-import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesmarcarLida, getNotificacoesTabela, getNotificacoesFiltros, getNotificacoesPaginacao, getNotificacoesLidasNaoLidasPaginacao} from "../../../services/Notificacoes.service";
+import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesmarcarLida, getNotificacoesTabela, getNotificacoesFiltros, getNotificacoesPaginacao, getNotificacoesLidasNaoLidasPaginacao, getNotificacoesFiltrosPaginacao} from "../../../services/Notificacoes.service";
 import Loading from "../../../utils/Loading";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import moment from "moment";
@@ -31,7 +31,8 @@ export const CentralDeNotificacoes = () => {
     const [totalDePaginas, setTotalDePaginas] = useState(0);
     const [paginacaoAtual, setPaginacaoAtual] = useState(1);
     const [categoriaLidaNaoLida, setCategoriaLidaNaoLida] = useState('todas');
-    const [forcarPrimeiraPagina, setForcarPrimeiraPagina] = useState('todas');
+    const [forcarPrimeiraPagina, setForcarPrimeiraPagina] = useState('');
+    const [usouFiltros, setUsouFiltros]  = useState(false);
 
     useEffect(()=> {
         trazerNotificacoes();
@@ -76,12 +77,32 @@ export const CentralDeNotificacoes = () => {
         setTotalDePaginas(Math.ceil((numeroDePaginas)/10));
     };
 
+    const trazerNotificacoesFiltros = async () =>{
+        let data_inicio = stateFormFiltros.data_inicio ? moment(new Date(stateFormFiltros.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let data_fim = stateFormFiltros.data_fim ? moment(new Date(stateFormFiltros.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let lista_retorno_filtros = await getNotificacoesFiltros(stateFormFiltros.tipo_notificacao, stateFormFiltros.remetente, stateFormFiltros.categoria, stateFormFiltros.lido, data_inicio, data_fim);
+        setNotificacoes(lista_retorno_filtros.results);
+        let numeroDePaginas = lista_retorno_filtros.count;
+        setTotalDePaginas(Math.ceil((numeroDePaginas)/10));
+    };
+
+    const trazerNotificacoesFiltrosPaginacao = async (page) =>{
+        setPaginacaoAtual(page);
+        let data_inicio = stateFormFiltros.data_inicio ? moment(new Date(stateFormFiltros.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let data_fim = stateFormFiltros.data_fim ? moment(new Date(stateFormFiltros.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let lista_retorno_filtros = await getNotificacoesFiltrosPaginacao(stateFormFiltros.tipo_notificacao, stateFormFiltros.remetente, stateFormFiltros.categoria, stateFormFiltros.lido, data_inicio, data_fim, page);
+        setNotificacoes(lista_retorno_filtros.results);
+        let numeroDePaginas = lista_retorno_filtros.count;
+        setTotalDePaginas(Math.ceil((numeroDePaginas)/10));
+    };
+
+
     const qtdeNotificacoesNaoLidas = async () =>{
         await notificacaoContext.getQtdeNotificacoesNaoLidas()
     };
 
     const getTabelaNotificacoes = async () =>{
-        let tabela_notitficacoes = await getNotificacoesTabela()
+        let tabela_notitficacoes = await getNotificacoesTabela();
         setTabelaNotificacoes(tabela_notitficacoes);
     };
 
@@ -92,6 +113,7 @@ export const CentralDeNotificacoes = () => {
     };
 
     const handleClickBtnCategorias = async (e) => {
+        setUsouFiltros(false);
         let lidas = e.target.id;
         setCategoriaLidaNaoLida(lidas);
         setClickBtnNotificacoes(false);
@@ -123,11 +145,10 @@ export const CentralDeNotificacoes = () => {
     };
 
     const handleSubmitFormFiltros = async (event) => {
+        setUsouFiltros(true);
+        setForcarPrimeiraPagina(gerarUuid);
         event.preventDefault();
-        let data_inicio = stateFormFiltros.data_inicio ? moment(new Date(stateFormFiltros.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        let data_fim = stateFormFiltros.data_fim ? moment(new Date(stateFormFiltros.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        let lista_retorno_filtros = await getNotificacoesFiltros(stateFormFiltros.tipo_notificacao, stateFormFiltros.remetente, stateFormFiltros.categoria, stateFormFiltros.lido, data_inicio, data_fim)
-        setNotificacoes(lista_retorno_filtros)
+        await trazerNotificacoesFiltros();
     };
 
     const limpaFormulario = async () => {
@@ -168,8 +189,6 @@ export const CentralDeNotificacoes = () => {
                                 metodoQueBuscaInfos={trazerNotificacoesPaginacao}
                             />
 
-                            <p>Total de paginas | {totalDePaginas}</p>
-
                             {totalDePaginas > 1 && totalDePaginas >= paginacaoAtual &&
                                 <Paginacao
                                     paginacaoPaginasTotal={totalDePaginas}
@@ -177,6 +196,8 @@ export const CentralDeNotificacoes = () => {
                                     trazerNotificacoesLidasNaoLidasPaginacao={trazerNotificacoesLidasNaoLidasPaginacao}
                                     categoriaLidaNaoLida={categoriaLidaNaoLida}
                                     forcarPrimeiraPagina={forcarPrimeiraPagina}
+                                    usouFiltros={usouFiltros}
+                                    trazerNotificacoesFiltrosPaginacao={trazerNotificacoesFiltrosPaginacao}
                                 />
                             }
                         </>

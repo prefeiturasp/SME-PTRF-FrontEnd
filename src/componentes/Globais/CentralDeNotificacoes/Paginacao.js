@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import UltimatePagination from 'react-ultimate-pagination-bootstrap-4'
 
-export const Paginacao = ({paginacaoPaginasTotal, trazerNotificacoesPaginacao, trazerNotificacoesLidasNaoLidasPaginacao, categoriaLidaNaoLida, forcarPrimeiraPagina}) => {
+export const Paginacao = ({paginacaoPaginasTotal, trazerNotificacoesPaginacao, trazerNotificacoesLidasNaoLidasPaginacao, categoriaLidaNaoLida, forcarPrimeiraPagina, usouFiltros, trazerNotificacoesFiltrosPaginacao }) => {
     const [page, setPage] = useState(1);
 
     useEffect(()=>{
@@ -10,9 +10,11 @@ export const Paginacao = ({paginacaoPaginasTotal, trazerNotificacoesPaginacao, t
 
     const onPageChange = (page) => {
         setPage(page);
-        if (categoriaLidaNaoLida === 'todas'){
+        if(usouFiltros){
+            trazerNotificacoesFiltrosPaginacao(page)
+        }else if (categoriaLidaNaoLida === 'todas'){
             trazerNotificacoesPaginacao(page);
-        }else {
+        }else if(categoriaLidaNaoLida === 'nao_lidas' || categoriaLidaNaoLida === 'lidas') {
             trazerNotificacoesLidasNaoLidasPaginacao(categoriaLidaNaoLida, page)
         }
     };
@@ -27,6 +29,5 @@ export const Paginacao = ({paginacaoPaginasTotal, trazerNotificacoesPaginacao, t
                 />
             </div>
         </>
-
     );
 };
