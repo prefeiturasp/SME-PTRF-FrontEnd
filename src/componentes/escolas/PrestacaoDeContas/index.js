@@ -20,6 +20,7 @@ export const PrestacaoDeContas = () => {
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [contaPrestacaoDeContas, setContaPrestacaoDeContas] = useState(false);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
+    const [periodoSelecionado, setPeriodoSelecionado] = useState(null);
     const [loading, setLoading] = useState(true);
     const [show, setShow] = useState(false);
 
@@ -116,6 +117,9 @@ export const PrestacaoDeContas = () => {
             setPeriodoPrestacaoDeConta(valor);
             let status = await getStatusPeriodoPorData(valor.data_inicial);
             setStatusPrestacaoDeConta(status)
+            let periodo = periodosAssociacao.filter((p) => (p.uuid == valor.periodo_uuid))[0]
+            console.log(periodo);
+            setPeriodoSelecionado(periodo);
         }
         setLoading(false);
     };
@@ -211,12 +215,14 @@ export const PrestacaoDeContas = () => {
                                 </nav>
                                 <DemonstrativoFinanceiro
                                     periodoPrestacaoDeConta={periodoPrestacaoDeConta}
+                                    periodoSelecionado={periodoSelecionado}
                                     statusPrestacaoDeConta={statusPrestacaoDeConta}
                                     contaPrestacaoDeContas={contaPrestacaoDeContas}
                                     setLoading={setLoading}
                                 />
                                 <RelacaoDeBens
                                     periodoPrestacaoDeConta={periodoPrestacaoDeConta}
+                                    periodoSelecionado={periodoSelecionado}
                                     statusPrestacaoDeConta={statusPrestacaoDeConta}
                                     contaPrestacaoDeContas={contaPrestacaoDeContas}
                                     setLoading={setLoading}

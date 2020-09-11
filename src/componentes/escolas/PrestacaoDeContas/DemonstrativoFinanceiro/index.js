@@ -3,6 +3,9 @@ import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {getAcoes, previa, documentoFinal, getDemonstrativoInfo} from "../../../../services/escolas/DemonstrativoFinanceiro.service";
+import moment from "moment";
+
+import {ModalPrevia} from "../ModalGerarPrevia";
 
 
 export class DemonstrativoFinanceiro extends Component {
@@ -11,11 +14,16 @@ export class DemonstrativoFinanceiro extends Component {
     state = {
         rowsPerPage: 30,
         estado: [],
+        show: false,
+        acaoUuid: null,
+        data_inicio: null,
+        data_fim: null,
+        mensagemErro: "" 
     };
 
     componentDidMount() {
         this._isMounted = true;
-        this.buscaAcoes()
+        this.buscaAcoes();
     }
 
     componentDidUpdate(prevProps) {
@@ -52,11 +60,45 @@ export class DemonstrativoFinanceiro extends Component {
         }
     };
 
-    gerarPrevia = async (acaoUuid) => {
+    showPrevia = (acaoUuid) => {
+        this.setState({show: true});
+        this.setState({acaoUuid});
+        let data_inicio = this.props.periodoSelecionado.data_inicio_realizacao_despesas
+        let data_fim = this.props.periodoSelecionado.data_fim_realizacao_despesas
+        this.setState({data_inicio: data_inicio, data_fim: data_fim})
+    }
+
+    onHide = () => {
+        this.setState({show: false});
+    }
+
+    handleChange = (name, value) => {
+        console.log("")
+        this.setState({
+            ...this.state,
+            [name]: value !== "" && value !== null ? moment(value, "YYYY-MM-DD").format("YYYY-MM-DD"): ""
+        });
+        this.setState({mensagemErro: ""})
+    };
+
+    gerarPrevia = async () => {
+        if (this.state.data_fim === null || this.state.data_fim === "") {
+            this.setState({mensagemErro: "Data final não pode ser vazia!"});
+            return 
+        }
+        
+        let data_inicio = new Date(this.state.data_inicio);
+        let data_fim = new Date(this.state.data_fim);
+        if (data_fim.getTime() < data_inicio.getTime()) {
+            this.setState({mensagemErro: "Data final não pode ser menor que a Data inicial"});
+            return
+        }
         this.props.setLoading(true);
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta')).periodo_uuid;
         const conta_uuid = JSON.parse(localStorage.getItem('contaPrestacaoDeConta')).conta_uuid;
-        await previa(acaoUuid, conta_uuid, periodo_uuid);
+        
+
+        await previa(this.state.acaoUuid, conta_uuid, periodo_uuid, this.state.data_inicio, this.state.data_fim);
         this.props.setLoading(false);
     };
 
@@ -82,7 +124,7 @@ export class DemonstrativoFinanceiro extends Component {
         return (
             <div className="text-right">
                 {this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
-                    <button type="button" disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className="btn btn-outline-success mr-2">prévia </button>
+                    <button onClick={(e) => this.showPrevia(rowData['acaoUuid'])} type="button" disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className="btn btn-outline-success mr-2">prévia </button>
                 }
                 {/*<button type="button" onClick={(e) => this.gerarPrevia(rowData['acaoUuid'])} className="btn btn-outline-success mr-2">prévia </button>*/}
                 <button disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} onClick={(e) => this.gerarDocumentoFinal(rowData['acaoUuid'])} type="button" className="btn btn-success">documento final</button>
@@ -151,6 +193,16 @@ export class DemonstrativoFinanceiro extends Component {
                                 />
                             </DataTable>
                         </div>
+                        <ModalPrevia 
+                            show={this.state.show} 
+                            onHide={this.onHide} 
+                            titulo="Geração de documento prévio"
+                            data_inicio={this.state.data_inicio}
+                            data_fim={this.state.data_fim}
+                            mensagemErro={this.state.mensagemErro}
+                            handleChange={this.handleChange}
+                            primeiroBotaoOnclick={this.gerarPrevia}
+                            primeiroBotaoTexto="OK"/>
                     </div>
                 ):
                     <p><strong>Não existem ações a serem exibidas</strong></p>
