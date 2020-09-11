@@ -3,21 +3,35 @@ import "./central-de-notificacoes.scss"
 import {BotoesCategoriasNotificacoes} from "./BotoesCategoriasNotificacoes";
 import {CardNotificacoes} from "./CardNotificacoes";
 import {FormFiltrosNotificacoes} from "./FormFiltrosNotificacoes";
-import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesmarcarLida, getFiltros} from "../../../services/Notificacoes.service";
+import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesmarcarLida, getNotificacoesTabela, getNotificacoesFiltros} from "../../../services/Notificacoes.service";
 import Loading from "../../../utils/Loading";
 import {NotificacaoContext} from "../../../context/Notificacoes";
+import moment from "moment";
+import {filtrosAvancadosReceitas} from "../../../services/escolas/Receitas.service";
 
 
 export const CentralDeNotificacoes = () => {
 
     const notificacaoContext = useContext(NotificacaoContext);
 
+    const initialStateFormFiltros = {
+        tipo_notificacao: "",
+        categoria: "",
+        remetente: "",
+        lido: "",
+        data_inicio: "",
+        data_fim: "",
+    };
+
     const [clickBtnNotificacoes, setClickBtnNotificacoes] = useState(false);
     const [notificacoes, setNotificacoes] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [tabelaNotificacoes, setTabelaNotificacoes] = useState(true);
+    const [stateFormFiltros, setStateFormFiltros] = useState(initialStateFormFiltros);
 
     useEffect(()=> {
         trazerNotificacoes();
+        getTabelaNotificacoes();
     }, []);
 
     useEffect(()=>{
@@ -41,6 +55,12 @@ export const CentralDeNotificacoes = () => {
 
     const qtdeNotificacoesNaoLidas = async () =>{
         await notificacaoContext.getQtdeNotificacoesNaoLidas()
+    };
+
+    const getTabelaNotificacoes = async () =>{
+        let tabela_notitficacoes = await getNotificacoesTabela()
+        console.log("TABELA ", tabela_notitficacoes)
+        setTabelaNotificacoes(tabela_notitficacoes);
     };
 
     const toggleBtnNotificacoes = (uuid) => {
@@ -71,6 +91,20 @@ export const CentralDeNotificacoes = () => {
         await getNotificacaoMarcarDesmarcarLida(payload);
     };
 
+    const handleChangeFormFiltros = (name, value) => {
+        setStateFormFiltros({
+            ...stateFormFiltros,
+            [name]: value
+        });
+    };
+
+    const handleSubmitFormFiltros = async (event) => {
+        event.preventDefault();
+
+        console.log("SUBMIT ", stateFormFiltros)
+
+    };
+
     return (
         <>
             {loading ? (
@@ -86,7 +120,12 @@ export const CentralDeNotificacoes = () => {
                         handleClickBtnCategorias={handleClickBtnCategorias}
                     />
 
-                    <FormFiltrosNotificacoes/>
+                    <FormFiltrosNotificacoes
+                        tabelaNotificacoes={tabelaNotificacoes}
+                        stateFormFiltros={stateFormFiltros}
+                        handleChangeFormFiltros={handleChangeFormFiltros}
+                        handleSubmitFormFiltros={handleSubmitFormFiltros}
+                    />
 
                     <CardNotificacoes
                         notificacoes={notificacoes}

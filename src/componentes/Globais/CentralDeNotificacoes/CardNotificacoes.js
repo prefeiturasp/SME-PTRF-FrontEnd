@@ -5,8 +5,6 @@ import {slugify} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const CardNotificacoes = ({notificacoes, toggleBtnNotificacoes, clickBtnNotificacoes, handleChangeMarcarComoLida}) => {
 
-    console.log("Card Noticacoes ", notificacoes)
-
     return (
         <>
             <div className="accordion mt-1" id="accordionNotificacoes">
