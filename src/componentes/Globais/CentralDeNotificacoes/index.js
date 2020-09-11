@@ -7,6 +7,7 @@ import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesma
 import Loading from "../../../utils/Loading";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import moment from "moment";
+import {gerarUuid} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 
 export const CentralDeNotificacoes = () => {
@@ -24,9 +25,11 @@ export const CentralDeNotificacoes = () => {
 
     const [clickBtnNotificacoes, setClickBtnNotificacoes] = useState(false);
     const [notificacoes, setNotificacoes] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [tabelaNotificacoes, setTabelaNotificacoes] = useState(true);
     const [stateFormFiltros, setStateFormFiltros] = useState(initialStateFormFiltros);
+    const [categoriaLida, setCategoriaLida] = useState("todas");
+    const [checkBoxMarcadoDesmarcado, setCheckBoxMarcadoDesmarcado] = useState("");
 
     useEffect(()=> {
         trazerNotificacoes();
@@ -37,6 +40,21 @@ export const CentralDeNotificacoes = () => {
         qtdeNotificacoesNaoLidas()
     }, [clickBtnNotificacoes]);
 
+    useEffect(()=>{
+        trazNotificacoesDeAcordoComEscolhido();
+    }, [checkBoxMarcadoDesmarcado]);
+
+
+    const trazNotificacoesDeAcordoComEscolhido = async () =>{
+        let escolhido = categoriaLida;
+        if (escolhido === 'nao_lidas'){
+            await trazerNotificacoesLidasNaoLidas("False")
+        }else if (escolhido === "lidas"){
+            await trazerNotificacoesLidasNaoLidas("True")
+        }else if (escolhido === 'todas'){
+            await trazerNotificacoes();
+        }
+    };
 
     const trazerNotificacoes = async () =>{
         //setLoading(true);
@@ -67,9 +85,12 @@ export const CentralDeNotificacoes = () => {
         });
     };
 
+
     const handleClickBtnCategorias = async (e) => {
-        setClickBtnNotificacoes(false);
         let lidas = e.target.id;
+        setCategoriaLida(lidas);
+        setClickBtnNotificacoes(false);
+
         if (lidas === 'nao_lidas'){
             await trazerNotificacoesLidasNaoLidas("False")
         }else if (lidas === "lidas"){
@@ -87,6 +108,8 @@ export const CentralDeNotificacoes = () => {
             "lido": checado
         };
         await getNotificacaoMarcarDesmarcarLida(payload);
+        // Gero um uuid aleatório para sempre mudar o estado de checkBoxMarcadoDesmarcado, para chamar o useEffect correpondente e executar trazNotificacoesDeAcordoComEscolhido
+        setCheckBoxMarcadoDesmarcado(gerarUuid());
     };
 
     const handleChangeFormFiltros = (name, value) => {
