@@ -96,7 +96,6 @@ export const CentralDeNotificacoes = () => {
         setTotalDePaginas(Math.ceil((numeroDePaginas)/10));
     };
 
-
     const qtdeNotificacoesNaoLidas = async () =>{
         await notificacaoContext.getQtdeNotificacoesNaoLidas()
     };
