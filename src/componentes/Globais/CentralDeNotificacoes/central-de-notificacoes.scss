@@ -26,6 +26,10 @@
   background-color: #fff;
 }
 
+.card-header-notificacao-lida{
+  background-color: #DADADA !important;
+  border-left: none !important;
+}
 #accordionNotificacoes .card-header, #accordionNotificacoes .card-body{
   border-bottom: 1px solid rgba(0,0,0,.125);
   background-color: #F3F3F3;
@@ -75,7 +79,7 @@
 
 .span-tipo-aviso{
   color: #2B7D83;
-  background-image: url("../../../assets/img/icones-central-notificacoes/info-circle-solid.svg");
+  background-image: url("../../../assets/img/icones-central-notificacoes/book-reader-solid.svg");
 }
 .card-tipo-aviso{
   border-left: #2B7D83 solid 8px;
@@ -91,5 +95,26 @@
 
 .marcar-como-lida{
   color: #00585e;
+}
+
+.container-form-filtros {
+  border-bottom: solid 1px #ccc;
+}
+
+/* Paginacao */
+.container-paginacao{
+
+  .pagination .page-item .page-link{
+    padding: 10px 15px;
+    color: #42474A;
+  }
+
+  .page-item.active .page-link {
+    padding: 10px 15px;
+    border: 1px solid #00585E;
+    background-color: #00585E;
+    color: #fff;
+  }
+
 }
 
