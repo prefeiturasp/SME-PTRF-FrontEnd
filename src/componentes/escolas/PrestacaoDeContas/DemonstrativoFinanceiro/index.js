@@ -73,7 +73,6 @@ export class DemonstrativoFinanceiro extends Component {
     }
 
     handleChange = (name, value) => {
-        console.log("")
         this.setState({
             ...this.state,
             [name]: value !== "" && value !== null ? moment(value, "YYYY-MM-DD").format("YYYY-MM-DD"): ""
@@ -93,10 +92,16 @@ export class DemonstrativoFinanceiro extends Component {
             this.setState({mensagemErro: "Data final não pode ser menor que a Data inicial"});
             return
         }
+
+        let data_fim_periodo = new Date(this.props.periodoSelecionado.data_fim_realizacao_despesas)
+        if (data_fim.getTime() > data_fim_periodo.getTime()) {
+            this.setState({mensagemErro: "Data final não pode ser maior que a data final do período."});
+            return
+        }
+
         this.props.setLoading(true);
         const periodo_uuid = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta')).periodo_uuid;
         const conta_uuid = JSON.parse(localStorage.getItem('contaPrestacaoDeConta')).conta_uuid;
-        
 
         await previa(this.state.acaoUuid, conta_uuid, periodo_uuid, this.state.data_inicio, this.state.data_fim);
         this.props.setLoading(false);

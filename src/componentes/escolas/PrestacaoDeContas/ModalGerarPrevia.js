@@ -23,7 +23,6 @@ export const ModalPrevia = (propriedades) => {
                                 name="data_inicio"
                                 id="data_inicio"
                                 value={propriedades.data_inicio !== null ? propriedades.data_inicio : ""}
-                                //onChange={(e) => e}
                                 disabled
                             />
                         </div>
