@@ -117,17 +117,10 @@ export const CadastroForm = ({verbo_http}) => {
         if (Object.entries(errors).length === 0 && values.cpf_cnpj_fornecedor) {
 
             // Verificando se já foi conferido
-
-            console.log("XXXXXXXXXXXXXXXXXX ", values);
-
-            let ja_conferido = values.rateios.find(element=> !element.conferido);
-            console.log("ja_conferido ", ja_conferido);
+            let ja_conferido = values.rateios.find(element=> element.conferido);
             if (ja_conferido){
                 setShowDespesaConferida(true)
             }
-
-
-
 
             let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
 
