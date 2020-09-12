@@ -118,7 +118,10 @@ export const ReceitaForm = props => {
         if (Object.entries(errors).length === 0 ) {
             if (values.conferido) {
                 setShowReceitaConferida(true)
+            }else{
+                onSubmit(values)
             }
+
         }
 
     };
@@ -700,7 +703,7 @@ export const ReceitaForm = props => {
                                     handleClose={()=>setShowReceitaConferida(false)}
                                     onSalvarReceitaConferida={ () => onSubmit(values) }
                                     titulo="Receita já demonstrada"
-                                    texto="<p>Atenção. Atenção. Esse crédito já foi demonstrado, caso a alteração seja gravada ele voltará a ser não demonstrado. Confirma a gravação?</p>"
+                                    texto="<p>Atenção. Esse crédito já foi demonstrado, caso a alteração seja gravada ele voltará a ser não demonstrado. Confirma a gravação?</p>"
                                 />
                             </section>
                         </form>
