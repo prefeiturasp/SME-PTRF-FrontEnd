@@ -113,15 +113,21 @@ export const ReceitaForm = props => {
         }
     }, [tabelas, initialValue.tipo_receita]);
 
-    const servicoDeVerificacoes = (values, errors) =>{
+    const servicoDeVerificacoes = (values, errors, setFieldValue) =>{
+
+        console.log("servicoDeVerificacoes values ", values)
+        console.log("servicoDeVerificacoes errors ", errors)
+
+        setFieldValue('tipo_receita', values.tipo_receita);
+
+
 
         if (Object.entries(errors).length === 0 ) {
             if (values.conferido) {
                 setShowReceitaConferida(true)
             }else{
-                onSubmit(values)
+                //onSubmit(values)
             }
-
         }
 
     };
@@ -443,6 +449,7 @@ export const ReceitaForm = props => {
         } else {
             setReadOnlyValor(false)
         }
+
         return errors;
     };
 
@@ -693,8 +700,10 @@ export const ReceitaForm = props => {
                                 {uuid ?
                                     <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null
                                 }
-                                <button onClick={()=>servicoDeVerificacoes(values, errors)}  type="button" className="btn btn-success mt-2">Salvar </button>
-                                {/*<button onClick={()=>servicoDeVerificacoes(values, errors)} disabled={readOnlyBtnAcao} type="button" className="btn btn-success mt-2">Salvar </button>*/}
+                                <button onClick={()=>servicoDeVerificacoes(values, errors, setFieldValue)}   type="submit" className="btn btn-success mt-2">Salvar </button>
+
+                                {/*disabled={readOnlyBtnAcao}*/}
+
                             </div>
                             {/*Fim Botões*/}
                             <section>
