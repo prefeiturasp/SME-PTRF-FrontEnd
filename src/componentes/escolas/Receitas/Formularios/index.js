@@ -113,23 +113,13 @@ export const ReceitaForm = props => {
         }
     }, [tabelas, initialValue.tipo_receita]);
 
-    const servicoDeVerificacoes = (values, errors, setFieldValue) =>{
-
-        console.log("servicoDeVerificacoes values ", values)
-        console.log("servicoDeVerificacoes errors ", errors)
-
-        setFieldValue('tipo_receita', values.tipo_receita);
-
-
-
+    const servicoDeVerificacoes = (e, values, errors) =>{
         if (Object.entries(errors).length === 0 ) {
             if (values.conferido) {
+                e.preventDefault();
                 setShowReceitaConferida(true)
-            }else{
-                //onSubmit(values)
             }
         }
-
     };
 
     const onSubmit = async (values) => {
@@ -700,9 +690,7 @@ export const ReceitaForm = props => {
                                 {uuid ?
                                     <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null
                                 }
-                                <button onClick={()=>servicoDeVerificacoes(values, errors, setFieldValue)}   type="submit" className="btn btn-success mt-2">Salvar </button>
-
-                                {/*disabled={readOnlyBtnAcao}*/}
+                                <button onClick={(e)=>servicoDeVerificacoes(e, values, errors)} disabled={readOnlyBtnAcao} type="submit" className="btn btn-success mt-2">Salvar </button>
 
                             </div>
                             {/*Fim Botões*/}
