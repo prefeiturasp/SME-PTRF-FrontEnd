@@ -11,7 +11,7 @@ export const ModalReceitaConferida = (props) =>{
             primeiroBotaoOnclick={props.handleClose}
             primeiroBotaoTexto="Não, cancelar"
             primeiroBotaoCss="outline-success"
-            segundoBotaoOnclick={props.onSalvarDespesaConferida}
+            segundoBotaoOnclick={props.onSalvarReceitaConferida}
             segundoBotaoCss="success"
             segundoBotaoTexto="Gravar"
         />
