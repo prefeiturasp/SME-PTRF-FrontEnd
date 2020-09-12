@@ -78,7 +78,6 @@ export const ReceitaForm = props => {
             if (uuid) {
                 getReceita(uuid).then(response => {
                     const resp = response.data;
-                    console.log("Initial Valudes ", resp)
                     const init = {
                         tipo_receita: resp.tipo_receita.id,
                         detalhe_tipo_receita: resp.detalhe_tipo_receita,
@@ -114,6 +113,7 @@ export const ReceitaForm = props => {
     }, [tabelas, initialValue.tipo_receita]);
 
     const servicoDeVerificacoes = (e, values, errors) =>{
+        // Validando se receita é conferida
         if (Object.entries(errors).length === 0 ) {
             if (values.conferido) {
                 e.preventDefault();
