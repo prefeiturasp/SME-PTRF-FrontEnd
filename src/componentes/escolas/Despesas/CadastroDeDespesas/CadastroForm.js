@@ -117,10 +117,12 @@ export const CadastroForm = ({verbo_http}) => {
         if (Object.entries(errors).length === 0 && values.cpf_cnpj_fornecedor) {
 
             // Verificando se já foi conferido
-            let ja_conferido = values.rateios.find(element=> element.conferido);
-            if (ja_conferido){
-                setShowDespesaConferida(true)
-            }
+            // let ja_conferido = values.rateios.find(element=> !element.conferido);
+            // if (ja_conferido){
+            //     setShowDespesaConferida(true)
+            // }else {
+            //     onSubmit(values)
+            // }
 
             let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
 
@@ -132,6 +134,10 @@ export const CadastroForm = ({verbo_http}) => {
                 setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes);
                 setShowSaldoInsuficiente(true);
 
+            // Checando se depesa já foi conferida
+            }else if (values.rateios.find(element=> !element.conferido)) {
+                setShowDespesaConferida(true)
+
                 // Checando se depesa já foi cadastrada
             }else if (values.tipo_documento && values.numero_documento) {
                 try {
@@ -139,13 +145,13 @@ export const CadastroForm = ({verbo_http}) => {
                     if (despesa_cadastrada.despesa_ja_lancada){
                         setShowDespesaCadastrada(true)
                     }else {
-                        //onSubmit(values);
+                        onSubmit(values);
                     }
                 }catch (e) {
                     console.log("Erro ao buscar despesa cadastrada ", e);
                 }
             } else {
-                //onSubmit(values);
+                onSubmit(values);
             }
         }
     };
