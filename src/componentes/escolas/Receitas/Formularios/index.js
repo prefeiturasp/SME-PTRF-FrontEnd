@@ -20,6 +20,8 @@ import {DeletarModalReceitas, CancelarModalReceitas, PeriodoFechado, ErroGeral} 
 import Loading from "../../../../utils/Loading";
 import api from "../../../../services/api";
 import {Login} from "../../../../paginas/Login";
+import {ModalReceitaConferida} from "../ModalReceitaJaConferida";
+import {ModalDespesaConferida} from "../../Despesas/CadastroDeDespesas/ModalDespesaJaConferida";
 
 export const ReceitaForm = props => {
 
@@ -61,6 +63,8 @@ export const ReceitaForm = props => {
 
     const [idxTipoDespesa, setIdxTipoDespesa] = useState(0);
 
+    const [showReceitaConferida, setShowReceitaConferida] = useState(false);
+
     useEffect(() => {
         const carregaTabelas = async () => {
             getTabelasReceita().then(response => {
@@ -79,6 +83,7 @@ export const ReceitaForm = props => {
                         detalhe_tipo_receita: resp.detalhe_tipo_receita,
                         detalhe_outros: resp.detalhe_outros,
                         categoria_receita: resp.categoria_receita,
+                        conferido: resp.conferido,
                         acao_associacao: resp.acao_associacao.uuid,
                         conta_associacao: resp.conta_associacao.uuid,
                         referencia_devolucao: resp.referencia_devolucao,
@@ -106,6 +111,16 @@ export const ReceitaForm = props => {
             setaDetalhesTipoReceita(initialValue.tipo_receita);
         }
     }, [tabelas, initialValue.tipo_receita]);
+
+    const servicoDeVerificacoes = (e, values, errors) =>{
+        // Validando se receita é conferida
+        if (Object.entries(errors).length === 0 ) {
+            if (values.conferido) {
+                e.preventDefault();
+                setShowReceitaConferida(true)
+            }
+        }
+    };
 
     const onSubmit = async (values) => {
         // Validando e ou removendo e_devolucao
@@ -412,6 +427,7 @@ export const ReceitaForm = props => {
                     acao_associacao: values.acao_associacao,
                     conta_associacao: repasse.conta_associacao.uuid,
                     categoria_receita: values.categoria_receita,
+                    conferido: values.conferido,
                     referencia_devolucao: values.referencia_devolucao,
                 };
                 setInitialValue(init);
@@ -423,6 +439,7 @@ export const ReceitaForm = props => {
         } else {
             setReadOnlyValor(false)
         }
+
         return errors;
     };
 
@@ -453,6 +470,7 @@ export const ReceitaForm = props => {
                 {props => {
                     const {
                         values,
+                        errors,
                         setFieldValue,
                     } = props;
                     return (
@@ -669,15 +687,22 @@ export const ReceitaForm = props => {
                                 <button type="reset" onClick={onShowModal}
                                         className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                 </button>
-                                {uuid
-                                    ?
-                                    <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal}
-                                            className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
-                                <button disabled={readOnlyBtnAcao} type="submit"
-                                        className="btn btn-success mt-2">Salvar
-                                </button>
+                                {uuid ?
+                                    <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null
+                                }
+                                <button onClick={(e)=>servicoDeVerificacoes(e, values, errors)} disabled={readOnlyBtnAcao} type="submit" className="btn btn-success mt-2">Salvar </button>
+
                             </div>
                             {/*Fim Botões*/}
+                            <section>
+                                <ModalReceitaConferida
+                                    show={showReceitaConferida}
+                                    handleClose={()=>setShowReceitaConferida(false)}
+                                    onSalvarReceitaConferida={ () => onSubmit(values) }
+                                    titulo="Receita já demonstrada"
+                                    texto="<p>Atenção. Esse crédito já foi demonstrado, caso a alteração seja gravada ele voltará a ser não demonstrado. Confirma a gravação?</p>"
+                                />
+                            </section>
                         </form>
                     );
                 }}
