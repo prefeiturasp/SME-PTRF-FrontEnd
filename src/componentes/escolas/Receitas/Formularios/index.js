@@ -20,6 +20,7 @@ import {DeletarModalReceitas, CancelarModalReceitas, PeriodoFechado, ErroGeral} 
 import Loading from "../../../../utils/Loading";
 import api from "../../../../services/api";
 import {Login} from "../../../../paginas/Login";
+import {ModalReceitaConferida} from "../ModalReceitaJaConferida";
 
 export const ReceitaForm = props => {
 
@@ -107,9 +108,15 @@ export const ReceitaForm = props => {
         }
     }, [tabelas, initialValue.tipo_receita]);
 
-    const servicoDeVerificacoes = () =>{
-        
-    }
+    const servicoDeVerificacoes = (values, errors) =>{
+        console.log("Servico de verificacoes values ", values)
+        console.log("Servico de verificacoes errors ", errors)
+
+        if (Object.entries(errors).length === 0 ) {
+
+        }
+
+    };
 
     const onSubmit = async (values) => {
         // Validando e ou removendo e_devolucao
@@ -457,6 +464,7 @@ export const ReceitaForm = props => {
                 {props => {
                     const {
                         values,
+                        errors,
                         setFieldValue,
                     } = props;
                     return (
@@ -673,13 +681,10 @@ export const ReceitaForm = props => {
                                 <button type="reset" onClick={onShowModal}
                                         className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                 </button>
-                                {uuid
-                                    ?
-                                    <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal}
-                                            className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null}
-                                <button disabled={readOnlyBtnAcao} type="submit"
-                                        className="btn btn-success mt-2">Salvar
-                                </button>
+                                {uuid ?
+                                    <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null
+                                }
+                                <button onClick={()=>servicoDeVerificacoes(values, errors)} disabled={readOnlyBtnAcao} type="submit" className="btn btn-success mt-2">Salvar </button>
                             </div>
                             {/*Fim Botões*/}
                         </form>
