@@ -107,6 +107,10 @@ export const ReceitaForm = props => {
         }
     }, [tabelas, initialValue.tipo_receita]);
 
+    const servicoDeVerificacoes = () =>{
+        
+    }
+
     const onSubmit = async (values) => {
         // Validando e ou removendo e_devolucao
         if (!verificaSeDevolucao(values.tipo_receita)){
