@@ -24,6 +24,7 @@ import {
     ModalConfirmarRetiradaAtribuicoes,
     ModalInformativoCopiaPeriodo} from "./Modais";
 import "./atribuicoes.scss";
+import {useParams} from 'react-router-dom';
 
 
 const CustomToast = (propriedades) => {
@@ -54,6 +55,7 @@ const CustomToast = (propriedades) => {
 
 export const Atribuicoes = () => {
     const rowsPerPage = 10;
+    let {tecnico_uuid} = useParams(); 
 
     const estadoInicialFiltros = {
         filtrar_por_termo: "",
@@ -85,7 +87,26 @@ export const Atribuicoes = () => {
     useEffect(() => {
         buscaDadosDiretoriaEPeriodos()
         .then(response => {
-                buscarUnidadesParaAtribuicao(response.dre, response.periodo);
+                if (tecnico_uuid !== undefined) {
+                    setEstadoFiltros({
+                        ...estadoFiltros,
+                        filtrar_por_tecnico: tecnico_uuid
+                    });
+                    filtrosUnidadesParaAtribuir(response.dre, response.periodo, 
+                        estadoFiltros.filtar_por_tipo_unidade, estadoFiltros.filtrar_por_termo, 
+                        estadoFiltros.filtrar_por_rf, tecnico_uuid).then(resultado_filtros => {
+                            console.log(resultado_filtros);
+                            let unis = resultado_filtros.map(obj => {
+                                return {
+                                    ...obj,
+                                    selecionado: false
+                                    }
+                                });
+                            setUnidades(unis);
+                        });
+                } else {
+                    buscarUnidadesParaAtribuicao(response.dre, response.periodo);
+                }
                 carregaTecnicos(response.dre);
             }
         );
@@ -303,7 +324,6 @@ export const Atribuicoes = () => {
     }
 
     const tratarSelecionado = (e, unidadeUuid) => {
-        console.log("Selecionado");
         if (showToast === true) {
             alert("A mensagem para Desfazer atribuições está aberta, feche a mensagem  no 'x' ou clique  em 'Desfazer' para liberar a seleção das unidades.");
             return 
@@ -550,9 +570,10 @@ export const Atribuicoes = () => {
                                                 type="radio"
                                                 id="sim"
                                                 value="sim"
+                                                className="form-check-input"
                                                 checked={escolhaTags}
                                             />
-                                            <label className="form-check-label" htmlFor="{`tag_sim_${index}`}">Sim</label>
+                                            <label className="form-check-label" htmlFor="{`tag_sim_${index}`}"> Sim</label>
                                         </div>
                                 
                                         <div className="form-check form-check-inline">
@@ -564,9 +585,10 @@ export const Atribuicoes = () => {
                                                 type="radio"
                                                 id="nao"
                                                 value="nao"
+                                                className="form-check-input"
                                                 checked={!escolhaTags}
                                             />
-                                            <label className="form-check-label" htmlFor="{`tag_nao_${index}`}">Não</label>
+                                            <label className="form-check-label" htmlFor="{`tag_nao_${index}`}"> Não</label>
                                         </div>
                                     </div>
                                     <div className="col-5">

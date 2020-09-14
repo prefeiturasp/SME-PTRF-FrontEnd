@@ -1,30 +1,19 @@
 import React, {useEffect, useState} from "react";
-
 import "./tecnicos.scss"
-
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
-
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash, faPlus, faClipboardList} from "@fortawesome/free-solid-svg-icons";
-
 import Img404 from "../../../../assets/img/img-404.svg";
 import Loading from "../../../../utils/Loading";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
-
-import {
-    getTecnicosDre,
-    createTecnicoDre,
-    deleteTecnicoDre,
-    getTecnicoDrePorRf
-} from "../../../../services/dres/TecnicosDre.service";
-
+import {getTecnicosDre, createTecnicoDre, deleteTecnicoDre, getTecnicoDrePorRf} from "../../../../services/dres/TecnicosDre.service";
 import {TecnicoDreForm} from "./TecnicoDreForm";
 import {ConfirmaDeleteTecnico} from "./ConfirmaDeleteTecnicoDialog";
 import {consultarRF} from "../../../../services/escolas/Associacao.service";
+import {Link} from "react-router-dom";
 
 export const CadastroTecnicosDre = ({dadosDaDre}) => {
-
 
     const rowsPerPage = 7;
 
@@ -35,18 +24,14 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     };
 
     const [loading, setLoading] = useState(true);
-
     const [stateTecnicoForm, setStateTecnicoForm] = useState(initTecnicoForm);
-
     const [dreUuid, setDreUuid] = useState(dadosDaDre.uuid);
-
     const [tecnicosList, setTecnicosList] = useState([]);
-
     const [showTecnicoForm, setShowTecnicoForm] = useState(false);
-
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
-
     const [btnSalvarReadOnly, setBtnSalvarReadOnly] = useState(false);
+    const [stateSelectDeleteTecnico, setStateSelectDeleteTecnico] = useState("");
+    const [stateCheckboxDeleteTecnico, setStateCheckboxDeleteTecnico] = useState(false);
 
     const carregaTecnicos = async () => {
         let tecnicos = await getTecnicosDre(dreUuid);
@@ -56,20 +41,19 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     const deleteTecnico = async () => {
         setLoading(true);
         if (stateTecnicoForm.uuid) {
-            try {
-                const response = await deleteTecnicoDre(stateTecnicoForm.uuid);
-                if (response.status === 204) {
-                    console.log("Operação realizada com sucesso!");
-                    await carregaTecnicos();
-                } else {
-                    console.log("Erro ao excluir Técnico")
+                try {
+                    const response = await deleteTecnicoDre(stateTecnicoForm.uuid, stateSelectDeleteTecnico);
+                    if (response.status === 204 || response.status === 200) {
+                        await carregaTecnicos();
+                        console.log("Operação realizada com sucesso!");
+                    } else {
+                        console.log("Erro ao excluir Técnico")
+                    }
+                } catch (error) {
+                    console.log(error)
                 }
-            } catch (error) {
-                console.log(error)
-            }
         }
         setLoading(false)
-
     };
 
     const handleAddTecnicoAction = () => {
@@ -113,7 +97,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                     // rf: ["Técnico de DRE com este RF já existe."]
                     console.log("Técnico já existe")
                 } else {
-                    console.log("Erro ao criar Tecnico")
+                    console.log("Erro ao criar Tecnico");
                     console.log(response)
                 }
             } catch (error) {
@@ -144,7 +128,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                 };
                 setStateTecnicoForm(init);
 
-                const tecnico_existente = await getTecnicoDrePorRf(values.rf.trim())
+                const tecnico_existente = await getTecnicoDrePorRf(values.rf.trim());
 
                 if (tecnico_existente.length > 0) {
                     errors.rf = "Técnico já cadastrado"
@@ -172,17 +156,16 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     const conferirAtribuicoesTemplate = (rowData, column) => {
         return (
             <div>
-                <a className="link-green" onClick={() => {}}>
+                <Link to={`/dre-atribuicoes/${rowData['uuid']}`} className="link-green" onClick={() => {}}>
                     <FontAwesomeIcon
                         style={{fontSize: '15px', marginRight: "0"}}
                         icon={faClipboardList}
                     />
                     <span> Conferir atribuições</span>
-                </a>
+                </Link>
             </div>
         )
     };
-
 
     const tableActionsTemplate = (rowData, column) => {
         return (
@@ -201,6 +184,15 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         carregaTecnicos()
         setLoading(false)
     }, []);
+
+    const handleChangeSelectDeleteTecnico = (value) => {
+        setStateSelectDeleteTecnico(value);
+    };
+    const handleChangeCheckboxDeleteTecnico = async (e) => {
+        let checado = e.target.checked;
+        setStateCheckboxDeleteTecnico(checado);
+        setStateSelectDeleteTecnico("");
+    };
 
     return (
         <>
@@ -277,6 +269,12 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                                 show={showConfirmDelete}
                                 onCancelDelete={closeConfirmDeleteDialog}
                                 onConfirmDelete={handleDeleteConfirmation}
+                                stateTecnicoForm={stateTecnicoForm}
+                                tecnicosList={tecnicosList}
+                                stateSelectDeleteTecnico={stateSelectDeleteTecnico}
+                                stateCheckboxDeleteTecnico={stateCheckboxDeleteTecnico}
+                                handleChangeSelectDeleteTecnico={handleChangeSelectDeleteTecnico}
+                                handleChangeCheckboxDeleteTecnico={handleChangeCheckboxDeleteTecnico}
                             />
                         </section>
                     </div>
