@@ -11,6 +11,7 @@ import {getTecnicosDre, createTecnicoDre, deleteTecnicoDre, getTecnicoDrePorRf} 
 import {TecnicoDreForm} from "./TecnicoDreForm";
 import {ConfirmaDeleteTecnico} from "./ConfirmaDeleteTecnicoDialog";
 import {consultarRF} from "../../../../services/escolas/Associacao.service";
+import {Link} from "react-router-dom";
 
 export const CadastroTecnicosDre = ({dadosDaDre}) => {
 
@@ -155,13 +156,13 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     const conferirAtribuicoesTemplate = (rowData, column) => {
         return (
             <div>
-                <a className="link-green" onClick={() => {}}>
+                <Link to={`/dre-atribuicoes/${rowData['uuid']}`} className="link-green" onClick={() => {}}>
                     <FontAwesomeIcon
                         style={{fontSize: '15px', marginRight: "0"}}
                         icon={faClipboardList}
                     />
                     <span> Conferir atribuições</span>
-                </a>
+                </Link>
             </div>
         )
     };

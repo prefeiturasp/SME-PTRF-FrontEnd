@@ -169,7 +169,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/dre-atribuicoes",
+        path: "/dre-atribuicoes/:tecnico_uuid?",
         component: AtribuicoesPage
     },
     {
