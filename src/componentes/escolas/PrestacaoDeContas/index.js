@@ -4,7 +4,6 @@ import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/esco
 import {getStatusPeriodoPorData, getConcluirPeriodo} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
-import {BoxPrestacaoDeContasPorPeriodo} from "../GeracaoDaAta/BoxPrestacaoDeContasPorPeriodo";
 import {DemonstrativoFinanceiro} from "./DemonstrativoFinanceiro";
 import RelacaoDeBens from "./RelacaoDeBens";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
@@ -155,6 +154,7 @@ export const PrestacaoDeContas = () => {
         await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
         let status = await getStatusPeriodoPorData(periodoPrestacaoDeConta.data_inicial);
         setStatusPrestacaoDeConta(status);
+        await carregaPeriodos();
         setLoading(false);
     };
 
