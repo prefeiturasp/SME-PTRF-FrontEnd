@@ -23,12 +23,14 @@ export const createTecnicoDre = async (payload) => {
     });
 };
 
-export const deleteTecnicoDre = async (uuid_tecnico) => {
-    return api.delete(`api/tecnicos-dre/${uuid_tecnico}/`, authHeader).then(response => {
+export const deleteTecnicoDre = async (uuid_tecnico, transe) => {
+    return (await api.delete(`api/tecnicos-dre/${uuid_tecnico}/`, authHeader)).data
+
+    /*return api.delete(`api/tecnicos-dre/${uuid_tecnico}/`, authHeader).then(response => {
         return response;
     }).catch(error => {
         return error.response;
-    });
+    });*/
 };
 
 export const getTecnicoDre = async (uuid_tecnico) => {

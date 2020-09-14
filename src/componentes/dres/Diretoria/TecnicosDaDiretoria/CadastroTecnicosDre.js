@@ -1,30 +1,18 @@
 import React, {useEffect, useState} from "react";
-
 import "./tecnicos.scss"
-
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
-
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash, faPlus, faClipboardList} from "@fortawesome/free-solid-svg-icons";
-
 import Img404 from "../../../../assets/img/img-404.svg";
 import Loading from "../../../../utils/Loading";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
-
-import {
-    getTecnicosDre,
-    createTecnicoDre,
-    deleteTecnicoDre,
-    getTecnicoDrePorRf
-} from "../../../../services/dres/TecnicosDre.service";
-
+import {getTecnicosDre, createTecnicoDre, deleteTecnicoDre, getTecnicoDrePorRf} from "../../../../services/dres/TecnicosDre.service";
 import {TecnicoDreForm} from "./TecnicoDreForm";
 import {ConfirmaDeleteTecnico} from "./ConfirmaDeleteTecnicoDialog";
 import {consultarRF} from "../../../../services/escolas/Associacao.service";
 
 export const CadastroTecnicosDre = ({dadosDaDre}) => {
-
 
     const rowsPerPage = 7;
 
@@ -41,7 +29,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     const [showTecnicoForm, setShowTecnicoForm] = useState(false);
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [btnSalvarReadOnly, setBtnSalvarReadOnly] = useState(false);
-    const [stateSelectDeleteTecnico, setStateSelectDeleteTecnico] = useState({});
+    const [stateSelectDeleteTecnico, setStateSelectDeleteTecnico] = useState("");
     const [stateCheckboxDeleteTecnico, setStateCheckboxDeleteTecnico] = useState(false);
 
     const carregaTecnicos = async () => {
@@ -51,7 +39,10 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
 
     const deleteTecnico = async () => {
         setLoading(true);
-        if (stateTecnicoForm.uuid) {
+        console.log("deleteTecnico stateSelectDeleteTecnico ", stateSelectDeleteTecnico)
+        console.log("deleteTecnico stateTecnicoForm.uuid ", stateTecnicoForm.uuid)
+        //console.log("deleteTecnico stateCheckboxDeleteTecnico ", stateCheckboxDeleteTecnico)
+/*        if (stateTecnicoForm.uuid) {
             try {
                 const response = await deleteTecnicoDre(stateTecnicoForm.uuid);
                 if (response.status === 204) {
@@ -63,7 +54,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
             } catch (error) {
                 console.log(error)
             }
-        }
+        }*/
         setLoading(false)
 
     };
@@ -285,6 +276,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                                 stateTecnicoForm={stateTecnicoForm}
                                 tecnicosList={tecnicosList}
                                 stateSelectDeleteTecnico={stateSelectDeleteTecnico}
+                                stateCheckboxDeleteTecnico={stateCheckboxDeleteTecnico}
                                 handleChangeSelectDeleteTecnico={handleChangeSelectDeleteTecnico}
                                 handleChangeCheckboxDeleteTecnico={handleChangeCheckboxDeleteTecnico}
                             />
