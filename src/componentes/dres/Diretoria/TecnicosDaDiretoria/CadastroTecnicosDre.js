@@ -41,7 +41,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         setLoading(true);
         console.log("deleteTecnico stateSelectDeleteTecnico ", stateSelectDeleteTecnico)
         console.log("deleteTecnico stateTecnicoForm.uuid ", stateTecnicoForm.uuid)
-        //console.log("deleteTecnico stateCheckboxDeleteTecnico ", stateCheckboxDeleteTecnico)
+        console.log("deleteTecnico stateCheckboxDeleteTecnico ", stateCheckboxDeleteTecnico)
 /*        if (stateTecnicoForm.uuid) {
             try {
                 const response = await deleteTecnicoDre(stateTecnicoForm.uuid);
@@ -189,13 +189,12 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     }, []);
 
     const handleChangeSelectDeleteTecnico = (value) => {
-        console.log("handleChangeSelectDeleteTecnico ", value)
         setStateSelectDeleteTecnico(value);
     };
     const handleChangeCheckboxDeleteTecnico = async (e) => {
         let checado = e.target.checked;
-        console.log("checkboxTecnicoDelete ", checado)
         setStateCheckboxDeleteTecnico(checado);
+        setStateSelectDeleteTecnico("");
     };
 
     return (

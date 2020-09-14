@@ -2,44 +2,6 @@ import {ModalBootstrapFormExcluirTecnicoDre} from "../../../Globais/ModalBootstr
 import React from "react";
 
 export const ConfirmaDeleteTecnico = ({show, onCancelDelete, onConfirmDelete, stateTecnicoForm, tecnicosList, stateSelectDeleteTecnico, stateCheckboxDeleteTecnico, handleChangeSelectDeleteTecnico, handleChangeCheckboxDeleteTecnico}) => {
-    console.log("ConfirmaDeleteTecnico stateSelectDeleteTecnico ", stateSelectDeleteTecnico)
-    console.log("ConfirmaDeleteTecnico stateCheckboxDeleteTecnico ", stateCheckboxDeleteTecnico)
-
-
-    var pilots = [
-        {
-            id: 2,
-            name: "Wedge Antilles",
-            faction: "Rebels",
-        },
-        {
-            id: 8,
-            name: "Ciena Ree",
-            faction: "Empire",
-        },
-        {
-            id: 40,
-            name: "Iden Versio",
-            faction: "Empire",
-        },
-        {
-            id: 66,
-            name: "Thane Kyrell",
-            faction: "Rebels",
-        }
-    ];
-
-    var rebels = pilots.filter(function (pilot) {
-        return pilot.faction === "Rebels";
-    });
-    console.log("REBELS ", rebels)
-
-    const retornaTecnicosFiltrado = (uuid_atual) => {
-        let tecnicos_filtrados = tecnicosList.filter(function (tecnico) {
-            return tecnico.uuid !== uuid_atual
-        })
-        return tecnicos_filtrados;
-    }
     const bodyTextarea = () => {
         return (
             <>
@@ -57,14 +19,8 @@ export const ConfirmaDeleteTecnico = ({show, onCancelDelete, onConfirmDelete, st
                                 id="selectTecnicoDelete"
                             >
                                 <option value="">Selecione uma opção</option>
-
-                                {tecnicosList && tecnicosList.length > 0 && tecnicosList.map((tecnico, index)=>{
-                                        return (
-                                            tecnico.uuid !== stateTecnicoForm.uuid && (
-                                                <option key={index} value={tecnico.uuid}>{tecnico.nome}</option>
-                                            )
-                                        )
-                                    }
+                                {tecnicosList && tecnicosList.length > 0 && tecnicosList.filter(tecnico => tecnico.uuid !== stateTecnicoForm.uuid).map((tec, index)=>
+                                    <option key={index} value={tec.uuid}>{tec.nome}</option>
                                 )}
                             </select>
                         </div>
