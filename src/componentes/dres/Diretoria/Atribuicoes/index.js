@@ -24,6 +24,7 @@ import {
     ModalConfirmarRetiradaAtribuicoes,
     ModalInformativoCopiaPeriodo} from "./Modais";
 import "./atribuicoes.scss";
+import {useParams} from 'react-router-dom';
 
 
 const CustomToast = (propriedades) => {
@@ -54,6 +55,7 @@ const CustomToast = (propriedades) => {
 
 export const Atribuicoes = () => {
     const rowsPerPage = 10;
+    let {tecnico_uuid} = useParams(); 
 
     const estadoInicialFiltros = {
         filtrar_por_termo: "",
@@ -85,7 +87,26 @@ export const Atribuicoes = () => {
     useEffect(() => {
         buscaDadosDiretoriaEPeriodos()
         .then(response => {
-                buscarUnidadesParaAtribuicao(response.dre, response.periodo);
+                if (tecnico_uuid !== undefined) {
+                    setEstadoFiltros({
+                        ...estadoFiltros,
+                        filtrar_por_tecnico: tecnico_uuid
+                    });
+                    filtrosUnidadesParaAtribuir(response.dre, response.periodo, 
+                        estadoFiltros.filtar_por_tipo_unidade, estadoFiltros.filtrar_por_termo, 
+                        estadoFiltros.filtrar_por_rf, tecnico_uuid).then(resultado_filtros => {
+                            console.log(resultado_filtros);
+                            let unis = resultado_filtros.map(obj => {
+                                return {
+                                    ...obj,
+                                    selecionado: false
+                                    }
+                                });
+                            setUnidades(unis);
+                        });
+                } else {
+                    buscarUnidadesParaAtribuicao(response.dre, response.periodo);
+                }
                 carregaTecnicos(response.dre);
             }
         );
