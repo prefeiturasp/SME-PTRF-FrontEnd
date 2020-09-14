@@ -303,7 +303,6 @@ export const Atribuicoes = () => {
     }
 
     const tratarSelecionado = (e, unidadeUuid) => {
-        console.log("Selecionado");
         if (showToast === true) {
             alert("A mensagem para Desfazer atribuições está aberta, feche a mensagem  no 'x' ou clique  em 'Desfazer' para liberar a seleção das unidades.");
             return 
@@ -550,9 +549,10 @@ export const Atribuicoes = () => {
                                                 type="radio"
                                                 id="sim"
                                                 value="sim"
+                                                className="form-check-input"
                                                 checked={escolhaTags}
                                             />
-                                            <label className="form-check-label" htmlFor="{`tag_sim_${index}`}">Sim</label>
+                                            <label className="form-check-label" htmlFor="{`tag_sim_${index}`}"> Sim</label>
                                         </div>
                                 
                                         <div className="form-check form-check-inline">
@@ -564,9 +564,10 @@ export const Atribuicoes = () => {
                                                 type="radio"
                                                 id="nao"
                                                 value="nao"
+                                                className="form-check-input"
                                                 checked={!escolhaTags}
                                             />
-                                            <label className="form-check-label" htmlFor="{`tag_nao_${index}`}">Não</label>
+                                            <label className="form-check-label" htmlFor="{`tag_nao_${index}`}"> Não</label>
                                         </div>
                                     </div>
                                     <div className="col-5">
