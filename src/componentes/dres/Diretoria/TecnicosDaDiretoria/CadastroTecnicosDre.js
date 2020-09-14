@@ -41,6 +41,8 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     const [showTecnicoForm, setShowTecnicoForm] = useState(false);
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [btnSalvarReadOnly, setBtnSalvarReadOnly] = useState(false);
+    const [stateSelectDeleteTecnico, setStateSelectDeleteTecnico] = useState({});
+    const [stateCheckboxDeleteTecnico, setStateCheckboxDeleteTecnico] = useState(false);
 
     const carregaTecnicos = async () => {
         let tecnicos = await getTecnicosDre(dreUuid);
@@ -177,7 +179,6 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         )
     };
 
-
     const tableActionsTemplate = (rowData, column) => {
         return (
             <div>
@@ -195,6 +196,16 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         carregaTecnicos()
         setLoading(false)
     }, []);
+
+    const handleChangeSelectDeleteTecnico = (value) => {
+        console.log("handleChangeSelectDeleteTecnico ", value)
+        setStateSelectDeleteTecnico(value);
+    };
+    const handleChangeCheckboxDeleteTecnico = async (e) => {
+        let checado = e.target.checked;
+        console.log("checkboxTecnicoDelete ", checado)
+        setStateCheckboxDeleteTecnico(checado);
+    };
 
     return (
         <>
@@ -272,6 +283,10 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                                 onCancelDelete={closeConfirmDeleteDialog}
                                 onConfirmDelete={handleDeleteConfirmation}
                                 stateTecnicoForm={stateTecnicoForm}
+                                tecnicosList={tecnicosList}
+                                stateSelectDeleteTecnico={stateSelectDeleteTecnico}
+                                handleChangeSelectDeleteTecnico={handleChangeSelectDeleteTecnico}
+                                handleChangeCheckboxDeleteTecnico={handleChangeCheckboxDeleteTecnico}
                             />
                         </section>
                     </div>
