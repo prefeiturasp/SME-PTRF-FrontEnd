@@ -115,8 +115,8 @@ export const PrestacaoDeContas = () => {
             let valor = JSON.parse(value);
             setPeriodoPrestacaoDeConta(valor);
             let status = await getStatusPeriodoPorData(valor.data_inicial);
-            setStatusPrestacaoDeConta(status)
-            let periodo = periodosAssociacao.filter((p) => (p.uuid == valor.periodo_uuid))[0]
+            setStatusPrestacaoDeConta(status);
+            let periodo = periodosAssociacao.filter((p) => (p.uuid == valor.periodo_uuid))[0];
             setPeriodoSelecionado(periodo);
         }
         setLoading(false);

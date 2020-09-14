@@ -96,7 +96,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                     // rf: ["Técnico de DRE com este RF já existe."]
                     console.log("Técnico já existe")
                 } else {
-                    console.log("Erro ao criar Tecnico")
+                    console.log("Erro ao criar Tecnico");
                     console.log(response)
                 }
             } catch (error) {
@@ -127,7 +127,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                 };
                 setStateTecnicoForm(init);
 
-                const tecnico_existente = await getTecnicoDrePorRf(values.rf.trim())
+                const tecnico_existente = await getTecnicoDrePorRf(values.rf.trim());
 
                 if (tecnico_existente.length > 0) {
                     errors.rf = "Técnico já cadastrado"
