@@ -8,8 +8,6 @@ const authHeader = {
     }
 };
 
-const url = window.location.href;
-
 export const getTecnicosDre = async (uuid_dre) => {
     return (await api.get(`api/tecnicos-dre/?dre__uuid=${uuid_dre}`, authHeader)).data
 };
@@ -23,8 +21,8 @@ export const createTecnicoDre = async (payload) => {
     });
 };
 
-export const deleteTecnicoDre = async (uuid_tecnico, transe) => {
-    return (await api.delete(`api/tecnicos-dre/${uuid_tecnico}/`, authHeader)).data
+export const deleteTecnicoDre = async (uuid_tecnico, transferir_para = null) => {
+    return (await api.delete(`api/tecnicos-dre/${uuid_tecnico}${transferir_para ? "?transferir_para="+transferir_para : ''}`, authHeader))
 
     /*return api.delete(`api/tecnicos-dre/${uuid_tecnico}/`, authHeader).then(response => {
         return response;

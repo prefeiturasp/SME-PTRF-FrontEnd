@@ -42,19 +42,23 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         console.log("deleteTecnico stateSelectDeleteTecnico ", stateSelectDeleteTecnico)
         console.log("deleteTecnico stateTecnicoForm.uuid ", stateTecnicoForm.uuid)
         console.log("deleteTecnico stateCheckboxDeleteTecnico ", stateCheckboxDeleteTecnico)
-/*        if (stateTecnicoForm.uuid) {
-            try {
-                const response = await deleteTecnicoDre(stateTecnicoForm.uuid);
-                if (response.status === 204) {
-                    console.log("Operação realizada com sucesso!");
-                    await carregaTecnicos();
-                } else {
-                    console.log("Erro ao excluir Técnico")
+
+
+        if (stateTecnicoForm.uuid) {
+                try {
+                    const response = await deleteTecnicoDre(stateTecnicoForm.uuid, stateSelectDeleteTecnico);
+                        console.log("Response ", response);
+                    if (response.status === 204 || response.status === 200) {
+                        await carregaTecnicos();
+                        console.log("Operação realizada com sucesso!");
+                    } else {
+                        console.log("Erro ao excluir Técnico")
+                    }
+                } catch (error) {
+                    console.log(error)
                 }
-            } catch (error) {
-                console.log(error)
-            }
-        }*/
+
+        }
         setLoading(false)
 
     };
