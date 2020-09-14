@@ -1,19 +1,33 @@
-import {ModalBootstrap} from "../../../Globais/ModalBootstrap";
+import {ModalBootstrapFormExcluirTecnicoDre} from "../../../Globais/ModalBootstrap";
 import React from "react";
+import {FormAlterarEmail} from "../../../Globais/FormAlterarEmail";
 
-export const ConfirmaDeleteTecnico = (propriedades) => {
+export const ConfirmaDeleteTecnico = ({show, onCancelDelete, onConfirmDelete, stateTecnicoForm}) => {
+
+    const bodyTextarea = () => {
+        return (
+            <>
+                <div className="col-12">
+                    <FormAlterarEmail
+                        handleClose={onCancelDelete}
+                    />
+                </div>
+            </>
+        )
+    };
+
     return (
-        <ModalBootstrap
-            show={propriedades.show}
-            onHide={propriedades.handleClose}
-            titulo="Excluir o técnico da diretoria"
-            bodyText="<p>Tem certeza que deseja excluir esse técnico?</p>"
-            segundoBotaoOnclick={propriedades.onConfirmDelete}
-            segundoBotaoTexto="Excluir"
-            segundoBotaoCss="danger"
-            primeiroBotaoOnclick={propriedades.onCancelDelete}
+        <ModalBootstrapFormExcluirTecnicoDre
+            show={show}
+            onHide={onCancelDelete}
+            titulo="Excluir um técnico"
+            bodyText={bodyTextarea()}
+            /*primeiroBotaoOnclick={onCancelDelete}
             primeiroBotaoTexto="Cancelar"
             primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={onConfirmDelete}
+            segundoBotaoTexto="Excluir"
+            segundoBotaoCss="danger"*/
         />
     )
 };

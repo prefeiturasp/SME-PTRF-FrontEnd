@@ -35,17 +35,11 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     };
 
     const [loading, setLoading] = useState(true);
-
     const [stateTecnicoForm, setStateTecnicoForm] = useState(initTecnicoForm);
-
     const [dreUuid, setDreUuid] = useState(dadosDaDre.uuid);
-
     const [tecnicosList, setTecnicosList] = useState([]);
-
     const [showTecnicoForm, setShowTecnicoForm] = useState(false);
-
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
-
     const [btnSalvarReadOnly, setBtnSalvarReadOnly] = useState(false);
 
     const carregaTecnicos = async () => {
@@ -277,6 +271,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                                 show={showConfirmDelete}
                                 onCancelDelete={closeConfirmDeleteDialog}
                                 onConfirmDelete={handleDeleteConfirmation}
+                                stateTecnicoForm={stateTecnicoForm}
                             />
                         </section>
                     </div>
