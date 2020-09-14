@@ -9,9 +9,9 @@ const authHeader = {
     }
 }
 
-export const previa = async (conta_associacao, periodo) => {
+export const previa = async (conta_associacao, periodo, data_inicio, data_fim) => {
     return api
-            .get(`/api/relacao-bens/previa/?conta-associacao=${conta_associacao}&periodo=${periodo}`, {
+            .get(`/api/relacao-bens/previa/?conta-associacao=${conta_associacao}&periodo=${periodo}&data_inicio=${data_inicio}&data_fim=${data_fim}`, {
                 responseType: 'blob',
                 timeout: 30000,
               })

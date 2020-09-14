@@ -1,5 +1,6 @@
 import React, {Fragment} from "react";
 import { NavLink } from 'react-router-dom';
+import "./menu-interno.scss"
 
 export const MenuInterno = ({caminhos_menu_interno}) => {
     return (
