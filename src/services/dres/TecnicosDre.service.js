@@ -23,12 +23,6 @@ export const createTecnicoDre = async (payload) => {
 
 export const deleteTecnicoDre = async (uuid_tecnico, transferir_para = null) => {
     return (await api.delete(`api/tecnicos-dre/${uuid_tecnico}${transferir_para ? "?transferir_para="+transferir_para : ''}`, authHeader))
-
-    /*return api.delete(`api/tecnicos-dre/${uuid_tecnico}/`, authHeader).then(response => {
-        return response;
-    }).catch(error => {
-        return error.response;
-    });*/
 };
 
 export const getTecnicoDre = async (uuid_tecnico) => {
