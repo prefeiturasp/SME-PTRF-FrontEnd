@@ -1,17 +1,18 @@
 .container-tabela-associacoes{
 
+  // Necessário para não quebrar o menu de ações quando existir apenas uma linha na tabela de associações
+  .p-datatable-wrapper{
+    min-height: 150px;
+  }
+
   .p-datatable-wrapper > table > thead > tr > th{
     padding-top: 10px;
     padding-bottom: 10px;
   }
 
-  .linha-unica{
-    height: 80px !important;
-  }
   .p-datatable-wrapper > table > tbody > tr > td{
     //padding-top: 10px;
     //padding-bottom: 10px;
-
   }
 
   .status-regularidade-pendente{

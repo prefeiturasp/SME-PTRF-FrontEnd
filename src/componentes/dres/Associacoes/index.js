@@ -93,28 +93,25 @@ export const Associacoes = () =>{
     };
 
     const acoesTemplate = (rowData) =>{
-        console.log("rowData ", associacoes.length)
         return (
-            <div className={`${associacoes.length === 1 && 'linha-unica'}`}>
-                <li className="nav-item dropdown link-acoes">
-                    <a href="#" id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <button className="btn-acoes"><span className="btn-acoes-dots">...</span></button>
-                    </a>
+            <li className={`nav-item dropdown link-acoes`}>
+                <a href="#" id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button className="btn-acoes"><span className="btn-acoes-dots">...</span></button>
+                </a>
 
-                    <div className={`dropdown-menu dropdown-menu-opcoes`}aria-labelledby="linkDropdownAcoes">
-                        <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-dados-da-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver dados unidade</button>
-                        <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-regularidade-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver regularidade</button>
-                        <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-situacao-financeira-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver situação financeira</button>
-                        {urlRedirect &&
-                            <Redirect
-                                to={{
-                                    pathname: urlRedirect,
-                                }}
-                            />
-                        }
-                    </div>
-                </li>
-            </div>
+                <div className={`dropdown-menu dropdown-menu-opcoes`}aria-labelledby="linkDropdownAcoes">
+                    <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-dados-da-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver dados unidade</button>
+                    <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-regularidade-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver regularidade</button>
+                    <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-situacao-financeira-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver situação financeira</button>
+                    {urlRedirect &&
+                        <Redirect
+                            to={{
+                                pathname: urlRedirect,
+                            }}
+                        />
+                    }
+                </div>
+            </li>
         )
     };
 
