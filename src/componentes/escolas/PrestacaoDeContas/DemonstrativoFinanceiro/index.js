@@ -63,8 +63,8 @@ export class DemonstrativoFinanceiro extends Component {
     showPrevia = (acaoUuid) => {
         this.setState({show: true});
         this.setState({acaoUuid});
-        let data_inicio = this.props.periodoSelecionado.data_inicio_realizacao_despesas;
-        let data_fim = this.props.periodoSelecionado.data_fim_realizacao_despesas;
+        let data_inicio = this.props.periodoPrestacaoDeConta.data_inicial;
+        let data_fim = this.props.periodoPrestacaoDeConta.data_final;
         this.setState({data_inicio: data_inicio, data_fim: data_fim})
     }
 

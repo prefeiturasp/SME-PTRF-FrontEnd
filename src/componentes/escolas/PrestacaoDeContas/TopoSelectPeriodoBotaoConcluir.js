@@ -17,6 +17,7 @@ export const TopoSelectPeriodoBotaoConcluir = ({periodoPrestacaoDeConta, handleC
                                         retornaObjetoPeriodoPrestacaoDeConta(
                                             periodoPrestacaoDeConta.periodo_uuid,
                                             periodoPrestacaoDeConta.data_inicial,
+                                            periodoPrestacaoDeConta.data_final
                                         )
                                     }
                                     onChange={(e) => handleChangePeriodoPrestacaoDeConta(e.target.name, e.target.value)}
@@ -32,6 +33,7 @@ export const TopoSelectPeriodoBotaoConcluir = ({periodoPrestacaoDeConta, handleC
                                                 retornaObjetoPeriodoPrestacaoDeConta(
                                                     periodo.uuid,
                                                     periodo.data_inicio_realizacao_despesas,
+                                                    periodo.data_fim_realizacao_despesas
                                                 )}
                                         >
                                             {`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}
