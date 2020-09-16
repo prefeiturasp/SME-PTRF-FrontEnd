@@ -10,6 +10,7 @@ import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../assets/img/img-404.svg";
 import Loading from "../../../utils/Loading";
 import {ModalConcluirPeriodo} from "./ModalConcluirPeriodo";
+import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 
 export const PrestacaoDeContas = () => {
 
@@ -74,7 +75,7 @@ export const PrestacaoDeContas = () => {
 
         if (periodo_prestacao_de_contas && periodo_prestacao_de_contas.periodo_uuid){
             let data_inicial = periodo_prestacao_de_contas.data_inicial;
-            let status = await getStatusPeriodoPorData(data_inicial);
+            let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), data_inicial);
             setStatusPrestacaoDeConta(status)
         }else {
             if (localStorage.getItem('statusPrestacaoDeConta')) {
@@ -113,7 +114,7 @@ export const PrestacaoDeContas = () => {
         if (value){
             let valor = JSON.parse(value);
             setPeriodoPrestacaoDeConta(valor);
-            let status = await getStatusPeriodoPorData(valor.data_inicial);
+            let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), valor.data_inicial);
             setStatusPrestacaoDeConta(status);
         }
         setLoading(false);
@@ -150,7 +151,7 @@ export const PrestacaoDeContas = () => {
     const concluirPeriodo = async () =>{
         setLoading(true);
         await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
-        let status = await getStatusPeriodoPorData(periodoPrestacaoDeConta.data_inicial);
+        let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
         setStatusPrestacaoDeConta(status);
         await carregaPeriodos();
         setLoading(false);
