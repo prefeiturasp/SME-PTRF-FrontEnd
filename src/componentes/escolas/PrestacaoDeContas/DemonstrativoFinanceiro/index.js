@@ -93,7 +93,7 @@ export class DemonstrativoFinanceiro extends Component {
             return
         }
 
-        let data_fim_periodo = new Date(this.props.periodoSelecionado.data_fim_realizacao_despesas)
+        let data_fim_periodo = new Date(this.props.periodoPrestacaoDeConta.data_final)
         if (data_fim.getTime() > data_fim_periodo.getTime()) {
             this.setState({mensagemErro: "Data final não pode ser maior que a data final do período."});
             return
