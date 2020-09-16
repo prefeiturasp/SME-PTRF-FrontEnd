@@ -49,7 +49,7 @@ export const Dashboard = () => {
         const getStatus = async () =>{
             if (acoesAssociacao && acoesAssociacao.data_inicio_realizacao_despesas){
                 let data_inicial = acoesAssociacao.data_inicio_realizacao_despesas;
-                let status = await getStatusPeriodoPorData(data_inicial);
+                let status = await getStatusPeriodoPorData(uuid_associacao, data_inicial);
                 setStatusPeriodoAssociacao(status)
             }
         };

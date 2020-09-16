@@ -9,8 +9,8 @@ const authHeader = {
 };
 
 // Prestação de Contas
-export const getStatusPeriodoPorData = async (data_incial_periodo) => {
-  return(await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/status-periodo/?data=${data_incial_periodo}`, authHeader)).data
+export const getStatusPeriodoPorData = async (uuid_associacao, data_incial_periodo) => {
+  return(await api.get(`/api/associacoes/${uuid_associacao}/status-periodo/?data=${data_incial_periodo}`, authHeader)).data
 };
 
 export const getConcluirPeriodo = async (periodo_uuid) => {
