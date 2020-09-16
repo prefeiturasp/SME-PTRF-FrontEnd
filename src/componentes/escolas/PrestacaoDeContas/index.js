@@ -19,7 +19,6 @@ export const PrestacaoDeContas = () => {
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [contaPrestacaoDeContas, setContaPrestacaoDeContas] = useState(false);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
-    const [periodoSelecionado, setPeriodoSelecionado] = useState(null);
     const [loading, setLoading] = useState(true);
     const [show, setShow] = useState(false);
 
@@ -116,8 +115,6 @@ export const PrestacaoDeContas = () => {
             setPeriodoPrestacaoDeConta(valor);
             let status = await getStatusPeriodoPorData(valor.data_inicial);
             setStatusPrestacaoDeConta(status);
-            let periodo = periodosAssociacao.filter((p) => (p.uuid == valor.periodo_uuid))[0];
-            setPeriodoSelecionado(periodo);
         }
         setLoading(false);
     };
@@ -130,10 +127,11 @@ export const PrestacaoDeContas = () => {
         setLoading(false);
     };
 
-    const retornaObjetoPeriodoPrestacaoDeConta = (periodo_uuid, data_inicial) => {
+    const retornaObjetoPeriodoPrestacaoDeConta = (periodo_uuid, data_inicial, data_final) => {
         return JSON.stringify({
             periodo_uuid: periodo_uuid,
             data_inicial: data_inicial,
+            data_final: data_final
         });
     };
 
@@ -214,14 +212,12 @@ export const PrestacaoDeContas = () => {
                                 </nav>
                                 <DemonstrativoFinanceiro
                                     periodoPrestacaoDeConta={periodoPrestacaoDeConta}
-                                    periodoSelecionado={periodoSelecionado}
                                     statusPrestacaoDeConta={statusPrestacaoDeConta}
                                     contaPrestacaoDeContas={contaPrestacaoDeContas}
                                     setLoading={setLoading}
                                 />
                                 <RelacaoDeBens
                                     periodoPrestacaoDeConta={periodoPrestacaoDeConta}
-                                    periodoSelecionado={periodoSelecionado}
                                     statusPrestacaoDeConta={statusPrestacaoDeConta}
                                     contaPrestacaoDeContas={contaPrestacaoDeContas}
                                     setLoading={setLoading}
