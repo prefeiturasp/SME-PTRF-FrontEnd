@@ -1,23 +1,45 @@
 export const ObjetoDashboard = [
     {
-        data: "Hoje, 10 Ago. 2020",
-        infos: [
+        totalDeAssociacoesDre: "371",
+        cards: [
             {
-                tipo: "urgente",
-                titulo: "Documentos faltantes na prestação de contas",
-                remetente: "DRE",
-                categoria: "Prestação de Contas",
-                descricao: "A prestação de contas foi recebida pela Diretoria Regional de Educação Ipiranga, porém o Demonstrativo Financeiro do PTRF não consta no SEI. A prestação foi devolvida para acertos.",
+                uuid: "-3b389",
+                titulo: "Prestações de contas não recebidas",
+                gtdeAssociacoes: "200",
+                status: "nao_recebidas",
             },
             {
-                uuid: "-3b33-",
-                tipo: "informacao",
-                titulo: "Atualização do Sig_Escola realizada. Versão 2.02.111.01",
-                remetente: "2 - DRE",
-                categoria: "2 - Prestação de Contas",
-                descricao: "2 - A prestação de contas foi recebida pela Diretoria Regional de Educação Ipiranga, porém o Demonstrativo Financeiro do PTRF não consta no SEI. A prestação foi devolvida para acertos.",
-            }
+                uuid: "r5tytr",
+                titulo: "Prestações de contas recebidas aguardando análise",
+                gtdeAssociacoes: "56",
+                status: "recebidas",
+            },
+            {
+                uuid: "9uio4",
+                titulo: "Prestações de contas em análise",
+                gtdeAssociacoes: "200",
+                status: "em_analise",
+            },
+            {
+                uuid: "xyzi9",
+                titulo: "Prestações de contas devolvida para acertos",
+                gtdeAssociacoes: "40",
+                status: "devolvida_para_acertos",
+            },
+            {
+                uuid: "-kjr-9",
+                titulo: "Prestações de contas aprovadas",
+                gtdeAssociacoes: "200",
+                status: "aprovadas",
+            },
+            {
+                uuid: "0irfdk8",
+                titulo: "Prestações de contas reprovadas",
+                gtdeAssociacoes: "200",
+                status: "reprovadas",
+            },
+
         ],
     },
-    
+
 ];

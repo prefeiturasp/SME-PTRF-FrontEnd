@@ -20,7 +20,6 @@ export const DreDashboard = () => {
 
     return (
         <>
-            <h1>Componente Dre Dashboard</h1>
             <SelectPeriodo
                 periodos={periodos}
                 handleChangePeriodos={handleChangePeriodos}
