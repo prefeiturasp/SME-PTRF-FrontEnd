@@ -1,7 +1,7 @@
 import React from "react";
 import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 
-export const TopoSelectPeriodo = ({periodosAssociacao, handleChangePeriodosAssociacao, periodoSelecionado}) => {
+export const SelectPeriodo = ({periodos, handleChangePeriodos}) => {
     return (
         <>
             <form id="periodo_conta">
@@ -13,14 +13,14 @@ export const TopoSelectPeriodo = ({periodosAssociacao, handleChangePeriodosAssoc
                             </div>
                             <div className="col-12 col-sm-7 col-md-9 pl-0">
                                 <select
-                                    value={periodoSelecionado}
-                                    onChange={(e) => handleChangePeriodosAssociacao( e.target.value)}
+                                    value={periodos.uuid}
+                                    onChange={(e) => handleChangePeriodos( e.target.value)}
                                     name="periodo"
                                     id="periodo"
                                     className="form-control"
                                 >
                                     <option value="">Escolha um período</option>
-                                    {periodosAssociacao && periodosAssociacao.map((periodo)=>
+                                    {periodos && periodos.map((periodo)=>
                                         <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}</option>
                                     )}
                                 </select>

@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
-import {TopoSelectPeriodo} from "./TopoSelectPeriodo";
+import {SelectPeriodo} from "./SelectPeriodo";
 
 export const DreDashboard = () => {
 
-    const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
-    const [periodoSelecionado, setPeriodoSelecionado] = useState(false);
+    const [periodos, setPeriodos] = useState(false);
 
     useEffect(() => {
         carregaPeriodos();
@@ -13,20 +12,18 @@ export const DreDashboard = () => {
 
     const carregaPeriodos = async () => {
         let periodos = await getPeriodos();
-        setPeriodosAssociacao(periodos);
+        setPeriodos(periodos);
     };
 
-    const handleChangePeriodosAssociacao = async (value) => {
-        setPeriodoSelecionado(value)
+    const handleChangePeriodos = async (value) => {
     };
 
     return (
         <>
             <h1>Componente Dre Dashboard</h1>
-            <TopoSelectPeriodo
-                periodosAssociacao={periodosAssociacao}
-                periodoSelecionado={periodoSelecionado}
-                handleChangePeriodosAssociacao={handleChangePeriodosAssociacao}
+            <SelectPeriodo
+                periodos={periodos}
+                handleChangePeriodos={handleChangePeriodos}
            />
         </>
     )
