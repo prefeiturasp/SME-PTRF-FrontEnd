@@ -29,13 +29,13 @@ export const ObjetoDashboard =
             {
                 uuid: "-kjr-9",
                 titulo: "Prestações de contas aprovadas",
-                gtdeAssociacoes: "200",
+                gtdeAssociacoes: "59",
                 status: "aprovadas",
             },
             {
                 uuid: "0irfdk8",
                 titulo: "Prestações de contas reprovadas",
-                gtdeAssociacoes: "200",
+                gtdeAssociacoes: "11",
                 status: "reprovadas",
             },
         ],
