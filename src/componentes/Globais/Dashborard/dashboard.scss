@@ -1,0 +1,87 @@
+.container-dashboard-card {
+
+}
+.container-lado-direito{
+  background-color: #F3F3F3;
+  border-radius: 3px;
+
+  .texto-cor-verde{
+    color: #00585E;
+  }
+}
+
+.container-lado-esquerdo {
+  font-size: 14px;
+  color: #42474A;
+}
+
+.ultima-atualizacao{
+  font-weight: 500;
+  font-style: italic;
+  font-size: 14px;
+}
+
+
+.barra-status-dashboard-verde {
+  background-color: #289B00;
+}
+
+.barra-status-dashboard-amarelo {
+  background-color: #D06D12;
+}
+
+.barra-status-dashboard-vermelho {
+  background-color: #B40C02;
+}
+
+.barra-status-dashboard-cinza {
+  background-color: #A4A4A4;
+}
+
+.barra-status-dashboard-azul {
+  background-color: #086397;
+}
+
+.texto-com-icone-amarelo, .texto-com-icone-vermelho, .texto-com-icone-azul{
+  background-repeat: no-repeat;
+  padding-left: 1.3rem;
+  background-position: 0 80%;
+}
+
+.texto-com-icone-amarelo{
+  color: #C65D00;
+  background-image: url("../../../assets/img/icone-nao-conciliado.svg");
+}
+
+.texto-com-icone-vermelho{
+  color: #B40C02;
+  background-image: url("../../../assets/img/dashborard-icone-pendente.svg");
+}
+
+.texto-com-icone-azul{
+  color: #42474A;
+  padding-left: 0;
+}
+
+
+// Fontes
+.fonte-12 {
+  font-size: 12px !important;
+}
+
+.fonte-14 {
+  font-size: 14px;
+}
+
+.fonte-16 {
+  font-size: 16px;
+}
+
+.texto-saldo{
+  border-bottom: solid 1px #DADADA;
+  width: 80%;
+  position: absolute;
+  top: 5px;
+  font-weight: bold;
+  color: #00585e;
+}

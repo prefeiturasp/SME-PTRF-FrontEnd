@@ -544,10 +544,9 @@ export const getTextoStatusPeriodo = (statusId) => {
   } else if (statusId === 'PENDENTE') {
     status = 'O período está pendente'
   } else if (statusId === 'CONCILIADO') {
-    status = 'O período foi conferido pela Associação'
+    status = 'O período foi conferido e fechado pela Associação de Pais e Mestres'
   } else if (statusId === 'APROVADO') {
-    status =
-        'O período está fechado e foi aprovado pela Diretoria Regional de Educação'
+    status = 'O período está fechado e foi aprovado pela Diretoria Regional de Educação'
   } else if (statusId === 'REJEITADO') {
     status =
         'O período está fechado e foi rejeitado pela Diretoria Regional de Educação'
@@ -555,16 +554,16 @@ export const getTextoStatusPeriodo = (statusId) => {
     status = 'O período está com status indefinido'
   }
   return status
-}
+};
 
 export const getCorStatusPeriodo = (statusId) => {
   let cor = ''
   if (statusId === 'EM_ANDAMENTO') {
-    cor = 'cinza'
+    cor = 'amarelo'
   } else if (statusId === 'PENDENTE') {
     cor = 'vermelho'
   } else if (statusId === 'CONCILIADO') {
-    cor = 'amarelo'
+    cor = 'azul'
   } else if (statusId === 'APROVADO') {
     cor = 'verde'
   } else if (statusId === 'REJEITADO') {
@@ -573,4 +572,36 @@ export const getCorStatusPeriodo = (statusId) => {
     cor = 'vermelho'
   }
   return cor
+};
+
+
+export const slugify = (string) =>{
+  return string
+  .toString()
+  .trim()
+  .toLowerCase()
+  .replace(/[àÀáÁâÂãäÄÅåª]+/g, 'a')       // Special Characters #1
+  .replace(/[èÈéÉêÊëË]+/g, 'e')       	// Special Characters #2
+  .replace(/[ìÌíÍîÎïÏ]+/g, 'i')       	// Special Characters #3
+  .replace(/[òÒóÓôÔõÕöÖº]+/g, 'o')       	// Special Characters #4
+  .replace(/[ùÙúÚûÛüÜ]+/g, 'u')       	// Special Characters #5
+  .replace(/[ýÝÿŸ]+/g, 'y')       		// Special Characters #6
+  .replace(/[ñÑ]+/g, 'n')       			// Special Characters #7
+  .replace(/[çÇ]+/g, 'c')       			// Special Characters #8
+  .replace(/[ß]+/g, 'ss')       			// Special Characters #9
+  .replace(/[Ææ]+/g, 'ae')       			// Special Characters #10
+  .replace(/[Øøœ]+/g, 'oe')       		// Special Characters #11
+  .replace(/[%]+/g, 'pct')       			// Special Characters #12
+  .replace(/\s+/g, '-')           		// Replace spaces with -
+  .replace(/[^\w\-]+/g, '')       		// Remove all non-word chars
+  .replace(/\-\-+/g, '-')         		// Replace multiple - with single -
+  .replace(/^-+/, '')             		// Trim - from start of text
+  .replace(/-+$/, '');            		// Trim - from end of text
+};
+
+export const gerarUuid = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+    return v.toString(16)
+  });
 }

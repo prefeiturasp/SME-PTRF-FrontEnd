@@ -4,9 +4,9 @@ import "../geracao-da-ata.scss"
 export const BoxPrestacaoDeContasPorPeriodo = ({corBoxPrestacaoDeContasPorPeriodo, textoBoxPrestacaoDeContasPorPeriodo, dataBoxPrestacaoDeContasPorPeriodo, setLoading}) => {
 
     const onClickVisualizarAta = () =>{
-        setLoading(true)
+        setLoading(true);
         window.location.assign('/visualizacao-da-ata')
-    }
+    };
 
     return (
         <div className="row mt-5">

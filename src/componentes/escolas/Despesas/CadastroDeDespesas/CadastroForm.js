@@ -12,11 +12,13 @@ import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
 import { AvisoCapitalModal, CancelarModal, DeletarModal, ErroGeral, PeriodoFechado, SaldoInsuficiente, SaldoInsuficienteConta, ChecarDespesaExistente, } from "../../../../utils/Modais"
+import {ModalDespesaConferida} from "./ModalDespesaJaConferida";
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../../utils/Loading";
 import {Tags} from "../Tags";
 import {metodosAuxiliares} from "../metodosAuxiliares";
+import {ModalConfirmaLogout} from "../../../Globais/Cabecalho/ModalConfirmaLogout";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -47,6 +49,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
     const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
     const [numreoDocumentoReadOnly, setNumreoDocumentoReadOnly] = useState(false);
+    const [showDespesaConferida, setShowDespesaConferida] = useState(false);
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
@@ -122,6 +125,10 @@ export const CadastroForm = ({verbo_http}) => {
             }else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
                 setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes);
                 setShowSaldoInsuficiente(true);
+
+            // Checando se depesa já foi conferida
+            }else if (values.rateios.find(element=> element.conferido)) {
+                setShowDespesaConferida(true)
 
                 // Checando se depesa já foi cadastrada
             }else if (values.tipo_documento && values.numero_documento) {
@@ -544,19 +551,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     </p>
                                                                     <hr className='mt-0 mb-1'/>
                                                                 </div>
-                                                                <div className="col-12">
-                                                                    <Tags
-                                                                        formikProps={props}
-                                                                        rateio={rateio}
-                                                                        rateios={values.rateios}
-                                                                        index={index}
-                                                                        verboHttp={despesaContext.verboHttp}
-                                                                        disabled={readOnlyCampos}
-                                                                        errors={errors}
-                                                                        setFieldValue={setFieldValue}
-                                                                        despesasTabelas={despesasTabelas}
-                                                                    />
-                                                                </div>
+
                                                                 <div className="col-12 col-md-6 mt-4">
 
                                                                     <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
@@ -587,6 +582,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     <CadastroFormCusteio
                                                                         formikProps={props}
                                                                         rateio={rateio}
+                                                                        rateios={values.rateios}
                                                                         index={index}
                                                                         despesasTabelas={despesasTabelas}
                                                                         especificacoes_custeio={especificacoes_custeio}
@@ -601,6 +597,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     <CadastroFormCapital
                                                                         formikProps={props}
                                                                         rateio={rateio}
+                                                                        rateios={values.rateios}
                                                                         index={index}
                                                                         despesasTabelas={despesasTabelas}
                                                                         especificaoes_capital={especificaoes_capital}
@@ -623,6 +620,22 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     </button>
                                                                 </div>
                                                             )}
+                                                            <div className="row">
+                                                                <div className="col-12">
+
+                                                                    <Tags
+                                                                        formikProps={props}
+                                                                        rateio={rateio}
+                                                                        rateios={values.rateios}
+                                                                        index={index}
+                                                                        verboHttp={despesaContext.verboHttp}
+                                                                        disabled={readOnlyCampos}
+                                                                        errors={errors}
+                                                                        setFieldValue={setFieldValue}
+                                                                        despesasTabelas={despesasTabelas}
+                                                                    />
+                                                                </div>
+                                                            </div>
                                                         </div> /*div key*/
                                                     )
                                                 })}
@@ -688,7 +701,8 @@ export const CadastroForm = ({verbo_http}) => {
                                     <section>
                                         <SaldoInsuficiente
                                             saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
-                                            show={showSaldoInsuficiente} handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                                            show={showSaldoInsuficiente}
+                                            handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
                                             onSaldoInsuficienteTrue={() => onSubmit(values, {resetForm})}
                                         />
                                     </section>
@@ -705,6 +719,15 @@ export const CadastroForm = ({verbo_http}) => {
                                             show={showDespesaCadastrada}
                                             handleClose={()=>setShowDespesaCadastrada(false)}
                                             onSalvarDespesaCadastradaTrue={ () => onSubmit(values, {resetForm}) }/>
+                                    </section>
+                                    <section>
+                                        <ModalDespesaConferida
+                                            show={showDespesaConferida}
+                                            handleClose={()=>setShowDespesaConferida(false)}
+                                            onSalvarDespesaConferida={ () => onSubmit(values, {resetForm}) }
+                                            titulo="Despesa já demonstrada"
+                                            texto="<p>Atenção. Essa despesa já foi demonstrada, caso a alteração seja gravada ela voltará a ser não demonstrada. Confirma a gravação?</p>"
+                                        />
                                     </section>
                                 </form>
                             </>

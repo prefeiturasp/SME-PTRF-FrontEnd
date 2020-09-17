@@ -3,9 +3,10 @@ import NumberFormat from "react-number-format";
 import {calculaValorRateio, trataNumericos, processoIncorporacaoMask} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import CurrencyInput from "react-currency-input";
 import MaskedInput from "react-text-mask";
+import {Tags} from "../Tags";
 
 export const CadastroFormCapital = (propriedades) => {
-    const {formikProps, rateio, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal} = propriedades;
+    const {formikProps, rateio, rateios, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal} = propriedades;
 
     return (
         <>

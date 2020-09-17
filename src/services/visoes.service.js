@@ -149,6 +149,10 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
         localStorage.setItem(ASSOCIACAO_TIPO_ESCOLA, unidade_tipo);
         localStorage.setItem(ASSOCIACAO_NOME_ESCOLA, unidade_nome);
         localStorage.removeItem('periodoConta');
+        localStorage.removeItem('acaoLancamento');
+        localStorage.removeItem('periodoPrestacaoDeConta');
+        localStorage.removeItem('statusPrestacaoDeConta');
+        localStorage.removeItem('contaPrestacaoDeConta');
         redirectVisao(visao)
     }
 };

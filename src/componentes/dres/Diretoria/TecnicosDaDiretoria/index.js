@@ -38,8 +38,7 @@ export const TecnicosDaDiretoria = () => {
                         <>
                             <div className="d-flex bd-highlight">
                                 <div className="p-2 flex-grow-1 bd-highlight">
-                                    <h1 className="titulo-itens-painel mt-5">Técnicos da
-                                        diretoria {dadosDiretoria.nome}</h1>
+                                    <h1 className="titulo-itens-painel mt-5">Técnicos da diretoria {dadosDiretoria.nome}</h1>
                                 </div>
                             </div>
                             <div className="page-content-inner">

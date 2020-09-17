@@ -2,16 +2,16 @@ import React from "react";
 import {Route, Switch} from 'react-router-dom'
 import {Login} from "../paginas/Login";
 import {Pagina404} from "../paginas/escolas/404";
-import {DashboardPage} from "../paginas/escolas/Dashboard";
+import {DashboardPage} from "../paginas/Dashboard";
 import {CadastroDeDespesa} from "../paginas/escolas/Despesas/CadastroDeDespesas";
 import {EdicaoDeDespesa} from "../paginas/escolas/Despesas/EdicaoDeDespesa";
-import { ListaDeDespesasPage } from '../paginas/escolas/Despesas/ListaDeDespesas'
-import { CadastroDeReceita } from '../paginas/escolas/Receitas/CadastroReceita';
-import { EdicaoDeReceita } from '../paginas/escolas/Receitas/EdicaoReceita';
-import { ListaDeReceitasPage } from "../paginas/escolas/Receitas/ListaDeReceitas";
+import {ListaDeDespesasPage} from '../paginas/escolas/Despesas/ListaDeDespesas'
+import {CadastroDeReceita} from '../paginas/escolas/Receitas/CadastroReceita';
+import {EdicaoDeReceita} from '../paginas/escolas/Receitas/EdicaoReceita';
+import {ListaDeReceitasPage } from "../paginas/escolas/Receitas/ListaDeReceitas";
 import {DadosDaAssociacaoPage} from "../paginas/escolas/Associacao";
 import {PrestacaoDeContasPage} from "../paginas/escolas/PrestacaoDeContas";
-import {DetalheDasPrestacoes} from "../componentes/escolas/PrestacaoDeContas/DetalheDasPrestacoes";
+import {DetalhedasPrestacoesPage} from "../paginas/escolas/DetalheDasPrestacoes";
 import {VisualizacaoDaAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta";
 import {MembrosDaAssociacaoPage} from "../paginas/escolas/MembrosDaAssociacao";
 import {ValoresReprogramadosPage} from "../paginas/escolas/ValoresReprogramados";
@@ -21,6 +21,7 @@ import {RedefinirSenhaPage} from "../paginas/Login/RedefinirMinhaSenha";
 import {MeusDadosPage} from "../paginas/escolas/MeusDados";
 import {AssociacoesPage} from "../paginas/dres/Associacoes";
 import {ProcessosSeiPage} from "../paginas/dres/Associacoes/ProcessosSei";
+import {CentralDeNotificacoesPage} from "../paginas/CentralDeNotificacoes";
 import { authService } from '../services/auth.service';
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
@@ -30,6 +31,10 @@ import {DadosDasContasDrePage} from "../paginas/dres/Associacoes/DadosDasContas"
 import {PaginaRegularidadeUnidadeEducacional} from "../paginas/dres/Associacoes/RegularidadeUnidadeEducacional"
 import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
 import {TecnicosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/TecnicosDaDiretoria";
+import {FaqDrePage} from "../paginas/dres/ApoioDiretoria/Faq";
+import {SituacaoFinanceiraUnidadeEducacionalPage} from "../paginas/dres/Associacoes/SituacaoFinanceiraUnidadeEducacional";
+import {AtribuicoesPage} from "../paginas/dres/Diretoria/Atribuicoes";
+
 
 const routesConfig = [
     {
@@ -95,7 +100,7 @@ const routesConfig = [
     {
       exact: true,
       path: "/detalhe-das-prestacoes",
-      component: DetalheDasPrestacoes
+      component: DetalhedasPrestacoesPage
     },
     {
       exact: true,
@@ -143,9 +148,29 @@ const routesConfig = [
       component: PaginaRegularidadeUnidadeEducacional
     },
     {
+      exact: true,
+      path: "/dre-situacao-financeira-unidade-educacional",
+      component: SituacaoFinanceiraUnidadeEducacionalPage
+    },
+    {
         exact: true,
         path: "/dre-tecnicos-da-diretoria",
         component: TecnicosDaDiretoriaDrePage
+    },
+    {
+        exact: true,
+        path: "/dre-faq",
+        component: FaqDrePage
+    },
+    {
+        exact: true,
+        path: "/central-de-notificacoes",
+        component: CentralDeNotificacoesPage
+    },
+    {
+        exact: true,
+        path: "/dre-atribuicoes/:tecnico_uuid?",
+        component: AtribuicoesPage
     },
     {
         exact: true,

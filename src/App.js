@@ -16,7 +16,7 @@ export const App = () => {
             pathName === '/esqueci-minha-senha/' ||
             pathName.match(/\/redefinir-senha\/[a-zA-Z0-9]/) ? (
                 <Rotas/>
-            ) : pathName === '/detalhe-das-prestacoes' || pathName === "/visualizacao-da-ata" ? (
+            ) : pathName === "/visualizacao-da-ata" ? (
                     <>
                         <Cabecalho/>
                         <Rotas/>
