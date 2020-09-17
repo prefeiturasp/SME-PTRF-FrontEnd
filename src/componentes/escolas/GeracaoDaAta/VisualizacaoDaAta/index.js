@@ -185,8 +185,7 @@ export const VisualizacaoDaAta = () => {
 
         }else if(campo === "periodo.referencia"){
             let periodo_referencia = dadosAta.periodo.referencia ? dadosAta.periodo.referencia.split(".") : "";
-            let string = periodo_referencia[1]+"° repasse de "+periodo_referencia[0];
-            return string;
+            return periodo_referencia[1] === "u" ? "repasse único de "+periodo_referencia[0] : periodo_referencia[1]+"° repasse de "+periodo_referencia[0];
 
         }else if (campo === "convocacao"){
             let convocacao =  tabelas.convocacoes ? tabelas.convocacoes.find(element => element.id === dadosAta.convocacao): "";
