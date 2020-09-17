@@ -4,3 +4,24 @@
   background-color: #2B7D83;
   color: #fff;
 }
+
+.container-cards-dre-dashboard{
+
+  .card-body{
+    padding: 0.8rem;
+
+    .card-title{
+      height: 60% !important;
+    }
+    .borda-bottom{
+      border-bottom: 1px solid #DADADA;
+    }
+    .card-qtde-associacoes{
+      font-weight: bold;
+      font-size: 28px;
+      color: #2B7D83;
+    }
+  }
+
+}
+

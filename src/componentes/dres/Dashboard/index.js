@@ -4,6 +4,7 @@ import {SelectPeriodo} from "./SelectPeriodo";
 import "./dashboard.scss"
 import {BarraDeStatus} from "./BarraDeStatus";
 import {ObjetoDashboard} from "./ObjetoDashboard";
+import {DashboardCard} from "./DashboardCard";
 
 export const DreDashboard = () => {
 
@@ -28,6 +29,9 @@ export const DreDashboard = () => {
                 handleChangePeriodos={handleChangePeriodos}
            />
            <BarraDeStatus
+               ObjetoDashboard={ObjetoDashboard}
+           />
+           <DashboardCard
                ObjetoDashboard={ObjetoDashboard}
            />
         </>

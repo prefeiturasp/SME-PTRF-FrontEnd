@@ -38,6 +38,5 @@ export const ObjetoDashboard =
                 gtdeAssociacoes: "200",
                 status: "reprovadas",
             },
-
         ],
     };
