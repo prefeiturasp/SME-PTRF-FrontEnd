@@ -12,11 +12,15 @@
     font-size: 16px;
     background-color: transparent;
     border-bottom: none;
-  }
-  .card-body{
+    line-height: 19px;
+
     .borda-bottom{
       border-bottom: 1px solid #DADADA;
+      display: block;
     }
+  }
+  .card-body{
+
     .card-qtde-associacoes{
       font-weight: bold;
       font-size: 28px;
