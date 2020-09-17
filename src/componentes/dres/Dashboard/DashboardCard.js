@@ -14,16 +14,15 @@ export const DashboardCard = ({ObjetoDashboard}) => {
                         </div>
                         <hr className="mt-0 mb-0 ml-3 mr-3" />
                         <div className="card-body">
-
-                            <p className="card-text card-qtde-associacoes  mb-0 pb-3">{card.gtdeAssociacoes}</p>
+                            <p className="card-text card-qtde-associacoes  mb-0 pb-3">{card.quantidade_associacoes}</p>
                             <p className="text-center">
-                                <a href="#" className="btn btn-outline-success btn-ver-prestacoes">
+                                <button className="btn btn-outline-success btn-ver-prestacoes">
                                     <FontAwesomeIcon
                                         style={{marginRight: "3px", color: '#2B7D83'}}
                                         icon={faEye}
                                     />
                                     Ver as prestações
-                                </a>
+                                </button>
                             </p>
                         </div>
                     </div>
