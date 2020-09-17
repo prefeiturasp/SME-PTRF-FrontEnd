@@ -53,6 +53,7 @@ export const ReceitaForm = props => {
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
     const [showErroGeral, setShowErroGeral] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
+    const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
     const [receita, setReceita] = useState({});
     const [readOnlyValor, setReadOnlyValor] = useState(false);
     const [readOnlyClassificacaoReceita, setreadOnlyClassificacaoReceita] = useState(false);
@@ -78,6 +79,7 @@ export const ReceitaForm = props => {
             if (uuid) {
                 getReceita(uuid).then(response => {
                     const resp = response.data;
+                    console.log("RESPONSE ", resp);
                     const init = {
                         tipo_receita: resp.tipo_receita.id,
                         detalhe_tipo_receita: resp.detalhe_tipo_receita,
@@ -93,6 +95,7 @@ export const ReceitaForm = props => {
                             currency: 'BRL'
                         }) : "",
                     };
+                    setObjetoParaComparacao(init);
                     setInitialValue(init);
                     setReceita(resp);
                     periodoFechado(resp.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
@@ -113,6 +116,20 @@ export const ReceitaForm = props => {
     }, [tabelas, initialValue.tipo_receita]);
 
     const servicoDeVerificacoes = (e, values, errors) =>{
+
+        console.log("Objeto ", objetoParaComparacao);
+        console.log("Values ", values);
+
+        let qtdeDiferente=0;
+
+
+
+        if (values === objetoParaComparacao){
+            console.log("OBJETOS IGUAIS ")
+        }else {
+            console.log("OBJETOS DIFERENTES ")
+        }
+
         // Validando se receita é conferida
         if (Object.entries(errors).length === 0 ) {
             if (values.conferido) {
@@ -121,6 +138,10 @@ export const ReceitaForm = props => {
             }
         }
     };
+
+    const comparaObjetos = async (objeto1, objeto2) => {
+
+    }
 
     const onSubmit = async (values) => {
         // Validando e ou removendo e_devolucao
@@ -140,11 +161,11 @@ export const ReceitaForm = props => {
         };
         setLoading(true);
         if (uuid) {
-            await atualizar(uuid, payload);
+            //await atualizar(uuid, payload);
         } else {
-            await cadastrar(payload);
+            //await cadastrar(payload);
         }
-        getPath();
+        //getPath();
         setLoading(false);
     };
 
@@ -363,6 +384,7 @@ export const ReceitaForm = props => {
     };
 
     const validateFormReceitas = async (values) => {
+
         const errors = {};
 
         // Verifica se é devolucao e setando erro caso referencia devolucao vazio
@@ -684,8 +706,7 @@ export const ReceitaForm = props => {
 
                             {/*Botões*/}
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
-                                <button type="reset" onClick={onShowModal}
-                                        className="btn btn btn-outline-success mt-2 mr-2">Voltar
+                                <button type="reset" onClick={values === objetoParaComparacao ? onCancelarTrue : onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                 </button>
                                 {uuid ?
                                     <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null
