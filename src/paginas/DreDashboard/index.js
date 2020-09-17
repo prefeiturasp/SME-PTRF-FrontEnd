@@ -1,12 +1,13 @@
 import React from "react";
 import {PaginasContainer} from '../PaginasContainer'
+import {DreDashboard} from "../../componentes/dres/Dashboard";
 
 export const DreDashboardPage = () => {
     return (
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Resumo dos Recursos</h1>
+            <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
             <div className="page-content-inner">
-                <h1>Dre Dashboard Page</h1>
+                <DreDashboard/>
             </div>
         </PaginasContainer>
 
