@@ -10,6 +10,5 @@ export const DreDashboardPage = () => {
                 <DreDashboard/>
             </div>
         </PaginasContainer>
-
     )
 };
