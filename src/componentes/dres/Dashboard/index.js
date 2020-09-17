@@ -1,28 +1,33 @@
 import React, {useEffect, useState} from "react";
-import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/escolas/Associacao.service";
+import {getPeriodos} from "../../../services/dres/Dashboard.service";
+import {TopoSelectPeriodo} from "./TopoSelectPeriodo";
 
 export const DreDashboard = () => {
 
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
+    const [periodoSelecionado, setPeriodoSelecionado] = useState(false);
 
-    useEffect(()=>{
+    useEffect(() => {
         carregaPeriodos();
-    }, [])
+    }, []);
 
     const carregaPeriodos = async () => {
-        let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
+        let periodos = await getPeriodos();
         setPeriodosAssociacao(periodos);
     };
 
-    const handleChangePeriodosAssociacao = async (name, value) => {
-        if (value){
-            let valor = JSON.parse(value);
-        }
+    const handleChangePeriodosAssociacao = async (value) => {
+        setPeriodoSelecionado(value)
     };
 
-    console.log("Periodos ", periodosAssociacao)
-
-    return(
-        <h1>Componente Dre Dashboard</h1>
+    return (
+        <>
+            <h1>Componente Dre Dashboard</h1>
+            <TopoSelectPeriodo
+                periodosAssociacao={periodosAssociacao}
+                periodoSelecionado={periodoSelecionado}
+                handleChangePeriodosAssociacao={handleChangePeriodosAssociacao}
+           />
+        </>
     )
 };
