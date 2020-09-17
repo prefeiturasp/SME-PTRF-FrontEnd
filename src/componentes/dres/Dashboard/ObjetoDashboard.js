@@ -1,4 +1,4 @@
-export const ObjetoDashboard = [
+export const ObjetoDashboard =
     {
         totalDeAssociacoesDre: "371",
         cards: [
@@ -40,6 +40,4 @@ export const ObjetoDashboard = [
             },
 
         ],
-    },
-
-];
+    };

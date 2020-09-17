@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
+import "./dashboard.scss"
+import {BarraDeStatus} from "./BarraDeStatus";
+import {ObjetoDashboard} from "./ObjetoDashboard";
 
 export const DreDashboard = () => {
 
@@ -23,6 +26,9 @@ export const DreDashboard = () => {
             <SelectPeriodo
                 periodos={periodos}
                 handleChangePeriodos={handleChangePeriodos}
+           />
+           <BarraDeStatus
+               ObjetoDashboard={ObjetoDashboard}
            />
         </>
     )
