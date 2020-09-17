@@ -5,9 +5,9 @@ import {faChevronUp, faEye} from "@fortawesome/free-solid-svg-icons";
 export const DashboardCard = ({ObjetoDashboard}) => {
     return (
         <>
-            <div className="row row-cols-1 row-cols-md-4 mt-3">
+            <div className="row mt-3">
             {ObjetoDashboard && ObjetoDashboard.cards && ObjetoDashboard.cards.length > 0 && ObjetoDashboard.cards.map((card, index)=>
-                <div key={index} className="col-12 col-md-3 mb-4 ">
+                <div key={index} className="col-sm-12 col-md-4 col-xl-3 mb-4 ">
                     <div className="card h-100 container-cards-dre-dashboard">
                         <div className="card-header">{card.titulo}</div>
                         <div className="card-body">
