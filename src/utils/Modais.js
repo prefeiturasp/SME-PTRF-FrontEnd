@@ -604,6 +604,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                         <div className="form-group">
                                             <label htmlFor="cargo_educacao">Cargo na educação</label>
                                             <input
+                                                readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
                                                 type="text"
                                                 value={props.values.cargo_educacao ? props.values.cargo_educacao : ""}
                                                 onChange={(e) => {
