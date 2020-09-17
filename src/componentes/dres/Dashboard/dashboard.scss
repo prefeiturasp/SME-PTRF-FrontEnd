@@ -6,13 +6,14 @@
 }
 
 .container-cards-dre-dashboard{
-
+  .card-header{
+    height: 48%;
+    font-weight: bold;
+    font-size: 16px;
+    background-color: transparent;
+    border-bottom: none;
+  }
   .card-body{
-    padding: 0.8rem;
-
-    .card-title{
-      height: 60% !important;
-    }
     .borda-bottom{
       border-bottom: 1px solid #DADADA;
     }
