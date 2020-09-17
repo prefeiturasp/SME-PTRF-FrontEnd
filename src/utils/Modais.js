@@ -566,11 +566,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                             <input
                                                 type="text"
                                                 value={props.values.codigo_identificacao ? props.values.codigo_identificacao : ""}
-/*                                                onBlur={(e) => {
-                                                    props.handleBlur(e);
-                                                    handleBlurCodigoIdentificacao(errors, values, setFieldValue);
-                                                }
-                                                }*/
+
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                     handleChangeEditarMembro(e.target.name, e.target.value);
@@ -608,6 +604,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                         <div className="form-group">
                                             <label htmlFor="cargo_educacao">Cargo na educação</label>
                                             <input
+                                                readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
                                                 type="text"
                                                 value={props.values.cargo_educacao ? props.values.cargo_educacao : ""}
                                                 onChange={(e) => {
@@ -618,7 +615,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                                 name="cargo_educacao"
                                                 className="form-control"
                                             />
-                                            {props.errors.cargo_educacao && <span className="span_erro text-danger mt-1"> {props.errors.cargo_educacao}</span>}
+                                            {(props.values.cargo_educacao === undefined || props.values.cargo_educacao === "") && props.errors.cargo_educacao && <span className="span_erro text-danger mt-1"> {props.errors.cargo_educacao}</span>}
                                         </div>
                                     </div>
 

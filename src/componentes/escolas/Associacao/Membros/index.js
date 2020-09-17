@@ -197,7 +197,7 @@ export const MembrosDaAssociacao = () =>{
                         nome: rf.data[0].nm_pessoa,
                         codigo_identificacao: values.codigo_identificacao,
                         cargo_associacao: values.cargo_associacao,
-                        cargo_educacao: values.cargo_educacao,
+                        cargo_educacao: rf.data[0].cargo,
                         representacao: values.representacao,
                         email: values.email,
                     };
