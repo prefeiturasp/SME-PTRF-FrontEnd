@@ -1,24 +1,28 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {TextoDespesas} from "../TextoDespesas";
 
 export const TabelaDinamica = ({infoAta, valorTemplate}) => {
 
     if (infoAta && infoAta.contas && infoAta.contas.length > 0) {
-        //console.log("TabelaDinamica ", infoAta.contas.length)
-        infoAta.contas.map((conta) =>
+        console.log("TabelaDinamica ", infoAta.contas)
+        /*infoAta.contas.map((conta) =>
             //console.log("conta ", conta)
             conta.acoes.map((acao) =>
                 console.log("conta ", acao)
             )
-        )
+        )*/
 
 
     }
     return (
         <>
-            {infoAta && infoAta.contas && infoAta.contas.length > 0 && infoAta.contas.map((conta) => {
-                    return (
-                        conta.acoes && conta.acoes.length > 0 && conta.acoes.map((info) => (
+            {infoAta && infoAta.contas && infoAta.contas.length > 0 && infoAta.contas.map((conta, index) =>
+
+                <Fragment key={index}>
+
+                    <p>Aqui</p>
+
+                {conta.acoes && conta.acoes.length > 0 && conta.acoes.map((info) =>
                             <div key={info.acao_associacao_uuid}>
                                 <p className='titulo-tabela-acoes mt-5'>
                                     {info.acao_associacao_nome}
@@ -107,9 +111,9 @@ export const TabelaDinamica = ({infoAta, valorTemplate}) => {
                                     valorTemplate={valorTemplate}
                                 />
                             </div>
-                        ))
-                    ) // Return
-                }
+                )}
+
+                </Fragment>
             )}
 
 
