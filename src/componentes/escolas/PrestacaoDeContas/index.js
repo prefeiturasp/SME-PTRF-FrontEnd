@@ -19,7 +19,7 @@ export const PrestacaoDeContas = () => {
     const [periodoPrestacaoDeConta, setPeriodoPrestacaoDeConta] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [statusPrestacaoDeConta, setStatusPrestacaoDeConta] = useState(false);
-    const [uuidPrestacaoConta, setUuidPrestacaoConta] = useState(false);
+    const [uuidPrestacaoConta, setUuidPrestacaoConta] = useState('');
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [contaPrestacaoDeContas, setContaPrestacaoDeContas] = useState(false);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
@@ -39,6 +39,8 @@ export const PrestacaoDeContas = () => {
         getUuidPrestacaoDeConta();
         getContaPrestacaoDeConta();
         getPrimeiraContaPrestacaoDeConta();
+        setConfBoxPrestacaoDeContasPorPeriodo()
+        //setConfBoxPrestacaoDeContasPorPeriodo();
     }, []);
 
     useEffect(() => {
@@ -107,7 +109,7 @@ export const PrestacaoDeContas = () => {
             const files = localStorage.getItem('uuidPrestacaoConta');
             setUuidPrestacaoConta(files)
         } else {
-            setUuidPrestacaoConta(false)
+            setUuidPrestacaoConta('')
         }
     };
 
@@ -180,37 +182,45 @@ export const PrestacaoDeContas = () => {
         let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
         setStatusPrestacaoDeConta(status);
         await carregaPeriodos();
-        await setConfBoxPrestacaoDeContasPorPeriodo(status_concluir_periodo)
+        await setConfBoxPrestacaoDeContasPorPeriodo()
         setLoading(false);
     };
 
-    const setConfBoxPrestacaoDeContasPorPeriodo = async (status)=>{
+    const setConfBoxPrestacaoDeContasPorPeriodo = async ()=>{
+        let uuid_prestacao_de_contas = localStorage.getItem('uuidPrestacaoConta');
+        console.log("setConfBoxPrestacaoDeContasPorPeriodo ")
         let data_preenchimento;
-        try {
-            data_preenchimento = await getDataPreenchimentoAta(status.uuid);
-            localStorage.setItem("uuidAta", data_preenchimento.uuid);
-            setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
-            if (data_preenchimento.alterado_em === null){
+
+        if (uuid_prestacao_de_contas){
+            try {
+                data_preenchimento = await getDataPreenchimentoAta(uuid_prestacao_de_contas);
+                localStorage.setItem("uuidAta", data_preenchimento.uuid);
+                setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
+                if (data_preenchimento.alterado_em === null){
+                    setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
+                    setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
+                }
+                else {
+                    setCorBoxPrestacaoDeContasPorPeriodo("verde");
+                    setDataBoxPrestacaoDeContasPorPeriodo("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
+                }
+
+            }catch (e) {
+                data_preenchimento = await getIniciarAta(uuid_prestacao_de_contas);
+                localStorage.setItem("uuidAta", data_preenchimento.uuid);
                 setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
+                setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
                 setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
             }
-            else {
-                setCorBoxPrestacaoDeContasPorPeriodo("verde");
-                setDataBoxPrestacaoDeContasPorPeriodo("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
-            }
-
-        }catch (e) {
-            data_preenchimento = await getIniciarAta(status.uuid);
-            localStorage.setItem("uuidAta", data_preenchimento.uuid);
-            setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
-            setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
-            setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
         }
-    }
+
+
+    };
 
 
     const onClickVisualizarAta = async () =>{
-
+        setLoading(true)
+        window.location.assign('/visualizacao-da-ata')
     };
 
     const onSalvarTrue = () =>{
@@ -279,7 +289,7 @@ export const PrestacaoDeContas = () => {
                                     contaPrestacaoDeContas={contaPrestacaoDeContas}
                                     setLoading={setLoading}
                                 />
-                                {uuidPrestacaoConta &&
+                                {localStorage.getItem('uuidPrestacaoConta') &&
                                     <BoxPrestacaoDeContasPorPeriodo
                                         onClickVisualizarAta={onClickVisualizarAta}
                                         setLoading={setLoading}
