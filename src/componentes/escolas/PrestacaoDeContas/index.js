@@ -11,12 +11,14 @@ import Img404 from "../../../assets/img/img-404.svg";
 import Loading from "../../../utils/Loading";
 import {ModalConcluirPeriodo} from "./ModalConcluirPeriodo";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
+import {BoxPrestacaoDeContasPorPeriodo} from "../GeracaoDaAta/BoxPrestacaoDeContasPorPeriodo";
 
 export const PrestacaoDeContas = () => {
 
     const [periodoPrestacaoDeConta, setPeriodoPrestacaoDeConta] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [statusPrestacaoDeConta, setStatusPrestacaoDeConta] = useState(false);
+    const [statusConcluirPeriodo, setStatusConcluirPeriodo] = useState(false);
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [contaPrestacaoDeContas, setContaPrestacaoDeContas] = useState(false);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
@@ -150,7 +152,9 @@ export const PrestacaoDeContas = () => {
 
     const concluirPeriodo = async () =>{
         setLoading(true);
-        await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
+        let status_concluir_periodo = await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
+        console.log("Concluir Periodo ", status_concluir_periodo)
+        setStatusConcluirPeriodo(status_concluir_periodo)
         let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
         setStatusPrestacaoDeConta(status);
         await carregaPeriodos();
@@ -223,12 +227,14 @@ export const PrestacaoDeContas = () => {
                                     contaPrestacaoDeContas={contaPrestacaoDeContas}
                                     setLoading={setLoading}
                                 />
-                                {/*<BoxPrestacaoDeContasPorPeriodo
+                                <BoxPrestacaoDeContasPorPeriodo
                                     setLoading={setLoading}
-                                    corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
-                                    textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
-                                    dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
-                                />*/}
+                                    statusPrestacaoDeConta={statusPrestacaoDeConta}
+                                    statusConcluirPeriodo={statusConcluirPeriodo}
+                                    // corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
+                                    // textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
+                                    // dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
+                                />
                             </>
                         ):
                         <MsgImgCentralizada
