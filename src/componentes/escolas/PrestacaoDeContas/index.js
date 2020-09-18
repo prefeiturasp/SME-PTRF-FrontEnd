@@ -40,7 +40,6 @@ export const PrestacaoDeContas = () => {
         getContaPrestacaoDeConta();
         getPrimeiraContaPrestacaoDeConta();
         setConfBoxPrestacaoDeContasPorPeriodo()
-        //setConfBoxPrestacaoDeContasPorPeriodo();
     }, []);
 
     useEffect(() => {
@@ -57,6 +56,7 @@ export const PrestacaoDeContas = () => {
 
     useEffect(() => {
         localStorage.setItem('uuidPrestacaoConta', uuidPrestacaoConta);
+        setConfBoxPrestacaoDeContasPorPeriodo();
     }, [uuidPrestacaoConta]);
 
     useEffect(() => {
@@ -93,6 +93,8 @@ export const PrestacaoDeContas = () => {
         if (periodo_prestacao_de_contas && periodo_prestacao_de_contas.periodo_uuid){
             let data_inicial = periodo_prestacao_de_contas.data_inicial;
             let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), data_inicial);
+            console.log("getStatusPrestacaoDeConta ", status);
+            setUuidPrestacaoConta(status.prestacao_conta);
             setStatusPrestacaoDeConta(status)
         }else {
             if (localStorage.getItem('statusPrestacaoDeConta')) {
@@ -141,6 +143,7 @@ export const PrestacaoDeContas = () => {
             let valor = JSON.parse(value);
             setPeriodoPrestacaoDeConta(valor);
             let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), valor.data_inicial);
+            setUuidPrestacaoConta(status.prestacao_conta);
             setStatusPrestacaoDeConta(status);
         }
         setLoading(false);
@@ -177,18 +180,16 @@ export const PrestacaoDeContas = () => {
     const concluirPeriodo = async () =>{
         setLoading(true);
         let status_concluir_periodo = await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
-        console.log("Concluir Periodo ", status_concluir_periodo)
-        setUuidPrestacaoConta(status_concluir_periodo.uuid)
+        setUuidPrestacaoConta(status_concluir_periodo.uuid);
         let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
         setStatusPrestacaoDeConta(status);
         await carregaPeriodos();
-        await setConfBoxPrestacaoDeContasPorPeriodo()
+        await setConfBoxPrestacaoDeContasPorPeriodo();
         setLoading(false);
     };
 
     const setConfBoxPrestacaoDeContasPorPeriodo = async ()=>{
         let uuid_prestacao_de_contas = localStorage.getItem('uuidPrestacaoConta');
-        console.log("setConfBoxPrestacaoDeContasPorPeriodo ")
         let data_preenchimento;
 
         if (uuid_prestacao_de_contas){
@@ -219,7 +220,7 @@ export const PrestacaoDeContas = () => {
 
 
     const onClickVisualizarAta = async () =>{
-        setLoading(true)
+        setLoading(true);
         window.location.assign('/visualizacao-da-ata')
     };
 
