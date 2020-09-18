@@ -234,6 +234,8 @@ export const VisualizacaoDaAta = () => {
                         infoAta={infoAta}
                         dadosAta={dadosAta}
                         valorTemplate={valorTemplate}
+                        retornaDadosAtaFormatado={retornaDadosAtaFormatado}
+
                     />
 
 

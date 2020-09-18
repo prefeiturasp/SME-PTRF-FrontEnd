@@ -3,10 +3,10 @@ import {TextoDespesas} from "../TextoDespesas";
 import {TabelaTotais} from "../TabelaTotais";
 import {TextoDinamicoInferiorPorAcao} from "../TextoDinamicoInferiorPorAcao";
 
-export const TabelaDinamica = ({infoAta, dadosAta, valorTemplate}) => {
+export const TabelaDinamica = ({infoAta, dadosAta, valorTemplate, retornaDadosAtaFormatado}) => {
 
     if (infoAta && infoAta.contas && infoAta.contas.length > 0) {
-        console.log("TabelaDinamica ", infoAta.contas)
+        //console.log("TabelaDinamica ", infoAta.contas)
         /*infoAta.contas.map((conta) =>
             //console.log("conta ", conta)
             conta.acoes.map((acao) =>
@@ -117,6 +117,13 @@ export const TabelaDinamica = ({infoAta, dadosAta, valorTemplate}) => {
                     )}
 
                     <TabelaTotais
+                        infoAta={conta}
+                        valorTemplate={valorTemplate}
+                    />
+
+                    <TextoDinamicoInferiorPorAcao
+                        dadosAta={dadosAta}
+                        retornaDadosAtaFormatado={retornaDadosAtaFormatado}
                         infoAta={conta}
                         valorTemplate={valorTemplate}
                     />
