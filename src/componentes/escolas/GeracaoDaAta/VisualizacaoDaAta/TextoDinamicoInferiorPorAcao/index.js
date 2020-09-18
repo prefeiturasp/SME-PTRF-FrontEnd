@@ -1,10 +1,6 @@
 import React from "react";
 
 export const TextoDinamicoInferiorPorAcao = ({dadosAta, retornaDadosAtaFormatado, infoAta, valorTemplate})=>{
-
-    console.log("TextoDinamicoInferiorPorAcao dadosAta ", dadosAta)
-    //console.log("TextoDinamicoInferiorPorAcao infoAta ", infoAta)
-
     return(
         <>
             {dadosAta && infoAta &&

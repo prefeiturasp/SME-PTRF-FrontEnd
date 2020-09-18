@@ -228,28 +228,21 @@ export const VisualizacaoDaAta = () => {
                     />
                 }
 
-                {infoAta &&
-                    <>
+                {infoAta && dadosAta &&
                     <TabelaDinamica
                         infoAta={infoAta}
                         dadosAta={dadosAta}
                         valorTemplate={valorTemplate}
                         retornaDadosAtaFormatado={retornaDadosAtaFormatado}
-
                     />
-
-
-                    </>
                 }
                 <br/>
-                {/*{dadosAta && Object.entries(dadosAta).length > 0 &&
+                {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <TextoDinamicoInferior
                         dadosAta={dadosAta}
                         retornaDadosAtaFormatado={retornaDadosAtaFormatado}
-                        infoAta={infoAta}
-                        valorTemplate={valorTemplate}
                     />
-                }*/}
+                }
             </div>
 
             <section>
