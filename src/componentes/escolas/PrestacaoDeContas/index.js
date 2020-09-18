@@ -54,7 +54,7 @@ export const PrestacaoDeContas = () => {
     }, [statusPrestacaoDeConta]);
 
     useEffect(() => {
-        localStorage.setItem('uuidPrestacaoConta', JSON.stringify(uuidPrestacaoConta));
+        localStorage.setItem('uuidPrestacaoConta', uuidPrestacaoConta);
     }, [uuidPrestacaoConta]);
 
     useEffect(() => {
@@ -286,10 +286,6 @@ export const PrestacaoDeContas = () => {
                                         corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
                                         textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
                                         dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
-
-                                        // corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
-                                        // textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
-                                        // dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
                                     />
                                 }
 

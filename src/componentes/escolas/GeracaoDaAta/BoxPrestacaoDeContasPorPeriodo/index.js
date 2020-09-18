@@ -2,13 +2,6 @@ import React from "react";
 import "../geracao-da-ata.scss"
 
 export const BoxPrestacaoDeContasPorPeriodo = ({corBoxPrestacaoDeContasPorPeriodo, textoBoxPrestacaoDeContasPorPeriodo, dataBoxPrestacaoDeContasPorPeriodo, setLoading, onClickVisualizarAta}) => {
-
-    let status = localStorage.getItem('uuidPrestacaoConta');
-
-    console.log("BoxPrestacaoDeContasPorPeriodo ", JSON.parse(status))
-
-
-
     return (
         <div className="row mt-5">
             <div className="col-12">
