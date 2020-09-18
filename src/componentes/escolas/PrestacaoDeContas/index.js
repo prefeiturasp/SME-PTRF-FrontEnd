@@ -1,7 +1,7 @@
 import React, {useEffect, useState, Fragment} from "react";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
 import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/escolas/Associacao.service"
-import {getStatusPeriodoPorData, getConcluirPeriodo} from "../../../services/escolas/PrestacaoDeContas.service";
+import {getStatusPeriodoPorData, getConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import {DemonstrativoFinanceiro} from "./DemonstrativoFinanceiro";
@@ -12,24 +12,31 @@ import Loading from "../../../utils/Loading";
 import {ModalConcluirPeriodo} from "./ModalConcluirPeriodo";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import {BoxPrestacaoDeContasPorPeriodo} from "../GeracaoDaAta/BoxPrestacaoDeContasPorPeriodo";
+import {exibeDateTimePT_BR_Ata} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const PrestacaoDeContas = () => {
 
     const [periodoPrestacaoDeConta, setPeriodoPrestacaoDeConta] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [statusPrestacaoDeConta, setStatusPrestacaoDeConta] = useState(false);
-    const [statusConcluirPeriodo, setStatusConcluirPeriodo] = useState(false);
+    const [uuidPrestacaoConta, setUuidPrestacaoConta] = useState(false);
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [contaPrestacaoDeContas, setContaPrestacaoDeContas] = useState(false);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [loading, setLoading] = useState(true);
     const [show, setShow] = useState(false);
 
+
+    const [corBoxPrestacaoDeContasPorPeriodo, setCorBoxPrestacaoDeContasPorPeriodo] = useState("");
+    const [textoBoxPrestacaoDeContasPorPeriodo, setTextoBoxPrestacaoDeContasPorPeriodo] = useState("");
+    const [dataBoxPrestacaoDeContasPorPeriodo, setDataBoxPrestacaoDeContasPorPeriodo] = useState("");
+
     useEffect(() => {
         getPeriodoPrestacaoDeConta();
         carregaPeriodos();
         carregaTabelas();
         getStatusPrestacaoDeConta();
+        getUuidPrestacaoDeConta();
         getContaPrestacaoDeConta();
         getPrimeiraContaPrestacaoDeConta();
     }, []);
@@ -47,8 +54,14 @@ export const PrestacaoDeContas = () => {
     }, [statusPrestacaoDeConta]);
 
     useEffect(() => {
+        localStorage.setItem('uuidPrestacaoConta', JSON.stringify(uuidPrestacaoConta));
+    }, [uuidPrestacaoConta]);
+
+    useEffect(() => {
         localStorage.setItem('contaPrestacaoDeConta', JSON.stringify(contaPrestacaoDeContas));
     }, [contaPrestacaoDeContas]);
+
+
 
     const carregaPeriodos = async () => {
         let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
@@ -86,6 +99,15 @@ export const PrestacaoDeContas = () => {
             } else {
                 setStatusPrestacaoDeConta({})
             }
+        }
+    };
+
+    const getUuidPrestacaoDeConta = () => {
+        if (localStorage.getItem('uuidPrestacaoConta')) {
+            const files = localStorage.getItem('uuidPrestacaoConta');
+            setUuidPrestacaoConta(files)
+        } else {
+            setUuidPrestacaoConta(false)
         }
     };
 
@@ -154,11 +176,41 @@ export const PrestacaoDeContas = () => {
         setLoading(true);
         let status_concluir_periodo = await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
         console.log("Concluir Periodo ", status_concluir_periodo)
-        setStatusConcluirPeriodo(status_concluir_periodo)
+        setUuidPrestacaoConta(status_concluir_periodo.uuid)
         let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
         setStatusPrestacaoDeConta(status);
         await carregaPeriodos();
+        await setConfBoxPrestacaoDeContasPorPeriodo(status_concluir_periodo)
         setLoading(false);
+    };
+
+    const setConfBoxPrestacaoDeContasPorPeriodo = async (status)=>{
+        let data_preenchimento;
+        try {
+            data_preenchimento = await getDataPreenchimentoAta(status.uuid);
+            localStorage.setItem("uuidAta", data_preenchimento.uuid);
+            setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
+            if (data_preenchimento.alterado_em === null){
+                setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
+                setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
+            }
+            else {
+                setCorBoxPrestacaoDeContasPorPeriodo("verde");
+                setDataBoxPrestacaoDeContasPorPeriodo("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
+            }
+
+        }catch (e) {
+            data_preenchimento = await getIniciarAta(status.uuid);
+            localStorage.setItem("uuidAta", data_preenchimento.uuid);
+            setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
+            setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
+            setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
+        }
+    }
+
+
+    const onClickVisualizarAta = async () =>{
+
     };
 
     const onSalvarTrue = () =>{
@@ -227,14 +279,20 @@ export const PrestacaoDeContas = () => {
                                     contaPrestacaoDeContas={contaPrestacaoDeContas}
                                     setLoading={setLoading}
                                 />
-                                <BoxPrestacaoDeContasPorPeriodo
-                                    setLoading={setLoading}
-                                    statusPrestacaoDeConta={statusPrestacaoDeConta}
-                                    statusConcluirPeriodo={statusConcluirPeriodo}
-                                    // corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
-                                    // textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
-                                    // dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
-                                />
+                                {uuidPrestacaoConta &&
+                                    <BoxPrestacaoDeContasPorPeriodo
+                                        onClickVisualizarAta={onClickVisualizarAta}
+                                        setLoading={setLoading}
+                                        corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
+                                        textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
+                                        dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
+
+                                        // corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
+                                        // textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
+                                        // dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
+                                    />
+                                }
+
                             </>
                         ):
                         <MsgImgCentralizada
