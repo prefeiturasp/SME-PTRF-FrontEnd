@@ -2,6 +2,7 @@ import React from "react";
 import {TextoDespesas} from "../TextoDespesas";
 
 export const TabelaDinamica = ({infoAta, valorTemplate}) => {
+    console.log("TabelaDinamica ", infoAta)
     return (
         <>
             {infoAta.acoes && infoAta.acoes.length > 0 && infoAta.acoes.map((info) => (
