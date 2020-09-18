@@ -232,13 +232,11 @@ export const VisualizacaoDaAta = () => {
                     <>
                     <TabelaDinamica
                         infoAta={infoAta}
+                        dadosAta={dadosAta}
                         valorTemplate={valorTemplate}
                     />
 
-                    <TabelaTotais
-                        infoAta={infoAta}
-                        valorTemplate={valorTemplate}
-                        />
+
                     </>
                 }
                 <br/>

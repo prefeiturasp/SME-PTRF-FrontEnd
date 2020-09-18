@@ -1,7 +1,9 @@
 import React, {Fragment} from "react";
 import {TextoDespesas} from "../TextoDespesas";
+import {TabelaTotais} from "../TabelaTotais";
+import {TextoDinamicoInferiorPorAcao} from "../TextoDinamicoInferiorPorAcao";
 
-export const TabelaDinamica = ({infoAta, valorTemplate}) => {
+export const TabelaDinamica = ({infoAta, dadosAta, valorTemplate}) => {
 
     if (infoAta && infoAta.contas && infoAta.contas.length > 0) {
         console.log("TabelaDinamica ", infoAta.contas)
@@ -113,6 +115,11 @@ export const TabelaDinamica = ({infoAta, valorTemplate}) => {
                             />
                         </div>
                     )}
+
+                    <TabelaTotais
+                        infoAta={conta}
+                        valorTemplate={valorTemplate}
+                    />
 
                 </Fragment>
             )}

@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TextoDinamicoInferior = ({dadosAta, retornaDadosAtaFormatado, infoAta, valorTemplate})=>{
+export const TextoDinamicoInferiorPorAcao = ({dadosAta, retornaDadosAtaFormatado, infoAta, valorTemplate})=>{
     return(
         <div className="row">
             <div className="col-12">
