@@ -214,8 +214,7 @@ export const PrestacaoDeContas = () => {
                 setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
             }
         }
-
-
+        setLoading(false);
     };
 
 
