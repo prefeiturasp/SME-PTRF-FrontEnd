@@ -142,11 +142,11 @@ export const ReceitaForm = props => {
         };
         setLoading(true);
         if (uuid) {
-            //await atualizar(uuid, payload);
+            await atualizar(uuid, payload);
         } else {
-            //await cadastrar(payload);
+            await cadastrar(payload);
         }
-        //getPath();
+        getPath();
         setLoading(false);
     };
 

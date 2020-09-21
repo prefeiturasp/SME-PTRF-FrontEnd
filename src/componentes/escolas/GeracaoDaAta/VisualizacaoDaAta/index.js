@@ -42,7 +42,6 @@ export const VisualizacaoDaAta = () => {
         const infoAta = async ()=>{
             let info_ata = await getInfoAta();
             setInfoAta(info_ata);
-
             await getDadosAta()
         };
 
@@ -58,7 +57,6 @@ export const VisualizacaoDaAta = () => {
     const getDadosAta = async () =>{
 
         let dados_ata = await getAtas();
-
         let data_da_reuniao = dados_ata.data_reuniao ? dados_ata.data_reuniao : "";
 
         setStateFormEditarAta({
@@ -223,26 +221,19 @@ export const VisualizacaoDaAta = () => {
                     />
                 }
 
-                {infoAta &&
-                    <>
+                {infoAta && dadosAta &&
                     <TabelaDinamica
                         infoAta={infoAta}
+                        dadosAta={dadosAta}
                         valorTemplate={valorTemplate}
+                        retornaDadosAtaFormatado={retornaDadosAtaFormatado}
                     />
-
-                    <TabelaTotais
-                        infoAta={infoAta}
-                        valorTemplate={valorTemplate}
-                        />
-                    </>
                 }
                 <br/>
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <TextoDinamicoInferior
                         dadosAta={dadosAta}
                         retornaDadosAtaFormatado={retornaDadosAtaFormatado}
-                        infoAta={infoAta}
-                        valorTemplate={valorTemplate}
                     />
                 }
             </div>

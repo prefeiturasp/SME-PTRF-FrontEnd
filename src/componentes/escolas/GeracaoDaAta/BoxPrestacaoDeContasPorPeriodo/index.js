@@ -1,13 +1,7 @@
 import React from "react";
 import "../geracao-da-ata.scss"
 
-export const BoxPrestacaoDeContasPorPeriodo = ({corBoxPrestacaoDeContasPorPeriodo, textoBoxPrestacaoDeContasPorPeriodo, dataBoxPrestacaoDeContasPorPeriodo, setLoading}) => {
-
-    const onClickVisualizarAta = () =>{
-        setLoading(true);
-        window.location.assign('/visualizacao-da-ata')
-    };
-
+export const BoxPrestacaoDeContasPorPeriodo = ({corBoxPrestacaoDeContasPorPeriodo, textoBoxPrestacaoDeContasPorPeriodo, dataBoxPrestacaoDeContasPorPeriodo, setLoading, onClickVisualizarAta}) => {
     return (
         <div className="row mt-5">
             <div className="col-12">
@@ -19,7 +13,7 @@ export const BoxPrestacaoDeContasPorPeriodo = ({corBoxPrestacaoDeContasPorPeriod
                             <p className={`fonte-12 mb-1 status-data-${corBoxPrestacaoDeContasPorPeriodo}`}>{dataBoxPrestacaoDeContasPorPeriodo}</p>
                         </div>
                         <div className="col-12 col-md-4 align-self-center">
-                            <button onClick={onClickVisualizarAta}  type="button" className="btn btn-success float-right">Visualizar ata</button>
+                            <button onClick={()=>onClickVisualizarAta()}  type="button" className="btn btn-success float-right">Visualizar ata</button>
                         </div>
                     </div>
                 </div>

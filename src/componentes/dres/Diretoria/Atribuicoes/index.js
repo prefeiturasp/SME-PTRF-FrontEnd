@@ -440,7 +440,6 @@ export const Atribuicoes = () => {
     }
 
     const fecharToast = () => {
-        console.log("Fechando Toast");
         setShowToast(false);
         setTecnico("");
         setCopiaUnidades([]);

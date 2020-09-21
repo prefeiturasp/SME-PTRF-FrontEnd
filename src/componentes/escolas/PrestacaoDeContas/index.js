@@ -1,7 +1,7 @@
 import React, {useEffect, useState, Fragment} from "react";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
 import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/escolas/Associacao.service"
-import {getStatusPeriodoPorData, getConcluirPeriodo} from "../../../services/escolas/PrestacaoDeContas.service";
+import {getStatusPeriodoPorData, getConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import {DemonstrativoFinanceiro} from "./DemonstrativoFinanceiro";
@@ -11,25 +11,35 @@ import Img404 from "../../../assets/img/img-404.svg";
 import Loading from "../../../utils/Loading";
 import {ModalConcluirPeriodo} from "./ModalConcluirPeriodo";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
+import {BoxPrestacaoDeContasPorPeriodo} from "../GeracaoDaAta/BoxPrestacaoDeContasPorPeriodo";
+import {exibeDateTimePT_BR_Ata} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const PrestacaoDeContas = () => {
 
     const [periodoPrestacaoDeConta, setPeriodoPrestacaoDeConta] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [statusPrestacaoDeConta, setStatusPrestacaoDeConta] = useState(false);
+    const [uuidPrestacaoConta, setUuidPrestacaoConta] = useState('');
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [contaPrestacaoDeContas, setContaPrestacaoDeContas] = useState(false);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [loading, setLoading] = useState(true);
     const [show, setShow] = useState(false);
 
+
+    const [corBoxPrestacaoDeContasPorPeriodo, setCorBoxPrestacaoDeContasPorPeriodo] = useState("");
+    const [textoBoxPrestacaoDeContasPorPeriodo, setTextoBoxPrestacaoDeContasPorPeriodo] = useState("");
+    const [dataBoxPrestacaoDeContasPorPeriodo, setDataBoxPrestacaoDeContasPorPeriodo] = useState("");
+
     useEffect(() => {
         getPeriodoPrestacaoDeConta();
         carregaPeriodos();
         carregaTabelas();
         getStatusPrestacaoDeConta();
+        getUuidPrestacaoDeConta();
         getContaPrestacaoDeConta();
         getPrimeiraContaPrestacaoDeConta();
+        setConfBoxPrestacaoDeContasPorPeriodo()
     }, []);
 
     useEffect(() => {
@@ -45,8 +55,15 @@ export const PrestacaoDeContas = () => {
     }, [statusPrestacaoDeConta]);
 
     useEffect(() => {
+        localStorage.setItem('uuidPrestacaoConta', uuidPrestacaoConta);
+        setConfBoxPrestacaoDeContasPorPeriodo();
+    }, [uuidPrestacaoConta]);
+
+    useEffect(() => {
         localStorage.setItem('contaPrestacaoDeConta', JSON.stringify(contaPrestacaoDeContas));
     }, [contaPrestacaoDeContas]);
+
+
 
     const carregaPeriodos = async () => {
         let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
@@ -76,6 +93,7 @@ export const PrestacaoDeContas = () => {
         if (periodo_prestacao_de_contas && periodo_prestacao_de_contas.periodo_uuid){
             let data_inicial = periodo_prestacao_de_contas.data_inicial;
             let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), data_inicial);
+            setUuidPrestacaoConta(status.prestacao_conta);
             setStatusPrestacaoDeConta(status)
         }else {
             if (localStorage.getItem('statusPrestacaoDeConta')) {
@@ -84,6 +102,15 @@ export const PrestacaoDeContas = () => {
             } else {
                 setStatusPrestacaoDeConta({})
             }
+        }
+    };
+
+    const getUuidPrestacaoDeConta = () => {
+        if (localStorage.getItem('uuidPrestacaoConta')) {
+            const files = localStorage.getItem('uuidPrestacaoConta');
+            setUuidPrestacaoConta(files)
+        } else {
+            setUuidPrestacaoConta('')
         }
     };
 
@@ -115,6 +142,7 @@ export const PrestacaoDeContas = () => {
             let valor = JSON.parse(value);
             setPeriodoPrestacaoDeConta(valor);
             let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), valor.data_inicial);
+            setUuidPrestacaoConta(status.prestacao_conta);
             setStatusPrestacaoDeConta(status);
         }
         setLoading(false);
@@ -150,11 +178,48 @@ export const PrestacaoDeContas = () => {
 
     const concluirPeriodo = async () =>{
         setLoading(true);
-        await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
+        let status_concluir_periodo = await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
+        setUuidPrestacaoConta(status_concluir_periodo.uuid);
         let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
         setStatusPrestacaoDeConta(status);
         await carregaPeriodos();
+        await setConfBoxPrestacaoDeContasPorPeriodo();
         setLoading(false);
+    };
+
+    const setConfBoxPrestacaoDeContasPorPeriodo = async ()=>{
+        let uuid_prestacao_de_contas = localStorage.getItem('uuidPrestacaoConta');
+        let data_preenchimento;
+
+        if (uuid_prestacao_de_contas){
+            try {
+                data_preenchimento = await getDataPreenchimentoAta(uuid_prestacao_de_contas);
+                localStorage.setItem("uuidAta", data_preenchimento.uuid);
+                setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
+                if (data_preenchimento.alterado_em === null){
+                    setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
+                    setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
+                }
+                else {
+                    setCorBoxPrestacaoDeContasPorPeriodo("verde");
+                    setDataBoxPrestacaoDeContasPorPeriodo("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
+                }
+
+            }catch (e) {
+                data_preenchimento = await getIniciarAta(uuid_prestacao_de_contas);
+                localStorage.setItem("uuidAta", data_preenchimento.uuid);
+                setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
+                setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
+                setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
+            }
+        }
+        setLoading(false);
+    };
+
+
+    const onClickVisualizarAta = async () =>{
+        setLoading(true);
+        window.location.assign('/visualizacao-da-ata')
     };
 
     const onSalvarTrue = () =>{
@@ -223,12 +288,16 @@ export const PrestacaoDeContas = () => {
                                     contaPrestacaoDeContas={contaPrestacaoDeContas}
                                     setLoading={setLoading}
                                 />
-                                {/*<BoxPrestacaoDeContasPorPeriodo
-                                    setLoading={setLoading}
-                                    corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
-                                    textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
-                                    dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
-                                />*/}
+                                {localStorage.getItem('uuidPrestacaoConta') &&
+                                    <BoxPrestacaoDeContasPorPeriodo
+                                        onClickVisualizarAta={onClickVisualizarAta}
+                                        setLoading={setLoading}
+                                        corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
+                                        textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
+                                        dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
+                                    />
+                                }
+
                             </>
                         ):
                         <MsgImgCentralizada
