@@ -42,7 +42,7 @@ export const VisualizacaoDaAta = () => {
         const infoAta = async ()=>{
             let info_ata = await getInfoAta();
 
-            //console.log("getInfoAta ", info_ata)
+            console.log("getInfoAta XXXXXXXXXX ", info_ata)
 
             setInfoAta(info_ata);
 
