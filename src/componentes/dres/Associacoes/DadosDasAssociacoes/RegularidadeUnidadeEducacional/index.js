@@ -103,7 +103,6 @@ export const RegularidadeUnidadeEducacional = () => {
     }
 
     const salvarItemVerificacao = async (lista_verificacao) => {
-      console.log("Salvar");
       var itens = checklists[lista_verificacao.uuid].map(item => {
         return {uuid: item.uuid, regular: item.regular}
       })

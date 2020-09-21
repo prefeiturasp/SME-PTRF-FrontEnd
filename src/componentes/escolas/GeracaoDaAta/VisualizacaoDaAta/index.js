@@ -41,11 +41,7 @@ export const VisualizacaoDaAta = () => {
     useEffect(()=>{
         const infoAta = async ()=>{
             let info_ata = await getInfoAta();
-
-            console.log("getInfoAta XXXXXXXXXX ", info_ata)
-
             setInfoAta(info_ata);
-
             await getDadosAta()
         };
 
@@ -61,9 +57,6 @@ export const VisualizacaoDaAta = () => {
     const getDadosAta = async () =>{
 
         let dados_ata = await getAtas();
-
-        //console.log("getDadosAta ", dados_ata)
-
         let data_da_reuniao = dados_ata.data_reuniao ? dados_ata.data_reuniao : "";
 
         setStateFormEditarAta({

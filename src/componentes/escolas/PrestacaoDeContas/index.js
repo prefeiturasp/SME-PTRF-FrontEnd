@@ -93,7 +93,6 @@ export const PrestacaoDeContas = () => {
         if (periodo_prestacao_de_contas && periodo_prestacao_de_contas.periodo_uuid){
             let data_inicial = periodo_prestacao_de_contas.data_inicial;
             let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), data_inicial);
-            console.log("getStatusPrestacaoDeConta ", status);
             setUuidPrestacaoConta(status.prestacao_conta);
             setStatusPrestacaoDeConta(status)
         }else {
