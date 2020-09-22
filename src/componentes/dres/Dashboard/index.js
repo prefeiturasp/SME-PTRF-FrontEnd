@@ -3,7 +3,6 @@ import {getPeriodos, getItensDashboard} from "../../../services/dres/Dashboard.s
 import {SelectPeriodo} from "./SelectPeriodo";
 import "./dashboard.scss"
 import {BarraDeStatus} from "./BarraDeStatus";
-import {ObjetoDashboard} from "./ObjetoDashboard";
 import {DashboardCard} from "./DashboardCard";
 
 export const DreDashboard = () => {
@@ -33,8 +32,7 @@ export const DreDashboard = () => {
             let itens = await getItensDashboard(periodoEsolhido);
             setItensDashboard(itens)
         }
-
-    }
+    };
 
     const handleChangePeriodos = async (uuid_periodo) => {
         setPeriodoEsolhido(uuid_periodo)
