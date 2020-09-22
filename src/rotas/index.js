@@ -34,7 +34,7 @@ import {TecnicosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/TecnicosDaDi
 import {FaqDrePage} from "../paginas/dres/ApoioDiretoria/Faq";
 import {SituacaoFinanceiraUnidadeEducacionalPage} from "../paginas/dres/Associacoes/SituacaoFinanceiraUnidadeEducacional";
 import {AtribuicoesPage} from "../paginas/dres/Diretoria/Atribuicoes";
-import {DreDashboardPage} from "../paginas/DreDashboard";
+import {DreDashboardPage} from "../paginas/dres/DreDashboard";
 
 
 const routesConfig = [
