@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import {Redirect} from 'react-router-dom'
 import {getPeriodos, getItensDashboard} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import "./dashboard.scss"
@@ -12,6 +13,7 @@ export const DreDashboard = () => {
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
     const [itensDashboard, setItensDashboard] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [redirect, setRedirect] = useState(false);
 
     useEffect(() => {
         carregaPeriodos();
@@ -46,6 +48,8 @@ export const DreDashboard = () => {
 
     const handleClickVerPrestacaoes = (status) =>{
         console.log("handleClickVerPrestacaoes ", status)
+        setRedirect(true)
+
     };
 
     return (
@@ -72,6 +76,17 @@ export const DreDashboard = () => {
                         itensDashboard={itensDashboard}
                         handleClickVerPrestacaoes={handleClickVerPrestacaoes}
                     />
+                    {redirect &&
+                    <Redirect
+                        to={{
+                            pathname: '/dre-lista-prestacao-de-contas',
+                            propriedades:{
+                                id: '123',
+                                nome:'Ollyver'
+                            }
+                        }}
+                    />
+                    }
                 </>
             }
         </>
