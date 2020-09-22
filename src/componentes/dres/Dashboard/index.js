@@ -12,8 +12,8 @@ export const DreDashboard = () => {
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
     const [itensDashboard, setItensDashboard] = useState(false);
+    const [statusPrestacao, setStatusPrestacao] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [redirect, setRedirect] = useState(false);
 
     useEffect(() => {
         carregaPeriodos();
@@ -47,9 +47,7 @@ export const DreDashboard = () => {
     };
 
     const handleClickVerPrestacaoes = (status) =>{
-        console.log("handleClickVerPrestacaoes ", status)
-        setRedirect(true)
-
+        setStatusPrestacao(status);
     };
 
     return (
@@ -76,14 +74,10 @@ export const DreDashboard = () => {
                         itensDashboard={itensDashboard}
                         handleClickVerPrestacaoes={handleClickVerPrestacaoes}
                     />
-                    {redirect &&
+                    {statusPrestacao &&
                     <Redirect
                         to={{
-                            pathname: '/dre-lista-prestacao-de-contas/123/STATUS_AQUI',
-                            propriedades:{
-                                id: '123',
-                                nome:'Ollyver'
-                            }
+                            pathname: `/dre-lista-prestacao-de-contas/${periodoEscolhido}/${statusPrestacao}`,
                         }}
                     />
                     }
