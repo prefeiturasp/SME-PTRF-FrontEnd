@@ -1,7 +1,7 @@
 import React from "react";
 import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 
-export const SelectPeriodo = ({periodos, periodoEsolhido, handleChangePeriodos}) => {
+export const SelectPeriodo = ({periodos, periodoEscolhido, handleChangePeriodos}) => {
     return (
         <>
             <form id="periodo_conta">
@@ -13,7 +13,7 @@ export const SelectPeriodo = ({periodos, periodoEsolhido, handleChangePeriodos})
                             </div>
                             <div className="col-12 col-sm-7 col-md-9 pl-0">
                                 <select
-                                    value={periodoEsolhido}
+                                    value={periodoEscolhido}
                                     onChange={(e) => handleChangePeriodos(e.target.value)}
                                     name="periodo"
                                     id="periodo"
