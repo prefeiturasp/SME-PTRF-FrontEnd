@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {TopoSelectPeriodoBotaoVoltar} from "./TopoSelectPeriodoBotaoVoltar";
-import {getPrestacoesDeContas, getQtdeUnidadesDre} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getPrestacoesDeContas, getQtdeUnidadesDre, getPrestacoesDeContasPorDrePeriodo} from "../../../../services/dres/PrestacaoDeContas.service";
 import {BarraDeStatus} from "./BarraDeStatus";
 import {FormFiltros} from "./FormFiltros";
 import "../prestacao-de-contas.scss"
@@ -29,6 +29,7 @@ export const ListaPrestacaoDeContas= () => {
 
     useEffect(() => {
         carregaPeriodos();
+        carregaStatus();
         carregaQtdeUnidadesDre();
         buscaTabelaAssociacoes();
     }, []);
@@ -42,6 +43,7 @@ export const ListaPrestacaoDeContas= () => {
         carregaPrestacoesDeContas();
     }, [statusPrestacao]);
 
+
     const carregaPeriodos = async () => {
         let periodos = await getPeriodos();
         setPeriodos(periodos);
@@ -50,17 +52,29 @@ export const ListaPrestacaoDeContas= () => {
         }else if (periodos && periodos.length > 0){
             setPeriodoEsolhido(periodos[0].uuid)
         }
-        if (status_prestacao){
-            setStatusPrestacao(status_prestacao)
-        }
     };
+
+    const carregaStatus = async  ()=>{
+        if (status_prestacao !== undefined){
+            setStatusPrestacao(status_prestacao)
+            setStateFiltros({
+                ...stateFiltros,
+                filtrar_por_status: status_prestacao
+            });
+        }
+    }
 
     const carregaPrestacoesDeContas = async ()=>{
         if (periodoEscolhido){
-            let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, statusPrestacao);
+            let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status);
             console.log("Prestacoes de contas ", prestacoes_de_contas);
             setPrestacaoDeContas(prestacoes_de_contas)
         }
+    };
+
+    const carregaPrestacoesDeContasPorDrePeriodo = async ()=>{
+        let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido);
+        setPrestacaoDeContas(prestacoes_de_contas)
     };
 
     const carregaQtdeUnidadesDre = async () =>{
@@ -105,8 +119,13 @@ export const ListaPrestacaoDeContas= () => {
 
     const handleSubmitFiltros = async (event)=>{
         event.preventDefault();
-        console.log("On submit filtros ", stateFiltros)
-    }
+        await carregaPrestacoesDeContas();
+    };
+
+    const limpaFiltros = async () => {
+        await setStateFiltros(initialStateFiltros)
+        await carregaPrestacoesDeContasPorDrePeriodo();
+    };
 
     return (
         <PaginasContainer>
@@ -130,6 +149,7 @@ export const ListaPrestacaoDeContas= () => {
                     tabelaAssociacoes={tabelaAssociacoes}
                     handleChangeFiltros={handleChangeFiltros}
                     handleSubmitFiltros={handleSubmitFiltros}
+                    limpaFiltros={limpaFiltros}
                 />
 
             </div>

@@ -1,9 +1,9 @@
 import React from "react";
 
-export const FormFiltros = ({tabelaAssociacoes, stateFiltros, handleChangeFiltros, handleSubmitFiltros}) => {
+export const FormFiltros = ({tabelaAssociacoes, stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros}) => {
     return (
         <>
-            <form onSubmit={handleSubmitFiltros}>
+            <form onSubmit={handleSubmitFiltros} method="post">
                 <div className="row mt-3">
                     <div className="col">
                         <label htmlFor="filtrar_por_termo">Filtrar por um termo</label>
@@ -57,7 +57,7 @@ export const FormFiltros = ({tabelaAssociacoes, stateFiltros, handleChangeFiltro
                     </div>
                 </div>
                 <div className="d-flex  justify-content-end pb-3 mt-3">
-                    <button type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                    <button onClick={()=>limpaFiltros()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                     <button type="submit" className="btn btn-success mt-2">Filtrar</button>
                 </div>
             </form>
