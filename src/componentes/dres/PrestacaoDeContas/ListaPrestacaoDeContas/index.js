@@ -6,20 +6,31 @@ import {TopoSelectPeriodoBotaoVoltar} from "./TopoSelectPeriodoBotaoVoltar";
 import {getPrestacoesDeContas, getQtdeUnidadesDre} from "../../../../services/dres/PrestacaoDeContas.service";
 import {BarraDeStatus} from "./BarraDeStatus";
 import {FormFiltros} from "./FormFiltros";
+import "../prestacao-de-contas.scss"
+import {getTabelaAssociacoes} from "../../../../services/dres/Associacoes.service";
 
 export const ListaPrestacaoDeContas= () => {
 
     let {periodo_uuid, status_prestacao} = useParams();
+
+    const initialStateFiltros = {
+        filtrar_por_termo: "",
+        filtrar_por_tipo_de_unidade: "",
+        filtrar_por_status: "",
+    };
 
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
     const [statusPrestacao, setStatusPrestacao] = useState("");
     const [prestacaoDeContas, setPrestacaoDeContas] = useState(false);
     const [qtdeUnidadesDre, setQtdeUnidadesDre] = useState(false);
+    const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
+    const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
 
     useEffect(() => {
         carregaPeriodos();
         carregaQtdeUnidadesDre();
+        buscaTabelaAssociacoes();
     }, []);
 
 
@@ -58,6 +69,11 @@ export const ListaPrestacaoDeContas= () => {
         setQtdeUnidadesDre(85)
     };
 
+    const buscaTabelaAssociacoes = async ()=>{
+        let tabela_associacoes = await getTabelaAssociacoes();
+        setTabelaAssociacoes(tabela_associacoes);
+    };
+
     const exibeLabelStatus = ()=>{
 
         if (statusPrestacao === 'NAO_RECEBIDA'){
@@ -80,6 +96,18 @@ export const ListaPrestacaoDeContas= () => {
         setPeriodoEsolhido(uuid_periodo)
     };
 
+    const handleChangeFiltros = (name, value) => {
+        setStateFiltros({
+            ...stateFiltros,
+            [name]: value
+        });
+    };
+
+    const handleSubmitFiltros = async (event)=>{
+        event.preventDefault();
+        console.log("On submit filtros ", stateFiltros)
+    }
+
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -95,7 +123,14 @@ export const ListaPrestacaoDeContas= () => {
                     statusDasPrestacoes={exibeLabelStatus(statusPrestacao)}
                 />
 
-                <FormFiltros/>
+                <p className='titulo-explicativo mt-4 mb-4'>Prestações de contas pendentes de análise e recebimento</p>
+
+                <FormFiltros
+                    stateFiltros={stateFiltros}
+                    tabelaAssociacoes={tabelaAssociacoes}
+                    handleChangeFiltros={handleChangeFiltros}
+                    handleSubmitFiltros={handleSubmitFiltros}
+                />
 
             </div>
         </PaginasContainer>
