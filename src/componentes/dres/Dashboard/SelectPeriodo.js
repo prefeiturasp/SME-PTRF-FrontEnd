@@ -1,7 +1,7 @@
 import React from "react";
 import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 
-export const SelectPeriodo = ({periodos, handleChangePeriodos}) => {
+export const SelectPeriodo = ({periodos, periodoEsolhido, handleChangePeriodos}) => {
     return (
         <>
             <form id="periodo_conta">
@@ -13,13 +13,13 @@ export const SelectPeriodo = ({periodos, handleChangePeriodos}) => {
                             </div>
                             <div className="col-12 col-sm-7 col-md-9 pl-0">
                                 <select
-                                    value={periodos.uuid}
-                                    onChange={(e) => handleChangePeriodos( e.target.value)}
+                                    value={periodoEsolhido}
+                                    onChange={(e) => handleChangePeriodos(e.target.value)}
                                     name="periodo"
                                     id="periodo"
                                     className="form-control"
                                 >
-                                    <option value="">Escolha um período</option>
+                                    {/*<option value="">Escolha um período</option>*/}
                                     {periodos && periodos.map((periodo)=>
                                         <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}</option>
                                     )}

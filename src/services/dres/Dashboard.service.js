@@ -12,3 +12,7 @@ const authHeader = {
 export const getPeriodos = async () => {
     return (await api.get(`/api/periodos/`, authHeader)).data
 };
+
+export const getItensDashboard = async (uuid_periodo) => {
+    return (await api.get(`/api/prestacoes-contas/dashboard/?periodo=${uuid_periodo}&dre_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
+};
