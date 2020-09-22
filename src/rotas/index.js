@@ -35,6 +35,7 @@ import {FaqDrePage} from "../paginas/dres/ApoioDiretoria/Faq";
 import {SituacaoFinanceiraUnidadeEducacionalPage} from "../paginas/dres/Associacoes/SituacaoFinanceiraUnidadeEducacional";
 import {AtribuicoesPage} from "../paginas/dres/Diretoria/Atribuicoes";
 import {DreDashboardPage} from "../paginas/dres/DreDashboard";
+import {ListaPrestacaoDeContasPage} from "../paginas/dres/PrestacaoDeContas/ListaPrestacaoDeContas";
 
 
 const routesConfig = [
@@ -177,6 +178,11 @@ const routesConfig = [
         exact: true,
         path: "/dre-dashboard",
         component: DreDashboardPage
+    },
+    {
+        exact: true,
+        path: "/dre-lista-prestacao-de-contas",
+        component: ListaPrestacaoDeContasPage
     },
     {
         exact: true,
