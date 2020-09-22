@@ -3,6 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye} from "@fortawesome/free-solid-svg-icons";
 
 export const DashboardCard = ({itensDashboard, handleClickVerPrestacaoes}) => {
+    console.log("Itens dashboard ", itensDashboard)
     return (
         <>
             <div className="row mt-4">

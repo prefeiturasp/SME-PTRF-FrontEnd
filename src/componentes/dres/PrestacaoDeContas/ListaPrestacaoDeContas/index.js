@@ -4,6 +4,7 @@ import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {TopoSelectPeriodoBotaoVoltar} from "./TopoSelectPeriodoBotaoVoltar";
 import {getPrestacoesDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
+import {BarraDeStatus} from "./BarraDeStatus";
 
 export const ListaPrestacaoDeContas= () => {
 
@@ -54,6 +55,7 @@ export const ListaPrestacaoDeContas= () => {
                     periodoEscolhido={periodoEscolhido}
                     handleChangePeriodos={handleChangePeriodos}
                 />
+                <BarraDeStatus/>
             </div>
         </PaginasContainer>
     )

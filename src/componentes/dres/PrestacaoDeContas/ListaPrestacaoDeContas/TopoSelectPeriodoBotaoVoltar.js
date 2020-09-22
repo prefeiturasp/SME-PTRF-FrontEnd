@@ -7,7 +7,7 @@ import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 export const TopoSelectPeriodoBotaoVoltar = ({periodos, periodoEscolhido, handleChangePeriodos}) =>{
     return (
         <>
-            <div className="d-flex bd-highlight border-bottom">
+            <div className="d-flex bd-highlight">
                 <div className="p-2 flex-grow-1 bd-highlight">
                     <form id="periodo_conta">
                         <div className="row pt-3">
