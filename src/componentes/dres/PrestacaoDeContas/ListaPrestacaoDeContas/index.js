@@ -28,6 +28,8 @@ export const ListaPrestacaoDeContas= () => {
         setPeriodos(periodos);
         if (periodo_uuid){
             setPeriodoEsolhido(periodo_uuid)
+        }else if (periodos && periodos.length > 0){
+            setPeriodoEsolhido(periodos[0].uuid)
         }
     };
 
@@ -37,8 +39,7 @@ export const ListaPrestacaoDeContas= () => {
             console.log("Prestacoes de contas ", prestacoes_de_contas)
             setPrestacaoDeContas(prestacoes_de_contas)
         }
-
-    }
+    };
 
     const handleChangePeriodos = async (uuid_periodo) => {
         setPeriodoEsolhido(uuid_periodo)

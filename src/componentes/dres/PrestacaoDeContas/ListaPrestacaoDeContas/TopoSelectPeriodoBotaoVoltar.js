@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom";
 import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 export const TopoSelectPeriodoBotaoVoltar = ({periodos, periodoEscolhido, handleChangePeriodos}) =>{
@@ -32,7 +33,7 @@ export const TopoSelectPeriodoBotaoVoltar = ({periodos, periodoEscolhido, handle
                     </form>
                 </div>
                 <div className="p-2 bd-highlight pt-3">
-                    <a href="" className="btn btn-info ml-2">Editar</a>
+                    <Link to='/dre-dashboard' className="btn btn-success ml-2">Voltar para painel geral</Link>
                 </div>
 
             </div>
