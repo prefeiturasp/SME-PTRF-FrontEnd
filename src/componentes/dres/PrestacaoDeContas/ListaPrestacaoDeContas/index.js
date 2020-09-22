@@ -5,6 +5,7 @@ import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {TopoSelectPeriodoBotaoVoltar} from "./TopoSelectPeriodoBotaoVoltar";
 import {getPrestacoesDeContas, getQtdeUnidadesDre} from "../../../../services/dres/PrestacaoDeContas.service";
 import {BarraDeStatus} from "./BarraDeStatus";
+import {FormFiltros} from "./FormFiltros";
 
 export const ListaPrestacaoDeContas= () => {
 
@@ -93,6 +94,9 @@ export const ListaPrestacaoDeContas= () => {
                     prestacaoDeContas={prestacaoDeContas}
                     statusDasPrestacoes={exibeLabelStatus(statusPrestacao)}
                 />
+
+                <FormFiltros/>
+
             </div>
         </PaginasContainer>
     )
