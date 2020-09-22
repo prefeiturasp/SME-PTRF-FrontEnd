@@ -44,6 +44,10 @@ export const DreDashboard = () => {
         setPeriodoEsolhido(uuid_periodo)
     };
 
+    const handleClickVerPrestacaoes = (status) =>{
+        console.log("handleClickVerPrestacaoes ", status)
+    };
+
     return (
         <>
             <SelectPeriodo
@@ -66,6 +70,7 @@ export const DreDashboard = () => {
                     />
                     <DashboardCard
                         itensDashboard={itensDashboard}
+                        handleClickVerPrestacaoes={handleClickVerPrestacaoes}
                     />
                 </>
             }

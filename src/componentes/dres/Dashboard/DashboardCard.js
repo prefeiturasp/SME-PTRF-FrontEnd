@@ -2,7 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye} from "@fortawesome/free-solid-svg-icons";
 
-export const DashboardCard = ({itensDashboard}) => {
+export const DashboardCard = ({itensDashboard, handleClickVerPrestacaoes}) => {
     return (
         <>
             <div className="row mt-4">
@@ -16,7 +16,7 @@ export const DashboardCard = ({itensDashboard}) => {
                         <div className="card-body">
                             <p className="card-text card-qtde-associacoes  mb-0 pb-3">{card.quantidade_prestacoes}</p>
                             <p className="text-center">
-                                <button className="btn btn-outline-success btn-ver-prestacoes">
+                                <button onClick={()=>handleClickVerPrestacaoes(card.status)} className="btn btn-outline-success btn-ver-prestacoes">
                                     <FontAwesomeIcon
                                         style={{marginRight: "3px", color: '#2B7D83'}}
                                         icon={faEye}
