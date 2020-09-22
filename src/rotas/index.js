@@ -34,6 +34,7 @@ import {TecnicosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/TecnicosDaDi
 import {FaqDrePage} from "../paginas/dres/ApoioDiretoria/Faq";
 import {SituacaoFinanceiraUnidadeEducacionalPage} from "../paginas/dres/Associacoes/SituacaoFinanceiraUnidadeEducacional";
 import {AtribuicoesPage} from "../paginas/dres/Diretoria/Atribuicoes";
+import {DreDashboardPage} from "../paginas/DreDashboard";
 
 
 const routesConfig = [
@@ -171,6 +172,11 @@ const routesConfig = [
         exact: true,
         path: "/dre-atribuicoes/:tecnico_uuid?",
         component: AtribuicoesPage
+    },
+    {
+        exact: true,
+        path: "/dre-dashboard",
+        component: DreDashboardPage
     },
     {
         exact: true,

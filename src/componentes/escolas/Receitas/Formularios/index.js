@@ -11,7 +11,7 @@ import {
     getTabelasReceita,
     getRepasse
 } from '../../../../services/escolas/Receitas.service';
-import {round, trataNumericos, periodoFechado} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {round, trataNumericos, periodoFechado, comparaObjetos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
@@ -53,6 +53,7 @@ export const ReceitaForm = props => {
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
     const [showErroGeral, setShowErroGeral] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
+    const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
     const [receita, setReceita] = useState({});
     const [readOnlyValor, setReadOnlyValor] = useState(false);
     const [readOnlyClassificacaoReceita, setreadOnlyClassificacaoReceita] = useState(false);
@@ -93,6 +94,7 @@ export const ReceitaForm = props => {
                             currency: 'BRL'
                         }) : "",
                     };
+                    setObjetoParaComparacao(init);
                     setInitialValue(init);
                     setReceita(resp);
                     periodoFechado(resp.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
@@ -363,6 +365,7 @@ export const ReceitaForm = props => {
     };
 
     const validateFormReceitas = async (values) => {
+
         const errors = {};
 
         // Verifica se é devolucao e setando erro caso referencia devolucao vazio
@@ -684,8 +687,7 @@ export const ReceitaForm = props => {
 
                             {/*Botões*/}
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
-                                <button type="reset" onClick={onShowModal}
-                                        className="btn btn btn-outline-success mt-2 mr-2">Voltar
+                                <button type="reset" onClick={comparaObjetos(values,objetoParaComparacao) ? onCancelarTrue : onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                 </button>
                                 {uuid ?
                                     <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null
