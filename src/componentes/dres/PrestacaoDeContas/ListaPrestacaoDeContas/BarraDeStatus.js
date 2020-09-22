@@ -1,10 +1,12 @@
 import React from "react";
-export const BarraDeStatus = ({itensDashboard}) => {
+export const BarraDeStatus = ({qtdeUnidadesDre, prestacaoDeContas, statusDasPrestacoes}) => {
     return (
         <>
-            <div className="col-12 mt-3 barra-de-status">
-                <p className="mb-0">Total de associações da Diretoria: <strong>155555 unidades</strong></p>
-            </div>
+            {qtdeUnidadesDre && prestacaoDeContas &&
+                <div className="col-12 mt-3 barra-de-status">
+                    <p className="mb-0"><strong>{prestacaoDeContas.length} de {qtdeUnidadesDre}</strong> unidades {statusDasPrestacoes}</p>
+                </div>
+            }
         </>
     )
 };
