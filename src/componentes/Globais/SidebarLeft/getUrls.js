@@ -52,7 +52,7 @@ const UrlsMenuEscolas ={
 
 const UrlsMenuDres ={
     dados_iniciais: {
-        default_selected: "dre-associacoes",
+        default_selected: "dre-dashboard",
         usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola

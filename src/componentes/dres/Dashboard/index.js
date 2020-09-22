@@ -11,7 +11,7 @@ export const DreDashboard = () => {
     const [periodos, setPeriodos] = useState(false);
     const [periodoEsolhido, setPeriodoEsolhido] = useState(false);
     const [itensDashboard, setItensDashboard] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         carregaPeriodos();
@@ -20,10 +20,6 @@ export const DreDashboard = () => {
     useEffect(() => {
         carregaItensDashboard();
     }, [periodoEsolhido]);
-
-    useEffect(() => {
-        setLoading(false);
-    }, []);
 
     const carregaPeriodos = async () => {
         setLoading(true);
@@ -64,7 +60,6 @@ export const DreDashboard = () => {
                         marginBottom="0"
                     />
                 ) :
-
                 <>
                     <BarraDeStatus
                         itensDashboard={itensDashboard}
