@@ -1,13 +1,12 @@
-import React, {useState} from "react";
-import { useHistory } from "react-router-dom";
+import React, from "react";
+import { useParams } from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 
 export const ListaPrestacaoDeContas= () => {
-    let history = useHistory();
+    let {periodo_uuid, status_prestacao} = useParams();
 
-    const [props, setProps] = useState(history.location.propriedades);
-
-    console.log("Use history ", history)
+    console.log("useParams periodo_uuid ", periodo_uuid)
+    console.log("useParams status_prestacao ", status_prestacao)
 
     return (
         <PaginasContainer>

@@ -181,7 +181,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/dre-lista-prestacao-de-contas",
+        path: "/dre-lista-prestacao-de-contas/:periodo_uuid?/:status_prestacao?",
         component: ListaPrestacaoDeContas
     },
     {

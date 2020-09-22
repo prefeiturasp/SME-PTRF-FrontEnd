@@ -79,7 +79,7 @@ export const DreDashboard = () => {
                     {redirect &&
                     <Redirect
                         to={{
-                            pathname: '/dre-lista-prestacao-de-contas',
+                            pathname: '/dre-lista-prestacao-de-contas/123/STATUS_AQUI',
                             propriedades:{
                                 id: '123',
                                 nome:'Ollyver'
