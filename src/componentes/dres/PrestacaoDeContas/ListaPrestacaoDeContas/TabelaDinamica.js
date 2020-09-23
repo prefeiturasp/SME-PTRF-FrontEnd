@@ -2,7 +2,6 @@ import React from "react";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 
-
 export const TabelaDinamica = ({prestacaoDeContas, rowsPerPage, columns, statusTemplate, dataTemplate, acoesTemplate}) => {
 
     const dynamicColumns = columns.map((col,i) => {

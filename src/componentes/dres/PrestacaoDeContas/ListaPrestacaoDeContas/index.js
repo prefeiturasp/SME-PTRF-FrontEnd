@@ -15,6 +15,7 @@ import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {colunasAprovada, colunasEmAnalise, colunasNaoRecebidas} from "./objetoColunasDinamicas";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye} from "@fortawesome/free-solid-svg-icons";
+import Loading from "../../../../utils/Loading";
 
 export const ListaPrestacaoDeContas= () => {
 
@@ -42,6 +43,7 @@ export const ListaPrestacaoDeContas= () => {
     const [toggleMaisFiltros, setToggleMaisFiltros] = useState(false);
     const [tecnicosList, setTecnicosList] = useState([]);
     const [columns, setColumns] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         carregaPeriodos();
@@ -67,6 +69,10 @@ export const ListaPrestacaoDeContas= () => {
         carregaTecnicos();
     }, []);
 
+    useEffect(() => {
+        setLoading(false);
+    }, []);
+
     const carregaPeriodos = async () => {
         let periodos = await getPeriodos();
         setPeriodos(periodos);
@@ -79,15 +85,16 @@ export const ListaPrestacaoDeContas= () => {
 
     const carregaStatus = async  ()=>{
         if (status_prestacao !== undefined){
-            setStatusPrestacao(status_prestacao)
+            setStatusPrestacao(status_prestacao);
             setStateFiltros({
                 ...stateFiltros,
                 filtrar_por_status: status_prestacao
             });
         }
-    }
+    };
 
     const carregaPrestacoesDeContas = async ()=>{
+        setLoading(true);
         if (periodoEscolhido){
             let data_inicio = stateFiltros.filtrar_por_data_inicio ? moment(new Date(stateFiltros.filtrar_por_data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
             let data_fim = stateFiltros.filtrar_por_data_fim ? moment(new Date(stateFiltros.filtrar_por_data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : '';
@@ -95,11 +102,14 @@ export const ListaPrestacaoDeContas= () => {
             let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status, stateFiltros.filtrar_por_tecnico_atribuido, data_inicio, data_fim);
             setPrestacaoDeContas(prestacoes_de_contas)
         }
+        setLoading(false);
     };
 
     const carregaPrestacoesDeContasPorDrePeriodo = async ()=>{
+        setLoading(true);
         let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido);
         setPrestacaoDeContas(prestacoes_de_contas)
+        setLoading(false);
     };
 
     const carregaQtdeUnidadesDre = async () =>{
@@ -118,7 +128,7 @@ export const ListaPrestacaoDeContas= () => {
     };
 
     const carregaTecnicos = async () => {
-        let dre = localStorage.getItem(ASSOCIACAO_UUID)
+        let dre = localStorage.getItem(ASSOCIACAO_UUID);
         let tecnicos = await getTecnicosDre(dre);
         setTecnicosList(tecnicos);
     };
@@ -244,33 +254,42 @@ export const ListaPrestacaoDeContas= () => {
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
-            <div className="page-content-inner">
-                <TopoSelectPeriodoBotaoVoltar
-                    periodos={periodos}
-                    periodoEscolhido={periodoEscolhido}
-                    handleChangePeriodos={handleChangePeriodos}
-                />
-                <BarraDeStatus
-                    qtdeUnidadesDre={qtdeUnidadesDre}
-                    prestacaoDeContas={prestacaoDeContas}
-                    statusDasPrestacoes={exibeLabelStatus(statusPrestacao).texto_barra_de_status}
-                />
+            {loading ? (
+                    <Loading
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="0"
+                        marginBottom="0"
+                    />
+                ) :
+                <div className="page-content-inner">
+                    <TopoSelectPeriodoBotaoVoltar
+                        periodos={periodos}
+                        periodoEscolhido={periodoEscolhido}
+                        handleChangePeriodos={handleChangePeriodos}
+                    />
+                    <BarraDeStatus
+                        qtdeUnidadesDre={qtdeUnidadesDre}
+                        prestacaoDeContas={prestacaoDeContas}
+                        statusDasPrestacoes={exibeLabelStatus(statusPrestacao).texto_barra_de_status}
+                    />
 
-                <p className='titulo-explicativo mt-4 mb-4'>Prestações de contas pendentes de análise e recebimento</p>
+                    <p className='titulo-explicativo mt-4 mb-4'>Prestações de contas pendentes de análise e
+                        recebimento</p>
 
-                <FormFiltros
-                    stateFiltros={stateFiltros}
-                    tabelaAssociacoes={tabelaAssociacoes}
-                    tabelaPrestacoes={tabelaPrestacoes}
-                    handleChangeFiltros={handleChangeFiltros}
-                    handleSubmitFiltros={handleSubmitFiltros}
-                    limpaFiltros={limpaFiltros}
-                    toggleMaisFiltros={toggleMaisFiltros}
-                    setToggleMaisFiltros={setToggleMaisFiltros}
-                    tecnicosList={tecnicosList}
-                />
+                    <FormFiltros
+                        stateFiltros={stateFiltros}
+                        tabelaAssociacoes={tabelaAssociacoes}
+                        tabelaPrestacoes={tabelaPrestacoes}
+                        handleChangeFiltros={handleChangeFiltros}
+                        handleSubmitFiltros={handleSubmitFiltros}
+                        limpaFiltros={limpaFiltros}
+                        toggleMaisFiltros={toggleMaisFiltros}
+                        setToggleMaisFiltros={setToggleMaisFiltros}
+                        tecnicosList={tecnicosList}
+                    />
 
-                {prestacaoDeContas && prestacaoDeContas.length > 0 &&
+                    {prestacaoDeContas && prestacaoDeContas.length > 0 &&
                     <TabelaDinamica
                         prestacaoDeContas={prestacaoDeContas}
                         rowsPerPage={rowsPerPage}
@@ -279,9 +298,9 @@ export const ListaPrestacaoDeContas= () => {
                         dataTemplate={dataTemplate}
                         acoesTemplate={acoesTemplate}
                     />
-                }
-
-            </div>
+                    }
+                </div>
+            }
         </PaginasContainer>
     )
 };

@@ -49,7 +49,7 @@ export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, 
                         </select>
                     </div>
                 </div>
-                <div className="collapse mt-3" id="collapseMaisFiltros">
+                <div className={`collapse mt-3 ${toggleMaisFiltros ? 'show' : ''}`} id="">
                     <div className='row'>
                         <div className="col">
                             <label htmlFor="filtrar_por_tecnico_atribuido">Filtrar por técnico atribuído</label>
@@ -93,7 +93,7 @@ export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, 
                     </div>
                 </div>
                 <div className="d-flex  justify-content-end pb-3 mt-3">
-                    <a onClick={() => setToggleMaisFiltros(!toggleMaisFiltros)} className="btn btn-outline-success mt-2 mr-2" data-toggle="collapse" href="#collapseMaisFiltros" role="button" aria-expanded="false" aria-controls="collapseMaisFiltros">
+                    <a onClick={() => setToggleMaisFiltros(!toggleMaisFiltros)} className="btn btn-outline-success mt-2 mr-2" role="button" aria-expanded="false" aria-controls="collapseMaisFiltros">
                         {toggleMaisFiltros ? 'Menos filtros' : 'Mais Filtros'}
                     </a>
                     <button onClick={() => limpaFiltros()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
