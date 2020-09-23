@@ -5,10 +5,7 @@ import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye} from "@fortawesome/free-solid-svg-icons";
 
-export const TabelaDinamica = ({prestacaoDeContas, statusPrestacao, exibeLabelStatus}) => {
-
-    //console.log("TabelaDinamica statusPrestacao ", statusPrestacao);
-    console.log("TabelaDinamica prestacaoDeContas ", prestacaoDeContas);
+export const TabelaDinamica = ({prestacaoDeContas, statusPrestacao, exibeLabelStatus, handleClickAcoes}) => {
 
     const rowsPerPage = 10;
 
@@ -78,7 +75,7 @@ export const TabelaDinamica = ({prestacaoDeContas, statusPrestacao, exibeLabelSt
     const acoesTemplate = (rowData) => {
         return (
             <div>
-                <button type="button" className="btn btn-link">
+                <button onClick={()=>handleClickAcoes(rowData)} type="button" className="btn btn-link">
                     <FontAwesomeIcon
                         style={{marginRight: "0", color: '#00585E'}}
                         icon={faEye}

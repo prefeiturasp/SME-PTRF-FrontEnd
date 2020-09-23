@@ -184,6 +184,10 @@ export const ListaPrestacaoDeContas= () => {
         await carregaPrestacoesDeContas();
     };
 
+    const handleClickAcoes = (rowData) => {
+        console.log("handleClickAcoes ", rowData)
+    };
+
     const limpaFiltros = async () => {
         await setStateFiltros(initialStateFiltros);
         await setStatusPrestacao('');
@@ -224,6 +228,7 @@ export const ListaPrestacaoDeContas= () => {
                         prestacaoDeContas={prestacaoDeContas}
                         statusPrestacao={statusPrestacao}
                         exibeLabelStatus={exibeLabelStatus}
+                        handleClickAcoes={handleClickAcoes}
                     />
                 }
 
