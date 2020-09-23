@@ -3,11 +3,12 @@ import { useParams } from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {TopoSelectPeriodoBotaoVoltar} from "./TopoSelectPeriodoBotaoVoltar";
-import {getPrestacoesDeContas, getQtdeUnidadesDre, getPrestacoesDeContasPorDrePeriodo} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getPrestacoesDeContas, getQtdeUnidadesDre} from "../../../../services/dres/PrestacaoDeContas.service";
 import {BarraDeStatus} from "./BarraDeStatus";
 import {FormFiltros} from "./FormFiltros";
 import "../prestacao-de-contas.scss"
 import {getTabelaAssociacoes} from "../../../../services/dres/Associacoes.service";
+import moment from "moment";
 
 export const ListaPrestacaoDeContas= () => {
 
@@ -17,6 +18,9 @@ export const ListaPrestacaoDeContas= () => {
         filtrar_por_termo: "",
         filtrar_por_tipo_de_unidade: "",
         filtrar_por_status: "",
+        filtrar_por_tecnico_atribuido: "",
+        filtrar_por_data_inicio: "",
+        filtrar_por_data_fim: "",
     };
 
     const [periodos, setPeriodos] = useState(false);
@@ -67,6 +71,9 @@ export const ListaPrestacaoDeContas= () => {
 
     const carregaPrestacoesDeContas = async ()=>{
         if (periodoEscolhido){
+            let data_inicio = stateFiltros.filtrar_por_data_inicio ? moment(new Date(stateFiltros.filtrar_por_data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
+            let data_fim = stateFiltros.filtrar_por_data_fim ? moment(new Date(stateFiltros.filtrar_por_data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : '';
+
             let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status);
             console.log("Prestacoes de contas ", prestacoes_de_contas);
             setPrestacaoDeContas(prestacoes_de_contas)
@@ -80,7 +87,6 @@ export const ListaPrestacaoDeContas= () => {
 
     const carregaQtdeUnidadesDre = async () =>{
         let qtde_unidades = await getQtdeUnidadesDre();
-        console.log("QTDE ", qtde_unidades.qtd_unidades)
         setQtdeUnidadesDre(qtde_unidades.qtd_unidades)
     };
 
@@ -121,6 +127,8 @@ export const ListaPrestacaoDeContas= () => {
     };
 
     const handleSubmitFiltros = async (event)=>{
+        console.log("handleSubmitFiltros ", stateFiltros)
+
         event.preventDefault();
         setStatusPrestacao(stateFiltros.filtrar_por_status);
         await carregaPrestacoesDeContas();
