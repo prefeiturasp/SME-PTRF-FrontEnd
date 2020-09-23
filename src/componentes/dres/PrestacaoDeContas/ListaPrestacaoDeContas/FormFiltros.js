@@ -1,7 +1,8 @@
 import React from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 
-export const FormFiltros = ({tabelaAssociacoes, stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, toggleMaisFiltros, setToggleMaisFiltros, tecnicosList}) => {
+export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, toggleMaisFiltros, setToggleMaisFiltros, tecnicosList}) => {
+    console.log("Form Filtros ", tabelaPrestacoes)
     return (
         <>
             <form onSubmit={handleSubmitFiltros} method="post">
@@ -42,19 +43,19 @@ export const FormFiltros = ({tabelaAssociacoes, stateFiltros, handleChangeFiltro
                             id="filtrar_por_status"
                             className="form-control"
                         >
-                            <option value="">Selecione um status</option>
+{/*                            <option value="">Selecione um status</option>
                             <option value='NAO_RECEBIDA'>Não Recebidas</option>
                             <option value='RECEBIDA'>Recebidas</option>
                             <option value='EM_ANALISE'>Em Análise</option>
                             <option value='DEVOLVIDA'>Devolvidas para acertos</option>
                             <option value='APROVADA'>Aprovadas</option>
                             <option value='APROVADA_RESSALVA'>Aprovadas com Resalvas</option>
-                            <option value='REPROVADA'>Reprovadas</option>
+                            <option value='REPROVADA'>Reprovadas</option>*/}
 
-
-                            {/*{tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.map(item => (
+                            <option value="">Selecione um status</option>
+                            {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.map(item => (
                                 <option key={item.id} value={item.id}>{item.nome}</option>
-                            ))}*/}
+                            ))}
                         </select>
                     </div>
                 </div>
@@ -70,14 +71,6 @@ export const FormFiltros = ({tabelaAssociacoes, stateFiltros, handleChangeFiltro
                                 className="form-control"
                             >
                                 <option value="">Selecione um servidor</option>
-                                {/*<option value='NAO_RECEBIDA'>Não Recebidas</option>
-                                <option value='RECEBIDA'>Recebidas</option>
-                                <option value='EM_ANALISE'>Em Análise</option>
-                                <option value='DEVOLVIDA'>Devolvidas para acertos</option>
-                                <option value='APROVADA'>Aprovadas</option>
-                                <option value='REPROVADA'>Reprovadas</option>*/}
-
-
                                 {tecnicosList && tecnicosList.length > 0 && tecnicosList.map(item => (
                                 <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                             ))}

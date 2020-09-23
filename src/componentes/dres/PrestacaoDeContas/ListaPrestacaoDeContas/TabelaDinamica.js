@@ -6,7 +6,7 @@ import moment from "moment";
 export const TabelaDinamica = ({prestacaoDeContas, statusPrestacao, exibeLabelStatus}) => {
 
     //console.log("TabelaDinamica statusPrestacao ", statusPrestacao);
-    console.log("TabelaDinamica prestacaoDeContas ", prestacaoDeContas);
+    //console.log("TabelaDinamica prestacaoDeContas ", prestacaoDeContas);
 
     const [columns, setColumns] = useState([]);
 

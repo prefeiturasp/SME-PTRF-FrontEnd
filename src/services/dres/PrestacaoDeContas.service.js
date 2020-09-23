@@ -16,3 +16,7 @@ export const getPrestacoesDeContas = async (periodo_uuid="",  nome="", associaca
 export const getQtdeUnidadesDre = async () => {
     return (await api.get(`/api/dres/${localStorage.getItem(ASSOCIACAO_UUID)}/qtd-unidades/`, authHeader)).data
 };
+
+export const getTabelasPrestacoesDeContas = async () => {
+    return (await api.get(`/api/prestacoes-contas/tabelas/`, authHeader)).data
+};

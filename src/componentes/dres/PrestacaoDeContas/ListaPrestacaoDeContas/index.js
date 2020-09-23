@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {TopoSelectPeriodoBotaoVoltar} from "./TopoSelectPeriodoBotaoVoltar";
-import {getPrestacoesDeContas, getQtdeUnidadesDre} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getPrestacoesDeContas, getQtdeUnidadesDre, getTabelasPrestacoesDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
 import {BarraDeStatus} from "./BarraDeStatus";
 import {FormFiltros} from "./FormFiltros";
 import "../prestacao-de-contas.scss"
@@ -32,6 +32,7 @@ export const ListaPrestacaoDeContas= () => {
     const [prestacaoDeContas, setPrestacaoDeContas] = useState(false);
     const [qtdeUnidadesDre, setQtdeUnidadesDre] = useState(false);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
+    const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [toggleMaisFiltros, setToggleMaisFiltros] = useState(false);
     const [tecnicosList, setTecnicosList] = useState([]);
@@ -40,7 +41,8 @@ export const ListaPrestacaoDeContas= () => {
         carregaPeriodos();
         carregaStatus();
         carregaQtdeUnidadesDre();
-        buscaTabelaAssociacoes();
+        carregaTabelaAssociacoes();
+        carregaTabelaPrestacaoDeContas();
     }, []);
 
 
@@ -97,9 +99,14 @@ export const ListaPrestacaoDeContas= () => {
         setQtdeUnidadesDre(qtde_unidades.qtd_unidades)
     };
 
-    const buscaTabelaAssociacoes = async ()=>{
+    const carregaTabelaAssociacoes = async ()=>{
         let tabela_associacoes = await getTabelaAssociacoes();
         setTabelaAssociacoes(tabela_associacoes);
+    };
+
+    const carregaTabelaPrestacaoDeContas = async ()=>{
+        let tabela_prestacoes = await getTabelasPrestacoesDeContas();
+        setTabelaPrestacoes(tabela_prestacoes);
     };
 
     const carregaTecnicos = async () => {
@@ -204,6 +211,7 @@ export const ListaPrestacaoDeContas= () => {
                 <FormFiltros
                     stateFiltros={stateFiltros}
                     tabelaAssociacoes={tabelaAssociacoes}
+                    tabelaPrestacoes={tabelaPrestacoes}
                     handleChangeFiltros={handleChangeFiltros}
                     handleSubmitFiltros={handleSubmitFiltros}
                     limpaFiltros={limpaFiltros}
