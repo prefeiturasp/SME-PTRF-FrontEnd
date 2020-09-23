@@ -1,6 +1,6 @@
 import React from "react";
 
-export const FormFiltros = ({tabelaAssociacoes, stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros}) => {
+export const FormFiltros = ({tabelaAssociacoes, stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, toggleMaisFiltros, setToggleMaisFiltros}) => {
     return (
         <>
             <form onSubmit={handleSubmitFiltros} method="post">
@@ -56,10 +56,21 @@ export const FormFiltros = ({tabelaAssociacoes, stateFiltros, handleChangeFiltro
                         </select>
                     </div>
                 </div>
+                <div className="collapse mt-3" id="collapseMaisFiltros">
+                    <div className="card card-body">
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad
+                        squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente
+                        ea proident.
+                    </div>
+                </div>
                 <div className="d-flex  justify-content-end pb-3 mt-3">
+                    <a onClick={()=>setToggleMaisFiltros(!toggleMaisFiltros)} className="btn btn-outline-success mt-2 mr-2" data-toggle="collapse" href="#collapseMaisFiltros" role="button" aria-expanded="false" aria-controls="collapseMaisFiltros">
+                        {toggleMaisFiltros ? 'Menos filtros' : 'Mais Filtros'}
+                    </a>
                     <button onClick={()=>limpaFiltros()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                     <button type="submit" className="btn btn-success mt-2">Filtrar</button>
                 </div>
+
             </form>
         </>
     )

@@ -26,6 +26,7 @@ export const ListaPrestacaoDeContas= () => {
     const [qtdeUnidadesDre, setQtdeUnidadesDre] = useState(false);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
+    const [toggleMaisFiltros, setToggleMaisFiltros] = useState(false);
 
     useEffect(() => {
         carregaPeriodos();
@@ -154,6 +155,8 @@ export const ListaPrestacaoDeContas= () => {
                     handleChangeFiltros={handleChangeFiltros}
                     handleSubmitFiltros={handleSubmitFiltros}
                     limpaFiltros={limpaFiltros}
+                    toggleMaisFiltros={toggleMaisFiltros}
+                    setToggleMaisFiltros={setToggleMaisFiltros}
                 />
 
             </div>
