@@ -10,6 +10,8 @@ import "../prestacao-de-contas.scss"
 import {getTabelaAssociacoes} from "../../../../services/dres/Associacoes.service";
 import moment from "moment";
 import {TabelaDinamica} from "./TabelaDinamica";
+import {getTecnicosDre} from "../../../../services/dres/TecnicosDre.service";
+import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 
 export const ListaPrestacaoDeContas= () => {
 
@@ -32,6 +34,7 @@ export const ListaPrestacaoDeContas= () => {
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [toggleMaisFiltros, setToggleMaisFiltros] = useState(false);
+    const [tecnicosList, setTecnicosList] = useState([]);
 
     useEffect(() => {
         carregaPeriodos();
@@ -48,6 +51,10 @@ export const ListaPrestacaoDeContas= () => {
     useEffect(() => {
         carregaPrestacoesDeContas();
     }, [statusPrestacao]);
+
+    useEffect(() => {
+        carregaTecnicos();
+    }, []);
 
 
     const carregaPeriodos = async () => {
@@ -75,7 +82,7 @@ export const ListaPrestacaoDeContas= () => {
             let data_inicio = stateFiltros.filtrar_por_data_inicio ? moment(new Date(stateFiltros.filtrar_por_data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
             let data_fim = stateFiltros.filtrar_por_data_fim ? moment(new Date(stateFiltros.filtrar_por_data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : '';
 
-            let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status);
+            let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status, stateFiltros.filtrar_por_tecnico_atribuido);
             setPrestacaoDeContas(prestacoes_de_contas)
         }
     };
@@ -93,6 +100,13 @@ export const ListaPrestacaoDeContas= () => {
     const buscaTabelaAssociacoes = async ()=>{
         let tabela_associacoes = await getTabelaAssociacoes();
         setTabelaAssociacoes(tabela_associacoes);
+    };
+
+    const carregaTecnicos = async () => {
+        let dre = localStorage.getItem(ASSOCIACAO_UUID)
+        let tecnicos = await getTecnicosDre(dre);
+        console.log("Tecnicos ", tecnicos)
+        setTecnicosList(tecnicos);
     };
 
     const exibeLabelStatus = (status=null)=>{
@@ -195,6 +209,7 @@ export const ListaPrestacaoDeContas= () => {
                     limpaFiltros={limpaFiltros}
                     toggleMaisFiltros={toggleMaisFiltros}
                     setToggleMaisFiltros={setToggleMaisFiltros}
+                    tecnicosList={tecnicosList}
                 />
 
                 {prestacaoDeContas && prestacaoDeContas.length > 0 &&
