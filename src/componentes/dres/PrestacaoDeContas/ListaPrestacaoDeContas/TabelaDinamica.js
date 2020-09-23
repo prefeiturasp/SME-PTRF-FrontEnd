@@ -4,9 +4,7 @@ import {Column} from "primereact/column";
 
 export const TabelaDinamica = ({prestacaoDeContas, rowsPerPage, columns, statusTemplate, dataTemplate, acoesTemplate, nomeTemplate}) => {
 
-    console.log("TabelaDinamica ", prestacaoDeContas);
-
-    const dynamicColumns = columns.map((col,i) => {
+    const dynamicColumns = columns.map((col) => {
         if (col.field === 'status'){
             return <Column key={col.field} field={col.field} header={col.header} body={statusTemplate} />;
         }else if(col.field === 'data_recebimento' || col.field === 'data_ultima_analise') {

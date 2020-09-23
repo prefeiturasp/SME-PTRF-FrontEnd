@@ -97,10 +97,9 @@ export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, 
                     <a onClick={() => setToggleMaisFiltros(!toggleMaisFiltros)} className="btn btn-outline-success mt-2 mr-2" role="button" aria-expanded="false" aria-controls="collapseMaisFiltros">
                         {toggleMaisFiltros ? 'Menos filtros' : 'Mais Filtros'}
                     </a>
-                    <button onClick={() => limpaFiltros()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                    <button onClick={() => limpaFiltros()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Limpar</button>
                     <button type="submit" className="btn btn-success mt-2">Filtrar</button>
                 </div>
-
             </form>
         </>
     )

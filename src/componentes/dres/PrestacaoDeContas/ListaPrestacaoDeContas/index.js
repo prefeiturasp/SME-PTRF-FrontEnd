@@ -1,9 +1,13 @@
 import React, {useEffect, useState} from "react";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {TopoSelectPeriodoBotaoVoltar} from "./TopoSelectPeriodoBotaoVoltar";
-import {getPrestacoesDeContas, getQtdeUnidadesDre, getTabelasPrestacoesDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
+import {
+    getPrestacoesDeContas,
+    getQtdeUnidadesDre,
+    getTabelasPrestacoesDeContas
+} from "../../../../services/dres/PrestacaoDeContas.service";
 import {BarraDeStatus} from "./BarraDeStatus";
 import {FormFiltros} from "./FormFiltros";
 import "../prestacao-de-contas.scss"
@@ -19,7 +23,7 @@ import Loading from "../../../../utils/Loading";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
 import Img404 from "../../../../assets/img/img-404.svg";
 
-export const ListaPrestacaoDeContas= () => {
+export const ListaPrestacaoDeContas = () => {
 
     let {periodo_uuid, status_prestacao} = useParams();
 
@@ -55,7 +59,7 @@ export const ListaPrestacaoDeContas= () => {
         carregaTabelaPrestacaoDeContas();
     }, []);
 
-    useEffect(()=> {
+    useEffect(() => {
         populaColunas();
     }, [statusPrestacao]);
 
@@ -78,15 +82,15 @@ export const ListaPrestacaoDeContas= () => {
     const carregaPeriodos = async () => {
         let periodos = await getPeriodos();
         setPeriodos(periodos);
-        if (periodo_uuid){
+        if (periodo_uuid) {
             setPeriodoEsolhido(periodo_uuid)
-        }else if (periodos && periodos.length > 0){
+        } else if (periodos && periodos.length > 0) {
             setPeriodoEsolhido(periodos[0].uuid)
         }
     };
 
-    const carregaStatus = async  ()=>{
-        if (status_prestacao !== undefined){
+    const carregaStatus = async () => {
+        if (status_prestacao !== undefined) {
             setStatusPrestacao(status_prestacao);
             setStateFiltros({
                 ...stateFiltros,
@@ -95,9 +99,9 @@ export const ListaPrestacaoDeContas= () => {
         }
     };
 
-    const carregaPrestacoesDeContas = async ()=>{
+    const carregaPrestacoesDeContas = async () => {
         setLoading(true);
-        if (periodoEscolhido){
+        if (periodoEscolhido) {
             let data_inicio = stateFiltros.filtrar_por_data_inicio ? moment(new Date(stateFiltros.filtrar_por_data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
             let data_fim = stateFiltros.filtrar_por_data_fim ? moment(new Date(stateFiltros.filtrar_por_data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : '';
 
@@ -107,24 +111,24 @@ export const ListaPrestacaoDeContas= () => {
         setLoading(false);
     };
 
-    const carregaPrestacoesDeContasPorDrePeriodo = async ()=>{
+    const carregaPrestacoesDeContasPorDrePeriodo = async () => {
         setLoading(true);
         let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido);
-        setPrestacaoDeContas(prestacoes_de_contas)
+        setPrestacaoDeContas(prestacoes_de_contas);
         setLoading(false);
     };
 
-    const carregaQtdeUnidadesDre = async () =>{
+    const carregaQtdeUnidadesDre = async () => {
         let qtde_unidades = await getQtdeUnidadesDre();
         setQtdeUnidadesDre(qtde_unidades.qtd_unidades)
     };
 
-    const carregaTabelaAssociacoes = async ()=>{
+    const carregaTabelaAssociacoes = async () => {
         let tabela_associacoes = await getTabelaAssociacoes();
         setTabelaAssociacoes(tabela_associacoes);
     };
 
-    const carregaTabelaPrestacaoDeContas = async ()=>{
+    const carregaTabelaPrestacaoDeContas = async () => {
         let tabela_prestacoes = await getTabelasPrestacoesDeContas();
         setTabelaPrestacoes(tabela_prestacoes);
     };
@@ -135,12 +139,12 @@ export const ListaPrestacaoDeContas= () => {
         setTecnicosList(tecnicos);
     };
 
-    const populaColunas = async () =>{
+    const populaColunas = async () => {
         if (statusPrestacao === 'EM_ANALISE' || statusPrestacao === 'REPROVADA') {
             setColumns(colunasEmAnalise)
-        }else if (statusPrestacao === 'APROVADA' || statusPrestacao === 'APROVADA_RESSALVA'){
+        } else if (statusPrestacao === 'APROVADA' || statusPrestacao === 'APROVADA_RESSALVA') {
             setColumns(colunasAprovada)
-        }else {
+        } else {
             setColumns(colunasNaoRecebidas)
         }
     };
@@ -148,7 +152,8 @@ export const ListaPrestacaoDeContas= () => {
     const statusTemplate = (rowData) => {
         return (
             <div>
-                {rowData['status'] ? <span className={`span-status-${rowData['status']}`}><strong>{exibeLabelStatus(rowData['status']).texto_col_tabela}</strong></span> : ''}
+                {rowData['status'] ? <span
+                    className={`span-status-${rowData['status']}`}><strong>{exibeLabelStatus(rowData['status']).texto_col_tabela}</strong></span> : ''}
             </div>
         )
     };
@@ -156,7 +161,7 @@ export const ListaPrestacaoDeContas= () => {
     const dataTemplate = (rowData) => {
         return (
             <div>
-                {rowData['data_recebimento'] ? moment(rowData['data_recebimento']).format('DD/MM/YYYY') : rowData['data_ultima_analise'] ? moment(rowData['data_ultima_analise']).format('DD/MM/YYYY') : '-' }
+                {rowData['data_recebimento'] ? moment(rowData['data_recebimento']).format('DD/MM/YYYY') : rowData['data_ultima_analise'] ? moment(rowData['data_ultima_analise']).format('DD/MM/YYYY') : '-'}
             </div>
         )
     };
@@ -172,7 +177,7 @@ export const ListaPrestacaoDeContas= () => {
     const acoesTemplate = (rowData) => {
         return (
             <div>
-                <button onClick={()=>handleClickAcoes(rowData)} type="button" className="btn btn-link">
+                <button onClick={() => handleClickAcoes(rowData)} type="button" className="btn btn-link">
                     <FontAwesomeIcon
                         style={{marginRight: "0", color: '#00585E'}}
                         icon={faEye}
@@ -182,53 +187,61 @@ export const ListaPrestacaoDeContas= () => {
         )
     };
 
-    const exibeLabelStatus = (status=null)=>{
+    const exibeLabelStatus = (status = null) => {
         let status_converter;
-        if (status){
+        if (status) {
             status_converter = status
-        }else {
+        } else {
             status_converter = statusPrestacao
         }
 
-        if (status_converter === 'NAO_RECEBIDA'){
+        if (status_converter === 'NAO_RECEBIDA') {
             return {
                 texto_barra_de_status: 'não recebidas',
                 texto_col_tabela: 'Não recebida',
+                texto_titulo: 'Prestações de contas pendentes de análise e recebimento',
             }
-        }else if (status_converter === 'RECEBIDA'){
+        } else if (status_converter === 'RECEBIDA') {
             return {
                 texto_barra_de_status: 'recebidas',
                 texto_col_tabela: 'Recebida',
+                texto_titulo: 'Prestações de contas pendentes de análise e recebimento',
             }
-        }else if (status_converter === 'EM_ANALISE'){
-            return {
-                texto_barra_de_status: 'em análise',
-                texto_col_tabela: 'Em análise',
-            }
-        }else if (status_converter === 'DEVOLVIDA'){
+        } else if (status_converter === 'DEVOLVIDA') {
             return {
                 texto_barra_de_status: 'devolvidas para acerto',
                 texto_col_tabela: 'Devolvida para acerto',
+                texto_titulo: 'Prestações de contas pendentes de análise e recebimento',
             }
-        }else if (status_converter === 'APROVADA'){
+        } else if (status_converter === 'EM_ANALISE') {
+            return {
+                texto_barra_de_status: 'em análise',
+                texto_col_tabela: 'Em análise',
+                texto_titulo: 'Prestações de contas em análise',
+            }
+        } else if (status_converter === 'APROVADA') {
             return {
                 texto_barra_de_status: 'aprovadas',
                 texto_col_tabela: 'Aprovada',
+                texto_titulo: 'Prestações de contas aprovadas',
             }
-        }else if (status_converter === 'REPROVADA'){
-            return {
-                texto_barra_de_status: 'reprovadas',
-                texto_col_tabela: 'Reprovada',
-            }
-        }else if (status_converter === 'APROVADA_RESSALVA'){
+        } else if (status_converter === 'APROVADA_RESSALVA') {
             return {
                 texto_barra_de_status: 'aprovada com ressalvas',
                 texto_col_tabela: 'Aprovada com ressalva',
+                texto_titulo: 'Prestações de contas aprovadas',
             }
-        }else {
+        } else if (status_converter === 'REPROVADA') {
+            return {
+                texto_barra_de_status: 'reprovadas',
+                texto_col_tabela: 'Reprovada',
+                texto_titulo: 'Prestações de contas reprovadas',
+            }
+        } else {
             return {
                 texto_barra_de_status: 'SEM STATUS',
                 texto_col_tabela: 'SEM STATUS',
+                texto_titulo: 'Prestações de contas sem status',
             }
         }
     };
@@ -245,7 +258,7 @@ export const ListaPrestacaoDeContas= () => {
         });
     };
 
-    const handleSubmitFiltros = async (event)=>{
+    const handleSubmitFiltros = async (event) => {
         event.preventDefault();
         setStatusPrestacao(stateFiltros.filtrar_por_status);
         await carregaPrestacoesDeContas();
@@ -284,8 +297,7 @@ export const ListaPrestacaoDeContas= () => {
                         statusDasPrestacoes={exibeLabelStatus(statusPrestacao).texto_barra_de_status}
                     />
 
-                    <p className='titulo-explicativo mt-4 mb-4'>Prestações de contas pendentes de análise e
-                        recebimento</p>
+                    <p className='titulo-explicativo mt-4 mb-4'>{exibeLabelStatus(statusPrestacao).texto_titulo}</p>
 
                     <FormFiltros
                         stateFiltros={stateFiltros}
@@ -314,7 +326,6 @@ export const ListaPrestacaoDeContas= () => {
                             texto='Nenhuma prestação retornada. Tente novamente com outros filtros'
                             img={Img404}
                         />
-
                     }
                 </div>
             }
