@@ -3,11 +3,7 @@ import {useParams} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {TopoSelectPeriodoBotaoVoltar} from "./TopoSelectPeriodoBotaoVoltar";
-import {
-    getPrestacoesDeContas,
-    getQtdeUnidadesDre,
-    getTabelasPrestacoesDeContas
-} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getPrestacoesDeContas, getQtdeUnidadesDre, getTabelasPrestacoesDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
 import {BarraDeStatus} from "./BarraDeStatus";
 import {FormFiltros} from "./FormFiltros";
 import "../prestacao-de-contas.scss"
@@ -152,8 +148,7 @@ export const ListaPrestacaoDeContas = () => {
     const statusTemplate = (rowData) => {
         return (
             <div>
-                {rowData['status'] ? <span
-                    className={`span-status-${rowData['status']}`}><strong>{exibeLabelStatus(rowData['status']).texto_col_tabela}</strong></span> : ''}
+                {rowData['status'] ? <span className={`span-status-${rowData['status']}`}><strong>{exibeLabelStatus(rowData['status']).texto_col_tabela}</strong></span> : ''}
             </div>
         )
     };
@@ -245,7 +240,6 @@ export const ListaPrestacaoDeContas = () => {
             }
         }
     };
-
 
     const handleChangePeriodos = async (uuid_periodo) => {
         setPeriodoEsolhido(uuid_periodo)
