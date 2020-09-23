@@ -2,7 +2,6 @@ import React from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 
 export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, toggleMaisFiltros, setToggleMaisFiltros, tecnicosList}) => {
-    console.log("Form Filtros ", tabelaPrestacoes)
     return (
         <>
             <form onSubmit={handleSubmitFiltros} method="post">
@@ -44,7 +43,7 @@ export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, 
                             className="form-control"
                         >
                             <option value="">Selecione um status</option>
-                            {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.map(item => (
+                            {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.filter(element => element.id !== 'DOCS_PENDENTES').map(item => (
                                 <option key={item.id} value={item.id}>{item.nome}</option>
                             ))}
                         </select>
