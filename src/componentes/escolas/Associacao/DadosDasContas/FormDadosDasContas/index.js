@@ -1,7 +1,7 @@
 import React from "react";
 import {Formik, FieldArray} from "formik";
 
-export const FormDadosDasContas = ({intialValues, setaCampoReadonly, validateFormDadosDasContas, onSubmit}) => {
+export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, errors}) => {
     const valores_inciais = {
         contas: intialValues
     };
@@ -9,7 +9,6 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, validateFor
         <>
             <Formik
                 initialValues={valores_inciais}
-                validate={validateFormDadosDasContas}
                 enableReinitialize={true}
                 validateOnBlur={true}
                 onSubmit={onSubmit}
@@ -108,9 +107,9 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, validateFor
                                                 </div>
                                             )
                                         })}
-                                        {props.errors.campos_obrigatorios &&
+                                        {errors.campos_obrigatorios &&
                                         <div className="col-12 mt-2">
-                                            <span className="text-danger"> {props.errors.campos_obrigatorios}</span>
+                                            <span className="text-danger"> {errors.campos_obrigatorios}</span>
                                         </div>
                                         }
                                     </>
