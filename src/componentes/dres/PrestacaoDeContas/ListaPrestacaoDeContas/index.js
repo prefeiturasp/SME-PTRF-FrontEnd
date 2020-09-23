@@ -112,7 +112,6 @@ export const ListaPrestacaoDeContas= () => {
     const carregaTecnicos = async () => {
         let dre = localStorage.getItem(ASSOCIACAO_UUID)
         let tecnicos = await getTecnicosDre(dre);
-        console.log("Tecnicos ", tecnicos)
         setTecnicosList(tecnicos);
     };
 

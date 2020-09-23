@@ -2,11 +2,15 @@ import React, {useEffect, useState, Fragment} from "react";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import moment from "moment";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEye} from "@fortawesome/free-solid-svg-icons";
 
 export const TabelaDinamica = ({prestacaoDeContas, statusPrestacao, exibeLabelStatus}) => {
 
     //console.log("TabelaDinamica statusPrestacao ", statusPrestacao);
-    //console.log("TabelaDinamica prestacaoDeContas ", prestacaoDeContas);
+    console.log("TabelaDinamica prestacaoDeContas ", prestacaoDeContas);
+
+    const rowsPerPage = 10;
 
     const [columns, setColumns] = useState([]);
 
@@ -30,7 +34,7 @@ export const TabelaDinamica = ({prestacaoDeContas, statusPrestacao, exibeLabelSt
         {field: 'tecnico_responsavel', header: 'Técnico atribuído'},
         {field: 'data_recebimento', header: 'Data de recebimento'},
         {field: 'status', header: 'Status'},
-        {field: 'quantity', header: 'Ações'},
+        {field: 'acoes', header: 'Ações'},
     ];
 
     const colunasEmAnalise = [
@@ -40,7 +44,7 @@ export const TabelaDinamica = ({prestacaoDeContas, statusPrestacao, exibeLabelSt
         {field: 'data_recebimento', header: 'Data de recebimento'},
         {field: 'data_ultima_analise', header: 'Última análise'},
         {field: 'tecnico_responsavel', header: 'Técnico atribuído'},
-        {field: 'quantity', header: 'Ações'},
+        {field: 'acoes', header: 'Ações'},
     ];
 
     const colunasAprovada = [
@@ -52,7 +56,7 @@ export const TabelaDinamica = ({prestacaoDeContas, statusPrestacao, exibeLabelSt
         {field: 'tecnico_responsavel', header: 'Quem está validando'},
         {field: 'tecnico_responsavel', header: 'Devolução ao tesouro'},
         {field: 'status', header: 'Status'},
-        {field: 'quantity', header: 'Ações'},
+        {field: 'acoes', header: 'Ações'},
     ];
 
     const statusTemplate = (rowData) => {
@@ -66,7 +70,20 @@ export const TabelaDinamica = ({prestacaoDeContas, statusPrestacao, exibeLabelSt
     const dataTemplate = (rowData) => {
         return (
             <div>
-                {rowData['data_recebimento'] ? moment(rowData['data_recebimento']).format('DD/MM/YYYY') : rowData['data_ultima_analise'] ? moment(rowData['data_ultima_analise']).format('DD/MM/YYYY') : '' }
+                {rowData['data_recebimento'] ? moment(rowData['data_recebimento']).format('DD/MM/YYYY') : rowData['data_ultima_analise'] ? moment(rowData['data_ultima_analise']).format('DD/MM/YYYY') : '-' }
+            </div>
+        )
+    };
+
+    const acoesTemplate = (rowData) => {
+        return (
+            <div>
+                <button type="button" className="btn btn-link">
+                    <FontAwesomeIcon
+                        style={{marginRight: "0", color: '#00585E'}}
+                        icon={faEye}
+                    />
+                </button>
             </div>
         )
     };
@@ -77,6 +94,8 @@ export const TabelaDinamica = ({prestacaoDeContas, statusPrestacao, exibeLabelSt
             return <Column key={col.field} field={col.field} header={col.header} body={statusTemplate} />;
         }else if(col.field === 'data_recebimento' || col.field === 'data_ultima_analise') {
             return <Column key={col.field} field={col.field} header={col.header} body={dataTemplate} />;
+        }else if(col.field === 'acoes') {
+            return <Column key={col.field} field={col.field} header={col.header} body={acoesTemplate} />;
         }else {
             return <Column key={col.field} field={col.field} header={col.header} />;
         }
@@ -87,7 +106,12 @@ export const TabelaDinamica = ({prestacaoDeContas, statusPrestacao, exibeLabelSt
         <>
             <div>
                 <div className="card">
-                    <DataTable value={prestacaoDeContas}>
+                    <DataTable
+                        value={prestacaoDeContas}
+                        paginator={prestacaoDeContas.length > rowsPerPage}
+                        rows={rowsPerPage}
+                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                    >
                         {dynamicColumns}
                     </DataTable>
                 </div>
