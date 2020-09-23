@@ -1,0 +1,17 @@
+.titulo-explicativo{
+  font-size: 24px;
+  color: #00585e;
+  font-weight: bold;
+}
+
+.span-status-NAO_RECEBIDA{
+  color: #B40C02;
+}
+
+.span-status-RECEBIDA, .span-status-APROVADA, .span-status-APROVADA_RESSALVA{
+  color: #297805;
+}
+
+.span-status-DEVOLVIDA{
+  color: #D06D12;
+}

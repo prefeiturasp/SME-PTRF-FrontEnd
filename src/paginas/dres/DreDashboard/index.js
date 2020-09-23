@@ -1,6 +1,6 @@
 import React from "react";
-import {PaginasContainer} from '../PaginasContainer'
-import {DreDashboard} from "../../componentes/dres/Dashboard";
+import {PaginasContainer} from '../../PaginasContainer'
+import {DreDashboard} from "../../../componentes/dres/Dashboard";
 
 export const DreDashboardPage = () => {
     return (
