@@ -14,7 +14,7 @@ export const colunasEmAnalise = [
     {field: 'data_recebimento', header: 'Data de recebimento'},
     {field: 'data_ultima_analise', header: 'Última análise'},
     {field: 'tecnico_responsavel', header: 'Técnico atribuído'},
-    {field: 'acoes', header: 'Ações'},
+    {field: 'acoes', header: ''},
 ];
 
 export const colunasAprovada = [
@@ -26,5 +26,5 @@ export const colunasAprovada = [
     {field: 'tecnico_responsavel', header: 'Quem está validando'},
     {field: 'devolucao_ao_tesouro', header: 'Devolução ao tesouro'},
     {field: 'status', header: 'Status'},
-    {field: 'acoes', header: 'Ações'},
+    {field: 'acoes', header: ''},
 ];

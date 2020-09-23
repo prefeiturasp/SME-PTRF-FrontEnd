@@ -2,7 +2,7 @@ import React from "react";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 
-export const TabelaDinamica = ({prestacaoDeContas, rowsPerPage, columns, statusTemplate, dataTemplate, acoesTemplate}) => {
+export const TabelaDinamica = ({prestacaoDeContas, rowsPerPage, columns, statusTemplate, dataTemplate, acoesTemplate, nomeTemplate}) => {
 
     console.log("TabelaDinamica ", prestacaoDeContas);
 
@@ -13,6 +13,8 @@ export const TabelaDinamica = ({prestacaoDeContas, rowsPerPage, columns, statusT
             return <Column key={col.field} field={col.field} header={col.header} body={dataTemplate} />;
         }else if(col.field === 'acoes') {
             return <Column key={col.field} field={col.field} header={col.header} body={acoesTemplate} />;
+        }else if(col.field === 'unidade_nome') {
+            return <Column key={col.field} field={col.field} header={col.header} body={nomeTemplate} />;
         }else {
             return <Column key={col.field} field={col.field} header={col.header} />;
         }

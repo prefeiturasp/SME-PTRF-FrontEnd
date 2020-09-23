@@ -9,6 +9,7 @@ export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, 
                     <div className="col">
                         <label htmlFor="filtrar_por_termo">Filtrar por um termo</label>
                         <input
+                            value={stateFiltros.filtrar_por_termo}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
                             name='filtrar_por_termo'
                             type="text"

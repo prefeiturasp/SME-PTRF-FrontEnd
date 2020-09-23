@@ -16,6 +16,8 @@ import {colunasAprovada, colunasEmAnalise, colunasNaoRecebidas} from "./objetoCo
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../utils/Loading";
+import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
+import Img404 from "../../../../assets/img/img-404.svg";
 
 export const ListaPrestacaoDeContas= () => {
 
@@ -159,6 +161,14 @@ export const ListaPrestacaoDeContas= () => {
         )
     };
 
+    const nomeTemplate = (rowData) => {
+        return (
+            <div>
+                {rowData['unidade_nome'] ? <strong>{rowData['unidade_nome']}</strong> : ''}
+            </div>
+        )
+    };
+
     const acoesTemplate = (rowData) => {
         return (
             <div>
@@ -289,15 +299,22 @@ export const ListaPrestacaoDeContas= () => {
                         tecnicosList={tecnicosList}
                     />
 
-                    {prestacaoDeContas && prestacaoDeContas.length > 0 &&
-                    <TabelaDinamica
-                        prestacaoDeContas={prestacaoDeContas}
-                        rowsPerPage={rowsPerPage}
-                        columns={columns}
-                        statusTemplate={statusTemplate}
-                        dataTemplate={dataTemplate}
-                        acoesTemplate={acoesTemplate}
-                    />
+                    {prestacaoDeContas && prestacaoDeContas.length > 0 ? (
+                            <TabelaDinamica
+                                prestacaoDeContas={prestacaoDeContas}
+                                rowsPerPage={rowsPerPage}
+                                columns={columns}
+                                statusTemplate={statusTemplate}
+                                dataTemplate={dataTemplate}
+                                acoesTemplate={acoesTemplate}
+                                nomeTemplate={nomeTemplate}
+                            />
+                        ) :
+                        <MsgImgLadoDireito
+                            texto='Nenhuma prestação retornada. Tente novamente com outros filtros'
+                            img={Img404}
+                        />
+
                     }
                 </div>
             }
