@@ -79,8 +79,8 @@ export const ListaPrestacaoDeContas= () => {
 
     const carregaQtdeUnidadesDre = async () =>{
         let qtde_unidades = await getQtdeUnidadesDre();
-        //console.log("QTDE ", qtde_unidades.qtd-unidades)
-        setQtdeUnidadesDre(85)
+        console.log("QTDE ", qtde_unidades.qtd_unidades)
+        setQtdeUnidadesDre(qtde_unidades.qtd_unidades)
     };
 
     const buscaTabelaAssociacoes = async ()=>{
@@ -102,6 +102,8 @@ export const ListaPrestacaoDeContas= () => {
             return 'aprovadas'
         }else if (statusPrestacao === 'REPROVADA'){
             return 'reprovadas'
+        }else {
+            return 'SEM STATUS'
         }
     };
 
@@ -119,11 +121,13 @@ export const ListaPrestacaoDeContas= () => {
 
     const handleSubmitFiltros = async (event)=>{
         event.preventDefault();
+        setStatusPrestacao(stateFiltros.filtrar_por_status);
         await carregaPrestacoesDeContas();
     };
 
     const limpaFiltros = async () => {
-        await setStateFiltros(initialStateFiltros)
+        await setStateFiltros(initialStateFiltros);
+        await setStatusPrestacao('');
         await carregaPrestacoesDeContasPorDrePeriodo();
     };
 
