@@ -95,22 +95,49 @@ export const ListaPrestacaoDeContas= () => {
         setTabelaAssociacoes(tabela_associacoes);
     };
 
-    const exibeLabelStatus = ()=>{
-
-        if (statusPrestacao === 'NAO_RECEBIDA'){
-            return 'não recebidas'
-        }else if (statusPrestacao === 'RECEBIDA'){
-            return 'recebidas'
-        }else if (statusPrestacao === 'EM_ANALISE'){
-            return 'em análise'
-        }else if (statusPrestacao === 'DEVOLVIDA'){
-            return 'devolvidas para acerto'
-        }else if (statusPrestacao === 'APROVADA'){
-            return 'aprovadas'
-        }else if (statusPrestacao === 'REPROVADA'){
-            return 'reprovadas'
+    const exibeLabelStatus = (status=null)=>{
+        let status_converter;
+        if (status){
+            status_converter = status
         }else {
-            return 'SEM STATUS'
+            status_converter = statusPrestacao
+        }
+
+        if (status_converter === 'NAO_RECEBIDA'){
+            return {
+                texto_barra_de_status: 'não recebidas',
+                texto_col_tabela: 'Não recebida',
+            }
+        }else if (status_converter === 'RECEBIDA'){
+            return {
+                texto_barra_de_status: 'recebidas',
+                texto_col_tabela: 'Recebida',
+            }
+        }else if (status_converter === 'EM_ANALISE'){
+            return {
+                texto_barra_de_status: 'em análise',
+                texto_col_tabela: 'Em análise',
+            }
+        }else if (status_converter === 'DEVOLVIDA'){
+            return {
+                texto_barra_de_status: 'devolvidas para acerto',
+                texto_col_tabela: 'Devolvida para acerto',
+            }
+        }else if (status_converter === 'APROVADA'){
+            return {
+                texto_barra_de_status: 'aprovadas',
+                texto_col_tabela: 'Aprovada',
+            }
+        }else if (status_converter === 'REPROVADA'){
+            return {
+                texto_barra_de_status: 'reprovadas',
+                texto_col_tabela: 'Reprovada',
+            }
+        }else {
+            return {
+                texto_barra_de_status: 'SEM STATUS',
+                texto_col_tabela: 'SEM STATUS',
+            }
         }
     };
 
@@ -152,7 +179,7 @@ export const ListaPrestacaoDeContas= () => {
                 <BarraDeStatus
                     qtdeUnidadesDre={qtdeUnidadesDre}
                     prestacaoDeContas={prestacaoDeContas}
-                    statusDasPrestacoes={exibeLabelStatus(statusPrestacao)}
+                    statusDasPrestacoes={exibeLabelStatus(statusPrestacao).texto_barra_de_status}
                 />
 
                 <p className='titulo-explicativo mt-4 mb-4'>Prestações de contas pendentes de análise e recebimento</p>
@@ -170,6 +197,8 @@ export const ListaPrestacaoDeContas= () => {
                 {prestacaoDeContas && prestacaoDeContas.length > 0 &&
                     <TabelaDinamica
                         prestacaoDeContas={prestacaoDeContas}
+                        statusPrestacao={statusPrestacao}
+                        exibeLabelStatus={exibeLabelStatus}
                     />
                 }
 
