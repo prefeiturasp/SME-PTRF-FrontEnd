@@ -12,10 +12,15 @@ import moment from "moment";
 import {TabelaDinamica} from "./TabelaDinamica";
 import {getTecnicosDre} from "../../../../services/dres/TecnicosDre.service";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
+import {colunasAprovada, colunasEmAnalise, colunasNaoRecebidas} from "./objetoColunasDinamicas";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEye} from "@fortawesome/free-solid-svg-icons";
 
 export const ListaPrestacaoDeContas= () => {
 
     let {periodo_uuid, status_prestacao} = useParams();
+
+    const rowsPerPage = 10;
 
     const initialStateFiltros = {
         filtrar_por_termo: "",
@@ -36,6 +41,7 @@ export const ListaPrestacaoDeContas= () => {
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [toggleMaisFiltros, setToggleMaisFiltros] = useState(false);
     const [tecnicosList, setTecnicosList] = useState([]);
+    const [columns, setColumns] = useState([]);
 
     useEffect(() => {
         carregaPeriodos();
@@ -45,6 +51,9 @@ export const ListaPrestacaoDeContas= () => {
         carregaTabelaPrestacaoDeContas();
     }, []);
 
+    useEffect(()=> {
+        populaColunas();
+    }, [statusPrestacao]);
 
     useEffect(() => {
         carregaPrestacoesDeContas();
@@ -57,7 +66,6 @@ export const ListaPrestacaoDeContas= () => {
     useEffect(() => {
         carregaTecnicos();
     }, []);
-
 
     const carregaPeriodos = async () => {
         let periodos = await getPeriodos();
@@ -113,6 +121,45 @@ export const ListaPrestacaoDeContas= () => {
         let dre = localStorage.getItem(ASSOCIACAO_UUID)
         let tecnicos = await getTecnicosDre(dre);
         setTecnicosList(tecnicos);
+    };
+
+    const populaColunas = async () =>{
+        if (statusPrestacao === 'EM_ANALISE' || statusPrestacao === 'REPROVADA') {
+            setColumns(colunasEmAnalise)
+        }else if (statusPrestacao === 'APROVADA' || statusPrestacao === 'APROVADA_RESSALVA'){
+            setColumns(colunasAprovada)
+        }else {
+            setColumns(colunasNaoRecebidas)
+        }
+    };
+
+    const statusTemplate = (rowData) => {
+        return (
+            <div>
+                {rowData['status'] ? <span className={`span-status-${rowData['status']}`}><strong>{exibeLabelStatus(rowData['status']).texto_col_tabela}</strong></span> : ''}
+            </div>
+        )
+    };
+
+    const dataTemplate = (rowData) => {
+        return (
+            <div>
+                {rowData['data_recebimento'] ? moment(rowData['data_recebimento']).format('DD/MM/YYYY') : rowData['data_ultima_analise'] ? moment(rowData['data_ultima_analise']).format('DD/MM/YYYY') : '-' }
+            </div>
+        )
+    };
+
+    const acoesTemplate = (rowData) => {
+        return (
+            <div>
+                <button onClick={()=>handleClickAcoes(rowData)} type="button" className="btn btn-link">
+                    <FontAwesomeIcon
+                        style={{marginRight: "0", color: '#00585E'}}
+                        icon={faEye}
+                    />
+                </button>
+            </div>
+        )
     };
 
     const exibeLabelStatus = (status=null)=>{
@@ -226,9 +273,11 @@ export const ListaPrestacaoDeContas= () => {
                 {prestacaoDeContas && prestacaoDeContas.length > 0 &&
                     <TabelaDinamica
                         prestacaoDeContas={prestacaoDeContas}
-                        statusPrestacao={statusPrestacao}
-                        exibeLabelStatus={exibeLabelStatus}
-                        handleClickAcoes={handleClickAcoes}
+                        rowsPerPage={rowsPerPage}
+                        columns={columns}
+                        statusTemplate={statusTemplate}
+                        dataTemplate={dataTemplate}
+                        acoesTemplate={acoesTemplate}
                     />
                 }
 
