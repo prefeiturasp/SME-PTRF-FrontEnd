@@ -9,6 +9,7 @@ import {FormFiltros} from "./FormFiltros";
 import "../prestacao-de-contas.scss"
 import {getTabelaAssociacoes} from "../../../../services/dres/Associacoes.service";
 import moment from "moment";
+import {TabelaDinamica} from "./TabelaDinamica";
 
 export const ListaPrestacaoDeContas= () => {
 
@@ -75,7 +76,6 @@ export const ListaPrestacaoDeContas= () => {
             let data_fim = stateFiltros.filtrar_por_data_fim ? moment(new Date(stateFiltros.filtrar_por_data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : '';
 
             let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status);
-            console.log("Prestacoes de contas ", prestacoes_de_contas);
             setPrestacaoDeContas(prestacoes_de_contas)
         }
     };
@@ -166,6 +166,12 @@ export const ListaPrestacaoDeContas= () => {
                     toggleMaisFiltros={toggleMaisFiltros}
                     setToggleMaisFiltros={setToggleMaisFiltros}
                 />
+
+                {prestacaoDeContas && prestacaoDeContas.length > 0 &&
+                    <TabelaDinamica
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                }
 
             </div>
         </PaginasContainer>
