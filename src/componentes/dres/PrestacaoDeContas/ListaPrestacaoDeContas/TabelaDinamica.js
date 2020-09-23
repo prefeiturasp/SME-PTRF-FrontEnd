@@ -15,7 +15,7 @@ export const TabelaDinamica = ({prestacaoDeContas, statusPrestacao, exibeLabelSt
     }, [statusPrestacao]);
 
     const populaColunas = async () =>{
-        if (statusPrestacao === 'EM_ANALISE') {
+        if (statusPrestacao === 'EM_ANALISE' || statusPrestacao === 'REPROVADA') {
             setColumns(colunasEmAnalise)
         }else if (statusPrestacao === 'APROVADA' || statusPrestacao === 'APROVADA_RESSALVA'){
             setColumns(colunasAprovada)
