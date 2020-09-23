@@ -187,7 +187,7 @@ export const ListaPrestacaoDeContas= () => {
     const limpaFiltros = async () => {
         await setStateFiltros(initialStateFiltros);
         await setStatusPrestacao('');
-        await carregaPrestacoesDeContas();
+        await carregaPrestacoesDeContasPorDrePeriodo();
     };
 
     return (
