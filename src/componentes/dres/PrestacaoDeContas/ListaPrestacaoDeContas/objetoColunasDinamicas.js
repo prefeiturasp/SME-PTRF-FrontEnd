@@ -24,7 +24,7 @@ export const colunasAprovada = [
     {field: 'data_recebimento', header: 'Data de recebimento'},
     {field: 'data_ultima_analise', header: 'Última análise'},
     {field: 'tecnico_responsavel', header: 'Quem está validando'},
-    {field: 'tecnico_responsavel', header: 'Devolução ao tesouro'},
+    {field: 'devolucao_ao_tesouro', header: 'Devolução ao tesouro'},
     {field: 'status', header: 'Status'},
     {field: 'acoes', header: 'Ações'},
 ];
