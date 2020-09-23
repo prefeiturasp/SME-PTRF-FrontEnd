@@ -43,15 +43,6 @@ export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, 
                             id="filtrar_por_status"
                             className="form-control"
                         >
-{/*                            <option value="">Selecione um status</option>
-                            <option value='NAO_RECEBIDA'>Não Recebidas</option>
-                            <option value='RECEBIDA'>Recebidas</option>
-                            <option value='EM_ANALISE'>Em Análise</option>
-                            <option value='DEVOLVIDA'>Devolvidas para acertos</option>
-                            <option value='APROVADA'>Aprovadas</option>
-                            <option value='APROVADA_RESSALVA'>Aprovadas com Resalvas</option>
-                            <option value='REPROVADA'>Reprovadas</option>*/}
-
                             <option value="">Selecione um status</option>
                             {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.map(item => (
                                 <option key={item.id} value={item.id}>{item.nome}</option>
@@ -103,14 +94,10 @@ export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, 
                     </div>
                 </div>
                 <div className="d-flex  justify-content-end pb-3 mt-3">
-                    <a onClick={() => setToggleMaisFiltros(!toggleMaisFiltros)}
-                       className="btn btn-outline-success mt-2 mr-2" data-toggle="collapse" href="#collapseMaisFiltros"
-                       role="button" aria-expanded="false" aria-controls="collapseMaisFiltros">
+                    <a onClick={() => setToggleMaisFiltros(!toggleMaisFiltros)} className="btn btn-outline-success mt-2 mr-2" data-toggle="collapse" href="#collapseMaisFiltros" role="button" aria-expanded="false" aria-controls="collapseMaisFiltros">
                         {toggleMaisFiltros ? 'Menos filtros' : 'Mais Filtros'}
                     </a>
-                    <button onClick={() => limpaFiltros()} type="reset"
-                            className="btn btn btn-outline-success mt-2 mr-2">Cancelar
-                    </button>
+                    <button onClick={() => limpaFiltros()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                     <button type="submit" className="btn btn-success mt-2">Filtrar</button>
                 </div>
 
