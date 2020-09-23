@@ -133,6 +133,11 @@ export const ListaPrestacaoDeContas= () => {
                 texto_barra_de_status: 'reprovadas',
                 texto_col_tabela: 'Reprovada',
             }
+        }else if (status_converter === 'APROVADA_RESSALVA'){
+            return {
+                texto_barra_de_status: 'aprovada com ressalvas',
+                texto_col_tabela: 'Aprovada com ressalva',
+            }
         }else {
             return {
                 texto_barra_de_status: 'SEM STATUS',
@@ -154,8 +159,6 @@ export const ListaPrestacaoDeContas= () => {
     };
 
     const handleSubmitFiltros = async (event)=>{
-        console.log("handleSubmitFiltros ", stateFiltros)
-
         event.preventDefault();
         setStatusPrestacao(stateFiltros.filtrar_por_status);
         await carregaPrestacoesDeContas();

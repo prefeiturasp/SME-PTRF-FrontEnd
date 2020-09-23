@@ -48,6 +48,7 @@ export const FormFiltros = ({tabelaAssociacoes, stateFiltros, handleChangeFiltro
                             <option value='EM_ANALISE'>Em Análise</option>
                             <option value='DEVOLVIDA'>Devolvidas para acertos</option>
                             <option value='APROVADA'>Aprovadas</option>
+                            <option value='APROVADA_RESSALVA'>Aprovadas com Resalvas</option>
                             <option value='REPROVADA'>Reprovadas</option>
 
 
