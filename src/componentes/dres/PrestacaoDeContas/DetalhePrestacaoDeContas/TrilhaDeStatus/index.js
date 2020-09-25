@@ -3,6 +3,7 @@ import {TrilhaDeStatusBotoes} from "./TrilhaDeStatusBotoes";
 import {TrilhaDeStatusNaoRecebida} from "./TrilhaDeStatusNaoRecebida";
 import {TrilhaDeStatusRecebida} from "./TrilhaDeStatusRecebida";
 import {TrilhaDeStatusEmAnalise} from "./TrilhaDeStatusEmAnalise";
+import {TrilhaDeStatusDevolvidaParaAcertos} from "./TrilhaDeStatusDevolvidaParaAcertos";
 
 export const TrilhaDeStatus = ({prestacaoDeContas}) => {
     console.log('TrilhaDeStatus XXXXX ', prestacaoDeContas);
@@ -20,6 +21,10 @@ export const TrilhaDeStatus = ({prestacaoDeContas}) => {
         }else if(status === 'EM_ANALISE'){
             return (
                 <TrilhaDeStatusEmAnalise/>
+            )
+        }else if(status === 'DEVOLVIDA'){
+            return (
+                <TrilhaDeStatusDevolvidaParaAcertos/>
             )
         }
     };
