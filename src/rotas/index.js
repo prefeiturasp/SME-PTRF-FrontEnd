@@ -36,7 +36,7 @@ import {SituacaoFinanceiraUnidadeEducacionalPage} from "../paginas/dres/Associac
 import {AtribuicoesPage} from "../paginas/dres/Diretoria/Atribuicoes";
 import {DreDashboardPage} from "../paginas/dres/DreDashboard";
 import {ListaPrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/ListaPrestacaoDeContas";
-
+import {DetalhePrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas";
 
 const routesConfig = [
     {
@@ -183,6 +183,11 @@ const routesConfig = [
         exact: true,
         path: "/dre-lista-prestacao-de-contas/:periodo_uuid?/:status_prestacao?",
         component: ListaPrestacaoDeContas
+    },
+    {
+        exact: true,
+        path: "/dre-detalhe-prestacao-de-contas/:prestacao_conta_uuid?",
+        component: DetalhePrestacaoDeContas
     },
     {
         exact: true,
