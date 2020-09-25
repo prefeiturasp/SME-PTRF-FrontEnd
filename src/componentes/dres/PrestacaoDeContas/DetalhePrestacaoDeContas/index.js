@@ -3,6 +3,7 @@ import {useParams, Redirect} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {getPrestacaoDeContasDetalhe} from "../../../../services/dres/PrestacaoDeContas.service";
 import {Cabecalho} from "./Cabecalho";
+import {TrilhaDeStatus} from "./TrilhaDeStatus";
 
 export const DetalhePrestacaoDeContas = () =>{
     let {prestacao_conta_uuid} = useParams();
@@ -33,6 +34,9 @@ export const DetalhePrestacaoDeContas = () =>{
                     ) :
                     <>
                         <Cabecalho
+                            prestacaoDeContas={prestacaoDeContas}
+                        />
+                        <TrilhaDeStatus
                             prestacaoDeContas={prestacaoDeContas}
                         />
                     </>

@@ -4,7 +4,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 
 export const Cabecalho = ({prestacaoDeContas}) => {
-    console.log('Cabecalho XXXXX ', prestacaoDeContas);
     return (
         <>
             {Object.entries(prestacaoDeContas).length > 0 &&
@@ -43,11 +42,8 @@ export const Cabecalho = ({prestacaoDeContas}) => {
                         <hr className='mt-2 mb-2'/>
                     </div>
                 </div>
-
-
             </>
             }
-
         </>
     );
 };
