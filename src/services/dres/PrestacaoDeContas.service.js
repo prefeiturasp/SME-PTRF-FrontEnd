@@ -22,5 +22,5 @@ export const getTabelasPrestacoesDeContas = async () => {
 };
 
 export const getPrestacaoDeContasDetalhe = async (prestacao_conta_uuid) => {
-    return (await api.get(`/api/prestacoes-contas/{prestacao_conta.uuid}/`, authHeader)).data
+    return (await api.get(`/api/prestacoes-contas/${prestacao_conta_uuid}/`, authHeader)).data
 };

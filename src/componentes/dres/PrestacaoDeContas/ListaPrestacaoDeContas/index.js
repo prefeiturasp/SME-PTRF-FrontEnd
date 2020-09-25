@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {useParams, Link} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {TopoSelectPeriodoBotaoVoltar} from "./TopoSelectPeriodoBotaoVoltar";
@@ -172,12 +172,17 @@ export const ListaPrestacaoDeContas = () => {
     const acoesTemplate = (rowData) => {
         return (
             <div>
-                <button onClick={() => handleClickAcoes(rowData)} type="button" className="btn btn-link">
+                <Link
+                    to={{
+                        pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
+                    }}
+                    className="btn btn-link"
+                >
                     <FontAwesomeIcon
                         style={{marginRight: "0", color: '#00585E'}}
                         icon={faEye}
                     />
-                </button>
+                </Link>
             </div>
         )
     };
@@ -256,10 +261,6 @@ export const ListaPrestacaoDeContas = () => {
         event.preventDefault();
         setStatusPrestacao(stateFiltros.filtrar_por_status);
         await carregaPrestacoesDeContas();
-    };
-
-    const handleClickAcoes = (rowData) => {
-        console.log("handleClickAcoes ", rowData)
     };
 
     const limpaFiltros = async () => {
