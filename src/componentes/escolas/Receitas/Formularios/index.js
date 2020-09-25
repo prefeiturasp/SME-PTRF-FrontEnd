@@ -364,6 +364,24 @@ export const ReceitaForm = props => {
         }
     };
 
+
+    const retornaTiposDeContas = (values) => {
+        if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita) {
+            
+            const tipoReceita = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))
+            
+            // Lista dos nomes dos tipos de conta que são aceitos pelo tipo de receita selecionado.
+            const tipos_conta = tipoReceita.tipos_conta.map(item => item.nome);
+
+            // Filtra as contas pelos tipos aceitos
+            return (
+                tabelas.contas_associacao.filter(conta => (tipos_conta.includes(conta.nome))).map((item, key) => (
+                    <option key={key} value={item.uuid}>{item.nome}</option>)
+            ))
+        }
+    }
+
+
     const validateFormReceitas = async (values) => {
 
         const errors = {};
@@ -601,10 +619,9 @@ export const ReceitaForm = props => {
                                     >
                                         {receita.conta_associacao
                                             ? null
-                                            : <option>Escolha uma conta</option>}
-                                        {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
-                                            <option key={key} value={item.uuid}>{item.nome}</option>
-                                        ))) : null}
+                                            : <option key={0} value="">Escolha uma conta</option>}
+
+                                        {retornaTiposDeContas(props.values)}
                                     </select>
                                     {props.touched.conta_associacao && props.errors.conta_associacao &&
                                     <span
