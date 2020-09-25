@@ -16,7 +16,6 @@ export const DetalhePrestacaoDeContas = () =>{
     const carregaPrestacaoDeContas = async () => {
         if (prestacao_conta_uuid){
             let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
-            console.log('Prestacao XXXXX ', prestacao);
             setPrestacaoDeContas(prestacao)
         }
     };
@@ -24,23 +23,21 @@ export const DetalhePrestacaoDeContas = () =>{
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
-
-            {!prestacao_conta_uuid ? (
-                    <Redirect
-                        to={{
-                            pathname: `/dre-lista-prestacao-de-contas/`,
-                        }}
-                    />
-                ) :
-
-                <>
-                    <Cabecalho
-                        prestacaoDeContas={prestacaoDeContas}
-                    />
-                </>
-
-            }
-
+            <div className="page-content-inner">
+                {!prestacao_conta_uuid ? (
+                        <Redirect
+                            to={{
+                                pathname: `/dre-lista-prestacao-de-contas/`,
+                            }}
+                        />
+                    ) :
+                    <>
+                        <Cabecalho
+                            prestacaoDeContas={prestacaoDeContas}
+                        />
+                    </>
+                }
+            </div>
         </PaginasContainer>
     )
 };

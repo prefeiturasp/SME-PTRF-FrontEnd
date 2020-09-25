@@ -15,3 +15,10 @@
 .span-status-DEVOLVIDA{
   color: #D06D12;
 }
+
+.container-cabecalho {
+  .btn-ir-para-listagem:hover svg path {
+    fill: #fff;
+  }
+}
+
