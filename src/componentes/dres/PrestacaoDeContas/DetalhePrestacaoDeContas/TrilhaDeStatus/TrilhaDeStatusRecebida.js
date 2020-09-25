@@ -1,6 +1,8 @@
 import React from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCheck} from "@fortawesome/free-solid-svg-icons";
 
-export const TrilhaDeStatusNaoRecebida = () => {
+export const TrilhaDeStatusRecebida = () => {
     return (
         <>
             <div className='row'>
@@ -8,12 +10,17 @@ export const TrilhaDeStatusNaoRecebida = () => {
                     <div id="timeline">&nbsp;</div>
                     <div className="d-flex justify-content-between mb-3">
                         <div className='container-circulo'>
-                            <span className='circulo circulo-ativo'>1</span>
+                            <span className='circulo circulo-ativo-passado'>
+                                <FontAwesomeIcon
+                                    style={{color: '#fff'}}
+                                    icon={faCheck}
+                                />
+                            </span>
                             <p className='mt-2'><strong>Não recebido</strong></p>
                         </div>
                         <div className='container-circulo'>
-                            <span className='circulo'>2</span>
-                            <p className='mt-2 texto-inativo'><strong>Recebida e <br/> aguardando análise</strong></p>
+                            <span className='circulo circulo-ativo'>2</span>
+                            <p className='mt-2'><strong>Recebida e <br/> aguardando análise</strong></p>
                         </div>
                         <div className='container-circulo'>
                             <span className='circulo'>3</span>
