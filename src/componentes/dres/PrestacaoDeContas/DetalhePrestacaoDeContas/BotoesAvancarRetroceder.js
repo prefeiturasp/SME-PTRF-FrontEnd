@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleLeft, faAngleDoubleRight} from "@fortawesome/free-solid-svg-icons";
 
-export const TrilhaDeStatusBotoes = ({prestacaoDeContas}) =>{
+export const BotoesAvancarRetroceder = ({prestacaoDeContas}) =>{
     return(
         <>
             {Object.entries(prestacaoDeContas).length > 0 &&
