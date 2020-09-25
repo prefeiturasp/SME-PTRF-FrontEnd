@@ -4,7 +4,7 @@ import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {getPrestacaoDeContasDetalhe} from "../../../../services/dres/PrestacaoDeContas.service";
 import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
-import {TrilhaDeStatusBotoes} from "./TrilhaDeStatus/TrilhaDeStatusBotoes";
+import {TrilhaDeStatusBotoes} from "./TrilhaDeStatusBotoes";
 
 export const DetalhePrestacaoDeContas = () =>{
     let {prestacao_conta_uuid} = useParams();
