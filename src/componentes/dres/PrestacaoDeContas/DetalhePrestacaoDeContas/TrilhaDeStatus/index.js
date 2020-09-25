@@ -1,11 +1,19 @@
 import React from "react";
-import {Link} from "react-router-dom";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {TrilhaDeStatusBotoes} from "./TrilhaDeStatusBotoes";
+import {TrilhaDeStatusNaoRecebida} from "./TrilhaDeStatusNaoRecebida";
 
 export const TrilhaDeStatus = ({prestacaoDeContas}) => {
     console.log('TrilhaDeStatus XXXXX ', prestacaoDeContas);
+
+    const getTrilhaDeStatusPeloStatus = (status)=>{
+        console.log("getTrilhaDeStatusPeloStatus ", status)
+        if (status === 'NAO_RECEBIDA'){
+            return(
+                <TrilhaDeStatusNaoRecebida/>
+            )
+        }
+    };
+
     return (
         <>
             {Object.entries(prestacaoDeContas).length > 0 &&
@@ -13,6 +21,8 @@ export const TrilhaDeStatus = ({prestacaoDeContas}) => {
                 <TrilhaDeStatusBotoes
                     prestacaoDeContas={prestacaoDeContas}
                 />
+
+                {getTrilhaDeStatusPeloStatus(prestacaoDeContas.status)}
 
             </>
             }

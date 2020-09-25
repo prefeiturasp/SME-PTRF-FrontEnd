@@ -1,18 +1,18 @@
-.titulo-explicativo{
+.titulo-explicativo {
   font-size: 24px;
   color: #00585e;
   font-weight: bold;
 }
 
-.span-status-NAO_RECEBIDA{
+.span-status-NAO_RECEBIDA {
   color: #B40C02;
 }
 
-.span-status-RECEBIDA, .span-status-APROVADA, .span-status-APROVADA_RESSALVA{
+.span-status-RECEBIDA, .span-status-APROVADA, .span-status-APROVADA_RESSALVA {
   color: #297805;
 }
 
-.span-status-DEVOLVIDA{
+.span-status-DEVOLVIDA {
   color: #D06D12;
 }
 
@@ -21,4 +21,142 @@
     fill: #fff;
   }
 }
+
+.container-circulo {
+  z-index: 1;
+  text-align: center;
+  background-color: #fff;
+  padding-right: 1rem;
+  padding-left: 1rem;
+
+  @media screen and (max-height: 1000px) {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .circulo, .circulo-ativo {
+    color: #fff;
+    font-size: 14px;
+    background-color: #A4A4A4;
+    border-radius: 67px;
+    padding: 6px 11px;
+    font-weight: bold;
+  }
+
+  .circulo-ativo{
+    background-color: #00585E;
+
+  }
+
+}
+
+
+// Timeline Status
+#timeline-wrap {
+  position: relative;
+
+}
+
+#timeline {
+  height: 2px;
+  width: 92%;
+  background-color: #00585E;
+  position: absolute;
+  top: 11px;
+  margin-left: 30px;
+
+}
+
+.marker {
+  z-index: 1000;
+  color: #fff;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  font-size: 1.4em;
+  text-align: center;
+  position: absolute;
+  margin-left: -25px;
+  background-color: #999999;
+  border-radius: 50%;
+}
+
+.marker:hover {
+  -moz-transform: scale(1.2);
+  -webkit-transform: scale(1.2);
+  -o-transform: scale(1.2);
+  -ms-transform: scale(1.2);
+  transform: scale(1.2);
+
+  -webkit-transition: all 300ms ease;
+  -moz-transition: all 300ms ease;
+  -ms-transition: all 300ms ease;
+  -o-transition: all 300ms ease;
+  transition: all 300ms ease;
+}
+
+
+.timeline-icon.one {
+  background-color: #3e4f88 !important;
+}
+
+.timeline-icon.two {
+  background-color: #536295 !important;
+}
+
+.timeline-icon.three {
+  background-color: #6976a2 !important;
+}
+
+.timeline-icon.four {
+  background-color: #7e8aaf !important;
+}
+
+
+.mfirst {
+  top: -25px;
+}
+
+.m2 {
+  top: -25px;
+  left: 32.5%
+}
+
+.m3 {
+  top: -25px;
+  left: 66%
+}
+
+
+.mlast {
+  top: -25px;
+  left: 100%
+}
+
+.timeline-panel {
+  margin-top: 20%;
+  width: 500px;
+  height: 200px;
+  background-color: #cbd0df;
+  border-radius: 2px;
+  position: relative;
+  text-align: left;
+  padding: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 20px;
+  float: left;
+}
+
+.timeline-panel:after {
+  content: '';
+  position: absolute;
+  margin-top: -12%;
+  left: 10%;
+  width: 0;
+  height: 0;
+  border: 12px solid transparent;
+  border-bottom: 15px solid #cbd0df;
+}
+
 
