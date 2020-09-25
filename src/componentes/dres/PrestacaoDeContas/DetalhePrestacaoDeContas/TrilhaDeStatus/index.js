@@ -2,6 +2,7 @@ import React from "react";
 import {TrilhaDeStatusBotoes} from "./TrilhaDeStatusBotoes";
 import {TrilhaDeStatusNaoRecebida} from "./TrilhaDeStatusNaoRecebida";
 import {TrilhaDeStatusRecebida} from "./TrilhaDeStatusRecebida";
+import {TrilhaDeStatusEmAnalise} from "./TrilhaDeStatusEmAnalise";
 
 export const TrilhaDeStatus = ({prestacaoDeContas}) => {
     console.log('TrilhaDeStatus XXXXX ', prestacaoDeContas);
@@ -15,6 +16,10 @@ export const TrilhaDeStatus = ({prestacaoDeContas}) => {
         }else if(status === 'RECEBIDA'){
             return (
                 <TrilhaDeStatusRecebida/>
+            )
+        }else if(status === 'EM_ANALISE'){
+            return (
+                <TrilhaDeStatusEmAnalise/>
             )
         }
     };
