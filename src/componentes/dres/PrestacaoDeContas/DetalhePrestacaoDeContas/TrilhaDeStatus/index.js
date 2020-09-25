@@ -1,5 +1,4 @@
 import React from "react";
-import {TrilhaDeStatusBotoes} from "./TrilhaDeStatusBotoes";
 import {TrilhaDeStatusNaoRecebida} from "./TrilhaDeStatusNaoRecebida";
 import {TrilhaDeStatusRecebida} from "./TrilhaDeStatusRecebida";
 import {TrilhaDeStatusEmAnalise} from "./TrilhaDeStatusEmAnalise";
@@ -38,7 +37,6 @@ export const TrilhaDeStatus = ({prestacaoDeContas}) => {
             {Object.entries(prestacaoDeContas).length > 0 &&
             <>
                 {getTrilhaDeStatusPeloStatus(prestacaoDeContas.status)}
-
             </>
             }
         </>
