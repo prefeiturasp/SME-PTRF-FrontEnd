@@ -4,12 +4,12 @@ import {TrilhaDeStatusNaoRecebida} from "./TrilhaDeStatusNaoRecebida";
 import {TrilhaDeStatusRecebida} from "./TrilhaDeStatusRecebida";
 import {TrilhaDeStatusEmAnalise} from "./TrilhaDeStatusEmAnalise";
 import {TrilhaDeStatusDevolvidaParaAcertos} from "./TrilhaDeStatusDevolvidaParaAcertos";
+import {TrilhaDeStatusAprovada} from "./TrilhaDeStatusAprovada";
 
 export const TrilhaDeStatus = ({prestacaoDeContas}) => {
     console.log('TrilhaDeStatus XXXXX ', prestacaoDeContas);
 
     const getTrilhaDeStatusPeloStatus = (status)=>{
-        console.log("getTrilhaDeStatusPeloStatus ", status)
         if (status === 'NAO_RECEBIDA'){
             return(
                 <TrilhaDeStatusNaoRecebida/>
@@ -26,6 +26,10 @@ export const TrilhaDeStatus = ({prestacaoDeContas}) => {
             return (
                 <TrilhaDeStatusDevolvidaParaAcertos/>
             )
+        }else if(status === 'APROVADA' || status === 'APROVADA_RESSALVA'|| status === 'REPROVADA'){
+            return (
+                <TrilhaDeStatusAprovada/>
+            )
         }
     };
 
@@ -33,10 +37,6 @@ export const TrilhaDeStatus = ({prestacaoDeContas}) => {
         <>
             {Object.entries(prestacaoDeContas).length > 0 &&
             <>
-                <TrilhaDeStatusBotoes
-                    prestacaoDeContas={prestacaoDeContas}
-                />
-
                 {getTrilhaDeStatusPeloStatus(prestacaoDeContas.status)}
 
             </>
