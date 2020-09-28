@@ -619,7 +619,7 @@ export const ReceitaForm = props => {
                                     >
                                         {receita.conta_associacao
                                             ? null
-                                            : <option key={0} value="">Escolha uma conta</option>}
+                                            : <option key="" value="">Escolha uma conta</option>}
 
                                         {retornaTiposDeContas(props.values)}
                                     </select>
