@@ -37,3 +37,7 @@ export const getListaDeCobrancas = async (prestacao_conta_uuid) => {
     return (await api.get(`/api/cobrancas-prestacoes-contas/?prestacao_conta__uuid=${prestacao_conta_uuid}&tipo=RECEBIMENTO`, authHeader)).data
 };
 
+export const getAddCobranca = async (payload) => {
+    return (await api.post(`/api/cobrancas-prestacoes-contas/`, payload, authHeader)).data
+};
+

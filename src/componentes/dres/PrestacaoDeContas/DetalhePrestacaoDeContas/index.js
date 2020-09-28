@@ -34,6 +34,7 @@ export const DetalhePrestacaoDeContas = () =>{;
     const [showReabrirPc, setShowReabrirPc] = useState(false);
     const [redirectListaPc, setRedirectListaPc] = useState(false);
     const [listaDeCobrancas, setListaDeCobrancas] = useState(initialListaCobranca);
+    const [dataCobranca, setDataCobranca] = useState('');
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -83,12 +84,22 @@ export const DetalhePrestacaoDeContas = () =>{;
     const reabrirPrestacaoDeContas = async ()=>{
         console.log("Cliquei em reabrirPrestacaoDeContas ");
         await getReabrirPrestacaoDeContas(prestacaoDeContas.uuid);
-        //window.location.assign(`/dre-lista-prestacao-de-contas/${prestacaoDeContas.periodo_uuid}/${prestacaoDeContas.status}`)
         setRedirectListaPc(true)
     };
 
+    const handleChangeDataCobranca = (name, value) =>{
+        setDataCobranca(value);
+    }
 
-    console.log("Prestacao XXXXXX ", prestacaoDeContas)
+    const addCobranca = async () =>{
+        console.log('addCobranca ', dataCobranca)
+        let data_cobranca = dataCobranca ? moment(new Date(dataCobranca), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
+        console.log('addCobranca ', data_cobranca)
+
+    };
+
+
+
 
     const handleChangeFormRecebimentoPelaDiretoria = (name, value) => {
         setStateFormRecebimentoPelaDiretoria({
@@ -131,8 +142,10 @@ export const DetalhePrestacaoDeContas = () =>{;
                         disabledStatus={true}
                     />
                     <CobrancaPrestacaoDeContasEditavel
-                        initialListaCobranca={initialListaCobranca}
                         listaDeCobrancas={listaDeCobrancas}
+                        dataCobranca={dataCobranca}
+                        handleChangeDataCobranca={handleChangeDataCobranca}
+                        addCobranca={addCobranca}
                     />
                 </>
             )
@@ -140,6 +153,8 @@ export const DetalhePrestacaoDeContas = () =>{;
         }
 
     };
+
+    console.log("Prestacao XXXXXX ", prestacaoDeContas)
 
     return(
         <PaginasContainer>
