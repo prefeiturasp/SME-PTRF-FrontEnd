@@ -21,7 +21,6 @@ export const DetalhePrestacaoDeContas = () =>{
             setPrestacaoDeContas(prestacao)
         }
     };
-
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
