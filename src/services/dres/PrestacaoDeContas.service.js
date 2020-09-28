@@ -32,3 +32,8 @@ export const getReceberPrestacaoDeContas = async (prestacao_conta_uuid, payload)
 export const getReabrirPrestacaoDeContas = async (prestacao_conta_uuid) => {
     return (await api.delete(`/api/prestacoes-contas/${prestacao_conta_uuid}/reabrir/`, authHeader))
 };
+
+export const getListaDeCobrancas = async (prestacao_conta_uuid) => {
+    return (await api.get(`/api/cobrancas-prestacoes-contas/?prestacao_conta__uuid=${prestacao_conta_uuid}&tipo=RECEBIMENTO`, authHeader)).data
+};
+

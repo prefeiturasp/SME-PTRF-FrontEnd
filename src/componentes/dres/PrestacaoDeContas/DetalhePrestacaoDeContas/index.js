@@ -6,12 +6,12 @@ import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {CobrancaPrestacaoDeContasEditavel} from "./CobrancaPrestacaoDeContasEditavel";
 
-export const DetalhePrestacaoDeContas = () =>{
+export const DetalhePrestacaoDeContas = () =>{;
     let {prestacao_conta_uuid} = useParams();
 
     const initialFormRecebimentoPelaDiretoria = {
@@ -20,16 +20,29 @@ export const DetalhePrestacaoDeContas = () =>{
         status: "",
     };
 
+    const initialListaCobranca = {
+        uuid: "",
+        prestacao_conta: '',
+        data:'',
+        tipo: '',
+    };
+
+
     const [prestacaoDeContas, setPrestacaoDeContas] = useState({});
     const [stateFormRecebimentoPelaDiretoria, setStateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
     const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
     const [showReabrirPc, setShowReabrirPc] = useState(false);
     const [redirectListaPc, setRedirectListaPc] = useState(false);
+    const [listaDeCobrancas, setListaDeCobrancas] = useState(initialListaCobranca);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
         carregaTabelaPrestacaoDeContas();
     }, []);
+
+    useEffect(()=>{
+        carregaListaDeCobrancas();
+    }, [prestacaoDeContas]);
 
     const carregaPrestacaoDeContas = async () => {
         if (prestacao_conta_uuid){
@@ -49,16 +62,21 @@ export const DetalhePrestacaoDeContas = () =>{
         setTabelaPrestacoes(tabela_prestacoes);
     };
 
+    const carregaListaDeCobrancas = async () =>{
+        if (prestacaoDeContas && prestacaoDeContas.uuid){
+            let lista = await getListaDeCobrancas(prestacaoDeContas.uuid);
+            console.log("Lista de Cobrancas ", lista)
+            setListaDeCobrancas(lista)
+        }
+    };
+
     const receberPrestacaoDeContas = async ()=>{
         let dt_recebimento = stateFormRecebimentoPelaDiretoria.data_recebimento ? moment(new Date(stateFormRecebimentoPelaDiretoria.data_recebimento), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
         let payload = {
             data_recebimento: dt_recebimento,
         };
-
-        console.log("Cliquei em receberPrestacaoDeContas ", dt_recebimento);
         let pc_recebida = await getReceberPrestacaoDeContas(prestacaoDeContas.uuid, payload);
-        console.log("pc_recebida XXXXXXXXXXXXX ", pc_recebida);
-        setPrestacaoDeContas(pc_recebida)
+        setPrestacaoDeContas(pc_recebida);
         setRedirectListaPc(false);
     };
 
@@ -112,7 +130,10 @@ export const DetalhePrestacaoDeContas = () =>{
                         disabledData={false}
                         disabledStatus={true}
                     />
-                    <CobrancaPrestacaoDeContasEditavel/>
+                    <CobrancaPrestacaoDeContasEditavel
+                        initialListaCobranca={initialListaCobranca}
+                        listaDeCobrancas={listaDeCobrancas}
+                    />
                 </>
             )
 
