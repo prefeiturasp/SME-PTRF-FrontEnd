@@ -41,3 +41,7 @@ export const getAddCobranca = async (payload) => {
     return (await api.post(`/api/cobrancas-prestacoes-contas/`, payload, authHeader)).data
 };
 
+export const getDeletarCobranca = async (cobranca_prestacao_recebimento_uuid) => {
+    return (await api.delete(`/api/cobrancas-prestacoes-contas/${cobranca_prestacao_recebimento_uuid}/`, authHeader))
+};
+

@@ -6,7 +6,7 @@ import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {CobrancaPrestacaoDeContasEditavel} from "./CobrancaPrestacaoDeContasEditavel";
@@ -89,12 +89,30 @@ export const DetalhePrestacaoDeContas = () =>{;
 
     const handleChangeDataCobranca = (name, value) =>{
         setDataCobranca(value);
-    }
+    };
 
     const addCobranca = async () =>{
-        console.log('addCobranca ', dataCobranca)
         let data_cobranca = dataCobranca ? moment(new Date(dataCobranca), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
-        console.log('addCobranca ', data_cobranca)
+        if (data_cobranca){
+            let payload = {
+                prestacao_conta: prestacaoDeContas.uuid,
+                data: data_cobranca,
+                tipo: 'RECEBIMENTO'
+            };
+            let add_cobranca = await getAddCobranca(payload);
+            console.log('addCobranca ', add_cobranca)
+            await carregaListaDeCobrancas()
+        }
+    };
+
+    const deleteCobranca = async (cobranca_uuid) =>{
+        //let deletar_cobranca = await getDeletarCobranca(aui);
+        console.log('deleteCobranca ', cobranca_uuid)
+
+        await getDeletarCobranca(cobranca_uuid);
+        if (cobranca_uuid){
+            await carregaListaDeCobrancas()
+        }
 
     };
 
@@ -146,6 +164,7 @@ export const DetalhePrestacaoDeContas = () =>{;
                         dataCobranca={dataCobranca}
                         handleChangeDataCobranca={handleChangeDataCobranca}
                         addCobranca={addCobranca}
+                        deleteCobranca={deleteCobranca}
                     />
                 </>
             )

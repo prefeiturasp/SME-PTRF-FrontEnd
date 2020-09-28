@@ -1,18 +1,16 @@
 import React from "react";
-import {Formik, FieldArray} from "formik";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
-import CurrencyInput from "react-currency-input";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 
-export const CobrancaPrestacaoDeContasEditavel = ({listaDeCobrancas, dataCobranca, handleChangeDataCobranca, addCobranca}) =>{
+export const CobrancaPrestacaoDeContasEditavel = ({listaDeCobrancas, dataCobranca, handleChangeDataCobranca, addCobranca, deleteCobranca}) =>{
+
+    console.log("listaDeCobrancas ", listaDeCobrancas)
 
     return(
         <>
             <hr className='mt-4 mb-3'/>
             <h4>Cobrança da prestação de contas</h4>
 
-            <form>
+            <form method='post'>
                 <div className="col">
                     <label htmlFor="data_cobranca">Data de recebimento</label>
                     <DatePickerField
@@ -25,9 +23,8 @@ export const CobrancaPrestacaoDeContasEditavel = ({listaDeCobrancas, dataCobranc
                 <button type='button' onClick={addCobranca}>Add Cobranca</button>
             </form>
 
-
-            {listaDeCobrancas && listaDeCobrancas.length > 0 && listaDeCobrancas.map((cobrancao)=>
-                <p>Cobrança Data {cobrancao.data} <button>Excluir</button></p>
+            {listaDeCobrancas && listaDeCobrancas.length > 0 && listaDeCobrancas.map((cobrancao, index)=>
+                <p key={index}><button onClick={()=>deleteCobranca(cobrancao.uuid)}>Cobrança Data {cobrancao.data} <button>Excluir</button></button></p>
             )}
 
         </>
