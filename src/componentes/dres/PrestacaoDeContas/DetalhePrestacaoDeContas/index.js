@@ -9,8 +9,7 @@ import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
 import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
-import {ModalConfirmaLogout} from "../../../Globais/Cabecalho/ModalConfirmaLogout";
-import {ModalBootstrap} from "../../../Globais/ModalBootstrap";
+import {CobrancaPrestacaoDeContasEditavel} from "./CobrancaPrestacaoDeContasEditavel";
 
 export const DetalhePrestacaoDeContas = () =>{
     let {prestacao_conta_uuid} = useParams();
@@ -25,6 +24,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [stateFormRecebimentoPelaDiretoria, setStateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
     const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
     const [showReabrirPc, setShowReabrirPc] = useState(false);
+    const [redirectListaPc, setRedirectListaPc] = useState(false);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -59,13 +59,14 @@ export const DetalhePrestacaoDeContas = () =>{
         let pc_recebida = await getReceberPrestacaoDeContas(prestacaoDeContas.uuid, payload);
         console.log("pc_recebida XXXXXXXXXXXXX ", pc_recebida);
         setPrestacaoDeContas(pc_recebida)
+        setRedirectListaPc(false);
     };
 
     const reabrirPrestacaoDeContas = async ()=>{
         console.log("Cliquei em reabrirPrestacaoDeContas ");
-        let pc_reaberta = await getReabrirPrestacaoDeContas(prestacaoDeContas.uuid);
-        //console.log("pc_reaberta XXXXXXXXXXXXX ", pc_reaberta);
-        window.location.assign(`/dre-lista-prestacao-de-contas/${prestacaoDeContas.periodo_uuid}/${prestacaoDeContas.status}`)
+        await getReabrirPrestacaoDeContas(prestacaoDeContas.uuid);
+        //window.location.assign(`/dre-lista-prestacao-de-contas/${prestacaoDeContas.periodo_uuid}/${prestacaoDeContas.status}`)
+        setRedirectListaPc(true)
     };
 
 
@@ -111,6 +112,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         disabledData={false}
                         disabledStatus={true}
                     />
+                    <CobrancaPrestacaoDeContasEditavel/>
                 </>
             )
 
@@ -149,6 +151,13 @@ export const DetalhePrestacaoDeContas = () =>{
                         segundoBotaoTexto="Confirmar"
                     />
                 </section>
+                {redirectListaPc &&
+                    <Redirect
+                        to={{
+                            pathname: `/dre-lista-prestacao-de-contas/${prestacaoDeContas.periodo_uuid}/${prestacaoDeContas.status}`,
+                        }}
+                    />
+                }
             </div>
         </PaginasContainer>
     )
