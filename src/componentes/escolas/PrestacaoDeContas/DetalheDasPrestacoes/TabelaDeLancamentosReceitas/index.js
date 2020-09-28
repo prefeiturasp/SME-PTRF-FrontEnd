@@ -7,7 +7,7 @@ import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
 import IconeNaoDemonstrado from "../../../../../assets/img/icone-nao-demonstrado.svg";
 import ReactTooltip from "react-tooltip";
 
-export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxReceitas, handleChangeCheckboxReceitas}) => {
+export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxReceitas, handleChangeCheckboxReceitas, dataTip}) => {
 
     let history = useHistory();
     const rowsPerPage = 7;
@@ -79,7 +79,7 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
     const tipoTemplate = (rowData) => {
         return (
             rowData['notificar_dias_nao_conferido'] > 0 ?
-                <div data-tip={`Não demonstrado por ${Math.trunc(rowData['notificar_dias_nao_conferido']/30)} meses.`}>
+                <div data-tip={dataTip(rowData['notificar_dias_nao_conferido'])}>
                     <img
                         src={IconeNaoDemonstrado}
                         alt=""

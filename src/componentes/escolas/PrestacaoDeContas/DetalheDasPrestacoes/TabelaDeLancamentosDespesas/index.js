@@ -8,7 +8,7 @@ import moment from "moment";
 import IconeNaoDemonstrado from "../../../../../assets/img/icone-nao-demonstrado.svg";
 import ReactTooltip from "react-tooltip";
 
-export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDespesas, handleChangeCheckboxDespesas}) => {
+export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDespesas, handleChangeCheckboxDespesas, dataTip}) => {
 
     let history = useHistory();
     const rowsPerPage = 7;
@@ -100,7 +100,7 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
     const cnpjTemplate = (rowData) => {
         return (
             rowData['notificar_dias_nao_conferido'] > 0 ?
-                <div data-tip={`Não demonstrado por ${Math.trunc(rowData['notificar_dias_nao_conferido']/30)} meses.`}>
+                <div data-tip={dataTip(rowData['notificar_dias_nao_conferido'])}>
                     <img
                         src={IconeNaoDemonstrado}
                         alt=""
