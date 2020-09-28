@@ -5,12 +5,13 @@ import {getPrestacaoDeContasDetalhe} from "../../../../services/dres/PrestacaoDe
 import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
+import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
 
 export const DetalhePrestacaoDeContas = () =>{
     let {prestacao_conta_uuid} = useParams();
 
     const [prestacaoDeContas, setPrestacaoDeContas] = useState({});
-
+    const [dataRecebimento, setDataRecebimento] = useState("");
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -19,8 +20,27 @@ export const DetalhePrestacaoDeContas = () =>{
     const carregaPrestacaoDeContas = async () => {
         if (prestacao_conta_uuid){
             let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
-            setPrestacaoDeContas(prestacao)
+            setPrestacaoDeContas(prestacao);
+            setDataRecebimento(prestacao.data_recebimento);
         }
+    };
+
+    const receberPrestacaoDeContas = async ()=>{
+        console.log("Cliquei em receberPrestacaoDeContas ", dataRecebimento)
+    };
+
+    const reabrirPrestacaoDeContas = async ()=>{
+        console.log("Cliquei em reabrirPrestacaoDeContas ")
+
+    };
+
+
+    console.log("Prestacao XXXXXX ", prestacaoDeContas)
+
+    const handleChangeDataRecebimento = (name, valor) =>{
+        console.log("handleChangeDataRecebimento ", name);
+        console.log("handleChangeDataRecebimento ", valor);
+        setDataRecebimento(valor)
     };
 
     const getComportamentoPorStatus = () =>{
@@ -33,9 +53,16 @@ export const DetalhePrestacaoDeContas = () =>{
                         textoBtnRetroceder={"Reabrir PC"}
                         metodoAvancar={receberPrestacaoDeContas}
                         metodoRetroceder={reabrirPrestacaoDeContas}
+                        disabledBtnAvancar={!dataRecebimento}
+                        disabledBtnRetroceder={false}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
+                    />
+                    <FormRecebimentoPelaDiretoria
+                        prestacaoDeContas={prestacaoDeContas}
+                        dataRecebimento={dataRecebimento}
+                        handleChangeDataRecebimento={handleChangeDataRecebimento}
                     />
                 </>
             )
@@ -43,17 +70,6 @@ export const DetalhePrestacaoDeContas = () =>{
         }
 
     };
-
-    const receberPrestacaoDeContas = async ()=>{
-        console.log("Cliquei em receberPrestacaoDeContas ")
-    };
-
-    const reabrirPrestacaoDeContas = async ()=>{
-        console.log("Cliquei em reabrirPrestacaoDeContas ")
-    };
-
-
-    console.log("Prestacao XXXXXX ", prestacaoDeContas)
 
     return(
         <PaginasContainer>

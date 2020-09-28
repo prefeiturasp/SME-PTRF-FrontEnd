@@ -2,7 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleLeft, faAngleDoubleRight} from "@fortawesome/free-solid-svg-icons";
 
-export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, textoBtnRetroceder, metodoAvancar, metodoRetroceder}) =>{
+export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, textoBtnRetroceder, metodoAvancar, metodoRetroceder, disabledBtnAvancar, disabledBtnRetroceder}) =>{
     return(
         <>
             {Object.entries(prestacaoDeContas).length > 0 &&
@@ -23,6 +23,7 @@ export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, tex
                     <div className="p-2 bd-highlight">
                         <button
                             onClick={metodoAvancar}
+                            disabled={disabledBtnAvancar}
                             className="btn btn-success ml-2"
                         >
                             {textoBtnAvancar}
