@@ -39,7 +39,6 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
                             className="form-control"
                             disabled={disabledStatus}
                         >
-                            <option value="">Selecione um status</option>
                             {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.filter(element => element.id !== 'DOCS_PENDENTES').map(item => (
                                 <option key={item.id} value={item.id}>{item.nome}</option>
                             ))}

@@ -24,3 +24,11 @@ export const getTabelasPrestacoesDeContas = async () => {
 export const getPrestacaoDeContasDetalhe = async (prestacao_conta_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_conta_uuid}/`, authHeader)).data
 };
+
+export const getReceberPrestacaoDeContas = async (prestacao_conta_uuid, payload) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/receber/`, payload, authHeader)).data
+};
+
+export const getReabrirPrestacaoDeContas = async (prestacao_conta_uuid) => {
+    return (await api.delete(`/api/prestacoes-contas/${prestacao_conta_uuid}/reabrir/`, authHeader))
+};

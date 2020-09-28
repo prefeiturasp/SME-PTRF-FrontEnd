@@ -6,7 +6,11 @@ import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
-import {getTabelasPrestacoesDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
+import moment from "moment";
+import {ModalReabrirPc} from "../ModalReabrirPC";
+import {ModalConfirmaLogout} from "../../../Globais/Cabecalho/ModalConfirmaLogout";
+import {ModalBootstrap} from "../../../Globais/ModalBootstrap";
 
 export const DetalhePrestacaoDeContas = () =>{
     let {prestacao_conta_uuid} = useParams();
@@ -20,6 +24,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [prestacaoDeContas, setPrestacaoDeContas] = useState({});
     const [stateFormRecebimentoPelaDiretoria, setStateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
     const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
+    const [showReabrirPc, setShowReabrirPc] = useState(false);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -32,9 +37,9 @@ export const DetalhePrestacaoDeContas = () =>{
             setPrestacaoDeContas(prestacao);
             setStateFormRecebimentoPelaDiretoria({
                 ...stateFormRecebimentoPelaDiretoria,
-                tecnico_atribuido: prestacao.tecnico_responsavel.nome,
-                dt_recebimento: prestacao.data_recebimento,
-                status: prestacao.status,
+                tecnico_atribuido: prestacao && prestacao.tecnico_responsavel && prestacao.tecnico_responsavel.nome ? prestacao.tecnico_responsavel.nome : '',
+                data_recebimento: prestacao && prestacao.data_recebimento ? prestacao.data_recebimento : '',
+                status: prestacao && prestacao.status ? prestacao.status : '',
             });
         }
     };
@@ -45,12 +50,22 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const receberPrestacaoDeContas = async ()=>{
-        console.log("Cliquei em receberPrestacaoDeContas ", stateFormRecebimentoPelaDiretoria.data_recebimento)
+        let dt_recebimento = stateFormRecebimentoPelaDiretoria.data_recebimento ? moment(new Date(stateFormRecebimentoPelaDiretoria.data_recebimento), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
+        let payload = {
+            data_recebimento: dt_recebimento,
+        };
+
+        console.log("Cliquei em receberPrestacaoDeContas ", dt_recebimento);
+        let pc_recebida = await getReceberPrestacaoDeContas(prestacaoDeContas.uuid, payload);
+        console.log("pc_recebida XXXXXXXXXXXXX ", pc_recebida);
+        setPrestacaoDeContas(pc_recebida)
     };
 
     const reabrirPrestacaoDeContas = async ()=>{
-        console.log("Cliquei em reabrirPrestacaoDeContas ")
-
+        console.log("Cliquei em reabrirPrestacaoDeContas ");
+        let pc_reaberta = await getReabrirPrestacaoDeContas(prestacaoDeContas.uuid);
+        //console.log("pc_reaberta XXXXXXXXXXXXX ", pc_reaberta);
+        window.location.assign(`/dre-lista-prestacao-de-contas/${prestacaoDeContas.periodo_uuid}/${prestacaoDeContas.status}`)
     };
 
 
@@ -63,6 +78,15 @@ export const DetalhePrestacaoDeContas = () =>{
         });
     };
 
+    const onHandleClose = () => {
+        setShowReabrirPc(false);
+    };
+
+    const onReabrirTrue = () => {
+        setShowReabrirPc(false);
+        reabrirPrestacaoDeContas();
+    };
+
     const getComportamentoPorStatus = () =>{
         if (prestacaoDeContas.status === 'NAO_RECEBIDA'){
             return (
@@ -72,7 +96,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         textoBtnAvancar={"Receber"}
                         textoBtnRetroceder={"Reabrir PC"}
                         metodoAvancar={receberPrestacaoDeContas}
-                        metodoRetroceder={reabrirPrestacaoDeContas}
+                        metodoRetroceder={()=>setShowReabrirPc(true)}
                         disabledBtnAvancar={!stateFormRecebimentoPelaDiretoria.data_recebimento}
                         disabledBtnRetroceder={false}
                     />
@@ -112,6 +136,19 @@ export const DetalhePrestacaoDeContas = () =>{
                         {getComportamentoPorStatus()}
                     </>
                 }
+                <section>
+                    <ModalReabrirPc
+                        show={showReabrirPc}
+                        handleClose={onHandleClose}
+                        onReabrirTrue={onReabrirTrue}
+                        titulo="Reabrir período de Prestação de Contas"
+                        texto="<p><strong>Atenção,</strong> a prestação de contas será reaberta para a Associação que poderá fazer alteração e precisará concluí-la novamente.</p>"
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="success"
+                        segundoBotaoTexto="Confirmar"
+                    />
+                </section>
             </div>
         </PaginasContainer>
     )
