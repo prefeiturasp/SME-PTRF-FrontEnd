@@ -1,7 +1,7 @@
 import React from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 
-export const FormRecebimentoPelaDiretoria = ({prestacaoDeContas, dataRecebimento, handleChangeDataRecebimento}) =>{
+export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria, handleChangeFormRecebimentoPelaDiretoria, disabledNome, disabledData, disabledStatus, tabelaPrestacoes}) =>{
 
     return(
         <>
@@ -11,22 +11,39 @@ export const FormRecebimentoPelaDiretoria = ({prestacaoDeContas, dataRecebimento
                     <div className="col">
                         <label htmlFor="tecnico_atribuido">Técnico atribuído</label>
                         <input
-                            defaultValue={prestacaoDeContas.tecnico_responsavel.nome}
-                            //onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
+                            value={stateFormRecebimentoPelaDiretoria.tecnico_atribuido ? stateFormRecebimentoPelaDiretoria.tecnico_atribuido : ''}
+                            onChange={(e) => handleChangeFormRecebimentoPelaDiretoria(e.target.name, e.target.value)}
                             name='tecnico_atribuido'
                             type="text"
                             className="form-control"
-
+                            disabled={disabledNome}
                         />
                     </div>
                     <div className="col">
-                        <label htmlFor="dt_recebimento">Data de recebimento</label>
+                        <label htmlFor="data_recebimento">Data de recebimento</label>
                         <DatePickerField
-                            name="dt_recebimento"
-                            id="dt_recebimento"
-                            value={dataRecebimento}
-                            onChange={handleChangeDataRecebimento}
+                            name="data_recebimento"
+                            id="data_recebimento"
+                            value={stateFormRecebimentoPelaDiretoria.data_recebimento ? stateFormRecebimentoPelaDiretoria.data_recebimento : ''}
+                            onChange={handleChangeFormRecebimentoPelaDiretoria}
+                            disabled={disabledData}
                         />
+                    </div>
+                    <div className="col">
+                        <label htmlFor="status">Status</label>
+                        <select
+                            value={stateFormRecebimentoPelaDiretoria.status}
+                            onChange={(e) => handleChangeFormRecebimentoPelaDiretoria(e.target.name, e.target.value)}
+                            name="status"
+                            id="status"
+                            className="form-control"
+                            disabled={disabledStatus}
+                        >
+                            <option value="">Selecione um status</option>
+                            {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.filter(element => element.id !== 'DOCS_PENDENTES').map(item => (
+                                <option key={item.id} value={item.id}>{item.nome}</option>
+                            ))}
+                        </select>
                     </div>
                 </div>
             </form>

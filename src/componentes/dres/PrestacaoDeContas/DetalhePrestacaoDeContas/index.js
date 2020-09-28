@@ -6,27 +6,46 @@ import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
+import {getTabelasPrestacoesDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
 
 export const DetalhePrestacaoDeContas = () =>{
     let {prestacao_conta_uuid} = useParams();
 
+    const initialFormRecebimentoPelaDiretoria = {
+        tecnico_atribuido: "",
+        data_recebimento: "",
+        status: "",
+    };
+
     const [prestacaoDeContas, setPrestacaoDeContas] = useState({});
-    const [dataRecebimento, setDataRecebimento] = useState("");
+    const [stateFormRecebimentoPelaDiretoria, setStateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
+    const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
+        carregaTabelaPrestacaoDeContas();
     }, []);
 
     const carregaPrestacaoDeContas = async () => {
         if (prestacao_conta_uuid){
             let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
             setPrestacaoDeContas(prestacao);
-            setDataRecebimento(prestacao.data_recebimento);
+            setStateFormRecebimentoPelaDiretoria({
+                ...stateFormRecebimentoPelaDiretoria,
+                tecnico_atribuido: prestacao.tecnico_responsavel.nome,
+                dt_recebimento: prestacao.data_recebimento,
+                status: prestacao.status,
+            });
         }
     };
 
+    const carregaTabelaPrestacaoDeContas = async () => {
+        let tabela_prestacoes = await getTabelasPrestacoesDeContas();
+        setTabelaPrestacoes(tabela_prestacoes);
+    };
+
     const receberPrestacaoDeContas = async ()=>{
-        console.log("Cliquei em receberPrestacaoDeContas ", dataRecebimento)
+        console.log("Cliquei em receberPrestacaoDeContas ", stateFormRecebimentoPelaDiretoria.data_recebimento)
     };
 
     const reabrirPrestacaoDeContas = async ()=>{
@@ -37,10 +56,11 @@ export const DetalhePrestacaoDeContas = () =>{
 
     console.log("Prestacao XXXXXX ", prestacaoDeContas)
 
-    const handleChangeDataRecebimento = (name, valor) =>{
-        console.log("handleChangeDataRecebimento ", name);
-        console.log("handleChangeDataRecebimento ", valor);
-        setDataRecebimento(valor)
+    const handleChangeFormRecebimentoPelaDiretoria = (name, value) => {
+        setStateFormRecebimentoPelaDiretoria({
+            ...stateFormRecebimentoPelaDiretoria,
+            [name]: value
+        });
     };
 
     const getComportamentoPorStatus = () =>{
@@ -53,16 +73,19 @@ export const DetalhePrestacaoDeContas = () =>{
                         textoBtnRetroceder={"Reabrir PC"}
                         metodoAvancar={receberPrestacaoDeContas}
                         metodoRetroceder={reabrirPrestacaoDeContas}
-                        disabledBtnAvancar={!dataRecebimento}
+                        disabledBtnAvancar={!stateFormRecebimentoPelaDiretoria.data_recebimento}
                         disabledBtnRetroceder={false}
                     />
                     <TrilhaDeStatus
                         prestacaoDeContas={prestacaoDeContas}
                     />
                     <FormRecebimentoPelaDiretoria
-                        prestacaoDeContas={prestacaoDeContas}
-                        dataRecebimento={dataRecebimento}
-                        handleChangeDataRecebimento={handleChangeDataRecebimento}
+                        handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
+                        stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
+                        tabelaPrestacoes={tabelaPrestacoes}
+                        disabledNome={true}
+                        disabledData={false}
+                        disabledStatus={true}
                     />
                 </>
             )
