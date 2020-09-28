@@ -327,6 +327,13 @@ export const DetalheDasPrestacoes = () => {
         window.location.assign(btnCadastrarUrl)
     };
 
+    const dataTip = (notificar_dias_nao_conferido) => {
+        let meses = Math.trunc(notificar_dias_nao_conferido/30)
+        let msg = (notificar_dias_nao_conferido <= 30) ? `${meses} mês.` : `${meses} meses.` 
+
+        return `Não demonstrado por ${msg}`;
+    }
+
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
             <div className="row">
@@ -386,6 +393,7 @@ export const DetalheDasPrestacoes = () => {
                                     receitas={receitasNaoConferidas}
                                     checkboxReceitas={checkboxReceitas}
                                     handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
+                                    dataTip={dataTip}
                                 />
                             )}
 
@@ -395,6 +403,7 @@ export const DetalheDasPrestacoes = () => {
                                     receitas={receitasConferidas}
                                     checkboxReceitas={checkboxReceitas}
                                     handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
+                                    dataTip={dataTip}
                                 />
                             )}
 
@@ -408,6 +417,7 @@ export const DetalheDasPrestacoes = () => {
                                 despesas={despesasNaoConferidas}
                                 checkboxDespesas={checkboxDespesas}
                                 handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
+                                dataTip={dataTip}
                             />
                             }
 
@@ -417,6 +427,7 @@ export const DetalheDasPrestacoes = () => {
                                 despesas={despesasConferidas}
                                 checkboxDespesas={checkboxDespesas}
                                 handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
+                                dataTip={dataTip}
                             />
                             }
 
