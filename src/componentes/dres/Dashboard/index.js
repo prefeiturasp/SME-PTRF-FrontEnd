@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import {Redirect} from 'react-router-dom'
 import {getPeriodos, getItensDashboard} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import "./dashboard.scss"
@@ -9,8 +10,9 @@ import Loading from "../../../utils/Loading";
 export const DreDashboard = () => {
 
     const [periodos, setPeriodos] = useState(false);
-    const [periodoEsolhido, setPeriodoEsolhido] = useState(false);
+    const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
     const [itensDashboard, setItensDashboard] = useState(false);
+    const [statusPrestacao, setStatusPrestacao] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -19,7 +21,7 @@ export const DreDashboard = () => {
 
     useEffect(() => {
         carregaItensDashboard();
-    }, [periodoEsolhido]);
+    }, [periodoEscolhido]);
 
     const carregaPeriodos = async () => {
         setLoading(true);
@@ -33,8 +35,8 @@ export const DreDashboard = () => {
 
     const carregaItensDashboard = async () =>{
         setLoading(true);
-        if (periodoEsolhido){
-            let itens = await getItensDashboard(periodoEsolhido);
+        if (periodoEscolhido){
+            let itens = await getItensDashboard(periodoEscolhido);
             setItensDashboard(itens)
         }
         setLoading(false);
@@ -45,14 +47,14 @@ export const DreDashboard = () => {
     };
 
     const handleClickVerPrestacaoes = (status) =>{
-        console.log("handleClickVerPrestacaoes ", status)
+        setStatusPrestacao(status);
     };
 
     return (
         <>
             <SelectPeriodo
                 periodos={periodos}
-                periodoEsolhido={periodoEsolhido}
+                periodoEscolhido={periodoEscolhido}
                 handleChangePeriodos={handleChangePeriodos}
            />
 
@@ -72,6 +74,13 @@ export const DreDashboard = () => {
                         itensDashboard={itensDashboard}
                         handleClickVerPrestacaoes={handleClickVerPrestacaoes}
                     />
+                    {statusPrestacao &&
+                    <Redirect
+                        to={{
+                            pathname: `/dre-lista-prestacao-de-contas/${periodoEscolhido}/${statusPrestacao}`,
+                        }}
+                    />
+                    }
                 </>
             }
         </>

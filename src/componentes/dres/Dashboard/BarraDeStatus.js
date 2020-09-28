@@ -1,5 +1,5 @@
 import React from "react";
-export const BarraDeStatus = ({ObjetoDashboard, itensDashboard}) => {
+export const BarraDeStatus = ({itensDashboard}) => {
     return (
         <>
             <div className="col-12 mt-3 barra-de-status">

@@ -20,6 +20,7 @@ export const DadosDasContas = () => {
     const [loading, setLoading] = useState(true);
     const [intialValues, setIntialValues] = useState(initial);
     const [showSalvar, setShowSalvar] = useState(false);
+    const [errors, setErrors] = useState({});
 
     useEffect(() =>{
         buscaContas();
@@ -38,20 +39,28 @@ export const DadosDasContas = () => {
         return nome_conta === "Cartão"
     };
 
-    const validateFormDadosDasContas = async (values) => {
+
+    const temErros = (values) => {
         const errors = {};
-        if (values.contas && values.contas.length > 0 ){
-            values.contas.map((item)=>{
+        values.contas.map((item)=>{
+            if (item.tipo_conta.nome !== 'Cartão') {
                 if (!item.tipo_conta || !item.banco_nome || !item.agencia || !item.numero_conta){
                     errors.campos_obrigatorios = "Todos os campos são obrigatórios"
                 }
-            });
-        }
-        return errors
+            }
+        });
+
+        return errors;
     };
 
     const onSubmit = async (values) => {
         if (values.contas && values.contas.length > 0 ){
+            const erros = temErros(values);
+            setErrors(erros);
+            if ("campos_obrigatorios" in erros) {
+                return
+            }
+
             setLoading(true);
             let payload = [];
             values.contas.map((value)=>{
@@ -95,7 +104,7 @@ export const DadosDasContas = () => {
                             intialValues={intialValues}
                             onSubmit={onSubmit}
                             setaCampoReadonly={setaCampoReadonly}
-                            validateFormDadosDasContas={validateFormDadosDasContas}
+                            errors={errors}
                         />
                     </div>
 

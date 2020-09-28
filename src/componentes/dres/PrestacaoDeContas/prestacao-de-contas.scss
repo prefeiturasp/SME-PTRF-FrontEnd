@@ -1,0 +1,64 @@
+.titulo-explicativo {
+  font-size: 24px;
+  color: #00585e;
+  font-weight: bold;
+}
+
+.span-status-NAO_RECEBIDA {
+  color: #B40C02;
+}
+
+.span-status-RECEBIDA, .span-status-APROVADA, .span-status-APROVADA_RESSALVA {
+  color: #297805;
+}
+
+.span-status-DEVOLVIDA {
+  color: #D06D12;
+}
+
+#timeline {
+  height: 2px;
+  width: 92%;
+  background-color: #00585E;
+  position: absolute;
+  top: 11px;
+  margin-left: 30px;
+
+}
+
+.container-cabecalho {
+  .btn-ir-para-listagem:hover svg path {
+    fill: #fff;
+  }
+}
+
+.container-circulo {
+  z-index: 1;
+  text-align: center;
+  background-color: #fff;
+
+  .circulo, .circulo-ativo, .circulo-ativo-passado {
+    color: #fff;
+    font-size: 14px;
+    background-color: #A4A4A4;
+    border-radius: 67px;
+    padding: 3px 8px;
+    font-weight: bold;
+  }
+  .circulo-ativo{
+    background-color: #00585E;
+  }
+  .circulo-ativo-passado {
+    background-color: #42474A;
+    padding: 3px 5px;
+  }
+
+  .circulo-devolvido-para-acertos{
+    background-color: #00585E;
+    padding: 3px 9.5px;
+  }
+
+  .texto-inativo{
+    color: #A4A4A4;
+  }
+}
