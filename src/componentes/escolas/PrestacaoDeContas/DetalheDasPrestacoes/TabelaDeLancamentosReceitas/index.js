@@ -79,7 +79,7 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
     const tipoTemplate = (rowData) => {
         return (
             rowData['notificar_dias_nao_conferido'] > 0 ?
-                <div data-tip={`Não demonstrado por ${rowData['notificar_dias_nao_conferido']} dias.`}>
+                <div data-tip={`Não demonstrado por ${Math.trunc(rowData['notificar_dias_nao_conferido']/30)} meses.`}>
                     <img
                         src={IconeNaoDemonstrado}
                         alt=""
