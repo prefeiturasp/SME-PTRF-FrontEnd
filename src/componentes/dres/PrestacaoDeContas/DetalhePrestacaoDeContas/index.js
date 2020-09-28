@@ -11,6 +11,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
     const [prestacaoDeContas, setPrestacaoDeContas] = useState({});
 
+
     useEffect(()=>{
         carregaPrestacaoDeContas();
     }, []);
@@ -21,6 +22,39 @@ export const DetalhePrestacaoDeContas = () =>{
             setPrestacaoDeContas(prestacao)
         }
     };
+
+    const getComportamentoPorStatus = () =>{
+        if (prestacaoDeContas.status === 'NAO_RECEBIDA'){
+            return (
+                <>
+                    <BotoesAvancarRetroceder
+                        prestacaoDeContas={prestacaoDeContas}
+                        textoBtnAvancar={"Receber"}
+                        textoBtnRetroceder={"Reabrir PC"}
+                        metodoAvancar={receberPrestacaoDeContas}
+                        metodoRetroceder={reabrirPrestacaoDeContas}
+                    />
+                    <TrilhaDeStatus
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                </>
+            )
+
+        }
+
+    };
+
+    const receberPrestacaoDeContas = async ()=>{
+        console.log("Cliquei em receberPrestacaoDeContas ")
+    };
+
+    const reabrirPrestacaoDeContas = async ()=>{
+        console.log("Cliquei em reabrirPrestacaoDeContas ")
+    };
+
+
+    console.log("Prestacao XXXXXX ", prestacaoDeContas)
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -36,12 +70,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         <Cabecalho
                             prestacaoDeContas={prestacaoDeContas}
                         />
-                        <BotoesAvancarRetroceder
-                            prestacaoDeContas={prestacaoDeContas}
-                        />
-                        <TrilhaDeStatus
-                            prestacaoDeContas={prestacaoDeContas}
-                        />
+                        {getComportamentoPorStatus()}
                     </>
                 }
             </div>

@@ -6,7 +6,6 @@ import {TrilhaDeStatusDevolvidaParaAcertos} from "./TrilhaDeStatusDevolvidaParaA
 import {TrilhaDeStatusAprovada} from "./TrilhaDeStatusAprovada";
 
 export const TrilhaDeStatus = ({prestacaoDeContas}) => {
-    console.log('TrilhaDeStatus XXXXX ', prestacaoDeContas);
 
     const getTrilhaDeStatusPeloStatus = (status)=>{
         if (status === 'NAO_RECEBIDA'){
@@ -25,7 +24,7 @@ export const TrilhaDeStatus = ({prestacaoDeContas}) => {
             return (
                 <TrilhaDeStatusDevolvidaParaAcertos/>
             )
-        }else if(status === 'APROVADA' || status === 'APROVADA_RESSALVA'|| status === 'REPROVADA'){
+        }else if(status === 'APROVADA' || status === 'APROVADA_RESSALVA' || status === 'REPROVADA'){
             return (
                 <TrilhaDeStatusAprovada/>
             )
