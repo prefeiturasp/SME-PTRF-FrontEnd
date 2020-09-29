@@ -87,7 +87,7 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const desfazerRecebimento = async () =>{
-        await getDesfazerRecebimento(prestacaoDeContas.uuid)
+        await getDesfazerRecebimento(prestacaoDeContas.uuid);
         await carregaPrestacaoDeContas();
     };
 
@@ -121,7 +121,7 @@ export const DetalhePrestacaoDeContas = () =>{
         setDataCobranca(value);
     };
 
-    const retornaNumeroCardinal = (index) =>{
+    const retornaNumeroOrdinal = (index) =>{
 
         let _index = index + 1;
 
@@ -193,7 +193,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         addCobranca={addCobranca}
                         deleteCobranca={deleteCobranca}
                         editavel={true}
-                        retornaNumeroCardinal={retornaNumeroCardinal}
+                        retornaNumeroOrdinal={retornaNumeroOrdinal}
                     />
                 </>
             )
@@ -228,7 +228,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         addCobranca={addCobranca}
                         deleteCobranca={deleteCobranca}
                         editavel={false}
-                        retornaNumeroCardinal={retornaNumeroCardinal}
+                        retornaNumeroOrdinal={retornaNumeroOrdinal}
                     />
                 </>
             )
