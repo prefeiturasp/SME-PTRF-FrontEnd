@@ -46,7 +46,6 @@ export const CobrancaPrestacaoDeContas = ({listaDeCobrancas, dataCobranca, handl
                     ) :
                         <span>{retornaNumeroCardinal(index)} cobrança: <strong>{cobrancao.data ? moment(new Date(cobrancao.data), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY") : ""}</strong></span>
                     }
-
                 </p>
             )}
         </>

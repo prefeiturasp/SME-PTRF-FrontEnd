@@ -109,7 +109,6 @@ export const DetalhePrestacaoDeContas = () =>{
         if (cobranca_uuid){
             await carregaListaDeCobrancas()
         }
-
     };
 
     const retornaNumeroCardinal = (index) =>{
@@ -131,13 +130,11 @@ export const DetalhePrestacaoDeContas = () =>{
             let modificada = primeira_palavra.substring(0, primeira_palavra.length - 1) + 'a';
             if (array[1] === undefined){
                 return modificada.charAt(0).toUpperCase() + modificada.slice(1)
-                //return modificada
             }else {
                 return modificada.charAt(0).toUpperCase() + modificada.slice(1) + " " + array[1]
             }
         }
     };
-
 
     const handleChangeFormRecebimentoPelaDiretoria = (name, value) => {
         setStateFormRecebimentoPelaDiretoria({
