@@ -329,7 +329,7 @@ export const DetalheDasPrestacoes = () => {
 
     const dataTip = (notificar_dias_nao_conferido) => {
         let meses = Math.trunc(notificar_dias_nao_conferido/30)
-        let msg = (notificar_dias_nao_conferido <= 30) ? `${meses} mês.` : `${meses} meses.` 
+        let msg = (notificar_dias_nao_conferido <= 59) ? `1 mês.` : `${meses} meses.` 
 
         return `Não demonstrado por ${msg}`;
     }
