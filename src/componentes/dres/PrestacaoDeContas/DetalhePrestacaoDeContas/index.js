@@ -166,6 +166,7 @@ export const DetalhePrestacaoDeContas = () =>{;
                         handleChangeDataCobranca={handleChangeDataCobranca}
                         addCobranca={addCobranca}
                         deleteCobranca={deleteCobranca}
+                        editavel={false}
                     />
                 </>
             )

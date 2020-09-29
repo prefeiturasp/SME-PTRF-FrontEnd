@@ -63,7 +63,16 @@
   }
 }
 
+.btn-add-cobranca{
+  font-weight: bold;
+  color: #00585e;
+  text-decoration: underline;
+}
 
+.btn-add-cobranca.disabled, .btn-add-cobranca:disabled {
+  color: #00585e;
+  pointer-events: none;
+}
 
   .btn-excluir-valores-reprogramados, .btn-excluir-valores-reprogramados:hover, .btn-excluir-valores-reprogramados:focus {
     outline: none;
