@@ -76,8 +76,8 @@ export const DetalhePrestacaoDeContas = () =>{
         let payload = {
             data_recebimento: dt_recebimento,
         };
-        let pc_recebida = await getReceberPrestacaoDeContas(prestacaoDeContas.uuid, payload);
-        setPrestacaoDeContas(pc_recebida);
+        await getReceberPrestacaoDeContas(prestacaoDeContas.uuid, payload);
+        await carregaPrestacaoDeContas();
         setRedirectListaPc(false);
     };
 
@@ -86,8 +86,14 @@ export const DetalhePrestacaoDeContas = () =>{
         setRedirectListaPc(true)
     };
 
-    const handleChangeDataCobranca = (name, value) =>{
-        setDataCobranca(value);
+    const desfazerRecebimento = async () =>{
+        await getDesfazerRecebimento(prestacaoDeContas.uuid)
+        await carregaPrestacaoDeContas();
+    };
+
+    const analisarPrestacaoDeContas = async () =>{
+        await getAnalisarPrestacaoDeContas(prestacaoDeContas.uuid);
+        await carregaPrestacaoDeContas();
     };
 
     const addCobranca = async () =>{
@@ -111,16 +117,8 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     };
 
-    const desfazerRecebimento = async () =>{
-        let desfazer = await getDesfazerRecebimento(prestacaoDeContas.uuid)
-        console.log('Desfazer Recebimento ', desfazer)
-        setPrestacaoDeContas(desfazer)
-    };
-
-    const analisarPrestacaoDeContas = async () =>{
-        let analisar = await getAnalisarPrestacaoDeContas(prestacaoDeContas.uuid);
-        console.log('analisarPrestacaoDeContas ', analisar)
-        setPrestacaoDeContas(analisar)
+    const handleChangeDataCobranca = (name, value) =>{
+        setDataCobranca(value);
     };
 
     const retornaNumeroCardinal = (index) =>{
