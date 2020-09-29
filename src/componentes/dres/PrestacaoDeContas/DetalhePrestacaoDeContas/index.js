@@ -67,7 +67,6 @@ export const DetalhePrestacaoDeContas = () =>{;
     const carregaListaDeCobrancas = async () =>{
         if (prestacaoDeContas && prestacaoDeContas.uuid){
             let lista = await getListaDeCobrancas(prestacaoDeContas.uuid);
-            console.log("Lista de Cobrancas ", lista)
             setListaDeCobrancas(lista)
         }
     };
@@ -83,7 +82,6 @@ export const DetalhePrestacaoDeContas = () =>{;
     };
 
     const reabrirPrestacaoDeContas = async ()=>{
-        console.log("Cliquei em reabrirPrestacaoDeContas ");
         await getReabrirPrestacaoDeContas(prestacaoDeContas.uuid);
         setRedirectListaPc(true)
     };
@@ -100,17 +98,13 @@ export const DetalhePrestacaoDeContas = () =>{;
                 data: data_cobranca,
                 tipo: 'RECEBIMENTO'
             };
-            let add_cobranca = await getAddCobranca(payload);
-            console.log('addCobranca ', add_cobranca)
-            await carregaListaDeCobrancas()
+            await getAddCobranca(payload);
+            await carregaListaDeCobrancas();
             setDataCobranca('')
         }
     };
 
     const deleteCobranca = async (cobranca_uuid) =>{
-        //let deletar_cobranca = await getDeletarCobranca(aui);
-        console.log('deleteCobranca ', cobranca_uuid)
-
         await getDeletarCobranca(cobranca_uuid);
         if (cobranca_uuid){
             await carregaListaDeCobrancas()
@@ -118,11 +112,27 @@ export const DetalhePrestacaoDeContas = () =>{;
 
     };
 
-
     const retornaNumeroCardinal = (index) =>{
+
         let _index = index + 1;
-        let oridinal = _index.toOrdinal({ genero: "a" });
-        return oridinal.charAt(0).toUpperCase() + oridinal.slice(1)
+
+        if (_index === 10){
+            return 'Décima'
+        }else if(_index === 20){
+            return 'Vigésima'
+        }else if(_index === 30){
+            return 'Trigésima'
+        }else{
+            let oridinal = _index.toOrdinal({ genero: "a", maiuscula:true });
+            let array = oridinal.split(' ');
+            let primeira_palavra = array[0];
+            let modificada = primeira_palavra.substring(0, primeira_palavra.length - 1) + 'a';
+            if (array[1] === undefined){
+                return modificada
+            }else {
+                return modificada + " " + array[1]
+            }
+        }
     };
 
 
@@ -177,12 +187,8 @@ export const DetalhePrestacaoDeContas = () =>{;
                     />
                 </>
             )
-
         }
-
     };
-
-    console.log("Prestacao XXXXXX ", prestacaoDeContas)
 
     return(
         <PaginasContainer>
