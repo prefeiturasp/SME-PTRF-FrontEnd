@@ -10,9 +10,9 @@ import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPre
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
-require("ordinal-pt-br")
+require("ordinal-pt-br");
 
-export const DetalhePrestacaoDeContas = () =>{;
+export const DetalhePrestacaoDeContas = () =>{
     let {prestacao_conta_uuid} = useParams();
 
     const initialFormRecebimentoPelaDiretoria = {
@@ -122,15 +122,18 @@ export const DetalhePrestacaoDeContas = () =>{;
             return 'Vigésima'
         }else if(_index === 30){
             return 'Trigésima'
+        }else if(_index === 40){
+            return 'Quadragésima'
         }else{
-            let oridinal = _index.toOrdinal({ genero: "a", maiuscula:true });
+            let oridinal = _index.toOrdinal({ genero: "a"});
             let array = oridinal.split(' ');
             let primeira_palavra = array[0];
             let modificada = primeira_palavra.substring(0, primeira_palavra.length - 1) + 'a';
             if (array[1] === undefined){
-                return modificada
+                return modificada.charAt(0).toUpperCase() + modificada.slice(1)
+                //return modificada
             }else {
-                return modificada + " " + array[1]
+                return modificada.charAt(0).toUpperCase() + modificada.slice(1) + " " + array[1]
             }
         }
     };

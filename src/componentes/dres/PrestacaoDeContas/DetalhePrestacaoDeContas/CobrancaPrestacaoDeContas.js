@@ -30,8 +30,6 @@ export const CobrancaPrestacaoDeContas = ({listaDeCobrancas, dataCobranca, handl
                 </form>
             }
 
-
-
             {listaDeCobrancas && listaDeCobrancas.length > 0 && listaDeCobrancas.map((cobrancao, index)=>
                 <p className='mt-3 pb-2 border-bottom' key={index}>
                     <button
