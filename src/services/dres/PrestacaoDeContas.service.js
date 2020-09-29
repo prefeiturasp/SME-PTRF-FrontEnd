@@ -45,3 +45,11 @@ export const getDeletarCobranca = async (cobranca_prestacao_recebimento_uuid) =>
     return (await api.delete(`/api/cobrancas-prestacoes-contas/${cobranca_prestacao_recebimento_uuid}/`, authHeader))
 };
 
+export const getDesfazerRecebimento = async (prestacao_conta_uuid) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-recebimento/`, authHeader)).data
+};
+
+export const getAnalisarPrestacaoDeContas = async (prestacao_conta_uuid) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/analisar/`, authHeader)).data
+};
+

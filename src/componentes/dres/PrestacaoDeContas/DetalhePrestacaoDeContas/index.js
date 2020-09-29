@@ -6,7 +6,7 @@ import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
@@ -111,6 +111,18 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     };
 
+    const desfazerRecebimento = async () =>{
+        let desfazer = await getDesfazerRecebimento(prestacaoDeContas.uuid)
+        console.log('Desfazer Recebimento ', desfazer)
+        setPrestacaoDeContas(desfazer)
+    };
+
+    const analisarPrestacaoDeContas = async () =>{
+        let analisar = await getAnalisarPrestacaoDeContas(prestacaoDeContas.uuid);
+        console.log('analisarPrestacaoDeContas ', analisar)
+        setPrestacaoDeContas(analisar)
+    };
+
     const retornaNumeroCardinal = (index) =>{
 
         let _index = index + 1;
@@ -187,6 +199,42 @@ export const DetalhePrestacaoDeContas = () =>{
                     />
                 </>
             )
+        }else if (prestacaoDeContas.status === 'RECEBIDA'){
+
+            return (
+                <>
+                    <BotoesAvancarRetroceder
+                        prestacaoDeContas={prestacaoDeContas}
+                        textoBtnAvancar={"Analisar"}
+                        textoBtnRetroceder={"Não recebida"}
+                        metodoAvancar={analisarPrestacaoDeContas}
+                        metodoRetroceder={desfazerRecebimento}
+                        disabledBtnAvancar={false}
+                        disabledBtnRetroceder={false}
+                    />
+                    <TrilhaDeStatus
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                    <FormRecebimentoPelaDiretoria
+                        handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
+                        stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
+                        tabelaPrestacoes={tabelaPrestacoes}
+                        disabledNome={true}
+                        disabledData={true}
+                        disabledStatus={true}
+                    />
+                    <CobrancaPrestacaoDeContas
+                        listaDeCobrancas={listaDeCobrancas}
+                        dataCobranca={dataCobranca}
+                        handleChangeDataCobranca={handleChangeDataCobranca}
+                        addCobranca={addCobranca}
+                        deleteCobranca={deleteCobranca}
+                        editavel={false}
+                        retornaNumeroCardinal={retornaNumeroCardinal}
+                    />
+                </>
+            )
+
         }
     };
 
