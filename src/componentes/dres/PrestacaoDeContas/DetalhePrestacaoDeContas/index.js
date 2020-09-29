@@ -9,7 +9,7 @@ import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
 import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
-import {CobrancaPrestacaoDeContasEditavel} from "./CobrancaPrestacaoDeContasEditavel";
+import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 
 export const DetalhePrestacaoDeContas = () =>{;
     let {prestacao_conta_uuid} = useParams();
@@ -160,13 +160,13 @@ export const DetalhePrestacaoDeContas = () =>{;
                         disabledData={false}
                         disabledStatus={true}
                     />
-                    <CobrancaPrestacaoDeContasEditavel
+                    <CobrancaPrestacaoDeContas
                         listaDeCobrancas={listaDeCobrancas}
                         dataCobranca={dataCobranca}
                         handleChangeDataCobranca={handleChangeDataCobranca}
                         addCobranca={addCobranca}
                         deleteCobranca={deleteCobranca}
-                        editavel={false}
+                        editavel={true}
                     />
                 </>
             )
