@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTrashAlt, faPlus} from '@fortawesome/free-solid-svg-icons'
 import moment from "moment";
 
-export const CobrancaPrestacaoDeContas = ({listaDeCobrancas, dataCobranca, handleChangeDataCobranca, addCobranca, deleteCobranca, editavel}) =>{
+export const CobrancaPrestacaoDeContas = ({listaDeCobrancas, dataCobranca, handleChangeDataCobranca, addCobranca, deleteCobranca, editavel, retornaNumeroCardinal}) =>{
 
     console.log("listaDeCobrancas ", listaDeCobrancas)
 
@@ -38,10 +38,10 @@ export const CobrancaPrestacaoDeContas = ({listaDeCobrancas, dataCobranca, handl
             {listaDeCobrancas && listaDeCobrancas.length > 0 && listaDeCobrancas.map((cobrancao, index)=>
                 <p key={index}>
                     <button
-                        className="btn-excluir-cobranca mt-3"
+                        className="btn-excluir-cobranca mt-3 pl-0"
                         onClick={()=>deleteCobranca(cobrancao.uuid)}
                         >
-                        Cobrança Data: <strong>{cobrancao.data ? moment(new Date(cobrancao.data), "YYYY-MM-DD").format("DD/MM/YYYY") : ""}</strong>
+                        {retornaNumeroCardinal(index)} Data: <strong>{cobrancao.data ? moment(new Date(cobrancao.data), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY") : ""}</strong>
                         <FontAwesomeIcon
                             style={{fontSize: '20px', marginLeft: "1rem"}}
                             icon={faTrashAlt}

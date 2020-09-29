@@ -10,6 +10,7 @@ import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPre
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
+require("ordinal-pt-br")
 
 export const DetalhePrestacaoDeContas = () =>{;
     let {prestacao_conta_uuid} = useParams();
@@ -118,6 +119,11 @@ export const DetalhePrestacaoDeContas = () =>{;
     };
 
 
+    const retornaNumeroCardinal = (index) =>{
+        let _index = index + 1;
+        let oridinal = _index.toOrdinal({ genero: "a" });
+        return oridinal.charAt(0).toUpperCase() + oridinal.slice(1)
+    };
 
 
     const handleChangeFormRecebimentoPelaDiretoria = (name, value) => {
@@ -167,6 +173,7 @@ export const DetalhePrestacaoDeContas = () =>{;
                         addCobranca={addCobranca}
                         deleteCobranca={deleteCobranca}
                         editavel={true}
+                        retornaNumeroCardinal={retornaNumeroCardinal}
                     />
                 </>
             )
