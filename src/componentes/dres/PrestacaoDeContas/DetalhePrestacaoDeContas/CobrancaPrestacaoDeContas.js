@@ -32,16 +32,21 @@ export const CobrancaPrestacaoDeContas = ({listaDeCobrancas, dataCobranca, handl
 
             {listaDeCobrancas && listaDeCobrancas.length > 0 && listaDeCobrancas.map((cobrancao, index)=>
                 <p className='mt-3 pb-2 border-bottom' key={index}>
-                    <button
-                        className="btn-excluir-cobranca pl-0"
-                        onClick={()=>deleteCobranca(cobrancao.uuid)}
+                    {editavel ? (
+                        <button
+                            className="btn-excluir-cobranca pl-0"
+                            onClick={()=>deleteCobranca(cobrancao.uuid)}
                         >
-                        {retornaNumeroCardinal(index)} cobrança: <strong>{cobrancao.data ? moment(new Date(cobrancao.data), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY") : ""}</strong>
-                        <FontAwesomeIcon
-                            style={{fontSize: '20px', marginLeft: "1rem"}}
-                            icon={faTrashAlt}
-                        />
-                    </button>
+                            {retornaNumeroCardinal(index)} cobrança: <strong>{cobrancao.data ? moment(new Date(cobrancao.data), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY") : ""}</strong>
+                            <FontAwesomeIcon
+                                style={{fontSize: '20px', marginLeft: "1rem"}}
+                                icon={faTrashAlt}
+                            />
+                        </button>
+                    ) :
+                        <span>{retornaNumeroCardinal(index)} cobrança: <strong>{cobrancao.data ? moment(new Date(cobrancao.data), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY") : ""}</strong></span>
+                    }
+
                 </p>
             )}
         </>
