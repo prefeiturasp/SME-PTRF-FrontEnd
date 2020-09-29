@@ -24,7 +24,7 @@ export const CobrancaPrestacaoDeContasEditavel = ({listaDeCobrancas, dataCobranc
             </form>
 
             {listaDeCobrancas && listaDeCobrancas.length > 0 && listaDeCobrancas.map((cobrancao, index)=>
-                <p key={index}><button onClick={()=>deleteCobranca(cobrancao.uuid)}>Cobrança Data {cobrancao.data} <button>Excluir</button></button></p>
+                <p key={index}><button onClick={()=>deleteCobranca(cobrancao.uuid)}>Cobrança Data {cobrancao.data} Excluir</button></p>
             )}
 
         </>

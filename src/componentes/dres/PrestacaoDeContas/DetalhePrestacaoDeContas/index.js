@@ -102,6 +102,7 @@ export const DetalhePrestacaoDeContas = () =>{;
             let add_cobranca = await getAddCobranca(payload);
             console.log('addCobranca ', add_cobranca)
             await carregaListaDeCobrancas()
+            setDataCobranca('')
         }
     };
 
