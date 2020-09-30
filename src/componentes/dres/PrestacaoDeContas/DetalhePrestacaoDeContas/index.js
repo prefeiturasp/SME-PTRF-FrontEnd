@@ -29,7 +29,6 @@ export const DetalhePrestacaoDeContas = () =>{
         tipo: '',
     };
 
-
     const [prestacaoDeContas, setPrestacaoDeContas] = useState({});
     const [stateFormRecebimentoPelaDiretoria, setStateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
     const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
