@@ -9,6 +9,7 @@ import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
 import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
+import {ModalNaoRecebida} from "../ModalNaoRecebida";
 import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 require("ordinal-pt-br");
 
@@ -33,6 +34,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [stateFormRecebimentoPelaDiretoria, setStateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
     const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
     const [showReabrirPc, setShowReabrirPc] = useState(false);
+    const [showNaoRecebida, setShowNaoRecebida] = useState(false);
     const [redirectListaPc, setRedirectListaPc] = useState(false);
     const [listaDeCobrancas, setListaDeCobrancas] = useState(initialListaCobranca);
     const [dataCobranca, setDataCobranca] = useState('');
@@ -155,11 +157,17 @@ export const DetalhePrestacaoDeContas = () =>{
 
     const onHandleClose = () => {
         setShowReabrirPc(false);
+        setShowNaoRecebida(false);
     };
 
-    const onReabrirTrue = () => {
+    const onReabrirTrue = async () => {
         setShowReabrirPc(false);
-        reabrirPrestacaoDeContas();
+        await reabrirPrestacaoDeContas();
+    };
+
+    const onNaoRecebida = async () => {
+        setShowNaoRecebida(false);
+        await desfazerRecebimento();
     };
 
     const getComportamentoPorStatus = () =>{
@@ -206,7 +214,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         textoBtnAvancar={"Analisar"}
                         textoBtnRetroceder={"Não recebida"}
                         metodoAvancar={analisarPrestacaoDeContas}
-                        metodoRetroceder={desfazerRecebimento}
+                        metodoRetroceder={()=>setShowNaoRecebida(true)}
                         disabledBtnAvancar={false}
                         disabledBtnRetroceder={false}
                     />
@@ -261,6 +269,19 @@ export const DetalhePrestacaoDeContas = () =>{
                         onReabrirTrue={onReabrirTrue}
                         titulo="Reabrir período de Prestação de Contas"
                         texto="<p><strong>Atenção,</strong> a prestação de contas será reaberta para a Associação que poderá fazer alteração e precisará concluí-la novamente.</p>"
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="success"
+                        segundoBotaoTexto="Confirmar"
+                    />
+                </section>
+                <section>
+                    <ModalNaoRecebida
+                        show={showNaoRecebida}
+                        handleClose={onHandleClose}
+                        onReabrirTrue={onNaoRecebida}
+                        titulo="Não receber Prestação de Contas"
+                        texto="<p><strong>Atenção,</strong> a prestação de contas voltará para o status de Não recebida. As informações de recebimento serão perdidas. Confirma operação?</p>"
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="success"
