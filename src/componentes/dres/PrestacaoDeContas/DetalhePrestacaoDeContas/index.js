@@ -14,6 +14,7 @@ import {ModalRecebida} from "../ModalRecebida";
 import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
+import {ResumoFinanceiro} from "./ResumoFinanceiro";
 
 require("ordinal-pt-br");
 
@@ -97,10 +98,8 @@ export const DetalhePrestacaoDeContas = () =>{
     const carregaInfoAta = async () =>{
         if (prestacaoDeContas.uuid){
             let info_ata = await getInfoAta(prestacaoDeContas.uuid);
-            console.log("Info Ata ", info_ata)
             setInfoAta(info_ata)
         }
-
     };
 
     const addCobranca = async () =>{
@@ -343,6 +342,9 @@ export const DetalhePrestacaoDeContas = () =>{
                     <InformacoesPrestacaoDeContas
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
+                    />
+                    <ResumoFinanceiro
+                        infoAta={infoAta}
                     />
 
                 </>
