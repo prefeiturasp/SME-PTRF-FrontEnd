@@ -74,13 +74,17 @@
   pointer-events: none;
 }
 
-  .btn-excluir-cobranca, .btn-excluir-cobranca:hover, .btn-excluir-cobranca:focus {
-    outline: none;
-    border: none;
-    background-color: transparent;
-  }
+.btn-excluir-cobranca, .btn-excluir-cobranca:hover, .btn-excluir-cobranca:focus {
+  outline: none;
+  border: none;
+  background-color: transparent;
+}
 
-  .fa-trash-alt{
-    color: #B40C02;
-  }
+.fa-trash-alt{
+  color: #B40C02;
+}
+
+.titulo-devolucao{
+  font-size: 14px;
+}
 
