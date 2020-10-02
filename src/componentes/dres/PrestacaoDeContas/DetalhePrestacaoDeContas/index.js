@@ -12,6 +12,7 @@ import {ModalReabrirPc} from "../ModalReabrirPC";
 import {ModalNaoRecebida} from "../ModalNaoRecebida";
 import {ModalRecebida} from "../ModalRecebida";
 import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
+import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
 require("ordinal-pt-br");
 
 export const DetalhePrestacaoDeContas = () =>{
@@ -275,6 +276,9 @@ export const DetalhePrestacaoDeContas = () =>{
                         disabledNome={true}
                         disabledData={true}
                         disabledStatus={true}
+                    />
+                    <DevolucoesPrestacaoDeContas
+                        prestacaoDeContas={prestacaoDeContas}
                     />
 
                 </>
