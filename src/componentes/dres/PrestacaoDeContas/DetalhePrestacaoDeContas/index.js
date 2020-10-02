@@ -6,7 +6,7 @@ import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {ModalNaoRecebida} from "../ModalNaoRecebida";
@@ -49,6 +49,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [listaDeCobrancas, setListaDeCobrancas] = useState(initialListaCobranca);
     const [dataCobranca, setDataCobranca] = useState('');
     const [informacoesPrestacaoDeContas, setInformacoesPrestacaoDeContas] = useState(initialInformacoesPrestacaoDeContas);
+    const [infoAta, setInfoAta] = useState({});
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -57,6 +58,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
     useEffect(()=>{
         carregaListaDeCobrancas();
+        carregaInfoAta();
     }, [prestacaoDeContas]);
 
     const carregaPrestacaoDeContas = async () => {
@@ -90,6 +92,15 @@ export const DetalhePrestacaoDeContas = () =>{
             let lista = await getListaDeCobrancas(prestacaoDeContas.uuid);
             setListaDeCobrancas(lista)
         }
+    };
+
+    const carregaInfoAta = async () =>{
+        if (prestacaoDeContas.uuid){
+            let info_ata = await getInfoAta(prestacaoDeContas.uuid);
+            console.log("Info Ata ", info_ata)
+            setInfoAta(info_ata)
+        }
+
     };
 
     const addCobranca = async () =>{
