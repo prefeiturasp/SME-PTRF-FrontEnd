@@ -15,6 +15,7 @@ import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
 import {ResumoFinanceiro} from "./ResumoFinanceiro";
+import {getTabelasReceita} from "../../../../services/escolas/Receitas.service";
 
 require("ordinal-pt-br");
 
@@ -63,6 +64,10 @@ export const DetalhePrestacaoDeContas = () =>{
         carregaListaDeCobrancas();
         carregaInfoAta();
     }, [prestacaoDeContas]);
+
+    useEffect(()=>{
+        getPrimeiraAtaPorConta()
+    }, [infoAta]);
 
     const carregaPrestacaoDeContas = async () => {
         if (prestacao_conta_uuid){
@@ -162,7 +167,16 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const exibeAtaPorConta = async (conta) =>{
-        console.log("exibeAtaPorConta ", conta)
+        let info_ata_por_conta = infoAta.contas.find(element => element.conta_associacao.nome === conta)
+        console.log("exibeAtaPorConta ", info_ata_por_conta)
+        setInfoAtaPorConta(info_ata_por_conta)
+    };
+
+    const getPrimeiraAtaPorConta = async ()=>{
+        if (infoAta && infoAta.contas && infoAta.contas.length > 0){
+            let conta = infoAta.contas[0];
+            setInfoAtaPorConta(conta)
+        }
     };
 
     const handleChangeDataCobranca = (name, value) =>{
@@ -357,6 +371,7 @@ export const DetalhePrestacaoDeContas = () =>{
                     />
                     <ResumoFinanceiro
                         infoAta={infoAta}
+                        infoAtaPorConta={infoAtaPorConta}
                         clickBtnEscolheConta={clickBtnEscolheConta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         exibeAtaPorConta={exibeAtaPorConta}
