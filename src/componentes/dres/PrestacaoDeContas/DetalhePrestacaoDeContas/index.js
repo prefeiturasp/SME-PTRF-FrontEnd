@@ -50,7 +50,9 @@ export const DetalhePrestacaoDeContas = () =>{
     const [listaDeCobrancas, setListaDeCobrancas] = useState(initialListaCobranca);
     const [dataCobranca, setDataCobranca] = useState('');
     const [informacoesPrestacaoDeContas, setInformacoesPrestacaoDeContas] = useState(initialInformacoesPrestacaoDeContas);
+    const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [infoAta, setInfoAta] = useState({});
+    const [infoAtaPorConta, setInfoAtaPorConta] = useState({});
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -153,6 +155,16 @@ export const DetalhePrestacaoDeContas = () =>{
         await carregaPrestacaoDeContas();
     };
 
+    const toggleBtnEscolheConta = (id) => {
+        setClickBtnEscolheConta({
+            [id]: !clickBtnEscolheConta[id]
+        });
+    };
+
+    const exibeAtaPorConta = async (conta) =>{
+        console.log("exibeAtaPorConta ", conta)
+    };
+
     const handleChangeDataCobranca = (name, value) =>{
         setDataCobranca(value);
     };
@@ -226,7 +238,7 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     };
 
-    console.log("Prestacao de Contas ", prestacaoDeContas);
+    //console.log("Prestacao de Contas ", prestacaoDeContas);
 
     const getComportamentoPorStatus = () =>{
         if (prestacaoDeContas.status === 'NAO_RECEBIDA'){
@@ -345,6 +357,9 @@ export const DetalhePrestacaoDeContas = () =>{
                     />
                     <ResumoFinanceiro
                         infoAta={infoAta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        exibeAtaPorConta={exibeAtaPorConta}
                     />
 
                 </>
