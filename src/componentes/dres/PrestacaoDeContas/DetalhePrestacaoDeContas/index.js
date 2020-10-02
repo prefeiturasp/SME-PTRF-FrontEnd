@@ -279,14 +279,13 @@ export const DetalhePrestacaoDeContas = () =>{
                     />
                     <DevolucoesPrestacaoDeContas
                         prestacaoDeContas={prestacaoDeContas}
+                        retornaNumeroOrdinal={retornaNumeroOrdinal}
                     />
 
                 </>
             )
         }
     };
-
-    console.log("PRESTACAO XXXXXX ", prestacaoDeContas)
 
     return(
         <PaginasContainer>
