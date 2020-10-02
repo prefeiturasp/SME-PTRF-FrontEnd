@@ -161,6 +161,10 @@ export const DetalhePrestacaoDeContas = () =>{
         });
     };
 
+    const salvarAnalise = async () =>{
+        console.log("Cliquei salvarAnalise")
+    };
+
     const onHandleClose = () => {
         setShowReabrirPc(false);
         setShowNaoRecebida(false);
@@ -213,6 +217,10 @@ export const DetalhePrestacaoDeContas = () =>{
         if (prestacaoDeContas.status === 'NAO_RECEBIDA'){
             return (
                 <>
+                    <Cabecalho
+                        prestacaoDeContas={prestacaoDeContas}
+                        exibeSalvar={false}
+                    />
                     <BotoesAvancarRetroceder
                         prestacaoDeContas={prestacaoDeContas}
                         textoBtnAvancar={"Receber"}
@@ -247,6 +255,10 @@ export const DetalhePrestacaoDeContas = () =>{
         }else if (prestacaoDeContas.status === 'RECEBIDA'){
             return (
                 <>
+                    <Cabecalho
+                        prestacaoDeContas={prestacaoDeContas}
+                        exibeSalvar={false}
+                    />
                     <BotoesAvancarRetroceder
                         prestacaoDeContas={prestacaoDeContas}
                         textoBtnAvancar={"Analisar"}
@@ -283,6 +295,11 @@ export const DetalhePrestacaoDeContas = () =>{
 
             return (
                 <>
+                    <Cabecalho
+                        prestacaoDeContas={prestacaoDeContas}
+                        exibeSalvar={true}
+                        metodoSalvarAnalise={salvarAnalise}
+                    />
                     <BotoesAvancarRetroceder
                         prestacaoDeContas={prestacaoDeContas}
                         textoBtnAvancar={"Concluir análise"}
@@ -329,9 +346,6 @@ export const DetalhePrestacaoDeContas = () =>{
                         />
                     ) :
                     <>
-                        <Cabecalho
-                            prestacaoDeContas={prestacaoDeContas}
-                        />
                         {getComportamentoPorStatus()}
                     </>
                 }
