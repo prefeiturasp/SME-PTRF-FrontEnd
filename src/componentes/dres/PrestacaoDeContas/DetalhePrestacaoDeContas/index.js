@@ -205,7 +205,6 @@ export const DetalhePrestacaoDeContas = () =>{
                 </>
             )
         }else if (prestacaoDeContas.status === 'RECEBIDA'){
-
             return (
                 <>
                     <BotoesAvancarRetroceder
@@ -240,8 +239,45 @@ export const DetalhePrestacaoDeContas = () =>{
                 </>
             )
 
+        }else if (prestacaoDeContas.status === 'EM_ANALISE') {
+
+            return (
+                <>
+                    <BotoesAvancarRetroceder
+                        prestacaoDeContas={prestacaoDeContas}
+                        textoBtnAvancar={"Analisar"}
+                        textoBtnRetroceder={"Não recebida"}
+                        metodoAvancar={analisarPrestacaoDeContas}
+                        metodoRetroceder={() => setShowNaoRecebida(true)}
+                        disabledBtnAvancar={false}
+                        disabledBtnRetroceder={false}
+                    />
+                    <TrilhaDeStatus
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                    <FormRecebimentoPelaDiretoria
+                        handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
+                        stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
+                        tabelaPrestacoes={tabelaPrestacoes}
+                        disabledNome={true}
+                        disabledData={true}
+                        disabledStatus={true}
+                    />
+                    <CobrancaPrestacaoDeContas
+                        listaDeCobrancas={listaDeCobrancas}
+                        dataCobranca={dataCobranca}
+                        handleChangeDataCobranca={handleChangeDataCobranca}
+                        addCobranca={addCobranca}
+                        deleteCobranca={deleteCobranca}
+                        editavel={false}
+                        retornaNumeroOrdinal={retornaNumeroOrdinal}
+                    />
+                </>
+            )
         }
     };
+
+    console.log("PRESTACAO XXXXXX ", prestacaoDeContas)
 
     return(
         <PaginasContainer>
