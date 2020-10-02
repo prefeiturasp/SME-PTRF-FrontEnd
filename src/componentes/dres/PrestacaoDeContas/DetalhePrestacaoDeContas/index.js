@@ -14,7 +14,7 @@ import {ModalRecebida} from "../ModalRecebida";
 import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
-import {ResumoFinanceiro} from "./ResumoFinanceiro";
+import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas";
 import {getTabelasReceita} from "../../../../services/escolas/Receitas.service";
 
 require("ordinal-pt-br");
@@ -369,7 +369,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
                     />
-                    <ResumoFinanceiro
+                    <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
                         infoAtaPorConta={infoAtaPorConta}
                         clickBtnEscolheConta={clickBtnEscolheConta}
