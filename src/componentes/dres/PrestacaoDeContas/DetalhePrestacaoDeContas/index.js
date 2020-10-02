@@ -13,6 +13,8 @@ import {ModalNaoRecebida} from "../ModalNaoRecebida";
 import {ModalRecebida} from "../ModalRecebida";
 import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
+import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
+
 require("ordinal-pt-br");
 
 export const DetalhePrestacaoDeContas = () =>{
@@ -281,6 +283,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         prestacaoDeContas={prestacaoDeContas}
                         retornaNumeroOrdinal={retornaNumeroOrdinal}
                     />
+                    <InformacoesPrestacaoDeContas/>
 
                 </>
             )
