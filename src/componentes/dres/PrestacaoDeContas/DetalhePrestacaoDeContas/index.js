@@ -6,10 +6,11 @@ import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {ModalNaoRecebida} from "../ModalNaoRecebida";
+import {ModalRecebida} from "../ModalRecebida";
 import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 require("ordinal-pt-br");
 
@@ -34,6 +35,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
     const [showReabrirPc, setShowReabrirPc] = useState(false);
     const [showNaoRecebida, setShowNaoRecebida] = useState(false);
+    const [showRecebida, setShowRecebida] = useState(false);
     const [redirectListaPc, setRedirectListaPc] = useState(false);
     const [listaDeCobrancas, setListaDeCobrancas] = useState(initialListaCobranca);
     const [dataCobranca, setDataCobranca] = useState('');
@@ -72,6 +74,27 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     };
 
+    const addCobranca = async () =>{
+        let data_cobranca = dataCobranca ? moment(new Date(dataCobranca), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
+        if (data_cobranca){
+            let payload = {
+                prestacao_conta: prestacaoDeContas.uuid,
+                data: data_cobranca,
+                tipo: 'RECEBIMENTO'
+            };
+            await getAddCobranca(payload);
+            await carregaListaDeCobrancas();
+            setDataCobranca('')
+        }
+    };
+
+    const deleteCobranca = async (cobranca_uuid) =>{
+        await getDeletarCobranca(cobranca_uuid);
+        if (cobranca_uuid){
+            await carregaListaDeCobrancas()
+        }
+    };
+
     const receberPrestacaoDeContas = async ()=>{
         let dt_recebimento = stateFormRecebimentoPelaDiretoria.data_recebimento ? moment(new Date(stateFormRecebimentoPelaDiretoria.data_recebimento), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
         let payload = {
@@ -97,29 +120,41 @@ export const DetalhePrestacaoDeContas = () =>{
         await carregaPrestacaoDeContas();
     };
 
-    const addCobranca = async () =>{
-        let data_cobranca = dataCobranca ? moment(new Date(dataCobranca), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
-        if (data_cobranca){
-            let payload = {
-                prestacao_conta: prestacaoDeContas.uuid,
-                data: data_cobranca,
-                tipo: 'RECEBIMENTO'
-            };
-            await getAddCobranca(payload);
-            await carregaListaDeCobrancas();
-            setDataCobranca('')
-        }
-    };
-
-    const deleteCobranca = async (cobranca_uuid) =>{
-        await getDeletarCobranca(cobranca_uuid);
-        if (cobranca_uuid){
-            await carregaListaDeCobrancas()
-        }
+    const desfazerAnalise = async () =>{
+        await getDesfazerAnalise(prestacaoDeContas.uuid);
+        await carregaPrestacaoDeContas();
     };
 
     const handleChangeDataCobranca = (name, value) =>{
         setDataCobranca(value);
+    };
+
+    const handleChangeFormRecebimentoPelaDiretoria = (name, value) => {
+        setStateFormRecebimentoPelaDiretoria({
+            ...stateFormRecebimentoPelaDiretoria,
+            [name]: value
+        });
+    };
+
+    const onHandleClose = () => {
+        setShowReabrirPc(false);
+        setShowNaoRecebida(false);
+        setShowRecebida(false)
+    };
+
+    const onReabrirTrue = async () => {
+        setShowReabrirPc(false);
+        await reabrirPrestacaoDeContas();
+    };
+
+    const onNaoRecebida = async () => {
+        setShowNaoRecebida(false);
+        await desfazerRecebimento();
+    };
+
+    const onRecebida = async () => {
+        setShowRecebida(false);
+        await desfazerAnalise();
     };
 
     const retornaNumeroOrdinal = (index) =>{
@@ -145,28 +180,6 @@ export const DetalhePrestacaoDeContas = () =>{
                 return modificada.charAt(0).toUpperCase() + modificada.slice(1) + " " + array[1]
             }
         }
-    };
-
-    const handleChangeFormRecebimentoPelaDiretoria = (name, value) => {
-        setStateFormRecebimentoPelaDiretoria({
-            ...stateFormRecebimentoPelaDiretoria,
-            [name]: value
-        });
-    };
-
-    const onHandleClose = () => {
-        setShowReabrirPc(false);
-        setShowNaoRecebida(false);
-    };
-
-    const onReabrirTrue = async () => {
-        setShowReabrirPc(false);
-        await reabrirPrestacaoDeContas();
-    };
-
-    const onNaoRecebida = async () => {
-        setShowNaoRecebida(false);
-        await desfazerRecebimento();
     };
 
     const getComportamentoPorStatus = () =>{
@@ -245,10 +258,10 @@ export const DetalhePrestacaoDeContas = () =>{
                 <>
                     <BotoesAvancarRetroceder
                         prestacaoDeContas={prestacaoDeContas}
-                        textoBtnAvancar={"Analisar"}
-                        textoBtnRetroceder={"Não recebida"}
+                        textoBtnAvancar={"Concluir análise"}
+                        textoBtnRetroceder={"Recebida"}
                         metodoAvancar={analisarPrestacaoDeContas}
-                        metodoRetroceder={() => setShowNaoRecebida(true)}
+                        metodoRetroceder={() => setShowRecebida(true)}
                         disabledBtnAvancar={false}
                         disabledBtnRetroceder={false}
                     />
@@ -263,15 +276,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         disabledData={true}
                         disabledStatus={true}
                     />
-                    <CobrancaPrestacaoDeContas
-                        listaDeCobrancas={listaDeCobrancas}
-                        dataCobranca={dataCobranca}
-                        handleChangeDataCobranca={handleChangeDataCobranca}
-                        addCobranca={addCobranca}
-                        deleteCobranca={deleteCobranca}
-                        editavel={false}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                    />
+
                 </>
             )
         }
@@ -317,6 +322,19 @@ export const DetalhePrestacaoDeContas = () =>{
                         onReabrirTrue={onNaoRecebida}
                         titulo="Não receber Prestação de Contas"
                         texto="<p><strong>Atenção,</strong> a prestação de contas voltará para o status de Não recebida. As informações de recebimento serão perdidas. Confirma operação?</p>"
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="success"
+                        segundoBotaoTexto="Confirmar"
+                    />
+                </section>
+                <section>
+                    <ModalRecebida
+                        show={showRecebida}
+                        handleClose={onHandleClose}
+                        onReabrirTrue={onRecebida}
+                        titulo="Receber Prestação de Contas"
+                        texto="<p><strong>Atenção,</strong> a prestação de contas voltará para o status de Recebida. As informações de análise serão perdidas. Confirma operação?</p>"
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="success"

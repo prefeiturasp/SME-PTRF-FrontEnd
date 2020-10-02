@@ -53,3 +53,7 @@ export const getAnalisarPrestacaoDeContas = async (prestacao_conta_uuid) => {
     return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/analisar/`, authHeader)).data
 };
 
+export const getDesfazerAnalise = async (prestacao_conta_uuid) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-analise/`, authHeader)).data
+};
+
