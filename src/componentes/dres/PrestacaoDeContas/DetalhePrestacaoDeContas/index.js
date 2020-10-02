@@ -33,6 +33,12 @@ export const DetalhePrestacaoDeContas = () =>{
         tipo: '',
     };
 
+    const initialInformacoesPrestacaoDeContas = {
+        processo_sei: "",
+        ultima_analise: '',
+        devolucao_ao_tesouro:'',
+    };
+
     const [prestacaoDeContas, setPrestacaoDeContas] = useState({});
     const [stateFormRecebimentoPelaDiretoria, setStateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
     const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
@@ -42,6 +48,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [redirectListaPc, setRedirectListaPc] = useState(false);
     const [listaDeCobrancas, setListaDeCobrancas] = useState(initialListaCobranca);
     const [dataCobranca, setDataCobranca] = useState('');
+    const [informacoesPrestacaoDeContas, setInformacoesPrestacaoDeContas] = useState(initialInformacoesPrestacaoDeContas);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -62,6 +69,14 @@ export const DetalhePrestacaoDeContas = () =>{
                 data_recebimento: prestacao && prestacao.data_recebimento ? prestacao.data_recebimento : '',
                 status: prestacao && prestacao.status ? prestacao.status : '',
             });
+
+            setInformacoesPrestacaoDeContas({
+                ...informacoesPrestacaoDeContas,
+                processo_sei: prestacao && prestacao.processo_sei ? prestacao.processo_sei : '',
+                ultima_analise: prestacao && prestacao.data_ultima_analise ? prestacao.data_ultima_analise : '',
+                devolucao_ao_tesouro: prestacao && prestacao.devolucao_ao_tesouro ? prestacao.devolucao_ao_tesouro : '',
+            })
+
         }
     };
 
@@ -139,6 +154,13 @@ export const DetalhePrestacaoDeContas = () =>{
         });
     };
 
+    const handleChangeFormInformacoesPrestacaoDeContas = (name, value) => {
+        setInformacoesPrestacaoDeContas({
+            ...informacoesPrestacaoDeContas,
+            [name]: value
+        });
+    };
+
     const onHandleClose = () => {
         setShowReabrirPc(false);
         setShowNaoRecebida(false);
@@ -184,6 +206,8 @@ export const DetalhePrestacaoDeContas = () =>{
             }
         }
     };
+
+    console.log("Prestacao de Contas ", prestacaoDeContas)
 
     const getComportamentoPorStatus = () =>{
         if (prestacaoDeContas.status === 'NAO_RECEBIDA'){
@@ -283,7 +307,10 @@ export const DetalhePrestacaoDeContas = () =>{
                         prestacaoDeContas={prestacaoDeContas}
                         retornaNumeroOrdinal={retornaNumeroOrdinal}
                     />
-                    <InformacoesPrestacaoDeContas/>
+                    <InformacoesPrestacaoDeContas
+                        handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
+                        informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
+                    />
 
                 </>
             )
