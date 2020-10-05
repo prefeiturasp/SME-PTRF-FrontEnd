@@ -43,20 +43,6 @@ export const DetalhePrestacaoDeContas = () =>{
         devolucao_ao_tesouro:'',
     };
 
-    const initialExtrato = [
-        {}
-        /*{
-            conta_associacao: "",
-            data_extrato: '',
-            saldo_extrato:'',
-        },
-        {
-            conta_associacao: "",
-            data_extrato: '',
-            saldo_extrato:'',
-        }*/
-    ];
-
     const [prestacaoDeContas, setPrestacaoDeContas] = useState({});
     const [stateFormRecebimentoPelaDiretoria, setStateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
     const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
@@ -105,8 +91,6 @@ export const DetalhePrestacaoDeContas = () =>{
                 ultima_analise: prestacao && prestacao.data_ultima_analise ? prestacao.data_ultima_analise : '',
                 devolucao_ao_tesouro: prestacao && prestacao.devolucao_ao_tesouro ? prestacao.devolucao_ao_tesouro : '',
             });
-
-            setAnalisesDeContaDaPrestacao(prestacao.analises_de_conta_da_prestacao)
 
         }
     };
@@ -179,20 +163,6 @@ export const DetalhePrestacaoDeContas = () =>{
         if (prestacaoDeContas.uuid){
             let info_ata = await getInfoAta(prestacaoDeContas.uuid);
             setInfoAta(info_ata);
-
-/*            if (info_ata && info_ata.contas && info_ata.contas.length > 0 ){
-
-                info_ata.contas.map((conta)=>{
-                    setAnalisesDeContaDaPrestacao(analise=>[
-                        ...analise,
-                        {
-                            conta_associacao: conta.conta_associacao.uuid,
-                            data_extrato: '',
-                            saldo_extrato:'',
-                        }
-                    ])
-                })
-            }*/
         }
 
     };
@@ -229,11 +199,7 @@ export const DetalhePrestacaoDeContas = () =>{
         let info_ata_por_conta = infoAta.contas.find(element => element.conta_associacao.nome === conta);
         setInfoAtaPorConta(info_ata_por_conta);
 
-        console.log("exibeAtaPorConta ", analisesDeContaDaPrestacao)
-
         let analise = analisesDeContaDaPrestacao.find(element => element.conta_associacao === info_ata_por_conta.conta_associacao.uuid)
-
-        console.log("ANALISE ", analise)
 
         if (analise === undefined){
             setAnalisesDeContaDaPrestacao(analise=>[
@@ -257,38 +223,30 @@ export const DetalhePrestacaoDeContas = () =>{
         return valor_formatado
     };
 
-    const handleChangeAnalisesDeContaDaPrestacao = (name, value) =>{
-
-        /*setAnalisesDeContaDaPrestacao({
-            ...analisesDeContaDaPrestacao,
-            conta_associacao: infoAta && infoAta.conta_associacao &&  infoAta.conta_associacao.uuid ? infoAta.conta_associacao.uuid : '',
-            [name]: value
-        });*/
-
-        /*setAnalisesDeContaDaPrestacao(analise=>[
-            ...analise,
-            {
-                [name]: value
-            }
-        ])*/
-
-        /*setAnalisesDeContaDaPrestacao(analise=>[
-            ...analise,
-            {
-                conta_associacao: conta.conta_associacao.uuid,
-                data_extrato: '',
-                saldo_extrato:'',
-            }
-        ])*/
-
+    const getObjetoIndexAnalise = () =>{
+        let analise_obj = analisesDeContaDaPrestacao.find(element => element.conta_associacao === infoAtaPorConta.conta_associacao.uuid);
+        let analise_index = analisesDeContaDaPrestacao.indexOf(analise_obj);
+        return {
+            analise_obj: analise_obj,
+            analise_index: analise_index,
+        }
     }
 
+    const handleChangeAnalisesDeContaDaPrestacao = (name, value) =>{
+        let arrayAnalise = analisesDeContaDaPrestacao;
+        let analise_index = getObjetoIndexAnalise().analise_index;
+
+        arrayAnalise[analise_index].conta_associacao = infoAtaPorConta.conta_associacao.uuid;
+        arrayAnalise[analise_index][name] = value;
+
+        setAnalisesDeContaDaPrestacao(()=>[
+            ...arrayAnalise
+        ])
+
+    };
+
     const handleSubmitAnalisesDeContaDaPrestacao = (uuid_conta) =>{
-        console.log("SUBMIT uuid_conta ", uuid_conta)
         console.log("SUBMIT analisesDeContaDaPrestacao ", analisesDeContaDaPrestacao)
-        console.log("SUBMIT infoAta ", infoAta)
-
-
     };
 
     // Fim Ata
@@ -504,6 +462,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                         handleSubmitAnalisesDeContaDaPrestacao={handleSubmitAnalisesDeContaDaPrestacao}
+                        getObjetoIndexAnalise={getObjetoIndexAnalise}
                     />
 
                 </>
