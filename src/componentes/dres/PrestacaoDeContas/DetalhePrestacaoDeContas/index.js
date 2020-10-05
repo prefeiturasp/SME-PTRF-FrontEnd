@@ -71,7 +71,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [infoAta, setInfoAta] = useState({});
     const [infoAtaPorConta, setInfoAtaPorConta] = useState({});
     const [clickBtnTabelaAcoes, setClickBtnTabelaAcoes] = useState(false);
-    const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState('');
+    const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState([]);
 
 
     useEffect(()=>{
@@ -105,6 +105,8 @@ export const DetalhePrestacaoDeContas = () =>{
                 ultima_analise: prestacao && prestacao.data_ultima_analise ? prestacao.data_ultima_analise : '',
                 devolucao_ao_tesouro: prestacao && prestacao.devolucao_ao_tesouro ? prestacao.devolucao_ao_tesouro : '',
             });
+
+            setAnalisesDeContaDaPrestacao(prestacao.analises_de_conta_da_prestacao)
 
         }
     };
@@ -178,7 +180,7 @@ export const DetalhePrestacaoDeContas = () =>{
             let info_ata = await getInfoAta(prestacaoDeContas.uuid);
             setInfoAta(info_ata);
 
-            if (info_ata && info_ata.contas && info_ata.contas.length > 0 ){
+/*            if (info_ata && info_ata.contas && info_ata.contas.length > 0 ){
 
                 info_ata.contas.map((conta)=>{
                     setAnalisesDeContaDaPrestacao(analise=>[
@@ -188,11 +190,9 @@ export const DetalhePrestacaoDeContas = () =>{
                             data_extrato: '',
                             saldo_extrato:'',
                         }
-
                     ])
                 })
-
-            }
+            }*/
         }
 
     };
@@ -213,13 +213,39 @@ export const DetalhePrestacaoDeContas = () =>{
         if (infoAta && infoAta.contas && infoAta.contas.length > 0){
             let conta = infoAta.contas[0];
             setInfoAtaPorConta(conta)
+
+            setAnalisesDeContaDaPrestacao(analise=>[
+                ...analise,
+                {
+                    conta_associacao: conta.conta_associacao.uuid,
+                    data_extrato: '',
+                    saldo_extrato:'',
+                }
+            ])
         }
     };
 
     const exibeAtaPorConta = async (conta) =>{
         let info_ata_por_conta = infoAta.contas.find(element => element.conta_associacao.nome === conta);
-        console.log("exibeAtaPorConta ", info_ata_por_conta);
-        setInfoAtaPorConta(info_ata_por_conta)
+        setInfoAtaPorConta(info_ata_por_conta);
+
+        console.log("exibeAtaPorConta ", analisesDeContaDaPrestacao)
+
+        let analise = analisesDeContaDaPrestacao.find(element => element.conta_associacao === info_ata_por_conta.conta_associacao.uuid)
+
+        console.log("ANALISE ", analise)
+
+        if (analise === undefined){
+            setAnalisesDeContaDaPrestacao(analise=>[
+                ...analise,
+                {
+                    conta_associacao: info_ata_por_conta.conta_associacao.uuid,
+                    data_extrato: '',
+                    saldo_extrato:'',
+                }
+            ])
+        }
+
     };
 
     const valorTemplate = (valor) => {
@@ -232,11 +258,38 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const handleChangeAnalisesDeContaDaPrestacao = (name, value) =>{
-        setAnalisesDeContaDaPrestacao({
+
+        /*setAnalisesDeContaDaPrestacao({
             ...analisesDeContaDaPrestacao,
+            conta_associacao: infoAta && infoAta.conta_associacao &&  infoAta.conta_associacao.uuid ? infoAta.conta_associacao.uuid : '',
             [name]: value
-        });
+        });*/
+
+        /*setAnalisesDeContaDaPrestacao(analise=>[
+            ...analise,
+            {
+                [name]: value
+            }
+        ])*/
+
+        /*setAnalisesDeContaDaPrestacao(analise=>[
+            ...analise,
+            {
+                conta_associacao: conta.conta_associacao.uuid,
+                data_extrato: '',
+                saldo_extrato:'',
+            }
+        ])*/
+
     }
+
+    const handleSubmitAnalisesDeContaDaPrestacao = (uuid_conta) =>{
+        console.log("SUBMIT uuid_conta ", uuid_conta)
+        console.log("SUBMIT analisesDeContaDaPrestacao ", analisesDeContaDaPrestacao)
+        console.log("SUBMIT infoAta ", infoAta)
+
+
+    };
 
     // Fim Ata
 
@@ -313,7 +366,8 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     };
 
-    console.log("Info Ata ", infoAta);
+    //console.log("Info Ata ", infoAta);
+    //console.log("Prestacao  ", prestacaoDeContas);
 
     const getComportamentoPorStatus = () =>{
         if (prestacaoDeContas.status === 'NAO_RECEBIDA'){
@@ -449,6 +503,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         infoAta={infoAtaPorConta}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
+                        handleSubmitAnalisesDeContaDaPrestacao={handleSubmitAnalisesDeContaDaPrestacao}
                     />
 
                 </>

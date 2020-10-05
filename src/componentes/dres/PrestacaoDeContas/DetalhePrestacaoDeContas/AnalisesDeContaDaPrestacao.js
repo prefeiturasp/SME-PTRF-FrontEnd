@@ -1,23 +1,40 @@
 import React from "react";
 
-export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao, handleChangeAnalisesDeContaDaPrestacao}) => {
-    console.log("XXXXXXXXXXXXXXXXXXXXXX ", analisesDeContaDaPrestacao)
+export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao, handleChangeAnalisesDeContaDaPrestacao, handleSubmitAnalisesDeContaDaPrestacao}) => {
+    console.log("XXXXXXXXXXXXXXXXXXXXXX ", infoAta)
     return (
         <>
             <h1>AnalisesDeContaDaPrestacao</h1>
-            <form>
-                <input value={infoAta.conta} name='conta_associacao' type='hidden'/>
-                <div className="form-group">
-                    <label htmlFor="data_extrato">Data</label>
-                    <input name='data_extrato' type="date" className="form-control" />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="saldo_extrato">Password</label>
-                    <input name='saldo_extrato' type="number" className="form-control" />
-                </div>
+            <div className='row'>
+                <div className='col-12 col-md-6'>
+                    <form method="post">
+                        <input value={infoAta && infoAta.conta_associacao &&  infoAta.conta_associacao.uuid ? infoAta.conta_associacao.uuid : ''} name='conta_associacao' type='hidden'/>
+                        <div className="form-group">
+                            <label htmlFor="data_extrato">Data</label>
+                            <input
+                                value={analisesDeContaDaPrestacao.data_extrato ? analisesDeContaDaPrestacao.data_extrato : ''}
+                                onChange={(e) => handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.value)}
+                                name='data_extrato'
+                                type="date"
+                                className="form-control"
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="saldo_extrato">Password</label>
+                            <input
+                                value={analisesDeContaDaPrestacao.saldo_extrato ? analisesDeContaDaPrestacao.saldo_extrato : ''}
+                                onChange={(e) => handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.value)}
+                                name='saldo_extrato'
+                                type="number"
+                                className="form-control"
+                            />
+                        </div>
 
-                <button type="submit" className="btn btn-primary">Submit</button>
-            </form>
+                        <button onClick={()=>handleSubmitAnalisesDeContaDaPrestacao(infoAta && infoAta.conta_associacao &&  infoAta.conta_associacao.uuid ? infoAta.conta_associacao.uuid : '')} type="button" className="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+
         </>
     )
 };
