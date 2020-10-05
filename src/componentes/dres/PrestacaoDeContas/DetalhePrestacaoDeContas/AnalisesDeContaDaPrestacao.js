@@ -1,4 +1,7 @@
 import React from "react";
+import {DatePickerField} from "../../../Globais/DatePickerField";
+import {calculaValorRecursoAcoes} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import CurrencyInput from "react-currency-input";
 
 export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao, handleChangeAnalisesDeContaDaPrestacao, handleSubmitAnalisesDeContaDaPrestacao, getObjetoIndexAnalise}) => {
     //console.log("XXXXXXXXXXXXXXXXXXXXXX ", analisesDeContaDaPrestacao[0])
@@ -19,9 +22,9 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                     <div className='row'>
                                         <div className="col">
                                             <label htmlFor="data_extrato">Data</label>
-                                            <input
+                                            <DatePickerField
                                                 value={analisesDeContaDaPrestacao[index].data_extrato ? analisesDeContaDaPrestacao[index].data_extrato : ''}
-                                                onChange={(e) => handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.value)}
+                                                onChange={handleChangeAnalisesDeContaDaPrestacao}
                                                 name='data_extrato'
                                                 type="date"
                                                 className="form-control"
@@ -30,14 +33,17 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                         </div>
                                         <div className="col">
                                             <label htmlFor="saldo_extrato">Saldo</label>
-                                            <input
+                                            <CurrencyInput
+                                                allowNegative={false}
+                                                prefix='R$'
+                                                decimalSeparator=","
+                                                thousandSeparator="."
                                                 value={analisesDeContaDaPrestacao[index].saldo_extrato ? analisesDeContaDaPrestacao[index].saldo_extrato : ''}
-                                                onChange={(e) => handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.value)}
-                                                name='saldo_extrato'
-                                                type="number"
+                                                id="saldo_extrato"
+                                                name="saldo_extrato"
                                                 className="form-control"
+                                                onChangeEvent={(e) => handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.value)}
                                             />
-
                                         </div>
                                     </div>
                                 </div>
