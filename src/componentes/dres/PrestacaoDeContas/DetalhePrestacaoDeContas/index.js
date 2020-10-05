@@ -16,6 +16,7 @@ import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
 import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas";
 import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
+import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
 
 require("ordinal-pt-br");
 
@@ -54,6 +55,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [infoAta, setInfoAta] = useState({});
     const [infoAtaPorConta, setInfoAtaPorConta] = useState({});
+
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -388,6 +390,10 @@ export const DetalhePrestacaoDeContas = () =>{
                         exibeAtaPorConta={exibeAtaPorConta}
                     />
                     <ResumoFinanceiroTabelaTotais
+                        infoAta={infoAtaPorConta}
+                        valorTemplate={valorTemplate}
+                    />
+                    <ResumoFinanceiroTabelaAcoes
                         infoAta={infoAtaPorConta}
                         valorTemplate={valorTemplate}
                     />
