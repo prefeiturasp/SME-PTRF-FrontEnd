@@ -128,11 +128,14 @@
   color: #000;
 }
 
-.tabela-totais{
+.tabela-totais, .tabela-acoes{
   max-width: 100%;
   color: #000 !important;
   .tr-titulo{
     background-color: #F5F6F8;
+  }
+  .tr-titulo-acoes{
+    background-color: #E0F7F9;
   }
   td, .td-livre-aplicacao-ausente{
     width: calc(100% / 5) !important;
