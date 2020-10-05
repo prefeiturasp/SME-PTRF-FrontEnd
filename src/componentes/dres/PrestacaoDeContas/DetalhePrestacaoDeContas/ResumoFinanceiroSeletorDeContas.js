@@ -1,8 +1,6 @@
 import React, {Fragment} from "react";
 
-export const ResumoFinanceiroSeletorDeContas = ({infoAta, infoAtaPorConta, clickBtnEscolheConta, toggleBtnEscolheConta, exibeAtaPorConta}) => {
-    //console.log("Info Ata ", infoAta)
-    console.log("infoAtaPorConta ", infoAtaPorConta)
+export const ResumoFinanceiroSeletorDeContas = ({infoAta, clickBtnEscolheConta, toggleBtnEscolheConta, exibeAtaPorConta}) => {
     return(
         <>
             <hr className='mt-4 mb-3'/>

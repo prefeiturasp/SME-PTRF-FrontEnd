@@ -123,3 +123,17 @@
   }
 }
 
+.tabela-totais{
+  max-width: 100%;
+  color: #000 !important;
+  .tr-titulo{
+    background-color: #F5F6F8;
+  }
+  td, .td-livre-aplicacao-ausente{
+    width: calc(100% / 5) !important;
+  }
+  .td-livre-aplicacao-ausente{
+    background-color: #E5E5E5;
+  }
+}
+

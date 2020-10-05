@@ -15,7 +15,7 @@ import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
 import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas";
-import {getTabelasReceita} from "../../../../services/escolas/Receitas.service";
+import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 
 require("ordinal-pt-br");
 
@@ -102,13 +102,6 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     };
 
-    const carregaInfoAta = async () =>{
-        if (prestacaoDeContas.uuid){
-            let info_ata = await getInfoAta(prestacaoDeContas.uuid);
-            setInfoAta(info_ata)
-        }
-    };
-
     const addCobranca = async () =>{
         let data_cobranca = dataCobranca ? moment(new Date(dataCobranca), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
         if (data_cobranca){
@@ -160,16 +153,18 @@ export const DetalhePrestacaoDeContas = () =>{
         await carregaPrestacaoDeContas();
     };
 
+    // Ata
+    const carregaInfoAta = async () =>{
+        if (prestacaoDeContas.uuid){
+            let info_ata = await getInfoAta(prestacaoDeContas.uuid);
+            setInfoAta(info_ata)
+        }
+    };
+
     const toggleBtnEscolheConta = (id) => {
         setClickBtnEscolheConta({
             [id]: !clickBtnEscolheConta[id]
         });
-    };
-
-    const exibeAtaPorConta = async (conta) =>{
-        let info_ata_por_conta = infoAta.contas.find(element => element.conta_associacao.nome === conta)
-        console.log("exibeAtaPorConta ", info_ata_por_conta)
-        setInfoAtaPorConta(info_ata_por_conta)
     };
 
     const getPrimeiraAtaPorConta = async ()=>{
@@ -178,6 +173,23 @@ export const DetalhePrestacaoDeContas = () =>{
             setInfoAtaPorConta(conta)
         }
     };
+
+    const exibeAtaPorConta = async (conta) =>{
+        let info_ata_por_conta = infoAta.contas.find(element => element.conta_associacao.nome === conta)
+        console.log("exibeAtaPorConta ", info_ata_por_conta)
+        setInfoAtaPorConta(info_ata_por_conta)
+    };
+
+    const valorTemplate = (valor) => {
+        let valor_formatado = Number(valor).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+        valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
+        return valor_formatado
+    };
+
+    // Fim Ata
 
     const handleChangeDataCobranca = (name, value) =>{
         setDataCobranca(value);
@@ -371,10 +383,13 @@ export const DetalhePrestacaoDeContas = () =>{
                     />
                     <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
-                        infoAtaPorConta={infoAtaPorConta}
                         clickBtnEscolheConta={clickBtnEscolheConta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         exibeAtaPorConta={exibeAtaPorConta}
+                    />
+                    <ResumoFinanceiroTabelaTotais
+                        infoAta={infoAtaPorConta}
+                        valorTemplate={valorTemplate}
                     />
 
                 </>
