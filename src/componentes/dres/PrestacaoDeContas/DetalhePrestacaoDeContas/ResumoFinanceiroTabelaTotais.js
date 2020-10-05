@@ -1,7 +1,6 @@
 import React from "react";
 
 export const ResumoFinanceiroTabelaTotais = ({infoAta, valorTemplate}) => {
-    console.log("ResumoFinanceiroTabelaTotais ", infoAta)
     return (
         <>
             {infoAta.totais && Object.entries(infoAta.totais).length > 0 &&

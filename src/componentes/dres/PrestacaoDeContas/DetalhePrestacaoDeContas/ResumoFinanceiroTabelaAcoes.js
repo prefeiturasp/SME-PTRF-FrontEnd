@@ -3,7 +3,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronUp, faChevronDown} from "@fortawesome/free-solid-svg-icons";
 
 export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTabelaAcoes, clickBtnTabelaAcoes}) => {
-    console.log("ResumoFinanceiroTabelaAcoes ", infoAta)
     return (
         <>
             <p className='titulo-tabela'>Ver dados por ação</p>

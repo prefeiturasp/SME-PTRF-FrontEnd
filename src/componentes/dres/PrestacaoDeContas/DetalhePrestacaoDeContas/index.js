@@ -17,6 +17,7 @@ import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
 import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas";
 import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
+import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
 
 require("ordinal-pt-br");
 
@@ -42,6 +43,20 @@ export const DetalhePrestacaoDeContas = () =>{
         devolucao_ao_tesouro:'',
     };
 
+    const initialExtrato = [
+        {}
+        /*{
+            conta_associacao: "",
+            data_extrato: '',
+            saldo_extrato:'',
+        },
+        {
+            conta_associacao: "",
+            data_extrato: '',
+            saldo_extrato:'',
+        }*/
+    ];
+
     const [prestacaoDeContas, setPrestacaoDeContas] = useState({});
     const [stateFormRecebimentoPelaDiretoria, setStateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
     const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
@@ -56,6 +71,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [infoAta, setInfoAta] = useState({});
     const [infoAtaPorConta, setInfoAtaPorConta] = useState({});
     const [clickBtnTabelaAcoes, setClickBtnTabelaAcoes] = useState(false);
+    const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState('');
 
 
     useEffect(()=>{
@@ -88,7 +104,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 processo_sei: prestacao && prestacao.processo_sei ? prestacao.processo_sei : '',
                 ultima_analise: prestacao && prestacao.data_ultima_analise ? prestacao.data_ultima_analise : '',
                 devolucao_ao_tesouro: prestacao && prestacao.devolucao_ao_tesouro ? prestacao.devolucao_ao_tesouro : '',
-            })
+            });
 
         }
     };
@@ -160,8 +176,25 @@ export const DetalhePrestacaoDeContas = () =>{
     const carregaInfoAta = async () =>{
         if (prestacaoDeContas.uuid){
             let info_ata = await getInfoAta(prestacaoDeContas.uuid);
-            setInfoAta(info_ata)
+            setInfoAta(info_ata);
+
+            if (info_ata && info_ata.contas && info_ata.contas.length > 0 ){
+
+                info_ata.contas.map((conta)=>{
+                    setAnalisesDeContaDaPrestacao(analise=>[
+                        ...analise,
+                        {
+                            conta_associacao: conta.conta_associacao.uuid,
+                            data_extrato: '',
+                            saldo_extrato:'',
+                        }
+
+                    ])
+                })
+
+            }
         }
+
     };
 
     const toggleBtnEscolheConta = (id) => {
@@ -184,8 +217,8 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const exibeAtaPorConta = async (conta) =>{
-        let info_ata_por_conta = infoAta.contas.find(element => element.conta_associacao.nome === conta)
-        console.log("exibeAtaPorConta ", info_ata_por_conta)
+        let info_ata_por_conta = infoAta.contas.find(element => element.conta_associacao.nome === conta);
+        console.log("exibeAtaPorConta ", info_ata_por_conta);
         setInfoAtaPorConta(info_ata_por_conta)
     };
 
@@ -197,6 +230,13 @@ export const DetalhePrestacaoDeContas = () =>{
         valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
         return valor_formatado
     };
+
+    const handleChangeAnalisesDeContaDaPrestacao = (name, value) =>{
+        setAnalisesDeContaDaPrestacao({
+            ...analisesDeContaDaPrestacao,
+            [name]: value
+        });
+    }
 
     // Fim Ata
 
@@ -273,7 +313,7 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     };
 
-    //console.log("Prestacao de Contas ", prestacaoDeContas);
+    console.log("Info Ata ", infoAta);
 
     const getComportamentoPorStatus = () =>{
         if (prestacaoDeContas.status === 'NAO_RECEBIDA'){
@@ -354,7 +394,6 @@ export const DetalhePrestacaoDeContas = () =>{
             )
 
         }else if (prestacaoDeContas.status === 'EM_ANALISE') {
-
             return (
                 <>
                     <Cabecalho
@@ -405,6 +444,11 @@ export const DetalhePrestacaoDeContas = () =>{
                         valorTemplate={valorTemplate}
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
+                    />
+                    <AnalisesDeContaDaPrestacao
+                        infoAta={infoAtaPorConta}
+                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                     />
 
                 </>
