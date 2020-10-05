@@ -8,8 +8,7 @@ export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTa
         <>
             <p className='titulo-tabela'>Ver dados por ação</p>
 
-            <div className="accordion mt-5" id="accordionFaq">
-
+            <div className="accordion" id="accordionFaq">
                 {infoAta.acoes && infoAta.acoes.length > 0 && infoAta.acoes.map((info, index) =>
                     <div className="card" key={info.acao_associacao_uuid}>
 
@@ -18,7 +17,7 @@ export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTa
                                 <div className="row">
                                     <div className="col-11">
                                         <button onClick={() => toggleBtnTabelaAcoes(index)}
-                                                className="btn btn-link btn-block text-left btn-container-pergunta pl-0"
+                                                className="btn btn-link btn-block text-left btn-container-titulo-acoes pl-0"
                                                 type="button" data-toggle="collapse"
                                                 data-target={`#collapse${index}`} aria-expanded="true"
                                                 aria-controls={`collapse${index}`}>
@@ -27,7 +26,8 @@ export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTa
                                     </div>
                                     <div className="col-1">
                                         <button onClick={() => toggleBtnTabelaAcoes(index)}
-                                                className="btn btn-link btn-block text-left" type="button"
+                                                className="btn btn-link btn-block text-left"
+                                                type="button"
                                                 data-toggle="collapse" data-target={`#collapse${index}`}
                                                 aria-expanded="true" aria-controls={`collapse${index}`}>
                                             <span className='span-icone-toogle'>
