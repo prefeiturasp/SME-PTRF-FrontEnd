@@ -1,10 +1,10 @@
 import React from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
-import {calculaValorRecursoAcoes} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import CurrencyInput from "react-currency-input";
 
 export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao, handleChangeAnalisesDeContaDaPrestacao, handleSubmitAnalisesDeContaDaPrestacao, getObjetoIndexAnalise}) => {
-    //console.log("XXXXXXXXXXXXXXXXXXXXXX ", analisesDeContaDaPrestacao[0])
+    console.log("XXXXXXXXXXXXXXXXXXXXXX ", infoAta)
     let index = getObjetoIndexAnalise().analise_index;
     return (
         <>
@@ -55,25 +55,24 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                     <h5 className="card-title titulo">Diferença em relação a prestação de contas</h5>
                                     <div className='row'>
                                         <div className="col-12">
-                                            <label htmlFor="data_extrato">Valor</label>
-                                            <input
-                                                value={analisesDeContaDaPrestacao[index].data_extrato ? analisesDeContaDaPrestacao[index].data_extrato : ''}
-                                                onChange={(e) => handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.value)}
-                                                name='data_extrato'
-                                                type="date"
+                                            <label htmlFor="diferenca">Valor</label>
+                                            <CurrencyInput
+                                                allowNegative={false}
+                                                prefix='R$'
+                                                decimalSeparator=","
+                                                thousandSeparator="."
+                                                value={infoAta.totais.saldo_atual_total - trataNumericos(analisesDeContaDaPrestacao[index].saldo_extrato)}
+                                                id="diferenca"
+                                                name="diferenca"
                                                 className="form-control"
+                                                disabled={true}
                                             />
-
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
-
 
                     <button
                         onClick={() => handleSubmitAnalisesDeContaDaPrestacao(infoAta && infoAta.conta_associacao && infoAta.conta_associacao.uuid ? infoAta.conta_associacao.uuid : '')}
