@@ -6,37 +6,77 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
     return (
         <>
             {analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0 &&
-                <>
-                    <h1>AnalisesDeContaDaPrestacao</h1>
-                    <div className='row'>
-                        <div className='col-12 col-md-6'>
-                            <form method="post">
-                                <div className="form-group">
-                                    <label htmlFor="data_extrato">Data</label>
-                                    <input
-                                        value={analisesDeContaDaPrestacao[index].data_extrato ? analisesDeContaDaPrestacao[index].data_extrato : ''}
-                                        onChange={(e) => handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.value)}
-                                        name='data_extrato'
-                                        type="date"
-                                        className="form-control"
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="saldo_extrato">Password</label>
-                                    <input
-                                        value={analisesDeContaDaPrestacao[index].saldo_extrato ? analisesDeContaDaPrestacao[index].saldo_extrato : ''}
-                                        onChange={(e) => handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.value)}
-                                        name='saldo_extrato'
-                                        type="number"
-                                        className="form-control"
-                                    />
-                                </div>
+            <>
 
-                                <button onClick={()=>handleSubmitAnalisesDeContaDaPrestacao(infoAta && infoAta.conta_associacao &&  infoAta.conta_associacao.uuid ? infoAta.conta_associacao.uuid : '')} type="button" className="btn btn-primary">Submit</button>
-                            </form>
+
+                <form method="post">
+
+                    <div className="row">
+                        <div className="col-sm-6">
+                            <div className="card container-extrato">
+                                <div className="card-body">
+                                    <h5 className="card-title titulo">Extrato Bancário da Unidade</h5>
+                                    <div className='row'>
+                                        <div className="col">
+                                            <label htmlFor="data_extrato">Data</label>
+                                            <input
+                                                value={analisesDeContaDaPrestacao[index].data_extrato ? analisesDeContaDaPrestacao[index].data_extrato : ''}
+                                                onChange={(e) => handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.value)}
+                                                name='data_extrato'
+                                                type="date"
+                                                className="form-control"
+                                            />
+
+                                        </div>
+                                        <div className="col">
+                                            <label htmlFor="saldo_extrato">Saldo</label>
+                                            <input
+                                                value={analisesDeContaDaPrestacao[index].saldo_extrato ? analisesDeContaDaPrestacao[index].saldo_extrato : ''}
+                                                onChange={(e) => handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.value)}
+                                                name='saldo_extrato'
+                                                type="number"
+                                                className="form-control"
+                                            />
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-sm-6">
+                            <div className="card container-diferenca">
+                                <div className="card-body">
+                                    <h5 className="card-title titulo">Diferença em relação a prestação de contas</h5>
+                                    <div className='row'>
+                                        <div className="col-12">
+                                            <label htmlFor="data_extrato">Valor</label>
+                                            <input
+                                                value={analisesDeContaDaPrestacao[index].data_extrato ? analisesDeContaDaPrestacao[index].data_extrato : ''}
+                                                onChange={(e) => handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.value)}
+                                                name='data_extrato'
+                                                type="date"
+                                                className="form-control"
+                                            />
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </>
+
+
+
+
+                    <button
+                        onClick={() => handleSubmitAnalisesDeContaDaPrestacao(infoAta && infoAta.conta_associacao && infoAta.conta_associacao.uuid ? infoAta.conta_associacao.uuid : '')}
+                        type="button" className="btn btn-primary">Submit
+                    </button>
+                </form>
+
+
+            </>
             }
 
 

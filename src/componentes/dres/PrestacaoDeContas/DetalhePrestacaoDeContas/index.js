@@ -447,6 +447,15 @@ export const DetalhePrestacaoDeContas = () =>{
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         exibeAtaPorConta={exibeAtaPorConta}
                     />
+
+                    <AnalisesDeContaDaPrestacao
+                        infoAta={infoAtaPorConta}
+                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
+                        handleSubmitAnalisesDeContaDaPrestacao={handleSubmitAnalisesDeContaDaPrestacao}
+                        getObjetoIndexAnalise={getObjetoIndexAnalise}
+                    />
+
                     <ResumoFinanceiroTabelaTotais
                         infoAta={infoAtaPorConta}
                         valorTemplate={valorTemplate}
@@ -457,14 +466,6 @@ export const DetalhePrestacaoDeContas = () =>{
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
-                    <AnalisesDeContaDaPrestacao
-                        infoAta={infoAtaPorConta}
-                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
-                        handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
-                        handleSubmitAnalisesDeContaDaPrestacao={handleSubmitAnalisesDeContaDaPrestacao}
-                        getObjetoIndexAnalise={getObjetoIndexAnalise}
-                    />
-
                 </>
             )
         }
