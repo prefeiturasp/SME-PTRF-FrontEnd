@@ -55,7 +55,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [infoAta, setInfoAta] = useState({});
     const [infoAtaPorConta, setInfoAtaPorConta] = useState({});
-    const [clickBtnFaq, setClickBtnFaq] = useState(false);
+    const [clickBtnTabelaAcoes, setClickBtnTabelaAcoes] = useState(false);
 
 
     useEffect(()=>{
@@ -170,9 +170,9 @@ export const DetalhePrestacaoDeContas = () =>{
         });
     };
 
-    const toggleBtnFaq = (id) => {
-        setClickBtnFaq({
-            [id]: !clickBtnFaq[id]
+    const toggleBtnTabelaAcoes = (id) => {
+        setClickBtnTabelaAcoes({
+            [id]: !clickBtnTabelaAcoes[id]
         });
     };
 
@@ -403,8 +403,8 @@ export const DetalhePrestacaoDeContas = () =>{
                     <ResumoFinanceiroTabelaAcoes
                         infoAta={infoAtaPorConta}
                         valorTemplate={valorTemplate}
-                        toggleBtnFaq={toggleBtnFaq}
-                        clickBtnFaq={clickBtnFaq}
+                        toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
+                        clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
 
                 </>

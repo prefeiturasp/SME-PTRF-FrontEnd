@@ -43,7 +43,7 @@ export const ResumoFinanceiroTabelaTotais = ({infoAta, valorTemplate}) => {
                         <td><strong>Despesas</strong></td>
                         <td>{valorTemplate(infoAta.totais.despesas_no_periodo_custeio)}</td>
                         <td>{valorTemplate(infoAta.totais.despesas_no_periodo_capital)}</td>
-                        <td className="td-livre-aplicacao-ausente">-</td>
+                        <td>-</td>
                         <td>{valorTemplate(infoAta.totais.despesas_no_periodo)}</td>
                     </tr>
                     <tr>
@@ -57,7 +57,7 @@ export const ResumoFinanceiroTabelaTotais = ({infoAta, valorTemplate}) => {
                         <td><strong>Despesas não demonstradas</strong></td>
                         <td>{valorTemplate(infoAta.totais.despesas_nao_conciliadas_custeio)}</td>
                         <td>{valorTemplate(infoAta.totais.despesas_nao_conciliadas_capital)}</td>
-                        <td className="td-livre-aplicacao-ausente">-</td>
+                        <td>-</td>
                         <td>{valorTemplate(infoAta.totais.despesas_nao_conciliadas)}</td>
                     </tr>
                     <tr>

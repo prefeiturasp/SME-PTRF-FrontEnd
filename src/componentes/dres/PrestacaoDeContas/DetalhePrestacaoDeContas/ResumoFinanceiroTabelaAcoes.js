@@ -2,7 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronUp, faChevronDown} from "@fortawesome/free-solid-svg-icons";
 
-export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnFaq, clickBtnFaq}) => {
+export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTabelaAcoes, clickBtnTabelaAcoes}) => {
     console.log("ResumoFinanceiroTabelaAcoes ", infoAta)
     return (
         <>
@@ -17,7 +17,7 @@ export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnFa
                             <h2 className="mb-0">
                                 <div className="row">
                                     <div className="col-11">
-                                        <button onClick={() => toggleBtnFaq(index)}
+                                        <button onClick={() => toggleBtnTabelaAcoes(index)}
                                                 className="btn btn-link btn-block text-left btn-container-pergunta pl-0"
                                                 type="button" data-toggle="collapse"
                                                 data-target={`#collapse${index}`} aria-expanded="true"
@@ -26,14 +26,14 @@ export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnFa
                                         </button>
                                     </div>
                                     <div className="col-1">
-                                        <button onClick={() => toggleBtnFaq(index)}
+                                        <button onClick={() => toggleBtnTabelaAcoes(index)}
                                                 className="btn btn-link btn-block text-left" type="button"
                                                 data-toggle="collapse" data-target={`#collapse${index}`}
                                                 aria-expanded="true" aria-controls={`collapse${index}`}>
                                             <span className='span-icone-toogle'>
                                                 <FontAwesomeIcon
                                                     style={{marginRight: "0", color: 'black'}}
-                                                    icon={clickBtnFaq[index] ? faChevronUp : faChevronDown}
+                                                    icon={clickBtnTabelaAcoes[index] ? faChevronUp : faChevronDown}
                                                 />
                                             </span>
                                         </button>
@@ -42,8 +42,6 @@ export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnFa
 
                             </h2>
                         </div>
-
-
                         <div id={`collapse${index}`} className="collapse" aria-labelledby="headingOne" data-parent="#accordionFaq">
                             <div className="card-body p-0 border-0">
                                 <table className="table table-bordered tabela-acoes border-0 mb-0">
@@ -58,67 +56,53 @@ export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnFa
                                     </thead>
                                     <tbody>
                                     <tr>
-                                        <td>Saldo anterior</td>
+                                        <td><strong>Saldo inicial  (reprogramado do período anterios)</strong></td>
                                         <td>{valorTemplate(info.saldo_reprogramado_custeio)}</td>
                                         <td>{valorTemplate(info.saldo_reprogramado_capital)}</td>
                                         <td>{valorTemplate(info.saldo_reprogramado_livre)}</td>
                                         <td>{valorTemplate(info.saldo_reprogramado)}</td>
                                     </tr>
                                     <tr>
-                                        <td>Recebimento</td>
+                                        <td><strong>Repasses</strong></td>
                                         <td>{valorTemplate(info.repasses_no_periodo_custeio)}</td>
                                         <td>{valorTemplate(info.repasses_no_periodo_capital)}</td>
                                         <td>{valorTemplate(info.repasses_no_periodo_livre)}</td>
                                         <td>{valorTemplate(info.repasses_no_periodo)}</td>
                                     </tr>
                                     <tr>
-                                        <td>Demais créditos (rendimento e outros)</td>
+                                        <td><strong>Demais crédito</strong></td>
                                         <td>{valorTemplate(info.outras_receitas_no_periodo_custeio)}</td>
                                         <td>{valorTemplate(info.outras_receitas_no_periodo_capital)}</td>
                                         <td>{valorTemplate(info.outras_receitas_no_periodo_livre)}</td>
                                         <td>{valorTemplate(info.outras_receitas_no_periodo)}</td>
                                     </tr>
                                     <tr>
-                                        <td>Despesas</td>
+                                        <td><strong>Despesas</strong></td>
                                         <td>{valorTemplate(info.despesas_no_periodo_custeio)}</td>
                                         <td>{valorTemplate(info.despesas_no_periodo_capital)}</td>
-                                        <td className="td-livre-aplicacao-ausente">-</td>
+                                        <td>-</td>
                                         <td>{valorTemplate(info.despesas_no_periodo)}</td>
                                     </tr>
                                     <tr>
-                                        <td>Saldo atual</td>
+                                        <td><strong>Saldo atual</strong></td>
+                                        <td>{valorTemplate(info.saldo_atual_custeio + info.despesas_nao_conciliadas_custeio)}</td>
+                                        <td>{valorTemplate(info.saldo_atual_capital + info.despesas_nao_conciliadas_capital)}</td>
+                                        <td>{valorTemplate(info.saldo_atual_livre)}</td>
+                                        <td>{valorTemplate(info.saldo_atual_total + info.despesas_nao_conciliadas)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Despesas não demonstradas</strong></td>
+                                        <td>{valorTemplate(info.despesas_nao_conciliadas_custeio)}</td>
+                                        <td>{valorTemplate(info.despesas_nao_conciliadas_capital)}</td>
+                                        <td>-</td>
+                                        <td>{valorTemplate(info.despesas_nao_conciliadas)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Saldo reprogramado  (para o próximo período)</strong></td>
                                         <td>{valorTemplate(info.saldo_atual_custeio)}</td>
                                         <td>{valorTemplate(info.saldo_atual_capital)}</td>
                                         <td>{valorTemplate(info.saldo_atual_livre)}</td>
                                         <td>{valorTemplate(info.saldo_atual_total)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Pagamentos a compensar</td>
-                                        <td>{valorTemplate(info.despesas_nao_conciliadas_custeio)}</td>
-                                        <td>{valorTemplate(info.despesas_nao_conciliadas_capital)}</td>
-                                        <td className="td-livre-aplicacao-ausente">-</td>
-                                        <td>{valorTemplate(info.despesas_nao_conciliadas)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Crédito não demonstrado</td>
-                                        <td>{valorTemplate(info.receitas_nao_conciliadas_custeio)}</td>
-                                        <td>{valorTemplate(info.receitas_nao_conciliadas_capital)}</td>
-                                        <td>{valorTemplate(info.receitas_nao_conciliadas_livre)}</td>
-                                        <td>{valorTemplate(info.receitas_nao_conciliadas)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Crédito futuros</td>
-                                        <td>{valorTemplate(info.repasses_nao_realizados_custeio)}</td>
-                                        <td>{valorTemplate(info.repasses_nao_realizados_capital)}</td>
-                                        <td>{valorTemplate(info.repasses_nao_realizados_livre)}</td>
-                                        <td>{valorTemplate(info.repasses_nao_realizados_custeio + info.repasses_nao_realizados_capital + info.repasses_nao_realizados_livre)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Devolução a conta do PTRF</td>
-                                        <td>{valorTemplate(info.receitas_devolucao_no_periodo_custeio)}</td>
-                                        <td>{valorTemplate(info.receitas_devolucao_no_periodo_capital)}</td>
-                                        <td>{valorTemplate(info.receitas_devolucao_no_periodo_livre)}</td>
-                                        <td>{valorTemplate(info.receitas_devolucao_no_periodo)}</td>
                                     </tr>
                                     </tbody>
                                 </table>
