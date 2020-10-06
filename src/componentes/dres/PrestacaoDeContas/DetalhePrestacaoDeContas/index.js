@@ -11,6 +11,7 @@ import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {ModalNaoRecebida} from "../ModalNaoRecebida";
 import {ModalRecebida} from "../ModalRecebida";
+import {ModalConcluirAnalise} from "../ModalConcluirAnalise";
 import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
@@ -44,12 +45,19 @@ export const DetalhePrestacaoDeContas = () =>{
         devolucao_ao_tesouro:'',
     };
 
+    const initialConcluirAnalise = {
+        status: "",
+        resalvas: '',
+        data_limite_devolucao:'',
+    };
+
     const [prestacaoDeContas, setPrestacaoDeContas] = useState({});
     const [stateFormRecebimentoPelaDiretoria, setStateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
     const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
     const [showReabrirPc, setShowReabrirPc] = useState(false);
     const [showNaoRecebida, setShowNaoRecebida] = useState(false);
     const [showRecebida, setShowRecebida] = useState(false);
+    const [showConcluirAnalise, setShowConcluirAnalise] = useState(false);
     const [redirectListaPc, setRedirectListaPc] = useState(false);
     const [listaDeCobrancas, setListaDeCobrancas] = useState(initialListaCobranca);
     const [dataCobranca, setDataCobranca] = useState('');
@@ -59,6 +67,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [infoAtaPorConta, setInfoAtaPorConta] = useState({});
     const [clickBtnTabelaAcoes, setClickBtnTabelaAcoes] = useState(false);
     const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState([]);
+    const [stateConcluirAnalise, setStateConcluirAnalise] = useState(initialConcluirAnalise)
 
 
     useEffect(()=>{
@@ -279,6 +288,14 @@ export const DetalhePrestacaoDeContas = () =>{
         ])
 
     };
+
+    const handleChangeConcluirAnalise = (name, value) => {
+        setStateConcluirAnalise({
+            ...stateConcluirAnalise,
+            [name]: value
+        });
+    };
+
     // Fim Ata
 
     const handleChangeDataCobranca = (name, value) =>{
@@ -320,6 +337,7 @@ export const DetalhePrestacaoDeContas = () =>{
         setShowReabrirPc(false);
         setShowNaoRecebida(false);
         setShowRecebida(false)
+        setShowConcluirAnalise(false)
     };
 
     const onReabrirTrue = async () => {
@@ -335,6 +353,12 @@ export const DetalhePrestacaoDeContas = () =>{
     const onRecebida = async () => {
         setShowRecebida(false);
         await desfazerAnalise();
+    };
+
+    const onConcluirAnalise = async () => {
+        console.log("onConcluirAnalise")
+        setShowRecebida(false);
+        //await analisarPrestacaoDeContas();
     };
 
     const retornaNumeroOrdinal = (index) =>{
@@ -455,7 +479,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         prestacaoDeContas={prestacaoDeContas}
                         textoBtnAvancar={"Concluir análise"}
                         textoBtnRetroceder={"Recebida"}
-                        metodoAvancar={analisarPrestacaoDeContas}
+                        metodoAvancar={() => setShowConcluirAnalise(true)}
                         metodoRetroceder={() => setShowRecebida(true)}
                         disabledBtnAvancar={false}
                         disabledBtnRetroceder={false}
@@ -560,6 +584,21 @@ export const DetalhePrestacaoDeContas = () =>{
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="success"
                         segundoBotaoTexto="Confirmar"
+                    />
+                </section>
+                <section>
+                    <ModalConcluirAnalise
+                        show={showConcluirAnalise}
+                        handleClose={onHandleClose}
+                        onConcluirAnalise={onConcluirAnalise}
+                        titulo="Conclusão da análise da Prestação de Contas"
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="success"
+                        segundoBotaoTexto="Confirmar"
+                        tabelaPrestacoes={tabelaPrestacoes}
+                        stateConcluirAnalise={stateConcluirAnalise}
+                        handleChangeConcluirAnalise={handleChangeConcluirAnalise}
                     />
                 </section>
                 {redirectListaPc &&
