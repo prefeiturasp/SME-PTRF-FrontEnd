@@ -65,4 +65,8 @@ export const getInfoAta = async (prestacao_conta_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_conta_uuid}/info-para-ata/`,authHeader)).data
 };
 
+export const getConcluirAnalise = async (prestacao_conta_uuid, payload) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/concluir-analise/`, payload, authHeader)).data
+};
+
 

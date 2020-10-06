@@ -4,9 +4,7 @@ import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios"
 import CurrencyInput from "react-currency-input";
 
 export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao, handleChangeAnalisesDeContaDaPrestacao, getObjetoIndexAnalise}) => {
-    //console.log("XXXXXXXXXXXXXXXXXXXXXX ", analisesDeContaDaPrestacao)
     let index = getObjetoIndexAnalise().analise_index;
-    //console.log("XXXXXXXXXXXXXXXXXXXXXX analise_index ", index)
     return (
         <>
             {analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0 && index > -1 &&
@@ -27,7 +25,6 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                                 type="date"
                                                 className="form-control"
                                             />
-
                                         </div>
                                         <div className="col">
                                             <label htmlFor="saldo_extrato">Saldo</label>

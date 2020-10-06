@@ -6,7 +6,7 @@ import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {ModalNaoRecebida} from "../ModalNaoRecebida";
@@ -19,7 +19,7 @@ import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas
 import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
 import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
-import {exibeDataPT_BR, trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 require("ordinal-pt-br");
 
@@ -67,8 +67,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [infoAtaPorConta, setInfoAtaPorConta] = useState({});
     const [clickBtnTabelaAcoes, setClickBtnTabelaAcoes] = useState(false);
     const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState([]);
-    const [stateConcluirAnalise, setStateConcluirAnalise] = useState(initialConcluirAnalise)
-
+    const [stateConcluirAnalise, setStateConcluirAnalise] = useState(initialConcluirAnalise);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -96,7 +95,7 @@ export const DetalhePrestacaoDeContas = () =>{
                             saldo_extrato: valorTemplate(conta.saldo_extrato),
                         })
                     });
-                setAnalisesDeContaDaPrestacao(arrayAnalises)
+                setAnalisesDeContaDaPrestacao(arrayAnalises);
                 return true
             }else {
                 return false
@@ -236,7 +235,7 @@ export const DetalhePrestacaoDeContas = () =>{
         let info_ata_por_conta = infoAta.contas.find(element => element.conta_associacao.nome === conta);
         setInfoAtaPorConta(info_ata_por_conta);
 
-        let analise = analisesDeContaDaPrestacao.find(element => element.conta_associacao === info_ata_por_conta.conta_associacao.uuid)
+        let analise = analisesDeContaDaPrestacao.find(element => element.conta_associacao === info_ata_por_conta.conta_associacao.uuid);
 
         let get_analise = await getAnalisePrestacao();
 
@@ -274,7 +273,7 @@ export const DetalhePrestacaoDeContas = () =>{
             return -1
         }
 
-    }
+    };
 
     const handleChangeAnalisesDeContaDaPrestacao = (name, value) =>{
         let arrayAnalise = analisesDeContaDaPrestacao;
@@ -286,7 +285,6 @@ export const DetalhePrestacaoDeContas = () =>{
         setAnalisesDeContaDaPrestacao(()=>[
             ...arrayAnalise
         ])
-
     };
 
     const handleChangeConcluirAnalise = (name, value) => {
@@ -326,8 +324,6 @@ export const DetalhePrestacaoDeContas = () =>{
             analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
         };
 
-        console.log('payload ', payload)
-
         await getSalvarAnalise(prestacaoDeContas.uuid, payload);
         await carregaPrestacaoDeContas();
         window.location.reload()
@@ -336,7 +332,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const onHandleClose = () => {
         setShowReabrirPc(false);
         setShowNaoRecebida(false);
-        setShowRecebida(false)
+        setShowRecebida(false);
         setShowConcluirAnalise(false)
     };
 
@@ -357,6 +353,12 @@ export const DetalhePrestacaoDeContas = () =>{
 
     const onConcluirAnalise = async () => {
         setShowConcluirAnalise(false);
+
+        analisesDeContaDaPrestacao.map((analise)=>{
+            analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;
+            analise.saldo_extrato = analise.saldo_extrato ? trataNumericos(analise.saldo_extrato) : 0;
+        });
+
         let payload={};
         if (stateConcluirAnalise.status === 'APROVADA'){
             payload={
@@ -386,9 +388,8 @@ export const DetalhePrestacaoDeContas = () =>{
             }
         }
 
-        console.log("onConcluirAnalise PAYLOAD ", payload)
-
-        //await analisarPrestacaoDeContas();
+        await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+        await carregaPrestacaoDeContas();
     };
 
     const retornaNumeroOrdinal = (index) =>{
@@ -416,7 +417,6 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     };
 
-    //console.log("Info Ata ", infoAta);
     console.log("Prestacao  XXXXXXXXXXXXXXXXXXXXXX ", prestacaoDeContas);
 
     const getComportamentoPorStatus = () =>{
