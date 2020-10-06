@@ -3,10 +3,10 @@ import {DatePickerField} from "../../../Globais/DatePickerField";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import CurrencyInput from "react-currency-input";
 
-export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao, handleChangeAnalisesDeContaDaPrestacao, handleSubmitAnalisesDeContaDaPrestacao, getObjetoIndexAnalise, valorTemplate}) => {
+export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao, handleChangeAnalisesDeContaDaPrestacao, getObjetoIndexAnalise}) => {
     //console.log("XXXXXXXXXXXXXXXXXXXXXX ", analisesDeContaDaPrestacao)
     let index = getObjetoIndexAnalise().analise_index;
-    console.log("XXXXXXXXXXXXXXXXXXXXXX analise_index ", index)
+    //console.log("XXXXXXXXXXXXXXXXXXXXXX analise_index ", index)
     return (
         <>
             {analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0 && index > -1 &&
@@ -70,7 +70,6 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                 </div>
                             </div>
                         </div>
-                        <button type='button' onClick={handleSubmitAnalisesDeContaDaPrestacao}>Salvar</button>
                     </div>
                 </form>
             </>

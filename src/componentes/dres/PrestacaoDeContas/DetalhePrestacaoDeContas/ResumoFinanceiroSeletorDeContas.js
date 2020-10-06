@@ -3,12 +3,11 @@ import React, {Fragment} from "react";
 export const ResumoFinanceiroSeletorDeContas = ({infoAta, clickBtnEscolheConta, toggleBtnEscolheConta, exibeAtaPorConta}) => {
     return(
         <>
-
                 {infoAta && infoAta.contas && infoAta.contas.length > 0 &&
                     <>
                         <hr className='mt-4 mb-3'/>
                         <h4 className='mb-4'>Resumo Financeiro</h4>
-                        <nav className="nav mb-4 mt-2 menu-interno">
+                        <nav className="nav mb-3 mt-2 menu-interno">
                             {infoAta && infoAta.contas && infoAta.contas.length > 0 && infoAta.contas.map((conta, index)=>
                                 <Fragment key={index}>
                                     <li className="nav-item">

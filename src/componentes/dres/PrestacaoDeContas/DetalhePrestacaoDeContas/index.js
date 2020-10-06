@@ -78,7 +78,6 @@ export const DetalhePrestacaoDeContas = () =>{
     const getAnalisePrestacao = async ()=>{
         if (prestacao_conta_uuid) {
             let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
-
             if (prestacao && prestacao.analises_de_conta_da_prestacao && prestacao.analises_de_conta_da_prestacao.length > 0){
                 let arrayAnalises = [];
                 prestacao.analises_de_conta_da_prestacao.map((conta)=>{
@@ -93,11 +92,10 @@ export const DetalhePrestacaoDeContas = () =>{
             }else {
                 return false
             }
-
         }else {
             return undefined
         }
-    }
+    };
 
     const carregaPrestacaoDeContas = async () => {
         if (prestacao_conta_uuid){
@@ -208,9 +206,7 @@ export const DetalhePrestacaoDeContas = () =>{
             let conta = infoAta.contas[0];
             setInfoAtaPorConta(conta);
 
-            console.log("Primeira Ata ", await getAnalisePrestacao())
-
-            let get_analise = await getAnalisePrestacao()
+            let get_analise = await getAnalisePrestacao();
 
             if (!get_analise){
                 setAnalisesDeContaDaPrestacao(analise=>[
@@ -233,11 +229,9 @@ export const DetalhePrestacaoDeContas = () =>{
 
         let analise = analisesDeContaDaPrestacao.find(element => element.conta_associacao === info_ata_por_conta.conta_associacao.uuid)
 
-        let get_analise = await getAnalisePrestacao()
+        let get_analise = await getAnalisePrestacao();
 
-        console.log("exibeAtaPorConta ", get_analise)
-
-        if (analise === undefined && !get_analise){
+        if (analise === undefined || !get_analise){
             setAnalisesDeContaDaPrestacao(analise=>[
                 ...analise,
                 {
@@ -260,7 +254,6 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const getObjetoIndexAnalise = () =>{
-        console.log("getObjetoIndexAnalise ", analisesDeContaDaPrestacao)
         if (analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0){
             let analise_obj = analisesDeContaDaPrestacao.find(element => element.conta_associacao === infoAtaPorConta.conta_associacao.uuid);
             let analise_index = analisesDeContaDaPrestacao.indexOf(analise_obj);
@@ -286,11 +279,6 @@ export const DetalhePrestacaoDeContas = () =>{
         ])
 
     };
-
-    const handleSubmitAnalisesDeContaDaPrestacao = (uuid_conta) =>{
-        console.log("SUBMIT analisesDeContaDaPrestacao ", analisesDeContaDaPrestacao)
-    };
-
     // Fim Ata
 
     const handleChangeDataCobranca = (name, value) =>{
@@ -312,9 +300,6 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const salvarAnalise = async () =>{
-
-        console.log("salvarAnalise DEPOIS ", analisesDeContaDaPrestacao)
-
         analisesDeContaDaPrestacao.map((analise)=>{
             analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;
             analise.saldo_extrato = analise.saldo_extrato ? trataNumericos(analise.saldo_extrato) : 0;
@@ -324,10 +309,11 @@ export const DetalhePrestacaoDeContas = () =>{
             analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
         };
 
-        console.log("salvarAnalise DEPOIS ", payload)
+        console.log('payload ', payload)
 
         await getSalvarAnalise(prestacaoDeContas.uuid, payload);
         await carregaPrestacaoDeContas();
+        window.location.reload()
     };
 
     const onHandleClose = () => {
@@ -504,9 +490,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         infoAta={infoAtaPorConta}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
-                        handleSubmitAnalisesDeContaDaPrestacao={handleSubmitAnalisesDeContaDaPrestacao}
                         getObjetoIndexAnalise={getObjetoIndexAnalise}
-                        valorTemplate={valorTemplate}
                     />
 
                     <ResumoFinanceiroTabelaTotais

@@ -5,7 +5,7 @@ export const ResumoFinanceiroTabelaTotais = ({infoAta, valorTemplate}) => {
         <>
             {infoAta.totais && Object.entries(infoAta.totais).length > 0 &&
             <>
-                <p className='titulo-tabela'>Síntese do período de realização da despesa</p>
+                <p className='titulo-tabela mt-3'>Síntese do período de realização da despesa</p>
                 <table className="table table-bordered tabela-totais">
                     <thead>
                     <tr className="tr-titulo">

@@ -32,7 +32,7 @@ export const InformacoesPrestacaoDeContas = ({handleChangeFormInformacoesPrestac
                     <div className="col">
                         <label htmlFor="devolucao_ao_tesouro">Devolução ao tesouro</label>
                         <select
-                            defaultValue={informacoesPrestacaoDeContas.devolucao_ao_tesouro}
+                            value={informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Não' ? 'Não' : 'Sim'}
                             onChange={(e) => handleChangeFormInformacoesPrestacaoDeContas(e.target.name, e.target.value)}
                             name="devolucao_ao_tesouro"
                             id="devolucao_ao_tesouro"
