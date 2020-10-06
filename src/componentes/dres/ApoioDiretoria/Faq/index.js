@@ -114,8 +114,7 @@ export const Faq = () => {
                                     </h2>
                                 </div>
 
-                                <div id={`collapse${index}`} className="collapse" aria-labelledby="headingOne"
-                                     data-parent="#accordionFaq">
+                                <div id={`collapse${index}`} className="collapse" aria-labelledby="headingOne" data-parent="#accordionFaq">
                                     <div className="card-body">
                                         {faq.resposta}
                                     </div>

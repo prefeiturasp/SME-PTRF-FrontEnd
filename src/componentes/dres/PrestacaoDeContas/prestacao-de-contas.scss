@@ -74,13 +74,113 @@
   pointer-events: none;
 }
 
-  .btn-excluir-cobranca, .btn-excluir-cobranca:hover, .btn-excluir-cobranca:focus {
-    outline: none;
-    border: none;
-    background-color: transparent;
-  }
+.btn-excluir-cobranca, .btn-excluir-cobranca:hover, .btn-excluir-cobranca:focus {
+  outline: none;
+  border: none;
+  background-color: transparent;
+}
 
-  .fa-trash-alt{
-    color: #B40C02;
+.fa-trash-alt{
+  color: #B40C02;
+}
+
+.titulo-devolucao{
+  font-size: 14px;
+}
+
+.menu-interno {
+  padding-bottom: 1.5rem;
+  li {
+    border: none;
+
+    .btn-escolhe-acao{
+      font-weight: bold !important;
+      color: #A4A4A4;
+      padding-bottom: 1rem;
+      margin-right: 2rem;
+      border: none;
+      outline: 0;
+      background-color: transparent;
+      padding-right: 0;
+      padding-left: 0;
+    }
+
+    .btn-escolhe-acao:hover{
+      color: #00585E !important;
+      text-decoration: none;
+    }
+
+    .btn-escolhe-acao-active{
+      font-weight: bold !important;
+      color: #00585E;
+      border-bottom: solid #00585E 4px;
+    }
+
+    svg{
+      fill: red !important;
+    }
+
   }
+}
+
+.titulo-tabela{
+  font-weight: bold;
+  color: #000;
+}
+
+.tabela-totais, .tabela-acoes{
+  max-width: 100%;
+  color: #000 !important;
+  .tr-titulo{
+    background-color: #F5F6F8;
+  }
+  .tr-titulo-acoes{
+    background-color: #E0F7F9;
+  }
+  td, .td-livre-aplicacao-ausente{
+    width: calc(100% / 5) !important;
+  }
+  .td-livre-aplicacao-ausente{
+    background-color: #E5E5E5;
+  }
+}
+
+.btn-container-titulo-acoes{
+  color: #000;
+}
+
+.btn-container-titulo-acoes:hover, .btn-container-titulo-acoes:active, .btn-container-titulo-acoes:focus{
+  text-decoration: none;
+  color: #000;
+}
+
+.container-extrato{
+  color: #fff;
+  background-color: #2B7D83;
+  .titulo{
+    font-size: 18px;
+    color: #fff;
+    font-weight: bold;
+  }
+}
+
+.container-diferenca{
+  color: #fff;
+  background-color: #00585E;
+  .titulo{
+    font-size: 18px;
+    color: #fff;
+    font-weight: bold;
+  }
+}
+
+.info-devolvida{
+  font-size: 16px;
+  color: #B40C02;
+  font-weight: bold;
+
+  span{
+    font-size: 18px;
+  }
+}
 
