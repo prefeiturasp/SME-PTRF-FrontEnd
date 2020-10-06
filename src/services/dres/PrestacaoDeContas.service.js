@@ -24,3 +24,32 @@ export const getTabelasPrestacoesDeContas = async () => {
 export const getPrestacaoDeContasDetalhe = async (prestacao_conta_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_conta_uuid}/`, authHeader)).data
 };
+
+export const getReceberPrestacaoDeContas = async (prestacao_conta_uuid, payload) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/receber/`, payload, authHeader)).data
+};
+
+export const getReabrirPrestacaoDeContas = async (prestacao_conta_uuid) => {
+    return (await api.delete(`/api/prestacoes-contas/${prestacao_conta_uuid}/reabrir/`, authHeader))
+};
+
+export const getListaDeCobrancas = async (prestacao_conta_uuid) => {
+    return (await api.get(`/api/cobrancas-prestacoes-contas/?prestacao_conta__uuid=${prestacao_conta_uuid}&tipo=RECEBIMENTO`, authHeader)).data
+};
+
+export const getAddCobranca = async (payload) => {
+    return (await api.post(`/api/cobrancas-prestacoes-contas/`, payload, authHeader)).data
+};
+
+export const getDeletarCobranca = async (cobranca_prestacao_recebimento_uuid) => {
+    return (await api.delete(`/api/cobrancas-prestacoes-contas/${cobranca_prestacao_recebimento_uuid}/`, authHeader))
+};
+
+export const getDesfazerRecebimento = async (prestacao_conta_uuid) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-recebimento/`, authHeader)).data
+};
+
+export const getAnalisarPrestacaoDeContas = async (prestacao_conta_uuid) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/analisar/`, authHeader)).data
+};
+
