@@ -19,7 +19,7 @@ import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas
 import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
 import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
-import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {exibeDataPT_BR, trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 require("ordinal-pt-br");
 
@@ -356,10 +356,37 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const onConcluirAnalise = async () => {
+        setShowConcluirAnalise(false);
+        let payload={};
+        if (stateConcluirAnalise.status === 'APROVADA'){
+            payload={
+                devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
+                analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
+                resultado_analise: stateConcluirAnalise.status
+            }
+        }else if (stateConcluirAnalise.status === 'APROVADA_RESSALVA'){
+            payload={
+                devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
+                analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
+                resultado_analise: stateConcluirAnalise.status,
+                ressalvas_aprovacao: stateConcluirAnalise.resalvas
+            }
+        }else if (stateConcluirAnalise.status === 'DEVOLVIDA'){
+            payload={
+                devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
+                analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
+                resultado_analise: stateConcluirAnalise.status,
+                data_limite_ue: moment(stateConcluirAnalise.data_limite_devolucao).format("YYYY-MM-DD")
+            }
+        }else if (stateConcluirAnalise.status === 'REPROVADA'){
+            payload={
+                devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
+                analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
+                resultado_analise: stateConcluirAnalise.status,
+            }
+        }
 
-        setShowRecebida(false);
-
-        console.log("onConcluirAnalise ", stateConcluirAnalise)
+        console.log("onConcluirAnalise PAYLOAD ", payload)
 
         //await analisarPrestacaoDeContas();
     };
