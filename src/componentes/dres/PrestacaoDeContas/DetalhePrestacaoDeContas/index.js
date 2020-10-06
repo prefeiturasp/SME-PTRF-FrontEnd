@@ -80,15 +80,22 @@ export const DetalhePrestacaoDeContas = () =>{
             let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
 
             if (prestacao && prestacao.analises_de_conta_da_prestacao && prestacao.analises_de_conta_da_prestacao.length > 0){
-                console.log("carregaPrestacaoDeContas ", prestacao.analises_de_conta_da_prestacao)
-                setAnalisesDeContaDaPrestacao(prestacao.analises_de_conta_da_prestacao)
+                let arrayAnalises = [];
+                prestacao.analises_de_conta_da_prestacao.map((conta)=>{
+                        arrayAnalises.push({
+                            conta_associacao: conta.conta_associacao.uuid,
+                            data_extrato: conta.data_extrato,
+                            saldo_extrato: valorTemplate(conta.saldo_extrato),
+                        })
+                    });
+                setAnalisesDeContaDaPrestacao(arrayAnalises)
                 return true
             }else {
                 return false
             }
 
         }else {
-            return false
+            return undefined
         }
     }
 
@@ -209,9 +216,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 setAnalisesDeContaDaPrestacao(analise=>[
                     ...analise,
                     {
-                        conta_associacao: {
-                            uuid:conta.conta_associacao.uuid
-                        },
+                        conta_associacao: conta.conta_associacao.uuid,
                         data_extrato: '',
                         saldo_extrato:'',
                     }
@@ -230,13 +235,13 @@ export const DetalhePrestacaoDeContas = () =>{
 
         let get_analise = await getAnalisePrestacao()
 
+        console.log("exibeAtaPorConta ", get_analise)
+
         if (analise === undefined && !get_analise){
             setAnalisesDeContaDaPrestacao(analise=>[
                 ...analise,
                 {
-                    conta_associacao: {
-                        uuid:conta.conta_associacao.uuid
-                    },
+                    conta_associacao: info_ata_por_conta.conta_associacao.uuid,
                     data_extrato: '',
                     saldo_extrato:'',
                 }
@@ -257,7 +262,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const getObjetoIndexAnalise = () =>{
         console.log("getObjetoIndexAnalise ", analisesDeContaDaPrestacao)
         if (analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0){
-            let analise_obj = analisesDeContaDaPrestacao.find(element => element.conta_associacao.uuid === infoAtaPorConta.conta_associacao.uuid);
+            let analise_obj = analisesDeContaDaPrestacao.find(element => element.conta_associacao === infoAtaPorConta.conta_associacao.uuid);
             let analise_index = analisesDeContaDaPrestacao.indexOf(analise_obj);
             return {
                 analise_obj: analise_obj,
@@ -273,7 +278,7 @@ export const DetalhePrestacaoDeContas = () =>{
         let arrayAnalise = analisesDeContaDaPrestacao;
         let analise_index = getObjetoIndexAnalise().analise_index;
 
-        arrayAnalise[analise_index].conta_associacao.uuid = infoAtaPorConta.conta_associacao.uuid;
+        arrayAnalise[analise_index].conta_associacao = infoAtaPorConta.conta_associacao.uuid;
         arrayAnalise[analise_index][name] = value;
 
         setAnalisesDeContaDaPrestacao(()=>[
@@ -307,6 +312,8 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const salvarAnalise = async () =>{
+
+        console.log("salvarAnalise DEPOIS ", analisesDeContaDaPrestacao)
 
         analisesDeContaDaPrestacao.map((analise)=>{
             analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;
@@ -370,7 +377,7 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     //console.log("Info Ata ", infoAta);
-    console.log("Prestacao  ", prestacaoDeContas);
+    console.log("Prestacao  XXXXXXXXXXXXXXXXXXXXXX ", prestacaoDeContas);
 
     const getComportamentoPorStatus = () =>{
         if (prestacaoDeContas.status === 'NAO_RECEBIDA'){
@@ -499,6 +506,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                         handleSubmitAnalisesDeContaDaPrestacao={handleSubmitAnalisesDeContaDaPrestacao}
                         getObjetoIndexAnalise={getObjetoIndexAnalise}
+                        valorTemplate={valorTemplate}
                     />
 
                     <ResumoFinanceiroTabelaTotais
