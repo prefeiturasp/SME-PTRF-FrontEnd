@@ -18,6 +18,7 @@ import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas
 import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
 import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
+import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 require("ordinal-pt-br");
 
@@ -74,6 +75,23 @@ export const DetalhePrestacaoDeContas = () =>{
         getPrimeiraAtaPorConta()
     }, [infoAta]);
 
+    const getAnalisePrestacao = async ()=>{
+        if (prestacao_conta_uuid) {
+            let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
+
+            if (prestacao && prestacao.analises_de_conta_da_prestacao && prestacao.analises_de_conta_da_prestacao.length > 0){
+                console.log("carregaPrestacaoDeContas ", prestacao.analises_de_conta_da_prestacao)
+                setAnalisesDeContaDaPrestacao(prestacao.analises_de_conta_da_prestacao)
+                return true
+            }else {
+                return false
+            }
+
+        }else {
+            return false
+        }
+    }
+
     const carregaPrestacaoDeContas = async () => {
         if (prestacao_conta_uuid){
             let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
@@ -91,7 +109,6 @@ export const DetalhePrestacaoDeContas = () =>{
                 ultima_analise: prestacao && prestacao.data_ultima_analise ? prestacao.data_ultima_analise : '',
                 devolucao_ao_tesouro: prestacao && prestacao.devolucao_ao_tesouro ? prestacao.devolucao_ao_tesouro : '',
             });
-
         }
     };
 
@@ -182,16 +199,26 @@ export const DetalhePrestacaoDeContas = () =>{
     const getPrimeiraAtaPorConta = async ()=>{
         if (infoAta && infoAta.contas && infoAta.contas.length > 0){
             let conta = infoAta.contas[0];
-            setInfoAtaPorConta(conta)
+            setInfoAtaPorConta(conta);
 
-            setAnalisesDeContaDaPrestacao(analise=>[
-                ...analise,
-                {
-                    conta_associacao: conta.conta_associacao.uuid,
-                    data_extrato: '',
-                    saldo_extrato:'',
-                }
-            ])
+            console.log("Primeira Ata ", await getAnalisePrestacao())
+
+            let get_analise = await getAnalisePrestacao()
+
+            if (!get_analise){
+                setAnalisesDeContaDaPrestacao(analise=>[
+                    ...analise,
+                    {
+                        conta_associacao: {
+                            uuid:conta.conta_associacao.uuid
+                        },
+                        data_extrato: '',
+                        saldo_extrato:'',
+                    }
+                ])
+            }
+
+
         }
     };
 
@@ -201,11 +228,15 @@ export const DetalhePrestacaoDeContas = () =>{
 
         let analise = analisesDeContaDaPrestacao.find(element => element.conta_associacao === info_ata_por_conta.conta_associacao.uuid)
 
-        if (analise === undefined){
+        let get_analise = await getAnalisePrestacao()
+
+        if (analise === undefined && !get_analise){
             setAnalisesDeContaDaPrestacao(analise=>[
                 ...analise,
                 {
-                    conta_associacao: info_ata_por_conta.conta_associacao.uuid,
+                    conta_associacao: {
+                        uuid:conta.conta_associacao.uuid
+                    },
                     data_extrato: '',
                     saldo_extrato:'',
                 }
@@ -224,19 +255,25 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const getObjetoIndexAnalise = () =>{
-        let analise_obj = analisesDeContaDaPrestacao.find(element => element.conta_associacao === infoAtaPorConta.conta_associacao.uuid);
-        let analise_index = analisesDeContaDaPrestacao.indexOf(analise_obj);
-        return {
-            analise_obj: analise_obj,
-            analise_index: analise_index,
+        console.log("getObjetoIndexAnalise ", analisesDeContaDaPrestacao)
+        if (analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0){
+            let analise_obj = analisesDeContaDaPrestacao.find(element => element.conta_associacao.uuid === infoAtaPorConta.conta_associacao.uuid);
+            let analise_index = analisesDeContaDaPrestacao.indexOf(analise_obj);
+            return {
+                analise_obj: analise_obj,
+                analise_index: analise_index,
+            }
+        }else {
+            return -1
         }
+
     }
 
     const handleChangeAnalisesDeContaDaPrestacao = (name, value) =>{
         let arrayAnalise = analisesDeContaDaPrestacao;
         let analise_index = getObjetoIndexAnalise().analise_index;
 
-        arrayAnalise[analise_index].conta_associacao = infoAtaPorConta.conta_associacao.uuid;
+        arrayAnalise[analise_index].conta_associacao.uuid = infoAtaPorConta.conta_associacao.uuid;
         arrayAnalise[analise_index][name] = value;
 
         setAnalisesDeContaDaPrestacao(()=>[
@@ -270,10 +307,18 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const salvarAnalise = async () =>{
+
+        analisesDeContaDaPrestacao.map((analise)=>{
+            analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;
+            analise.saldo_extrato = analise.saldo_extrato ? trataNumericos(analise.saldo_extrato) : 0;
+        });
         const payload = {
             devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
-            analises_de_conta_da_prestacao: [],
+            analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
         };
+
+        console.log("salvarAnalise DEPOIS ", payload)
+
         await getSalvarAnalise(prestacaoDeContas.uuid, payload);
         await carregaPrestacaoDeContas();
     };
@@ -325,7 +370,7 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     //console.log("Info Ata ", infoAta);
-    //console.log("Prestacao  ", prestacaoDeContas);
+    console.log("Prestacao  ", prestacaoDeContas);
 
     const getComportamentoPorStatus = () =>{
         if (prestacaoDeContas.status === 'NAO_RECEBIDA'){

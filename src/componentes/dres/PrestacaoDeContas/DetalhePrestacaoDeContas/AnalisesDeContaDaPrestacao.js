@@ -4,16 +4,14 @@ import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios"
 import CurrencyInput from "react-currency-input";
 
 export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao, handleChangeAnalisesDeContaDaPrestacao, handleSubmitAnalisesDeContaDaPrestacao, getObjetoIndexAnalise}) => {
-    console.log("XXXXXXXXXXXXXXXXXXXXXX ", infoAta)
+    //console.log("XXXXXXXXXXXXXXXXXXXXXX ", analisesDeContaDaPrestacao)
     let index = getObjetoIndexAnalise().analise_index;
+    //console.log("XXXXXXXXXXXXXXXXXXXXXX analise_index ", index)
     return (
         <>
-            {analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0 &&
+            {analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0 && index > -1 &&
             <>
-
-
                 <form method="post">
-
                     <div className="row">
                         <div className="col-sm-6">
                             <div className="card container-extrato">
@@ -72,19 +70,11 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                 </div>
                             </div>
                         </div>
+                        <button type='button' onClick={handleSubmitAnalisesDeContaDaPrestacao}>Salvar</button>
                     </div>
-
-                    <button
-                        onClick={() => handleSubmitAnalisesDeContaDaPrestacao(infoAta && infoAta.conta_associacao && infoAta.conta_associacao.uuid ? infoAta.conta_associacao.uuid : '')}
-                        type="button" className="btn btn-primary">Submit
-                    </button>
                 </form>
-
-
             </>
             }
-
-
         </>
     )
 };
