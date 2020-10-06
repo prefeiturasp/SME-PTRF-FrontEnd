@@ -356,8 +356,11 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const onConcluirAnalise = async () => {
-        console.log("onConcluirAnalise")
+
         setShowRecebida(false);
+
+        console.log("onConcluirAnalise ", stateConcluirAnalise)
+
         //await analisarPrestacaoDeContas();
     };
 
