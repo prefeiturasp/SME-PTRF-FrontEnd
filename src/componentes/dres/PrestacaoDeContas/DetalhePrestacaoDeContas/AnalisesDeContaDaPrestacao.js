@@ -3,7 +3,7 @@ import {DatePickerField} from "../../../Globais/DatePickerField";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import CurrencyInput from "react-currency-input";
 
-export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao, handleChangeAnalisesDeContaDaPrestacao, getObjetoIndexAnalise}) => {
+export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao, handleChangeAnalisesDeContaDaPrestacao, getObjetoIndexAnalise, editavel}) => {
     let index = getObjetoIndexAnalise().analise_index;
     return (
         <>
@@ -19,6 +19,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                         <div className="col">
                                             <label htmlFor="data_extrato">Data</label>
                                             <DatePickerField
+                                                disabled={!editavel}
                                                 value={analisesDeContaDaPrestacao[index].data_extrato ? analisesDeContaDaPrestacao[index].data_extrato : ''}
                                                 onChange={handleChangeAnalisesDeContaDaPrestacao}
                                                 name='data_extrato'
@@ -29,6 +30,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                         <div className="col">
                                             <label htmlFor="saldo_extrato">Saldo</label>
                                             <CurrencyInput
+                                                disabled={!editavel}
                                                 allowNegative={false}
                                                 prefix='R$'
                                                 decimalSeparator=","

@@ -1,7 +1,7 @@
 import React from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 
-export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria, handleChangeFormRecebimentoPelaDiretoria, disabledNome, disabledData, disabledStatus, tabelaPrestacoes}) =>{
+export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria, handleChangeFormRecebimentoPelaDiretoria, disabledNome, disabledData, disabledStatus, tabelaPrestacoes, prestacaoDeContas, exibeMotivo}) =>{
 
     return(
         <>
@@ -44,6 +44,12 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
                             ))}
                         </select>
                     </div>
+                    {exibeMotivo && prestacaoDeContas && prestacaoDeContas.ressalvas_aprovacao &&
+                        <div className='col-12 mt-3'>
+                            <label htmlFor="motivo">Motivos:</label>
+                            <textarea defaultValue={prestacaoDeContas.ressalvas_aprovacao} disabled={true} className="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        </div>
+                    }
                 </div>
             </form>
         </>
