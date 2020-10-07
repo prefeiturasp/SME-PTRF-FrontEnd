@@ -14,7 +14,6 @@ import {ModalRecebida} from "../ModalRecebida";
 import {ModalConcluirAnalise} from "../ModalConcluirAnalise";
 import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
-import {DevolucoesPrestacaoDeContasStatusDevolvido} from "./DevolucoesPrestacaoDeContasStatusDevolvido";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
 import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas";
 import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
@@ -545,6 +544,7 @@ export const DetalhePrestacaoDeContas = () =>{
                     <DevolucoesPrestacaoDeContas
                         prestacaoDeContas={prestacaoDeContas}
                         retornaNumeroOrdinal={retornaNumeroOrdinal}
+                        excluiUltimaCobranca={false}
                     />
                     <InformacoesPrestacaoDeContas
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
@@ -603,7 +603,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         disabledData={true}
                         disabledStatus={true}
                     />
-                    <DevolucoesPrestacaoDeContasStatusDevolvido
+                    <DevolucoesPrestacaoDeContas
                         prestacaoDeContas={prestacaoDeContas}
                         retornaNumeroOrdinal={retornaNumeroOrdinal}
                         excluiUltimaCobranca={true}
