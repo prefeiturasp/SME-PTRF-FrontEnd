@@ -6,13 +6,14 @@ import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {ModalNaoRecebida} from "../ModalNaoRecebida";
 import {ModalRecebida} from "../ModalRecebida";
 import {ModalConcluirAnalise} from "../ModalConcluirAnalise";
 import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
+import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
 import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
 import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas";
@@ -33,6 +34,13 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const initialListaCobranca = {
+        uuid: "",
+        prestacao_conta: '',
+        data:'',
+        tipo: '',
+    };
+
+    const initialListaCobrancaDevolucoes = {
         uuid: "",
         prestacao_conta: '',
         data:'',
@@ -60,6 +68,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [showConcluirAnalise, setShowConcluirAnalise] = useState(false);
     const [redirectListaPc, setRedirectListaPc] = useState(false);
     const [listaDeCobrancas, setListaDeCobrancas] = useState(initialListaCobranca);
+    const [listaDeCobrancasDevolucoes, setListaDeCobrancasDevolucoes] = useState(initialListaCobrancaDevolucoes);
     const [dataCobranca, setDataCobranca] = useState('');
     const [informacoesPrestacaoDeContas, setInformacoesPrestacaoDeContas] = useState(initialInformacoesPrestacaoDeContas);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
@@ -77,6 +86,7 @@ export const DetalhePrestacaoDeContas = () =>{
     useEffect(()=>{
         carregaListaDeCobrancas();
         carregaInfoAta();
+        carregaListaDeCobrancasDevolucoes();
     }, [prestacaoDeContas]);
 
     useEffect(()=>{
@@ -134,6 +144,17 @@ export const DetalhePrestacaoDeContas = () =>{
         if (prestacaoDeContas && prestacaoDeContas.uuid){
             let lista = await getListaDeCobrancas(prestacaoDeContas.uuid);
             setListaDeCobrancas(lista)
+        }
+    };
+
+    const carregaListaDeCobrancasDevolucoes = async () =>{
+        if (prestacaoDeContas && prestacaoDeContas.uuid && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0){
+
+            let ultimo_item = prestacaoDeContas.devolucoes_da_prestacao.slice(-1)
+            console.log("Ultimo item: ", ultimo_item)
+
+            let lista = await getListaDeCobrancasDevolucoes(prestacaoDeContas.uuid, ultimo_item[0].uuid);
+            setListaDeCobrancasDevolucoes(lista)
         }
     };
 
@@ -417,23 +438,8 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     };
 
-    const removeUltimoItemCobranca = () =>{
-
-        /*                let arrayCobrancas = prestacaoDeContas.devolucoes_da_prestacao;
-                        let arrayCobrancasRemovido = arrayCobrancas.slice(0,-1)
-                        console.log("removeUltimoItemCobranca arrayCobrancas ", arrayCobrancas)
-                        console.log("removeUltimoItemCobranca arrayCobrancasRemovido ", arrayCobrancasRemovido)*/
-
-            if (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0){
-
-
-            }
-
-    };
-
+    //carregaListaDeCobrancasDevolucoes()
     console.log("Prestacao  XXXXXXXXXXXXXXXXXXXXXX ", prestacaoDeContas);
-
-    removeUltimoItemCobranca()
 
     const getComportamentoPorStatus = () =>{
         if (prestacaoDeContas.status === 'NAO_RECEBIDA'){
@@ -607,6 +613,15 @@ export const DetalhePrestacaoDeContas = () =>{
                         prestacaoDeContas={prestacaoDeContas}
                         retornaNumeroOrdinal={retornaNumeroOrdinal}
                         excluiUltimaCobranca={true}
+                    />
+                    <CobrancaDevolucoesPrestacaoDeContas
+                        listaDeCobrancas={listaDeCobrancasDevolucoes}
+                        dataCobranca={dataCobranca}
+                        handleChangeDataCobranca={handleChangeDataCobranca}
+                        addCobranca={addCobranca}
+                        deleteCobranca={deleteCobranca}
+                        editavel={true}
+                        retornaNumeroOrdinal={retornaNumeroOrdinal}
                     />
                 </>
             )
