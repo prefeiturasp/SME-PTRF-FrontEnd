@@ -14,6 +14,7 @@ import {ModalRecebida} from "../ModalRecebida";
 import {ModalConcluirAnalise} from "../ModalConcluirAnalise";
 import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
+import {DevolucoesPrestacaoDeContasStatusDevolvido} from "./DevolucoesPrestacaoDeContasStatusDevolvido";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
 import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas";
 import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
@@ -417,7 +418,24 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     };
 
-    console.log("Prestacao  XXXXXXXXXXXXXXXXXXXXXX ", prestacaoDeContas);
+    const removeUltimoItemCobranca = () =>{
+
+
+
+            if (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0){
+                let arrayCobrancas = prestacaoDeContas.devolucoes_da_prestacao;
+                let arrayCobrancasRemovido = arrayCobrancas.slice(0,-1)
+
+                console.log("removeUltimoItemCobranca arrayCobrancas ", arrayCobrancas)
+                console.log("removeUltimoItemCobranca arrayCobrancasRemovido ", arrayCobrancasRemovido)
+
+            }
+
+    };
+
+    //console.log("Prestacao  XXXXXXXXXXXXXXXXXXXXXX ", prestacaoDeContas);
+
+    removeUltimoItemCobranca()
 
     const getComportamentoPorStatus = () =>{
         if (prestacaoDeContas.status === 'NAO_RECEBIDA'){
@@ -556,6 +574,40 @@ export const DetalhePrestacaoDeContas = () =>{
                         valorTemplate={valorTemplate}
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
+                    />
+                </>
+            )
+        }else if (prestacaoDeContas.status === 'DEVOLVIDA') {
+            return (
+                <>
+                    <Cabecalho
+                        prestacaoDeContas={prestacaoDeContas}
+                        exibeSalvar={false}
+                    />
+                    <BotoesAvancarRetroceder
+                        prestacaoDeContas={prestacaoDeContas}
+                        textoBtnAvancar={"Concluir análise"}
+                        textoBtnRetroceder={"Recebida"}
+                        metodoAvancar={() => setShowConcluirAnalise(true)}
+                        metodoRetroceder={() => setShowRecebida(true)}
+                        disabledBtnAvancar={true}
+                        disabledBtnRetroceder={true}
+                    />
+                    <TrilhaDeStatus
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                    <FormRecebimentoPelaDiretoria
+                        handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
+                        stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
+                        tabelaPrestacoes={tabelaPrestacoes}
+                        disabledNome={true}
+                        disabledData={true}
+                        disabledStatus={true}
+                    />
+                    <DevolucoesPrestacaoDeContasStatusDevolvido
+                        prestacaoDeContas={prestacaoDeContas}
+                        retornaNumeroOrdinal={retornaNumeroOrdinal}
+                        excluiUltimaCobranca={true}
                     />
                 </>
             )

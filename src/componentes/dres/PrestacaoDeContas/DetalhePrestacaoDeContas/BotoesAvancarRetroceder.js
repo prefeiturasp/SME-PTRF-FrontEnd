@@ -11,6 +11,7 @@ export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, tex
                     <div className="flex-grow-1 bd-highlight">
                         <button
                            onClick={metodoRetroceder}
+                           disabled={disabledBtnRetroceder}
                             className="btn btn-success ml-2"
                         >
                             <FontAwesomeIcon
