@@ -2,7 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleLeft, faAngleDoubleRight} from "@fortawesome/free-solid-svg-icons";
 
-export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, textoBtnRetroceder, metodoAvancar, metodoRetroceder, disabledBtnAvancar, disabledBtnRetroceder}) =>{
+export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, textoBtnRetroceder, metodoAvancar, metodoRetroceder, disabledBtnAvancar, disabledBtnRetroceder, esconderBotaoAvancar}) =>{
     return(
         <>
             {Object.entries(prestacaoDeContas).length > 0 &&
@@ -21,19 +21,22 @@ export const BotoesAvancarRetroceder = ({prestacaoDeContas, textoBtnAvancar, tex
                             {textoBtnRetroceder}
                         </button>
                     </div>
-                    <div className="p-2 bd-highlight">
-                        <button
-                            onClick={metodoAvancar}
-                            disabled={disabledBtnAvancar}
-                            className="btn btn-success ml-2"
-                        >
-                            {textoBtnAvancar}
-                            <FontAwesomeIcon
-                                style={{marginLeft: "5px", color: '#fff'}}
-                                icon={faAngleDoubleRight}
-                            />
-                        </button>
-                    </div>
+                    {!esconderBotaoAvancar &&
+                        <div className="p-2 bd-highlight">
+                            <button
+                                onClick={metodoAvancar}
+                                disabled={disabledBtnAvancar}
+                                className="btn btn-success ml-2"
+                            >
+                                {textoBtnAvancar}
+                                <FontAwesomeIcon
+                                    style={{marginLeft: "5px", color: '#fff'}}
+                                    icon={faAngleDoubleRight}
+                                />
+                            </button>
+                        </div>
+                    }
+
                 </div>
             </>
             }

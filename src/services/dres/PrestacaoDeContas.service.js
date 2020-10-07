@@ -79,3 +79,7 @@ export const getAddCobrancaDevolucoes = async (payload) => {
     return (await api.post(`/api/cobrancas-prestacoes-contas/`, payload, authHeader)).data
 };
 
+export const getDesfazerConclusaoAnalise = async (prestacao_conta_uuid) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-conclusao-analise/`, authHeader)).data
+};
+
