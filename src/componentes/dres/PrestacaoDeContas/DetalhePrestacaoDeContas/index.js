@@ -70,6 +70,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [listaDeCobrancas, setListaDeCobrancas] = useState(initialListaCobranca);
     const [listaDeCobrancasDevolucoes, setListaDeCobrancasDevolucoes] = useState(initialListaCobrancaDevolucoes);
     const [dataCobranca, setDataCobranca] = useState('');
+    const [dataCobrancaDevolucoes, setDataCobrancaDevolucoes] = useState('');
     const [informacoesPrestacaoDeContas, setInformacoesPrestacaoDeContas] = useState(initialInformacoesPrestacaoDeContas);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [infoAta, setInfoAta] = useState({});
@@ -151,9 +152,10 @@ export const DetalhePrestacaoDeContas = () =>{
         if (prestacaoDeContas && prestacaoDeContas.uuid && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0){
 
             let ultimo_item = prestacaoDeContas.devolucoes_da_prestacao.slice(-1)
-            console.log("Ultimo item: ", ultimo_item)
+            console.log("Ultimo item: ", ultimo_item[0].uuid)
 
             let lista = await getListaDeCobrancasDevolucoes(prestacaoDeContas.uuid, ultimo_item[0].uuid);
+            console.log("lista XXXXXXXXXXXXX : ", lista)
             setListaDeCobrancasDevolucoes(lista)
         }
     };
@@ -172,10 +174,33 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     };
 
+    const addCobrancaDevolucoes = async () =>{
+        let data_cobranca = dataCobrancaDevolucoes ? moment(new Date(dataCobrancaDevolucoes), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
+        console.log("Cliquei addCobrancaDevolucoes ", data_cobranca)
+
+        if (data_cobranca){
+            let payload = {
+                prestacao_conta: prestacaoDeContas.uuid,
+                data: data_cobranca,
+                tipo: 'DEVOLUCAO'
+            };
+            await getAddCobranca(payload);
+            await carregaListaDeCobrancasDevolucoes();
+            setDataCobrancaDevolucoes('')
+        }
+    };
+
     const deleteCobranca = async (cobranca_uuid) =>{
         await getDeletarCobranca(cobranca_uuid);
         if (cobranca_uuid){
             await carregaListaDeCobrancas()
+        }
+    };
+
+    const deleteCobrancaDevolucoes = async (cobranca_uuid) =>{
+        await getDeletarCobranca(cobranca_uuid);
+        if (cobranca_uuid){
+            await carregaListaDeCobrancasDevolucoes()
         }
     };
 
@@ -319,6 +344,10 @@ export const DetalhePrestacaoDeContas = () =>{
 
     const handleChangeDataCobranca = (name, value) =>{
         setDataCobranca(value);
+    };
+
+    const handleChangeDataCobrancaDevolucoes = (name, value) =>{
+        setDataCobrancaDevolucoes(value);
     };
 
     const handleChangeFormRecebimentoPelaDiretoria = (name, value) => {
@@ -615,11 +644,11 @@ export const DetalhePrestacaoDeContas = () =>{
                         excluiUltimaCobranca={true}
                     />
                     <CobrancaDevolucoesPrestacaoDeContas
-                        listaDeCobrancas={listaDeCobrancasDevolucoes}
-                        dataCobranca={dataCobranca}
-                        handleChangeDataCobranca={handleChangeDataCobranca}
-                        addCobranca={addCobranca}
-                        deleteCobranca={deleteCobranca}
+                        listaDeCobrancasDevolucoes={listaDeCobrancasDevolucoes}
+                        dataCobrancaDevolucoes={dataCobrancaDevolucoes}
+                        handleChangeDataCobrancaDevolucoes={handleChangeDataCobrancaDevolucoes}
+                        addCobrancaDevolucoes={addCobrancaDevolucoes}
+                        deleteCobrancaDevolucoes={deleteCobrancaDevolucoes}
                         editavel={true}
                         retornaNumeroOrdinal={retornaNumeroOrdinal}
                     />

@@ -4,7 +4,10 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTrashAlt, faPlus} from '@fortawesome/free-solid-svg-icons'
 import moment from "moment";
 
-export const CobrancaDevolucoesPrestacaoDeContas = ({listaDeCobrancas, dataCobranca, handleChangeDataCobranca, addCobranca, deleteCobranca, editavel, retornaNumeroOrdinal}) =>{
+export const CobrancaDevolucoesPrestacaoDeContas = ({listaDeCobrancasDevolucoes, dataCobrancaDevolucoes, handleChangeDataCobrancaDevolucoes, addCobrancaDevolucoes, deleteCobrancaDevolucoes, editavel, retornaNumeroOrdinal}) =>{
+
+    //console.log("CobrancaDevolucoesPrestacaoDeContas ", listaDeCobrancasDevolucoes)
+
     return(
         <>
             {editavel &&
@@ -14,10 +17,10 @@ export const CobrancaDevolucoesPrestacaoDeContas = ({listaDeCobrancas, dataCobra
                         <DatePickerField
                             name="data_cobranca"
                             id="data_cobranca"
-                            value={dataCobranca ? dataCobranca : ''}
-                            onChange={handleChangeDataCobranca}
+                            value={dataCobrancaDevolucoes ? dataCobrancaDevolucoes : ''}
+                            onChange={handleChangeDataCobrancaDevolucoes}
                         />
-                        <button disabled={!dataCobranca} onClick={addCobranca} type="button" className="btn btn-link btn-add-cobranca my-1 ml-3">
+                        <button disabled={!dataCobrancaDevolucoes} onClick={addCobrancaDevolucoes} type="button" className="btn btn-link btn-add-cobranca my-1 ml-3">
                             <FontAwesomeIcon
                                 style={{fontSize: '18px', marginRight: "5px"}}
                                 icon={faPlus}
@@ -28,12 +31,12 @@ export const CobrancaDevolucoesPrestacaoDeContas = ({listaDeCobrancas, dataCobra
                 </form>
             }
 
-            {listaDeCobrancas && listaDeCobrancas.length > 0 && listaDeCobrancas.map((cobrancao, index)=>
+            {listaDeCobrancasDevolucoes && listaDeCobrancasDevolucoes.length > 0 && listaDeCobrancasDevolucoes.map((cobrancao, index)=>
                 <p className='mt-3 pb-2 border-bottom' key={index}>
                     {editavel ? (
                         <button
                             className="btn-excluir-cobranca pl-0"
-                            onClick={()=>deleteCobranca(cobrancao.uuid)}
+                            onClick={()=>deleteCobrancaDevolucoes(cobrancao.uuid)}
                         >
                             {retornaNumeroOrdinal(index)} cobrança: <strong>{cobrancao.data ? moment(new Date(cobrancao.data), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY") : ""}</strong>
                             <FontAwesomeIcon
