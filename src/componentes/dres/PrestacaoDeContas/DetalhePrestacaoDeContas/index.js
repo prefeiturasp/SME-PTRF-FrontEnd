@@ -420,20 +420,19 @@ export const DetalhePrestacaoDeContas = () =>{
 
     const removeUltimoItemCobranca = () =>{
 
-
+        /*                let arrayCobrancas = prestacaoDeContas.devolucoes_da_prestacao;
+                        let arrayCobrancasRemovido = arrayCobrancas.slice(0,-1)
+                        console.log("removeUltimoItemCobranca arrayCobrancas ", arrayCobrancas)
+                        console.log("removeUltimoItemCobranca arrayCobrancasRemovido ", arrayCobrancasRemovido)*/
 
             if (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0){
-                let arrayCobrancas = prestacaoDeContas.devolucoes_da_prestacao;
-                let arrayCobrancasRemovido = arrayCobrancas.slice(0,-1)
 
-                console.log("removeUltimoItemCobranca arrayCobrancas ", arrayCobrancas)
-                console.log("removeUltimoItemCobranca arrayCobrancasRemovido ", arrayCobrancasRemovido)
 
             }
 
     };
 
-    //console.log("Prestacao  XXXXXXXXXXXXXXXXXXXXXX ", prestacaoDeContas);
+    console.log("Prestacao  XXXXXXXXXXXXXXXXXXXXXX ", prestacaoDeContas);
 
     removeUltimoItemCobranca()
 
