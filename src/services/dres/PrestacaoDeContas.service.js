@@ -70,8 +70,6 @@ export const getConcluirAnalise = async (prestacao_conta_uuid, payload) => {
 };
 
 export const getListaDeCobrancasDevolucoes = async (prestacao_conta_uuid, devolucao_uuid) => {
-    console.log("getListaDeCobrancasDevolucoes prestacao_conta_uuid ", prestacao_conta_uuid)
-    console.log("getListaDeCobrancasDevolucoes devolucao_uuid ", devolucao_uuid)
     return (await api.get(`/api/cobrancas-prestacoes-contas/?prestacao_conta__uuid=${prestacao_conta_uuid}&tipo=DEVOLUCAO&devolucao_prestacao__uuid=${devolucao_uuid}`, authHeader)).data
 };
 

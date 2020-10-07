@@ -155,9 +155,9 @@ export const DetalhePrestacaoDeContas = () =>{
 
     const carregaListaDeCobrancasDevolucoes = async () =>{
         if (prestacaoDeContas && prestacaoDeContas.uuid && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0){
-            let ultimo_item = prestacaoDeContas.devolucoes_da_prestacao.slice(-1)
+            let ultimo_item = prestacaoDeContas.devolucoes_da_prestacao.slice(-1);
             let lista = await getListaDeCobrancasDevolucoes(prestacaoDeContas.uuid, ultimo_item[0].uuid);
-            setListaDeCobrancasDevolucoes(lista)
+            setListaDeCobrancasDevolucoes(lista);
         }
     };
 
@@ -381,8 +381,8 @@ export const DetalhePrestacaoDeContas = () =>{
         setShowReabrirPc(false);
         setShowNaoRecebida(false);
         setShowRecebida(false);
-        setShowConcluirAnalise(false)
-        setShowVoltarParaAnalise(false)
+        setShowConcluirAnalise(false);
+        setShowVoltarParaAnalise(false);
     };
 
     const onReabrirTrue = async () => {
@@ -824,8 +824,6 @@ export const DetalhePrestacaoDeContas = () =>{
         )
     }
     };
-
-    console.log("Prestacao  XXXXXXXXXXXXXXXXXXXXXX ", prestacaoDeContas);
 
     return(
         <PaginasContainer>
