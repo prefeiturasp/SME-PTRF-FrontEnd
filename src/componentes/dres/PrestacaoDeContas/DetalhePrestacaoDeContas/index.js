@@ -6,7 +6,7 @@ import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {ModalNaoRecebida} from "../ModalNaoRecebida";
@@ -150,7 +150,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
     const carregaListaDeCobrancasDevolucoes = async () =>{
         if (prestacaoDeContas && prestacaoDeContas.uuid && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0){
-
+            console.log("lista PRESTACOES : ", prestacaoDeContas)
             let ultimo_item = prestacaoDeContas.devolucoes_da_prestacao.slice(-1)
             console.log("Ultimo item: ", ultimo_item[0].uuid)
 
@@ -184,7 +184,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 data: data_cobranca,
                 tipo: 'DEVOLUCAO'
             };
-            await getAddCobranca(payload);
+            await getAddCobrancaDevolucoes(payload);
             await carregaListaDeCobrancasDevolucoes();
             setDataCobrancaDevolucoes('')
         }
@@ -467,8 +467,7 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     };
 
-    //carregaListaDeCobrancasDevolucoes()
-    console.log("Prestacao  XXXXXXXXXXXXXXXXXXXXXX ", prestacaoDeContas);
+    //console.log("Prestacao  XXXXXXXXXXXXXXXXXXXXXX ", prestacaoDeContas);
 
     const getComportamentoPorStatus = () =>{
         if (prestacaoDeContas.status === 'NAO_RECEBIDA'){
@@ -584,6 +583,7 @@ export const DetalhePrestacaoDeContas = () =>{
                     <InformacoesPrestacaoDeContas
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
+                        editavel={true}
                     />
                     <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
@@ -597,6 +597,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                         getObjetoIndexAnalise={getObjetoIndexAnalise}
+                        editavel={true}
                     />
 
                     <ResumoFinanceiroTabelaTotais
@@ -651,6 +652,34 @@ export const DetalhePrestacaoDeContas = () =>{
                         deleteCobrancaDevolucoes={deleteCobrancaDevolucoes}
                         editavel={true}
                         retornaNumeroOrdinal={retornaNumeroOrdinal}
+                    />
+                    <InformacoesPrestacaoDeContas
+                        handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
+                        informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
+                        editavel={false}
+                    />
+                    <ResumoFinanceiroSeletorDeContas
+                        infoAta={infoAta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        exibeAtaPorConta={exibeAtaPorConta}
+                    />
+                    <AnalisesDeContaDaPrestacao
+                        infoAta={infoAtaPorConta}
+                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
+                        getObjetoIndexAnalise={getObjetoIndexAnalise}
+                        editavel={false}
+                    />
+                    <ResumoFinanceiroTabelaTotais
+                        infoAta={infoAtaPorConta}
+                        valorTemplate={valorTemplate}
+                    />
+                    <ResumoFinanceiroTabelaAcoes
+                        infoAta={infoAtaPorConta}
+                        valorTemplate={valorTemplate}
+                        toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
+                        clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
                 </>
             )

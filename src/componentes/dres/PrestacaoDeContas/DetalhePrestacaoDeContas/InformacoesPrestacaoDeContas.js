@@ -1,7 +1,7 @@
 import React from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 
-export const InformacoesPrestacaoDeContas = ({handleChangeFormInformacoesPrestacaoDeContas, informacoesPrestacaoDeContas}) =>{
+export const InformacoesPrestacaoDeContas = ({handleChangeFormInformacoesPrestacaoDeContas, informacoesPrestacaoDeContas, editavel}) =>{
     return(
         <>
             <hr className='mt-4 mb-3'/>
@@ -37,7 +37,7 @@ export const InformacoesPrestacaoDeContas = ({handleChangeFormInformacoesPrestac
                             name="devolucao_ao_tesouro"
                             id="devolucao_ao_tesouro"
                             className="form-control"
-                            disabled={false}
+                            disabled={!editavel}
                         >
                             <option value='Não'>Não</option>
                             <option value='Sim'>Sim</option>
