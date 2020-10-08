@@ -4,18 +4,6 @@ import {TabelaTotais} from "../TabelaTotais";
 import {TextoDinamicoInferiorPorAcao} from "../TextoDinamicoInferiorPorAcao";
 
 export const TabelaDinamica = ({infoAta, dadosAta, valorTemplate, retornaDadosAtaFormatado}) => {
-
-    if (infoAta && infoAta.contas && infoAta.contas.length > 0) {
-        //console.log("TabelaDinamica ", infoAta.contas)
-        /*infoAta.contas.map((conta) =>
-            //console.log("conta ", conta)
-            conta.acoes.map((acao) =>
-                console.log("conta ", acao)
-            )
-        )*/
-
-
-    }
     return (
         <>
             {infoAta && infoAta.contas && infoAta.contas.length > 0 && infoAta.contas.map((conta, index) =>

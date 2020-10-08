@@ -53,3 +53,31 @@ export const getAnalisarPrestacaoDeContas = async (prestacao_conta_uuid) => {
     return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/analisar/`, authHeader)).data
 };
 
+export const getDesfazerAnalise = async (prestacao_conta_uuid) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-analise/`, authHeader)).data
+};
+
+export const getSalvarAnalise = async (prestacao_conta_uuid, payload) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/salvar-analise/`, payload, authHeader)).data
+};
+
+export const getInfoAta = async (prestacao_conta_uuid) => {
+    return (await api.get(`/api/prestacoes-contas/${prestacao_conta_uuid}/info-para-ata/`,authHeader)).data
+};
+
+export const getConcluirAnalise = async (prestacao_conta_uuid, payload) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/concluir-analise/`, payload, authHeader)).data
+};
+
+export const getListaDeCobrancasDevolucoes = async (prestacao_conta_uuid, devolucao_uuid) => {
+    return (await api.get(`/api/cobrancas-prestacoes-contas/?prestacao_conta__uuid=${prestacao_conta_uuid}&tipo=DEVOLUCAO&devolucao_prestacao__uuid=${devolucao_uuid}`, authHeader)).data
+};
+
+export const getAddCobrancaDevolucoes = async (payload) => {
+    return (await api.post(`/api/cobrancas-prestacoes-contas/`, payload, authHeader)).data
+};
+
+export const getDesfazerConclusaoAnalise = async (prestacao_conta_uuid) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-conclusao-analise/`, authHeader)).data
+};
+
