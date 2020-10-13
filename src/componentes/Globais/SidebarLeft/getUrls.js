@@ -52,13 +52,13 @@ const UrlsMenuEscolas ={
 
 const UrlsMenuDres ={
     dados_iniciais: {
-        default_selected: "dre-associacoes",
+        default_selected: "dre-dashboard",
         usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
     lista_de_urls:[
-        {label: "Painel", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconePainel},
+        {label: "Painel", url: "dre-dashboard", dataFor:"dre_dashboard", icone:IconePainel},
         {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola},
         {label: "Acompanhamento", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeAcompanhamento},
         {label: "Relatório consolidado", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeRelatorio},

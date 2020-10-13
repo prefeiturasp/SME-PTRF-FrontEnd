@@ -153,6 +153,8 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
         localStorage.removeItem('periodoPrestacaoDeConta');
         localStorage.removeItem('statusPrestacaoDeConta');
         localStorage.removeItem('contaPrestacaoDeConta');
+        localStorage.removeItem('uuidPrestacaoConta');
+        localStorage.removeItem('uuidAta');
         redirectVisao(visao)
     }
 };
@@ -163,14 +165,14 @@ const redirectVisao = (visao = null) => {
     if (visao === 'SME') {
         redirect('/undefined')
     } else if (visao === 'DRE') {
-        redirect('/dre-associacoes')
+        redirect('/dre-dashboard')
     } else if (visao === 'UE') {
         redirect('/dados-da-associacao')
     } else {
         if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'SME')) {
             redirect('/undefined')
         } else if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'DRE')) {
-            redirect('/dre-associacoes')
+            redirect('/dre-dashboard')
         } else if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'UE')) {
             redirect('/dados-da-associacao')
         } else {

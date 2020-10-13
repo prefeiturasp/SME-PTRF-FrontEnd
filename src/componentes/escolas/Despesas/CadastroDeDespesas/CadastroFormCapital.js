@@ -1,12 +1,22 @@
-import React from "react";
+import React, {useState} from "react";
 import NumberFormat from "react-number-format";
 import {calculaValorRateio, trataNumericos, processoIncorporacaoMask} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import CurrencyInput from "react-currency-input";
 import MaskedInput from "react-text-mask";
-import {Tags} from "../Tags";
 
 export const CadastroFormCapital = (propriedades) => {
-    const {formikProps, rateio, rateios, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal} = propriedades;
+    const {formikProps, rateio, rateios, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal, setFieldValue} = propriedades;
+    const [valorItemRateio, setValorItemRateio] = useState({[index]: rateio.valor_rateio});
+
+
+    const handleChangeData = (quantidade, valor) => {
+        let val = calculaValorRateio(quantidade, trataNumericos(valor));
+        let d = {
+            ...valorItemRateio,
+            [index]: val
+        }
+        setValorItemRateio(d);
+    }
 
     return (
         <>
@@ -59,7 +69,7 @@ export const CadastroFormCapital = (propriedades) => {
                             <label htmlFor="quantidade_itens_capital">Quantidade de itens</label>
                             <NumberFormat
                                 value={rateio.quantidade_itens_capital}
-                                onChange={formikProps.handleChange}
+                                onChange={(e) => {formikProps.handleChange(e); handleChangeData(e.target.value, rateio.valor_item_capital);}}
                                 name={`rateios[${index}].quantidade_itens_capital`}
                                 decimalScale={0}
                                 id="quantidade_itens_capital"
@@ -79,7 +89,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 name={`rateios[${index}].valor_item_capital`}
                                 id="valor_item_capital"
                                 className={`${trataNumericos(rateio.valor_item_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
-                                onChangeEvent={formikProps.handleChange}
+                                onChangeEvent={(e) => {formikProps.handleChange(e); handleChangeData(rateio.quantidade_itens_capital, e.target.value);}}
                                 disabled={disabled}
                             />
                         </div>
@@ -146,11 +156,11 @@ export const CadastroFormCapital = (propriedades) => {
                             prefix='R$'
                             decimalSeparator=","
                             thousandSeparator="."
-                            value={rateio.valor_rateio}
+                            value={valorItemRateio[index]}
                             name={`rateios[${index}].valor_rateio`}
                             id="valor_rateio"
                             className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control ${trataNumericos(rateio.valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
-                            onChangeEvent={formikProps.handleChange}
+                            onChangeEvent={(e) => {formikProps.handleChange(e); setValorItemRateio({...valorItemRateio, [index]: e.target.value})}}
                         />
                         {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                     </div>

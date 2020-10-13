@@ -11,7 +11,7 @@ import {
     getTabelasReceita,
     getRepasse
 } from '../../../../services/escolas/Receitas.service';
-import {round, trataNumericos, periodoFechado} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {round, trataNumericos, periodoFechado, comparaObjetos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
@@ -53,6 +53,7 @@ export const ReceitaForm = props => {
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
     const [showErroGeral, setShowErroGeral] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
+    const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
     const [receita, setReceita] = useState({});
     const [readOnlyValor, setReadOnlyValor] = useState(false);
     const [readOnlyClassificacaoReceita, setreadOnlyClassificacaoReceita] = useState(false);
@@ -93,6 +94,7 @@ export const ReceitaForm = props => {
                             currency: 'BRL'
                         }) : "",
                     };
+                    setObjetoParaComparacao(init);
                     setInitialValue(init);
                     setReceita(resp);
                     periodoFechado(resp.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
@@ -362,7 +364,26 @@ export const ReceitaForm = props => {
         }
     };
 
+
+    const retornaTiposDeContas = (values) => {
+        if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita) {
+            
+            const tipoReceita = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))
+            
+            // Lista dos nomes dos tipos de conta que são aceitos pelo tipo de receita selecionado.
+            const tipos_conta = tipoReceita.tipos_conta.map(item => item.nome);
+
+            // Filtra as contas pelos tipos aceitos
+            return (
+                tabelas.contas_associacao.filter(conta => (tipos_conta.includes(conta.nome))).map((item, key) => (
+                    <option key={key} value={item.uuid}>{item.nome}</option>)
+            ))
+        }
+    }
+
+
     const validateFormReceitas = async (values) => {
+
         const errors = {};
 
         // Verifica se é devolucao e setando erro caso referencia devolucao vazio
@@ -598,10 +619,9 @@ export const ReceitaForm = props => {
                                     >
                                         {receita.conta_associacao
                                             ? null
-                                            : <option>Escolha uma conta</option>}
-                                        {tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0 ? (tabelas.contas_associacao.map((item, key) => (
-                                            <option key={key} value={item.uuid}>{item.nome}</option>
-                                        ))) : null}
+                                            : <option key="" value="">Escolha uma conta</option>}
+
+                                        {retornaTiposDeContas(props.values)}
                                     </select>
                                     {props.touched.conta_associacao && props.errors.conta_associacao &&
                                     <span
@@ -684,8 +704,7 @@ export const ReceitaForm = props => {
 
                             {/*Botões*/}
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
-                                <button type="reset" onClick={onShowModal}
-                                        className="btn btn btn-outline-success mt-2 mr-2">Voltar
+                                <button type="reset" onClick={comparaObjetos(values,objetoParaComparacao) ? onCancelarTrue : onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                 </button>
                                 {uuid ?
                                     <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null

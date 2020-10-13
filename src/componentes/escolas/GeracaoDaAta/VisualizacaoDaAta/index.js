@@ -42,7 +42,6 @@ export const VisualizacaoDaAta = () => {
         const infoAta = async ()=>{
             let info_ata = await getInfoAta();
             setInfoAta(info_ata);
-
             await getDadosAta()
         };
 
@@ -58,7 +57,6 @@ export const VisualizacaoDaAta = () => {
     const getDadosAta = async () =>{
 
         let dados_ata = await getAtas();
-
         let data_da_reuniao = dados_ata.data_reuniao ? dados_ata.data_reuniao : "";
 
         setStateFormEditarAta({
@@ -185,8 +183,7 @@ export const VisualizacaoDaAta = () => {
 
         }else if(campo === "periodo.referencia"){
             let periodo_referencia = dadosAta.periodo.referencia ? dadosAta.periodo.referencia.split(".") : "";
-            let string = periodo_referencia[1]+"° repasse de "+periodo_referencia[0];
-            return string;
+            return periodo_referencia[1] === "u" ? "repasse único de "+periodo_referencia[0] : periodo_referencia[1]+"° repasse de "+periodo_referencia[0];
 
         }else if (campo === "convocacao"){
             let convocacao =  tabelas.convocacoes ? tabelas.convocacoes.find(element => element.id === dadosAta.convocacao): "";
@@ -224,26 +221,19 @@ export const VisualizacaoDaAta = () => {
                     />
                 }
 
-                {infoAta &&
-                    <>
+                {infoAta && dadosAta &&
                     <TabelaDinamica
                         infoAta={infoAta}
+                        dadosAta={dadosAta}
                         valorTemplate={valorTemplate}
+                        retornaDadosAtaFormatado={retornaDadosAtaFormatado}
                     />
-
-                    <TabelaTotais
-                        infoAta={infoAta}
-                        valorTemplate={valorTemplate}
-                        />
-                    </>
                 }
                 <br/>
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <TextoDinamicoInferior
                         dadosAta={dadosAta}
                         retornaDadosAtaFormatado={retornaDadosAtaFormatado}
-                        infoAta={infoAta}
-                        valorTemplate={valorTemplate}
                     />
                 }
             </div>

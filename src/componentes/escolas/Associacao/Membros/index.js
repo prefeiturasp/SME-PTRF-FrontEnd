@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
 import {EditarMembro} from "../../../../utils/Modais";
-import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol} from "../../../../services/escolas/Associacao.service";
+import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarNomeResponsavel} from "../../../../services/escolas/Associacao.service";
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
@@ -197,7 +197,7 @@ export const MembrosDaAssociacao = () =>{
                         nome: rf.data[0].nm_pessoa,
                         codigo_identificacao: values.codigo_identificacao,
                         cargo_associacao: values.cargo_associacao,
-                        cargo_educacao: values.cargo_educacao,
+                        cargo_educacao: rf.data[0].cargo,
                         representacao: values.representacao,
                         email: values.email,
                     };
@@ -205,9 +205,14 @@ export const MembrosDaAssociacao = () =>{
                     setBtnSalvarReadOnly(false);
                 }
             }catch (e) {
-                errors.codigo_identificacao = "RF inválido"
+                let data = e.response.data;
+                if (data !== undefined && data.detail !== undefined) {
+                    errors.codigo_identificacao = data.detail    
+                } else {
+                    errors.codigo_identificacao = "RF inválido"
+                }
             }
-        }else if(values.representacao === "ESTUDANTE"){
+        } else if(values.representacao === "ESTUDANTE"){
             setBtnSalvarReadOnly(true);
             try {
                 let cod_eol = await consultarCodEol(values.codigo_identificacao);
@@ -224,10 +229,28 @@ export const MembrosDaAssociacao = () =>{
                     setStateFormEditarMembro(init);
                     setBtnSalvarReadOnly(false);
                 }
-            }catch (e) {
-                errors.codigo_identificacao = "Código Eol inválido"
+            } catch (e) {
+                let data = e.response.data;
+                if (data !== undefined && data.detail !== undefined) {
+                    errors.codigo_identificacao = data.detail    
+                } else {
+                    errors.codigo_identificacao = "Código Eol inválido"
+                }
             }
-        }else {
+        } else if (values.representacao === "PAI_RESPONSAVEL") {
+            setBtnSalvarReadOnly(true);
+            try {
+                let result = await consultarNomeResponsavel(values.nome);
+                if (result.status === 200 || result.status === 201) {
+                    setBtnSalvarReadOnly(false);
+                }
+            } catch (e) {
+                let data = e.response.data;
+                if (data !== undefined && data.detail !== undefined) {
+                    errors.nome = data.detail    
+                }
+            }
+        } else {
             setBtnSalvarReadOnly(false)
         }
         return errors

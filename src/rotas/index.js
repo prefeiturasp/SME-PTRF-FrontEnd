@@ -34,7 +34,9 @@ import {TecnicosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/TecnicosDaDi
 import {FaqDrePage} from "../paginas/dres/ApoioDiretoria/Faq";
 import {SituacaoFinanceiraUnidadeEducacionalPage} from "../paginas/dres/Associacoes/SituacaoFinanceiraUnidadeEducacional";
 import {AtribuicoesPage} from "../paginas/dres/Diretoria/Atribuicoes";
-
+import {DreDashboardPage} from "../paginas/dres/DreDashboard";
+import {ListaPrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/ListaPrestacaoDeContas";
+import {DetalhePrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas";
 
 const routesConfig = [
     {
@@ -171,6 +173,21 @@ const routesConfig = [
         exact: true,
         path: "/dre-atribuicoes/:tecnico_uuid?",
         component: AtribuicoesPage
+    },
+    {
+        exact: true,
+        path: "/dre-dashboard",
+        component: DreDashboardPage
+    },
+    {
+        exact: true,
+        path: "/dre-lista-prestacao-de-contas/:periodo_uuid?/:status_prestacao?",
+        component: ListaPrestacaoDeContas
+    },
+    {
+        exact: true,
+        path: "/dre-detalhe-prestacao-de-contas/:prestacao_conta_uuid?",
+        component: DetalhePrestacaoDeContas
     },
     {
         exact: true,

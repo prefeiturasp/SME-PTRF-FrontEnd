@@ -108,14 +108,14 @@ export default class RelacaoDeBens extends Component {
                 <article>
                     <div className="info">
                     <p className="fonte-14 mb-1"><strong>Bens adquiridos ou produzidos</strong></p>
-                    <p className={`fonte-12 mb-1 ${mensagem.includes('pendente') ? "documento-pendente" :"documento-gerado"}`}>{mensagem}</p>
+                    <p className={`fonte-12 mb-1 ${mensagem.includes('pendente') || mensagem.includes('Não houve') ? "documento-pendente" :"documento-gerado"}`}>{mensagem}</p>
                     </div>
                     <div className="actions">
-                        {this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
+                        {!mensagem.includes('Não houve') && this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
                             <button onClick={(e) => this.showPrevia()} type="button" disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className="btn btn-outline-success mr-2">prévia </button>
                         }
                         {/*<button type="button" onClick={this.gerarPrevia} className="btn btn-outline-success mr-2">prévia </button>*/}
-                        <button disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} onClick={this.gerarDocumentoFinal} type="button" className="btn btn-success">documento final</button>
+                        <button disabled={(this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados) || mensagem.includes('Não houve')} onClick={this.gerarDocumentoFinal} type="button" className="btn btn-success">documento final</button>
                         {/*<button disabled={false} onClick={this.gerarDocumentoFinal} type="button" className="btn btn-success">documento final</button>*/}
                     </div>
                 </article>
