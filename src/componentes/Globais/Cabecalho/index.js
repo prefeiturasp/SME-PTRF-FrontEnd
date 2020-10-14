@@ -105,7 +105,6 @@ export const Cabecalho = () => {
     return (
         <>
             <div className="col-12 cabecalho fixed-top pb-0">
-
                 <div className="row">
                     <div className='col col-md-2 col-lg-3 col-xl-2 '>
                         <div className="p-3">
@@ -153,7 +152,6 @@ export const Cabecalho = () => {
                         </div>
                         }
                     </div>
-
                     <div className="col col-md-2 col-lg-1">
                         <div className="p-2 text-center">
                             <button
@@ -165,7 +163,6 @@ export const Cabecalho = () => {
                             <p>Notificações</p>
                         </div>
                     </div>
-
                     <div className="col col-md-1">
                         <div className="p-2 text-center">
                             <button className="btn-sair" onClick={()=>onShow()}><img className="icone-sair" src={IconeSair} alt=""/></button>
