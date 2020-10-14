@@ -14,9 +14,18 @@ export const CadastroFormCapital = (propriedades) => {
         let d = {
             ...valorItemRateio,
             [index]: val
-        }
+        };
         setValorItemRateio(d);
-    }
+    };
+
+    const handleChangeQtdeItens = (valor, setFieldValue) => {
+        console.log("handleChangeQtdeItens ", valor)
+        if (valor !== '1'){
+            setFieldValue(`rateios[${index}].valor_item_capital`, 0)
+        }
+
+
+    };
 
     return (
         <>
@@ -69,7 +78,11 @@ export const CadastroFormCapital = (propriedades) => {
                             <label htmlFor="quantidade_itens_capital">Quantidade de itens</label>
                             <NumberFormat
                                 value={rateio.quantidade_itens_capital}
-                                onChange={(e) => {formikProps.handleChange(e); handleChangeData(e.target.value, rateio.valor_item_capital);}}
+                                onChange={(e) => {
+                                    formikProps.handleChange(e);
+                                    handleChangeData(e.target.value, rateio.valor_item_capital);
+                                    handleChangeQtdeItens(e.target.value, formikProps.setFieldValue)
+                                }}
                                 name={`rateios[${index}].quantidade_itens_capital`}
                                 decimalScale={0}
                                 id="quantidade_itens_capital"
