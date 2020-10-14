@@ -127,7 +127,7 @@ export const Cabecalho = () => {
                                         dados_usuario_logado.unidade_selecionada.nome
                                     )}
                                 onChange={(e)=>onChangeVisao(e)}
-                                className="form-control w-100"
+                                className="form-control w-75"
                             >
                                 {dados_usuario_logado.unidades.map((unidade, index)=>
                                     <option
@@ -142,7 +142,7 @@ export const Cabecalho = () => {
                                                 unidade.nome,
                                             )}
                                     >
-                                        {visoesService.converteNomeVisao(unidade.tipo_unidade)} - {unidade.nome}
+                                        {unidade.tipo_unidade} - {unidade.nome}
                                     </option>
                                 )}
                             </select>
