@@ -6,22 +6,21 @@ import MaskedInput from "react-text-mask";
 
 export const CadastroFormCapital = (propriedades) => {
     const {formikProps, rateio, rateios, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal, setFieldValue} = propriedades;
-    const [valorItemRateio, setValorItemRateio] = useState({[index]: rateio.valor_rateio});
+    //const [valorItemRateio, setValorItemRateio] = useState({[index]: rateio.valor_rateio});
 
 
-    const handleChangeData = (quantidade, valor) => {
-        //console.log("handleChangeData quantidade ", quantidade)
-        //console.log("handleChangeData valor ", valor)
+    const handleChangeData = (quantidade, valor, setFieldValue) => {
         let val = calculaValorRateio(quantidade, trataNumericos(valor));
-        let d = {
+        /*let d = {
             ...valorItemRateio,
             [index]: val
         };
-        setValorItemRateio(d);
+        setValorItemRateio(d);*/
+        setFieldValue(`rateios[${index}].valor_rateio`, val)
+
     };
 
     const handleChangeQtdeItens = (valor, setFieldValue) => {
-        console.log("XXXXXXXXXXXXXXX ", formikProps.values.mais_de_um_tipo_despesa)
         if (formikProps.values.mais_de_um_tipo_despesa === 'nao' && valor !== '1'){
             setFieldValue(`rateios[${index}].valor_item_capital`, 0)
         }
@@ -81,7 +80,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 onChange={(e) => {
                                     formikProps.handleChange(e);
                                     handleChangeQtdeItens(e.target.value, formikProps.setFieldValue);
-                                    handleChangeData(e.target.value, rateio.valor_item_capital);
+                                    handleChangeData(e.target.value, rateio.valor_item_capital, formikProps.setFieldValue);
 
                                 }}
                                 name={`rateios[${index}].quantidade_itens_capital`}
@@ -105,7 +104,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 className={`${trataNumericos(rateio.valor_item_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                                 onChangeEvent={(e) => {
                                     formikProps.handleChange(e);
-                                    handleChangeData(rateio.quantidade_itens_capital, e.target.value);
+                                    handleChangeData(rateio.quantidade_itens_capital, e.target.value, formikProps.setFieldValue);
                                 }}
                                 disabled={disabled}
                             />
@@ -173,11 +172,14 @@ export const CadastroFormCapital = (propriedades) => {
                             prefix='R$'
                             decimalSeparator=","
                             thousandSeparator="."
-                            value={valorItemRateio[index]}
+                            value={rateio.valor_rateio}
                             name={`rateios[${index}].valor_rateio`}
                             id="valor_rateio"
                             className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control ${trataNumericos(rateio.valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
-                            onChangeEvent={(e) => {formikProps.handleChange(e); setValorItemRateio({...valorItemRateio, [index]: e.target.value})}}
+                            onChangeEvent={(e) => {
+                                formikProps.handleChange(e);
+                                //setValorItemRateio({...valorItemRateio, [index]: e.target.value})
+                            }}
                         />
                         {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                     </div>
