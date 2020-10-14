@@ -115,6 +115,7 @@ export const Cabecalho = () => {
                     <div className="col col-md-4 col-lg-7 col-xl-8 mt-2 pl-lg-0 pl-xl-3">
                         {exibeMenu &&
                         <div className="pt-2 container-select-visoes">
+                            <span className='span-label-visao-selecionada'>{ visoesService.getItemUsuarioLogado('visao_selecionada.nome')}</span>
                             <select
                                 value={
                                     retornaVisaoConvertida(
