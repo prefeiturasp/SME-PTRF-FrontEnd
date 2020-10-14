@@ -115,37 +115,41 @@ export const Cabecalho = () => {
                     <div className="col col-md-4 col-lg-7 col-xl-8 mt-2 pl-lg-0 pl-xl-3">
                         {exibeMenu &&
                         <div className="pt-2 container-select-visoes">
-                            <span className='span-label-visao-selecionada'>{ visoesService.getItemUsuarioLogado('visao_selecionada.nome')}</span>
-                            <select
-                                value={
-                                    retornaVisaoConvertida(
-                                        dados_usuario_logado.visao_selecionada.nome,
-                                        dados_usuario_logado.unidade_selecionada.uuid,
-                                        dados_usuario_logado.associacao_selecionada.uuid,
-                                        dados_usuario_logado.associacao_selecionada.nome,
-                                        dados_usuario_logado.unidade_selecionada.tipo_unidade,
-                                        dados_usuario_logado.unidade_selecionada.nome
-                                    )}
-                                onChange={(e)=>onChangeVisao(e)}
-                                className="form-control w-75"
-                            >
-                                {dados_usuario_logado.unidades.map((unidade, index)=>
-                                    <option
-                                        key={index}
+                            <div className="d-flex mb-3 w-100">
+                                <div className="p-2 bd-highlight"><span className='span-label-visao-selecionada'>{ visoesService.getItemUsuarioLogado('visao_selecionada.nome')}</span></div>
+                                <div className="p-0 bd-highlight w-100">
+                                    <select
                                         value={
                                             retornaVisaoConvertida(
-                                                unidade.tipo_unidade,
-                                                unidade.uuid,
-                                                unidade.associacao.uuid,
-                                                unidade.tipo_unidade === "DRE" ? unidade.nome : unidade.associacao.nome,
-                                                unidade.tipo_unidade,
-                                                unidade.nome,
+                                                dados_usuario_logado.visao_selecionada.nome,
+                                                dados_usuario_logado.unidade_selecionada.uuid,
+                                                dados_usuario_logado.associacao_selecionada.uuid,
+                                                dados_usuario_logado.associacao_selecionada.nome,
+                                                dados_usuario_logado.unidade_selecionada.tipo_unidade,
+                                                dados_usuario_logado.unidade_selecionada.nome
                                             )}
+                                        onChange={(e)=>onChangeVisao(e)}
+                                        className="form-control"
                                     >
-                                        {unidade.tipo_unidade} - {unidade.nome}
-                                    </option>
-                                )}
-                            </select>
+                                        {dados_usuario_logado.unidades.map((unidade, index)=>
+                                            <option
+                                                key={index}
+                                                value={
+                                                    retornaVisaoConvertida(
+                                                        unidade.tipo_unidade,
+                                                        unidade.uuid,
+                                                        unidade.associacao.uuid,
+                                                        unidade.tipo_unidade === "DRE" ? unidade.nome : unidade.associacao.nome,
+                                                        unidade.tipo_unidade,
+                                                        unidade.nome,
+                                                    )}
+                                            >
+                                                {unidade.tipo_unidade} - {unidade.nome}
+                                            </option>
+                                        )}
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         }
                     </div>
