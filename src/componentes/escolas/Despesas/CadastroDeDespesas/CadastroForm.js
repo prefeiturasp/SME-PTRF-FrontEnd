@@ -18,7 +18,6 @@ import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios"
 import Loading from "../../../../utils/Loading";
 import {Tags} from "../Tags";
 import {metodosAuxiliares} from "../metodosAuxiliares";
-import {ModalConfirmaLogout} from "../../../Globais/Cabecalho/ModalConfirmaLogout";
 
 export const CadastroForm = ({verbo_http}) => {
 
