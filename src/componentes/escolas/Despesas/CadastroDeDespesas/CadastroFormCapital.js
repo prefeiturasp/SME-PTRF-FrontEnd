@@ -10,6 +10,8 @@ export const CadastroFormCapital = (propriedades) => {
 
 
     const handleChangeData = (quantidade, valor) => {
+        //console.log("handleChangeData quantidade ", quantidade)
+        //console.log("handleChangeData valor ", valor)
         let val = calculaValorRateio(quantidade, trataNumericos(valor));
         let d = {
             ...valorItemRateio,
@@ -19,12 +21,10 @@ export const CadastroFormCapital = (propriedades) => {
     };
 
     const handleChangeQtdeItens = (valor, setFieldValue) => {
-        console.log("handleChangeQtdeItens ", valor)
-        if (valor !== '1'){
+        console.log("XXXXXXXXXXXXXXX ", formikProps.values.mais_de_um_tipo_despesa)
+        if (formikProps.values.mais_de_um_tipo_despesa === 'nao' && valor !== '1'){
             setFieldValue(`rateios[${index}].valor_item_capital`, 0)
         }
-
-
     };
 
     return (
@@ -80,8 +80,9 @@ export const CadastroFormCapital = (propriedades) => {
                                 value={rateio.quantidade_itens_capital}
                                 onChange={(e) => {
                                     formikProps.handleChange(e);
+                                    handleChangeQtdeItens(e.target.value, formikProps.setFieldValue);
                                     handleChangeData(e.target.value, rateio.valor_item_capital);
-                                    handleChangeQtdeItens(e.target.value, formikProps.setFieldValue)
+
                                 }}
                                 name={`rateios[${index}].quantidade_itens_capital`}
                                 decimalScale={0}
@@ -102,7 +103,10 @@ export const CadastroFormCapital = (propriedades) => {
                                 name={`rateios[${index}].valor_item_capital`}
                                 id="valor_item_capital"
                                 className={`${trataNumericos(rateio.valor_item_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
-                                onChangeEvent={(e) => {formikProps.handleChange(e); handleChangeData(rateio.quantidade_itens_capital, e.target.value);}}
+                                onChangeEvent={(e) => {
+                                    formikProps.handleChange(e);
+                                    handleChangeData(rateio.quantidade_itens_capital, e.target.value);
+                                }}
                                 disabled={disabled}
                             />
                         </div>
