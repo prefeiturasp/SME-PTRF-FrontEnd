@@ -8,7 +8,6 @@ export const CadastroFormCapital = (propriedades) => {
     const {formikProps, rateio, rateios, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal, setFieldValue} = propriedades;
     //const [valorItemRateio, setValorItemRateio] = useState({[index]: rateio.valor_rateio});
 
-
     const handleChangeData = (quantidade, valor, setFieldValue) => {
         let val = calculaValorRateio(quantidade, trataNumericos(valor));
         /*let d = {
