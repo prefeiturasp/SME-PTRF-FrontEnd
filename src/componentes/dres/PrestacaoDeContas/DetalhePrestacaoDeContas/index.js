@@ -9,7 +9,7 @@ import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorCpfCnpj} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {ModalNaoRecebida} from "../ModalNaoRecebida";
@@ -69,6 +69,8 @@ export const DetalhePrestacaoDeContas = () =>{
         devolucoes_ao_tesouro: [
             {
                 busca_por_cpf_cnpj: "",
+                busca_por_tipo_documento: "",
+                busca_por_numero_documento: "",
                 tipo_devolucao: "",
             }
         ]
@@ -629,6 +631,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         formRef={formRef}
                         handleChangeCpfBuscaDespesa={handleChangeCpfBuscaDespesa}
                         despesas={despesas}
+                        buscaDespesaPorFiltros={buscaDespesaPorFiltros}
                     />
                     <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
@@ -868,7 +871,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
         //console.log("handleChangeCpfBuscaDespesa ", value)
 
-        let despesas_por_cpf = await getDespesasPorCpfCnpj(prestacaoDeContas.associacao.uuid, value)
+        let despesas_por_cpf = await getDespesasPorFiltros(prestacaoDeContas.associacao.uuid, value)
         console.log("handleChangeCpfBuscaDespesa despesas ", despesas_por_cpf)
 
         // setDespesas({
@@ -885,6 +888,33 @@ export const DetalhePrestacaoDeContas = () =>{
         });
 
     };
+
+    const buscaDespesaPorFiltros = async (index) =>{
+
+        //console.log("AQUI buscaDespesaPorFiltros index ", index)
+
+        let valores, cpf, tipo_documento, numero_documento;
+
+        if (formRef.current) {
+            //console.log("AQUI buscaDespesaPorFiltros formRef.current.values ", formRef.current.values)
+            valores = formRef.current.values.devolucoes_ao_tesouro[index]
+
+            //console.log("AQUI buscaDespesaPorFiltros valores ", valores)
+            cpf = valores.busca_por_cpf_cnpj ? valores.busca_por_cpf_cnpj : "";
+            tipo_documento = valores.busca_por_tipo_documento ? valores.busca_por_tipo_documento : '';
+            numero_documento = valores.busca_por_numero_documento ? valores.busca_por_numero_documento : '';
+
+            let despesas_por_cpf = await getDespesasPorFiltros(prestacaoDeContas.associacao.uuid, cpf, tipo_documento, numero_documento)
+            console.log("handleChangeCpfBuscaDespesa despesas ", despesas_por_cpf)
+
+            setDespesas({
+                ...despesas,
+                [`devolucao_${index}`]: [...despesas_por_cpf]
+            });
+        }
+
+
+    }
 
     return(
         <PaginasContainer>

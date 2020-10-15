@@ -7,7 +7,8 @@ export const InformacoesDevolucaoAoTesouro = (
         informacoesPrestacaoDeContas,
         initialValues,
         handleChangeCpfBuscaDespesa,
-        despesas
+        despesas,
+        buscaDespesaPorFiltros,
     }) =>{
     console.log("InformacoesDevolucaoAoTesouro ", despesas)
     return(
@@ -49,9 +50,9 @@ export const InformacoesDevolucaoAoTesouro = (
                                                             </div>
 
 
-                                                            <div className="col-12 mt-2">
+                                                            <div className="col-12 col mt-2">
                                                                 <div className='row'>
-                                                                    <div className='col-6'>
+                                                                    <div className='col'>
                                                                         <label htmlFor="busca_por_cpf_cnpj">Busque por CNPJ ou CPF</label>
 
                                                                         <input
@@ -60,7 +61,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                             onChange={async (e) => {
                                                                                 props.handleChange(e);
                                                                                 //await handleChangeFormDevolucaoAoTesouro(values);
-                                                                                handleChangeCpfBuscaDespesa(e.target.value, index)
+                                                                                //handleChangeCpfBuscaDespesa(e.target.value, index)
                                                                             }
                                                                             }
                                                                             type="text"
@@ -68,6 +69,49 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                             placeholder="Digite o nº do CNPJ ou CPF"
                                                                         />
                                                                     </div>
+
+
+
+                                                                    <div className='col'>
+                                                                        <label htmlFor="busca_por_tipo_documento">Busque por tipo de documento</label>
+
+                                                                        <input
+                                                                            name={`devolucoes_ao_tesouro[${index}].busca_por_tipo_documento`}
+                                                                            value={devolucao.busca_por_tipo_documento}
+                                                                            onChange={async (e) => {
+                                                                                props.handleChange(e);
+                                                                                //await handleChangeFormDevolucaoAoTesouro(values);
+                                                                                //handleChangeCpfBuscaDespesa(e.target.value, index)
+                                                                            }
+                                                                            }
+                                                                            type="text"
+                                                                            className='form-control'
+                                                                            placeholder=""
+                                                                        />
+                                                                    </div>
+
+                                                                    <div className='col'>
+                                                                        <label htmlFor="busca_por_numero_documento">Busque por número do documento</label>
+
+                                                                        <input
+                                                                            name={`devolucoes_ao_tesouro[${index}].busca_por_numero_documento`}
+                                                                            value={devolucao.busca_por_numero_documento}
+                                                                            onChange={async (e) => {
+                                                                                props.handleChange(e);
+                                                                                //await handleChangeFormDevolucaoAoTesouro(values);
+                                                                                //handleChangeCpfBuscaDespesa(e.target.value, index)
+                                                                            }
+                                                                            }
+                                                                            type="text"
+                                                                            className='form-control'
+                                                                            placeholder=""
+                                                                        />
+                                                                    </div>
+                                                                    <div className='col'>
+                                                                        <button type='button' onClick={()=>buscaDespesaPorFiltros(index)} className='btn btn-success'>Filtrar</button>
+                                                                    </div>
+
+
                                                                 </div>
 
                                                             </div>
