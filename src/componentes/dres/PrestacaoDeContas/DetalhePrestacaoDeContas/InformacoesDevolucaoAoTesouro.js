@@ -1,7 +1,7 @@
 import React from "react";
 import {Formik, FieldArray} from "formik";
 
-export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeContas, initialValues, handleChangeFormDevolucaoAoTesouro, metodoSalvarAnalise}) =>{
+export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeContas, initialValues}) =>{
     //console.log("InformacoesDevolucaoAoTesouro ", initialValues)
     return(
         <>
@@ -59,9 +59,6 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                                 //await handleChangeFormDevolucaoAoTesouro(values);
                                                                             }
                                                                             }
-                                                                            onBlur={async (e)=>{
-                                                                                await handleChangeFormDevolucaoAoTesouro(values);
-                                                                            }}
                                                                             type="text"
                                                                             className='form-control'
                                                                             placeholder="Digite o nº do CNPJ ou CPF"
@@ -83,9 +80,6 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                             //await handleChangeFormDevolucaoAoTesouro(values);
                                                                         }
                                                                         }
-                                                                        onBlur={async (e)=>{
-                                                                            await handleChangeFormDevolucaoAoTesouro(values);
-                                                                        }}
                                                                         type="text"
                                                                         className="form-control"
                                                                     />
@@ -101,7 +95,6 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                         className="btn btn btn-outline-success mt-2 mr-2"
                                                                         onClick={async () => {
                                                                             await remove(index)
-                                                                            await handleChangeFormDevolucaoAoTesouro(values)
                                                                         }}
 
                                                                     >
@@ -125,7 +118,6 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                     tipo_devolucao: "",
                                                                 }
                                                             );
-                                                            await handleChangeFormDevolucaoAoTesouro(values)
                                                         }}
                                                     >
                                                         + Adicionar despesa parcial
@@ -135,12 +127,6 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                         )}
                                     >
                                     </FieldArray>
-
-                                    <div className="d-flex  justify-content-end pb-3 mt-3">
-                                        <button onClick={props.handleReset} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                                        <button type="submit" className="btn btn-success mt-2">Salvar</button>
-                                    </div>
-
                                 </form>
                             )
                         }}

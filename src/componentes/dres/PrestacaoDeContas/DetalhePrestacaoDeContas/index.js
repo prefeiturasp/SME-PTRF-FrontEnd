@@ -32,6 +32,8 @@ require("ordinal-pt-br");
 export const DetalhePrestacaoDeContas = () =>{
     let {prestacao_conta_uuid} = useParams();
 
+    const formRef = useRef()
+
     const initialFormRecebimentoPelaDiretoria = {
         tecnico_atribuido: "",
         data_recebimento: "",
@@ -94,7 +96,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [clickBtnTabelaAcoes, setClickBtnTabelaAcoes] = useState(false);
     const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState([]);
     const [stateConcluirAnalise, setStateConcluirAnalise] = useState(initialConcluirAnalise);
-    const [formDevolucaoAoTesouro, setFormDevolucaoAoTesouro] = useState(initialDevolucaoAoTesouro);
+    const [initialFormDevolucaoAoTesouro, setInitialFormDevolucaoAoTesouro] = useState(initialDevolucaoAoTesouro);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -376,15 +378,12 @@ export const DetalhePrestacaoDeContas = () =>{
 
 
 
-    const salvarAnalise = async (values) =>{
+    const salvarAnalise = async () =>{
 
-        //console.log('salvarAnalise values ', values)
-        console.log('salvarAnalise form ', formDevolucaoAoTesouro)
-
-/*        if (formRef.current) {
-            console.log("AQUI XXXXXX", formRef.current)
+        if (formRef.current) {
+            console.log("AQUI salvarAnalise XXXXXX", formRef.current.values)
             //formRef.current.handleSubmit()
-        }*/
+        }
 
 /*        analisesDeContaDaPrestacao.map((analise)=>{
             analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;
@@ -426,7 +425,12 @@ export const DetalhePrestacaoDeContas = () =>{
     const onConcluirAnalise = async () => {
         setShowConcluirAnalise(false);
 
-        analisesDeContaDaPrestacao.map((analise)=>{
+        if (formRef.current) {
+            console.log("AQUI onConcluirAnalise XXXXXX", formRef.current.values)
+            //formRef.current.handleSubmit()
+        }
+
+        /*analisesDeContaDaPrestacao.map((analise)=>{
             analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;
             analise.saldo_extrato = analise.saldo_extrato ? trataNumericos(analise.saldo_extrato) : 0;
         });
@@ -461,7 +465,7 @@ export const DetalhePrestacaoDeContas = () =>{
         }
 
         await getConcluirAnalise(prestacaoDeContas.uuid, payload);
-        await carregaPrestacaoDeContas();
+        await carregaPrestacaoDeContas();*/
     };
 
     const onVoltarParaAnalise = async () => {
@@ -616,9 +620,7 @@ export const DetalhePrestacaoDeContas = () =>{
                     />
                     <InformacoesDevolucaoAoTesouro
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
-                        initialValues={initialDevolucaoAoTesouro}
-                        handleChangeFormDevolucaoAoTesouro={handleChangeFormDevolucaoAoTesouro}
-                        metodoSalvarAnalise={salvarAnalise}
+                        initialValues={initialFormDevolucaoAoTesouro}
                         formRef={formRef}
                     />
                     <ResumoFinanceiroSeletorDeContas
@@ -854,21 +856,6 @@ export const DetalhePrestacaoDeContas = () =>{
         )
     }
     };
-
-    console.log("Prestacao XXXXXXXXX ", formDevolucaoAoTesouro)
-
-    const formRef = useRef()
-    const handleChangeFormDevolucaoAoTesouro = async (values) => {
-
-        if (formRef.current) {
-            console.log("AQUI XXXXXX", formRef.current)
-            //formRef.current.handleSubmit()
-        }
-
-        await setFormDevolucaoAoTesouro(values);
-    };
-
-
 
     return(
         <PaginasContainer>
