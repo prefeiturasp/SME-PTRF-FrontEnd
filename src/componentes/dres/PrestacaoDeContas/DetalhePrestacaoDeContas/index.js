@@ -64,6 +64,15 @@ export const DetalhePrestacaoDeContas = () =>{
         data_limite_devolucao:'',
     };
 
+    const initialDevolucaoAoTesouro = {
+        devolucoes_ao_tesouro: [
+            {
+                busca_por_cpf_cnpj: "",
+            }
+        ]
+
+    };
+
     const [prestacaoDeContas, setPrestacaoDeContas] = useState({});
     const [stateFormRecebimentoPelaDiretoria, setStateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
     const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
@@ -84,6 +93,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [clickBtnTabelaAcoes, setClickBtnTabelaAcoes] = useState(false);
     const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState([]);
     const [stateConcluirAnalise, setStateConcluirAnalise] = useState(initialConcluirAnalise);
+    const [initialValueDevolucaoAoTesouro, setInitialValueDevolucaoAoTesouro] = useState(initialDevolucaoAoTesouro);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -597,6 +607,7 @@ export const DetalhePrestacaoDeContas = () =>{
                     />
                     <InformacoesDevolucaoAoTesouro
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
+                        initialValues={initialDevolucaoAoTesouro}
                     />
                     <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
