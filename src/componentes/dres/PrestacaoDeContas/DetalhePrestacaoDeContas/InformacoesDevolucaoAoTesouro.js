@@ -9,6 +9,7 @@ export const InformacoesDevolucaoAoTesouro = (
         handleChangeCpfBuscaDespesa,
         despesas,
         buscaDespesaPorFiltros,
+        valoresIniciaisPush,
     }) =>{
     console.log("InformacoesDevolucaoAoTesouro ", despesas)
     return(
@@ -70,11 +71,8 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                         />
                                                                     </div>
 
-
-
                                                                     <div className='col'>
                                                                         <label htmlFor="busca_por_tipo_documento">Busque por tipo de documento</label>
-
                                                                         <input
                                                                             name={`devolucoes_ao_tesouro[${index}].busca_por_tipo_documento`}
                                                                             value={devolucao.busca_por_tipo_documento}
@@ -86,7 +84,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                             }
                                                                             type="text"
                                                                             className='form-control'
-                                                                            placeholder=""
+                                                                            //placeholder=""
                                                                         />
                                                                     </div>
 
@@ -104,7 +102,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                             }
                                                                             type="text"
                                                                             className='form-control'
-                                                                            placeholder=""
+                                                                            //placeholder=""
                                                                         />
                                                                     </div>
                                                                     <div className='col'>
@@ -165,6 +163,8 @@ export const InformacoesDevolucaoAoTesouro = (
                                                             push(
                                                                 {
                                                                     busca_por_cpf_cnpj: "",
+                                                                    busca_por_tipo_documento: "",
+                                                                    busca_por_numero_documento: "",
                                                                     tipo_devolucao: "",
                                                                 }
                                                             );

@@ -632,6 +632,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         handleChangeCpfBuscaDespesa={handleChangeCpfBuscaDespesa}
                         despesas={despesas}
                         buscaDespesaPorFiltros={buscaDespesaPorFiltros}
+                        valoresIniciaisPush={initialDevolucaoAoTesouro}
                     />
                     <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
