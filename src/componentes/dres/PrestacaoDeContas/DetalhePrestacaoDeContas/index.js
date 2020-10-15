@@ -20,6 +20,7 @@ import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
 import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
+import {InformacoesDevolucaoAoTesouro} from "./InformacoesDevolucaoAoTesouro";
 import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas";
 import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
@@ -356,6 +357,9 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const handleChangeFormInformacoesPrestacaoDeContas = (name, value) => {
+
+        console.log('handleChangeFormInformacoesPrestacaoDeContas ', name, " - ", value)
+
         setInformacoesPrestacaoDeContas({
             ...informacoesPrestacaoDeContas,
             [name]: value
@@ -591,6 +595,9 @@ export const DetalhePrestacaoDeContas = () =>{
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
                         editavel={true}
                     />
+                    <InformacoesDevolucaoAoTesouro
+                        informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
+                    />
                     <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
                         clickBtnEscolheConta={clickBtnEscolheConta}
@@ -824,6 +831,8 @@ export const DetalhePrestacaoDeContas = () =>{
         )
     }
     };
+
+    console.log("Prestacao XXXXXXXXX ", prestacaoDeContas)
 
     return(
         <PaginasContainer>
