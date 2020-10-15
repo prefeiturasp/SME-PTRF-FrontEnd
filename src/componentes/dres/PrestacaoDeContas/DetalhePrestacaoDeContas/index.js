@@ -871,18 +871,17 @@ export const DetalhePrestacaoDeContas = () =>{
         let despesas_por_cpf = await getDespesasPorCpfCnpj(prestacaoDeContas.associacao.uuid, value)
         console.log("handleChangeCpfBuscaDespesa despesas ", despesas_por_cpf)
 
-/*        setAnalisesDeContaDaPrestacao(analise=>[
-            ...analise,
-            {
-                conta_associacao: conta.conta_associacao.uuid,
-                data_extrato: '',
-                saldo_extrato:'',
-            }
-        ])*/
+        // setDespesas({
+        //     ...despesas,
+        //     [index]: {despesas_por_cpf}
+        // });
+
+        // [`usuario_${getUsuarioLogin()}`]
+
 
         setDespesas({
             ...despesas,
-            [index]: {despesas_por_cpf}
+            [`devolucao_${index}`]: [...despesas_por_cpf]
         });
 
     };
