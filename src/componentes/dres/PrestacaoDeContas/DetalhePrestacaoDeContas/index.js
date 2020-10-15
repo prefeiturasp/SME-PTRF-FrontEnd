@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useParams, Redirect} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {
@@ -68,6 +68,7 @@ export const DetalhePrestacaoDeContas = () =>{
         devolucoes_ao_tesouro: [
             {
                 busca_por_cpf_cnpj: "",
+                tipo_devolucao: "",
             }
         ]
 
@@ -93,7 +94,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [clickBtnTabelaAcoes, setClickBtnTabelaAcoes] = useState(false);
     const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState([]);
     const [stateConcluirAnalise, setStateConcluirAnalise] = useState(initialConcluirAnalise);
-    const [initialValueDevolucaoAoTesouro, setInitialValueDevolucaoAoTesouro] = useState(initialDevolucaoAoTesouro);
+    const [formDevolucaoAoTesouro, setFormDevolucaoAoTesouro] = useState(initialDevolucaoAoTesouro);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -367,17 +368,25 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const handleChangeFormInformacoesPrestacaoDeContas = (name, value) => {
-
-        console.log('handleChangeFormInformacoesPrestacaoDeContas ', name, " - ", value)
-
         setInformacoesPrestacaoDeContas({
             ...informacoesPrestacaoDeContas,
             [name]: value
         });
     };
 
-    const salvarAnalise = async () =>{
-        analisesDeContaDaPrestacao.map((analise)=>{
+
+
+    const salvarAnalise = async (values) =>{
+
+        //console.log('salvarAnalise values ', values)
+        console.log('salvarAnalise form ', formDevolucaoAoTesouro)
+
+/*        if (formRef.current) {
+            console.log("AQUI XXXXXX", formRef.current)
+            //formRef.current.handleSubmit()
+        }*/
+
+/*        analisesDeContaDaPrestacao.map((analise)=>{
             analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;
             analise.saldo_extrato = analise.saldo_extrato ? trataNumericos(analise.saldo_extrato) : 0;
         });
@@ -388,7 +397,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
         await getSalvarAnalise(prestacaoDeContas.uuid, payload);
         await carregaPrestacaoDeContas();
-        window.location.reload()
+        window.location.reload()*/
     };
 
     const onHandleClose = () => {
@@ -608,6 +617,9 @@ export const DetalhePrestacaoDeContas = () =>{
                     <InformacoesDevolucaoAoTesouro
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
                         initialValues={initialDevolucaoAoTesouro}
+                        handleChangeFormDevolucaoAoTesouro={handleChangeFormDevolucaoAoTesouro}
+                        metodoSalvarAnalise={salvarAnalise}
+                        formRef={formRef}
                     />
                     <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
@@ -843,7 +855,20 @@ export const DetalhePrestacaoDeContas = () =>{
     }
     };
 
-    console.log("Prestacao XXXXXXXXX ", prestacaoDeContas)
+    console.log("Prestacao XXXXXXXXX ", formDevolucaoAoTesouro)
+
+    const formRef = useRef()
+    const handleChangeFormDevolucaoAoTesouro = async (values) => {
+
+        if (formRef.current) {
+            console.log("AQUI XXXXXX", formRef.current)
+            //formRef.current.handleSubmit()
+        }
+
+        await setFormDevolucaoAoTesouro(values);
+    };
+
+
 
     return(
         <PaginasContainer>

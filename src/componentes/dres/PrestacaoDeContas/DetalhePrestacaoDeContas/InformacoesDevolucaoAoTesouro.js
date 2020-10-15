@@ -1,11 +1,8 @@
 import React from "react";
-import {Formik, FieldArray, Field} from "formik";
-import {ReceitaSchema} from "../../../escolas/Receitas/Schemas";
-import MaskedInput from "react-text-mask";
-import {cpfMaskContitional} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {Formik, FieldArray} from "formik";
 
-export const InformacoesDevolucaoAoTesouro = ({informacoesPrestacaoDeContas, initialValues}) =>{
-    console.log("InformacoesDevolucaoAoTesouro ", initialValues)
+export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeContas, initialValues, handleChangeFormDevolucaoAoTesouro, metodoSalvarAnalise}) =>{
+    //console.log("InformacoesDevolucaoAoTesouro ", initialValues)
     return(
         <>
             {informacoesPrestacaoDeContas && informacoesPrestacaoDeContas.devolucao_ao_tesouro === "Sim" &&
@@ -15,7 +12,12 @@ export const InformacoesDevolucaoAoTesouro = ({informacoesPrestacaoDeContas, ini
                         initialValues={initialValues}
                         enableReinitialize={true}
                         validateOnBlur={true}
-                        //onSubmit={onSubmit}
+                        //onSubmit={metodoSalvarAnalise}
+                        onSubmit={(values, { metodoSalvarAnalise }) => {
+                            console.log({ values });
+                            //setSubmitting(false);
+                        }}
+                        innerRef={formRef}
                     >
                         {props => {
                             const {
@@ -30,7 +32,7 @@ export const InformacoesDevolucaoAoTesouro = ({informacoesPrestacaoDeContas, ini
 
                                     <FieldArray
                                         name="devolucoes_ao_tesouro"
-                                        render={() => (
+                                        render={({remove, push}) => (
                                             <>
                                                 {values.devolucoes_ao_tesouro && values.devolucoes_ao_tesouro.length > 0 && values.devolucoes_ao_tesouro.map((devolucao, index) => {
                                                     return (
@@ -48,13 +50,18 @@ export const InformacoesDevolucaoAoTesouro = ({informacoesPrestacaoDeContas, ini
                                                                 <div className='row'>
                                                                     <div className='col-6'>
                                                                         <label htmlFor="busca_por_cpf_cnpj">Busque por CNPJ ou CPF</label>
+
                                                                         <input
-                                                                            name={`devolucao[${index}].busca_por_cpf_cnpj`}
+                                                                            name={`devolucoes_ao_tesouro[${index}].busca_por_cpf_cnpj`}
                                                                             value={devolucao.busca_por_cpf_cnpj}
-                                                                            onChange={(e) => {
+                                                                            onChange={async (e) => {
                                                                                 props.handleChange(e);
+                                                                                //await handleChangeFormDevolucaoAoTesouro(values);
                                                                             }
                                                                             }
+                                                                            onBlur={async (e)=>{
+                                                                                await handleChangeFormDevolucaoAoTesouro(values);
+                                                                            }}
                                                                             type="text"
                                                                             className='form-control'
                                                                             placeholder="Digite o nº do CNPJ ou CPF"
@@ -67,23 +74,63 @@ export const InformacoesDevolucaoAoTesouro = ({informacoesPrestacaoDeContas, ini
 
                                                             <div className='col-12 mt-2'>
                                                                 <div className="form-group">
-                                                                    <label htmlFor="banco_nome">Tipo de devolução</label>
+                                                                    <label htmlFor="tipo_devolucao">Tipo de devolução</label>
                                                                     <input
-                                                                        name={`devolucao[${index}].banco_nome`}
-                                                                        value={devolucao.banco_nome}
-                                                                        onChange={(e) => {
+                                                                        name={`devolucoes_ao_tesouro[${index}].tipo_devolucao`}
+                                                                        value={devolucao.tipo_devolucao}
+                                                                        onChange={async (e) => {
                                                                             props.handleChange(e);
+                                                                            //await handleChangeFormDevolucaoAoTesouro(values);
                                                                         }
                                                                         }
+                                                                        onBlur={async (e)=>{
+                                                                            await handleChangeFormDevolucaoAoTesouro(values);
+                                                                        }}
                                                                         type="text"
                                                                         className="form-control"
                                                                     />
-                                                                    {props.errors.banco_nome && <span className="text-danger mt-1">{props.errors.banco_nome}</span>}
+                                                                    {props.errors.tipo_devolucao && <span className="text-danger mt-1">{props.errors.tipo_devolucao}</span>}
                                                                 </div>
                                                             </div>
+
+
+                                                            {index >= 1 && values.devolucoes_ao_tesouro.length > 1 && (
+                                                                <div className="d-flex  justify-content-start mt-3 mb-3">
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn btn-outline-success mt-2 mr-2"
+                                                                        onClick={async () => {
+                                                                            await remove(index)
+                                                                            await handleChangeFormDevolucaoAoTesouro(values)
+                                                                        }}
+
+                                                                    >
+                                                                        - Remover Despesa
+                                                                    </button>
+                                                                </div>
+                                                            )}
+
                                                         </div>
+
                                                     )
                                                 })}
+                                                <div className="d-flex  justify-content-start mt-3 mb-3">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn btn-outline-success mt-2 mr-2"
+                                                        onClick={async () =>  {
+                                                            push(
+                                                                {
+                                                                    busca_por_cpf_cnpj: "",
+                                                                    tipo_devolucao: "",
+                                                                }
+                                                            );
+                                                            await handleChangeFormDevolucaoAoTesouro(values)
+                                                        }}
+                                                    >
+                                                        + Adicionar despesa parcial
+                                                    </button>
+                                                </div>
                                             </>
                                         )}
                                     >
