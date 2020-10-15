@@ -9,7 +9,7 @@ import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorCpfCnpj} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {ModalNaoRecebida} from "../ModalNaoRecebida";
@@ -25,7 +25,6 @@ import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas
 import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
 import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
-import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 require("ordinal-pt-br");
 
@@ -97,6 +96,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState([]);
     const [stateConcluirAnalise, setStateConcluirAnalise] = useState(initialConcluirAnalise);
     const [initialFormDevolucaoAoTesouro, setInitialFormDevolucaoAoTesouro] = useState(initialDevolucaoAoTesouro);
+    const [despesas, setDespesas] = useState([]);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -138,6 +138,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const carregaPrestacaoDeContas = async () => {
         if (prestacao_conta_uuid){
             let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
+            console.log("PRESTAÇÂO XXXXXX ", prestacao)
             setPrestacaoDeContas(prestacao);
             setStateFormRecebimentoPelaDiretoria({
                 ...stateFormRecebimentoPelaDiretoria,
@@ -152,6 +153,10 @@ export const DetalhePrestacaoDeContas = () =>{
                 ultima_analise: prestacao && prestacao.data_ultima_analise ? prestacao.data_ultima_analise : '',
                 devolucao_ao_tesouro: prestacao && prestacao.devolucao_ao_tesouro ? prestacao.devolucao_ao_tesouro : '',
             });
+
+            if (prestacao && prestacao.devolucoes_ao_tesouro_da_prestacao && prestacao.devolucoes_ao_tesouro_da_prestacao.length > 0 ){
+                setInitialFormDevolucaoAoTesouro(prestacao.devolucoes_ao_tesouro_da_prestacao)
+            }
         }
     };
 
@@ -622,6 +627,8 @@ export const DetalhePrestacaoDeContas = () =>{
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
                         initialValues={initialFormDevolucaoAoTesouro}
                         formRef={formRef}
+                        handleChangeCpfBuscaDespesa={handleChangeCpfBuscaDespesa}
+                        despesas={despesas}
                     />
                     <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
@@ -855,6 +862,29 @@ export const DetalhePrestacaoDeContas = () =>{
             </>
         )
     }
+    };
+
+    const handleChangeCpfBuscaDespesa = async (value, index) => {
+
+        //console.log("handleChangeCpfBuscaDespesa ", value)
+
+        let despesas_por_cpf = await getDespesasPorCpfCnpj(prestacaoDeContas.associacao.uuid, value)
+        console.log("handleChangeCpfBuscaDespesa despesas ", despesas_por_cpf)
+
+/*        setAnalisesDeContaDaPrestacao(analise=>[
+            ...analise,
+            {
+                conta_associacao: conta.conta_associacao.uuid,
+                data_extrato: '',
+                saldo_extrato:'',
+            }
+        ])*/
+
+        setDespesas({
+            ...despesas,
+            [index]: {despesas_por_cpf}
+        });
+
     };
 
     return(

@@ -1,8 +1,15 @@
 import React from "react";
 import {Formik, FieldArray} from "formik";
 
-export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeContas, initialValues}) =>{
-    //console.log("InformacoesDevolucaoAoTesouro ", initialValues)
+export const InformacoesDevolucaoAoTesouro = (
+    {
+        formRef,
+        informacoesPrestacaoDeContas,
+        initialValues,
+        handleChangeCpfBuscaDespesa,
+        despesas
+    }) =>{
+    console.log("InformacoesDevolucaoAoTesouro ", despesas)
     return(
         <>
             {informacoesPrestacaoDeContas && informacoesPrestacaoDeContas.devolucao_ao_tesouro === "Sim" &&
@@ -13,10 +20,6 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                         enableReinitialize={true}
                         validateOnBlur={true}
                         //onSubmit={metodoSalvarAnalise}
-                        onSubmit={(values, { metodoSalvarAnalise }) => {
-                            console.log({ values });
-                            //setSubmitting(false);
-                        }}
                         innerRef={formRef}
                     >
                         {props => {
@@ -28,7 +31,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                             } = props;
 
                             return (
-                                <form onSubmit={props.handleSubmit}>
+                                <form>
 
                                     <FieldArray
                                         name="devolucoes_ao_tesouro"
@@ -57,6 +60,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                             onChange={async (e) => {
                                                                                 props.handleChange(e);
                                                                                 //await handleChangeFormDevolucaoAoTesouro(values);
+                                                                                handleChangeCpfBuscaDespesa(e.target.value, index)
                                                                             }
                                                                             }
                                                                             type="text"
@@ -89,17 +93,19 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
 
 
                                                             {index >= 1 && values.devolucoes_ao_tesouro.length > 1 && (
-                                                                <div className="d-flex  justify-content-start mt-3 mb-3">
-                                                                    <button
-                                                                        type="button"
-                                                                        className="btn btn btn-outline-success mt-2 mr-2"
-                                                                        onClick={async () => {
-                                                                            await remove(index)
-                                                                        }}
+                                                                <div className='col-12'>
+                                                                    <div className="d-flex  justify-content-start mt-2 mb-3">
+                                                                        <button
+                                                                            type="button"
+                                                                            className="btn btn btn-outline-success mr-2"
+                                                                            onClick={async () => {
+                                                                                await remove(index)
+                                                                            }}
 
-                                                                    >
-                                                                        - Remover Despesa
-                                                                    </button>
+                                                                        >
+                                                                            - Remover Despesa
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
                                                             )}
 
@@ -107,10 +113,10 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
 
                                                     )
                                                 })}
-                                                <div className="d-flex  justify-content-start mt-3 mb-3">
+                                                <div className="d-flex justify-content-start mt-2 mb-3">
                                                     <button
                                                         type="button"
-                                                        className="btn btn btn-outline-success mt-2 mr-2"
+                                                        className="btn btn btn-success mr-2"
                                                         onClick={async () =>  {
                                                             push(
                                                                 {
@@ -120,7 +126,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                             );
                                                         }}
                                                     >
-                                                        + Adicionar despesa parcial
+                                                        + Adicionar outra devolução
                                                     </button>
                                                 </div>
                                             </>
