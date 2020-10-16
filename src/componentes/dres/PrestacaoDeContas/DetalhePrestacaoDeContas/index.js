@@ -71,6 +71,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 busca_por_cpf_cnpj: "",
                 busca_por_tipo_documento: "",
                 busca_por_numero_documento: "",
+                despesa_uuid: "",
                 tipo_devolucao: "",
             }
         ]

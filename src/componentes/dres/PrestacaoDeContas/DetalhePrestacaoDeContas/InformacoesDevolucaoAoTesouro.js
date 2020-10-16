@@ -1,5 +1,5 @@
-import React from "react";
-import {Formik, FieldArray} from "formik";
+import React, {Fragment} from "react";
+import {Formik, FieldArray, Field} from "formik";
 
 export const InformacoesDevolucaoAoTesouro = (
     {
@@ -109,10 +109,37 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                         <button type='button' onClick={()=>buscaDespesaPorFiltros(index)} className='btn btn-success'>Filtrar</button>
                                                                     </div>
 
-
                                                                 </div>
-
                                                             </div>
+
+                                                            <div className='col-12 mt-3'>
+                                                                <div className='col-12 py-2 container-tabela-despesas'>
+                                                                    <table className={`table tabela-despesas mb-3  ${despesas && eval('despesas.devolucao_'+index) && eval('despesas.devolucao_'+index).length > 0 ? 'table-bordered' : ''}`}>
+                                                                        <tbody>
+
+                                                                            {despesas && eval('despesas.devolucao_'+index) && eval('despesas.devolucao_'+index).length > 0 ?
+
+                                                                                eval('despesas.devolucao_'+index).map((despesa, index)=>
+                                                                                    <Fragment key={index}>
+                                                                                        <tr className='divisao'>
+                                                                                            <td className='td-com-despesas'><Field type="radio" name={`devolucoes_ao_tesouro[${index}].despesa_uuid`} value={despesa.uuid} /></td>
+                                                                                            <td className='td-com-despesas'>{despesa.nome_fornecedor}</td>
+                                                                                            <td className='td-com-despesas'>{despesa.cpf_cnpj_fornecedor}</td>
+                                                                                            <td className='td-com-despesas'>{despesa.numero_documento}</td>
+                                                                                            <td className='td-com-despesas'>{despesa.valor_total}</td>
+                                                                                            <td className='td-com-despesas'>{despesa.data_documento}</td>
+                                                                                        </tr>
+                                                                                    </Fragment>
+                                                                                ):
+                                                                                <tr>
+                                                                                    <td className='td-sem-despesas'><p className='mb-0'>Não existem itens para essa pesquisa</p></td>
+                                                                                </tr>
+                                                                            }
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+
 
 
                                                             <div className='col-12 mt-2'>
@@ -165,6 +192,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                     busca_por_cpf_cnpj: "",
                                                                     busca_por_tipo_documento: "",
                                                                     busca_por_numero_documento: "",
+                                                                    despesa_uuid: "",
                                                                     tipo_devolucao: "",
                                                                 }
                                                             );
