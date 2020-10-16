@@ -25,6 +25,7 @@ import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas
 import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
 import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
+import {getDespesasTabelas, getEspecificacoesCusteio} from "../../../../services/escolas/Despesas.service";
 
 require("ordinal-pt-br");
 
@@ -73,6 +74,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 busca_por_numero_documento: "",
                 despesa_uuid: "",
                 tipo_devolucao: "",
+                data: "",
             }
         ]
 
@@ -100,6 +102,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [stateConcluirAnalise, setStateConcluirAnalise] = useState(initialConcluirAnalise);
     const [initialFormDevolucaoAoTesouro, setInitialFormDevolucaoAoTesouro] = useState(initialDevolucaoAoTesouro);
     const [despesas, setDespesas] = useState([]);
+    const [despesasTabelas, setDespesasTabelas] = useState([]);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -115,6 +118,14 @@ export const DetalhePrestacaoDeContas = () =>{
     useEffect(()=>{
         getPrimeiraAtaPorConta()
     }, [infoAta]);
+
+    useEffect(() => {
+        const carregaTabelasDespesas = async () => {
+            const resp = await getDespesasTabelas();
+            setDespesasTabelas(resp);
+        };
+        carregaTabelasDespesas();
+    }, []);
 
     const getAnalisePrestacao = async ()=>{
         if (prestacao_conta_uuid) {
@@ -629,6 +640,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         despesas={despesas}
                         buscaDespesaPorFiltros={buscaDespesaPorFiltros}
                         valorTemplate={valorTemplate}
+                        despesasTabelas={despesasTabelas}
                     />
                     <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
