@@ -57,7 +57,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                         <div className="col-12 col mt-2">
                                                             <div className='row'>
                                                                 <div className='col'>
-                                                                    <label htmlFor="busca_por_cpf_cnpj">Busque por CNPJ ou CPF</label>
+                                                                    <label className='labels-filtros' htmlFor="busca_por_cpf_cnpj">Busque por CNPJ ou CPF</label>
 
                                                                     <input
                                                                         name={`devolucoes_ao_tesouro[${index}].busca_por_cpf_cnpj`}
@@ -73,7 +73,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 </div>
 
                                                                 <div className='col'>
-                                                                    <label htmlFor="busca_por_tipo_documento">Busque por tipo de documento</label>
+                                                                    <label className='labels-filtros' htmlFor="busca_por_tipo_documento">Busque por tipo de documento</label>
 
                                                                     <select
                                                                         name={`devolucoes_ao_tesouro[${index}].busca_por_tipo_documento`}
@@ -94,8 +94,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 </div>
 
                                                                 <div className='col'>
-                                                                    <label htmlFor="busca_por_numero_documento">Busque por número do documento</label>
-
+                                                                    <label className='labels-filtros' htmlFor="busca_por_numero_documento">Busque por número do documento</label>
                                                                     <input
                                                                         name={`devolucoes_ao_tesouro[${index}].busca_por_numero_documento`}
                                                                         value={devolucao.busca_por_numero_documento}
@@ -108,8 +107,8 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                         //placeholder=""
                                                                     />
                                                                 </div>
-                                                                <div className='col'>
-                                                                    <button type='button' onClick={()=>buscaDespesaPorFiltros(index)} className='btn btn-success'>Filtrar</button>
+                                                                <div className='col-12 text-right'>
+                                                                    <button name='btnFiltrar' type='button' onClick={()=>buscaDespesaPorFiltros(index)} className='btn btn-success mt-2'>Filtrar</button>
                                                                 </div>
 
                                                             </div>
