@@ -292,8 +292,6 @@ export const DetalhePrestacaoDeContas = () =>{
                     }
                 ])
             }
-
-
         }
     };
 
@@ -383,8 +381,6 @@ export const DetalhePrestacaoDeContas = () =>{
             [name]: value
         });
     };
-
-
 
     const salvarAnalise = async () =>{
 
@@ -630,10 +626,9 @@ export const DetalhePrestacaoDeContas = () =>{
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
                         initialValues={initialFormDevolucaoAoTesouro}
                         formRef={formRef}
-                        handleChangeCpfBuscaDespesa={handleChangeCpfBuscaDespesa}
                         despesas={despesas}
                         buscaDespesaPorFiltros={buscaDespesaPorFiltros}
-                        valoresIniciaisPush={initialDevolucaoAoTesouro}
+                        valorTemplate={valorTemplate}
                     />
                     <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
@@ -869,54 +864,26 @@ export const DetalhePrestacaoDeContas = () =>{
     }
     };
 
-    const handleChangeCpfBuscaDespesa = async (value, index) => {
-
-        //console.log("handleChangeCpfBuscaDespesa ", value)
-
-        let despesas_por_cpf = await getDespesasPorFiltros(prestacaoDeContas.associacao.uuid, value)
-        console.log("handleChangeCpfBuscaDespesa despesas ", despesas_por_cpf)
-
-        // setDespesas({
-        //     ...despesas,
-        //     [index]: {despesas_por_cpf}
-        // });
-
-        // [`usuario_${getUsuarioLogin()}`]
-
-
-        setDespesas({
-            ...despesas,
-            [`devolucao_${index}`]: [...despesas_por_cpf]
-        });
-
-    };
-
     const buscaDespesaPorFiltros = async (index) =>{
-
-        //console.log("AQUI buscaDespesaPorFiltros index ", index)
 
         let valores, cpf, tipo_documento, numero_documento;
 
         if (formRef.current) {
-            //console.log("AQUI buscaDespesaPorFiltros formRef.current.values ", formRef.current.values)
             valores = formRef.current.values.devolucoes_ao_tesouro[index]
-
-            //console.log("AQUI buscaDespesaPorFiltros valores ", valores)
             cpf = valores.busca_por_cpf_cnpj ? valores.busca_por_cpf_cnpj : "";
             tipo_documento = valores.busca_por_tipo_documento ? valores.busca_por_tipo_documento : '';
             numero_documento = valores.busca_por_numero_documento ? valores.busca_por_numero_documento : '';
 
-            let despesas_por_cpf = await getDespesasPorFiltros(prestacaoDeContas.associacao.uuid, cpf, tipo_documento, numero_documento)
-            console.log("handleChangeCpfBuscaDespesa despesas ", despesas_por_cpf)
+            let despesas_por_filtros = await getDespesasPorFiltros(prestacaoDeContas.associacao.uuid, cpf, tipo_documento, numero_documento)
+            //console.log("buscaDespesaPorFiltros despesas ", despesas_por_filtros)
 
             setDespesas({
                 ...despesas,
-                [`devolucao_${index}`]: [...despesas_por_cpf]
+                [`devolucao_${index}`]: [...despesas_por_filtros]
             });
         }
 
-
-    }
+    };
 
     return(
         <PaginasContainer>
