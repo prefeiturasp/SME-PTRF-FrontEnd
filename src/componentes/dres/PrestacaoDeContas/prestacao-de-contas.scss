@@ -215,6 +215,8 @@
   background-color: #C4C4C4;
 }
 
-.labels-filtros{
-  font-size: 14px !important;
+@media (max-width: 1200px) {
+  .labels-filtros {
+    font-size: 14px !important;
+  }
 }
