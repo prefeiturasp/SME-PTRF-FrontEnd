@@ -86,7 +86,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                     >
                                                                         <option value="">Selecione o tipo</option>
                                                                         {despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.map(item =>
-                                                                            <option key={item.id} value={item.uuid}>{item.nome}</option>
+                                                                            <option key={item.id} value={item.id}>{item.nome}</option>
                                                                         )
                                                                         }
 

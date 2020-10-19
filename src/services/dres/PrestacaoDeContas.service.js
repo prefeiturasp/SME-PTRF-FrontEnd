@@ -81,8 +81,8 @@ export const getDesfazerConclusaoAnalise = async (prestacao_conta_uuid) => {
     return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-conclusao-analise/`, authHeader)).data
 };
 
-export const getDespesasPorFiltros = async (associacao_uuid, cpf_cnpj_fornecedor='', tipo_documento__uuid='', numero_documento='') => {
-    return (await api.get(`/api/despesas/?associacao__uuid=${associacao_uuid}&cpf_cnpj_fornecedor=${cpf_cnpj_fornecedor}&tipo_documento__uuid=${tipo_documento__uuid}&numero_documento=${numero_documento}`, authHeader)).data
+export const getDespesasPorFiltros = async (associacao_uuid, cpf_cnpj_fornecedor='', tipo_documento__id='', numero_documento='') => {
+    return (await api.get(`/api/despesas/?associacao__uuid=${associacao_uuid}&cpf_cnpj_fornecedor=${cpf_cnpj_fornecedor}&tipo_documento__id=${tipo_documento__id}&numero_documento=${numero_documento}`, authHeader)).data
 };
 
 

@@ -25,7 +25,7 @@ import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas
 import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
 import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
-import {getDespesasTabelas, getEspecificacoesCusteio} from "../../../../services/escolas/Despesas.service";
+import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 
 require("ordinal-pt-br");
 
@@ -103,6 +103,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [initialFormDevolucaoAoTesouro, setInitialFormDevolucaoAoTesouro] = useState(initialDevolucaoAoTesouro);
     const [despesas, setDespesas] = useState([]);
     const [despesasTabelas, setDespesasTabelas] = useState([]);
+    const [objetoDespesasUuid, setObjetoDespesasUuid] = useState([]);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -894,6 +895,17 @@ export const DetalhePrestacaoDeContas = () =>{
                 [`devolucao_${index}`]: [...despesas_por_filtros]
             });
         }
+
+    };
+
+    const handleChangeObjetoDespesasUuid = (despesa_uuid) => {
+
+        setObjetoDespesasUuid(analise=>[
+            ...objetoDespesasUuid,
+            {
+                despesa_uui: despesa_uuid,
+            }
+        ])
 
     };
 
