@@ -10,6 +10,7 @@ import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
 import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getDespesa} from "../../../../services/escolas/Despesas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {ModalNaoRecebida} from "../ModalNaoRecebida";
@@ -136,9 +137,6 @@ export const DetalhePrestacaoDeContas = () =>{
     useEffect(() => {
         const carregaTiposDevolucao = async () => {
             const resp = await getTiposDevolucao();
-
-            console.log("Tipos devolucao ", resp)
-
             setTiposDevolucao(resp);
         };
         carregaTiposDevolucao();
@@ -187,7 +185,8 @@ export const DetalhePrestacaoDeContas = () =>{
 
             if (prestacao && prestacao.devolucoes_ao_tesouro_da_prestacao && prestacao.devolucoes_ao_tesouro_da_prestacao.length > 0 ){
                 let devolucoes_ao_tesouro_da_prestacao = [];
-                prestacao.devolucoes_ao_tesouro_da_prestacao.map((devolucao)=>{
+                prestacao.devolucoes_ao_tesouro_da_prestacao.map((devolucao, index)=>{
+                    buscaDespesa(devolucao.despesa.uuid, index);
                     devolucoes_ao_tesouro_da_prestacao.push({
                         busca_por_cpf_cnpj: "",
                         busca_por_tipo_documento: "",
@@ -196,7 +195,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         tipo: devolucao.tipo.uuid,
                         data: devolucao.data,
                         devolucao_total: devolucao.devolucao_total,
-                        valor: devolucao.valor,
+                        valor: devolucao.valor ?  valorTemplate(devolucao.valor) : '',
                         motivo: devolucao.motivo,
                     })
                 });
@@ -456,16 +455,16 @@ export const DetalhePrestacaoDeContas = () =>{
             analise.saldo_extrato = analise.saldo_extrato ? trataNumericos(analise.saldo_extrato) : 0;
         });
         const payload = {
-            devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
+            devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro !== 'Não',
             analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
             devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
         };
 
-        console.log("AQUI salvarAnalise XXXXXX payload ", payload)
+        //console.log("AQUI salvarAnalise XXXXXX payload ", payload)
 
         let salvar = await getSalvarAnalise(prestacaoDeContas.uuid, payload);
 
-        console.log("AQUI salvarAnalise XXXXXX payload ", salvar)
+        //console.log("AQUI salvarAnalise XXXXXX payload ", salvar)
 
         await carregaPrestacaoDeContas();
         //window.location.reload()
@@ -696,6 +695,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         formRef={formRef}
                         despesas={despesas}
                         buscaDespesaPorFiltros={buscaDespesaPorFiltros}
+                        buscaDespesa={buscaDespesa}
                         valorTemplate={valorTemplate}
                         despesasTabelas={despesasTabelas}
                         tiposDevolucao={tiposDevolucao}
@@ -945,15 +945,67 @@ export const DetalhePrestacaoDeContas = () =>{
             numero_documento = valores.busca_por_numero_documento ? valores.busca_por_numero_documento : '';
 
             let despesas_por_filtros = await getDespesasPorFiltros(prestacaoDeContas.associacao.uuid, cpf, tipo_documento, numero_documento)
-            //console.log("buscaDespesaPorFiltros despesas ", despesas_por_filtros)
+
+            console.log("despesas_por_filtros ", despesas_por_filtros)
 
             setDespesas({
                 ...despesas,
-                [`devolucao_${index}`]: [...despesas_por_filtros]
+                [index]: [...despesas_por_filtros]
             });
         }
 
     };
+
+    const buscaDespesa = async (despesa_uuid, index) =>{
+
+        //console.log("Busca Despesa despesa_uuid ", despesa_uuid)
+        //console.log("Busca Despesa index ", index)
+
+        if (despesa_uuid){
+            let despesa = await getDespesa(despesa_uuid)
+
+            console.log("Busca Despesa ", despesa)
+
+
+            setDespesas(prevArray => [...prevArray , despesa])
+
+
+            // setDespesas(analise=>[
+            //     ...analise,
+            //     {
+            //         [`devolucao_${index}`]:
+            //             {
+            //                 campo:despesa.uuid
+            //             }
+            //
+            //     }
+            // ])
+
+
+/*            setDespesas(analise=>[
+                ...analise,
+                {
+                    [`devolucao_${index}`]: {...despesa}
+                }
+            ])*/
+
+            // setDespesas(analise=>[
+            //     ...analise,
+            //     {
+            //         [`devolucao_${index}`]: [{...despesa}]
+            //     }
+            // ])
+
+            // setDespesas({
+            //     ...despesas,
+            //     [`devolucao_${index}`]: [{...despesa}]
+            // });
+
+
+        }
+
+
+    }
 
     const handleChangeObjetoDespesasUuid = (despesa_uuid) => {
 

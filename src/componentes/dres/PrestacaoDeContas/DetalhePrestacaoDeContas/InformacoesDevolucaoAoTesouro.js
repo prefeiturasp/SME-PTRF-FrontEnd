@@ -11,15 +11,23 @@ export const InformacoesDevolucaoAoTesouro = (
         initialValues,
         despesas,
         buscaDespesaPorFiltros,
+        buscaDespesa,
         valorTemplate,
         despesasTabelas,
         tiposDevolucao,
     }) =>{
-    console.log("InformacoesDevolucaoAoTesouro ", initialValues)
+    console.log("InformacoesDevolucaoAoTesouro ", despesas);
+
+    const buscarDespesaPorUuid = (despesa_uuid, index) => {
+        if (despesa_uuid && index){
+            //buscaDespesa(despesa_uuid, index)
+        }
+
+    }
 
     return(
         <>
-            {informacoesPrestacaoDeContas && informacoesPrestacaoDeContas.devolucao_ao_tesouro === "Sim" &&
+            {informacoesPrestacaoDeContas && informacoesPrestacaoDeContas.devolucao_ao_tesouro !== "Não" &&
             <>
                 <h1>devolucaoAoTesouro</h1>
                 <Formik
@@ -63,7 +71,7 @@ export const InformacoesDevolucaoAoTesouro = (
 
                                                                     <input
                                                                         name={`devolucoes_ao_tesouro_da_prestacao[${index}].busca_por_cpf_cnpj`}
-                                                                        value={devolucao.busca_por_cpf_cnpj}
+                                                                        value={devolucao.busca_por_cpf_cnpj ? devolucao.busca_por_cpf_cnpj : ''}
                                                                         onChange={async (e) => {
                                                                             props.handleChange(e);
                                                                         }
@@ -79,7 +87,7 @@ export const InformacoesDevolucaoAoTesouro = (
 
                                                                     <select
                                                                         name={`devolucoes_ao_tesouro_da_prestacao[${index}].busca_por_tipo_documento`}
-                                                                        value={devolucao.busca_por_tipo_documento}
+                                                                        value={devolucao.busca_por_tipo_documento ? devolucao.busca_por_tipo_documento : '' }
                                                                         onChange={async (e) => {
                                                                             props.handleChange(e);
                                                                         }
@@ -95,11 +103,13 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                     </select>
                                                                 </div>
 
+                                                                {/*{devolucao && devolucao.despesa && buscarDespesaPorUuid(devolucao.despesa, index)}*/}
+
                                                                 <div className='col'>
                                                                     <label className='labels-filtros' htmlFor="busca_por_numero_documento">Busque por número do documento</label>
                                                                     <input
                                                                         name={`devolucoes_ao_tesouro_da_prestacao[${index}].busca_por_numero_documento`}
-                                                                        value={devolucao.busca_por_numero_documento}
+                                                                        value={devolucao.busca_por_numero_documento ? devolucao.busca_por_numero_documento : ''}
                                                                         onChange={async (e) => {
                                                                             props.handleChange(e);
                                                                         }
@@ -206,7 +216,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 prefix='R$'
                                                                 decimalSeparator=","
                                                                 thousandSeparator="."
-                                                                value={devolucao.valor ? valorTemplate(devolucao.valor) : ''}
+                                                                value={devolucao.valor}
                                                                 name={`devolucoes_ao_tesouro_da_prestacao[${index}].valor`}
                                                                 onChangeEvent={(e) => {
                                                                     props.handleChange(e);
