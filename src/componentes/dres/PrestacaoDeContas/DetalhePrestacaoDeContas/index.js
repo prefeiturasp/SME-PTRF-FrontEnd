@@ -110,6 +110,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [despesasTabelas, setDespesasTabelas] = useState([]);
     const [tiposDevolucao, setTiposDevolucao] = useState([]);
     const [objetoDespesasUuid, setObjetoDespesasUuid] = useState([]);
+    const [camposObrigatorios, setCamposObrigatorios] = useState(false);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -430,12 +431,14 @@ export const DetalhePrestacaoDeContas = () =>{
 
         let devolucao_ao_tesouro_tratado;
 
+        console.log("XXXXXXXXXX ", formRef.current)
+
         if (formRef.current) {
             devolucao_ao_tesouro_tratado = formRef.current.values.devolucoes_ao_tesouro_da_prestacao;
 
             if (devolucao_ao_tesouro_tratado.length > 0 ){
 
-                devolucao_ao_tesouro_tratado.map((devolucao)=>{
+                devolucao_ao_tesouro_tratado.map((devolucao, index)=>{
                     delete devolucao.busca_por_cpf_cnpj;
                     delete devolucao.busca_por_tipo_documento;
                     delete devolucao.busca_por_numero_documento;
@@ -449,7 +452,6 @@ export const DetalhePrestacaoDeContas = () =>{
             devolucao_ao_tesouro_tratado=[];
         }
 
-
         analisesDeContaDaPrestacao.map((analise)=>{
             analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;
             analise.saldo_extrato = analise.saldo_extrato ? trataNumericos(analise.saldo_extrato) : 0;
@@ -460,14 +462,21 @@ export const DetalhePrestacaoDeContas = () =>{
             devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
         };
 
-        //console.log("AQUI salvarAnalise XXXXXX payload ", payload)
+        let validar =  await validateFormDevolucaoAoTesouro(formRef.current.values);
 
-        let salvar = await getSalvarAnalise(prestacaoDeContas.uuid, payload);
+        console.log("AQUI salvarAnalise XXXXXX payload ", validar)
 
-        //console.log("AQUI salvarAnalise XXXXXX payload ", salvar)
+        if (!camposObrigatorios && Object.entries(validar).length === 0){
+            let salvar = await getSalvarAnalise(prestacaoDeContas.uuid, payload);
+            await carregaPrestacaoDeContas();
+            window.location.reload()
+        }else {
+            //alert("Todos os campos são obrigatórios")
 
-        await carregaPrestacaoDeContas();
-        //window.location.reload()
+            return formRef.current.setErrors( validar )
+        }
+
+
     };
 
     const onHandleClose = () => {
@@ -699,6 +708,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         valorTemplate={valorTemplate}
                         despesasTabelas={despesasTabelas}
                         tiposDevolucao={tiposDevolucao}
+                        validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
                     />
                     <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
@@ -945,9 +955,6 @@ export const DetalhePrestacaoDeContas = () =>{
             numero_documento = valores.busca_por_numero_documento ? valores.busca_por_numero_documento : '';
 
             let despesas_por_filtros = await getDespesasPorFiltros(prestacaoDeContas.associacao.uuid, cpf, tipo_documento, numero_documento)
-
-            console.log("despesas_por_filtros ", despesas_por_filtros)
-
             setDespesas({
                 ...despesas,
                 [`devolucao_${index}`]: [...despesas_por_filtros]
@@ -957,65 +964,25 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const buscaDespesa = async (despesa_uuid, index) =>{
-
-        //console.log("Busca Despesa despesa_uuid ", despesa_uuid)
-        //console.log("Busca Despesa index ", index)
-
         if (despesa_uuid){
             let despesa = await getDespesa(despesa_uuid)
-
-            console.log("Busca Despesa ", despesa)
-            
             setDespesas(prevState => ({ ...prevState,  [`devolucao_${index}`]: [despesa]}));
-
-
-            // setDespesas(analise=>[
-            //     ...analise,
-            //     {
-            //         [`devolucao_${index}`]:
-            //             {
-            //                 campo:despesa.uuid
-            //             }
-            //
-            //     }
-            // ])
-
-
-/*            setDespesas(analise=>[
-                ...analise,
-                {
-                    [`devolucao_${index}`]: {...despesa}
-                }
-            ])*/
-
-            // setDespesas(analise=>[
-            //     ...analise,
-            //     {
-            //         [`devolucao_${index}`]: [{...despesa}]
-            //     }
-            // ])
-
-            // setDespesas({
-            //     ...despesas,
-            //     [`devolucao_${index}`]: [{...despesa}]
-            // });
-
-
         }
-
-
-    }
-
-    const handleChangeObjetoDespesasUuid = (despesa_uuid) => {
-
-        setObjetoDespesasUuid(analise=>[
-            ...objetoDespesasUuid,
-            {
-                despesa_uui: despesa_uuid,
-            }
-        ])
-
     };
+
+    const validateFormDevolucaoAoTesouro = async (values) => {
+        console.log("validateFormDevolucaoAoTesouro ", values)
+        const errors = {};
+        values.devolucoes_ao_tesouro_da_prestacao.map((devolucao)=>{
+            if (!devolucao.data || !devolucao.despesa || devolucao.devolucao_total === '' || !devolucao.motivo || !devolucao.tipo || !devolucao.valor){
+                setCamposObrigatorios(true);
+                errors.campos_obrigatorios = "Todos os campos são obrigatórios";
+            }else {
+                setCamposObrigatorios(false)
+            }
+        });
+        return errors;
+    }
 
     return(
         <PaginasContainer>

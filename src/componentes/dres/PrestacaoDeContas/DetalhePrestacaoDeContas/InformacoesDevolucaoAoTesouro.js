@@ -11,19 +11,12 @@ export const InformacoesDevolucaoAoTesouro = (
         initialValues,
         despesas,
         buscaDespesaPorFiltros,
-        buscaDespesa,
         valorTemplate,
         despesasTabelas,
         tiposDevolucao,
+        validateFormDevolucaoAoTesouro,
     }) =>{
-    console.log("InformacoesDevolucaoAoTesouro ", despesas);
-
-    const buscarDespesaPorUuid = (despesa_uuid, index) => {
-        if (despesa_uuid && index){
-            //buscaDespesa(despesa_uuid, index)
-        }
-
-    }
+    //console.log("InformacoesDevolucaoAoTesouro ", despesas);
 
     return(
         <>
@@ -34,7 +27,7 @@ export const InformacoesDevolucaoAoTesouro = (
                     initialValues={initialValues}
                     enableReinitialize={true}
                     validateOnBlur={true}
-                    //onSubmit={metodoSalvarAnalise}
+                    validate={validateFormDevolucaoAoTesouro}
                     innerRef={formRef}
                 >
                     {props => {
@@ -204,8 +197,8 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                     className='form-control'
                                                                 >
                                                                     <option value="">Selecione o tipo</option>
-                                                                    <option value={true}>Valor total</option>
-                                                                    <option value={false}>Valor parcial</option>
+                                                                    <option value={'true'}>Valor total</option>
+                                                                    <option value={'false'}>Valor parcial</option>
                                                                 </select>
                                                         </div>
 
@@ -263,6 +256,14 @@ export const InformacoesDevolucaoAoTesouro = (
 
                                                 )
                                             })}
+
+                                            {props.errors.campos_obrigatorios &&
+                                                <div className="row">
+                                                    <div className="col-12 mt-2">
+                                                        <span className="text-danger"> <strong>{props.errors.campos_obrigatorios}</strong></span>
+                                                    </div>
+                                                </div>
+                                            }
                                             <div className="d-flex justify-content-start mt-3 mb-3">
                                                 <button
                                                     type="button"
