@@ -15,7 +15,7 @@ export const InformacoesDevolucaoAoTesouro = (
         despesasTabelas,
         tiposDevolucao,
     }) =>{
-    console.log("InformacoesDevolucaoAoTesouro ", despesasTabelas)
+    console.log("InformacoesDevolucaoAoTesouro ", tiposDevolucao)
 
     return(
         <>
@@ -41,10 +41,10 @@ export const InformacoesDevolucaoAoTesouro = (
                             <form>
 
                                 <FieldArray
-                                    name="devolucoes_ao_tesouro"
+                                    name="devolucoes_ao_tesouro_da_prestacao"
                                     render={({remove, push}) => (
                                         <>
-                                            {values.devolucoes_ao_tesouro && values.devolucoes_ao_tesouro.length > 0 && values.devolucoes_ao_tesouro.map((devolucao, index) => {
+                                            {values.devolucoes_ao_tesouro_da_prestacao && values.devolucoes_ao_tesouro_da_prestacao.length > 0 && values.devolucoes_ao_tesouro_da_prestacao.map((devolucao, index) => {
                                                 return (
                                                     <div className="row" key={index}>
 
@@ -62,7 +62,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                     <label className='labels-filtros' htmlFor="busca_por_cpf_cnpj">Busque por CNPJ ou CPF</label>
 
                                                                     <input
-                                                                        name={`devolucoes_ao_tesouro[${index}].busca_por_cpf_cnpj`}
+                                                                        name={`devolucoes_ao_tesouro_da_prestacao[${index}].busca_por_cpf_cnpj`}
                                                                         value={devolucao.busca_por_cpf_cnpj}
                                                                         onChange={async (e) => {
                                                                             props.handleChange(e);
@@ -78,7 +78,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                     <label className='labels-filtros' htmlFor="busca_por_tipo_documento">Busque por tipo de documento</label>
 
                                                                     <select
-                                                                        name={`devolucoes_ao_tesouro[${index}].busca_por_tipo_documento`}
+                                                                        name={`devolucoes_ao_tesouro_da_prestacao[${index}].busca_por_tipo_documento`}
                                                                         value={devolucao.busca_por_tipo_documento}
                                                                         onChange={async (e) => {
                                                                             props.handleChange(e);
@@ -98,7 +98,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 <div className='col'>
                                                                     <label className='labels-filtros' htmlFor="busca_por_numero_documento">Busque por número do documento</label>
                                                                     <input
-                                                                        name={`devolucoes_ao_tesouro[${index}].busca_por_numero_documento`}
+                                                                        name={`devolucoes_ao_tesouro_da_prestacao[${index}].busca_por_numero_documento`}
                                                                         value={devolucao.busca_por_numero_documento}
                                                                         onChange={async (e) => {
                                                                             props.handleChange(e);
@@ -127,7 +127,7 @@ export const InformacoesDevolucaoAoTesouro = (
 
                                                                             <Fragment key={index_interno}>
                                                                                 <tr className='divisao'>
-                                                                                    <td className='td-com-despesas'><Field type="radio" name={`devolucoes_ao_tesouro[${index}].despesa_uuid`} value={despesa.uuid} /></td>
+                                                                                    <td className='td-com-despesas'><Field type="radio" name={`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`} value={despesa.uuid} /></td>
                                                                                     <td className='td-com-despesas'>{despesa.nome_fornecedor}</td>
                                                                                     <td className='td-com-despesas'>{despesa.cpf_cnpj_fornecedor}</td>
                                                                                     <td className='td-com-despesas'>{despesa.tipo_documento && despesa.tipo_documento.nome ? despesa.tipo_documento.nome : ''}</td>
@@ -148,11 +148,11 @@ export const InformacoesDevolucaoAoTesouro = (
 
                                                         <div className='col-12 col-md-9 mt-2'>
                                                             <div className="form-group">
-                                                                <label htmlFor="tipo_devolucao">Tipo de devolução</label>
+                                                                <label htmlFor="tipo">Tipo de devolução</label>
 
                                                                 <select
-                                                                    name={`devolucoes_ao_tesouro[${index}].tipo_devolucao`}
-                                                                    value={devolucao.tipo_devolucao}
+                                                                    name={`devolucoes_ao_tesouro_da_prestacao[${index}].tipo`}
+                                                                    value={devolucao.tipo}
                                                                     onChange={async (e) => {
                                                                         props.handleChange(e);
                                                                     }
@@ -165,7 +165,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                     )
                                                                     }
                                                                  </select>
-                                                                {props.errors.tipo_devolucao && <span className="text-danger mt-1">{props.errors.tipo_devolucao}</span>}
+                                                                {props.errors.tipo && <span className="text-danger mt-1">{props.errors.tipo}</span>}
                                                             </div>
                                                         </div>
 
@@ -173,7 +173,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                             <div className="form-group">
                                                                 <label htmlFor="data">Data da devolução</label>
                                                                 <DatePickerField
-                                                                    name={`devolucoes_ao_tesouro[${index}].data`}
+                                                                    name={`devolucoes_ao_tesouro_da_prestacao[${index}].data`}
                                                                     value={devolucao.data}
                                                                     onChange={setFieldValue}
                                                                 />
@@ -182,10 +182,10 @@ export const InformacoesDevolucaoAoTesouro = (
                                                         </div>
 
                                                         <div className='col-12 col-md-6'>
-                                                                <label className='labels-filtros' htmlFor="valor_total_parcial">Valor total ou parcial da despesa</label>
+                                                                <label className='labels-filtros' htmlFor="devolucao_total">Valor total ou parcial da despesa</label>
                                                                  <select
-                                                                    name={`devolucoes_ao_tesouro[${index}].valor_total_parcial`}
-                                                                    value={devolucao.valor_total_parcial}
+                                                                    name={`devolucoes_ao_tesouro_da_prestacao[${index}].devolucao_total`}
+                                                                    value={devolucao.devolucao_total}
                                                                     onChange={async (e) => {
                                                                         props.handleChange(e);
                                                                     }
@@ -206,7 +206,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 decimalSeparator=","
                                                                 thousandSeparator="."
                                                                 value={devolucao.valor}
-                                                                name={`devolucoes_ao_tesouro[${index}].valor`}
+                                                                name={`devolucoes_ao_tesouro_da_prestacao[${index}].valor`}
                                                                 onChangeEvent={(e) => {
                                                                     props.handleChange(e);
                                                                 }}
@@ -214,9 +214,23 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 selectAllOnFocus={true}
                                                             />
                                                         </div>
+                                                        <div className='col-12 col-md-6'>
+                                                            <label htmlFor="motivo">Motivo:</label>
+                                                            <textarea
+                                                                value={devolucao.motivo}
+                                                                name={`devolucoes_ao_tesouro_da_prestacao[${index}].motivo`}
+                                                                onChange={(e) => {
+                                                                    props.handleChange(e);
+                                                                }}
+                                                                className="form-control"
+                                                                rows="3"
+                                                            >
+
+                                                            </textarea>
+                                                        </div>
 
 
-                                                        {index >= 1 && values.devolucoes_ao_tesouro.length > 1 && (
+                                                        {index >= 1 && values.devolucoes_ao_tesouro_da_prestacao.length > 1 && (
                                                             <div className='col-12'>
                                                                 <div className="d-flex  justify-content-start mt-2 mb-3">
                                                                     <button
@@ -225,7 +239,6 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                         onClick={async () => {
                                                                             await remove(index)
                                                                         }}
-
                                                                     >
                                                                         - Remover Despesa
                                                                     </button>
@@ -237,7 +250,7 @@ export const InformacoesDevolucaoAoTesouro = (
 
                                                 )
                                             })}
-                                            <div className="d-flex justify-content-start mt-2 mb-3">
+                                            <div className="d-flex justify-content-start mt-3 mb-3">
                                                 <button
                                                     type="button"
                                                     className="btn btn btn-success mr-2"
@@ -247,11 +260,12 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 busca_por_cpf_cnpj: "",
                                                                 busca_por_tipo_documento: "",
                                                                 busca_por_numero_documento: "",
-                                                                despesa_uuid: "",
-                                                                tipo_devolucao: "",
+                                                                despesa: "",
+                                                                tipo: "",
                                                                 data: "",
-                                                                valor_total_parcial: "",
+                                                                devolucao_total: "",
                                                                 valor: "",
+                                                                motivo: "",
                                                             }
                                                         );
                                                     }}

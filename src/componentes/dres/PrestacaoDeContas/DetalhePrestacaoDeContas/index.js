@@ -67,16 +67,17 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const initialDevolucaoAoTesouro = {
-        devolucoes_ao_tesouro: [
+        devolucoes_ao_tesouro_da_prestacao: [
             {
                 busca_por_cpf_cnpj: "",
                 busca_por_tipo_documento: "",
                 busca_por_numero_documento: "",
-                despesa_uuid: "",
-                tipo_devolucao: "",
+                despesa: "",
+                tipo: "",
                 data: "",
-                valor_total_parcial: "",
+                devolucao_total: "",
                 valor: "",
+                motivo: "",
             }
         ]
 
@@ -897,7 +898,7 @@ export const DetalhePrestacaoDeContas = () =>{
         let valores, cpf, tipo_documento, numero_documento;
 
         if (formRef.current) {
-            valores = formRef.current.values.devolucoes_ao_tesouro[index]
+            valores = formRef.current.values.devolucoes_ao_tesouro_da_prestacao[index]
             cpf = valores.busca_por_cpf_cnpj ? valores.busca_por_cpf_cnpj : "";
             tipo_documento = valores.busca_por_tipo_documento ? valores.busca_por_tipo_documento : '';
             numero_documento = valores.busca_por_numero_documento ? valores.busca_por_numero_documento : '';
