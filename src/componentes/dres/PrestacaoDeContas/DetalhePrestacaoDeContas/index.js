@@ -950,7 +950,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
             setDespesas({
                 ...despesas,
-                [index]: [...despesas_por_filtros]
+                [`devolucao_${index}`]: [...despesas_por_filtros]
             });
         }
 
@@ -965,9 +965,8 @@ export const DetalhePrestacaoDeContas = () =>{
             let despesa = await getDespesa(despesa_uuid)
 
             console.log("Busca Despesa ", despesa)
-
-
-            setDespesas(prevArray => [...prevArray , despesa])
+            
+            setDespesas(prevState => ({ ...prevState,  [`devolucao_${index}`]: [despesa]}));
 
 
             // setDespesas(analise=>[
