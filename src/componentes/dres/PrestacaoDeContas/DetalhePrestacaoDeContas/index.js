@@ -426,6 +426,32 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
 
+
+
+    const onHandleClose = () => {
+        setShowReabrirPc(false);
+        setShowNaoRecebida(false);
+        setShowRecebida(false);
+        setShowConcluirAnalise(false);
+        setShowVoltarParaAnalise(false);
+    };
+
+    const onReabrirTrue = async () => {
+        setShowReabrirPc(false);
+        await reabrirPrestacaoDeContas();
+    };
+
+    const onNaoRecebida = async () => {
+        setShowNaoRecebida(false);
+        await desfazerRecebimento();
+    };
+
+    const onRecebida = async () => {
+        setShowRecebida(false);
+        await desfazerAnalise();
+    };
+
+
     const salvarAnalise = async () =>{
 
         let devolucao_ao_tesouro_tratado;
@@ -474,38 +500,31 @@ export const DetalhePrestacaoDeContas = () =>{
 
     };
 
-    const onHandleClose = () => {
-        setShowReabrirPc(false);
-        setShowNaoRecebida(false);
-        setShowRecebida(false);
-        setShowConcluirAnalise(false);
-        setShowVoltarParaAnalise(false);
-    };
-
-    const onReabrirTrue = async () => {
-        setShowReabrirPc(false);
-        await reabrirPrestacaoDeContas();
-    };
-
-    const onNaoRecebida = async () => {
-        setShowNaoRecebida(false);
-        await desfazerRecebimento();
-    };
-
-    const onRecebida = async () => {
-        setShowRecebida(false);
-        await desfazerAnalise();
-    };
-
     const onConcluirAnalise = async () => {
         setShowConcluirAnalise(false);
 
+        let devolucao_ao_tesouro_tratado;
+
         if (formRef.current) {
-            console.log("AQUI onConcluirAnalise XXXXXX", formRef.current.values)
-            //formRef.current.handleSubmit()
+            devolucao_ao_tesouro_tratado = formRef.current.values.devolucoes_ao_tesouro_da_prestacao;
+
+            if (devolucao_ao_tesouro_tratado.length > 0 ){
+
+                devolucao_ao_tesouro_tratado.map((devolucao, index)=>{
+                    delete devolucao.busca_por_cpf_cnpj;
+                    delete devolucao.busca_por_tipo_documento;
+                    delete devolucao.busca_por_numero_documento;
+                    devolucao.data = devolucao.data ?  moment(devolucao.data).format("YYYY-MM-DD") : null;
+                    devolucao.valor = devolucao.valor ? trataNumericos(devolucao.valor) : ''
+                    devolucao.devolucao_total = devolucao.devolucao_total === 'true' ? true : false
+                })
+            }
+
+        }else {
+            devolucao_ao_tesouro_tratado=[];
         }
 
-        /*analisesDeContaDaPrestacao.map((analise)=>{
+        analisesDeContaDaPrestacao.map((analise)=>{
             analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;
             analise.saldo_extrato = analise.saldo_extrato ? trataNumericos(analise.saldo_extrato) : 0;
         });
@@ -515,32 +534,36 @@ export const DetalhePrestacaoDeContas = () =>{
             payload={
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
-                resultado_analise: stateConcluirAnalise.status
+                resultado_analise: stateConcluirAnalise.status,
+                devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }else if (stateConcluirAnalise.status === 'APROVADA_RESSALVA'){
             payload={
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
-                ressalvas_aprovacao: stateConcluirAnalise.resalvas
+                ressalvas_aprovacao: stateConcluirAnalise.resalvas,
+                devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }else if (stateConcluirAnalise.status === 'DEVOLVIDA'){
             payload={
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
-                data_limite_ue: moment(stateConcluirAnalise.data_limite_devolucao).format("YYYY-MM-DD")
+                data_limite_ue: moment(stateConcluirAnalise.data_limite_devolucao).format("YYYY-MM-DD"),
+                devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }else if (stateConcluirAnalise.status === 'REPROVADA'){
             payload={
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
+                devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }
 
         await getConcluirAnalise(prestacaoDeContas.uuid, payload);
-        await carregaPrestacaoDeContas();*/
+        await carregaPrestacaoDeContas();
     };
 
     const onVoltarParaAnalise = async () => {
