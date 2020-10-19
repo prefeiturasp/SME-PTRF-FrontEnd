@@ -15,7 +15,7 @@ export const InformacoesDevolucaoAoTesouro = (
         despesasTabelas,
         tiposDevolucao,
     }) =>{
-    console.log("InformacoesDevolucaoAoTesouro ", tiposDevolucao)
+    console.log("InformacoesDevolucaoAoTesouro ", initialValues)
 
     return(
         <>
@@ -161,7 +161,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 >
                                                                     <option value="">Selecione o tipo de devolução</option>
                                                                     {tiposDevolucao && tiposDevolucao.map(item =>
-                                                                        <option key={item.id} value={item.id}>{item.nome}</option>
+                                                                        <option key={item.id} value={item.uuid}>{item.nome}</option>
                                                                     )
                                                                     }
                                                                  </select>
@@ -206,7 +206,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 prefix='R$'
                                                                 decimalSeparator=","
                                                                 thousandSeparator="."
-                                                                value={devolucao.valor}
+                                                                value={devolucao.valor ? valorTemplate(devolucao.valor) : ''}
                                                                 name={`devolucoes_ao_tesouro_da_prestacao[${index}].valor`}
                                                                 onChangeEvent={(e) => {
                                                                     props.handleChange(e);

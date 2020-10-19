@@ -26,6 +26,7 @@ import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
 import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
 import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
+import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 require("ordinal-pt-br");
 
@@ -185,7 +186,23 @@ export const DetalhePrestacaoDeContas = () =>{
             });
 
             if (prestacao && prestacao.devolucoes_ao_tesouro_da_prestacao && prestacao.devolucoes_ao_tesouro_da_prestacao.length > 0 ){
-                setInitialFormDevolucaoAoTesouro(prestacao.devolucoes_ao_tesouro_da_prestacao)
+                let devolucoes_ao_tesouro_da_prestacao = [];
+                prestacao.devolucoes_ao_tesouro_da_prestacao.map((devolucao)=>{
+                    devolucoes_ao_tesouro_da_prestacao.push({
+                        busca_por_cpf_cnpj: "",
+                        busca_por_tipo_documento: "",
+                        busca_por_numero_documento: "",
+                        despesa: devolucao.despesa.uuid,
+                        tipo: devolucao.tipo.uuid,
+                        data: devolucao.data,
+                        devolucao_total: devolucao.devolucao_total,
+                        valor: devolucao.valor,
+                        motivo: devolucao.motivo,
+                    })
+                });
+
+                setInitialFormDevolucaoAoTesouro({devolucoes_ao_tesouro_da_prestacao})
+
             }
         }
     };
@@ -412,25 +429,46 @@ export const DetalhePrestacaoDeContas = () =>{
 
     const salvarAnalise = async () =>{
 
+        let devolucao_ao_tesouro_tratado;
+
         if (formRef.current) {
-            console.log("AQUI salvarAnalise XXXXXX", formRef.current.values)
-            //formRef.current.handleSubmit()
+            devolucao_ao_tesouro_tratado = formRef.current.values.devolucoes_ao_tesouro_da_prestacao;
+
+            if (devolucao_ao_tesouro_tratado.length > 0 ){
+
+                devolucao_ao_tesouro_tratado.map((devolucao)=>{
+                    delete devolucao.busca_por_cpf_cnpj;
+                    delete devolucao.busca_por_tipo_documento;
+                    delete devolucao.busca_por_numero_documento;
+                    devolucao.data = devolucao.data ?  moment(devolucao.data).format("YYYY-MM-DD") : null;
+                    devolucao.valor = devolucao.valor ? trataNumericos(devolucao.valor) : ''
+                    devolucao.devolucao_total = devolucao.devolucao_total === 'true'
+                })
+            }
+
+        }else {
+            devolucao_ao_tesouro_tratado=[];
         }
 
 
-
-/*        analisesDeContaDaPrestacao.map((analise)=>{
+        analisesDeContaDaPrestacao.map((analise)=>{
             analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;
             analise.saldo_extrato = analise.saldo_extrato ? trataNumericos(analise.saldo_extrato) : 0;
         });
         const payload = {
             devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
             analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
+            devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
         };
 
-        await getSalvarAnalise(prestacaoDeContas.uuid, payload);
+        console.log("AQUI salvarAnalise XXXXXX payload ", payload)
+
+        let salvar = await getSalvarAnalise(prestacaoDeContas.uuid, payload);
+
+        console.log("AQUI salvarAnalise XXXXXX payload ", salvar)
+
         await carregaPrestacaoDeContas();
-        window.location.reload()*/
+        //window.location.reload()
     };
 
     const onHandleClose = () => {
