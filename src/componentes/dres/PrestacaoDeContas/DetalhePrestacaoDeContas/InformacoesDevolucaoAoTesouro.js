@@ -197,8 +197,8 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                     className='form-control'
                                                                 >
                                                                     <option value="">Selecione o tipo</option>
-                                                                    <option value={'true'}>Valor total</option>
-                                                                    <option value={'false'}>Valor parcial</option>
+                                                                    <option value='true'>Valor total</option>
+                                                                    <option value='false'>Valor parcial</option>
                                                                 </select>
                                                         </div>
 

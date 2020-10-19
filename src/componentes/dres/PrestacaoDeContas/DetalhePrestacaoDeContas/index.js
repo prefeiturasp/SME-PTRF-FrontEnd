@@ -109,7 +109,6 @@ export const DetalhePrestacaoDeContas = () =>{
     const [despesas, setDespesas] = useState([]);
     const [despesasTabelas, setDespesasTabelas] = useState([]);
     const [tiposDevolucao, setTiposDevolucao] = useState([]);
-    const [objetoDespesasUuid, setObjetoDespesasUuid] = useState([]);
     const [camposObrigatorios, setCamposObrigatorios] = useState(false);
 
     useEffect(()=>{
@@ -195,7 +194,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         despesa: devolucao.despesa.uuid,
                         tipo: devolucao.tipo.uuid,
                         data: devolucao.data,
-                        devolucao_total: devolucao.devolucao_total,
+                        devolucao_total: devolucao.devolucao_total ? 'true' : 'false',
                         valor: devolucao.valor ?  valorTemplate(devolucao.valor) : '',
                         motivo: devolucao.motivo,
                     })
@@ -431,8 +430,6 @@ export const DetalhePrestacaoDeContas = () =>{
 
         let devolucao_ao_tesouro_tratado;
 
-        console.log("XXXXXXXXXX ", formRef.current)
-
         if (formRef.current) {
             devolucao_ao_tesouro_tratado = formRef.current.values.devolucoes_ao_tesouro_da_prestacao;
 
@@ -444,7 +441,7 @@ export const DetalhePrestacaoDeContas = () =>{
                     delete devolucao.busca_por_numero_documento;
                     devolucao.data = devolucao.data ?  moment(devolucao.data).format("YYYY-MM-DD") : null;
                     devolucao.valor = devolucao.valor ? trataNumericos(devolucao.valor) : ''
-                    devolucao.devolucao_total = devolucao.devolucao_total === 'true'
+                    devolucao.devolucao_total = devolucao.devolucao_total === 'true' ? true : false
                 })
             }
 
@@ -471,8 +468,6 @@ export const DetalhePrestacaoDeContas = () =>{
             await carregaPrestacaoDeContas();
             window.location.reload()
         }else {
-            //alert("Todos os campos são obrigatórios")
-
             return formRef.current.setErrors( validar )
         }
 
