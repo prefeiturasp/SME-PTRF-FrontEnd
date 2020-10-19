@@ -409,12 +409,15 @@ export const DetalhePrestacaoDeContas = () =>{
         });
     };
 
+
     const salvarAnalise = async () =>{
 
         if (formRef.current) {
             console.log("AQUI salvarAnalise XXXXXX", formRef.current.values)
             //formRef.current.handleSubmit()
         }
+
+
 
 /*        analisesDeContaDaPrestacao.map((analise)=>{
             analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;

@@ -159,7 +159,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                     }
                                                                     className='form-control'
                                                                 >
-                                                                    <option value="">Selecione o tipo</option>
+                                                                    <option value="">Selecione o tipo de devolução</option>
                                                                     {tiposDevolucao && tiposDevolucao.map(item =>
                                                                         <option key={item.id} value={item.id}>{item.nome}</option>
                                                                     )
@@ -176,6 +176,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                     name={`devolucoes_ao_tesouro_da_prestacao[${index}].data`}
                                                                     value={devolucao.data}
                                                                     onChange={setFieldValue}
+                                                                    placeholderText='Selecione data'
                                                                 />
                                                                 {props.errors.data && <span className="text-danger mt-1">{props.errors.data}</span>}
                                                             </div>
@@ -212,9 +213,10 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 }}
                                                                 className={`form-control`}
                                                                 selectAllOnFocus={true}
+                                                                placeholder='Digite o valor'
                                                             />
                                                         </div>
-                                                        <div className='col-12 col-md-6'>
+                                                        <div className='col-12 mt-2'>
                                                             <label htmlFor="motivo">Motivo:</label>
                                                             <textarea
                                                                 value={devolucao.motivo}
@@ -224,6 +226,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 }}
                                                                 className="form-control"
                                                                 rows="3"
+                                                                placeholder='Escreva o motivo da devolução'
                                                             >
 
                                                             </textarea>
