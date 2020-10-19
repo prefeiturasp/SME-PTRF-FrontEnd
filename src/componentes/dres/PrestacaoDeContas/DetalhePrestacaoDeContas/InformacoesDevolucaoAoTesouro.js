@@ -1,7 +1,8 @@
 import React, {Fragment} from "react";
 import {Formik, FieldArray, Field} from "formik";
-import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {exibeDataPT_BR, trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {DatePickerField} from "../../../Globais/DatePickerField";
+import CurrencyInput from "react-currency-input";
 
 export const InformacoesDevolucaoAoTesouro = (
     {
@@ -12,6 +13,7 @@ export const InformacoesDevolucaoAoTesouro = (
         buscaDespesaPorFiltros,
         valorTemplate,
         despesasTabelas,
+        tiposDevolucao,
     }) =>{
     console.log("InformacoesDevolucaoAoTesouro ", despesasTabelas)
 
@@ -147,23 +149,29 @@ export const InformacoesDevolucaoAoTesouro = (
                                                         <div className='col-12 col-md-9 mt-2'>
                                                             <div className="form-group">
                                                                 <label htmlFor="tipo_devolucao">Tipo de devolução</label>
-                                                                <input
+
+                                                                <select
                                                                     name={`devolucoes_ao_tesouro[${index}].tipo_devolucao`}
                                                                     value={devolucao.tipo_devolucao}
                                                                     onChange={async (e) => {
                                                                         props.handleChange(e);
                                                                     }
                                                                     }
-                                                                    type="text"
-                                                                    className="form-control"
-                                                                />
+                                                                    className='form-control'
+                                                                >
+                                                                    <option value="">Selecione o tipo</option>
+                                                                    {tiposDevolucao && tiposDevolucao.map(item =>
+                                                                        <option key={item.id} value={item.id}>{item.nome}</option>
+                                                                    )
+                                                                    }
+                                                                 </select>
                                                                 {props.errors.tipo_devolucao && <span className="text-danger mt-1">{props.errors.tipo_devolucao}</span>}
                                                             </div>
                                                         </div>
 
                                                         <div className='col-12 col-md-3 mt-2'>
                                                             <div className="form-group">
-                                                                <label htmlFor="data">Tipo de devolução</label>
+                                                                <label htmlFor="data">Data da devolução</label>
                                                                 <DatePickerField
                                                                     name={`devolucoes_ao_tesouro[${index}].data`}
                                                                     value={devolucao.data}
@@ -171,6 +179,40 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 />
                                                                 {props.errors.data && <span className="text-danger mt-1">{props.errors.data}</span>}
                                                             </div>
+                                                        </div>
+
+                                                        <div className='col-12 col-md-6'>
+                                                                <label className='labels-filtros' htmlFor="valor_total_parcial">Valor total ou parcial da despesa</label>
+                                                                 <select
+                                                                    name={`devolucoes_ao_tesouro[${index}].valor_total_parcial`}
+                                                                    value={devolucao.valor_total_parcial}
+                                                                    onChange={async (e) => {
+                                                                        props.handleChange(e);
+                                                                    }
+                                                                    }
+                                                                    className='form-control'
+                                                                >
+                                                                    <option value="">Selecione o tipo</option>
+                                                                    <option value={true}>Valor total</option>
+                                                                    <option value={false}>Valor parcial</option>
+                                                                </select>
+                                                        </div>
+
+                                                        <div className='col-12 col-md-6'>
+                                                            <label className='labels-filtros' htmlFor="valor">Valor</label>
+                                                            <CurrencyInput
+                                                                allowNegative={false}
+                                                                prefix='R$'
+                                                                decimalSeparator=","
+                                                                thousandSeparator="."
+                                                                value={devolucao.valor}
+                                                                name={`devolucoes_ao_tesouro[${index}].valor`}
+                                                                onChangeEvent={(e) => {
+                                                                    props.handleChange(e);
+                                                                }}
+                                                                className={`form-control`}
+                                                                selectAllOnFocus={true}
+                                                            />
                                                         </div>
 
 
@@ -208,6 +250,8 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 despesa_uuid: "",
                                                                 tipo_devolucao: "",
                                                                 data: "",
+                                                                valor_total_parcial: "",
+                                                                valor: "",
                                                             }
                                                         );
                                                     }}

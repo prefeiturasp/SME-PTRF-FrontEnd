@@ -85,4 +85,6 @@ export const getDespesasPorFiltros = async (associacao_uuid, cpf_cnpj_fornecedor
     return (await api.get(`/api/despesas/?associacao__uuid=${associacao_uuid}&cpf_cnpj_fornecedor=${cpf_cnpj_fornecedor}&tipo_documento__id=${tipo_documento__id}&numero_documento=${numero_documento}`, authHeader)).data
 };
 
-
+export const getTiposDevolucao = async () => {
+    return (await api.get(`/api/tipos-devolucao-ao-tesouro/`, authHeader)).data
+};

@@ -9,7 +9,7 @@ import {Cabecalho} from "./Cabecalho";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {ModalNaoRecebida} from "../ModalNaoRecebida";
@@ -75,6 +75,8 @@ export const DetalhePrestacaoDeContas = () =>{
                 despesa_uuid: "",
                 tipo_devolucao: "",
                 data: "",
+                valor_total_parcial: "",
+                valor: "",
             }
         ]
 
@@ -103,6 +105,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [initialFormDevolucaoAoTesouro, setInitialFormDevolucaoAoTesouro] = useState(initialDevolucaoAoTesouro);
     const [despesas, setDespesas] = useState([]);
     const [despesasTabelas, setDespesasTabelas] = useState([]);
+    const [tiposDevolucao, setTiposDevolucao] = useState([]);
     const [objetoDespesasUuid, setObjetoDespesasUuid] = useState([]);
 
     useEffect(()=>{
@@ -126,6 +129,17 @@ export const DetalhePrestacaoDeContas = () =>{
             setDespesasTabelas(resp);
         };
         carregaTabelasDespesas();
+    }, []);
+
+    useEffect(() => {
+        const carregaTiposDevolucao = async () => {
+            const resp = await getTiposDevolucao();
+
+            console.log("Tipos devolucao ", resp)
+
+            setTiposDevolucao(resp);
+        };
+        carregaTiposDevolucao();
     }, []);
 
     const getAnalisePrestacao = async ()=>{
@@ -642,6 +656,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         buscaDespesaPorFiltros={buscaDespesaPorFiltros}
                         valorTemplate={valorTemplate}
                         despesasTabelas={despesasTabelas}
+                        tiposDevolucao={tiposDevolucao}
                     />
                     <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
