@@ -1,35 +1,28 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useParams, Redirect} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {
     getDesfazerConclusaoAnalise,
     getPrestacaoDeContasDetalhe
 } from "../../../../services/dres/PrestacaoDeContas.service";
-import {Cabecalho} from "./Cabecalho";
-import {TrilhaDeStatus} from "./TrilhaDeStatus";
-import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
-import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getDespesa} from "../../../../services/escolas/Despesas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
 import {ModalNaoRecebida} from "../ModalNaoRecebida";
 import {ModalRecebida} from "../ModalRecebida";
 import {ModalConcluirAnalise} from "../ModalConcluirAnalise";
 import {ModalVoltarParaAnalise} from "../ModalVoltarParaAnalise";
-import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
-import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
-import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
-import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
-import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas";
-import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
-import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
-import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
+import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {GetComportamentoPorStatus} from "./GetComportamentoPorStatus";
 
 require("ordinal-pt-br");
 
 export const DetalhePrestacaoDeContas = () =>{
     let {prestacao_conta_uuid} = useParams();
+
+    const formRef = useRef();
 
     const initialFormRecebimentoPelaDiretoria = {
         tecnico_atribuido: "",
@@ -63,6 +56,23 @@ export const DetalhePrestacaoDeContas = () =>{
         data_limite_devolucao:'',
     };
 
+    const initialDevolucaoAoTesouro = {
+        devolucoes_ao_tesouro_da_prestacao: [
+            {
+                busca_por_cpf_cnpj: "",
+                busca_por_tipo_documento: "",
+                busca_por_numero_documento: "",
+                despesa: "",
+                tipo: "",
+                data: "",
+                devolucao_total: "",
+                valor: "",
+                motivo: "",
+            }
+        ]
+
+    };
+
     const [prestacaoDeContas, setPrestacaoDeContas] = useState({});
     const [stateFormRecebimentoPelaDiretoria, setStateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
     const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
@@ -83,6 +93,11 @@ export const DetalhePrestacaoDeContas = () =>{
     const [clickBtnTabelaAcoes, setClickBtnTabelaAcoes] = useState(false);
     const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState([]);
     const [stateConcluirAnalise, setStateConcluirAnalise] = useState(initialConcluirAnalise);
+    const [initialFormDevolucaoAoTesouro, setInitialFormDevolucaoAoTesouro] = useState(initialDevolucaoAoTesouro);
+    const [despesas, setDespesas] = useState([]);
+    const [despesasTabelas, setDespesasTabelas] = useState([]);
+    const [tiposDevolucao, setTiposDevolucao] = useState([]);
+    const [camposObrigatorios, setCamposObrigatorios] = useState(false);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -98,6 +113,22 @@ export const DetalhePrestacaoDeContas = () =>{
     useEffect(()=>{
         getPrimeiraAtaPorConta()
     }, [infoAta]);
+
+    useEffect(() => {
+        const carregaTabelasDespesas = async () => {
+            const resp = await getDespesasTabelas();
+            setDespesasTabelas(resp);
+        };
+        carregaTabelasDespesas();
+    }, []);
+
+    useEffect(() => {
+        const carregaTiposDevolucao = async () => {
+            const resp = await getTiposDevolucao();
+            setTiposDevolucao(resp);
+        };
+        carregaTiposDevolucao();
+    }, []);
 
     const getAnalisePrestacao = async ()=>{
         if (prestacao_conta_uuid) {
@@ -136,8 +167,27 @@ export const DetalhePrestacaoDeContas = () =>{
                 ...informacoesPrestacaoDeContas,
                 processo_sei: prestacao && prestacao.processo_sei ? prestacao.processo_sei : '',
                 ultima_analise: prestacao && prestacao.data_ultima_analise ? prestacao.data_ultima_analise : '',
-                devolucao_ao_tesouro: prestacao && prestacao.devolucao_ao_tesouro ? prestacao.devolucao_ao_tesouro : '',
+                devolucao_ao_tesouro: prestacao.devolucao_ao_tesouro === 'Não' ? prestacao.devolucao_ao_tesouro : 'Sim' ,
             });
+
+            if (prestacao && prestacao.devolucoes_ao_tesouro_da_prestacao && prestacao.devolucoes_ao_tesouro_da_prestacao.length > 0 ){
+                let devolucoes_ao_tesouro_da_prestacao = [];
+                prestacao.devolucoes_ao_tesouro_da_prestacao.map((devolucao, index)=>{
+                    buscaDespesa(devolucao.despesa.uuid, index);
+                    devolucoes_ao_tesouro_da_prestacao.push({
+                        busca_por_cpf_cnpj: "",
+                        busca_por_tipo_documento: "",
+                        busca_por_numero_documento: "",
+                        despesa: devolucao.despesa.uuid,
+                        tipo: devolucao.tipo.uuid,
+                        data: devolucao.data,
+                        devolucao_total: devolucao.devolucao_total ? 'true' : 'false',
+                        valor: devolucao.valor ?  valorTemplate(devolucao.valor) : '',
+                        motivo: devolucao.motivo,
+                    })
+                });
+                setInitialFormDevolucaoAoTesouro({devolucoes_ao_tesouro_da_prestacao})
+            }
         }
     };
 
@@ -270,8 +320,6 @@ export const DetalhePrestacaoDeContas = () =>{
                     }
                 ])
             }
-
-
         }
     };
 
@@ -362,21 +410,6 @@ export const DetalhePrestacaoDeContas = () =>{
         });
     };
 
-    const salvarAnalise = async () =>{
-        analisesDeContaDaPrestacao.map((analise)=>{
-            analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;
-            analise.saldo_extrato = analise.saldo_extrato ? trataNumericos(analise.saldo_extrato) : 0;
-        });
-        const payload = {
-            devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
-            analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
-        };
-
-        await getSalvarAnalise(prestacaoDeContas.uuid, payload);
-        await carregaPrestacaoDeContas();
-        window.location.reload()
-    };
-
     const onHandleClose = () => {
         setShowReabrirPc(false);
         setShowNaoRecebida(false);
@@ -400,8 +433,66 @@ export const DetalhePrestacaoDeContas = () =>{
         await desfazerAnalise();
     };
 
+    const salvarAnalise = async () =>{
+        let devolucao_ao_tesouro_tratado;
+        if (formRef.current && informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim') {
+            devolucao_ao_tesouro_tratado = formRef.current.values.devolucoes_ao_tesouro_da_prestacao;
+            if (devolucao_ao_tesouro_tratado.length > 0 ){
+                devolucao_ao_tesouro_tratado.map((devolucao, )=>{
+                    delete devolucao.busca_por_cpf_cnpj;
+                    delete devolucao.busca_por_tipo_documento;
+                    delete devolucao.busca_por_numero_documento;
+                    devolucao.data = devolucao.data ?  moment(devolucao.data).format("YYYY-MM-DD") : null;
+                    devolucao.valor = devolucao.valor ? trataNumericos(devolucao.valor) : '';
+                    devolucao.devolucao_total = devolucao.devolucao_total === 'true' ? true : false;
+                })
+            }
+        }else {
+            devolucao_ao_tesouro_tratado=[];
+        }
+
+        analisesDeContaDaPrestacao.map((analise)=>{
+            analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;
+            analise.saldo_extrato = analise.saldo_extrato ? trataNumericos(analise.saldo_extrato) : 0;
+        });
+        const payload = {
+            devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro !== 'Não',
+            analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
+            devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
+        };
+
+        if (formRef.current && informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim') {
+            let validar =  await validateFormDevolucaoAoTesouro(formRef.current.values);
+            if (!camposObrigatorios && Object.entries(validar).length === 0){
+                await getSalvarAnalise(prestacaoDeContas.uuid, payload);
+                await carregaPrestacaoDeContas();
+            }else {
+                return formRef.current.setErrors( validar )
+            }
+        }else {
+            await getSalvarAnalise(prestacaoDeContas.uuid, payload);
+            await carregaPrestacaoDeContas();
+        }
+    };
+
     const onConcluirAnalise = async () => {
         setShowConcluirAnalise(false);
+        let devolucao_ao_tesouro_tratado;
+        if (formRef.current) {
+            devolucao_ao_tesouro_tratado = formRef.current.values.devolucoes_ao_tesouro_da_prestacao;
+            if (devolucao_ao_tesouro_tratado.length > 0 ){
+                devolucao_ao_tesouro_tratado.map((devolucao, index)=>{
+                    delete devolucao.busca_por_cpf_cnpj;
+                    delete devolucao.busca_por_tipo_documento;
+                    delete devolucao.busca_por_numero_documento;
+                    devolucao.data = devolucao.data ?  moment(devolucao.data).format("YYYY-MM-DD") : null;
+                    devolucao.valor = devolucao.valor ? trataNumericos(devolucao.valor) : '';
+                    devolucao.devolucao_total = devolucao.devolucao_total === 'true' ? true : false;
+                })
+            }
+        }else {
+            devolucao_ao_tesouro_tratado=[];
+        }
 
         analisesDeContaDaPrestacao.map((analise)=>{
             analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;
@@ -413,32 +504,46 @@ export const DetalhePrestacaoDeContas = () =>{
             payload={
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
-                resultado_analise: stateConcluirAnalise.status
+                resultado_analise: stateConcluirAnalise.status,
+                devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }else if (stateConcluirAnalise.status === 'APROVADA_RESSALVA'){
             payload={
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
-                ressalvas_aprovacao: stateConcluirAnalise.resalvas
+                ressalvas_aprovacao: stateConcluirAnalise.resalvas,
+                devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }else if (stateConcluirAnalise.status === 'DEVOLVIDA'){
             payload={
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
-                data_limite_ue: moment(stateConcluirAnalise.data_limite_devolucao).format("YYYY-MM-DD")
+                data_limite_ue: moment(stateConcluirAnalise.data_limite_devolucao).format("YYYY-MM-DD"),
+                devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }else if (stateConcluirAnalise.status === 'REPROVADA'){
             payload={
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
+                devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }
 
-        await getConcluirAnalise(prestacaoDeContas.uuid, payload);
-        await carregaPrestacaoDeContas();
+        if (formRef.current && informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim') {
+            let validar =  await validateFormDevolucaoAoTesouro(formRef.current.values);
+            if (!camposObrigatorios && Object.entries(validar).length === 0){
+                await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+                await carregaPrestacaoDeContas();
+            }else {
+                return formRef.current.setErrors( validar )
+            }
+        }else {
+            await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+            await carregaPrestacaoDeContas();
+        }
     };
 
     const onVoltarParaAnalise = async () => {
@@ -448,9 +553,7 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const retornaNumeroOrdinal = (index) =>{
-
         let _index = index + 1;
-
         if (_index === 10){
             return 'Décima'
         }else if(_index === 20){
@@ -472,357 +575,45 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     };
 
-    const getComportamentoPorStatus = () =>{
-        if (prestacaoDeContas.status === 'NAO_RECEBIDA'){
-            return (
-                <>
-                    <Cabecalho
-                        prestacaoDeContas={prestacaoDeContas}
-                        exibeSalvar={false}
-                    />
-                    <BotoesAvancarRetroceder
-                        prestacaoDeContas={prestacaoDeContas}
-                        textoBtnAvancar={"Receber"}
-                        textoBtnRetroceder={"Reabrir PC"}
-                        metodoAvancar={receberPrestacaoDeContas}
-                        metodoRetroceder={()=>setShowReabrirPc(true)}
-                        disabledBtnAvancar={!stateFormRecebimentoPelaDiretoria.data_recebimento}
-                        disabledBtnRetroceder={false}
-                    />
-                    <TrilhaDeStatus
-                        prestacaoDeContas={prestacaoDeContas}
-                    />
-                    <FormRecebimentoPelaDiretoria
-                        handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
-                        stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
-                        tabelaPrestacoes={tabelaPrestacoes}
-                        disabledNome={true}
-                        disabledData={false}
-                        disabledStatus={true}
-                        exibeMotivo={false}
-                    />
-                    <CobrancaPrestacaoDeContas
-                        listaDeCobrancas={listaDeCobrancas}
-                        dataCobranca={dataCobranca}
-                        handleChangeDataCobranca={handleChangeDataCobranca}
-                        addCobranca={addCobranca}
-                        deleteCobranca={deleteCobranca}
-                        editavel={true}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                    />
-                </>
-            )
-        }else if (prestacaoDeContas.status === 'RECEBIDA'){
-            return (
-                <>
-                    <Cabecalho
-                        prestacaoDeContas={prestacaoDeContas}
-                        exibeSalvar={false}
-                    />
-                    <BotoesAvancarRetroceder
-                        prestacaoDeContas={prestacaoDeContas}
-                        textoBtnAvancar={"Analisar"}
-                        textoBtnRetroceder={"Não recebida"}
-                        metodoAvancar={analisarPrestacaoDeContas}
-                        metodoRetroceder={()=>setShowNaoRecebida(true)}
-                        disabledBtnAvancar={false}
-                        disabledBtnRetroceder={false}
-                    />
-                    <TrilhaDeStatus
-                        prestacaoDeContas={prestacaoDeContas}
-                    />
-                    <FormRecebimentoPelaDiretoria
-                        handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
-                        stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
-                        tabelaPrestacoes={tabelaPrestacoes}
-                        disabledNome={true}
-                        disabledData={true}
-                        disabledStatus={true}
-                        exibeMotivo={false}
-                    />
-                    <CobrancaPrestacaoDeContas
-                        listaDeCobrancas={listaDeCobrancas}
-                        dataCobranca={dataCobranca}
-                        handleChangeDataCobranca={handleChangeDataCobranca}
-                        addCobranca={addCobranca}
-                        deleteCobranca={deleteCobranca}
-                        editavel={false}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                    />
-                </>
-            )
 
-        }else if (prestacaoDeContas.status === 'EM_ANALISE') {
-            return (
-                <>
-                    <Cabecalho
-                        prestacaoDeContas={prestacaoDeContas}
-                        exibeSalvar={true}
-                        metodoSalvarAnalise={salvarAnalise}
-                    />
-                    <BotoesAvancarRetroceder
-                        prestacaoDeContas={prestacaoDeContas}
-                        textoBtnAvancar={"Concluir análise"}
-                        textoBtnRetroceder={"Recebida"}
-                        metodoAvancar={() => setShowConcluirAnalise(true)}
-                        metodoRetroceder={() => setShowRecebida(true)}
-                        disabledBtnAvancar={false}
-                        disabledBtnRetroceder={false}
-                    />
-                    <TrilhaDeStatus
-                        prestacaoDeContas={prestacaoDeContas}
-                    />
-                    <FormRecebimentoPelaDiretoria
-                        handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
-                        stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
-                        tabelaPrestacoes={tabelaPrestacoes}
-                        disabledNome={true}
-                        disabledData={true}
-                        disabledStatus={true}
-                        exibeMotivo={false}
-                    />
-                    <DevolucoesPrestacaoDeContas
-                        prestacaoDeContas={prestacaoDeContas}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                        excluiUltimaCobranca={false}
-                    />
-                    <InformacoesPrestacaoDeContas
-                        handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
-                        informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
-                        editavel={true}
-                    />
-                    <ResumoFinanceiroSeletorDeContas
-                        infoAta={infoAta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
-                        toggleBtnEscolheConta={toggleBtnEscolheConta}
-                        exibeAtaPorConta={exibeAtaPorConta}
-                    />
 
-                    <AnalisesDeContaDaPrestacao
-                        infoAta={infoAtaPorConta}
-                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
-                        handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
-                        getObjetoIndexAnalise={getObjetoIndexAnalise}
-                        editavel={true}
-                    />
+    const buscaDespesaPorFiltros = async (index) =>{
 
-                    <ResumoFinanceiroTabelaTotais
-                        infoAta={infoAtaPorConta}
-                        valorTemplate={valorTemplate}
-                    />
-                    <ResumoFinanceiroTabelaAcoes
-                        infoAta={infoAtaPorConta}
-                        valorTemplate={valorTemplate}
-                        toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
-                        clickBtnTabelaAcoes={clickBtnTabelaAcoes}
-                    />
-                </>
-            )
-        }else if (prestacaoDeContas.status === 'DEVOLVIDA') {
-            return (
-                <>
-                    <Cabecalho
-                        prestacaoDeContas={prestacaoDeContas}
-                        exibeSalvar={false}
-                    />
-                    <BotoesAvancarRetroceder
-                        prestacaoDeContas={prestacaoDeContas}
-                        textoBtnAvancar={"Concluir análise"}
-                        textoBtnRetroceder={"Recebida"}
-                        metodoAvancar={() => setShowConcluirAnalise(true)}
-                        metodoRetroceder={() => setShowRecebida(true)}
-                        disabledBtnAvancar={true}
-                        disabledBtnRetroceder={true}
-                    />
-                    <TrilhaDeStatus
-                        prestacaoDeContas={prestacaoDeContas}
-                    />
-                    <FormRecebimentoPelaDiretoria
-                        handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
-                        stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
-                        tabelaPrestacoes={tabelaPrestacoes}
-                        disabledNome={true}
-                        disabledData={true}
-                        disabledStatus={true}
-                        exibeMotivo={false}
-                    />
-                    <DevolucoesPrestacaoDeContas
-                        prestacaoDeContas={prestacaoDeContas}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                        excluiUltimaCobranca={true}
-                    />
-                    <CobrancaDevolucoesPrestacaoDeContas
-                        listaDeCobrancasDevolucoes={listaDeCobrancasDevolucoes}
-                        dataCobrancaDevolucoes={dataCobrancaDevolucoes}
-                        handleChangeDataCobrancaDevolucoes={handleChangeDataCobrancaDevolucoes}
-                        addCobrancaDevolucoes={addCobrancaDevolucoes}
-                        deleteCobrancaDevolucoes={deleteCobrancaDevolucoes}
-                        editavel={true}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                    />
-                    <InformacoesPrestacaoDeContas
-                        handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
-                        informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
-                        editavel={false}
-                    />
-                    <ResumoFinanceiroSeletorDeContas
-                        infoAta={infoAta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
-                        toggleBtnEscolheConta={toggleBtnEscolheConta}
-                        exibeAtaPorConta={exibeAtaPorConta}
-                    />
-                    <AnalisesDeContaDaPrestacao
-                        infoAta={infoAtaPorConta}
-                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
-                        handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
-                        getObjetoIndexAnalise={getObjetoIndexAnalise}
-                        editavel={false}
-                    />
-                    <ResumoFinanceiroTabelaTotais
-                        infoAta={infoAtaPorConta}
-                        valorTemplate={valorTemplate}
-                    />
-                    <ResumoFinanceiroTabelaAcoes
-                        infoAta={infoAtaPorConta}
-                        valorTemplate={valorTemplate}
-                        toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
-                        clickBtnTabelaAcoes={clickBtnTabelaAcoes}
-                    />
-                </>
-            )
-        }else if (prestacaoDeContas.status === 'APROVADA_RESSALVA') {
-            return (
-                <>
-                    <Cabecalho
-                        prestacaoDeContas={prestacaoDeContas}
-                        exibeSalvar={false}
-                    />
+        let valores, cpf, tipo_documento, numero_documento;
 
-                    <BotoesAvancarRetroceder
-                        prestacaoDeContas={prestacaoDeContas}
-                        textoBtnAvancar={"Concluir análise"}
-                        textoBtnRetroceder={"Voltar para análise"}
-                        metodoAvancar={() => setShowConcluirAnalise(true)}
-                        metodoRetroceder={() => setShowVoltarParaAnalise(true)}
-                        disabledBtnAvancar={true}
-                        disabledBtnRetroceder={false}
-                        esconderBotaoAvancar={true}
-                    />
-                    <TrilhaDeStatus
-                        prestacaoDeContas={prestacaoDeContas}
-                    />
-                    <FormRecebimentoPelaDiretoria
-                        handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
-                        stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
-                        tabelaPrestacoes={tabelaPrestacoes}
-                        disabledNome={true}
-                        disabledData={true}
-                        disabledStatus={true}
-                        prestacaoDeContas={prestacaoDeContas}
-                        exibeMotivo={true}
-                    />
-                    <DevolucoesPrestacaoDeContas
-                        prestacaoDeContas={prestacaoDeContas}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                        excluiUltimaCobranca={false}
-                    />
-                    <InformacoesPrestacaoDeContas
-                        handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
-                        informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
-                        editavel={false}
-                    />
-                    <ResumoFinanceiroSeletorDeContas
-                        infoAta={infoAta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
-                        toggleBtnEscolheConta={toggleBtnEscolheConta}
-                        exibeAtaPorConta={exibeAtaPorConta}
-                    />
-                    <AnalisesDeContaDaPrestacao
-                        infoAta={infoAtaPorConta}
-                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
-                        handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
-                        getObjetoIndexAnalise={getObjetoIndexAnalise}
-                        editavel={false}
-                    />
-                    <ResumoFinanceiroTabelaTotais
-                        infoAta={infoAtaPorConta}
-                        valorTemplate={valorTemplate}
-                    />
-                    <ResumoFinanceiroTabelaAcoes
-                        infoAta={infoAtaPorConta}
-                        valorTemplate={valorTemplate}
-                        toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
-                        clickBtnTabelaAcoes={clickBtnTabelaAcoes}
-                    />
-                </>
-            )
-        }else if (prestacaoDeContas.status === 'APROVADA' || prestacaoDeContas.status === 'REPROVADA') {
-        return (
-            <>
-                <Cabecalho
-                    prestacaoDeContas={prestacaoDeContas}
-                    exibeSalvar={false}
-                />
+        if (formRef.current) {
+            valores = formRef.current.values.devolucoes_ao_tesouro_da_prestacao[index];
+            cpf = valores.busca_por_cpf_cnpj ? valores.busca_por_cpf_cnpj : "";
+            tipo_documento = valores.busca_por_tipo_documento ? valores.busca_por_tipo_documento : '';
+            numero_documento = valores.busca_por_numero_documento ? valores.busca_por_numero_documento : '';
 
-                <BotoesAvancarRetroceder
-                    prestacaoDeContas={prestacaoDeContas}
-                    textoBtnAvancar={"Concluir análise"}
-                    textoBtnRetroceder={"Voltar para análise"}
-                    metodoAvancar={() => setShowConcluirAnalise(true)}
-                    metodoRetroceder={() => setShowVoltarParaAnalise(true)}
-                    disabledBtnAvancar={true}
-                    disabledBtnRetroceder={false}
-                    esconderBotaoAvancar={true}
-                />
-                <TrilhaDeStatus
-                    prestacaoDeContas={prestacaoDeContas}
-                />
-                <FormRecebimentoPelaDiretoria
-                    handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
-                    stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
-                    tabelaPrestacoes={tabelaPrestacoes}
-                    disabledNome={true}
-                    disabledData={true}
-                    disabledStatus={true}
-                    prestacaoDeContas={prestacaoDeContas}
-                    exibeMotivo={false}
-                />
-                <DevolucoesPrestacaoDeContas
-                    prestacaoDeContas={prestacaoDeContas}
-                    retornaNumeroOrdinal={retornaNumeroOrdinal}
-                    excluiUltimaCobranca={false}
-                />
-                <InformacoesPrestacaoDeContas
-                    handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
-                    informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
-                    editavel={false}
-                />
-                <ResumoFinanceiroSeletorDeContas
-                    infoAta={infoAta}
-                    clickBtnEscolheConta={clickBtnEscolheConta}
-                    toggleBtnEscolheConta={toggleBtnEscolheConta}
-                    exibeAtaPorConta={exibeAtaPorConta}
-                />
-                <AnalisesDeContaDaPrestacao
-                    infoAta={infoAtaPorConta}
-                    analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
-                    handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
-                    getObjetoIndexAnalise={getObjetoIndexAnalise}
-                    editavel={false}
-                />
-                <ResumoFinanceiroTabelaTotais
-                    infoAta={infoAtaPorConta}
-                    valorTemplate={valorTemplate}
-                />
-                <ResumoFinanceiroTabelaAcoes
-                    infoAta={infoAtaPorConta}
-                    valorTemplate={valorTemplate}
-                    toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
-                    clickBtnTabelaAcoes={clickBtnTabelaAcoes}
-                />
-            </>
-        )
-    }
+            let despesas_por_filtros = await getDespesasPorFiltros(prestacaoDeContas.associacao.uuid, cpf, tipo_documento, numero_documento);
+            setDespesas({
+                ...despesas,
+                [`devolucao_${index}`]: [...despesas_por_filtros]
+            });
+        }
+
+    };
+
+    const buscaDespesa = async (despesa_uuid, index) =>{
+        if (despesa_uuid){
+            let despesa = await getDespesa(despesa_uuid);
+            setDespesas(prevState => ({ ...prevState,  [`devolucao_${index}`]: [despesa]}));
+        }
+    };
+
+    const validateFormDevolucaoAoTesouro = async (values) => {
+        const errors = {};
+        values.devolucoes_ao_tesouro_da_prestacao.map((devolucao)=>{
+            if (!devolucao.data || !devolucao.despesa || devolucao.devolucao_total === '' || !devolucao.motivo || !devolucao.tipo || !devolucao.valor){
+                setCamposObrigatorios(true);
+                errors.campos_obrigatorios = "Todos os campos são obrigatórios";
+            }else {
+                setCamposObrigatorios(false)
+            }
+        });
+        return errors;
     };
 
     return(
@@ -837,7 +628,55 @@ export const DetalhePrestacaoDeContas = () =>{
                         />
                     ) :
                     <>
-                        {getComportamentoPorStatus()}
+                        {
+                            prestacaoDeContas && prestacaoDeContas.status &&
+                                <GetComportamentoPorStatus
+                                    prestacaoDeContas={prestacaoDeContas}
+                                    receberPrestacaoDeContas={receberPrestacaoDeContas}
+                                    setShowReabrirPc={setShowReabrirPc}
+                                    stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
+                                    handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
+                                    tabelaPrestacoes={tabelaPrestacoes}
+                                    listaDeCobrancas={listaDeCobrancas}
+                                    dataCobranca={dataCobranca}
+                                    handleChangeDataCobranca={handleChangeDataCobranca}
+                                    addCobranca={addCobranca}
+                                    deleteCobranca={deleteCobranca}
+                                    retornaNumeroOrdinal={retornaNumeroOrdinal}
+                                    analisarPrestacaoDeContas={analisarPrestacaoDeContas}
+                                    setShowNaoRecebida={setShowNaoRecebida}
+                                    salvarAnalise={salvarAnalise}
+                                    setShowConcluirAnalise={setShowConcluirAnalise}
+                                    setShowRecebida={setShowRecebida}
+                                    handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
+                                    informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
+                                    initialFormDevolucaoAoTesouro={initialFormDevolucaoAoTesouro}
+                                    formRef={formRef}
+                                    despesas={despesas}
+                                    buscaDespesaPorFiltros={buscaDespesaPorFiltros}
+                                    buscaDespesa={buscaDespesa}
+                                    valorTemplate={valorTemplate}
+                                    despesasTabelas={despesasTabelas}
+                                    tiposDevolucao={tiposDevolucao}
+                                    validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
+                                    infoAta={infoAta}
+                                    clickBtnEscolheConta={clickBtnEscolheConta}
+                                    toggleBtnEscolheConta={toggleBtnEscolheConta}
+                                    exibeAtaPorConta={exibeAtaPorConta}
+                                    infoAtaPorConta={infoAtaPorConta}
+                                    analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                                    handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
+                                    getObjetoIndexAnalise={getObjetoIndexAnalise}
+                                    toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
+                                    clickBtnTabelaAcoes={clickBtnTabelaAcoes}
+                                    listaDeCobrancasDevolucoes={listaDeCobrancasDevolucoes}
+                                    dataCobrancaDevolucoes={dataCobrancaDevolucoes}
+                                    handleChangeDataCobrancaDevolucoes={handleChangeDataCobrancaDevolucoes}
+                                    addCobrancaDevolucoes={addCobrancaDevolucoes}
+                                    deleteCobrancaDevolucoes={deleteCobrancaDevolucoes}
+                                    setShowVoltarParaAnalise={setShowVoltarParaAnalise}
+                                />
+                        }
                     </>
                 }
                 <section>

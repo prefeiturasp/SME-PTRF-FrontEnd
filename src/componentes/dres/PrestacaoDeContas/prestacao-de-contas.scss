@@ -184,3 +184,43 @@
   }
 }
 
+.container-tabela-despesas{
+  background-color: #C4C4C4;
+}
+
+.tabela-despesas{
+  border-collapse: collapse;
+  border-spacing: 8px;
+}
+
+.tabela-despesas tr.divisao {
+  border-bottom: #C4C4C4 5px solid;
+  border-top: #C4C4C4 5px solid;
+}
+
+.td-com-despesas{
+  //width: calc(100% / 6) !important;
+  background-color: #EDEDED;
+}
+
+.td-com-despesas-unica{
+  background-color: #C0E5E8 !important;
+}
+
+
+.td-sem-despesas{
+  background-color: #C4C4C4;
+  color: #42474A;
+  border: none !important;
+  padding-bottom: 0 !important;
+}
+
+.td-separacao{
+  background-color: #C4C4C4;
+}
+
+@media (max-width: 1200px) {
+  .labels-filtros {
+    font-size: 14px !important;
+  }
+}
