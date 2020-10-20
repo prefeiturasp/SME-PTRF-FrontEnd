@@ -130,13 +130,13 @@ export const InformacoesDevolucaoAoTesouro = (
 
                                                                             <Fragment key={index_interno}>
                                                                                 <tr className='divisao'>
-                                                                                    <td className='td-com-despesas'><Field type="radio" name={`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`} value={despesa.uuid} /></td>
-                                                                                    <td className='td-com-despesas'>{despesa.nome_fornecedor}</td>
-                                                                                    <td className='td-com-despesas'>{despesa.cpf_cnpj_fornecedor}</td>
-                                                                                    <td className='td-com-despesas'>{despesa.tipo_documento && despesa.tipo_documento.nome ? despesa.tipo_documento.nome : ''}</td>
-                                                                                    <td className='td-com-despesas'>{despesa.numero_documento}</td>
-                                                                                    <td className='td-com-despesas'>R$ {valorTemplate(despesa.valor_total)}</td>
-                                                                                    <td className='td-com-despesas'>{despesa.data_documento ? exibeDataPT_BR(despesa.data_documento) : ''}</td>
+                                                                                    <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}><Field type="radio" name={`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`} value={despesa.uuid} /></td>
+                                                                                    <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesa.nome_fornecedor}</td>
+                                                                                    <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesa.cpf_cnpj_fornecedor}</td>
+                                                                                    <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesa.tipo_documento && despesa.tipo_documento.nome ? despesa.tipo_documento.nome : ''}</td>
+                                                                                    <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesa.numero_documento}</td>
+                                                                                    <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>R$ {valorTemplate(despesa.valor_total)}</td>
+                                                                                    <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesa.data_documento ? exibeDataPT_BR(despesa.data_documento) : ''}</td>
                                                                                 </tr>
                                                                             </Fragment>
                                                                         ):
