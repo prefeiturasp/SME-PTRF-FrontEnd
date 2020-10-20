@@ -430,6 +430,4 @@ export const GetComportamentoPorStatus = (
             )
         }
     }
-
-
 };

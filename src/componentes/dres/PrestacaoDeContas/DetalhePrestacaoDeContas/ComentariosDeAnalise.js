@@ -93,7 +93,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                         <div key={index} className="d-flex bd-highlight border mt-2">
                                             <div className="p-2 flex-grow-1 bd-highlight">{comentario.comentario}</div>
                                             <div className="p-2 bd-highlight">
-                                                <button onClick={()=>setComentarioParaEdicao(comentario)} className="btn-editar-comentario ml-2">
+                                                <button type='button' onClick={()=>setComentarioParaEdicao(comentario)} className="btn-editar-comentario ml-2">
                                                     <FontAwesomeIcon
                                                         style={{fontSize: '20px', marginRight: "0", color: '#A4A4A4'}}
                                                         icon={faEdit}
