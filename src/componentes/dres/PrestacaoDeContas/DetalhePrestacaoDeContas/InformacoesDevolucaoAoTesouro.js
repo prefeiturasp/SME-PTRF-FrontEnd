@@ -1,8 +1,9 @@
 import React, {Fragment} from "react";
 import {Formik, FieldArray, Field} from "formik";
-import {exibeDataPT_BR, trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {cpfMaskContitional, exibeDataPT_BR, trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import CurrencyInput from "react-currency-input";
+import MaskedInput from "react-text-mask";
 
 export const InformacoesDevolucaoAoTesouro = (
     {
@@ -55,20 +56,20 @@ export const InformacoesDevolucaoAoTesouro = (
                                                             </p>
                                                             <hr className="mt-0 mb-1"/>
                                                         </div>
-
-
+                                                        
                                                         <div className="col-12 col mt-2">
                                                             <div className='row'>
                                                                 <div className='col'>
                                                                     <label className='labels-filtros' htmlFor="busca_por_cpf_cnpj">Busque por CNPJ ou CPF</label>
 
-                                                                    <input
-                                                                        name={`devolucoes_ao_tesouro_da_prestacao[${index}].busca_por_cpf_cnpj`}
+                                                                    <MaskedInput
+                                                                        mask={(valor) => cpfMaskContitional(valor)}
                                                                         value={devolucao.busca_por_cpf_cnpj ? devolucao.busca_por_cpf_cnpj : ''}
                                                                         onChange={async (e) => {
                                                                             props.handleChange(e);
                                                                         }
                                                                         }
+                                                                        name={`devolucoes_ao_tesouro_da_prestacao[${index}].busca_por_cpf_cnpj`}
                                                                         type="text"
                                                                         className='form-control'
                                                                         placeholder="Digite o nº do CNPJ ou CPF"
@@ -77,7 +78,6 @@ export const InformacoesDevolucaoAoTesouro = (
 
                                                                 <div className='col'>
                                                                     <label className='labels-filtros' htmlFor="busca_por_tipo_documento">Busque por tipo de documento</label>
-
                                                                     <select
                                                                         name={`devolucoes_ao_tesouro_da_prestacao[${index}].busca_por_tipo_documento`}
                                                                         value={devolucao.busca_por_tipo_documento ? devolucao.busca_por_tipo_documento : '' }
@@ -95,8 +95,6 @@ export const InformacoesDevolucaoAoTesouro = (
 
                                                                     </select>
                                                                 </div>
-
-                                                                {/*{devolucao && devolucao.despesa && buscarDespesaPorUuid(devolucao.despesa, index)}*/}
 
                                                                 <div className='col'>
                                                                     <label className='labels-filtros' htmlFor="busca_por_numero_documento">Busque por número do documento</label>
