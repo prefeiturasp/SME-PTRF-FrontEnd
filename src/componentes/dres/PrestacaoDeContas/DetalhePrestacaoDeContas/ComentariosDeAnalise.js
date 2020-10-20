@@ -1,5 +1,5 @@
-import React, {useEffect, useState, Fragment} from "react";
-import {getComentariosDeAnalise, criarComentarioDeAnalise} from "../../../../services/dres/PrestacaoDeContas.service";
+import React, {useEffect, useState} from "react";
+import {getComentariosDeAnalise, criarComentarioDeAnalise, editarComentarioDeAnalise} from "../../../../services/dres/PrestacaoDeContas.service";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faEdit} from '@fortawesome/free-solid-svg-icons'
 import {FieldArray, Formik} from "formik";
@@ -45,10 +45,14 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         setComentarioEdicao(false)
     };
     
-    const onEditarComentario = () => {
+    const onEditarComentario = async () => {
         setShowModalComentario(false);
-
         console.log("onEditarComentario ", comentarioEdicao)
+        const payload = comentarioEdicao
+        let editar_comentario = await editarComentarioDeAnalise(comentarioEdicao.uuid, payload)
+        console.log("EDITAR XXXXXXXXXXXXXXX ", editar_comentario)
+        setToggleExibeBtnAddComentario(!toggleExibeBtnAddComentario)
+        carregaComentarios()
     };
 
     const setComentarioParaEdicao = (comentario)=>{

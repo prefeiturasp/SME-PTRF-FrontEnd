@@ -96,3 +96,7 @@ export const getComentariosDeAnalise = async (prestacao_uuid) => {
 export const criarComentarioDeAnalise = async (payload) => {
     return (await api.post(`/api/comentarios-de-analises/`, payload, authHeader)).data
 };
+
+export const editarComentarioDeAnalise = async (comentario_uuid, payload) => {
+    return (await api.patch(`/api/comentarios-de-analises/${comentario_uuid}/`, payload, authHeader)).data
+};
