@@ -92,3 +92,7 @@ export const getTiposDevolucao = async () => {
 export const getComentariosDeAnalise = async (prestacao_uuid) => {
     return (await api.get(`/api/comentarios-de-analises/?prestacao_conta__uuid=${prestacao_uuid}`, authHeader)).data
 };
+
+export const criarComentarioDeAnalise = async (payload) => {
+    return (await api.post(`/api/comentarios-de-analises/`, payload, authHeader)).data
+};
