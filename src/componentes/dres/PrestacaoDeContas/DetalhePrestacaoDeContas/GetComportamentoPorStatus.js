@@ -1,3 +1,4 @@
+import React from "react";
 import {Cabecalho} from "./Cabecalho";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
@@ -11,7 +12,8 @@ import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
 import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
 import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
-import React from "react";
+import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
+
 
 export const GetComportamentoPorStatus = (
     {
@@ -217,6 +219,7 @@ export const GetComportamentoPorStatus = (
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
+                    <ComentariosDeAnalise/>
                 </>
             )
         }else if (prestacaoDeContas.status === 'DEVOLVIDA') {
