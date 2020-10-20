@@ -34,7 +34,7 @@ require("ordinal-pt-br");
 export const DetalhePrestacaoDeContas = () =>{
     let {prestacao_conta_uuid} = useParams();
 
-    const formRef = useRef()
+    const formRef = useRef();
 
     const initialFormRecebimentoPelaDiretoria = {
         tecnico_atribuido: "",
@@ -167,7 +167,6 @@ export const DetalhePrestacaoDeContas = () =>{
     const carregaPrestacaoDeContas = async () => {
         if (prestacao_conta_uuid){
             let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
-            console.log("PRESTAÇÂO XXXXXX ", prestacao)
             setPrestacaoDeContas(prestacao);
             setStateFormRecebimentoPelaDiretoria({
                 ...stateFormRecebimentoPelaDiretoria,
@@ -199,9 +198,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         motivo: devolucao.motivo,
                     })
                 });
-
                 setInitialFormDevolucaoAoTesouro({devolucoes_ao_tesouro_da_prestacao})
-
             }
         }
     };
@@ -425,9 +422,6 @@ export const DetalhePrestacaoDeContas = () =>{
         });
     };
 
-
-
-
     const onHandleClose = () => {
         setShowReabrirPc(false);
         setShowNaoRecebida(false);
@@ -451,21 +445,18 @@ export const DetalhePrestacaoDeContas = () =>{
         await desfazerAnalise();
     };
 
-
     const salvarAnalise = async () =>{
-
         let devolucao_ao_tesouro_tratado;
-
         if (formRef.current && informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim') {
             devolucao_ao_tesouro_tratado = formRef.current.values.devolucoes_ao_tesouro_da_prestacao;
             if (devolucao_ao_tesouro_tratado.length > 0 ){
-                devolucao_ao_tesouro_tratado.map((devolucao, index)=>{
+                devolucao_ao_tesouro_tratado.map((devolucao, )=>{
                     delete devolucao.busca_por_cpf_cnpj;
                     delete devolucao.busca_por_tipo_documento;
                     delete devolucao.busca_por_numero_documento;
                     devolucao.data = devolucao.data ?  moment(devolucao.data).format("YYYY-MM-DD") : null;
-                    devolucao.valor = devolucao.valor ? trataNumericos(devolucao.valor) : ''
-                    devolucao.devolucao_total = devolucao.devolucao_total === 'true' ? true : false
+                    devolucao.valor = devolucao.valor ? trataNumericos(devolucao.valor) : '';
+                    devolucao.devolucao_total = devolucao.devolucao_total === 'true' ? true : false;
                 })
             }
         }else {
@@ -507,8 +498,8 @@ export const DetalhePrestacaoDeContas = () =>{
                     delete devolucao.busca_por_tipo_documento;
                     delete devolucao.busca_por_numero_documento;
                     devolucao.data = devolucao.data ?  moment(devolucao.data).format("YYYY-MM-DD") : null;
-                    devolucao.valor = devolucao.valor ? trataNumericos(devolucao.valor) : ''
-                    devolucao.devolucao_total = devolucao.devolucao_total === 'true' ? true : false
+                    devolucao.valor = devolucao.valor ? trataNumericos(devolucao.valor) : '';
+                    devolucao.devolucao_total = devolucao.devolucao_total === 'true' ? true : false;
                 })
             }
         }else {
@@ -574,9 +565,7 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const retornaNumeroOrdinal = (index) =>{
-
         let _index = index + 1;
-
         if (_index === 10){
             return 'Décima'
         }else if(_index === 20){
@@ -968,12 +957,12 @@ export const DetalhePrestacaoDeContas = () =>{
         let valores, cpf, tipo_documento, numero_documento;
 
         if (formRef.current) {
-            valores = formRef.current.values.devolucoes_ao_tesouro_da_prestacao[index]
+            valores = formRef.current.values.devolucoes_ao_tesouro_da_prestacao[index];
             cpf = valores.busca_por_cpf_cnpj ? valores.busca_por_cpf_cnpj : "";
             tipo_documento = valores.busca_por_tipo_documento ? valores.busca_por_tipo_documento : '';
             numero_documento = valores.busca_por_numero_documento ? valores.busca_por_numero_documento : '';
 
-            let despesas_por_filtros = await getDespesasPorFiltros(prestacaoDeContas.associacao.uuid, cpf, tipo_documento, numero_documento)
+            let despesas_por_filtros = await getDespesasPorFiltros(prestacaoDeContas.associacao.uuid, cpf, tipo_documento, numero_documento);
             setDespesas({
                 ...despesas,
                 [`devolucao_${index}`]: [...despesas_por_filtros]
@@ -984,13 +973,12 @@ export const DetalhePrestacaoDeContas = () =>{
 
     const buscaDespesa = async (despesa_uuid, index) =>{
         if (despesa_uuid){
-            let despesa = await getDespesa(despesa_uuid)
+            let despesa = await getDespesa(despesa_uuid);
             setDespesas(prevState => ({ ...prevState,  [`devolucao_${index}`]: [despesa]}));
         }
     };
 
     const validateFormDevolucaoAoTesouro = async (values) => {
-        console.log("validateFormDevolucaoAoTesouro ", values)
         const errors = {};
         values.devolucoes_ao_tesouro_da_prestacao.map((devolucao)=>{
             if (!devolucao.data || !devolucao.despesa || devolucao.devolucao_total === '' || !devolucao.motivo || !devolucao.tipo || !devolucao.valor){
@@ -1001,7 +989,7 @@ export const DetalhePrestacaoDeContas = () =>{
             }
         });
         return errors;
-    }
+    };
 
     return(
         <PaginasContainer>

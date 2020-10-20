@@ -1,6 +1,6 @@
 import React, {Fragment} from "react";
 import {Formik, FieldArray, Field} from "formik";
-import {cpfMaskContitional, exibeDataPT_BR, trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {cpfMaskContitional, exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import CurrencyInput from "react-currency-input";
 import MaskedInput from "react-text-mask";
@@ -17,8 +17,6 @@ export const InformacoesDevolucaoAoTesouro = (
         tiposDevolucao,
         validateFormDevolucaoAoTesouro,
     }) =>{
-    //console.log("InformacoesDevolucaoAoTesouro ", despesas);
-
     return(
         <>
             {informacoesPrestacaoDeContas && informacoesPrestacaoDeContas.devolucao_ao_tesouro !== "Não" &&
@@ -35,13 +33,9 @@ export const InformacoesDevolucaoAoTesouro = (
                         const {
                             values,
                             setFieldValue,
-                            resetForm,
-                            errors,
                         } = props;
-
                         return (
                             <form>
-
                                 <FieldArray
                                     name="devolucoes_ao_tesouro_da_prestacao"
                                     render={({remove, push}) => (
@@ -49,19 +43,16 @@ export const InformacoesDevolucaoAoTesouro = (
                                             {values.devolucoes_ao_tesouro_da_prestacao && values.devolucoes_ao_tesouro_da_prestacao.length > 0 && values.devolucoes_ao_tesouro_da_prestacao.map((devolucao, index) => {
                                                 return (
                                                     <div className="row" key={index}>
-
                                                         <div className={`col-12 mt-3`}>
                                                             <p className="mb-0">
                                                                 <strong>Devolução {index + 1}</strong>
                                                             </p>
                                                             <hr className="mt-0 mb-1"/>
                                                         </div>
-                                                        
                                                         <div className="col-12 col mt-2">
                                                             <div className='row'>
                                                                 <div className='col'>
                                                                     <label className='labels-filtros' htmlFor="busca_por_cpf_cnpj">Busque por CNPJ ou CPF</label>
-
                                                                     <MaskedInput
                                                                         mask={(valor) => cpfMaskContitional(valor)}
                                                                         value={devolucao.busca_por_cpf_cnpj ? devolucao.busca_por_cpf_cnpj : ''}
@@ -110,6 +101,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                         //placeholder=""
                                                                     />
                                                                 </div>
+
                                                                 <div className='col-12 text-right'>
                                                                     <button name='btnFiltrar' type='button' onClick={()=>buscaDespesaPorFiltros(index)} className='btn btn-success mt-2'>Filtrar</button>
                                                                 </div>
@@ -121,11 +113,8 @@ export const InformacoesDevolucaoAoTesouro = (
                                                             <div className='col-12 py-2 container-tabela-despesas'>
                                                                 <table className={`table tabela-despesas mb-0 ${despesas && eval('despesas.devolucao_'+index) && eval('despesas.devolucao_'+index).length > 0 ? 'table-bordered' : ''}`}>
                                                                     <tbody>
-
                                                                     {despesas && eval('despesas.devolucao_'+index) && eval('despesas.devolucao_'+index).length > 0 ?
-
                                                                         eval('despesas.devolucao_'+index).map((despesa, index_interno)=>
-
                                                                             <Fragment key={index_interno}>
                                                                                 <tr className='divisao'>
                                                                                     <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}><Field type="radio" name={`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`} value={despesa.uuid} /></td>
@@ -150,7 +139,6 @@ export const InformacoesDevolucaoAoTesouro = (
                                                         <div className='col-12 col-md-9 mt-2'>
                                                             <div className="form-group">
                                                                 <label htmlFor="tipo">Tipo de devolução</label>
-
                                                                 <select
                                                                     name={`devolucoes_ao_tesouro_da_prestacao[${index}].tipo`}
                                                                     value={devolucao.tipo}
@@ -184,20 +172,20 @@ export const InformacoesDevolucaoAoTesouro = (
                                                         </div>
 
                                                         <div className='col-12 col-md-6'>
-                                                                <label className='labels-filtros' htmlFor="devolucao_total">Valor total ou parcial da despesa</label>
-                                                                 <select
-                                                                    name={`devolucoes_ao_tesouro_da_prestacao[${index}].devolucao_total`}
-                                                                    value={devolucao.devolucao_total}
-                                                                    onChange={async (e) => {
-                                                                        props.handleChange(e);
-                                                                    }
-                                                                    }
-                                                                    className='form-control'
-                                                                >
-                                                                    <option value="">Selecione o tipo</option>
-                                                                    <option value='true'>Valor total</option>
-                                                                    <option value='false'>Valor parcial</option>
-                                                                </select>
+                                                            <label className='labels-filtros' htmlFor="devolucao_total">Valor total ou parcial da despesa</label>
+                                                             <select
+                                                                name={`devolucoes_ao_tesouro_da_prestacao[${index}].devolucao_total`}
+                                                                value={devolucao.devolucao_total}
+                                                                onChange={async (e) => {
+                                                                    props.handleChange(e);
+                                                                }
+                                                                }
+                                                                className='form-control'
+                                                            >
+                                                                <option value="">Selecione o tipo</option>
+                                                                <option value='true'>Valor total</option>
+                                                                <option value='false'>Valor parcial</option>
+                                                            </select>
                                                         </div>
 
                                                         <div className='col-12 col-md-6'>
@@ -229,10 +217,8 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 rows="3"
                                                                 placeholder='Escreva o motivo da devolução'
                                                             >
-
                                                             </textarea>
                                                         </div>
-
 
                                                         {index >= 1 && values.devolucoes_ao_tesouro_da_prestacao.length > 1 && (
                                                             <div className='col-12'>
@@ -249,9 +235,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 </div>
                                                             </div>
                                                         )}
-
                                                     </div>
-
                                                 )
                                             })}
 
@@ -295,7 +279,6 @@ export const InformacoesDevolucaoAoTesouro = (
                 </Formik>
             </>
             }
-
         </>
     )
 };
