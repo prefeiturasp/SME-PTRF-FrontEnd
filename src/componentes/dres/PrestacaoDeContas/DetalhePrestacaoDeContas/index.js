@@ -180,7 +180,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 ...informacoesPrestacaoDeContas,
                 processo_sei: prestacao && prestacao.processo_sei ? prestacao.processo_sei : '',
                 ultima_analise: prestacao && prestacao.data_ultima_analise ? prestacao.data_ultima_analise : '',
-                devolucao_ao_tesouro: prestacao && prestacao.devolucao_ao_tesouro ? prestacao.devolucao_ao_tesouro : '',
+                devolucao_ao_tesouro: prestacao.devolucao_ao_tesouro === 'Não' ? prestacao.devolucao_ao_tesouro : 'Sim' ,
             });
 
             if (prestacao && prestacao.devolucoes_ao_tesouro_da_prestacao && prestacao.devolucoes_ao_tesouro_da_prestacao.length > 0 ){
@@ -456,11 +456,9 @@ export const DetalhePrestacaoDeContas = () =>{
 
         let devolucao_ao_tesouro_tratado;
 
-        if (formRef.current) {
+        if (formRef.current && informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim') {
             devolucao_ao_tesouro_tratado = formRef.current.values.devolucoes_ao_tesouro_da_prestacao;
-
             if (devolucao_ao_tesouro_tratado.length > 0 ){
-
                 devolucao_ao_tesouro_tratado.map((devolucao, index)=>{
                     delete devolucao.busca_por_cpf_cnpj;
                     delete devolucao.busca_por_tipo_documento;
@@ -470,7 +468,6 @@ export const DetalhePrestacaoDeContas = () =>{
                     devolucao.devolucao_total = devolucao.devolucao_total === 'true' ? true : false
                 })
             }
-
         }else {
             devolucao_ao_tesouro_tratado=[];
         }
@@ -485,31 +482,26 @@ export const DetalhePrestacaoDeContas = () =>{
             devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
         };
 
-        let validar =  await validateFormDevolucaoAoTesouro(formRef.current.values);
-
-        console.log("AQUI salvarAnalise XXXXXX payload ", validar)
-
-        if (!camposObrigatorios && Object.entries(validar).length === 0){
-            let salvar = await getSalvarAnalise(prestacaoDeContas.uuid, payload);
-            await carregaPrestacaoDeContas();
-            window.location.reload()
+        if (formRef.current && informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim') {
+            let validar =  await validateFormDevolucaoAoTesouro(formRef.current.values);
+            if (!camposObrigatorios && Object.entries(validar).length === 0){
+                await getSalvarAnalise(prestacaoDeContas.uuid, payload);
+                await carregaPrestacaoDeContas();
+            }else {
+                return formRef.current.setErrors( validar )
+            }
         }else {
-            return formRef.current.setErrors( validar )
+            await getSalvarAnalise(prestacaoDeContas.uuid, payload);
+            await carregaPrestacaoDeContas();
         }
-
-
     };
 
     const onConcluirAnalise = async () => {
         setShowConcluirAnalise(false);
-
         let devolucao_ao_tesouro_tratado;
-
         if (formRef.current) {
             devolucao_ao_tesouro_tratado = formRef.current.values.devolucoes_ao_tesouro_da_prestacao;
-
             if (devolucao_ao_tesouro_tratado.length > 0 ){
-
                 devolucao_ao_tesouro_tratado.map((devolucao, index)=>{
                     delete devolucao.busca_por_cpf_cnpj;
                     delete devolucao.busca_por_tipo_documento;
@@ -519,7 +511,6 @@ export const DetalhePrestacaoDeContas = () =>{
                     devolucao.devolucao_total = devolucao.devolucao_total === 'true' ? true : false
                 })
             }
-
         }else {
             devolucao_ao_tesouro_tratado=[];
         }
@@ -562,8 +553,18 @@ export const DetalhePrestacaoDeContas = () =>{
             }
         }
 
-        await getConcluirAnalise(prestacaoDeContas.uuid, payload);
-        await carregaPrestacaoDeContas();
+        if (formRef.current && informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim') {
+            let validar =  await validateFormDevolucaoAoTesouro(formRef.current.values);
+            if (!camposObrigatorios && Object.entries(validar).length === 0){
+                await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+                await carregaPrestacaoDeContas();
+            }else {
+                return formRef.current.setErrors( validar )
+            }
+        }else {
+            await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+            await carregaPrestacaoDeContas();
+        }
     };
 
     const onVoltarParaAnalise = async () => {
