@@ -45,19 +45,15 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         setComentarioEdicao(false)
     };
     
-    const onEditarComentario = (comentario) => {
+    const onEditarComentario = () => {
         setShowModalComentario(false);
 
-        console.log("onEditarComentario ", comentario)
+        console.log("onEditarComentario ")
     };
 
     const setComentarioParaEdicao = (comentario)=>{
         setComentarioEdicao(comentario)
         setShowModalComentario(true)
-    }
-
-    const onChangeComentario = (comentario) =>{
-        setComentarioEdicao(comentario)
     }
 
     return (
@@ -83,7 +79,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                             <form onSubmit={props.handleSubmit}>
 
                                     {comentarios && comentarios.length > 0 && comentarios.map((comentario, index) =>
-
+                                        <>
                                         <div key={index} className="d-flex bd-highlight border mt-2">
                                             <div className="p-2 flex-grow-1 bd-highlight">{comentario.comentario}</div>
                                             <div className="p-2 bd-highlight">
@@ -95,7 +91,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                                 </button>
                                             </div>
                                         </div>
-
+                                        </>
                                     )}
 
                                 <FieldArray
@@ -170,6 +166,22 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                                         Confirmar comentário
                                                     </button>
                                                 }
+
+                                                <section>
+                                                    <ModalEditarDeletarComentario
+                                                        show={showModalComentario}
+                                                        handleClose={onHandleClose}
+                                                        onEditarComentario={onEditarComentario}
+                                                        comentario={comentarioEdicao}
+                                                        onChange={props.handleChange}
+                                                        titulo="Edição de comentário"
+                                                        primeiroBotaoTexto="Cancelar"
+                                                        primeiroBotaoCss="outline-success"
+                                                        segundoBotaoCss="success"
+                                                        segundoBotaoTexto="Confirmar"
+                                                    />
+                                                </section>
+
                                             </div>
                                         </>
                                     )}
@@ -178,21 +190,6 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                         )
                     }}
                 </Formik>
-
-                <section>
-                    <ModalEditarDeletarComentario
-                        show={showModalComentario}
-                        handleClose={onHandleClose}
-                        onEditarComentario={onEditarComentario}
-                        comentario={comentarioEdicao}
-                        onChangeComentario={onChangeComentario}
-                        titulo="Edição de comentário"
-                        primeiroBotaoTexto="Cancelar"
-                        primeiroBotaoCss="outline-success"
-                        segundoBotaoCss="success"
-                        segundoBotaoTexto="Confirmar"
-                    />
-                </section>
 
             </>
 
