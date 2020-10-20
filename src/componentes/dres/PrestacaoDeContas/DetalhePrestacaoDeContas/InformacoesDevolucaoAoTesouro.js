@@ -21,7 +21,6 @@ export const InformacoesDevolucaoAoTesouro = (
         <>
             {informacoesPrestacaoDeContas && informacoesPrestacaoDeContas.devolucao_ao_tesouro !== "Não" &&
             <>
-                <h1>devolucaoAoTesouro</h1>
                 <Formik
                     initialValues={initialValues}
                     enableReinitialize={true}

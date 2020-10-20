@@ -15,7 +15,7 @@ import {ModalConcluirAnalise} from "../ModalConcluirAnalise";
 import {ModalVoltarParaAnalise} from "../ModalVoltarParaAnalise";
 import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
-import {GetComportamentoPorStatus} from "./getComportamentoPorStatus";
+import {GetComportamentoPorStatus} from "./GetComportamentoPorStatus";
 
 require("ordinal-pt-br");
 
@@ -616,7 +616,6 @@ export const DetalhePrestacaoDeContas = () =>{
         return errors;
     };
 
-    console.log("Prestacao XXXXXXX ", prestacaoDeContas)
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>

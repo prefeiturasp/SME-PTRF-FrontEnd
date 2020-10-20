@@ -2,7 +2,6 @@ import React from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 
 export const InformacoesPrestacaoDeContas = ({handleChangeFormInformacoesPrestacaoDeContas, informacoesPrestacaoDeContas, editavel}) =>{
-    console.log("informacoesPrestacaoDeContas ", informacoesPrestacaoDeContas)
     return(
         <>
             <hr className='mt-4 mb-3'/>

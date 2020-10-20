@@ -61,8 +61,6 @@ export const GetComportamentoPorStatus = (
         setShowVoltarParaAnalise,
     }) =>{
 
-    console.log("Prestação ", prestacaoDeContas)
-
     if (prestacaoDeContas && prestacaoDeContas.status){
         if (prestacaoDeContas.status === 'NAO_RECEBIDA'){
             return (
