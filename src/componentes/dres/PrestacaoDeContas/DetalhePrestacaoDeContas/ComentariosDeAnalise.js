@@ -45,10 +45,10 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         setComentarioEdicao(false)
     };
     
-    const onEditarComentario = (comentario) => {
+    const onEditarComentario = () => {
         setShowModalComentario(false);
 
-        console.log("onEditarComentario ", comentario)
+        console.log("onEditarComentario ", comentarioEdicao)
     };
 
     const setComentarioParaEdicao = (comentario)=>{
@@ -57,7 +57,13 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     }
 
     const onChangeComentario = (comentario) =>{
-        setComentarioEdicao(comentario)
+        console.log("onChangeComentario ", comentario)
+
+        setComentarioEdicao({
+            ...comentarioEdicao,
+            comentario: comentario
+        });
+
     }
 
     return (
