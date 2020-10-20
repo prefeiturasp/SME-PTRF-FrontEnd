@@ -219,7 +219,9 @@ export const GetComportamentoPorStatus = (
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
-                    <ComentariosDeAnalise/>
+                    <ComentariosDeAnalise
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
                 </>
             )
         }else if (prestacaoDeContas.status === 'DEVOLVIDA') {
