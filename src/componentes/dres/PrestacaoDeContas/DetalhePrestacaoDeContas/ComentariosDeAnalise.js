@@ -1,13 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {getComentariosDeAnalise, criarComentarioDeAnalise, editarComentarioDeAnalise} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getComentariosDeAnalise, criarComentarioDeAnalise, editarComentarioDeAnalise, deleteComentarioDeAnalise} from "../../../../services/dres/PrestacaoDeContas.service";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faEdit} from '@fortawesome/free-solid-svg-icons'
 import {FieldArray, Formik} from "formik";
 import {ModalEditarDeletarComentario} from "../ModalEditarDeletarComentario";
 
 export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
-
-    //console.log("ComentariosDeAnalise ", prestacaoDeContas);
 
     const initialComentarios = {
         comentario: ''
@@ -36,7 +34,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         };
 
         await criarComentarioDeAnalise(payload);
-        setToggleExibeBtnAddComentario(!toggleExibeBtnAddComentario)
+        setToggleExibeBtnAddComentario(true)
         carregaComentarios()
     };
 
@@ -47,28 +45,30 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     
     const onEditarComentario = async () => {
         setShowModalComentario(false);
-        console.log("onEditarComentario ", comentarioEdicao)
-        const payload = comentarioEdicao
-        let editar_comentario = await editarComentarioDeAnalise(comentarioEdicao.uuid, payload)
-        console.log("EDITAR XXXXXXXXXXXXXXX ", editar_comentario)
-        setToggleExibeBtnAddComentario(!toggleExibeBtnAddComentario)
+        const payload = comentarioEdicao;
+        await editarComentarioDeAnalise(comentarioEdicao.uuid, payload);
+        setToggleExibeBtnAddComentario(true);
+        carregaComentarios()
+    };
+
+    const onDeletarComentario = async () => {
+        setShowModalComentario(false);
+        await deleteComentarioDeAnalise(comentarioEdicao.uuid);
+        setToggleExibeBtnAddComentario(true);
         carregaComentarios()
     };
 
     const setComentarioParaEdicao = (comentario)=>{
         setComentarioEdicao(comentario)
         setShowModalComentario(true)
-    }
+    };
 
     const onChangeComentario = (comentario) =>{
-        console.log("onChangeComentario ", comentario)
-
         setComentarioEdicao({
             ...comentarioEdicao,
             comentario: comentario
         });
-
-    }
+    };
 
     return (
         <>
@@ -194,6 +194,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                         show={showModalComentario}
                         handleClose={onHandleClose}
                         onEditarComentario={onEditarComentario}
+                        onDeletarComentario={onDeletarComentario}
                         comentario={comentarioEdicao}
                         onChangeComentario={onChangeComentario}
                         titulo="Edição de comentário"

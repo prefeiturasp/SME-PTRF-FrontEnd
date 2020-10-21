@@ -33,6 +33,14 @@ export const ModalEditarDeletarComentario = (props) => {
                             >
                                 Confirmar
                             </button>
+
+                            <button
+                                onClick={props.onDeletarComentario}
+                                type="button"
+                                className="btn btn-danger mt-2"
+                            >
+                                DELETAR
+                            </button>
                         </div>
                     </div>
 

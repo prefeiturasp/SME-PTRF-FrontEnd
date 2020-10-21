@@ -100,3 +100,7 @@ export const criarComentarioDeAnalise = async (payload) => {
 export const editarComentarioDeAnalise = async (comentario_uuid, payload) => {
     return (await api.patch(`/api/comentarios-de-analises/${comentario_uuid}/`, payload, authHeader)).data
 };
+
+export const deleteComentarioDeAnalise = async (comentario_uuid) => {
+    return (await api.delete(`/api/comentarios-de-analises/${comentario_uuid}/`, authHeader))
+};
