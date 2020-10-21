@@ -13,7 +13,6 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         prestacao_conta: '',
         ordem: '',
         comentario: '',
-        distance: 300,
     };
 
     const [comentarios, setComentarios] = useState(initialComentarios);
@@ -40,8 +39,6 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                     prestacao_conta: prestacaoDeContas.uuid,
                     ordem: index+1,
                     comentario: comentario.comentario,
-                    distance: 300,
-
                 })
             });
             setItensReordenados(arrayAnalises)
@@ -77,8 +74,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     
     const onEditarComentario = async () => {
         setShowModalComentario(false);
-        const payload = comentarioEdicao;
-        await editarComentarioDeAnalise(comentarioEdicao.uuid, payload);
+        await editarComentarioDeAnalise(comentarioEdicao.uuid, comentarioEdicao);
         setToggleExibeBtnAddComentario(true);
         carregaComentarios()
     };
@@ -91,7 +87,6 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     };
 
     const setComentarioParaEdicao = (comentario)=>{
-        console.log("setComentarioParaEdicao ", comentario)
         setComentarioEdicao(comentario)
         setShowModalComentario(true)
     };
@@ -104,60 +99,34 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     };
 
     const SortableItem = SortableElement(({comentario}) =>
-
-        // <div key={index} className="d-flex bd-highlight border mt-2">
-        //     <div className="p-2 flex-grow-1 bd-highlight">{comentario.comentario}</div>
-        //     <div className="p-2 bd-highlight">
-        //         <button type='button' onClick={()=>setComentarioParaEdicao(comentario)} className="btn-editar-comentario ml-2">
-        //             <FontAwesomeIcon
-        //                 style={{fontSize: '20px', marginRight: "0", color: '#A4A4A4'}}
-        //                 icon={faEdit}
-        //             />
-        //         </button>
-        //     </div>
-        // </div>
-
-
         <li className="d-flex bd-highlight border mt-2">
             <div className="p-2 flex-grow-1 bd-highlight">{comentario.comentario}</div>
-            <div className="p-2 bd-highlight" onClick={()=>setComentarioParaEdicao(comentario)} >
-                <button type='button' className="btn-editar-comentario ml-2">
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: '#A4A4A4'}}
-                        icon={faEdit}
-                    />
+            <div className="p-2 bd-highlight" >
+                <button onClick={()=>setComentarioParaEdicao(comentario)} type='button' className="btn-cancelar-comentario ml-2">
+                    Editar
                 </button>
             </div>
         </li>
     );
     const SortableList = SortableContainer(({comentarios}) => {
-
         return (
             <>
                 <ul>
                     {comentarios && comentarios.length > 0 && comentarios.map((comentario, index) => (
-                        <SortableItem comentario={comentario} key={`item-${index}`} index={index} value={comentario} />
+                        <SortableItem comentario={comentario} key={`item-${index}`} index={index} />
                     ))}
                 </ul>
             </>
         );
     });
 
-
-
     console.log("Itens Reordenados ", itensReordenados)
 
     return (
-
-
-
         <>
             <hr className='mt-4 mb-3'/>
             <h4 className='mb-2'>Comentários</h4>
             <p>Crie os comentários e arraste as caixas para cima ou para baixo para reorganizar.</p>
-
-
-
             <>
                 <Formik
                     initialValues={comentarios}
@@ -175,9 +144,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                         return (
                             <form onSubmit={props.handleSubmit}>
 
-
                                 <SortableList comentarios={comentarios} onSortEnd={onSortEnd} />
-
 
                                 <FieldArray
                                     name="comentarios"
