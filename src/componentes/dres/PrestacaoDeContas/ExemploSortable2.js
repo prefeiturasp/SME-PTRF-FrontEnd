@@ -2,21 +2,36 @@ import React, {useEffect, useState} from 'react';
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
-
-const SortableItem = SortableElement(({value}) => <li>{value}</li>);
-const SortableList = SortableContainer(({items}) => {
-
-    return (
-        <ul>
-            {/*{items.map((value, index) => (*/}
-            {items.map(({ordem, name}, index) => (
-                <SortableItem key={`item-${ordem}`} index={index} value={name} />
-            ))}
-        </ul>
-    );
-});
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faEdit} from '@fortawesome/free-solid-svg-icons'
 
 export const BasicFunction2 = () =>{
+
+    const SortableItem = SortableElement(({value}) =>
+        <li className="d-flex bd-highlight border mt-2">
+            <div className="p-2 flex-grow-1 bd-highlight">{value}</div>
+            <div className="p-2 bd-highlight">
+                <button type='button' className="btn-editar-comentario ml-2">
+                    <FontAwesomeIcon
+                        style={{fontSize: '20px', marginRight: "0", color: '#A4A4A4'}}
+                        icon={faEdit}
+                    />
+                </button>
+            </div>
+        </li>
+    );
+    const SortableList = SortableContainer(({items}) => {
+
+        return (
+            <>
+                <ul>
+                    {items.map(({ordem, name}, index) => (
+                        <SortableItem key={`item-${ordem}`} index={index} value={name} />
+                    ))}
+                </ul>
+            </>
+        );
+    });
 
     const [items, setItems] = useState([
         { ordem: 1, name: 'Priscilla Cormier', depth: 0 },
