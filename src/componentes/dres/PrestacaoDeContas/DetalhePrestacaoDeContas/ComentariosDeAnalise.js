@@ -9,70 +9,11 @@ import arrayMove from 'array-move';
 
 export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
 
-    const SortableItem = SortableElement(({value}) =>
-        <li className="d-flex bd-highlight border mt-2">
-            <div className="p-2 flex-grow-1 bd-highlight">{value}</div>
-            <div className="p-2 bd-highlight">
-                <button type='button' className="btn-editar-comentario ml-2">
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: '#A4A4A4'}}
-                        icon={faEdit}
-                    />
-                </button>
-            </div>
-        </li>
-    );
-    const SortableList = SortableContainer(({items}) => {
-
-        return (
-            <>
-                <ul>
-                    {items.map(({ordem, name}, index) => (
-                        <SortableItem key={`item-${ordem}`} index={index} value={name} />
-                    ))}
-                </ul>
-            </>
-        );
-    });
-
-    const [items, setItems] = useState([
-        { ordem: 1, name: 'Priscilla Cormier', depth: 0 },
-        { ordem: 2, name: 'Miss Erich Bartoletti', depth: 0 },
-        { ordem: 3, name: 'Alison Friesen', depth: 0 },
-        { ordem: 4, name: 'Bernita Mayert', depth: 0 },
-        { ordem: 5, name: 'Garfield Berge', depth: 0 },
-    ]);
-
-    const [itensReordenados, setItensReordenados] = useState([])
-
-    useEffect(()=>{
-        setItensReordenados(items)
-        reordenarArray()
-    }, [items])
-
-    const onSortEnd = ({oldIndex, newIndex}) => {
-        setItems(arrayMove(items, oldIndex, newIndex));
-    };
-
-    const reordenarArray = () =>{
-        if (items && items.length > 0 ){
-            let arrayAnalises = [];
-            items.map((item, index)=>{
-                arrayAnalises.push({
-                    ordem: index+1,
-                    name:item.name,
-                    depth:item.depth
-                })
-            });
-            setItensReordenados(arrayAnalises)
-        }
-    };
-
-
-    console.log("Itens Reordenados ", itensReordenados)
-
     const initialComentarios = {
-        comentario: ''
+        prestacao_conta: '',
+        ordem: '',
+        comentario: '',
+        distance: 300,
     };
 
     const [comentarios, setComentarios] = useState(initialComentarios);
@@ -80,13 +21,40 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     const [showModalComentario, setShowModalComentario] = useState(false);
     const [comentarioEdicao, setComentarioEdicao] = useState(false);
 
+    const [itensReordenados, setItensReordenados] = useState([])
+
+    useEffect(()=>{
+        setItensReordenados(comentarios)
+        reordenarArray()
+    }, [comentarios])
+
+    const onSortEnd = ({oldIndex, newIndex}) => {
+        setComentarios(arrayMove(comentarios, oldIndex, newIndex));
+    };
+
+    const reordenarArray = () =>{
+        if (comentarios && comentarios.length > 0 ){
+            let arrayAnalises = [];
+            comentarios.map((comentario, index)=>{
+                arrayAnalises.push({
+                    prestacao_conta: prestacaoDeContas.uuid,
+                    ordem: index+1,
+                    comentario: comentario.comentario,
+                    distance: 300,
+
+                })
+            });
+            setItensReordenados(arrayAnalises)
+        }
+    };
+
+
     useEffect(() => {
         carregaComentarios();
     }, []);
 
     const carregaComentarios = async () => {
         let comentarios = await getComentariosDeAnalise(prestacaoDeContas.uuid);
-        console.log("comentarios ", comentarios);
         setComentarios(comentarios)
     };
 
@@ -123,6 +91,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     };
 
     const setComentarioParaEdicao = (comentario)=>{
+        console.log("setComentarioParaEdicao ", comentario)
         setComentarioEdicao(comentario)
         setShowModalComentario(true)
     };
@@ -134,13 +103,60 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         });
     };
 
+    const SortableItem = SortableElement(({comentario}) =>
+
+        // <div key={index} className="d-flex bd-highlight border mt-2">
+        //     <div className="p-2 flex-grow-1 bd-highlight">{comentario.comentario}</div>
+        //     <div className="p-2 bd-highlight">
+        //         <button type='button' onClick={()=>setComentarioParaEdicao(comentario)} className="btn-editar-comentario ml-2">
+        //             <FontAwesomeIcon
+        //                 style={{fontSize: '20px', marginRight: "0", color: '#A4A4A4'}}
+        //                 icon={faEdit}
+        //             />
+        //         </button>
+        //     </div>
+        // </div>
+
+
+        <li className="d-flex bd-highlight border mt-2">
+            <div className="p-2 flex-grow-1 bd-highlight">{comentario.comentario}</div>
+            <div className="p-2 bd-highlight" onClick={()=>setComentarioParaEdicao(comentario)} >
+                <button type='button' className="btn-editar-comentario ml-2">
+                    <FontAwesomeIcon
+                        style={{fontSize: '20px', marginRight: "0", color: '#A4A4A4'}}
+                        icon={faEdit}
+                    />
+                </button>
+            </div>
+        </li>
+    );
+    const SortableList = SortableContainer(({comentarios}) => {
+
+        return (
+            <>
+                <ul>
+                    {comentarios && comentarios.length > 0 && comentarios.map((comentario, index) => (
+                        <SortableItem comentario={comentario} key={`item-${index}`} index={index} value={comentario} />
+                    ))}
+                </ul>
+            </>
+        );
+    });
+
+
+
+    console.log("Itens Reordenados ", itensReordenados)
+
     return (
+
+
+
         <>
             <hr className='mt-4 mb-3'/>
             <h4 className='mb-2'>Comentários</h4>
             <p>Crie os comentários e arraste as caixas para cima ou para baixo para reorganizar.</p>
 
-            <SortableList items={items} onSortEnd={onSortEnd} />
+
 
             <>
                 <Formik
@@ -159,21 +175,9 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                         return (
                             <form onSubmit={props.handleSubmit}>
 
-                                    {comentarios && comentarios.length > 0 && comentarios.map((comentario, index) =>
 
-                                        <div key={index} className="d-flex bd-highlight border mt-2">
-                                            <div className="p-2 flex-grow-1 bd-highlight">{comentario.comentario}</div>
-                                            <div className="p-2 bd-highlight">
-                                                <button type='button' onClick={()=>setComentarioParaEdicao(comentario)} className="btn-editar-comentario ml-2">
-                                                    <FontAwesomeIcon
-                                                        style={{fontSize: '20px', marginRight: "0", color: '#A4A4A4'}}
-                                                        icon={faEdit}
-                                                    />
-                                                </button>
-                                            </div>
-                                        </div>
+                                <SortableList comentarios={comentarios} onSortEnd={onSortEnd} />
 
-                                    )}
 
                                 <FieldArray
                                     name="comentarios"
