@@ -65,14 +65,29 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         setShowModalComentario(true)
     };
 
+    const onChangeComentario = (comentario, objComentario) =>{
+        console.log("On onChangeComentario ", objComentario)
+        setComentarioEdicao({
+            ...comentarioEdicao,
+            prestacao_conta: prestacaoDeContas.uuid,
+            comentario: comentario,
+            ordem: objComentario.ordem,
+            uuid: objComentario.uuid
+        });
+    };
+
     const onEditarComentario = async () => {
         setShowModalComentario(false);
 
-        console.log("On onEditarComentario ", comentarioEdicao.uuid)
+        console.log("On onEditarComentario ", comentarioEdicao)
 
-        await editarComentarioDeAnalise(comentarioEdicao.uuid, comentarioEdicao);
+
+        let retornoEditarComentario = await editarComentarioDeAnalise(comentarioEdicao.uuid, comentarioEdicao);
+
+        console.log("retornoEditarComentario ", retornoEditarComentario)
+
         setToggleExibeBtnAddComentario(true);
-        carregaComentarios()
+        //carregaComentarios()
     };
 
     const onDeletarComentario = async () => {
@@ -84,17 +99,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
 
 
 
-    const onChangeComentario = (comentario, objComentario) =>{
 
-        console.log("On onChangeComentario ", objComentario)
-        setComentarioEdicao({
-            ...comentarioEdicao,
-            prestacao_conta: prestacaoDeContas.uuid,
-            comentario: comentario,
-            ordem: objComentario.ordem,
-            uuid: objComentario.uuid
-        });
-    };
 
     // *********** Sortable Comentário
     const onSortEnd = async ({oldIndex, newIndex}) => {
@@ -121,6 +126,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
 
             //console.log('gravarComentariosReordenados ', payload)
             await getReordenarComentarios(payload);
+            console.log('CARREGANDO COMENTARIOS');
             carregaComentarios()
 
 
