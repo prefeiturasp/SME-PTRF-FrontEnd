@@ -76,6 +76,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         setShowModalComentario(false);
         await editarComentarioDeAnalise(comentarioEdicao.uuid, comentarioEdicao);
         setToggleExibeBtnAddComentario(true);
+        await carregaComentarios();
     };
 
     const onDeletarComentario = async () => {
