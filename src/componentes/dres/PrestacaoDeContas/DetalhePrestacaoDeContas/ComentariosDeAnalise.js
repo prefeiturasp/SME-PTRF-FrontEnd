@@ -153,7 +153,6 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                     initialValues={comentarios}
                     enableReinitialize={true}
                     validateOnBlur={true}
-                    //validate={validateFormValoresReprogramados}
                     onSubmit={onSubmit}
                 >
                     {props => {

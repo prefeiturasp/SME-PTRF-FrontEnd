@@ -9,8 +9,8 @@ const authHeader = {
     }
 }
 
-export const getAcoes = async (associacao_uuid, periodo_uuid) => {
-    return (await api.get(`/api/demonstrativo-financeiro/acoes/?associacao_uuid=${associacao_uuid}&periodo_uuid=${periodo_uuid}`, authHeader)).data
+export const getAcoes = async (associacao_uuid, periodo_uuid, conta_uuid) => {
+    return (await api.get(`/api/demonstrativo-financeiro/acoes/?associacao_uuid=${associacao_uuid}&periodo_uuid=${periodo_uuid}&conta-associacao=${conta_uuid}`, authHeader)).data
 }
 
 export const getDemonstrativoInfo = async (acao_associacao_uuid, conta_associacao_uuid, periodo_uuid) => {

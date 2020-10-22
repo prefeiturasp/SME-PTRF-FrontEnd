@@ -38,8 +38,6 @@ import {DreDashboardPage} from "../paginas/dres/DreDashboard";
 import {ListaPrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/ListaPrestacaoDeContas";
 import {DetalhePrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas";
 
-import {BasicFunction2} from "../componentes/dres/PrestacaoDeContas/ExemploSortable2";
-
 const routesConfig = [
     {
         exact: true,
@@ -195,11 +193,6 @@ const routesConfig = [
         exact: true,
         path: "/",
         component: RedirectLoginVisaoUe
-    },
-    {
-        exact: true,
-        path: "/exemplo-sortable2",
-        component: BasicFunction2
     },
 ];
 

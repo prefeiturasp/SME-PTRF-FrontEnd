@@ -42,7 +42,7 @@ export class DemonstrativoFinanceiro extends Component {
         const associacao_uuid = localStorage.getItem(ASSOCIACAO_UUID);
 
         if (periodo_uuid && conta_uuid && associacao_uuid){
-            const result = await getAcoes(associacao_uuid, periodo_uuid);
+            const result = await getAcoes(associacao_uuid, periodo_uuid, conta_uuid);
 
             Promise.all(result.info_acoes.map(async (info) => {
                 const msg = await getDemonstrativoInfo(info.acao_associacao_uuid, conta_uuid, periodo_uuid);
