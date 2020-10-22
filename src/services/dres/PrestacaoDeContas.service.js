@@ -89,4 +89,22 @@ export const getTiposDevolucao = async () => {
     return (await api.get(`/api/tipos-devolucao-ao-tesouro/`, authHeader)).data
 };
 
+export const getComentariosDeAnalise = async (prestacao_uuid) => {
+    return (await api.get(`/api/comentarios-de-analises/?prestacao_conta__uuid=${prestacao_uuid}`, authHeader)).data
+};
 
+export const criarComentarioDeAnalise = async (payload) => {
+    return (await api.post(`/api/comentarios-de-analises/`, payload, authHeader)).data
+};
+
+export const editarComentarioDeAnalise = async (comentario_uuid, payload) => {
+    return (await api.patch(`/api/comentarios-de-analises/${comentario_uuid}/`, payload, authHeader)).data
+};
+
+export const deleteComentarioDeAnalise = async (comentario_uuid) => {
+    return (await api.delete(`/api/comentarios-de-analises/${comentario_uuid}/`, authHeader))
+};
+
+export const getReordenarComentarios = async (payload) => {
+    return (await api.patch(`/api/comentarios-de-analises/reordenar-comentarios/`, payload, authHeader)).data
+};

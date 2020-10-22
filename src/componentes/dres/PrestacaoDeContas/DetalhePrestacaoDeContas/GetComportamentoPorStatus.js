@@ -1,3 +1,4 @@
+import React from "react";
 import {Cabecalho} from "./Cabecalho";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
@@ -11,7 +12,8 @@ import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
 import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
 import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
-import React from "react";
+import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
+
 
 export const GetComportamentoPorStatus = (
     {
@@ -216,6 +218,9 @@ export const GetComportamentoPorStatus = (
                         valorTemplate={valorTemplate}
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
+                    />
+                    <ComentariosDeAnalise
+                        prestacaoDeContas={prestacaoDeContas}
                     />
                 </>
             )
@@ -425,6 +430,4 @@ export const GetComportamentoPorStatus = (
             )
         }
     }
-
-
 };

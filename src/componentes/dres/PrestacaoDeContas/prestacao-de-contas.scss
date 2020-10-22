@@ -224,3 +224,19 @@
     font-size: 14px !important;
   }
 }
+
+.btn-editar-comentario, .btn-cancelar-comentario{
+  outline: 0 !important;
+  background: none !important;
+  border: none !important;
+}
+
+.btn-cancelar-comentario{
+  color: #00585e;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.container-item-comentario:hover{
+  cursor: move;
+}
