@@ -1,7 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getComentariosDeAnalise, criarComentarioDeAnalise, editarComentarioDeAnalise, deleteComentarioDeAnalise} from "../../../../services/dres/PrestacaoDeContas.service";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faEdit} from '@fortawesome/free-solid-svg-icons'
+import {getComentariosDeAnalise, criarComentarioDeAnalise, editarComentarioDeAnalise, deleteComentarioDeAnalise, getReordenarComentarios} from "../../../../services/dres/PrestacaoDeContas.service";
 import {FieldArray, Formik} from "formik";
 import {ModalEditarDeletarComentario} from "../ModalEditarDeletarComentario";
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
@@ -13,6 +11,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         prestacao_conta: '',
         ordem: '',
         comentario: '',
+        uuid: '',
     };
 
     const [comentarios, setComentarios] = useState(initialComentarios);
@@ -20,38 +19,25 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     const [showModalComentario, setShowModalComentario] = useState(false);
     const [comentarioEdicao, setComentarioEdicao] = useState(false);
 
-    const [itensReordenados, setItensReordenados] = useState([])
+    const [comentariosSortable, setComentariosSortable] = useState([])
 
-    useEffect(()=>{
-        setItensReordenados(comentarios)
-        reordenarArray()
-    }, [comentarios])
-
-    const onSortEnd = ({oldIndex, newIndex}) => {
-        setComentarios(arrayMove(comentarios, oldIndex, newIndex));
-    };
-
-    const reordenarArray = () =>{
-        if (comentarios && comentarios.length > 0 ){
-            let arrayAnalises = [];
-            comentarios.map((comentario, index)=>{
-                arrayAnalises.push({
-                    prestacao_conta: prestacaoDeContas.uuid,
-                    ordem: index+1,
-                    comentario: comentario.comentario,
-                })
-            });
-            setItensReordenados(arrayAnalises)
-        }
-    };
-
+    // useEffect(()=>{
+    //     setComentariosSortable(comentarios)
+    //     reordenarComentarios()
+    // }, [comentarios])
 
     useEffect(() => {
         carregaComentarios();
     }, []);
 
+    // useEffect(() => {
+    //     gravarComentariosReordenados();
+    // }, [comentariosSortable]);
+
+
     const carregaComentarios = async () => {
         let comentarios = await getComentariosDeAnalise(prestacaoDeContas.uuid);
+        console.log("Carrega Comentários ", comentarios)
         setComentarios(comentarios)
     };
 
@@ -59,7 +45,8 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         const payload = {
             prestacao_conta: prestacaoDeContas.uuid,
             ordem: comentarios.length + 1,
-            comentario: values.comentarios[0].comentario
+            comentario: values.comentarios[0].comentario,
+            uuid: values.comentarios[0].uuid
         };
 
         await criarComentarioDeAnalise(payload);
@@ -71,9 +58,18 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         setShowModalComentario(false);
         setComentarioEdicao(false)
     };
-    
+
+    const setComentarioParaEdicao = (comentario)=>{
+        console.log("setComentarioParaEdicao ", comentario)
+        setComentarioEdicao(comentario)
+        setShowModalComentario(true)
+    };
+
     const onEditarComentario = async () => {
         setShowModalComentario(false);
+
+        console.log("On onEditarComentario ", comentarioEdicao.uuid)
+
         await editarComentarioDeAnalise(comentarioEdicao.uuid, comentarioEdicao);
         setToggleExibeBtnAddComentario(true);
         carregaComentarios()
@@ -86,17 +82,87 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         carregaComentarios()
     };
 
-    const setComentarioParaEdicao = (comentario)=>{
-        setComentarioEdicao(comentario)
-        setShowModalComentario(true)
-    };
 
-    const onChangeComentario = (comentario) =>{
+
+    const onChangeComentario = (comentario, objComentario) =>{
+
+        console.log("On onChangeComentario ", objComentario)
         setComentarioEdicao({
             ...comentarioEdicao,
-            comentario: comentario
+            prestacao_conta: prestacaoDeContas.uuid,
+            comentario: comentario,
+            ordem: objComentario.ordem,
+            uuid: objComentario.uuid
         });
     };
+
+    // *********** Sortable Comentário
+    const onSortEnd = async ({oldIndex, newIndex}) => {
+        let novoArrayComentarios = arrayMove(comentarios, oldIndex, newIndex);
+        //setComentarios(novoArrayComentarios);
+        //reordenarComentarios(novoArrayComentarios)
+
+        if (novoArrayComentarios && novoArrayComentarios.length > 0 ){
+            let arrayAnalises = [];
+            novoArrayComentarios.map((comentario, index)=>{
+                arrayAnalises.push({
+                    prestacao_conta: prestacaoDeContas.uuid,
+                    ordem: index+1,
+                    comentario: comentario.comentario,
+                    uuid: comentario.uuid,
+                })
+            });
+            setComentarios(arrayAnalises);
+            const payload = {
+                comentarios_de_analise: [
+                    ...arrayAnalises
+                ]
+            }
+
+            //console.log('gravarComentariosReordenados ', payload)
+            await getReordenarComentarios(payload);
+            carregaComentarios()
+
+
+            //setComentariosSortable(arrayAnalises)
+        }
+    };
+
+    const reordenarComentarios = async (novoArrayComentarios) =>{
+        if (novoArrayComentarios && novoArrayComentarios.length > 0 ){
+            let arrayAnalises = [];
+            novoArrayComentarios.map((comentario, index)=>{
+                arrayAnalises.push({
+                    prestacao_conta: prestacaoDeContas.uuid,
+                    ordem: index+1,
+                    comentario: comentario.comentario,
+                    uuid: comentario.uuid,
+                })
+            });
+
+            setComentarios(arrayAnalises);
+            //setComentariosSortable(arrayAnalises)
+        }
+    };
+
+    const gravarComentariosReordenados = async () =>{
+
+
+
+        if (comentariosSortable && comentariosSortable.length > 0){
+            const payload = {
+                comentarios_de_analise: [
+                    ...comentariosSortable
+                ]
+            }
+
+            //console.log('gravarComentariosReordenados ', payload)
+            await getReordenarComentarios(payload);
+            //carregaComentarios()
+        }
+
+
+    }
 
     const SortableItem = SortableElement(({comentario}) =>
         <li className="d-flex bd-highlight border mt-2">
@@ -111,7 +177,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     const SortableList = SortableContainer(({comentarios}) => {
         return (
             <>
-                <ul>
+                <ul className='p-0'>
                     {comentarios && comentarios.length > 0 && comentarios.map((comentario, index) => (
                         <SortableItem comentario={comentario} key={`item-${index}`} index={index} />
                     ))}
@@ -119,8 +185,9 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
             </>
         );
     });
-
-    console.log("Itens Reordenados ", itensReordenados)
+    // *********** Fim Sortable Comentário
+    
+    //console.log("Itens Reordenados ", comentariosSortable)
 
     return (
         <>

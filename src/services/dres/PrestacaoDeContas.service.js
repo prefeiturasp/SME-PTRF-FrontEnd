@@ -104,3 +104,7 @@ export const editarComentarioDeAnalise = async (comentario_uuid, payload) => {
 export const deleteComentarioDeAnalise = async (comentario_uuid) => {
     return (await api.delete(`/api/comentarios-de-analises/${comentario_uuid}/`, authHeader))
 };
+
+export const getReordenarComentarios = async (payload) => {
+    return (await api.patch(`/api/comentarios-de-analises/reordenar-comentarios/`, payload, authHeader)).data
+};

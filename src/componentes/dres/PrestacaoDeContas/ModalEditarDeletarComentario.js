@@ -15,7 +15,7 @@ export const ModalEditarDeletarComentario = (props) => {
                         <textarea
                             name='resalvas'
                             value={props.comentario.comentario}
-                            onChange={(e) => props.onChangeComentario(e.target.value)}
+                            onChange={(e) => props.onChangeComentario(e.target.value, props.comentario)}
                             //onChange={props.onChangeComentario}
                             className="form-control"
                         />
