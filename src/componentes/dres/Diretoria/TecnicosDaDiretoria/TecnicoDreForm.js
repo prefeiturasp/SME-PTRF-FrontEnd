@@ -47,8 +47,7 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                                     name="rf"
                                                     className="form-control"
                                                 />
-                                                {props.errors.rf &&
-                                                <span className="span_erro text-danger mt-1"> {props.errors.rf}</span>}
+                                                {props.errors.rf && <span className="span_erro text-danger mt-1"> {props.errors.rf}</span>}
                                             </div>
                                         </div>
 
@@ -67,8 +66,7 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                                     className="form-control"
                                                     readOnly={true}
                                                 />
-                                                {props.errors.nome && <span
-                                                    className="span_erro text-danger mt-1"> {props.errors.nome}</span>}
+                                                {props.errors.nome && <span className="span_erro text-danger mt-1"> {props.errors.nome}</span>}
                                             </div>
                                         </div>
 
@@ -77,7 +75,7 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                                 <label htmlFor="email">Email</label>
                                                 <input
                                                     type="text"
-                                                    value={props.values.email ? props.values.email : ""}
+                                                    value={props.values.email}
                                                     onChange={(e) => {
                                                         props.handleChange(e);
                                                         handleChange(e.target.name, e.target.value);
@@ -85,7 +83,7 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                                     }
                                                     name="email"
                                                     className="form-control"
-                                                    readOnly={true}
+                                                    placeholder='Insira seu email se desejar'
                                                 />
                                                 {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
                                             </div>
@@ -96,7 +94,7 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                                 <label htmlFor="telefone">Telefone</label>
                                                 <input
                                                     type="text"
-                                                    value={props.values.telefone ? props.values.telefone : ""}
+                                                    value={props.values.telefone}
                                                     onChange={(e) => {
                                                         props.handleChange(e);
                                                         handleChange(e.target.name, e.target.value);
@@ -104,7 +102,7 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                                     }
                                                     name="telefone"
                                                     className="form-control"
-                                                    readOnly={true}
+                                                    placeholder='Insira seu telefone se desejar'
                                                 />
                                                 {props.errors.telefone && <span className="span_erro text-danger mt-1"> {props.errors.telefone}</span>}
                                             </div>

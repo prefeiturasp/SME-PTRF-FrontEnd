@@ -117,6 +117,8 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     };
 
     const handleChangesInTecnicoForm = (name, value) => {
+
+        console.log("handleChangesInTecnicoForm name: ", name, ' value: ', value)
         setStateTecnicoForm({
             ...stateTecnicoForm,
             [name]: value
@@ -133,7 +135,9 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                 const init = {
                     ...stateTecnicoForm,
                     nome: rf.data[0].nm_pessoa,
-                    rf: values.rf
+                    rf: values.rf,
+                    email: values.email,
+                    telefone: values.telefone,
                 };
                 setStateTecnicoForm(init);
 
