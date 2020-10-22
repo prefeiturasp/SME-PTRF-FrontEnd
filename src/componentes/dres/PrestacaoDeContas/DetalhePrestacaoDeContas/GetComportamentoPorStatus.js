@@ -61,10 +61,10 @@ export const GetComportamentoPorStatus = (
         addCobrancaDevolucoes,
         deleteCobrancaDevolucoes,
         setShowVoltarParaAnalise,
-    }) =>{
+    }) => {
 
-    if (prestacaoDeContas && prestacaoDeContas.status){
-        if (prestacaoDeContas.status === 'NAO_RECEBIDA'){
+    if (prestacaoDeContas && prestacaoDeContas.status) {
+        if (prestacaoDeContas.status === 'NAO_RECEBIDA') {
             return (
                 <>
                     <Cabecalho
@@ -76,7 +76,7 @@ export const GetComportamentoPorStatus = (
                         textoBtnAvancar={"Receber"}
                         textoBtnRetroceder={"Reabrir PC"}
                         metodoAvancar={receberPrestacaoDeContas}
-                        metodoRetroceder={()=>setShowReabrirPc(true)}
+                        metodoRetroceder={() => setShowReabrirPc(true)}
                         disabledBtnAvancar={!stateFormRecebimentoPelaDiretoria.data_recebimento}
                         disabledBtnRetroceder={false}
                     />
@@ -103,7 +103,7 @@ export const GetComportamentoPorStatus = (
                     />
                 </>
             )
-        }else if (prestacaoDeContas.status === 'RECEBIDA'){
+        } else if (prestacaoDeContas.status === 'RECEBIDA') {
             return (
                 <>
                     <Cabecalho
@@ -115,7 +115,7 @@ export const GetComportamentoPorStatus = (
                         textoBtnAvancar={"Analisar"}
                         textoBtnRetroceder={"Não recebida"}
                         metodoAvancar={analisarPrestacaoDeContas}
-                        metodoRetroceder={()=>setShowNaoRecebida(true)}
+                        metodoRetroceder={() => setShowNaoRecebida(true)}
                         disabledBtnAvancar={false}
                         disabledBtnRetroceder={false}
                     />
@@ -143,7 +143,7 @@ export const GetComportamentoPorStatus = (
                 </>
             )
 
-        }else if (prestacaoDeContas.status === 'EM_ANALISE') {
+        } else if (prestacaoDeContas.status === 'EM_ANALISE') {
             return (
                 <>
                     <Cabecalho
@@ -224,7 +224,7 @@ export const GetComportamentoPorStatus = (
                     />
                 </>
             )
-        }else if (prestacaoDeContas.status === 'DEVOLVIDA') {
+        } else if (prestacaoDeContas.status === 'DEVOLVIDA') {
             return (
                 <>
                     <Cabecalho
@@ -294,9 +294,12 @@ export const GetComportamentoPorStatus = (
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
+                    <ComentariosDeAnalise
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
                 </>
             )
-        }else if (prestacaoDeContas.status === 'APROVADA_RESSALVA') {
+        } else if (prestacaoDeContas.status === 'APROVADA_RESSALVA') {
             return (
                 <>
                     <Cabecalho
@@ -360,9 +363,12 @@ export const GetComportamentoPorStatus = (
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
+                    <ComentariosDeAnalise
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
                 </>
             )
-        }else if (prestacaoDeContas.status === 'APROVADA' || prestacaoDeContas.status === 'REPROVADA') {
+        } else if (prestacaoDeContas.status === 'APROVADA' || prestacaoDeContas.status === 'REPROVADA') {
             return (
                 <>
                     <Cabecalho
@@ -425,6 +431,9 @@ export const GetComportamentoPorStatus = (
                         valorTemplate={valorTemplate}
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
+                    />
+                    <ComentariosDeAnalise
+                        prestacaoDeContas={prestacaoDeContas}
                     />
                 </>
             )
