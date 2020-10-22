@@ -134,7 +134,7 @@ export const ModalBootstrapFormMembros = (propriedades) =>{
     // Os botões de Cancelar e Salvar estão dentro do próprio form, pois utilizei Formik para validações
     return (
         <Fragment>
-            <Modal centered show={propriedades.show} onHide={propriedades.onHide}  size="lg">
+            <Modal centered show={propriedades.show} onHide={propriedades.onHide}>
                 <Modal.Header>
                     <Modal.Title>{propriedades.titulo}</Modal.Title>
                 </Modal.Header>

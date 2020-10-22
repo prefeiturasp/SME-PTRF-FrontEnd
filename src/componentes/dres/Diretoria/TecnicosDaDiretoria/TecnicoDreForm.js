@@ -33,9 +33,9 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                 <form method="POST" id="membrosForm" onSubmit={props.handleSubmit}>
 
                                     <div className="row">
-                                        <div className="col-12 col-md-6">
+                                        <div className="col-12">
                                             <div className="form-group">
-                                                <label htmlFor="cargo_associacao">Registro funcional</label>
+                                                <label htmlFor="rf">Registro funcional</label>
                                                 <input
                                                     type="text"
                                                     value={props.values.rf ? props.values.rf : ""}
@@ -52,9 +52,9 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                             </div>
                                         </div>
 
-                                        <div className="col-12 col-md-6">
+                                        <div className="col-12">
                                             <div className="form-group">
-                                                <label htmlFor="cargo_associacao">Nome completo</label>
+                                                <label htmlFor="nome">Nome completo</label>
                                                 <input
                                                     type="text"
                                                     value={props.values.nome ? props.values.nome : ""}
@@ -69,6 +69,44 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                                 />
                                                 {props.errors.nome && <span
                                                     className="span_erro text-danger mt-1"> {props.errors.nome}</span>}
+                                            </div>
+                                        </div>
+
+                                        <div className="col-12">
+                                            <div className="form-group">
+                                                <label htmlFor="email">Email</label>
+                                                <input
+                                                    type="text"
+                                                    value={props.values.email ? props.values.email : ""}
+                                                    onChange={(e) => {
+                                                        props.handleChange(e);
+                                                        handleChange(e.target.name, e.target.value);
+                                                    }
+                                                    }
+                                                    name="email"
+                                                    className="form-control"
+                                                    readOnly={true}
+                                                />
+                                                {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
+                                            </div>
+                                        </div>
+
+                                        <div className="col-12">
+                                            <div className="form-group">
+                                                <label htmlFor="telefone">Telefone</label>
+                                                <input
+                                                    type="text"
+                                                    value={props.values.telefone ? props.values.telefone : ""}
+                                                    onChange={(e) => {
+                                                        props.handleChange(e);
+                                                        handleChange(e.target.name, e.target.value);
+                                                    }
+                                                    }
+                                                    name="telefone"
+                                                    className="form-control"
+                                                    readOnly={true}
+                                                />
+                                                {props.errors.telefone && <span className="span_erro text-danger mt-1"> {props.errors.telefone}</span>}
                                             </div>
                                         </div>
 

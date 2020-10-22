@@ -21,6 +21,8 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         uuid: "",
         rf: "",
         nome: "",
+        email: "",
+        telefone: "",
     };
 
     const [loading, setLoading] = useState(true);
@@ -35,6 +37,9 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
 
     const carregaTecnicos = async () => {
         let tecnicos = await getTecnicosDre(dreUuid);
+
+        console.log("tecnicos ", tecnicos)
+
         setTecnicosList(tecnicos)
     };
 
@@ -66,6 +71,8 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
             uuid: tecnico.uuid,
             rf: tecnico.rf,
             nome: tecnico.nome,
+            email: tecnico.email,
+            telefone: tecnico.telefone,
         };
         setStateTecnicoForm(initFormTecnico);
         setShowConfirmDelete(true);
@@ -81,7 +88,9 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         const payload = {
             'dre': dreUuid,
             'rf': stateTecnicoForm.rf,
-            'nome': stateTecnicoForm.nome
+            'nome': stateTecnicoForm.nome,
+            'email': stateTecnicoForm.email,
+            'telefone': stateTecnicoForm.telefone,
         };
 
         if (stateTecnicoForm.uuid) {
@@ -223,7 +232,8 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                         </div>
                         <div className="row">
                             <div className="col-12">
-                                {tecnicosList.length > 0 ? (<DataTable
+                                {tecnicosList.length > 0 ? (
+                                    <DataTable
                                         value={tecnicosList}
                                         className="mt-3 datatable-footer-coad"
                                         paginator={tecnicosList.length > rowsPerPage}
@@ -234,6 +244,8 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                                     >
                                         <Column field='rf' header='Registro funcional'/>
                                         <Column field='nome' header='Nome completo'/>
+                                        <Column field='email' header='E-mail'/>
+                                        <Column field='telefone' header='Telefone'/>
 
                                         <Column body={conferirAtribuicoesTemplate} header='Unidades escolares atribuidas'
                                                 style={{textAlign: 'center'}}/>
