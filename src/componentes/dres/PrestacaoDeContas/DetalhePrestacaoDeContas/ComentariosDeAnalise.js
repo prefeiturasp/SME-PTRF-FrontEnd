@@ -20,6 +20,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     const [showModalComentario, setShowModalComentario] = useState(false);
     const [showModalDeleteComentario, setShowModalDeleteComentario] = useState(false);
     const [comentarioEdicao, setComentarioEdicao] = useState(false);
+    const [disabledBtnAddComentario, setDisabledBtnAddComentario] = useState(true);
 
     useEffect(() => {
         carregaComentarios();
@@ -87,6 +88,14 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         await carregaComentarios()
     };
 
+    const validaConteudoComentario = (conteudoComentario) =>{
+        if (conteudoComentario) {
+            setDisabledBtnAddComentario(false)
+        }else {
+            setDisabledBtnAddComentario(true)
+        }
+    };
+
     // *********** Sortable Comentário
     const onSortEnd = async ({oldIndex, newIndex}) => {
         let novoArrayComentarios = arrayMove(comentarios, oldIndex, newIndex);
@@ -150,8 +159,6 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                     {props => {
                         const {
                             values,
-                            setFieldValue,
-                            errors,
                         } = props;
                         return (
                             <form onSubmit={props.handleSubmit}>
@@ -175,6 +182,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                                                     className="form-control"
                                                                     onChange={(e) => {
                                                                         props.handleChange(e);
+                                                                        validaConteudoComentario(e.target.value)
                                                                     }
                                                                     }
                                                                     placeholder='Escreva o comentário aqui...'
@@ -225,7 +233,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                                         type="button"
                                                         onClick={()=>onSubmit(values)}
                                                         className="btn btn btn-success mt-2 mr-2"
-
+                                                        disabled={disabledBtnAddComentario}
                                                     >
                                                         Confirmar comentário
                                                     </button>
