@@ -3,11 +3,11 @@ import "./tecnicos.scss"
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrash, faPlus, faClipboardList} from "@fortawesome/free-solid-svg-icons";
+import {faTrash, faPlus, faClipboardList, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Img404 from "../../../../assets/img/img-404.svg";
 import Loading from "../../../../utils/Loading";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
-import {getTecnicosDre, createTecnicoDre, deleteTecnicoDre, getTecnicoDrePorRf} from "../../../../services/dres/TecnicosDre.service";
+import {getTecnicosDre, createTecnicoDre, deleteTecnicoDre, getTecnicoDrePorRf, updateTecnicoDre} from "../../../../services/dres/TecnicosDre.service";
 import {TecnicoDreForm} from "./TecnicoDreForm";
 import {ConfirmaDeleteTecnico} from "./ConfirmaDeleteTecnicoDialog";
 import {consultarRF} from "../../../../services/escolas/Associacao.service";
@@ -185,10 +185,17 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
             <div>
                 <button className="btn-editar-membro" onClick={() => handleDeleteTecnicoAction(rowData)}>
                     <FontAwesomeIcon
+                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                        icon={faEdit}
+                    />
+                </button>
+                <button className="btn-editar-membro" onClick={() => handleDeleteTecnicoAction(rowData)}>
+                    <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "red"}}
                         icon={faTrash}
                     />
                 </button>
+
             </div>
         )
     };

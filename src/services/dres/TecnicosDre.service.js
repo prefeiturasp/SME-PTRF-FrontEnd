@@ -32,3 +32,7 @@ export const getTecnicoDre = async (uuid_tecnico) => {
 export const getTecnicoDrePorRf = async (rf) => {
     return (await api.get(`api/tecnicos-dre/?rf=${rf}`, authHeader)).data
 };
+
+export const updateTecnicoDre = async (uuid_tecnico, payload) => {
+    return (await api.patch(`api/tecnicos-dre/${uuid_tecnico}/`, payload, authHeader)).data
+};
