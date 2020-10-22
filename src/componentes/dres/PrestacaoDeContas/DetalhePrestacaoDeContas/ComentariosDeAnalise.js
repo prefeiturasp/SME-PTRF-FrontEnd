@@ -50,17 +50,17 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     };
 
     const onHandleCloseDeletarComentario = () => {
-        setShowModalDeleteComentario(false)
+        setShowModalDeleteComentario(false);
     };
 
     const onDeleteComentarioTrue = () => {
-        setShowModalDeleteComentario(false)
-        onDeletarComentario()
+        setShowModalDeleteComentario(false);
+        onDeletarComentario();
     };
 
     const setComentarioParaEdicao = (comentario)=>{
         setComentarioEdicao(comentario);
-        setShowModalComentario(true)
+        setShowModalComentario(true);
     };
 
     const onChangeComentario = (comentario, objComentario) =>{
