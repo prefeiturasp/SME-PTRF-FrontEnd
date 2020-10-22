@@ -122,7 +122,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
 
     const SortableItem = SortableElement(({comentario}) =>
         <li className="d-flex bd-highlight border mt-2">
-            <div className="p-2 flex-grow-1 bd-highlight">{comentario.comentario}</div>
+            <div className="p-2 flex-grow-1 bd-highlight container-item-comentario">{comentario.comentario}</div>
             <div className="p-2 bd-highlight" >
                 <button onClick={()=>setComentarioParaEdicao(comentario)} type='button' className="btn-cancelar-comentario ml-2">
                     Editar
