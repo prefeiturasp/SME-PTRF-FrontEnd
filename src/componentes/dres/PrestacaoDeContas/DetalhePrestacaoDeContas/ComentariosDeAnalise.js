@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {getComentariosDeAnalise, criarComentarioDeAnalise, editarComentarioDeAnalise, deleteComentarioDeAnalise, getReordenarComentarios} from "../../../../services/dres/PrestacaoDeContas.service";
 import {FieldArray, Formik} from "formik";
 import {ModalEditarDeletarComentario} from "../ModalEditarDeletarComentario";
+import {ModalDeleteComentario} from "../ModalDeleteComentario";
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
@@ -17,28 +18,16 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     const [comentarios, setComentarios] = useState(initialComentarios);
     const [toggleExibeBtnAddComentario, setToggleExibeBtnAddComentario] = useState(true);
     const [showModalComentario, setShowModalComentario] = useState(false);
+    const [showModalDeleteComentario, setShowModalDeleteComentario] = useState(false);
     const [comentarioEdicao, setComentarioEdicao] = useState(false);
-
-    const [comentariosSortable, setComentariosSortable] = useState([])
-
-    // useEffect(()=>{
-    //     setComentariosSortable(comentarios)
-    //     reordenarComentarios()
-    // }, [comentarios])
 
     useEffect(() => {
         carregaComentarios();
     }, []);
 
-    // useEffect(() => {
-    //     gravarComentariosReordenados();
-    // }, [comentariosSortable]);
-
-
     const carregaComentarios = async () => {
         let comentarios = await getComentariosDeAnalise(prestacaoDeContas.uuid);
-        console.log("Carrega Comentários ", comentarios)
-        setComentarios(comentarios)
+        setComentarios(comentarios);
     };
 
     const onSubmit = async (values) => {
@@ -50,23 +39,30 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         };
 
         await criarComentarioDeAnalise(payload);
-        setToggleExibeBtnAddComentario(true)
-        carregaComentarios()
+        setToggleExibeBtnAddComentario(true);
+        await carregaComentarios();
     };
 
     const onHandleClose = () => {
         setShowModalComentario(false);
-        setComentarioEdicao(false)
+        setComentarioEdicao(false);
+    };
+
+    const onHandleCloseDeletarComentario = () => {
+        setShowModalDeleteComentario(false)
+    };
+
+    const onDeleteComentarioTrue = () => {
+        setShowModalDeleteComentario(false)
+        onDeletarComentario()
     };
 
     const setComentarioParaEdicao = (comentario)=>{
-        console.log("setComentarioParaEdicao ", comentario)
-        setComentarioEdicao(comentario)
+        setComentarioEdicao(comentario);
         setShowModalComentario(true)
     };
 
     const onChangeComentario = (comentario, objComentario) =>{
-        console.log("On onChangeComentario ", objComentario)
         setComentarioEdicao({
             ...comentarioEdicao,
             prestacao_conta: prestacaoDeContas.uuid,
@@ -78,35 +74,21 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
 
     const onEditarComentario = async () => {
         setShowModalComentario(false);
-
-        console.log("On onEditarComentario ", comentarioEdicao)
-
-
-        let retornoEditarComentario = await editarComentarioDeAnalise(comentarioEdicao.uuid, comentarioEdicao);
-
-        console.log("retornoEditarComentario ", retornoEditarComentario)
-
+        await editarComentarioDeAnalise(comentarioEdicao.uuid, comentarioEdicao);
         setToggleExibeBtnAddComentario(true);
-        //carregaComentarios()
     };
 
     const onDeletarComentario = async () => {
         setShowModalComentario(false);
+        setShowModalDeleteComentario(false);
         await deleteComentarioDeAnalise(comentarioEdicao.uuid);
         setToggleExibeBtnAddComentario(true);
-        carregaComentarios()
+        await carregaComentarios()
     };
-
-
-
-
 
     // *********** Sortable Comentário
     const onSortEnd = async ({oldIndex, newIndex}) => {
         let novoArrayComentarios = arrayMove(comentarios, oldIndex, newIndex);
-        //setComentarios(novoArrayComentarios);
-        //reordenarComentarios(novoArrayComentarios)
-
         if (novoArrayComentarios && novoArrayComentarios.length > 0 ){
             let arrayAnalises = [];
             novoArrayComentarios.map((comentario, index)=>{
@@ -122,53 +104,11 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                 comentarios_de_analise: [
                     ...arrayAnalises
                 ]
-            }
-
-            //console.log('gravarComentariosReordenados ', payload)
+            };
             await getReordenarComentarios(payload);
-            console.log('CARREGANDO COMENTARIOS');
-            carregaComentarios()
-
-
-            //setComentariosSortable(arrayAnalises)
+            await carregaComentarios()
         }
     };
-
-    const reordenarComentarios = async (novoArrayComentarios) =>{
-        if (novoArrayComentarios && novoArrayComentarios.length > 0 ){
-            let arrayAnalises = [];
-            novoArrayComentarios.map((comentario, index)=>{
-                arrayAnalises.push({
-                    prestacao_conta: prestacaoDeContas.uuid,
-                    ordem: index+1,
-                    comentario: comentario.comentario,
-                    uuid: comentario.uuid,
-                })
-            });
-
-            setComentarios(arrayAnalises);
-            //setComentariosSortable(arrayAnalises)
-        }
-    };
-
-    const gravarComentariosReordenados = async () =>{
-
-
-
-        if (comentariosSortable && comentariosSortable.length > 0){
-            const payload = {
-                comentarios_de_analise: [
-                    ...comentariosSortable
-                ]
-            }
-
-            //console.log('gravarComentariosReordenados ', payload)
-            await getReordenarComentarios(payload);
-            //carregaComentarios()
-        }
-
-
-    }
 
     const SortableItem = SortableElement(({comentario}) =>
         <li className="d-flex bd-highlight border mt-2">
@@ -192,8 +132,6 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         );
     });
     // *********** Fim Sortable Comentário
-    
-    //console.log("Itens Reordenados ", comentariosSortable)
 
     return (
         <>
@@ -305,7 +243,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                         show={showModalComentario}
                         handleClose={onHandleClose}
                         onEditarComentario={onEditarComentario}
-                        onDeletarComentario={onDeletarComentario}
+                        setShowModalDeleteComentario={setShowModalDeleteComentario}
                         comentario={comentarioEdicao}
                         onChangeComentario={onChangeComentario}
                         titulo="Edição de comentário"
@@ -315,10 +253,20 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                         segundoBotaoTexto="Confirmar"
                     />
                 </section>
-
+                <section>
+                    <ModalDeleteComentario
+                        show={showModalDeleteComentario}
+                        handleClose={onHandleCloseDeletarComentario}
+                        onDeleteComentarioTrue={onDeleteComentarioTrue}
+                        titulo="Excluir Comentário"
+                        texto="<p>Deseja realmente excluir este comentário?</p>"
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="danger"
+                        segundoBotaoTexto="Excluir"
+                    />
+                </section>
             </>
-
-
         </>
     )
 };

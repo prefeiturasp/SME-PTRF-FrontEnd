@@ -1,11 +1,6 @@
 import {ModalBootstrapFormComentarioDeAnalise} from "../../Globais/ModalBootstrap";
 import React from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-
 export const ModalEditarDeletarComentario = (props) => {
-
-    //console.log("Props ", props)
-
     const bodyTextarea = () => {
         return (
             <>
@@ -23,7 +18,7 @@ export const ModalEditarDeletarComentario = (props) => {
                 </div>
                 <div className="d-flex bd-highlight mt-2">
                     <div className="p-Y flex-grow-1 bd-highlight">
-                        <button onClick={props.onDeletarComentario} type="button" className="btn btn-danger mt-2"> Apagar</button>
+                        <button onClick={()=>props.setShowModalDeleteComentario(true)} type="button" className="btn btn-danger mt-2"> Apagar</button>
                     </div>
                     <div className="p-Y bd-highlight">
                         <button onClick={props.handleClose} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
