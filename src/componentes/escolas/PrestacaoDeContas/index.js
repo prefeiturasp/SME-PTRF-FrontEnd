@@ -137,6 +137,7 @@ export const PrestacaoDeContas = () => {
     };
 
     const handleChangePeriodoPrestacaoDeConta = async (name, value) => {
+        console.log('handleChangePeriodoPrestacaoDeConta ', name, ' - ', value)
         setLoading(true);
         if (value){
             let valor = JSON.parse(value);
