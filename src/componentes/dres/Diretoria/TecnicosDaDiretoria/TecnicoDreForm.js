@@ -3,11 +3,24 @@ import {Formik} from "formik";
 import {ModalBootstrapFormMembros} from "../../../Globais/ModalBootstrap";
 import React from "react";
 import * as yup from "yup";
+import {cpfMaskContitional} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import MaskedInput from "react-text-mask";
 
 export const YupSignupSchemaTecnico = yup.object().shape({
     rf: yup.string().required("Campo RF do técnico é obrigatório"),
     email: yup.string().email("Digite um email válido"),
 });
+
+export const telefoneMaskContitional = (value) => {
+    let telefone = value.replace(/[^\d]+/g, "");
+    let mask = [];
+    if (telefone.length <= 10 ) {
+        mask = ['(', /\d/, /\d/,')' , /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]
+    }else{
+        mask = ['(', /\d/, /\d/,')' , /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]
+    }
+    return mask
+}
 
 
 export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, validateForm, initialValues, btnSalvarReadOnly}) => {
@@ -75,8 +88,9 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                         <div className="col-12">
                                             <div className="form-group">
                                                 <label htmlFor="telefone">Telefone</label>
-                                                <input
-                                                    type="text"
+
+                                                <MaskedInput
+                                                    mask={(valor) => telefoneMaskContitional(valor)}
                                                     value={props.values.telefone}
                                                     onChange={(e) => {
                                                         props.handleChange(e);
@@ -87,6 +101,19 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                                     className="form-control"
                                                     placeholder='Insira seu telefone se desejar'
                                                 />
+
+                                                {/*<input
+                                                    type="text"
+                                                    value={props.values.telefone}
+                                                    onChange={(e) => {
+                                                        props.handleChange(e);
+                                                        handleChange(e.target.name, e.target.value);
+                                                    }
+                                                    }
+                                                    name="telefone"
+                                                    className="form-control"
+                                                    placeholder='Insira seu telefone se desejar'
+                                                />*/}
                                                 {props.errors.telefone && <span className="span_erro text-danger mt-1"> {props.errors.telefone}</span>}
                                             </div>
                                         </div>
