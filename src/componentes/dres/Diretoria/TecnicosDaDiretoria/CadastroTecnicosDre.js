@@ -66,7 +66,22 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         setShowTecnicoForm(true);
     };
 
+    const handleEditTecnicoAction = (tecnico) => {
+        const initFormTecnico = {
+            uuid: tecnico.uuid,
+            rf: tecnico.rf,
+            nome: tecnico.nome,
+            email: tecnico.email,
+            telefone: tecnico.telefone,
+        };
+        setStateTecnicoForm(initFormTecnico);
+        setShowTecnicoForm(true);
+    };
+
     const handleDeleteTecnicoAction = (tecnico) => {
+
+        console.log('handleDeleteTecnicoAction ', tecnico)
+
         const initFormTecnico = {
             uuid: tecnico.uuid,
             rf: tecnico.rf,
@@ -93,8 +108,19 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
             'telefone': stateTecnicoForm.telefone,
         };
 
+        const payloadEdit = {
+            'dre': dreUuid,
+            ...stateTecnicoForm
+        };
+
         if (stateTecnicoForm.uuid) {
-            console.log("Update não implementado.")
+            try {
+                await updateTecnicoDre(stateTecnicoForm.uuid, payloadEdit)
+                await carregaTecnicos();
+            }catch (e) {
+                console.log("Erro ao editar técnico ", e)
+            }
+
         } else {
             try {
                 const response = await createTecnicoDre(payload);
@@ -102,8 +128,6 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                     console.log("Técnico criado com sucesso!");
                     await carregaTecnicos();
                 } else if (response.status === 400 && response.data.rf) {
-                    // data:
-                    // rf: ["Técnico de DRE com este RF já existe."]
                     console.log("Técnico já existe")
                 } else {
                     console.log("Erro ao criar Tecnico");
@@ -183,7 +207,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     const tableActionsTemplate = (rowData, column) => {
         return (
             <div>
-                <button className="btn-editar-membro" onClick={() => handleDeleteTecnicoAction(rowData)}>
+                <button className="btn-editar-membro" onClick={() => handleEditTecnicoAction(rowData)}>
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                         icon={faEdit}

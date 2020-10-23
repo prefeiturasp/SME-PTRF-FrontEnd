@@ -11,6 +11,8 @@ export const YupSignupSchemaTecnico = yup.object().shape({
 
 export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, validateForm, initialValues, btnSalvarReadOnly}) => {
 
+    console.log('TecnicoDreForm ', initialValues)
+
     const bodyTextarea = () => {
         return (
             <>
@@ -18,7 +20,7 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                     <Formik
                         initialValues={initialValues}
                         validationSchema={YupSignupSchemaTecnico}
-                        validate={validateForm}
+                        validate={!initialValues.uuid ? validateForm : ''}
                         enableReinitialize={true}
                         validateOnBlur={true}
                         onSubmit={onSubmit}
@@ -46,6 +48,7 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                                     }
                                                     name="rf"
                                                     className="form-control"
+                                                    disabled={initialValues.uuid}
                                                 />
                                                 {props.errors.rf && <span className="span_erro text-danger mt-1"> {props.errors.rf}</span>}
                                             </div>
@@ -114,7 +117,7 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                         <button onClick={() => handleClose()} type="button"
                                                 className="btn btn btn-outline-success mt-2 mr-2">Cancelar
                                         </button>
-                                        <button disabled={btnSalvarReadOnly} type="submit" className="btn btn-success mt-2">Adicionar</button>
+                                        <button disabled={btnSalvarReadOnly} type="submit" className="btn btn-success mt-2">{!initialValues.uuid ? 'Adicionar' : 'Salvar'}</button>
                                     </div>
                                 </form>
                             );
@@ -128,7 +131,7 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
         <ModalBootstrapFormMembros
             show={show}
             onHide={handleClose}
-            titulo="Adicionar novo técnico"
+            titulo={!initialValues.uuid ? 'Adicionar novo técnico' : 'Editar um técnico'}
             bodyText={bodyTextarea()}
         />
     )
