@@ -1,5 +1,5 @@
-import React from "react";
-import {Route, Switch} from 'react-router-dom'
+import React, {Fragment} from "react";
+import {Redirect, Route, Switch} from 'react-router-dom'
 import {Login} from "../paginas/Login";
 import {Pagina404} from "../paginas/escolas/404";
 import {DashboardPage} from "../paginas/Dashboard";
@@ -23,6 +23,8 @@ import {AssociacoesPage} from "../paginas/dres/Associacoes";
 import {ProcessosSeiPage} from "../paginas/dres/Associacoes/ProcessosSei";
 import {CentralDeNotificacoesPage} from "../paginas/CentralDeNotificacoes";
 import { authService } from '../services/auth.service';
+import {visoesService} from "../services/visoes.service";
+import {PaginaSemPermissao} from "../paginas/SemPermissao";
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
 import {DadosDaUnidadeEducacionalPage} from "../paginas/dres/Associacoes/DadosDaUnidadeEducacional";
@@ -42,157 +44,196 @@ const routesConfig = [
     {
         exact: true,
         path: "/dashboard",
-        component: DashboardPage
+        component: DashboardPage,
+        permissoes: ['view_dashboard', 'add_despesa','outra_permissao'],
     },
     { 
         exact: true,
         path: "/cadastro-de-despesa/:origem?",
-        component: CadastroDeDespesa
+        component: CadastroDeDespesa,
+        permissoes: ['permissao_total'],
     },
     { 
         exact: true,
         path: "/lista-de-despesas",
-        component: ListaDeDespesasPage
+        component: ListaDeDespesasPage,
+        permissoes: ['add_despesa', 'outra_permissao'],
     },
     { 
         exact: true,
         path: "/edicao-de-despesa/:associacao/:origem?",
-        component: EdicaoDeDespesa
+        component: EdicaoDeDespesa,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,
         path: "/cadastro-de-credito/:origem?",
-        component: CadastroDeReceita
+        component: CadastroDeReceita,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,
         path: "/edicao-de-receita/:uuid/:origem?",
-        component: EdicaoDeReceita
+        component: EdicaoDeReceita,
+        permissoes: ['permissao_total'],
     },
     {
       exact: true,
       path: "/lista-de-receitas",
-      component: ListaDeReceitasPage
+      component: ListaDeReceitasPage,
+      permissoes: ['add_receita'],
     },
     {
       exact: true,
       path: "/cadastro-de-valores-reprogramados",
-      component: ValoresReprogramadosPage
+      component: ValoresReprogramadosPage,
+        permissoes: ['permissao_total'],
     },
     {
       exact: true,
       path: "/dados-da-associacao",
-      component: DadosDaAssociacaoPage
+      component: DadosDaAssociacaoPage,
+        permissoes: ['permissao_total'],
     },
     {
       exact: true,
       path: "/membros-da-associacao",
-      component: MembrosDaAssociacaoPage
+      component: MembrosDaAssociacaoPage,
+        permissoes: ['permissao_total'],
     },
     {
       exact: true,
       path: "/dados-das-contas-da-associacao",
-      component: DadosDasContasPage
+      component: DadosDasContasPage,
+        permissoes: ['permissao_total'],
     },
     {
       exact: true,
       path: "/prestacao-de-contas",
-      component: PrestacaoDeContasPage
+      component: PrestacaoDeContasPage,
+        permissoes: ['permissao_total'],
     },
     {
       exact: true,
       path: "/detalhe-das-prestacoes",
-      component: DetalhedasPrestacoesPage
+      component: DetalhedasPrestacoesPage,
+        permissoes: ['permissao_total'],
     },
     {
       exact: true,
       path: "/visualizacao-da-ata",
-      component: VisualizacaoDaAta
+      component: VisualizacaoDaAta,
+        permissoes: ['permissao_total'],
     },
     {
       exact: true,
       path: "/meus-dados",
-      component: MeusDadosPage
+      component: MeusDadosPage,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,
         path: "/dre-associacoes",
-        component: AssociacoesPage
+        component: AssociacoesPage,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,
         path: "/dre-dados-da-unidade-educacional",
-        component: DadosDaUnidadeEducacionalPage
+        component: DadosDaUnidadeEducacionalPage,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,
         path: "/dre-dados-da-associacao",
-        component: DadosDaAssociacaoDrePage
+        component: DadosDaAssociacaoDrePage,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,
         path: "/dre-dados-das-contas",
-        component: DadosDasContasDrePage
+        component: DadosDasContasDrePage,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,
         path: "/dre-processos-sei",
-        component: ProcessosSeiPage
+        component: ProcessosSeiPage,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,      
         path: "/dre-dados-da-diretoria",
-        component: DadosDaDiretoriaDrePage
+        component: DadosDaDiretoriaDrePage,
+        permissoes: ['permissao_total'],
     },
     {
       exact: true,
       path: "/dre-regularidade-unidade-educacional",
-      component: PaginaRegularidadeUnidadeEducacional
+      component: PaginaRegularidadeUnidadeEducacional,
+        permissoes: ['permissao_total'],
     },
     {
       exact: true,
       path: "/dre-situacao-financeira-unidade-educacional",
-      component: SituacaoFinanceiraUnidadeEducacionalPage
+      component: SituacaoFinanceiraUnidadeEducacionalPage,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,
         path: "/dre-tecnicos-da-diretoria",
-        component: TecnicosDaDiretoriaDrePage
+        component: TecnicosDaDiretoriaDrePage,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,
         path: "/dre-faq",
-        component: FaqDrePage
+        component: FaqDrePage,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,
         path: "/central-de-notificacoes",
-        component: CentralDeNotificacoesPage
+        component: CentralDeNotificacoesPage,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,
         path: "/dre-atribuicoes/:tecnico_uuid?",
-        component: AtribuicoesPage
+        component: AtribuicoesPage,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,
         path: "/dre-dashboard",
-        component: DreDashboardPage
+        component: DreDashboardPage,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,
         path: "/dre-lista-prestacao-de-contas/:periodo_uuid?/:status_prestacao?",
-        component: ListaPrestacaoDeContas
+        component: ListaPrestacaoDeContas,
+        permissoes: ['permissao_total'],
     },
     {
         exact: true,
         path: "/dre-detalhe-prestacao-de-contas/:prestacao_conta_uuid?",
-        component: DetalhePrestacaoDeContas
+        component: DetalhePrestacaoDeContas,
+        permissoes: ['permissao_total'],
     },
+
+    {
+        exact: true,
+        path: "/sem-permissao-de-acesso",
+        component: PaginaSemPermissao,
+        permissoes: ['permissao_total'],
+    },
+
     {
         exact: true,
         path: "/",
-        component: RedirectLoginVisaoUe
+        component: RedirectLoginVisaoUe,
+        permissoes: ['permissao_total'],
     },
 ];
 
@@ -203,7 +244,11 @@ const PrivateRouter = (
       {...rest}
       render={props =>
         authService.isLoggedIn() ? (
-          <Component {...props} />
+
+            visoesService.getPermissoes(rest.permissoes)? (
+                <Component {...props} />
+                ) :
+                <Route path="*" component={PaginaSemPermissao}/>
         ) :
             window.location.assign("/login")
           /* <Redirect
@@ -221,15 +266,16 @@ export const Rotas = () => {
             <Route exact={true} path="/redefinir-senha/:uuid/" component={RedefinirSenhaPage}/>
             {routesConfig.map(
                 (value, key) => {
-                return (
-                    <PrivateRouter
-                        key={key}
-                        exact={value.exact}
-                        path={value.path}
-                        component={value.component}
-                    />
-                );
-            })}
+                    return (
+                        <PrivateRouter
+                            key={key}
+                            exact={value.exact}
+                            path={value.path}
+                            component={value.component}
+                            permissoes={value.permissoes}
+                        />
+                    );
+                })}
             <Route path="*" component={Pagina404}/>
         </Switch>
     )
