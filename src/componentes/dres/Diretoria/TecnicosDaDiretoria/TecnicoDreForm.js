@@ -6,12 +6,11 @@ import * as yup from "yup";
 
 export const YupSignupSchemaTecnico = yup.object().shape({
     rf: yup.string().required("Campo RF do técnico é obrigatório"),
+    email: yup.string().email("Digite um email válido"),
 });
 
 
 export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, validateForm, initialValues, btnSalvarReadOnly}) => {
-
-    console.log('TecnicoDreForm ', initialValues)
 
     const bodyTextarea = () => {
         return (
@@ -75,25 +74,6 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
 
                                         <div className="col-12">
                                             <div className="form-group">
-                                                <label htmlFor="email">Email</label>
-                                                <input
-                                                    type="text"
-                                                    value={props.values.email}
-                                                    onChange={(e) => {
-                                                        props.handleChange(e);
-                                                        handleChange(e.target.name, e.target.value);
-                                                    }
-                                                    }
-                                                    name="email"
-                                                    className="form-control"
-                                                    placeholder='Insira seu email se desejar'
-                                                />
-                                                {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
-                                            </div>
-                                        </div>
-
-                                        <div className="col-12">
-                                            <div className="form-group">
                                                 <label htmlFor="telefone">Telefone</label>
                                                 <input
                                                     type="text"
@@ -108,6 +88,25 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                                     placeholder='Insira seu telefone se desejar'
                                                 />
                                                 {props.errors.telefone && <span className="span_erro text-danger mt-1"> {props.errors.telefone}</span>}
+                                            </div>
+                                        </div>
+
+                                        <div className="col-12">
+                                            <div className="form-group">
+                                                <label htmlFor="email">Email</label>
+                                                <input
+                                                    type="text"
+                                                    value={props.values.email}
+                                                    onChange={(e) => {
+                                                        props.handleChange(e);
+                                                        handleChange(e.target.name, e.target.value);
+                                                    }
+                                                    }
+                                                    name="email"
+                                                    className="form-control"
+                                                    placeholder='Insira seu email se desejar'
+                                                />
+                                                {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
                                             </div>
                                         </div>
 

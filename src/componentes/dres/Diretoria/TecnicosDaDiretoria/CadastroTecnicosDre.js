@@ -279,8 +279,8 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                                     >
                                         <Column field='rf' header='Registro funcional'/>
                                         <Column field='nome' header='Nome completo'/>
-                                        <Column field='email' header='E-mail'/>
                                         <Column field='telefone' header='Telefone'/>
+                                        <Column field='email' header='E-mail'/>
 
                                         <Column body={conferirAtribuicoesTemplate} header='Unidades escolares atribuidas'
                                                 style={{textAlign: 'center'}}/>
