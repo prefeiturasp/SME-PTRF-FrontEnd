@@ -3,7 +3,6 @@ import {Formik} from "formik";
 import {ModalBootstrapFormMembros} from "../../../Globais/ModalBootstrap";
 import React from "react";
 import * as yup from "yup";
-import {cpfMaskContitional} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from "react-text-mask";
 
 export const YupSignupSchemaTecnico = yup.object().shape({

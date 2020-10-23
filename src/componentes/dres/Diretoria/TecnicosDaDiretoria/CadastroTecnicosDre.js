@@ -37,9 +37,6 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
 
     const carregaTecnicos = async () => {
         let tecnicos = await getTecnicosDre(dreUuid);
-
-        console.log("tecnicos ", tecnicos)
-
         setTecnicosList(tecnicos)
     };
 
@@ -79,9 +76,6 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     };
 
     const handleDeleteTecnicoAction = (tecnico) => {
-
-        console.log('handleDeleteTecnicoAction ', tecnico)
-
         const initFormTecnico = {
             uuid: tecnico.uuid,
             rf: tecnico.rf,
@@ -115,7 +109,7 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
 
         if (stateTecnicoForm.uuid) {
             try {
-                await updateTecnicoDre(stateTecnicoForm.uuid, payloadEdit)
+                await updateTecnicoDre(stateTecnicoForm.uuid, payloadEdit);
                 await carregaTecnicos();
             }catch (e) {
                 console.log("Erro ao editar técnico ", e)
@@ -141,8 +135,6 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     };
 
     const handleChangesInTecnicoForm = (name, value) => {
-
-        console.log("handleChangesInTecnicoForm name: ", name, ' value: ', value)
         setStateTecnicoForm({
             ...stateTecnicoForm,
             [name]: value
@@ -176,10 +168,8 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         } catch (e) {
             errors.rf = "RF inválido"
         }
-
         return errors
     };
-
 
     const handleDeleteConfirmation = () => {
         setShowConfirmDelete(false);
@@ -219,7 +209,6 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                         icon={faTrash}
                     />
                 </button>
-
             </div>
         )
     };
