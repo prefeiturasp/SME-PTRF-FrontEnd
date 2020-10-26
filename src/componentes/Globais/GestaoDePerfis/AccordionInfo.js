@@ -17,7 +17,8 @@ export const AccordionInfo = ({clickBtnInfo, setClickBtnInfo}) =>{
                                         className="btn btn-link btn-block text-left btn-container-pergunta pl-0"
                                         type="button" data-toggle="collapse"
                                         data-target={`#collapse1`} aria-expanded="true"
-                                        aria-controls={`collapse1`}>
+                                        aria-controls={`collapse1`}
+                                    >
                                         Confira os grupos de acesso existentes
                                     </button>
                                 </div>
@@ -26,7 +27,8 @@ export const AccordionInfo = ({clickBtnInfo, setClickBtnInfo}) =>{
                                         onClick={() => setClickBtnInfo(!clickBtnInfo)}
                                         className="btn btn-link btn-block text-left" type="button"
                                         data-toggle="collapse" data-target={`#collapse1`}
-                                        aria-expanded="true" aria-controls={`collapse1`}>
+                                        aria-expanded="true" aria-controls={`collapse1`}
+                                    >
                                             <span className='span-icone-toogle'>
                                                 <FontAwesomeIcon
                                                     style={{marginRight: "0", color: 'black'}}
