@@ -210,8 +210,7 @@ export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfi
 
                                 </div>
                                 <div className="d-flex  justify-content-end pb-3 mt-3">
-                                    <button onClick={() => handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar
-                                    </button>
+                                    <button onClick={() => handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                                     <button type="submit" className="btn btn-success mt-2">{!initialValues.uuid ? 'Adicionar' : 'Salvar'}</button>
                                 </div>
                             </form>

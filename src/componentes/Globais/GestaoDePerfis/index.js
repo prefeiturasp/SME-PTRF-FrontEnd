@@ -21,7 +21,7 @@ export const GestaoDePerfis = () => {
         nome_usuario: "",
         nome_completo: "",
         email: "",
-        grupo_acesso: "",
+        grupo_acesso: [],
     };
 
     const objetoTabelaDinamica = [
@@ -79,7 +79,6 @@ export const GestaoDePerfis = () => {
         };
 
         setStatePerfisForm(initFormPerfis)
-
         setShowPerfisForm(true)
 
     };
