@@ -47,6 +47,7 @@ const UrlsMenuEscolas ={
                 },
             ]
         },
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeMenuGastosDaEscola, permissoes: ['permissao_total'],},
     ]
 };
 
@@ -74,6 +75,7 @@ const UrlsMenuDres ={
                 }
             ]
         },
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeMenuGastosDaEscola, permissoes: ['permissao_total'],},
     ]
 };
 

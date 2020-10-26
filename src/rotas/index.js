@@ -25,6 +25,7 @@ import {CentralDeNotificacoesPage} from "../paginas/CentralDeNotificacoes";
 import {authService} from '../services/auth.service';
 import {visoesService} from "../services/visoes.service";
 import {PaginaSemPermissao} from "../paginas/SemPermissao";
+import {GestaoDePerfisPage} from "../paginas/GestaoDePerfis";
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
 import {DadosDaUnidadeEducacionalPage} from "../paginas/dres/Associacoes/DadosDaUnidadeEducacional";
@@ -226,6 +227,13 @@ const routesConfig = [
         exact: true,
         path: "/sem-permissao-de-acesso",
         component: PaginaSemPermissao,
+        permissoes: ['permissao_total'],
+    },
+
+    {
+        exact: true,
+        path: "/gestao-de-perfis",
+        component: GestaoDePerfisPage,
         permissoes: ['permissao_total'],
     },
 
