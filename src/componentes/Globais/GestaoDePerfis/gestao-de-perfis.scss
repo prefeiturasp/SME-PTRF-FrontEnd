@@ -1,3 +1,13 @@
 .container-info-permissoes{
   background-color: #d5e5e6;
 }
+
+.tabela-lista-perfis{
+  th, td{
+    width: calc(100% / 5) !important;
+  }
+
+  .coluna-editar{
+    width: 56px !important;
+  }
+}
