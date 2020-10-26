@@ -3,6 +3,8 @@ import {ModalBootstrapFormPerfis} from "../../Globais/ModalBootstrap";
 import {Formik, Field} from "formik";
 import * as yup from "yup";
 import {consultarCodEol, consultarNomeResponsavel, consultarRF} from "../../../services/escolas/Associacao.service";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTrash} from "@fortawesome/free-solid-svg-icons";
 
 export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfisForm, handleChange, setShowModalDeletePerfil, onSubmit}) => {
 
@@ -209,13 +211,25 @@ export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfi
 
 
                                 </div>
-                                <div className="d-flex  justify-content-end pb-3 mt-3">
-                                    {initialValues.uuid &&
-                                        <button onClick={() => setShowModalDeletePerfil(true)} type="button" className="btn btn btn-danger mt-2 mr-2">Excluir</button>
-                                    }
 
-                                    <button onClick={() => handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                                    <button type="submit" className="btn btn-success mt-2">{!initialValues.uuid ? 'Adicionar' : 'Salvar'}</button>
+                                <div className="d-flex bd-highlight mt-2">
+                                    <div className="p-Y flex-grow-1 bd-highlight">
+                                        {initialValues.uuid &&
+                                            <button onClick={() => setShowModalDeletePerfil(true)} type="button" className="btn btn btn-danger mt-2 mr-2">
+                                                <FontAwesomeIcon
+                                                    style={{fontSize: '15px', marginRight: "5px", color:'#fff'}}
+                                                    icon={faTrash}
+                                                />
+                                                Excluir perfil
+                                            </button>
+                                        }
+                                    </div>
+                                    <div className="p-Y bd-highlight">
+                                        <button onClick={() => handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                                    </div>
+                                    <div className="p-Y bd-highlight">
+                                        <button type="submit" className="btn btn-success mt-2">{!initialValues.uuid ? 'Adicionar' : 'Salvar'}</button>
+                                    </div>
                                 </div>
                             </form>
                         );
