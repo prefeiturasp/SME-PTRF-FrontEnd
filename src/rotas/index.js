@@ -8,7 +8,7 @@ import {EdicaoDeDespesa} from "../paginas/escolas/Despesas/EdicaoDeDespesa";
 import {ListaDeDespesasPage} from '../paginas/escolas/Despesas/ListaDeDespesas'
 import {CadastroDeReceita} from '../paginas/escolas/Receitas/CadastroReceita';
 import {EdicaoDeReceita} from '../paginas/escolas/Receitas/EdicaoReceita';
-import {ListaDeReceitasPage } from "../paginas/escolas/Receitas/ListaDeReceitas";
+import {ListaDeReceitasPage} from "../paginas/escolas/Receitas/ListaDeReceitas";
 import {DadosDaAssociacaoPage} from "../paginas/escolas/Associacao";
 import {PrestacaoDeContasPage} from "../paginas/escolas/PrestacaoDeContas";
 import {DetalhedasPrestacoesPage} from "../paginas/escolas/DetalheDasPrestacoes";
@@ -22,7 +22,7 @@ import {MeusDadosPage} from "../paginas/escolas/MeusDados";
 import {AssociacoesPage} from "../paginas/dres/Associacoes";
 import {ProcessosSeiPage} from "../paginas/dres/Associacoes/ProcessosSei";
 import {CentralDeNotificacoesPage} from "../paginas/CentralDeNotificacoes";
-import { authService } from '../services/auth.service';
+import {authService} from '../services/auth.service';
 import {visoesService} from "../services/visoes.service";
 import {PaginaSemPermissao} from "../paginas/SemPermissao";
 // Faz o redirect de acordo com a Visao Selecionada
@@ -45,21 +45,21 @@ const routesConfig = [
         exact: true,
         path: "/dashboard",
         component: DashboardPage,
-        permissoes: ['view_dashboard', 'add_despesa','outra_permissao'],
+        permissoes: ['view_dashboard', 'add_despesa', 'outra_permissao'],
     },
-    { 
+    {
         exact: true,
         path: "/cadastro-de-despesa/:origem?",
         component: CadastroDeDespesa,
         permissoes: ['permissao_total'],
     },
-    { 
+    {
         exact: true,
         path: "/lista-de-despesas",
         component: ListaDeDespesasPage,
         permissoes: ['add_despesa', 'outra_permissao'],
     },
-    { 
+    {
         exact: true,
         path: "/edicao-de-despesa/:associacao/:origem?",
         component: EdicaoDeDespesa,
@@ -78,57 +78,57 @@ const routesConfig = [
         permissoes: ['permissao_total'],
     },
     {
-      exact: true,
-      path: "/lista-de-receitas",
-      component: ListaDeReceitasPage,
-      permissoes: ['add_receita'],
+        exact: true,
+        path: "/lista-de-receitas",
+        component: ListaDeReceitasPage,
+        permissoes: ['add_receita'],
     },
     {
-      exact: true,
-      path: "/cadastro-de-valores-reprogramados",
-      component: ValoresReprogramadosPage,
+        exact: true,
+        path: "/cadastro-de-valores-reprogramados",
+        component: ValoresReprogramadosPage,
         permissoes: ['permissao_total'],
     },
     {
-      exact: true,
-      path: "/dados-da-associacao",
-      component: DadosDaAssociacaoPage,
+        exact: true,
+        path: "/dados-da-associacao",
+        component: DadosDaAssociacaoPage,
         permissoes: ['permissao_total'],
     },
     {
-      exact: true,
-      path: "/membros-da-associacao",
-      component: MembrosDaAssociacaoPage,
+        exact: true,
+        path: "/membros-da-associacao",
+        component: MembrosDaAssociacaoPage,
         permissoes: ['permissao_total'],
     },
     {
-      exact: true,
-      path: "/dados-das-contas-da-associacao",
-      component: DadosDasContasPage,
+        exact: true,
+        path: "/dados-das-contas-da-associacao",
+        component: DadosDasContasPage,
         permissoes: ['permissao_total'],
     },
     {
-      exact: true,
-      path: "/prestacao-de-contas",
-      component: PrestacaoDeContasPage,
+        exact: true,
+        path: "/prestacao-de-contas",
+        component: PrestacaoDeContasPage,
         permissoes: ['permissao_total'],
     },
     {
-      exact: true,
-      path: "/detalhe-das-prestacoes",
-      component: DetalhedasPrestacoesPage,
+        exact: true,
+        path: "/detalhe-das-prestacoes",
+        component: DetalhedasPrestacoesPage,
         permissoes: ['permissao_total'],
     },
     {
-      exact: true,
-      path: "/visualizacao-da-ata",
-      component: VisualizacaoDaAta,
+        exact: true,
+        path: "/visualizacao-da-ata",
+        component: VisualizacaoDaAta,
         permissoes: ['permissao_total'],
     },
     {
-      exact: true,
-      path: "/meus-dados",
-      component: MeusDadosPage,
+        exact: true,
+        path: "/meus-dados",
+        component: MeusDadosPage,
         permissoes: ['permissao_total'],
     },
     {
@@ -162,21 +162,21 @@ const routesConfig = [
         permissoes: ['permissao_total'],
     },
     {
-        exact: true,      
+        exact: true,
         path: "/dre-dados-da-diretoria",
         component: DadosDaDiretoriaDrePage,
         permissoes: ['permissao_total'],
     },
     {
-      exact: true,
-      path: "/dre-regularidade-unidade-educacional",
-      component: PaginaRegularidadeUnidadeEducacional,
+        exact: true,
+        path: "/dre-regularidade-unidade-educacional",
+        component: PaginaRegularidadeUnidadeEducacional,
         permissoes: ['permissao_total'],
     },
     {
-      exact: true,
-      path: "/dre-situacao-financeira-unidade-educacional",
-      component: SituacaoFinanceiraUnidadeEducacionalPage,
+        exact: true,
+        path: "/dre-situacao-financeira-unidade-educacional",
+        component: SituacaoFinanceiraUnidadeEducacionalPage,
         permissoes: ['permissao_total'],
     },
     {
@@ -238,28 +238,28 @@ const routesConfig = [
 ];
 
 const PrivateRouter = (
-    { component: Component, ...rest } // eslint-disable-line
-  ) => (
+    {component: Component, ...rest} // eslint-disable-line
+) => (
     <Route
-      {...rest}
-      render={props =>
-        authService.isLoggedIn() ? (
+        {...rest}
+        render={props =>
+            authService.isLoggedIn() ? (
 
-            visoesService.getPermissoes(rest.permissoes)? (
-                <Component {...props} />
+                    visoesService.getPermissoes(rest.permissoes) ? (
+                            <Component {...props} />
+                        ) :
+                        <Route path="*" component={PaginaSemPermissao}/>
                 ) :
-                <Route path="*" component={PaginaSemPermissao}/>
-        ) :
-            window.location.assign("/login")
-          /* <Redirect
-            to={{ pathname: "/login", state: { from: props.location } }} // eslint-disable-line
-          /> */
-      }
+                window.location.assign("/login")
+            /* <Redirect
+              to={{ pathname: "/login", state: { from: props.location } }} // eslint-disable-line
+            /> */
+        }
     />
-  );
+);
 
 export const Rotas = () => {
-    return(
+    return (
         <Switch>
             <Route path="/login" component={Login}/>
             <Route strict path="/esqueci-minha-senha/" component={EsqueciMinhaSenhaPage}/>
