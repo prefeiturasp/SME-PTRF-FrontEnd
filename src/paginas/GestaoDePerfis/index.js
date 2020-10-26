@@ -1,5 +1,6 @@
 import React from "react";
 import {PaginasContainer} from "../PaginasContainer";
+import {GestaoDePerfis} from "../../componentes/Globais/GestaoDePerfis";
 
 
 export const GestaoDePerfisPage = () =>{
@@ -7,7 +8,7 @@ export const GestaoDePerfisPage = () =>{
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Gestao De Perfis</h1>
             <div className="page-content-inner">
-                <h1>GestaoDePerfis Page</h1>
+                <GestaoDePerfis/>
             </div>
         </PaginasContainer>
     )
