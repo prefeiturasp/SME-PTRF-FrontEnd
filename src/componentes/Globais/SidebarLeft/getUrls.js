@@ -2,7 +2,6 @@ import React from "react";
 
 import {USUARIO_NOME, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA} from '../../../services/auth.service'
 import {visoesService} from "../../../services/visoes.service";
-import IconeMenuDadosDaAssociacao from '../../../assets/img/icone-menu-dados-da-associacao.svg'
 import IconeMenuPainel from '../../../assets/img/icone-menu-painel.svg'
 import IconeMenuCreditosDaEscola from '../../../assets/img/icone-menu-creditos-da-escola.svg'
 import IconeMenuGastosDaEscola from '../../../assets/img/icone-menu-gastos-da-escola.svg'
@@ -12,6 +11,7 @@ import IconeAcompanhamento from "../../../assets/img/icone-menu-dre-acompanhamen
 import IconePainel from "../../../assets/img/icone-menu-dre-painel.svg"
 import IconeRelatorio from "../../../assets/img/icone-menu-dre-relatorio.svg"
 import IconeApoioDiretoria from "../../../assets/img/icone-apoio-a-diretoria.svg"
+import IconeGestaoDePerfis from "../../../assets/img/icone-menu-gestao-de-perfis.svg"
 
 const getDadosUsuario = () =>{
     let usuario = localStorage.getItem(USUARIO_NOME);
@@ -47,7 +47,7 @@ const UrlsMenuEscolas ={
                 },
             ]
         },
-        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeMenuGastosDaEscola, permissoes: ['permissao_total'],},
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['permissao_total'],},
     ]
 };
 
@@ -75,7 +75,7 @@ const UrlsMenuDres ={
                 }
             ]
         },
-        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeMenuGastosDaEscola, permissoes: ['permissao_total'],},
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['permissao_total'],},
     ]
 };
 
