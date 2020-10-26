@@ -4,7 +4,7 @@ import {Formik, Field} from "formik";
 import * as yup from "yup";
 import {consultarCodEol, consultarNomeResponsavel, consultarRF} from "../../../services/escolas/Associacao.service";
 
-export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfisForm, handleChange, onSubmit}) => {
+export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfisForm, handleChange, setShowModalDeletePerfil, onSubmit}) => {
 
     const YupSignupSchemaPerfis = yup.object().shape({
         tipo_usuario: yup.string().required("Tipo de usuário é obrigatório"),
@@ -210,6 +210,10 @@ export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfi
 
                                 </div>
                                 <div className="d-flex  justify-content-end pb-3 mt-3">
+                                    {initialValues.uuid &&
+                                        <button onClick={() => setShowModalDeletePerfil(true)} type="button" className="btn btn btn-danger mt-2 mr-2">Excluir</button>
+                                    }
+
                                     <button onClick={() => handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                                     <button type="submit" className="btn btn-success mt-2">{!initialValues.uuid ? 'Adicionar' : 'Salvar'}</button>
                                 </div>

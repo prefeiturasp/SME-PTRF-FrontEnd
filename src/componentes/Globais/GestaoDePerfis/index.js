@@ -7,6 +7,7 @@ import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import {ModalPerfisForm} from "./ModalPerfisForm";
+import {ModalConfirmDeletePerfil} from "./ModalConfirmDeletePerfil";
 
 export const GestaoDePerfis = () => {
 
@@ -36,6 +37,7 @@ export const GestaoDePerfis = () => {
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [statePerfisForm, setStatePerfisForm] = useState(initPerfisForm);
     const [showPerfisForm, setShowPerfisForm] = useState(false);
+    const [showModalDeletePerfil, setShowModalDeletePerfil] = useState(false);
 
     const handleChangeFiltros = (name, value) => {
         setStateFiltros({
@@ -67,8 +69,9 @@ export const GestaoDePerfis = () => {
     };
 
 
+
     const handleEditarPerfisForm = (rowData) =>{
-        console.log("Cliquei handleEditarPerfisForm ", rowData)
+        console.log("Cliquei handleEditarPerfisForm ", rowData);
         const initFormPerfis = {
             uuid: rowData.uuid,
             tipo_usuario: rowData.tipo_usuario,
@@ -97,6 +100,17 @@ export const GestaoDePerfis = () => {
     const handleClose = () => {
         setShowPerfisForm(false);
     };
+
+    const handleCloseDeletePerfil = () => {
+        setShowModalDeletePerfil(false);
+    };
+
+    const onDeleteComentarioTrue = () =>{
+        console.log('onDeleteComentarioTrue ', statePerfisForm)
+        setShowPerfisForm(false);
+        setShowModalDeletePerfil(false);
+    };
+
 
     return (
         <>
@@ -146,12 +160,26 @@ export const GestaoDePerfis = () => {
                     handleClose={handleClose}
                     onSubmit={handleSubmitPerfisForm}
                     handleChange={handleChangesPerfisForm}
+                    setShowModalDeletePerfil={setShowModalDeletePerfil}
                     initialValues={statePerfisForm}
                     setStatePerfisForm={setStatePerfisForm}
                     primeiroBotaoTexto="Cancelar"
                     primeiroBotaoCss="outline-success"
                     segundoBotaoCss="success"
                     segundoBotaoTexto="Confirmar"
+                />
+            </section>
+            <section>
+                <ModalConfirmDeletePerfil
+                    show={showModalDeletePerfil}
+                    handleClose={handleCloseDeletePerfil}
+                    onDeleteComentarioTrue={onDeleteComentarioTrue}
+                    titulo="Excluir Perfil"
+                    texto="<p>Deseja realmente excluir este perfil?</p>"
+                    primeiroBotaoTexto="Cancelar"
+                    primeiroBotaoCss="outline-success"
+                    segundoBotaoCss="danger"
+                    segundoBotaoTexto="Excluir"
                 />
             </section>
 
