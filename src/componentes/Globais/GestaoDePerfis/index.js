@@ -148,6 +148,7 @@ export const GestaoDePerfis = () => {
                     onSubmit={handleSubmitPerfisForm}
                     handleChange={handleChangesPerfisForm}
                     initialValues={statePerfisForm}
+                    setStatePerfisForm={setStatePerfisForm}
                     primeiroBotaoTexto="Cancelar"
                     primeiroBotaoCss="outline-success"
                     segundoBotaoCss="success"
