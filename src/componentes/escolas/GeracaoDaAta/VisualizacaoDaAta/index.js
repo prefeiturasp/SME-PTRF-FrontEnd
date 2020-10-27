@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import "../geracao-da-ata.scss"
 import {TopoComBotoes} from "./TopoComBotoes";
@@ -8,9 +8,11 @@ import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
 import {EditarAta, TextoCopiado} from "../../../../utils/Modais";
 import {getInfoAta} from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasAtas, atualizarInfoAta, getAtas} from "../../../../services/escolas/AtasAssociacao.service";
-import {getPrestacaoDeContasDetalhe} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getDespesasPorFiltros, getPrestacaoDeContasDetalhe} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {getDespesa, getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
+import {InformacoesDevolucaoAoTesouro} from "../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/InformacoesDevolucaoAoTesouro";
 
 moment.updateLocale('pt', {
     months : [
@@ -68,9 +70,9 @@ export const VisualizacaoDaAta = () => {
         let dados_ata = await getAtas(uuid_ata);
 
 
-        let devolucoes_tesouro = await getPrestacaoDeContasDetalhe(dados_ata.prestacao_conta)
-        console.log('devolucoes_tesouro ', devolucoes_tesouro)
-        setPrestacaoDeContasDetalhe(devolucoes_tesouro)
+        let prestacao = await getPrestacaoDeContasDetalhe(dados_ata.prestacao_conta)
+        console.log('prestacao ', prestacao)
+        setPrestacaoDeContasDetalhe(prestacao)
 
 
         console.log("getDadosAta ", dados_ata)
@@ -92,6 +94,25 @@ export const VisualizacaoDaAta = () => {
         });
 
         setDadosAta(dados_ata);
+
+        if (prestacao && prestacao.devolucoes_ao_tesouro_da_prestacao && prestacao.devolucoes_ao_tesouro_da_prestacao.length > 0 ){
+            let devolucoes_ao_tesouro_da_prestacao = [];
+            prestacao.devolucoes_ao_tesouro_da_prestacao.map((devolucao, index)=>{
+                buscaDespesa(devolucao.despesa.uuid, index);
+                devolucoes_ao_tesouro_da_prestacao.push({
+                    busca_por_cpf_cnpj: "",
+                    busca_por_tipo_documento: "",
+                    busca_por_numero_documento: "",
+                    despesa: devolucao.despesa.uuid,
+                    tipo: devolucao.tipo.uuid,
+                    data: devolucao.data,
+                    devolucao_total: devolucao.devolucao_total ? 'true' : 'false',
+                    valor: devolucao.valor ?  valorTemplate(devolucao.valor) : '',
+                    motivo: devolucao.motivo,
+                })
+            });
+            setInitialFormDevolucaoAoTesouro({devolucoes_ao_tesouro_da_prestacao})
+        }
     };
 
     const onHandleClose = () => {
@@ -262,6 +283,83 @@ export const VisualizacaoDaAta = () => {
         }
     }
 
+    // InformacoesDvolucaoAoTesrouro
+    const formRef = useRef();
+    const initialInformacoesPrestacaoDeContas = {
+        devolucao_ao_tesouro:'Sim',
+    };
+    const initialDevolucaoAoTesouro = {
+        devolucoes_ao_tesouro_da_prestacao: [
+            {
+                busca_por_cpf_cnpj: "",
+                busca_por_tipo_documento: "",
+                busca_por_numero_documento: "",
+                despesa: "",
+                tipo: "",
+                data: "",
+                devolucao_total: "",
+                valor: "",
+                motivo: "",
+            }
+        ]
+
+    };
+    const [informacoesPrestacaoDeContas, setInformacoesPrestacaoDeContas] = useState(initialInformacoesPrestacaoDeContas);
+    const [initialFormDevolucaoAoTesouro, setInitialFormDevolucaoAoTesouro] = useState(initialDevolucaoAoTesouro);
+    const [despesas, setDespesas] = useState([]);
+    const [despesasTabelas, setDespesasTabelas] = useState([]);
+    const [tiposDevolucao, setTiposDevolucao] = useState([]);
+    const [camposObrigatorios, setCamposObrigatorios] = useState(false);
+
+    useEffect(() => {
+        const carregaTabelasDespesas = async () => {
+            const resp = await getDespesasTabelas();
+            setDespesasTabelas(resp);
+        };
+        carregaTabelasDespesas();
+    }, []);
+
+    const buscaDespesaPorFiltros = async (index) =>{
+
+        let valores, cpf, tipo_documento, numero_documento;
+
+        if (formRef.current) {
+            valores = formRef.current.values.devolucoes_ao_tesouro_da_prestacao[index];
+            cpf = valores.busca_por_cpf_cnpj ? valores.busca_por_cpf_cnpj : "";
+            tipo_documento = valores.busca_por_tipo_documento ? valores.busca_por_tipo_documento : '';
+            numero_documento = valores.busca_por_numero_documento ? valores.busca_por_numero_documento : '';
+
+            let despesas_por_filtros = await getDespesasPorFiltros(prestacaoDeContasDetalhe.associacao.uuid, cpf, tipo_documento, numero_documento);
+            setDespesas({
+                ...despesas,
+                [`devolucao_${index}`]: [...despesas_por_filtros]
+            });
+        }
+
+    };
+
+    const buscaDespesa = async (despesa_uuid, index) =>{
+        if (despesa_uuid){
+            let despesa = await getDespesa(despesa_uuid);
+            setDespesas(prevState => ({ ...prevState,  [`devolucao_${index}`]: [despesa]}));
+        }
+    };
+
+    const validateFormDevolucaoAoTesouro = async (values) => {
+        const errors = {};
+        values.devolucoes_ao_tesouro_da_prestacao.map((devolucao)=>{
+            if (!devolucao.data || !devolucao.despesa || devolucao.devolucao_total === '' || !devolucao.motivo || !devolucao.tipo || !devolucao.valor){
+                setCamposObrigatorios(true);
+                errors.campos_obrigatorios = "Todos os campos são obrigatórios";
+            }else {
+                setCamposObrigatorios(false)
+            }
+        });
+        return errors;
+    };
+
+    // FIM InformacoesDvolucaoAoTesrouro
+
     return(
         <div className="col-12 container-visualizacao-da-ata mb-5">
             <div className="col-12 mt-4">
@@ -275,6 +373,8 @@ export const VisualizacaoDaAta = () => {
                     />
                 }
             </div>
+
+
 
             <div id="copiar" className="col-12">
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
@@ -290,6 +390,22 @@ export const VisualizacaoDaAta = () => {
                         <p>{stateFormEditarAta.retificacoes}</p>
 
                         {exibeDevolucoesAoTesouro()}
+
+                        <div className="col-12 mt-4">
+                            <InformacoesDevolucaoAoTesouro
+                                informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
+                                initialValues={initialFormDevolucaoAoTesouro}
+                                formRef={formRef}
+                                despesas={despesas}
+                                buscaDespesaPorFiltros={buscaDespesaPorFiltros}
+                                buscaDespesa={buscaDespesa}
+                                valorTemplate={valorTemplate}
+                                despesasTabelas={despesasTabelas}
+                                tiposDevolucao={tiposDevolucao}
+                                validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
+                            />
+                        </div>
+
                     </>
                 }
 

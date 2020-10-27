@@ -13,6 +13,7 @@ import {DatePickerField} from "../componentes/Globais/DatePickerField";
 import {FormAlterarSenha} from "../componentes/Globais/EdicaoDeSenha/FormAlterarSenha";
 import {TextoValidacaoSenha} from "../componentes/Globais/MedidorForcaSenha/textoValidacaoSenha";
 import {FormAlterarEmail} from "../componentes/Globais/FormAlterarEmail";
+import {InformacoesDevolucaoAoTesouro} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/InformacoesDevolucaoAoTesouro";
 
 import {Formik} from 'formik';
 import {YupSignupSchemaMembros} from "./ValidacoesAdicionaisFormularios";
