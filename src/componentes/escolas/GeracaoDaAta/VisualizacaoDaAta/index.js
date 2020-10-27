@@ -8,7 +8,11 @@ import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
 import {EditarAta, TextoCopiado} from "../../../../utils/Modais";
 import {getInfoAta} from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasAtas, atualizarInfoAta, getAtas} from "../../../../services/escolas/AtasAssociacao.service";
-import {getDespesasPorFiltros, getPrestacaoDeContasDetalhe} from "../../../../services/dres/PrestacaoDeContas.service";
+import {
+    getDespesasPorFiltros,
+    getPrestacaoDeContasDetalhe,
+    getTiposDevolucao
+} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {getDespesa, getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
@@ -317,6 +321,14 @@ export const VisualizacaoDaAta = () => {
             setDespesasTabelas(resp);
         };
         carregaTabelasDespesas();
+    }, []);
+
+    useEffect(() => {
+        const carregaTiposDevolucao = async () => {
+            const resp = await getTiposDevolucao();
+            setTiposDevolucao(resp);
+        };
+        carregaTiposDevolucao();
     }, []);
 
     const buscaDespesaPorFiltros = async (index) =>{
