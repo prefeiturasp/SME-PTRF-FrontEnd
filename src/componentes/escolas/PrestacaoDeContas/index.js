@@ -303,6 +303,7 @@ export const PrestacaoDeContas = () => {
                                     <GeracaoAtaRetificadora
                                         uuidPrestacaoConta={localStorage.getItem('uuidPrestacaoConta')}
                                         statusPrestacaoDeConta={statusPrestacaoDeConta}
+                                        onClickVisualizarAta={onClickVisualizarAta}
                                     />
                                 }
 

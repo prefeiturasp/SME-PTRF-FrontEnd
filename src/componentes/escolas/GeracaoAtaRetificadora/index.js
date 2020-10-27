@@ -4,7 +4,7 @@ import {exibeDateTimePT_BR_Ata} from "../../../utils/ValidacoesAdicionaisFormula
 import {BoxAtaRetificadora} from "./BoxAtaRetificadora";
 import "../GeracaoDaAta/geracao-da-ata.scss"
 
-export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeConta}) => {
+export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeConta, onClickVisualizarAta}) => {
     const [dadosAtaRetificadora, setDadosAtaRetificadora] = useState(false);
     const [corBoxAtaRetificadora, setCorBoxAtaRetificadora] = useState("");
     const [textoBoxAtaRetificadora, setTextoBoxAtaRetificadora] = useState("");
@@ -17,9 +17,9 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
 
     const carregagaDadosAtaRetificadora = async () => {
         try {
-            let dados = await getAtaRetificadora(uuidPrestacaoConta)
+            let dados = await getAtaRetificadora(uuidPrestacaoConta);
             setDadosAtaRetificadora(dados);
-            console.log("DADOS 01 ", dados)
+            console.log("DADOS 01 ", dados);
             setTextoBoxAtaRetificadora(dados.nome);
             if (dados.alterado_em === null){
                 setCorBoxAtaRetificadora("vermelho");
@@ -31,7 +31,7 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
             }
         } catch (e) {
             if (statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA") {
-                let dados = await getIniciarAtaRetificadora(uuidPrestacaoConta)
+                let dados = await getIniciarAtaRetificadora(uuidPrestacaoConta);
                 setDadosAtaRetificadora(dados)
                 setCorBoxAtaRetificadora("vermelho");
                 setTextoBoxAtaRetificadora(dados.nome);
@@ -40,18 +40,23 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
         }
     };
 
-    const onClickVisualizarAta = () =>{
-        console.log('onClickVisualizarAta')
-    }
+    // const onClickVisualizarAta = () =>{
+    //     console.log('onClickVisualizarAta')
+    // };
+
+    console.log("DADOS 01 ", dadosAtaRetificadora);
 
     return (
         <>
-            <BoxAtaRetificadora
-                corBoxAtaRetificadora={corBoxAtaRetificadora}
-                textoBoxAtaRetificadora={textoBoxAtaRetificadora}
-                dataBoxAtaRetificadora={dataBoxAtaRetificadora}
-                onClickVisualizarAta={onClickVisualizarAta}
-            />
+            {dataBoxAtaRetificadora &&
+                <BoxAtaRetificadora
+                    corBoxAtaRetificadora={corBoxAtaRetificadora}
+                    textoBoxAtaRetificadora={textoBoxAtaRetificadora}
+                    dataBoxAtaRetificadora={dataBoxAtaRetificadora}
+                    onClickVisualizarAta={onClickVisualizarAta}
+                />
+            }
+
         </>
     )
 
