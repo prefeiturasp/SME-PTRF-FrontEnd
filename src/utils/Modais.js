@@ -428,6 +428,26 @@ export const EditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, onCha
 
                     </div>
 
+                    {dadosAta && dadosAta.tipo_ata === "RETIFICACAO" &&
+                    <>
+                        <div className="col-12 mt-3">
+                            <div className="form-group">
+                                <label htmlFor="retificacoes" className="mb-0">Retificações</label>
+                                <p><small>Utilize esse campo para registrar as retificações da prestação de contas</small></p>
+                                <textarea
+                                    rows="3"
+                                    placeholder="Escreva seu texto aqui"
+                                    value={stateFormEditarAta.retificacoes}
+                                    onChange={(e) => onChange(e.target.name, e.target.value)}
+                                    name="retificacoes"
+                                    className="form-control"
+                                />
+                            </div>
+                        </div>
+                    </>
+                    }
+
+
 
                     <div className="col-12 mt-3">
                         <div className="form-group">
@@ -458,27 +478,8 @@ export const EditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, onCha
                         </div>
                     </div>
 
-                    {dadosAta && dadosAta.tipo_ata === "RETIFICACAO" &&
-                        <>
-                            <div className="col-12 mt-3">
-                                <div className="form-group">
-                                    <label htmlFor="retificacoes" className="mb-0">Retificações</label>
-                                    <p><small>Utilize esse campo para registrar as retificações da prestação de contas</small></p>
-                                    <textarea
-                                        rows="3"
-                                        placeholder="Escreva seu texto aqui"
-                                        value={stateFormEditarAta.retificacoes}
-                                        onChange={(e) => onChange(e.target.name, e.target.value)}
-                                        name="retificacoes"
-                                        className="form-control"
-                                    />
-                                </div>
-                            </div>
-                        </>
-                    }
 
                 </div>
-                {/*row*/}
             </form>
         )
 
