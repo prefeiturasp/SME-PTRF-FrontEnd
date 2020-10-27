@@ -32,6 +32,8 @@ export const PrestacaoDeContas = () => {
     const [textoBoxPrestacaoDeContasPorPeriodo, setTextoBoxPrestacaoDeContasPorPeriodo] = useState("");
     const [dataBoxPrestacaoDeContasPorPeriodo, setDataBoxPrestacaoDeContasPorPeriodo] = useState("");
 
+    const [uuidAtaApresentacao, setUuidAtaApresentacao] = useState("");
+
     useEffect(() => {
         getPeriodoPrestacaoDeConta();
         carregaPeriodos();
@@ -196,6 +198,7 @@ export const PrestacaoDeContas = () => {
             try {
                 data_preenchimento = await getDataPreenchimentoAta(uuid_prestacao_de_contas);
                 localStorage.setItem("uuidAta", data_preenchimento.uuid);
+                setUuidAtaApresentacao(data_preenchimento.uuid)
                 setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
                 if (data_preenchimento.alterado_em === null){
                     setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
@@ -209,6 +212,7 @@ export const PrestacaoDeContas = () => {
             }catch (e) {
                 data_preenchimento = await getIniciarAta(uuid_prestacao_de_contas);
                 localStorage.setItem("uuidAta", data_preenchimento.uuid);
+                setUuidAtaApresentacao(data_preenchimento.uuid)
                 setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
                 setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
                 setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
@@ -218,9 +222,9 @@ export const PrestacaoDeContas = () => {
     };
 
 
-    const onClickVisualizarAta = async () =>{
+    const onClickVisualizarAta = async (uuid_ata) =>{
         setLoading(true);
-        window.location.assign('/visualizacao-da-ata')
+        window.location.assign(`/visualizacao-da-ata/${uuid_ata}`)
     };
 
     const onSalvarTrue = () =>{
@@ -291,11 +295,12 @@ export const PrestacaoDeContas = () => {
                                 />
                                 {localStorage.getItem('uuidPrestacaoConta') &&
                                     <BoxPrestacaoDeContasPorPeriodo
-                                        onClickVisualizarAta={onClickVisualizarAta}
+                                        onClickVisualizarAta={()=>onClickVisualizarAta(uuidAtaApresentacao)}
                                         setLoading={setLoading}
                                         corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
                                         textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
                                         dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
+                                        uuidAtaApresentacao={uuidAtaApresentacao}
                                     />
                                 }
 
@@ -303,7 +308,6 @@ export const PrestacaoDeContas = () => {
                                     <GeracaoAtaRetificadora
                                         uuidPrestacaoConta={localStorage.getItem('uuidPrestacaoConta')}
                                         statusPrestacaoDeConta={statusPrestacaoDeConta}
-                                        onClickVisualizarAta={onClickVisualizarAta}
                                     />
                                 }
 

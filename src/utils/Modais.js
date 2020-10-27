@@ -343,7 +343,7 @@ export const PeriodoFechado = (propriedades) => {
     )
 };
 
-export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, stateFormEditarAta, tabelas}) => {
+export const EditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, onChange, stateFormEditarAta, tabelas}) => {
     const bodyTextarea = () => {
         return (
             <form className="form-group">
@@ -430,10 +430,8 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
 
                     <div className="col-12 mt-3">
                         <div className="form-group">
-                            <label htmlFor="comentarios" className="mb-0">Manifestações, Comentários e
-                                Justificativas</label>
-                            <p><small>Utilize esse campo para registrar possíveis dúvidas, discussões, esclarecimentos
-                                aparecidos durante a reunião</small></p>
+                            <label htmlFor="comentarios" className="mb-0">Manifestações, Comentários e Justificativas</label>
+                            <p><small>Utilize esse campo para registrar possíveis dúvidas, discussões, esclarecimentos aparecidos durante a reunião</small></p>
                             <textarea
                                 rows="3"
                                 placeholder="Escreva seu texto aqui"
@@ -458,6 +456,25 @@ export const EditarAta = ({show, handleClose, onSubmitEditarAta, onChange, state
                             </select>
                         </div>
                     </div>
+
+                    {dadosAta && dadosAta.tipo_ata === "RETIFICACAO" &&
+                        <>
+                            <div className="col-12 mt-3">
+                                <div className="form-group">
+                                    <label htmlFor="retificacoes" className="mb-0">Retificações</label>
+                                    <p><small>Utilize esse campo para registrar as retificações da prestação de contas</small></p>
+                                    <textarea
+                                        rows="3"
+                                        placeholder="Escreva seu texto aqui"
+                                        value={stateFormEditarAta.retificacoes}
+                                        onChange={(e) => onChange(e.target.name, e.target.value)}
+                                        name="retificacoes"
+                                        className="form-control"
+                                    />
+                                </div>
+                            </div>
+                        </>
+                    }
 
                 </div>
                 {/*row*/}

@@ -4,7 +4,7 @@ import {exibeDateTimePT_BR_Ata} from "../../../utils/ValidacoesAdicionaisFormula
 import {BoxAtaRetificadora} from "./BoxAtaRetificadora";
 import "../GeracaoDaAta/geracao-da-ata.scss"
 
-export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeConta, onClickVisualizarAta}) => {
+export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeConta}) => {
     const [dadosAtaRetificadora, setDadosAtaRetificadora] = useState(false);
     const [corBoxAtaRetificadora, setCorBoxAtaRetificadora] = useState("");
     const [textoBoxAtaRetificadora, setTextoBoxAtaRetificadora] = useState("");
@@ -40,9 +40,10 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
         }
     };
 
-    // const onClickVisualizarAta = () =>{
-    //     console.log('onClickVisualizarAta')
-    // };
+    const onClickVisualizarAta = () =>{
+        console.log('onClickVisualizarAta ', dataBoxAtaRetificadora)
+        window.location.assign(`/visualizacao-da-ata/${dadosAtaRetificadora.uuid}`)
+    };
 
     console.log("DADOS 01 ", dadosAtaRetificadora);
 

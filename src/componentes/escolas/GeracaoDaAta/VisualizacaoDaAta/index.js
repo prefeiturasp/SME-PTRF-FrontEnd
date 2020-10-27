@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
 import "../geracao-da-ata.scss"
 import {TopoComBotoes} from "./TopoComBotoes";
 import {TextoDinamicoSuperior} from "./TextoDinamicoSuperior";
@@ -8,7 +9,10 @@ import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
 import {EditarAta, TextoCopiado} from "../../../../utils/Modais";
 import {getInfoAta} from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasAtas, atualizarInfoAta, getAtas} from "../../../../services/escolas/AtasAssociacao.service";
+import {getPrestacaoDeContasDetalhe} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
+import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
+
 moment.updateLocale('pt', {
     months : [
         "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho",
@@ -19,6 +23,9 @@ moment.updateLocale('pt', {
 const numero = require('numero-por-extenso');
 
 export const VisualizacaoDaAta = () => {
+
+    let {uuid_ata} = useParams();
+
     const [showEditarAta, setShowEditarAta] = useState(false);
     const [showTextoCopiado, setShowTextoCopiado] = useState(false);
     const [stateFormEditarAta, setStateFormEditarAta] = useState({
@@ -32,23 +39,23 @@ export const VisualizacaoDaAta = () => {
         convocacao:"PRIMEIRA",
         cargo_presidente_reuniao:"",
         cargo_secretaria_reuniao:"",
+        retificacoes: "",
     });
 
     const [infoAta, setInfoAta]= useState({});
     const [tabelas, setTabelas]= useState({});
     const [dadosAta, setDadosAta]= useState({});
+    const [devolucoesTesouro, setDevolucoesTesouro]= useState({});
 
     useEffect(()=>{
         const infoAta = async ()=>{
             let info_ata = await getInfoAta();
-            console.log("infoAta ", info_ata)
             setInfoAta(info_ata);
             await getDadosAta()
         };
 
         const tabelasAta = async ()=>{
             let tabelas = await getTabelasAtas();
-            console.log("tabelasAta ", tabelas)
             setTabelas(tabelas)
         };
 
@@ -56,9 +63,16 @@ export const VisualizacaoDaAta = () => {
         tabelasAta();
     }, []);
 
+
     const getDadosAta = async () =>{
 
-        let dados_ata = await getAtas();
+        let dados_ata = await getAtas(uuid_ata);
+
+
+        let devolucoes_tesouro = await getPrestacaoDeContasDetalhe(dados_ata.prestacao_conta)
+        console.log('devolucoes_tesouro ', devolucoes_tesouro)
+        setDevolucoesTesouro(devolucoes_tesouro.devolucoes_ao_tesouro_da_prestacao)
+
 
         console.log("getDadosAta ", dados_ata)
 
@@ -75,6 +89,7 @@ export const VisualizacaoDaAta = () => {
             convocacao:dados_ata.convocacao,
             cargo_presidente_reuniao:dados_ata.cargo_presidente_reuniao,
             cargo_secretaria_reuniao:dados_ata.cargo_secretaria_reuniao,
+            retificacoes:dados_ata.retificacoes,
         });
 
         setDadosAta(dados_ata);
@@ -136,10 +151,11 @@ export const VisualizacaoDaAta = () => {
             "cargo_secretaria_reuniao": stateFormEditarAta.cargo_secretaria_reuniao,
             "parecer_conselho": stateFormEditarAta.parecer_conselho,
             "comentarios": stateFormEditarAta.comentarios,
+            "retificacoes": stateFormEditarAta.retificacoes,
         };
 
         try {
-            await atualizarInfoAta(payload);
+            await atualizarInfoAta(uuid_ata, payload);
             getDadosAta();
             setShowEditarAta(false);
         }catch (e) {
@@ -205,8 +221,47 @@ export const VisualizacaoDaAta = () => {
             }
 
         }
-
     };
+
+    const exibeDevolucoesAoTesouro = () =>{
+        if (devolucoesTesouro && devolucoesTesouro.length > 0){
+            return(
+                <>
+                    <p><strong>Devoluções ao tesouro</strong></p>
+                    <table className="table table-bordered tabela-devolucoes-ao-tesouro">
+                        <thead>
+                        <tr>
+                            <th scope="col">Tipo  de devolução</th>
+                            <th scope="col">Data de devolução</th>
+                            <th scope="col">Número de documento</th>
+                            <th scope="col">CPF/CNPJ do fornecedor</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {devolucoesTesouro.map((devolucao, index)=>(
+                            <tr key={index}>
+                                <td>{devolucao.tipo.nome}</td>
+                                <td>{devolucao.data ? exibeDataPT_BR(devolucao.data) : ''}</td>
+                                <td>{devolucao.despesa.numero_documento}</td>
+                                <td>{devolucao.despesa.cpf_cnpj_fornecedor}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                    <hr/>
+                </>
+            )
+        }else {
+            return(
+                    <>
+                        <p><strong>Devoluções ao tesouro</strong></p>
+                        <p>...</p>
+                    </>
+                )
+
+        }
+    }
 
     return(
         <div className="col-12 container-visualizacao-da-ata mb-5">
@@ -225,6 +280,16 @@ export const VisualizacaoDaAta = () => {
                         retornaDadosAtaFormatado={retornaDadosAtaFormatado}
                     />
                 }
+
+                {dadosAta && Object.entries(dadosAta).length > 0 && dadosAta.tipo_ata === 'RETIFICACAO' &&
+                    <>
+                        <p className='mt-3'><strong>Retificações:</strong></p>
+                        <p>{stateFormEditarAta.retificacoes}</p>
+
+                        {exibeDevolucoesAoTesouro()}
+                    </>
+                }
+
 
                 {infoAta && dadosAta &&
                     <TabelaDinamica
@@ -245,6 +310,7 @@ export const VisualizacaoDaAta = () => {
 
             <section>
                 <EditarAta
+                    dadosAta={dadosAta}
                     show={showEditarAta}
                     handleClose={onHandleClose}
                     onSubmitEditarAta={onSubmitEditarAta}
