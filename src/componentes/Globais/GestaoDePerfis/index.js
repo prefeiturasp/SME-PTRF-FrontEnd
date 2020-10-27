@@ -105,8 +105,8 @@ export const GestaoDePerfis = () => {
         setShowModalDeletePerfil(false);
     };
 
-    const onDeleteComentarioTrue = () =>{
-        console.log('onDeleteComentarioTrue ', statePerfisForm)
+    const onDeletePerfilTrue = () =>{
+        console.log('onDeletePerfilTrue ', statePerfisForm)
         setShowPerfisForm(false);
         setShowModalDeletePerfil(false);
     };
@@ -173,7 +173,7 @@ export const GestaoDePerfis = () => {
                 <ModalConfirmDeletePerfil
                     show={showModalDeletePerfil}
                     handleClose={handleCloseDeletePerfil}
-                    onDeleteComentarioTrue={onDeleteComentarioTrue}
+                    onDeletePerfilTrue={onDeletePerfilTrue}
                     titulo="Excluir Perfil"
                     texto="<p>Deseja realmente excluir este perfil?</p>"
                     primeiroBotaoTexto="Cancelar"

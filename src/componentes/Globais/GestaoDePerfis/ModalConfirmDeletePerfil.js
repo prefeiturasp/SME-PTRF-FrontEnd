@@ -11,7 +11,7 @@ export const ModalConfirmDeletePerfil = (props) => {
             primeiroBotaoOnclick={props.handleClose}
             primeiroBotaoTexto={props.primeiroBotaoTexto}
             primeiroBotaoCss={props.primeiroBotaoCss}
-            segundoBotaoOnclick={props.onDeleteComentarioTrue}
+            segundoBotaoOnclick={props.onDeletePerfilTrue}
             segundoBotaoCss={props.segundoBotaoCss}
             segundoBotaoTexto={props.segundoBotaoTexto}
         />
