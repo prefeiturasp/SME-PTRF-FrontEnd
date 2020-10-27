@@ -12,6 +12,7 @@ import Loading from "../../../utils/Loading";
 import {ModalConcluirPeriodo} from "./ModalConcluirPeriodo";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import {BoxPrestacaoDeContasPorPeriodo} from "../GeracaoDaAta/BoxPrestacaoDeContasPorPeriodo";
+import {GeracaoAtaRetificadora} from "../GeracaoAtaRetificadora";
 import {exibeDateTimePT_BR_Ata} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const PrestacaoDeContas = () => {
@@ -295,6 +296,13 @@ export const PrestacaoDeContas = () => {
                                         corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
                                         textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
                                         dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
+                                    />
+                                }
+
+                                {localStorage.getItem('uuidPrestacaoConta') && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao &&
+                                    <GeracaoAtaRetificadora
+                                        uuidPrestacaoConta={localStorage.getItem('uuidPrestacaoConta')}
+                                        statusPrestacaoDeConta={statusPrestacaoDeConta}
                                     />
                                 }
 
