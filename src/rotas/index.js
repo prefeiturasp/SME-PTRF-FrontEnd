@@ -46,7 +46,7 @@ const routesConfig = [
         exact: true,
         path: "/dashboard",
         component: DashboardPage,
-        permissoes: ['view_dashboard', 'add_despesa', 'outra_permissao'],
+        permissoes: ['view_dashboard', 'add_despesa', ],
     },
     {
         exact: true,
@@ -58,7 +58,7 @@ const routesConfig = [
         exact: true,
         path: "/lista-de-despesas",
         component: ListaDeDespesasPage,
-        permissoes: ['add_despesa', 'outra_permissao'],
+        permissoes: ['add_despesa', ],
     },
     {
         exact: true,

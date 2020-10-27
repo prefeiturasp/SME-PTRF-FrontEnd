@@ -86,7 +86,6 @@ const getPermissoes = (permissao) =>{
         let permissoes = getItemUsuarioLogado('permissoes');
         let result = permissao.filter(item => permissoes.indexOf(item) > -1);
         let tem_acesso = result.length === permissao.length;
-        console.log("XXXXXXXX  ", tem_acesso)
         return tem_acesso
     }
 
