@@ -2,7 +2,6 @@ import React from "react";
 
 import {USUARIO_NOME, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA} from '../../../services/auth.service'
 import {visoesService} from "../../../services/visoes.service";
-import IconeMenuDadosDaAssociacao from '../../../assets/img/icone-menu-dados-da-associacao.svg'
 import IconeMenuPainel from '../../../assets/img/icone-menu-painel.svg'
 import IconeMenuCreditosDaEscola from '../../../assets/img/icone-menu-creditos-da-escola.svg'
 import IconeMenuGastosDaEscola from '../../../assets/img/icone-menu-gastos-da-escola.svg'
@@ -12,6 +11,7 @@ import IconeAcompanhamento from "../../../assets/img/icone-menu-dre-acompanhamen
 import IconePainel from "../../../assets/img/icone-menu-dre-painel.svg"
 import IconeRelatorio from "../../../assets/img/icone-menu-dre-relatorio.svg"
 import IconeApoioDiretoria from "../../../assets/img/icone-apoio-a-diretoria.svg"
+import IconeGestaoDePerfis from "../../../assets/img/icone-menu-gestao-de-perfis.svg"
 
 const getDadosUsuario = () =>{
     let usuario = localStorage.getItem(USUARIO_NOME);
@@ -33,11 +33,11 @@ const UrlsMenuEscolas ={
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
     lista_de_urls:[
-        {label: "Dados da Associação", url: "dados-da-associacao", dataFor:"dados_da_associacao", icone:IconeDadosDaDiretoria},
-        {label: "Resumo dos recursos", url: "dashboard", dataFor:"resumo_dos_recursos", icone:IconeMenuPainel},
-        {label: "Créditos da escola", url: "lista-de-receitas", dataFor:"creditos_da_escola", icone:IconeMenuCreditosDaEscola},
-        {label: "Gastos da escola", url: "lista-de-despesas", dataFor:"gastos_da_escola", icone:IconeMenuGastosDaEscola},
-        {label: "Prestação de contas", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:IconeMenuPrestacaoDeContas,
+        {label: "Dados da Associação", url: "dados-da-associacao", dataFor:"dados_da_associacao", icone:IconeDadosDaDiretoria, permissoes: ['permissao_total'],},
+        {label: "Resumo dos recursos", url: "dashboard", dataFor:"resumo_dos_recursos", icone:IconeMenuPainel, permissoes: ['view_dashboard', 'add_despesa',],},
+        {label: "Créditos da escola", url: "lista-de-receitas", dataFor:"creditos_da_escola", icone:IconeMenuCreditosDaEscola, permissoes: ['add_receita'],},
+        {label: "Gastos da escola", url: "lista-de-despesas", dataFor:"gastos_da_escola", icone:IconeMenuGastosDaEscola, permissoes: ['add_despesa', ],},
+        {label: "Prestação de contas", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:IconeMenuPrestacaoDeContas, permissoes: ['permissao_total'],
             subItens: [
                 {
                     label: "Conciliação Bancária", url: "detalhe-das-prestacoes", dataFor:"detalhe_das_prestacoes", icone:""
@@ -47,6 +47,7 @@ const UrlsMenuEscolas ={
                 },
             ]
         },
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['permissao_total'],},
     ]
 };
 
@@ -58,11 +59,11 @@ const UrlsMenuDres ={
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
     lista_de_urls:[
-        {label: "Painel", url: "dre-dashboard", dataFor:"dre_dashboard", icone:IconePainel},
-        {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola},
-        {label: "Acompanhamento", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeAcompanhamento},
-        {label: "Relatório consolidado", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeRelatorio},
-        {label: "Dados da Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria},
+        {label: "Painel", url: "dre-dashboard", dataFor:"dre_dashboard", icone:IconePainel, permissoes: ['permissao_total'],},
+        {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola, permissoes: ['permissao_total'],},
+        {label: "Acompanhamento", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeAcompanhamento, permissoes: ['permissao_total'],},
+        {label: "Relatório consolidado", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeRelatorio, permissoes: ['permissao_total']},
+        {label: "Dados da Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria, permissoes: ['permissao_total']},
         {
             label: "Apoio à Diretoria",
             url: "dre-dados-da-diretoria",
@@ -74,6 +75,7 @@ const UrlsMenuDres ={
                 }
             ]
         },
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['permissao_total'],},
     ]
 };
 
