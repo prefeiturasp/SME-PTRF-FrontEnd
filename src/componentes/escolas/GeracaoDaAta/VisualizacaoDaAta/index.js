@@ -4,7 +4,6 @@ import "../geracao-da-ata.scss"
 import {TopoComBotoes} from "./TopoComBotoes";
 import {TextoDinamicoSuperior} from "./TextoDinamicoSuperior";
 import {TabelaDinamica} from "./TabelaDinamica";
-import {TabelaTotais} from "./TabelaTotais";
 import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
 import {EditarAta, TextoCopiado} from "../../../../utils/Modais";
 import {getInfoAta} from "../../../../services/escolas/PrestacaoDeContas.service";
@@ -45,7 +44,7 @@ export const VisualizacaoDaAta = () => {
     const [infoAta, setInfoAta]= useState({});
     const [tabelas, setTabelas]= useState({});
     const [dadosAta, setDadosAta]= useState({});
-    const [devolucoesTesouro, setDevolucoesTesouro]= useState({});
+    const [prestacaoDeContasDetalhe, setPrestacaoDeContasDetalhe]= useState({});
 
     useEffect(()=>{
         const infoAta = async ()=>{
@@ -71,7 +70,7 @@ export const VisualizacaoDaAta = () => {
 
         let devolucoes_tesouro = await getPrestacaoDeContasDetalhe(dados_ata.prestacao_conta)
         console.log('devolucoes_tesouro ', devolucoes_tesouro)
-        setDevolucoesTesouro(devolucoes_tesouro.devolucoes_ao_tesouro_da_prestacao)
+        setPrestacaoDeContasDetalhe(devolucoes_tesouro)
 
 
         console.log("getDadosAta ", dados_ata)
@@ -224,7 +223,7 @@ export const VisualizacaoDaAta = () => {
     };
 
     const exibeDevolucoesAoTesouro = () =>{
-        if (devolucoesTesouro && devolucoesTesouro.length > 0){
+        if (prestacaoDeContasDetalhe && prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao && prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao.length > 0){
             return(
                 <>
                     <p><strong>Devoluções ao tesouro</strong></p>
@@ -239,7 +238,7 @@ export const VisualizacaoDaAta = () => {
                         </thead>
                         <tbody>
 
-                        {devolucoesTesouro.map((devolucao, index)=>(
+                        {prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao.map((devolucao, index)=>(
                             <tr key={index}>
                                 <td>{devolucao.tipo.nome}</td>
                                 <td>{devolucao.data ? exibeDataPT_BR(devolucao.data) : ''}</td>
@@ -266,11 +265,15 @@ export const VisualizacaoDaAta = () => {
     return(
         <div className="col-12 container-visualizacao-da-ata mb-5">
             <div className="col-12 mt-4">
-                <TopoComBotoes
-                    handleClickEditarAta={handleClickEditarAta}
-                    handleClickFecharAta={handleClickFecharAta}
-                    handleClickCopiarAta={handleClickCopiarAta}
-                />
+                {dadosAta && Object.entries(dadosAta).length > 0 &&
+                    <TopoComBotoes
+                        dadosAta={dadosAta}
+                        prestacaoDeContasDetalhe={prestacaoDeContasDetalhe}
+                        handleClickEditarAta={handleClickEditarAta}
+                        handleClickFecharAta={handleClickFecharAta}
+                        handleClickCopiarAta={handleClickCopiarAta}
+                    />
+                }
             </div>
 
             <div id="copiar" className="col-12">
