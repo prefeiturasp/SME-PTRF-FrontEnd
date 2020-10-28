@@ -402,6 +402,7 @@ export const VisualizacaoDaAta = () => {
                 await getSalvarDevoulucoesAoTesouro(prestacaoDeContasDetalhe.uuid, payload);
                 await getDadosAta();
                 setShowModalDevolucoesAoTesouro(false)
+                setShowReverDevolucoesAoTesouro(false)
             }else {
                 return formRef.current.setErrors( validar )
             }
@@ -469,7 +470,6 @@ export const VisualizacaoDaAta = () => {
                     tabelas={tabelas}
                 />
             </section>
-
             <section>
                 <ModalDevolucaoAoTesouro
                     show={showModalDevolucoesAoTesouro}
@@ -500,8 +500,6 @@ export const VisualizacaoDaAta = () => {
                     segundoBotaoTexto="Sim, ja está tudo certo"
                 />
             </section>
-
-
             <section>
                 <TextoCopiado
                     show={showTextoCopiado}
