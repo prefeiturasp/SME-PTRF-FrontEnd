@@ -8,15 +8,12 @@ import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
 import {EditarAta, TextoCopiado} from "../../../../utils/Modais";
 import {getInfoAta} from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasAtas, atualizarInfoAta, getAtas} from "../../../../services/escolas/AtasAssociacao.service";
-import {
-    getDespesasPorFiltros,
-    getPrestacaoDeContasDetalhe,
-    getTiposDevolucao
-} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getDespesasPorFiltros, getPrestacaoDeContasDetalhe, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {getDespesa, getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {InformacoesDevolucaoAoTesouro} from "../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/InformacoesDevolucaoAoTesouro";
+import {ModalDevolucaoAoTesouro} from "../ModalDevolucaoAoTesouro";
 
 moment.updateLocale('pt', {
     months : [
@@ -32,6 +29,7 @@ export const VisualizacaoDaAta = () => {
     let {uuid_ata} = useParams();
 
     const [showEditarAta, setShowEditarAta] = useState(false);
+    const [showModalDevolucoesAoTesouro, setShowModalDevolucoesAoTesouro] = useState(false);
     const [showTextoCopiado, setShowTextoCopiado] = useState(false);
     const [stateFormEditarAta, setStateFormEditarAta] = useState({
         comentarios:"",
@@ -122,6 +120,7 @@ export const VisualizacaoDaAta = () => {
     const onHandleClose = () => {
         setShowEditarAta(false);
         setShowTextoCopiado(false)
+        setShowModalDevolucoesAoTesouro(false)
     };
 
     const handleClickEditarAta = () => {
@@ -308,7 +307,7 @@ export const VisualizacaoDaAta = () => {
         ]
 
     };
-    const [informacoesPrestacaoDeContas, setInformacoesPrestacaoDeContas] = useState(initialInformacoesPrestacaoDeContas);
+    const [informacoesPrestacaoDeContas] = useState(initialInformacoesPrestacaoDeContas);
     const [initialFormDevolucaoAoTesouro, setInitialFormDevolucaoAoTesouro] = useState(initialDevolucaoAoTesouro);
     const [despesas, setDespesas] = useState([]);
     const [despesasTabelas, setDespesasTabelas] = useState([]);
@@ -370,6 +369,10 @@ export const VisualizacaoDaAta = () => {
         return errors;
     };
 
+    const onSubmitModalDevolucoesAoTesouro = () => {
+        console.log('onSubmitModalDevolucoesAoTesouro ', formRef.current.values)
+    }
+
     // FIM InformacoesDvolucaoAoTesrouro
 
     return(
@@ -382,6 +385,7 @@ export const VisualizacaoDaAta = () => {
                         handleClickEditarAta={handleClickEditarAta}
                         handleClickFecharAta={handleClickFecharAta}
                         handleClickCopiarAta={handleClickCopiarAta}
+                        setShowModalDevolucoesAoTesouro={setShowModalDevolucoesAoTesouro}
                     />
                 }
             </div>
@@ -448,6 +452,25 @@ export const VisualizacaoDaAta = () => {
                     onChange={handleChangeEditarAta}
                     stateFormEditarAta={stateFormEditarAta}
                     tabelas={tabelas}
+                />
+            </section>
+
+            <section>
+                <ModalDevolucaoAoTesouro
+                    show={showModalDevolucoesAoTesouro}
+                    handleClose={onHandleClose}
+                    onSubmitModalDevolucoesAoTesouro={onSubmitModalDevolucoesAoTesouro}
+                    informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
+                    initialValues={initialFormDevolucaoAoTesouro}
+                    formRef={formRef}
+                    despesas={despesas}
+                    buscaDespesaPorFiltros={buscaDespesaPorFiltros}
+                    buscaDespesa={buscaDespesa}
+                    valorTemplate={valorTemplate}
+                    despesasTabelas={despesasTabelas}
+                    tiposDevolucao={tiposDevolucao}
+                    validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
+
                 />
             </section>
 
