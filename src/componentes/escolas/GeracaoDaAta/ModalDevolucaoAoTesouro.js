@@ -14,24 +14,25 @@ export const ModalDevolucaoAoTesouro = ({show, handleClose, onSubmitModalDevoluc
                                             tiposDevolucao,
                                             validateFormDevolucaoAoTesouro,
                                         }) => {
-    console.log("InformacoesDevolucaoAoTesouro ", initialValues)
     const bodyTextarea = () => {
         return (
             <>
-            <InformacoesDevolucaoAoTesouro
-                informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
-                initialValues={initialValues}
-                formRef={formRef}
-                despesas={despesas}
-                buscaDespesaPorFiltros={buscaDespesaPorFiltros}
-                buscaDespesa={buscaDespesa}
-                valorTemplate={valorTemplate}
-                despesasTabelas={despesasTabelas}
-                tiposDevolucao={tiposDevolucao}
-                validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
-            />
-            <button onClick={handleClose} type='button'>Cancelar</button>
-            <button onClick={onSubmitModalDevolucoesAoTesouro} type='button'>Salvar</button>
+                <InformacoesDevolucaoAoTesouro
+                    informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
+                    initialValues={initialValues}
+                    formRef={formRef}
+                    despesas={despesas}
+                    buscaDespesaPorFiltros={buscaDespesaPorFiltros}
+                    buscaDespesa={buscaDespesa}
+                    valorTemplate={valorTemplate}
+                    despesasTabelas={despesasTabelas}
+                    tiposDevolucao={tiposDevolucao}
+                    validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
+                />
+                <div className="d-flex  justify-content-end pb-3 mt-3">
+                    <button onClick={handleClose} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                    <button onClick={onSubmitModalDevolucoesAoTesouro}type="button" className="btn btn-success mt-2">Salvar</button>
+                </div>
             </>
 
 

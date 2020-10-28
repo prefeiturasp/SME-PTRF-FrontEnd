@@ -108,3 +108,8 @@ export const deleteComentarioDeAnalise = async (comentario_uuid) => {
 export const getReordenarComentarios = async (payload) => {
     return (await api.patch(`/api/comentarios-de-analises/reordenar-comentarios/`, payload, authHeader)).data
 };
+
+export const getSalvarDevoulucoesAoTesouro = async (prestacao_conta_uuid, payload) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/`, payload, authHeader)).data
+};
+

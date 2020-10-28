@@ -8,12 +8,17 @@ import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
 import {EditarAta, TextoCopiado} from "../../../../utils/Modais";
 import {getInfoAta} from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasAtas, atualizarInfoAta, getAtas} from "../../../../services/escolas/AtasAssociacao.service";
-import {getDespesasPorFiltros, getPrestacaoDeContasDetalhe, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
+import {
+    getDespesasPorFiltros,
+    getPrestacaoDeContasDetalhe,
+    getSalvarAnalise,
+    getTiposDevolucao
+} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
-import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {exibeDataPT_BR, trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {getDespesa, getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
-import {InformacoesDevolucaoAoTesouro} from "../../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/InformacoesDevolucaoAoTesouro";
 import {ModalDevolucaoAoTesouro} from "../ModalDevolucaoAoTesouro";
+import {getSalvarDevoulucoesAoTesouro} from "../../../../services/dres/PrestacaoDeContas.service";
 
 moment.updateLocale('pt', {
     months : [
@@ -75,9 +80,6 @@ export const VisualizacaoDaAta = () => {
         let prestacao = await getPrestacaoDeContasDetalhe(dados_ata.prestacao_conta)
         console.log('prestacao ', prestacao)
         setPrestacaoDeContasDetalhe(prestacao)
-
-
-        console.log("getDadosAta ", dados_ata)
 
         let data_da_reuniao = dados_ata.data_reuniao ? dados_ata.data_reuniao : "";
 
@@ -369,9 +371,41 @@ export const VisualizacaoDaAta = () => {
         return errors;
     };
 
-    const onSubmitModalDevolucoesAoTesouro = () => {
+    const onSubmitModalDevolucoesAoTesouro = async () => {
         console.log('onSubmitModalDevolucoesAoTesouro ', formRef.current.values)
-    }
+        let devolucao_ao_tesouro_tratado;
+        if (formRef.current) {
+            devolucao_ao_tesouro_tratado = formRef.current.values.devolucoes_ao_tesouro_da_prestacao;
+            if (devolucao_ao_tesouro_tratado.length > 0 ){
+                devolucao_ao_tesouro_tratado.map((devolucao, )=>{
+                    delete devolucao.busca_por_cpf_cnpj;
+                    delete devolucao.busca_por_tipo_documento;
+                    delete devolucao.busca_por_numero_documento;
+                    devolucao.data = devolucao.data ?  moment(devolucao.data).format("YYYY-MM-DD") : null;
+                    devolucao.valor = devolucao.valor ? trataNumericos(devolucao.valor) : '';
+                    devolucao.devolucao_total = devolucao.devolucao_total === 'true' ? true : false;
+                })
+            }
+        }else {
+            devolucao_ao_tesouro_tratado=[];
+        }
+
+        const payload = {
+            devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
+        };
+
+        if (formRef.current) {
+            let validar =  await validateFormDevolucaoAoTesouro(formRef.current.values);
+            if (!camposObrigatorios && Object.entries(validar).length === 0){
+                await getSalvarDevoulucoesAoTesouro(prestacaoDeContasDetalhe.uuid, payload);
+                await getDadosAta();
+                setShowModalDevolucoesAoTesouro(false)
+                //window.location.reload()
+            }else {
+                return formRef.current.setErrors( validar )
+            }
+        }
+    };
 
     // FIM InformacoesDvolucaoAoTesrouro
 
@@ -406,25 +440,8 @@ export const VisualizacaoDaAta = () => {
                         <p>{stateFormEditarAta.retificacoes}</p>
 
                         {exibeDevolucoesAoTesouro()}
-
-                        <div className="col-12 mt-4">
-                            <InformacoesDevolucaoAoTesouro
-                                informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
-                                initialValues={initialFormDevolucaoAoTesouro}
-                                formRef={formRef}
-                                despesas={despesas}
-                                buscaDespesaPorFiltros={buscaDespesaPorFiltros}
-                                buscaDespesa={buscaDespesa}
-                                valorTemplate={valorTemplate}
-                                despesasTabelas={despesasTabelas}
-                                tiposDevolucao={tiposDevolucao}
-                                validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
-                            />
-                        </div>
-
                     </>
                 }
-
 
                 {infoAta && dadosAta &&
                     <TabelaDinamica
