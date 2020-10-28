@@ -71,14 +71,9 @@ export const VisualizacaoDaAta = () => {
 
 
     const getDadosAta = async () =>{
-
         let dados_ata = await getAtas(uuid_ata);
-
-
-        let prestacao = await getPrestacaoDeContasDetalhe(dados_ata.prestacao_conta)
-        console.log('prestacao ', prestacao)
-        setPrestacaoDeContasDetalhe(prestacao)
-
+        let prestacao = await getPrestacaoDeContasDetalhe(dados_ata.prestacao_conta);
+        setPrestacaoDeContasDetalhe(prestacao);
         let data_da_reuniao = dados_ata.data_reuniao ? dados_ata.data_reuniao : "";
 
         setStateFormEditarAta({
@@ -119,9 +114,9 @@ export const VisualizacaoDaAta = () => {
 
     const onHandleClose = () => {
         setShowEditarAta(false);
-        setShowTextoCopiado(false)
-        setShowModalDevolucoesAoTesouro(false)
-        setShowReverDevolucoesAoTesouro(false)
+        setShowTextoCopiado(false);
+        setShowModalDevolucoesAoTesouro(false);
+        setShowReverDevolucoesAoTesouro(false);
     };
 
     const handleClickEditarAta = () => {
@@ -163,8 +158,9 @@ export const VisualizacaoDaAta = () => {
     };
 
     const serviceSubmitAta = async () => {
-        console.log('serviceSubmitAta')
-        setShowReverDevolucoesAoTesouro(true);
+        if (dadosAta.tipo_ata === 'RETIFICACAO' && prestacaoDeContasDetalhe && prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao && prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao.length > 0){
+            setShowReverDevolucoesAoTesouro(true);
+        }
         setShowEditarAta(false);
         await onSubmitEditarAta()
 
@@ -379,7 +375,7 @@ export const VisualizacaoDaAta = () => {
     };
 
     const onSubmitModalDevolucoesAoTesouro = async () => {
-        console.log('onSubmitModalDevolucoesAoTesouro ', formRef.current.values)
+        console.log('onSubmitModalDevolucoesAoTesouro ', formRef.current.values);
         let devolucao_ao_tesouro_tratado;
         if (formRef.current) {
             devolucao_ao_tesouro_tratado = formRef.current.values.devolucoes_ao_tesouro_da_prestacao;
@@ -398,16 +394,14 @@ export const VisualizacaoDaAta = () => {
         }
 
         const payload = {
-            devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
+            devolucoes_ao_tesouro_da_prestacao: devolucao_ao_tesouro_tratado
         };
-
         if (formRef.current) {
             let validar =  await validateFormDevolucaoAoTesouro(formRef.current.values);
             if (!camposObrigatorios && Object.entries(validar).length === 0){
                 await getSalvarDevoulucoesAoTesouro(prestacaoDeContasDetalhe.uuid, payload);
                 await getDadosAta();
                 setShowModalDevolucoesAoTesouro(false)
-                //window.location.reload()
             }else {
                 return formRef.current.setErrors( validar )
             }
@@ -429,8 +423,6 @@ export const VisualizacaoDaAta = () => {
                     />
                 }
             </div>
-
-
 
             <div id="copiar" className="col-12">
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
