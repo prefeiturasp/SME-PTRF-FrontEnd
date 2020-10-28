@@ -5,19 +5,16 @@ import {TopoComBotoes} from "./TopoComBotoes";
 import {TextoDinamicoSuperior} from "./TextoDinamicoSuperior";
 import {TabelaDinamica} from "./TabelaDinamica";
 import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
-import {EditarAta, TextoCopiado} from "../../../../utils/Modais";
+import {TextoCopiado} from "../../../../utils/Modais";
 import {getInfoAta} from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasAtas, atualizarInfoAta, getAtas} from "../../../../services/escolas/AtasAssociacao.service";
-import {
-    getDespesasPorFiltros,
-    getPrestacaoDeContasDetalhe,
-    getSalvarAnalise,
-    getTiposDevolucao
-} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getDespesasPorFiltros, getPrestacaoDeContasDetalhe, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {exibeDataPT_BR, trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {getDespesa, getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
+import {ModalEditarAta} from "../ModalEditarAta";
 import {ModalDevolucaoAoTesouro} from "../ModalDevolucaoAoTesouro";
+import {ModalReverDevolucoesAoTesouro} from "../ModalReverDevolucoesAoTesouro";
 import {getSalvarDevoulucoesAoTesouro} from "../../../../services/dres/PrestacaoDeContas.service";
 
 moment.updateLocale('pt', {
@@ -36,6 +33,7 @@ export const VisualizacaoDaAta = () => {
     const [showEditarAta, setShowEditarAta] = useState(false);
     const [showModalDevolucoesAoTesouro, setShowModalDevolucoesAoTesouro] = useState(false);
     const [showTextoCopiado, setShowTextoCopiado] = useState(false);
+    const [showReverDevolucoesAoTesouro, setShowReverDevolucoesAoTesouro] = useState(false);
     const [stateFormEditarAta, setStateFormEditarAta] = useState({
         comentarios:"",
         parecer_conselho:"",
@@ -123,6 +121,7 @@ export const VisualizacaoDaAta = () => {
         setShowEditarAta(false);
         setShowTextoCopiado(false)
         setShowModalDevolucoesAoTesouro(false)
+        setShowReverDevolucoesAoTesouro(false)
     };
 
     const handleClickEditarAta = () => {
@@ -161,6 +160,14 @@ export const VisualizacaoDaAta = () => {
         if (range){
             setShowTextoCopiado(true)
         }
+    };
+
+    const serviceSubmitAta = async () => {
+        console.log('serviceSubmitAta')
+        setShowReverDevolucoesAoTesouro(true);
+        setShowEditarAta(false);
+        await onSubmitEditarAta()
+
     };
 
     const onSubmitEditarAta = async () =>{
@@ -286,7 +293,7 @@ export const VisualizacaoDaAta = () => {
                 )
 
         }
-    }
+    };
 
     // InformacoesDvolucaoAoTesrouro
     const formRef = useRef();
@@ -406,7 +413,6 @@ export const VisualizacaoDaAta = () => {
             }
         }
     };
-
     // FIM InformacoesDvolucaoAoTesrouro
 
     return(
@@ -461,11 +467,11 @@ export const VisualizacaoDaAta = () => {
             </div>
 
             <section>
-                <EditarAta
+                <ModalEditarAta
                     dadosAta={dadosAta}
                     show={showEditarAta}
                     handleClose={onHandleClose}
-                    onSubmitEditarAta={onSubmitEditarAta}
+                    onSubmitEditarAta={serviceSubmitAta}
                     onChange={handleChangeEditarAta}
                     stateFormEditarAta={stateFormEditarAta}
                     tabelas={tabelas}
@@ -487,9 +493,22 @@ export const VisualizacaoDaAta = () => {
                     despesasTabelas={despesasTabelas}
                     tiposDevolucao={tiposDevolucao}
                     validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
-
                 />
             </section>
+            <section>
+                <ModalReverDevolucoesAoTesouro
+                    show={showReverDevolucoesAoTesouro}
+                    handleClose={onHandleClose}
+                    setShowModalDevolucoesAoTesouro={setShowModalDevolucoesAoTesouro}
+                    titulo="Rever Devoluções ao Tesouro"
+                    texto="<p>Você ja conferiu as devoluções ao tesouro registradas nessa prestação de contas?</p>"
+                    primeiroBotaoTexto="Não, leve-me para lá"
+                    primeiroBotaoCss="outline-success"
+                    segundoBotaoCss="success"
+                    segundoBotaoTexto="Sim, ja está tudo certo"
+                />
+            </section>
+
 
             <section>
                 <TextoCopiado

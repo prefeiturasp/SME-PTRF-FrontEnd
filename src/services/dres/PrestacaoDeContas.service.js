@@ -110,6 +110,6 @@ export const getReordenarComentarios = async (payload) => {
 };
 
 export const getSalvarDevoulucoesAoTesouro = async (prestacao_conta_uuid, payload) => {
-    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/`, payload, authHeader)).data
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/salvar-devolucoes-ao-tesouro/`, payload, authHeader)).data
 };
 
