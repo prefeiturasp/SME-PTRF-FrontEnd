@@ -99,6 +99,7 @@ export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePer
                                                 name="nome_usuario"
                                                 className="form-control"
                                                 placeholder='Insira o nome de usuário'
+                                                disabled={statePerfisForm.id}
                                             />
                                             {props.errors.nome_usuario && <span className="span_erro text-danger mt-1"> {props.errors.nome_usuario}</span>}
                                         </div>
@@ -154,12 +155,7 @@ export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePer
                                                 value={props.values.grupo_acesso ? props.values.grupo_acesso : []}
                                                 // You need to set the new field value
                                                 onChange={evt =>
-                                                    setFieldValue(
-                                                        "grupo_acesso",
-                                                        [].slice
-                                                        .call(evt.target.selectedOptions)
-                                                        .map(option => option.value)
-                                                    )
+                                                    setFieldValue("grupo_acesso", [].slice.call(evt.target.selectedOptions).map(option => option.value))
                                                 }
                                             >
                                                 {grupos && grupos.length > 0 && grupos.map((grupo, index) => (
