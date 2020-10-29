@@ -8,7 +8,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import {ModalPerfisForm} from "./ModalPerfisForm";
 import {ModalConfirmDeletePerfil} from "./ModalConfirmDeletePerfil";
-import {getGrupos, getUsuarios, postCriarUsuario} from "../../../services/GestaoDePerfis.service";
+import {getGrupos, getUsuarios, postCriarUsuario, putEditarUsuario} from "../../../services/GestaoDePerfis.service";
 
 export const GestaoDePerfis = () => {
 
@@ -114,14 +114,34 @@ export const GestaoDePerfis = () => {
     };
 
     const handleSubmitPerfisForm = async (values)=>{
-        const payload = {
+
+        console.log('handleSubmitPerfisForm ', values)
+
+        let payload = {
             username: values.nome_usuario,
             email: values.email,
             name: values.nome_completo,
             tipo_usuario: values.tipo_usuario,
             groups: values.grupo_acesso,
         };
-        await postCriarUsuario(payload);
+
+        if(values.id){
+            try {
+                await putEditarUsuario(values.id, payload)
+                console.log('Usuário editado com sucesso')
+            }catch (e) {
+                console.log('Erro ao editar usuário ', e)
+            }
+
+        }else {
+            try {
+                await postCriarUsuario(payload);
+                console.log('Usuário criado com sucesso')
+            }catch (e) {
+                console.log('Erro ao criar usuário ', e)
+            }
+        }
+        setShowPerfisForm(false);
         await exibeUsuarios()
     };
 

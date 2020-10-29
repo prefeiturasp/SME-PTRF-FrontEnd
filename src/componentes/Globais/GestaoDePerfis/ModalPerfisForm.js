@@ -23,6 +23,7 @@ export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePer
                 if (username.status === 200 || username.status === 201) {
                     const init = {
                         ...statePerfisForm,
+                        tipo_usuario: values.tipo_usuario,
                         nome_usuario: values.nome_usuario,
                         nome_completo: username.data.nome,
                         email: username.data.email,
@@ -77,8 +78,8 @@ export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePer
                                             >
                                                 <option value="">Escolha o tipo de usuário</option>
                                                 <option value="ESTUDANTE">Estudante</option>
-                                                <option value='PAI_RESPONSAVEL'>Pai ou responsável</option>
-                                                <option value='Servidor'>Servidor</option>
+                                                <option value="PAI_RESPONSAVEL">Pai ou responsável</option>
+                                                <option value="SERVIDOR">Servidor</option>
                                             </select>
                                             {props.errors.tipo_usuario && <span className="span_erro text-danger mt-1"> {props.errors.tipo_usuario}</span>}
                                         </div>
@@ -188,7 +189,7 @@ export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePer
                                         <button onClick={() => handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                                     </div>
                                     <div className="p-Y bd-highlight">
-                                        <button type="submit" className="btn btn-success mt-2">{!statePerfisForm.uuid ? 'Adicionar' : 'Salvar'}</button>
+                                        <button type="submit" className="btn btn-success mt-2">{!statePerfisForm.id ? 'Adicionar' : 'Salvar'}</button>
                                     </div>
                                 </div>
                             </form>
@@ -203,7 +204,7 @@ export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePer
         <ModalBootstrapFormPerfis
             show={show}
             onHide={handleClose}
-            titulo={!statePerfisForm.uuid ? 'Adicionar perfil' : 'Editar perfil'}
+            titulo={!statePerfisForm.id ? 'Adicionar perfil' : 'Editar perfil'}
             bodyText={bodyTextarea()}
         />
     )
