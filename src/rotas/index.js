@@ -1,5 +1,5 @@
-import React, {Fragment} from "react";
-import {Redirect, Route, Switch} from 'react-router-dom'
+import React from "react";
+import {Route, Switch} from 'react-router-dom'
 import {Login} from "../paginas/Login";
 import {Pagina404} from "../paginas/escolas/404";
 import {DashboardPage} from "../paginas/Dashboard";
@@ -46,43 +46,49 @@ const routesConfig = [
         exact: true,
         path: "/dashboard",
         component: DashboardPage,
-        permissoes: ['view_dashboard', 'add_despesa', ],
+        permissoes: ['view_associacao', ],
+    },
+    {
+        exact: true,
+        path: "/dados-da-associacao",
+        component: DadosDaAssociacaoPage,
+        permissoes: ['view_associacao'],
     },
     {
         exact: true,
         path: "/cadastro-de-despesa/:origem?",
         component: CadastroDeDespesa,
-        permissoes: ['permissao_total'],
+        permissoes: ['view_despesa'],
     },
     {
         exact: true,
         path: "/lista-de-despesas",
         component: ListaDeDespesasPage,
-        permissoes: ['add_despesa', ],
+        permissoes: ['view_despesa', ],
     },
     {
         exact: true,
         path: "/edicao-de-despesa/:associacao/:origem?",
         component: EdicaoDeDespesa,
-        permissoes: ['permissao_total'],
+        permissoes: ['view_despesa'],
     },
     {
         exact: true,
         path: "/cadastro-de-credito/:origem?",
         component: CadastroDeReceita,
-        permissoes: ['permissao_total'],
+        permissoes: ['view_receita'],
     },
     {
         exact: true,
         path: "/edicao-de-receita/:uuid/:origem?",
         component: EdicaoDeReceita,
-        permissoes: ['permissao_total'],
+        permissoes: ['view_receita'],
     },
     {
         exact: true,
         path: "/lista-de-receitas",
         component: ListaDeReceitasPage,
-        permissoes: ['add_receita'],
+        permissoes: ['view_receita'],
     },
     {
         exact: true,
@@ -92,45 +98,39 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/dados-da-associacao",
-        component: DadosDaAssociacaoPage,
-        permissoes: ['permissao_total'],
-    },
-    {
-        exact: true,
         path: "/membros-da-associacao",
         component: MembrosDaAssociacaoPage,
-        permissoes: ['permissao_total'],
+        permissoes: ['view_associacao'],
     },
     {
         exact: true,
         path: "/dados-das-contas-da-associacao",
         component: DadosDasContasPage,
-        permissoes: ['permissao_total'],
+        permissoes: ['view_associacao'],
     },
     {
         exact: true,
         path: "/prestacao-de-contas",
         component: PrestacaoDeContasPage,
-        permissoes: ['permissao_total'],
+        permissoes: ['view_prestacaoconta'],
     },
     {
         exact: true,
         path: "/detalhe-das-prestacoes",
         component: DetalhedasPrestacoesPage,
-        permissoes: ['permissao_total'],
+        permissoes: ['view_prestacaoconta'],
     },
     {
         exact: true,
         path: "/visualizacao-da-ata/:uuid_ata",
         component: VisualizacaoDaAta,
-        permissoes: ['permissao_total'],
+        permissoes: ['view_prestacaoconta'],
     },
     {
         exact: true,
         path: "/meus-dados",
         component: MeusDadosPage,
-        permissoes: ['permissao_total'],
+        permissoes: ['view_default'],
     },
     {
         exact: true,
@@ -196,7 +196,7 @@ const routesConfig = [
         exact: true,
         path: "/central-de-notificacoes",
         component: CentralDeNotificacoesPage,
-        permissoes: ['permissao_total'],
+        permissoes: ['view_default'],
     },
     {
         exact: true,
@@ -241,7 +241,7 @@ const routesConfig = [
         exact: true,
         path: "/",
         component: RedirectLoginVisaoUe,
-        permissoes: ['permissao_total'],
+        permissoes: ['view_associacao'],
     },
 ];
 

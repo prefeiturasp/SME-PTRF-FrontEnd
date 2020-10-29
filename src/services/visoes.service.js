@@ -136,9 +136,7 @@ const setDadosUsuariosLogados = async (resp) => {
                 nome: usuario_logado ? usuario_logado.associacao_selecionada.nome : "",
             },
 
-            permissoes: [
-                'permissao_total', 'add_despesa', 'add_receita', 'view_dashboard'
-            ]
+            permissoes: resp.permissoes ? resp.permissoes : []
         }
     };
     localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(novos_dados_do_usuario_logado))
