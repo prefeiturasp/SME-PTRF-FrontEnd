@@ -8,7 +8,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import {ModalPerfisForm} from "./ModalPerfisForm";
 import {ModalConfirmDeletePerfil} from "./ModalConfirmDeletePerfil";
-import {getGrupos} from "../../../services/GestaoDePerfis.service";
+import {getGrupos, getUsuarios, postCriarUsuario} from "../../../services/GestaoDePerfis.service";
 
 export const GestaoDePerfis = () => {
 
@@ -18,7 +18,7 @@ export const GestaoDePerfis = () => {
     };
 
     const initPerfisForm = {
-        uuid: "",
+        id: "",
         tipo_usuario: "",
         nome_usuario: "",
         nome_completo: "",
@@ -26,31 +26,30 @@ export const GestaoDePerfis = () => {
         grupo_acesso: [],
     };
 
-    const objetoTabelaDinamica = [
-        {uuid: '123', email:'email@email.com', tipo_usuario: 'servidor', nome_completo: 'Camila Coelho', nome_usuario: 'camila_coelho', grupo_acesso: 'Usuário membro', },
-        {uuid: '123', email:'email@email.com', tipo_usuario: 'servidor', nome_completo: 'Marcelo Dantas de Noronha', nome_usuario: 'camila_coelho', grupo_acesso: 'Usuário membro', },
-        {uuid: '123', email:'email@email.com', tipo_usuario: 'servidor', nome_completo: 'Fernanda Lemi Messina de Castro', nome_usuario: 'camila_coelho', grupo_acesso: 'Usuário membro', },
-        {uuid: '123', email:'email@email.com', tipo_usuario: 'servidor', nome_completo: 'Caio Cesar Silva Nascimento', nome_usuario: 'camila_coelho', grupo_acesso: 'Usuário membro', },
-        {uuid: '123', email:'email@email.com', tipo_usuario: 'servidor', nome_completo: 'Bruna Vecci Mascaranhas', nome_usuario: 'camila_coelho', grupo_acesso: 'Usuário membro', },
-    ];
-
     const [clickBtnInfo, setClickBtnInfo] = useState(false);
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [statePerfisForm, setStatePerfisForm] = useState(initPerfisForm);
     const [showPerfisForm, setShowPerfisForm] = useState(false);
     const [showModalDeletePerfil, setShowModalDeletePerfil] = useState(false);
+    const [usuarios, setUsuarios] = useState({});
 
     const [grupos, setGrupos] = useState([])
 
     useEffect(()=>{
         exibeGrupos();
-    }, [])
+        exibeUsuarios();
+    }, []);
 
     const exibeGrupos = async ()=>{
         let grupos = await getGrupos();
-        console.log("exibe Grupos ", grupos);
         setGrupos(grupos);
-    }
+    };
+
+    const exibeUsuarios = async () =>{
+        let _usuarios = await getUsuarios();
+        console.log('USUArios', _usuarios)
+        setUsuarios(_usuarios)
+    };
 
     const handleChangeFiltros = (name, value) => {
         setStateFiltros({
@@ -66,6 +65,20 @@ export const GestaoDePerfis = () => {
     const handleSubmitFiltros = async (event) => {
         event.preventDefault();
         console.log("handleSubmitFiltros ", stateFiltros)
+
+
+    };
+
+    const grupoTemplate = (rowData) =>{
+        //console.log('groups ', rowData)
+        if (rowData['groups'] && rowData['groups'].length > 0){
+
+                rowData['groups'].map((grupo)=>(
+                    <p>Aqui {grupo} </p>
+                ))
+
+        }
+
     };
 
     const acoesTemplate = (rowData) =>{
@@ -86,10 +99,10 @@ export const GestaoDePerfis = () => {
     const handleEditarPerfisForm = (rowData) =>{
         console.log("Cliquei handleEditarPerfisForm ", rowData);
         const initFormPerfis = {
-            uuid: rowData.uuid,
+            id: rowData.id,
             tipo_usuario: rowData.tipo_usuario,
-            nome_usuario: rowData.nome_usuario,
-            nome_completo: rowData.nome_completo,
+            nome_usuario: rowData.username,
+            nome_completo: rowData.name,
             email: rowData.email,
             grupo_acesso: rowData.grupo_acesso,
         };
@@ -106,8 +119,31 @@ export const GestaoDePerfis = () => {
         });
     };
 
-    const handleSubmitPerfisForm = (values)=>{
-        console.log('handleSubmitPerfisForm ', values)
+    const handleSubmitPerfisForm = async (values)=>{
+
+
+        // email: "marco.reaus@gmail.com"
+        // grupo_acesso: (3) ["2", "3", "4"]
+        // id: ""
+        // nome_completo: "LUCIA HELENA LEAL SORIA DOS REIS"
+        // nome_usuario: "7483902"
+        // tipo_usuario: "PAI_RESPONSAVEL"
+
+        const payload = {
+            username: values.nome_usuario,
+            email: values.email,
+            name: values.nome_completo,
+            tipo_usuario: values.tipo_usuario,
+            groups: values.grupo_acesso,
+        };
+        console.log('handleSubmitPerfisForm payload ', payload)
+
+        let usuario = await postCriarUsuario(payload);
+        console.log('handleSubmitPerfisForm usuario ', usuario)
+
+
+        await exibeUsuarios()
+
     };
 
     const handleClose = () => {
@@ -152,21 +188,26 @@ export const GestaoDePerfis = () => {
                     </a>
                 </div>
             </div>
-            <div>
+
+            {usuarios && Object.entries(usuarios).length > 0 &&
                 <div className="card">
-                    <DataTable value={objetoTabelaDinamica} className='tabela-lista-perfis'>
-                        <Column field="nome_completo" header="Nome completo"/>
-                        <Column field="nome_usuario" header="Nome de usuário"/>
-                        <Column field="grupo_acesso" header="Grupo de acesso"/>
+                    <DataTable value={usuarios} className='tabela-lista-perfis'>
+                        <Column field="name" header="Nome completo"/>
+                        <Column field="username" header="Nome de usuário"/>
                         <Column
-                            field="uuid"
+                            field="groups"
+                            header="Grupo de acesso"
+                            body={grupoTemplate}
+                        />
+                        <Column
+                            field="id"
                             header="Editar"
                             body={acoesTemplate}
                             className='coluna-editar'
                         />
                     </DataTable>
                 </div>
-            </div>
+            }
 
             <section>
                 <ModalPerfisForm
@@ -175,8 +216,9 @@ export const GestaoDePerfis = () => {
                     onSubmit={handleSubmitPerfisForm}
                     handleChange={handleChangesPerfisForm}
                     setShowModalDeletePerfil={setShowModalDeletePerfil}
-                    initialValues={statePerfisForm}
+                    statePerfisForm={statePerfisForm}
                     setStatePerfisForm={setStatePerfisForm}
+                    grupos={grupos}
                     primeiroBotaoTexto="Cancelar"
                     primeiroBotaoCss="outline-success"
                     segundoBotaoCss="success"

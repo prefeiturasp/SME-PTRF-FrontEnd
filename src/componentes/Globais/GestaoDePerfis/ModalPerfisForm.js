@@ -2,11 +2,11 @@ import React from "react";
 import {ModalBootstrapFormPerfis} from "../../Globais/ModalBootstrap";
 import {Formik, Field} from "formik";
 import * as yup from "yup";
-import {consultarCodEol, consultarNomeResponsavel, consultarRF} from "../../../services/escolas/Associacao.service";
+import {getConsultarUsuario} from "../../../services/GestaoDePerfis.service";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 
-export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfisForm, handleChange, setShowModalDeletePerfil, onSubmit}) => {
+export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePerfisForm, handleChange, setShowModalDeletePerfil, grupos, onSubmit}) => {
 
     const YupSignupSchemaPerfis = yup.object().shape({
         tipo_usuario: yup.string().required("Tipo de usuário é obrigatório"),
@@ -14,16 +14,18 @@ export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfi
         grupo_acesso: yup.string().required("Grupo de acesso é obrigatório"),
     });
 
-    const validateFormMPerfis = async (values) => {
+    const validateFormPerfis = async (values) => {
         const errors = {};
-        if (values.tipo_usuario === "SERVIDOR"){
+
+        if (values.nome_usuario.trim()){
             try {
-                let rf = await consultarRF(values.nome_usuario.trim());
-                if (rf.status === 200 || rf.status === 201) {
+                let username = await getConsultarUsuario(values.nome_usuario.trim());
+                if (username.status === 200 || username.status === 201) {
                     const init = {
-                        ...initialValues,
-                        nome_completo: rf.data[0].nm_pessoa,
-                        email: values.email,
+                        ...statePerfisForm,
+                        nome_usuario: values.nome_usuario,
+                        nome_completo: username.data.nome,
+                        email: username.data.email,
                     };
                     setStatePerfisForm(init);
                 }
@@ -32,62 +34,20 @@ export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfi
                 if (data !== undefined && data.detail !== undefined) {
                     errors.nome_usuario = data.detail
                 } else {
-                    errors.nome_usuario = "RF inválido"
+                    errors.nome_usuario = "Nome de usuário inválido"
                 }
             }
-        } else if(values.representacao === "ESTUDANTE"){
-            try {
-                let cod_eol = await consultarCodEol(values.codigo_identificacao);
-                if (cod_eol.status === 200 || cod_eol.status === 201){
-                    const init = {
-                        ...initialValues,
-                        nome: cod_eol.data.nm_aluno,
-                        codigo_identificacao: values.codigo_identificacao,
-                        cargo_associacao: values.cargo_associacao,
-                        cargo_educacao: "",
-                        representacao: values.representacao,
-                        email: values.email,
-                    };
-                    setStatePerfisForm(init);
-                }
-            } catch (e) {
-                let data = e.response.data;
-                if (data !== undefined && data.detail !== undefined) {
-                    errors.codigo_identificacao = data.detail
-                } else {
-                    errors.codigo_identificacao = "Código Eol inválido"
-                }
-            }
-        } else if (values.representacao === "PAI_RESPONSAVEL") {
-            try {
-                let result = await consultarNomeResponsavel(values.nome);
-                if (result.status === 200 || result.status === 201) {
-                    //setBtnSalvarReadOnly(false);
-                }
-            } catch (e) {
-                let data = e.response.data;
-                if (data !== undefined && data.detail !== undefined) {
-                    errors.nome = data.detail
-                }
-            }
-        } else {
         }
         return errors
     };
-
-    const availableSelection = [
-        {uuid: 'uuid_grupo_acesso_01', nome:'Grupo de Acesso 01'},
-        {uuid: 'uuid_grupo_acesso_02', nome:'Grupo de Acesso 02'},
-        {uuid: 'uuid_grupo_acesso_03', nome:'Grupo de Acesso 03'},
-    ];
 
     const bodyTextarea = () => {
         return (
             <>
                 <Formik
-                    initialValues={initialValues}
+                    initialValues={statePerfisForm}
                     validationSchema={YupSignupSchemaPerfis}
-                    //validate={validateFormMPerfis}
+                    validate={validateFormPerfis}
                     enableReinitialize={true}
                     validateOnBlur={true}
                     onSubmit={onSubmit}
@@ -106,7 +66,7 @@ export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfi
                                         <div className="form-group">
                                             <label htmlFor="tipo_usuario">Tipo de usuário</label>
                                             <select
-                                                value={props.values.tipo_usuario ? props.values.tipo_usuario : ""}
+                                                defaultValue={props.values.tipo_usuario ? props.values.tipo_usuario : ""}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                     handleChange(e.target.name, e.target.value);
@@ -167,7 +127,7 @@ export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfi
                                             <label htmlFor="email">Email</label>
                                             <input
                                                 type="text"
-                                                value={props.values.email}
+                                                value={props.values.email ? props.values.email : ''}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                     handleChange(e.target.name, e.target.value);
@@ -201,8 +161,8 @@ export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfi
                                                     )
                                                 }
                                             >
-                                                {availableSelection.map(s => (
-                                                    <option key={s.uuid} value={s.uuid}>{s.nome}</option>
+                                                {grupos && grupos.length > 0 && grupos.map((grupo, index) => (
+                                                    <option key={index} value={grupo.id}>{grupo.nome}</option>
                                                 ))}
                                             </Field>
                                             {props.errors.grupo_acesso && <span className="span_erro text-danger mt-1"> {props.errors.grupo_acesso}</span>}
@@ -214,7 +174,7 @@ export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfi
 
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
-                                        {initialValues.uuid &&
+                                        {statePerfisForm.uuid &&
                                             <button onClick={() => setShowModalDeletePerfil(true)} type="button" className="btn btn btn-danger mt-2 mr-2">
                                                 <FontAwesomeIcon
                                                     style={{fontSize: '15px', marginRight: "5px", color:'#fff'}}
@@ -228,7 +188,7 @@ export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfi
                                         <button onClick={() => handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                                     </div>
                                     <div className="p-Y bd-highlight">
-                                        <button type="submit" className="btn btn-success mt-2">{!initialValues.uuid ? 'Adicionar' : 'Salvar'}</button>
+                                        <button type="submit" className="btn btn-success mt-2">{!statePerfisForm.uuid ? 'Adicionar' : 'Salvar'}</button>
                                     </div>
                                 </div>
                             </form>
@@ -243,7 +203,7 @@ export const ModalPerfisForm = ({show, handleClose, initialValues, setStatePerfi
         <ModalBootstrapFormPerfis
             show={show}
             onHide={handleClose}
-            titulo={!initialValues.uuid ? 'Adicionar perfil' : 'Editar perfil'}
+            titulo={!statePerfisForm.uuid ? 'Adicionar perfil' : 'Editar perfil'}
             bodyText={bodyTextarea()}
         />
     )

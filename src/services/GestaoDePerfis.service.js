@@ -11,3 +11,15 @@ const authHeader = {
 export const getGrupos = async () =>{
     return (await api.get(`/api/usuarios/grupos/`, authHeader)).data
 };
+
+export const getConsultarUsuario = async (username) =>{
+    return (await api.get(`/api/usuarios/consultar/?username=${username}`, authHeader))
+};
+
+export const getUsuarios = async () =>{
+    return (await api.get(`/api/usuarios/`, authHeader)).data
+};
+
+export const postCriarUsuario = async (payload) => {
+    return (await api.post(`/api/usuarios/`, payload, authHeader)).data
+};
