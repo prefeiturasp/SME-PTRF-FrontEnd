@@ -122,7 +122,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/visualizacao-da-ata",
+        path: "/visualizacao-da-ata/:uuid_ata",
         component: VisualizacaoDaAta,
         permissoes: ['permissao_total'],
     },

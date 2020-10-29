@@ -109,3 +109,13 @@ export const getConcluirPrestacaoDeConta = async (
 export const getFiqueDeOlho = async () => {
   return (await api.get(`/api/prestacoes-contas/fique-de-olho/`,authHeader)).data
 };
+
+export const getAtaRetificadora = async (prestacao_uuid) => {
+  return (await api.get(`/api/prestacoes-contas/${prestacao_uuid}/ata-retificacao/`,authHeader)).data
+};
+
+export const getIniciarAtaRetificadora = async (uuidPrestacaoDeContas) => {
+  return (await api.post(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/iniciar-ata-retificacao/`,authHeader)).data
+};
+
+
