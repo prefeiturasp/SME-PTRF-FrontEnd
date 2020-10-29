@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import "./gestao-de-perfis.scss"
 import {AccordionInfo} from "./AccordionInfo";
 import {FormFiltros} from "./FormFiltros";
@@ -8,6 +8,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import {ModalPerfisForm} from "./ModalPerfisForm";
 import {ModalConfirmDeletePerfil} from "./ModalConfirmDeletePerfil";
+import {getGrupos} from "../../../services/GestaoDePerfis.service";
 
 export const GestaoDePerfis = () => {
 
@@ -38,6 +39,18 @@ export const GestaoDePerfis = () => {
     const [statePerfisForm, setStatePerfisForm] = useState(initPerfisForm);
     const [showPerfisForm, setShowPerfisForm] = useState(false);
     const [showModalDeletePerfil, setShowModalDeletePerfil] = useState(false);
+
+    const [grupos, setGrupos] = useState([])
+
+    useEffect(()=>{
+        exibeGrupos();
+    }, [])
+
+    const exibeGrupos = async ()=>{
+        let grupos = await getGrupos();
+        console.log("exibe Grupos ", grupos);
+        setGrupos(grupos);
+    }
 
     const handleChangeFiltros = (name, value) => {
         setStateFiltros({
@@ -118,6 +131,7 @@ export const GestaoDePerfis = () => {
             <AccordionInfo
                 clickBtnInfo={clickBtnInfo}
                 setClickBtnInfo={setClickBtnInfo}
+                grupos={grupos}
             />
             <FormFiltros
                 handleChangeFiltros={handleChangeFiltros}
