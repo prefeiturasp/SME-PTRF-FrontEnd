@@ -78,7 +78,7 @@ export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePer
                                                 <option value="">Escolha o tipo de usuário</option>
                                                 <option value="ESTUDANTE">Estudante</option>
                                                 <option value='PAI_RESPONSAVEL'>Pai ou responsável</option>
-                                                <option value='SERVIDOR'>Servidor</option>
+                                                <option value='Servidor'>Servidor</option>
                                             </select>
                                             {props.errors.tipo_usuario && <span className="span_erro text-danger mt-1"> {props.errors.tipo_usuario}</span>}
                                         </div>

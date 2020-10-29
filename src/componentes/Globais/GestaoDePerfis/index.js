@@ -33,7 +33,7 @@ export const GestaoDePerfis = () => {
     const [showModalDeletePerfil, setShowModalDeletePerfil] = useState(false);
     const [usuarios, setUsuarios] = useState({});
 
-    const [grupos, setGrupos] = useState([])
+    const [grupos, setGrupos] = useState([]);
 
     useEffect(()=>{
         exibeGrupos();
@@ -47,8 +47,8 @@ export const GestaoDePerfis = () => {
 
     const exibeUsuarios = async () =>{
         let _usuarios = await getUsuarios();
-        console.log('USUArios', _usuarios)
-        setUsuarios(_usuarios)
+        console.log('USUArios', _usuarios);
+        setUsuarios(_usuarios);
     };
 
     const handleChangeFiltros = (name, value) => {
@@ -65,20 +65,16 @@ export const GestaoDePerfis = () => {
     const handleSubmitFiltros = async (event) => {
         event.preventDefault();
         console.log("handleSubmitFiltros ", stateFiltros)
-
-
     };
 
     const grupoTemplate = (rowData) =>{
-        //console.log('groups ', rowData)
         if (rowData['groups'] && rowData['groups'].length > 0){
-
-                rowData['groups'].map((grupo)=>(
-                    <p>Aqui {grupo} </p>
+            return(
+                rowData['groups'].map((grupo, index)=>(
+                    <p key={index} className='mb-0'>{grupo.name} </p>
                 ))
-
+            )
         }
-
     };
 
     const acoesTemplate = (rowData) =>{
@@ -94,8 +90,6 @@ export const GestaoDePerfis = () => {
         )
     };
 
-
-
     const handleEditarPerfisForm = (rowData) =>{
         console.log("Cliquei handleEditarPerfisForm ", rowData);
         const initFormPerfis = {
@@ -107,7 +101,7 @@ export const GestaoDePerfis = () => {
             grupo_acesso: rowData.grupo_acesso,
         };
 
-        setStatePerfisForm(initFormPerfis)
+        setStatePerfisForm(initFormPerfis);
         setShowPerfisForm(true)
 
     };
@@ -120,15 +114,6 @@ export const GestaoDePerfis = () => {
     };
 
     const handleSubmitPerfisForm = async (values)=>{
-
-
-        // email: "marco.reaus@gmail.com"
-        // grupo_acesso: (3) ["2", "3", "4"]
-        // id: ""
-        // nome_completo: "LUCIA HELENA LEAL SORIA DOS REIS"
-        // nome_usuario: "7483902"
-        // tipo_usuario: "PAI_RESPONSAVEL"
-
         const payload = {
             username: values.nome_usuario,
             email: values.email,
@@ -136,14 +121,8 @@ export const GestaoDePerfis = () => {
             tipo_usuario: values.tipo_usuario,
             groups: values.grupo_acesso,
         };
-        console.log('handleSubmitPerfisForm payload ', payload)
-
-        let usuario = await postCriarUsuario(payload);
-        console.log('handleSubmitPerfisForm usuario ', usuario)
-
-
+        await postCriarUsuario(payload);
         await exibeUsuarios()
-
     };
 
     const handleClose = () => {
@@ -155,7 +134,7 @@ export const GestaoDePerfis = () => {
     };
 
     const onDeletePerfilTrue = () =>{
-        console.log('onDeletePerfilTrue ', statePerfisForm)
+        console.log('onDeletePerfilTrue ', statePerfisForm);
         setShowPerfisForm(false);
         setShowModalDeletePerfil(false);
     };
@@ -179,7 +158,12 @@ export const GestaoDePerfis = () => {
             <div className="d-flex bd-highlight mt-4">
                 <div className="flex-grow-1 bd-highlight mb-3"><h4>Lista de perfis com acesso  </h4></div>
                 <div className="p-2 bd-highlight">
-                    <a className="link-green float-right" onClick={()=>setShowPerfisForm(true)}>
+                    <a className="link-green float-right" onClick={()=>{
+                        setStatePerfisForm(initPerfisForm);
+                        setShowPerfisForm(true);
+                        }
+                        }
+                    >
                         <FontAwesomeIcon
                             style={{fontSize: '15px', marginRight: "0"}}
                             icon={faPlus}
