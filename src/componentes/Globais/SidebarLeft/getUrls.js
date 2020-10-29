@@ -47,7 +47,7 @@ const UrlsMenuEscolas ={
                 },
             ]
         },
-        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['permissao_total'],},
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['view_default'],},
     ]
 };
 
@@ -59,19 +59,19 @@ const UrlsMenuDres ={
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
     lista_de_urls:[
-        {label: "Painel", url: "dre-dashboard", dataFor:"dre_dashboard", icone:IconePainel, permissoes: ['permissao_total'],},
-        {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola, permissoes: ['permissao_total'],},
-        {label: "Acompanhamento", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeAcompanhamento, permissoes: ['permissao_total'],},
-        {label: "Relatório consolidado", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeRelatorio, permissoes: ['permissao_total']},
-        {label: "Dados da Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria, permissoes: ['permissao_total']},
-        {label: "Apoio à Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeApoioDiretoria, permissoes: ['permissao_total'],
+        {label: "Painel", url: "dre-dashboard", dataFor:"dre_dashboard", icone:IconePainel, permissoes: ['view_dashboard_dre'],},
+        {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola, permissoes: ['view_associacao_dre'],},
+        {label: "Acompanhamento", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeAcompanhamento, permissoes: ['view_dadosdiretoria_dre'],},
+        {label: "Relatório consolidado", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeRelatorio, permissoes: ['view_dadosdiretoria_dre']},
+        {label: "Dados da Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria, permissoes: ['view_dadosdiretoria_dre']},
+        {label: "Apoio à Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeApoioDiretoria, permissoes: ['view_dadosdiretoria_dre'],
             subItens: [
                 {
                     label: "Perguntas Frequentes", url: "dre-faq", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria
                 }
             ]
         },
-        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['permissao_total'],},
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['view_dadosdiretoria_dre'],},
     ]
 };
 
