@@ -19,7 +19,6 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
         try {
             let dados = await getAtaRetificadora(uuidPrestacaoConta);
             setDadosAtaRetificadora(dados);
-            console.log("DADOS 01 ", dados);
             setTextoBoxAtaRetificadora(dados.nome);
             if (dados.alterado_em === null){
                 setCorBoxAtaRetificadora("vermelho");
@@ -44,9 +43,6 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
         console.log('onClickVisualizarAta ', dataBoxAtaRetificadora)
         window.location.assign(`/visualizacao-da-ata/${dadosAtaRetificadora.uuid}`)
     };
-
-    console.log("DADOS 01 ", dadosAtaRetificadora);
-
     return (
         <>
             {dataBoxAtaRetificadora &&
