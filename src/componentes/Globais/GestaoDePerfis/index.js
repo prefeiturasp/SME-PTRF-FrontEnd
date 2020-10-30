@@ -11,9 +11,9 @@ import {ModalConfirmDeletePerfil} from "./ModalConfirmDeletePerfil";
 import {getGrupos, getUsuarios, postCriarUsuario, putEditarUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
 import {visoesService} from "../../../services/visoes.service";
 
-
 export const GestaoDePerfis = () => {
 
+    const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
 
     const initialStateFiltros = {
         filtrar_por_nome: "",
@@ -35,8 +35,6 @@ export const GestaoDePerfis = () => {
     const [showPerfisForm, setShowPerfisForm] = useState(false);
     const [showModalDeletePerfil, setShowModalDeletePerfil] = useState(false);
     const [usuarios, setUsuarios] = useState({});
-    const [visao, setVisao] = useState({});
-
     const [grupos, setGrupos] = useState([]);
 
     useEffect(()=>{
@@ -45,14 +43,11 @@ export const GestaoDePerfis = () => {
     }, []);
 
     const exibeGrupos = async ()=>{
-        const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
-        setVisao(visao_selecionada)
         let grupos = await getGrupos(visao_selecionada);
         setGrupos(grupos);
     };
 
     const exibeUsuarios = async () =>{
-        const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
         let _usuarios = await getUsuarios(visao_selecionada);
         setUsuarios(_usuarios);
     };
@@ -97,7 +92,6 @@ export const GestaoDePerfis = () => {
     };
 
     const handleEditarPerfisForm = (rowData) =>{
-        console.log("Cliquei handleEditarPerfisForm ", rowData);
         const initFormPerfis = {
             id: rowData.id,
             tipo_usuario: rowData.tipo_usuario,
@@ -106,10 +100,8 @@ export const GestaoDePerfis = () => {
             email: rowData.email ? rowData.email : '',
             grupo_acesso: rowData.grupo_acesso,
         };
-
         setStatePerfisForm(initFormPerfis);
         setShowPerfisForm(true)
-
     };
 
     const handleChangesPerfisForm = (name, value) => {
@@ -120,16 +112,12 @@ export const GestaoDePerfis = () => {
     };
 
     const handleSubmitPerfisForm = async (values)=>{
-
-        console.log('handleSubmitPerfisForm ', values)
-
-
         let payload = {
             username: values.nome_usuario,
             email: values.email ? values.email : "",
             name: values.nome_completo,
             tipo_usuario: values.tipo_usuario,
-            visao: visao,
+            visao: visao_selecionada,
             groups: values.grupo_acesso,
         };
 
@@ -153,6 +141,18 @@ export const GestaoDePerfis = () => {
         await exibeUsuarios()
     };
 
+    const onDeletePerfilTrue = async () =>{
+        setShowPerfisForm(false);
+        setShowModalDeletePerfil(false);
+        try {
+            await deleteUsuario(statePerfisForm.id)
+            console.log('Usuário deletado com sucesso');
+        }catch (e) {
+            console.log('Erro ao deletar usuário ', e);
+        }
+        await exibeUsuarios()
+    };
+
     const handleClose = () => {
         setShowPerfisForm(false);
     };
@@ -161,17 +161,6 @@ export const GestaoDePerfis = () => {
         setShowModalDeletePerfil(false);
     };
 
-    const onDeletePerfilTrue = async () =>{
-        console.log('onDeletePerfilTrue ', statePerfisForm);
-        setShowPerfisForm(false);
-        setShowModalDeletePerfil(false);
-
-        let delete_usuario = await deleteUsuario(statePerfisForm.id)
-
-        console.log('onDeletePerfilTrue ', delete_usuario);
-        await exibeUsuarios()
-
-    };
 
 
     return (

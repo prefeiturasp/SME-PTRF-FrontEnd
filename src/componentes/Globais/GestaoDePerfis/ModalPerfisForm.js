@@ -9,8 +9,6 @@ import {visoesService} from "../../../services/visoes.service";
 
 export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePerfisForm, handleChange, setShowModalDeletePerfil, grupos, onSubmit}) => {
 
-
-
     const YupSignupSchemaPerfis = yup.object().shape({
         tipo_usuario: yup.string().required("Tipo de usuário é obrigatório"),
         nome_usuario: yup.string().required("Nome de usuário é obrigatório"),
