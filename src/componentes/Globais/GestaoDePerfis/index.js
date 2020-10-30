@@ -36,6 +36,15 @@ export const GestaoDePerfis = () => {
     const [showModalDeletePerfil, setShowModalDeletePerfil] = useState(false);
     const [usuarios, setUsuarios] = useState({});
     const [grupos, setGrupos] = useState([]);
+    const [selectedFlavors, setSelectedFlavors] = useState([]);
+
+    const handleSelect = function(selectedItems) {
+        const flavors = [];
+        for (let i=0; i<selectedItems.length; i++) {
+            flavors.push(selectedItems[i].value);
+        }
+        setSelectedFlavors(flavors);
+    }
 
     useEffect(()=>{
         exibeGrupos();
@@ -93,13 +102,19 @@ export const GestaoDePerfis = () => {
     };
 
     const handleEditarPerfisForm = (rowData) =>{
+        let ids_grupos =[];
+        if (rowData && rowData.groups && rowData.groups.length > 0){
+            rowData.groups.map((grupo)=>
+                ids_grupos.push(grupo.id)
+            );
+        }
         const initFormPerfis = {
             id: rowData.id,
             tipo_usuario: rowData.tipo_usuario,
             nome_usuario: rowData.username,
             nome_completo: rowData.name,
             email: rowData.email ? rowData.email : '',
-            grupo_acesso: rowData.grupo_acesso,
+            grupo_acesso: ids_grupos,
         };
         setStatePerfisForm(initFormPerfis);
         setShowPerfisForm(true)

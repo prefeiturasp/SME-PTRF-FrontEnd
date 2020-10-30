@@ -155,7 +155,6 @@ export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePer
                                                 className="form-control"
                                                 multiple={true}
                                                 value={props.values.grupo_acesso ? props.values.grupo_acesso : []}
-                                                // You need to set the new field value
                                                 onChange={evt =>
                                                     setFieldValue("grupo_acesso", [].slice.call(evt.target.selectedOptions).map(option => option.value))
                                                 }
