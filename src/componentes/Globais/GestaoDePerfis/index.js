@@ -8,7 +8,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import {ModalPerfisForm} from "./ModalPerfisForm";
 import {ModalConfirmDeletePerfil} from "./ModalConfirmDeletePerfil";
-import {getGrupos, getUsuarios, postCriarUsuario, putEditarUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
+import {getGrupos, getUsuarios, postCriarUsuario, putEditarUsuario, deleteUsuario, getUsuariosFiltros} from "../../../services/GestaoDePerfis.service";
 import {visoesService} from "../../../services/visoes.service";
 
 export const GestaoDePerfis = () => {
@@ -65,7 +65,8 @@ export const GestaoDePerfis = () => {
 
     const handleSubmitFiltros = async (event) => {
         event.preventDefault();
-        console.log("handleSubmitFiltros ", stateFiltros)
+        let retorno_filtros = await getUsuariosFiltros(visao_selecionada, stateFiltros.filtrar_por_nome, stateFiltros.filtrar_por_grupo)
+        setUsuarios(retorno_filtros)
     };
 
     const grupoTemplate = (rowData) =>{
@@ -176,6 +177,7 @@ export const GestaoDePerfis = () => {
                 limpaFiltros={limpaFiltros}
                 handleSubmitFiltros={handleSubmitFiltros}
                 stateFiltros={stateFiltros}
+                grupos={grupos}
             />
 
             <div className="d-flex bd-highlight mt-4">

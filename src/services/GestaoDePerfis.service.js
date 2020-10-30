@@ -31,3 +31,7 @@ export const putEditarUsuario = async (usuario_id, payload) => {
 export const deleteUsuario = async (usuario_id) => {
     return (await api.delete(`/api/usuarios/${usuario_id}`, authHeader))
 };
+
+export const getUsuariosFiltros = async (visao_selecionada, nome, group) =>{
+    return (await api.get(`/api/usuarios/?visao=${visao_selecionada}${nome ? '&search='+nome : ''}${group ? '&groups__id='+group : ''}`, authHeader)).data
+};
