@@ -5,8 +5,11 @@ import * as yup from "yup";
 import {getConsultarUsuario} from "../../../services/GestaoDePerfis.service";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
+import {visoesService} from "../../../services/visoes.service";
 
 export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePerfisForm, handleChange, setShowModalDeletePerfil, grupos, onSubmit}) => {
+
+
 
     const YupSignupSchemaPerfis = yup.object().shape({
         tipo_usuario: yup.string().required("Tipo de usuário é obrigatório"),
@@ -19,7 +22,8 @@ export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePer
 
         if (values.nome_usuario.trim()){
             try {
-                let username = await getConsultarUsuario(values.nome_usuario.trim());
+                const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
+                let username = await getConsultarUsuario(visao_selecionada, values.nome_usuario.trim());
                 if (username.status === 200 || username.status === 201) {
                     const init = {
                         ...statePerfisForm,

@@ -8,16 +8,16 @@ const authHeader = {
     }
 };
 
-export const getGrupos = async () =>{
-    return (await api.get(`/api/usuarios/grupos/`, authHeader)).data
+export const getGrupos = async (visao_selecionada) =>{
+    return (await api.get(`/api/usuarios/grupos/?visao=${visao_selecionada}`, authHeader)).data
 };
 
-export const getConsultarUsuario = async (username) =>{
-    return (await api.get(`/api/usuarios/consultar/?username=${username}`, authHeader))
+export const getConsultarUsuario = async (visao_selecionada, username) =>{
+    return (await api.get(`/api/usuarios/consultar/?visao=${visao_selecionada}&username=${username}`, authHeader))
 };
 
-export const getUsuarios = async () =>{
-    return (await api.get(`/api/usuarios/`, authHeader)).data
+export const getUsuarios = async (visao_selecionada) =>{
+    return (await api.get(`/api/usuarios/?visao=${visao_selecionada}`, authHeader)).data
 };
 
 export const postCriarUsuario = async (payload) => {

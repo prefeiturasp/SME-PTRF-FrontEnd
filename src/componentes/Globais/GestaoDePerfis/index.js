@@ -9,8 +9,11 @@ import { Column } from 'primereact/column';
 import {ModalPerfisForm} from "./ModalPerfisForm";
 import {ModalConfirmDeletePerfil} from "./ModalConfirmDeletePerfil";
 import {getGrupos, getUsuarios, postCriarUsuario, putEditarUsuario} from "../../../services/GestaoDePerfis.service";
+import {visoesService} from "../../../services/visoes.service";
+
 
 export const GestaoDePerfis = () => {
+
 
     const initialStateFiltros = {
         filtrar_por_nome: "",
@@ -32,6 +35,7 @@ export const GestaoDePerfis = () => {
     const [showPerfisForm, setShowPerfisForm] = useState(false);
     const [showModalDeletePerfil, setShowModalDeletePerfil] = useState(false);
     const [usuarios, setUsuarios] = useState({});
+    const [visao, setVisao] = useState({});
 
     const [grupos, setGrupos] = useState([]);
 
@@ -41,13 +45,15 @@ export const GestaoDePerfis = () => {
     }, []);
 
     const exibeGrupos = async ()=>{
-        let grupos = await getGrupos();
+        const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
+        setVisao(visao_selecionada)
+        let grupos = await getGrupos(visao_selecionada);
         setGrupos(grupos);
     };
 
     const exibeUsuarios = async () =>{
-        let _usuarios = await getUsuarios();
-        console.log('USUArios', _usuarios);
+        const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
+        let _usuarios = await getUsuarios(visao_selecionada);
         setUsuarios(_usuarios);
     };
 
@@ -97,7 +103,7 @@ export const GestaoDePerfis = () => {
             tipo_usuario: rowData.tipo_usuario,
             nome_usuario: rowData.username,
             nome_completo: rowData.name,
-            email: rowData.email,
+            email: rowData.email ? rowData.email : '',
             grupo_acesso: rowData.grupo_acesso,
         };
 
@@ -117,11 +123,13 @@ export const GestaoDePerfis = () => {
 
         console.log('handleSubmitPerfisForm ', values)
 
+
         let payload = {
             username: values.nome_usuario,
-            email: values.email,
+            email: values.email ? values.email : "",
             name: values.nome_completo,
             tipo_usuario: values.tipo_usuario,
+            visao: visao,
             groups: values.grupo_acesso,
         };
 
