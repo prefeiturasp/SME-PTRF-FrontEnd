@@ -20,7 +20,7 @@ export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePer
 
         if (values.nome_usuario.trim()){
             try {
-                const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome')
+                const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
                 let username = await getConsultarUsuario(visao_selecionada, values.nome_usuario.trim());
                 if (username.status === 200 || username.status === 201) {
                     const init = {
@@ -57,8 +57,6 @@ export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePer
                 >
                     {props => {
                         const {
-                            errors,
-                            values,
                             setFieldValue,
                         } = props;
                         return (

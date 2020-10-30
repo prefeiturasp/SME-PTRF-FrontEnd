@@ -61,6 +61,8 @@ export const GestaoDePerfis = () => {
 
     const limpaFiltros = async () => {
         await setStateFiltros(initialStateFiltros);
+        await exibeUsuarios();
+
     };
 
     const handleSubmitFiltros = async (event) => {
@@ -145,7 +147,7 @@ export const GestaoDePerfis = () => {
             }
         }
         setShowPerfisForm(false);
-        await exibeUsuarios()
+        await exibeUsuarios();
     };
 
     const onDeletePerfilTrue = async () =>{
@@ -167,8 +169,6 @@ export const GestaoDePerfis = () => {
     const handleCloseDeletePerfil = () => {
         setShowModalDeletePerfil(false);
     };
-
-
 
     return (
         <>
@@ -223,7 +223,6 @@ export const GestaoDePerfis = () => {
                     </DataTable>
                 </div>
             }
-
             <section>
                 <ModalPerfisForm
                     show={showPerfisForm}
@@ -253,7 +252,6 @@ export const GestaoDePerfis = () => {
                     segundoBotaoTexto="Excluir"
                 />
             </section>
-
         </>
     );
 };
