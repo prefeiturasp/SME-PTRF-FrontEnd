@@ -1,11 +1,11 @@
 import React from "react";
 
-export const FormFiltros = ({stateFiltros, handleChangeFiltros, limpaFiltros, handleSubmitFiltros}) =>{
+export const FormFiltros = ({stateFiltros, handleChangeFiltros, limpaFiltros, handleSubmitFiltros, grupos}) =>{
   return(
       <form onSubmit={handleSubmitFiltros} method="post">
           <div className="row mt-3">
               <div className="col">
-                  <label htmlFor="filtrar_por_termo">Filtrar por um termo</label>
+                  <label htmlFor="filtrar_por_termo">Filtrar por nome ou nome de usuário</label>
                   <input
                       value={stateFiltros.filtrar_por_nome}
                       onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
@@ -17,15 +17,20 @@ export const FormFiltros = ({stateFiltros, handleChangeFiltros, limpaFiltros, ha
               </div>
 
               <div className="col">
-                  <label htmlFor="filtrar_por_termo">Filtrar por um termo</label>
-                  <input
+                  <label htmlFor="filtrar_por_grupo">Filtrar por grupo</label>
+
+                  <select
                       value={stateFiltros.filtrar_por_grupo}
                       onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
                       name='filtrar_por_grupo'
-                      type="text"
-                      className="form-control"
-                      placeholder="Escreva o termo que deseja filtrar"
-                  />
+                      id='filtrar_por_grupo'
+                      className='form-control'
+                  >
+                      <option key='' value="">Selecione o tipo</option>
+                      {grupos && grupos.length > 0 && grupos.map((grupo, index) => (
+                          <option key={index} value={grupo.id}>{grupo.nome}</option>
+                      ))}
+                  </select>
               </div>
 
               <div className="col-md-3 col-xl-2 text-right mt-4">

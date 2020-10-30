@@ -33,11 +33,11 @@ const UrlsMenuEscolas ={
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
     lista_de_urls:[
-        {label: "Dados da Associação", url: "dados-da-associacao", dataFor:"dados_da_associacao", icone:IconeDadosDaDiretoria, permissoes: ['permissao_total'],},
-        {label: "Resumo dos recursos", url: "dashboard", dataFor:"resumo_dos_recursos", icone:IconeMenuPainel, permissoes: ['view_dashboard', 'add_despesa',],},
-        {label: "Créditos da escola", url: "lista-de-receitas", dataFor:"creditos_da_escola", icone:IconeMenuCreditosDaEscola, permissoes: ['add_receita'],},
-        {label: "Gastos da escola", url: "lista-de-despesas", dataFor:"gastos_da_escola", icone:IconeMenuGastosDaEscola, permissoes: ['add_despesa', ],},
-        {label: "Prestação de contas", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:IconeMenuPrestacaoDeContas, permissoes: ['permissao_total'],
+        {label: "Dados da Associação", url: "dados-da-associacao", dataFor:"dados_da_associacao", icone:IconeDadosDaDiretoria, permissoes: ['view_associacao'],},
+        {label: "Resumo dos recursos", url: "dashboard", dataFor:"resumo_dos_recursos", icone:IconeMenuPainel, permissoes: ['view_associacao',],},
+        {label: "Créditos da escola", url: "lista-de-receitas", dataFor:"creditos_da_escola", icone:IconeMenuCreditosDaEscola, permissoes: ['view_receita'],},
+        {label: "Gastos da escola", url: "lista-de-despesas", dataFor:"gastos_da_escola", icone:IconeMenuGastosDaEscola, permissoes: ['view_despesa', ],},
+        {label: "Prestação de contas", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:IconeMenuPrestacaoDeContas, permissoes: ['view_prestacaoconta'],
             subItens: [
                 {
                     label: "Conciliação Bancária", url: "detalhe-das-prestacoes", dataFor:"detalhe_das_prestacoes", icone:""
@@ -47,7 +47,7 @@ const UrlsMenuEscolas ={
                 },
             ]
         },
-        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['permissao_total'],},
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['view_default'],},
     ]
 };
 
@@ -59,23 +59,19 @@ const UrlsMenuDres ={
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
     lista_de_urls:[
-        {label: "Painel", url: "dre-dashboard", dataFor:"dre_dashboard", icone:IconePainel, permissoes: ['permissao_total'],},
-        {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola, permissoes: ['permissao_total'],},
-        {label: "Acompanhamento", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeAcompanhamento, permissoes: ['permissao_total'],},
-        {label: "Relatório consolidado", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeRelatorio, permissoes: ['permissao_total']},
-        {label: "Dados da Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria, permissoes: ['permissao_total']},
-        {
-            label: "Apoio à Diretoria",
-            url: "dre-dados-da-diretoria",
-            dataFor:"dre_dados_da_diretoria",
-            icone:IconeApoioDiretoria,
+        {label: "Painel", url: "dre-dashboard", dataFor:"dre_dashboard", icone:IconePainel, permissoes: ['view_dashboard_dre'],},
+        {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola, permissoes: ['view_associacao_dre'],},
+        {label: "Acompanhamento", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeAcompanhamento, permissoes: ['view_dadosdiretoria_dre'],},
+        {label: "Relatório consolidado", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeRelatorio, permissoes: ['view_dadosdiretoria_dre']},
+        {label: "Dados da Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria, permissoes: ['view_dadosdiretoria_dre']},
+        {label: "Apoio à Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeApoioDiretoria, permissoes: ['view_dadosdiretoria_dre'],
             subItens: [
                 {
                     label: "Perguntas Frequentes", url: "dre-faq", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria
                 }
             ]
         },
-        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['permissao_total'],},
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['view_dadosdiretoria_dre'],},
     ]
 };
 
