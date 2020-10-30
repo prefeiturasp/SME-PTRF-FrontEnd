@@ -27,3 +27,7 @@ export const postCriarUsuario = async (payload) => {
 export const putEditarUsuario = async (usuario_id, payload) => {
     return (await api.put(`/api/usuarios/${usuario_id}`, payload, authHeader)).data
 };
+
+export const deleteUsuario = async (usuario_id) => {
+    return (await api.delete(`/api/usuarios/${usuario_id}`, authHeader))
+};

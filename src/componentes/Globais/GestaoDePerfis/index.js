@@ -8,7 +8,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import {ModalPerfisForm} from "./ModalPerfisForm";
 import {ModalConfirmDeletePerfil} from "./ModalConfirmDeletePerfil";
-import {getGrupos, getUsuarios, postCriarUsuario, putEditarUsuario} from "../../../services/GestaoDePerfis.service";
+import {getGrupos, getUsuarios, postCriarUsuario, putEditarUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
 import {visoesService} from "../../../services/visoes.service";
 
 
@@ -161,10 +161,16 @@ export const GestaoDePerfis = () => {
         setShowModalDeletePerfil(false);
     };
 
-    const onDeletePerfilTrue = () =>{
+    const onDeletePerfilTrue = async () =>{
         console.log('onDeletePerfilTrue ', statePerfisForm);
         setShowPerfisForm(false);
         setShowModalDeletePerfil(false);
+
+        let delete_usuario = await deleteUsuario(statePerfisForm.id)
+
+        console.log('onDeletePerfilTrue ', delete_usuario);
+        await exibeUsuarios()
+
     };
 
 

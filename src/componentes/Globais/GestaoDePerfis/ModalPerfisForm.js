@@ -175,7 +175,7 @@ export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePer
 
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
-                                        {statePerfisForm.uuid &&
+                                        {statePerfisForm.id &&
                                             <button onClick={() => setShowModalDeletePerfil(true)} type="button" className="btn btn btn-danger mt-2 mr-2">
                                                 <FontAwesomeIcon
                                                     style={{fontSize: '15px', marginRight: "5px", color:'#fff'}}
