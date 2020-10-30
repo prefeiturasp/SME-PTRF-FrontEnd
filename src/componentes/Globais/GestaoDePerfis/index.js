@@ -36,15 +36,6 @@ export const GestaoDePerfis = () => {
     const [showModalDeletePerfil, setShowModalDeletePerfil] = useState(false);
     const [usuarios, setUsuarios] = useState({});
     const [grupos, setGrupos] = useState([]);
-    const [selectedFlavors, setSelectedFlavors] = useState([]);
-
-    const handleSelect = function(selectedItems) {
-        const flavors = [];
-        for (let i=0; i<selectedItems.length; i++) {
-            flavors.push(selectedItems[i].value);
-        }
-        setSelectedFlavors(flavors);
-    }
 
     useEffect(()=>{
         exibeGrupos();
@@ -74,7 +65,7 @@ export const GestaoDePerfis = () => {
 
     const handleSubmitFiltros = async (event) => {
         event.preventDefault();
-        let retorno_filtros = await getUsuariosFiltros(visao_selecionada, stateFiltros.filtrar_por_nome, stateFiltros.filtrar_por_grupo)
+        let retorno_filtros = await getUsuariosFiltros(visao_selecionada, stateFiltros.filtrar_por_nome, stateFiltros.filtrar_por_grupo);
         setUsuarios(retorno_filtros)
     };
 
@@ -139,7 +130,7 @@ export const GestaoDePerfis = () => {
 
         if(values.id){
             try {
-                await putEditarUsuario(values.id, payload)
+                await putEditarUsuario(values.id, payload);
                 console.log('Usuário editado com sucesso')
             }catch (e) {
                 console.log('Erro ao editar usuário ', e)
@@ -161,7 +152,7 @@ export const GestaoDePerfis = () => {
         setShowPerfisForm(false);
         setShowModalDeletePerfil(false);
         try {
-            await deleteUsuario(statePerfisForm.id)
+            await deleteUsuario(statePerfisForm.id);
             console.log('Usuário deletado com sucesso');
         }catch (e) {
             console.log('Erro ao deletar usuário ', e);

@@ -166,8 +166,6 @@ export const ModalPerfisForm = ({show, handleClose, statePerfisForm, setStatePer
                                             {props.errors.grupo_acesso && <span className="span_erro text-danger mt-1"> {props.errors.grupo_acesso}</span>}
                                         </div>
                                     </div>
-
-
                                 </div>
 
                                 <div className="d-flex bd-highlight mt-2">
