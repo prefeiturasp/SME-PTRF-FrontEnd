@@ -45,9 +45,18 @@
     padding: 3px 8px;
     font-weight: bold;
   }
-  .circulo-ativo{
+  .circulo-ativo, .circulo-ativo-relatorio-consolidado, .circulo-ativo-relatorio-consolidado-total{
     background-color: #00585E;
   }
+
+  .circulo-ativo-relatorio-consolidado{
+    padding: 8px 9px;
+  }
+
+  .circulo-ativo-relatorio-consolidado-total{
+    padding: 9px 6px;
+  }
+
   .circulo-ativo-passado {
     background-color: #42474A;
     padding: 3px 5px;

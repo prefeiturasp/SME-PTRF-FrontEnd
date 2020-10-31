@@ -48,6 +48,20 @@ export const RelatorioConsolidado = () => {
         setPeriodoEsolhido(uuid_periodo)
     };
 
+    const retornaQtdeStatus = (status) => {
+        let item = itensDashboard.cards.find(element => element.status === status)
+
+        let qtde_itens = item.quantidade_prestacoes
+        console.log('retornaQtdeStatus ', item)
+
+        if (qtde_itens <= 9){
+            qtde_itens = "0" + qtde_itens
+        }
+
+        return qtde_itens
+
+    };
+
     console.log('PERIODO Escolhido ', periodoEscolhido)
     console.log('itensDashboard ', itensDashboard)
 
@@ -65,7 +79,10 @@ export const RelatorioConsolidado = () => {
                 />
 
                 {periodoEscolhido && itensDashboard ? (
-                    <TrilhaDeStatus/>
+                    <TrilhaDeStatus
+                        itensDashboard={itensDashboard}
+                        retornaQtdeStatus={retornaQtdeStatus}
+                    />
                 ):
                     <MsgImgCentralizada
                         texto='Selecione um período acima para visualizar as ações'
