@@ -49,32 +49,27 @@ export const RelatorioConsolidado = () => {
     };
 
     const retornaQtdeStatus = (status) => {
-        let item = itensDashboard.cards.find(element => element.status === status)
-        let qtde_itens = item.quantidade_prestacoes
+        let item = itensDashboard.cards.find(element => element.status === status);
+        let qtde_itens = item.quantidade_prestacoes;
         if (qtde_itens <= 9){
-            qtde_itens = "0" + qtde_itens
+            return '0' + qtde_itens;
+        }else {
+            return qtde_itens.toString();
         }
-        return qtde_itens
     };
 
     const retornaQtdeStatusTotal = () =>{
-        // if (itensDashboard){
-        //     var total = itensDashboard.cards.reduce(()=>getTotal, 0);
-        //     function getTotal(total, item) {
-        //         return total + item.quantidade_prestacoes
-        //     }
-        // }
-
         if (itensDashboard) {
-            return itensDashboard.cards.filter(elemtent => elemtent.status === 'APROVADA' || elemtent.status === 'REPROVADA').reduce((total, valor) => total + valor.quantidade_prestacoes, 0);
-        }else {
-            return 'NÂO'
+            let total = itensDashboard.cards.filter(elemtent => elemtent.status === 'APROVADA' || elemtent.status === 'REPROVADA').reduce((total, valor) => total + valor.quantidade_prestacoes, 0);
+            if (total <= 9){
+                return '0' + total;
+            }else {
+                return total.toString();
+            }
         }
-
     };
 
     console.log('itensDashboard ', itensDashboard)
-    console.log('TOTAL  ', retornaQtdeStatusTotal())
 
     return (
         <>
@@ -91,8 +86,8 @@ export const RelatorioConsolidado = () => {
 
                 {periodoEscolhido && itensDashboard ? (
                     <TrilhaDeStatus
-                        itensDashboard={itensDashboard}
                         retornaQtdeStatus={retornaQtdeStatus}
+                        retornaQtdeStatusTotal={retornaQtdeStatusTotal}
                     />
                 ):
                     <MsgImgCentralizada
@@ -104,4 +99,4 @@ export const RelatorioConsolidado = () => {
             </div>
         </>
     )
-}
+};

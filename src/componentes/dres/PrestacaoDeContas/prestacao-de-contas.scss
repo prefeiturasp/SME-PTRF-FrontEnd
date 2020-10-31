@@ -45,15 +45,19 @@
     padding: 3px 8px;
     font-weight: bold;
   }
-  .circulo-ativo, .circulo-ativo-relatorio-consolidado, .circulo-ativo-relatorio-consolidado-total{
+  .circulo-ativo, .circulo-ativo-relatorio-consolidado-dois-digitos, .circulo-ativo-relatorio-consolidado-tres-digitos{
     background-color: #00585E;
   }
 
-  .circulo-ativo-relatorio-consolidado{
+  .circulo-relatorio-consolidado-em-analise{
+    background-color: #B40C02;
+  }
+
+  .circulo-ativo-relatorio-consolidado-dois-digitos{
     padding: 8px 9px;
   }
 
-  .circulo-ativo-relatorio-consolidado-total{
+  .circulo-ativo-relatorio-consolidado-tres-digitos{
     padding: 9px 6px;
   }
 
