@@ -40,6 +40,7 @@ import {AtribuicoesPage} from "../paginas/dres/Diretoria/Atribuicoes";
 import {DreDashboardPage} from "../paginas/dres/DreDashboard";
 import {ListaPrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/ListaPrestacaoDeContas";
 import {DetalhePrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas";
+import {RelatorioConsolidadoPage} from "../paginas/dres/RelatorioConsolidado";
 
 const routesConfig = [
     {
@@ -239,9 +240,16 @@ const routesConfig = [
 
     {
         exact: true,
+        path: "/dre-relatorio-consolidado",
+        component: RelatorioConsolidadoPage,
+        permissoes: ['view_dashboard_dre'],
+    },
+
+    {
+        exact: true,
         path: "/",
         component: RedirectLoginVisaoUe,
-        permissoes: ['view_associacao'],
+        permissoes: ['view_default'],
     },
 ];
 
