@@ -2,15 +2,19 @@ import React, {useEffect, useState} from "react";
 import {getFiqueDeOlho} from "../../../services/dres/RelatorioConsolidado.service";
 import {getItensDashboard, getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
+import {SelectConta} from "./SelectConta";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../assets/img/img-404.svg";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
+import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 
 export const RelatorioConsolidado = () => {
     const [fiqueDeOlho, setFiqueDeOlho] = useState("");
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
     const [itensDashboard, setItensDashboard] = useState(false);
+    const [contas, setContas] = useState(false);
+    const [contaEscolhida, setContaEscolhida] = useState(false);
 
     useEffect(() => {
         buscaFiqueDeOlho();
@@ -21,8 +25,16 @@ export const RelatorioConsolidado = () => {
     }, []);
 
     useEffect(() => {
+        carregaTabelas();
+    }, []);
+
+    useEffect(() => {
         carregaItensDashboard();
     }, [periodoEscolhido]);
+
+    useEffect(() => {
+        montaBarraDeStatus();
+    }, [periodoEscolhido, contaEscolhida]);
 
     const carregaPeriodos = async () => {
         let periodos = await getPeriodos();
@@ -30,6 +42,17 @@ export const RelatorioConsolidado = () => {
         if (periodos && periodos.length > 0){
             setPeriodoEsolhido(periodos[0].uuid)
         }
+    };
+
+    const carregaTabelas = async () => {
+        await getTabelasReceita().then(response => {
+            setContas(response.data.contas_associacao);
+            if (response.data.contas_associacao && response.data.contas_associacao.length > 0){
+                setContaEscolhida(response.data.contas_associacao[0].uuid)
+            }
+        }).catch(error => {
+            console.log(error);
+        });
     };
 
     const carregaItensDashboard = async () =>{
@@ -46,6 +69,10 @@ export const RelatorioConsolidado = () => {
 
     const handleChangePeriodos = async (uuid_periodo) => {
         setPeriodoEsolhido(uuid_periodo)
+    };
+
+    const handleChangeContas = async (uuid_conta) => {
+        setContaEscolhida(uuid_conta)
     };
 
     const retornaQtdeStatus = (status) => {
@@ -69,7 +96,11 @@ export const RelatorioConsolidado = () => {
         }
     };
 
-    console.log('itensDashboard ', itensDashboard)
+    const montaBarraDeStatus = () =>{
+        console.log('montaBarraDeStatus ', periodoEscolhido, contaEscolhida)
+    };
+
+    //console.log('itensDashboard ', itensDashboard)
 
     return (
         <>
@@ -83,6 +114,15 @@ export const RelatorioConsolidado = () => {
                     periodoEscolhido={periodoEscolhido}
                     handleChangePeriodos={handleChangePeriodos}
                 />
+
+                {periodoEscolhido &&
+                    <SelectConta
+                        contas={contas}
+                        contaEscolhida={contaEscolhida}
+                        handleChangeContas={handleChangeContas}
+                    />
+                }
+
 
                 {periodoEscolhido && itensDashboard ? (
                     <TrilhaDeStatus
