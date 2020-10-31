@@ -1,18 +1,55 @@
 import React, {useEffect, useState} from "react";
 import {getFiqueDeOlho} from "../../../services/dres/RelatorioConsolidado.service";
+import {getItensDashboard, getPeriodos} from "../../../services/dres/Dashboard.service";
+import {SelectPeriodo} from "./SelectPeriodo";
+import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
+import Img404 from "../../../assets/img/img-404.svg";
+import {TrilhaDeStatus} from "./TrilhaDeStatus";
 
 export const RelatorioConsolidado = () => {
     const [fiqueDeOlho, setFiqueDeOlho] = useState("");
+    const [periodos, setPeriodos] = useState(false);
+    const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
+    const [itensDashboard, setItensDashboard] = useState(false);
 
     useEffect(() => {
         buscaFiqueDeOlho();
     }, []);
 
+    useEffect(() => {
+        carregaPeriodos();
+    }, []);
+
+    useEffect(() => {
+        carregaItensDashboard();
+    }, [periodoEscolhido]);
+
+    const carregaPeriodos = async () => {
+        let periodos = await getPeriodos();
+        setPeriodos(periodos);
+        if (periodos && periodos.length > 0){
+            setPeriodoEsolhido(periodos[0].uuid)
+        }
+    };
+
+    const carregaItensDashboard = async () =>{
+        if (periodoEscolhido){
+            let itens = await getItensDashboard(periodoEscolhido);
+            setItensDashboard(itens)
+        }
+    };
+
     const buscaFiqueDeOlho = async () => {
         let fique_de_olho = await getFiqueDeOlho();
-        console.log('Fuca aslnlas ', fique_de_olho)
         setFiqueDeOlho(fique_de_olho.detail);
     };
+
+    const handleChangePeriodos = async (uuid_periodo) => {
+        setPeriodoEsolhido(uuid_periodo)
+    };
+
+    console.log('PERIODO Escolhido ', periodoEscolhido)
+    console.log('itensDashboard ', itensDashboard)
 
     return (
         <>
@@ -21,6 +58,21 @@ export const RelatorioConsolidado = () => {
             </div>
 
             <div className="page-content-inner">
+                <SelectPeriodo
+                    periodos={periodos}
+                    periodoEscolhido={periodoEscolhido}
+                    handleChangePeriodos={handleChangePeriodos}
+                />
+
+                {periodoEscolhido && itensDashboard ? (
+                    <TrilhaDeStatus/>
+                ):
+                    <MsgImgCentralizada
+                        texto='Selecione um período acima para visualizar as ações'
+                        img={Img404}
+                    />
+                }
+
             </div>
         </>
     )
