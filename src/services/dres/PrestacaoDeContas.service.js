@@ -46,15 +46,15 @@ export const getDeletarCobranca = async (cobranca_prestacao_recebimento_uuid) =>
 };
 
 export const getDesfazerRecebimento = async (prestacao_conta_uuid) => {
-    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-recebimento/`, authHeader)).data
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-recebimento/`, {}, authHeader)).data
 };
 
 export const getAnalisarPrestacaoDeContas = async (prestacao_conta_uuid) => {
-    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/analisar/`, authHeader)).data
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/analisar/`, {}, authHeader)).data
 };
 
 export const getDesfazerAnalise = async (prestacao_conta_uuid) => {
-    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-analise/`, authHeader)).data
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-analise/`, {}, authHeader)).data
 };
 
 export const getSalvarAnalise = async (prestacao_conta_uuid, payload) => {
@@ -78,7 +78,7 @@ export const getAddCobrancaDevolucoes = async (payload) => {
 };
 
 export const getDesfazerConclusaoAnalise = async (prestacao_conta_uuid) => {
-    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-conclusao-analise/`, authHeader)).data
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-conclusao-analise/`, {}, authHeader)).data
 };
 
 export const getDespesasPorFiltros = async (associacao_uuid, cpf_cnpj_fornecedor='', tipo_documento__id='', numero_documento='') => {

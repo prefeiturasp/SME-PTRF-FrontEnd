@@ -58,19 +58,19 @@ export const getReceitasPrestacaoDeContas = async (periodo_uuid, conta_uuid, aca
 };
 
 export const getConciliarReceita = async (receita_uuid, periodo_uuid) => {
-  return (await api.patch(`/api/receitas/${receita_uuid}/conciliar/?periodo=${periodo_uuid}`, authHeader)).data
+  return (await api.patch(`/api/receitas/${receita_uuid}/conciliar/?periodo=${periodo_uuid}`, {}, authHeader)).data
 };
 
 export const getDesconciliarReceita = async (receita_uuid, periodo_uuid) => {
-  return (await api.patch(`/api/receitas/${receita_uuid}/desconciliar/?periodo=${periodo_uuid}`, authHeader)).data
+  return (await api.patch(`/api/receitas/${receita_uuid}/desconciliar/?periodo=${periodo_uuid}`, {}, authHeader)).data
 };
 
 export const getConciliarDespesa = async (rateio_uuid, periodo_uuid) => {
-  return (await api.patch(`/api/rateios-despesas/${rateio_uuid}/conciliar/?periodo=${periodo_uuid}`, authHeader)).data
+  return (await api.patch(`/api/rateios-despesas/${rateio_uuid}/conciliar/?periodo=${periodo_uuid}`, {}, authHeader)).data
 };
 
 export const getDesconciliarDespesa = async (rateio_uuid, periodo_uuid) => {
-  return (await api.patch(`/api/rateios-despesas/${rateio_uuid}/desconciliar/?periodo=${periodo_uuid}`, authHeader)).data
+  return (await api.patch(`/api/rateios-despesas/${rateio_uuid}/desconciliar/?periodo=${periodo_uuid}`, {}, authHeader)).data
 };
 
 export const getObservacoes = async (periodo_uuid, conta_uuid) => {
