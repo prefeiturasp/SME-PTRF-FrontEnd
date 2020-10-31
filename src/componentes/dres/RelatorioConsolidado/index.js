@@ -50,20 +50,31 @@ export const RelatorioConsolidado = () => {
 
     const retornaQtdeStatus = (status) => {
         let item = itensDashboard.cards.find(element => element.status === status)
-
         let qtde_itens = item.quantidade_prestacoes
-        console.log('retornaQtdeStatus ', item)
-
         if (qtde_itens <= 9){
             qtde_itens = "0" + qtde_itens
         }
-
         return qtde_itens
+    };
+
+    const retornaQtdeStatusTotal = () =>{
+        // if (itensDashboard){
+        //     var total = itensDashboard.cards.reduce(()=>getTotal, 0);
+        //     function getTotal(total, item) {
+        //         return total + item.quantidade_prestacoes
+        //     }
+        // }
+
+        if (itensDashboard) {
+            return itensDashboard.cards.filter(elemtent => elemtent.status === 'APROVADA' || elemtent.status === 'REPROVADA').reduce((total, valor) => total + valor.quantidade_prestacoes, 0);
+        }else {
+            return 'NÂO'
+        }
 
     };
 
-    console.log('PERIODO Escolhido ', periodoEscolhido)
     console.log('itensDashboard ', itensDashboard)
+    console.log('TOTAL  ', retornaQtdeStatusTotal())
 
     return (
         <>
