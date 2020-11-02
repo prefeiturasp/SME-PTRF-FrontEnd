@@ -11,3 +11,7 @@ const authHeader = {
 export const getFiqueDeOlho = async () => {
     return (await api.get(`/api/relatorios-consolidados-dre/fique-de-olho/`, authHeader)).data
 };
+
+export const getConsultarStatus = async (dre_uuid, periodo_uuid, conta_uuid) => {
+    return (await api.get(`/api/relatorios-consolidados-dre/status-relatorio/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}`, authHeader)).data
+};

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getFiqueDeOlho} from "../../../services/dres/RelatorioConsolidado.service";
+import {getFiqueDeOlho, getConsultarStatus} from "../../../services/dres/RelatorioConsolidado.service";
 import {getItensDashboard, getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
@@ -7,8 +7,14 @@ import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../assets/img/img-404.svg";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
+import {visoesService} from "../../../services/visoes.service";
 
 export const RelatorioConsolidado = () => {
+
+    const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid')
+
+    console.log('DRE uuid ', dre_uuid)
+
     const [fiqueDeOlho, setFiqueDeOlho] = useState("");
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
@@ -33,7 +39,7 @@ export const RelatorioConsolidado = () => {
     }, [periodoEscolhido]);
 
     useEffect(() => {
-        montaBarraDeStatus();
+        consultarStatus();
     }, [periodoEscolhido, contaEscolhida]);
 
     const carregaPeriodos = async () => {
@@ -96,11 +102,17 @@ export const RelatorioConsolidado = () => {
         }
     };
 
-    const montaBarraDeStatus = () =>{
-        console.log('montaBarraDeStatus ', periodoEscolhido, contaEscolhida)
+    const consultarStatus = async () =>{
+
+        if (dre_uuid && periodoEscolhido && contaEscolhida){
+            let status = await getConsultarStatus(dre_uuid, periodoEscolhido, contaEscolhida)
+
+            console.log('consultarStatus ', status)
+
+        }
     };
 
-    //console.log('itensDashboard ', itensDashboard)
+    console.log('itensDashboard ', itensDashboard)
 
     return (
         <>
