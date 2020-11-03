@@ -12,7 +12,7 @@ import './relatorio-consolidade.scss'
 
 export const RelatorioConsolidado = () => {
 
-    const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid')
+    const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
 
     const [fiqueDeOlho, setFiqueDeOlho] = useState("");
     const [periodos, setPeriodos] = useState(false);
@@ -104,35 +104,28 @@ export const RelatorioConsolidado = () => {
     };
 
     const consultarStatus = async () =>{
-
         if (dre_uuid && periodoEscolhido && contaEscolhida){
             let status = await getConsultarStatus(dre_uuid, periodoEscolhido, contaEscolhida);
             setStatusRelatorio(status);
-            console.log('consultarStatus ', status)
         }
     };
-
-    //console.log('itensDashboard ', itensDashboard)
 
     return (
         <>
             <div className="col-12 container-texto-introdutorio mb-4 mt-3">
                 <div dangerouslySetInnerHTML={{__html: fiqueDeOlho}}/>
             </div>
-
             <div className="page-content-inner pt-0">
                 {statusRelatorio &&
                     <BarraDeStatus
                         statusRelatorio={statusRelatorio}
                     />
                 }
-
                 <SelectPeriodo
                     periodos={periodos}
                     periodoEscolhido={periodoEscolhido}
                     handleChangePeriodos={handleChangePeriodos}
                 />
-
                 {periodoEscolhido &&
                     <SelectConta
                         contas={contas}
@@ -140,8 +133,6 @@ export const RelatorioConsolidado = () => {
                         handleChangeContas={handleChangeContas}
                     />
                 }
-
-
                 {periodoEscolhido && itensDashboard ? (
                     <TrilhaDeStatus
                         retornaQtdeStatus={retornaQtdeStatus}
@@ -153,7 +144,6 @@ export const RelatorioConsolidado = () => {
                         img={Img404}
                     />
                 }
-
             </div>
         </>
     )
