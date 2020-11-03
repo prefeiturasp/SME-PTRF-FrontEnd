@@ -17,11 +17,11 @@ export const TrilhaDeStatus = ({retornaQtdeStatus, retornaQtdeStatusTotal}) => {
                             <p className='mt-2'><strong>Não recebido</strong></p>
                         </div>
                         <div className='container-circulo'>
-                            <span className={`circulo ${retornaQtdeStatus('RECEBIDA').length < 3 ? 'circulo-ativo-relatorio-consolidado-dois-digitos' : 'circulo-ativo-relatorio-consolidado-tres-digitos'}`}>{retornaQtdeStatus('RECEBIDA')}</span>
+                            <span className={`circulo circulo-relatorio-consolidado-em-analise ${retornaQtdeStatus('RECEBIDA').length < 3 ? 'circulo-ativo-relatorio-consolidado-dois-digitos' : 'circulo-ativo-relatorio-consolidado-tres-digitos'}`}>{retornaQtdeStatus('RECEBIDA')}</span>
                             <p className='mt-2'><strong>Recebida e <br/> aguardando análise</strong></p>
                         </div>
                         <div className='container-circulo'>
-                            <span className={`circulo ${retornaQtdeStatus('DEVOLVIDA').length < 3 ? 'circulo-ativo-relatorio-consolidado-dois-digitos' : 'circulo-ativo-relatorio-consolidado-tres-digitos'}`}>{retornaQtdeStatus('DEVOLVIDA')}</span>
+                            <span className={`circulo circulo-relatorio-consolidado-em-analise ${retornaQtdeStatus('DEVOLVIDA').length < 3 ? 'circulo-ativo-relatorio-consolidado-dois-digitos' : 'circulo-ativo-relatorio-consolidado-tres-digitos'}`}>{retornaQtdeStatus('DEVOLVIDA')}</span>
                             <p className='mt-2'><strong>Devolvido <br/>para acertos</strong></p>
                         </div>
                         <div className='container-circulo'>
