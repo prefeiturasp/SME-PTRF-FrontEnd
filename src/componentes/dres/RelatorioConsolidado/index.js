@@ -6,14 +6,13 @@ import {SelectConta} from "./SelectConta";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../assets/img/img-404.svg";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
-import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {visoesService} from "../../../services/visoes.service";
+import {BarraDeStatus} from "./BarraDeStatus";
+import './relatorio-consolidade.scss'
 
 export const RelatorioConsolidado = () => {
 
     const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid')
-
-    console.log('DRE uuid ', dre_uuid)
 
     const [fiqueDeOlho, setFiqueDeOlho] = useState("");
     const [periodos, setPeriodos] = useState(false);
@@ -21,6 +20,7 @@ export const RelatorioConsolidado = () => {
     const [itensDashboard, setItensDashboard] = useState(false);
     const [contas, setContas] = useState(false);
     const [contaEscolhida, setContaEscolhida] = useState(false);
+    const [statusRelatorio, setStatusRelatorio] = useState(false);
 
     useEffect(() => {
         buscaFiqueDeOlho();
@@ -106,14 +106,13 @@ export const RelatorioConsolidado = () => {
     const consultarStatus = async () =>{
 
         if (dre_uuid && periodoEscolhido && contaEscolhida){
-            let status = await getConsultarStatus(dre_uuid, periodoEscolhido, contaEscolhida)
-
+            let status = await getConsultarStatus(dre_uuid, periodoEscolhido, contaEscolhida);
+            setStatusRelatorio(status);
             console.log('consultarStatus ', status)
-
         }
     };
 
-    console.log('itensDashboard ', itensDashboard)
+    //console.log('itensDashboard ', itensDashboard)
 
     return (
         <>
@@ -121,7 +120,13 @@ export const RelatorioConsolidado = () => {
                 <div dangerouslySetInnerHTML={{__html: fiqueDeOlho}}/>
             </div>
 
-            <div className="page-content-inner">
+            <div className="page-content-inner pt-0">
+                {statusRelatorio &&
+                    <BarraDeStatus
+                        statusRelatorio={statusRelatorio}
+                    />
+                }
+
                 <SelectPeriodo
                     periodos={periodos}
                     periodoEscolhido={periodoEscolhido}
