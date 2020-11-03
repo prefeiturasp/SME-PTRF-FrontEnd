@@ -1,6 +1,6 @@
 import React from "react";
 
-export const InfoAssociacoesEmAnalise = ({totalEmAnalise}) =>{
+export const InfoAssociacoesEmAnalise = ({totalEmAnalise, periodoUuid}) =>{
     return(
         <>
             {totalEmAnalise > 0 &&
@@ -12,7 +12,7 @@ export const InfoAssociacoesEmAnalise = ({totalEmAnalise}) =>{
                                 <p className='texto-aviso-associacoes-em-analise'><strong>{totalEmAnalise === 1 ? 'Existe ' + totalEmAnalise + ' associação ': 'Existem ' + totalEmAnalise + ' associações '}  ainda em análise nas prestações de contas</strong></p>
                             </div>
                             <div className="py-2 bd-highlight">
-                                <button onClick={()=>window.location.assign('/dre-relatorio-consolidado')} className="btn btn-outline-success">Ir para painel de acompanhamento</button>
+                                <button onClick={()=>window.location.assign(`/dre-lista-prestacao-de-contas/${periodoUuid}/EM_ANALISE`)} className="btn-ir-para-acompanhamento">Ir para painel de acompanhamento</button>
                             </div>
                         </div>
                     </div>

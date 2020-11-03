@@ -81,6 +81,7 @@ export const RelatorioConsolidadoApuracao = () =>{
                     />
                     <InfoAssociacoesEmAnalise
                         totalEmAnalise={totalEmAnalise}
+                        periodoUuid={periodo_uuid}
                     />
                 </div>
             </div>

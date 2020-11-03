@@ -21,3 +21,12 @@
   color: #B40C02;
   background-image: url("../../../assets/img/dashborard-icone-pendente.svg");
 }
+
+.btn-ir-para-acompanhamento, .btn-ir-para-acompanhamento:focus{
+  outline: 0;
+  border: none;
+  background-color: transparent;
+  text-decoration: underline;
+  color: #000;
+  font-weight: bold;
+}
