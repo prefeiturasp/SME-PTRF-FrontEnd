@@ -7,6 +7,7 @@ import {getTiposConta, getExecucaoFinanceira} from "../../../../services/dres/Re
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
 import {visoesService} from "../../../../services/visoes.service";
+import {TabelaExecucaoFinanceira} from "./TabelaExecucaoFinanceira";
 
 export const RelatorioConsolidadoApuracao = () =>{
 
@@ -18,6 +19,7 @@ export const RelatorioConsolidadoApuracao = () =>{
     const [totalEmAnalise, setTotalEmAnalise] = useState(0);
     const [periodoNome, setPeriodoNome] = useState('');
     const [contaNome, setContaNome] = useState('');
+    const [execucaoFinanceira, setExecucaoFinanceira] = useState(false);
 
     useEffect(() => {
         carregaItensDashboard();
@@ -66,8 +68,14 @@ export const RelatorioConsolidadoApuracao = () =>{
     };
 
     const carregaExecucaoFinanceira = async () =>{
-        let execucao = await getExecucaoFinanceira(dre_uuid, periodo_uuid, conta_uuid);
-        console.log("carregaExecucaoFinanceira ", execucao);
+        try {
+            let execucao = await getExecucaoFinanceira(dre_uuid, periodo_uuid, conta_uuid);
+            setExecucaoFinanceira(execucao)
+            console.log("carregaExecucaoFinanceira ", execucao)
+        }catch (e) {
+            console.log("Erro ao carregar execução financeira ", e)
+        }
+
     };
 
     const retornaQtdeEmAnalise = () =>{
@@ -93,6 +101,7 @@ export const RelatorioConsolidadoApuracao = () =>{
                         periodoUuid={periodo_uuid}
                     />
                     <BoxConsultarDados/>
+                    <TabelaExecucaoFinanceira/>
                 </div>
             </div>
         </>
