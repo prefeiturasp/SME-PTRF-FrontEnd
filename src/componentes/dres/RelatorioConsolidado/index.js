@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getFiqueDeOlho, getConsultarStatus} from "../../../services/dres/RelatorioConsolidado.service";
+import {getFiqueDeOlho, getConsultarStatus, getTiposConta} from "../../../services/dres/RelatorioConsolidado.service";
 import {getItensDashboard, getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
@@ -31,7 +31,7 @@ export const RelatorioConsolidado = () => {
     }, []);
 
     useEffect(() => {
-        carregaTabelas();
+        carregaContas();
     }, []);
 
     useEffect(() => {
@@ -50,15 +50,16 @@ export const RelatorioConsolidado = () => {
         }
     };
 
-    const carregaTabelas = async () => {
-        await getTabelasReceita().then(response => {
-            setContas(response.data.contas_associacao);
-            if (response.data.contas_associacao && response.data.contas_associacao.length > 0){
-                setContaEscolhida(response.data.contas_associacao[0].uuid)
+    const carregaContas = async () => {
+        try {
+            let tipo_contas = await getTiposConta();
+            setContas(tipo_contas);
+            if (tipo_contas && tipo_contas.length > 0){
+                setContaEscolhida(tipo_contas[0].uuid)
             }
-        }).catch(error => {
-            console.log(error);
-        });
+        }catch (e) {
+            console.log("Erro ao trazer os tipos de contas ", e);
+        }
     };
 
     const carregaItensDashboard = async () =>{

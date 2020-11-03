@@ -1,5 +1,4 @@
 import React from "react";
-import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 
 export const SelectConta = ({contas, contaEscolhida, handleChangeContas}) =>{
     return(
@@ -11,13 +10,6 @@ export const SelectConta = ({contas, contaEscolhida, handleChangeContas}) =>{
                         <label htmlFor="conta" className="">Conta:</label>
                     </div>
                     <div className="col-12 col-sm-7 col-md-9 pl-0">
-
-{/*                        <select name="conta" id="conta" className="form-control">
-                            <option value="">Selecione uma conta</option>
-                            <option value="aca9f879-f86e-4446-974e-d0b4fa0cb2b4">Cartão</option>
-                            <option value="2fb97e3f-cccf-4843-b2fd-ef396b18e6b9">Cheque</option>
-                        </select>*/}
-
                         <select
                             value={contaEscolhida}
                             onChange={(e) => handleChangeContas(e.target.value)}
@@ -25,12 +17,9 @@ export const SelectConta = ({contas, contaEscolhida, handleChangeContas}) =>{
                             id="contaEscolhida"
                             className="form-control"
                         >
-                            <option value="">Selecione uma conta</option>
-                            <option value="aca9f879-f86e-4446-974e-d0b4fa0cb2b4">Cartão</option>
-                            <option value="2fb97e3f-cccf-4843-b2fd-ef396b18e6b9">Cheque</option>
-                            {/*{contas && contas.map((conta)=>
+                            {contas && contas.map((conta)=>
                                 <option key={conta.uuid} value={conta.uuid}>{conta.nome}</option>
-                            )}*/}
+                            )}
                         </select>
                     </div>
                 </div>
