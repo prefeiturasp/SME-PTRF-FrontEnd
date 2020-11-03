@@ -1,7 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {getItensDashboard} from "../../../../services/dres/Dashboard.service";
+import {getItensDashboard, getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";
+import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {getTiposConta} from "../../../../services/dres/RelatorioConsolidado.service";
+import {TopoComBotoes} from "./TopoComBotoes";
 
 export const RelatorioConsolidadoApuracao = () =>{
 
@@ -9,12 +12,16 @@ export const RelatorioConsolidadoApuracao = () =>{
 
     const [itensDashboard, setItensDashboard] = useState(false);
     const [totalEmAnalise, setTotalEmAnalise] = useState(0);
+    const [periodoNome, setPeriodoNome] = useState('');
+    const [contaNome, setContaNome] = useState('');
 
     useEffect(() => {
         carregaItensDashboard();
     }, []);
 
     useEffect(() => {
+        carregaPeriodos();
+        carregaContas();
         retornaQtdeEmAnalise();
     }, [itensDashboard]);
 
@@ -22,6 +29,35 @@ export const RelatorioConsolidadoApuracao = () =>{
         if (periodo_uuid){
             let itens = await getItensDashboard(periodo_uuid);
             setItensDashboard(itens)
+        }
+    };
+
+    const carregaPeriodos = async () => {
+        if (periodo_uuid){
+            let periodos = await getPeriodos();
+            if (periodos.length > 0 ){
+                let periodo_obj = periodos.find(element => element.uuid === periodo_uuid);
+                let periodo_nome;
+                periodo_nome = periodo_obj.referencia + " - ";
+                periodo_nome += periodo_obj.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo_obj.data_inicio_realizacao_despesas) : "-";
+                periodo_nome += " até ";
+                periodo_nome += periodo_obj.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo_obj.data_fim_realizacao_despesas) : "-";
+
+                setPeriodoNome(periodo_nome);
+            }
+        }
+    };
+
+    const carregaContas = async () => {
+        try {
+            let tipo_contas = await getTiposConta();
+            if (tipo_contas && tipo_contas.length > 0){
+                let tipo_conta_obj = tipo_contas.find(element => element.uuid === conta_uuid);
+                console.log("carregaContas ", tipo_conta_obj)
+                setContaNome(tipo_conta_obj.nome)
+            }
+        }catch (e) {
+            console.log("Erro ao trazer os tipos de contas ", e);
         }
     };
 
@@ -38,8 +74,11 @@ export const RelatorioConsolidadoApuracao = () =>{
     return(
         <>
             <div className="col-12 container-visualizacao-da-ata mb-5">
-                <div className="col-12 mt-4">
-                    <h1>RelatorioConsolidadoApuracao</h1>
+                <div className="col-12 mt-5">
+                    <TopoComBotoes
+                        periodoNome={periodoNome}
+                        contaNome={contaNome}
+                    />
                     <InfoAssociacoesEmAnalise
                         totalEmAnalise={totalEmAnalise}
                     />
