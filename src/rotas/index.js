@@ -248,7 +248,7 @@ const routesConfig = [
 
     {
         exact: true,
-        path: "/dre-relatorio-consolidado-apuracao",
+        path: "/dre-relatorio-consolidado-apuracao/:periodo_uuid/:conta_uuid/",
         component: RelatorioConsolidadoApuracao,
         permissoes: ['view_dashboard_dre'],
     },

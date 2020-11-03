@@ -1,6 +1,6 @@
 import React from "react";
 
-export const SelectConta = ({contas, contaEscolhida, handleChangeContas}) =>{
+export const SelectConta = ({contas, contaEscolhida, handleChangeContas, onClickVerRelatorio}) =>{
     return(
 
         <div className="row justify-content-between pt-4">
@@ -25,7 +25,7 @@ export const SelectConta = ({contas, contaEscolhida, handleChangeContas}) =>{
                 </div>
             </div>
             <div className='col text-right'>
-                <button className='btn btn btn btn-success mr-0 mb-2 ml-md-2 mt-2'>Ver relatórios</button>
+                <button onClick={()=>onClickVerRelatorio()} className='btn btn btn btn-success mr-0 mb-2 ml-md-2 mt-2'>Ver relatórios</button>
             </div>
         </div>
     )
