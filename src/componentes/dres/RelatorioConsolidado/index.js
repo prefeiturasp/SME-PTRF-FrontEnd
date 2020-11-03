@@ -8,7 +8,7 @@ import Img404 from "../../../assets/img/img-404.svg";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {visoesService} from "../../../services/visoes.service";
 import {BarraDeStatus} from "./BarraDeStatus";
-import './relatorio-consolidade.scss'
+import './relatorio-consolidado.scss'
 
 export const RelatorioConsolidado = () => {
 
