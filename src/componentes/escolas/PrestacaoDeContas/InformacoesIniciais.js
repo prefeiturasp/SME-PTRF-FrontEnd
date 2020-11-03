@@ -8,7 +8,7 @@ export const InformacoesIniciais = () => {
 
     useEffect(() => {
         buscaFiqueDeOlho();
-    }, [])
+    }, []);
 
     const buscaFiqueDeOlho = async () => {
         await getFiqueDeOlho().then((response) => {
@@ -16,11 +16,11 @@ export const InformacoesIniciais = () => {
         }).catch((error) => {
             console.log(error);
         })
-    }
+    };
 
     return(
         <div className="col-12 container-texto-introdutorio mb-4">
             <div dangerouslySetInnerHTML={{ __html: fique_de_olho }} />
         </div>
     )
-}
+};
