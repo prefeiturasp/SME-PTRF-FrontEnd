@@ -41,6 +41,7 @@ import {DreDashboardPage} from "../paginas/dres/DreDashboard";
 import {ListaPrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/ListaPrestacaoDeContas";
 import {DetalhePrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas";
 import {RelatorioConsolidadoPage} from "../paginas/dres/RelatorioConsolidado";
+import {RelatorioConsolidadoApuracao} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoApuracao";
 
 const routesConfig = [
     {
@@ -242,6 +243,13 @@ const routesConfig = [
         exact: true,
         path: "/dre-relatorio-consolidado",
         component: RelatorioConsolidadoPage,
+        permissoes: ['view_dashboard_dre'],
+    },
+
+    {
+        exact: true,
+        path: "/dre-relatorio-consolidado-apuracao",
+        component: RelatorioConsolidadoApuracao,
         permissoes: ['view_dashboard_dre'],
     },
 
