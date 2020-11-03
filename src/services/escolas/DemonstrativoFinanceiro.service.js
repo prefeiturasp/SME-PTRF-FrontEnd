@@ -22,6 +22,10 @@ export const previa = async (acao_associacao, conta_associacao, periodo, data_in
             .get(`/api/demonstrativo-financeiro/previa/?acao-associacao=${acao_associacao}&conta-associacao=${conta_associacao}&periodo=${periodo}&data_inicio=${data_inicio}&data_fim=${data_fim}`, {
                 responseType: 'blob',
                 timeout: 30000,
+                headers: {
+                    'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                    'Content-Type': 'application/json',
+                }
               })
             .then((response) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -40,6 +44,10 @@ export const documentoFinal = async (acao_associacao, conta_associacao, periodo)
             .get(`/api/demonstrativo-financeiro/documento-final/?acao-associacao=${acao_associacao}&conta-associacao=${conta_associacao}&periodo=${periodo}`, {
                 responseType: 'blob',
                 timeout: 30000,
+                headers: {
+                    'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                    'Content-Type': 'application/json',
+                }
               })
             .then((response) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
