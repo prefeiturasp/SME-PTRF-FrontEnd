@@ -14,7 +14,7 @@ export const getStatusPeriodoPorData = async (uuid_associacao, data_incial_perio
 };
 
 export const getConcluirPeriodo = async (periodo_uuid) => {
-  return(await api.post(`/api/prestacoes-contas/concluir/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo_uuid=${periodo_uuid}`, authHeader)).data
+  return(await api.post(`/api/prestacoes-contas/concluir/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo_uuid=${periodo_uuid}`, {}, authHeader)).data
 };
 
 
@@ -35,6 +35,7 @@ export const getIniciarPrestacaoDeContas = async (conta_uuid, periodo_uuid) => {
   return (
     await api.post(
       `/api/prestacoes-contas/iniciar/?conta_associacao_uuid=${conta_uuid}&periodo_uuid=${periodo_uuid}`,
+      {},
       authHeader
     )
   ).data
@@ -86,7 +87,7 @@ export const getDataPreenchimentoAta = async (uuidPrestacaoDeContas) => {
 };
 
 export const getIniciarAta = async (uuidPrestacaoDeContas) => {
-    return (await api.post(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/iniciar-ata/`,authHeader)).data
+    return (await api.post(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/iniciar-ata/`, {}, authHeader)).data
 };
 
 export const getInfoAta = async () => {
@@ -115,7 +116,7 @@ export const getAtaRetificadora = async (prestacao_uuid) => {
 };
 
 export const getIniciarAtaRetificadora = async (uuidPrestacaoDeContas) => {
-  return (await api.post(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/iniciar-ata-retificacao/`,authHeader)).data
+  return (await api.post(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/iniciar-ata-retificacao/`, {}, authHeader)).data
 };
 
 
