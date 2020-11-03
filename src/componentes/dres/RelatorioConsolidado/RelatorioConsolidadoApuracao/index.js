@@ -3,13 +3,16 @@ import {useParams} from "react-router-dom";
 import {getItensDashboard, getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";
 import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
-import {getTiposConta} from "../../../../services/dres/RelatorioConsolidado.service";
+import {getTiposConta, getExecucaoFinanceira} from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
+import {visoesService} from "../../../../services/visoes.service";
 
 export const RelatorioConsolidadoApuracao = () =>{
 
     let {periodo_uuid, conta_uuid} = useParams();
+
+    const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
 
     const [itensDashboard, setItensDashboard] = useState(false);
     const [totalEmAnalise, setTotalEmAnalise] = useState(0);
@@ -24,6 +27,7 @@ export const RelatorioConsolidadoApuracao = () =>{
         carregaPeriodos();
         carregaContas();
         retornaQtdeEmAnalise();
+        carregaExecucaoFinanceira();
     }, [itensDashboard]);
 
     const carregaItensDashboard = async () =>{
@@ -54,12 +58,16 @@ export const RelatorioConsolidadoApuracao = () =>{
             let tipo_contas = await getTiposConta();
             if (tipo_contas && tipo_contas.length > 0){
                 let tipo_conta_obj = tipo_contas.find(element => element.uuid === conta_uuid);
-                console.log("carregaContas ", tipo_conta_obj)
                 setContaNome(tipo_conta_obj.nome)
             }
         }catch (e) {
             console.log("Erro ao trazer os tipos de contas ", e);
         }
+    };
+
+    const carregaExecucaoFinanceira = async () =>{
+        let execucao = await getExecucaoFinanceira(dre_uuid, periodo_uuid, conta_uuid);
+        console.log("carregaExecucaoFinanceira ", execucao);
     };
 
     const retornaQtdeEmAnalise = () =>{
@@ -69,8 +77,8 @@ export const RelatorioConsolidadoApuracao = () =>{
         }
     };
 
-    console.log("RelatorioConsolidadoApuracao items ", itensDashboard)
-    console.log("RelatorioConsolidadoApuracao Total ", totalEmAnalise)
+    //console.log("RelatorioConsolidadoApuracao items ", itensDashboard)
+    //console.log("RelatorioConsolidadoApuracao Total ", totalEmAnalise)
 
     return(
         <>
