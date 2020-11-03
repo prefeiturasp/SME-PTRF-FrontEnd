@@ -5,6 +5,7 @@ import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";
 import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {getTiposConta} from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
+import {BoxConsultarDados} from "./BoxConsultarDados";
 
 export const RelatorioConsolidadoApuracao = () =>{
 
@@ -83,6 +84,7 @@ export const RelatorioConsolidadoApuracao = () =>{
                         totalEmAnalise={totalEmAnalise}
                         periodoUuid={periodo_uuid}
                     />
+                    <BoxConsultarDados/>
                 </div>
             </div>
         </>
