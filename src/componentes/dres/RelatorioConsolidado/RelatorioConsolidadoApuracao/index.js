@@ -8,6 +8,7 @@ import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
 import {visoesService} from "../../../../services/visoes.service";
 import {TabelaExecucaoFinanceira} from "./TabelaExecucaoFinanceira";
+import {JustificativaDiferenca} from "./JustificativaDiferenca";
 
 export const RelatorioConsolidadoApuracao = () =>{
 
@@ -20,6 +21,7 @@ export const RelatorioConsolidadoApuracao = () =>{
     const [periodoNome, setPeriodoNome] = useState('');
     const [contaNome, setContaNome] = useState('');
     const [execucaoFinanceira, setExecucaoFinanceira] = useState(false);
+    const [justificativaDiferenca, setJustificativaDiferenca] = useState('');
 
     useEffect(() => {
         carregaItensDashboard();
@@ -103,6 +105,10 @@ export const RelatorioConsolidadoApuracao = () =>{
         }
     };
 
+    const onSubmitJustificativaDiferenca = () =>{
+        console.log("onSubmitJustificativaDiferenca ", justificativaDiferenca)
+    };
+
     //console.log("RelatorioConsolidadoApuracao items ", itensDashboard)
     //console.log("RelatorioConsolidadoApuracao Total ", totalEmAnalise)
 
@@ -123,6 +129,12 @@ export const RelatorioConsolidadoApuracao = () =>{
                         execucaoFinanceira={execucaoFinanceira}
                         valorTemplate={valorTemplate}
                         comparaValores={comparaValores}
+                    />
+                    <JustificativaDiferenca
+                        comparaValores={comparaValores}
+                        justificativaDiferenca={justificativaDiferenca}
+                        setJustificativaDiferenca={setJustificativaDiferenca}
+                        onSubmitJustificativaDiferenca={onSubmitJustificativaDiferenca}
                     />
                 </div>
             </div>
