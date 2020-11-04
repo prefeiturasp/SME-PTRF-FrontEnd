@@ -162,25 +162,18 @@ export const RelatorioConsolidadoApuracao = () =>{
             await patchJustificativa(justificativaDiferenca.uuid, payload)
         }else {
             delete justificativaDiferenca.uuid;
-            let payload = justificativaDiferenca;
-            await postJustificativa(payload)
+            await postJustificativa(justificativaDiferenca)
         }
     };
 
     const retornaQtdePorStatus = (status) => {
         let item = itensDashboard.cards.find(element => element.status === status);
-        let qtde_itens = item.quantidade_prestacoes;
-        return qtde_itens;
+        return item.quantidade_prestacoes;
     };
 
     const retornaNaoApresentadas = () =>{
-        let nao_apresentadas = itensDashboard.total_associacoes_dre - retornaQtdePorStatus('NAO_RECEBIDA') - retornaQtdePorStatus('RECEBIDA') - retornaQtdePorStatus('EM_ANALISE') - retornaQtdePorStatus('DEVOLVIDA') - retornaQtdePorStatus('APROVADA') - retornaQtdePorStatus('REPROVADA')
-        return nao_apresentadas;
+        return itensDashboard.total_associacoes_dre - retornaQtdePorStatus('NAO_RECEBIDA') - retornaQtdePorStatus('RECEBIDA') - retornaQtdePorStatus('EM_ANALISE') - retornaQtdePorStatus('DEVOLVIDA') - retornaQtdePorStatus('APROVADA') - retornaQtdePorStatus('REPROVADA');
     };
-
-    //console.log("RelatorioConsolidadoApuracao items ", itensDashboard)
-    //console.log("RelatorioConsolidadoApuracao Total ", totalEmAnalise)
-
     return(
         <>
             <div className="col-12 container-visualizacao-da-ata mb-5">

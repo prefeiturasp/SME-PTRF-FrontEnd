@@ -7,7 +7,7 @@ export const JustificativaDiferenca = ({comparaValores, justificativaDiferenca, 
                 <>
                     <p className='texto-aviso-associacoes-em-analise'><strong>Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período</strong></p>
                     <div className="form-group">
-                        <textarea onChange={(e)=>onChangeJustificativaDiferenca(e.target.value)} className="form-control" id="justificativaDiferenca" rows="3" value={justificativaDiferenca.texto}>
+                        <textarea onChange={(e)=>onChangeJustificativaDiferenca(e.target.value)} className="form-control" id="justificativaDiferenca" rows="3" value={justificativaDiferenca.texto} placeholder='Escreva aqui a justificativa para essa diferença.'>
                         </textarea>
                     </div>
                     <div className="d-flex  justify-content-end pb-3">
