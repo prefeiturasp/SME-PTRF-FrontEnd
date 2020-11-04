@@ -37,7 +37,7 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                                         <div className="form-group">
                                                             <label htmlFor="banco_nome">Banco</label>
                                                             <input
-                                                                readOnly={setaCampoReadonly(conta.tipo_conta.nome)}
+                                                                readOnly={setaCampoReadonly(conta)}
                                                                 name={`contas[${index}].banco_nome`}
                                                                 value={conta.banco_nome}
                                                                 onChange={(e) => {
@@ -71,9 +71,9 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
 
                                                     <div className='col-12 col-md-3'>
                                                         <div className="form-group">
-                                                            <label htmlFor="agencia">Agência {setaCampoReadonly(conta.tipo_conta.nome) ? 'do Programa' : ""}</label>
+                                                            <label htmlFor="agencia">Agência {setaCampoReadonly(conta) ? 'do Programa' : ""}</label>
                                                             <input
-                                                                readOnly={setaCampoReadonly(conta.tipo_conta.nome)}
+                                                                readOnly={setaCampoReadonly(conta)}
                                                                 name={`contas[${index}].agencia`}
                                                                 value={conta.agencia}
                                                                 onChange={(e) => {
@@ -89,9 +89,9 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
 
                                                     <div className='col-12 col-md-3'>
                                                         <div className="form-group">
-                                                            <label className='mt-md-n5' htmlFor="numero_conta">Nº da conta {setaCampoReadonly(conta.tipo_conta.nome) ? 'do Programa' : ""} com o dígito</label>
+                                                            <label className='mt-md-n5' htmlFor="numero_conta">Nº da conta {setaCampoReadonly(conta) ? 'do Programa' : ""} com o dígito</label>
                                                             <input
-                                                                readOnly={setaCampoReadonly(conta.tipo_conta.nome)}
+                                                                readOnly={setaCampoReadonly(conta)}
                                                                 name={`contas[${index}].numero_conta`}
                                                                 value={conta.numero_conta}
                                                                 onChange={(e) => {

@@ -9,7 +9,7 @@ import moment from "moment";
 registerLocale("pt", pt );
 
 
-export const DatePickerField = ({ name, about, value, onChange, disabled, naoExibePlaceholder }) => {
+export const DatePickerField = ({ name, about, value, onChange, disabled, placeholderText }) => {
 
     return (
         <DatePicker
@@ -25,7 +25,7 @@ export const DatePickerField = ({ name, about, value, onChange, disabled, naoExi
             locale="pt"
             showYearDropdown
             className={`${ (name === "data_documento" || name === "data_transacao") && !value && about === "PUT" ? 'is_invalid' : ""} form-control`}
-            placeholderText={!naoExibePlaceholder ? "Somente números" : ''}
+            placeholderText={placeholderText}
             customInput={
                 <MaskedInput
                     mask = {[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}

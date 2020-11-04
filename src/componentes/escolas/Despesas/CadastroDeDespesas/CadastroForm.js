@@ -18,7 +18,6 @@ import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios"
 import Loading from "../../../../utils/Loading";
 import {Tags} from "../Tags";
 import {metodosAuxiliares} from "../metodosAuxiliares";
-import {ModalConfirmaLogout} from "../../../Globais/Cabecalho/ModalConfirmaLogout";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -234,14 +233,14 @@ export const CadastroForm = ({verbo_http}) => {
                 style: 'currency',
                 currency: 'BRL'
             });
-            errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa. Difrerença de  R$ '+ diferenca;
+            errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa. Diferença de  R$ '+ diferenca;
         }
         if (aux.getErroValorOriginalRateios(values) !== 0){
             let diferenca = Number(aux.getErroValorOriginalRateios(values)).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             });
-            errors.valor_original = "O total das despesas originais deve corresponder ao valor total dos recursos originais. Difrerença de  R$ " + diferenca
+            errors.valor_original = "O total das despesas originais deve corresponder ao valor total dos recursos originais. Diferença de  R$ " + diferenca
         }
         return errors;
     };

@@ -35,15 +35,15 @@ export const DadosDasContas = () => {
         setIntialValues(contas)
     };
 
-    const setaCampoReadonly=(nome_conta) =>{
-        return nome_conta === "Cartão"
+    const setaCampoReadonly=(conta) =>{
+        return conta.tipo_conta.apenas_leitura === true
     };
 
 
     const temErros = (values) => {
         const errors = {};
         values.contas.map((item)=>{
-            if (item.tipo_conta.nome !== 'Cartão') {
+            if (item.tipo_conta.apenas_leitura === false) {
                 if (!item.tipo_conta || !item.banco_nome || !item.agencia || !item.numero_conta){
                     errors.campos_obrigatorios = "Todos os campos são obrigatórios"
                 }

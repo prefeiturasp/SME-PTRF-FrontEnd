@@ -5,7 +5,7 @@ export const BoxPrestacaoDeContasPorPeriodo = ({corBoxPrestacaoDeContasPorPeriod
     return (
         <div className="row mt-5">
             <div className="col-12">
-                <h1 className="titulo-box-prestacao-de-contas-por-periodo">Ata de apresentação da prestação de contas</h1>
+                <h1 className="titulo-box-prestacao-de-contas-por-periodo">Atas da prestação de contas</h1>
                 <div className="col-12">
                     <div className="row mt-3 container-box-prestacao-de-contas-por-periodo pt-4 pb-4">
                         <div className="col-12 col-md-8">

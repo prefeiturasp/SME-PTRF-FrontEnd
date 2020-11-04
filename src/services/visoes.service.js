@@ -1,4 +1,11 @@
-import {USUARIO_LOGIN, ASSOCIACAO_UUID, ASSOCIACAO_TIPO_ESCOLA, ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_NOME} from "./auth.service";
+import {
+    USUARIO_LOGIN,
+    ASSOCIACAO_UUID,
+    ASSOCIACAO_TIPO_ESCOLA,
+    ASSOCIACAO_NOME_ESCOLA,
+    ASSOCIACAO_NOME,
+    authService
+} from "./auth.service";
 import {redirect} from "../utils/redirect";
 
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
@@ -73,6 +80,30 @@ const setDadosPrimeiroAcesso = async (resp) =>{
     alternaVisoes(visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome)
 };
 
+const getPermissoes = (permissao) =>{
+
+    if (permissao && authService.isLoggedIn()){
+        let permissoes = getItemUsuarioLogado('permissoes');
+        let result = permissao.filter(item => permissoes.indexOf(item) > -1);
+        let tem_acesso = result.length === permissao.length;
+        return tem_acesso
+    }
+
+};
+
+
+// const getPermissoes = (permissao) =>{
+//     let permissoes = getItemUsuarioLogado('permissoes');
+//
+//
+//     let tem_permissao = permissoes.find(element=> element === permissao);
+//
+//     //console.log("getPermissoes tem_permissao ", tem_permissao)
+//
+//     return tem_permissao
+//
+// };
+
 const setDadosUsuariosLogados = async (resp) => {
 
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
@@ -104,6 +135,8 @@ const setDadosUsuariosLogados = async (resp) => {
                 uuid: usuario_logado ? usuario_logado.associacao_selecionada.uuid : "",
                 nome: usuario_logado ? usuario_logado.associacao_selecionada.nome : "",
             },
+
+            permissoes: resp.permissoes ? resp.permissoes : []
         }
     };
     localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(novos_dados_do_usuario_logado))
@@ -189,6 +222,7 @@ const getItemUsuarioLogado = (indice) =>{
 
 export const visoesService = {
     setDadosUsuariosLogados,
+    getPermissoes,
     setDadosPrimeiroAcesso,
     converteNomeVisao,
     alternaVisoes,

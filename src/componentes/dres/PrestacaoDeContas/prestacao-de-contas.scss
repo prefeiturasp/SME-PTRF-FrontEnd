@@ -45,9 +45,22 @@
     padding: 3px 8px;
     font-weight: bold;
   }
-  .circulo-ativo{
+  .circulo-ativo, .circulo-ativo-relatorio-consolidado-dois-digitos, .circulo-ativo-relatorio-consolidado-tres-digitos{
     background-color: #00585E;
   }
+
+  .circulo-relatorio-consolidado-em-analise{
+    background-color: #B40C02;
+  }
+
+  .circulo-ativo-relatorio-consolidado-dois-digitos{
+    padding: 8px 9px;
+  }
+
+  .circulo-ativo-relatorio-consolidado-tres-digitos{
+    padding: 9px 6px;
+  }
+
   .circulo-ativo-passado {
     background-color: #42474A;
     padding: 3px 5px;
@@ -184,3 +197,59 @@
   }
 }
 
+.container-tabela-despesas{
+  background-color: #C4C4C4;
+}
+
+.tabela-despesas{
+  border-collapse: collapse;
+  border-spacing: 8px;
+}
+
+.tabela-despesas tr.divisao {
+  border-bottom: #C4C4C4 5px solid;
+  border-top: #C4C4C4 5px solid;
+}
+
+.td-com-despesas{
+  //width: calc(100% / 6) !important;
+  background-color: #EDEDED;
+}
+
+.td-com-despesas-unica{
+  background-color: #C0E5E8 !important;
+}
+
+
+.td-sem-despesas{
+  background-color: #C4C4C4;
+  color: #42474A;
+  border: none !important;
+  padding-bottom: 0 !important;
+}
+
+.td-separacao{
+  background-color: #C4C4C4;
+}
+
+@media (max-width: 1200px) {
+  .labels-filtros {
+    font-size: 14px !important;
+  }
+}
+
+.btn-editar-comentario, .btn-cancelar-comentario{
+  outline: 0 !important;
+  background: none !important;
+  border: none !important;
+}
+
+.btn-cancelar-comentario{
+  color: #00585e;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.container-item-comentario:hover{
+  cursor: move;
+}

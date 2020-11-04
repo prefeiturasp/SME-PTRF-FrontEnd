@@ -46,15 +46,15 @@ export const getDeletarCobranca = async (cobranca_prestacao_recebimento_uuid) =>
 };
 
 export const getDesfazerRecebimento = async (prestacao_conta_uuid) => {
-    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-recebimento/`, authHeader)).data
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-recebimento/`, {}, authHeader)).data
 };
 
 export const getAnalisarPrestacaoDeContas = async (prestacao_conta_uuid) => {
-    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/analisar/`, authHeader)).data
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/analisar/`, {}, authHeader)).data
 };
 
 export const getDesfazerAnalise = async (prestacao_conta_uuid) => {
-    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-analise/`, authHeader)).data
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-analise/`, {}, authHeader)).data
 };
 
 export const getSalvarAnalise = async (prestacao_conta_uuid, payload) => {
@@ -78,6 +78,38 @@ export const getAddCobrancaDevolucoes = async (payload) => {
 };
 
 export const getDesfazerConclusaoAnalise = async (prestacao_conta_uuid) => {
-    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-conclusao-analise/`, authHeader)).data
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-conclusao-analise/`, {}, authHeader)).data
+};
+
+export const getDespesasPorFiltros = async (associacao_uuid, cpf_cnpj_fornecedor='', tipo_documento__id='', numero_documento='') => {
+    return (await api.get(`/api/despesas/?associacao__uuid=${associacao_uuid}&cpf_cnpj_fornecedor=${cpf_cnpj_fornecedor}&tipo_documento__id=${tipo_documento__id}&numero_documento=${numero_documento}`, authHeader)).data
+};
+
+export const getTiposDevolucao = async () => {
+    return (await api.get(`/api/tipos-devolucao-ao-tesouro/`, authHeader)).data
+};
+
+export const getComentariosDeAnalise = async (prestacao_uuid) => {
+    return (await api.get(`/api/comentarios-de-analises/?prestacao_conta__uuid=${prestacao_uuid}`, authHeader)).data
+};
+
+export const criarComentarioDeAnalise = async (payload) => {
+    return (await api.post(`/api/comentarios-de-analises/`, payload, authHeader)).data
+};
+
+export const editarComentarioDeAnalise = async (comentario_uuid, payload) => {
+    return (await api.patch(`/api/comentarios-de-analises/${comentario_uuid}/`, payload, authHeader)).data
+};
+
+export const deleteComentarioDeAnalise = async (comentario_uuid) => {
+    return (await api.delete(`/api/comentarios-de-analises/${comentario_uuid}/`, authHeader))
+};
+
+export const getReordenarComentarios = async (payload) => {
+    return (await api.patch(`/api/comentarios-de-analises/reordenar-comentarios/`, payload, authHeader)).data
+};
+
+export const getSalvarDevoulucoesAoTesouro = async (prestacao_conta_uuid, payload) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/salvar-devolucoes-ao-tesouro/`, payload, authHeader)).data
 };
 

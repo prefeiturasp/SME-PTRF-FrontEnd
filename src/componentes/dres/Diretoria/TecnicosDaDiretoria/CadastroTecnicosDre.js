@@ -3,11 +3,11 @@ import "./tecnicos.scss"
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrash, faPlus, faClipboardList} from "@fortawesome/free-solid-svg-icons";
+import {faTrash, faPlus, faClipboardList, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Img404 from "../../../../assets/img/img-404.svg";
 import Loading from "../../../../utils/Loading";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
-import {getTecnicosDre, createTecnicoDre, deleteTecnicoDre, getTecnicoDrePorRf} from "../../../../services/dres/TecnicosDre.service";
+import {getTecnicosDre, createTecnicoDre, deleteTecnicoDre, getTecnicoDrePorRf, updateTecnicoDre} from "../../../../services/dres/TecnicosDre.service";
 import {TecnicoDreForm} from "./TecnicoDreForm";
 import {ConfirmaDeleteTecnico} from "./ConfirmaDeleteTecnicoDialog";
 import {consultarRF} from "../../../../services/escolas/Associacao.service";
@@ -21,6 +21,8 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         uuid: "",
         rf: "",
         nome: "",
+        email: "",
+        telefone: "",
     };
 
     const [loading, setLoading] = useState(true);
@@ -61,11 +63,25 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         setShowTecnicoForm(true);
     };
 
+    const handleEditTecnicoAction = (tecnico) => {
+        const initFormTecnico = {
+            uuid: tecnico.uuid,
+            rf: tecnico.rf,
+            nome: tecnico.nome,
+            email: tecnico.email,
+            telefone: tecnico.telefone,
+        };
+        setStateTecnicoForm(initFormTecnico);
+        setShowTecnicoForm(true);
+    };
+
     const handleDeleteTecnicoAction = (tecnico) => {
         const initFormTecnico = {
             uuid: tecnico.uuid,
             rf: tecnico.rf,
             nome: tecnico.nome,
+            email: tecnico.email,
+            telefone: tecnico.telefone,
         };
         setStateTecnicoForm(initFormTecnico);
         setShowConfirmDelete(true);
@@ -81,11 +97,24 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         const payload = {
             'dre': dreUuid,
             'rf': stateTecnicoForm.rf,
-            'nome': stateTecnicoForm.nome
+            'nome': stateTecnicoForm.nome,
+            'email': stateTecnicoForm.email,
+            'telefone': stateTecnicoForm.telefone,
+        };
+
+        const payloadEdit = {
+            'dre': dreUuid,
+            ...stateTecnicoForm
         };
 
         if (stateTecnicoForm.uuid) {
-            console.log("Update não implementado.")
+            try {
+                await updateTecnicoDre(stateTecnicoForm.uuid, payloadEdit);
+                await carregaTecnicos();
+            }catch (e) {
+                console.log("Erro ao editar técnico ", e)
+            }
+
         } else {
             try {
                 const response = await createTecnicoDre(payload);
@@ -93,8 +122,6 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                     console.log("Técnico criado com sucesso!");
                     await carregaTecnicos();
                 } else if (response.status === 400 && response.data.rf) {
-                    // data:
-                    // rf: ["Técnico de DRE com este RF já existe."]
                     console.log("Técnico já existe")
                 } else {
                     console.log("Erro ao criar Tecnico");
@@ -124,7 +151,9 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                 const init = {
                     ...stateTecnicoForm,
                     nome: rf.data[0].nm_pessoa,
-                    rf: values.rf
+                    rf: values.rf,
+                    email: values.email,
+                    telefone: values.telefone,
                 };
                 setStateTecnicoForm(init);
 
@@ -139,10 +168,8 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         } catch (e) {
             errors.rf = "RF inválido"
         }
-
         return errors
     };
-
 
     const handleDeleteConfirmation = () => {
         setShowConfirmDelete(false);
@@ -170,6 +197,12 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     const tableActionsTemplate = (rowData, column) => {
         return (
             <div>
+                <button className="btn-editar-membro" onClick={() => handleEditTecnicoAction(rowData)}>
+                    <FontAwesomeIcon
+                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                        icon={faEdit}
+                    />
+                </button>
                 <button className="btn-editar-membro" onClick={() => handleDeleteTecnicoAction(rowData)}>
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "red"}}
@@ -223,7 +256,8 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                         </div>
                         <div className="row">
                             <div className="col-12">
-                                {tecnicosList.length > 0 ? (<DataTable
+                                {tecnicosList.length > 0 ? (
+                                    <DataTable
                                         value={tecnicosList}
                                         className="mt-3 datatable-footer-coad"
                                         paginator={tecnicosList.length > rowsPerPage}
@@ -234,6 +268,8 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                                     >
                                         <Column field='rf' header='Registro funcional'/>
                                         <Column field='nome' header='Nome completo'/>
+                                        <Column field='telefone' header='Telefone'/>
+                                        <Column field='email' header='E-mail'/>
 
                                         <Column body={conferirAtribuicoesTemplate} header='Unidades escolares atribuidas'
                                                 style={{textAlign: 'center'}}/>
