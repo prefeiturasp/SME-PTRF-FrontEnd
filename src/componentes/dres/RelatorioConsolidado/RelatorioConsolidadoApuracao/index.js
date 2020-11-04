@@ -85,6 +85,15 @@ export const RelatorioConsolidadoApuracao = () =>{
         }
     };
 
+    const valorTemplate = (valor) => {
+        let valor_formatado = Number(valor).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+        valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
+        return valor_formatado
+    };
+
     //console.log("RelatorioConsolidadoApuracao items ", itensDashboard)
     //console.log("RelatorioConsolidadoApuracao Total ", totalEmAnalise)
 
@@ -101,7 +110,10 @@ export const RelatorioConsolidadoApuracao = () =>{
                         periodoUuid={periodo_uuid}
                     />
                     <BoxConsultarDados/>
-                    <TabelaExecucaoFinanceira/>
+                    <TabelaExecucaoFinanceira
+                        execucaoFinanceira={execucaoFinanceira}
+                        valorTemplate={valorTemplate}
+                    />
                 </div>
             </div>
         </>
