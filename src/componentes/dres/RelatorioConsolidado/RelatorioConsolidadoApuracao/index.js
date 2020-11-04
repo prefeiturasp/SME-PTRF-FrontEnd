@@ -3,12 +3,13 @@ import {useParams} from "react-router-dom";
 import {getItensDashboard, getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";
 import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
-import {getTiposConta, getExecucaoFinanceira} from "../../../../services/dres/RelatorioConsolidado.service";
+import {getTiposConta, getExecucaoFinanceira, getDevolucoesContaPtrf} from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
 import {visoesService} from "../../../../services/visoes.service";
 import {TabelaExecucaoFinanceira} from "./TabelaExecucaoFinanceira";
 import {JustificativaDiferenca} from "./JustificativaDiferenca";
+import {DevolucoesContaPtrf} from "./DevolucoesContaPtrf";
 
 export const RelatorioConsolidadoApuracao = () =>{
 
@@ -22,6 +23,7 @@ export const RelatorioConsolidadoApuracao = () =>{
     const [contaNome, setContaNome] = useState('');
     const [execucaoFinanceira, setExecucaoFinanceira] = useState(false);
     const [justificativaDiferenca, setJustificativaDiferenca] = useState('');
+    const [devolucoesContaPtrf, setDevolucoesContaPtrf] = useState(false);
 
     useEffect(() => {
         carregaItensDashboard();
@@ -32,6 +34,7 @@ export const RelatorioConsolidadoApuracao = () =>{
         carregaContas();
         retornaQtdeEmAnalise();
         carregaExecucaoFinanceira();
+        carregaDevolucoesContaPtrf();
     }, [itensDashboard]);
 
     const carregaItensDashboard = async () =>{
@@ -76,6 +79,16 @@ export const RelatorioConsolidadoApuracao = () =>{
             console.log("carregaExecucaoFinanceira ", execucao)
         }catch (e) {
             console.log("Erro ao carregar execução financeira ", e)
+        }
+    };
+
+    const carregaDevolucoesContaPtrf = async () =>{
+        try {
+            let devolucoes = await getDevolucoesContaPtrf(dre_uuid, periodo_uuid, conta_uuid);
+            console.log("Devoluções a conta PTRF ", devolucoes)
+            setDevolucoesContaPtrf(devolucoes)
+        }catch (e) {
+            console.log("Erro ao carregar Devolucoes a Conta Ptrf ", e)
         }
 
     };
@@ -135,6 +148,9 @@ export const RelatorioConsolidadoApuracao = () =>{
                         justificativaDiferenca={justificativaDiferenca}
                         setJustificativaDiferenca={setJustificativaDiferenca}
                         onSubmitJustificativaDiferenca={onSubmitJustificativaDiferenca}
+                    />
+                    <DevolucoesContaPtrf
+                        devolucoesContaPtrf={devolucoesContaPtrf}
                     />
                 </div>
             </div>

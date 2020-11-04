@@ -23,3 +23,7 @@ export const getTiposConta = async () => {
 export const getExecucaoFinanceira = async (dre_uuid, periodo_uuid, conta_uuid) => {
     return (await api.get(`/api/relatorios-consolidados-dre/info-execucao-financeira/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}`, authHeader)).data
 };
+
+export const getDevolucoesContaPtrf = async (dre_uuid, periodo_uuid, conta_uuid) => {
+    return (await api.get(`/api/relatorios-consolidados-dre/info-devolucoes-conta/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}`, authHeader)).data
+};
