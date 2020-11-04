@@ -94,6 +94,15 @@ export const RelatorioConsolidadoApuracao = () =>{
         return valor_formatado
     };
 
+    const comparaValores = () =>{
+        if (execucaoFinanceira){
+            return execucaoFinanceira.repasses_previstos_sme_custeio !== execucaoFinanceira.repasses_no_periodo_custeio ||
+                execucaoFinanceira.repasses_previstos_sme_capital !== execucaoFinanceira.repasses_no_periodo_capital ||
+                execucaoFinanceira.repasses_previstos_sme_livre !== execucaoFinanceira.repasses_no_periodo_livre ||
+                execucaoFinanceira.repasses_previstos_sme_total !== execucaoFinanceira.repasses_no_periodo_total;
+        }
+    };
+
     //console.log("RelatorioConsolidadoApuracao items ", itensDashboard)
     //console.log("RelatorioConsolidadoApuracao Total ", totalEmAnalise)
 
@@ -113,6 +122,7 @@ export const RelatorioConsolidadoApuracao = () =>{
                     <TabelaExecucaoFinanceira
                         execucaoFinanceira={execucaoFinanceira}
                         valorTemplate={valorTemplate}
+                        comparaValores={comparaValores}
                     />
                 </div>
             </div>
