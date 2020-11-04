@@ -39,9 +39,15 @@
   background-color: #F3F3F3;
 }
 
-.tabela-execucao-financeira{
+.tabela-execucao-financeira, .tabela-devolucoes{
   .tr-titulo{
     background-color: #F5F6F8;
+  }
+}
+
+.tabela-devolucoes{
+  td{
+    width: calc(115% / 4) !important;
   }
 }
 

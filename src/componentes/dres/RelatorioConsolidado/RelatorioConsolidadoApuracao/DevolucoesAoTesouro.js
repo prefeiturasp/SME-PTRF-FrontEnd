@@ -15,7 +15,7 @@ export const DevolucoesAoTesouro = ({devolucoesAoTesouro, valorTemplate}) => {
                         Devoluções ao tesouro
                     </p>
                     {devolucoesAoTesouro && devolucoesAoTesouro.length > 0 ? (
-                            <table className="table table-bordered tabela-execucao-financeira">
+                            <table className="table table-bordered tabela-devolucoes">
                                 <thead>
                                 <tr className='tr-titulo'>
                                     <th scope="col">Tipo de devolução ao tesouro</th>

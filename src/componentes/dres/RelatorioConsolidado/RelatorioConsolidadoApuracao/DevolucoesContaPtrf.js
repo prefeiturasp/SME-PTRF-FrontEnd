@@ -15,7 +15,7 @@ export const DevolucoesContaPtrf = ({devolucoesContaPtrf, valorTemplate}) => {
                         Devoluções a conta PTRF
                     </p>
                     {devolucoesContaPtrf && devolucoesContaPtrf.length > 0 ? (
-                        <table className="table table-bordered tabela-execucao-financeira">
+                        <table className="table table-bordered tabela-devolucoes">
                             <thead>
                             <tr className='tr-titulo'>
                                 <th scope="col">Tipo de devolução a conta PTRF </th>
@@ -45,7 +45,7 @@ export const DevolucoesContaPtrf = ({devolucoesContaPtrf, valorTemplate}) => {
                         </table>
                         ) :
                         <p><strong>Não existem devoluções a serem exibidas</strong></p>
-                    }
+                       }
                 </div>
             </div>
         </>
