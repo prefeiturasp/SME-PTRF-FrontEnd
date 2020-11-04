@@ -27,3 +27,15 @@ export const getExecucaoFinanceira = async (dre_uuid, periodo_uuid, conta_uuid) 
 export const getDevolucoesContaPtrf = async (dre_uuid, periodo_uuid, conta_uuid) => {
     return (await api.get(`/api/relatorios-consolidados-dre/info-devolucoes-conta/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}`, authHeader)).data
 };
+
+export const getJustificativa = async (dre_uuid, periodo_uuid, conta_uuid) => {
+    return (await api.get(`/api/justificativas-relatorios-consolidados-dre/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}`, authHeader)).data
+};
+
+export const postJustificativa = async (payload) => {
+    return (await api.post(`/api/justificativas-relatorios-consolidados-dre/`, payload, authHeader)).data
+};
+
+export const patchJustificativa = async (justificativa_uuid, payload) => {
+    return (await api.patch(`/api/justificativas-relatorios-consolidados-dre/${justificativa_uuid}/`, payload, authHeader)).data
+};

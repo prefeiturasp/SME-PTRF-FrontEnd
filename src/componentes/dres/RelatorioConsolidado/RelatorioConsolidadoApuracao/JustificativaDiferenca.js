@@ -1,13 +1,13 @@
 import React from "react";
 
-export const JustificativaDiferenca = ({comparaValores, justificativaDiferenca, setJustificativaDiferenca, onSubmitJustificativaDiferenca}) => {
+export const JustificativaDiferenca = ({comparaValores, justificativaDiferenca, setJustificativaDiferenca, onChangeJustificativaDiferenca, onSubmitJustificativaDiferenca}) => {
     return(
         <>
             {comparaValores() &&
                 <>
                     <p className='texto-aviso-associacoes-em-analise'><strong>Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período</strong></p>
                     <div className="form-group">
-                        <textarea onChange={(e)=>setJustificativaDiferenca(e.target.value)} className="form-control" id="justificativaDiferenca" rows="3" value={justificativaDiferenca}>
+                        <textarea onChange={(e)=>onChangeJustificativaDiferenca(e.target.value)} className="form-control" id="justificativaDiferenca" rows="3" value={justificativaDiferenca.texto}>
                         </textarea>
                     </div>
                     <div className="d-flex  justify-content-end pb-3">

@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {getItensDashboard, getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";
 import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
-import {getTiposConta, getExecucaoFinanceira, getDevolucoesContaPtrf} from "../../../../services/dres/RelatorioConsolidado.service";
+import {getTiposConta, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa} from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
 import {visoesService} from "../../../../services/visoes.service";
@@ -17,12 +17,20 @@ export const RelatorioConsolidadoApuracao = () =>{
 
     const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
 
+    const initJustificativa = {
+        uuid:'',
+        dre: dre_uuid,
+        periodo: periodo_uuid,
+        tipo_conta: conta_uuid,
+        texto: ''
+    };
+
     const [itensDashboard, setItensDashboard] = useState(false);
     const [totalEmAnalise, setTotalEmAnalise] = useState(0);
     const [periodoNome, setPeriodoNome] = useState('');
     const [contaNome, setContaNome] = useState('');
     const [execucaoFinanceira, setExecucaoFinanceira] = useState(false);
-    const [justificativaDiferenca, setJustificativaDiferenca] = useState('');
+    const [justificativaDiferenca, setJustificativaDiferenca] = useState(initJustificativa);
     const [devolucoesContaPtrf, setDevolucoesContaPtrf] = useState(false);
 
     useEffect(() => {
@@ -35,6 +43,7 @@ export const RelatorioConsolidadoApuracao = () =>{
         retornaQtdeEmAnalise();
         carregaExecucaoFinanceira();
         carregaDevolucoesContaPtrf();
+        carregaJustificativa();
     }, [itensDashboard]);
 
     const carregaItensDashboard = async () =>{
@@ -76,7 +85,6 @@ export const RelatorioConsolidadoApuracao = () =>{
         try {
             let execucao = await getExecucaoFinanceira(dre_uuid, periodo_uuid, conta_uuid);
             setExecucaoFinanceira(execucao);
-            console.log("carregaExecucaoFinanceira ", execucao)
         }catch (e) {
             console.log("Erro ao carregar execução financeira ", e)
         }
@@ -85,19 +93,21 @@ export const RelatorioConsolidadoApuracao = () =>{
     const carregaDevolucoesContaPtrf = async () =>{
         try {
             let devolucoes = await getDevolucoesContaPtrf(dre_uuid, periodo_uuid, conta_uuid);
-            console.log("Devoluções a conta PTRF ", devolucoes)
-
-            let obj_fake = [
-                {'detalhe_tipo_receita__nome': 'Devolução à conta tipo 1', 'ocorrencias': 999, 'valor': 3000.00},
-                {'detalhe_tipo_receita__nome': 'Devolução à conta tipo 2', 'ocorrencias': 100, 'valor': 2000.00},
-                {'detalhe_tipo_receita__nome': 'Devolução à conta tipo 3', 'ocorrencias': 200, 'valor': 1000.00},
-            ]
-
-            setDevolucoesContaPtrf(obj_fake)
+            setDevolucoesContaPtrf(devolucoes)
         }catch (e) {
             console.log("Erro ao carregar Devolucoes a Conta Ptrf ", e)
         }
+    };
 
+    const carregaJustificativa = async ()=>{
+        try {
+            let justificativa = await getJustificativa(dre_uuid, periodo_uuid, conta_uuid);
+            if (justificativa && justificativa.length > 0){
+                setJustificativaDiferenca(justificativa[0])
+            }
+        }catch (e) {
+            console.log("Erro ao carregar justificativa ", e)
+        }
     };
 
     const retornaQtdeEmAnalise = () =>{
@@ -125,8 +135,24 @@ export const RelatorioConsolidadoApuracao = () =>{
         }
     };
 
-    const onSubmitJustificativaDiferenca = () =>{
-        console.log("onSubmitJustificativaDiferenca ", justificativaDiferenca)
+    const onChangeJustificativaDiferenca = (justificativa_texto) =>{
+        setJustificativaDiferenca({
+            ...justificativaDiferenca,
+            texto: justificativa_texto
+        })
+    };
+
+    const onSubmitJustificativaDiferenca = async () =>{
+        if (justificativaDiferenca && justificativaDiferenca.uuid){
+            let payload = {
+                texto: justificativaDiferenca.texto
+            };
+            await patchJustificativa(justificativaDiferenca.uuid, payload)
+        }else {
+            delete justificativaDiferenca.uuid;
+            let payload = justificativaDiferenca;
+            await postJustificativa(payload)
+        }
     };
 
     //console.log("RelatorioConsolidadoApuracao items ", itensDashboard)
@@ -154,6 +180,7 @@ export const RelatorioConsolidadoApuracao = () =>{
                         comparaValores={comparaValores}
                         justificativaDiferenca={justificativaDiferenca}
                         setJustificativaDiferenca={setJustificativaDiferenca}
+                        onChangeJustificativaDiferenca={onChangeJustificativaDiferenca}
                         onSubmitJustificativaDiferenca={onSubmitJustificativaDiferenca}
                     />
                     <DevolucoesContaPtrf
