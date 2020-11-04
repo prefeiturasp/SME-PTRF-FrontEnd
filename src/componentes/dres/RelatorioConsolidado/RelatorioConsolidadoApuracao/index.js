@@ -70,7 +70,7 @@ export const RelatorioConsolidadoApuracao = () =>{
     const carregaExecucaoFinanceira = async () =>{
         try {
             let execucao = await getExecucaoFinanceira(dre_uuid, periodo_uuid, conta_uuid);
-            setExecucaoFinanceira(execucao)
+            setExecucaoFinanceira(execucao);
             console.log("carregaExecucaoFinanceira ", execucao)
         }catch (e) {
             console.log("Erro ao carregar execução financeira ", e)

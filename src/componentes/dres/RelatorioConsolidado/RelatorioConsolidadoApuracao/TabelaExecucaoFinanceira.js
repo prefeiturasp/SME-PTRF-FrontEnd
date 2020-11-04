@@ -90,8 +90,6 @@ export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate}) =>
                     </tbody>
                 </table>
             }
-
-
         </>
     )
 };
