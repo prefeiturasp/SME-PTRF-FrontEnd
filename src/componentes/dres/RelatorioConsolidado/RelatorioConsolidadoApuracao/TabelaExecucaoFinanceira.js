@@ -24,32 +24,32 @@ export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate}) =>
                         <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_total ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_total) :'-'}</td>
                     </tr>
                     <tr>
-                        <td>Previsto Secretaria Municipal de Educação NÂO</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_custeio ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_custeio) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_capital ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_capital) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_total ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_total) :'-'}</td>
+                        <td>Previsto Secretaria Municipal de Educação</td>
+                        <td>{execucaoFinanceira.repasses_previstos_sme_custeio ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_custeio) :'-'}</td>
+                        <td>{execucaoFinanceira.repasses_previstos_sme_capital ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_capital) :'-'}</td>
+                        <td>{execucaoFinanceira.repasses_previstos_sme_livre ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_livre) :'-'}</td>
+                        <td>{execucaoFinanceira.repasses_previstos_sme_total ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_total) :'-'}</td>
                     </tr>
                     <tr>
-                        <td>Transferido pela Diretoria Regional de Ensino no período NÂO</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_custeio ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_custeio) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_capital ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_capital) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_total ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_total) :'-'}</td>
+                        <td>Transferido pela Diretoria Regional de Ensino no período</td>
+                        <td>{execucaoFinanceira.repasses_no_periodo_custeio ? valorTemplate(execucaoFinanceira.repasses_no_periodo_custeio) :'-'}</td>
+                        <td>{execucaoFinanceira.repasses_no_periodo_capital ? valorTemplate(execucaoFinanceira.repasses_no_periodo_capital) :'-'}</td>
+                        <td>{execucaoFinanceira.repasses_no_periodo_livre ? valorTemplate(execucaoFinanceira.repasses_no_periodo_livre) :'-'}</td>
+                        <td>{execucaoFinanceira.repasses_no_periodo_total ? valorTemplate(execucaoFinanceira.repasses_no_periodo_total) :'-'}</td>
                     </tr>
                     <tr>
-                        <td>Rendimentos de Aplicação Financeira NÂO</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_custeio ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_custeio) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_capital ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_capital) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_total ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_total) :'-'}</td>
+                        <td>Rendimentos de Aplicação Financeira</td>
+                        <td>{execucaoFinanceira.receitas_rendimento_no_periodo_custeio ? valorTemplate(execucaoFinanceira.receitas_rendimento_no_periodo_custeio) :'-'}</td>
+                        <td>{execucaoFinanceira.receitas_rendimento_no_periodo_capital ? valorTemplate(execucaoFinanceira.receitas_rendimento_no_periodo_capital) :'-'}</td>
+                        <td>{execucaoFinanceira.receitas_rendimento_no_periodo_livre ? valorTemplate(execucaoFinanceira.receitas_rendimento_no_periodo_livre) :'-'}</td>
+                        <td>{execucaoFinanceira.receitas_rendimento_no_periodo_total ? valorTemplate(execucaoFinanceira.receitas_rendimento_no_periodo_total) :'-'}</td>
                     </tr>
                     <tr>
-                        <td>Devolução à conta PTRF NÃO</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_custeio ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_custeio) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_capital ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_capital) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_total ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_total) :'-'}</td>
+                        <td>Devolução à conta PTRF</td>
+                        <td>{execucaoFinanceira.receitas_devolucao_no_periodo_custeio ? valorTemplate(execucaoFinanceira.receitas_devolucao_no_periodo_custeio) :'-'}</td>
+                        <td>{execucaoFinanceira.receitas_devolucao_no_periodo_capital ? valorTemplate(execucaoFinanceira.receitas_devolucao_no_periodo_capital) :'-'}</td>
+                        <td>{execucaoFinanceira.receitas_devolucao_no_periodo_livre ? valorTemplate(execucaoFinanceira.receitas_devolucao_no_periodo_livre) :'-'}</td>
+                        <td>{execucaoFinanceira.receitas_devolucao_no_periodo_total ? valorTemplate(execucaoFinanceira.receitas_devolucao_no_periodo_total) :'-'}</td>
                     </tr>
                     <tr>
                         <td>Demais créditos</td>
@@ -59,18 +59,18 @@ export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate}) =>
                         <td>{execucaoFinanceira.demais_creditos_no_periodo_total ? valorTemplate(execucaoFinanceira.demais_creditos_no_periodo_total) :'-'}</td>
                     </tr>
                     <tr>
-                        <td>Valor total NÃO</td>
-                        <td>{execucaoFinanceira.demais_creditos_no_periodo_custeio ? valorTemplate(execucaoFinanceira.demais_creditos_no_periodo_custeio) :'-'}</td>
-                        <td>{execucaoFinanceira.demais_creditos_no_periodo_capital ? valorTemplate(execucaoFinanceira.demais_creditos_no_periodo_capital) :'-'}</td>
-                        <td>{execucaoFinanceira.demais_creditos_no_periodo_livre ? valorTemplate(execucaoFinanceira.demais_creditos_no_periodo_livre) :'-'}</td>
-                        <td>{execucaoFinanceira.demais_creditos_no_periodo_total ? valorTemplate(execucaoFinanceira.demais_creditos_no_periodo_total) :'-'}</td>
+                        <td>Valor total</td>
+                        <td>{execucaoFinanceira.receitas_totais_no_periodo_custeio ? valorTemplate(execucaoFinanceira.receitas_totais_no_periodo_custeio) :'-'}</td>
+                        <td>{execucaoFinanceira.receitas_totais_no_periodo_capital ? valorTemplate(execucaoFinanceira.receitas_totais_no_periodo_capital) :'-'}</td>
+                        <td>{execucaoFinanceira.receitas_totais_no_periodo_livre ? valorTemplate(execucaoFinanceira.receitas_totais_no_periodo_livre) :'-'}</td>
+                        <td>{execucaoFinanceira.receitas_totais_no_periodo_total ? valorTemplate(execucaoFinanceira.receitas_totais_no_periodo_total) :'-'}</td>
                     </tr>
                     <tr>
-                        <td>Despesa realizada NÃO</td>
-                        <td>{execucaoFinanceira.demais_creditos_no_periodo_custeio ? valorTemplate(execucaoFinanceira.demais_creditos_no_periodo_custeio) :'-'}</td>
-                        <td>{execucaoFinanceira.demais_creditos_no_periodo_capital ? valorTemplate(execucaoFinanceira.demais_creditos_no_periodo_capital) :'-'}</td>
-                        <td>{execucaoFinanceira.demais_creditos_no_periodo_livre ? valorTemplate(execucaoFinanceira.demais_creditos_no_periodo_livre) :'-'}</td>
-                        <td>{execucaoFinanceira.demais_creditos_no_periodo_total ? valorTemplate(execucaoFinanceira.demais_creditos_no_periodo_total) :'-'}</td>
+                        <td>Despesa realizada</td>
+                        <td>{execucaoFinanceira.despesas_no_periodo_custeio ? valorTemplate(execucaoFinanceira.despesas_no_periodo_custeio) :'-'}</td>
+                        <td>{execucaoFinanceira.despesas_no_periodo_capital ? valorTemplate(execucaoFinanceira.despesas_no_periodo_capital) :'-'}</td>
+                        <td>{execucaoFinanceira.despesas_no_periodo_livre ? valorTemplate(execucaoFinanceira.despesas_no_periodo_livre) :'-'}</td>
+                        <td>{execucaoFinanceira.despesas_no_periodo_total ? valorTemplate(execucaoFinanceira.despesas_no_periodo_total) :'-'}</td>
                     </tr>
                     <tr>
                         <td>Saldo reprogramado próximo período</td>
@@ -86,7 +86,6 @@ export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate}) =>
                         <td>-</td>
                         <td>{execucaoFinanceira.devolucoes_ao_tesouro_no_periodo_total ? valorTemplate(execucaoFinanceira.devolucoes_ao_tesouro_no_periodo_total) :'-'}</td>
                     </tr>
-
                     </tbody>
                 </table>
             }
