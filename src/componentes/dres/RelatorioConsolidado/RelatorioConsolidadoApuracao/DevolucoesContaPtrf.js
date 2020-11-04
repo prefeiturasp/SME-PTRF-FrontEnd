@@ -45,14 +45,9 @@ export const DevolucoesContaPtrf = ({devolucoesContaPtrf, valorTemplate}) => {
                         </table>
                         ) :
                         <p><strong>Não existem devoluções a serem exibidas</strong></p>
-
                     }
-
-
-
                 </div>
             </div>
-
         </>
     )
 };

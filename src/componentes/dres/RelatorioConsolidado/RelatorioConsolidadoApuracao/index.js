@@ -3,13 +3,14 @@ import {useParams} from "react-router-dom";
 import {getItensDashboard, getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";
 import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
-import {getTiposConta, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa} from "../../../../services/dres/RelatorioConsolidado.service";
+import {getTiposConta, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa, getDevolucoesAoTesouro} from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
 import {visoesService} from "../../../../services/visoes.service";
 import {TabelaExecucaoFinanceira} from "./TabelaExecucaoFinanceira";
 import {JustificativaDiferenca} from "./JustificativaDiferenca";
 import {DevolucoesContaPtrf} from "./DevolucoesContaPtrf";
+import {DevolucoesAoTesouro} from "./DevolucoesAoTesouro";
 
 export const RelatorioConsolidadoApuracao = () =>{
 
@@ -32,6 +33,7 @@ export const RelatorioConsolidadoApuracao = () =>{
     const [execucaoFinanceira, setExecucaoFinanceira] = useState(false);
     const [justificativaDiferenca, setJustificativaDiferenca] = useState(initJustificativa);
     const [devolucoesContaPtrf, setDevolucoesContaPtrf] = useState(false);
+    const [devolucoesAoTesouro, setDevolucoesAoTesouro] = useState(false);
 
     useEffect(() => {
         carregaItensDashboard();
@@ -44,6 +46,7 @@ export const RelatorioConsolidadoApuracao = () =>{
         carregaExecucaoFinanceira();
         carregaDevolucoesContaPtrf();
         carregaJustificativa();
+        carregaDevolucoesAoTesouro();
     }, [itensDashboard]);
 
     const carregaItensDashboard = async () =>{
@@ -63,7 +66,6 @@ export const RelatorioConsolidadoApuracao = () =>{
                 periodo_nome += periodo_obj.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo_obj.data_inicio_realizacao_despesas) : "-";
                 periodo_nome += " até ";
                 periodo_nome += periodo_obj.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo_obj.data_fim_realizacao_despesas) : "-";
-
                 setPeriodoNome(periodo_nome);
             }
         }
@@ -95,7 +97,7 @@ export const RelatorioConsolidadoApuracao = () =>{
             let devolucoes = await getDevolucoesContaPtrf(dre_uuid, periodo_uuid, conta_uuid);
             setDevolucoesContaPtrf(devolucoes)
         }catch (e) {
-            console.log("Erro ao carregar Devolucoes a Conta Ptrf ", e)
+            console.log("Erro ao carregar Devolucoes a Conta Ptrf ", e);
         }
     };
 
@@ -107,6 +109,16 @@ export const RelatorioConsolidadoApuracao = () =>{
             }
         }catch (e) {
             console.log("Erro ao carregar justificativa ", e)
+        }
+    };
+
+    const carregaDevolucoesAoTesouro = async () =>{
+        try {
+            let devolucoes = await getDevolucoesAoTesouro(dre_uuid, periodo_uuid, conta_uuid);
+            console.log("Devolucoes ", devolucoes);
+            setDevolucoesAoTesouro(devolucoes)
+        }catch (e) {
+            console.log("Erro ao carregar Devolucoes ao Tesouro ", e);
         }
     };
 
@@ -185,6 +197,10 @@ export const RelatorioConsolidadoApuracao = () =>{
                     />
                     <DevolucoesContaPtrf
                         devolucoesContaPtrf={devolucoesContaPtrf}
+                        valorTemplate={valorTemplate}
+                    />
+                    <DevolucoesAoTesouro
+                        devolucoesAoTesouro={devolucoesAoTesouro}
                         valorTemplate={valorTemplate}
                     />
                 </div>
