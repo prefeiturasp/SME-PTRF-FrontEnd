@@ -1,7 +1,6 @@
 import React from "react";
 
-export const TabelaExecucaoFisica = ({itensDashboard}) => {
-    console.log("TabelaExecucaoFisica ", itensDashboard)
+export const TabelaExecucaoFisica = ({itensDashboard, retornaQtdePorStatus, retornaNaoApresentadas}) => {
     return(
         <>
             {itensDashboard &&
@@ -24,13 +23,13 @@ export const TabelaExecucaoFisica = ({itensDashboard}) => {
                         </thead>
                         <tbody>
                         <tr>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
+                            <td>{retornaQtdePorStatus('APROVADA')}</td>
+                            <td>{retornaQtdePorStatus('APROVADA')}</td>
+                            <td>{retornaQtdePorStatus('EM_ANALISE')}</td>
+                            <td>{retornaNaoApresentadas()}</td>
+                            <td>{retornaQtdePorStatus('REPROVADA')}</td>
+                            <td>{retornaNaoApresentadas() + retornaQtdePorStatus('REPROVADA')}</td>
+                            <td>{itensDashboard.total_associacoes_dre}</td>
                         </tr>
                         </tbody>
                     </table>
