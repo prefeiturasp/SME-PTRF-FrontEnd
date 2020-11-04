@@ -2,7 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faWallet, faPlus} from "@fortawesome/free-solid-svg-icons";
 
-export const DevolucoesContaPtrf = ({devolucoesContaPtrf, valorTemplate}) => {
+export const TabelaDevolucoesContaPtrf = ({devolucoesContaPtrf, valorTemplate}) => {
     return(
         <>
             <div className='row mt-0'>
@@ -18,7 +18,7 @@ export const DevolucoesContaPtrf = ({devolucoesContaPtrf, valorTemplate}) => {
                         <table className="table table-bordered tabela-devolucoes">
                             <thead>
                             <tr className='tr-titulo'>
-                                <th scope="col">Tipo de devolução a conta PTRF </th>
+                                <th scope="col">Tipo de devolução a conta PTRF</th>
                                 <th scope="col">Número de ocorrências</th>
                                 <th scope="col">Valor</th>
                                 <th scope="col">Observações da DRE</th>

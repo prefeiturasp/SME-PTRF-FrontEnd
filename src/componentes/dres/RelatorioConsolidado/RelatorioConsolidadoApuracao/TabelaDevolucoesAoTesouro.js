@@ -2,7 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHandHoldingUsd, faPlus} from "@fortawesome/free-solid-svg-icons";
 
-export const DevolucoesAoTesouro = ({devolucoesAoTesouro, valorTemplate}) => {
+export const TabelaDevolucoesAoTesouro = ({devolucoesAoTesouro, valorTemplate}) => {
     return(
         <>
             <div className='row mt-2'>

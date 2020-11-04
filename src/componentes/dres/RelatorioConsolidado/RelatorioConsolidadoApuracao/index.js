@@ -9,8 +9,9 @@ import {BoxConsultarDados} from "./BoxConsultarDados";
 import {visoesService} from "../../../../services/visoes.service";
 import {TabelaExecucaoFinanceira} from "./TabelaExecucaoFinanceira";
 import {JustificativaDiferenca} from "./JustificativaDiferenca";
-import {DevolucoesContaPtrf} from "./DevolucoesContaPtrf";
-import {DevolucoesAoTesouro} from "./DevolucoesAoTesouro";
+import {TabelaDevolucoesContaPtrf} from "./TabelaDevolucoesContaPtrf";
+import {TabelaDevolucoesAoTesouro} from "./TabelaDevolucoesAoTesouro";
+import {TabelaExecucaoFisica} from "./TabelaExecucaoFisica";
 
 export const RelatorioConsolidadoApuracao = () =>{
 
@@ -115,7 +116,6 @@ export const RelatorioConsolidadoApuracao = () =>{
     const carregaDevolucoesAoTesouro = async () =>{
         try {
             let devolucoes = await getDevolucoesAoTesouro(dre_uuid, periodo_uuid, conta_uuid);
-            console.log("Devolucoes ", devolucoes);
             setDevolucoesAoTesouro(devolucoes)
         }catch (e) {
             console.log("Erro ao carregar Devolucoes ao Tesouro ", e);
@@ -195,13 +195,16 @@ export const RelatorioConsolidadoApuracao = () =>{
                         onChangeJustificativaDiferenca={onChangeJustificativaDiferenca}
                         onSubmitJustificativaDiferenca={onSubmitJustificativaDiferenca}
                     />
-                    <DevolucoesContaPtrf
+                    <TabelaDevolucoesContaPtrf
                         devolucoesContaPtrf={devolucoesContaPtrf}
                         valorTemplate={valorTemplate}
                     />
-                    <DevolucoesAoTesouro
+                    <TabelaDevolucoesAoTesouro
                         devolucoesAoTesouro={devolucoesAoTesouro}
                         valorTemplate={valorTemplate}
+                    />
+                    <TabelaExecucaoFisica
+                        itensDashboard={itensDashboard}
                     />
                 </div>
             </div>

@@ -39,7 +39,7 @@
   background-color: #F3F3F3;
 }
 
-.tabela-execucao-financeira, .tabela-devolucoes{
+.tabela-execucao-financeira, .tabela-devolucoes, .tabela-execucao-fisica{
   .tr-titulo{
     background-color: #F5F6F8;
   }
@@ -55,4 +55,14 @@
   font-weight: bold;
   color: #00585e;
   font-size: 20px;
+}
+
+.titulo-execucao-fisica{
+  color: #000;
+  font-weight: bold;
+  font-size: 20px;
+}
+.sub-titulo-execucao-fisica{
+  color: #00585e;
+  font-weight: bold;
 }
