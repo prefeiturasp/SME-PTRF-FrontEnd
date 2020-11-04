@@ -86,7 +86,14 @@ export const RelatorioConsolidadoApuracao = () =>{
         try {
             let devolucoes = await getDevolucoesContaPtrf(dre_uuid, periodo_uuid, conta_uuid);
             console.log("Devoluções a conta PTRF ", devolucoes)
-            setDevolucoesContaPtrf(devolucoes)
+
+            let obj_fake = [
+                {'detalhe_tipo_receita__nome': 'Devolução à conta tipo 1', 'ocorrencias': 999, 'valor': 3000.00},
+                {'detalhe_tipo_receita__nome': 'Devolução à conta tipo 2', 'ocorrencias': 100, 'valor': 2000.00},
+                {'detalhe_tipo_receita__nome': 'Devolução à conta tipo 3', 'ocorrencias': 200, 'valor': 1000.00},
+            ]
+
+            setDevolucoesContaPtrf(obj_fake)
         }catch (e) {
             console.log("Erro ao carregar Devolucoes a Conta Ptrf ", e)
         }
@@ -151,6 +158,7 @@ export const RelatorioConsolidadoApuracao = () =>{
                     />
                     <DevolucoesContaPtrf
                         devolucoesContaPtrf={devolucoesContaPtrf}
+                        valorTemplate={valorTemplate}
                     />
                 </div>
             </div>

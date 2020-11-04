@@ -22,13 +22,17 @@
   background-image: url("../../../assets/img/dashborard-icone-pendente.svg");
 }
 
-.btn-ir-para-acompanhamento, .btn-ir-para-acompanhamento:focus{
+.btn-ir-para-acompanhamento, .btn-ir-para-acompanhamento:focus, .btn-adicionar-devolucoes, .btn-adicionar-devolucoes:focus{
   outline: 0;
   border: none;
   background-color: transparent;
   text-decoration: underline;
   color: #000;
   font-weight: bold;
+}
+
+.btn-adicionar-devolucoes{
+  color: #00585e;
 }
 
 .container-box-consultar-dados{
