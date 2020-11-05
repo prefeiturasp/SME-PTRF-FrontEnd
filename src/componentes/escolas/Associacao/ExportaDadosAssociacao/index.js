@@ -2,10 +2,9 @@ import React, {useState} from "react";
 import "../associacao.scss"
 import {exportarDadosAssociacao} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
-import IconeExportarDados from "../../../../assets/img/icone-exportar-dados.svg";
 import {visoesService} from "../../../../services/visoes.service";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowRight, faDownload} from "@fortawesome/free-solid-svg-icons";
+import {faDownload} from "@fortawesome/free-solid-svg-icons";
 
 export const ExportaDadosDaAsssociacao = () => {
     const [loading, setLoading] = useState(false);
