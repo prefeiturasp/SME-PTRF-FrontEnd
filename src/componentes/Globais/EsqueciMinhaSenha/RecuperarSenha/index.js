@@ -25,7 +25,6 @@ export const RecuperarMinhaSenha = ({initialValuesRecuperarSenha, onSubmitReuper
                     <form onSubmit={props.handleSubmit}>
                         <div className="form-group">
                             <label htmlFor="login">Usuário</label>
-
                             <input
                                 type="text"
                                 value={props.values.usuario}
@@ -36,9 +35,7 @@ export const RecuperarMinhaSenha = ({initialValuesRecuperarSenha, onSubmitReuper
                                 onBlur={props.handleBlur}
                             />
                             {props.touched.usuario && props.errors.usuario && <span className="span_erro text-danger mt-1"> {props.errors.usuario} </span>}
-
                         </div>
-
                         <div className="d-flex  justify-content-end pb-3 mt-3">
                             <button onClick={() => window.location.assign("/login")} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Voltar</button>
                             <button onClick={() => props.resetForm()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
@@ -48,7 +45,6 @@ export const RecuperarMinhaSenha = ({initialValuesRecuperarSenha, onSubmitReuper
                     );
                 }}
             </Formik>
-            {/*<button type="button" onClick={() => window.location.assign('/esqueci-minha-senha/recuperacao-de-email/')} className="btn btn-link">Esqueci minha senha</button>*/}
         </div>
         </>
     );

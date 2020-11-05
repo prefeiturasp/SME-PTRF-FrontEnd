@@ -2,7 +2,7 @@ import React from "react";
 import {RespostaSucesso} from "./respostaSucesso";
 import {RespostaErro} from "./respostaErro";
 
-export const RecuperacaoResposta = ({recuperacaoResposta, emailComMascara}) =>{
+export const RecuperacaoResposta = ({recuperacaoResposta, emailComMascara, respostaDeErro}) =>{
     return (
         <>
             <div className="esqueci-minha-senha-inner-texto">
@@ -12,7 +12,9 @@ export const RecuperacaoResposta = ({recuperacaoResposta, emailComMascara}) =>{
                         emailComMascara={emailComMascara}
                     />
                 ):
-                    <RespostaErro/>
+                    <RespostaErro
+                        respostaDeErro={respostaDeErro}
+                    />
                 }
             </div>
         </>
