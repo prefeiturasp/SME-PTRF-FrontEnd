@@ -1,0 +1,68 @@
+.barra-status-legenda-cor-0 {
+  background-color: #B40C02;
+}
+.barra-status-legenda-cor-1 {
+  background-color: #DE9524;
+}
+.barra-status-legenda-cor-2 {
+  background-color: #2B7D83;
+}
+.barra-status-legenda-cor-3 {
+  background-color: #289B00;
+}
+
+.texto-aviso-associacoes-em-analise{
+  background-repeat: no-repeat;
+  padding-left: 1.3rem;
+  background-position: 0 60%;
+}
+
+.texto-aviso-associacoes-em-analise{
+  color: #B40C02;
+  background-image: url("../../../assets/img/dashborard-icone-pendente.svg");
+}
+
+.btn-ir-para-acompanhamento, .btn-ir-para-acompanhamento:focus, .btn-adicionar-devolucoes, .btn-adicionar-devolucoes:focus{
+  outline: 0;
+  border: none;
+  background-color: transparent;
+  text-decoration: underline;
+  color: #000;
+  font-weight: bold;
+}
+
+.btn-adicionar-devolucoes{
+  color: #00585e;
+}
+
+.container-box-consultar-dados{
+  background-color: #F3F3F3;
+}
+
+.tabela-execucao-financeira, .tabela-devolucoes, .tabela-execucao-fisica{
+  .tr-titulo{
+    background-color: #F5F6F8;
+  }
+}
+
+.tabela-devolucoes{
+  td{
+    width: calc(115% / 4) !important;
+  }
+}
+
+.titulo-devolucoes{
+  font-weight: bold;
+  color: #00585e;
+  font-size: 20px;
+}
+
+.titulo-execucao-fisica{
+  color: #000;
+  font-weight: bold;
+  font-size: 20px;
+}
+.sub-titulo-execucao-fisica{
+  color: #00585e;
+  font-weight: bold;
+}
