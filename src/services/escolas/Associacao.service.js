@@ -62,6 +62,10 @@ export const exportarDadosAssociacao = async () => {
             .get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/exportar`, {
                 responseType: 'blob',
                 timeout: 30000,
+                headers: {
+                    'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                    'Content-Type': 'application/json'
+                }
               })
             .then((response) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
