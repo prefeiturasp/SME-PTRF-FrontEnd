@@ -1,7 +1,6 @@
 import React from "react";
 
 export const TabelaExecucaoFisica = ({itensDashboard, retornaQtdePorStatus, retornaNaoApresentadas}) => {
-    console.log("TabelaExecucaoFisica ", itensDashboard)
     return(
         <>
             {itensDashboard &&
