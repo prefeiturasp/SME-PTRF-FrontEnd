@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {getItensDashboard, getPeriodos} from "../../../../services/dres/Dashboard.service";
+import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";
 import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
-import {getTiposConta, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa, getDevolucoesAoTesouro} from "../../../../services/dres/RelatorioConsolidado.service";
+import {getItensDashboard, getTiposConta, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa, getDevolucoesAoTesouro} from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
 import {visoesService} from "../../../../services/visoes.service";
@@ -172,7 +172,7 @@ export const RelatorioConsolidadoApuracao = () =>{
     };
 
     const retornaNaoApresentadas = () =>{
-        return itensDashboard.total_associacoes_dre - retornaQtdePorStatus('NAO_RECEBIDA') - retornaQtdePorStatus('RECEBIDA') - retornaQtdePorStatus('EM_ANALISE') - retornaQtdePorStatus('DEVOLVIDA') - retornaQtdePorStatus('APROVADA') - retornaQtdePorStatus('REPROVADA');
+        return itensDashboard.total_associacoes_dre - retornaQtdePorStatus('EM_ANALISE') - retornaQtdePorStatus('APROVADA') - retornaQtdePorStatus('APROVADA_RESSALVA');
     };
     return(
         <>

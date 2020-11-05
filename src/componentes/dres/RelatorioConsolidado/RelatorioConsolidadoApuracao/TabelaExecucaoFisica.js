@@ -25,7 +25,7 @@ export const TabelaExecucaoFisica = ({itensDashboard, retornaQtdePorStatus, reto
                         <tbody>
                         <tr>
                             <td>{retornaQtdePorStatus('APROVADA')}</td>
-                            <td>{retornaQtdePorStatus('APROVADA')}</td>
+                            <td>{retornaQtdePorStatus('APROVADA_RESSALVA')}</td>
                             <td>{retornaQtdePorStatus('EM_ANALISE')}</td>
                             <td>{retornaNaoApresentadas()}</td>
                             <td>{retornaQtdePorStatus('REPROVADA')}</td>
