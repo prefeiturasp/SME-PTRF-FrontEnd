@@ -52,7 +52,6 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                                             {props.errors.banco_nome && <span className="text-danger mt-1">{props.errors.banco_nome}</span>}
                                                         </div>
                                                     </div>
-
                                                     <div className='col-12 col-md-3'>
                                                         <div className="form-group">
                                                             <label htmlFor="tipo_conta">Tipo de Conta</label>
@@ -71,7 +70,6 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                                             {props.errors.tipo_conta && <span className="text-danger mt-1">{props.errors.tipo_conta}</span>}
                                                         </div>
                                                     </div>
-
                                                     <div className='col-12 col-md-3'>
                                                         <div className="form-group">
                                                             <label htmlFor="agencia">Agência {setaCampoReadonly(conta) ? 'do Programa' : ""}</label>
@@ -90,7 +88,6 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                                             {props.errors.agencia && <span className="text-danger mt-1">{props.errors.agencia}</span>}
                                                         </div>
                                                     </div>
-
                                                     <div className='col-12 col-md-3'>
                                                         <div className="form-group">
                                                             <label className='mt-md-n5' htmlFor="numero_conta">Nº da conta {setaCampoReadonly(conta) ? 'do Programa' : ""} com o dígito</label>
@@ -121,12 +118,10 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                 )}
                             >
                             </FieldArray>
-
                             <div className="d-flex  justify-content-end pb-3 mt-3">
                                 <button onClick={props.handleReset} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                                 <button disabled={!visoesService.getPermissoes(['change_associacao'])} type="submit" className="btn btn-success mt-2">Salvar</button>
                             </div>
-
                         </form>
                     )
                 }}
