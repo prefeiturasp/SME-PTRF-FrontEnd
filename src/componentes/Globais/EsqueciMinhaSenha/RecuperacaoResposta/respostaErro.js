@@ -5,8 +5,6 @@ import Loading from "../../../../utils/Loading";
 
 export const RespostaErro = ({respostaDeErro}) => {
 
-    console.log("RespostaErro ", respostaDeErro);
-
     const [btnDisabled, setBtnDisabled] = useState(false);
     const [loading, setLoading] = useState(false);
 
