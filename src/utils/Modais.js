@@ -13,6 +13,7 @@ import {TextoValidacaoSenha} from "../componentes/Globais/MedidorForcaSenha/text
 import {FormAlterarEmail} from "../componentes/Globais/FormAlterarEmail";
 import {Formik} from 'formik';
 import {YupSignupSchemaMembros} from "./ValidacoesAdicionaisFormularios";
+import {visoesService} from "../services/visoes.service";
 
 export const AvisoCapitalModal = (propriedades) => {
     return (
@@ -353,7 +354,7 @@ export const TextoCopiado = ({show, handleClose}) => {
     )
 };
 
-export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, validateFormMembros, stateFormEditarMembro, infosMembroSelecionado, btnSalvarReadOnly}) => {
+export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, validateFormMembros, stateFormEditarMembro, infosMembroSelecionado, btnSalvarReadOnly}) => {
 
     const bodyTextarea = () => {
         return (
@@ -401,6 +402,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                         <div className="form-group">
                                             <label htmlFor="representacao">Representação na associação</label>
                                             <select
+                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
                                                 value={props.values.representacao ? props.values.representacao : ""}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
@@ -423,9 +425,9 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                         <div className="form-group">
                                             <label htmlFor="codigo_identificacao">{props.values.representacao === 'SERVIDOR' ? "Registro Funcional" : "Código EOL"}</label>
                                             <input
+                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
                                                 type="text"
                                                 value={props.values.codigo_identificacao ? props.values.codigo_identificacao : ""}
-
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                     handleChangeEditarMembro(e.target.name, e.target.value);
@@ -445,6 +447,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                             <label htmlFor="cargo_associacao">Nome Completo</label>
                                             <input
                                                 readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
+                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
                                                 type="text"
                                                 value={props.values.nome ? props.values.nome : ""}
                                                 onChange={(e) => {
@@ -464,6 +467,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                             <label htmlFor="cargo_educacao">Cargo na educação</label>
                                             <input
                                                 readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
+                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
                                                 type="text"
                                                 value={props.values.cargo_educacao ? props.values.cargo_educacao : ""}
                                                 onChange={(e) => {
@@ -482,6 +486,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                         <div className="form-group">
                                             <label htmlFor="email">Email</label>
                                             <input
+                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
                                                 type="text"
                                                 value={props.values.email ? props.values.email : ""}
                                                 onChange={(e) => {
@@ -500,7 +505,7 @@ export const EditarMembro = ({show, handleClose, onSubmitEditarMembro, handleCha
                                 </div>
                                 <div className="d-flex  justify-content-end pb-3 mt-3">
                                     <button onClick={()=>handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                                    <button disabled={btnSalvarReadOnly} type="submit" className="btn btn-success mt-2">Salvar</button>
+                                    <button disabled={btnSalvarReadOnly || !visoesService.getPermissoes(['change_associacao'])} type="submit" className="btn btn-success mt-2">Salvar</button>
                                 </div>
                             </form>
                         );

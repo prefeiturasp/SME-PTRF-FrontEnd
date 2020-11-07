@@ -7,6 +7,7 @@ import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao";
+import {visoesService} from "../../../../services/visoes.service";
 
 export const MembrosDaAssociacao = () =>{
 
@@ -372,6 +373,7 @@ export const MembrosDaAssociacao = () =>{
                     stateFormEditarMembro={stateFormEditarMembro}
                     infosMembroSelecionado={infosMembroSelecionado}
                     btnSalvarReadOnly={btnSalvarReadOnly}
+                    visoesService={visoesService}
                 />
             </section>
 

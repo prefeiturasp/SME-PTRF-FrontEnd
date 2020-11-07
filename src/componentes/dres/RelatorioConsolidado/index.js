@@ -8,7 +8,7 @@ import Img404 from "../../../assets/img/img-404.svg";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {visoesService} from "../../../services/visoes.service";
 import {BarraDeStatus} from "./BarraDeStatus";
-import './relatorio-consolidade.scss'
+import './relatorio-consolidado.scss'
 
 export const RelatorioConsolidado = () => {
 
@@ -110,6 +110,10 @@ export const RelatorioConsolidado = () => {
         }
     };
 
+    const onClickVerRelatorio = () =>{
+        window.location.assign(`/dre-relatorio-consolidado-apuracao/${periodoEscolhido}/${contaEscolhida}/`)
+    };
+
     return (
         <>
             <div className="col-12 container-texto-introdutorio mb-4 mt-3">
@@ -131,6 +135,7 @@ export const RelatorioConsolidado = () => {
                         contas={contas}
                         contaEscolhida={contaEscolhida}
                         handleChangeContas={handleChangeContas}
+                        onClickVerRelatorio={onClickVerRelatorio}
                     />
                 }
                 {periodoEscolhido && itensDashboard ? (

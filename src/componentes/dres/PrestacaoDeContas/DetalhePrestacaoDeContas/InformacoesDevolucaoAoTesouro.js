@@ -229,7 +229,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                             await remove(index)
                                                                         }}
                                                                     >
-                                                                        - Remover Despesa
+                                                                        - Remover devolução
                                                                     </button>
                                                                 </div>
                                                             </div>

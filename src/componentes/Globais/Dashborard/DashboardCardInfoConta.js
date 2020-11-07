@@ -3,6 +3,9 @@ import {exibeValorFormatadoPT_BR} from "../../../utils/ValidacoesAdicionaisFormu
 
 export const DashboardCardInfoConta = ({acoesAssociacao, corIconeFonte}) =>{
     let info = acoesAssociacao.info_conta;
+    const getCorSaldo = (valor_saldo) => {
+        return valor_saldo < 0 ? "texto-cor-vermelha" : "texto-cor-verde"
+    };
     return(
         <>
             {info &&
@@ -41,27 +44,27 @@ export const DashboardCardInfoConta = ({acoesAssociacao, corIconeFonte}) =>{
                                                         {info.saldo_atual_custeio ? (
                                                             <div className="col-12 col-md-6">
                                                                 <p className="pt-1">
-                                                                    Custeio: <strong className="texto-cor-verde">{exibeValorFormatadoPT_BR(info.saldo_atual_custeio)}</strong>
+                                                                    Custeio: <strong className={getCorSaldo(info.saldo_atual_custeio)}>{exibeValorFormatadoPT_BR(info.saldo_atual_custeio)}</strong>
                                                                 </p>
                                                             </div>
                                                         ) : null}
                                                         {info.saldo_atual_capital ? (
                                                             <div className="col-12 col-md-6">
                                                                 <p className="pt-1">
-                                                                    Capital: <strong className="texto-cor-verde">{exibeValorFormatadoPT_BR(info.saldo_atual_capital)}</strong>
+                                                                    Capital: <strong className={getCorSaldo(info.saldo_atual_capital)}>{exibeValorFormatadoPT_BR(info.saldo_atual_capital)}</strong>
                                                                 </p>
                                                             </div>
                                                         ) : null}
                                                         {info.saldo_atual_livre ? (
                                                             <div className="col-12 col-md-6">
                                                                 <p className="pt-1">
-                                                                    RLA: <strong className="texto-cor-verde">{exibeValorFormatadoPT_BR(info.saldo_atual_livre)}</strong>
+                                                                    RLA: <strong className={getCorSaldo(info.saldo_atual_livre)}>{exibeValorFormatadoPT_BR(info.saldo_atual_livre)}</strong>
                                                                 </p>
                                                             </div>
                                                         ) : null}
                                                         <div className="col-12 col-md-6">
                                                             <p className="pt-0">
-                                                                <strong>Total:</strong> <strong className="texto-cor-verde">{exibeValorFormatadoPT_BR(info.saldo_atual_total)}</strong>
+                                                                <strong>Total:</strong> <strong className={getCorSaldo(info.saldo_atual_total)}>{exibeValorFormatadoPT_BR(info.saldo_atual_total)}</strong>
                                                             </p>
                                                         </div>
                                                     </div>
