@@ -63,24 +63,24 @@ export const FormFiltrosAvancados = (props) => {
                 <form onSubmit={handleSubmit}>
                     <div className="form-row">
                         <div className="form-group col-lg-6">
-                            <label htmlFor="filtrar_por_termo">Filtrar por um termo</label>
-                            <input value={state.filtrar_por_termo}
-                                   onChange={(e) => handleChange(e.target.name, e.target.value)}
-                                   name="filtrar_por_termo" id="filtrar_por_termo" type="text" className="form-control"
-                                   placeholder="Escreva o termo que deseja filtrar"/>
+                            <label htmlFor="tipo_receita">Filtrar por tipo de crédito</label>
+                            <select value={state.tipo_receita}
+                                    onChange={(e) => handleChange(e.target.name, e.target.value)}
+                                    name="tipo_receita" id="tipo_receita" className="form-control">
+                                <option key={0} value="">Selecione uma tipo</option>
+                                {tabelas.tipos_receita !== undefined && tabelas.tipos_receita.length > 0 ? (tabelas.tipos_receita.map(item => (
+                                    <option key={item.id} value={item.id}>{item.nome}</option>
+                                ))) : null}
+                            </select>
                         </div>
                         <div className="col-12 col-lg-6">
                             <div className="row">
                                 <div className="form-group col-12 col-md-6 pr-md-1">
-                                    <label htmlFor="acao_associacao">Filtrar por tipo de crédito</label>
-                                    <select value={state.tipo_receita}
-                                            onChange={(e) => handleChange(e.target.name, e.target.value)}
-                                            name="tipo_receita" id="tipo_receita" className="form-control">
-                                        <option key={0} value="">Selecione uma tipo</option>
-                                        {tabelas.tipos_receita !== undefined && tabelas.tipos_receita.length > 0 ? (tabelas.tipos_receita.map(item => (
-                                            <option key={item.id} value={item.id}>{item.nome}</option>
-                                        ))) : null}
-                                    </select>
+                                    <label htmlFor="filtrar_por_termo">Detalhamento do crédito</label>
+                                    <input value={state.filtrar_por_termo}
+                                       onChange={(e) => handleChange(e.target.name, e.target.value)}
+                                       name="filtrar_por_termo" id="filtrar_por_termo" type="text" className="form-control"
+                                       placeholder="Termo que deseja filtrar"/>
                                 </div>
                                 <div className="form-group col-12 col-md-6 pl-md-1">
                                     <label htmlFor="conta_associacao">Filtrar por tipo de conta</label>

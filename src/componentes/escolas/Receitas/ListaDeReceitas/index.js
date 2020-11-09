@@ -8,12 +8,12 @@ import '../../../../paginas/escolas/404/pagina-404.scss'
 import moment from 'moment';
 import {getListaReceitas} from "../../../../services/escolas/Receitas.service";
 import {getBotaoValoresReprogramados} from "../../../../services/escolas/ValoresReprogramados.service";
-import {FormFiltroPorPalavra} from "../../../Globais/FormFiltroPorPalavra";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito"
 import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
 import "./lista-de-receitas.scss"
 import {FormFiltrosAvancados} from "../FormFiltrosAvancados";
+import {FiltroPorTipoReceita} from "../FiltroPorTipoReceita";
 import Loading from "../../../../utils/Loading";
 
 export const ListaDeReceitas = () => {
@@ -94,14 +94,10 @@ export const ListaDeReceitas = () => {
                             <p>Filtrar por</p>
                         </div>
                         <div className={`col-12 col-md-5 pr-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
-                            <FormFiltroPorPalavra
-                                inputPesquisa={inputPesquisa}
-                                setInputPesquisa={setInputPesquisa}
+                            <FiltroPorTipoReceita
                                 buscaUtilizandoFiltro={buscaUtilizandoFiltro}
                                 setBuscaUtilizandoFiltro={setBuscaUtilizandoFiltro}
                                 setLista={setReceitas}
-                                setLoading={setLoading}
-                                origem="Receitas"
                             />
                         </div>
                         <div className={`col-12 col-md-2 mt-2 pl-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
