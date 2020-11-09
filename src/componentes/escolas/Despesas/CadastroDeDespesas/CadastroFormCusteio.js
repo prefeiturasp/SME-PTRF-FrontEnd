@@ -2,6 +2,8 @@ import React from "react";
 import CurrencyInput from "react-currency-input";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {Tags} from "../Tags";
+import {visoesService} from "../../../../services/visoes.service";
+
 
 export const CadastroFormCusteio = (propriedades) => {
 
@@ -29,7 +31,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         name={`rateios[${index}].tipo_custeio`}
                         id='tipo_custeio'
                         className={`${!rateio.tipo_custeio && verboHttp === "PUT" && "is_invalid "} form-control`}
-                        disabled={disabled}
+                        disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option value="">Selecione um tipo</option>
                         {despesasTabelas.tipos_custeio && despesasTabelas.tipos_custeio.map(item => (
@@ -53,7 +55,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         name={`rateios[${index}].especificacao_material_servico`}
                         id='especificacao_material_servico'
                         className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} form-control`}
-                        disabled={disabled}
+                        disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option key={0} value="">Selecione uma especificação</option>
                         {
@@ -80,7 +82,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         name={`rateios[${index}].acao_associacao`}
                         id='acao_associacao'
                         className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
-                        disabled={disabled}
+                        disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option key={0} value="">Selecione uma ação</option>
                         {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
@@ -100,7 +102,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         name={`rateios[${index}].conta_associacao`}
                         id='conta_associacao'
                         className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
-                        disabled={disabled}
+                        disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option key={0} value="">Selecione uma conta</option>
                         {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
@@ -124,7 +126,7 @@ export const CadastroFormCusteio = (propriedades) => {
                             formikProps.handleChange(e);
                             setValorRateioRealizado(formikProps.setFieldValue, index, e.target.value)
                         }}
-                        disabled={disabled}
+                        disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     />
                     {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
                 </div>
@@ -141,7 +143,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         id="valor_rateio"
                         className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control ${trataNumericos(rateio.valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
                         onChangeEvent={formikProps.handleChange}
-                        disabled={disabled}
+                        disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     />
                     {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                 </div>
