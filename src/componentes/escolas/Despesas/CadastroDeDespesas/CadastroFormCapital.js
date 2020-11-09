@@ -180,7 +180,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 formikProps.handleChange(e);
                                 //setValorItemRateio({...valorItemRateio, [index]: e.target.value})
                             }}
-                            disabled={![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                            disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                         />
                         {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                     </div>
