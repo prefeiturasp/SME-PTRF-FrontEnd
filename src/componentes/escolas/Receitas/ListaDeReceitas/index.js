@@ -15,6 +15,8 @@ import "./lista-de-receitas.scss"
 import {FormFiltrosAvancados} from "../FormFiltrosAvancados";
 import {FiltroPorTipoReceita} from "../FiltroPorTipoReceita";
 import Loading from "../../../../utils/Loading";
+import {visoesService} from "../../../../services/visoes.service";
+
 
 export const ListaDeReceitas = () => {
 
@@ -110,9 +112,9 @@ export const ListaDeReceitas = () => {
                             </button>
                         </div>
                         <div className={`${btnMaisFiltros ? "col-12" : "col-12 col-md-5 mt-2"}`}>
-                            <button onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right">Cadastrar crédito</button>
+                            <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => history.push('/cadastro-de-credito')} type="submit" className="btn btn btn-outline-success float-right">Cadastrar crédito</button>
                             {btnValoresReprogramados &&
-                                <button onClick={() => history.push('/cadastro-de-valores-reprogramados')} type="submit" className="btn btn btn-outline-success float-right mr-2">Valores reprogramados</button>
+                                <button disabled={!visoesService.getPermissoes(['add_receita'])} onClick={() => history.push('/cadastro-de-valores-reprogramados')} type="submit" className="btn btn btn-outline-success float-right mr-2">Valores reprogramados</button>
                             }
                         </div>
                     </div>
