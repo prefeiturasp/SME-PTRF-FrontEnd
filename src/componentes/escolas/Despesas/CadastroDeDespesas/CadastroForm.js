@@ -348,7 +348,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 value={values.data_documento != null ? values.data_documento : ""}
                                                 onChange={setFieldValue}
                                                 about={despesaContext.verboHttp}
-                                                disabled={![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                             {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                         </div>
