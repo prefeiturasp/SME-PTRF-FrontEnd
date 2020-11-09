@@ -3,6 +3,7 @@ import NumberFormat from "react-number-format";
 import {calculaValorRateio, trataNumericos, processoIncorporacaoMask} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import CurrencyInput from "react-currency-input";
 import MaskedInput from "react-text-mask";
+import {visoesService} from "../../../../services/visoes.service";
 
 export const CadastroFormCapital = (propriedades) => {
     const {formikProps, rateio, rateios, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal, setFieldValue} = propriedades;
@@ -40,7 +41,7 @@ export const CadastroFormCapital = (propriedades) => {
                         name={`rateios[${index}].especificacao_material_servico`}
                         id='especificacao_material_servico'
                         className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} form-control`}
-                        disabled={disabled}
+                        disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option key={0} value="">Selecione uma especificação</option>
                         {especificaoes_capital && especificaoes_capital.map((item) => (
@@ -61,7 +62,7 @@ export const CadastroFormCapital = (propriedades) => {
                         name={`rateios[${index}].acao_associacao`}
                         id='acao_associacao'
                         className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
-                        disabled={disabled}
+                        disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option value="">Selecione uma ação</option>
                         {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
@@ -86,7 +87,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 decimalScale={0}
                                 id="quantidade_itens_capital"
                                 className={`${(!rateio.quantidade_itens_capital || rateio.quantidade_itens_capital === '0') && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
-                                disabled={disabled}
+                                disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                             />
                         </div>
 
@@ -105,7 +106,7 @@ export const CadastroFormCapital = (propriedades) => {
                                     formikProps.handleChange(e);
                                     handleChangeData(rateio.quantidade_itens_capital, e.target.value, formikProps.setFieldValue);
                                 }}
-                                disabled={disabled}
+                                disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                             />
                         </div>
                     </div>
@@ -114,7 +115,7 @@ export const CadastroFormCapital = (propriedades) => {
                 <div className="col-12 col-md-6 mt-4">
                     <label htmlFor="numero_processo_incorporacao_capital">Número do processo de incorporação</label>
                     <MaskedInput
-                        disabled={disabled}
+                        disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                         mask={(valor) => processoIncorporacaoMask(valor)}
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].numero_processo_incorporacao_capital`}
@@ -138,7 +139,7 @@ export const CadastroFormCapital = (propriedades) => {
                             name={`rateios[${index}].conta_associacao`}
                             id='conta_associacao'
                             className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
-                            disabled={disabled}
+                            disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                         >
                             <option key={0} value="">Selecione uma conta</option>
                             {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
@@ -179,6 +180,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 formikProps.handleChange(e);
                                 //setValorItemRateio({...valorItemRateio, [index]: e.target.value})
                             }}
+                            disabled={![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                         />
                         {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                     </div>

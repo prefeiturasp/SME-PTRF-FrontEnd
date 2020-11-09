@@ -15,6 +15,8 @@ import "./lista-de-despesas.scss"
 import {FormFiltrosAvancados} from "../FormFiltrosAvancados";
 import {SomaDasDespesas} from "../SomaDasDespesas";
 import Loading from "../../../../utils/Loading";
+import {visoesService} from "../../../../services/visoes.service";
+
 
 export class ListaDeDespesas extends Component {
     constructor(props) {
@@ -100,6 +102,7 @@ export class ListaDeDespesas extends Component {
                         onClick={() => history.push('/cadastro-de-despesa')}
                         type="button"
                         className="btn btn btn-outline-success float-right mt-2"
+                        disabled={!visoesService.getPermissoes(['add_despesa'])}
                     >
                         Cadastrar despesa
                     </button>
