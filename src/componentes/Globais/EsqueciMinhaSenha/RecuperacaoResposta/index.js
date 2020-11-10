@@ -7,7 +7,7 @@ export const RecuperacaoResposta = ({recuperacaoResposta, emailComMascara, respo
         <>
             <div className="esqueci-minha-senha-inner-texto">
                 <h1 className="titulo-services mb-3">Recuperação de Senha</h1>
-                {recuperacaoResposta && recuperacaoResposta.email ? (
+                {recuperacaoResposta && Object.entries(recuperacaoResposta).length > 0 ? (
                     <RespostaSucesso
                         emailComMascara={emailComMascara}
                     />
