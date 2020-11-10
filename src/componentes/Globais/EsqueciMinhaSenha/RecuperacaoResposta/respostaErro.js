@@ -4,7 +4,6 @@ import {faTimesCircle} from '@fortawesome/free-solid-svg-icons'
 import Loading from "../../../../utils/Loading";
 
 export const RespostaErro = ({respostaDeErro}) => {
-
     const [btnDisabled, setBtnDisabled] = useState(false);
     const [loading, setLoading] = useState(false);
 

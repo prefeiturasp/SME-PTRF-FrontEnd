@@ -12,7 +12,7 @@ export const EsqueciMinhaSenha = () => {
     const [recuperacaoResposta, setRecuperacaoResposta] = useState({});
     const [emailComMascara, setEmailComMascara] = useState({});
     const [loading, setLoading] = useState(true);
-    const [respostaDeErro, setRspostaDeErro] = useState(false);
+    const [respostaDeErro, setRespostaDeErro] = useState(false);
 
     useEffect(() => {
         setService('recuperar-minha-senha');
@@ -38,7 +38,7 @@ export const EsqueciMinhaSenha = () => {
             });
             setEmailComMascara(mascaraExibicaoEmail(resposta.email));
         } catch (e) {
-            setRspostaDeErro(e.response.data.detail);
+            setRespostaDeErro(e.response.data.detail);
             console.log("Erro ao recuperar usuário ", e)
         }
         setService('recuperacao-resposta');
