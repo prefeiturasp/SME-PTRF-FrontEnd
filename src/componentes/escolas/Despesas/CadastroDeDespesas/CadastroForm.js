@@ -114,6 +114,10 @@ export const CadastroForm = ({verbo_http}) => {
 
         validaPayloadDespesas(values);
 
+        console.log("onShowSaldoInsuficiente ", errors)
+
+        debugger
+
         if (Object.entries(errors).length === 0 && values.cpf_cnpj_fornecedor) {
 
             let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
@@ -137,18 +141,18 @@ export const CadastroForm = ({verbo_http}) => {
                     if (despesa_cadastrada.despesa_ja_lancada){
                         setShowDespesaCadastrada(true)
                     }else {
-                        onSubmit(values);
+                        onSubmit(values, errors);
                     }
                 }catch (e) {
                     console.log("Erro ao buscar despesa cadastrada ", e);
                 }
             } else {
-                onSubmit(values);
+                onSubmit(values, errors);
             }
         }
     };
 
-    const onSubmit = async (values) => {
+    const onSubmit = async (values, errors) => {
 
         setLoading(true);
 
@@ -157,35 +161,41 @@ export const CadastroForm = ({verbo_http}) => {
 
         validaPayloadDespesas(values, despesasTabelas);
 
-        if( despesaContext.verboHttp === "POST"){
-            try {
-                const response = await criarDespesa(values);
-                if (response.status === HTTP_STATUS.CREATED) {
-                    console.log("Operação realizada com sucesso!");
-                    //resetForm({values: ""})
-                    aux.getPath(origem);
-                } else {
-                    setLoading(false);
-                }
-            } catch (error) {
-                console.log(error);
-                setLoading(false);
-            }
-        }else if(despesaContext.verboHttp === "PUT"){
+        console.log("On Submit ", errors)
 
-            try {
-                const response = await alterarDespesa(values, despesaContext.idDespesa);
-                if (response.status === 200) {
-                    console.log("Operação realizada com sucesso!");
-                    //resetForm({values: ""})
-                    aux.getPath(origem);
-                } else {
+        if (Object.entries(errors).length === 0){
+            if( despesaContext.verboHttp === "POST"){
+                try {
+                    const response = await criarDespesa(values);
+                    if (response.status === HTTP_STATUS.CREATED) {
+                        console.log("Operação realizada com sucesso!");
+                        //resetForm({values: ""})
+                        aux.getPath(origem);
+                    } else {
+                        setLoading(false);
+                    }
+                } catch (error) {
+                    console.log(error);
                     setLoading(false);
                 }
-            } catch (error) {
-                console.log(error);
-                setLoading(false);
+            }else if(despesaContext.verboHttp === "PUT"){
+
+                try {
+                    const response = await alterarDespesa(values, despesaContext.idDespesa);
+                    if (response.status === 200) {
+                        console.log("Operação realizada com sucesso!");
+                        //resetForm({values: ""})
+                        aux.getPath(origem);
+                    } else {
+                        setLoading(false);
+                    }
+                } catch (error) {
+                    console.log(error);
+                    setLoading(false);
+                }
             }
+        }else {
+            return errors
         }
     };
 
@@ -229,6 +239,11 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
         // Verificando erros nos valores de rateios e rateios original
+
+        //console.log("getErroValorRealizadoRateios ", aux.getErroValorRealizadoRateios(values))
+
+        //console.log("getErroValorOriginalRateios ", aux.getErroValorOriginalRateios(values))
+
         if (await aux.getErroValorRealizadoRateios(values) !== 0){
             let diferenca = Number(aux.getErroValorRealizadoRateios(values)).toLocaleString('pt-BR', {
                 style: 'currency',
@@ -706,7 +721,7 @@ export const CadastroForm = ({verbo_http}) => {
                                             saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
                                             show={showSaldoInsuficiente}
                                             handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
-                                            onSaldoInsuficienteTrue={() => onSubmit(values, {resetForm})}
+                                            onSaldoInsuficienteTrue={() => onSubmit(values, {resetForm}, errors)}
                                         />
                                     </section>
                                     <section>
@@ -714,20 +729,20 @@ export const CadastroForm = ({verbo_http}) => {
                                             saldosInsuficientesDaConta={saldosInsuficientesDaConta}
                                             show={showSaldoInsuficienteConta}
                                             handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
-                                            onSaldoInsuficienteContaTrue={() => onSubmit(values, {resetForm})}
+                                            onSaldoInsuficienteContaTrue={() => onSubmit(values, {resetForm}, errors)}
                                         />
                                     </section>
                                     <section>
                                         <ChecarDespesaExistente
                                             show={showDespesaCadastrada}
                                             handleClose={()=>setShowDespesaCadastrada(false)}
-                                            onSalvarDespesaCadastradaTrue={ () => onSubmit(values, {resetForm}) }/>
+                                            onSalvarDespesaCadastradaTrue={ () => onSubmit(values, {resetForm}, errors) }/>
                                     </section>
                                     <section>
                                         <ModalDespesaConferida
                                             show={showDespesaConferida}
                                             handleClose={()=>setShowDespesaConferida(false)}
-                                            onSalvarDespesaConferida={ () => onSubmit(values, {resetForm}) }
+                                            onSalvarDespesaConferida={ () => onSubmit(values, {resetForm}, errors) }
                                             titulo="Despesa já demonstrada"
                                             texto="<p>Atenção. Essa despesa já foi demonstrada, caso a alteração seja gravada ela voltará a ser não demonstrada. Confirma a gravação?</p>"
                                         />
