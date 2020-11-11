@@ -191,8 +191,9 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const validateFormDespesas = async (values) => {
-        setExibeMsgErroValorRecursos(false);
-        setExibeMsgErroValorOriginal(false);
+        // Causador erro de não mostrar validações
+        //setExibeMsgErroValorRecursos(false);
+       //setExibeMsgErroValorOriginal(false);
 
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
