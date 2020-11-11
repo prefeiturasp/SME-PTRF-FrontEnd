@@ -196,11 +196,13 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
   values.valor_total = trataNumericos(values.valor_total);
   values.valor_original = trataNumericos(values.valor_original);
 
+  console.log("Valor Recurso Açoes Antes", values.valor_recusos_acoes)
+
   values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
   values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)
 
 
-  console.log("Valor Recurso Açoes ", values.valor_recusos_acoes)
+  console.log("Valor Recurso Açoes Depois ", values.valor_recusos_acoes)
 
   if (values.data_documento !== "" && values.data_documento !== null){
     values.data_documento = moment(values.data_documento).format("YYYY-MM-DD");
