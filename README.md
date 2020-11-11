@@ -6,9 +6,24 @@ Front da aplicação _SIG.Escola_ da Secretaria de Educação da cidade de São 
 
 License: MIT
 
-Versão: 1.1.0
+Versão: 1.2.0
 
 ## Release Notes
+
+### 1.2.0 - 10/11/2020 - Entregas da Sprint 11
+* Gestão de perfis de acesso às funcionalidades do sistema
+* Cadastro de Devoluções ao Tesouro na análise de prestações de conta pela DRE
+* Inclusão de comentários na análise de prestações de conta pela DRE
+* Atas de retificação
+* Relatório Consolidado DRE (Parte 1)
+* Permitir a parametrização de um tipo de conta para apenas leitura
+* Saldos negativos agora são exibidos em vermelho no painel financeiro da Associação
+* Recuperação de senha ("esqueci minha senha") agora usa o e-mail cadastrado no CoreSSO
+* Inclusão de campos para telefone e e-mail no cadastro de técnicos da DRE
+* Mudanças nos filtros do cadastro de créditos da Associação
+* Mudança na forma de exibição da visão do usuário, agora ao lado do seletor de unidade
+* 🐞 Correção de alguns bugs.
+
 ### 1.1.0 - 09/10/2020 - Entregas da Sprint 10
 * Parametrização de tipos de crédito por conta
 * Ata consolidada por prestação de contas (todos as contas)

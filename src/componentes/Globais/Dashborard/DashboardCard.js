@@ -3,8 +3,12 @@ import '../../../paginas/escolas/404/pagina-404.scss'
 import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
 import Img404 from '../../../assets/img/img-404.svg'
 import {exibeDataPT_BR, exibeDateTimePT_BR, exibeValorFormatadoPT_BR} from '../../../utils/ValidacoesAdicionaisFormularios'
+import {getAcoesAssociacao} from "../../../services/Dashboard.service";
 
 export const DashboardCard = ({acoesAssociacao, corIconeFonte}) => {
+    const getCorSaldo = (valor_saldo) => {
+        return valor_saldo < 0 ? "texto-cor-vermelha" : "texto-cor-verde"
+    };
     return (
         <>
             {acoesAssociacao.info_acoes && acoesAssociacao.info_acoes.length > 0 ? (
@@ -46,21 +50,21 @@ export const DashboardCard = ({acoesAssociacao, corIconeFonte}) => {
                                                         <div className='mt-3'>&nbsp;</div>
                                                         {acao.saldo_atual_custeio ? (
                                                             <p className="pt-1">
-                                                                Custeio: <strong className="texto-cor-verde">{exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}</strong>
+                                                                Custeio: <strong className={getCorSaldo(acao.saldo_atual_custeio)}>{exibeValorFormatadoPT_BR(acao.saldo_atual_custeio)}</strong>
                                                             </p>
                                                         ) : null}
                                                         {acao.saldo_atual_capital ? (
                                                             <p className="pt-1">
-                                                                Capital: <strong className="texto-cor-verde">{exibeValorFormatadoPT_BR(acao.saldo_atual_capital)}</strong>
+                                                                Capital: <strong className={getCorSaldo(acao.saldo_atual_capital)}>{exibeValorFormatadoPT_BR(acao.saldo_atual_capital)}</strong>
                                                             </p>
                                                         ) : null}
                                                         {acao.saldo_atual_livre ? (
                                                             <p className="pt-1">
-                                                                RLA: <strong className="texto-cor-verde">{exibeValorFormatadoPT_BR(acao.saldo_atual_livre)}</strong>
+                                                                RLA: <strong className={getCorSaldo(acao.saldo_atual_livre)}>{exibeValorFormatadoPT_BR(acao.saldo_atual_livre)}</strong>
                                                             </p>
                                                         ) : null}
                                                         <p className="pt-0">
-                                                            Total: <strong className="texto-cor-verde">{exibeValorFormatadoPT_BR(acao.saldo_atual_total)}</strong>
+                                                            Total: <strong className={getCorSaldo(acao.saldo_atual_total)}>{exibeValorFormatadoPT_BR(acao.saldo_atual_total)}</strong>
                                                         </p>
                                                     </div>
                                                 </div>

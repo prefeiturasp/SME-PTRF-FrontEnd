@@ -27,7 +27,7 @@ export const InformacoesPrestacaoDeContas = ({handleChangeFormInformacoesPrestac
                             value={informacoesPrestacaoDeContas.ultima_analise ? informacoesPrestacaoDeContas.ultima_analise : ''}
                             onChange={handleChangeFormInformacoesPrestacaoDeContas}
                             disabled={true}
-                            naoExibePlaceholder={true}
+                            placeholderText=''
                         />
                     </div>
                     <div className="col">

@@ -8,8 +8,6 @@ const authHeader = {
     }
 };
 
-const url = window.location.href;
-
 export const updateProcessoAssociacao = async (uuid_processo, payload) => {
     return api.patch(`api/processos-associacao/${uuid_processo}/`, payload, authHeader).then(response => {
         return response;

@@ -1,5 +1,6 @@
 import React from "react";
 import {Formik, FieldArray} from "formik";
+import {visoesService} from "../../../../../services/visoes.service";
 
 export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, errors}) => {
     const valores_inciais = {
@@ -37,7 +38,8 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                                         <div className="form-group">
                                                             <label htmlFor="banco_nome">Banco</label>
                                                             <input
-                                                                readOnly={setaCampoReadonly(conta.tipo_conta.nome)}
+                                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                                readOnly={setaCampoReadonly(conta)}
                                                                 name={`contas[${index}].banco_nome`}
                                                                 value={conta.banco_nome}
                                                                 onChange={(e) => {
@@ -50,11 +52,11 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                                             {props.errors.banco_nome && <span className="text-danger mt-1">{props.errors.banco_nome}</span>}
                                                         </div>
                                                     </div>
-
                                                     <div className='col-12 col-md-3'>
                                                         <div className="form-group">
                                                             <label htmlFor="tipo_conta">Tipo de Conta</label>
                                                             <input
+                                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
                                                                 readOnly={true}
                                                                 name={`contas[${index}].tipo_conta`}
                                                                 value={conta.tipo_conta && conta.tipo_conta.nome ? conta.tipo_conta.nome : ""}
@@ -68,12 +70,12 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                                             {props.errors.tipo_conta && <span className="text-danger mt-1">{props.errors.tipo_conta}</span>}
                                                         </div>
                                                     </div>
-
                                                     <div className='col-12 col-md-3'>
                                                         <div className="form-group">
-                                                            <label htmlFor="agencia">Agência {setaCampoReadonly(conta.tipo_conta.nome) ? 'do Programa' : ""}</label>
+                                                            <label htmlFor="agencia">Agência {setaCampoReadonly(conta) ? 'do Programa' : ""}</label>
                                                             <input
-                                                                readOnly={setaCampoReadonly(conta.tipo_conta.nome)}
+                                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                                readOnly={setaCampoReadonly(conta)}
                                                                 name={`contas[${index}].agencia`}
                                                                 value={conta.agencia}
                                                                 onChange={(e) => {
@@ -86,12 +88,12 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                                             {props.errors.agencia && <span className="text-danger mt-1">{props.errors.agencia}</span>}
                                                         </div>
                                                     </div>
-
                                                     <div className='col-12 col-md-3'>
                                                         <div className="form-group">
-                                                            <label className='mt-md-n5' htmlFor="numero_conta">Nº da conta {setaCampoReadonly(conta.tipo_conta.nome) ? 'do Programa' : ""} com o dígito</label>
+                                                            <label className='mt-md-n5' htmlFor="numero_conta">Nº da conta {setaCampoReadonly(conta) ? 'do Programa' : ""} com o dígito</label>
                                                             <input
-                                                                readOnly={setaCampoReadonly(conta.tipo_conta.nome)}
+                                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                                readOnly={setaCampoReadonly(conta)}
                                                                 name={`contas[${index}].numero_conta`}
                                                                 value={conta.numero_conta}
                                                                 onChange={(e) => {
@@ -116,12 +118,10 @@ export const FormDadosDasContas = ({intialValues, setaCampoReadonly, onSubmit, e
                                 )}
                             >
                             </FieldArray>
-
                             <div className="d-flex  justify-content-end pb-3 mt-3">
                                 <button onClick={props.handleReset} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                                <button type="submit" className="btn btn-success mt-2">Salvar</button>
+                                <button disabled={!visoesService.getPermissoes(['change_associacao'])} type="submit" className="btn btn-success mt-2">Salvar</button>
                             </div>
-
                         </form>
                     )
                 }}

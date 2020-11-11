@@ -18,7 +18,7 @@ import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios"
 import Loading from "../../../../utils/Loading";
 import {Tags} from "../Tags";
 import {metodosAuxiliares} from "../metodosAuxiliares";
-import {ModalConfirmaLogout} from "../../../Globais/Cabecalho/ModalConfirmaLogout";
+import {visoesService} from "../../../../services/visoes.service";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -234,14 +234,14 @@ export const CadastroForm = ({verbo_http}) => {
                 style: 'currency',
                 currency: 'BRL'
             });
-            errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa. Difrerença de  R$ '+ diferenca;
+            errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa. Diferença de  R$ '+ diferenca;
         }
         if (aux.getErroValorOriginalRateios(values) !== 0){
             let diferenca = Number(aux.getErroValorOriginalRateios(values)).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             });
-            errors.valor_original = "O total das despesas originais deve corresponder ao valor total dos recursos originais. Difrerença de  R$ " + diferenca
+            errors.valor_original = "O total das despesas originais deve corresponder ao valor total dos recursos originais. Diferença de  R$ " + diferenca
         }
         return errors;
     };
@@ -286,7 +286,7 @@ export const CadastroForm = ({verbo_http}) => {
                                         <div className="col-12 col-md-6 mt-4">
                                             <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
                                             <MaskedInput
-                                                disabled={readOnlyCampos}
+                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                                 mask={(valor) => cpfMaskContitional(valor)}
                                                 value={props.values.cpf_cnpj_fornecedor}
                                                 onChange={(e) => {
@@ -311,7 +311,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 name="nome_fornecedor" id="nome_fornecedor" type="text"
                                                 className={`${!props.values.nome_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 placeholder="Digite o nome"
-                                                disabled={readOnlyCampos}
+                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                         </div>
                                     </div>
@@ -330,7 +330,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 name='tipo_documento'
                                                 id='tipo_documento'
                                                 className={`${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                                disabled={readOnlyCampos}
+                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             >
                                                 <option key={0} value="">Selecione o tipo</option>
                                                 {despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.map(item =>
@@ -348,6 +348,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 value={values.data_documento != null ? values.data_documento : ""}
                                                 onChange={setFieldValue}
                                                 about={despesaContext.verboHttp}
+                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                             {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                         </div>
@@ -362,7 +363,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 id="numero_documento" type="text"
                                                 className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 placeholder="Digite o número"
-                                                disabled={readOnlyCampos || numreoDocumentoReadOnly}
+                                                disabled={readOnlyCampos || numreoDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                             {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
                                         </div>
@@ -383,7 +384,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 name='tipo_transacao'
                                                 id='tipo_transacao'
                                                 className={`${!props.values.tipo_transacao && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                                disabled={readOnlyCampos}
+                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             >
                                                 <option key={0} value="">Selecione o tipo</option>
                                                 {despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map(item => (
@@ -400,7 +401,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 value={values.data_transacao != null ? values.data_transacao : ""}
                                                 onChange={setFieldValue}
                                                 about={despesaContext.verboHttp}
-                                                disabled={readOnlyCampos}
+                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                             {props.errors.data_transacao &&
                                             <span className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
@@ -418,7 +419,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                     type="text"
                                                     className="form-control"
                                                     placeholder="Digite o número do documento"
-                                                    disabled={readOnlyCampos}
+                                                    disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                                 />
                                                 {props.errors.documento_transacao && <span className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
                                             </div>
@@ -443,7 +444,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                     props.handleChange(e);
                                                     aux.setValorRealizado(setFieldValue, e.target.value);
                                                 }}
-                                                disabled={readOnlyCampos}
+                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                             {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
                                         </div>
@@ -463,7 +464,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
                                                 }}
-                                                disabled={readOnlyCampos}
+                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                             {props.errors.valor_total &&
                                             <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
@@ -484,7 +485,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
                                                 }}
-                                                disabled={readOnlyCampos}
+                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                             {props.errors.valor_recursos_proprios && <span
                                                 className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
@@ -505,7 +506,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                         className="form-control"
                                                         onChangeEvent={props.handleChange}
                                                         readOnly={true}
-                                                        disabled={readOnlyCampos}
+                                                        disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                                     />
                                                 )}
                                             </Field>
@@ -528,7 +529,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 name='mais_de_um_tipo_despesa'
                                                 id='mais_de_um_tipo_despesa'
                                                 className={`${!props.values.mais_de_um_tipo_despesa && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                                disabled={readOnlyCampos}
+                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             >
                                                 <option value="">Selecione</option>
                                                 <option value="nao">Não</option>
@@ -567,7 +568,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         name={`rateios[${index}].aplicacao_recurso`}
                                                                         id='aplicacao_recurso'
                                                                         className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                                                        disabled={readOnlyCampos}
+                                                                        disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                                                     >
                                                                         <option key={0} value="">Escolha uma opção</option>
                                                                         {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map(item => (
@@ -615,6 +616,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         type="button"
                                                                         className="btn btn btn-outline-success mt-2 mr-2"
                                                                         onClick={() => remove(index)}
+                                                                        disabled={!visoesService.getPermissoes(['delete_despesa'])}
                                                                     >
                                                                         - Remover Despesa
                                                                     </button>
@@ -629,7 +631,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         rateios={values.rateios}
                                                                         index={index}
                                                                         verboHttp={despesaContext.verboHttp}
-                                                                        disabled={readOnlyCampos}
+                                                                        disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                                                         errors={errors}
                                                                         setFieldValue={setFieldValue}
                                                                         despesasTabelas={despesasTabelas}
@@ -645,6 +647,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                     <button
                                                         type="button"
                                                         className="btn btn btn-outline-success mt-2 mr-2"
+                                                        disabled={![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                                         onChange={(e) => {
                                                             props.handleChange(e);
                                                             aux.handleAvisoCapital(e.target.value, setShowAvisoCapital);
@@ -683,10 +686,10 @@ export const CadastroForm = ({verbo_http}) => {
                                                 className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                         </button>
                                         {despesaContext.idDespesa
-                                            ? <button disabled={readOnlyBtnAcao} type="reset" onClick={()=>aux.onShowDeleteModal(setShowDelete)}
+                                            ? <button disabled={readOnlyBtnAcao || !visoesService.getPermissoes(["delete_despesa"])} type="reset" onClick={()=>aux.onShowDeleteModal(setShowDelete)}
                                                       className="btn btn btn-danger mt-2 mr-2">Deletar</button>
                                             : null}
-                                        <button disabled={btnSubmitDisable || readOnlyBtnAcao} type="button"
+                                        <button disabled={btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)} type="button"
                                                 onClick={() => onShowSaldoInsuficiente(values, errors, setFieldValue, {resetForm})}
                                                 className="btn btn-success mt-2">Salvar
                                         </button>

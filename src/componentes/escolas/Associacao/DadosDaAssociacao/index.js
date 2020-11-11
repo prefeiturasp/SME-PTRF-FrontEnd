@@ -9,6 +9,7 @@ import {Formik} from "formik";
 import {YupSignupSchemaDadosDaAssociacao} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from "react-text-mask";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao"
+import {visoesService} from "../../../../services/visoes.service";
 
 export const DadosDaAsssociacao = () => {
 
@@ -125,6 +126,7 @@ export const DadosDaAsssociacao = () => {
                                                     className="form-control"
                                                     onChange={props.handleChange}
                                                     onBlur={props.handleBlur}
+                                                    disabled={!visoesService.getPermissoes(['change_associacao'])}
                                                 />
                                                 {props.touched.nome && props.errors.nome && <span
                                                     className="span_erro text-danger mt-1"> {props.errors.nome} </span>}
@@ -193,6 +195,7 @@ export const DadosDaAsssociacao = () => {
                                                     className="form-control"
                                                     onChange={props.handleChange}
                                                     onBlur={props.handleBlur}
+                                                    disabled={!visoesService.getPermissoes(['change_associacao'])}
                                                 />
                                                 {props.touched.ccm && props.errors.ccm && <span
                                                     className="span_erro text-danger mt-1"> {props.errors.ccm} </span>}
@@ -208,6 +211,7 @@ export const DadosDaAsssociacao = () => {
                                                     className="form-control"
                                                     onChange={props.handleChange}
                                                     onBlur={props.handleBlur}
+                                                    disabled={!visoesService.getPermissoes(['change_associacao'])}
                                                 />
                                                 {props.touched.email && props.errors.email && <span
                                                     className="span_erro text-danger mt-1"> {props.errors.email} </span>}
@@ -217,7 +221,7 @@ export const DadosDaAsssociacao = () => {
                                             <button onClick={() => setShowModalDadosAssociacaoCancelar(true)}
                                                     type="reset" className="btn btn btn-outline-success mt-2">Cancelar
                                             </button>
-                                            <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
+                                            <button disabled={!visoesService.getPermissoes(['change_associacao'])} type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
                                         </div>
 
                                         <section>

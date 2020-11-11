@@ -28,8 +28,15 @@
   margin-bottom: 0;
 }
 
-.link-exportar{
+.link-exportar, .link-exportar:focus{
   color: #00585E !important;
+  background-color: transparent;
+  outline: 0;
+  border: none !important;
+}
+
+.link-exportar-disabled, .link-exportar-disabled:focus, .link-exportar-disabled:hover, .link-exportar-disabled img svg path{
+  color: #7D7D7D !important;
 }
 
 .link-exportar:hover{

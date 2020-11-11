@@ -21,7 +21,9 @@ import Loading from "../../../../utils/Loading";
 import api from "../../../../services/api";
 import {Login} from "../../../../paginas/Login";
 import {ModalReceitaConferida} from "../ModalReceitaJaConferida";
+import {visoesService} from "../../../../services/visoes.service";
 import {ModalDespesaConferida} from "../../Despesas/CadastroDeDespesas/ModalDespesaJaConferida";
+
 
 export const ReceitaForm = props => {
 
@@ -503,7 +505,7 @@ export const ReceitaForm = props => {
                                     <select
                                         id="tipo_receita"
                                         name="tipo_receita"
-                                        disabled={readOnlyCampos}
+                                        disabled={readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                         value={props.values.tipo_receita}
                                         onChange={(e) => {
                                             props.handleChange(e);
@@ -535,7 +537,7 @@ export const ReceitaForm = props => {
                                         <select
                                             id="detalhe_tipo_receita"
                                             name="detalhe_tipo_receita"
-                                            disabled={readOnlyCampos}
+                                            disabled={readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                             value={props.values.detalhe_tipo_receita ? props.values.detalhe_tipo_receita.id : ""}
                                             onChange={(e) => {
                                                 props.handleChange(e);
@@ -558,7 +560,7 @@ export const ReceitaForm = props => {
                                             name="detalhe_outros" id="detalhe_outros" type="text"
                                             className="form-control"
                                             placeholder="Digite o detalhamento"
-                                            disabled={readOnlyCampos}
+                                            disabled={readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                         />
                                     }
                                     {props.touched.detalhe_tipo_receita && props.errors.detalhe_tipo_receita && <span className="span_erro text-danger mt-1"> {props.errors.detalhe_tipo_receita}</span>}
@@ -576,7 +578,7 @@ export const ReceitaForm = props => {
                                             onChange={props.handleChange}
                                             onBlur={props.handleBlur}
                                             className="form-control"
-                                            disabled={readOnlyValor || readOnlyCampos}
+                                            disabled={readOnlyValor || readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                         >
                                             {receita.referencia_devolucao
                                                 ? null
@@ -599,6 +601,7 @@ export const ReceitaForm = props => {
                                         value={values.data}
                                         onChange={setFieldValue}
                                         onBlur={props.handleBlur}
+                                        disabled={![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                     />
                                     {props.touched.data && props.errors.data &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.data}</span>}
@@ -615,7 +618,7 @@ export const ReceitaForm = props => {
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         className="form-control"
-                                        disabled={readOnlyValor || readOnlyCampos}
+                                        disabled={readOnlyValor || readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                     >
                                         {receita.conta_associacao
                                             ? null
@@ -633,7 +636,7 @@ export const ReceitaForm = props => {
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="acao_associacao">Ação</label>
                                     <select
-                                        disabled={readOnlyCampos}
+                                        disabled={readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                         id="acao_associacao"
                                         name="acao_associacao"
                                         value={props.values.acao_associacao}
@@ -668,7 +671,7 @@ export const ReceitaForm = props => {
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         className="form-control"
-                                        disabled={readOnlyClassificacaoReceita || readOnlyCampos}
+                                        disabled={readOnlyClassificacaoReceita || readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                     >
                                         {receita.categorias_receita ? null :
                                             <option key={0} value="">Escolha a classificação</option>}
@@ -684,7 +687,7 @@ export const ReceitaForm = props => {
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="valor">Valor total do crédito</label>
                                     <CurrencyInput
-                                        disabled={readOnlyCampos}
+                                        disabled={readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                         allowNegative={false}
                                         prefix='R$'
                                         decimalSeparator=","
@@ -707,9 +710,9 @@ export const ReceitaForm = props => {
                                 <button type="reset" onClick={comparaObjetos(values,objetoParaComparacao) ? onCancelarTrue : onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                 </button>
                                 {uuid ?
-                                    <button disabled={readOnlyBtnAcao} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null
+                                    <button disabled={readOnlyBtnAcao || !visoesService.getPermissoes(['delete_receita'])} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null
                                 }
-                                <button onClick={(e)=>servicoDeVerificacoes(e, values, errors)} disabled={readOnlyBtnAcao} type="submit" className="btn btn-success mt-2">Salvar </button>
+                                <button onClick={(e)=>servicoDeVerificacoes(e, values, errors)} disabled={readOnlyBtnAcao || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)} type="submit" className="btn btn-success mt-2">Salvar </button>
 
                             </div>
                             {/*Fim Botões*/}

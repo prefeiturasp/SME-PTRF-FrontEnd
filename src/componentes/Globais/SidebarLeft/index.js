@@ -1,5 +1,5 @@
-import React, {useContext, Fragment} from 'react'
-import SideNav, {NavItem, NavIcon, NavText, Toggle} from '@trendmicro/react-sidenav'
+import React, {useContext} from 'react'
+import SideNav, {NavItem, NavIcon, NavText} from '@trendmicro/react-sidenav'
 import '@trendmicro/react-sidenav/dist/react-sidenav.css'
 import './siderbarLeft.scss'
 import IconeMenuMeuPerfil from '../../../assets/img/icone-menu-meu-perfil.png'
@@ -10,22 +10,20 @@ import {Versao} from '../Versao'
 import ReactTooltip from "react-tooltip";
 import {getUrls} from "./getUrls";
 import {NotificacaoContext} from "../../../context/Notificacoes";
+import {visoesService} from "../../../services/visoes.service";
 
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
-    const notificacaoContext = useContext(NotificacaoContext)
+    const notificacaoContext = useContext(NotificacaoContext);
     let history = useHistory();
 
     const onToggle = () => {
         sidebarStatus.setSideBarStatus(!sidebarStatus.sideBarStatus)
     };
-    const safeLink= (event)=>{
-        event.preventDefault()
-    };
 
     let urls = getUrls.GetUrls();
 
-    const qtdeNotificacoesNaoLidas = async () =>{
+    const qtdeNotificacoesNaoLidas = async () => {
         await notificacaoContext.getQtdeNotificacoesNaoLidas()
     };
 
@@ -70,39 +68,47 @@ export const SidebarLeft = () => {
                     >
                         <NavIcon>{!sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} alt=""/> : ""} </NavIcon>
                         <NavText>
-                            <div className="container-meus-dados mt-n4 d-flex justify-content-center align-items-center">
-                                {sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} className="mr-1" alt=""/> : ""}
+                            <div
+                                className="container-meus-dados mt-n4 d-flex justify-content-center align-items-center">
+                                {sidebarStatus.sideBarStatus ?
+                                    <img src={IconeMenuMeuPerfil} className="mr-1" alt=""/> : ""}
                                 Meus Dados
                             </div>
                         </NavText>
                     </NavItem>
                     <ReactTooltip disable={sidebarStatus.sideBarStatus} id='meus_dados'>{}</ReactTooltip>
 
-                    {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index)=>
-                        <NavItem
-                            key={index}
-                            navitemClassName={`d-flex align-items-end ${url.subItens && url.subItens.length > 0 ? "sub-menu" : ""}`}
-                            data-tip={url.label}  data-for={url.dataFor}
-                            eventKey={url.url}
-                        >
-                            <NavIcon>
-                                <img src={url.icone} alt=""/>
-                            </NavIcon>
-                            <NavText>{url.label}</NavText>
-                            <ReactTooltip disable={sidebarStatus.sideBarStatus} id={url.dataFor}>{}</ReactTooltip>
-                            {url.subItens && url.subItens.length > 0 && url.subItens.map((subItem, index)=>
-                                <NavItem
-                                    key={index}
-                                    navitemClassName="sub-menu-item"
-                                    eventKey={subItem.url}
-                                >
-                                    <NavText>
-                                        {subItem.label}
-                                    </NavText>
-                                </NavItem>
-                            )}
-                        </NavItem>
-                        )
+                    {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index) => {
+                            return (
+                                visoesService.getPermissoes(url.permissoes) ? (
+                                    <NavItem
+                                        key={index}
+                                        navitemClassName={`d-flex align-items-end ${url.subItens && url.subItens.length > 0 ? "sub-menu" : ""}`}
+                                        data-tip={url.label} data-for={url.dataFor}
+                                        eventKey={url.url}
+                                    >
+                                        <NavIcon>
+                                            <img src={url.icone} alt=""/>
+                                        </NavIcon>
+                                        <NavText>{url.label}</NavText>
+                                        <ReactTooltip disable={sidebarStatus.sideBarStatus}
+                                                      id={url.dataFor}>{}</ReactTooltip>
+                                        {url.subItens && url.subItens.length > 0 && url.subItens.map((subItem, index) =>
+                                            <NavItem
+                                                key={index}
+                                                navitemClassName="sub-menu-item"
+                                                eventKey={subItem.url}
+                                            >
+                                                <NavText>
+                                                    {subItem.label}
+                                                </NavText>
+                                            </NavItem>
+                                        )}
+                                    </NavItem>
+                                ) : null
+                            )
+                        }
+                    )
                     }
                     <NavItem
                         eventKey={urls.dados_iniciais.default_selected}
@@ -120,7 +126,7 @@ export const SidebarLeft = () => {
                         </NavText>
                     </NavItem>
                     <NavItem
-                        navitemClassName={ !sidebarStatus.sideBarStatus ? 'escondeItem' : 'navItemCustomizadoNome' }
+                        navitemClassName={!sidebarStatus.sideBarStatus ? 'escondeItem' : 'navItemCustomizadoNome'}
                         eventKey={urls.dados_iniciais.default_selected}
                     >
                         <NavIcon>&nbsp;</NavIcon>
