@@ -101,6 +101,8 @@ export const CadastroForm = ({verbo_http}) => {
         // Necessário atribuir o valor ao campo cpf_cnpj_fornecedor para chamar o YupSignupSchemaCadastroDespesa
         setFieldValue("cpf_cnpj_fornecedor", values.cpf_cnpj_fornecedor);
 
+        console.log("onShowSaldoInsuficiente ", values)
+
         if (errors && errors.valor_recusos_acoes){
             setExibeMsgErroValorRecursos(true)
         }else {
@@ -191,8 +193,9 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const validateFormDespesas = async (values) => {
-        setExibeMsgErroValorRecursos(false);
-        setExibeMsgErroValorOriginal(false);
+        // Causador erro de não mostrar validações
+        //setExibeMsgErroValorRecursos(false);
+       //setExibeMsgErroValorOriginal(false);
 
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
