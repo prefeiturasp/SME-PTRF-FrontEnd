@@ -232,16 +232,16 @@ export const CadastroForm = ({verbo_http}) => {
 
         // Verificando erros nos valores de rateios e rateios original
 
-        console.log('getErroValorRealizadoRateios ',aux.getErroValorRealizadoRateios(values));
+        console.log('getErroValorRealizadoRateios ',await aux.getErroValorRealizadoRateios(values));
 
-        if (aux.getErroValorRealizadoRateios(values) !== 0){
+        if (await aux.getErroValorRealizadoRateios(values) !== 0){
             let diferenca = Number(aux.getErroValorRealizadoRateios(values)).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             });
             errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa. Diferença de  R$ '+ diferenca;
         }
-        if (aux.getErroValorOriginalRateios(values) !== 0){
+        if (await aux.getErroValorOriginalRateios(values) !== 0){
             let diferenca = Number(aux.getErroValorOriginalRateios(values)).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
