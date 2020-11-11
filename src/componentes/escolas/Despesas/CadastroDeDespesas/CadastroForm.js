@@ -101,8 +101,6 @@ export const CadastroForm = ({verbo_http}) => {
         // Necessário atribuir o valor ao campo cpf_cnpj_fornecedor para chamar o YupSignupSchemaCadastroDespesa
         setFieldValue("cpf_cnpj_fornecedor", values.cpf_cnpj_fornecedor);
 
-        console.log("onShowSaldoInsuficiente ", values)
-
         if (errors && errors.valor_recusos_acoes){
             setExibeMsgErroValorRecursos(true)
         }else {
