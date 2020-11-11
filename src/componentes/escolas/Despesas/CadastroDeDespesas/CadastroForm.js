@@ -114,6 +114,10 @@ export const CadastroForm = ({verbo_http}) => {
 
         validaPayloadDespesas(values);
 
+        console.log("onShowSaldoInsuficiente errors ", errors)
+
+        debugger
+
         if (Object.entries(errors).length === 0 && values.cpf_cnpj_fornecedor) {
 
             let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
@@ -229,6 +233,9 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
         // Verificando erros nos valores de rateios e rateios original
+
+        console.log("getErroValorRealizadoRateios ", aux.getErroValorRealizadoRateios(values))
+
         if (await aux.getErroValorRealizadoRateios(values) !== 0){
             let diferenca = Number(aux.getErroValorRealizadoRateios(values)).toLocaleString('pt-BR', {
                 style: 'currency',

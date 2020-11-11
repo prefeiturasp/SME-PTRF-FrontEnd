@@ -115,6 +115,9 @@ const setValoresRateiosOriginal = (mais_de_um_tipo_de_despesa = null, values, se
 };
 
 const getErroValorOriginalRateios = (values) =>{
+
+    console.log("")
+
     let valor_ptfr_original;
 
     valor_ptfr_original = calculaValorOriginal(values);
