@@ -119,9 +119,6 @@ const getErroValorOriginalRateios = (values) =>{
     let valor_ptfr_original;
 
     valor_ptfr_original = calculaValorOriginal(values);
-
-    //console.log("valor_ptfr_original ", valor_ptfr_original)
-
     let valor_total_dos_rateios_original = 0;
     let valor_total_dos_rateios_capital_original = 0;
     let valor_total_dos_rateios_custeio_original = 0;
@@ -134,9 +131,7 @@ const getErroValorOriginalRateios = (values) =>{
         }
     });
 
-    valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original
-
-    //console.log("XXXXXXXXXXX ", round(valor_ptfr_original, 2) - round(valor_total_dos_rateios_original, 2))
+    valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original;
 
     return round(valor_ptfr_original, 2) - round(valor_total_dos_rateios_original, 2)
 
@@ -152,8 +147,6 @@ const getErroValorRealizadoRateios = (values) =>{
         var_valor_total_dos_rateios_custeio = var_valor_total_dos_rateios_custeio + trataNumericos(rateio.valor_rateio)
     });
     var_valor_total_dos_rateios = var_valor_total_dos_rateios_capital + var_valor_total_dos_rateios_custeio;
-
-    //console.log("YYYYYYYYYYYY ", round(var_valor_recursos_acoes, 2) - round(var_valor_total_dos_rateios, 2))
 
     return round(var_valor_recursos_acoes, 2) - round(var_valor_total_dos_rateios, 2);
 };
