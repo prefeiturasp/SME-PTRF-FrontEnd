@@ -121,7 +121,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         value={rateio.valor_original}
                         name={`rateios[${index}].valor_original`}
                         id="valor_original"
-                        className={`${ trataNumericos(rateio.valor_original) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                        className={`form-control`}
                         onChangeEvent={(e) => {
                             formikProps.handleChange(e);
                             setValorRateioRealizado(formikProps.setFieldValue, index, e.target.value)
