@@ -27,7 +27,7 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
                                 formikProps.handleChange(e);
                                 formikProps.setFieldValue(`rateios[${index}].escolha_tags`, "sim")
                             }}
-                            className={`${!rateio.tag && verboHttp === "PUT" && "is_invalid "} form-check-input`}
+                            className={`form-check-input`}
                             type="radio"
                             id={`tag_sim_${index}`}
                             value="sim"
@@ -44,7 +44,7 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
                                 formikProps.handleChange(e);
                                 formikProps.setFieldValue(`rateios[${index}].escolha_tags`, "nao")
                             }}
-                            className={`${!rateio.tag && verboHttp === "PUT" && "is_invalid "} form-check-input`}
+                            className={`form-check-input`}
                             type="radio"
                             id={`tag_nao_${index}`}
                             value="nao"

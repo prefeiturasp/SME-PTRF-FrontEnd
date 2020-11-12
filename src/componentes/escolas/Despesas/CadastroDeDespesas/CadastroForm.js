@@ -197,6 +197,8 @@ export const CadastroForm = ({verbo_http}) => {
 
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
+        console.log("qtde_erros_form_despesa ", document.getElementsByClassName("is_invalid"))
+
         // Verifica período fechado para a receita
         if (values.data_documento){
             await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
