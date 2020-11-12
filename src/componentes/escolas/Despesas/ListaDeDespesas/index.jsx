@@ -20,7 +20,7 @@ import {visoesService} from "../../../../services/visoes.service";
 
 export class ListaDeDespesas extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             rateiosDespesas: [],
             somaDosTotais: {},
@@ -32,14 +32,14 @@ export class ListaDeDespesas extends Component {
     }
 
     buscaRateiosDespesas = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "") => {
-        const rateiosDespesas = await getListaRateiosDespesas()
+        const rateiosDespesas = await getListaRateiosDespesas();
         this.setState({rateiosDespesas})
-    }
+    };
 
-    reusltadoSomaDosTotais = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "", fornecedor="", data_inicio="", data_fim="") => {
+    reusltadoSomaDosTotais = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "", fornecedor = "", data_inicio = "", data_fim = "") => {
         const somaDosTotais = await getSomaDosTotais(palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim);
-        this.setState({somaDosTotais})
-    }
+        this.setState({somaDosTotais});
+    };
 
     componentDidMount() {
         this.buscaRateiosDespesas();
@@ -47,25 +47,25 @@ export class ListaDeDespesas extends Component {
         this.setState({loading: false})
     }
 
-    numeroDocumentoStatusTemplate(rowData, column) {
+    numeroDocumentoStatusTemplate(rowData) {
         const statusColor =
             rowData['status_despesa'] === 'COMPLETO'
                 ? 'ptrf-despesa-status-ativo'
-                : 'ptrf-despesa-status-inativo'
+                : 'ptrf-despesa-status-inativo';
         const statusText =
             rowData['status_despesa'] === 'COMPLETO'
                 ? 'Status: Completo'
-                : 'Status: Incompleto'
+                : 'Status: Incompleto';
         return (
             <div>
                 <span>{rowData['numero_documento']}</span>
-                <br></br>
+                <br/>
                 <span className={statusColor}>{statusText}</span>
             </div>
         )
     }
 
-    especificacaoDataTemplate(rowData, column) {
+    especificacaoDataTemplate(rowData) {
         return (
             <div>
         <span>
@@ -73,7 +73,7 @@ export class ListaDeDespesas extends Component {
               ? rowData['especificacao_material_servico'].descricao
               : ''}
         </span>
-                <br></br>
+                <br/>
                 <span>
           Data:{' '}
                     {rowData['data_documento']
@@ -84,13 +84,13 @@ export class ListaDeDespesas extends Component {
         )
     }
 
-    valorTotalTemplate(rowData, column) {
+    valorTotalTemplate(rowData) {
         const valorFormatado = rowData['valor_total']
             ? rowData['valor_total'].toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
-            : ''
+            : '';
         return <span>{valorFormatado}</span>
     }
 
@@ -112,18 +112,18 @@ export class ListaDeDespesas extends Component {
     }
 
     redirecionaDetalhe = value => {
-        const url = '/edicao-de-despesa/' + value.despesa
+        const url = '/edicao-de-despesa/' + value.despesa;
         redirect(url)
-    }
+    };
 
-    onClickBtnMaisFiltros = (event) => {
-        this.setState({inputPesquisa: ""})
+    onClickBtnMaisFiltros = () => {
+        this.setState({inputPesquisa: ""});
         this.setState({btnMaisFiltros: !this.state.btnMaisFiltros})
-    }
+    };
 
     render() {
-        const {rateiosDespesas, somaDosTotais} = this.state
-        const rowsPerPage = 10
+        const {rateiosDespesas, somaDosTotais} = this.state;
+        const rowsPerPage = 10;
 
         return (
 
@@ -145,7 +145,9 @@ export class ListaDeDespesas extends Component {
                                 </div>
                                 <Col lg={7} xl={7}
                                      className={`pr-0 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
-                                    <i className="float-left fas fa-file-signature" style={{marginRight: '5px', color: '#42474A'}}></i>
+                                    <i className="float-left fas fa-file-signature"
+                                       style={{marginRight: '5px', color: '#42474A'}}>
+                                    </i>
 
                                     <FormFiltroPorPalavra
                                         inputPesquisa={this.state.inputPesquisa}
@@ -158,7 +160,8 @@ export class ListaDeDespesas extends Component {
                                         setLoading={(loading) => this.setState({loading})}
                                     />
                                 </Col>
-                                <Col lg={2} xl={2} className={`pl-sm-0 mt-2 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
+                                <Col lg={2} xl={2}
+                                     className={`pl-sm-0 mt-2 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
                                     <button
                                         onClick={this.onClickBtnMaisFiltros}
                                         type="button"
@@ -234,7 +237,6 @@ export class ListaDeDespesas extends Component {
                             }
                         </>
                 }
-
             </div>
         )
     }
