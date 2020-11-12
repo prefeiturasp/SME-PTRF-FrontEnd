@@ -53,9 +53,6 @@ export const CadastroForm = ({verbo_http}) => {
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
-
-            console.log("despesaContext.initialValues ", despesaContext.initialValues)
-
             aux.exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas);
         }
         if (despesaContext.initialValues.data_documento && verbo_http === "PUT"){
@@ -200,8 +197,6 @@ export const CadastroForm = ({verbo_http}) => {
 
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
-        console.log("qtde_erros_form_despesa ", document.getElementsByClassName("is_invalid"))
-
         // Verifica período fechado para a receita
         if (values.data_documento){
             await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
@@ -249,13 +244,8 @@ export const CadastroForm = ({verbo_http}) => {
                 currency: 'BRL'
             });
             errors.valor_original = "O total das despesas originais deve corresponder ao valor total dos recursos originais. Diferença de  R$ " + diferenca
-
         }
         return errors;
-    };
-
-    const verificaSeDisabled = (e)=>{
-        console.log("verificaSeDisabled ", e)
     };
 
     return (
@@ -286,11 +276,12 @@ export const CadastroForm = ({verbo_http}) => {
 
                         return (
                             <>
-                                {props.values.status !== 'COMPLETO' && props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
+                                {props.values.status === 'COMPLETO' ?
+                                    null :
+                                props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
                                 <div className="col-12 barra-status-erros pt-1 pb-1">
-                                    <p className="titulo-status pt-1 pb-1 mb-0">O cadastro
-                                        possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode
-                                        completá-los agora ou terminar depois.</p>
+                                    <p className="titulo-status pt-1 pb-1 mb-0">
+                                        O cadastro possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
                                 </div>
                                 }
                                 <form onSubmit={props.handleSubmit}>
@@ -366,7 +357,6 @@ export const CadastroForm = ({verbo_http}) => {
                                         </div>
 
                                         <div className="col-12 col-md-6 mt-4">
-                                            <p>AQUI XXX {document.getElementById("numero_documento") && document.getElementById("numero_documento").disabled ? document.getElementById("numero_documento").disabled : "NÂO"}</p>
                                             <label htmlFor="numero_documento">Número do documento</label>
                                             <input
                                                 value={props.values.numero_documento}
@@ -374,6 +364,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onBlur={props.handleBlur}
                                                 name="numero_documento"
                                                 id="numero_documento" type="text"
+                                                /*className={`${ numeroDocumentoReadOnly ? "form-control" : !props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid form-control" : ""}`}*/
                                                 className={`${ !numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid " : ""} form-control`}
                                                 placeholder="Digite o número"
                                                 disabled={readOnlyCampos || numeroDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
