@@ -48,11 +48,14 @@ export const CadastroForm = ({verbo_http}) => {
     const [loading, setLoading] = useState(true);
     const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
     const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
-    const [numreoDocumentoReadOnly, setNumreoDocumentoReadOnly] = useState(false);
+    const [numeroDocumentoReadOnly, setNumeroDocumentoReadOnly] = useState(false);
     const [showDespesaConferida, setShowDespesaConferida] = useState(false);
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
+
+            console.log("despesaContext.initialValues ", despesaContext.initialValues)
+
             aux.exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas);
         }
         if (despesaContext.initialValues.data_documento && verbo_http === "PUT"){
@@ -220,9 +223,9 @@ export const CadastroForm = ({verbo_http}) => {
             exibe_campo_numero_documento = so_numeros;
             if (exibe_campo_numero_documento && !exibe_campo_numero_documento.numero_documento_digitado){
                 values.numero_documento = "";
-                setNumreoDocumentoReadOnly(true)
+                setNumeroDocumentoReadOnly(true)
             }else {
-                setNumreoDocumentoReadOnly(false)
+                setNumeroDocumentoReadOnly(false)
             }
 
             if (so_numeros && so_numeros.apenas_digitos && values.numero_documento){
@@ -249,6 +252,10 @@ export const CadastroForm = ({verbo_http}) => {
 
         }
         return errors;
+    };
+
+    const verificaSeDisabled = (e)=>{
+        console.log("verificaSeDisabled ", e)
     };
 
     return (
@@ -279,7 +286,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                         return (
                             <>
-                                {props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
+                                {props.values.status !== 'COMPLETO' && props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
                                 <div className="col-12 barra-status-erros pt-1 pb-1">
                                     <p className="titulo-status pt-1 pb-1 mb-0">O cadastro
                                         possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode
@@ -359,6 +366,7 @@ export const CadastroForm = ({verbo_http}) => {
                                         </div>
 
                                         <div className="col-12 col-md-6 mt-4">
+                                            <p>AQUI XXX {document.getElementById("numero_documento") && document.getElementById("numero_documento").disabled ? document.getElementById("numero_documento").disabled : "NÂO"}</p>
                                             <label htmlFor="numero_documento">Número do documento</label>
                                             <input
                                                 value={props.values.numero_documento}
@@ -366,9 +374,9 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onBlur={props.handleBlur}
                                                 name="numero_documento"
                                                 id="numero_documento" type="text"
-                                                className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                className={`${ !numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid " : ""} form-control`}
                                                 placeholder="Digite o número"
-                                                disabled={readOnlyCampos || numreoDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                disabled={readOnlyCampos || numeroDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                             {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
                                         </div>
