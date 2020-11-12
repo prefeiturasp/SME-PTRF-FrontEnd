@@ -97,6 +97,7 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
+
         // Necessário atribuir o valor ao campo cpf_cnpj_fornecedor para chamar o YupSignupSchemaCadastroDespesa
         setFieldValue("cpf_cnpj_fornecedor", values.cpf_cnpj_fornecedor);
 
@@ -190,8 +191,9 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const validateFormDespesas = async (values) => {
-        setExibeMsgErroValorRecursos(false);
-        setExibeMsgErroValorOriginal(false);
+        // Causador erro de não mostrar validações
+        //setExibeMsgErroValorRecursos(false);
+       //setExibeMsgErroValorOriginal(false);
 
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
@@ -229,19 +231,20 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
         // Verificando erros nos valores de rateios e rateios original
-        if (aux.getErroValorRealizadoRateios(values) !== 0){
+        if (await aux.getErroValorRealizadoRateios(values) !== 0){
             let diferenca = Number(aux.getErroValorRealizadoRateios(values)).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             });
             errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa. Diferença de  R$ '+ diferenca;
         }
-        if (aux.getErroValorOriginalRateios(values) !== 0){
+        if (await aux.getErroValorOriginalRateios(values) !== 0){
             let diferenca = Number(aux.getErroValorOriginalRateios(values)).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             });
             errors.valor_original = "O total das despesas originais deve corresponder ao valor total dos recursos originais. Diferença de  R$ " + diferenca
+
         }
         return errors;
     };
@@ -446,7 +449,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 }}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
-                                            {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
+                                            {props.errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
                                         </div>
 
                                         <div className="col-12 col-md-3 mt-4">
