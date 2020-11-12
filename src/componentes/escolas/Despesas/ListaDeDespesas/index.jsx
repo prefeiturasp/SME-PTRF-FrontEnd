@@ -36,8 +36,8 @@ export class ListaDeDespesas extends Component {
         this.setState({rateiosDespesas})
     }
 
-    reusltadoSomaDosTotais = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "") => {
-        const somaDosTotais = await getSomaDosTotais(palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status);
+    reusltadoSomaDosTotais = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "", fornecedor="", data_inicio="", data_fim="") => {
+        const somaDosTotais = await getSomaDosTotais(palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim);
         this.setState({somaDosTotais})
     }
 

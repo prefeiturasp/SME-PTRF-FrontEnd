@@ -2,6 +2,7 @@ import React from "react";
 import "./soma-das-depesas.scss"
 
 export const SomaDasDespesas = ({somaDosTotais}) => {
+    console.log("SomaDasDespesas ", somaDosTotais)
     return (
         <div className="row">
             <div className="col-12 mt-5">
