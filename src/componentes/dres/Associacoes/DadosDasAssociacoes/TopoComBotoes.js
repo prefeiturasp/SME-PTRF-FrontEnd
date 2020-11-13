@@ -14,12 +14,11 @@ export const TopoComBotoes = ({dadosDaAssociacao}) =>{
         </div>
 
         <div className="d-flex justify-content-between p-3 mb-4 mt-2 bg-white container-menu-dados-das-associacoes">
-            <Link to="/dre-dados-da-unidade-educacional" className="">Dados da unidade</Link>
-            <Link to="/dre-regularidade-unidade-educacional" className="">Regularidade</Link>
-            <Link to="/dre-situacao-financeira-unidade-educacional" type="button" className="">Situação financeira</Link>
-            <Link to="/dre-situacao-financeira-unidade-educacional" type="button" className="">Situação patrimonial</Link>
+            <Link to="/dre-dados-da-unidade-educacional">Dados da unidade</Link>
+            <Link to="/dre-regularidade-unidade-educacional">Regularidade</Link>
+            <Link to="/dre-situacao-financeira-unidade-educacional">Situação financeira</Link>
+            <Link to="/dre-situacao-financeira-unidade-educacional">Situação patrimonial</Link>
         </div>
-
         </>
     );
 };
