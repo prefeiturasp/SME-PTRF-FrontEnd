@@ -740,6 +740,7 @@ export const ReceitaForm = props => {
                     show={show}
                     handleClose={onHandleClose}
                     onCancelarTrue={onCancelarTrue}
+                    uuid={uuid}
                 />
             </section>
             {uuid

@@ -2,11 +2,12 @@ import React from "react";
 import {ModalBootstrap} from "../../Globais/ModalBootstrap";
 
 export const CancelarModalReceitas = (propriedades) =>{
+    console.log("CancelarModalReceitas uuid ", propriedades.uuid)
     return (
         <ModalBootstrap
             show={propriedades.show}
             onHide={propriedades.handleClose}
-            titulo="Deseja cancelar a inclusão de Crédito?"
+            titulo={propriedades.uuid ? 'Deseja cancelar as alterações feitas no crédito?' :'Deseja cancelar a inclusão de crédito?'}
             bodyText=""
             primeiroBotaoOnclick={propriedades.onCancelarTrue}
             primeiroBotaoTexto="OK"
