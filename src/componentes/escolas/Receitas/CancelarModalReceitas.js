@@ -2,7 +2,6 @@ import React from "react";
 import {ModalBootstrap} from "../../Globais/ModalBootstrap";
 
 export const CancelarModalReceitas = (propriedades) =>{
-    console.log("CancelarModalReceitas uuid ", propriedades.uuid)
     return (
         <ModalBootstrap
             show={propriedades.show}
