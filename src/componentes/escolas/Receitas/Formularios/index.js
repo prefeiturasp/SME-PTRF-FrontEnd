@@ -16,7 +16,8 @@ import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
-import {DeletarModalReceitas, CancelarModalReceitas, PeriodoFechado, ErroGeral} from "../../../../utils/Modais";
+import {DeletarModalReceitas, PeriodoFechado, ErroGeral} from "../../../../utils/Modais";
+import {CancelarModalReceitas} from "../CancelarModalReceitas";
 import Loading from "../../../../utils/Loading";
 import api from "../../../../services/api";
 import {Login} from "../../../../paginas/Login";
@@ -707,7 +708,12 @@ export const ReceitaForm = props => {
 
                             {/*Botões*/}
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
-                                <button type="reset" onClick={comparaObjetos(values,objetoParaComparacao) ? onCancelarTrue : onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Voltar
+                                <button
+                                    type="reset"
+                                    onClick={comparaObjetos(values,objetoParaComparacao) ? onCancelarTrue : onShowModal}
+                                    className="btn btn btn-outline-success mt-2 mr-2"
+                                >
+                                    Voltar
                                 </button>
                                 {uuid ?
                                     <button disabled={readOnlyBtnAcao || !visoesService.getPermissoes(['delete_receita'])} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null
@@ -730,7 +736,11 @@ export const ReceitaForm = props => {
                 }}
             </Formik>
             <section>
-                <CancelarModalReceitas show={show} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+                <CancelarModalReceitas
+                    show={show}
+                    handleClose={onHandleClose}
+                    onCancelarTrue={onCancelarTrue}
+                />
             </section>
             {uuid
                 ?
