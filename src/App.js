@@ -18,7 +18,8 @@ export const App = () => {
                 <Rotas/>
             ) :
                 pathName.match(/\/visualizacao-da-ata\/[a-zA-Z0-9]/) ||
-                pathName.match(/\/dre-relatorio-consolidado-apuracao\/[a-zA-Z0-9]/) ? (
+                pathName.match(/\/dre-relatorio-consolidado-apuracao\/[a-zA-Z0-9]/) ||
+                pathName.match(/\/dre-relatorio-consolidado-dados-das-ues\/[a-zA-Z0-9]/) ? (
                     <>
                         <Cabecalho/>
                         <Rotas/>
