@@ -18,7 +18,6 @@ export const RelatorioConsolidadoDadosDasUes = () => {
 
     const carregaListaPrestacaoDeContasDaDre = useCallback(async ()=>{
         let lista_de_prestacoes = await getListaPrestacaoDeContasDaDre(dre_uuid, periodo_uuid, conta_uuid);
-        console.log("carregaListaPrestacaoDeContasDaDre ", lista_de_prestacoes);
         setListaPrestacoes(lista_de_prestacoes)
     }, [dre_uuid, periodo_uuid, conta_uuid]);
 
