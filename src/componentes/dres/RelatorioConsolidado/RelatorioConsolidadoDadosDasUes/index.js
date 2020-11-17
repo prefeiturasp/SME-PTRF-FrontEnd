@@ -1,8 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {useParams} from "react-router-dom";
 import {visoesService} from "../../../../services/visoes.service";
 import {auxGetNomes} from "../auxGetNomes";
 import {TopoComBotoes} from "./TopoComBotoes";
+import {getListaPrestacaoDeContasDaDre} from "../../../../services/dres/RelatorioConsolidado.service";
+import {TabelaListaPrestacoesDaDre} from "./TabelaListaPrestacoesDaDre";
 
 export const RelatorioConsolidadoDadosDasUes = () => {
 
@@ -12,11 +14,23 @@ export const RelatorioConsolidadoDadosDasUes = () => {
 
     const [periodoNome, setPeriodoNome] = useState('');
     const [contaNome, setContaNome] = useState('');
+    const [listaPrestacoes, setListaPrestacoes] = useState([]);
+
+    const carregaListaPrestacaoDeContasDaDre = useCallback(async ()=>{
+        let lista_de_prestacoes = await getListaPrestacaoDeContasDaDre(dre_uuid, periodo_uuid, conta_uuid);
+        console.log("carregaListaPrestacaoDeContasDaDre ", lista_de_prestacoes)
+        setListaPrestacoes(lista_de_prestacoes)
+    }, []);
 
     useEffect(()=>{
         carregaNomePeriodo();
         carregaNomeConta();
     });
+
+    useEffect(()=>{
+        carregaListaPrestacaoDeContasDaDre()
+    }, [carregaListaPrestacaoDeContasDaDre]);
+
 
     const carregaNomePeriodo = async () => {
         if (periodo_uuid){
@@ -30,7 +44,6 @@ export const RelatorioConsolidadoDadosDasUes = () => {
         setContaNome(conta_nome);
     };
 
-
     return (
         <>
             <div className="col-12 container-visualizacao-da-ata mb-5">
@@ -40,6 +53,9 @@ export const RelatorioConsolidadoDadosDasUes = () => {
                         contaNome={contaNome}
                         periodo_uuid={periodo_uuid}
                         conta_uuid={conta_uuid}
+                    />
+                    <TabelaListaPrestacoesDaDre
+                        listaPrestacoes={listaPrestacoes}
                     />
                 </div>
             </div>
