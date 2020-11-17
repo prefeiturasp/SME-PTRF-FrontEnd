@@ -8,8 +8,6 @@ export const RelatorioConsolidadoDadosDasUes = () => {
 
     const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
 
-
-
     return (
         <>
             <div className="col-12 container-visualizacao-da-ata mb-5">
