@@ -186,7 +186,10 @@ export const RelatorioConsolidadoApuracao = () =>{
                         totalEmAnalise={totalEmAnalise}
                         periodoUuid={periodo_uuid}
                     />
-                    <BoxConsultarDados/>
+                    <BoxConsultarDados
+                        periodo_uuid={periodo_uuid}
+                        conta_uuid={conta_uuid}
+                    />
                     <TabelaExecucaoFinanceira
                         execucaoFinanceira={execucaoFinanceira}
                         valorTemplate={valorTemplate}
