@@ -5,7 +5,6 @@ import {auxGetNomes} from "../auxGetNomes";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {getListaPrestacaoDeContasDaDre} from "../../../../services/dres/RelatorioConsolidado.service";
 import TabelaListaPrestacoesDaDre from "./TabelaListaPrestacoesDaDre";
-import {DataTableRowGroupDemo} from "./DataTableRowGroupDemo";
 
 export const RelatorioConsolidadoDadosDasUes = () => {
 
