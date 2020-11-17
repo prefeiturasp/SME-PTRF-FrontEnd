@@ -1,10 +1,12 @@
-import React from "react";
+import React, {memo} from "react";
 
-export const TabelaListaPrestacoesDaDre = (listaPrestacoes)=>{
-    console.log("listaPrestacoes ", listaPrestacoes)
+ const TabelaListaPrestacoesDaDre = (listaPrestacoes)=>{
+    console.log("listaPrestacoes ", listaPrestacoes);
   return(
       <>
           <h1>TabelaListaPrestacoesDaDre</h1>
       </>
   )
 };
+
+ export default memo(TabelaListaPrestacoesDaDre)

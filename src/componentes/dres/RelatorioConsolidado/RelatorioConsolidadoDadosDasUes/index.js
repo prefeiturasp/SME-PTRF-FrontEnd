@@ -4,7 +4,7 @@ import {visoesService} from "../../../../services/visoes.service";
 import {auxGetNomes} from "../auxGetNomes";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {getListaPrestacaoDeContasDaDre} from "../../../../services/dres/RelatorioConsolidado.service";
-import {TabelaListaPrestacoesDaDre} from "./TabelaListaPrestacoesDaDre";
+import TabelaListaPrestacoesDaDre from "./TabelaListaPrestacoesDaDre";
 
 export const RelatorioConsolidadoDadosDasUes = () => {
 
