@@ -5,6 +5,7 @@ import {auxGetNomes} from "../auxGetNomes";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {getListaPrestacaoDeContasDaDre} from "../../../../services/dres/RelatorioConsolidado.service";
 import TabelaListaPrestacoesDaDre from "./TabelaListaPrestacoesDaDre";
+import {DataTableRowGroupDemo} from "./DataTableRowGroupDemo";
 
 export const RelatorioConsolidadoDadosDasUes = () => {
 
@@ -43,6 +44,15 @@ export const RelatorioConsolidadoDadosDasUes = () => {
         setContaNome(conta_nome);
     };
 
+    const valorTemplate = (valor) => {
+        let valor_formatado = Number(valor).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+        valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
+        return valor_formatado
+    };
+
     return (
         <>
             <div className="col-12 container-visualizacao-da-ata mb-5">
@@ -55,7 +65,9 @@ export const RelatorioConsolidadoDadosDasUes = () => {
                     />
                     <TabelaListaPrestacoesDaDre
                         listaPrestacoes={listaPrestacoes}
+                        valorTemplate={valorTemplate}
                     />
+                    {/*<DataTableRowGroupDemo/>*/}
                 </div>
             </div>
         </>

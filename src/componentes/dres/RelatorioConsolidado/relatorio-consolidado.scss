@@ -66,3 +66,25 @@
   color: #00585e;
   font-weight: bold;
 }
+
+.tabela-lista-prestacoes-dre{
+  .p-datatable-wrapper{
+    .p-datatable-thead tr th{
+      padding: 15px 5px;
+    }
+  }
+
+  .p-datatable-tbody{
+    .p-datatable-row{
+      td{
+        padding: 0;
+      }
+    }
+  }
+
+}
+
+
+.conteudo-celulas-lista-dres{
+  display: inline-block;
+}

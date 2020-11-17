@@ -2,33 +2,83 @@ import React, {memo} from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
- const TabelaListaPrestacoesDaDre = (listaPrestacoes)=>{
+ const TabelaListaPrestacoesDaDre = ({listaPrestacoes, valorTemplate})=>{
     console.log("listaPrestacoes ", listaPrestacoes);
 
-    const columns = [
-        {product: 'Bamboo Watch', lastYearSale: 51, thisYearSale: 40, lastYearProfit: 54406, thisYearProfit: 43342},
-        {product: 'Black Watch', lastYearSale: 83, thisYearSale: 9, lastYearProfit: 423132, thisYearProfit: 312122},
-        {product: 'Blue Band', lastYearSale: 38, thisYearSale: 5, lastYearProfit: 12321, thisYearProfit: 8500},
-        {product: 'Blue T-Shirt', lastYearSale: 49, thisYearSale: 22, lastYearProfit: 745232, thisYearProfit: 65323},
-        {product: 'Brown Purse', lastYearSale: 17, thisYearSale: 79, lastYearProfit: 643242, thisYearProfit: 500332},
-        {product: 'Chakra Bracelet', lastYearSale: 52, thisYearSale:  65, lastYearProfit: 421132, thisYearProfit: 150005},
-        {product: 'Galaxy Earrings', lastYearSale: 82, thisYearSale: 12, lastYearProfit: 131211, thisYearProfit: 100214},
-        {product: 'Game Controller', lastYearSale: 44, thisYearSale: 45, lastYearProfit: 66442, thisYearProfit: 53322},
-        {product: 'Gaming Set', lastYearSale: 90, thisYearSale: 56, lastYearProfit: 765442, thisYearProfit: 296232},
-        {product: 'Gold Phone Case', lastYearSale: 75, thisYearSale: 54, lastYearProfit: 21212, thisYearProfit: 12533}
-    ];
+    const unidadeTemplate = (rowData) =>{
+         return (
+             <React.Fragment>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{rowData.unidade.codigo_eol} - {rowData.unidade.nome}</span></p>
+             </React.Fragment>
+         )
+     };
+
+    const tipoRecursoTemplate = () =>{
+         return (
+             <React.Fragment>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">Capital</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">Custeio</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">RLA</span></p>
+             </React.Fragment>
+         )
+     };
+
+    const reprogramadoTemplate = (rowData) =>{
+         return (
+             <React.Fragment>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_custeio)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_livre)}</span></p>
+             </React.Fragment>
+         )
+     };
+
+     const statusTemplate = (rowData) =>{
+         return (
+             <React.Fragment>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas}</span></p>
+             </React.Fragment>
+         )
+     };
 
   return(
       <>
-          <div className="card">
-              <DataTable value={columns}>
-                  <Column field="product" header='Produto'/>
-                  <Column field="lastYearSale" header='Ultimo Ano'/>
-                  <Column field="thisYearSale" header='Esse ano'/>
-                  <Column field="lastYearProfit" header='Ultimo Ano 02' />
-                  <Column field="thisYearProfit" header='Esse ano 2'/>
-              </DataTable>
-          </div>
+          {listaPrestacoes && listaPrestacoes.length > 0 &&
+              <div className="card">
+                  <DataTable
+                      value={listaPrestacoes}
+                      className='tabela-lista-prestacoes-dre'
+                      paginator
+                      paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                      rows={10}
+                      rowsPerPageOptions={[10,20,50]}
+                  >
+                      <Column
+                          field='unidade.nome'
+                          header="Unidade educacional"
+                          body={unidadeTemplate}
+                          className='align-top'
+                      />
+                      <Column
+                          filterField={'valores.demais_creditos_no_periodo_capital'}
+                          header=" Tipo de recurso"
+                          body={tipoRecursoTemplate}
+                      />
+                      <Column
+                          field='valores.demais_creditos_no_periodo_capital'
+                          header="Reprogramado"
+                          body={reprogramadoTemplate}
+                      />
+                      <Column
+                          field='unidade.nome'
+                          header="Unidade educacional"
+                          body={statusTemplate}
+                          className='align-top'
+                      />
+                  </DataTable>
+              </div>
+          }
+
       </>
   )
 };
