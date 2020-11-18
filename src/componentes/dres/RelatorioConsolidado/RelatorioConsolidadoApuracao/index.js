@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";
-import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
-import {getItensDashboard, getTiposConta, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa, getDevolucoesAoTesouro} from "../../../../services/dres/RelatorioConsolidado.service";
+import {getItensDashboard, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa, getDevolucoesAoTesouro} from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
 import {visoesService} from "../../../../services/visoes.service";
@@ -13,6 +11,7 @@ import {TabelaDevolucoesContaPtrf} from "./TabelaDevolucoesContaPtrf";
 import {TabelaDevolucoesAoTesouro} from "./TabelaDevolucoesAoTesouro";
 import {TabelaExecucaoFisica} from "./TabelaExecucaoFisica";
 import {auxGetNomes} from "../auxGetNomes";
+import {ModalComentariosRelatorioConsolidadoApuracao} from "../ModalComentariosRelatorioConsolidadoApuracao";
 
 export const RelatorioConsolidadoApuracao = () =>{
 
@@ -36,6 +35,9 @@ export const RelatorioConsolidadoApuracao = () =>{
     const [justificativaDiferenca, setJustificativaDiferenca] = useState(initJustificativa);
     const [devolucoesContaPtrf, setDevolucoesContaPtrf] = useState(false);
     const [devolucoesAoTesouro, setDevolucoesAoTesouro] = useState(false);
+
+    const [observacao, setObservacao] = useState(false);
+    const [showModalObservacao, setShowModalObservacao] = useState(false);
 
     useEffect(() => {
         carregaItensDashboard();
@@ -82,7 +84,7 @@ export const RelatorioConsolidadoApuracao = () =>{
     const carregaDevolucoesContaPtrf = async () =>{
         try {
             let devolucoes = await getDevolucoesContaPtrf(dre_uuid, periodo_uuid, conta_uuid);
-            setDevolucoesContaPtrf(devolucoes)
+            setDevolucoesContaPtrf(devolucoes);
             console.log("Devolucoes ", devolucoes)
         }catch (e) {
             console.log("Erro ao carregar Devolucoes a Conta Ptrf ", e);
@@ -161,6 +163,24 @@ export const RelatorioConsolidadoApuracao = () =>{
     const retornaNaoApresentadas = () =>{
         return itensDashboard.total_associacoes_dre - retornaQtdePorStatus('EM_ANALISE') - retornaQtdePorStatus('APROVADA') - retornaQtdePorStatus('APROVADA_RESSALVA') - retornaQtdePorStatus('REPROVADA');
     };
+
+    const onHandleClose = () => {
+        setShowModalObservacao(false);
+    };
+
+    const onClickObservacao = (obj) =>{
+        setShowModalObservacao(true)
+        console.log("onClicAddObservacao ", obj)
+        setObservacao(obj)
+    };
+
+    const onChangeObservacao = (valor) =>{
+        setObservacao({
+            ...observacao,
+            observacao:valor,
+        })
+    };
+
     return(
         <>
             <div className="col-12 container-visualizacao-da-ata mb-5">
@@ -192,6 +212,7 @@ export const RelatorioConsolidadoApuracao = () =>{
                     <TabelaDevolucoesContaPtrf
                         devolucoesContaPtrf={devolucoesContaPtrf}
                         valorTemplate={valorTemplate}
+                        onClickObservacao={onClickObservacao}
                     />
                     <TabelaDevolucoesAoTesouro
                         devolucoesAoTesouro={devolucoesAoTesouro}
@@ -203,6 +224,20 @@ export const RelatorioConsolidadoApuracao = () =>{
                         retornaNaoApresentadas={retornaNaoApresentadas}
                     />
                 </div>
+                <section>
+                    <ModalComentariosRelatorioConsolidadoApuracao
+                        show={showModalObservacao}
+                        handleClose={onHandleClose}
+                        observacao={observacao}
+                        onChangeObservacao={onChangeObservacao}
+
+                        titulo="Edição de comentário"
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="success"
+                        segundoBotaoTexto="Confirmar"
+                    />
+                </section>
             </div>
         </>
     )

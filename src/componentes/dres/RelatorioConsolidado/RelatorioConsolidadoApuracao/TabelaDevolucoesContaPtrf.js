@@ -2,7 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faWallet, faPlus} from "@fortawesome/free-solid-svg-icons";
 
-export const TabelaDevolucoesContaPtrf = ({devolucoesContaPtrf, valorTemplate}) => {
+export const TabelaDevolucoesContaPtrf = ({devolucoesContaPtrf, valorTemplate, onClickObservacao}) => {
     return(
         <>
             <div className='row mt-0'>
@@ -31,7 +31,10 @@ export const TabelaDevolucoesContaPtrf = ({devolucoesContaPtrf, valorTemplate}) 
                                     <td>{devolucao.ocorrencias}</td>
                                     <td>{devolucao.valor ? valorTemplate(devolucao.valor) : '-'}</td>
                                     <td>
-                                        <button className="btn-adicionar-devolucoes float-right">
+                                        <button
+                                            onClick={()=>onClickObservacao(devolucao)}
+                                            className="btn-adicionar-devolucoes float-right"
+                                        >
                                             <FontAwesomeIcon
                                                 style={{fontSize: '15px', marginRight: "0"}}
                                                 icon={faPlus}
