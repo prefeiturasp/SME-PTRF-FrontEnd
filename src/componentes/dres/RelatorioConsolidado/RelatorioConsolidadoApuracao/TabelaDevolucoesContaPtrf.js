@@ -27,7 +27,7 @@ export const TabelaDevolucoesContaPtrf = ({devolucoesContaPtrf, valorTemplate}) 
                             <tbody>
                             {devolucoesContaPtrf.map((devolucao, index)=>
                                 <tr key={index}>
-                                    <td>{devolucao.detalhe_tipo_receita__nome}</td>
+                                    <td>{devolucao.tipo_nome}</td>
                                     <td>{devolucao.ocorrencias}</td>
                                     <td>{devolucao.valor ? valorTemplate(devolucao.valor) : '-'}</td>
                                     <td>

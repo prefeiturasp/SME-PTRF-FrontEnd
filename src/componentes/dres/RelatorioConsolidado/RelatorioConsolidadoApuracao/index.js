@@ -83,6 +83,7 @@ export const RelatorioConsolidadoApuracao = () =>{
         try {
             let devolucoes = await getDevolucoesContaPtrf(dre_uuid, periodo_uuid, conta_uuid);
             setDevolucoesContaPtrf(devolucoes)
+            console.log("Devolucoes ", devolucoes)
         }catch (e) {
             console.log("Erro ao carregar Devolucoes a Conta Ptrf ", e);
         }
