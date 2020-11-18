@@ -1,6 +1,6 @@
 import React from "react";
 
-export const FormFiltros = ({stateFiltros, handleChangeFiltros, limpaFiltros, handleSubmitFiltros, grupos}) =>{
+export const FormFiltros = ({stateFiltros, handleChangeFiltros, limpaFiltros, handleSubmitFiltros, tiposDeUnidade, statusPc}) =>{
     return(
         <form onSubmit={handleSubmitFiltros} method="post">
             <div className="row mt-3 mb-3">
@@ -26,24 +26,24 @@ export const FormFiltros = ({stateFiltros, handleChangeFiltros, limpaFiltros, ha
                         className='form-control'
                     >
                         <option key='' value="">Selecione um tipo de unidade</option>
-                        {grupos && grupos.length > 0 && grupos.map((grupo, index) => (
-                            <option key={index} value={grupo.id}>{grupo.nome}</option>
+                        {tiposDeUnidade && tiposDeUnidade.length > 0 && tiposDeUnidade.map((tipo, index) => (
+                            <option key={index} value={tipo.id}>{tipo.nome}</option>
                         ))}
                     </select>
                 </div>
 
                 <div className="col">
-                    <label htmlFor="filtrar_por_situacao">Filtrar por situação da prestação de contas</label>
+                    <label htmlFor="filtrar_por_status_pc">Filtrar por situação da prestação de contas</label>
 
                     <select
-                        value={stateFiltros.filtrar_por_situacao}
+                        value={stateFiltros.filtrar_por_status_pc}
                         onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
-                        name='filtrar_por_situacao'
+                        name='filtrar_por_status_pc'
                         className='form-control'
                     >
                         <option key='' value="">Selecione o status</option>
-                        {grupos && grupos.length > 0 && grupos.map((grupo, index) => (
-                            <option key={index} value={grupo.id}>{grupo.nome}</option>
+                        {statusPc && statusPc.length > 0 && statusPc.map((status, index) => (
+                            <option key={index} value={status.id}>{status.nome}</option>
                         ))}
                     </select>
                 </div>

@@ -52,3 +52,11 @@ export const getItensDashboard = async (uuid_periodo) => {
 export const getListaPrestacaoDeContasDaDre = async (dre_uuid, periodo_uuid, conta_uuid) => {
     return (await api.get(`/api/relatorios-consolidados-dre/info-execucao-financeira-unidades/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}`, authHeader)).data
 };
+
+export const getTiposDeUnidade = async () => {
+    return (await api.get(`/api/associacoes/tabelas/`, authHeader)).data
+};
+
+export const getStatusPc = async () => {
+    return (await api.get(`/api/prestacoes-contas/tabelas/`, authHeader)).data
+};
