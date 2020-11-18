@@ -1,10 +1,10 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {visoesService} from "../../../../services/visoes.service";
 import {auxGetNomes} from "../auxGetNomes";
 import {TopoComBotoes} from "./TopoComBotoes";
-import {getListaPrestacaoDeContasDaDre, getTiposDeUnidade, getStatusPc} from "../../../../services/dres/RelatorioConsolidado.service";
-import TabelaListaPrestacoesDaDre from "./TabelaListaPrestacoesDaDre";
+import {getListaPrestacaoDeContasDaDre, getTiposDeUnidade, getStatusPc, getListaPrestacaoDeContasDaDreFiltros} from "../../../../services/dres/RelatorioConsolidado.service";
+import {TabelaListaPrestacoesDaDre} from "./TabelaListaPrestacoesDaDre";
 import {FormFiltros} from "./FormFiltros";
 
 export const RelatorioConsolidadoDadosDasUes = () => {
@@ -38,14 +38,12 @@ export const RelatorioConsolidadoDadosDasUes = () => {
 
     const carregaStatusPc = useCallback(async () => {
         let status = await getStatusPc();
-        console.log("STATUS ", status.status)
         setStatusPc(status.status)
     }, []);
 
     useEffect(()=>{
         carregaNomePeriodo();
         carregaNomeConta();
-        //carregaTiposDeUnidade();
     });
 
     useEffect(()=>{
@@ -60,7 +58,6 @@ export const RelatorioConsolidadoDadosDasUes = () => {
         carregaStatusPc()
     }, [carregaStatusPc]);
 
-
     const carregaNomePeriodo = async () => {
         if (periodo_uuid){
             let periodo_nome = await auxGetNomes.nomePeriodo(periodo_uuid);
@@ -72,8 +69,6 @@ export const RelatorioConsolidadoDadosDasUes = () => {
         let conta_nome = await auxGetNomes.nomeConta(conta_uuid);
         setContaNome(conta_nome);
     };
-
-
 
     const valorTemplate = (valor) => {
         let valor_formatado = Number(valor).toLocaleString('pt-BR', {
@@ -93,11 +88,15 @@ export const RelatorioConsolidadoDadosDasUes = () => {
 
     const limpaFiltros = async () => {
         await setStateFiltros(initialStateFiltros);
+        await carregaListaPrestacaoDeContasDaDre();
     };
 
     const handleSubmitFiltros = async (event) => {
-        console.log("handleSubmitFiltros ", stateFiltros)
         event.preventDefault();
+        let lista_prestacoes_filtros = await getListaPrestacaoDeContasDaDreFiltros(dre_uuid, periodo_uuid, conta_uuid, stateFiltros.filtrar_por_ue, stateFiltros.filtrar_por_tipo_unidade, stateFiltros.filtrar_por_status_pc)
+        console.log("handleSubmitFiltros ", lista_prestacoes_filtros)
+        setListaPrestacoes(lista_prestacoes_filtros)
+
     };
 
     return (

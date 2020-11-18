@@ -1,9 +1,8 @@
-import React, {memo} from "react";
+import React from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
- const TabelaListaPrestacoesDaDre = ({listaPrestacoes, valorTemplate})=>{
-    console.log("listaPrestacoes ", listaPrestacoes);
+export const TabelaListaPrestacoesDaDre = ({listaPrestacoes, valorTemplate})=>{
 
     const unidadeTemplate = (rowData) =>{
          return (
@@ -226,5 +225,3 @@ import { Column } from 'primereact/column';
       </>
   )
 };
-
- export default memo(TabelaListaPrestacoesDaDre)

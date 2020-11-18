@@ -60,3 +60,7 @@ export const getTiposDeUnidade = async () => {
 export const getStatusPc = async () => {
     return (await api.get(`/api/prestacoes-contas/tabelas/`, authHeader)).data
 };
+
+export const getListaPrestacaoDeContasDaDreFiltros = async (dre_uuid, periodo_uuid, conta_uuid, nome, tipo_unidade, status) => {
+    return (await api.get(`/api/relatorios-consolidados-dre/info-execucao-financeira-unidades/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}${nome ? '&nome='+nome : ''}${tipo_unidade ? '&tipo_unidade='+tipo_unidade : ''}${status ? '&status='+status : ''}`, authHeader)).data
+};
