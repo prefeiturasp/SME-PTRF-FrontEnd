@@ -95,10 +95,8 @@ export const RelatorioConsolidadoDadosDasUes = () => {
 
     const handleSubmitFiltros = async (event) => {
         event.preventDefault();
-        let lista_prestacoes_filtros = await getListaPrestacaoDeContasDaDreFiltros(dre_uuid, periodo_uuid, conta_uuid, stateFiltros.filtrar_por_ue, stateFiltros.filtrar_por_tipo_unidade, stateFiltros.filtrar_por_status_pc)
-        console.log("handleSubmitFiltros ", lista_prestacoes_filtros)
+        let lista_prestacoes_filtros = await getListaPrestacaoDeContasDaDreFiltros(dre_uuid, periodo_uuid, conta_uuid, stateFiltros.filtrar_por_ue, stateFiltros.filtrar_por_tipo_unidade, stateFiltros.filtrar_por_status_pc);
         setListaPrestacoes(lista_prestacoes_filtros)
-
     };
 
     return (
@@ -130,7 +128,6 @@ export const RelatorioConsolidadoDadosDasUes = () => {
                             img={Img404}
                         />
                     }
-
                 </div>
             </div>
         </>

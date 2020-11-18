@@ -18,7 +18,6 @@ export const TopoComBotoes = ({periodoNome, contaNome, periodo_uuid, conta_uuid}
                         Voltar para síntese
                     </button>
                 </div>
-
             </div>
         </>
     )

@@ -221,7 +221,6 @@ export const TabelaListaPrestacoesDaDre = ({listaPrestacoes, valorTemplate})=>{
                   </DataTable>
               </div>
           }
-
       </>
   )
 };
