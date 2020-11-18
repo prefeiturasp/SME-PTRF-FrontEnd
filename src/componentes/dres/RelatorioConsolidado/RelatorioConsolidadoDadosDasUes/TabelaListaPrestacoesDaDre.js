@@ -33,6 +33,74 @@ import { Column } from 'primereact/column';
          )
      };
 
+    const repasseTemplate = (rowData) =>{
+         return (
+             <React.Fragment>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_custeio)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_livre)}</span></p>
+             </React.Fragment>
+         )
+     };
+
+     const rendimentoTemplate = (rowData) =>{
+         return (
+             <React.Fragment>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_custeio)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_livre)}</span></p>
+             </React.Fragment>
+         )
+     };
+
+     const devolucaoPtrfTemplate = (rowData) =>{
+         return (
+             <React.Fragment>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_custeio)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_livre)}</span></p>
+             </React.Fragment>
+         )
+     };
+
+     const demaisCreditosTemplate = (rowData) =>{
+         return (
+             <React.Fragment>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_custeio)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_livre)}</span></p>
+             </React.Fragment>
+         )
+     };
+
+     const despesaRealizadaTemplate = (rowData) =>{
+         return (
+             <React.Fragment>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_custeio)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_livre)}</span></p>
+             </React.Fragment>
+         )
+     };
+     const saldoTemplate = (rowData) =>{
+         return (
+             <React.Fragment>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_custeio)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_livre)}</span></p>
+             </React.Fragment>
+         )
+     };
+     const devolucaoTesouroTemplate = (rowData) =>{
+         return (
+             <React.Fragment>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_custeio)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_livre)}</span></p>
+             </React.Fragment>
+         )
+     };
+
      const statusTemplate = (rowData) =>{
          return (
              <React.Fragment>
@@ -70,8 +138,43 @@ import { Column } from 'primereact/column';
                           body={reprogramadoTemplate}
                       />
                       <Column
-                          field='unidade.nome'
-                          header="Unidade educacional"
+                          field='valores.demais_creditos_no_periodo_capital'
+                          header="Repasse"
+                          body={repasseTemplate}
+                      />
+                      <Column
+                          field='valores.demais_creditos_no_periodo_capital'
+                          header="Rendimento"
+                          body={rendimentoTemplate}
+                      />
+                      <Column
+                          field='valores.demais_creditos_no_periodo_capital'
+                          header="Devolução à conta PTRF"
+                          body={devolucaoPtrfTemplate}
+                      />
+                      <Column
+                          field='valores.demais_creditos_no_periodo_capital'
+                          header="Demais créditos"
+                          body={demaisCreditosTemplate}
+                      />
+                      <Column
+                          field='valores.demais_creditos_no_periodo_capital'
+                          header="Despesa realizada"
+                          body={despesaRealizadaTemplate}
+                      />
+                      <Column
+                          field='valores.demais_creditos_no_periodo_capital'
+                          header="Saldo"
+                          body={saldoTemplate}
+                      />
+                      <Column
+                          field='valores.demais_creditos_no_periodo_capital'
+                          header="Devolução ao tesouro"
+                          body={devolucaoTesouroTemplate}
+                      />
+                      <Column
+                          field='status_prestacao_contas'
+                          header="Situação da Prestação de Contas"
                           body={statusTemplate}
                           className='align-top'
                       />
