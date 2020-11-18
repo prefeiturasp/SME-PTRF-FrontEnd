@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";
-import {getItensDashboard, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa, getDevolucoesAoTesouro} from "../../../../services/dres/RelatorioConsolidado.service";
+import {getItensDashboard, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa, getDevolucoesAoTesouro, putCriarEditarDeletarObservacaoDevolucaoContaPtrf} from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
 import {visoesService} from "../../../../services/visoes.service";
@@ -181,6 +181,36 @@ export const RelatorioConsolidadoApuracao = () =>{
         })
     };
 
+    const onSalvarObservacao = async ()=>{
+        setShowModalObservacao(false);
+        const payload = {
+            observacao: observacao.observacao,
+        };
+        try {
+            await putCriarEditarDeletarObservacaoDevolucaoContaPtrf(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
+            console.log("Observação salva com sucesso")
+        }catch (e) {
+            console.log("Erro ao salvar observação ", e)
+        }
+        await carregaDevolucoesContaPtrf();
+
+    };
+
+    const onDeletarObeservacao = async () =>{
+        setShowModalObservacao(false);
+        const payload = {
+            observacao: '',
+        };
+        try {
+            await putCriarEditarDeletarObservacaoDevolucaoContaPtrf(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
+            console.log("Observação deletada com sucesso")
+        }catch (e) {
+            console.log("Erro ao salvar observação ", e)
+        }
+        await carregaDevolucoesContaPtrf();
+
+    };
+
     return(
         <>
             <div className="col-12 container-visualizacao-da-ata mb-5">
@@ -230,7 +260,8 @@ export const RelatorioConsolidadoApuracao = () =>{
                         handleClose={onHandleClose}
                         observacao={observacao}
                         onChangeObservacao={onChangeObservacao}
-
+                        onSalvarObservacao={onSalvarObservacao}
+                        onDeletarObeservacao={onDeletarObeservacao}
                         titulo="Edição de comentário"
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
