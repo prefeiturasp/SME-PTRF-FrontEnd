@@ -5,6 +5,7 @@ import {auxGetNomes} from "../auxGetNomes";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {getListaPrestacaoDeContasDaDre} from "../../../../services/dres/RelatorioConsolidado.service";
 import TabelaListaPrestacoesDaDre from "./TabelaListaPrestacoesDaDre";
+import {FormFiltros} from "./FormFiltros";
 
 export const RelatorioConsolidadoDadosDasUes = () => {
 
@@ -12,9 +13,18 @@ export const RelatorioConsolidadoDadosDasUes = () => {
 
     const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
 
+    const initialStateFiltros = {
+        filtrar_por_ue: "",
+        filtrar_por_tipo_unidade: "",
+        filtrar_por_situacao: "",
+    };
+
     const [periodoNome, setPeriodoNome] = useState('');
     const [contaNome, setContaNome] = useState('');
     const [listaPrestacoes, setListaPrestacoes] = useState([]);
+    const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
+    const [tipoDeUnidade, setTipoDeUnidade] = useState([]);
+    const [situacaoPc, setSituacaoPc] = useState([]);
 
     const carregaListaPrestacaoDeContasDaDre = useCallback(async ()=>{
         let lista_de_prestacoes = await getListaPrestacaoDeContasDaDre(dre_uuid, periodo_uuid, conta_uuid);
@@ -52,6 +62,21 @@ export const RelatorioConsolidadoDadosDasUes = () => {
         return valor_formatado
     };
 
+    const handleChangeFiltros = (name, value) => {
+        setStateFiltros({
+            ...stateFiltros,
+            [name]: value
+        });
+    };
+
+    const limpaFiltros = async () => {
+        await setStateFiltros(initialStateFiltros);
+    };
+
+    const handleSubmitFiltros = async (event) => {
+        event.preventDefault();
+    };
+
     return (
         <>
             <div className="col-12 container-visualizacao-da-ata mb-5">
@@ -62,11 +87,16 @@ export const RelatorioConsolidadoDadosDasUes = () => {
                         periodo_uuid={periodo_uuid}
                         conta_uuid={conta_uuid}
                     />
+                    <FormFiltros
+                        handleChangeFiltros={handleChangeFiltros}
+                        limpaFiltros={limpaFiltros}
+                        handleSubmitFiltros={handleSubmitFiltros}
+                        stateFiltros={stateFiltros}
+                    />
                     <TabelaListaPrestacoesDaDre
                         listaPrestacoes={listaPrestacoes}
                         valorTemplate={valorTemplate}
                     />
-                    {/*<DataTableRowGroupDemo/>*/}
                 </div>
             </div>
         </>
