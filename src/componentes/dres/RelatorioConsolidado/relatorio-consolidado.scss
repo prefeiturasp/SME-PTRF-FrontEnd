@@ -84,7 +84,18 @@
 
 }
 
-
 .conteudo-celulas-lista-dres{
   display: inline-block;
+}
+
+.span-status-NAO_RECEBIDA, .span-status-NAO_APRESENTADA  {
+  color: #B40C02;
+}
+
+.span-status-RECEBIDA, .span-status-APROVADA, .span-status-APROVADA_RESSALVA {
+  color: #297805;
+}
+
+.span-status-DEVOLVIDA, .span-status-EM_ANALISE {
+  color: #D06D12;
 }
