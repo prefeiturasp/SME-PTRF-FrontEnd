@@ -6,6 +6,8 @@ import {TopoComBotoes} from "./TopoComBotoes";
 import {getListaPrestacaoDeContasDaDre, getTiposDeUnidade, getStatusPc, getListaPrestacaoDeContasDaDreFiltros} from "../../../../services/dres/RelatorioConsolidado.service";
 import {TabelaListaPrestacoesDaDre} from "./TabelaListaPrestacoesDaDre";
 import {FormFiltros} from "./FormFiltros";
+import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
+import Img404 from "../../../../assets/img/img-404.svg"
 
 export const RelatorioConsolidadoDadosDasUes = () => {
 
@@ -117,10 +119,18 @@ export const RelatorioConsolidadoDadosDasUes = () => {
                         tiposDeUnidade={tiposDeUnidade}
                         statusPc={statusPc}
                     />
-                    <TabelaListaPrestacoesDaDre
-                        listaPrestacoes={listaPrestacoes}
-                        valorTemplate={valorTemplate}
-                    />
+                    {listaPrestacoes && listaPrestacoes.length > 0 ?(
+                        <TabelaListaPrestacoesDaDre
+                            listaPrestacoes={listaPrestacoes}
+                            valorTemplate={valorTemplate}
+                        />
+                    ):
+                        <MsgImgCentralizada
+                            texto='Não encontramos nenhuma prestação de contas, tente novamente'
+                            img={Img404}
+                        />
+                    }
+
                 </div>
             </div>
         </>
