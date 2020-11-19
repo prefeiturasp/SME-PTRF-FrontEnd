@@ -271,10 +271,6 @@ export const RelatorioConsolidadoApuracao = () =>{
                         onChangeObservacao={onChangeObservacao}
                         serviceObservacao={serviceObservacao}
                         titulo="Observação sobre devolução"
-                        primeiroBotaoTexto="Cancelar"
-                        primeiroBotaoCss="outline-success"
-                        segundoBotaoCss="success"
-                        segundoBotaoTexto="Confirmar"
                     />
                 </section>
             </div>

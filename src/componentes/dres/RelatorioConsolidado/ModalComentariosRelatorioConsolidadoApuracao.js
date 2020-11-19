@@ -40,11 +40,6 @@ export const ModalComentariosRelatorioConsolidadoApuracao = (props) => {
             titulo={props.titulo}
             bodyText={bodyTextarea()}
             primeiroBotaoOnclick={props.handleClose}
-            primeiroBotaoTexto={props.primeiroBotaoTexto}
-            primeiroBotaoCss={props.primeiroBotaoCss}
-            segundoBotaoOnclick={props.onVoltarParaAnalise}
-            segundoBotaoCss={props.segundoBotaoCss}
-            segundoBotaoTexto={props.segundoBotaoTexto}
         />
     )
 };
