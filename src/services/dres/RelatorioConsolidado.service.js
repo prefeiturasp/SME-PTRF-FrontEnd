@@ -66,5 +66,5 @@ export const getListaPrestacaoDeContasDaDreFiltros = async (dre_uuid, periodo_uu
 };
 
 export const putCriarEditarDeletarObservacaoDevolucaoContaPtrf = async (dre_uuid, periodo_uuid, conta_uuid, tipo_devolucao_uuid, payload) =>{
-    return await api.put(`/api/relatorios-consolidados-dre/update-observacao-devolucoes-a-conta/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}&tipo_devolucao=${tipo_devolucao_uuid}`, payload, authHeader).data
+    return (await api.put(`/api/relatorios-consolidados-dre/update-observacao-devolucoes-a-conta/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}&tipo_devolucao=${tipo_devolucao_uuid}`, payload, authHeader)).data
 };

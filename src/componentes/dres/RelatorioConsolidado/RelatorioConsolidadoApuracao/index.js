@@ -168,10 +168,10 @@ export const RelatorioConsolidadoApuracao = () =>{
         setShowModalObservacao(false);
     };
 
-    const onClickObservacao = (obj) =>{
+    const onClickObservacao = (devolucao) =>{
         setShowModalObservacao(true)
-        console.log("onClicAddObservacao ", obj)
-        setObservacao(obj)
+        console.log("onClickObservacao  ", devolucao)
+        setObservacao(devolucao)
     };
 
     const onChangeObservacao = (valor) =>{
@@ -186,12 +186,16 @@ export const RelatorioConsolidadoApuracao = () =>{
         const payload = {
             observacao: observacao.observacao,
         };
-        try {
-            await putCriarEditarDeletarObservacaoDevolucaoContaPtrf(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
-            console.log("Observação salva com sucesso")
-        }catch (e) {
-            console.log("Erro ao salvar observação ", e)
+
+        if (observacao.tipo_devolucao === 'devolucao_conta'){
+            try {
+                await putCriarEditarDeletarObservacaoDevolucaoContaPtrf(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
+                console.log("Observação salva com sucesso")
+            }catch (e) {
+                console.log("Erro ao salvar observação ", e)
+            }
         }
+
         await carregaDevolucoesContaPtrf();
 
     };
@@ -201,11 +205,14 @@ export const RelatorioConsolidadoApuracao = () =>{
         const payload = {
             observacao: '',
         };
-        try {
-            await putCriarEditarDeletarObservacaoDevolucaoContaPtrf(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
-            console.log("Observação deletada com sucesso")
-        }catch (e) {
-            console.log("Erro ao salvar observação ", e)
+
+        if (observacao.tipo_devolucao === 'devolucao_conta') {
+            try {
+                await putCriarEditarDeletarObservacaoDevolucaoContaPtrf(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
+                console.log("Observação deletada com sucesso")
+            } catch (e) {
+                console.log("Erro ao salvar observação ", e)
+            }
         }
         await carregaDevolucoesContaPtrf();
 

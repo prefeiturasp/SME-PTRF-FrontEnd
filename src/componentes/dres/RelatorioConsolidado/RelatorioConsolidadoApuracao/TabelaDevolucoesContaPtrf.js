@@ -32,7 +32,7 @@ export const TabelaDevolucoesContaPtrf = ({devolucoesContaPtrf, valorTemplate, o
                                     <td>{devolucao.valor ? valorTemplate(devolucao.valor) : '-'}</td>
                                     <td>
                                         <button
-                                            onClick={()=>onClickObservacao(devolucao)}
+                                            onClick={()=>onClickObservacao( {...devolucao, tipo_devolucao:'devolucao_conta'} )}
                                             className="btn-adicionar-devolucoes float-right"
                                         >
                                             <FontAwesomeIcon
