@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";
-import {getItensDashboard, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa, getDevolucoesAoTesouro, putCriarEditarDeletarObservacaoDevolucaoContaPtrf} from "../../../../services/dres/RelatorioConsolidado.service";
+import {getItensDashboard, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa, getDevolucoesAoTesouro, putCriarEditarDeletarObservacaoDevolucaoContaPtrf, putCriarEditarDeletarObservacaoDevolucaoTesouro} from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
 import {visoesService} from "../../../../services/visoes.service";
@@ -85,9 +85,17 @@ export const RelatorioConsolidadoApuracao = () =>{
         try {
             let devolucoes = await getDevolucoesContaPtrf(dre_uuid, periodo_uuid, conta_uuid);
             setDevolucoesContaPtrf(devolucoes);
-            console.log("Devolucoes ", devolucoes)
         }catch (e) {
             console.log("Erro ao carregar Devolucoes a Conta Ptrf ", e);
+        }
+    };
+
+    const carregaDevolucoesAoTesouro = async () =>{
+        try {
+            let devolucoes = await getDevolucoesAoTesouro(dre_uuid, periodo_uuid, conta_uuid);
+            setDevolucoesAoTesouro(devolucoes)
+        }catch (e) {
+            console.log("Erro ao carregar Devolucoes ao Tesouro ", e);
         }
     };
 
@@ -102,14 +110,7 @@ export const RelatorioConsolidadoApuracao = () =>{
         }
     };
 
-    const carregaDevolucoesAoTesouro = async () =>{
-        try {
-            let devolucoes = await getDevolucoesAoTesouro(dre_uuid, periodo_uuid, conta_uuid);
-            setDevolucoesAoTesouro(devolucoes)
-        }catch (e) {
-            console.log("Erro ao carregar Devolucoes ao Tesouro ", e);
-        }
-    };
+
 
     const retornaQtdeEmAnalise = () =>{
         if (itensDashboard) {
@@ -168,9 +169,13 @@ export const RelatorioConsolidadoApuracao = () =>{
         setShowModalObservacao(false);
     };
 
+
+    // Observações
+    // Os métodos onClickObservacao, onChangeObservacao e serviceOperacao, servem tanto para devoluções a conta PTRF quanto devoluções ao tesouro
+    // É passado ao clicar nas respectivas tabelas o parâmetro tipo_devolucao:'devolucao_conta', tipo_devolucao:'devolucao_tesouro', operacao:'salvar' e operacao:'deletar'
+
     const onClickObservacao = (devolucao) =>{
-        setShowModalObservacao(true)
-        console.log("onClickObservacao  ", devolucao)
+        setShowModalObservacao(true);
         setObservacao(devolucao)
     };
 
@@ -181,40 +186,37 @@ export const RelatorioConsolidadoApuracao = () =>{
         })
     };
 
-    const onSalvarObservacao = async ()=>{
+    const serviceOperacao = async (operacao)=>{
         setShowModalObservacao(false);
-        const payload = {
-            observacao: observacao.observacao,
-        };
+        let payload;
+
+        if (operacao.operacao === 'salvar'){
+            payload = {
+                observacao: observacao.observacao,
+            };
+        }else if(operacao.operacao === 'deletar'){
+            payload = {
+                observacao: '',
+            };
+        }
 
         if (observacao.tipo_devolucao === 'devolucao_conta'){
             try {
                 await putCriarEditarDeletarObservacaoDevolucaoContaPtrf(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
-                console.log("Observação salva com sucesso")
+                await carregaDevolucoesContaPtrf();
+                console.log("Operação de ", operacao.operacao, " Observação devolução a conta PTRF salva com sucesso")
+            }catch (e) {
+                console.log("Erro ao salvar observação ", e)
+            }
+        }else if(observacao.tipo_devolucao === 'devolucao_tesouro'){
+            try {
+                await putCriarEditarDeletarObservacaoDevolucaoTesouro(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
+                await carregaDevolucoesAoTesouro()
+                console.log("Operação de ", operacao.operacao, " Observação devolução ao tesouro salva com sucesso")
             }catch (e) {
                 console.log("Erro ao salvar observação ", e)
             }
         }
-
-        await carregaDevolucoesContaPtrf();
-
-    };
-
-    const onDeletarObeservacao = async () =>{
-        setShowModalObservacao(false);
-        const payload = {
-            observacao: '',
-        };
-
-        if (observacao.tipo_devolucao === 'devolucao_conta') {
-            try {
-                await putCriarEditarDeletarObservacaoDevolucaoContaPtrf(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
-                console.log("Observação deletada com sucesso")
-            } catch (e) {
-                console.log("Erro ao salvar observação ", e)
-            }
-        }
-        await carregaDevolucoesContaPtrf();
 
     };
 
@@ -254,6 +256,7 @@ export const RelatorioConsolidadoApuracao = () =>{
                     <TabelaDevolucoesAoTesouro
                         devolucoesAoTesouro={devolucoesAoTesouro}
                         valorTemplate={valorTemplate}
+                        onClickObservacao={onClickObservacao}
                     />
                     <TabelaExecucaoFisica
                         itensDashboard={itensDashboard}
@@ -267,8 +270,7 @@ export const RelatorioConsolidadoApuracao = () =>{
                         handleClose={onHandleClose}
                         observacao={observacao}
                         onChangeObservacao={onChangeObservacao}
-                        onSalvarObservacao={onSalvarObservacao}
-                        onDeletarObeservacao={onDeletarObeservacao}
+                        serviceOperacao={serviceOperacao}
                         titulo="Edição de comentário"
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
