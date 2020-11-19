@@ -6,9 +6,12 @@ Front da aplicação _SIG.Escola_ da Secretaria de Educação da cidade de São 
 
 License: MIT
 
-Versão: 1.2.0
+Versão: 1.2.1
 
 ## Release Notes
+
+### 1.2.1 - 19/11/2020 - Hotfix
+* 🐞28206 - Erro de autenticação ao baixar relações de bens de prestações de contas
 
 ### 1.2.0 - 10/11/2020 - Entregas da Sprint 11
 * Gestão de perfis de acesso às funcionalidades do sistema
