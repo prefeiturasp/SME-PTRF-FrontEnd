@@ -44,21 +44,6 @@ export const CancelarModal = (propriedades) => {
     )
 };
 
-export const CancelarModalReceitas = (propriedades) => {
-    return (
-        <ModalBootstrap
-            show={propriedades.show}
-            onHide={propriedades.handleClose}
-            titulo="Deseja cancelar a inclusão de Crédito?"
-            bodyText=""
-            primeiroBotaoOnclick={propriedades.onCancelarTrue}
-            primeiroBotaoTexto="OK"
-            segundoBotaoOnclick={propriedades.handleClose}
-            segundoBotaoTexto="Fechar"
-        />
-    )
-};
-
 export const DeletarModal = (propriedades) => {
     return (
         <ModalBootstrap
@@ -330,13 +315,13 @@ export const PeriodoFechado = (propriedades) => {
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Período Fechado"
-            bodyText="Este período está fechado, para inclusão ou edição de lançamentos (créditos ou despesas) é necessário reabrir o processo de prestação de contas. Deseja ir para a página de Prestação de Contas?"
+            bodyText="Este período está fechado. Para inclusão ou edição de lançamentos (créditos ou despesas) é necessário reabrir o processo de prestação de contas. Se for esse o caso, por favor, entre em contato com sua Diretoria Regional de Educação - DRE."
             primeiroBotaoOnclick={propriedades.handleClose}
-            primeiroBotaoTexto="Não"
-            primeiroBotaoCss="outline-success"
-            segundoBotaoOnclick={() => {window.location.assign("/prestacao-de-contas")}}
-            segundoBotaoTexto="Sim"
-            segundoBotaoCss="success"
+            primeiroBotaoTexto="Fechar"
+            primeiroBotaoCss="success"
+            // segundoBotaoOnclick={() => {window.location.assign("/prestacao-de-contas")}}
+            // segundoBotaoTexto="Sim"
+            // segundoBotaoCss="success"
         />
     )
 };

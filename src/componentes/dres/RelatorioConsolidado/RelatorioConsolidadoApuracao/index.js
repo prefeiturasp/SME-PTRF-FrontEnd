@@ -12,6 +12,7 @@ import {JustificativaDiferenca} from "./JustificativaDiferenca";
 import {TabelaDevolucoesContaPtrf} from "./TabelaDevolucoesContaPtrf";
 import {TabelaDevolucoesAoTesouro} from "./TabelaDevolucoesAoTesouro";
 import {TabelaExecucaoFisica} from "./TabelaExecucaoFisica";
+import {auxGetNomes} from "../auxGetNomes";
 
 export const RelatorioConsolidadoApuracao = () =>{
 
@@ -41,8 +42,8 @@ export const RelatorioConsolidadoApuracao = () =>{
     }, []);
 
     useEffect(() => {
-        carregaPeriodos();
-        carregaContas();
+        carregaNomePeriodo();
+        carregaNomeConta();
         retornaQtdeEmAnalise();
         carregaExecucaoFinanceira();
         carregaDevolucoesContaPtrf();
@@ -57,31 +58,16 @@ export const RelatorioConsolidadoApuracao = () =>{
         }
     };
 
-    const carregaPeriodos = async () => {
+    const carregaNomePeriodo = async () => {
         if (periodo_uuid){
-            let periodos = await getPeriodos();
-            if (periodos.length > 0 ){
-                let periodo_obj = periodos.find(element => element.uuid === periodo_uuid);
-                let periodo_nome;
-                periodo_nome = periodo_obj.referencia + " - ";
-                periodo_nome += periodo_obj.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo_obj.data_inicio_realizacao_despesas) : "-";
-                periodo_nome += " até ";
-                periodo_nome += periodo_obj.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo_obj.data_fim_realizacao_despesas) : "-";
-                setPeriodoNome(periodo_nome);
-            }
+            let periodo_nome = await auxGetNomes.nomePeriodo(periodo_uuid);
+            setPeriodoNome(periodo_nome);
         }
     };
 
-    const carregaContas = async () => {
-        try {
-            let tipo_contas = await getTiposConta();
-            if (tipo_contas && tipo_contas.length > 0){
-                let tipo_conta_obj = tipo_contas.find(element => element.uuid === conta_uuid);
-                setContaNome(tipo_conta_obj.nome)
-            }
-        }catch (e) {
-            console.log("Erro ao trazer os tipos de contas ", e);
-        }
+    const carregaNomeConta = async () => {
+        let conta_nome = await auxGetNomes.nomeConta(conta_uuid);
+        setContaNome(conta_nome);
     };
 
     const carregaExecucaoFinanceira = async () =>{
@@ -186,7 +172,10 @@ export const RelatorioConsolidadoApuracao = () =>{
                         totalEmAnalise={totalEmAnalise}
                         periodoUuid={periodo_uuid}
                     />
-                    <BoxConsultarDados/>
+                    <BoxConsultarDados
+                        periodo_uuid={periodo_uuid}
+                        conta_uuid={conta_uuid}
+                    />
                     <TabelaExecucaoFinanceira
                         execucaoFinanceira={execucaoFinanceira}
                         valorTemplate={valorTemplate}

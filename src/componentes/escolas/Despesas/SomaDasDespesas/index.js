@@ -29,4 +29,4 @@ export const SomaDasDespesas = ({somaDosTotais}) => {
             </div>
         </div>
     )
-}
+};

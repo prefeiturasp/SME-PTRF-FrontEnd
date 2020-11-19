@@ -115,10 +115,10 @@ const setValoresRateiosOriginal = (mais_de_um_tipo_de_despesa = null, values, se
 };
 
 const getErroValorOriginalRateios = (values) =>{
+
     let valor_ptfr_original;
 
     valor_ptfr_original = calculaValorOriginal(values);
-
     let valor_total_dos_rateios_original = 0;
     let valor_total_dos_rateios_capital_original = 0;
     let valor_total_dos_rateios_custeio_original = 0;
@@ -131,7 +131,7 @@ const getErroValorOriginalRateios = (values) =>{
         }
     });
 
-    valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original
+    valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original;
 
     return round(valor_ptfr_original, 2) - round(valor_total_dos_rateios_original, 2)
 

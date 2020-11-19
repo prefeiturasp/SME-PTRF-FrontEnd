@@ -1,14 +1,15 @@
 # SME-PTRF-FrontEnd
 
-========
-
 Front da aplicação _SIG.Escola_ da Secretaria de Educação da cidade de São Paulo.
 
 License: MIT
 
-Versão: 1.2.1
+Versão: 1.3.0
 
 ## Release Notes
+
+### 1.3.0 - 08/12/2020 - Entregas da Sprint 12
+* Em andamento...
 
 ### 1.2.1 - 19/11/2020 - Hotfix
 * 🐞28206 - Erro de autenticação ao baixar relações de bens de prestações de contas

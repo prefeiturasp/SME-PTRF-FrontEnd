@@ -18,7 +18,7 @@ export const ModalConcluirAnalise = (props) => {
                             className="form-control"
                         >
                             <option value="">Selecione um status</option>
-                            {props.tabelaPrestacoes.status && props.tabelaPrestacoes.status.length > 0 && props.tabelaPrestacoes.status.filter(element => element.id !== 'DOCS_PENDENTES' && element.id !== 'NAO_RECEBIDA' && element.id !== 'RECEBIDA' && element.id !== 'EM_ANALISE').map(item => (
+                            {props.tabelaPrestacoes.status && props.tabelaPrestacoes.status.length > 0 && props.tabelaPrestacoes.status.filter(element => element.id !== 'NAO_APRESENTADA' && element.id !== 'NAO_RECEBIDA' && element.id !== 'RECEBIDA' && element.id !== 'EM_ANALISE').map(item => (
                                 <option key={item.id} value={item.id}>{item.nome}</option>
                             ))}
                         </select>
