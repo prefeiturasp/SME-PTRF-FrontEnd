@@ -171,8 +171,8 @@ export const RelatorioConsolidadoApuracao = () =>{
 
 
     // Observações
-    // Os métodos onClickObservacao, onChangeObservacao e serviceOperacao, servem tanto para devoluções a conta PTRF quanto devoluções ao tesouro
-    // É passado ao clicar nas respectivas tabelas o parâmetro tipo_devolucao:'devolucao_conta', tipo_devolucao:'devolucao_tesouro', operacao:'salvar' e operacao:'deletar'
+    // Os métodos onClickObservacao, onChangeObservacao e serviceObservacao, servem tanto para devoluções a conta PTRF quanto devoluções ao tesouro
+    // É passado ao clicar nas respectivas tabelas os parâmetros tipo_devolucao:'devolucao_conta', tipo_devolucao:'devolucao_tesouro' e operacao:'salvar' e operacao:'deletar'
 
     const onClickObservacao = (devolucao) =>{
         setShowModalObservacao(true);
@@ -186,7 +186,7 @@ export const RelatorioConsolidadoApuracao = () =>{
         })
     };
 
-    const serviceOperacao = async (operacao)=>{
+    const serviceObservacao = async (operacao)=>{
         setShowModalObservacao(false);
         let payload;
 
@@ -217,7 +217,6 @@ export const RelatorioConsolidadoApuracao = () =>{
                 console.log("Erro ao salvar observação ", e)
             }
         }
-
     };
 
     return(
@@ -270,8 +269,8 @@ export const RelatorioConsolidadoApuracao = () =>{
                         handleClose={onHandleClose}
                         observacao={observacao}
                         onChangeObservacao={onChangeObservacao}
-                        serviceOperacao={serviceOperacao}
-                        titulo="Edição de comentário"
+                        serviceObservacao={serviceObservacao}
+                        titulo="Observação sobre devolução"
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="success"
