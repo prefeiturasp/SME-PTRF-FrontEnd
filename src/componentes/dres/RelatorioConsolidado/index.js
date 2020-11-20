@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getFiqueDeOlho, getConsultarStatus, getTiposConta} from "../../../services/dres/RelatorioConsolidado.service";
+import {getFiqueDeOlho, getConsultarStatus, getTiposConta, getDownloadRelatorio} from "../../../services/dres/RelatorioConsolidado.service";
 import {getItensDashboard, getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
@@ -8,6 +8,7 @@ import Img404 from "../../../assets/img/img-404.svg";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {visoesService} from "../../../services/visoes.service";
 import {BarraDeStatus} from "./BarraDeStatus";
+import {ExecucaoFinanceira} from "./ExecucaoFinanceira";
 import './relatorio-consolidado.scss'
 
 export const RelatorioConsolidado = () => {
@@ -114,6 +115,20 @@ export const RelatorioConsolidado = () => {
         window.location.assign(`/dre-relatorio-consolidado-apuracao/${periodoEscolhido}/${contaEscolhida}/`)
     };
 
+    const textoBtnRelatorio = () =>{
+        if (statusRelatorio.status_geracao === 'GERADO_TOTAL'){
+            return 'Relatório consolidado gerado'
+        }else if (statusRelatorio.status_geracao === 'GERADO_PARCIAL'){
+            return 'Relatório parcial gerado'
+        }else if (statusRelatorio.status_geracao === 'NAO_GERADO'){
+            return 'Relatório não gerado'
+        }
+    };
+
+    const downloadRelatorio = async () =>{
+        await getDownloadRelatorio(dre_uuid, periodoEscolhido, contaEscolhida);
+    };
+
     return (
         <>
             <div className="col-12 container-texto-introdutorio mb-4 mt-3">
@@ -139,10 +154,18 @@ export const RelatorioConsolidado = () => {
                     />
                 }
                 {periodoEscolhido && itensDashboard ? (
+                    <>
                     <TrilhaDeStatus
                         retornaQtdeStatus={retornaQtdeStatus}
                         retornaQtdeStatusTotal={retornaQtdeStatusTotal}
                     />
+                    <ExecucaoFinanceira
+                        statusRelatorio={statusRelatorio}
+                        textoBtnRelatorio={textoBtnRelatorio}
+                        downloadRelatorio={downloadRelatorio}
+                    />
+                    </>
+
                 ):
                     <MsgImgCentralizada
                         texto='Selecione um período acima para visualizar as ações'

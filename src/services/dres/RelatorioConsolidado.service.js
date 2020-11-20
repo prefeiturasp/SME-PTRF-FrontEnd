@@ -72,3 +72,26 @@ export const putCriarEditarDeletarObservacaoDevolucaoContaPtrf = async (dre_uuid
 export const putCriarEditarDeletarObservacaoDevolucaoTesouro = async (dre_uuid, periodo_uuid, conta_uuid, tipo_devolucao_uuid, payload) =>{
     return (await api.put(`/api/relatorios-consolidados-dre/update-observacao-devolucoes-ao-tesouro/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}&tipo_devolucao=${tipo_devolucao_uuid}`, payload, authHeader)).data
 };
+
+export const getDownloadRelatorio = async (dre_uuid, periodo_uuid, conta_uuid) => {
+    return api
+    .get(`/api/relatorios-consolidados-dre/download/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}`, {
+        responseType: 'blob',
+        timeout: 30000,
+        headers: {
+            'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+            'Content-Type': 'application/json',
+        }
+    })
+    .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'relatorio_dre.xlsx');
+        document.body.appendChild(link);
+        link.click();
+    }).catch(error => {
+        return error.response;
+    });
+};
+
