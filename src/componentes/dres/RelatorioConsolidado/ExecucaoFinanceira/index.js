@@ -1,7 +1,6 @@
 import React from "react";
 
 export const ExecucaoFinanceira =({statusRelatorio, textoBtnRelatorio, downloadRelatorio}) =>{
-    console.log("Execucao Financeira ", statusRelatorio)
     return(
         <>
             {statusRelatorio &&

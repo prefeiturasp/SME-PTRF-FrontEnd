@@ -107,7 +107,6 @@ export const RelatorioConsolidado = () => {
     const consultarStatus = async () =>{
         if (dre_uuid && periodoEscolhido && contaEscolhida){
             let status = await getConsultarStatus(dre_uuid, periodoEscolhido, contaEscolhida);
-            console.log("Consultar Status ", status)
             setStatusRelatorio(status);
         }
     };
@@ -127,8 +126,7 @@ export const RelatorioConsolidado = () => {
     };
 
     const downloadRelatorio = async () =>{
-        let download = await getDownloadRelatorio(dre_uuid, periodoEscolhido, contaEscolhida)
-        console.log('downloadRelatorio ', download)
+        await getDownloadRelatorio(dre_uuid, periodoEscolhido, contaEscolhida);
     };
 
     return (
