@@ -1,6 +1,6 @@
 import React from "react";
 
-export const ExecucaoFinanceira =({statusRelatorio}) =>{
+export const ExecucaoFinanceira =({statusRelatorio, textoBtnRelatorio, downloadRelatorio}) =>{
     console.log("Execucao Financeira ", statusRelatorio)
     return(
         <>
@@ -23,11 +23,12 @@ export const ExecucaoFinanceira =({statusRelatorio}) =>{
                                         Previa
                                     </button>
                                     <button
+                                        onClick={()=>downloadRelatorio()}
                                         type="button"
                                         className="btn btn-success"
                                         disabled={statusRelatorio.status_geracao === 'NAO_GERADO'}
                                     >
-                                        Visualizar ata
+                                        {textoBtnRelatorio()}
                                     </button>
                                 </div>
                             </div>

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getFiqueDeOlho, getConsultarStatus, getTiposConta} from "../../../services/dres/RelatorioConsolidado.service";
+import {getFiqueDeOlho, getConsultarStatus, getTiposConta, getDownloadRelatorio} from "../../../services/dres/RelatorioConsolidado.service";
 import {getItensDashboard, getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
@@ -116,6 +116,21 @@ export const RelatorioConsolidado = () => {
         window.location.assign(`/dre-relatorio-consolidado-apuracao/${periodoEscolhido}/${contaEscolhida}/`)
     };
 
+    const textoBtnRelatorio = () =>{
+        if (statusRelatorio.status_geracao === 'GERADO_TOTAL'){
+            return 'Relatório consolidado gerado'
+        }else if (statusRelatorio.status_geracao === 'GERADO_PARCIAL'){
+            return 'Relatório parcial gerado'
+        }else if (statusRelatorio.status_geracao === 'NAO_GERADO'){
+            return 'Relatório não gerado'
+        }
+    };
+
+    const downloadRelatorio = async () =>{
+        let download = await getDownloadRelatorio(dre_uuid, periodoEscolhido, contaEscolhida)
+        console.log('downloadRelatorio ', download)
+    };
+
     return (
         <>
             <div className="col-12 container-texto-introdutorio mb-4 mt-3">
@@ -148,6 +163,8 @@ export const RelatorioConsolidado = () => {
                     />
                     <ExecucaoFinanceira
                         statusRelatorio={statusRelatorio}
+                        textoBtnRelatorio={textoBtnRelatorio}
+                        downloadRelatorio={downloadRelatorio}
                     />
                     </>
 
