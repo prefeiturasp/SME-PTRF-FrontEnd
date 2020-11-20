@@ -8,6 +8,7 @@ import Img404 from "../../../assets/img/img-404.svg";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {visoesService} from "../../../services/visoes.service";
 import {BarraDeStatus} from "./BarraDeStatus";
+import {ExecucaoFinanceira} from "./ExecucaoFinanceira";
 import './relatorio-consolidado.scss'
 
 export const RelatorioConsolidado = () => {
@@ -106,6 +107,7 @@ export const RelatorioConsolidado = () => {
     const consultarStatus = async () =>{
         if (dre_uuid && periodoEscolhido && contaEscolhida){
             let status = await getConsultarStatus(dre_uuid, periodoEscolhido, contaEscolhida);
+            console.log("Consultar Status ", status)
             setStatusRelatorio(status);
         }
     };
@@ -139,10 +141,14 @@ export const RelatorioConsolidado = () => {
                     />
                 }
                 {periodoEscolhido && itensDashboard ? (
+                    <>
                     <TrilhaDeStatus
                         retornaQtdeStatus={retornaQtdeStatus}
                         retornaQtdeStatusTotal={retornaQtdeStatusTotal}
                     />
+                    <ExecucaoFinanceira/>
+                    </>
+
                 ):
                     <MsgImgCentralizada
                         texto='Selecione um período acima para visualizar as ações'
