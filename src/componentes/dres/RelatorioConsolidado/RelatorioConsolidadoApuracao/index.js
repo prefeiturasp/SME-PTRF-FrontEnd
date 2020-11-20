@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";
-import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
-import {getItensDashboard, getTiposConta, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa, getDevolucoesAoTesouro} from "../../../../services/dres/RelatorioConsolidado.service";
+import {getItensDashboard, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa, getDevolucoesAoTesouro, putCriarEditarDeletarObservacaoDevolucaoContaPtrf, putCriarEditarDeletarObservacaoDevolucaoTesouro} from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
 import {visoesService} from "../../../../services/visoes.service";
@@ -13,6 +11,7 @@ import {TabelaDevolucoesContaPtrf} from "./TabelaDevolucoesContaPtrf";
 import {TabelaDevolucoesAoTesouro} from "./TabelaDevolucoesAoTesouro";
 import {TabelaExecucaoFisica} from "./TabelaExecucaoFisica";
 import {auxGetNomes} from "../auxGetNomes";
+import {ModalObservacoesRelatorioConsolidadoApuracao} from "../ModalObservacoesRelatorioConsolidadoApuracao";
 
 export const RelatorioConsolidadoApuracao = () =>{
 
@@ -36,6 +35,9 @@ export const RelatorioConsolidadoApuracao = () =>{
     const [justificativaDiferenca, setJustificativaDiferenca] = useState(initJustificativa);
     const [devolucoesContaPtrf, setDevolucoesContaPtrf] = useState(false);
     const [devolucoesAoTesouro, setDevolucoesAoTesouro] = useState(false);
+
+    const [observacao, setObservacao] = useState(false);
+    const [showModalObservacao, setShowModalObservacao] = useState(false);
 
     useEffect(() => {
         carregaItensDashboard();
@@ -82,9 +84,18 @@ export const RelatorioConsolidadoApuracao = () =>{
     const carregaDevolucoesContaPtrf = async () =>{
         try {
             let devolucoes = await getDevolucoesContaPtrf(dre_uuid, periodo_uuid, conta_uuid);
-            setDevolucoesContaPtrf(devolucoes)
+            setDevolucoesContaPtrf(devolucoes);
         }catch (e) {
             console.log("Erro ao carregar Devolucoes a Conta Ptrf ", e);
+        }
+    };
+
+    const carregaDevolucoesAoTesouro = async () =>{
+        try {
+            let devolucoes = await getDevolucoesAoTesouro(dre_uuid, periodo_uuid, conta_uuid);
+            setDevolucoesAoTesouro(devolucoes)
+        }catch (e) {
+            console.log("Erro ao carregar Devolucoes ao Tesouro ", e);
         }
     };
 
@@ -99,14 +110,7 @@ export const RelatorioConsolidadoApuracao = () =>{
         }
     };
 
-    const carregaDevolucoesAoTesouro = async () =>{
-        try {
-            let devolucoes = await getDevolucoesAoTesouro(dre_uuid, periodo_uuid, conta_uuid);
-            setDevolucoesAoTesouro(devolucoes)
-        }catch (e) {
-            console.log("Erro ao carregar Devolucoes ao Tesouro ", e);
-        }
-    };
+
 
     const retornaQtdeEmAnalise = () =>{
         if (itensDashboard) {
@@ -160,6 +164,61 @@ export const RelatorioConsolidadoApuracao = () =>{
     const retornaNaoApresentadas = () =>{
         return itensDashboard.total_associacoes_dre - retornaQtdePorStatus('EM_ANALISE') - retornaQtdePorStatus('APROVADA') - retornaQtdePorStatus('APROVADA_RESSALVA') - retornaQtdePorStatus('REPROVADA');
     };
+
+    const onHandleClose = () => {
+        setShowModalObservacao(false);
+    };
+
+
+    // Observações
+    // Os métodos onClickObservacao, onChangeObservacao e serviceObservacao, servem tanto para devoluções a conta PTRF quanto devoluções ao tesouro
+    // É passado ao clicar nas respectivas tabelas os parâmetros tipo_devolucao:'devolucao_conta', tipo_devolucao:'devolucao_tesouro' e operacao:'salvar' e operacao:'deletar'
+
+    const onClickObservacao = (devolucao) =>{
+        setShowModalObservacao(true);
+        setObservacao(devolucao)
+    };
+
+    const onChangeObservacao = (valor) =>{
+        setObservacao({
+            ...observacao,
+            observacao:valor,
+        })
+    };
+
+    const serviceObservacao = async (operacao)=>{
+        setShowModalObservacao(false);
+        let payload;
+
+        if (operacao.operacao === 'salvar'){
+            payload = {
+                observacao: observacao.observacao,
+            };
+        }else if(operacao.operacao === 'deletar'){
+            payload = {
+                observacao: '',
+            };
+        }
+
+        if (observacao.tipo_devolucao === 'devolucao_conta'){
+            try {
+                await putCriarEditarDeletarObservacaoDevolucaoContaPtrf(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
+                await carregaDevolucoesContaPtrf();
+                console.log("Operação de ", operacao.operacao, " Observação devolução a conta PTRF salva com sucesso")
+            }catch (e) {
+                console.log("Erro ao salvar observação ", e)
+            }
+        }else if(observacao.tipo_devolucao === 'devolucao_tesouro'){
+            try {
+                await putCriarEditarDeletarObservacaoDevolucaoTesouro(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
+                await carregaDevolucoesAoTesouro();
+                console.log("Operação de ", operacao.operacao, " Observação devolução ao tesouro salva com sucesso")
+            }catch (e) {
+                console.log("Erro ao salvar observação ", e)
+            }
+        }
+    };
+
     return(
         <>
             <div className="col-12 container-visualizacao-da-ata mb-5">
@@ -191,10 +250,12 @@ export const RelatorioConsolidadoApuracao = () =>{
                     <TabelaDevolucoesContaPtrf
                         devolucoesContaPtrf={devolucoesContaPtrf}
                         valorTemplate={valorTemplate}
+                        onClickObservacao={onClickObservacao}
                     />
                     <TabelaDevolucoesAoTesouro
                         devolucoesAoTesouro={devolucoesAoTesouro}
                         valorTemplate={valorTemplate}
+                        onClickObservacao={onClickObservacao}
                     />
                     <TabelaExecucaoFisica
                         itensDashboard={itensDashboard}
@@ -202,6 +263,16 @@ export const RelatorioConsolidadoApuracao = () =>{
                         retornaNaoApresentadas={retornaNaoApresentadas}
                     />
                 </div>
+                <section>
+                    <ModalObservacoesRelatorioConsolidadoApuracao
+                        show={showModalObservacao}
+                        handleClose={onHandleClose}
+                        observacao={observacao}
+                        onChangeObservacao={onChangeObservacao}
+                        serviceObservacao={serviceObservacao}
+                        titulo="Observação sobre devolução"
+                    />
+                </section>
             </div>
         </>
     )
