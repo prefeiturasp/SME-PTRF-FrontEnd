@@ -146,7 +146,9 @@ export const RelatorioConsolidado = () => {
                         retornaQtdeStatus={retornaQtdeStatus}
                         retornaQtdeStatusTotal={retornaQtdeStatusTotal}
                     />
-                    <ExecucaoFinanceira/>
+                    <ExecucaoFinanceira
+                        statusRelatorio={statusRelatorio}
+                    />
                     </>
 
                 ):
