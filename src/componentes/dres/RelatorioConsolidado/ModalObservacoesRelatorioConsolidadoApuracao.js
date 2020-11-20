@@ -1,7 +1,6 @@
 import {ModalFormComentariosRelatorioConsolidadoApuracao} from "../../Globais/ModalBootstrap";
 import React from "react";
-export const ModalComentariosRelatorioConsolidadoApuracao = (props) => {
-    //console.log("MODAL ", props)
+export const ModalObservacoesRelatorioConsolidadoApuracao = (props) => {
     const bodyTextarea = () => {
         return (
             <>

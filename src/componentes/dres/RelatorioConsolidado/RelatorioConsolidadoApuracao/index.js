@@ -11,7 +11,7 @@ import {TabelaDevolucoesContaPtrf} from "./TabelaDevolucoesContaPtrf";
 import {TabelaDevolucoesAoTesouro} from "./TabelaDevolucoesAoTesouro";
 import {TabelaExecucaoFisica} from "./TabelaExecucaoFisica";
 import {auxGetNomes} from "../auxGetNomes";
-import {ModalComentariosRelatorioConsolidadoApuracao} from "../ModalComentariosRelatorioConsolidadoApuracao";
+import {ModalObservacoesRelatorioConsolidadoApuracao} from "../ModalObservacoesRelatorioConsolidadoApuracao";
 
 export const RelatorioConsolidadoApuracao = () =>{
 
@@ -211,7 +211,7 @@ export const RelatorioConsolidadoApuracao = () =>{
         }else if(observacao.tipo_devolucao === 'devolucao_tesouro'){
             try {
                 await putCriarEditarDeletarObservacaoDevolucaoTesouro(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
-                await carregaDevolucoesAoTesouro()
+                await carregaDevolucoesAoTesouro();
                 console.log("Operação de ", operacao.operacao, " Observação devolução ao tesouro salva com sucesso")
             }catch (e) {
                 console.log("Erro ao salvar observação ", e)
@@ -264,7 +264,7 @@ export const RelatorioConsolidadoApuracao = () =>{
                     />
                 </div>
                 <section>
-                    <ModalComentariosRelatorioConsolidadoApuracao
+                    <ModalObservacoesRelatorioConsolidadoApuracao
                         show={showModalObservacao}
                         handleClose={onHandleClose}
                         observacao={observacao}
