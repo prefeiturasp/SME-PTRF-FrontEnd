@@ -74,7 +74,7 @@ export const putCriarEditarDeletarObservacaoDevolucaoTesouro = async (dre_uuid, 
 };
 
 export const postGerarRelatorio = async (payload) => {
-    return (await api.post(`/api/relatorios-consolidados-dre/gerar-relatorio`, payload, authHeader)).data
+    return (await api.post(`/api/relatorios-consolidados-dre/gerar-relatorio/`, payload, authHeader)).data
 };
 
 export const getDownloadRelatorio = async (dre_uuid, periodo_uuid, conta_uuid) => {

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";
-import {getItensDashboard, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa, getDevolucoesAoTesouro, putCriarEditarDeletarObservacaoDevolucaoContaPtrf, putCriarEditarDeletarObservacaoDevolucaoTesouro} from "../../../../services/dres/RelatorioConsolidado.service";
+import {getItensDashboard, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa, getDevolucoesAoTesouro, putCriarEditarDeletarObservacaoDevolucaoContaPtrf, putCriarEditarDeletarObservacaoDevolucaoTesouro, postGerarRelatorio} from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
 import {visoesService} from "../../../../services/visoes.service";
@@ -233,7 +233,26 @@ export const RelatorioConsolidadoApuracao = () =>{
     };
 
     const onGerarRelatorio = async ()=>{
-        console.log('Relatório parcial')
+
+        let parcial = totalEmAnalise > 0;
+
+        const payload = {
+            dre_uuid: dre_uuid,
+            periodo_uuid: periodo_uuid,
+            tipo_conta_uuid: conta_uuid,
+            parcial: parcial
+        };
+
+        console.log('onGerarRelatorio payload ', payload);
+
+        try {
+            let gerar = await postGerarRelatorio(payload);
+            console.log('onGerarRelatorio gerar ', gerar);
+            console.log('Relaório gerado com sucesso');
+        }catch (e) {
+            console.log('Erro ao gerar relatório ', e.response.data);
+        }
+        setShowModalAssociacoesEmAnalise(false);
     };
 
     return(
