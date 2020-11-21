@@ -12,6 +12,7 @@ import {TabelaDevolucoesAoTesouro} from "./TabelaDevolucoesAoTesouro";
 import {TabelaExecucaoFisica} from "./TabelaExecucaoFisica";
 import {auxGetNomes} from "../auxGetNomes";
 import {ModalObservacoesRelatorioConsolidadoApuracao} from "../ModalObservacoesRelatorioConsolidadoApuracao";
+import {ModalAssociacoesEmAnalise} from "../ModalAssociacoesEmAnalise";
 
 export const RelatorioConsolidadoApuracao = () =>{
 
@@ -38,6 +39,7 @@ export const RelatorioConsolidadoApuracao = () =>{
 
     const [observacao, setObservacao] = useState(false);
     const [showModalObservacao, setShowModalObservacao] = useState(false);
+    const [showModalAssociacoesEmAnalise, setShowModalAssociacoesEmAnalise] = useState(false);
 
     useEffect(() => {
         carregaItensDashboard();
@@ -167,6 +169,7 @@ export const RelatorioConsolidadoApuracao = () =>{
 
     const onHandleClose = () => {
         setShowModalObservacao(false);
+        setShowModalAssociacoesEmAnalise(false)
     };
 
 
@@ -219,6 +222,20 @@ export const RelatorioConsolidadoApuracao = () =>{
         }
     };
 
+    const onClickGerarRelatorio = async () =>{
+        console.log('onClickGerarRelatorio');
+        if (totalEmAnalise > 0){
+            setShowModalAssociacoesEmAnalise(true)
+        }else {
+            await onGerarRelatorio();
+        }
+
+    };
+
+    const onGerarRelatorio = async ()=>{
+        console.log('Relatório parcial')
+    };
+
     return(
         <>
             <div className="col-12 container-visualizacao-da-ata mb-5">
@@ -226,6 +243,7 @@ export const RelatorioConsolidadoApuracao = () =>{
                     <TopoComBotoes
                         periodoNome={periodoNome}
                         contaNome={contaNome}
+                        onClickGerarRelatorio={onClickGerarRelatorio}
                     />
                     <InfoAssociacoesEmAnalise
                         totalEmAnalise={totalEmAnalise}
@@ -271,6 +289,15 @@ export const RelatorioConsolidadoApuracao = () =>{
                         onChangeObservacao={onChangeObservacao}
                         serviceObservacao={serviceObservacao}
                         titulo="Observação sobre devolução"
+                    />
+                </section>
+                <section>
+                    <ModalAssociacoesEmAnalise
+                        show={showModalAssociacoesEmAnalise}
+                        handleClose={onHandleClose}
+                        titulo='Associações em análise'
+                        texto={`Ainda constam ${totalEmAnalise} Associações em análise nas prestações de contas. Deseja fechar relatória parcial?`}
+                        onGerarRelatorio={onGerarRelatorio}
                     />
                 </section>
             </div>

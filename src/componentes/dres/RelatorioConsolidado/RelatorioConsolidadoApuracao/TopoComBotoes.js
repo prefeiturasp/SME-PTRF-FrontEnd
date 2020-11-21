@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TopoComBotoes = ({periodoNome, contaNome}) =>{
+export const TopoComBotoes = ({periodoNome, contaNome, onClickGerarRelatorio}) =>{
     return(
         <>
             <div className="d-flex bd-highlight mb-3">
@@ -9,7 +9,7 @@ export const TopoComBotoes = ({periodoNome, contaNome}) =>{
                     <button onClick={()=>window.location.assign('/dre-relatorio-consolidado')} className="btn btn-outline-success">Cancelar</button>
                 </div>
                 <div className="py-2 bd-highlight">
-                    <button className="btn btn-success ml-2">Gerar relatório</button>
+                    <button onClick={onClickGerarRelatorio} className="btn btn-success ml-2">Gerar relatório</button>
                 </div>
             </div>
         </>
