@@ -203,6 +203,7 @@ export const RelatorioConsolidadoApuracao = () => {
 
     const serviceObservacao = async (operacao) => {
         setShowModalObservacao(false);
+        setLoading(true);
         let payload;
 
         if (operacao.operacao === 'salvar') {
@@ -232,6 +233,7 @@ export const RelatorioConsolidadoApuracao = () => {
                 console.log("Erro ao salvar observação ", e)
             }
         }
+        setLoading(false);
     };
 
     const onClickGerarRelatorio = async () => {
@@ -254,9 +256,6 @@ export const RelatorioConsolidadoApuracao = () => {
             tipo_conta_uuid: conta_uuid,
             parcial: parcial
         };
-
-        console.log('onGerarRelatorio payload ', payload);
-
         try {
             setLoading(true);
             await postGerarRelatorio(payload);
@@ -268,7 +267,6 @@ export const RelatorioConsolidadoApuracao = () => {
             setLoading(false);
             console.log('Erro ao gerar relatório ', e.response.data);
         }
-
     };
 
     return (
