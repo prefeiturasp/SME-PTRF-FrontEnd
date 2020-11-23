@@ -1,7 +1,18 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";
-import {getItensDashboard, getExecucaoFinanceira, getDevolucoesContaPtrf, getJustificativa, postJustificativa, patchJustificativa, getDevolucoesAoTesouro, putCriarEditarDeletarObservacaoDevolucaoContaPtrf, putCriarEditarDeletarObservacaoDevolucaoTesouro, postGerarRelatorio} from "../../../../services/dres/RelatorioConsolidado.service";
+import {
+    getItensDashboard,
+    getExecucaoFinanceira,
+    getDevolucoesContaPtrf,
+    getJustificativa,
+    postJustificativa,
+    patchJustificativa,
+    getDevolucoesAoTesouro,
+    putCriarEditarDeletarObservacaoDevolucaoContaPtrf,
+    putCriarEditarDeletarObservacaoDevolucaoTesouro,
+    postGerarRelatorio
+} from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
 import {visoesService} from "../../../../services/visoes.service";
@@ -13,15 +24,16 @@ import {TabelaExecucaoFisica} from "./TabelaExecucaoFisica";
 import {auxGetNomes} from "../auxGetNomes";
 import {ModalObservacoesRelatorioConsolidadoApuracao} from "../ModalObservacoesRelatorioConsolidadoApuracao";
 import {ModalAssociacoesEmAnalise} from "../ModalAssociacoesEmAnalise";
+import Loading from "../../../../utils/Loading";
 
-export const RelatorioConsolidadoApuracao = () =>{
+export const RelatorioConsolidadoApuracao = () => {
 
     let {periodo_uuid, conta_uuid} = useParams();
 
     const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
 
     const initJustificativa = {
-        uuid:'',
+        uuid: '',
         dre: dre_uuid,
         periodo: periodo_uuid,
         tipo_conta: conta_uuid,
@@ -40,6 +52,7 @@ export const RelatorioConsolidadoApuracao = () =>{
     const [observacao, setObservacao] = useState(false);
     const [showModalObservacao, setShowModalObservacao] = useState(false);
     const [showModalAssociacoesEmAnalise, setShowModalAssociacoesEmAnalise] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         carregaItensDashboard();
@@ -55,15 +68,15 @@ export const RelatorioConsolidadoApuracao = () =>{
         carregaDevolucoesAoTesouro();
     }, [itensDashboard]);
 
-    const carregaItensDashboard = async () =>{
-        if (periodo_uuid){
+    const carregaItensDashboard = async () => {
+        if (periodo_uuid) {
             let itens = await getItensDashboard(periodo_uuid);
             setItensDashboard(itens)
         }
     };
 
     const carregaNomePeriodo = async () => {
-        if (periodo_uuid){
+        if (periodo_uuid) {
             let periodo_nome = await auxGetNomes.nomePeriodo(periodo_uuid);
             setPeriodoNome(periodo_nome);
         }
@@ -74,47 +87,46 @@ export const RelatorioConsolidadoApuracao = () =>{
         setContaNome(conta_nome);
     };
 
-    const carregaExecucaoFinanceira = async () =>{
+    const carregaExecucaoFinanceira = async () => {
         try {
             let execucao = await getExecucaoFinanceira(dre_uuid, periodo_uuid, conta_uuid);
             setExecucaoFinanceira(execucao);
-        }catch (e) {
+        } catch (e) {
             console.log("Erro ao carregar execução financeira ", e)
         }
     };
 
-    const carregaDevolucoesContaPtrf = async () =>{
+    const carregaDevolucoesContaPtrf = async () => {
         try {
             let devolucoes = await getDevolucoesContaPtrf(dre_uuid, periodo_uuid, conta_uuid);
             setDevolucoesContaPtrf(devolucoes);
-        }catch (e) {
+        } catch (e) {
             console.log("Erro ao carregar Devolucoes a Conta Ptrf ", e);
         }
     };
 
-    const carregaDevolucoesAoTesouro = async () =>{
+    const carregaDevolucoesAoTesouro = async () => {
         try {
             let devolucoes = await getDevolucoesAoTesouro(dre_uuid, periodo_uuid, conta_uuid);
             setDevolucoesAoTesouro(devolucoes)
-        }catch (e) {
+        } catch (e) {
             console.log("Erro ao carregar Devolucoes ao Tesouro ", e);
         }
     };
 
-    const carregaJustificativa = async ()=>{
+    const carregaJustificativa = async () => {
         try {
             let justificativa = await getJustificativa(dre_uuid, periodo_uuid, conta_uuid);
-            if (justificativa && justificativa.length > 0){
+            if (justificativa && justificativa.length > 0) {
                 setJustificativaDiferenca(justificativa[0])
             }
-        }catch (e) {
+        } catch (e) {
             console.log("Erro ao carregar justificativa ", e)
         }
     };
 
 
-
-    const retornaQtdeEmAnalise = () =>{
+    const retornaQtdeEmAnalise = () => {
         if (itensDashboard) {
             let total = itensDashboard.cards.filter(elemtent => elemtent.status === 'RECEBIDA' || elemtent.status === 'DEVOLVIDA' || elemtent.status === 'EM_ANALISE').reduce((total, valor) => total + valor.quantidade_prestacoes, 0);
             setTotalEmAnalise(total)
@@ -130,8 +142,8 @@ export const RelatorioConsolidadoApuracao = () =>{
         return valor_formatado
     };
 
-    const comparaValores = () =>{
-        if (execucaoFinanceira){
+    const comparaValores = () => {
+        if (execucaoFinanceira) {
             return execucaoFinanceira.repasses_previstos_sme_custeio !== execucaoFinanceira.repasses_no_periodo_custeio ||
                 execucaoFinanceira.repasses_previstos_sme_capital !== execucaoFinanceira.repasses_no_periodo_capital ||
                 execucaoFinanceira.repasses_previstos_sme_livre !== execucaoFinanceira.repasses_no_periodo_livre ||
@@ -139,20 +151,20 @@ export const RelatorioConsolidadoApuracao = () =>{
         }
     };
 
-    const onChangeJustificativaDiferenca = (justificativa_texto) =>{
+    const onChangeJustificativaDiferenca = (justificativa_texto) => {
         setJustificativaDiferenca({
             ...justificativaDiferenca,
             texto: justificativa_texto
         })
     };
 
-    const onSubmitJustificativaDiferenca = async () =>{
-        if (justificativaDiferenca && justificativaDiferenca.uuid){
+    const onSubmitJustificativaDiferenca = async () => {
+        if (justificativaDiferenca && justificativaDiferenca.uuid) {
             let payload = {
                 texto: justificativaDiferenca.texto
             };
             await patchJustificativa(justificativaDiferenca.uuid, payload)
-        }else {
+        } else {
             delete justificativaDiferenca.uuid;
             await postJustificativa(justificativaDiferenca)
         }
@@ -163,7 +175,7 @@ export const RelatorioConsolidadoApuracao = () =>{
         return item.quantidade_prestacoes;
     };
 
-    const retornaNaoApresentadas = () =>{
+    const retornaNaoApresentadas = () => {
         return itensDashboard.total_associacoes_dre - retornaQtdePorStatus('EM_ANALISE') - retornaQtdePorStatus('APROVADA') - retornaQtdePorStatus('APROVADA_RESSALVA') - retornaQtdePorStatus('REPROVADA');
     };
 
@@ -177,62 +189,62 @@ export const RelatorioConsolidadoApuracao = () =>{
     // Os métodos onClickObservacao, onChangeObservacao e serviceObservacao, servem tanto para devoluções a conta PTRF quanto devoluções ao tesouro
     // É passado ao clicar nas respectivas tabelas os parâmetros tipo_devolucao:'devolucao_conta', tipo_devolucao:'devolucao_tesouro' e operacao:'salvar' e operacao:'deletar'
 
-    const onClickObservacao = (devolucao) =>{
+    const onClickObservacao = (devolucao) => {
         setShowModalObservacao(true);
         setObservacao(devolucao)
     };
 
-    const onChangeObservacao = (valor) =>{
+    const onChangeObservacao = (valor) => {
         setObservacao({
             ...observacao,
-            observacao:valor,
+            observacao: valor,
         })
     };
 
-    const serviceObservacao = async (operacao)=>{
+    const serviceObservacao = async (operacao) => {
         setShowModalObservacao(false);
         let payload;
 
-        if (operacao.operacao === 'salvar'){
+        if (operacao.operacao === 'salvar') {
             payload = {
                 observacao: observacao.observacao,
             };
-        }else if(operacao.operacao === 'deletar'){
+        } else if (operacao.operacao === 'deletar') {
             payload = {
                 observacao: '',
             };
         }
 
-        if (observacao.tipo_devolucao === 'devolucao_conta'){
+        if (observacao.tipo_devolucao === 'devolucao_conta') {
             try {
                 await putCriarEditarDeletarObservacaoDevolucaoContaPtrf(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
                 await carregaDevolucoesContaPtrf();
                 console.log("Operação de ", operacao.operacao, " Observação devolução a conta PTRF salva com sucesso")
-            }catch (e) {
+            } catch (e) {
                 console.log("Erro ao salvar observação ", e)
             }
-        }else if(observacao.tipo_devolucao === 'devolucao_tesouro'){
+        } else if (observacao.tipo_devolucao === 'devolucao_tesouro') {
             try {
                 await putCriarEditarDeletarObservacaoDevolucaoTesouro(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
                 await carregaDevolucoesAoTesouro();
                 console.log("Operação de ", operacao.operacao, " Observação devolução ao tesouro salva com sucesso")
-            }catch (e) {
+            } catch (e) {
                 console.log("Erro ao salvar observação ", e)
             }
         }
     };
 
-    const onClickGerarRelatorio = async () =>{
+    const onClickGerarRelatorio = async () => {
         console.log('onClickGerarRelatorio');
-        if (totalEmAnalise > 0){
+        if (totalEmAnalise > 0) {
             setShowModalAssociacoesEmAnalise(true)
-        }else {
+        } else {
             await onGerarRelatorio();
         }
 
     };
 
-    const onGerarRelatorio = async ()=>{
+    const onGerarRelatorio = async () => {
 
         let parcial = totalEmAnalise > 0;
 
@@ -246,80 +258,102 @@ export const RelatorioConsolidadoApuracao = () =>{
         console.log('onGerarRelatorio payload ', payload);
 
         try {
-            let gerar = await postGerarRelatorio(payload);
-            console.log('onGerarRelatorio gerar ', gerar);
+            setLoading(true);
+            await postGerarRelatorio(payload);
             console.log('Relaório gerado com sucesso');
-        }catch (e) {
+            setShowModalAssociacoesEmAnalise(false);
+            setLoading(false);
+        } catch (e) {
+            setShowModalAssociacoesEmAnalise(false);
+            setLoading(false);
             console.log('Erro ao gerar relatório ', e.response.data);
         }
-        setShowModalAssociacoesEmAnalise(false);
+
     };
 
-    return(
+    return (
         <>
+
             <div className="col-12 container-visualizacao-da-ata mb-5">
-                <div className="col-12 mt-5">
-                    <TopoComBotoes
-                        periodoNome={periodoNome}
-                        contaNome={contaNome}
-                        onClickGerarRelatorio={onClickGerarRelatorio}
-                    />
-                    <InfoAssociacoesEmAnalise
-                        totalEmAnalise={totalEmAnalise}
-                        periodoUuid={periodo_uuid}
-                    />
-                    <BoxConsultarDados
-                        periodo_uuid={periodo_uuid}
-                        conta_uuid={conta_uuid}
-                    />
-                    <TabelaExecucaoFinanceira
-                        execucaoFinanceira={execucaoFinanceira}
-                        valorTemplate={valorTemplate}
-                        comparaValores={comparaValores}
-                    />
-                    <JustificativaDiferenca
-                        comparaValores={comparaValores}
-                        justificativaDiferenca={justificativaDiferenca}
-                        setJustificativaDiferenca={setJustificativaDiferenca}
-                        onChangeJustificativaDiferenca={onChangeJustificativaDiferenca}
-                        onSubmitJustificativaDiferenca={onSubmitJustificativaDiferenca}
-                    />
-                    <TabelaDevolucoesContaPtrf
-                        devolucoesContaPtrf={devolucoesContaPtrf}
-                        valorTemplate={valorTemplate}
-                        onClickObservacao={onClickObservacao}
-                    />
-                    <TabelaDevolucoesAoTesouro
-                        devolucoesAoTesouro={devolucoesAoTesouro}
-                        valorTemplate={valorTemplate}
-                        onClickObservacao={onClickObservacao}
-                    />
-                    <TabelaExecucaoFisica
-                        itensDashboard={itensDashboard}
-                        retornaQtdePorStatus={retornaQtdePorStatus}
-                        retornaNaoApresentadas={retornaNaoApresentadas}
-                    />
-                </div>
-                <section>
-                    <ModalObservacoesRelatorioConsolidadoApuracao
-                        show={showModalObservacao}
-                        handleClose={onHandleClose}
-                        observacao={observacao}
-                        onChangeObservacao={onChangeObservacao}
-                        serviceObservacao={serviceObservacao}
-                        titulo="Observação sobre devolução"
-                    />
-                </section>
-                <section>
-                    <ModalAssociacoesEmAnalise
-                        show={showModalAssociacoesEmAnalise}
-                        handleClose={onHandleClose}
-                        titulo='Associações em análise'
-                        texto={`Ainda constam ${totalEmAnalise} Associações em análise nas prestações de contas. Deseja fechar relatória parcial?`}
-                        onGerarRelatorio={onGerarRelatorio}
-                    />
-                </section>
+                {loading ? (
+                        <div className="mt-5">
+                            <Loading
+                                corGrafico="black"
+                                corFonte="dark"
+                                marginTop="0"
+                                marginBottom="0"
+                            />
+                        </div>
+                    ) :
+                    <>
+                        <div className="col-12 mt-5">
+                            <TopoComBotoes
+                                periodoNome={periodoNome}
+                                contaNome={contaNome}
+                                onClickGerarRelatorio={onClickGerarRelatorio}
+                            />
+                            <InfoAssociacoesEmAnalise
+                                totalEmAnalise={totalEmAnalise}
+                                periodoUuid={periodo_uuid}
+                            />
+                            <BoxConsultarDados
+                                periodo_uuid={periodo_uuid}
+                                conta_uuid={conta_uuid}
+                            />
+                            <TabelaExecucaoFinanceira
+                                execucaoFinanceira={execucaoFinanceira}
+                                valorTemplate={valorTemplate}
+                                comparaValores={comparaValores}
+                            />
+                            <JustificativaDiferenca
+                                comparaValores={comparaValores}
+                                justificativaDiferenca={justificativaDiferenca}
+                                setJustificativaDiferenca={setJustificativaDiferenca}
+                                onChangeJustificativaDiferenca={onChangeJustificativaDiferenca}
+                                onSubmitJustificativaDiferenca={onSubmitJustificativaDiferenca}
+                            />
+                            <TabelaDevolucoesContaPtrf
+                                devolucoesContaPtrf={devolucoesContaPtrf}
+                                valorTemplate={valorTemplate}
+                                onClickObservacao={onClickObservacao}
+                            />
+                            <TabelaDevolucoesAoTesouro
+                                devolucoesAoTesouro={devolucoesAoTesouro}
+                                valorTemplate={valorTemplate}
+                                onClickObservacao={onClickObservacao}
+                            />
+                            <TabelaExecucaoFisica
+                                itensDashboard={itensDashboard}
+                                retornaQtdePorStatus={retornaQtdePorStatus}
+                                retornaNaoApresentadas={retornaNaoApresentadas}
+                            />
+                        </div>
+                        <section>
+                            <ModalObservacoesRelatorioConsolidadoApuracao
+                                show={showModalObservacao}
+                                handleClose={onHandleClose}
+                                observacao={observacao}
+                                onChangeObservacao={onChangeObservacao}
+                                serviceObservacao={serviceObservacao}
+                                titulo="Observação sobre devolução"
+                            />
+                        </section>
+                        <section>
+                            <ModalAssociacoesEmAnalise
+                                show={showModalAssociacoesEmAnalise}
+                                handleClose={onHandleClose}
+                                titulo='Associações em análise'
+                                texto={`Ainda constam ${totalEmAnalise} Associações em análise nas prestações de contas. Deseja fechar relatória parcial?`}
+                                onGerarRelatorio={onGerarRelatorio}
+                            />
+                        </section>
+                    </>
+
+                }
+
             </div>
+
+
         </>
     )
 };
