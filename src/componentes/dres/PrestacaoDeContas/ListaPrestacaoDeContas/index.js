@@ -97,8 +97,6 @@ export const ListaPrestacaoDeContas = () => {
 
     const carregaPrestacoesDeContas = async () => {
 
-        console.log("carregaPrestacoesDeContas ", stateFiltros);
-
         setLoading(true);
         if (periodoEscolhido) {
             let data_inicio = stateFiltros.filtrar_por_data_inicio ? moment(new Date(stateFiltros.filtrar_por_data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
