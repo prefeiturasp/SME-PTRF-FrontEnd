@@ -73,6 +73,10 @@ export const putCriarEditarDeletarObservacaoDevolucaoTesouro = async (dre_uuid, 
     return (await api.put(`/api/relatorios-consolidados-dre/update-observacao-devolucoes-ao-tesouro/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}&tipo_devolucao=${tipo_devolucao_uuid}`, payload, authHeader)).data
 };
 
+export const postGerarRelatorio = async (payload) => {
+    return (await api.post(`/api/relatorios-consolidados-dre/gerar-relatorio/`, payload, authHeader)).data
+};
+
 export const getDownloadRelatorio = async (dre_uuid, periodo_uuid, conta_uuid) => {
     return api
     .get(`/api/relatorios-consolidados-dre/download/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}`, {
