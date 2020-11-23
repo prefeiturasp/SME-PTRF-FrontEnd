@@ -106,11 +106,11 @@ export const ListaPrestacaoDeContas = () => {
             let prestacoes_de_contas;
 
             if (stateFiltros.filtrar_por_status === 'NAO_RECEBIDA' || stateFiltros.filtrar_por_status === 'NAO_APRESENTADA'){
-                prestacoes_de_contas = await getPrestacoesDeContasNaoRecebidaNaoGerada(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status)
+                prestacoes_de_contas = await getPrestacoesDeContasNaoRecebidaNaoGerada(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade)
             }else {
                 prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status, stateFiltros.filtrar_por_tecnico_atribuido, data_inicio, data_fim);
             }
-            
+
             setPrestacaoDeContas(prestacoes_de_contas)
         }
         setLoading(false);
