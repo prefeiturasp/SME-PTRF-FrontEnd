@@ -24,6 +24,7 @@ import {TabelaExecucaoFisica} from "./TabelaExecucaoFisica";
 import {auxGetNomes} from "../auxGetNomes";
 import {ModalObservacoesRelatorioConsolidadoApuracao} from "../ModalObservacoesRelatorioConsolidadoApuracao";
 import {ModalAssociacoesEmAnalise} from "../ModalAssociacoesEmAnalise";
+import {ModalMsgGeracaoRelatorio} from "../ModalMsgGeracaoRelatorio";
 import Loading from "../../../../utils/Loading";
 
 export const RelatorioConsolidadoApuracao = () => {
@@ -53,6 +54,8 @@ export const RelatorioConsolidadoApuracao = () => {
     const [showModalObservacao, setShowModalObservacao] = useState(false);
     const [showModalAssociacoesEmAnalise, setShowModalAssociacoesEmAnalise] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [showModalMsgGeracaoRelatorio, setShowModalMsgGeracaoRelatorio] = useState(false);
+    const [msgGeracaoRelatorio, setMsgGeracaoRelatorio] = useState('');
 
     useEffect(() => {
         carregaItensDashboard();
@@ -181,7 +184,8 @@ export const RelatorioConsolidadoApuracao = () => {
 
     const onHandleClose = () => {
         setShowModalObservacao(false);
-        setShowModalAssociacoesEmAnalise(false)
+        setShowModalAssociacoesEmAnalise(false);
+        setShowModalMsgGeracaoRelatorio(false);
     };
 
 
@@ -220,17 +224,17 @@ export const RelatorioConsolidadoApuracao = () => {
             try {
                 await putCriarEditarDeletarObservacaoDevolucaoContaPtrf(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
                 await carregaDevolucoesContaPtrf();
-                console.log("Operação de ", operacao.operacao, " Observação devolução a conta PTRF salva com sucesso")
+                console.log("Operação de ", operacao.operacao, " Observação devolução a conta PTRF realizada com sucesso")
             } catch (e) {
-                console.log("Erro ao salvar observação ", e)
+                console.log("Erro ao ", operacao.operacao, "observação devolução a conta PTRF", e)
             }
         } else if (observacao.tipo_devolucao === 'devolucao_tesouro') {
             try {
                 await putCriarEditarDeletarObservacaoDevolucaoTesouro(dre_uuid, periodo_uuid, conta_uuid, observacao.tipo_uuid, payload);
                 await carregaDevolucoesAoTesouro();
-                console.log("Operação de ", operacao.operacao, " Observação devolução ao tesouro salva com sucesso")
+                console.log("Operação de ", operacao.operacao, " Observação devolução ao tesouro realizada com sucesso")
             } catch (e) {
-                console.log("Erro ao salvar observação ", e)
+                console.log("Erro ao ", operacao.operacao, "observação devolução ao Tesouro ", e)
             }
         }
         setLoading(false);
@@ -260,9 +264,13 @@ export const RelatorioConsolidadoApuracao = () => {
             console.log('Relaório gerado com sucesso');
             setShowModalAssociacoesEmAnalise(false);
             setLoading(false);
+            setMsgGeracaoRelatorio('Relaório gerado com sucesso');
+            setShowModalMsgGeracaoRelatorio(true)
         } catch (e) {
             setShowModalAssociacoesEmAnalise(false);
             setLoading(false);
+            setMsgGeracaoRelatorio('Erro ao gerar relatório');
+            setShowModalMsgGeracaoRelatorio(true);
             console.log('Erro ao gerar relatório ', e.response.data);
         }
     };
@@ -343,6 +351,18 @@ export const RelatorioConsolidadoApuracao = () => {
                                 onGerarRelatorio={onGerarRelatorio}
                             />
                         </section>
+                        {msgGeracaoRelatorio &&
+                            <section>
+                                <ModalMsgGeracaoRelatorio
+                                    show={showModalMsgGeracaoRelatorio}
+                                    handleClose={onHandleClose}
+                                    titulo='Geração do relatório'
+                                    texto={msgGeracaoRelatorio}
+                                    onGerarRelatorio={onGerarRelatorio}
+                                />
+                            </section>
+                        }
+
                     </>
 
                 }
