@@ -237,13 +237,11 @@ export const RelatorioConsolidadoApuracao = () => {
     };
 
     const onClickGerarRelatorio = async () => {
-        console.log('onClickGerarRelatorio');
         if (totalEmAnalise > 0) {
             setShowModalAssociacoesEmAnalise(true)
         } else {
             await onGerarRelatorio();
         }
-
     };
 
     const onGerarRelatorio = async () => {
