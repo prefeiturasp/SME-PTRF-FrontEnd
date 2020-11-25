@@ -41,6 +41,10 @@ export const getListaDeCobrancas = async (prestacao_conta_uuid) => {
     return (await api.get(`/api/cobrancas-prestacoes-contas/?prestacao_conta__uuid=${prestacao_conta_uuid}&tipo=RECEBIMENTO`, authHeader)).data
 };
 
+export const getListaDeCobrancasPcNaoApresentada = async (associacao_uuid, periodo_uuid) => {
+    return (await api.get(`/api/cobrancas-prestacoes-contas/?associacao__uuid=${associacao_uuid}&periodo__uuid=${periodo_uuid}&tipo=RECEBIMENTO`, authHeader)).data
+};
+
 export const getAddCobranca = async (payload) => {
     return (await api.post(`/api/cobrancas-prestacoes-contas/`, payload, authHeader)).data
 };

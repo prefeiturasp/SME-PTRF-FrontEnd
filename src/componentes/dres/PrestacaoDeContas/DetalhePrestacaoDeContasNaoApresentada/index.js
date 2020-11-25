@@ -3,10 +3,18 @@ import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {Cabecalho} from "../DetalhePrestacaoDeContas/Cabecalho";
 import {BotoesAvancarRetroceder} from "../DetalhePrestacaoDeContas/BotoesAvancarRetroceder";
 import {TrilhaDeStatus} from "../DetalhePrestacaoDeContas/TrilhaDeStatus";
-import {getTabelasPrestacoesDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
+import {
+    getAddCobranca, getDeletarCobranca,
+    getListaDeCobrancasPcNaoApresentada,
+    getTabelasPrestacoesDeContas
+} from "../../../../services/dres/PrestacaoDeContas.service";
 import {FormRecebimentoPelaDiretoria} from "../DetalhePrestacaoDeContas/FormRecebimentoPelaDiretoria";
+import moment from "moment";
+import {CobrancaPrestacaoDeContas} from "../DetalhePrestacaoDeContas/CobrancaPrestacaoDeContas";
 
 export const DetalhePrestacaoDeContasNaoApresentada = () =>{
+
+    const prestacaoDeContas = JSON.parse(localStorage.getItem('prestacao_de_contas_nao_apresentada'));
 
     const initialFormRecebimentoPelaDiretoria = {
         tecnico_atribuido: "",
@@ -14,20 +22,21 @@ export const DetalhePrestacaoDeContasNaoApresentada = () =>{
         status: "NAO_APRESENTADA",
     };
 
-    const [prestacaoDeContas, setPrestacaoDeContas] = useState(false);
+    const initialListaCobranca = {
+        uuid: "",
+        prestacao_conta: '',
+        data:'',
+        tipo: '',
+    };
+
     const [stateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
     const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
-
-
-    useEffect(() => {
-        const prestacao_nao_apresentada = localStorage.getItem('prestacao_de_contas_nao_apresentada');
-        if(prestacao_nao_apresentada){
-            setPrestacaoDeContas(JSON.parse(prestacao_nao_apresentada))
-        }
-    }, []);
+    const [listaDeCobrancas, setListaDeCobrancas] = useState(initialListaCobranca);
+    const [dataCobranca, setDataCobranca] = useState('');
 
     useEffect(()=>{
-       carregaTabelaPrestacaoDeContas();
+        carregaTabelaPrestacaoDeContas();
+        carregaListaDeCobrancas();
     }, []);
 
     const carregaTabelaPrestacaoDeContas = async () => {
@@ -35,74 +44,71 @@ export const DetalhePrestacaoDeContasNaoApresentada = () =>{
         setTabelaPrestacoes(tabela_prestacoes);
     };
 
+    const carregaListaDeCobrancas = async () =>{
+        if (prestacaoDeContas.periodo_uuid){
+            let lista = await getListaDeCobrancasPcNaoApresentada(prestacaoDeContas.associacao.uuid, prestacaoDeContas.periodo_uuid);
+            setListaDeCobrancas(lista)
+        }
+    };
 
-        /*
-        associacao_uuid: "3ebd27dd-62e4-42be-bfd2-748a693c243e"
-data_recebimento: null
-data_ultima_analise: null
-devolucao_ao_tesouro: "0,00"
-periodo_uuid: "3dd89f8c-5266-425c-910e-e13ed3f66e10"
-processo_sei: ""
-status: "NAO_APRESENTADA"
-tecnico_responsavel: ""
-unidade_eol: "400514"
-unidade_nome: "BUTANTA"
-uuid: ""
-        * */
+    const addCobranca = async () =>{
+        let data_cobranca = dataCobranca ? moment(new Date(dataCobranca), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
+        if (data_cobranca){
+            let payload = {
+                associacao: prestacaoDeContas.associacao.uuid,
+                periodo: prestacaoDeContas.periodo_uuid,
+                data: data_cobranca,
+                tipo: 'RECEBIMENTO'
+            };
 
+            await getAddCobranca(payload);
+            await carregaListaDeCobrancas();
+            setDataCobranca('')
+        }
+    };
 
-    /*
-    * analises_de_conta_da_prestacao: []
-associacao: {uuid: "5b2422b8-3994-416d-a50f-a1adad7154b7", nome: "CEI YVONNE MALUHY JOSEPH SABGA",…}
-ccm: ""
-cnpj: "06.537.165/0001-83"
-email: ""
-nome: "CEI YVONNE MALUHY JOSEPH SABGA"
-presidente_associacao: {nome: "", email: "", cargo_educacao: ""}
-cargo_educacao: ""
-email: ""
-nome: ""
-presidente_conselho_fiscal: {nome: "", email: "", cargo_educacao: ""}
-cargo_educacao: ""
-email: ""
-nome: ""
-processo_regularidade: ""
-status_regularidade: "PENDENTE"
-unidade: {uuid: "01dd84fe-a9db-4363-aa2b-f74846f74739", codigo_eol: "400269", tipo_unidade: "CEI",…}
-bairro: ""
-cep: ""
-codigo_eol: "400269"
-complemento: ""
-diretor_nome: ""
-dre: {uuid: "82b460c6-7b6a-4de6-9376-d66a47f8d6b1", codigo_eol: "108100", tipo_unidade: "DRE",…}
-dre_cnpj: ""
-dre_designacao_ano: ""
-dre_designacao_portaria: ""
-dre_diretor_regional_nome: ""
-dre_diretor_regional_rf: ""
-email: ""
-logradouro: ""
-nome: "DIRET YVONE MALUHY JOSEPF SABGA"
-numero: ""
-qtd_alunos: 0
-sigla: ""
-telefone: ""
-tipo_logradouro: ""
-tipo_unidade: "CEI"
-uuid: "01dd84fe-a9db-4363-aa2b-f74846f74739"
-uuid: "5b2422b8-3994-416d-a50f-a1adad7154b7"
-data_recebimento: null
-data_ultima_analise: null
-devolucao_ao_tesouro: "Não"
-devolucoes_ao_tesouro_da_prestacao: []
-devolucoes_da_prestacao: []
-periodo_uuid: "3dd89f8c-5266-425c-910e-e13ed3f66e10"
-processo_sei: ""
-ressalvas_aprovacao: ""
-status: "EM_ANALISE"
-tecnico_responsavel: null
-uuid: "0112a7bc-98e3-4ab7-b64e-c43db2fdbb67"
-    * */
+    const deleteCobranca = async (cobranca_uuid) =>{
+        await getDeletarCobranca(cobranca_uuid);
+        if (cobranca_uuid){
+            await carregaListaDeCobrancas()
+        }
+    };
+
+    const handleChangeDataCobranca = (name, value) =>{
+        setDataCobranca(value);
+    };
+
+    const retornaNumeroOrdinal = (index) =>{
+        let _index = index + 1;
+
+        if (_index === 10){
+            return 'Décima'
+        }else if(_index === 20){
+            return 'Vigésima'
+        }else if(_index === 30){
+            return 'Trigésima'
+        }else if(_index === 40){
+            return 'Quadragésima'
+        }else if(_index === 50){
+            return 'Quinguasésima'
+        }else if(_index === 60){
+            return 'Sextagésima'
+        }else if(_index === 70){
+            return 'Séptimagésima'
+        }else if(_index === 80){
+            return 'Octagésima'
+        }else{
+            let oridinal = _index.toOrdinal({ genero: "a"});
+            let array = oridinal.split(' ');
+            let primeira_palavra = array[0];
+            let modificada = primeira_palavra.substring(0, primeira_palavra.length - 1) + 'a';
+            if (array[1] === undefined){
+                return modificada.charAt(0).toUpperCase() + modificada.slice(1)
+            }else {
+                return modificada.charAt(0).toUpperCase() + modificada.slice(1) + " " + array[1]
+            }
+        }
+    };
 
     return(
         <PaginasContainer>
@@ -135,6 +141,15 @@ uuid: "0112a7bc-98e3-4ab7-b64e-c43db2fdbb67"
                                     disabledData={true}
                                     disabledStatus={true}
                                     exibeMotivo={false}
+                                />
+                                <CobrancaPrestacaoDeContas
+                                    listaDeCobrancas={listaDeCobrancas}
+                                    dataCobranca={dataCobranca}
+                                    handleChangeDataCobranca={handleChangeDataCobranca}
+                                    addCobranca={addCobranca}
+                                    deleteCobranca={deleteCobranca}
+                                    editavel={true}
+                                    retornaNumeroOrdinal={retornaNumeroOrdinal}
                                 />
                             </>
                         }

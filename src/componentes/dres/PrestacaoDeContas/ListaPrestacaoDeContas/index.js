@@ -178,8 +178,12 @@ export const ListaPrestacaoDeContas = () => {
     };
 
     const gravaPcNaoApresentada = (rowData) =>{
+
+        console.log('gravaPcNaoApresentada ', rowData)
+
         let obj_prestacao = {
             associacao: {
+                uuid: rowData.associacao_uuid,
                 nome: rowData.unidade_nome,
                 cnpj: '',
                 unidade: {
@@ -197,7 +201,6 @@ export const ListaPrestacaoDeContas = () => {
         };
 
         localStorage.setItem("prestacao_de_contas_nao_apresentada", JSON.stringify( obj_prestacao))
-        //window.location.assign('/dre-detalhe-prestacao-de-contas-nao-apresentada')
         setRedirectPcNaoApresentada(true)
     };
 
