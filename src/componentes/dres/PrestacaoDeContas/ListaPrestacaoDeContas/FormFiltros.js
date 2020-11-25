@@ -43,7 +43,6 @@ export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, 
                             id="filtrar_por_status"
                             className="form-control"
                         >
-                            <option value="">Selecione um status</option>
                             {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.map(item => (
                                 <option key={item.id} value={item.id}>{item.nome}</option>
                             ))}

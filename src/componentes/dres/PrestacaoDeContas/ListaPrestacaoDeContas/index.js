@@ -117,7 +117,8 @@ export const ListaPrestacaoDeContas = () => {
 
     const carregaPrestacoesDeContasPorDrePeriodo = async () => {
         setLoading(true);
-        let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido);
+        let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status, stateFiltros.filtrar_por_tecnico_atribuido);;
+        //let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido);
         setPrestacaoDeContas(prestacoes_de_contas);
         setLoading(false);
     };
@@ -319,9 +320,12 @@ export const ListaPrestacaoDeContas = () => {
     };
 
     const limpaFiltros = async () => {
-        await setStateFiltros(initialStateFiltros);
+        await setStateFiltros({
+            ...initialStateFiltros,
+            filtrar_por_status: stateFiltros.filtrar_por_status,
+        });
         await setStatusPrestacao('');
-        await carregaPrestacoesDeContasPorDrePeriodo();
+        await carregaPrestacoesDeContas();
     };
 
     return (
@@ -351,7 +355,7 @@ export const ListaPrestacaoDeContas = () => {
                     <BarraDeStatus
                         qtdeUnidadesDre={qtdeUnidadesDre}
                         prestacaoDeContas={prestacaoDeContas}
-                        statusDasPrestacoes={exibeLabelStatus(statusPrestacao).texto_barra_de_status}
+                        statusDasPrestacoes={exibeLabelStatus(statusPrestacao ? statusPrestacao : stateFiltros.filtrar_por_status).texto_barra_de_status}
                     />
 
                     <p className='titulo-explicativo mt-4 mb-4'>{exibeLabelStatus(statusPrestacao).texto_titulo}</p>
