@@ -4,7 +4,7 @@ import {DatePickerField} from "../../../Globais/DatePickerField";
 export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, toggleMaisFiltros, setToggleMaisFiltros, tecnicosList}) => {
     return (
         <>
-            <form onSubmit={handleSubmitFiltros} method="post">
+            <form method="post">
                 <div className="row mt-3">
                     <div className="col">
                         <label htmlFor="filtrar_por_termo">Filtrar por um termo</label>
@@ -43,8 +43,7 @@ export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, 
                             id="filtrar_por_status"
                             className="form-control"
                         >
-                            <option value="">Selecione um status</option>
-                            {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.filter(element => element.id !== 'NAO_APRESENTADA').map(item => (
+                            {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.map(item => (
                                 <option key={item.id} value={item.id}>{item.nome}</option>
                             ))}
                         </select>
@@ -94,11 +93,21 @@ export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, 
                     </div>
                 </div>
                 <div className="d-flex  justify-content-end pb-3 mt-3">
-                    <a onClick={() => setToggleMaisFiltros(!toggleMaisFiltros)} className="btn btn-outline-success mt-2 mr-2" role="button" aria-expanded="false" aria-controls="collapseMaisFiltros">
+                    <button
+                        type="button"
+                        onClick={() => setToggleMaisFiltros(!toggleMaisFiltros)}
+                        className="btn btn-outline-success mt-2 mr-2"
+                    >
                         {toggleMaisFiltros ? 'Menos filtros' : 'Mais Filtros'}
-                    </a>
+                    </button>
                     <button onClick={() => limpaFiltros()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Limpar</button>
-                    <button type="submit" className="btn btn-success mt-2">Filtrar</button>
+                    <button
+                        onClick={handleSubmitFiltros}
+                        type="button"
+                        className="btn btn-success mt-2"
+                    >
+                        Filtrar
+                    </button>
                 </div>
             </form>
         </>

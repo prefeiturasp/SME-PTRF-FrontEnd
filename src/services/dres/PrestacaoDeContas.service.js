@@ -13,6 +13,10 @@ export const getPrestacoesDeContas = async (periodo_uuid="",  nome="", associaca
     return (await api.get(`/api/prestacoes-contas/?associacao__unidade__dre__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo__uuid=${periodo_uuid}${nome ? '&nome=' + nome : ''}${associacao__unidade__tipo_unidade ? '&associacao__unidade__tipo_unidade=' + associacao__unidade__tipo_unidade : ''}${status ? '&status=' + status : ''}${tecnico_uuid ? '&tecnico=' + tecnico_uuid : ''}${data_inicio ? '&data_inicio='+data_inicio : ''}${data_fim ? '&data_fim='+data_fim : ''}`, authHeader)).data
 };
 
+export const getPrestacoesDeContasNaoRecebidaNaoGerada = async (periodo_uuid="",  nome="", tipo_unidade='') => {
+    return (await api.get(`/api/prestacoes-contas/nao-recebidas/?associacao__unidade__dre__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo__uuid=${periodo_uuid}${nome ? '&nome=' + nome : ''}${tipo_unidade ? '&tipo_unidade=' + tipo_unidade : ''}`, authHeader)).data
+};
+
 export const getQtdeUnidadesDre = async () => {
     return (await api.get(`/api/dres/${localStorage.getItem(ASSOCIACAO_UUID)}/qtd-unidades/`, authHeader)).data
 };
@@ -35,6 +39,10 @@ export const getReabrirPrestacaoDeContas = async (prestacao_conta_uuid) => {
 
 export const getListaDeCobrancas = async (prestacao_conta_uuid) => {
     return (await api.get(`/api/cobrancas-prestacoes-contas/?prestacao_conta__uuid=${prestacao_conta_uuid}&tipo=RECEBIMENTO`, authHeader)).data
+};
+
+export const getListaDeCobrancasPcNaoApresentada = async (associacao_uuid, periodo_uuid) => {
+    return (await api.get(`/api/cobrancas-prestacoes-contas/?associacao__uuid=${associacao_uuid}&periodo__uuid=${periodo_uuid}&tipo=RECEBIMENTO`, authHeader)).data
 };
 
 export const getAddCobranca = async (payload) => {
