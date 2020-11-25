@@ -2,7 +2,6 @@ import React from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 
 export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria, handleChangeFormRecebimentoPelaDiretoria, disabledNome, disabledData, disabledStatus, tabelaPrestacoes, prestacaoDeContas, exibeMotivo}) =>{
-
     return(
         <>
             <h4>Recebimento pela Diretoria</h4>
@@ -39,7 +38,7 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
                             className="form-control"
                             disabled={disabledStatus}
                         >
-                            {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.filter(element => element.id !== 'NAO_APRESENTADA').map(item => (
+                            {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.map(item => (
                                 <option key={item.id} value={item.id}>{item.nome}</option>
                             ))}
                         </select>
@@ -47,7 +46,8 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
                     {exibeMotivo && prestacaoDeContas && prestacaoDeContas.ressalvas_aprovacao &&
                         <div className='col-12 mt-3'>
                             <label htmlFor="motivo">Motivos:</label>
-                            <textarea defaultValue={prestacaoDeContas.ressalvas_aprovacao} disabled={true} className="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                            <textarea defaultValue={prestacaoDeContas.ressalvas_aprovacao} disabled={true} className="form-control" id="exampleFormControlTextarea1" rows="3">
+                            </textarea>
                         </div>
                     }
                 </div>

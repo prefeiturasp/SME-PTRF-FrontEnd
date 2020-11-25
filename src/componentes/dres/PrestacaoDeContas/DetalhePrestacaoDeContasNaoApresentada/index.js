@@ -1,26 +1,39 @@
 import React, {useEffect, useState} from "react";
-import {useLocation, Redirect} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {Cabecalho} from "../DetalhePrestacaoDeContas/Cabecalho";
+import {BotoesAvancarRetroceder} from "../DetalhePrestacaoDeContas/BotoesAvancarRetroceder";
+import {TrilhaDeStatus} from "../DetalhePrestacaoDeContas/TrilhaDeStatus";
+import {getTabelasPrestacoesDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
+import {FormRecebimentoPelaDiretoria} from "../DetalhePrestacaoDeContas/FormRecebimentoPelaDiretoria";
 
 export const DetalhePrestacaoDeContasNaoApresentada = () =>{
 
-    const obj_props = useLocation();
+    const initialFormRecebimentoPelaDiretoria = {
+        tecnico_atribuido: "",
+        data_recebimento: "",
+        status: "NAO_APRESENTADA",
+    };
 
     const [prestacaoDeContas, setPrestacaoDeContas] = useState(false);
+    const [stateFormRecebimentoPelaDiretoria] = useState(initialFormRecebimentoPelaDiretoria);
+    const [tabelaPrestacoes, setTabelaPrestacoes] = useState({});
 
 
     useEffect(() => {
-        const prestacao_nao_apresentada = localStorage.getItem('prestacao_de_contas_nao_apresentada')
-
+        const prestacao_nao_apresentada = localStorage.getItem('prestacao_de_contas_nao_apresentada');
         if(prestacao_nao_apresentada){
             setPrestacaoDeContas(JSON.parse(prestacao_nao_apresentada))
         }
+    }, []);
 
-        // Como se fosse o componentWillUnmount - Quando desmonta o componente
-        //return () => {}
+    useEffect(()=>{
+       carregaTabelaPrestacaoDeContas();
+    }, []);
 
-    }, [])
+    const carregaTabelaPrestacaoDeContas = async () => {
+        let tabela_prestacoes = await getTabelasPrestacoesDeContas();
+        setTabelaPrestacoes(tabela_prestacoes);
+    };
 
 
         /*
@@ -97,10 +110,33 @@ uuid: "0112a7bc-98e3-4ab7-b64e-c43db2fdbb67"
             <div className="page-content-inner">
                     <>
                         {prestacaoDeContas &&
+                            <>
                             <Cabecalho
                                 prestacaoDeContas={prestacaoDeContas}
                                 exibeSalvar={false}
                             />
+                                <BotoesAvancarRetroceder
+                                    prestacaoDeContas={prestacaoDeContas}
+                                    textoBtnAvancar={"Receber"}
+                                    textoBtnRetroceder={"Reabrir PC"}
+                                    metodoAvancar={undefined}
+                                    metodoRetroceder={undefined}
+                                    disabledBtnAvancar={true}
+                                    disabledBtnRetroceder={true}
+                                />
+                                <TrilhaDeStatus
+                                    prestacaoDeContas={prestacaoDeContas}
+                                />
+                                <FormRecebimentoPelaDiretoria
+                                    handleChangeFormRecebimentoPelaDiretoria={undefined}
+                                    stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
+                                    tabelaPrestacoes={tabelaPrestacoes}
+                                    disabledNome={true}
+                                    disabledData={true}
+                                    disabledStatus={true}
+                                    exibeMotivo={false}
+                                />
+                            </>
                         }
 
                     </>

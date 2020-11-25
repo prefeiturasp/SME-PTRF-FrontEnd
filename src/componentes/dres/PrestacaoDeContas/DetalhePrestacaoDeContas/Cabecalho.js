@@ -4,7 +4,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 
 export const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise}) => {
-    console.log('Cabecalho ', prestacaoDeContas)
     return (
         <>
             {Object.entries(prestacaoDeContas).length > 0 &&
