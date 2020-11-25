@@ -177,12 +177,26 @@ export const ListaPrestacaoDeContas = () => {
     };
 
     const acoesTemplate = (rowData) => {
+
+        let obj_props;
+
+        if (rowData.status === 'NAO_APRESENTADA'){
+            obj_props = {
+                pathname: `/dre-detalhe-prestacao-de-contas-nao-apresentada`,
+                prestacao: rowData
+            }
+        }else {
+            obj_props = {
+                pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
+            }
+        }
+
+        console.log('acoesTemplate ', rowData)
+
         return (
             <div>
                 <Link
-                    to={{
-                        pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
-                    }}
+                    to={obj_props}
                     className="btn btn-link"
                 >
                     <FontAwesomeIcon
