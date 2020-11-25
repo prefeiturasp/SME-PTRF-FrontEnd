@@ -1,6 +1,13 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
-import {YupSignupSchemaCadastroDespesa, validaPayloadDespesas, cpfMaskContitional, calculaValorRecursoAcoes, periodoFechado} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {
+    YupSignupSchemaCadastroDespesa,
+    validaPayloadDespesas,
+    cpfMaskContitional,
+    calculaValorRecursoAcoes,
+    periodoFechado,
+    comparaObjetos
+} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import {getDespesasTabelas, criarDespesa, alterarDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getDespesaCadastrada} from "../../../../services/escolas/Despesas.service";
 import {DatePickerField} from "../../../Globais/DatePickerField";
@@ -51,12 +58,17 @@ export const CadastroForm = ({verbo_http}) => {
     const [numeroDocumentoReadOnly, setNumeroDocumentoReadOnly] = useState(false);
     const [showDespesaConferida, setShowDespesaConferida] = useState(false);
 
+    const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
+
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
             aux.exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas);
         }
         if (despesaContext.initialValues.data_documento && verbo_http === "PUT"){
             periodoFechado(despesaContext.initialValues.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
+        }
+        if (verbo_http === "PUT"){
+            setObjetoParaComparacao(despesaContext.initialValues)
         }
     }, [despesaContext.initialValues]);
 
@@ -247,6 +259,19 @@ export const CadastroForm = ({verbo_http}) => {
         }
         return errors;
     };
+
+    const onCancelarTrue = () => {
+        setShow(false);
+        aux.getPath(origem);
+    };
+
+    const onShowModal = () => {
+        setShow(true);
+    };
+
+    const houveAlteracoes = (values) => {
+        return !comparaObjetos(values,objetoParaComparacao)
+    }
 
     return (
         <>
@@ -686,7 +711,7 @@ export const CadastroForm = ({verbo_http}) => {
                                         )}
                                     />
                                     <div className="d-flex  justify-content-end pb-3 mt-3">
-                                        <button type="reset" onClick={()=>aux.onShowModal(setShow)}
+                                        <button type="reset" onClick={houveAlteracoes(values) ? onShowModal: onCancelarTrue}
                                                 className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                         </button>
                                         {despesaContext.idDespesa
