@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useParams, Link} from "react-router-dom";
+import {useParams, Link, Redirect} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {TopoSelectPeriodoBotaoVoltar} from "./TopoSelectPeriodoBotaoVoltar";
@@ -46,6 +46,7 @@ export const ListaPrestacaoDeContas = () => {
     const [tecnicosList, setTecnicosList] = useState([]);
     const [columns, setColumns] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [redirectPcNaoApresentada, setRedirectPcNaoApresentada] = useState(false);
 
     useEffect(() => {
         carregaPeriodos();
@@ -176,37 +177,62 @@ export const ListaPrestacaoDeContas = () => {
         )
     };
 
+    const gravaPcNaoApresentada = (rowData) =>{
+        let obj_prestacao = {
+            associacao: {
+                nome: rowData.unidade_nome,
+                cnpj: '',
+                unidade: {
+                    codigo_eol:'',
+                },
+                presidente_associacao:{
+                    nome:'',
+                },
+                presidente_conselho_fiscal:{
+                    nome:'',
+                }
+            },
+            periodo_uuid: rowData.periodo_uuid,
+            status: rowData.status,
+        };
+
+        localStorage.setItem("prestacao_de_contas_nao_apresentada", JSON.stringify( obj_prestacao))
+        //window.location.assign('/dre-detalhe-prestacao-de-contas-nao-apresentada')
+        setRedirectPcNaoApresentada(true)
+    };
+
     const acoesTemplate = (rowData) => {
-
-        let obj_props;
-
-        if (rowData.status === 'NAO_APRESENTADA'){
-            obj_props = {
-                pathname: `/dre-detalhe-prestacao-de-contas-nao-apresentada`,
-                prestacao: rowData
-            }
-        }else {
-            obj_props = {
-                pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
-            }
-        }
-
-        console.log('acoesTemplate ', rowData)
 
         return (
             <div>
-                <Link
-                    to={obj_props}
-                    className="btn btn-link"
-                >
-                    <FontAwesomeIcon
-                        style={{marginRight: "0", color: '#00585E'}}
-                        icon={faEye}
-                    />
-                </Link>
+                {rowData.status !== 'NAO_APRESENTADA' ? (
+                    <Link
+                        to={{
+                            pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
+                        }}
+                        className="btn btn-link"
+                    >
+                        <FontAwesomeIcon
+                            style={{marginRight: "0", color: '#00585E'}}
+                            icon={faEye}
+                        />
+                    </Link>
+                ):
+                    <button
+                        onClick={()=>gravaPcNaoApresentada(rowData)}
+                        className="btn btn-link"
+                    >
+                        <FontAwesomeIcon
+                            style={{marginRight: "0", color: '#00585E'}}
+                            icon={faEye}
+                        />
+                    </button>
+                }
+
             </div>
         )
     };
+
 
     const exibeLabelStatus = (status = null) => {
         let status_converter;
@@ -307,6 +333,13 @@ export const ListaPrestacaoDeContas = () => {
                     />
                 ) :
                 <div className="page-content-inner">
+                    {redirectPcNaoApresentada &&
+                        <Redirect
+                            to={{
+                                pathname: `/dre-detalhe-prestacao-de-contas-nao-apresentada`,
+                            }}
+                        />
+                    }
                     <TopoSelectPeriodoBotaoVoltar
                         periodos={periodos}
                         periodoEscolhido={periodoEscolhido}

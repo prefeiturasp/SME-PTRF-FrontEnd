@@ -7,10 +7,21 @@ export const DetalhePrestacaoDeContasNaoApresentada = () =>{
 
     const obj_props = useLocation();
 
-
     const [prestacaoDeContas, setPrestacaoDeContas] = useState(false);
 
-    useEffect(()=>{
+
+    useEffect(() => {
+        const prestacao_nao_apresentada = localStorage.getItem('prestacao_de_contas_nao_apresentada')
+
+        if(prestacao_nao_apresentada){
+            setPrestacaoDeContas(JSON.parse(prestacao_nao_apresentada))
+        }
+
+        // Como se fosse o componentWillUnmount - Quando desmonta o componente
+        //return () => {}
+
+    }, [])
+
 
         /*
         associacao_uuid: "3ebd27dd-62e4-42be-bfd2-748a693c243e"
@@ -26,29 +37,6 @@ unidade_nome: "BUTANTA"
 uuid: ""
         * */
 
-        if (obj_props.prestacao){
-
-            let obj_prestacao = {
-                associacao: {
-                    nome: obj_props.prestacao.unidade_nome,
-                    cnpj: '',
-                    unidade: {
-                        codigo_eol:'',
-                    },
-                    presidente_associacao:{
-                        nome:'',
-                    },
-                    presidente_conselho_fiscal:{
-                        nome:'',
-                    }
-                },
-                periodo_uuid: obj_props.prestacao.periodo_uuid,
-                status: obj_props.prestacao.status,
-            };
-
-            setPrestacaoDeContas(obj_prestacao)
-        }
-    }, [obj_props.prestacao]);
 
     /*
     * analises_de_conta_da_prestacao: []
@@ -102,7 +90,6 @@ status: "EM_ANALISE"
 tecnico_responsavel: null
 uuid: "0112a7bc-98e3-4ab7-b64e-c43db2fdbb67"
     * */
-    console.log("AQUI XXXXXX ", prestacaoDeContas)
 
     return(
         <PaginasContainer>
