@@ -48,6 +48,7 @@ export const ListaPrestacaoDeContas = () => {
     const [loading, setLoading] = useState(true);
     const [redirectPcNaoApresentada, setRedirectPcNaoApresentada] = useState(false);
 
+
     useEffect(() => {
         carregaPeriodos();
         carregaStatus();
@@ -62,10 +63,16 @@ export const ListaPrestacaoDeContas = () => {
 
     useEffect(() => {
         carregaPrestacoesDeContas();
+        return () => {
+            setPrestacaoDeContas(false); // Desmontando
+        };
     }, [periodoEscolhido]);
 
     useEffect(() => {
         carregaPrestacoesDeContas();
+        return () => {
+            setPrestacaoDeContas(false); // Desmontando
+        };
     }, [statusPrestacao]);
 
     useEffect(() => {
@@ -112,14 +119,6 @@ export const ListaPrestacaoDeContas = () => {
 
             setPrestacaoDeContas(prestacoes_de_contas)
         }
-        setLoading(false);
-    };
-
-    const carregaPrestacoesDeContasPorDrePeriodo = async () => {
-        setLoading(true);
-        let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status, stateFiltros.filtrar_por_tecnico_atribuido);;
-        //let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido);
-        setPrestacaoDeContas(prestacoes_de_contas);
         setLoading(false);
     };
 
@@ -179,9 +178,6 @@ export const ListaPrestacaoDeContas = () => {
     };
 
     const gravaPcNaoApresentada = (rowData) =>{
-
-        console.log('gravaPcNaoApresentada ', rowData)
-
         let obj_prestacao = {
             associacao: {
                 uuid: rowData.associacao_uuid,
@@ -201,7 +197,7 @@ export const ListaPrestacaoDeContas = () => {
             status: rowData.status,
         };
 
-        localStorage.setItem("prestacao_de_contas_nao_apresentada", JSON.stringify( obj_prestacao))
+        localStorage.setItem("prestacao_de_contas_nao_apresentada", JSON.stringify( obj_prestacao));
         setRedirectPcNaoApresentada(true)
     };
 
@@ -313,19 +309,20 @@ export const ListaPrestacaoDeContas = () => {
         });
     };
 
-    const handleSubmitFiltros = async (event) => {
-        event.preventDefault();
+    const handleSubmitFiltros = async () => {
         setStatusPrestacao(stateFiltros.filtrar_por_status);
         await carregaPrestacoesDeContas();
     };
 
     const limpaFiltros = async () => {
-        await setStateFiltros({
+        setLoading(true);
+        setStateFiltros({
             ...initialStateFiltros,
             filtrar_por_status: stateFiltros.filtrar_por_status,
         });
-        await setStatusPrestacao('');
+        setStatusPrestacao('');
         await carregaPrestacoesDeContas();
+        setLoading(false)
     };
 
     return (
