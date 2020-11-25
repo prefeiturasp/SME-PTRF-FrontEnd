@@ -4,6 +4,7 @@ import "../../associacoes.scss"
 import Loading from "../../../../../utils/Loading";
 import {Formik} from "formik";
 import {YupSignupSchemaDadosDaAssociacao} from "../../../../../utils/ValidacoesAdicionaisFormularios";
+import MaskedInput from "react-text-mask";
 
 
 export const ProcessoSeiRegularidade = ({dadosDaAssociacao}) => {
@@ -46,6 +47,15 @@ export const ProcessoSeiRegularidade = ({dadosDaAssociacao}) => {
         setLoading(false)
     };
 
+    const processoSeiMask = (value) => {
+        // 0000.0000/0000000-0
+        let processo = value.replace(/[^\d]+/g, "");
+
+        let mask = [/\d/, /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/]
+
+        return mask
+    }
+
     return (
         <>
             {loading ? (
@@ -74,13 +84,14 @@ export const ProcessoSeiRegularidade = ({dadosDaAssociacao}) => {
                                             <div className="form-group col-md-12">
                                                 <label htmlFor="processo-regularidade"><strong>Processo SEI de regularidade</strong></label>
                                                 <div className="d-flex align-items-center">
-                                                <input
-                                                    type="text"
-                                                    value={props.values.processo_regularidade}
-                                                    name="processo_regularidade"
-                                                    id="processo_regularidade"
-                                                    className="form-control"
+                                                <MaskedInput
+                                                    mask={(valor) => processoSeiMask(valor)}
                                                     onChange={props.handleChange}
+                                                    name="processo_regularidade"
+                                                    className="form-control"
+                                                    placeholder="Número do processo SEI"
+                                                    value={props.values.processo_regularidade}
+                                                    id="processo_regularidade"
                                                     onBlur={props.handleBlur}
                                                 />
                                                 {props.touched.processo_regularidade && props.errors.processo_regularidade && <span
