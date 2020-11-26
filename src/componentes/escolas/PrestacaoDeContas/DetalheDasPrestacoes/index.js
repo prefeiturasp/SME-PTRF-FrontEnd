@@ -15,6 +15,7 @@ import {
     getDesconciliarDespesa,
     getSalvarPrestacaoDeConta,
     getObservacoes,
+    getStatusPeriodoPorData
 } from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getContas, getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
@@ -22,6 +23,7 @@ import {SelectPeriodoConta} from "../SelectPeriodoConta";
 import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
 import {ModalConfirmaSalvar} from "../../../../utils/Modais";
+import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -29,6 +31,7 @@ export const DetalheDasPrestacoes = () => {
     const [loading, setLoading] = useState(true);
     const [showSalvar, setShowSalvar] = useState(false);
     const [periodoConta, setPeriodoConta] = useState("");
+    const [periodoFechado, setPeriodoFechado] = useState(true);
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [contaConciliacao, setContaConciliacao] = useState("");
@@ -100,10 +103,16 @@ export const DetalheDasPrestacoes = () => {
         setLoading(false)
     }, []);
 
+    useEffect(
+        () => {
+            verificaSePeriodoEstaAberto(periodoConta.periodo)
+        }, [periodoConta, periodosAssociacao]
+    );
+
     const getPeriodoConta = () => {
         if (localStorage.getItem('periodoConta')) {
-            const files = JSON.parse(localStorage.getItem('periodoConta'));
-            setPeriodoConta(files)
+            const periodoConta = JSON.parse(localStorage.getItem('periodoConta'));
+            setPeriodoConta(periodoConta)
         } else {
             setPeriodoConta({periodo: "", conta: ""})
         }
@@ -334,6 +343,21 @@ export const DetalheDasPrestacoes = () => {
         return `Não demonstrado por ${msg}`;
     }
 
+    const verificaSePeriodoEstaAberto = async (periodoUuid) => {
+        if (periodosAssociacao) {
+            const periodo = periodosAssociacao.find(o => o.uuid === periodoUuid);
+            if (periodo) {
+                const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
+                await getStatusPeriodoPorData(associacaoUuid, periodo.data_inicio_realizacao_despesas).then(response => {
+                    const periodoBloqueado = response.prestacao_contas_status ? response.prestacao_contas_status.periodo_bloqueado : true
+                    setPeriodoFechado(periodoBloqueado)
+                }).catch(error => {
+                    console.log(error);
+                });
+            }
+        }
+    }
+
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
             <div className="row">
@@ -366,7 +390,7 @@ export const DetalheDasPrestacoes = () => {
                                 handleClickCadastrar={handleClickCadastrar}
                                 btnCadastrarTexto={btnCadastrarTexto}
                                 setShowSalvar={setShowSalvar}
-                                showSalvar={showSalvar}
+                                showSalvar={!periodoFechado}
                                 onSalvarTrue={onSalvarTrue}
                                 onHandleClose={onHandleClose}
                                 contaConciliacao={contaConciliacao}
@@ -394,6 +418,7 @@ export const DetalheDasPrestacoes = () => {
                                     checkboxReceitas={checkboxReceitas}
                                     handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
                                     dataTip={dataTip}
+                                    periodoFechado={periodoFechado}
                                 />
                             )}
 
@@ -404,6 +429,7 @@ export const DetalheDasPrestacoes = () => {
                                     checkboxReceitas={checkboxReceitas}
                                     handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
                                     dataTip={dataTip}
+                                    periodoFechado={periodoFechado}
                                 />
                             )}
 
@@ -418,6 +444,7 @@ export const DetalheDasPrestacoes = () => {
                                 checkboxDespesas={checkboxDespesas}
                                 handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
                                 dataTip={dataTip}
+                                periodoFechado={periodoFechado}
                             />
                             }
 
@@ -428,12 +455,14 @@ export const DetalheDasPrestacoes = () => {
                                 checkboxDespesas={checkboxDespesas}
                                 handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
                                 dataTip={dataTip}
+                                periodoFechado={periodoFechado}
                             />
                             }
 
                             <Justificativa
                                 textareaJustificativa={textareaJustificativa}
                                 handleChangeTextareaJustificativa={handleChangeTextareaJustificativa}
+                                periodoFechado={periodoFechado}
                             />
                         </>
                     ):

@@ -8,7 +8,7 @@ import moment from "moment";
 import IconeNaoDemonstrado from "../../../../../assets/img/icone-nao-demonstrado.svg";
 import ReactTooltip from "react-tooltip";
 
-export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDespesas, handleChangeCheckboxDespesas, dataTip}) => {
+export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDespesas, handleChangeCheckboxDespesas, dataTip, periodoFechado}) => {
 
     let history = useHistory();
     const rowsPerPage = 7;
@@ -50,6 +50,7 @@ export const TabelaDeLancamentosDespesas = ({conciliados, despesas, checkboxDesp
                         onChange={(e)=>handleChangeCheckboxDespesas(e, rowData.uuid)}
                         name="checkConferido"
                         id="checkConferido"
+                        disabled={periodoFechado}
                     />
                 </div>
             )
