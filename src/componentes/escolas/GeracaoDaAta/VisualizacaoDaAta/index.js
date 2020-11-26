@@ -104,6 +104,7 @@ export const VisualizacaoDaAta = () => {
                     devolucao_total: devolucao.devolucao_total ? 'true' : 'false',
                     valor: devolucao.valor ? valorTemplate(devolucao.valor) : '',
                     motivo: devolucao.motivo,
+                    visao_criacao: devolucao.visao_criacao,
                 })
             });
             setInitialFormDevolucaoAoTesouro({devolucoes_ao_tesouro_da_prestacao})
@@ -300,6 +301,7 @@ export const VisualizacaoDaAta = () => {
                 devolucao_total: "",
                 valor: "",
                 motivo: "",
+                visao_criacao: "UE",
             }
         ]
     };
