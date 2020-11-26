@@ -11,18 +11,11 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
 
     const [showConfirmaRemocao, setShowConfirmaRemocao] = useState({abrir:false, indice:0});
 
-    const serviceRemoverDevolucao = (remove, index)=>{
-
-    };
-
     const setDisabledCampos = (devolucao) =>{
        return devolucao.visao_criacao === "DRE" && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE'
     };
 
     const onClickRemoverDevolucao = async (remove, index) =>{
-        console.log("onClickRemoverDevolucao XXXXXX ", index)
-        //console.log("showConfirmaRemocao XXXXXX ", showConfirmaRemocao.indice)
-
         await remove(index)
         setShowConfirmaRemocao(false)
     };
@@ -30,7 +23,6 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
     const onHandleClose = () => {
         setShowConfirmaRemocao(false);
     };
-
 
     return(
         <>
@@ -104,7 +96,6 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                 </div>
 
                                                                 <div className='col'>
-                                                                    <p>VISÃO CRIACAO: {devolucao.visao_criacao } |  VISÃO SELECIONADA: {visoesService.getItemUsuarioLogado('visao_selecionada.nome')}</p>
                                                                     <label className='labels-filtros' htmlFor="busca_por_numero_documento">Busque por número do documento</label>
                                                                     <input
                                                                         name={`devolucoes_ao_tesouro_da_prestacao[${index}].busca_por_numero_documento`}
@@ -116,7 +107,6 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                         type="text"
                                                                         className='form-control'
                                                                         disabled={setDisabledCampos(devolucao) }
-                                                                        //disabled={devolucao.visao_criacao === "DRE" && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' }
                                                                     />
                                                                 </div>
 
