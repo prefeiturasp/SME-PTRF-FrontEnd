@@ -68,6 +68,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 devolucao_total: "",
                 valor: "",
                 motivo: "",
+                visao_criacao: "DRE",
             }
         ]
 
@@ -155,6 +156,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const carregaPrestacaoDeContas = async () => {
         if (prestacao_conta_uuid){
             let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
+            console.log("carregaPrestacaoDeContas ", prestacao)
             setPrestacaoDeContas(prestacao);
             setStateFormRecebimentoPelaDiretoria({
                 ...stateFormRecebimentoPelaDiretoria,
@@ -184,6 +186,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         devolucao_total: devolucao.devolucao_total ? 'true' : 'false',
                         valor: devolucao.valor ?  valorTemplate(devolucao.valor) : '',
                         motivo: devolucao.motivo,
+                        visao_criacao: devolucao.visao_criacao,
                     })
                 });
                 setInitialFormDevolucaoAoTesouro({devolucoes_ao_tesouro_da_prestacao})

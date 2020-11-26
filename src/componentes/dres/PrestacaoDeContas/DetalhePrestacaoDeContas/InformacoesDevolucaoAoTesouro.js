@@ -4,6 +4,7 @@ import {cpfMaskContitional, exibeDataPT_BR} from "../../../../utils/ValidacoesAd
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import CurrencyInput from "react-currency-input";
 import MaskedInput from "react-text-mask";
+import {visoesService} from "../../../../services/visoes.service";
 
 export const InformacoesDevolucaoAoTesouro = (
     {
@@ -261,6 +262,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 devolucao_total: "",
                                                                 valor: "",
                                                                 motivo: "",
+                                                                visao_criacao: visoesService.getItemUsuarioLogado('visao_selecionada.nome'),
                                                             }
                                                         );
                                                     }}
