@@ -249,20 +249,12 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                         type="button"
                                                                         className="btn btn btn-outline-success mr-2"
                                                                         onClick={async ()=>{
-                                                                            //serviceRemoverDevolucao(devolucao, remove, index)
-                                                                            //onClickRemoverDevolucao(remove, index)
                                                                             setDisabledCampos(devolucao) ? setShowConfirmaRemocao({abrir:true, indice:index}) : onClickRemoverDevolucao(remove, index)
                                                                         }}
-                                                                        // onClick={async () => {
-                                                                        //     await remove(index)
-                                                                        // }}
                                                                     >
                                                                         - Remover devolução
                                                                     </button>
                                                                 </div>
-
-
-
                                                             </div>
                                                         )}
                                                         <section>
