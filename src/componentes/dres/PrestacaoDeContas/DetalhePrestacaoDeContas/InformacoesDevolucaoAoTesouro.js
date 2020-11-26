@@ -6,18 +6,18 @@ import CurrencyInput from "react-currency-input";
 import MaskedInput from "react-text-mask";
 import {visoesService} from "../../../../services/visoes.service";
 
-export const InformacoesDevolucaoAoTesouro = (
-    {
-        formRef,
-        informacoesPrestacaoDeContas,
-        initialValues,
-        despesas,
-        buscaDespesaPorFiltros,
-        valorTemplate,
-        despesasTabelas,
-        tiposDevolucao,
-        validateFormDevolucaoAoTesouro,
-    }) =>{
+export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeContas, initialValues, despesas, buscaDespesaPorFiltros, valorTemplate, despesasTabelas, tiposDevolucao, validateFormDevolucaoAoTesouro,}) =>{
+
+    console.log("InformacoesDevolucaoAoTesouro XXXXXX ", initialValues)
+
+    const setDisabledCampos = (devolucao) =>{
+       return devolucao.visao_criacao === "DRE" && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE'
+    };
+
+    const onClickRemoverDevolucao = async (remove, index) =>{
+        await remove(index)
+    };
+
     return(
         <>
             {informacoesPrestacaoDeContas && informacoesPrestacaoDeContas.devolucao_ao_tesouro !== "Não" &&
@@ -64,6 +64,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                         type="text"
                                                                         className='form-control'
                                                                         placeholder="Digite o nº do CNPJ ou CPF"
+                                                                        disabled={setDisabledCampos(devolucao) }
                                                                     />
                                                                 </div>
 
@@ -77,6 +78,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                         }
                                                                         }
                                                                         className='form-control'
+                                                                        disabled={setDisabledCampos(devolucao) }
                                                                     >
                                                                         <option value="">Selecione o tipo</option>
                                                                         {despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.map(item =>
@@ -88,6 +90,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 </div>
 
                                                                 <div className='col'>
+                                                                    <p>VISÃO CRIACAO: {devolucao.visao_criacao } |  VISÃO SELECIONADA: {visoesService.getItemUsuarioLogado('visao_selecionada.nome')}</p>
                                                                     <label className='labels-filtros' htmlFor="busca_por_numero_documento">Busque por número do documento</label>
                                                                     <input
                                                                         name={`devolucoes_ao_tesouro_da_prestacao[${index}].busca_por_numero_documento`}
@@ -98,12 +101,13 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                         }
                                                                         type="text"
                                                                         className='form-control'
-                                                                        //placeholder=""
+                                                                        disabled={setDisabledCampos(devolucao) }
+                                                                        //disabled={devolucao.visao_criacao === "DRE" && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' }
                                                                     />
                                                                 </div>
 
                                                                 <div className='col-12 text-right'>
-                                                                    <button name='btnFiltrar' type='button' onClick={()=>buscaDespesaPorFiltros(index)} className='btn btn-success mt-2'>Filtrar</button>
+                                                                    <button disabled={setDisabledCampos(devolucao) } name='btnFiltrar' type='button' onClick={()=>buscaDespesaPorFiltros(index)} className='btn btn-success mt-2'>Filtrar</button>
                                                                 </div>
 
                                                             </div>
@@ -117,7 +121,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                         eval('despesas.devolucao_'+index).map((despesa, index_interno)=>
                                                                             <Fragment key={index_interno}>
                                                                                 <tr className='divisao'>
-                                                                                    <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}><Field type="radio" name={`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`} value={despesa.uuid} /></td>
+                                                                                    <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}><Field disabled={setDisabledCampos(devolucao) } type="radio" name={`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`} value={despesa.uuid} /></td>
                                                                                     <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesa.nome_fornecedor}</td>
                                                                                     <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesa.cpf_cnpj_fornecedor}</td>
                                                                                     <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesa.tipo_documento && despesa.tipo_documento.nome ? despesa.tipo_documento.nome : ''}</td>
@@ -147,6 +151,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                     }
                                                                     }
                                                                     className='form-control'
+                                                                    disabled={setDisabledCampos(devolucao) }
                                                                 >
                                                                     <option value="">Selecione o tipo de devolução</option>
                                                                     {tiposDevolucao && tiposDevolucao.map(item =>
@@ -181,6 +186,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 }
                                                                 }
                                                                 className='form-control'
+                                                                disabled={setDisabledCampos(devolucao) }
                                                             >
                                                                 <option value="">Selecione o tipo</option>
                                                                 <option value='true'>Valor total</option>
@@ -203,6 +209,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 className={`form-control`}
                                                                 selectAllOnFocus={true}
                                                                 placeholder='Digite o valor'
+                                                                disabled={setDisabledCampos(devolucao) }
                                                             />
                                                         </div>
                                                         <div className='col-12 mt-2'>
@@ -216,6 +223,7 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                 className="form-control"
                                                                 rows="3"
                                                                 placeholder='Escreva o motivo da devolução'
+                                                                disabled={setDisabledCampos(devolucao) }
                                                             >
                                                             </textarea>
                                                         </div>
@@ -226,9 +234,12 @@ export const InformacoesDevolucaoAoTesouro = (
                                                                     <button
                                                                         type="button"
                                                                         className="btn btn btn-outline-success mr-2"
-                                                                        onClick={async () => {
-                                                                            await remove(index)
+                                                                        onClick={async ()=>{
+                                                                            onClickRemoverDevolucao(remove, index)
                                                                         }}
+                                                                        // onClick={async () => {
+                                                                        //     await remove(index)
+                                                                        // }}
                                                                     >
                                                                         - Remover devolução
                                                                     </button>
