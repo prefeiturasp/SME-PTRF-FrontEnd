@@ -1,14 +1,18 @@
-import React, {Fragment} from "react";
+import React, {Fragment, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
 import {cpfMaskContitional, exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import CurrencyInput from "react-currency-input";
 import MaskedInput from "react-text-mask";
 import {visoesService} from "../../../../services/visoes.service";
+import {ModalRecebida} from "../ModalRecebida";
+import {ModalConfirmaRemocaoDevolucaoAoTesouro} from "../ModalConfirmaRemocaoDevolucaoAoTesouro";
 
 export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeContas, initialValues, despesas, buscaDespesaPorFiltros, valorTemplate, despesasTabelas, tiposDevolucao, validateFormDevolucaoAoTesouro,}) =>{
 
     console.log("InformacoesDevolucaoAoTesouro XXXXXX ", initialValues)
+
+    const [showConfirmaRemocao, setShowConfirmaRemocao] = useState(false);
 
     const setDisabledCampos = (devolucao) =>{
        return devolucao.visao_criacao === "DRE" && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE'
@@ -16,7 +20,13 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
 
     const onClickRemoverDevolucao = async (remove, index) =>{
         await remove(index)
+        setShowConfirmaRemocao(false)
     };
+
+    const onHandleClose = () => {
+        setShowConfirmaRemocao(false);
+    };
+
 
     return(
         <>
@@ -235,7 +245,8 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                         type="button"
                                                                         className="btn btn btn-outline-success mr-2"
                                                                         onClick={async ()=>{
-                                                                            onClickRemoverDevolucao(remove, index)
+                                                                            //serviceRemoverDevolucao(devolucao, remove, index)
+                                                                            setDisabledCampos(devolucao) ? setShowConfirmaRemocao(true) : onClickRemoverDevolucao(remove, index)
                                                                         }}
                                                                         // onClick={async () => {
                                                                         //     await remove(index)
@@ -246,6 +257,20 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                 </div>
                                                             </div>
                                                         )}
+
+                                                        <section>
+                                                            <ModalConfirmaRemocaoDevolucaoAoTesouro
+                                                                show={showConfirmaRemocao}
+                                                                handleClose={onHandleClose}
+                                                                onConfirmaTrue={()=>onClickRemoverDevolucao(remove, index)}
+                                                                titulo="Excluir devolução"
+                                                                texto="<p>Essa devolução foi incluida pela Diretoria Regional. Deseja realmente exclui-la?</p>"
+                                                                primeiroBotaoTexto="Cancelar"
+                                                                primeiroBotaoCss="outline-success"
+                                                                segundoBotaoCss="success"
+                                                                segundoBotaoTexto="Confirmar"
+                                                            />
+                                                        </section>
                                                     </div>
                                                 )
                                             })}
@@ -289,6 +314,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                         )
                     }}
                 </Formik>
+
             </>
             }
         </>
