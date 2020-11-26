@@ -5,20 +5,24 @@ import {DatePickerField} from "../../../Globais/DatePickerField";
 import CurrencyInput from "react-currency-input";
 import MaskedInput from "react-text-mask";
 import {visoesService} from "../../../../services/visoes.service";
-import {ModalRecebida} from "../ModalRecebida";
 import {ModalConfirmaRemocaoDevolucaoAoTesouro} from "../ModalConfirmaRemocaoDevolucaoAoTesouro";
 
 export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeContas, initialValues, despesas, buscaDespesaPorFiltros, valorTemplate, despesasTabelas, tiposDevolucao, validateFormDevolucaoAoTesouro,}) =>{
 
-    console.log("InformacoesDevolucaoAoTesouro XXXXXX ", initialValues)
+    const [showConfirmaRemocao, setShowConfirmaRemocao] = useState({abrir:false, indice:0});
 
-    const [showConfirmaRemocao, setShowConfirmaRemocao] = useState(false);
+    const serviceRemoverDevolucao = (remove, index)=>{
+
+    };
 
     const setDisabledCampos = (devolucao) =>{
        return devolucao.visao_criacao === "DRE" && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE'
     };
 
     const onClickRemoverDevolucao = async (remove, index) =>{
+        console.log("onClickRemoverDevolucao XXXXXX ", index)
+        //console.log("showConfirmaRemocao XXXXXX ", showConfirmaRemocao.indice)
+
         await remove(index)
         setShowConfirmaRemocao(false)
     };
@@ -246,7 +250,8 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                         className="btn btn btn-outline-success mr-2"
                                                                         onClick={async ()=>{
                                                                             //serviceRemoverDevolucao(devolucao, remove, index)
-                                                                            setDisabledCampos(devolucao) ? setShowConfirmaRemocao(true) : onClickRemoverDevolucao(remove, index)
+                                                                            //onClickRemoverDevolucao(remove, index)
+                                                                            setDisabledCampos(devolucao) ? setShowConfirmaRemocao({abrir:true, indice:index}) : onClickRemoverDevolucao(remove, index)
                                                                         }}
                                                                         // onClick={async () => {
                                                                         //     await remove(index)
@@ -255,14 +260,16 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                         - Remover devolução
                                                                     </button>
                                                                 </div>
+
+
+
                                                             </div>
                                                         )}
-
                                                         <section>
                                                             <ModalConfirmaRemocaoDevolucaoAoTesouro
-                                                                show={showConfirmaRemocao}
+                                                                show={showConfirmaRemocao.abrir}
                                                                 handleClose={onHandleClose}
-                                                                onConfirmaTrue={()=>onClickRemoverDevolucao(remove, index)}
+                                                                onConfirmaTrue={()=>onClickRemoverDevolucao(remove, showConfirmaRemocao.indice)}
                                                                 titulo="Excluir devolução"
                                                                 texto="<p>Essa devolução foi incluida pela Diretoria Regional. Deseja realmente exclui-la?</p>"
                                                                 primeiroBotaoTexto="Cancelar"
@@ -271,7 +278,9 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                 segundoBotaoTexto="Confirmar"
                                                             />
                                                         </section>
+
                                                     </div>
+
                                                 )
                                             })}
 
