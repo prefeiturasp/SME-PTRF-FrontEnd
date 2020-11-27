@@ -339,7 +339,7 @@ export const TextoCopiado = ({show, handleClose}) => {
     )
 };
 
-export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, validateFormMembros, stateFormEditarMembro, infosMembroSelecionado, btnSalvarReadOnly}) => {
+export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, validateFormMembros, stateFormEditarMembro, infosMembroSelecionado, btnSalvarReadOnly, usuarios}) => {
 
     const bodyTextarea = () => {
         return (
@@ -484,6 +484,30 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                                 placeholder="Insira seu email se desejar"
                                             />
                                             {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
+                                        </div>
+                                    </div>
+
+                                    <div className='col-12'>
+                                        <div className='form-group'>
+                                            <label htmlFor="usuario">Usuário</label>
+                                            <select
+                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                value={props.values.usuario ? props.values.usuario : ""}
+                                                onChange={(e) => {
+                                                    props.handleChange(e);
+                                                    handleChangeEditarMembro(e.target.name, e.target.value);
+                                                }
+                                                }
+                                                name="usuario"
+                                                className="form-control"
+                                            >
+                                                <option value="">Escolha seu usuário</option>
+                                                {usuarios && usuarios.length > 0 && usuarios.map(usuario=>
+                                                    <option key={usuario.id} value={usuario.id}>{usuario.name}</option>
+                                                )}
+
+                                            </select>
+                                            {props.errors.representacao && <span className="span_erro text-danger mt-1"> {props.errors.representacao}</span>}
                                         </div>
                                     </div>
 

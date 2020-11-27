@@ -163,6 +163,7 @@ export const MembrosDaAssociacao = () =>{
                 representacao: infoMembroSelecionado.infos.representacao ? infoMembroSelecionado.infos.representacao : "",
                 codigo_identificacao: infoMembroSelecionado.infos.codigo_identificacao ? infoMembroSelecionado.infos.codigo_identificacao : "",
                 email: infoMembroSelecionado.infos.email ? infoMembroSelecionado.infos.email : "",
+                usuario: infoMembroSelecionado.infos.usuario ? infoMembroSelecionado.infos.usuario : "",
             };
         }else {
             init = {
@@ -285,7 +286,7 @@ export const MembrosDaAssociacao = () =>{
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
-                'usuario': stateFormEditarMembro.email ? stateFormEditarMembro.usuario : ""
+                'usuario': stateFormEditarMembro.usuario ? stateFormEditarMembro.usuario : ""
             };
         }else if(stateFormEditarMembro && stateFormEditarMembro.representacao === "ESTUDANTE"){
             payload = {
@@ -296,7 +297,7 @@ export const MembrosDaAssociacao = () =>{
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
-                'usuario': stateFormEditarMembro.email ? stateFormEditarMembro.usuario : ""
+                'usuario': stateFormEditarMembro.usuario ? stateFormEditarMembro.usuario : ""
             };
         }else if (stateFormEditarMembro && stateFormEditarMembro.representacao === "PAI_RESPONSAVEL"){
             payload = {
@@ -307,7 +308,7 @@ export const MembrosDaAssociacao = () =>{
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
-                'usuario': stateFormEditarMembro.email ? stateFormEditarMembro.usuario : ""
+                'usuario': stateFormEditarMembro.usuario ? stateFormEditarMembro.usuario : ""
             };
         }
 
@@ -386,6 +387,7 @@ export const MembrosDaAssociacao = () =>{
                     show={showEditarMembro}
                     handleClose={onHandleClose}
                     onSubmitEditarMembro={onSubmitEditarMembro}
+                    usuarios={usuarios}
                     handleChangeEditarMembro={handleChangeEditarMembro}
                     validateFormMembros={validateFormMembros}
                     stateFormEditarMembro={stateFormEditarMembro}
