@@ -339,8 +339,7 @@ export const TextoCopiado = ({show, handleClose}) => {
     )
 };
 
-export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, validateFormMembros, stateFormEditarMembro, infosMembroSelecionado, btnSalvarReadOnly}) => {
-
+export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, validateFormMembros, stateFormEditarMembro, infosMembroSelecionado, btnSalvarReadOnly, usuarios}) => {
     const bodyTextarea = () => {
         return (
 
@@ -370,7 +369,6 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                                 readOnly={true}
                                                 type="text"
                                                 value={props.values.cargo_associacao ? props.values.cargo_associacao : ""}
-                                                //onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
                                                 onChange={(e) => {
                                                         props.handleChange(e);
                                                         handleChangeEditarMembro(e.target.name, e.target.value);
@@ -387,7 +385,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                         <div className="form-group">
                                             <label htmlFor="representacao">Representação na associação</label>
                                             <select
-                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                disabled={!visoesService.getPermissoes(['change_associacao']) || stateFormEditarMembro.uuid}
                                                 value={props.values.representacao ? props.values.representacao : ""}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
@@ -410,7 +408,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                         <div className="form-group">
                                             <label htmlFor="codigo_identificacao">{props.values.representacao === 'SERVIDOR' ? "Registro Funcional" : "Código EOL"}</label>
                                             <input
-                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                disabled={!visoesService.getPermissoes(['change_associacao']) || stateFormEditarMembro.uuid}
                                                 type="text"
                                                 value={props.values.codigo_identificacao ? props.values.codigo_identificacao : ""}
                                                 onChange={(e) => {
@@ -432,7 +430,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                             <label htmlFor="cargo_associacao">Nome Completo</label>
                                             <input
                                                 readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
-                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                disabled={!visoesService.getPermissoes(['change_associacao']) || stateFormEditarMembro.uuid}
                                                 type="text"
                                                 value={props.values.nome ? props.values.nome : ""}
                                                 onChange={(e) => {
@@ -484,6 +482,30 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                                 placeholder="Insira seu email se desejar"
                                             />
                                             {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
+                                        </div>
+                                    </div>
+
+                                    <div className='col-12'>
+                                        <div className='form-group'>
+                                            <label htmlFor="usuario">Usuário</label>
+                                            <select
+                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                value={props.values.usuario.id}
+                                                onChange={(e) => {
+                                                    props.handleChange(e);
+                                                    handleChangeEditarMembro(e.target.name, e.target.value);
+                                                }
+                                                }
+                                                name="usuario"
+                                                className="form-control"
+                                            >
+                                                <option value="">Escolha seu usuário</option>
+                                                {usuarios && usuarios.length > 0 && usuarios.map(usuario=>
+                                                    <option key={usuario.id} value={usuario.id}>{usuario.name}</option>
+                                                )}
+
+                                            </select>
+                                            {props.errors.representacao && <span className="span_erro text-danger mt-1"> {props.errors.representacao}</span>}
                                         </div>
                                     </div>
 
