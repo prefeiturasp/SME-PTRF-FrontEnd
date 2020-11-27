@@ -77,8 +77,12 @@ export const exportarDadosAssociacao = async () => {
             }).catch(error => {
                 return error.response;
             });
-}
+};
 
 export const getPeriodosDePrestacaoDeContasDaAssociacao = async () => {
     return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/periodos-para-prestacao-de-contas/`, authHeader)).data
+};
+
+export const getUsuarios = async () => {
+    return (await api.get(`/api/usuarios/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };

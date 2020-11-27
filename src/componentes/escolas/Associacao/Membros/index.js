@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
 import {EditarMembro} from "../../../../utils/Modais";
-import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarNomeResponsavel} from "../../../../services/escolas/Associacao.service";
+import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarNomeResponsavel, getUsuarios} from "../../../../services/escolas/Associacao.service";
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
@@ -39,11 +39,13 @@ export const MembrosDaAssociacao = () =>{
         representacao:"",
         codigo_identificacao:"",
         email:"",
+        usuario:"",
     };
 
     const [clickIconeToogle, setClickIconeToogle] = useState({});
     const [showEditarMembro, setShowEditarMembro] = useState(false);
     const [membros, setMembros] = useState({});
+    const [usuarios, setUsuarios] = useState({});
     const [initialValuesMembrosDiretoria, setInitialValuesMembrosDiretoria] = useState(initDiretoria);
     const [initialValuesMembrosConselho, setInitialValuesMembrosConselho] = useState(initConselho);
     const [infosMembroSelecionado, setInfosMembroSelecionado] = useState(null);
@@ -53,6 +55,10 @@ export const MembrosDaAssociacao = () =>{
 
     useEffect(()=>{
         carregaMembros();
+    }, []);
+
+    useEffect(()=>{
+        carregaUsuarios();
     }, []);
 
     useEffect(()=>{
@@ -66,6 +72,12 @@ export const MembrosDaAssociacao = () =>{
     const carregaMembros = async ()=>{
         let membros = await getMembrosAssociacao();
         setMembros(membros)
+    };
+
+    const carregaUsuarios = async ()=>{
+        let usuarios = await getUsuarios();
+        console.log('carregaUsuarios ', usuarios)
+        setUsuarios(usuarios);
     };
 
     const buscaDadosMembros = (id_cargo) =>{
@@ -161,6 +173,7 @@ export const MembrosDaAssociacao = () =>{
                 representacao: "",
                 codigo_identificacao: "",
                 email: "",
+                usuario:"",
             };
         }
 
@@ -201,6 +214,7 @@ export const MembrosDaAssociacao = () =>{
                         cargo_educacao: rf.data[0].cargo,
                         representacao: values.representacao,
                         email: values.email,
+                        usuario: values.usuario,
                     };
                     setStateFormEditarMembro(init);
                     setBtnSalvarReadOnly(false);
@@ -226,6 +240,7 @@ export const MembrosDaAssociacao = () =>{
                         cargo_educacao: "",
                         representacao: values.representacao,
                         email: values.email,
+                        usuario: values.usuario,
                     };
                     setStateFormEditarMembro(init);
                     setBtnSalvarReadOnly(false);
@@ -269,7 +284,8 @@ export const MembrosDaAssociacao = () =>{
                 'cargo_educacao': stateFormEditarMembro.cargo_educacao ? stateFormEditarMembro.cargo_educacao : "",
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
-                'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : ""
+                'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
+                'usuario': stateFormEditarMembro.email ? stateFormEditarMembro.usuario : ""
             };
         }else if(stateFormEditarMembro && stateFormEditarMembro.representacao === "ESTUDANTE"){
             payload = {
@@ -280,6 +296,7 @@ export const MembrosDaAssociacao = () =>{
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
+                'usuario': stateFormEditarMembro.email ? stateFormEditarMembro.usuario : ""
             };
         }else if (stateFormEditarMembro && stateFormEditarMembro.representacao === "PAI_RESPONSAVEL"){
             payload = {
@@ -290,6 +307,7 @@ export const MembrosDaAssociacao = () =>{
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
+                'usuario': stateFormEditarMembro.email ? stateFormEditarMembro.usuario : ""
             };
         }
 
