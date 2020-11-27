@@ -38,15 +38,15 @@ export const editarMembroAssociacao = async (payload, uuid) => {
 };
 
 export const consultarRF = async (rf) => {
-    return (await api.get(`/api/membros-associacao/codigo-identificacao/?rf=${rf}`, authHeader))
+    return (await api.get(`/api/membros-associacao/codigo-identificacao/?rf=${rf}&associacao_uuid${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader))
 };
 
 export const consultarCodEol = async (cod_eol) => {
-    return (await api.get(`/api/membros-associacao/codigo-identificacao/?codigo-eol=${cod_eol}`, authHeader))
+    return (await api.get(`/api/membros-associacao/codigo-identificacao/?codigo-eol=${cod_eol}&associacao_uuid${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader))
 };
 
 export const consultarNomeResponsavel = async (nome) => {
-    return (await api.get(`/api/membros-associacao/nome-responsavel/?nome=${nome}`, authHeader))
+    return (await api.get(`/api/membros-associacao/nome-responsavel/?nome=${nome}&associacao_uuid${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader))
 };
 
 export const getContas = async () => {
