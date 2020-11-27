@@ -71,12 +71,13 @@ export const MembrosDaAssociacao = () =>{
 
     const carregaMembros = async ()=>{
         let membros = await getMembrosAssociacao();
+        //console.log("Carrega Membros ", membros)
         setMembros(membros)
     };
 
     const carregaUsuarios = async ()=>{
         let usuarios = await getUsuarios();
-        console.log('carregaUsuarios ', usuarios)
+        //console.log('carregaUsuarios ', usuarios)
         setUsuarios(usuarios);
     };
 
@@ -201,82 +202,98 @@ export const MembrosDaAssociacao = () =>{
     };
 
     const validateFormMembros = async (values) => {
+        //console.log("validateFormMembros ", values)
         const errors = {};
-        if (values.representacao === "SERVIDOR"){
-            setBtnSalvarReadOnly(true);
-            try {
-                let rf = await consultarRF(values.codigo_identificacao.trim());
-                if (rf.status === 200 || rf.status === 201) {
-                    const init = {
-                        ...stateFormEditarMembro,
-                        nome: rf.data[0].nm_pessoa,
-                        codigo_identificacao: values.codigo_identificacao,
-                        cargo_associacao: values.cargo_associacao,
-                        cargo_educacao: rf.data[0].cargo,
-                        representacao: values.representacao,
-                        email: values.email,
-                        usuario: values.usuario,
-                    };
-                    setStateFormEditarMembro(init);
-                    setBtnSalvarReadOnly(false);
+
+        if (!values.uuid){
+            if (values.representacao === "SERVIDOR"){
+                setBtnSalvarReadOnly(true);
+                try {
+                    let rf = await consultarRF(values.codigo_identificacao.trim());
+                    if (rf.status === 200 || rf.status === 201) {
+                        const init = {
+                            ...stateFormEditarMembro,
+                            nome: rf.data[0].nm_pessoa,
+                            codigo_identificacao: values.codigo_identificacao,
+                            cargo_associacao: values.cargo_associacao,
+                            cargo_educacao: rf.data[0].cargo,
+                            representacao: values.representacao,
+                            email: values.email,
+                            usuario: values.usuario,
+                        };
+                        setStateFormEditarMembro(init);
+                        setBtnSalvarReadOnly(false);
+                    }
+                }catch (e) {
+                    let data = e.response.data;
+                    if (data !== undefined && data.detail !== undefined) {
+                        errors.codigo_identificacao = data.detail
+                    } else {
+                        errors.codigo_identificacao = "RF inválido"
+                    }
                 }
-            }catch (e) {
-                let data = e.response.data;
-                if (data !== undefined && data.detail !== undefined) {
-                    errors.codigo_identificacao = data.detail    
-                } else {
-                    errors.codigo_identificacao = "RF inválido"
+            } else if(values.representacao === "ESTUDANTE"){
+                setBtnSalvarReadOnly(true);
+                try {
+                    let cod_eol = await consultarCodEol(values.codigo_identificacao);
+                    if (cod_eol.status === 200 || cod_eol.status === 201){
+                        const init = {
+                            ...stateFormEditarMembro,
+                            nome: cod_eol.data.nm_aluno,
+                            codigo_identificacao: values.codigo_identificacao,
+                            cargo_associacao: values.cargo_associacao,
+                            cargo_educacao: "",
+                            representacao: values.representacao,
+                            email: values.email,
+                            usuario: values.usuario,
+                        };
+                        setStateFormEditarMembro(init);
+                        setBtnSalvarReadOnly(false);
+                    }
+                } catch (e) {
+                    let data = e.response.data;
+                    if (data !== undefined && data.detail !== undefined) {
+                        errors.codigo_identificacao = data.detail
+                    } else {
+                        errors.codigo_identificacao = "Código Eol inválido"
+                    }
                 }
+            } else if (values.representacao === "PAI_RESPONSAVEL") {
+                setBtnSalvarReadOnly(true);
+                try {
+                    let result = await consultarNomeResponsavel(values.nome);
+                    if (result.status === 200 || result.status === 201) {
+                        setBtnSalvarReadOnly(false);
+                    }
+                } catch (e) {
+                    let data = e.response.data;
+                    if (data !== undefined && data.detail !== undefined) {
+                        errors.nome = data.detail
+                    }
+                }
+            } else {
+                setBtnSalvarReadOnly(false)
             }
-        } else if(values.representacao === "ESTUDANTE"){
-            setBtnSalvarReadOnly(true);
-            try {
-                let cod_eol = await consultarCodEol(values.codigo_identificacao);
-                if (cod_eol.status === 200 || cod_eol.status === 201){
-                    const init = {
-                        ...stateFormEditarMembro,
-                        nome: cod_eol.data.nm_aluno,
-                        codigo_identificacao: values.codigo_identificacao,
-                        cargo_associacao: values.cargo_associacao,
-                        cargo_educacao: "",
-                        representacao: values.representacao,
-                        email: values.email,
-                        usuario: values.usuario,
-                    };
-                    setStateFormEditarMembro(init);
-                    setBtnSalvarReadOnly(false);
-                }
-            } catch (e) {
-                let data = e.response.data;
-                if (data !== undefined && data.detail !== undefined) {
-                    errors.codigo_identificacao = data.detail    
-                } else {
-                    errors.codigo_identificacao = "Código Eol inválido"
-                }
-            }
-        } else if (values.representacao === "PAI_RESPONSAVEL") {
-            setBtnSalvarReadOnly(true);
-            try {
-                let result = await consultarNomeResponsavel(values.nome);
-                if (result.status === 200 || result.status === 201) {
-                    setBtnSalvarReadOnly(false);
-                }
-            } catch (e) {
-                let data = e.response.data;
-                if (data !== undefined && data.detail !== undefined) {
-                    errors.nome = data.detail    
-                }
-            }
-        } else {
-            setBtnSalvarReadOnly(false)
         }
+
+
         return errors
     };
 
     const onSubmitEditarMembro = async () =>{
+        console.log("onSubmitEditarMembro ", stateFormEditarMembro)
+
         setLoading(true)
         setShowEditarMembro(false);
         let payload = {};
+        let usuario;
+
+        if (typeof stateFormEditarMembro.usuario === "object" && stateFormEditarMembro.usuario !== null) {
+            usuario = stateFormEditarMembro.usuario.id
+        }else {
+            usuario = stateFormEditarMembro.usuario
+        }
+
         if(stateFormEditarMembro && stateFormEditarMembro.representacao === "SERVIDOR"){
             payload = {
                 'nome': stateFormEditarMembro.nome,
@@ -286,7 +303,7 @@ export const MembrosDaAssociacao = () =>{
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
-                'usuario': stateFormEditarMembro.usuario ? stateFormEditarMembro.usuario : ""
+                'usuario': usuario
             };
         }else if(stateFormEditarMembro && stateFormEditarMembro.representacao === "ESTUDANTE"){
             payload = {
@@ -297,7 +314,7 @@ export const MembrosDaAssociacao = () =>{
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
-                'usuario': stateFormEditarMembro.usuario ? stateFormEditarMembro.usuario : ""
+                'usuario': usuario
             };
         }else if (stateFormEditarMembro && stateFormEditarMembro.representacao === "PAI_RESPONSAVEL"){
             payload = {
@@ -308,7 +325,7 @@ export const MembrosDaAssociacao = () =>{
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
-                'usuario': stateFormEditarMembro.usuario ? stateFormEditarMembro.usuario : ""
+                'usuario': usuario
             };
         }
 
