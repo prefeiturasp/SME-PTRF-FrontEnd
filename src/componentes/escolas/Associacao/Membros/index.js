@@ -281,7 +281,6 @@ export const MembrosDaAssociacao = () =>{
     };
 
     const onSubmitEditarMembro = async () =>{
-        console.log("onSubmitEditarMembro ", stateFormEditarMembro)
 
         setLoading(true)
         setShowEditarMembro(false);
