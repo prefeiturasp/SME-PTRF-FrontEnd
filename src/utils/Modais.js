@@ -385,7 +385,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                         <div className="form-group">
                                             <label htmlFor="representacao">Representação na associação</label>
                                             <select
-                                                disabled={!visoesService.getPermissoes(['change_associacao']) || stateFormEditarMembro.uuid}
+                                                disabled={!visoesService.getPermissoes(['change_associacao']) }
                                                 value={props.values.representacao ? props.values.representacao : ""}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
@@ -408,7 +408,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                         <div className="form-group">
                                             <label htmlFor="codigo_identificacao">{props.values.representacao === 'SERVIDOR' ? "Registro Funcional" : "Código EOL"}</label>
                                             <input
-                                                disabled={!visoesService.getPermissoes(['change_associacao']) || stateFormEditarMembro.uuid}
+                                                disabled={!visoesService.getPermissoes(['change_associacao']) }
                                                 type="text"
                                                 value={props.values.codigo_identificacao ? props.values.codigo_identificacao : ""}
                                                 onChange={(e) => {
@@ -430,7 +430,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                             <label htmlFor="cargo_associacao">Nome Completo</label>
                                             <input
                                                 readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
-                                                disabled={!visoesService.getPermissoes(['change_associacao']) || stateFormEditarMembro.uuid}
+                                                disabled={!visoesService.getPermissoes(['change_associacao']) }
                                                 type="text"
                                                 value={props.values.nome ? props.values.nome : ""}
                                                 onChange={(e) => {
