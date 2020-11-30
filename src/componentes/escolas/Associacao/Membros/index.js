@@ -2,7 +2,7 @@ import React, {useEffect, useState, useMemo} from "react";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
 import {EditarMembro} from "../../../../utils/Modais";
-import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarNomeResponsavel, getUsuarios} from "../../../../services/escolas/Associacao.service";
+import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarNomeResponsavel, consultarCpfResponsavel, getUsuarios} from "../../../../services/escolas/Associacao.service";
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
@@ -39,6 +39,7 @@ export const MembrosDaAssociacao = () =>{
         representacao:"",
         codigo_identificacao:"",
         email:"",
+        cpf:"",
         usuario:"",
     };
 
@@ -164,6 +165,7 @@ export const MembrosDaAssociacao = () =>{
                 representacao: infoMembroSelecionado.infos.representacao ? infoMembroSelecionado.infos.representacao : "",
                 codigo_identificacao: infoMembroSelecionado.infos.codigo_identificacao ? infoMembroSelecionado.infos.codigo_identificacao : "",
                 email: infoMembroSelecionado.infos.email ? infoMembroSelecionado.infos.email : "",
+                cpf: infoMembroSelecionado.infos.cpf ? infoMembroSelecionado.infos.cpf : "",
                 usuario: infoMembroSelecionado.infos.usuario ? infoMembroSelecionado.infos.usuario : "",
             };
         }else {
@@ -175,6 +177,7 @@ export const MembrosDaAssociacao = () =>{
                 representacao: "",
                 codigo_identificacao: "",
                 email: "",
+                cpf: "",
                 usuario:"",
             };
         }
@@ -203,7 +206,7 @@ export const MembrosDaAssociacao = () =>{
 
     const cod_identificacao_rf =  useMemo(() => stateFormEditarMembro.codigo_identificacao, [stateFormEditarMembro.codigo_identificacao]);
     const cod_identificacao_eol =  useMemo(() => stateFormEditarMembro.codigo_identificacao, [stateFormEditarMembro.codigo_identificacao]);
-    const cod_identificacao_nome =  useMemo(() => stateFormEditarMembro.nome, [stateFormEditarMembro.nome]);
+    const cod_identificacao_cpf =  useMemo(() => stateFormEditarMembro.cpf, [stateFormEditarMembro.cpf]);
 
     const validateFormMembros = async (values) => {
         const errors = {};
@@ -222,6 +225,7 @@ export const MembrosDaAssociacao = () =>{
                                 cargo_educacao: rf.data[0].cargo,
                                 representacao: values.representacao,
                                 email: values.email,
+                                cpf: values.cpf,
                                 usuario: values.usuario,
                             };
                             setStateFormEditarMembro(init);
@@ -251,6 +255,7 @@ export const MembrosDaAssociacao = () =>{
                                 cargo_educacao: "",
                                 representacao: values.representacao,
                                 email: values.email,
+                                cpf: values.cpf,
                                 usuario: values.usuario,
                             };
                             setStateFormEditarMembro(init);
@@ -268,16 +273,13 @@ export const MembrosDaAssociacao = () =>{
                     }
                 }
             } else if (values.representacao === "PAI_RESPONSAVEL") {
-                if (cod_identificacao_nome !== values.nome.trim()){
+                if (cod_identificacao_cpf !== values.cpf.trim()){
                     try {
-                        await consultarNomeResponsavel(values.nome);
+                        await consultarCpfResponsavel(values.cpf);
                         setBtnSalvarReadOnly(false);
                     } catch (e) {
                         setBtnSalvarReadOnly(true);
-                        let data = e.response.data;
-                        if (data !== undefined && data.detail !== undefined) {
-                            errors.nome = data.detail
-                        }
+                        errors.cpf = 'CPF já cadastrado.';
                     }
                 }
 
@@ -309,6 +311,7 @@ export const MembrosDaAssociacao = () =>{
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
+                'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
                 'usuario': usuario
             };
         }else if(stateFormEditarMembro && stateFormEditarMembro.representacao === "ESTUDANTE"){
@@ -320,6 +323,7 @@ export const MembrosDaAssociacao = () =>{
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
+                'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
                 'usuario': usuario
             };
         }else if (stateFormEditarMembro && stateFormEditarMembro.representacao === "PAI_RESPONSAVEL"){
@@ -331,6 +335,7 @@ export const MembrosDaAssociacao = () =>{
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
+                'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
                 'usuario': usuario
             };
         }

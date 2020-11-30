@@ -445,6 +445,28 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                         </div>
                                     </div>
 
+                                    {props.values.representacao === 'PAI_RESPONSAVEL' &&
+                                    <div className="col-12 col-md-6">
+                                        <div className="form-group">
+                                            <label htmlFor="cpf">CPF Responsável</label>
+                                            <input
+                                                readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
+                                                disabled={!visoesService.getPermissoes(['change_associacao']) }
+                                                type="text"
+                                                value={props.values.cpf ? props.values.cpf : ""}
+                                                onChange={(e) => {
+                                                    props.handleChange(e);
+                                                    handleChangeEditarMembro(e.target.name, e.target.value);
+                                                }
+                                                }
+                                                name="cpf"
+                                                className="form-control"
+                                            />
+                                            {props.errors.cpf && <span className="span_erro text-danger mt-1"> {props.errors.cpf}</span>}
+                                        </div>
+                                    </div>
+                                    }
+
                                     <div className={`col-12 col-md-6 ${props.values.representacao !== 'SERVIDOR' && 'escondeItem'}`}>
                                         <div className="form-group">
                                             <label htmlFor="cargo_educacao">Cargo na educação</label>
