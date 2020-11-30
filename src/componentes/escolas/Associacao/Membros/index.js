@@ -278,8 +278,13 @@ export const MembrosDaAssociacao = () =>{
                         await consultarCpfResponsavel(values.cpf);
                         setBtnSalvarReadOnly(false);
                     } catch (e) {
+                        let data = e.response.data;
+                        if (data !== undefined && data.detail !== undefined) {
+                            errors.cpf = 'CPF já cadastrado'
+                        } else {
+                            errors.cpf = "CPF inválido"
+                        }
                         setBtnSalvarReadOnly(true);
-                        errors.cpf = 'CPF já cadastrado.';
                     }
                 }
 

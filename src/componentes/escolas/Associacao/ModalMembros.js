@@ -1,7 +1,9 @@
 import {Formik} from "formik";
-import {YupSignupSchemaMembros} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {cpfMaskContitional, YupSignupSchemaMembros} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {ModalBootstrapFormMembros} from "../../Globais/ModalBootstrap";
 import React from "react";
+import {visoesService} from "../../../services/visoes.service";
+import MaskedInput from "react-text-mask";
 
 export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, validateFormMembros, stateFormEditarMembro, infosMembroSelecionado, btnSalvarReadOnly, usuarios}) => {
     const bodyTextarea = () => {
@@ -113,7 +115,9 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                     <div className="col-12 col-md-6">
                                         <div className="form-group">
                                             <label htmlFor="cpf">CPF Responsável</label>
-                                            <input
+
+                                            <MaskedInput
+                                                mask={[/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/]}
                                                 readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
                                                 disabled={!visoesService.getPermissoes(['change_associacao']) }
                                                 type="text"
@@ -126,6 +130,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                                 name="cpf"
                                                 className="form-control"
                                             />
+
                                             {props.errors.cpf && <span className="span_erro text-danger mt-1"> {props.errors.cpf}</span>}
                                         </div>
                                     </div>
