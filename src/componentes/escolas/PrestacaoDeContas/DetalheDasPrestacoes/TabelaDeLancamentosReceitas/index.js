@@ -7,7 +7,7 @@ import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
 import IconeNaoDemonstrado from "../../../../../assets/img/icone-nao-demonstrado.svg";
 import ReactTooltip from "react-tooltip";
 
-export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxReceitas, handleChangeCheckboxReceitas, dataTip}) => {
+export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxReceitas, handleChangeCheckboxReceitas, dataTip, periodoFechado}) => {
 
     let history = useHistory();
     const rowsPerPage = 7;
@@ -61,6 +61,7 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
                     onChange={(e) => handleChangeCheckboxReceitas(e, rowData.uuid)}
                     name="checkConferido"
                     id="checkConferido"
+                    disabled={periodoFechado}
                 />
             </div>
         )
