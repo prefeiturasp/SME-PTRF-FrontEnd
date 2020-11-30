@@ -225,12 +225,11 @@ export const MembrosDaAssociacao = () =>{
                                 usuario: values.usuario,
                             };
                             setStateFormEditarMembro(init);
-                            //setBtnSalvarReadOnly(true);
-                        }else {
-                            setBtnSalvarReadOnly(false);
                         }
                     }
+                    setBtnSalvarReadOnly(false);
                 }catch (e) {
+                    setBtnSalvarReadOnly(true);
                     let data = e.response.data;
                     if (data !== undefined && data.detail !== undefined) {
                         errors.codigo_identificacao = data.detail
@@ -241,7 +240,6 @@ export const MembrosDaAssociacao = () =>{
             } else if(values.representacao === "ESTUDANTE"){
                 //setBtnSalvarReadOnly(true);
                 try {
-
                     if (cod_identificacao_eol !== values.codigo_identificacao){
                         let cod_eol = await consultarCodEol(values.codigo_identificacao);
                         if (cod_eol.status === 200 || cod_eol.status === 201){
@@ -256,13 +254,12 @@ export const MembrosDaAssociacao = () =>{
                                 usuario: values.usuario,
                             };
                             setStateFormEditarMembro(init);
-                            //setBtnSalvarReadOnly(true);
-                        }else {
-                            setBtnSalvarReadOnly(false);
+
                         }
                     }
-
+                    setBtnSalvarReadOnly(false);
                 } catch (e) {
+                    setBtnSalvarReadOnly(true);
                     let data = e.response.data;
                     if (data !== undefined && data.detail !== undefined) {
                         errors.codigo_identificacao = data.detail
@@ -273,11 +270,10 @@ export const MembrosDaAssociacao = () =>{
             } else if (values.representacao === "PAI_RESPONSAVEL") {
                 if (cod_identificacao_nome !== values.nome.trim()){
                     try {
-                        let result = await consultarNomeResponsavel(values.nome);
-                        if (result.status === 200 || result.status === 201) {
-                            //setBtnSalvarReadOnly(true);
-                        }
+                        await consultarNomeResponsavel(values.nome);
+                        setBtnSalvarReadOnly(false);
                     } catch (e) {
+                        setBtnSalvarReadOnly(true);
                         let data = e.response.data;
                         if (data !== undefined && data.detail !== undefined) {
                             errors.nome = data.detail
