@@ -1,8 +1,8 @@
 import React, {useEffect, useState, useMemo} from "react";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
-import {EditarMembro} from "../../../../utils/Modais";
-import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarNomeResponsavel, consultarCpfResponsavel, getUsuarios} from "../../../../services/escolas/Associacao.service";
+import {EditarMembro} from "../ModalMembros";
+import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarCpfResponsavel, getUsuarios} from "../../../../services/escolas/Associacao.service";
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
