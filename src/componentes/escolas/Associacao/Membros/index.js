@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useMemo} from "react";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
 import {EditarMembro} from "../../../../utils/Modais";
@@ -201,28 +201,34 @@ export const MembrosDaAssociacao = () =>{
         });
     };
 
+    const cod_identificacao_rf =  useMemo(() => stateFormEditarMembro.codigo_identificacao, [stateFormEditarMembro.codigo_identificacao]);
+    const cod_identificacao_eol =  useMemo(() => stateFormEditarMembro.codigo_identificacao, [stateFormEditarMembro.codigo_identificacao]);
+    const cod_identificacao_nome =  useMemo(() => stateFormEditarMembro.nome, [stateFormEditarMembro.nome]);
+
     const validateFormMembros = async (values) => {
-        //console.log("validateFormMembros ", values)
         const errors = {};
 
-        if (!values.uuid){
             if (values.representacao === "SERVIDOR"){
-                setBtnSalvarReadOnly(true);
+                //setBtnSalvarReadOnly(true);
                 try {
-                    let rf = await consultarRF(values.codigo_identificacao.trim());
-                    if (rf.status === 200 || rf.status === 201) {
-                        const init = {
-                            ...stateFormEditarMembro,
-                            nome: rf.data[0].nm_pessoa,
-                            codigo_identificacao: values.codigo_identificacao,
-                            cargo_associacao: values.cargo_associacao,
-                            cargo_educacao: rf.data[0].cargo,
-                            representacao: values.representacao,
-                            email: values.email,
-                            usuario: values.usuario,
-                        };
-                        setStateFormEditarMembro(init);
-                        setBtnSalvarReadOnly(false);
+                    if (cod_identificacao_rf !== values.codigo_identificacao.trim()){
+                        let rf = await consultarRF(values.codigo_identificacao.trim());
+                        if (rf.status === 200 || rf.status === 201) {
+                            const init = {
+                                ...stateFormEditarMembro,
+                                nome: rf.data[0].nm_pessoa,
+                                codigo_identificacao: values.codigo_identificacao,
+                                cargo_associacao: values.cargo_associacao,
+                                cargo_educacao: rf.data[0].cargo,
+                                representacao: values.representacao,
+                                email: values.email,
+                                usuario: values.usuario,
+                            };
+                            setStateFormEditarMembro(init);
+                            //setBtnSalvarReadOnly(true);
+                        }else {
+                            setBtnSalvarReadOnly(false);
+                        }
                     }
                 }catch (e) {
                     let data = e.response.data;
@@ -233,23 +239,29 @@ export const MembrosDaAssociacao = () =>{
                     }
                 }
             } else if(values.representacao === "ESTUDANTE"){
-                setBtnSalvarReadOnly(true);
+                //setBtnSalvarReadOnly(true);
                 try {
-                    let cod_eol = await consultarCodEol(values.codigo_identificacao);
-                    if (cod_eol.status === 200 || cod_eol.status === 201){
-                        const init = {
-                            ...stateFormEditarMembro,
-                            nome: cod_eol.data.nm_aluno,
-                            codigo_identificacao: values.codigo_identificacao,
-                            cargo_associacao: values.cargo_associacao,
-                            cargo_educacao: "",
-                            representacao: values.representacao,
-                            email: values.email,
-                            usuario: values.usuario,
-                        };
-                        setStateFormEditarMembro(init);
-                        setBtnSalvarReadOnly(false);
+
+                    if (cod_identificacao_eol !== values.codigo_identificacao){
+                        let cod_eol = await consultarCodEol(values.codigo_identificacao);
+                        if (cod_eol.status === 200 || cod_eol.status === 201){
+                            const init = {
+                                ...stateFormEditarMembro,
+                                nome: cod_eol.data.nm_aluno,
+                                codigo_identificacao: values.codigo_identificacao,
+                                cargo_associacao: values.cargo_associacao,
+                                cargo_educacao: "",
+                                representacao: values.representacao,
+                                email: values.email,
+                                usuario: values.usuario,
+                            };
+                            setStateFormEditarMembro(init);
+                            //setBtnSalvarReadOnly(true);
+                        }else {
+                            setBtnSalvarReadOnly(false);
+                        }
                     }
+
                 } catch (e) {
                     let data = e.response.data;
                     if (data !== undefined && data.detail !== undefined) {
@@ -259,24 +271,23 @@ export const MembrosDaAssociacao = () =>{
                     }
                 }
             } else if (values.representacao === "PAI_RESPONSAVEL") {
-                setBtnSalvarReadOnly(true);
-                try {
-                    let result = await consultarNomeResponsavel(values.nome);
-                    if (result.status === 200 || result.status === 201) {
-                        setBtnSalvarReadOnly(false);
-                    }
-                } catch (e) {
-                    let data = e.response.data;
-                    if (data !== undefined && data.detail !== undefined) {
-                        errors.nome = data.detail
+                if (cod_identificacao_nome !== values.nome.trim()){
+                    try {
+                        let result = await consultarNomeResponsavel(values.nome);
+                        if (result.status === 200 || result.status === 201) {
+                            //setBtnSalvarReadOnly(true);
+                        }
+                    } catch (e) {
+                        let data = e.response.data;
+                        if (data !== undefined && data.detail !== undefined) {
+                            errors.nome = data.detail
+                        }
                     }
                 }
+
             } else {
                 setBtnSalvarReadOnly(false)
             }
-        }
-
-
         return errors
     };
 
