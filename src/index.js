@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/browser";
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
@@ -6,6 +7,11 @@ import {SidebarContextProvider} from "./context/Sidebar";
 import {DespesaContextProvider} from "./context/Despesa";
 import {NotificacaoContextProvider} from "./context/Notificacoes";
 import * as serviceWorker from './serviceWorker';
+
+if (process.env.NODE_ENV === "production") {
+    const SENTRY_URL = "SENTRY_URL_REPLACE_ME";
+    Sentry.init({ dsn: SENTRY_URL });
+}
 
 ReactDOM.render(
     <NotificacaoContextProvider>
