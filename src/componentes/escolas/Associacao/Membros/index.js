@@ -181,7 +181,6 @@ export const MembrosDaAssociacao = () =>{
                 usuario:"",
             };
         }
-
         setStateFormEditarMembro(init);
         setInfosMembroSelecionado(infoMembroSelecionado)
     };
@@ -287,7 +286,6 @@ export const MembrosDaAssociacao = () =>{
                         setBtnSalvarReadOnly(true);
                     }
                 }
-
             } else {
                 setBtnSalvarReadOnly(false)
             }
