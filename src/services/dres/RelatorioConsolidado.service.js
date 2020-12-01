@@ -99,3 +99,40 @@ export const getDownloadRelatorio = async (dre_uuid, periodo_uuid, conta_uuid) =
     });
 };
 
+export const getPreviaRelatorio = async (payload) => {
+    //return (await api.get(`/api/relatorios-consolidados-dre/previa/`, payload, authHeader)).data
+    //return (await api.post(`/api/relatorios-consolidados-dre/previa/`, payload, authHeader)).data
+    return api
+    .post(`/api/relatorios-consolidados-dre/previa/`, payload, authHeader)
+    .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'relatorio_consolidado_dre.xlsx');
+        document.body.appendChild(link);
+        link.click();
+    }).catch(error => {
+        return error.response;
+    });
+    // return api
+    // .post(`/api/relatorios-consolidados-dre/previa/`, {
+    //     responseType: 'blob',
+    //     timeout: 30000,
+    //     headers: {
+    //         'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+    //         'Content-Type': 'application/json',
+    //     },
+    //     payload
+    // })
+    // .then((response) => {
+    //     const url = window.URL.createObjectURL(new Blob([response.data]));
+    //     const link = document.createElement('a');
+    //     link.href = url;
+    //     link.setAttribute('download', 'relatorio_dre.xlsx');
+    //     document.body.appendChild(link);
+    //     link.click();
+    // }).catch(error => {
+    //     return error.response;
+    // });
+};
+

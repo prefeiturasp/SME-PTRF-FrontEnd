@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getFiqueDeOlho, getConsultarStatus, getTiposConta, getDownloadRelatorio} from "../../../services/dres/RelatorioConsolidado.service";
+import {getFiqueDeOlho, getConsultarStatus, getTiposConta, getDownloadRelatorio, getPreviaRelatorio} from "../../../services/dres/RelatorioConsolidado.service";
 import {getItensDashboard, getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
@@ -129,6 +129,23 @@ export const RelatorioConsolidado = () => {
         await getDownloadRelatorio(dre_uuid, periodoEscolhido, contaEscolhida);
     };
 
+    const previaRelatorio = async () =>{
+        let parcial = true;
+        //let parcial = totalEmAnalise > 0;
+
+        const payload = {
+            dre_uuid: dre_uuid,
+            periodo_uuid: periodoEscolhido,
+            tipo_conta_uuid: contaEscolhida,
+            parcial: parcial
+        };
+
+        let previa = await getPreviaRelatorio(payload)
+        console.log("Previa ", previa)
+
+
+    };
+
     return (
         <>
             <div className="col-12 container-texto-introdutorio mb-4 mt-3">
@@ -163,6 +180,7 @@ export const RelatorioConsolidado = () => {
                         statusRelatorio={statusRelatorio}
                         textoBtnRelatorio={textoBtnRelatorio}
                         downloadRelatorio={downloadRelatorio}
+                        previaRelatorio={previaRelatorio}
                     />
                     </>
 
