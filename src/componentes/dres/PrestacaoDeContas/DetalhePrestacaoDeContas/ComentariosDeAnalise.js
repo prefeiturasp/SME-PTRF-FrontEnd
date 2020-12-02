@@ -21,6 +21,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     const [showModalDeleteComentario, setShowModalDeleteComentario] = useState(false);
     const [comentarioEdicao, setComentarioEdicao] = useState(false);
     const [disabledBtnAddComentario, setDisabledBtnAddComentario] = useState(true);
+    const [checkboxNotificarComentarios, setCheckboxNotificarComentarios] = useState([])
 
     useEffect(() => {
         carregaComentarios();
@@ -28,6 +29,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
 
     const carregaComentarios = async () => {
         let comentarios = await getComentariosDeAnalise(prestacaoDeContas.uuid);
+        console.log("Comentarios ", comentarios)
         setComentarios(comentarios);
     };
 
@@ -120,9 +122,32 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         }
     };
 
+    const handleChangeCheckboxNotificarComentarios = (e, comentario_uuid) =>{
+        console.log("handleChangeCheckboxNotificarComentarios e ", e.target.checked)
+        console.log("handleChangeCheckboxNotificarComentarios comentario_uuid ", comentario_uuid)
+        let check_box_obj ={
+            checkbox_nome: e.target.name,
+            comentario_uuid:comentario_uuid,
+        }
+
+        if (e.target.checked){
+            setCheckboxNotificarComentarios([...checkboxNotificarComentarios, check_box_obj])
+        }
+
+    }
+
     const SortableItem = SortableElement(({comentario}) =>
         <li className="d-flex bd-highlight border mt-2">
-            <div className="p-2 flex-grow-1 bd-highlight container-item-comentario">{comentario.comentario}</div>
+            <div className="p-2 flex-grow-1 bd-highlight container-item-comentario">
+                <input
+                    type='checkbox'
+                    //name='notificarComentarios[]'
+                    name={`check_box_notificar_`+comentario.uuid}
+                    value={checkboxNotificarComentarios}
+                    onChange={(e) => handleChangeCheckboxNotificarComentarios(e, comentario.uuid)}
+                />
+                {comentario.comentario}
+            </div>
             <div className="p-2 bd-highlight" >
                 <button onClick={()=>setComentarioParaEdicao(comentario)} type='button' className="btn-cancelar-comentario ml-2">
                     Editar
@@ -142,6 +167,9 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         );
     });
     // *********** Fim Sortable Comentário
+
+
+    console.log("CHECBOX XXXXXXX ", checkboxNotificarComentarios)
 
     return (
         <>
