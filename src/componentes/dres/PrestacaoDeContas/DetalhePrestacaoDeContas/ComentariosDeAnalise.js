@@ -86,6 +86,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         setShowModalDeleteComentario(false);
         await deleteComentarioDeAnalise(comentarioEdicao.uuid);
         setToggleExibeBtnAddComentario(true);
+        setChecked([]);
         await carregaComentarios()
     };
 
@@ -147,6 +148,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                     type='checkbox'
                     onChange={(event)=>handleChangeCheckboxNotificarComentarios(event, comentario.uuid)}
                     checked={verificaSeChecado(comentario.uuid)}
+                    className="checkbox-comentario-de-analise"
                 />
                 {comentario.comentario}
             </div>
