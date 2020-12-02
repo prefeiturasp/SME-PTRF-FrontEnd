@@ -121,3 +121,7 @@ export const getSalvarDevoulucoesAoTesouro = async (prestacao_conta_uuid, payloa
     return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/salvar-devolucoes-ao-tesouro/`, payload, authHeader)).data
 };
 
+export const postNotificarComentarios = async (payload) => {
+    return (await api.post(`/api/notificacoes/notificar/`, payload, authHeader)).data
+};
+

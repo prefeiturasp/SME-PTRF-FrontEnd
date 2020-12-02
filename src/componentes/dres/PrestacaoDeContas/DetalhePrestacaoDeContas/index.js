@@ -156,7 +156,6 @@ export const DetalhePrestacaoDeContas = () =>{
     const carregaPrestacaoDeContas = async () => {
         if (prestacao_conta_uuid){
             let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
-            console.log("carregaPrestacaoDeContas ", prestacao)
             setPrestacaoDeContas(prestacao);
             setStateFormRecebimentoPelaDiretoria({
                 ...stateFormRecebimentoPelaDiretoria,
