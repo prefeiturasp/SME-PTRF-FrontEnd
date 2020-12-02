@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getComentariosDeAnalise, criarComentarioDeAnalise, editarComentarioDeAnalise, deleteComentarioDeAnalise, getReordenarComentarios} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getComentariosDeAnalise, criarComentarioDeAnalise, editarComentarioDeAnalise, deleteComentarioDeAnalise, getReordenarComentarios, postNotificarComentarios} from "../../../../services/dres/PrestacaoDeContas.service";
 import {FieldArray, Formik} from "formik";
 import {ModalEditarDeletarComentario} from "../ModalEditarDeletarComentario";
 import {ModalDeleteComentario} from "../ModalDeleteComentario";
@@ -144,13 +144,24 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
 
     };
 
-    const notificarComentarios = () =>{
-        console.log("notificarComentarios ")
-        console.log("CHECBOX XXXXXXX ", comentarioChecked)
+    const notificarComentarios = async () =>{
+        const payload = {
+            associacao: prestacaoDeContas.associacao.uuid,
+            periodo: prestacaoDeContas.periodo_uuid,
+            comentarios: comentarioChecked
+        };
+        
+        try {
+            let notificar = await postNotificarComentarios(payload);
+            console.log(notificar.mensagem)
+        }catch (e) {
+            console.log("Erro ao enviar notificações ", e)
+        }
 
 
 
         setShowModalNotificarComentarios(false);
+        setComentarioChecked([])
     };
 
     const SortableItem = SortableElement(({comentario}) =>
