@@ -23,7 +23,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     const [showModalNotificarComentarios, setShowModalNotificarComentarios] = useState(false);
     const [comentarioEdicao, setComentarioEdicao] = useState(false);
     const [disabledBtnAddComentario, setDisabledBtnAddComentario] = useState(true);
-    const [checked, setChecked] = useState([]); // notificar comentários
+    const [comentarioChecked, setComentarioChecked] = useState([]); // notificar comentários
 
     useEffect(() => {
         carregaComentarios();
@@ -89,7 +89,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         setShowModalDeleteComentario(false);
         await deleteComentarioDeAnalise(comentarioEdicao.uuid);
         setToggleExibeBtnAddComentario(true);
-        setChecked([]);
+        setComentarioChecked([]);
         await carregaComentarios()
     };
 
@@ -126,29 +126,29 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     };
 
     const verificaSeChecado = (comentario_uuid) =>{
-        if (checked && checked.length > 0){
-            return checked.find(element=> element  === comentario_uuid)
+        if (comentarioChecked && comentarioChecked.length > 0){
+            return comentarioChecked.find(element=> element  === comentario_uuid)
         }
     };
 
     const handleChangeCheckboxNotificarComentarios = (event, comentario_uuid) =>{
-        const comentarioClicado = checked.indexOf(comentario_uuid);
-        const all = [...checked];
+        const comentarioClicado = comentarioChecked.indexOf(comentario_uuid);
+        const all = [...comentarioChecked];
 
         if (comentarioClicado === -1) {
             all.push(comentario_uuid);
         } else {
             all.splice(comentarioClicado, 1);
         }
-        setChecked(all);
+        setComentarioChecked(all);
 
     };
 
     const notificarComentarios = () =>{
         console.log("notificarComentarios ")
-        console.log("CHECBOX XXXXXXX ", checked)
+        console.log("CHECBOX XXXXXXX ", comentarioChecked)
 
-        
+
 
         setShowModalNotificarComentarios(false);
     };
@@ -282,7 +282,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                                 <button
                                                     className="btn btn btn-outline-success mt-2 mr-2"
                                                     type="button"
-                                                    disabled={checked.length <=0}
+                                                    disabled={comentarioChecked.length <=0}
                                                     onClick={()=>setShowModalNotificarComentarios(true)}
                                                     >
                                                     Notificar a Associação
