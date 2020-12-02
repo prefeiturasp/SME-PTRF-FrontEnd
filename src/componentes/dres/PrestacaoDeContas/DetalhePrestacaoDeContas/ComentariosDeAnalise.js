@@ -127,21 +127,19 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
 
     const verificaSeChecado = (comentario_uuid) =>{
         if (comentarioChecked && comentarioChecked.length > 0){
-            return comentarioChecked.find(element=> element  === comentario_uuid)
+            return comentarioChecked.find(element=> element === comentario_uuid)
         }
     };
 
     const handleChangeCheckboxNotificarComentarios = (event, comentario_uuid) =>{
         const comentarioClicado = comentarioChecked.indexOf(comentario_uuid);
         const all = [...comentarioChecked];
-
         if (comentarioClicado === -1) {
             all.push(comentario_uuid);
         } else {
             all.splice(comentarioClicado, 1);
         }
         setComentarioChecked(all);
-
     };
 
     const notificarComentarios = async () =>{
@@ -150,16 +148,12 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
             periodo: prestacaoDeContas.periodo_uuid,
             comentarios: comentarioChecked
         };
-        
         try {
             let notificar = await postNotificarComentarios(payload);
             console.log(notificar.mensagem)
         }catch (e) {
             console.log("Erro ao enviar notificações ", e)
         }
-
-
-
         setShowModalNotificarComentarios(false);
         setComentarioChecked([])
     };
