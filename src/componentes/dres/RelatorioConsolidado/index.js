@@ -23,6 +23,7 @@ export const RelatorioConsolidado = () => {
     const [contas, setContas] = useState(false);
     const [contaEscolhida, setContaEscolhida] = useState(false);
     const [statusRelatorio, setStatusRelatorio] = useState(false);
+    const [totalEmAnalise, setTotalEmAnalise] = useState(0);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -44,6 +45,10 @@ export const RelatorioConsolidado = () => {
     useEffect(() => {
         consultarStatus();
     }, [periodoEscolhido, contaEscolhida]);
+
+    useEffect(() => {
+        retornaQtdeEmAnalise();
+    }, [itensDashboard]);
 
     const carregaPeriodos = async () => {
         let periodos = await getPeriodos();
@@ -106,6 +111,13 @@ export const RelatorioConsolidado = () => {
         }
     };
 
+    const retornaQtdeEmAnalise = () => {
+        if (itensDashboard) {
+            let total = itensDashboard.cards.filter(elemtent => elemtent.status === 'RECEBIDA' || elemtent.status === 'DEVOLVIDA' || elemtent.status === 'EM_ANALISE').reduce((total, valor) => total + valor.quantidade_prestacoes, 0);
+            setTotalEmAnalise(total)
+        }
+    };
+
     const consultarStatus = async () =>{
         if (dre_uuid && periodoEscolhido && contaEscolhida){
             let status = await getConsultarStatus(dre_uuid, periodoEscolhido, contaEscolhida);
@@ -132,14 +144,13 @@ export const RelatorioConsolidado = () => {
     };
 
     const downloadPreviaRelatorio = async () =>{
-        let parcial = true;
+        let parcial = totalEmAnalise > 0;
         const payload = {
             dre_uuid: dre_uuid,
             periodo_uuid: periodoEscolhido,
             tipo_conta_uuid: contaEscolhida,
             parcial: parcial
         };
-
         setLoading(true);
         await getDownloadPreviaRelatorio(payload);
         setLoading(false);

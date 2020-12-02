@@ -101,7 +101,14 @@ export const getDownloadRelatorio = async (dre_uuid, periodo_uuid, conta_uuid) =
 
 export const getDownloadPreviaRelatorio = async (payload) => {
     return api
-    .post(`/api/relatorios-consolidados-dre/previa/`, payload, authHeader)
+    .post(`/api/relatorios-consolidados-dre/previa/`, payload, {
+        responseType: 'blob',
+        timeout: 3600000,
+        headers: {
+            'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+            'Content-Type': 'application/json',
+        }
+    })
     .then((response) => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
