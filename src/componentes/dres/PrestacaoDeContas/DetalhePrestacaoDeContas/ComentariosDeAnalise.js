@@ -21,10 +21,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     const [showModalDeleteComentario, setShowModalDeleteComentario] = useState(false);
     const [comentarioEdicao, setComentarioEdicao] = useState(false);
     const [disabledBtnAddComentario, setDisabledBtnAddComentario] = useState(true);
-    const [checkboxNotificarComentarios, setCheckboxNotificarComentarios] = useState([])
-    const [hobbies,setHobbies] = useState([])
-
-    const [checked, setChecked] = useState([]); // categories
+    const [checked, setChecked] = useState([]); // notificar comentários
 
     useEffect(() => {
         carregaComentarios();
@@ -32,7 +29,6 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
 
     const carregaComentarios = async () => {
         let comentarios = await getComentariosDeAnalise(prestacaoDeContas.uuid);
-        console.log("Comentarios ", comentarios)
         setComentarios(comentarios);
     };
 
@@ -125,82 +121,30 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         }
     };
 
-
-
-    // const handleChangeCheckboxNotificarComentarios = (event, comentario_uuid) =>{
-    //     console.log("handleChangeCheckboxNotificarComentarios e ", event.target.checked)
-    //     const target = event.target;
-    //     if(target.checked){
-    //         setHobbies([...hobbies, [comentario_uuid] = comentario_uuid]);
-    //     }else{
-    //         setHobbies(hobbies.splice(comentario_uuid, 1));
-    //         //this.state.hobbies.splice(value, 1);
-    //     }
-    //
-    // }
-
-    // const handleChangeCheckboxNotificarComentarios = (event) =>{
-    //     console.log("handleChangeCheckboxNotificarComentarios e ", event.target.checked)
-    //     const target = event.target;
-    //     var value = target.value;
-    //
-    //     if(target.checked){
-    //         setHobbies([...hobbies, [value] = value]);
-    //     }else{
-    //         setHobbies(hobbies.splice(value, 1));
-    //         //this.state.hobbies.splice(value, 1);
-    //     }
-    //
-    // }
-
-    // const handleChangeCheckboxNotificarComentarios = (e, comentario_uuid) =>{
-    //     console.log("handleChangeCheckboxNotificarComentarios e ", e.target.checked)
-    //     console.log("handleChangeCheckboxNotificarComentarios comentario_uuid ", comentario_uuid)
-    //     let check_box_obj ={
-    //         checkbox_nome: e.target.name,
-    //         comentario_uuid:comentario_uuid,
-    //     }
-    //
-    //     if (e.target.checked){
-    //         setCheckboxNotificarComentarios([...checkboxNotificarComentarios, check_box_obj])
-    //     }
-    //
-    // }
-
     const verificaSeChecado = (comentario_uuid) =>{
-
-        console.log("Verifica se checado ", comentario_uuid)
         if (checked && checked.length > 0){
             return checked.find(element=> element  === comentario_uuid)
         }
-
-    }
+    };
 
     const handleChangeCheckboxNotificarComentarios = (event, comentario_uuid) =>{
-
-        console.log('handleChangeCheckboxNotificarComentarios ', event.target.checked)
-
-        const clickedCategory = checked.indexOf(comentario_uuid);
+        const comentarioClicado = checked.indexOf(comentario_uuid);
         const all = [...checked];
 
-        if (clickedCategory === -1) {
+        if (comentarioClicado === -1) {
             all.push(comentario_uuid);
         } else {
-            all.splice(clickedCategory, 1);
+            all.splice(comentarioClicado, 1);
         }
         setChecked(all);
 
-    }
+    };
 
     const SortableItem = SortableElement(({comentario}) =>
         <li className="d-flex bd-highlight border mt-2">
             <div className="p-2 flex-grow-1 bd-highlight container-item-comentario">
                 <input
                     type='checkbox'
-                    //name='notificarComentarios[]'
-                    //id={`check_box_notificar_`+comentario.uuid}
-                    //name='hobbies'
-                    //value={comentario.uuid}
                     onChange={(event)=>handleChangeCheckboxNotificarComentarios(event, comentario.uuid)}
                     checked={verificaSeChecado(comentario.uuid)}
                 />
