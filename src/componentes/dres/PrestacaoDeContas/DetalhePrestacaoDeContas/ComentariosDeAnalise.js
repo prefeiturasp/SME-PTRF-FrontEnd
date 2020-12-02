@@ -3,6 +3,7 @@ import {getComentariosDeAnalise, criarComentarioDeAnalise, editarComentarioDeAna
 import {FieldArray, Formik} from "formik";
 import {ModalEditarDeletarComentario} from "../ModalEditarDeletarComentario";
 import {ModalDeleteComentario} from "../ModalDeleteComentario";
+import {ModalNotificarComentarios} from "../ModalNotificarComentarios";
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
@@ -19,6 +20,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     const [toggleExibeBtnAddComentario, setToggleExibeBtnAddComentario] = useState(true);
     const [showModalComentario, setShowModalComentario] = useState(false);
     const [showModalDeleteComentario, setShowModalDeleteComentario] = useState(false);
+    const [showModalNotificarComentarios, setShowModalNotificarComentarios] = useState(false);
     const [comentarioEdicao, setComentarioEdicao] = useState(false);
     const [disabledBtnAddComentario, setDisabledBtnAddComentario] = useState(true);
     const [checked, setChecked] = useState([]); // notificar comentários
@@ -48,6 +50,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     const onHandleClose = () => {
         setShowModalComentario(false);
         setComentarioEdicao(false);
+        setShowModalNotificarComentarios(false)
     };
 
     const onHandleCloseDeletarComentario = () => {
@@ -141,6 +144,15 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
 
     };
 
+    const notificarComentarios = () =>{
+        console.log("notificarComentarios ")
+        console.log("CHECBOX XXXXXXX ", checked)
+
+        
+
+        setShowModalNotificarComentarios(false);
+    };
+
     const SortableItem = SortableElement(({comentario}) =>
         <li className="d-flex bd-highlight border mt-2">
             <div className="p-2 flex-grow-1 bd-highlight container-item-comentario">
@@ -171,9 +183,6 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         );
     });
     // *********** Fim Sortable Comentário
-
-
-    console.log("CHECBOX XXXXXXX ", checked)
 
     return (
         <>
@@ -269,6 +278,16 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                                         Confirmar comentário
                                                     </button>
                                                 }
+
+                                                <button
+                                                    className="btn btn btn-outline-success mt-2 mr-2"
+                                                    type="button"
+                                                    disabled={checked.length <=0}
+                                                    onClick={()=>setShowModalNotificarComentarios(true)}
+                                                    >
+                                                    Notificar a Associação
+                                                </button>
+
                                             </div>
                                         </>
                                     )}
@@ -304,6 +323,19 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="danger"
                         segundoBotaoTexto="Excluir"
+                    />
+                </section>
+                <section>
+                    <ModalNotificarComentarios
+                        show={showModalNotificarComentarios}
+                        handleClose={onHandleClose}
+                        notificarComentarios={notificarComentarios}
+                        titulo="Notificar comentários"
+                        texto="<p>Deseja enviar os comentários selecionados como notificações para o presidente e vice-presidente da associação?</p>"
+                        primeiroBotaoTexto="Sim"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="success"
+                        segundoBotaoTexto="Não"
                     />
                 </section>
             </>
