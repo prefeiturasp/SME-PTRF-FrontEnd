@@ -261,7 +261,7 @@ export const RelatorioConsolidadoApuracao = () => {
         try {
             setLoading(true);
             await postGerarRelatorio(payload);
-            console.log('Relaório gerado com sucesso');
+            console.log('Relatório gerado com sucesso');
             setShowModalAssociacoesEmAnalise(false);
             setLoading(false);
             setMsgGeracaoRelatorio('Relaório gerado com sucesso');
