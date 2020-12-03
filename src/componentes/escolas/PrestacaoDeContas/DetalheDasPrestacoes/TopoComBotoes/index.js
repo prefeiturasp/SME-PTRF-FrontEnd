@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TopoComBotoes = ({handleClickCadastrar, btnCadastrarTexto, onSalvarTrue, contaConciliacao}) => {
+export const TopoComBotoes = ({handleClickCadastrar, btnCadastrarTexto, onSalvarTrue, contaConciliacao, showSalvar}) => {
     return (
         <div className="row mt-3">
             <div className='col-12 col-md-6 mt-2'>
@@ -9,7 +9,7 @@ export const TopoComBotoes = ({handleClickCadastrar, btnCadastrarTexto, onSalvar
             {btnCadastrarTexto &&
                 <div className='col-12 col-md-6 text-right'>
                     <button type="button" onClick={handleClickCadastrar} className="btn btn-outline-success mr-2 mt-2"> <strong>{btnCadastrarTexto}</strong></button>
-                    <button type="button" onClick={()=>onSalvarTrue()} className="btn btn-outline-success mt-2"><strong>Salvar</strong></button>
+                    <button type="button" onClick={()=>onSalvarTrue()} className="btn btn-outline-success mt-2" disabled={!showSalvar}><strong>Salvar</strong></button>
                 </div>
             }
         </div>

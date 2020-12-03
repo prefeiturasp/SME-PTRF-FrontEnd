@@ -38,15 +38,15 @@ export const editarMembroAssociacao = async (payload, uuid) => {
 };
 
 export const consultarRF = async (rf) => {
-    return (await api.get(`/api/membros-associacao/codigo-identificacao/?rf=${rf}`, authHeader))
+    return (await api.get(`/api/membros-associacao/codigo-identificacao/?rf=${rf}&associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader))
 };
 
 export const consultarCodEol = async (cod_eol) => {
-    return (await api.get(`/api/membros-associacao/codigo-identificacao/?codigo-eol=${cod_eol}`, authHeader))
+    return (await api.get(`/api/membros-associacao/codigo-identificacao/?codigo-eol=${cod_eol}&associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader))
 };
 
-export const consultarNomeResponsavel = async (nome) => {
-    return (await api.get(`/api/membros-associacao/nome-responsavel/?nome=${nome}`, authHeader))
+export const consultarCpfResponsavel = async (cpf) => {
+    return (await api.get(`/api/membros-associacao/cpf-responsavel/?cpf=${cpf}&associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader))
 };
 
 export const getContas = async () => {
@@ -77,8 +77,12 @@ export const exportarDadosAssociacao = async () => {
             }).catch(error => {
                 return error.response;
             });
-}
+};
 
 export const getPeriodosDePrestacaoDeContasDaAssociacao = async () => {
     return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/periodos-para-prestacao-de-contas/`, authHeader)).data
+};
+
+export const getUsuarios = async () => {
+    return (await api.get(`/api/usuarios/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };

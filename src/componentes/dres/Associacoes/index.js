@@ -103,6 +103,7 @@ export const Associacoes = () =>{
                     <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-dados-da-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver dados unidade</button>
                     <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-regularidade-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver regularidade</button>
                     <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-situacao-financeira-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver situação financeira</button>
+                    <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-situacao-financeira-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver situação patrimonial</button>
                     {urlRedirect &&
                         <Redirect
                             to={{

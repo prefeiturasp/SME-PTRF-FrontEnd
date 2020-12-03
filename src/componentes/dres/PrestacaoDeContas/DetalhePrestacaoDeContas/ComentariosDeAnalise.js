@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {getComentariosDeAnalise, criarComentarioDeAnalise, editarComentarioDeAnalise, deleteComentarioDeAnalise, getReordenarComentarios} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getComentariosDeAnalise, criarComentarioDeAnalise, editarComentarioDeAnalise, deleteComentarioDeAnalise, getReordenarComentarios, postNotificarComentarios} from "../../../../services/dres/PrestacaoDeContas.service";
 import {FieldArray, Formik} from "formik";
 import {ModalEditarDeletarComentario} from "../ModalEditarDeletarComentario";
 import {ModalDeleteComentario} from "../ModalDeleteComentario";
+import {ModalNotificarComentarios} from "../ModalNotificarComentarios";
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
@@ -19,8 +20,10 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     const [toggleExibeBtnAddComentario, setToggleExibeBtnAddComentario] = useState(true);
     const [showModalComentario, setShowModalComentario] = useState(false);
     const [showModalDeleteComentario, setShowModalDeleteComentario] = useState(false);
+    const [showModalNotificarComentarios, setShowModalNotificarComentarios] = useState(false);
     const [comentarioEdicao, setComentarioEdicao] = useState(false);
     const [disabledBtnAddComentario, setDisabledBtnAddComentario] = useState(true);
+    const [comentarioChecked, setComentarioChecked] = useState([]); // notificar comentários
 
     useEffect(() => {
         carregaComentarios();
@@ -47,6 +50,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     const onHandleClose = () => {
         setShowModalComentario(false);
         setComentarioEdicao(false);
+        setShowModalNotificarComentarios(false)
     };
 
     const onHandleCloseDeletarComentario = () => {
@@ -85,6 +89,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         setShowModalDeleteComentario(false);
         await deleteComentarioDeAnalise(comentarioEdicao.uuid);
         setToggleExibeBtnAddComentario(true);
+        setComentarioChecked([]);
         await carregaComentarios()
     };
 
@@ -120,9 +125,50 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         }
     };
 
+    const verificaSeChecado = (comentario_uuid) =>{
+        if (comentarioChecked && comentarioChecked.length > 0){
+            return comentarioChecked.find(element=> element === comentario_uuid)
+        }
+    };
+
+    const handleChangeCheckboxNotificarComentarios = (event, comentario_uuid) =>{
+        const comentarioClicado = comentarioChecked.indexOf(comentario_uuid);
+        const all = [...comentarioChecked];
+        if (comentarioClicado === -1) {
+            all.push(comentario_uuid);
+        } else {
+            all.splice(comentarioClicado, 1);
+        }
+        setComentarioChecked(all);
+    };
+
+    const notificarComentarios = async () =>{
+        const payload = {
+            associacao: prestacaoDeContas.associacao.uuid,
+            periodo: prestacaoDeContas.periodo_uuid,
+            comentarios: comentarioChecked
+        };
+        try {
+            let notificar = await postNotificarComentarios(payload);
+            console.log(notificar.mensagem)
+        }catch (e) {
+            console.log("Erro ao enviar notificações ", e)
+        }
+        setShowModalNotificarComentarios(false);
+        setComentarioChecked([])
+    };
+
     const SortableItem = SortableElement(({comentario}) =>
         <li className="d-flex bd-highlight border mt-2">
-            <div className="p-2 flex-grow-1 bd-highlight container-item-comentario">{comentario.comentario}</div>
+            <div className="p-2 flex-grow-1 bd-highlight container-item-comentario">
+                <input
+                    type='checkbox'
+                    onChange={(event)=>handleChangeCheckboxNotificarComentarios(event, comentario.uuid)}
+                    checked={verificaSeChecado(comentario.uuid)}
+                    className="checkbox-comentario-de-analise"
+                />
+                {comentario.comentario}
+            </div>
             <div className="p-2 bd-highlight" >
                 <button onClick={()=>setComentarioParaEdicao(comentario)} type='button' className="btn-cancelar-comentario ml-2">
                     Editar
@@ -237,6 +283,16 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                                         Confirmar comentário
                                                     </button>
                                                 }
+
+                                                <button
+                                                    className="btn btn btn-outline-success mt-2 mr-2"
+                                                    type="button"
+                                                    disabled={comentarioChecked.length <=0}
+                                                    onClick={()=>setShowModalNotificarComentarios(true)}
+                                                    >
+                                                    Notificar a Associação
+                                                </button>
+
                                             </div>
                                         </>
                                     )}
@@ -272,6 +328,19 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="danger"
                         segundoBotaoTexto="Excluir"
+                    />
+                </section>
+                <section>
+                    <ModalNotificarComentarios
+                        show={showModalNotificarComentarios}
+                        handleClose={onHandleClose}
+                        notificarComentarios={notificarComentarios}
+                        titulo="Notificar comentários"
+                        texto="<p>Deseja enviar os comentários selecionados como notificações para o presidente e vice-presidente da associação?</p>"
+                        primeiroBotaoTexto="Sim"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="success"
+                        segundoBotaoTexto="Não"
                     />
                 </section>
             </>

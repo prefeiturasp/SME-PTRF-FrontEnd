@@ -1,8 +1,8 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faHandHoldingUsd, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faHandHoldingUsd, faPlus, faEdit} from "@fortawesome/free-solid-svg-icons";
 
-export const TabelaDevolucoesAoTesouro = ({devolucoesAoTesouro, valorTemplate}) => {
+export const TabelaDevolucoesAoTesouro = ({devolucoesAoTesouro, valorTemplate, onClickObservacao}) => {
     return(
         <>
             <div className='row mt-2'>
@@ -27,16 +27,19 @@ export const TabelaDevolucoesAoTesouro = ({devolucoesAoTesouro, valorTemplate}) 
                                 <tbody>
                                 {devolucoesAoTesouro.map((devolucao, index)=>
                                     <tr key={index}>
-                                        <td>{devolucao.tipo__nome}</td>
+                                        <td>{devolucao.tipo_nome}</td>
                                         <td>{devolucao.ocorrencias}</td>
                                         <td>{devolucao.valor ? valorTemplate(devolucao.valor) : '-'}</td>
                                         <td>
-                                            <button className="btn-adicionar-devolucoes float-right">
+                                            <button
+                                                onClick={()=>onClickObservacao( {...devolucao, tipo_devolucao:'devolucao_tesouro'} )}
+                                                className="btn-adicionar-devolucoes float-right"
+                                            >
                                                 <FontAwesomeIcon
-                                                    style={{fontSize: '15px', marginRight: "0"}}
-                                                    icon={faPlus}
+                                                    style={{fontSize: '15px', marginRight: "3px"}}
+                                                    icon={devolucao.observacao ? faEdit : faPlus}
                                                 />
-                                                <strong> adicionar</strong>
+                                                <strong>{devolucao.observacao ? 'editar' : 'adicionar'}</strong>
                                             </button>
                                         </td>
                                     </tr>

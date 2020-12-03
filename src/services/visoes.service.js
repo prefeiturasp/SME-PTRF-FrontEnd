@@ -91,19 +91,6 @@ const getPermissoes = (permissao) =>{
 
 };
 
-
-// const getPermissoes = (permissao) =>{
-//     let permissoes = getItemUsuarioLogado('permissoes');
-//
-//
-//     let tem_permissao = permissoes.find(element=> element === permissao);
-//
-//     //console.log("getPermissoes tem_permissao ", tem_permissao)
-//
-//     return tem_permissao
-//
-// };
-
 const setDadosUsuariosLogados = async (resp) => {
 
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
@@ -188,6 +175,7 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
         localStorage.removeItem('contaPrestacaoDeConta');
         localStorage.removeItem('uuidPrestacaoConta');
         localStorage.removeItem('uuidAta');
+        localStorage.removeItem('prestacao_de_contas_nao_apresentada');
         redirectVisao(visao)
     }
 };

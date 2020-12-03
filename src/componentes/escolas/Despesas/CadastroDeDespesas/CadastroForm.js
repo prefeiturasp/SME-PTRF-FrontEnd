@@ -1,6 +1,13 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
-import {YupSignupSchemaCadastroDespesa, validaPayloadDespesas, cpfMaskContitional, calculaValorRecursoAcoes, periodoFechado} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {
+    YupSignupSchemaCadastroDespesa,
+    validaPayloadDespesas,
+    cpfMaskContitional,
+    calculaValorRecursoAcoes,
+    periodoFechado,
+    comparaObjetos
+} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import {getDespesasTabelas, criarDespesa, alterarDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getDespesaCadastrada} from "../../../../services/escolas/Despesas.service";
 import {DatePickerField} from "../../../Globais/DatePickerField";
@@ -48,8 +55,10 @@ export const CadastroForm = ({verbo_http}) => {
     const [loading, setLoading] = useState(true);
     const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
     const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
-    const [numreoDocumentoReadOnly, setNumreoDocumentoReadOnly] = useState(false);
+    const [numeroDocumentoReadOnly, setNumeroDocumentoReadOnly] = useState(false);
     const [showDespesaConferida, setShowDespesaConferida] = useState(false);
+
+    const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
 
     useEffect(()=>{
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
@@ -57,6 +66,9 @@ export const CadastroForm = ({verbo_http}) => {
         }
         if (despesaContext.initialValues.data_documento && verbo_http === "PUT"){
             periodoFechado(despesaContext.initialValues.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
+        }
+        if (verbo_http === "PUT"){
+            setObjetoParaComparacao(despesaContext.initialValues)
         }
     }, [despesaContext.initialValues]);
 
@@ -218,9 +230,9 @@ export const CadastroForm = ({verbo_http}) => {
             exibe_campo_numero_documento = so_numeros;
             if (exibe_campo_numero_documento && !exibe_campo_numero_documento.numero_documento_digitado){
                 values.numero_documento = "";
-                setNumreoDocumentoReadOnly(true)
+                setNumeroDocumentoReadOnly(true)
             }else {
-                setNumreoDocumentoReadOnly(false)
+                setNumeroDocumentoReadOnly(false)
             }
 
             if (so_numeros && so_numeros.apenas_digitos && values.numero_documento){
@@ -244,10 +256,22 @@ export const CadastroForm = ({verbo_http}) => {
                 currency: 'BRL'
             });
             errors.valor_original = "O total das despesas originais deve corresponder ao valor total dos recursos originais. Diferença de  R$ " + diferenca
-
         }
         return errors;
     };
+
+    const onCancelarTrue = () => {
+        setShow(false);
+        aux.getPath(origem);
+    };
+
+    const onShowModal = () => {
+        setShow(true);
+    };
+
+    const houveAlteracoes = (values) => {
+        return !comparaObjetos(values,objetoParaComparacao)
+    }
 
     return (
         <>
@@ -277,11 +301,12 @@ export const CadastroForm = ({verbo_http}) => {
 
                         return (
                             <>
-                                {props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
+                                {props.values.status === 'COMPLETO' ?
+                                    null :
+                                props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
                                 <div className="col-12 barra-status-erros pt-1 pb-1">
-                                    <p className="titulo-status pt-1 pb-1 mb-0">O cadastro
-                                        possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode
-                                        completá-los agora ou terminar depois.</p>
+                                    <p className="titulo-status pt-1 pb-1 mb-0">
+                                        O cadastro possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
                                 </div>
                                 }
                                 <form onSubmit={props.handleSubmit}>
@@ -364,9 +389,10 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onBlur={props.handleBlur}
                                                 name="numero_documento"
                                                 id="numero_documento" type="text"
-                                                className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                /*className={`${ numeroDocumentoReadOnly ? "form-control" : !props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid form-control" : ""}`}*/
+                                                className={`${ !numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid " : ""} form-control`}
                                                 placeholder="Digite o número"
-                                                disabled={readOnlyCampos || numreoDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                disabled={readOnlyCampos || numeroDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                             {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
                                         </div>
@@ -685,7 +711,7 @@ export const CadastroForm = ({verbo_http}) => {
                                         )}
                                     />
                                     <div className="d-flex  justify-content-end pb-3 mt-3">
-                                        <button type="reset" onClick={()=>aux.onShowModal(setShow)}
+                                        <button type="reset" onClick={houveAlteracoes(values) ? onShowModal: onCancelarTrue}
                                                 className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                         </button>
                                         {despesaContext.idDespesa

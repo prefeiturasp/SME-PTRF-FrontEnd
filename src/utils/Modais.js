@@ -44,21 +44,6 @@ export const CancelarModal = (propriedades) => {
     )
 };
 
-export const CancelarModalReceitas = (propriedades) => {
-    return (
-        <ModalBootstrap
-            show={propriedades.show}
-            onHide={propriedades.handleClose}
-            titulo="Deseja cancelar a inclusão de Crédito?"
-            bodyText=""
-            primeiroBotaoOnclick={propriedades.onCancelarTrue}
-            primeiroBotaoTexto="OK"
-            segundoBotaoOnclick={propriedades.handleClose}
-            segundoBotaoTexto="Fechar"
-        />
-    )
-};
-
 export const DeletarModal = (propriedades) => {
     return (
         <ModalBootstrap
@@ -330,13 +315,13 @@ export const PeriodoFechado = (propriedades) => {
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Período Fechado"
-            bodyText="Este período está fechado, para inclusão ou edição de lançamentos (créditos ou despesas) é necessário reabrir o processo de prestação de contas. Deseja ir para a página de Prestação de Contas?"
+            bodyText="Este período está fechado. Para inclusão ou edição de lançamentos (créditos ou despesas) é necessário reabrir o processo de prestação de contas. Se for esse o caso, por favor, entre em contato com sua Diretoria Regional de Educação - DRE."
             primeiroBotaoOnclick={propriedades.handleClose}
-            primeiroBotaoTexto="Não"
-            primeiroBotaoCss="outline-success"
-            segundoBotaoOnclick={() => {window.location.assign("/prestacao-de-contas")}}
-            segundoBotaoTexto="Sim"
-            segundoBotaoCss="success"
+            primeiroBotaoTexto="Fechar"
+            primeiroBotaoCss="success"
+            // segundoBotaoOnclick={() => {window.location.assign("/prestacao-de-contas")}}
+            // segundoBotaoTexto="Sim"
+            // segundoBotaoCss="success"
         />
     )
 };
@@ -350,177 +335,6 @@ export const TextoCopiado = ({show, handleClose}) => {
             bodyText='Digite as teclas CTRL + V para "colar" o conteúdo copiado onde desejar'
             primeiroBotaoOnclick={handleClose}
             primeiroBotaoTexto="Fechar"
-        />
-    )
-};
-
-export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, validateFormMembros, stateFormEditarMembro, infosMembroSelecionado, btnSalvarReadOnly}) => {
-
-    const bodyTextarea = () => {
-        return (
-
-            <>
-                {infosMembroSelecionado &&
-                <Formik
-                    initialValues={stateFormEditarMembro}
-                    validationSchema={YupSignupSchemaMembros}
-                    validate={validateFormMembros}
-                    enableReinitialize={true}
-                    validateOnBlur={true}
-                    onSubmit={onSubmitEditarMembro}
-                >
-                    {props => {
-                        const {
-                            errors,
-                            values,
-                            setFieldValue,
-                        } = props;
-                        return(
-                            <form method="POST" id="membrosForm" onSubmit={props.handleSubmit}>
-                                <div className='row'>
-                                    <div className="col-12">
-                                        <div className="form-group">
-                                            <label htmlFor="cargo_associacao">Cargo na Associação</label>
-                                            <input
-                                                readOnly={true}
-                                                type="text"
-                                                value={props.values.cargo_associacao ? props.values.cargo_associacao : ""}
-                                                //onChange={(e) => handleChangeEditarMembro(e.target.name, e.target.value)}
-                                                onChange={(e) => {
-                                                        props.handleChange(e);
-                                                        handleChangeEditarMembro(e.target.name, e.target.value);
-                                                    }
-                                                }
-                                                name="cargo_associacao"
-                                                className="form-control"
-                                            />
-                                            {props.errors.cargo_associacao && <span className="span_erro text-danger mt-1"> {props.errors.cargo_associacao}</span>}
-                                        </div>
-                                    </div>
-
-                                    <div className="col-12 col-md-6">
-                                        <div className="form-group">
-                                            <label htmlFor="representacao">Representação na associação</label>
-                                            <select
-                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
-                                                value={props.values.representacao ? props.values.representacao : ""}
-                                                onChange={(e) => {
-                                                    props.handleChange(e);
-                                                    handleChangeEditarMembro(e.target.name, e.target.value);
-                                                }
-                                                }
-                                                name="representacao"
-                                                className="form-control"
-                                            >
-                                                <option value="">Escolha a Representação</option>
-                                                <option value="ESTUDANTE">Estudante</option>
-                                                <option value='PAI_RESPONSAVEL'>Pai ou responsável</option>
-                                                <option value='SERVIDOR'>Servidor</option>
-                                            </select>
-                                            {props.errors.representacao && <span className="span_erro text-danger mt-1"> {props.errors.representacao}</span>}
-                                        </div>
-                                    </div>
-
-                                    <div className={`col-12 col-md-6 ${props.values.representacao !== 'SERVIDOR' && props.values.representacao !== 'ESTUDANTE' && 'escondeItem'}`}>
-                                        <div className="form-group">
-                                            <label htmlFor="codigo_identificacao">{props.values.representacao === 'SERVIDOR' ? "Registro Funcional" : "Código EOL"}</label>
-                                            <input
-                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
-                                                type="text"
-                                                value={props.values.codigo_identificacao ? props.values.codigo_identificacao : ""}
-                                                onChange={(e) => {
-                                                    props.handleChange(e);
-                                                    handleChangeEditarMembro(e.target.name, e.target.value);
-                                                }
-                                                }
-                                                name="codigo_identificacao"
-                                                className="form-control"
-                                            />
-                                            {props.errors.codigo_identificacao && <span className="span_erro text-danger mt-1"> {props.errors.codigo_identificacao}</span>}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-12 col-md-6">
-                                        <div className="form-group">
-                                            <label htmlFor="cargo_associacao">Nome Completo</label>
-                                            <input
-                                                readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
-                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
-                                                type="text"
-                                                value={props.values.nome ? props.values.nome : ""}
-                                                onChange={(e) => {
-                                                        props.handleChange(e);
-                                                        handleChangeEditarMembro(e.target.name, e.target.value);
-                                                    }
-                                                }
-                                                name="nome"
-                                                className="form-control"
-                                            />
-                                            {props.errors.nome && <span className="span_erro text-danger mt-1"> {props.errors.nome}</span>}
-                                        </div>
-                                    </div>
-
-                                    <div className={`col-12 col-md-6 ${props.values.representacao !== 'SERVIDOR' && 'escondeItem'}`}>
-                                        <div className="form-group">
-                                            <label htmlFor="cargo_educacao">Cargo na educação</label>
-                                            <input
-                                                readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
-                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
-                                                type="text"
-                                                value={props.values.cargo_educacao ? props.values.cargo_educacao : ""}
-                                                onChange={(e) => {
-                                                    props.handleChange(e);
-                                                    handleChangeEditarMembro(e.target.name, e.target.value);
-                                                }
-                                                }
-                                                name="cargo_educacao"
-                                                className="form-control"
-                                            />
-                                            {(props.values.cargo_educacao === undefined || props.values.cargo_educacao === "") && props.errors.cargo_educacao && <span className="span_erro text-danger mt-1"> {props.errors.cargo_educacao}</span>}
-                                        </div>
-                                    </div>
-
-                                    <div className="col-12">
-                                        <div className="form-group">
-                                            <label htmlFor="email">Email</label>
-                                            <input
-                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
-                                                type="text"
-                                                value={props.values.email ? props.values.email : ""}
-                                                onChange={(e) => {
-                                                    props.handleChange(e);
-                                                    handleChangeEditarMembro(e.target.name, e.target.value);
-                                                }
-                                                }
-                                                name="email"
-                                                className="form-control"
-                                                placeholder="Insira seu email se desejar"
-                                            />
-                                            {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div className="d-flex  justify-content-end pb-3 mt-3">
-                                    <button onClick={()=>handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                                    <button disabled={btnSalvarReadOnly || !visoesService.getPermissoes(['change_associacao'])} type="submit" className="btn btn-success mt-2">Salvar</button>
-                                </div>
-                            </form>
-                        );
-                    }}
-                </Formik>
-                }
-            </>
-        )
-    };
-    return (
-        <ModalBootstrapFormMembros
-            show={show}
-            onHide={handleClose}
-            titulo="Editar membro"
-            bodyText={bodyTextarea()}
         />
     )
 };

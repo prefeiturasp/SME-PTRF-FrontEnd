@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Justificativa = ({textareaJustificativa, handleChangeTextareaJustificativa}) => {
+export const Justificativa = ({textareaJustificativa, handleChangeTextareaJustificativa, periodoFechado}) => {
     return(
         <div className="form-group mt-4">
             <label htmlFor="justificativa"><strong>Justificativas, informações adicionais e cheques cancelados</strong></label>
@@ -12,6 +12,7 @@ export const Justificativa = ({textareaJustificativa, handleChangeTextareaJustif
                 id="justificativa"
                 name="justificativa"
                 placeholder="Escreva o comentário"
+                disabled={periodoFechado}
             >
             </textarea>
         </div>

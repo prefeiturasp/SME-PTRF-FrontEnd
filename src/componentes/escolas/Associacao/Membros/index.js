@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useMemo} from "react";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
-import {EditarMembro} from "../../../../utils/Modais";
-import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarNomeResponsavel} from "../../../../services/escolas/Associacao.service";
+import {EditarMembro} from "../ModalMembros";
+import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarCpfResponsavel, getUsuarios} from "../../../../services/escolas/Associacao.service";
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
@@ -39,11 +39,14 @@ export const MembrosDaAssociacao = () =>{
         representacao:"",
         codigo_identificacao:"",
         email:"",
+        cpf:"",
+        usuario:"",
     };
 
     const [clickIconeToogle, setClickIconeToogle] = useState({});
     const [showEditarMembro, setShowEditarMembro] = useState(false);
     const [membros, setMembros] = useState({});
+    const [usuarios, setUsuarios] = useState({});
     const [initialValuesMembrosDiretoria, setInitialValuesMembrosDiretoria] = useState(initDiretoria);
     const [initialValuesMembrosConselho, setInitialValuesMembrosConselho] = useState(initConselho);
     const [infosMembroSelecionado, setInfosMembroSelecionado] = useState(null);
@@ -56,6 +59,10 @@ export const MembrosDaAssociacao = () =>{
     }, []);
 
     useEffect(()=>{
+        carregaUsuarios();
+    }, []);
+
+    useEffect(()=>{
         mesclaMembros();
     }, [membros]);
 
@@ -65,7 +72,14 @@ export const MembrosDaAssociacao = () =>{
 
     const carregaMembros = async ()=>{
         let membros = await getMembrosAssociacao();
+        //console.log("Carrega Membros ", membros)
         setMembros(membros)
+    };
+
+    const carregaUsuarios = async ()=>{
+        let usuarios = await getUsuarios();
+        //console.log('carregaUsuarios ', usuarios)
+        setUsuarios(usuarios);
     };
 
     const buscaDadosMembros = (id_cargo) =>{
@@ -151,6 +165,8 @@ export const MembrosDaAssociacao = () =>{
                 representacao: infoMembroSelecionado.infos.representacao ? infoMembroSelecionado.infos.representacao : "",
                 codigo_identificacao: infoMembroSelecionado.infos.codigo_identificacao ? infoMembroSelecionado.infos.codigo_identificacao : "",
                 email: infoMembroSelecionado.infos.email ? infoMembroSelecionado.infos.email : "",
+                cpf: infoMembroSelecionado.infos.cpf ? infoMembroSelecionado.infos.cpf : "",
+                usuario: infoMembroSelecionado.infos.usuario ? infoMembroSelecionado.infos.usuario : "",
             };
         }else {
             init = {
@@ -161,9 +177,10 @@ export const MembrosDaAssociacao = () =>{
                 representacao: "",
                 codigo_identificacao: "",
                 email: "",
+                cpf: "",
+                usuario:"",
             };
         }
-
         setStateFormEditarMembro(init);
         setInfosMembroSelecionado(infoMembroSelecionado)
     };
@@ -186,81 +203,108 @@ export const MembrosDaAssociacao = () =>{
         });
     };
 
+    const cod_identificacao_rf =  useMemo(() => stateFormEditarMembro.codigo_identificacao, [stateFormEditarMembro.codigo_identificacao]);
+    const cod_identificacao_eol =  useMemo(() => stateFormEditarMembro.codigo_identificacao, [stateFormEditarMembro.codigo_identificacao]);
+    const cod_identificacao_cpf =  useMemo(() => stateFormEditarMembro.cpf, [stateFormEditarMembro.cpf]);
+
     const validateFormMembros = async (values) => {
         const errors = {};
-        if (values.representacao === "SERVIDOR"){
-            setBtnSalvarReadOnly(true);
-            try {
-                let rf = await consultarRF(values.codigo_identificacao.trim());
-                if (rf.status === 200 || rf.status === 201) {
-                    const init = {
-                        ...stateFormEditarMembro,
-                        nome: rf.data[0].nm_pessoa,
-                        codigo_identificacao: values.codigo_identificacao,
-                        cargo_associacao: values.cargo_associacao,
-                        cargo_educacao: rf.data[0].cargo,
-                        representacao: values.representacao,
-                        email: values.email,
-                    };
-                    setStateFormEditarMembro(init);
+
+            if (values.representacao === "SERVIDOR"){
+                //setBtnSalvarReadOnly(true);
+                try {
+                    if (cod_identificacao_rf !== values.codigo_identificacao.trim()){
+                        let rf = await consultarRF(values.codigo_identificacao.trim());
+                        if (rf.status === 200 || rf.status === 201) {
+                            const init = {
+                                ...stateFormEditarMembro,
+                                nome: rf.data[0].nm_pessoa,
+                                codigo_identificacao: values.codigo_identificacao,
+                                cargo_associacao: values.cargo_associacao,
+                                cargo_educacao: rf.data[0].cargo,
+                                representacao: values.representacao,
+                                email: values.email,
+                                cpf: values.cpf,
+                                usuario: values.usuario,
+                            };
+                            setStateFormEditarMembro(init);
+                        }
+                    }
                     setBtnSalvarReadOnly(false);
+                }catch (e) {
+                    setBtnSalvarReadOnly(true);
+                    let data = e.response.data;
+                    if (data !== undefined && data.detail !== undefined) {
+                        errors.codigo_identificacao = data.detail
+                    } else {
+                        errors.codigo_identificacao = "RF inválido"
+                    }
                 }
-            }catch (e) {
-                let data = e.response.data;
-                if (data !== undefined && data.detail !== undefined) {
-                    errors.codigo_identificacao = data.detail    
-                } else {
-                    errors.codigo_identificacao = "RF inválido"
-                }
-            }
-        } else if(values.representacao === "ESTUDANTE"){
-            setBtnSalvarReadOnly(true);
-            try {
-                let cod_eol = await consultarCodEol(values.codigo_identificacao);
-                if (cod_eol.status === 200 || cod_eol.status === 201){
-                    const init = {
-                        ...stateFormEditarMembro,
-                        nome: cod_eol.data.nm_aluno,
-                        codigo_identificacao: values.codigo_identificacao,
-                        cargo_associacao: values.cargo_associacao,
-                        cargo_educacao: "",
-                        representacao: values.representacao,
-                        email: values.email,
-                    };
-                    setStateFormEditarMembro(init);
+            } else if(values.representacao === "ESTUDANTE"){
+                //setBtnSalvarReadOnly(true);
+                try {
+                    if (cod_identificacao_eol !== values.codigo_identificacao){
+                        let cod_eol = await consultarCodEol(values.codigo_identificacao);
+                        if (cod_eol.status === 200 || cod_eol.status === 201){
+                            const init = {
+                                ...stateFormEditarMembro,
+                                nome: cod_eol.data.nm_aluno,
+                                codigo_identificacao: values.codigo_identificacao,
+                                cargo_associacao: values.cargo_associacao,
+                                cargo_educacao: "",
+                                representacao: values.representacao,
+                                email: values.email,
+                                cpf: values.cpf,
+                                usuario: values.usuario,
+                            };
+                            setStateFormEditarMembro(init);
+
+                        }
+                    }
                     setBtnSalvarReadOnly(false);
+                } catch (e) {
+                    setBtnSalvarReadOnly(true);
+                    let data = e.response.data;
+                    if (data !== undefined && data.detail !== undefined) {
+                        errors.codigo_identificacao = data.detail
+                    } else {
+                        errors.codigo_identificacao = "Código Eol inválido"
+                    }
                 }
-            } catch (e) {
-                let data = e.response.data;
-                if (data !== undefined && data.detail !== undefined) {
-                    errors.codigo_identificacao = data.detail    
-                } else {
-                    errors.codigo_identificacao = "Código Eol inválido"
+            } else if (values.representacao === "PAI_RESPONSAVEL") {
+                if (cod_identificacao_cpf !== values.cpf.trim()){
+                    try {
+                        await consultarCpfResponsavel(values.cpf);
+                        setBtnSalvarReadOnly(false);
+                    } catch (e) {
+                        let data = e.response.data;
+                        if (data !== undefined && data.detail !== undefined) {
+                            errors.cpf = 'CPF já cadastrado'
+                        } else {
+                            errors.cpf = "CPF inválido"
+                        }
+                        setBtnSalvarReadOnly(true);
+                    }
                 }
+            } else {
+                setBtnSalvarReadOnly(false)
             }
-        } else if (values.representacao === "PAI_RESPONSAVEL") {
-            setBtnSalvarReadOnly(true);
-            try {
-                let result = await consultarNomeResponsavel(values.nome);
-                if (result.status === 200 || result.status === 201) {
-                    setBtnSalvarReadOnly(false);
-                }
-            } catch (e) {
-                let data = e.response.data;
-                if (data !== undefined && data.detail !== undefined) {
-                    errors.nome = data.detail    
-                }
-            }
-        } else {
-            setBtnSalvarReadOnly(false)
-        }
         return errors
     };
 
     const onSubmitEditarMembro = async () =>{
+
         setLoading(true)
         setShowEditarMembro(false);
         let payload = {};
+        let usuario;
+
+        if (typeof stateFormEditarMembro.usuario === "object" && stateFormEditarMembro.usuario !== null) {
+            usuario = stateFormEditarMembro.usuario.id
+        }else {
+            usuario = stateFormEditarMembro.usuario
+        }
+
         if(stateFormEditarMembro && stateFormEditarMembro.representacao === "SERVIDOR"){
             payload = {
                 'nome': stateFormEditarMembro.nome,
@@ -269,7 +313,9 @@ export const MembrosDaAssociacao = () =>{
                 'cargo_educacao': stateFormEditarMembro.cargo_educacao ? stateFormEditarMembro.cargo_educacao : "",
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
-                'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : ""
+                'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
+                'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
+                'usuario': usuario
             };
         }else if(stateFormEditarMembro && stateFormEditarMembro.representacao === "ESTUDANTE"){
             payload = {
@@ -280,6 +326,8 @@ export const MembrosDaAssociacao = () =>{
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
+                'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
+                'usuario': usuario
             };
         }else if (stateFormEditarMembro && stateFormEditarMembro.representacao === "PAI_RESPONSAVEL"){
             payload = {
@@ -290,6 +338,8 @@ export const MembrosDaAssociacao = () =>{
                 'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                 'codigo_identificacao': "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
+                'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
+                'usuario': usuario
             };
         }
 
@@ -368,6 +418,7 @@ export const MembrosDaAssociacao = () =>{
                     show={showEditarMembro}
                     handleClose={onHandleClose}
                     onSubmitEditarMembro={onSubmitEditarMembro}
+                    usuarios={usuarios}
                     handleChangeEditarMembro={handleChangeEditarMembro}
                     validateFormMembros={validateFormMembros}
                     stateFormEditarMembro={stateFormEditarMembro}
