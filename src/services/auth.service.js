@@ -23,15 +23,11 @@ const authHeader = {
 const setDataLogin = async ()=>{
     let data_login = localStorage.getItem(DATA_LOGIN);
     if(data_login){
-        const now = moment(new Date()); // Data atual
-        const past = moment(data_login, "YYYY-MM-DD").format("YYYY-MM-DD") // Data do login
+        const now = moment(new Date().toISOString().slice(0,10)); // Data atual
+        const past = moment(data_login); // Data do login
         const duration = moment.duration(now.diff(past)); // Calcula diferença entre datas
         const days = duration.asDays(); // Mostra a diferença em dias
-
-        console.log("Diferenca de horas duration ", duration)
-        console.log("Diferenca de horas days ", days)
-
-        if (days > 1){
+        if (days >= 1){
             localStorage.removeItem('DADOS_USUARIO_LOGADO');
             localStorage.setItem(DATA_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"));
             await logout();
