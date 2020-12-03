@@ -11,6 +11,8 @@ import ReactTooltip from "react-tooltip";
 import {getUrls} from "./getUrls";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import {visoesService} from "../../../services/visoes.service";
+import {authService} from "../../../services/auth.service";
+import moment from "moment";
 
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
@@ -27,6 +29,24 @@ export const SidebarLeft = () => {
         await notificacaoContext.getQtdeNotificacoesNaoLidas()
     };
 
+    const forcarNovoLogin = ()=>{
+        const data_hora_atual = moment().format("YYYY-MM-DD HH:mm:ss")
+        let data_hora_localstorage = localStorage.getItem('DATA_HORA_USUARIO_LOGADO')
+        if(data_hora_localstorage){
+            let diferenca = moment(data_hora_atual).diff(moment(data_hora_localstorage), 'minutes');
+            console.log('DIFERENCA ', diferenca)
+
+            if (diferenca >=1){
+                localStorage.setItem('DATA_HORA_USUARIO_LOGADO', data_hora_atual);
+                authService.logout();
+            }
+
+        }else {
+            localStorage.setItem('DATA_HORA_USUARIO_LOGADO', data_hora_atual)
+        }
+
+    };
+
     return (
         <>
             <SideNav
@@ -35,6 +55,7 @@ export const SidebarLeft = () => {
                 expanded={sidebarStatus.sideBarStatus}
                 onSelect={(selected) => {
                     qtdeNotificacoesNaoLidas();
+                    forcarNovoLogin();
                     const to = '/' + selected;
                     if (history.location.pathname !== to) {
                         history.push(to)
