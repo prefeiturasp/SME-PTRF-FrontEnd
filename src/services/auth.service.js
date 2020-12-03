@@ -5,7 +5,7 @@ import {visoesService} from "./visoes.service";
 import moment from "moment";
 
 export const TOKEN_ALIAS = "TOKEN";
-export const HORARIO_LOGIN = "HORARIO_LOGIN";
+export const DATA_LOGIN = "DATA_LOGIN";
 export const USUARIO_NOME = "NOME";
 export const ASSOCIACAO_UUID = "UUID";
 export const ASSOCIACAO_NOME = "ASSO_NOME";
@@ -20,22 +20,24 @@ const authHeader = {
     'Content-Type': 'application/json'
 };
 
-const setHoraLogin = ()=>{
-    let hora_login = localStorage.getItem(HORARIO_LOGIN)
-    if(hora_login){
+const setDataLogin = async ()=>{
+    let data_login = localStorage.getItem(DATA_LOGIN);
+    if(data_login){
+        const now = moment(new Date()); // Data atual
+        const past = moment(data_login, "YYYY-MM-DD").format("YYYY-MM-DD") // Data do login
+        const duration = moment.duration(now.diff(past)); // Calcula diferença entre datas
+        const days = duration.asDays(); // Mostra a diferença em dias
 
-        const now = moment(new Date()); // Data de hoje
-        const past = moment(hora_login); // Outra data no passado
-        const duration = moment.duration(now.diff(past));
+        console.log("Diferenca de horas duration ", duration)
+        console.log("Diferenca de horas days ", days)
 
-        // Mostra a diferença em dias
-        const days = duration.asDays();
-
-        console.log('setHoraLogin days ', days)
-
+        if (days > 1){
+            localStorage.removeItem('DADOS_USUARIO_LOGADO');
+            localStorage.setItem(DATA_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"));
+            await logout();
+        }
     }else {
-
-        localStorage.setItem(HORARIO_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"))
+        localStorage.setItem(DATA_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"))
     }
 };
 
@@ -54,7 +56,7 @@ const login = async (login, senha) => {
                 return "RF incorreto"
             }
 
-            setHoraLogin();
+            await setDataLogin();
 
             localStorage.setItem(TOKEN_ALIAS, resp.token);
             localStorage.setItem(
@@ -75,12 +77,12 @@ const login = async (login, senha) => {
             );
             localStorage.removeItem('medidorSenha');
 
-            //await visoesService.setDadosUsuariosLogados(resp);
+            await visoesService.setDadosUsuariosLogados(resp);
 
-           // await visoesService.setDadosPrimeiroAcesso(resp);
+            await visoesService.setDadosPrimeiroAcesso(resp);
 
             const decoded = decode(resp.token);
-            //window.location.href = "/";
+            window.location.href = "/";
         } 
     } catch (error) {
         console.log('ERROR');
