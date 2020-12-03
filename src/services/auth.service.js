@@ -2,8 +2,10 @@ import decode from "jwt-decode";
 import api from './api';
 import HTTP_STATUS from "http-status-codes";
 import {visoesService} from "./visoes.service";
+import moment from "moment";
 
 export const TOKEN_ALIAS = "TOKEN";
+export const HORARIO_LOGIN = "HORARIO_LOGIN";
 export const USUARIO_NOME = "NOME";
 export const ASSOCIACAO_UUID = "UUID";
 export const ASSOCIACAO_NOME = "ASSO_NOME";
@@ -16,6 +18,25 @@ export const DADOS_DA_ASSOCIACAO = "DADOS_DA_ASSOCIACAO";
 
 const authHeader = {
     'Content-Type': 'application/json'
+};
+
+const setHoraLogin = ()=>{
+    let hora_login = localStorage.getItem(HORARIO_LOGIN)
+    if(hora_login){
+
+        const now = moment(new Date()); // Data de hoje
+        const past = moment(hora_login); // Outra data no passado
+        const duration = moment.duration(now.diff(past));
+
+        // Mostra a diferença em dias
+        const days = duration.asDays();
+
+        console.log('setHoraLogin days ', days)
+
+    }else {
+
+        localStorage.setItem(HORARIO_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"))
+    }
 };
 
 const login = async (login, senha) => {
@@ -32,6 +53,8 @@ const login = async (login, senha) => {
             if (resp.detail) {
                 return "RF incorreto"
             }
+
+            setHoraLogin();
 
             localStorage.setItem(TOKEN_ALIAS, resp.token);
             localStorage.setItem(
@@ -52,12 +75,12 @@ const login = async (login, senha) => {
             );
             localStorage.removeItem('medidorSenha');
 
-            await visoesService.setDadosUsuariosLogados(resp);
+            //await visoesService.setDadosUsuariosLogados(resp);
 
-            await visoesService.setDadosPrimeiroAcesso(resp);
+           // await visoesService.setDadosPrimeiroAcesso(resp);
 
             const decoded = decode(resp.token);
-            window.location.href = "/";
+            //window.location.href = "/";
         } 
     } catch (error) {
         console.log('ERROR');
