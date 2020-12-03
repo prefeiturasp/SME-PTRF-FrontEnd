@@ -7,8 +7,24 @@ import {
     authService
 } from "./auth.service";
 import {redirect} from "../utils/redirect";
+import moment from "moment";
 
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
+export const DATA_HORA_USUARIO_LOGADO = "DATA_HORA_USUARIO_LOGADO";
+
+const forcarNovoLogin = ()=>{
+    const data_hora_atual = moment().format("YYYY-MM-DD HH:mm:ss");
+    let data_hora_localstorage = localStorage.getItem(DATA_HORA_USUARIO_LOGADO);
+    if(data_hora_localstorage){
+        let diferenca = moment(data_hora_atual).diff(moment(data_hora_localstorage), 'minutes');
+        if (diferenca >= 600){ // Equivale a 10 horas
+            localStorage.setItem(DATA_HORA_USUARIO_LOGADO, data_hora_atual);
+            authService.logout();
+        }
+    }else {
+        localStorage.setItem(DATA_HORA_USUARIO_LOGADO, data_hora_atual)
+    }
+};
 
 const getUsuarioLogin = () => {
     return localStorage.getItem(USUARIO_LOGIN)
@@ -204,11 +220,13 @@ const redirectVisao = (visao = null) => {
 
 const getItemUsuarioLogado = (indice) =>{
     let usuario_logado = getDadosDoUsuarioLogado();
+    // eslint-disable-next-line no-eval
     return eval('usuario_logado.' + indice)
 };
 
 
 export const visoesService = {
+    forcarNovoLogin,
     setDadosUsuariosLogados,
     getPermissoes,
     setDadosPrimeiroAcesso,
