@@ -26,29 +26,20 @@ export const PrestacaoDeContas = () => {
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [loading, setLoading] = useState(true);
     const [show, setShow] = useState(false);
-
-
     const [corBoxPrestacaoDeContasPorPeriodo, setCorBoxPrestacaoDeContasPorPeriodo] = useState("");
     const [textoBoxPrestacaoDeContasPorPeriodo, setTextoBoxPrestacaoDeContasPorPeriodo] = useState("");
     const [dataBoxPrestacaoDeContasPorPeriodo, setDataBoxPrestacaoDeContasPorPeriodo] = useState("");
-
     const [uuidAtaApresentacao, setUuidAtaApresentacao] = useState("");
-
-    const [seconds, setSeconds] = useState(1);
-
 
     useEffect(() => {
         if (statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'EM_PROCESSAMENTO'){
             const timer = setInterval(() => {
-                setSeconds(seconds + 1);
                 getStatusPrestacaoDeConta();
             }, 5000);
             // clearing interval
             return () => clearInterval(timer);
         }
-
     });
-
 
     useEffect(() => {
         getPeriodoPrestacaoDeConta();
@@ -81,8 +72,6 @@ export const PrestacaoDeContas = () => {
     useEffect(() => {
         localStorage.setItem('contaPrestacaoDeConta', JSON.stringify(contaPrestacaoDeContas));
     }, [contaPrestacaoDeContas]);
-
-
 
     const carregaPeriodos = async () => {
         let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
@@ -196,14 +185,12 @@ export const PrestacaoDeContas = () => {
     };
 
     const concluirPeriodo = async () =>{
-        //setLoading(true);
         let status_concluir_periodo = await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
         setUuidPrestacaoConta(status_concluir_periodo.uuid);
         let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
         setStatusPrestacaoDeConta(status);
         await carregaPeriodos();
         await setConfBoxPrestacaoDeContasPorPeriodo();
-        //setLoading(false);
     };
 
     const setConfBoxPrestacaoDeContasPorPeriodo = async ()=>{
@@ -237,7 +224,6 @@ export const PrestacaoDeContas = () => {
         setLoading(false);
     };
 
-
     const onClickVisualizarAta = async (uuid_ata) =>{
         setLoading(true);
         window.location.assign(`/visualizacao-da-ata/${uuid_ata}`)
@@ -252,8 +238,6 @@ export const PrestacaoDeContas = () => {
         setShow(false);
     };
 
-    console.log("STATUS PRESTACAO DE CONTAS ", statusPrestacaoDeConta)
-
     return (
         <>
             {loading ? (
@@ -265,9 +249,6 @@ export const PrestacaoDeContas = () => {
                 />
             ):
                 <>
-
-                    <h1>Number of seconds is {seconds}</h1>
-
                     {checkCondicaoExibicao(statusPrestacaoDeConta) &&
                         <BarraDeStatusPrestacaoDeContas
                             statusPrestacaoDeConta={statusPrestacaoDeConta}
@@ -341,7 +322,6 @@ export const PrestacaoDeContas = () => {
                                             statusPrestacaoDeConta={statusPrestacaoDeConta}
                                         />
                                         }
-
                                     </>
                                 ):
                                 <MsgImgCentralizada
@@ -349,10 +329,8 @@ export const PrestacaoDeContas = () => {
                                     img={Img404}
                                 />
                             }
-
                         </>
                     }
-
                     <section>
                         <ModalConcluirPeriodo
                             show={show}
