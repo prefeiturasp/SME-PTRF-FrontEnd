@@ -34,6 +34,18 @@ export const PrestacaoDeContas = () => {
 
     const [uuidAtaApresentacao, setUuidAtaApresentacao] = useState("");
 
+    const [seconds, setSeconds] = useState(1);
+
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setSeconds(seconds + 1);
+        }, 5000);
+        // clearing interval
+        return () => clearInterval(timer);
+    });
+
+
     useEffect(() => {
         getPeriodoPrestacaoDeConta();
         carregaPeriodos();
@@ -83,8 +95,8 @@ export const PrestacaoDeContas = () => {
 
     const getPeriodoPrestacaoDeConta = () => {
         if (localStorage.getItem('periodoPrestacaoDeConta')) {
-            const files = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta'));
-            setPeriodoPrestacaoDeConta(files)
+            const periodo_prestacao_de_contas = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta'));
+            setPeriodoPrestacaoDeConta(periodo_prestacao_de_contas)
         } else {
             setPeriodoPrestacaoDeConta({})
         }
@@ -100,8 +112,8 @@ export const PrestacaoDeContas = () => {
             setStatusPrestacaoDeConta(status)
         }else {
             if (localStorage.getItem('statusPrestacaoDeConta')) {
-                const files = JSON.parse(localStorage.getItem('statusPrestacaoDeConta'));
-                setStatusPrestacaoDeConta(files)
+                const status_prestacao_de_contas = JSON.parse(localStorage.getItem('statusPrestacaoDeConta'));
+                setStatusPrestacaoDeConta(status_prestacao_de_contas)
             } else {
                 setStatusPrestacaoDeConta({})
             }
@@ -110,8 +122,8 @@ export const PrestacaoDeContas = () => {
 
     const getUuidPrestacaoDeConta = () => {
         if (localStorage.getItem('uuidPrestacaoConta')) {
-            const files = localStorage.getItem('uuidPrestacaoConta');
-            setUuidPrestacaoConta(files)
+            const uuid_prestacao_de_contas = localStorage.getItem('uuidPrestacaoConta');
+            setUuidPrestacaoConta(uuid_prestacao_de_contas)
         } else {
             setUuidPrestacaoConta('')
         }
@@ -119,8 +131,8 @@ export const PrestacaoDeContas = () => {
 
     const getContaPrestacaoDeConta = () => {
         if (localStorage.getItem('contaPrestacaoDeConta')) {
-            const files = JSON.parse(localStorage.getItem('contaPrestacaoDeConta'));
-            setContaPrestacaoDeContas(files)
+            const conta_prestacao_de_contas = JSON.parse(localStorage.getItem('contaPrestacaoDeConta'));
+            setContaPrestacaoDeContas(conta_prestacao_de_contas)
         } else {
             setContaPrestacaoDeContas({})
         }
@@ -236,6 +248,8 @@ export const PrestacaoDeContas = () => {
         setShow(false);
     };
 
+    console.log("STATUS PRESTACAO DE CONTAS ", statusPrestacaoDeConta)
+
     return (
         <>
             {loading ? (
@@ -247,6 +261,9 @@ export const PrestacaoDeContas = () => {
                 />
             ):
                 <>
+
+                    <h1>Number of seconds is {seconds}</h1>
+
                     {checkCondicaoExibicao(statusPrestacaoDeConta) &&
                         <BarraDeStatusPrestacaoDeContas
                             statusPrestacaoDeConta={statusPrestacaoDeConta}
