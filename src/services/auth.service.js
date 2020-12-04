@@ -102,7 +102,6 @@ const getToken = () => {
     }
   };
   
-
 const logout = () => {
     localStorage.removeItem(TOKEN_ALIAS);
     localStorage.removeItem(USUARIO_NOME);

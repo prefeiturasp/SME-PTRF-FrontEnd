@@ -15,7 +15,6 @@ export const DATA_HORA_USUARIO_LOGADO = "DATA_HORA_USUARIO_LOGADO";
 const forcarNovoLogin = ()=>{
     const data_hora_atual = moment().format("YYYY-MM-DD HH:mm:ss");
     const data_hora_localstorage = localStorage.getItem(DATA_HORA_USUARIO_LOGADO);
-
     if(data_hora_localstorage){
         const diferenca = moment(data_hora_atual).diff(moment(data_hora_localstorage), 'minutes');
         if (diferenca >= 600){ // Equivale a 10 horas
@@ -33,6 +32,7 @@ const getUsuarioLogin = () => {
 
 const getDadosDoUsuarioLogado = () => {
     let dados_usuario_logado = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO));
+    // eslint-disable-next-line no-eval
     return dados_usuario_logado ? eval('dados_usuario_logado.usuario_' + getUsuarioLogin()) : null
 };
 
