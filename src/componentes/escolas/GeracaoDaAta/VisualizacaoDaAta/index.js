@@ -366,8 +366,6 @@ export const VisualizacaoDaAta = () => {
 
     const onSubmitModalDevolucoesAoTesouro = async () => {
 
-        //debugger
-
         let devolucao_ao_tesouro_tratado;
         if (formRef.current) {
             devolucao_ao_tesouro_tratado = formRef.current.values.devolucoes_ao_tesouro_da_prestacao;
@@ -482,6 +480,7 @@ export const VisualizacaoDaAta = () => {
                     despesasTabelas={despesasTabelas}
                     tiposDevolucao={tiposDevolucao}
                     validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
+                    camposObrigatorios={camposObrigatorios}
                 />
             </section>
             <section>
