@@ -8,6 +8,7 @@ import {salvaDadosDiretoria} from "../../../../services/dres/Unidades.service";
 import {YupSignupSchemaDreDadosDiretoria} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {consultarRF} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
+import {CancelarModalDiretoria, SalvarModalDiretoria} from "../../../../utils/Modais";
 
 export const DadosDaDiretoria = () => {
     const [loading, setLoading] = useState(true);
@@ -19,7 +20,8 @@ export const DadosDaDiretoria = () => {
         dre_designacao_portaria: "",
         dre_designacao_ano: "",
     });
-
+    const [showModalDiretoriaSalvar, setShowModalDiretoriaSalvar] = useState(false);
+    const [showModalDiretoriaCancelar, setShowModalDiretoriaCancelar] = useState(false);
     useEffect(() => {
         buscaDiretoria()
     }, []);
@@ -49,11 +51,11 @@ export const DadosDaDiretoria = () => {
         setLoading(true);
 
         try {
-            const response = await salvaDadosDiretoria(dadosDiretoria.uuid, payload);
-            if (response.status === 200) {
-                console.log("Operação realizada com sucesso!");
-                await buscaDiretoria();
-            }
+            await salvaDadosDiretoria(dadosDiretoria.uuid, payload);
+            console.log("Operação realizada com sucesso!");
+            await buscaDiretoria();
+            onShowModalSalvar()
+
         } catch (error) {
             console.log("Erro ao salvar os dados ", error);
         }
@@ -72,6 +74,22 @@ export const DadosDaDiretoria = () => {
          }
     };
 
+    const onHandleClose = () => {
+        setShowModalDiretoriaCancelar(false);
+    };
+
+    const onCancelarDiretoriaTrue = async (props) => {
+        props.handleReset();
+        setShowModalDiretoriaCancelar(false);
+    };
+    const onSalvarDiretoriaTrue = async () => {
+        await buscaDiretoria();
+        setShowModalDiretoriaSalvar(false);
+    };
+
+    const onShowModalSalvar = () => {
+        setShowModalDiretoriaSalvar(true);
+    };
     return (
         <>
             {loading ? (
@@ -187,6 +205,14 @@ export const DadosDaDiretoria = () => {
                                                 <button onClick={props.handleReset} type="reset" className="btn btn btn-outline-success mt-2">Cancelar</button>
                                                 <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
                                             </div>
+                                            <section>
+                                                <CancelarModalDiretoria show={showModalDiretoriaCancelar}
+                                                                        handleClose={onHandleClose}
+                                                                        onCancelarTrue={() => onCancelarDiretoriaTrue(props)}/>
+                                                <SalvarModalDiretoria show={showModalDiretoriaSalvar}
+                                                                      handleClose={onHandleClose}
+                                                                      onCancelarTrue={onSalvarDiretoriaTrue}/>
+                                            </section>
                                         </form>
                                         );
                                     }}

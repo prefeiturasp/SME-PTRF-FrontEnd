@@ -438,3 +438,33 @@ export const ModalConfirmaSalvar = (propriedades) => {
         />
     )
 };
+
+
+
+export const CancelarModalDiretoria = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Deseja cancelar a Edição da Diretoria?"
+            bodyText="<p>Tem certeza que deseja cancelar a edição? A ação não poderá ser desfeita.</p>"
+            primeiroBotaoOnclick={propriedades.onCancelarTrue}
+            primeiroBotaoTexto="OK"
+            segundoBotaoOnclick={propriedades.handleClose}
+            segundoBotaoTexto="Fechar"
+        />
+    )
+};
+
+export const SalvarModalDiretoria = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Edição salva"
+            bodyText="<p>A edição foi salva com sucesso!</p>"
+            primeiroBotaoOnclick={propriedades.onCancelarTrue}
+            primeiroBotaoTexto="OK"
+        />
+    )
+};

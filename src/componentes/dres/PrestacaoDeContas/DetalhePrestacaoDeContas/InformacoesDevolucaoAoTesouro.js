@@ -242,7 +242,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                             </textarea>
                                                         </div>
 
-                                                        {index >= 1 && values.devolucoes_ao_tesouro_da_prestacao.length > 1 && (
+                                                        {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === "UE" || (index >= 1 && values.devolucoes_ao_tesouro_da_prestacao.length > 1) ? (
                                                             <div className='col-12'>
                                                                 <div className="d-flex  justify-content-start mt-2 mb-3">
                                                                     <button
@@ -256,7 +256,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                     </button>
                                                                 </div>
                                                             </div>
-                                                        )}
+                                                        ) : null}
                                                         <section>
                                                             <ModalConfirmaRemocaoDevolucaoAoTesouro
                                                                 show={showConfirmaRemocao.abrir}

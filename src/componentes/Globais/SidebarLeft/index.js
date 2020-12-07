@@ -35,6 +35,7 @@ export const SidebarLeft = () => {
                 expanded={sidebarStatus.sideBarStatus}
                 onSelect={(selected) => {
                     qtdeNotificacoesNaoLidas();
+                    visoesService.forcarNovoLogin();
                     const to = '/' + selected;
                     if (history.location.pathname !== to) {
                         history.push(to)
