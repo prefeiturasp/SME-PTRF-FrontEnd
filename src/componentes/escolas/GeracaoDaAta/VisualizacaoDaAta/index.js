@@ -453,7 +453,6 @@ export const VisualizacaoDaAta = () => {
                     />
                 }
             </div>
-
             <section>
                 <ModalEditarAta
                     dadosAta={dadosAta}

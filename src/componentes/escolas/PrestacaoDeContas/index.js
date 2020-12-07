@@ -254,7 +254,6 @@ export const PrestacaoDeContas = () => {
                             statusPrestacaoDeConta={statusPrestacaoDeConta}
                         />
                     }
-
                     {statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'EM_PROCESSAMENTO' ? (
                             <Loading
                                 corGrafico="black"
