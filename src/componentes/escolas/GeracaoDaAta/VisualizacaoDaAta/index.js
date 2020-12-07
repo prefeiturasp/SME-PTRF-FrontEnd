@@ -365,11 +365,12 @@ export const VisualizacaoDaAta = () => {
     };
 
     const onSubmitModalDevolucoesAoTesouro = async () => {
+
         let devolucao_ao_tesouro_tratado;
         if (formRef.current) {
             devolucao_ao_tesouro_tratado = formRef.current.values.devolucoes_ao_tesouro_da_prestacao;
             if (devolucao_ao_tesouro_tratado.length > 0) {
-                devolucao_ao_tesouro_tratado.map((devolucao,) => {
+                devolucao_ao_tesouro_tratado.map((devolucao) => {
                     delete devolucao.busca_por_cpf_cnpj;
                     delete devolucao.busca_por_tipo_documento;
                     delete devolucao.busca_por_numero_documento;
@@ -377,9 +378,15 @@ export const VisualizacaoDaAta = () => {
                     devolucao.valor = devolucao.valor ? trataNumericos(devolucao.valor) : '';
                     devolucao.devolucao_total = devolucao.devolucao_total === 'true' ? true : false;
                 })
+            }else{
+                devolucao_ao_tesouro_tratado = [];
+                setInitialFormDevolucaoAoTesouro(initialDevolucaoAoTesouro);
+                setDespesas([])
             }
         } else {
             devolucao_ao_tesouro_tratado = [];
+            setInitialFormDevolucaoAoTesouro(initialDevolucaoAoTesouro)
+            setDespesas([])
         }
 
         const payload = {
@@ -446,7 +453,6 @@ export const VisualizacaoDaAta = () => {
                     />
                 }
             </div>
-
             <section>
                 <ModalEditarAta
                     dadosAta={dadosAta}
@@ -473,6 +479,7 @@ export const VisualizacaoDaAta = () => {
                     despesasTabelas={despesasTabelas}
                     tiposDevolucao={tiposDevolucao}
                     validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
+                    camposObrigatorios={camposObrigatorios}
                 />
             </section>
             <section>
