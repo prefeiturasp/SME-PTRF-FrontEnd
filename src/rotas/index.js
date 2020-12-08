@@ -146,7 +146,7 @@ const routesConfig = [
         exact: true,
         path: "/dre-dados-da-unidade-educacional",
         component: DadosDaUnidadeEducacionalPage,
-        permissoes: ['view_associacao_dre'],
+        permissoes: ['view_associacao_dre', 'view_dados_unidade_dre'],
     },
     {
         exact: true,
@@ -176,13 +176,13 @@ const routesConfig = [
         exact: true,
         path: "/dre-regularidade-unidade-educacional",
         component: PaginaRegularidadeUnidadeEducacional,
-        permissoes: ['view_associacao_dre'],
+        permissoes: ['view_associacao_dre', 'view_regularidade_dre'],
     },
     {
         exact: true,
         path: "/dre-situacao-financeira-unidade-educacional",
         component: SituacaoFinanceiraUnidadeEducacionalPage,
-        permissoes: ['view_associacao_dre'],
+        permissoes: ['view_associacao_dre', 'view_situacao_financeira_dre'],
     },
     {
         exact: true,
