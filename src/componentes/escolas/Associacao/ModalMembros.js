@@ -175,7 +175,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
 
                                     <div className='col-12'>
                                         <div className='form-group'>
-                                            <label htmlFor="usuario">Usuário</label>
+                                            <label htmlFor="usuario">Usuário do SIG - Escola</label>
                                             <select
                                                 disabled={!visoesService.getPermissoes(['change_associacao'])}
                                                 value={props.values.usuario.id}
