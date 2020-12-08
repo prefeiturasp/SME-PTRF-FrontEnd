@@ -264,7 +264,7 @@ export const RelatorioConsolidadoApuracao = () => {
             console.log('Relatório gerado com sucesso');
             setShowModalAssociacoesEmAnalise(false);
             setLoading(false);
-            setMsgGeracaoRelatorio('Relaório gerado com sucesso');
+            setMsgGeracaoRelatorio('Relatório gerado com sucesso');
             setShowModalMsgGeracaoRelatorio(true)
         } catch (e) {
             setShowModalAssociacoesEmAnalise(false);
