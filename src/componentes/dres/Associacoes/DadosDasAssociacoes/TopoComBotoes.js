@@ -1,5 +1,6 @@
 import React from "react";
 import {Link} from "react-router-dom";
+import {visoesService} from "../../../../services/visoes.service"
 
 export const TopoComBotoes = ({dadosDaAssociacao}) =>{
     return(
@@ -14,10 +15,10 @@ export const TopoComBotoes = ({dadosDaAssociacao}) =>{
             </div>
 
             <div className="d-flex justify-content-between p-3 mb-4 mt-2 bg-white container-menu-dados-das-associacoes">
-                <Link to="/dre-dados-da-unidade-educacional">Dados da unidade</Link>
-                <Link to="/dre-regularidade-unidade-educacional">Regularidade</Link>
-                <Link to="/dre-situacao-financeira-unidade-educacional">Situação financeira</Link>
-                <Link to="/dre-situacao-financeira-unidade-educacional">Situação patrimonial</Link>
+                {visoesService.getPermissoes(["view_dados_unidade_dre"]) ? <Link to="/dre-dados-da-unidade-educacional">Dados da unidade</Link>: null}
+                {visoesService.getPermissoes(["view_regularidade_dre"]) ? <Link to="/dre-regularidade-unidade-educacional">Regularidade</Link>: null}
+                {visoesService.getPermissoes(["view_situacao_financeira_dre"]) ? <Link to="/dre-situacao-financeira-unidade-educacional">Situação financeira</Link>: null}
+                {visoesService.getPermissoes(["view_situacao_financeira_dre"]) ? <Link to="/dre-situacao-financeira-unidade-educacional">Situação patrimonial</Link>: null}
             </div>
         </>
     );
