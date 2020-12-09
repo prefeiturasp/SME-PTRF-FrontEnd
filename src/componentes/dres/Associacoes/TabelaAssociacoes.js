@@ -10,13 +10,12 @@ export const TabelaAssociacoes = ({associacoes, rowsPerPage, unidadeEscolarTempl
           paginator={associacoes.length > rowsPerPage}
           rows={rowsPerPage}
           paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-          //paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
           autoLayout={true}
           selectionMode="single"
       >
           <Column field="unidade.codigo_eol" header="Código Eol" />
           <Column
-              field="nome"
+              field="unidade.nome_com_tipo"
               header="Unidade escolar"
               body={unidadeEscolarTemplate}
           />
