@@ -77,8 +77,10 @@ export default class RelacaoDeBens extends Component {
             return
         }
 
-        let data_fim_periodo = new Date(this.props.periodoPrestacaoDeConta.data_final)
-        if (data_fim.getTime() > data_fim_periodo.getTime()) {
+        let data_fim_periodo_verifica = this.props.periodoPrestacaoDeConta.data_final;
+        let data_fim_periodo = new Date(this.props.periodoPrestacaoDeConta.data_final);
+
+        if (data_fim_periodo_verifica && data_fim.getTime() > data_fim_periodo.getTime()) {
             this.setState({mensagemErro: "Data final não pode ser maior que a data final do período."});
             return
         }
