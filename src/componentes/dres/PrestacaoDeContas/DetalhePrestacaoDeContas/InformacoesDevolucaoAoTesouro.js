@@ -96,7 +96,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                 </div>
 
                                                                 <div className='col'>
-                                                                    <label className='labels-filtros' htmlFor="busca_por_numero_documento">Busque por número do documento</label>
+                                                                    <label className='labels-filtros' htmlFor="busca_por_numero_documento">Busque por nº do documento</label>
                                                                     <input
                                                                         name={`devolucoes_ao_tesouro_da_prestacao[${index}].busca_por_numero_documento`}
                                                                         value={devolucao.busca_por_numero_documento ? devolucao.busca_por_numero_documento : ''}
