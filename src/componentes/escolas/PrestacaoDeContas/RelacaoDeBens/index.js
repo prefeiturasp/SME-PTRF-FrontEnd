@@ -49,14 +49,13 @@ export default class RelacaoDeBens extends Component {
         let data_inicio = this.props.periodoPrestacaoDeConta.data_inicial;
         let data_fim = this.props.periodoPrestacaoDeConta.data_final;
         this.setState({data_inicio: data_inicio, data_fim: data_fim})
-    }
+    };
 
     onHide = () => {
         this.setState({show: false});
-    }
+    };
 
     handleChange = (name, value) => {
-        console.log("")
         this.setState({
             ...this.state,
             [name]: value !== "" && value !== null ? moment(value, "YYYY-MM-DD").format("YYYY-MM-DD"): ""

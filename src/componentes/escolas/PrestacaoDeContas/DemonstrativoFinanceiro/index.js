@@ -66,11 +66,11 @@ export class DemonstrativoFinanceiro extends Component {
         let data_inicio = this.props.periodoPrestacaoDeConta.data_inicial;
         let data_fim = this.props.periodoPrestacaoDeConta.data_final;
         this.setState({data_inicio: data_inicio, data_fim: data_fim})
-    }
+    };
 
     onHide = () => {
         this.setState({show: false});
-    }
+    };
 
     handleChange = (name, value) => {
         this.setState({
