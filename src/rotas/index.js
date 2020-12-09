@@ -40,8 +40,10 @@ import {AtribuicoesPage} from "../paginas/dres/Diretoria/Atribuicoes";
 import {DreDashboardPage} from "../paginas/dres/DreDashboard";
 import {ListaPrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/ListaPrestacaoDeContas";
 import {DetalhePrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas";
+import {DetalhePrestacaoDeContasNaoApresentada} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContasNaoApresentada";
 import {RelatorioConsolidadoPage} from "../paginas/dres/RelatorioConsolidado";
 import {RelatorioConsolidadoApuracao} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoApuracao";
+import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoDadosDasUes";
 
 const routesConfig = [
     {
@@ -144,7 +146,7 @@ const routesConfig = [
         exact: true,
         path: "/dre-dados-da-unidade-educacional",
         component: DadosDaUnidadeEducacionalPage,
-        permissoes: ['view_associacao_dre'],
+        permissoes: ['view_associacao_dre', 'view_dados_unidade_dre'],
     },
     {
         exact: true,
@@ -174,13 +176,13 @@ const routesConfig = [
         exact: true,
         path: "/dre-regularidade-unidade-educacional",
         component: PaginaRegularidadeUnidadeEducacional,
-        permissoes: ['view_associacao_dre'],
+        permissoes: ['view_associacao_dre', 'view_regularidade_dre'],
     },
     {
         exact: true,
         path: "/dre-situacao-financeira-unidade-educacional",
         component: SituacaoFinanceiraUnidadeEducacionalPage,
-        permissoes: ['view_associacao_dre'],
+        permissoes: ['view_associacao_dre', 'view_situacao_financeira_dre'],
     },
     {
         exact: true,
@@ -224,6 +226,12 @@ const routesConfig = [
         component: DetalhePrestacaoDeContas,
         permissoes: ['view_dashboard_dre'],
     },
+    {
+        exact: true,
+        path: "/dre-detalhe-prestacao-de-contas-nao-apresentada",
+        component: DetalhePrestacaoDeContasNaoApresentada,
+        permissoes: ['view_dashboard_dre'],
+    },
 
     {
         exact: true,
@@ -250,6 +258,12 @@ const routesConfig = [
         exact: true,
         path: "/dre-relatorio-consolidado-apuracao/:periodo_uuid/:conta_uuid/",
         component: RelatorioConsolidadoApuracao,
+        permissoes: ['view_dashboard_dre'],
+    },
+    {
+        exact: true,
+        path: "/dre-relatorio-consolidado-dados-das-ues/:periodo_uuid/:conta_uuid/",
+        component: RelatorioConsolidadoDadosDasUes,
         permissoes: ['view_dashboard_dre'],
     },
 

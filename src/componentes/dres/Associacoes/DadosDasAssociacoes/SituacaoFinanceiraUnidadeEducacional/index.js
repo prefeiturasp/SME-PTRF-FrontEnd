@@ -1,6 +1,6 @@
 import React from "react";
 import {DADOS_DA_ASSOCIACAO} from "../../../../../services/auth.service";
-import {TopoComBotoes} from "./TopoComBotoes";
+import {TopoComBotoes} from "../TopoComBotoes";
 import {Redirect} from "react-router-dom";
 import {Dashboard} from "../../../../Globais/Dashborard";
 

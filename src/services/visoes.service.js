@@ -7,8 +7,24 @@ import {
     authService
 } from "./auth.service";
 import {redirect} from "../utils/redirect";
+import moment from "moment";
 
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
+export const DATA_HORA_USUARIO_LOGADO = "DATA_HORA_USUARIO_LOGADO";
+
+const forcarNovoLogin = ()=>{
+    const data_hora_atual = moment().format("YYYY-MM-DD HH:mm:ss");
+    const data_hora_localstorage = localStorage.getItem(DATA_HORA_USUARIO_LOGADO);
+    if(data_hora_localstorage){
+        const diferenca = moment(data_hora_atual).diff(moment(data_hora_localstorage), 'minutes');
+        if (diferenca >= 600){ // Equivale a 10 horas
+            localStorage.setItem(DATA_HORA_USUARIO_LOGADO, data_hora_atual);
+            authService.logout();
+        }
+    }else {
+        localStorage.setItem(DATA_HORA_USUARIO_LOGADO, data_hora_atual)
+    }
+};
 
 const getUsuarioLogin = () => {
     return localStorage.getItem(USUARIO_LOGIN)
@@ -16,6 +32,7 @@ const getUsuarioLogin = () => {
 
 const getDadosDoUsuarioLogado = () => {
     let dados_usuario_logado = JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO));
+    // eslint-disable-next-line no-eval
     return dados_usuario_logado ? eval('dados_usuario_logado.usuario_' + getUsuarioLogin()) : null
 };
 
@@ -90,19 +107,6 @@ const getPermissoes = (permissao) =>{
     }
 
 };
-
-
-// const getPermissoes = (permissao) =>{
-//     let permissoes = getItemUsuarioLogado('permissoes');
-//
-//
-//     let tem_permissao = permissoes.find(element=> element === permissao);
-//
-//     //console.log("getPermissoes tem_permissao ", tem_permissao)
-//
-//     return tem_permissao
-//
-// };
 
 const setDadosUsuariosLogados = async (resp) => {
 
@@ -188,6 +192,7 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
         localStorage.removeItem('contaPrestacaoDeConta');
         localStorage.removeItem('uuidPrestacaoConta');
         localStorage.removeItem('uuidAta');
+        localStorage.removeItem('prestacao_de_contas_nao_apresentada');
         redirectVisao(visao)
     }
 };
@@ -216,11 +221,13 @@ const redirectVisao = (visao = null) => {
 
 const getItemUsuarioLogado = (indice) =>{
     let usuario_logado = getDadosDoUsuarioLogado();
+    // eslint-disable-next-line no-eval
     return eval('usuario_logado.' + indice)
 };
 
 
 export const visoesService = {
+    forcarNovoLogin,
     setDadosUsuariosLogados,
     getPermissoes,
     setDadosPrimeiroAcesso,

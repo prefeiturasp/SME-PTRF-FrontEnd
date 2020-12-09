@@ -2,18 +2,8 @@ import React from "react";
 import {InformacoesDevolucaoAoTesouro} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/InformacoesDevolucaoAoTesouro";
 import {ModalBootstrapDevolucaoAoTesouroAta} from "../../Globais/ModalBootstrap";
 
-export const ModalDevolucaoAoTesouro = ({show, handleClose, onSubmitModalDevolucoesAoTesouro,
-                                            informacoesPrestacaoDeContas,
-                                            initialValues,
-                                            formRef,
-                                            despesas,
-                                            buscaDespesaPorFiltros,
-                                            buscaDespesa,
-                                            valorTemplate,
-                                            despesasTabelas,
-                                            tiposDevolucao,
-                                            validateFormDevolucaoAoTesouro,
-                                        }) => {
+export const ModalDevolucaoAoTesouro = ({show, handleClose, onSubmitModalDevolucoesAoTesouro, informacoesPrestacaoDeContas, initialValues, formRef, despesas, buscaDespesaPorFiltros, buscaDespesa, valorTemplate, despesasTabelas, tiposDevolucao, validateFormDevolucaoAoTesouro, camposObrigatorios}) => {
+
     const bodyTextarea = () => {
         return (
             <>
@@ -31,11 +21,9 @@ export const ModalDevolucaoAoTesouro = ({show, handleClose, onSubmitModalDevoluc
                 />
                 <div className="d-flex  justify-content-end pb-3 mt-3">
                     <button onClick={handleClose} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                    <button onClick={onSubmitModalDevolucoesAoTesouro}type="button" className="btn btn-success mt-2">Salvar</button>
+                    <button disabled={camposObrigatorios} onClick={onSubmitModalDevolucoesAoTesouro} type="button" className="btn btn-success mt-2">Salvar</button>
                 </div>
             </>
-
-
         );
     };
 
@@ -53,7 +41,4 @@ export const ModalDevolucaoAoTesouro = ({show, handleClose, onSubmitModalDevoluc
                 segundoBotaoCss="success"
             />
         )
-
-
-
 };

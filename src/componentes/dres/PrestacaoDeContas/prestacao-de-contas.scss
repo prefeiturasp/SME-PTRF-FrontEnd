@@ -204,6 +204,7 @@
 .tabela-despesas{
   border-collapse: collapse;
   border-spacing: 8px;
+  word-break: break-word;
 }
 
 .tabela-despesas tr.divisao {
@@ -252,4 +253,8 @@
 
 .container-item-comentario:hover{
   cursor: move;
+}
+
+.checkbox-comentario-de-analise{
+  margin-right: 5px;
 }

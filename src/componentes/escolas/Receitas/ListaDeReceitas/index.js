@@ -129,7 +129,8 @@ export const ListaDeReceitas = () => {
 
                     />
 
-                    {receitas.length > 0 ? (<DataTable
+                    {receitas.length > 0 ? (
+                        <DataTable
                             value={receitas}
                             className="mt-3 datatable-footer-coad"
                             paginator={receitas.length > rowsPerPage}

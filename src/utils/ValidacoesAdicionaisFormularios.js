@@ -111,6 +111,17 @@ export const YupSignupSchemaMembros = yup.object().shape({
           return true
         }
       }),
+
+  cpf: yup.string()
+  .test('test-name', 'CPF inválido',
+      function (value) {
+        const { representacao } = this.parent;
+        if(representacao === "PAI_RESPONSAVEL"){
+          return !(!value || value.trim() === "" || !valida_cpf_cnpj(value));
+        }else {
+          return true
+        }
+      }),
 });
 
 export const YupSignupSchemaCadastroDespesa = yup.object().shape({
@@ -199,9 +210,6 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
   values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
   values.valor_recusos_acoes = round((values.valor_recusos_acoes), 2)
 
-
-  console.log("Valor Recurso Açoes ", values.valor_recusos_acoes)
-
   if (values.data_documento !== "" && values.data_documento !== null){
     values.data_documento = moment(values.data_documento).format("YYYY-MM-DD");
   }else {
@@ -264,9 +272,6 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
     rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital)
     rateio.valor_rateio = round(trataNumericos(rateio.valor_rateio),2)
     rateio.valor_original = round(trataNumericos(rateio.valor_original),2)
-
-
-    console.log("Valor Rateio ", rateio.valor_rateio)
 
     if (rateio.aplicacao_recurso === "0" || rateio.aplicacao_recurso === "" || rateio.aplicacao_recurso === 0){
       rateio.aplicacao_recurso = null

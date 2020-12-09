@@ -9,6 +9,7 @@ import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
 import {DADOS_DA_ASSOCIACAO} from "../../../services/auth.service";
+import {visoesService} from "../../../services/visoes.service";
 
 export const Associacoes = () =>{
 
@@ -100,9 +101,10 @@ export const Associacoes = () =>{
                 </a>
 
                 <div className={`dropdown-menu dropdown-menu-opcoes`}aria-labelledby="linkDropdownAcoes">
-                    <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-dados-da-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver dados unidade</button>
-                    <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-regularidade-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver regularidade</button>
-                    <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-situacao-financeira-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver situação financeira</button>
+                    {visoesService.getPermissoes(["view_dados_unidade_dre"]) ? <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-dados-da-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver dados unidade</button>: null}
+                    {visoesService.getPermissoes(["view_regularidade_dre"]) ? <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-regularidade-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver regularidade</button>: null}
+                    {visoesService.getPermissoes(["view_situacao_financeira_dre"]) ? <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-situacao-financeira-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver situação financeira</button>: null}
+                    {visoesService.getPermissoes(["view_situacao_financeira_dre"]) ? <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-situacao-financeira-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver situação patrimonial</button>: null}
                     {urlRedirect &&
                         <Redirect
                             to={{

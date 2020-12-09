@@ -26,13 +26,20 @@ export const PrestacaoDeContas = () => {
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [loading, setLoading] = useState(true);
     const [show, setShow] = useState(false);
-
-
     const [corBoxPrestacaoDeContasPorPeriodo, setCorBoxPrestacaoDeContasPorPeriodo] = useState("");
     const [textoBoxPrestacaoDeContasPorPeriodo, setTextoBoxPrestacaoDeContasPorPeriodo] = useState("");
     const [dataBoxPrestacaoDeContasPorPeriodo, setDataBoxPrestacaoDeContasPorPeriodo] = useState("");
-
     const [uuidAtaApresentacao, setUuidAtaApresentacao] = useState("");
+
+    useEffect(() => {
+        if (statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'EM_PROCESSAMENTO'){
+            const timer = setInterval(() => {
+                getStatusPrestacaoDeConta();
+            }, 5000);
+            // clearing interval
+            return () => clearInterval(timer);
+        }
+    });
 
     useEffect(() => {
         getPeriodoPrestacaoDeConta();
@@ -66,8 +73,6 @@ export const PrestacaoDeContas = () => {
         localStorage.setItem('contaPrestacaoDeConta', JSON.stringify(contaPrestacaoDeContas));
     }, [contaPrestacaoDeContas]);
 
-
-
     const carregaPeriodos = async () => {
         let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
         setPeriodosAssociacao(periodos);
@@ -83,8 +88,8 @@ export const PrestacaoDeContas = () => {
 
     const getPeriodoPrestacaoDeConta = () => {
         if (localStorage.getItem('periodoPrestacaoDeConta')) {
-            const files = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta'));
-            setPeriodoPrestacaoDeConta(files)
+            const periodo_prestacao_de_contas = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta'));
+            setPeriodoPrestacaoDeConta(periodo_prestacao_de_contas)
         } else {
             setPeriodoPrestacaoDeConta({})
         }
@@ -100,8 +105,8 @@ export const PrestacaoDeContas = () => {
             setStatusPrestacaoDeConta(status)
         }else {
             if (localStorage.getItem('statusPrestacaoDeConta')) {
-                const files = JSON.parse(localStorage.getItem('statusPrestacaoDeConta'));
-                setStatusPrestacaoDeConta(files)
+                const status_prestacao_de_contas = JSON.parse(localStorage.getItem('statusPrestacaoDeConta'));
+                setStatusPrestacaoDeConta(status_prestacao_de_contas)
             } else {
                 setStatusPrestacaoDeConta({})
             }
@@ -110,8 +115,8 @@ export const PrestacaoDeContas = () => {
 
     const getUuidPrestacaoDeConta = () => {
         if (localStorage.getItem('uuidPrestacaoConta')) {
-            const files = localStorage.getItem('uuidPrestacaoConta');
-            setUuidPrestacaoConta(files)
+            const uuid_prestacao_de_contas = localStorage.getItem('uuidPrestacaoConta');
+            setUuidPrestacaoConta(uuid_prestacao_de_contas)
         } else {
             setUuidPrestacaoConta('')
         }
@@ -119,8 +124,8 @@ export const PrestacaoDeContas = () => {
 
     const getContaPrestacaoDeConta = () => {
         if (localStorage.getItem('contaPrestacaoDeConta')) {
-            const files = JSON.parse(localStorage.getItem('contaPrestacaoDeConta'));
-            setContaPrestacaoDeContas(files)
+            const conta_prestacao_de_contas = JSON.parse(localStorage.getItem('contaPrestacaoDeConta'));
+            setContaPrestacaoDeContas(conta_prestacao_de_contas)
         } else {
             setContaPrestacaoDeContas({})
         }
@@ -180,14 +185,12 @@ export const PrestacaoDeContas = () => {
     };
 
     const concluirPeriodo = async () =>{
-        setLoading(true);
         let status_concluir_periodo = await getConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid);
         setUuidPrestacaoConta(status_concluir_periodo.uuid);
         let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
         setStatusPrestacaoDeConta(status);
         await carregaPeriodos();
         await setConfBoxPrestacaoDeContasPorPeriodo();
-        setLoading(false);
     };
 
     const setConfBoxPrestacaoDeContasPorPeriodo = async ()=>{
@@ -221,7 +224,6 @@ export const PrestacaoDeContas = () => {
         setLoading(false);
     };
 
-
     const onClickVisualizarAta = async (uuid_ata) =>{
         setLoading(true);
         window.location.assign(`/visualizacao-da-ata/${uuid_ata}`)
@@ -252,71 +254,81 @@ export const PrestacaoDeContas = () => {
                             statusPrestacaoDeConta={statusPrestacaoDeConta}
                         />
                     }
-                    <TopoSelectPeriodoBotaoConcluir
-                        periodoPrestacaoDeConta={periodoPrestacaoDeConta}
-                        handleChangePeriodoPrestacaoDeConta={handleChangePeriodoPrestacaoDeConta}
-                        periodosAssociacao={periodosAssociacao}
-                        retornaObjetoPeriodoPrestacaoDeConta={retornaObjetoPeriodoPrestacaoDeConta}
-                        statusPrestacaoDeConta={statusPrestacaoDeConta}
-                        checkCondicaoExibicao={checkCondicaoExibicao}
-                        concluirPeriodo={concluirPeriodo}
-                        setShow={setShow}
-                    />
-                    {checkCondicaoExibicao(periodoPrestacaoDeConta)  ? (
-                            <>
-                                <nav className="nav mb-4 mt-2 menu-interno">
-                                    {contasAssociacao && contasAssociacao.length > 0 && contasAssociacao.map((conta, index) =>
-                                        <Fragment key={index}>
-                                            <li className="nav-item">
-                                                <button
-                                                    onClick={() => {
-                                                        toggleBtnEscolheConta(index);
-                                                        handleClickContaPrestacaoDeContas(conta.uuid);
-                                                    }}
-                                                    className={`nav-link btn-escolhe-acao mr-3 ${clickBtnEscolheConta[index] ? "btn-escolhe-acao-active" : ""}`}
-                                                >
-                                                    Conta {conta.nome}
-                                                </button>
-                                            </li>
-                                        </Fragment>
-                                    )}
-                                </nav>
-                                <DemonstrativoFinanceiro
-                                    periodoPrestacaoDeConta={periodoPrestacaoDeConta}
-                                    statusPrestacaoDeConta={statusPrestacaoDeConta}
-                                    contaPrestacaoDeContas={contaPrestacaoDeContas}
-                                    setLoading={setLoading}
-                                />
-                                <RelacaoDeBens
-                                    periodoPrestacaoDeConta={periodoPrestacaoDeConta}
-                                    statusPrestacaoDeConta={statusPrestacaoDeConta}
-                                    contaPrestacaoDeContas={contaPrestacaoDeContas}
-                                    setLoading={setLoading}
-                                />
-                                {localStorage.getItem('uuidPrestacaoConta') &&
-                                    <BoxPrestacaoDeContasPorPeriodo
-                                        onClickVisualizarAta={()=>onClickVisualizarAta(uuidAtaApresentacao)}
-                                        setLoading={setLoading}
-                                        corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
-                                        textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
-                                        dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
-                                        uuidAtaApresentacao={uuidAtaApresentacao}
-                                    />
-                                }
+                    {statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'EM_PROCESSAMENTO' ? (
+                            <Loading
+                                corGrafico="black"
+                                corFonte="dark"
+                                marginTop="50"
+                                marginBottom="0"
+                            />
+                    ) :
+                        <>
+                            <TopoSelectPeriodoBotaoConcluir
+                                periodoPrestacaoDeConta={periodoPrestacaoDeConta}
+                                handleChangePeriodoPrestacaoDeConta={handleChangePeriodoPrestacaoDeConta}
+                                periodosAssociacao={periodosAssociacao}
+                                retornaObjetoPeriodoPrestacaoDeConta={retornaObjetoPeriodoPrestacaoDeConta}
+                                statusPrestacaoDeConta={statusPrestacaoDeConta}
+                                checkCondicaoExibicao={checkCondicaoExibicao}
+                                concluirPeriodo={concluirPeriodo}
+                                setShow={setShow}
+                            />
+                            {checkCondicaoExibicao(periodoPrestacaoDeConta)  ? (
+                                    <>
+                                        <nav className="nav mb-4 mt-2 menu-interno">
+                                            {contasAssociacao && contasAssociacao.length > 0 && contasAssociacao.map((conta, index) =>
+                                                <Fragment key={index}>
+                                                    <li className="nav-item">
+                                                        <button
+                                                            onClick={() => {
+                                                                toggleBtnEscolheConta(index);
+                                                                handleClickContaPrestacaoDeContas(conta.uuid);
+                                                            }}
+                                                            className={`nav-link btn-escolhe-acao mr-3 ${clickBtnEscolheConta[index] ? "btn-escolhe-acao-active" : ""}`}
+                                                        >
+                                                            Conta {conta.nome}
+                                                        </button>
+                                                    </li>
+                                                </Fragment>
+                                            )}
+                                        </nav>
+                                        <DemonstrativoFinanceiro
+                                            periodoPrestacaoDeConta={periodoPrestacaoDeConta}
+                                            statusPrestacaoDeConta={statusPrestacaoDeConta}
+                                            contaPrestacaoDeContas={contaPrestacaoDeContas}
+                                            setLoading={setLoading}
+                                        />
+                                        <RelacaoDeBens
+                                            periodoPrestacaoDeConta={periodoPrestacaoDeConta}
+                                            statusPrestacaoDeConta={statusPrestacaoDeConta}
+                                            contaPrestacaoDeContas={contaPrestacaoDeContas}
+                                            setLoading={setLoading}
+                                        />
+                                        {localStorage.getItem('uuidPrestacaoConta') &&
+                                        <BoxPrestacaoDeContasPorPeriodo
+                                            onClickVisualizarAta={()=>onClickVisualizarAta(uuidAtaApresentacao)}
+                                            setLoading={setLoading}
+                                            corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
+                                            textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
+                                            dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
+                                            uuidAtaApresentacao={uuidAtaApresentacao}
+                                        />
+                                        }
 
-                                {localStorage.getItem('uuidPrestacaoConta') && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao &&
-                                    <GeracaoAtaRetificadora
-                                        uuidPrestacaoConta={localStorage.getItem('uuidPrestacaoConta')}
-                                        statusPrestacaoDeConta={statusPrestacaoDeConta}
-                                    />
-                                }
-
-                            </>
-                        ):
-                        <MsgImgCentralizada
-                            texto='Selecione um período acima para visualizar as ações'
-                            img={Img404}
-                        />
+                                        {localStorage.getItem('uuidPrestacaoConta') && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao &&
+                                        <GeracaoAtaRetificadora
+                                            uuidPrestacaoConta={localStorage.getItem('uuidPrestacaoConta')}
+                                            statusPrestacaoDeConta={statusPrestacaoDeConta}
+                                        />
+                                        }
+                                    </>
+                                ):
+                                <MsgImgCentralizada
+                                    texto='Selecione um período acima para visualizar as ações'
+                                    img={Img404}
+                                />
+                            }
+                        </>
                     }
                     <section>
                         <ModalConcluirPeriodo

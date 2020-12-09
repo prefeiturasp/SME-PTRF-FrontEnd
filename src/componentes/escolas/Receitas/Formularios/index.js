@@ -16,16 +16,12 @@ import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
-import {DeletarModalReceitas, CancelarModalReceitas, PeriodoFechado, ErroGeral} from "../../../../utils/Modais";
-import Loading from "../../../../utils/Loading";
-import api from "../../../../services/api";
-import {Login} from "../../../../paginas/Login";
+import {DeletarModalReceitas, PeriodoFechado, ErroGeral} from "../../../../utils/Modais";
+import {CancelarModalReceitas} from "../CancelarModalReceitas";
 import {ModalReceitaConferida} from "../ModalReceitaJaConferida";
 import {visoesService} from "../../../../services/visoes.service";
-import {ModalDespesaConferida} from "../../Despesas/CadastroDeDespesas/ModalDespesaJaConferida";
 
-
-export const ReceitaForm = props => {
+export const ReceitaForm = () => {
 
     let {origem} = useParams();
     let {uuid} = useParams();
@@ -370,7 +366,7 @@ export const ReceitaForm = props => {
     const retornaTiposDeContas = (values) => {
         if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita) {
             
-            const tipoReceita = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))
+            const tipoReceita = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita));
             
             // Lista dos nomes dos tipos de conta que são aceitos pelo tipo de receita selecionado.
             const tipos_conta = tipoReceita.tipos_conta.map(item => item.nome);
@@ -381,8 +377,7 @@ export const ReceitaForm = props => {
                     <option key={key} value={item.uuid}>{item.nome}</option>)
             ))
         }
-    }
-
+    };
 
     const validateFormReceitas = async (values) => {
 
@@ -532,7 +527,7 @@ export const ReceitaForm = props => {
 
                                 {/*Detalhamento do Crédito */}
                                 <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="tipo_receita">Detalhamento do crédito</label>
+                                    <label htmlFor="detalhe_tipo_receita">Detalhamento do crédito</label>
                                     {temOpcoesDetalhesTipoReceita(props.values) ?
                                         <select
                                             id="detalhe_tipo_receita"
@@ -707,7 +702,12 @@ export const ReceitaForm = props => {
 
                             {/*Botões*/}
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
-                                <button type="reset" onClick={comparaObjetos(values,objetoParaComparacao) ? onCancelarTrue : onShowModal} className="btn btn btn-outline-success mt-2 mr-2">Voltar
+                                <button
+                                    type="reset"
+                                    onClick={comparaObjetos(values,objetoParaComparacao) ? onCancelarTrue : onShowModal}
+                                    className="btn btn btn-outline-success mt-2 mr-2"
+                                >
+                                    Voltar
                                 </button>
                                 {uuid ?
                                     <button disabled={readOnlyBtnAcao || !visoesService.getPermissoes(['delete_receita'])} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null
@@ -730,7 +730,12 @@ export const ReceitaForm = props => {
                 }}
             </Formik>
             <section>
-                <CancelarModalReceitas show={show} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+                <CancelarModalReceitas
+                    show={show}
+                    handleClose={onHandleClose}
+                    onCancelarTrue={onCancelarTrue}
+                    uuid={uuid}
+                />
             </section>
             {uuid
                 ?

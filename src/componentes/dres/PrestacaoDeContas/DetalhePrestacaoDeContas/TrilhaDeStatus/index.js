@@ -8,7 +8,7 @@ import {TrilhaDeStatusAprovada} from "./TrilhaDeStatusAprovada";
 export const TrilhaDeStatus = ({prestacaoDeContas}) => {
 
     const getTrilhaDeStatusPeloStatus = (status)=>{
-        if (status === 'NAO_RECEBIDA'){
+        if (status === 'NAO_RECEBIDA' || status === 'NAO_APRESENTADA'){
             return(
                 <TrilhaDeStatusNaoRecebida/>
             )

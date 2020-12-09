@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {useParams, Link} from "react-router-dom";
+import {useParams, Link, Redirect} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {TopoSelectPeriodoBotaoVoltar} from "./TopoSelectPeriodoBotaoVoltar";
-import {getPrestacoesDeContas, getQtdeUnidadesDre, getTabelasPrestacoesDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getPrestacoesDeContas, getPrestacoesDeContasNaoRecebidaNaoGerada, getQtdeUnidadesDre, getTabelasPrestacoesDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
 import {BarraDeStatus} from "./BarraDeStatus";
 import {FormFiltros} from "./FormFiltros";
 import "../prestacao-de-contas.scss"
@@ -46,6 +46,8 @@ export const ListaPrestacaoDeContas = () => {
     const [tecnicosList, setTecnicosList] = useState([]);
     const [columns, setColumns] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [redirectPcNaoApresentada, setRedirectPcNaoApresentada] = useState(false);
+
 
     useEffect(() => {
         carregaPeriodos();
@@ -61,10 +63,16 @@ export const ListaPrestacaoDeContas = () => {
 
     useEffect(() => {
         carregaPrestacoesDeContas();
+        return () => {
+            setPrestacaoDeContas(false); // Desmontando
+        };
     }, [periodoEscolhido]);
 
     useEffect(() => {
         carregaPrestacoesDeContas();
+        return () => {
+            setPrestacaoDeContas(false); // Desmontando
+        };
     }, [statusPrestacao]);
 
     useEffect(() => {
@@ -96,21 +104,21 @@ export const ListaPrestacaoDeContas = () => {
     };
 
     const carregaPrestacoesDeContas = async () => {
+
         setLoading(true);
         if (periodoEscolhido) {
             let data_inicio = stateFiltros.filtrar_por_data_inicio ? moment(new Date(stateFiltros.filtrar_por_data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
             let data_fim = stateFiltros.filtrar_por_data_fim ? moment(new Date(stateFiltros.filtrar_por_data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : '';
+            let prestacoes_de_contas;
 
-            let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status, stateFiltros.filtrar_por_tecnico_atribuido, data_inicio, data_fim);
+            if (stateFiltros.filtrar_por_status === 'NAO_RECEBIDA' || stateFiltros.filtrar_por_status === 'NAO_APRESENTADA'){
+                prestacoes_de_contas = await getPrestacoesDeContasNaoRecebidaNaoGerada(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade)
+            }else {
+                prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status, stateFiltros.filtrar_por_tecnico_atribuido, data_inicio, data_fim);
+            }
+
             setPrestacaoDeContas(prestacoes_de_contas)
         }
-        setLoading(false);
-    };
-
-    const carregaPrestacoesDeContasPorDrePeriodo = async () => {
-        setLoading(true);
-        let prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido);
-        setPrestacaoDeContas(prestacoes_de_contas);
         setLoading(false);
     };
 
@@ -169,23 +177,62 @@ export const ListaPrestacaoDeContas = () => {
         )
     };
 
+    const gravaPcNaoApresentada = (rowData) =>{
+        let obj_prestacao = {
+            associacao: {
+                uuid: rowData.associacao_uuid,
+                nome: rowData.unidade_nome,
+                cnpj: '',
+                unidade: {
+                    codigo_eol:'',
+                },
+                presidente_associacao:{
+                    nome:'',
+                },
+                presidente_conselho_fiscal:{
+                    nome:'',
+                }
+            },
+            periodo_uuid: rowData.periodo_uuid,
+            status: rowData.status,
+        };
+
+        localStorage.setItem("prestacao_de_contas_nao_apresentada", JSON.stringify( obj_prestacao));
+        setRedirectPcNaoApresentada(true)
+    };
+
     const acoesTemplate = (rowData) => {
+
         return (
             <div>
-                <Link
-                    to={{
-                        pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
-                    }}
-                    className="btn btn-link"
-                >
-                    <FontAwesomeIcon
-                        style={{marginRight: "0", color: '#00585E'}}
-                        icon={faEye}
-                    />
-                </Link>
+                {rowData.status !== 'NAO_APRESENTADA' ? (
+                    <Link
+                        to={{
+                            pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
+                        }}
+                        className="btn btn-link"
+                    >
+                        <FontAwesomeIcon
+                            style={{marginRight: "0", color: '#00585E'}}
+                            icon={faEye}
+                        />
+                    </Link>
+                ):
+                    <button
+                        onClick={()=>gravaPcNaoApresentada(rowData)}
+                        className="btn btn-link"
+                    >
+                        <FontAwesomeIcon
+                            style={{marginRight: "0", color: '#00585E'}}
+                            icon={faEye}
+                        />
+                    </button>
+                }
+
             </div>
         )
     };
+
 
     const exibeLabelStatus = (status = null) => {
         let status_converter;
@@ -194,11 +241,16 @@ export const ListaPrestacaoDeContas = () => {
         } else {
             status_converter = statusPrestacao
         }
-
         if (status_converter === 'NAO_RECEBIDA') {
             return {
                 texto_barra_de_status: 'não recebidas',
                 texto_col_tabela: 'Não recebida',
+                texto_titulo: 'Prestações de contas pendentes de análise e recebimento',
+            }
+        } else if (status_converter === 'NAO_APRESENTADA') {
+            return {
+                texto_barra_de_status: 'não apresentadas',
+                texto_col_tabela: 'Não apresentada',
                 texto_titulo: 'Prestações de contas pendentes de análise e recebimento',
             }
         } else if (status_converter === 'RECEBIDA') {
@@ -257,16 +309,20 @@ export const ListaPrestacaoDeContas = () => {
         });
     };
 
-    const handleSubmitFiltros = async (event) => {
-        event.preventDefault();
+    const handleSubmitFiltros = async () => {
         setStatusPrestacao(stateFiltros.filtrar_por_status);
         await carregaPrestacoesDeContas();
     };
 
     const limpaFiltros = async () => {
-        await setStateFiltros(initialStateFiltros);
-        await setStatusPrestacao('');
-        await carregaPrestacoesDeContasPorDrePeriodo();
+        setLoading(true);
+        setStateFiltros({
+            ...initialStateFiltros,
+            filtrar_por_status: stateFiltros.filtrar_por_status,
+        });
+        setStatusPrestacao('');
+        await carregaPrestacoesDeContas();
+        setLoading(false)
     };
 
     return (
@@ -281,6 +337,13 @@ export const ListaPrestacaoDeContas = () => {
                     />
                 ) :
                 <div className="page-content-inner">
+                    {redirectPcNaoApresentada &&
+                        <Redirect
+                            to={{
+                                pathname: `/dre-detalhe-prestacao-de-contas-nao-apresentada`,
+                            }}
+                        />
+                    }
                     <TopoSelectPeriodoBotaoVoltar
                         periodos={periodos}
                         periodoEscolhido={periodoEscolhido}
@@ -289,7 +352,7 @@ export const ListaPrestacaoDeContas = () => {
                     <BarraDeStatus
                         qtdeUnidadesDre={qtdeUnidadesDre}
                         prestacaoDeContas={prestacaoDeContas}
-                        statusDasPrestacoes={exibeLabelStatus(statusPrestacao).texto_barra_de_status}
+                        statusDasPrestacoes={exibeLabelStatus(statusPrestacao ? statusPrestacao : stateFiltros.filtrar_por_status).texto_barra_de_status}
                     />
 
                     <p className='titulo-explicativo mt-4 mb-4'>{exibeLabelStatus(statusPrestacao).texto_titulo}</p>

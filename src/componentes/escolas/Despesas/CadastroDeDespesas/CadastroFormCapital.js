@@ -158,7 +158,7 @@ export const CadastroFormCapital = (propriedades) => {
                             value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
                             name={`rateios[${index}].valor_original`}
                             id="valor_original"
-                            className={`${ trataNumericos(rateio.valor_original) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                            className={`${ calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                             onChangeEvent={formikProps.handleChange}
                             disabled={true}
                         />
