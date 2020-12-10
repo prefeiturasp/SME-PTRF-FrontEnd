@@ -308,10 +308,23 @@ export const ReceitaForm = () => {
         return false
     };
 
+    const retornaAcoes = (values) => {
+        if (tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 && values.tipo_receita) {
+            let e_recurso_proprio = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_recursos_proprios
+
+            return (tabelas.acoes_associacao.filter(item => item.e_recursos_proprios == e_recurso_proprio).map((item, key) => (
+                <option key={key} value={item.uuid}>{item.nome}</option>
+            )))
+        }
+        
+        return tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ?(tabelas.acoes_associacao.map((item, key) => (
+            <option key={key} value={item.uuid}>{item.nome}</option>
+        ))): null
+    }
+
     const retornaClassificacaoReceita = (values, setFieldValue) => {
 
         if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && values.tipo_receita && Object.entries(repasse).length > 0) {
-
             return tabelas.categorias_receita.map((item, index) => {
 
                 let id_categoria_receita_lower = item.id.toLowerCase();
@@ -347,10 +360,11 @@ export const ReceitaForm = () => {
                 }
             })
         }else{
-            if (tabelas.categorias_receita && tabelas.categorias_receita.length > 0){
+            if (tabelas.categorias_receita && tabelas.categorias_receita.length > 0 && values.tipo_receita){
                 return tabelas.categorias_receita.map((item)=>{
                     return (
                         <option
+                            style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
                             key={item.id}
                             value={item.id}
                         >
@@ -646,9 +660,7 @@ export const ReceitaForm = () => {
                                         {receita.acao_associacao
                                             ? null
                                             : <option value="">Escolha uma ação</option>}
-                                        {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
-                                            <option key={key} value={item.uuid}>{item.nome}</option>
-                                        ))) : null}
+                                        {retornaAcoes(props.values)}
                                     </select>
                                     {props.touched.acao_associacao && props.errors.acao_associacao &&
                                     <span
