@@ -26,13 +26,6 @@ export const Cabecalho = () => {
         qtdeNotificacoesNaoLidas()
     }, []);
 
-
-    useEffect(()=>{
-        if (dados_usuario_logado.visoes.find(visao=> visao === 'SME')){
-            setExibeMenu(false);
-        }
-    }, []);
-
     const qtdeNotificacoesNaoLidas = async () =>{
         await notificacaoContext.getQtdeNotificacoesNaoLidas()
     };
@@ -52,7 +45,7 @@ export const Cabecalho = () => {
     const retornaVisaoConvertida = (visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome) =>{
         let visao_convertida = visoesService.converteNomeVisao(visao);
         let obj;
-        if (visao === "DRE"){
+        if (visao === "DRE" || visao === "SME"){
             obj = JSON.stringify({
                 visao: visao_convertida ,
                 uuid_unidade:uuid_unidade,
@@ -141,7 +134,7 @@ export const Cabecalho = () => {
                                                                 unidade.tipo_unidade,
                                                                 unidade.uuid,
                                                                 unidade.associacao.uuid,
-                                                                unidade.tipo_unidade === "DRE" ? unidade.nome : unidade.associacao.nome,
+                                                                unidade.tipo_unidade === "DRE" || unidade.tipo_unidade === "SME" ? unidade.nome : unidade.associacao.nome,
                                                                 unidade.tipo_unidade,
                                                                 unidade.nome,
                                                             )}

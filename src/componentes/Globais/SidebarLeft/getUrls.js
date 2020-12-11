@@ -12,6 +12,7 @@ import IconePainel from "../../../assets/img/icone-menu-dre-painel.svg"
 import IconeRelatorio from "../../../assets/img/icone-menu-dre-relatorio.svg"
 import IconeApoioDiretoria from "../../../assets/img/icone-apoio-a-diretoria.svg"
 import IconeGestaoDePerfis from "../../../assets/img/icone-menu-gestao-de-perfis.svg"
+import IconeMenuParametrizacoes from "../../../assets/img/icone-menu-parametrizacoes.svg"
 
 const getDadosUsuario = () =>{
     let usuario = localStorage.getItem(USUARIO_NOME);
@@ -75,31 +76,34 @@ const UrlsMenuDres ={
     ]
 };
 
-const UrlsMenuSme ={
+const UrlsMenuSME ={
     dados_iniciais: {
-        default_selected: "undefined",
+        default_selected: "painel-parametrizacoes",
         usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
     lista_de_urls:[
-        {},
+        {label: "Parametrizações", url: "painel-parametrizacoes", dataFor:"sme_painel_parametrizacoes", icone:IconeMenuParametrizacoes, permissoes: ['view_default'],},
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['view_default'],},
     ]
 };
+
+
 
 const GetUrls = () =>{
 
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
 
     if (dados_usuario_logado.visao_selecionada.nome === 'SME'){
-        return UrlsMenuSme
+        return UrlsMenuSME
     }else if(dados_usuario_logado.visao_selecionada.nome === 'DRE'){
         return UrlsMenuDres
     }else if (dados_usuario_logado.visao_selecionada.nome === 'UE'){
         return UrlsMenuEscolas
     }else {
         if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'SME')){
-            return UrlsMenuSme
+            return UrlsMenuSME
         }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'DRE')){
             return UrlsMenuDres
         }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'UE')){
