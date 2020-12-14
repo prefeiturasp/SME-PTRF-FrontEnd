@@ -4,9 +4,12 @@ Front da aplicação _SIG.Escola_ da Secretaria de Educação da cidade de São 
 
 License: MIT
 
-Versão: 1.3.0
+Versão: 1.4.0
 
 ## Release Notes
+
+### 1.4.0 - 07/01/2021 - Entregas da Sprint 13
+* Em andamento...;
 
 ### 1.3.0 - 08/12/2020 - Entregas da Sprint 12
 * Carga de previsões de repasse da SME;

@@ -44,7 +44,7 @@ import {DetalhePrestacaoDeContasNaoApresentada} from "../componentes/dres/Presta
 import {RelatorioConsolidadoPage} from "../paginas/dres/RelatorioConsolidado";
 import {RelatorioConsolidadoApuracao} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoApuracao";
 import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoDadosDasUes";
-
+import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
 const routesConfig = [
     {
         exact: true,
@@ -266,7 +266,12 @@ const routesConfig = [
         component: RelatorioConsolidadoDadosDasUes,
         permissoes: ['view_dashboard_dre'],
     },
-
+    {
+        exact: true,
+        path: "/painel-parametrizacoes",
+        component: PainelParametrizacoesPage,
+        permissoes: ['view_default'],
+    },
     {
         exact: true,
         path: "/",
