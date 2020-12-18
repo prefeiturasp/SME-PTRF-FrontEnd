@@ -203,14 +203,14 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
 const redirectVisao = (visao = null) => {
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
     if (visao === 'SME') {
-        redirect('/painel-parametrizacoes')
+        redirect('/acompanhamento-pcs-sme')
     } else if (visao === 'DRE') {
         redirect('/dre-dashboard')
     } else if (visao === 'UE') {
         redirect('/dados-da-associacao')
     } else {
         if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'SME')) {
-            redirect('/painel-parametrizacoes')
+            redirect('/acompanhamento-pcs-sme')
         } else if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'DRE')) {
             redirect('/dre-dashboard')
         } else if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'UE')) {

@@ -78,7 +78,7 @@ const UrlsMenuDres ={
 
 const UrlsMenuSME ={
     dados_iniciais: {
-        default_selected: "painel-parametrizacoes",
+        default_selected: "acompanhamento-pcs-sme",
         usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
