@@ -1,8 +1,6 @@
 import React from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEye} from "@fortawesome/free-solid-svg-icons";
 
-export const DashboardCard = ({itensDashboard}) => {
+export const DashboardCard = ({itensDashboard, statusPeriodo}) => {
 
     const cardQuantidadeStyleByStatus = {
         1: {
@@ -45,12 +43,12 @@ export const DashboardCard = ({itensDashboard}) => {
         backgroundColor:"#2B7D83",
     };
 
-    const idxStyle = itensDashboard ? itensDashboard.status.cor_idx : 1;
+    const idxStyle = statusPeriodo ? statusPeriodo.cor_idx : 1;
 
     return (
         <>
             <div className="row mt-4">
-                {itensDashboard && itensDashboard.cards && itensDashboard.cards.length > 0 && itensDashboard.cards.map((card, index) =>
+                {itensDashboard && itensDashboard && itensDashboard.length > 0 && itensDashboard.map((card, index) =>
                     <div key={index} className="col-sm-12 col-md-4 col-xl-3 mb-4 ">
                         <div className="card h-100 container-cards-dre-dashboard" style={card.status === 'TOTAL_UNIDADES' ? cardTotalStyle : {}}>
                             <div className="card-header">

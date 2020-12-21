@@ -4,6 +4,7 @@ import {getPeriodos, getItensDashboard} from "../../../services/sme/DashboardSme
 import {SelectPeriodo} from "./SelectPeriodo";
 import "./dashboard.scss"
 import {BarraDeStatus} from "./BarraDeStatus";
+import {BarraTotalUnidades} from "./BarraTotalUnidades";
 import {DashboardCard} from "./DashboardCard";
 import Loading from "../../../utils/Loading";
 
@@ -15,6 +16,7 @@ export const AcompanhamentoPcsSme = () => {
     const [statusPrestacao, setStatusPrestacao] = useState(false);
     const [loading, setLoading] = useState(false);
     const [statusPeriodo, setStatusPeriodo] = useState(false);
+    const [totalUnidades, setTotalUnidades] = useState(0);
 
     useEffect(() => {
         carregaPeriodos();
@@ -38,8 +40,12 @@ export const AcompanhamentoPcsSme = () => {
         setLoading(true);
         if (periodoEscolhido){
             let itens = await getItensDashboard(periodoEscolhido);
-            setItensDashboard(itens)
+            let cards = itens.cards;
+            let totalCard = cards.shift();
+            let totalUnidades = totalCard ? totalCard.quantidade_prestacoes : 0
+            setItensDashboard(cards)
             setStatusPeriodo(itens.status)
+            setTotalUnidades(totalUnidades)
         }
         setLoading(false);
     };
@@ -82,8 +88,12 @@ export const AcompanhamentoPcsSme = () => {
                     />
                     }
                     <h4 style={TituloStyle}>Resumo geral do período</h4>
+                    <BarraTotalUnidades
+                        totalUnidades={totalUnidades}
+                    />
                     <DashboardCard
                         itensDashboard={itensDashboard}
+                        statusPeriodo={statusPeriodo}
                     />
                     {statusPrestacao &&
                     <Redirect
