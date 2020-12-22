@@ -16,7 +16,7 @@ import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
-import {DeletarModalReceitas, PeriodoFechado, ErroGeral} from "../../../../utils/Modais";
+import {DeletarModalReceitas, PeriodoFechado, ErroGeral, SalvarReceita} from "../../../../utils/Modais";
 import {CancelarModalReceitas} from "../CancelarModalReceitas";
 import {ModalReceitaConferida} from "../ModalReceitaJaConferida";
 import {visoesService} from "../../../../services/visoes.service";
@@ -29,6 +29,7 @@ export const ReceitaForm = () => {
     const [loading, setLoading] = useState(true);
 
     const [redirectTo, setRedirectTo] = useState('');
+    const [uuid_receita, setUuidReceita] = useState(null);
 
     const tabelaInicial = {
         tipos_receita: [],
@@ -54,6 +55,7 @@ export const ReceitaForm = () => {
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
     const [showErroGeral, setShowErroGeral] = useState(false);
     const [showCadastrarSaida, setShowCadastrarSaida] = useState(false);
+    const [showSalvarReceita, setShowSalvarReceita] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
     const [receita, setReceita] = useState({});
@@ -145,11 +147,12 @@ export const ReceitaForm = () => {
         setLoading(true);
         if (uuid) {
             await atualizar(uuid, payload).then(response => {
-                getPath();
+                setShowSalvarReceita(true);
             });
         } else {
             cadastrar(payload).then(response => {
-                getPath(response);
+                setShowSalvarReceita(true);
+                setUuidReceita(response);
             });
         }
         setLoading(false);
@@ -169,7 +172,7 @@ export const ReceitaForm = () => {
         }
     };
 
-    const atualizar = async (uid, payload) => {
+    const atualizar = async (uuid, payload) => {
         try {
             const response = await atualizaReceita(uuid, payload);
             if (response.status === HTTP_STATUS.CREATED) {
@@ -193,7 +196,13 @@ export const ReceitaForm = () => {
         setShowDelete(false);
         setShowPeriodoFechado(false);
         setShowErroGeral(false);
+        
     };
+
+    const fecharSalvarCredito = () => {
+        setShowSalvarReceita(false);
+        getPath();
+    }
 
     const onShowModal = () => {
         setShow(true);
@@ -218,16 +227,16 @@ export const ReceitaForm = () => {
         setShowErroGeral(true);
     };
 
-    const getPath = (uuidReceita) => {
+    const getPath = () => {
         let path;
         if (redirectTo !== '') {
-            path = `${redirectTo}/${uuidReceita}`;
+            path = `${redirectTo}/${uuid_receita}`;
         } else if (origem === undefined) {
             path = `/lista-de-receitas`;
         } else {
             path = `/detalhe-das-prestacoes`;
         }
-        window.location.assign(path)
+        window.location.assign(path);
     };
 
     const setaRepasse = async (values)=>{
@@ -740,7 +749,7 @@ export const ReceitaForm = () => {
                                 {showCadastrarSaida == true ?
                                     <button
                                         type="submit"
-                                        onClick={()=> setRedirectTo('/cadastro-de-despesa-recurso-proprio')}
+                                        onClick={() => setRedirectTo('/cadastro-de-despesa-recurso-proprio')}
                                         className="btn btn btn-outline-success mt-2 mr-2"
                                     >
                                         Cadastrar saída
@@ -794,6 +803,9 @@ export const ReceitaForm = () => {
             </section>
             <section>
                 <ErroGeral show={showErroGeral} handleClose={onHandleClose}/>
+            </section>
+            <section>
+                <SalvarReceita show={showSalvarReceita} handleClose={fecharSalvarCredito}/>
             </section>
         </>
     );

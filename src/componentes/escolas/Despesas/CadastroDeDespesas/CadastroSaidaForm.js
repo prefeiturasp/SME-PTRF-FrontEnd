@@ -61,7 +61,7 @@ export const CadastroSaidaForm = (props) => {
     const onSubmit = async (values) => {
         setLoading(true);
         validaPayloadDespesas(values, despesasTabelas);
-        
+
         values.rateios[0].acao_associacao = receita.acao_associacao.uuid;
         values.rateios[0].conta_associacao = receita.conta_associacao.uuid;
         values.rateios[0].valor_original = values.valor_original
@@ -72,7 +72,6 @@ export const CadastroSaidaForm = (props) => {
             const response = await criarDespesa(values);
             if (response.status === HTTP_STATUS.CREATED) {
                 console.log("Operação realizada com sucesso!");
-                //resetForm({values: ""})
                 aux.getPath();
             } else {
                 setLoading(false);
@@ -101,9 +100,8 @@ export const CadastroSaidaForm = (props) => {
         <Formik
             initialValues={initialValues()}
             validationSchema={YupSignupSchemaCadastroDespesaSaida}
-            onSubmit={onSubmit}
             enableReinitialize={true}
-            validateOnBlur={true}
+            onSubmit={onSubmit}
         >
             {props => {
                 const {
@@ -115,7 +113,7 @@ export const CadastroSaidaForm = (props) => {
 
                 return (
                     <>
-                        <form onSubmit={props.handleSubmit}>
+                        <form method="POST" onSubmit={props.handleSubmit}>
                             <div className="form-row">
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
@@ -304,7 +302,6 @@ export const CadastroSaidaForm = (props) => {
                                 </button>
                                 
                                 <button type="submit"
-                                        onClick={() => null}
                                         className="btn btn-success mt-2">Salvar
                                 </button>
                             </div>

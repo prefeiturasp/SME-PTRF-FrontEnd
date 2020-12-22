@@ -157,6 +157,7 @@ export const YupSignupSchemaCadastroDespesaSaida = yup.object().shape({
           return true
         }
       }),
+
   nome_fornecedor: yup.string().required("Nome Fornecedor é obrigatório")
   .test('test-nome-fornecedor', 'Digite um nome de fornecedor válido',
       function (value) {
@@ -166,6 +167,7 @@ export const YupSignupSchemaCadastroDespesaSaida = yup.object().shape({
           return false
         }
       }),
+
   tipo_documento:yup.string().required("Tipo de documento é obrigatório")
   .test('test-tipo-documento', 'Selecione um tipo de documento válido',
       function (value) {
@@ -175,19 +177,33 @@ export const YupSignupSchemaCadastroDespesaSaida = yup.object().shape({
           return false
         }
       }),
-  numero_documento:yup.string().required("Número documento é obrigatório.").nullable(),
+
+  numero_documento:yup.string().required("Número documento é obrigatório.")
+  .test('test-numero-documento', 'Selecione um número de documento válido',
+    function (value) {
+      if (value !== undefined || value !== '') {
+        return true
+      } else {
+        return false
+      }
+    }),
+  
   data_documento: yup.string().required("Data do documento é obrigatório.").nullable(),
-  tipo_transacao: yup.string().required("Tipo de transacao é obrigatório.").nullable(),
+  tipo_transacao: yup.string().required("Tipo da transação é obrigatório.").nullable(),
+
   data_transacao: yup.string().required("Data da transação é obrigatório.").nullable(),
-  documento_transacao: yup.string().required("Documento da transacao é obrigatório.").nullable(),
+  documento_transacao: yup.string().nullable(),
+
   valor_total: yup.string().required("Valor do crédito é obrigatório.")
     .test('test-valor', 'Valor deve ser maior que zero.',
-    function (value) {
-        return !(trataNumericos(value) <= 0);
-    }).test('test-string', 'Valor do crédito é obrigatório.',
-    function (value) {
-        return !(typeof(value) == undefined)
-    }),
+      function (value) {
+          return !(trataNumericos(value) <= 0);
+      })
+    .test('test-string', 'Valor do crédito é obrigatório.',
+      function (value) {
+          return !(typeof(value) == undefined)
+      }),
+
   valor_recursos_proprios: yup.string().nullable(),
   valor_total_dos_rateios:yup.string().nullable(),
   valor_recusos_acoes:yup.string().nullable(),
