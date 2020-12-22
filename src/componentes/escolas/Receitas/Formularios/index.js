@@ -16,16 +16,20 @@ import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
-import {DeletarModalReceitas, PeriodoFechado, ErroGeral} from "../../../../utils/Modais";
+import {DeletarModalReceitas, PeriodoFechado, ErroGeral, SalvarReceita} from "../../../../utils/Modais";
 import {CancelarModalReceitas} from "../CancelarModalReceitas";
 import {ModalReceitaConferida} from "../ModalReceitaJaConferida";
 import {visoesService} from "../../../../services/visoes.service";
+
 
 export const ReceitaForm = () => {
 
     let {origem} = useParams();
     let {uuid} = useParams();
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
+
+    const [redirectTo, setRedirectTo] = useState('');
+    const [uuid_receita, setUuidReceita] = useState(null);
 
     const tabelaInicial = {
         tipos_receita: [],
@@ -50,6 +54,8 @@ export const ReceitaForm = () => {
     const [showDelete, setShowDelete] = useState(false);
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
     const [showErroGeral, setShowErroGeral] = useState(false);
+    const [showCadastrarSaida, setShowCadastrarSaida] = useState(false);
+    const [showSalvarReceita, setShowSalvarReceita] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
     const [receita, setReceita] = useState({});
@@ -140,11 +146,15 @@ export const ReceitaForm = () => {
         };
         setLoading(true);
         if (uuid) {
-            await atualizar(uuid, payload);
+            await atualizar(uuid, payload).then(response => {
+                setShowSalvarReceita(true);
+            });
         } else {
-            await cadastrar(payload);
+            cadastrar(payload).then(response => {
+                setShowSalvarReceita(true);
+                setUuidReceita(response);
+            });
         }
-        getPath();
         setLoading(false);
     };
 
@@ -153,6 +163,7 @@ export const ReceitaForm = () => {
             const response = await criarReceita(payload);
             if (response.status === HTTP_STATUS.CREATED) {
                 console.log("Operação realizada com sucesso!");
+                return response.data.uuid;
             } else {
                 console.log(response)
             }
@@ -161,7 +172,7 @@ export const ReceitaForm = () => {
         }
     };
 
-    const atualizar = async (uid, payload) => {
+    const atualizar = async (uuid, payload) => {
         try {
             const response = await atualizaReceita(uuid, payload);
             if (response.status === HTTP_STATUS.CREATED) {
@@ -176,6 +187,7 @@ export const ReceitaForm = () => {
 
     const onCancelarTrue = () => {
         setShow(false);
+        setRedirectTo('');
         getPath();
     };
 
@@ -184,7 +196,13 @@ export const ReceitaForm = () => {
         setShowDelete(false);
         setShowPeriodoFechado(false);
         setShowErroGeral(false);
+        
     };
+
+    const fecharSalvarCredito = () => {
+        setShowSalvarReceita(false);
+        getPath();
+    }
 
     const onShowModal = () => {
         setShow(true);
@@ -211,12 +229,14 @@ export const ReceitaForm = () => {
 
     const getPath = () => {
         let path;
-        if (origem === undefined) {
+        if (redirectTo !== '') {
+            path = `${redirectTo}/${uuid_receita}`;
+        } else if (origem === undefined) {
             path = `/lista-de-receitas`;
         } else {
             path = `/detalhe-das-prestacoes`;
         }
-        window.location.assign(path)
+        window.location.assign(path);
     };
 
     const setaRepasse = async (values)=>{
@@ -320,6 +340,16 @@ export const ReceitaForm = () => {
         return tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ?(tabelas.acoes_associacao.map((item, key) => (
             <option key={key} value={item.uuid}>{item.nome}</option>
         ))): null
+    }
+
+    const showBotaoCadastrarSaida = (uuid_acao_associacao) => {
+        if (tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 && uuid_acao_associacao) {
+            let acao = tabelas.acoes_associacao.find(item => item.uuid == uuid_acao_associacao)
+            if (acao.e_recursos_proprios) {
+                setShowCadastrarSaida(true);
+            }
+            return acao;
+        }
     }
 
     const retornaClassificacaoReceita = (values, setFieldValue) => {
@@ -489,6 +519,7 @@ export const ReceitaForm = () => {
         }
     };
 
+
     return (
         <>
             <Formik
@@ -651,7 +682,8 @@ export const ReceitaForm = () => {
                                         value={props.values.acao_associacao}
                                         onChange={(e) => {
                                             props.handleChange(e);
-                                            setaRepasse(values)
+                                            setaRepasse(values);
+                                            showBotaoCadastrarSaida(e.target.value);
                                         }
                                         }
                                         onBlur={props.handleBlur}
@@ -714,6 +746,14 @@ export const ReceitaForm = () => {
 
                             {/*Botões*/}
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
+                                {showCadastrarSaida == true ?
+                                    <button
+                                        type="submit"
+                                        onClick={() => setRedirectTo('/cadastro-de-despesa-recurso-proprio')}
+                                        className="btn btn btn-outline-success mt-2 mr-2"
+                                    >
+                                        Cadastrar saída
+                                    </button> : null}
                                 <button
                                     type="reset"
                                     onClick={comparaObjetos(values,objetoParaComparacao) ? onCancelarTrue : onShowModal}
@@ -763,6 +803,9 @@ export const ReceitaForm = () => {
             </section>
             <section>
                 <ErroGeral show={showErroGeral} handleClose={onHandleClose}/>
+            </section>
+            <section>
+                <SalvarReceita show={showSalvarReceita} handleClose={fecharSalvarCredito}/>
             </section>
         </>
     );
