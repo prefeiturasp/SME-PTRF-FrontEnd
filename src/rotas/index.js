@@ -5,7 +5,8 @@ import {Pagina404} from "../paginas/escolas/404";
 import {DashboardPage} from "../paginas/Dashboard";
 import {CadastroDeDespesa} from "../paginas/escolas/Despesas/CadastroDeDespesas";
 import {EdicaoDeDespesa} from "../paginas/escolas/Despesas/EdicaoDeDespesa";
-import {ListaDeDespesasPage} from '../paginas/escolas/Despesas/ListaDeDespesas'
+import {ListaDeDespesasPage} from '../paginas/escolas/Despesas/ListaDeDespesas';
+import {CadastroSaida} from "../paginas/escolas/Despesas/CadastroSaida";
 import {CadastroDeReceita} from '../paginas/escolas/Receitas/CadastroReceita';
 import {EdicaoDeReceita} from '../paginas/escolas/Receitas/EdicaoReceita';
 import {ListaDeReceitasPage} from "../paginas/escolas/Receitas/ListaDeReceitas";
@@ -63,6 +64,12 @@ const routesConfig = [
         path: "/cadastro-de-despesa/:origem?",
         component: CadastroDeDespesa,
         permissoes: ['view_despesa'],
+    },
+    {
+        exact: true,
+        path: "/cadastro-de-despesa-recurso-proprio/:uuid?",
+        component: CadastroSaida,
+        permissoes: ['view_receita']
     },
     {
         exact: true,
