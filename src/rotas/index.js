@@ -259,7 +259,7 @@ const routesConfig = [
         exact: true,
         path: "/dre-relatorio-consolidado",
         component: RelatorioConsolidadoPage,
-        permissoes: ['view_dashboard_dre'],
+        permissoes: ['view_relatorio_consolidado_dre'],
     },
 
     {
