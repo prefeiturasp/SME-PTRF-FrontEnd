@@ -12,6 +12,7 @@ export const DespesaContext = createContext( {
     setInitialValues(){},
 
     valores_iniciais:[],
+    valores_iniciais_recursos_proprios:[],
 
 });
 
@@ -84,7 +85,7 @@ export const DespesaContextProvider = ({children}) => {
                 tag:"",
                 conta_associacao: "",
                 acao_associacao: "",
-                aplicacao_recurso: "",
+                aplicacao_recurso: "CUSTEIO",
                 tipo_custeio: "",
                 especificacao_material_servico: "",
                 valor_rateio: "",

@@ -6,6 +6,7 @@ import "./dashboard.scss"
 import {BarraDeStatus} from "./BarraDeStatus";
 import {BarraTotalUnidades} from "./BarraTotalUnidades";
 import {DashboardCard} from "./DashboardCard";
+import {ResumoPorDre} from "./ResumoPorDre";
 import Loading from "../../../utils/Loading";
 
 export const AcompanhamentoPcsSme = () => {
@@ -13,7 +14,7 @@ export const AcompanhamentoPcsSme = () => {
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
     const [itensDashboard, setItensDashboard] = useState(false);
-    const [statusPrestacao, setStatusPrestacao] = useState(false);
+    const [resumoPorDre, setResumoPorDre] = useState([]);
     const [loading, setLoading] = useState(false);
     const [statusPeriodo, setStatusPeriodo] = useState(false);
     const [totalUnidades, setTotalUnidades] = useState(0);
@@ -42,10 +43,12 @@ export const AcompanhamentoPcsSme = () => {
             let itens = await getItensDashboard(periodoEscolhido);
             let cards = itens.cards;
             let totalCard = cards.shift();
-            let totalUnidades = totalCard ? totalCard.quantidade_prestacoes : 0
-            setItensDashboard(cards)
-            setStatusPeriodo(itens.status)
-            setTotalUnidades(totalUnidades)
+            let totalUnidades = totalCard ? totalCard.quantidade_prestacoes : 0;
+            let resumoPorDre = itens && itens.resumo_por_dre ? itens.resumo_por_dre : [];
+            setItensDashboard(cards);
+            setStatusPeriodo(itens.status);
+            setTotalUnidades(totalUnidades);
+            setResumoPorDre(resumoPorDre);
         }
         setLoading(false);
     };
@@ -95,13 +98,8 @@ export const AcompanhamentoPcsSme = () => {
                         itensDashboard={itensDashboard}
                         statusPeriodo={statusPeriodo}
                     />
-                    {statusPrestacao &&
-                    <Redirect
-                        to={{
-                            pathname: `/dre-lista-prestacao-de-contas/${periodoEscolhido}/${statusPrestacao}`,
-                        }}
-                    />
-                    }
+                    <h4 style={TituloStyle}>Resumo por diretoria regional</h4>
+                    <ResumoPorDre resumoPorDre={resumoPorDre} statusPeriodo={statusPeriodo}/>
                 </>
             }
         </>
