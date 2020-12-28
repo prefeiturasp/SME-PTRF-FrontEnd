@@ -73,6 +73,7 @@ export const VisualizacaoDaAta = () => {
         let dados_ata = await getAtas(uuid_ata);
         let prestacao = await getPrestacaoDeContasDetalhe(dados_ata.prestacao_conta);
         setPrestacaoDeContasDetalhe(prestacao);
+        console.log(prestacao.devolucoes_ao_tesouro_da_prestacao);
         let data_da_reuniao = dados_ata.data_reuniao ? dados_ata.data_reuniao : "";
         setStateFormEditarAta({
             comentarios: dados_ata.comentarios,
@@ -258,6 +259,7 @@ export const VisualizacaoDaAta = () => {
                             <th scope="col">Data de devolução</th>
                             <th scope="col">Número de documento</th>
                             <th scope="col">CPF/CNPJ do fornecedor</th>
+                            <th scope="col">Valor da devolução</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -267,6 +269,7 @@ export const VisualizacaoDaAta = () => {
                                 <td>{devolucao.data ? exibeDataPT_BR(devolucao.data) : ''}</td>
                                 <td>{devolucao.despesa.numero_documento}</td>
                                 <td>{devolucao.despesa.cpf_cnpj_fornecedor}</td>
+                                <td>{devolucao.valor ? valorTemplate(devolucao.valor) : ''}</td>
                             </tr>
                         ))}
                         </tbody>
