@@ -41,10 +41,10 @@ const UrlsMenuEscolas ={
         {label: "Prestação de contas", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:IconeMenuPrestacaoDeContas, permissoes: ['view_prestacaoconta'],
             subItens: [
                 {
-                    label: "Conciliação Bancária", url: "detalhe-das-prestacoes", dataFor:"detalhe_das_prestacoes", icone:""
+                    label: "Conciliação Bancária", url: "detalhe-das-prestacoes", dataFor:"detalhe_das_prestacoes", icone:"", permissoes: ['view_conciliacao_bancaria', ]
                 },
                 {
-                    label: "Geração de documentos", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:""
+                    label: "Geração de documentos", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:"", permissoes: ['view_default']
                 },
             ]
         },
@@ -68,7 +68,7 @@ const UrlsMenuDres ={
         {label: "Apoio à Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeApoioDiretoria, permissoes: ['view_dadosdiretoria_dre'],
             subItens: [
                 {
-                    label: "Perguntas Frequentes", url: "dre-faq", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria
+                    label: "Perguntas Frequentes", url: "dre-faq", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria, permissoes: ['view_default']
                 }
             ]
         },
