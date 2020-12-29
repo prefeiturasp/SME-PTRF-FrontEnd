@@ -1,4 +1,5 @@
 import React from "react";
+import {visoesService} from "../../../../../services/visoes.service";
 
 export const TopoComBotoes = ({handleClickCadastrar, btnCadastrarTexto, onSalvarTrue, contaConciliacao, showSalvar}) => {
     return (
@@ -8,8 +9,12 @@ export const TopoComBotoes = ({handleClickCadastrar, btnCadastrarTexto, onSalvar
             </div>
             {btnCadastrarTexto &&
                 <div className='col-12 col-md-6 text-right'>
-                    <button type="button" onClick={handleClickCadastrar} className="btn btn-outline-success mr-2 mt-2"> <strong>{btnCadastrarTexto}</strong></button>
-                    <button type="button" onClick={()=>onSalvarTrue()} className="btn btn-outline-success mt-2" disabled={!showSalvar}><strong>Salvar</strong></button>
+                    {(btnCadastrarTexto.includes('Receita') & visoesService.getPermissoes(['add_receita'])) | (btnCadastrarTexto.includes('Despesa') & visoesService.getPermissoes(['add_despesa']))
+                    ? <button type="button" onClick={handleClickCadastrar} className="btn btn-outline-success mr-2 mt-2"> <strong>{btnCadastrarTexto}</strong></button>
+                    : null}
+                    {visoesService.getPermissoes(['change_conciliacao_bancaria'])
+                     ?  <button type="button" onClick={()=>onSalvarTrue()} className="btn btn-outline-success mt-2" disabled={!showSalvar}><strong>Salvar</strong></button>
+                     : null}
                 </div>
             }
         </div>

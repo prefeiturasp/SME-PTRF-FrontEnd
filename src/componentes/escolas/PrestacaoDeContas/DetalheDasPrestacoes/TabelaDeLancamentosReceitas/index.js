@@ -6,6 +6,7 @@ import moment from "moment";
 import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
 import IconeNaoDemonstrado from "../../../../../assets/img/icone-nao-demonstrado.svg";
 import ReactTooltip from "react-tooltip";
+import {visoesService} from "../../../../../services/visoes.service";
 
 export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxReceitas, handleChangeCheckboxReceitas, dataTip, periodoFechado}) => {
 
@@ -53,7 +54,7 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
 
     const conferidoTemplate = (rowData) => {
         return (
-            <div className="align-middle text-center">
+            <div data-tip={!visoesService.getPermissoes(['change_conciliacao_bancaria']) ? "Não tem perimssão para conciliar/desconciliar": null}  className="align-middle text-center">
                 <input
                     checked={conciliados}
                     type="checkbox"
@@ -61,7 +62,7 @@ export const TabelaDeLancamentosReceitas = ({conciliados, receitas, checkboxRece
                     onChange={(e) => handleChangeCheckboxReceitas(e, rowData.uuid)}
                     name="checkConferido"
                     id="checkConferido"
-                    disabled={periodoFechado}
+                    disabled={periodoFechado | !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
                 />
             </div>
         )
