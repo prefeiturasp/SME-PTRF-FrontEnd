@@ -53,6 +53,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const initialConcluirAnalise = {
         status: "",
         resalvas: '',
+        motivos_reprovacao: '',
         data_limite_devolucao:'',
     };
 
@@ -530,6 +531,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
+                motivos_reprovacao: stateConcluirAnalise.motivos_reprovacao,
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }
