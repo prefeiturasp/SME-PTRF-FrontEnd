@@ -80,6 +80,10 @@ export const getRepasse = async (acao_associacao_uuid, data_receita, uuid="") =>
     return (await api.get(`/api/repasses/pendentes/?acao-associacao=${acao_associacao_uuid}&data=${data_receita}&uuid-receita=${uuid}`, authHeader)).data
 };
 
+export const getRepasses = async () => {
+    return (await api.get(`/api/repasses/pendentes/?associacao=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
+};
+
 export const getPeriodoFechadoReceita = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status) => {
     return (await api.get(`api/rateios-despesas/totais/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&acao_associacao__uuid=${acao_associacao__uuid}&despesa__status=${despesa__status}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
