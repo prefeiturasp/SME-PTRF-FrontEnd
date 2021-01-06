@@ -10,7 +10,6 @@ import {ModalConfirmaRemocaoDevolucaoAoTesouro} from "../ModalConfirmaRemocaoDev
 export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeContas, initialValues, despesas, buscaDespesaPorFiltros, valorTemplate, despesasTabelas, tiposDevolucao, validateFormDevolucaoAoTesouro,}) =>{
 
     const [showConfirmaRemocao, setShowConfirmaRemocao] = useState({abrir:false, indice:0});
-    const [despesaSelecionada, setDespesaSelecionada] = useState(null);
 
     const setDisabledCampos = (devolucao) =>{
        return devolucao.visao_criacao === "DRE" && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE'
@@ -25,20 +24,38 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
         setShowConfirmaRemocao(false);
     };
 
-    const onClickSelecaoDespesa = (despesa) => {
-        setDespesaSelecionada(despesa);
-    }
-
-    const preencheValor = (name, value, setFieldValue) => {
-        if (despesaSelecionada !== null && value === "true") {
-            setFieldValue(name, valorTemplate(despesaSelecionada.valor_total));
-        }
-    }
-
     const clear = (index, setFieldValue) => {
-        setDespesaSelecionada(null); 
+        setFieldValue(`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`, '');
         setFieldValue(`devolucoes_ao_tesouro_da_prestacao[${index}].devolucao_total`, '');
         setFieldValue(`devolucoes_ao_tesouro_da_prestacao[${index}].valor`, '0,00');
+    }
+
+    const exibeDespesaSelecionada = (index, values, despesas, devolucao) => {
+        if (values.devolucoes_ao_tesouro_da_prestacao[index].despesa) {
+            let uuid_despesa = values.devolucoes_ao_tesouro_da_prestacao[index].despesa;
+            let desp = eval('despesas.devolucao_'+index).find(item => item.uuid === uuid_despesa);
+
+            return (
+                <Fragment key={0}>
+                    <tr className='divisao'>
+                        {/* eslint-disable-next-line no-eval */}
+                        <td className={`td-com-despesas `}><Field disabled={setDisabledCampos(devolucao) } type="radio" name={`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`} value={desp.uuid}/></td>
+                        {/* eslint-disable-next-line no-eval */}
+                        <td className={`td-com-despesas `}>{desp.nome_fornecedor}</td>
+                        {/* eslint-disable-next-line no-eval */}
+                        <td className={`td-com-despesas `}>{desp.cpf_cnpj_fornecedor}</td>
+                        {/* eslint-disable-next-line no-eval */}
+                        <td className={`td-com-despesas `}>{desp.tipo_documento && desp.tipo_documento.nome ? desp.tipo_documento.nome : ''}</td>
+                        {/* eslint-disable-next-line no-eval */}
+                        <td className={`td-com-despesas `}>{desp.numero_documento}</td>
+                        {/* eslint-disable-next-line no-eval */}
+                        <td className={`td-com-despesas `}>R$ {valorTemplate(desp.valor_total)}</td>
+                        {/* eslint-disable-next-line no-eval */}
+                        <td className={`td-com-despesas `}>{desp.data_documento ? exibeDataPT_BR(desp.data_documento) : ''}</td>
+                    </tr>
+                </Fragment>
+            )
+        }
     }
 
     return(
@@ -140,32 +157,15 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                 <table className={`table tabela-despesas mb-0 ${despesas && eval('despesas.devolucao_'+index) && eval('despesas.devolucao_'+index).length > 0 ? 'table-bordered' : ''}`}>
                                                                     <tbody>
                                                                     {/* eslint-disable-next-line no-eval */}
-                                                                    {despesaSelecionada !== null ?  
-                                                                        <Fragment key={0}>
-                                                                            <tr className='divisao'>
-                                                                                {/* eslint-disable-next-line no-eval */}
-                                                                                <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}><Field disabled={setDisabledCampos(devolucao) } type="radio" name={`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`} value={despesaSelecionada.uuid}/></td>
-                                                                                {/* eslint-disable-next-line no-eval */}
-                                                                                <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesaSelecionada.nome_fornecedor}</td>
-                                                                                {/* eslint-disable-next-line no-eval */}
-                                                                                <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesaSelecionada.cpf_cnpj_fornecedor}</td>
-                                                                                {/* eslint-disable-next-line no-eval */}
-                                                                                <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesaSelecionada.tipo_documento && despesaSelecionada.tipo_documento.nome ? despesaSelecionada.tipo_documento.nome : ''}</td>
-                                                                                {/* eslint-disable-next-line no-eval */}
-                                                                                <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesaSelecionada.numero_documento}</td>
-                                                                                {/* eslint-disable-next-line no-eval */}
-                                                                                <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>R$ {valorTemplate(despesaSelecionada.valor_total)}</td>
-                                                                                {/* eslint-disable-next-line no-eval */}
-                                                                                <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesaSelecionada.data_documento ? exibeDataPT_BR(despesaSelecionada.data_documento) : ''}</td>
-                                                                            </tr>
-                                                                        </Fragment>
+                                                                    {values.devolucoes_ao_tesouro_da_prestacao[index].despesa !== "" && despesas && eval('despesas.devolucao_'+index) && eval('despesas.devolucao_'+index).length > 0?
+                                                                        exibeDespesaSelecionada(index, values, despesas, devolucao)
                                                                     : despesas && eval('despesas.devolucao_'+index) && eval('despesas.devolucao_'+index).length > 0 ?
                                                                         // eslint-disable-next-line no-eval
                                                                         eval('despesas.devolucao_'+index).map((despesa, index_interno)=>
                                                                             <Fragment key={index_interno}>
                                                                                 <tr className='divisao'>
                                                                                     {/* eslint-disable-next-line no-eval */}
-                                                                                    <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}><Field disabled={setDisabledCampos(devolucao) } type="radio" name={`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`} value={despesa.uuid} onChange={(e) => {props.handleChange(e); onClickSelecaoDespesa(despesa);}}/></td>
+                                                                                    <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}><Field disabled={setDisabledCampos(devolucao) } type="radio" name={`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`} value={despesa.uuid} onClick={(e) => values.devolucoes_ao_tesouro_da_prestacao[index].devolucao_total === "true" ? setFieldValue(`devolucoes_ao_tesouro_da_prestacao[${index}].valor`, valorTemplate(despesa.valor_total)): null}/></td> 
                                                                                     {/* eslint-disable-next-line no-eval */}
                                                                                     <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesa.nome_fornecedor}</td>
                                                                                     {/* eslint-disable-next-line no-eval */}
@@ -233,7 +233,10 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                 value={devolucao.devolucao_total}
                                                                 onChange={async (e) => {
                                                                     props.handleChange(e);
-                                                                    preencheValor(`devolucoes_ao_tesouro_da_prestacao[${index}].valor`, e.target.value, setFieldValue);
+                                                                    if (values.devolucoes_ao_tesouro_da_prestacao[index].despesa && e.target.value === 'true') {
+                                                                        let desp = eval('despesas.devolucao_'+index).find(item => item.uuid === values.devolucoes_ao_tesouro_da_prestacao[index].despesa);
+                                                                        setFieldValue(`devolucoes_ao_tesouro_da_prestacao[${index}].valor`, valorTemplate(desp.valor_total));
+                                                                    }
                                                                 }
                                                                 }
                                                                 className='form-control'
@@ -272,7 +275,6 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                         className="btn btn btn-outline-success mr-2"
                                                                         onClick={async ()=>{
                                                                             setDisabledCampos(devolucao) ? setShowConfirmaRemocao({abrir:true, indice:index}) : onClickRemoverDevolucao(remove, index)
-                                                                            setDespesaSelecionada(null);
                                                                         }}
                                                                     >
                                                                         - Remover devolução
