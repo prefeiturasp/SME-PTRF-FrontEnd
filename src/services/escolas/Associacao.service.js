@@ -37,6 +37,16 @@ export const editarMembroAssociacao = async (payload, uuid) => {
     return (await api.put(`/api/membros-associacao/${uuid}/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, payload, authHeader))
 };
 
+
+export const deleteMembroAssociacao = async (uuid_membro) => {
+    return api.delete(`api/membros-associacao/${uuid_membro}/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader).then(response => {
+        return response;
+    }).catch(error => {
+        return error.response;
+    });
+};
+
+
 export const consultarRF = async (rf) => {
     return (await api.get(`/api/membros-associacao/codigo-identificacao/?rf=${rf}&associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader))
 };

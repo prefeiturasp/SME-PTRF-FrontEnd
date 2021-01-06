@@ -2,12 +2,13 @@ import React, {useEffect, useState, useMemo} from "react";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
 import {EditarMembro} from "../ModalMembros";
-import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarCpfResponsavel, getUsuarios} from "../../../../services/escolas/Associacao.service";
+import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarCpfResponsavel, getUsuarios, deleteMembroAssociacao} from "../../../../services/escolas/Associacao.service";
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {ExportaDadosDaAsssociacao} from "../ExportaDadosAssociacao";
 import {visoesService} from "../../../../services/visoes.service";
+import {ConfirmaDeleteMembro} from "./ConfirmaDeleteMembroDialog";
 
 export const MembrosDaAssociacao = () =>{
 
@@ -53,6 +54,7 @@ export const MembrosDaAssociacao = () =>{
     const [stateFormEditarMembro, setStateFormEditarMembro] = useState(initFormMembro);
     const [btnSalvarReadOnly, setBtnSalvarReadOnly] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
     useEffect(()=>{
         carregaMembros();
@@ -72,13 +74,11 @@ export const MembrosDaAssociacao = () =>{
 
     const carregaMembros = async ()=>{
         let membros = await getMembrosAssociacao();
-        //console.log("Carrega Membros ", membros)
         setMembros(membros)
     };
 
     const carregaUsuarios = async ()=>{
         let usuarios = await getUsuarios();
-        //console.log('carregaUsuarios ', usuarios)
         setUsuarios(usuarios);
     };
 
@@ -112,6 +112,9 @@ export const MembrosDaAssociacao = () =>{
             ];
             setInitialValuesMembrosDiretoria(cargos_e_infos_diretoria);
             setInitialValuesMembrosConselho(cargos_e_infos_conselho);
+        } else {
+            setInitialValuesMembrosDiretoria(initDiretoria);
+            setInitialValuesMembrosConselho(initConselho);
         }
     };
 
@@ -184,6 +187,7 @@ export const MembrosDaAssociacao = () =>{
         setStateFormEditarMembro(init);
         setInfosMembroSelecionado(infoMembroSelecionado)
     };
+
 
     const toggleIcon = (id) => {
         setClickIconeToogle({
@@ -372,6 +376,38 @@ export const MembrosDaAssociacao = () =>{
         setLoading(false)
     };
 
+    const handleDeleteMembroAction = (infoMembroSelecionado) => {
+        setInfosMembroSelecionado(infoMembroSelecionado)
+        setShowConfirmDelete(true);
+    };
+
+    const handleDeleteConfirmation = async () => {
+        setShowConfirmDelete(false);
+        await deleteMembro(infosMembroSelecionado.infos.uuid);
+    };
+
+    const closeConfirmDeleteDialog = () => {
+        setShowConfirmDelete(false);
+    };
+
+    const deleteMembro = async (uuid) => {
+        if (uuid) {
+            try {
+                const response = await deleteMembroAssociacao(uuid);
+                if (response.status === 204) {
+                    console.log("Exclusão realizada com sucesso!");
+                    await carregaMembros();
+                } else {
+                    console.log("Erro ao excluir Membro")
+                }
+            } catch (error) {
+                console.log(error)
+            }
+
+        }
+    };
+
+
     return(
         <div className="row">
                 <div className="col-12">
@@ -393,6 +429,7 @@ export const MembrosDaAssociacao = () =>{
                             clickIconeToogle={clickIconeToogle}
                             toggleIcon={toggleIcon}
                             onShowEditarMembro={onShowEditarMembro}
+                            onDeleteMembro={handleDeleteMembroAction}
                             cargos={initialValuesMembrosDiretoria}
                             converteNomeRepresentacao={converteNomeRepresentacao}
                             retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
@@ -404,6 +441,7 @@ export const MembrosDaAssociacao = () =>{
                             clickIconeToogle={clickIconeToogle}
                             toggleIcon={toggleIcon}
                             onShowEditarMembro={onShowEditarMembro}
+                            onDeleteMembro={handleDeleteMembroAction}
                             cargos={initialValuesMembrosConselho}
                             converteNomeRepresentacao={converteNomeRepresentacao}
                             retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
@@ -425,6 +463,14 @@ export const MembrosDaAssociacao = () =>{
                     infosMembroSelecionado={infosMembroSelecionado}
                     btnSalvarReadOnly={btnSalvarReadOnly}
                     visoesService={visoesService}
+                />
+            </section>
+
+            <section>
+                <ConfirmaDeleteMembro
+                    show={showConfirmDelete}
+                    onCancelDelete={closeConfirmDeleteDialog}
+                    onConfirmDelete={handleDeleteConfirmation}
                 />
             </section>
 
