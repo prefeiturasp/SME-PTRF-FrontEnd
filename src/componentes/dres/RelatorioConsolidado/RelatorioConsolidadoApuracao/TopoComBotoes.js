@@ -1,4 +1,5 @@
 import React from "react";
+import {visoesService} from "../../../../services/visoes.service";
 
 export const TopoComBotoes = ({periodoNome, contaNome, onClickGerarRelatorio}) =>{
     return(
@@ -8,9 +9,12 @@ export const TopoComBotoes = ({periodoNome, contaNome, onClickGerarRelatorio}) =
                 <div className="py-2 bd-highlight">
                     <button onClick={()=>window.location.assign('/dre-relatorio-consolidado')} className="btn btn-outline-success">Cancelar</button>
                 </div>
-                <div className="py-2 bd-highlight">
-                    <button onClick={onClickGerarRelatorio} className="btn btn-success ml-2">Gerar relatório</button>
-                </div>
+                {visoesService.getPermissoes(['gerar_relatorio_consolidado_dre'])
+                ? 
+                    <div className="py-2 bd-highlight">
+                        <button onClick={onClickGerarRelatorio} className="btn btn-success ml-2">Gerar relatório</button>
+                    </div>
+                : null}
             </div>
         </>
     )
