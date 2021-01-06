@@ -161,10 +161,10 @@ export const ListaPrestacaoDeContas = () => {
         )
     };
 
-    const dataTemplate = (rowData) => {
+    const dataTemplate = (rowData, column) => {
         return (
             <div>
-                {rowData['data_recebimento'] ? moment(rowData['data_recebimento']).format('DD/MM/YYYY') : rowData['data_ultima_analise'] ? moment(rowData['data_ultima_analise']).format('DD/MM/YYYY') : '-'}
+                {rowData[column.field] ? moment(rowData[column.field]).format('DD/MM/YYYY') : '-'}
             </div>
         )
     };
