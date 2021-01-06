@@ -1,8 +1,8 @@
 import React, {Fragment} from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faAngleDown, faAngleUp, faEdit} from '@fortawesome/free-solid-svg-icons'
+import {faAngleDown, faAngleUp, faEdit, faTrash} from '@fortawesome/free-solid-svg-icons'
 
-export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, onShowEditarMembro, cargos, converteNomeRepresentacao, retornaDadosAdicionaisTabela}) => {
+export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, onShowEditarMembro, cargos, converteNomeRepresentacao, retornaDadosAdicionaisTabela, onDeleteMembro}) => {
 
     return(
         <>
@@ -36,10 +36,17 @@ export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, onShowEdita
                                 <td><span>{item.infos && item.infos.representacao ? converteNomeRepresentacao(item.infos.representacao) : ""}</span></td>
                                 <td>
                                     <div className="d-flex justify-content-center">
-                                        <button className="btn-editar-membro" onClick={()=>onShowEditarMembro(item)}>
+                                        <button className="btn-editar-membro" onClick={() => onShowEditarMembro(item)}>
                                             <FontAwesomeIcon
-                                                style={{fontSize: '20px', marginRight:"0"}}
+                                                style={{fontSize: '20px', marginRight: "0"}}
                                                 icon={faEdit}
+                                            />
+                                        </button>
+                                        <button className="btn-editar-membro"
+                                                onClick={() => onDeleteMembro(item)}>
+                                            <FontAwesomeIcon
+                                                style={{fontSize: '20px', marginRight: "0", color: "red"}}
+                                                icon={faTrash}
                                             />
                                         </button>
                                     </div>
