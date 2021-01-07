@@ -358,7 +358,6 @@ export const ReceitaForm = () => {
     const retornaAcoes = (values) => {
         if (tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 && values.tipo_receita && e_repasse(values) && Object.keys(repasse).length !== 0) {
             let acao_associacao = tabelas.acoes_associacao.find(item => item.uuid == repasse.acao_associacao.uuid);
-            console.log(acao_associacao);
             setreadOnlyAcaoAssociacaoReceita(true);
             return (
                 <option key={acao_associacao.uuid} value={acao_associacao.uuid}>{acao_associacao.nome}</option>
@@ -376,18 +375,20 @@ export const ReceitaForm = () => {
         ))): null
     }
 
-    const showBotaoCadastrarSaida = (uuid_acao_associacao) => {
-        if (tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 && uuid_acao_associacao) {
+    const showBotaoCadastrarSaida = (uuid_acao_associacao, values) => {
+        if (tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 && uuid_acao_associacao && values && values.tipo_receita) {
+            let e_recurso_proprio = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_recursos_proprios
             let acao = tabelas.acoes_associacao.find(item => item.uuid == uuid_acao_associacao)
-            if (acao && acao.e_recursos_proprios) {
+            if (acao && acao.e_recursos_proprios && e_recurso_proprio) {
                 setShowCadastrarSaida(true);
-            }
+            } 
             return acao;
+        } else {
+            setShowCadastrarSaida(false);
         }
     }
 
     const retornaClassificacaoReceita = (values, setFieldValue) => {
-        console.log(values);
         if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values !== undefined && values.acao_associacao && values.tipo_receita && Object.entries(repasse).length > 0 && uuid === undefined) {
             return tabelas.categorias_receita.map((item, index) => {
 
@@ -572,6 +573,14 @@ export const ReceitaForm = () => {
                                             consultaRepasses(e.target.value);
                                             getClassificacaoReceita(e.target.value, setFieldValue);
                                             setaDetalhesTipoReceita(e.target.value);
+                                            if (e.target.value !== "" && !tabelas.tipos_receita.find(element => element.id === Number(e.target.value)).e_recursos_proprios) {
+                                                setShowCadastrarSaida(false);
+                                            } else if (e.target.value !== "" && tabelas.tipos_receita.find(element => element.id === Number(e.target.value)).e_recursos_proprios) {
+                                                let acao = tabelas.acoes_associacao.find(item => item.uuid == props.values.acao_associacao)
+                                                if (acao && acao.e_recursos_proprios) {
+                                                    setShowCadastrarSaida(true);
+                                                } 
+                                            }
                                         }
                                         }
                                         onBlur={props.handleBlur}
@@ -702,7 +711,7 @@ export const ReceitaForm = () => {
                                         value={props.values.acao_associacao}
                                         onChange={(e) => {
                                             props.handleChange(e);
-                                            showBotaoCadastrarSaida(e.target.value);
+                                            showBotaoCadastrarSaida(e.target.value, props.values);
                                         }
                                         }
                                         onBlur={props.handleBlur}
