@@ -219,7 +219,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                 <DatePickerField
                                                                     name={`devolucoes_ao_tesouro_da_prestacao[${index}].data`}
                                                                     value={devolucao.data}
-                                                                    placeholderText='UE deve preencher.'
+                                                                    placeholderText='Preenchimento pela UE.'
                                                                     disabled={true}
                                                                 />
                                                                 {props.errors.data && <span className="text-danger mt-1">{props.errors.data}</span>}
