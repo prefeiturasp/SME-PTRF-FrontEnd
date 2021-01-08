@@ -131,7 +131,7 @@ export const ResumoPorDre = ({resumoPorDre, statusPeriodo}) => {
                 <Column field='cards.APROVADA' header='Aprovadas' body={aprovadaTemplate}/>
                 <Column field='cards.APROVADA_RESSALVA' header='Aprovadas com ressalvas' body={aprovadaRessalvaTemplate}/>
                 <Column field='cards.REPROVADA' header='Reprovadas' body={reprovadaTemplate}/>
-                <Column field='acoes' header='' body={acoesTemplate}/>
+                <Column field='acoes' header='Ações' body={acoesTemplate}/>
             </DataTable>
 
         </>
