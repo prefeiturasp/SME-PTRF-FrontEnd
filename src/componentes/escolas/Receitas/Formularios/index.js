@@ -9,23 +9,28 @@ import {
     deletarReceita,
     getReceita,
     getTabelasReceita,
-    getRepasse
+    getRepasses
 } from '../../../../services/escolas/Receitas.service';
 import {round, trataNumericos, periodoFechado, comparaObjetos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
-import {DeletarModalReceitas, PeriodoFechado, ErroGeral} from "../../../../utils/Modais";
+import {DeletarModalReceitas, PeriodoFechado, ErroGeral, SalvarReceita} from "../../../../utils/Modais";
 import {CancelarModalReceitas} from "../CancelarModalReceitas";
 import {ModalReceitaConferida} from "../ModalReceitaJaConferida";
+import {ModalSelecionaRepasse} from "../ModalSelecionaRepasse";
 import {visoesService} from "../../../../services/visoes.service";
+
 
 export const ReceitaForm = () => {
 
     let {origem} = useParams();
     let {uuid} = useParams();
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
+
+    const [redirectTo, setRedirectTo] = useState('');
+    const [uuid_receita, setUuidReceita] = useState(null);
 
     const tabelaInicial = {
         tipos_receita: [],
@@ -50,11 +55,16 @@ export const ReceitaForm = () => {
     const [showDelete, setShowDelete] = useState(false);
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
     const [showErroGeral, setShowErroGeral] = useState(false);
+    const [showCadastrarSaida, setShowCadastrarSaida] = useState(false);
+    const [showSalvarReceita, setShowSalvarReceita] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
     const [receita, setReceita] = useState({});
     const [readOnlyValor, setReadOnlyValor] = useState(false);
     const [readOnlyClassificacaoReceita, setreadOnlyClassificacaoReceita] = useState(false);
+    const [readOnlyAcaoAssociacaoReceita, setreadOnlyAcaoAssociacaoReceita] = useState(false);
+    const [readOnlyContaAssociacaoReceita, setreadOnlyContaAssociacaoReceita] = useState(false);
+    const [readOnlyTipoReceita, setreadOnlyTipoReceita] = useState(false);
 
     const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
@@ -63,6 +73,9 @@ export const ReceitaForm = () => {
     const [idxTipoDespesa, setIdxTipoDespesa] = useState(0);
 
     const [showReceitaConferida, setShowReceitaConferida] = useState(false);
+
+    const [repasses, setRepasses] = useState([]);
+    const [showSelecionaRepasse, setShowSelecionaRepasse] = useState(false);
 
     useEffect(() => {
         const carregaTabelas = async () => {
@@ -96,6 +109,12 @@ export const ReceitaForm = () => {
                     setInitialValue(init);
                     setReceita(resp);
                     periodoFechado(resp.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+                    if (resp.repasse !== null) {
+                        setRepasse(resp.repasse);
+                        setReadOnlyValor(true);
+                        setreadOnlyClassificacaoReceita(true);
+                        setreadOnlyTipoReceita(true);
+                    }
                 }).catch(error => {
                     console.log(error);
                 });
@@ -136,15 +155,24 @@ export const ReceitaForm = () => {
         const payload = {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID),
-            detalhe_tipo_receita: values.detalhe_tipo_receita && values.detalhe_tipo_receita.id !== undefined ? values.detalhe_tipo_receita.id : values.detalhe_tipo_receita
+            detalhe_tipo_receita: values.detalhe_tipo_receita && values.detalhe_tipo_receita.id !== undefined ? values.detalhe_tipo_receita.id : values.detalhe_tipo_receita,
         };
+
+        if (Object.keys(repasse).length !== 0) {
+            payload['repasse'] = repasse.uuid;
+        }
+
         setLoading(true);
         if (uuid) {
-            await atualizar(uuid, payload);
+            await atualizar(uuid, payload).then(response => {
+                setShowSalvarReceita(true);
+            });
         } else {
-            await cadastrar(payload);
+            cadastrar(payload).then(response => {
+                setShowSalvarReceita(true);
+                setUuidReceita(response);
+            });
         }
-        getPath();
         setLoading(false);
     };
 
@@ -153,6 +181,7 @@ export const ReceitaForm = () => {
             const response = await criarReceita(payload);
             if (response.status === HTTP_STATUS.CREATED) {
                 console.log("Operação realizada com sucesso!");
+                return response.data.uuid;
             } else {
                 console.log(response)
             }
@@ -161,7 +190,7 @@ export const ReceitaForm = () => {
         }
     };
 
-    const atualizar = async (uid, payload) => {
+    const atualizar = async (uuid, payload) => {
         try {
             const response = await atualizaReceita(uuid, payload);
             if (response.status === HTTP_STATUS.CREATED) {
@@ -176,6 +205,7 @@ export const ReceitaForm = () => {
 
     const onCancelarTrue = () => {
         setShow(false);
+        setRedirectTo('');
         getPath();
     };
 
@@ -184,7 +214,13 @@ export const ReceitaForm = () => {
         setShowDelete(false);
         setShowPeriodoFechado(false);
         setShowErroGeral(false);
+        
     };
+
+    const fecharSalvarCredito = () => {
+        setShowSalvarReceita(false);
+        getPath();
+    }
 
     const onShowModal = () => {
         setShow(true);
@@ -211,34 +247,41 @@ export const ReceitaForm = () => {
 
     const getPath = () => {
         let path;
-        if (origem === undefined) {
+        if (redirectTo !== '') {
+            path = `${redirectTo}/${uuid_receita}`;
+        } else if (origem === undefined) {
             path = `/lista-de-receitas`;
         } else {
             path = `/detalhe-das-prestacoes`;
         }
-        window.location.assign(path)
+        window.location.assign(path);
     };
 
-    const setaRepasse = async (values)=>{
-        let local_repasse;
-        if (values && values.acao_associacao && values.data) {
-            let data_receita = moment(new Date(values.data), "YYYY-MM-DD").format("DD/MM/YYYY");
-            if (uuid) {
+    const setaRepasse = async (value)=>{
+        if (value) {
+            setRepasse(value);
+        }
+        
+    };
+
+    const consultaRepasses = async (value) => {
+        if (value) {
+            let tipo_receita = tabelas.tipos_receita.find(item => item.id == value);
+            if (tipo_receita.e_repasse === true) {
                 try {
-                    local_repasse = await getRepasse(values.acao_associacao, data_receita, uuid);
-                    setRepasse(local_repasse)
+                    let listaRepasses = await getRepasses();
+                    setRepasses(listaRepasses);
+                    setShowSelecionaRepasse(true);
                 } catch (e) {
-                    console.log("Erro ao obter o repasse ", e)
+                    console.log("Erro ao obter a listagem de repasses", e);
                 }
+                
             } else {
-                try {
-                    local_repasse = await getRepasse(values.acao_associacao, data_receita);
-                    setRepasse(local_repasse)
-                } catch (e) {
-                    console.log("Erro ao obter o repasse ", e)
-                }
+                setaRepasse({});
+                setreadOnlyAcaoAssociacaoReceita(false);
+                setreadOnlyContaAssociacaoReceita(false);
+                setReadOnlyValor(false);
             }
-            return local_repasse;
         }
     };
 
@@ -308,10 +351,45 @@ export const ReceitaForm = () => {
         return false
     };
 
+    const e_repasse = (values) => {
+        return tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_repasse
+    }
+
+    const retornaAcoes = (values) => {
+        if (tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 && values.tipo_receita && e_repasse(values) && Object.keys(repasse).length !== 0) {
+            let acao_associacao = tabelas.acoes_associacao.find(item => item.uuid == repasse.acao_associacao.uuid);
+            setreadOnlyAcaoAssociacaoReceita(true);
+            return (
+                <option key={acao_associacao.uuid} value={acao_associacao.uuid}>{acao_associacao.nome}</option>
+            )
+        } else if (tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 && values.tipo_receita) {
+            let e_recurso_proprio = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_recursos_proprios
+
+            return (tabelas.acoes_associacao.filter(item => item.e_recursos_proprios == e_recurso_proprio).map((item, key) => (
+                <option key={item.uuid} value={item.uuid}>{item.nome}</option>
+            )))
+        }
+
+        return tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ?(tabelas.acoes_associacao.map((item, key) => (
+            <option key={item.uuid} value={item.uuid}>{item.nome}</option>
+        ))): null
+    }
+
+    const showBotaoCadastrarSaida = (uuid_acao_associacao, values) => {
+        if (tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 && uuid_acao_associacao && values && values.tipo_receita) {
+            let e_recurso_proprio = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_recursos_proprios
+            let acao = tabelas.acoes_associacao.find(item => item.uuid == uuid_acao_associacao)
+            if (acao && acao.e_recursos_proprios && e_recurso_proprio) {
+                setShowCadastrarSaida(true);
+            } 
+            return acao;
+        } else {
+            setShowCadastrarSaida(false);
+        }
+    }
+
     const retornaClassificacaoReceita = (values, setFieldValue) => {
-
-        if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values.acao_associacao && values.tipo_receita && Object.entries(repasse).length > 0) {
-
+        if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values !== undefined && values.acao_associacao && values.tipo_receita && Object.entries(repasse).length > 0 && uuid === undefined) {
             return tabelas.categorias_receita.map((item, index) => {
 
                 let id_categoria_receita_lower = item.id.toLowerCase();
@@ -347,10 +425,11 @@ export const ReceitaForm = () => {
                 }
             })
         }else{
-            if (tabelas.categorias_receita && tabelas.categorias_receita.length > 0){
+            if (tabelas.categorias_receita && tabelas.categorias_receita.length > 0 && values.tipo_receita){
                 return tabelas.categorias_receita.map((item)=>{
                     return (
                         <option
+                            style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
                             key={item.id}
                             value={item.id}
                         >
@@ -364,7 +443,13 @@ export const ReceitaForm = () => {
 
 
     const retornaTiposDeContas = (values) => {
-        if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita) {
+        if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita && e_repasse(values) && Object.keys(repasse).length !== 0) {
+            let conta_associacao = tabelas.contas_associacao.find(conta => (repasse.conta_associacao.nome.includes(conta.nome)));
+            setreadOnlyContaAssociacaoReceita(true);
+            return (
+                    <option key={conta_associacao.uuid} value={conta_associacao.uuid}>{conta_associacao.nome}</option>
+            )
+        } else if (tabelas.contas_associacao !== undefined && tabelas.contas_associacao.length > 0  && values.tipo_receita) {
             
             const tipoReceita = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita));
             
@@ -374,13 +459,12 @@ export const ReceitaForm = () => {
             // Filtra as contas pelos tipos aceitos
             return (
                 tabelas.contas_associacao.filter(conta => (tipos_conta.includes(conta.nome))).map((item, key) => (
-                    <option key={key} value={item.uuid}>{item.nome}</option>)
+                    <option key={item.uuid} value={item.uuid}>{item.nome}</option>)
             ))
         }
     };
 
     const validateFormReceitas = async (values) => {
-
         const errors = {};
 
         // Verifica se é devolucao e setando erro caso referencia devolucao vazio
@@ -411,49 +495,8 @@ export const ReceitaForm = () => {
             errors.data = "Data do crédito não pode ser maior que a data de hoje"
         }
 
-        if (e_repasse_tipo_receita !== false && e_repasse_acao !== "" && e_repasse_acao !== "Escolha uma ação" && values.data) {
-
-            try {
-
-                let repasse = await setaRepasse(values);
-
-                let data_digitada = moment(values.data);
-                let data_inicio = moment(repasse.periodo.data_inicio_realizacao_despesas);
-                let data_fim = repasse.periodo.data_fim_realizacao_despesas;
-
-                if (data_fim === null) {
-                    data_fim = moment(new Date());
-                } else {
-                    data_fim = moment(repasse.periodo.data_fim_realizacao_despesas);
-                }
-
-                if (data_digitada > data_fim || data_digitada < data_inicio) {
-                    errors.data = `Data inválida. A data tem que ser entre ${data_inicio.format("DD/MM/YYYY")} e ${data_fim.format("DD/MM/YYYY")}`;
-                }
-
-                let id_categoria_receita_lower = values.categoria_receita.toLowerCase();
-
-                let valor_da_receita = eval('repasse.valor_' + id_categoria_receita_lower);
-
-                const init = {
-                    ...initialValue,
-                    tipo_receita: values.tipo_receita,
-                    detalhe_tipo_receita: values.detalhe_tipo_receita,
-                    detalhe_outros: values.detalhe_outros,
-                    data: values.data,
-                    valor: Number(valor_da_receita),
-                    acao_associacao: values.acao_associacao,
-                    conta_associacao: repasse.conta_associacao.uuid,
-                    categoria_receita: values.categoria_receita,
-                    conferido: values.conferido,
-                    referencia_devolucao: values.referencia_devolucao,
-                };
-                setInitialValue(init);
-                setReadOnlyValor(true);
-            } catch (e) {
-                console.log("Erro: ", e);
-                errors.acao_associacao = 'Não existem repasses pendentes para a Associação nesta ação';
-            }
+        if (tabelas.tipos_receita !== undefined && tabelas.tipos_receita.length > 0 && values.tipo_receita && e_repasse(values) && Object.keys(repasse).length !== 0) {
+            setReadOnlyValor(true);
         } else {
             setReadOnlyValor(false)
         }
@@ -474,6 +517,29 @@ export const ReceitaForm = () => {
             return e_devolucao
         }
     };
+
+    const trataRepasse = (repasse_row, setFieldValue) => {
+        setaRepasse(repasse_row);
+        setFieldValue('acao_associacao', repasse_row.acao_associacao.uuid);
+        setFieldValue('conta_associacao', repasse_row.conta_associacao.uuid);
+        setFieldValue('valor', '0,00');
+        setReadOnlyValor(true);
+        setShowSelecionaRepasse(false);
+
+    }
+
+    const atualizaValorRepasse = (value, setFieldValue) => {
+        if (Object.keys(repasse).length !== 0) {
+            let valor_formatado = new Number(repasse[`valor_${value.toLowerCase()}`]).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+
+            setFieldValue('valor', valor_formatado);
+        }
+    }
+
+
 
     return (
         <>
@@ -500,13 +566,21 @@ export const ReceitaForm = () => {
                                     <select
                                         id="tipo_receita"
                                         name="tipo_receita"
-                                        disabled={readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                        disabled={readOnlyCampos || readOnlyTipoReceita || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                         value={props.values.tipo_receita}
                                         onChange={(e) => {
                                             props.handleChange(e);
-                                            //setaRepasse(values);
+                                            consultaRepasses(e.target.value);
                                             getClassificacaoReceita(e.target.value, setFieldValue);
                                             setaDetalhesTipoReceita(e.target.value);
+                                            if (e.target.value !== "" && !tabelas.tipos_receita.find(element => element.id === Number(e.target.value)).e_recursos_proprios) {
+                                                setShowCadastrarSaida(false);
+                                            } else if (e.target.value !== "" && tabelas.tipos_receita.find(element => element.id === Number(e.target.value)).e_recursos_proprios) {
+                                                let acao = tabelas.acoes_associacao.find(item => item.uuid == props.values.acao_associacao)
+                                                if (acao && acao.e_recursos_proprios) {
+                                                    setShowCadastrarSaida(true);
+                                                } 
+                                            }
                                         }
                                         }
                                         onBlur={props.handleBlur}
@@ -613,7 +687,7 @@ export const ReceitaForm = () => {
                                         onChange={props.handleChange}
                                         onBlur={props.handleBlur}
                                         className="form-control"
-                                        disabled={readOnlyValor || readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                        disabled={readOnlyValor || readOnlyCampos || readOnlyContaAssociacaoReceita || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                     >
                                         {receita.conta_associacao
                                             ? null
@@ -631,13 +705,13 @@ export const ReceitaForm = () => {
                                 <div className="col-12 col-md-6 mt-4">
                                     <label htmlFor="acao_associacao">Ação</label>
                                     <select
-                                        disabled={readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                        disabled={readOnlyCampos || readOnlyAcaoAssociacaoReceita || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
                                         id="acao_associacao"
                                         name="acao_associacao"
                                         value={props.values.acao_associacao}
                                         onChange={(e) => {
                                             props.handleChange(e);
-                                            setaRepasse(values)
+                                            showBotaoCadastrarSaida(e.target.value, props.values);
                                         }
                                         }
                                         onBlur={props.handleBlur}
@@ -645,10 +719,8 @@ export const ReceitaForm = () => {
                                     >
                                         {receita.acao_associacao
                                             ? null
-                                            : <option value="">Escolha uma ação</option>}
-                                        {tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 ? (tabelas.acoes_associacao.map((item, key) => (
-                                            <option key={key} value={item.uuid}>{item.nome}</option>
-                                        ))) : null}
+                                            : <option key={0} value="">Escolha uma ação</option>}
+                                        {retornaAcoes(props.values)}
                                     </select>
                                     {props.touched.acao_associacao && props.errors.acao_associacao &&
                                     <span
@@ -663,7 +735,11 @@ export const ReceitaForm = () => {
                                         id="categoria_receita"
                                         name="categoria_receita"
                                         value={props.values.categoria_receita}
-                                        onChange={props.handleChange}
+                                        onChange={ (e) => {
+                                            props.handleChange(e);
+                                            atualizaValorRepasse(e.target.value, setFieldValue);
+                                            }
+                                        }
                                         onBlur={props.handleBlur}
                                         className="form-control"
                                         disabled={readOnlyClassificacaoReceita || readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
@@ -702,6 +778,14 @@ export const ReceitaForm = () => {
 
                             {/*Botões*/}
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
+                                {showCadastrarSaida == true ?
+                                    <button
+                                        type="submit"
+                                        onClick={() => setRedirectTo('/cadastro-de-despesa-recurso-proprio')}
+                                        className="btn btn btn-outline-success mt-2 mr-2"
+                                    >
+                                        Cadastrar saída
+                                    </button> : null}
                                 <button
                                     type="reset"
                                     onClick={comparaObjetos(values,objetoParaComparacao) ? onCancelarTrue : onShowModal}
@@ -723,6 +807,21 @@ export const ReceitaForm = () => {
                                     onSalvarReceitaConferida={ () => onSubmit(values) }
                                     titulo="Receita já demonstrada"
                                     texto="<p>Atenção. Esse crédito já foi demonstrado, caso a alteração seja gravada ele voltará a ser não demonstrado. Confirma a gravação?</p>"
+                                />
+                            </section>
+                            <section>
+                                <ModalSelecionaRepasse
+                                    show={showSelecionaRepasse}
+                                    cancelar={() => {
+                                        setShowSelecionaRepasse(false); 
+                                        setFieldValue('tipo_receita', '');
+                                        setFieldValue('valor', '0,00');
+                                    }}
+                                    repasses={repasses}
+                                    trataRepasse={trataRepasse}
+                                    setFieldValue={setFieldValue}
+                                    titulo="Selecione o repasse."
+                                    bodyText="<p>Atenção. Esse crédito já foi demonstrado, caso a alteração seja gravada ele voltará a ser não demonstrado. Confirma a gravação?</p>"
                                 />
                             </section>
                         </form>
@@ -751,6 +850,9 @@ export const ReceitaForm = () => {
             </section>
             <section>
                 <ErroGeral show={showErroGeral} handleClose={onHandleClose}/>
+            </section>
+            <section>
+                <SalvarReceita show={showSalvarReceita} handleClose={fecharSalvarCredito}/>
             </section>
         </>
     );

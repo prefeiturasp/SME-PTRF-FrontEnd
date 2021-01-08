@@ -24,6 +24,40 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
         setShowConfirmaRemocao(false);
     };
 
+    const clear = (index, setFieldValue) => {
+        setFieldValue(`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`, '');
+        setFieldValue(`devolucoes_ao_tesouro_da_prestacao[${index}].devolucao_total`, '');
+        setFieldValue(`devolucoes_ao_tesouro_da_prestacao[${index}].valor`, '0,00');
+    }
+
+    const exibeDespesaSelecionada = (index, values, despesas, devolucao) => {
+        if (values.devolucoes_ao_tesouro_da_prestacao[index].despesa) {
+            let uuid_despesa = values.devolucoes_ao_tesouro_da_prestacao[index].despesa;
+            let desp = eval('despesas.devolucao_'+index).find(item => item.uuid === uuid_despesa);
+
+            return (
+                <Fragment key={0}>
+                    <tr className='divisao'>
+                        {/* eslint-disable-next-line no-eval */}
+                        <td className={`td-com-despesas `}><Field disabled={setDisabledCampos(devolucao) } type="radio" name={`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`} value={desp.uuid}/></td>
+                        {/* eslint-disable-next-line no-eval */}
+                        <td className={`td-com-despesas `}>{desp.nome_fornecedor}</td>
+                        {/* eslint-disable-next-line no-eval */}
+                        <td className={`td-com-despesas `}>{desp.cpf_cnpj_fornecedor}</td>
+                        {/* eslint-disable-next-line no-eval */}
+                        <td className={`td-com-despesas `}>{desp.tipo_documento && desp.tipo_documento.nome ? desp.tipo_documento.nome : ''}</td>
+                        {/* eslint-disable-next-line no-eval */}
+                        <td className={`td-com-despesas `}>{desp.numero_documento}</td>
+                        {/* eslint-disable-next-line no-eval */}
+                        <td className={`td-com-despesas `}>R$ {valorTemplate(desp.valor_total)}</td>
+                        {/* eslint-disable-next-line no-eval */}
+                        <td className={`td-com-despesas `}>{desp.data_documento ? exibeDataPT_BR(desp.data_documento) : ''}</td>
+                    </tr>
+                </Fragment>
+            )
+        }
+    }
+
     return(
         <>
             {informacoesPrestacaoDeContas && informacoesPrestacaoDeContas.devolucao_ao_tesouro !== "Não" &&
@@ -111,7 +145,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                 </div>
 
                                                                 <div className='col-12 text-right'>
-                                                                    <button disabled={setDisabledCampos(devolucao) } name='btnFiltrar' type='button' onClick={()=>buscaDespesaPorFiltros(index)} className='btn btn-success mt-2'>Filtrar</button>
+                                                                    <button disabled={setDisabledCampos(devolucao) } name='btnFiltrar' type='button' onClick={()=>{buscaDespesaPorFiltros(index); clear(index, setFieldValue)}} className='btn btn-success mt-2'>Filtrar</button>
                                                                 </div>
 
                                                             </div>
@@ -123,13 +157,15 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                 <table className={`table tabela-despesas mb-0 ${despesas && eval('despesas.devolucao_'+index) && eval('despesas.devolucao_'+index).length > 0 ? 'table-bordered' : ''}`}>
                                                                     <tbody>
                                                                     {/* eslint-disable-next-line no-eval */}
-                                                                    {despesas && eval('despesas.devolucao_'+index) && eval('despesas.devolucao_'+index).length > 0 ?
+                                                                    {values.devolucoes_ao_tesouro_da_prestacao[index].despesa !== "" && despesas && eval('despesas.devolucao_'+index) && eval('despesas.devolucao_'+index).length > 0?
+                                                                        exibeDespesaSelecionada(index, values, despesas, devolucao)
+                                                                    : despesas && eval('despesas.devolucao_'+index) && eval('despesas.devolucao_'+index).length > 0 ?
                                                                         // eslint-disable-next-line no-eval
                                                                         eval('despesas.devolucao_'+index).map((despesa, index_interno)=>
                                                                             <Fragment key={index_interno}>
                                                                                 <tr className='divisao'>
                                                                                     {/* eslint-disable-next-line no-eval */}
-                                                                                    <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}><Field disabled={setDisabledCampos(devolucao) } type="radio" name={`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`} value={despesa.uuid} /></td>
+                                                                                    <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}><Field disabled={setDisabledCampos(devolucao) } type="radio" name={`devolucoes_ao_tesouro_da_prestacao[${index}].despesa`} value={despesa.uuid} onClick={(e) => values.devolucoes_ao_tesouro_da_prestacao[index].devolucao_total === "true" ? setFieldValue(`devolucoes_ao_tesouro_da_prestacao[${index}].valor`, valorTemplate(despesa.valor_total)): null}/></td> 
                                                                                     {/* eslint-disable-next-line no-eval */}
                                                                                     <td className={`td-com-despesas ${eval('despesas.devolucao_'+index).length === 1 ? 'td-com-despesas-unica' : ''}`}>{despesa.nome_fornecedor}</td>
                                                                                     {/* eslint-disable-next-line no-eval */}
@@ -183,8 +219,8 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                 <DatePickerField
                                                                     name={`devolucoes_ao_tesouro_da_prestacao[${index}].data`}
                                                                     value={devolucao.data}
-                                                                    onChange={setFieldValue}
-                                                                    placeholderText='Selecione data'
+                                                                    placeholderText='Preenchimento pela UE.'
+                                                                    disabled={true}
                                                                 />
                                                                 {props.errors.data && <span className="text-danger mt-1">{props.errors.data}</span>}
                                                             </div>
@@ -197,6 +233,10 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                 value={devolucao.devolucao_total}
                                                                 onChange={async (e) => {
                                                                     props.handleChange(e);
+                                                                    if (values.devolucoes_ao_tesouro_da_prestacao[index].despesa && e.target.value === 'true') {
+                                                                        let desp = eval('despesas.devolucao_'+index).find(item => item.uuid === values.devolucoes_ao_tesouro_da_prestacao[index].despesa);
+                                                                        setFieldValue(`devolucoes_ao_tesouro_da_prestacao[${index}].valor`, valorTemplate(desp.valor_total));
+                                                                    }
                                                                 }
                                                                 }
                                                                 className='form-control'
@@ -225,21 +265,6 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                 placeholder='Digite o valor'
                                                                 disabled={setDisabledCampos(devolucao) }
                                                             />
-                                                        </div>
-                                                        <div className='col-12 mt-2'>
-                                                            <label htmlFor="motivo">Motivo:</label>
-                                                            <textarea
-                                                                value={devolucao.motivo}
-                                                                name={`devolucoes_ao_tesouro_da_prestacao[${index}].motivo`}
-                                                                onChange={(e) => {
-                                                                    props.handleChange(e);
-                                                                }}
-                                                                className="form-control"
-                                                                rows="3"
-                                                                placeholder='Escreva o motivo da devolução'
-                                                                disabled={setDisabledCampos(devolucao) }
-                                                            >
-                                                            </textarea>
                                                         </div>
 
                                                         {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === "UE" || (index >= 1 && values.devolucoes_ao_tesouro_da_prestacao.length > 1) ? (

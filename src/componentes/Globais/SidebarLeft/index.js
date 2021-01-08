@@ -95,6 +95,7 @@ export const SidebarLeft = () => {
                                         <ReactTooltip disable={sidebarStatus.sideBarStatus}
                                                       id={url.dataFor}>{}</ReactTooltip>
                                         {url.subItens && url.subItens.length > 0 && url.subItens.map((subItem, index) =>
+                                            visoesService.getPermissoes(subItem.permissoes) ? (
                                             <NavItem
                                                 key={index}
                                                 navitemClassName="sub-menu-item"
@@ -103,7 +104,7 @@ export const SidebarLeft = () => {
                                                 <NavText>
                                                     {subItem.label}
                                                 </NavText>
-                                            </NavItem>
+                                            </NavItem>): null
                                         )}
                                     </NavItem>
                                 ) : null

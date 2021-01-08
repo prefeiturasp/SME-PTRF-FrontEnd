@@ -12,6 +12,7 @@ import IconePainel from "../../../assets/img/icone-menu-dre-painel.svg"
 import IconeRelatorio from "../../../assets/img/icone-menu-dre-relatorio.svg"
 import IconeApoioDiretoria from "../../../assets/img/icone-apoio-a-diretoria.svg"
 import IconeGestaoDePerfis from "../../../assets/img/icone-menu-gestao-de-perfis.svg"
+import IconeMenuParametrizacoes from "../../../assets/img/icone-menu-parametrizacoes.svg"
 
 const getDadosUsuario = () =>{
     let usuario = localStorage.getItem(USUARIO_NOME);
@@ -40,10 +41,10 @@ const UrlsMenuEscolas ={
         {label: "Prestação de contas", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:IconeMenuPrestacaoDeContas, permissoes: ['view_prestacaoconta'],
             subItens: [
                 {
-                    label: "Conciliação Bancária", url: "detalhe-das-prestacoes", dataFor:"detalhe_das_prestacoes", icone:""
+                    label: "Conciliação Bancária", url: "detalhe-das-prestacoes", dataFor:"detalhe_das_prestacoes", icone:"", permissoes: ['view_conciliacao_bancaria', ]
                 },
                 {
-                    label: "Geração de documentos", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:""
+                    label: "Geração de documentos", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:"", permissoes: ['view_default']
                 },
             ]
         },
@@ -62,12 +63,12 @@ const UrlsMenuDres ={
         /*{label: "Painel", url: "dre-dashboard", dataFor:"dre_dashboard", icone:IconePainel, permissoes: ['view_dashboard_dre'],},*/
         {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola, permissoes: ['view_associacao_dre'],},
         {label: "Acompanhamento de PC", url: "dre-dashboard", dataFor:"dre_dashboard", icone:IconeAcompanhamento, permissoes: ['view_dadosdiretoria_dre'],},
-        {label: "Relatório consolidado", url: "dre-relatorio-consolidado", dataFor:"dre_relatorio_consolidado", icone:IconeRelatorio, permissoes: ['view_dashboard_dre']},
+        {label: "Relatório consolidado", url: "dre-relatorio-consolidado", dataFor:"dre_relatorio_consolidado", icone:IconeRelatorio, permissoes: ['view_relatorio_consolidado_dre']},
         {label: "Dados da Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria, permissoes: ['view_dadosdiretoria_dre']},
         {label: "Apoio à Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeApoioDiretoria, permissoes: ['view_dadosdiretoria_dre'],
             subItens: [
                 {
-                    label: "Perguntas Frequentes", url: "dre-faq", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria
+                    label: "Perguntas Frequentes", url: "dre-faq", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria, permissoes: ['view_default']
                 }
             ]
         },
@@ -75,31 +76,35 @@ const UrlsMenuDres ={
     ]
 };
 
-const UrlsMenuSme ={
+const UrlsMenuSME ={
     dados_iniciais: {
-        default_selected: "undefined",
+        default_selected: "acompanhamento-pcs-sme",
         usuario: getDadosUsuario(),
         associacao_tipo_escola: getDadosUnidade().tipo_escola,
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
     lista_de_urls:[
-        {},
+        {label: "Parametrizações", url: "painel-parametrizacoes", dataFor:"sme_painel_parametrizacoes", icone:IconeMenuParametrizacoes, permissoes: ['view_default'],},
+        {label: "Acompanhamento de PCs", url: "acompanhamento-pcs-sme", dataFor:"acompanhamento_pcs_sme", icone:IconeAcompanhamento, permissoes: ['view_default'],},
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['view_default'],},
     ]
 };
+
+
 
 const GetUrls = () =>{
 
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
 
     if (dados_usuario_logado.visao_selecionada.nome === 'SME'){
-        return UrlsMenuSme
+        return UrlsMenuSME
     }else if(dados_usuario_logado.visao_selecionada.nome === 'DRE'){
         return UrlsMenuDres
     }else if (dados_usuario_logado.visao_selecionada.nome === 'UE'){
         return UrlsMenuEscolas
     }else {
         if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'SME')){
-            return UrlsMenuSme
+            return UrlsMenuSME
         }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'DRE')){
             return UrlsMenuDres
         }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'UE')){

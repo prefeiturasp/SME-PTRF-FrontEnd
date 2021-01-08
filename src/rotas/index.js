@@ -5,7 +5,8 @@ import {Pagina404} from "../paginas/escolas/404";
 import {DashboardPage} from "../paginas/Dashboard";
 import {CadastroDeDespesa} from "../paginas/escolas/Despesas/CadastroDeDespesas";
 import {EdicaoDeDespesa} from "../paginas/escolas/Despesas/EdicaoDeDespesa";
-import {ListaDeDespesasPage} from '../paginas/escolas/Despesas/ListaDeDespesas'
+import {ListaDeDespesasPage} from '../paginas/escolas/Despesas/ListaDeDespesas';
+import {CadastroSaida} from "../paginas/escolas/Despesas/CadastroSaida";
 import {CadastroDeReceita} from '../paginas/escolas/Receitas/CadastroReceita';
 import {EdicaoDeReceita} from '../paginas/escolas/Receitas/EdicaoReceita';
 import {ListaDeReceitasPage} from "../paginas/escolas/Receitas/ListaDeReceitas";
@@ -44,7 +45,8 @@ import {DetalhePrestacaoDeContasNaoApresentada} from "../componentes/dres/Presta
 import {RelatorioConsolidadoPage} from "../paginas/dres/RelatorioConsolidado";
 import {RelatorioConsolidadoApuracao} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoApuracao";
 import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoDadosDasUes";
-
+import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
+import {AcompanhamentoPcsSmePage} from "../paginas/SME/AcompanhamentoPcsSme";
 const routesConfig = [
     {
         exact: true,
@@ -63,6 +65,12 @@ const routesConfig = [
         path: "/cadastro-de-despesa/:origem?",
         component: CadastroDeDespesa,
         permissoes: ['view_despesa'],
+    },
+    {
+        exact: true,
+        path: "/cadastro-de-despesa-recurso-proprio/:uuid?",
+        component: CadastroSaida,
+        permissoes: ['view_receita']
     },
     {
         exact: true,
@@ -251,7 +259,7 @@ const routesConfig = [
         exact: true,
         path: "/dre-relatorio-consolidado",
         component: RelatorioConsolidadoPage,
-        permissoes: ['view_dashboard_dre'],
+        permissoes: ['view_relatorio_consolidado_dre'],
     },
 
     {
@@ -266,7 +274,18 @@ const routesConfig = [
         component: RelatorioConsolidadoDadosDasUes,
         permissoes: ['view_dashboard_dre'],
     },
-
+    {
+        exact: true,
+        path: "/painel-parametrizacoes",
+        component: PainelParametrizacoesPage,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/acompanhamento-pcs-sme",
+        component: AcompanhamentoPcsSmePage,
+        permissoes: ['view_default'],
+    },
     {
         exact: true,
         path: "/",

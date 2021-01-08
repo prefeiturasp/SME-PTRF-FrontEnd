@@ -74,7 +74,7 @@ export const Associacoes = () =>{
     const unidadeEscolarTemplate = (rowData) =>{
         return (
             <div>
-                {rowData['nome'] ? <strong>{rowData['nome']}</strong> : ''}
+                {rowData['unidade']['nome_com_tipo'] ? <strong>{rowData['unidade']['nome_com_tipo']}</strong> : ''}
             </div>
         )
     };

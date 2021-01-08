@@ -35,6 +35,17 @@ export const ModalConcluirAnalise = (props) => {
                             />
                         </div>
                     }
+                    {props.stateConcluirAnalise.status === 'REPROVADA' &&
+                        <div className="col-12 mt-2">
+                            <label htmlFor="motivos_reprovacao">Motivos:</label>
+                            <textarea
+                                name='motivos_reprovacao'
+                                value={props.stateConcluirAnalise.motivos_reprovacao}
+                                onChange={(e) => props.handleChangeConcluirAnalise(e.target.name, e.target.value)}
+                                className="form-control"
+                            />
+                        </div>
+                    }
                     {props.stateConcluirAnalise.status === 'DEVOLVIDA' &&
                         <>
                         <div className="col-12 mt-2">

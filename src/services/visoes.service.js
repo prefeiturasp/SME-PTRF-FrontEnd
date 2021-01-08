@@ -1,3 +1,4 @@
+
 import {
     USUARIO_LOGIN,
     ASSOCIACAO_UUID,
@@ -48,10 +49,11 @@ const setDadosPrimeiroAcesso = async (resp) =>{
         nome_associacao = usuario_logado.associacao_selecionada.nome;
     }else {
         if (resp.visoes.find(visao=> visao === 'SME')){
+            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "SME");
             visao="SME";
-            uuid_unidade = "";
-            uuid_associacao = "";
-            nome_associacao = "ASSOCIACAO SME";
+            uuid_unidade = unidade.uuid;
+            uuid_associacao = unidade.uuid;
+            nome_associacao = unidade.nome;
         }else if (resp.visoes.find(visao=> visao === 'DRE')){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
             visao="DRE";
@@ -71,7 +73,8 @@ const setDadosPrimeiroAcesso = async (resp) =>{
         unidade_nome = usuario_logado.unidade_selecionada.nome;
     }else{
         if (resp.visoes.find(visao=> visao === 'SME')){
-            unidade_nome = "Unidade Visão SME";
+            let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "SME");
+            unidade_nome = unidade.nome;
         }else if (resp.visoes.find(visao=> visao === 'DRE')){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
             unidade_nome = unidade.nome;
@@ -198,17 +201,16 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
 };
 
 const redirectVisao = (visao = null) => {
-
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
     if (visao === 'SME') {
-        redirect('/undefined')
+        redirect('/acompanhamento-pcs-sme')
     } else if (visao === 'DRE') {
         redirect('/dre-dashboard')
     } else if (visao === 'UE') {
         redirect('/dados-da-associacao')
     } else {
         if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'SME')) {
-            redirect('/undefined')
+            redirect('/acompanhamento-pcs-sme')
         } else if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'DRE')) {
             redirect('/dre-dashboard')
         } else if (dados_usuario_logado.visoes.find(visao => visao.tipo === 'UE')) {

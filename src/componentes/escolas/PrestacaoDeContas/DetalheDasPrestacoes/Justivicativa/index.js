@@ -1,4 +1,5 @@
 import React from "react";
+import {visoesService} from "../../../../../services/visoes.service";
 
 export const Justificativa = ({textareaJustificativa, handleChangeTextareaJustificativa, periodoFechado}) => {
     return(
@@ -12,7 +13,7 @@ export const Justificativa = ({textareaJustificativa, handleChangeTextareaJustif
                 id="justificativa"
                 name="justificativa"
                 placeholder="Escreva o comentário"
-                disabled={periodoFechado}
+                disabled={periodoFechado | !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
             >
             </textarea>
         </div>

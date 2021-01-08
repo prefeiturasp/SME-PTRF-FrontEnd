@@ -53,6 +53,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const initialConcluirAnalise = {
         status: "",
         resalvas: '',
+        motivos_reprovacao: '',
         data_limite_devolucao:'',
     };
 
@@ -530,6 +531,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
+                motivos_reprovacao: stateConcluirAnalise.motivos_reprovacao,
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }
@@ -608,7 +610,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const validateFormDevolucaoAoTesouro = async (values) => {
         const errors = {};
         values.devolucoes_ao_tesouro_da_prestacao.map((devolucao)=>{
-            if (!devolucao.data || !devolucao.despesa || devolucao.devolucao_total === '' || !devolucao.motivo || !devolucao.tipo || !devolucao.valor){
+            if (!devolucao.despesa || devolucao.devolucao_total === '' || !devolucao.tipo || !devolucao.valor){
                 setCamposObrigatorios(true);
                 errors.campos_obrigatorios = "Todos os campos são obrigatórios";
             }else {
