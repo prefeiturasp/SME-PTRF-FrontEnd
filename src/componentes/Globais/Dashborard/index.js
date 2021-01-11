@@ -4,7 +4,7 @@ import {DashboardCardInfoConta} from "./DashboardCardInfoConta";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
 import {getPeriodosNaoFuturos, getStatusPeriodoPorData} from "../../../services/escolas/PrestacaoDeContas.service";
-import {getAcoesAssociacao, getAcoesAssociacaoPorPeriodo, getAcoesAssociacaoPorConta, getTabelas} from "../../../services/Dashboard.service";
+import {getAcoesAssociacao, getAcoesAssociacaoPorPeriodoConta, getTabelas} from "../../../services/Dashboard.service";
 import {exibeDataPT_BR, getCorStatusPeriodo} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
 import {BarraDeStatusPeriodoAssociacao} from "./BarraDeStatusPeriodoAssociacao";
@@ -58,6 +58,7 @@ export const Dashboard = () => {
 
     const buscaPeriodos = async () => {
         let periodos = await getPeriodosNaoFuturos();
+        setSelectPeriodo(periodos[0].uuid)
         setPeriodosAssociacao(periodos);
     };
 
@@ -67,27 +68,21 @@ export const Dashboard = () => {
         setLoading(false);
     };
 
-    const handleChangePeriodo = async (value) => {
+    const handleChangePeriodo = async (periodo_uuid) => {
         setLoading(true);
-        setSelectPeriodo(false);
-        if (value) {
-            let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodo(uuid_associacao, value);
-            setSelectConta(true);
+        setSelectPeriodo(periodo_uuid);
+        if (periodo_uuid) {
+            let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodoConta(uuid_associacao, periodo_uuid, selectConta);
             setAcoesAssociacao(acoesPorPeriodo);
         }
         setLoading(false);
     };
 
-    const handleChangeConta = async (value) => {
+    const handleChangeConta = async (conta_associacao_uuid) => {
         setLoading(true);
-        setSelectConta(false);
-        setSelectPeriodo(true);
-        if (value) {
-            let acoesPorConta =  await getAcoesAssociacaoPorConta(uuid_associacao, value);
-            setAcoesAssociacao(acoesPorConta);
-        }else {
-            await buscaListaAcoesAssociacao();
-        }
+        setSelectConta(conta_associacao_uuid);
+        let acoesPorConta =  await getAcoesAssociacaoPorPeriodoConta(uuid_associacao, selectPeriodo, conta_associacao_uuid);
+        setAcoesAssociacao(acoesPorConta);
         setLoading(false);
     };
 
