@@ -1,9 +1,9 @@
 .login-bg {
-  background: url("../../assets/img/bg-login.png");
+  background: url("../../assets/img/bg-login-novo-tratado.jpg");
   width: 50%;
   position: absolute;
   height: 100%;
-  left: 0px;
+  left: 0;
   object-fit: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -13,7 +13,7 @@
 .right-half {
   @media screen and (min-width: 992px) {
     position: absolute;
-    right: 0px;
+    right: 0;
     width: 50%;
     height: 100%;
     text-align: center;
