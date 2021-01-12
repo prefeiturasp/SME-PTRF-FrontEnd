@@ -255,12 +255,17 @@ export const PrestacaoDeContas = () => {
                         />
                     }
                     {statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'EM_PROCESSAMENTO' ? (
+                        <>
                             <Loading
                                 corGrafico="black"
                                 corFonte="dark"
                                 marginTop="50"
                                 marginBottom="0"
                             />
+                            <div className='text-center'>
+                                <p>Os documentos estão sendo gerados. Enquanto isso, você pode realizar outras atividades no sistema.</p>
+                            </div>
+                        </>
                     ) :
                         <>
                             <TopoSelectPeriodoBotaoConcluir
