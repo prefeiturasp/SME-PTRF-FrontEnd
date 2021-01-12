@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useCallback} from "react";
 import {ModalBootstrapFormConcluirAnalise} from "../../Globais/ModalBootstrap";
 import {DatePickerField} from "../../Globais/DatePickerField";
 
@@ -16,6 +16,11 @@ export const ModalConcluirAnalise = (props) => {
         //     [name]: value
         // });
     };
+
+    const exibeMotivosOutros = useCallback(() =>{
+        console.log("Entrei em exibeMotivosOutros")
+        return selectOptions.find(outro=> outro === 'outros')
+    }, [selectOptions])
 
     const bodyTextarea = () => {
 
@@ -47,17 +52,38 @@ export const ModalConcluirAnalise = (props) => {
                             {/*<select
                                 name="selectOptions"
                                 multiple={true}
-                                onChange={(e)=>handleChange(e)}
+                                onChange={
+                                    (e)=>{
+                                        handleChange(e)
+                                        exibeMotivosOutros()
+                                    }
+
+                                }
                                 value={selectOptions}
                                 className="form-control"
                             >
                                 {props.motivosAprovadoComRessalva && props.motivosAprovadoComRessalva.length > 0 && props.motivosAprovadoComRessalva.map((motivo)=>(
                                     <option key={motivo.uuid} value={motivo.uuid}>{motivo.motivo}</option>
                                 ))}
+                                <option value="outros">Outros</option>
                                 <option value="zen">Zen</option>
                                 <option value="ana">Ana</option>
                                 <option value="junk">Junk</option>
-                            </select>*/}
+                            </select>
+
+                            {exibeMotivosOutros() &&
+                                <>
+                                    <br/>
+                                    <label htmlFor="resalvas">Outro motivo:</label>
+                                    <textarea
+                                        name='motivos_outros'
+                                        //value={props.stateConcluirAnalise.motivos_reprovacao}
+                                        //onChange={(e) => props.handleChangeConcluirAnalise(e.target.name, e.target.value)}
+                                        className="form-control"
+                                    />
+                                </>
+                            }*/}
+
 
 
 
