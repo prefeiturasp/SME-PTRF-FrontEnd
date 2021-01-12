@@ -43,10 +43,10 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
                             ))}
                         </select>
                     </div>
-                    {exibeMotivo && prestacaoDeContas && prestacaoDeContas.ressalvas_aprovacao &&
+                    {exibeMotivo && prestacaoDeContas && prestacaoDeContas.motivo_aprovacao_ressalva && prestacaoDeContas.motivo_aprovacao_ressalva.motivo &&
                         <div className='col-12 mt-3'>
                             <label htmlFor="motivo">Motivos:</label>
-                            <textarea defaultValue={prestacaoDeContas.ressalvas_aprovacao} disabled={true} className="form-control" id="exampleFormControlTextarea1" rows="3">
+                            <textarea defaultValue={prestacaoDeContas.motivo_aprovacao_ressalva.motivo} disabled={true} className="form-control" id="exampleFormControlTextarea1" rows="3">
                             </textarea>
                         </div>
                     }
