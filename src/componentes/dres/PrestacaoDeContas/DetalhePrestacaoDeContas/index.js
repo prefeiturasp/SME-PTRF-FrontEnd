@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {useParams, Redirect} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {
-    getDesfazerConclusaoAnalise,
+    getDesfazerConclusaoAnalise, getMotivosAprovadoComRessalva,
     getPrestacaoDeContasDetalhe
 } from "../../../../services/dres/PrestacaoDeContas.service";
 import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
@@ -100,6 +100,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [despesasTabelas, setDespesasTabelas] = useState([]);
     const [tiposDevolucao, setTiposDevolucao] = useState([]);
     const [camposObrigatorios, setCamposObrigatorios] = useState(false);
+    const [motivosAprovadoComRessalva, setMotivosAprovadoComRessalva] = useState([]);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -130,6 +131,14 @@ export const DetalhePrestacaoDeContas = () =>{
             setTiposDevolucao(resp);
         };
         carregaTiposDevolucao();
+    }, []);
+
+    useEffect(() => {
+        const carregaMotivosAprovadoComRessalva = async () => {
+            const resp = await getMotivosAprovadoComRessalva();
+            setMotivosAprovadoComRessalva(resp);
+        };
+        carregaMotivosAprovadoComRessalva();
     }, []);
 
     const getAnalisePrestacao = async ()=>{
@@ -367,7 +376,6 @@ export const DetalhePrestacaoDeContas = () =>{
         }else {
             return -1
         }
-
     };
 
     const handleChangeAnalisesDeContaDaPrestacao = (name, value) =>{
@@ -388,7 +396,6 @@ export const DetalhePrestacaoDeContas = () =>{
             [name]: value
         });
     };
-
     // Fim Ata
 
     const handleChangeDataCobranca = (name, value) =>{
@@ -515,7 +522,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
-                ressalvas_aprovacao: stateConcluirAnalise.resalvas,
+                motivo_aprovacao_ressalva:stateConcluirAnalise.resalvas,
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }else if (stateConcluirAnalise.status === 'DEVOLVIDA'){
@@ -734,6 +741,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         segundoBotaoTexto="Confirmar"
                         tabelaPrestacoes={tabelaPrestacoes}
                         stateConcluirAnalise={stateConcluirAnalise}
+                        motivosAprovadoComRessalva={motivosAprovadoComRessalva}
                         handleChangeConcluirAnalise={handleChangeConcluirAnalise}
                     />
                 </section>

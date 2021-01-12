@@ -25,13 +25,18 @@ export const ModalConcluirAnalise = (props) => {
 
                     {props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' &&
                         <div className="col-12 mt-2">
-                            <label htmlFor="resalvas">Motivos:</label>
-                            <textarea
+                            <label htmlFor="resalvas">Motivo:</label>
+                            <select
                                 name='resalvas'
                                 value={props.stateConcluirAnalise.resalvas}
                                 onChange={(e) => props.handleChangeConcluirAnalise(e.target.name, e.target.value)}
                                 className="form-control"
-                            />
+                            >
+                                <option value="">Selecione o motivo</option>
+                                {props.motivosAprovadoComRessalva && props.motivosAprovadoComRessalva.length > 0 && props.motivosAprovadoComRessalva.map((motivo)=>(
+                                    <option key={motivo.uuid} value={motivo.uuid}>{motivo.motivo}</option>
+                                ))}
+                            </select>
                         </div>
                     }
                     {props.stateConcluirAnalise.status === 'REPROVADA' &&

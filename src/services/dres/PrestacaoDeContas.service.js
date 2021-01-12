@@ -125,3 +125,9 @@ export const postNotificarComentarios = async (payload) => {
     return (await api.post(`/api/notificacoes/notificar/`, payload, authHeader)).data
 };
 
+export const getMotivosAprovadoComRessalva = async () => {
+    return (await api.get(`/api/motivos-aprovacao-ressalva/`, authHeader)).data
+};
+
+
+
