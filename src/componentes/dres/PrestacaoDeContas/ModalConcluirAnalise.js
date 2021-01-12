@@ -1,9 +1,26 @@
-import React from "react";
+import React, {useState} from "react";
 import {ModalBootstrapFormConcluirAnalise} from "../../Globais/ModalBootstrap";
 import {DatePickerField} from "../../Globais/DatePickerField";
 
 export const ModalConcluirAnalise = (props) => {
+
+    const [selectOptions, setSelectOptions] = useState([]);
+
+    const handleChange = (e) => {
+        let target = e.target
+        let name = target.name
+        //here
+        let value = Array.from(target.selectedOptions, option => option.value);
+        setSelectOptions(value);
+        // this.setState({
+        //     [name]: value
+        // });
+    };
+
     const bodyTextarea = () => {
+
+        //console.log("SELECT OPTION ", selectOptions)
+
         return (
             <form>
                 <div className='row'>
@@ -26,6 +43,24 @@ export const ModalConcluirAnalise = (props) => {
                     {props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' &&
                         <div className="col-12 mt-2">
                             <label htmlFor="resalvas">Motivo:</label>
+
+                            {/*<select
+                                name="selectOptions"
+                                multiple={true}
+                                onChange={(e)=>handleChange(e)}
+                                value={selectOptions}
+                                className="form-control"
+                            >
+                                {props.motivosAprovadoComRessalva && props.motivosAprovadoComRessalva.length > 0 && props.motivosAprovadoComRessalva.map((motivo)=>(
+                                    <option key={motivo.uuid} value={motivo.uuid}>{motivo.motivo}</option>
+                                ))}
+                                <option value="zen">Zen</option>
+                                <option value="ana">Ana</option>
+                                <option value="junk">Junk</option>
+                            </select>*/}
+
+
+
                             <select
                                 name='resalvas'
                                 value={props.stateConcluirAnalise.resalvas}
