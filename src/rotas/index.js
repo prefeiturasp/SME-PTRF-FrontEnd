@@ -47,6 +47,8 @@ import {RelatorioConsolidadoApuracao} from "../componentes/dres/RelatorioConsoli
 import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoDadosDasUes";
 import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
 import {AcompanhamentoPcsSmePage} from "../paginas/SME/AcompanhamentoPcsSme";
+import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoees/Estrutura/AcoesDasAssociacoes";
+
 const routesConfig = [
     {
         exact: true,
@@ -278,6 +280,12 @@ const routesConfig = [
         exact: true,
         path: "/painel-parametrizacoes",
         component: PainelParametrizacoesPage,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/parametro-acoes-associacoes",
+        component: AcoesDasAssociacoes,
         permissoes: ['view_default'],
     },
     {
