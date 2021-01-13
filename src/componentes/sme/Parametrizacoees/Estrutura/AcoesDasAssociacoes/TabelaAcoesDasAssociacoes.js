@@ -1,23 +1,11 @@
 import React from "react";
 import {DataTable} from 'primereact/datatable'
 import {Column} from 'primereact/column'
-import moment from "moment";
 
-export const TabelaAcoesDasAssociacoes = ({todasAsAcoes}) => {
 
-    const rowsPerPage = 10;
-
-    const statusTemplate = (rowData) => {
-        console.log('statusTemplate ', rowData.status)
-        return rowData.status && rowData.status === 'ATIVA' ? 'Ativa' : 'Inativa'
-    };
-
-    const dataTemplate = (rowData) => {
-        return rowData.criado_em ? moment(rowData.criado_em).format("DD/MM/YYYY [às] HH[h]mm") : '';
-    };
+export const TabelaAcoesDasAssociacoes = ({todasAsAcoes, rowsPerPage, statusTemplate, dataTemplate, acoesTemplate}) => {
 
     return(
-
         <DataTable
             value={todasAsAcoes}
             paginator={todasAsAcoes.length > rowsPerPage}
@@ -37,7 +25,11 @@ export const TabelaAcoesDasAssociacoes = ({todasAsAcoes}) => {
                 header="Status"
                 body={dataTemplate}
             />
+            <Column
+                field="acoes"
+                header="Ações"
+                body={acoesTemplate}
+            />
         </DataTable>
-
     )
 };

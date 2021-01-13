@@ -1,8 +1,6 @@
 import React from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
 
-export const BtnAddAcoes = () =>{
+export const BtnAddAcoes = ({FontAwesomeIcon, faPlus}) =>{
 
     return(
         <div className="d-flex  justify-content-end pb-4 mt-n5">

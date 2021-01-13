@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, despesasTabelas}) =>{
+export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, listaTiposDeAcao}) =>{
 
     return(
         <>
@@ -27,9 +27,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             className="form-control"
                         >
                             <option>Selecione a ação</option>
-                            <option value='ATIVA ação'>Ativa ação</option>
-                            <option value='INATIVA ação'>Inativa ação</option>
-                            {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
+                            {listaTiposDeAcao && listaTiposDeAcao.length > 0 && listaTiposDeAcao.map(item => (
                                 <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                             ))}
                         </select>
