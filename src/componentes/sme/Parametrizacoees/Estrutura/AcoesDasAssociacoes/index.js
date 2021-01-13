@@ -1,11 +1,12 @@
 import React, {useState, useEffect, useCallback, useMemo} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {getTodasAcoesDasAssociacoes} from "../../../../../services/sme/Parametrizacoes.service";
+import {getTodasAcoesDasAssociacoes, getTabelas} from "../../../../../services/sme/Parametrizacoes.service";
 import '../parametrizacoes-estrutura.scss'
 import {MenuInterno} from "../../../../Globais/MenuInterno";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
 import {Filtros} from "./Filtros";
-import {getDespesasTabelas} from "../../../../../services/escolas/Despesas.service";
+import {BtnAddAcoes} from "./BtnAddAcoes";
+import {TabelaAcoesDasAssociacoes} from "./TabelaAcoesDasAssociacoes";
 
 export const AcoesDasAssociacoes = () => {
 
@@ -31,7 +32,8 @@ export const AcoesDasAssociacoes = () => {
     }, [carregaTodasAsAcoes]);
 
     const carregaTabelasDespesas = useCallback(async () =>{
-        const resp = await getDespesasTabelas();
+        const resp = await getTabelas();
+        console.log('carregaTabelasDespesas ', resp)
         setDespesasTabelas(resp);
     }, []);
 
@@ -49,6 +51,14 @@ export const AcoesDasAssociacoes = () => {
         });
     };
 
+    const handleSubmitFiltros = async () =>{
+        console.log("handleSubmitFiltros ", stateFiltros)
+    };
+
+    const limpaFiltros = async ()=>{
+      setStateFiltros(initialStateFiltros)
+    };
+
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Ações das Associações</h1>
@@ -56,13 +66,19 @@ export const AcoesDasAssociacoes = () => {
                 <MenuInterno
                     caminhos_menu_interno={UrlsMenuInterno}
                 />
+                <BtnAddAcoes/>
                 <Filtros
                     stateFiltros={stateFiltros}
                     handleChangeFiltros={handleChangeFiltros}
+                    handleSubmitFiltros={handleSubmitFiltros}
+                    limpaFiltros={limpaFiltros}
                     despesasTabelas={despesasTabelas}
                 />
                 <p>Exibindo <span className='total-acoes'>{totalDeAcoes}</span> ações de associações</p>
-                {/*<button onClick={()=>setCount(prevState => prevState+1)}>Botão Sem Use Calback</button>*/}
+                <TabelaAcoesDasAssociacoes
+                    todasAsAcoes={todasAsAcoes}
+                />
+                {/*<button onClick={()=>setCount(prevState => prevState+1)}>Botão Sem Use Calback: {count}</button>*/}
             </div>
         </PaginasContainer>
     )

@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Filtros = ({stateFiltros, handleChangeFiltros, despesasTabelas}) =>{
+export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, despesasTabelas}) =>{
 
     return(
         <>
@@ -27,6 +27,8 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, despesasTabelas}) =>
                             className="form-control"
                         >
                             <option>Selecione a ação</option>
+                            <option value='ATIVA ação'>Ativa ação</option>
+                            <option value='INATIVA ação'>Inativa ação</option>
                             {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
                                 <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                             ))}
@@ -48,9 +50,9 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, despesasTabelas}) =>
                     </div>
                 </div>
 
-                <div className="d-flex  justify-content-end pb-3 mt-3">
-                    <button type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                    <button type="bu" className="btn btn-success mt-2">Filtrar</button>
+                <div className="d-flex  justify-content-end mt-n2">
+                    <button onClick={()=>limpaFiltros()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Limpar</button>
+                    <button onClick={handleSubmitFiltros} type="button" className="btn btn-success mt-2">Filtrar</button>
                 </div>
             </form>
         </>

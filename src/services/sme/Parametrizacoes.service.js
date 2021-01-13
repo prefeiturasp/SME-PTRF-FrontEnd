@@ -11,3 +11,7 @@ const authHeader = {
 export const getTodasAcoesDasAssociacoes = async () => {
     return (await api.get(`/api/acoes-associacoes/`, authHeader)).data
 };
+
+export const getTabelas = async () => {
+    return (await api.get(`/api/associacoes/tabelas/`, authHeader)).data
+};
