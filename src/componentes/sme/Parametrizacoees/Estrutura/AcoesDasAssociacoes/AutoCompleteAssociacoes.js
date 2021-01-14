@@ -28,16 +28,30 @@ const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete}) => {
 
     return (
         <form>
-            <h5>Basic</h5>
-            <AutoComplete
-                value={selectedAcao}
-                suggestions={filteredAcoes}
-                completeMethod={searchAcao}
-                field="associacao.unidade.nome_com_tipo"
-                onChange={(e) => setSelectedAcao(e.value)}
-                inputClassName="form-control"
-            />
-            <button onClick={handleSubmit} type='button'>Enviar</button>
+            <div className="form-group">
+                <label htmlFor="selectedAcao">Unidade Educacional</label>
+                <div className='row'>
+                    <div className='col-11 pr-0'>
+                        <AutoComplete
+                            value={selectedAcao}
+                            name='selectedAcao'
+                            inputId='selectedAcao'
+                            suggestions={filteredAcoes}
+                            completeMethod={searchAcao}
+                            field="associacao.unidade.nome_com_tipo"
+                            onChange={(e) => setSelectedAcao(e.value)}
+                            inputClassName="form-control"
+                            style={{width: "100%"}}
+                        />
+                    </div>
+                    <div className='col-1 pl-1'>
+                        <button className='btn btn-primary ml-2' onClick={handleSubmit} type='button'>Enviar</button>
+                    </div>
+                </div>
+
+            </div>
+
+
         </form>
     )
 };
