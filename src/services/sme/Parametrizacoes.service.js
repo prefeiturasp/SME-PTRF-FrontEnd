@@ -23,3 +23,11 @@ export const getFiltros = async (nome='', acao__uuid, status) => {
 export const postAddAcaoAssociacao = async (payload) => {
     return (await api.post(`/api/acoes-associacoes/`, payload, authHeader)).data
 };
+
+export const putAtualizarAcaoAssociacao = async (acao_associacao_uuid, payload) => {
+    return (await api.put(`/api/acoes-associacoes/${acao_associacao_uuid}/`, payload, authHeader)).data
+};
+
+export const deleteAcaoAssociacao = async (acao_associacao_uuid) => {
+    return (await api.delete(`/api/acoes-associacoes/${acao_associacao_uuid}/`, authHeader))
+};

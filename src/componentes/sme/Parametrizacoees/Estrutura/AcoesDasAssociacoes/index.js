@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback, useMemo} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {getTodasAcoesDasAssociacoes, getListaDeAcoes, getFiltros, postAddAcaoAssociacao} from "../../../../../services/sme/Parametrizacoes.service";
+import {getTodasAcoesDasAssociacoes, getListaDeAcoes, getFiltros, postAddAcaoAssociacao, putAtualizarAcaoAssociacao, deleteAcaoAssociacao} from "../../../../../services/sme/Parametrizacoes.service";
 import '../parametrizacoes-estrutura.scss'
 import {MenuInterno} from "../../../../Globais/MenuInterno";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
@@ -130,7 +130,8 @@ export const AcoesDasAssociacoes = () => {
     };
 
     const onHandleClose = () => {
-       setShowModalForm(false)
+        setStateFormModal(initialStateFormModal);
+        setShowModalForm(false)
     };
 
     const handleChangeFormModal = (name, value) => {
@@ -173,6 +174,15 @@ export const AcoesDasAssociacoes = () => {
                 await carregaTodasAsAcoes();
             }catch (e) {
                 console.log('Erro ao criar Ação Associação!! ', e)
+            }
+        }else {
+            try {
+                await putAtualizarAcaoAssociacao(stateFormModal.uuid, payload);
+                setShowModalForm(false);
+                console.log('Ação Associação alterada com sucesso');
+                await carregaTodasAsAcoes();
+            }catch (e) {
+                console.log('Erro ao alterar Ação Associação!! ', e)
             }
         }
 
