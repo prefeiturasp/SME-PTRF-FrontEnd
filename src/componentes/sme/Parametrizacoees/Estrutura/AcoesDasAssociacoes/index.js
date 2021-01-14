@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback, useMemo} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {getTodasAcoesDasAssociacoes, getListaDeAcoes, getFiltros} from "../../../../../services/sme/Parametrizacoes.service";
+import {getTodasAcoesDasAssociacoes, getListaDeAcoes, getFiltros, postAddAcaoAssociacao} from "../../../../../services/sme/Parametrizacoes.service";
 import '../parametrizacoes-estrutura.scss'
 import {MenuInterno} from "../../../../Globais/MenuInterno";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
@@ -11,7 +11,6 @@ import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
-import AutoCompleteAssociacoes from "./AutoCompleteAssociacoes";
 import {ModalFormAcoesDaAssociacao} from "./ModalFormAcoesDasAssociacoes";
 
 export const AcoesDasAssociacoes = () => {
@@ -115,9 +114,16 @@ export const AcoesDasAssociacoes = () => {
         console.log('handleEditarAcoes', rowData)
     };
 
-    const handleSubmitModalFormAcoesDasAssociacoes = (stateForm, associacaoAutocomplete) =>{
-        console.log('handleSubmitModalFormAcoesDasAssociacoes stateForm ', stateForm)
-        console.log('handleSubmitModalFormAcoesDasAssociacoes associacaoAutocomplete ', associacaoAutocomplete)
+    const handleSubmitModalFormAcoesDasAssociacoes = async (stateFormModal) =>{
+        console.log('handleSubmitModalFormAcoesDasAssociacoes stateForm ', stateFormModal);
+        try {
+            await postAddAcaoAssociacao(stateFormModal);
+            setShowModalForm(false);
+            console.log('Ação Associação criada com sucesso');
+            await carregaTodasAsAcoes();
+        }catch (e) {
+            console.log('Erro ao criar Ação Associação!! ', e)
+        }
     };
 
     return (

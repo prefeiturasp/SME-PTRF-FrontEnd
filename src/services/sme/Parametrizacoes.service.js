@@ -19,3 +19,7 @@ export const getListaDeAcoes = async () => {
 export const getFiltros = async (nome='', acao__uuid, status) => {
     return (await api.get(`/api/acoes-associacoes/?nome=${nome}${acao__uuid ? '&acao__uuid='+acao__uuid : ''}${status ? '&status='+status : ''}`, authHeader)).data
 };
+
+export const postAddAcaoAssociacao = async (payload) => {
+    return (await api.post(`/api/acoes-associacoes/`, payload, authHeader)).data
+};
