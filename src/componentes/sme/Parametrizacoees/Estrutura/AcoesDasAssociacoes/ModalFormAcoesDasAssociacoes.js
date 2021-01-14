@@ -89,16 +89,33 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                         </div>
                     </div>
 
+
+                    <div className="d-flex bd-highlight mt-2">
+                        <div className="p-Y flex-grow-1 bd-highlight">
+                            {props.stateFormModal && props.stateFormModal.operacao === 'edit' &&
+                            <button onClick={()=>props.setShowModalDeleteAcao(true)} type="button" className="btn btn btn-danger mt-2 mr-2">
+                                Apagar
+                            </button>
+                            }
+                        </div>
+                        <div className="p-Y bd-highlight">
+                            <button onClick={props.handleClose} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                        </div>
+                        <div className="p-Y bd-highlight">
+                            <button
+                                disabled={props.readOnly || !props.stateFormModal.acao || !props.stateFormModal.status}
+                                onClick={()=>props.handleSubmitModalFormAcoesDasAssociacoes(props.stateFormModal)}
+                                type="button"
+                                className="btn btn btn-success mt-2"
+                            >
+                                Salvar
+                            </button>
+                        </div>
+                    </div>
+
                     <div className="p-Y bd-highlight">
-                        <button onClick={props.handleClose} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                        <button
-                            disabled={props.readOnly || !props.stateFormModal.acao || !props.stateFormModal.status}
-                            onClick={()=>props.handleSubmitModalFormAcoesDasAssociacoes(props.stateFormModal)}
-                            type="button"
-                            className="btn btn btn-success mt-2"
-                        >
-                            Enviar
-                        </button>
+
+
                     </div>
                 </form>
             </>

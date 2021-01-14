@@ -12,6 +12,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import {ModalFormAcoesDaAssociacao} from "./ModalFormAcoesDasAssociacoes";
+import {ModalConfirmDeleteAcaoAssociacao} from "./ModalConfirmDeleteAcaoAssociacao";
 
 export const AcoesDasAssociacoes = () => {
 
@@ -27,7 +28,7 @@ export const AcoesDasAssociacoes = () => {
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [listaTiposDeAcao, setListaTiposDeAcao] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [showModalForm, setShowModalForm] = useState(false);
+
 
     const carregaTodasAsAcoes = useCallback(async () => {
         setLoading(true);
@@ -111,9 +112,12 @@ export const AcoesDasAssociacoes = () => {
         nome_unidade:"",
         operacao:'create',
     };
+    const [showModalForm, setShowModalForm] = useState(false);
+    const [showModalDeleteAcao, setShowModalDeleteAcao] = useState(false);
     const [associacaoAutocomplete, setAssociacaoAutocomplete] = useState(null);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [readOnly, setReadOnly] = useState(true);
+
 
     const recebeAcaoAutoComplete = (selectAcao) =>{
         setAssociacaoAutocomplete(selectAcao);
@@ -132,6 +136,10 @@ export const AcoesDasAssociacoes = () => {
     const onHandleClose = () => {
         setStateFormModal(initialStateFormModal);
         setShowModalForm(false)
+    };
+
+    const handleCloseDeleteAcao = () => {
+        setShowModalDeleteAcao(false)
     };
 
     const handleChangeFormModal = (name, value) => {
@@ -185,8 +193,17 @@ export const AcoesDasAssociacoes = () => {
                 console.log('Erro ao alterar Ação Associação!! ', e)
             }
         }
-
-
+    };
+    const onDeleteAcaoTrue = async ()=>{
+        try {
+            await deleteAcaoAssociacao(stateFormModal.uuid);
+            setShowModalDeleteAcao(false);
+            setShowModalForm(false);
+            console.log('Ação Associação excluída com sucesso');
+            await carregaTodasAsAcoes();
+        }catch (e) {
+            console.log('Erro ao excluir Ação Associação!! ', e)
+        }
     };
 
     return (
@@ -246,9 +263,23 @@ export const AcoesDasAssociacoes = () => {
                         stateFormModal={stateFormModal}
                         readOnly={readOnly}
                         listaTiposDeAcao={listaTiposDeAcao}
+                        setShowModalDeleteAcao={setShowModalDeleteAcao}
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
                         todasAsAcoesAutoComplete={todasAsAcoesAutoComplete}
+                    />
+                </section>
+                <section>
+                    <ModalConfirmDeleteAcaoAssociacao
+                        show={showModalDeleteAcao}
+                        handleClose={handleCloseDeleteAcao}
+                        onDeleteAcaoTrue={onDeleteAcaoTrue}
+                        titulo="Excluir Ação"
+                        texto="<p>Deseja realmente excluir esta ação?</p>"
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="danger"
+                        segundoBotaoTexto="Excluir"
                     />
                 </section>
             </div>
