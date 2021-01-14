@@ -13,7 +13,6 @@ import {faPlus, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import AutoCompleteAssociacoes from "./AutoCompleteAssociacoes";
 import {ModalFormAcoesDaAssociacao} from "./ModalFormAcoesDasAssociacoes";
-import {ModalEditarDeletarComentario} from "../../../../dres/PrestacaoDeContas/ModalEditarDeletarComentario";
 
 export const AcoesDasAssociacoes = () => {
 
@@ -81,7 +80,7 @@ export const AcoesDasAssociacoes = () => {
     };
 
     //Para a Tabela
-    const rowsPerPage = 10;
+    const rowsPerPage = 20;
     const statusTemplate = (rowData) => {
         return rowData.status && rowData.status === 'ATIVA' ? 'Ativa' : 'Inativa'
     };
@@ -116,8 +115,9 @@ export const AcoesDasAssociacoes = () => {
         console.log('handleEditarAcoes', rowData)
     };
 
-    const handleSubmitModalFormAcoesDasAssociacoes = () =>{
-        console.log('handleSubmitModalFormAcoesDasAssociacoes ')
+    const handleSubmitModalFormAcoesDasAssociacoes = (stateForm, associacaoAutocomplete) =>{
+        console.log('handleSubmitModalFormAcoesDasAssociacoes stateForm ', stateForm)
+        console.log('handleSubmitModalFormAcoesDasAssociacoes associacaoAutocomplete ', associacaoAutocomplete)
     };
 
     return (
@@ -154,9 +154,6 @@ export const AcoesDasAssociacoes = () => {
                         </div>
                     ) :
                     <>
-                        <AutoCompleteAssociacoes
-                            todasAsAcoesAutoComplete={todasAsAcoesAutoComplete}
-                        />
                         <p>Exibindo <span className='total-acoes'>{totalDeAcoes}</span> ações de associações</p>
                         <TabelaAcoesDasAssociacoes
                             todasAsAcoes={todasAsAcoes}
@@ -172,6 +169,7 @@ export const AcoesDasAssociacoes = () => {
                         show={showModalForm}
                         handleClose={onHandleClose}
                         handleSubmitModalFormAcoesDasAssociacoes={handleSubmitModalFormAcoesDasAssociacoes}
+                        listaTiposDeAcao={listaTiposDeAcao}
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
                         todasAsAcoesAutoComplete={todasAsAcoesAutoComplete}
