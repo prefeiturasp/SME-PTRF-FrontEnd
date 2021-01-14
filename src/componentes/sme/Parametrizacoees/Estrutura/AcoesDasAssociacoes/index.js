@@ -100,30 +100,83 @@ export const AcoesDasAssociacoes = () => {
         )
     };
 
+    // Para o ModalForm
+    const initialStateFormModal = {
+        associacao: "",
+        acao: "",
+        status: "",
+        codigo_eol:"",
+        uuid:"",
+        id:"",
+        nome_unidade:"",
+        operacao:'create',
+    };
+    const [associacaoAutocomplete, setAssociacaoAutocomplete] = useState(null);
+    const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
+    const [readOnly, setReadOnly] = useState(true);
+
+    const recebeAcaoAutoComplete = (selectAcao) =>{
+        setAssociacaoAutocomplete(selectAcao);
+        if (selectAcao){
+            setStateFormModal({
+                ...stateFormModal,
+                associacao: selectAcao.associacao.uuid,
+                codigo_eol: selectAcao.associacao.unidade.codigo_eol,
+                uuid: selectAcao.uuid,
+                id: selectAcao.id,
+            });
+            setReadOnly(false)
+        }
+    };
+
     const onHandleClose = () => {
        setShowModalForm(false)
     };
 
-    const handleAddAcoes = (rowData) => {
-        setShowModalForm(true)
-        console.log('handleEditarAcoes', rowData)
+    const handleChangeFormModal = (name, value) => {
+        setStateFormModal({
+            ...stateFormModal,
+            [name]: value
+        });
     };
 
     const handleEditarAcoes = (rowData) => {
-        setShowModalForm(true)
         console.log('handleEditarAcoes', rowData)
-    };
+        setReadOnly(false);
+        setStateFormModal({
+            associacao:rowData.associacao.uuid,
+            acao: rowData.acao.uuid,
+            status: rowData.status,
+            codigo_eol: rowData.associacao.unidade.codigo_eol,
+            uuid: rowData.uuid,
+            id: rowData.id,
+            nome_unidade: rowData.associacao.unidade.nome_com_tipo,
+            operacao:'edit',
+        });
+        setShowModalForm(true)
 
+    };
     const handleSubmitModalFormAcoesDasAssociacoes = async (stateFormModal) =>{
         console.log('handleSubmitModalFormAcoesDasAssociacoes stateForm ', stateFormModal);
-        try {
-            await postAddAcaoAssociacao(stateFormModal);
-            setShowModalForm(false);
-            console.log('Ação Associação criada com sucesso');
-            await carregaTodasAsAcoes();
-        }catch (e) {
-            console.log('Erro ao criar Ação Associação!! ', e)
+
+        const payload = {
+            associacao: stateFormModal.associacao,
+            acao: stateFormModal.acao,
+            status: stateFormModal.status,
+        };
+
+        if(stateFormModal.operacao === 'create'){
+            try {
+                await postAddAcaoAssociacao(payload);
+                setShowModalForm(false);
+                console.log('Ação Associação criada com sucesso');
+                await carregaTodasAsAcoes();
+            }catch (e) {
+                console.log('Erro ao criar Ação Associação!! ', e)
+            }
         }
+
+
     };
 
     return (
@@ -136,7 +189,9 @@ export const AcoesDasAssociacoes = () => {
                 <BtnAddAcoes
                     FontAwesomeIcon={FontAwesomeIcon}
                     faPlus={faPlus}
-                    handleAddAcoes={handleAddAcoes}
+                    setShowModalForm={setShowModalForm}
+                    initialStateFormModal={initialStateFormModal}
+                    setStateFormModal={setStateFormModal}
                 />
 
                 <button onClick={()=>setCount(prevState => prevState+1)}>Botão Sem Use Calback: {count}</button>
@@ -175,6 +230,11 @@ export const AcoesDasAssociacoes = () => {
                         show={showModalForm}
                         handleClose={onHandleClose}
                         handleSubmitModalFormAcoesDasAssociacoes={handleSubmitModalFormAcoesDasAssociacoes}
+                        recebeAcaoAutoComplete={recebeAcaoAutoComplete}
+                        associacaoAutocomplete={associacaoAutocomplete}
+                        handleChangeFormModal={handleChangeFormModal}
+                        stateFormModal={stateFormModal}
+                        readOnly={readOnly}
                         listaTiposDeAcao={listaTiposDeAcao}
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"

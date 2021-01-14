@@ -1,53 +1,41 @@
-import React, {useState} from "react";
+import React from "react";
 import {ModalFormParametrizacoesAcoesDaAssociacao} from "../../../../Globais/ModalBootstrap";
 import AutoCompleteAssociacoes from "./AutoCompleteAssociacoes";
 export const ModalFormAcoesDaAssociacao = (props) => {
-
-
-    const initialStateForm = {
-        associacao: "",
-        acao: "",
-        status: "",
-    };
-
-    const [associacaoAutocomplete, setAssociacaoAutocomplete] = useState(null);
-    const [stateFormModal, setStateFormModal] = useState(initialStateForm);
-    const [readOnly, setReadOnly] = useState(true);
-
-    const recebeAcaoAutoComplete = (selectAcao) =>{
-        setAssociacaoAutocomplete(selectAcao);
-        if (selectAcao){
-            setStateFormModal({
-                ...stateFormModal,
-                associacao: selectAcao.associacao.uuid
-            });
-            setReadOnly(false)
-        }
-    };
-
-    const handleChangeForm = (name, value) => {
-        setStateFormModal({
-            ...stateFormModal,
-            [name]: value
-        });
-    };
-
-    console.log('associacaoAutocomplete ', associacaoAutocomplete)
 
     const bodyTextarea = () => {
         return (
             <>
                 <form onSubmit={props.handleSubmitModalFormAcoesDasAssociacoes}>
-                    <AutoCompleteAssociacoes
-                        todasAsAcoesAutoComplete={props.todasAsAcoesAutoComplete}
-                        recebeAcaoAutoComplete={recebeAcaoAutoComplete}
-                    />
+                    {props.stateFormModal && props.stateFormModal.operacao === 'edit' ? (
+                        <div className='row'>
+                            <div className='col'>
+                                <label htmlFor="cod_eol">Unidade Educacional</label>
+                                <input
+                                    value={props.stateFormModal.nome_unidade}
+                                    name='nome_unidade'
+                                    id="nome_unidade"
+                                    type="text"
+                                    className="form-control"
+                                    readOnly={true}
+                                />
+                            </div>
+                        </div>
+                    ) :
+                        <>
+                            <label htmlFor="selectedAcao">Unidade Educacional</label>
+                            <AutoCompleteAssociacoes
+                                todasAsAcoesAutoComplete={props.todasAsAcoesAutoComplete}
+                                recebeAcaoAutoComplete={props.recebeAcaoAutoComplete}
+                            />
+                        </>
+                    }
+
                     <div className='row mt-3'>
                         <div className='col'>
                             <label htmlFor="cod_eol">Código EOL</label>
                             <input
-                                value={associacaoAutocomplete && associacaoAutocomplete.associacao.unidade.codigo_eol ? associacaoAutocomplete.associacao.unidade.codigo_eol : ''}
-                                //onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
+                                value={props.stateFormModal.codigo_eol}
                                 name='cod_eol'
                                 id="cod_eol"
                                 type="text"
@@ -59,12 +47,12 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                         <div className='col'>
                             <label htmlFor="acao">Ação</label>
                             <select
-                                value={stateFormModal.acao}
-                                onChange={(e) => handleChangeForm(e.target.name, e.target.value)}
+                                value={props.stateFormModal.acao}
+                                onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
                                 name='acao'
                                 id="acao"
                                 className="form-control"
-                                disabled={readOnly}
+                                disabled={props.readOnly}
                             >
                                 <option value=''>Selecione ação</option>
                                 {props.listaTiposDeAcao && props.listaTiposDeAcao.length > 0 && props.listaTiposDeAcao.map(item => (
@@ -76,12 +64,12 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                         <div className='col'>
                             <label htmlFor="status">Status</label>
                             <select
-                                value={stateFormModal.status}
-                                onChange={(e) => handleChangeForm(e.target.name, e.target.value)}
+                                value={props.stateFormModal.status}
+                                onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
                                 name='status'
                                 id="status"
                                 className="form-control"
-                                disabled={readOnly}
+                                disabled={props.readOnly}
                             >
                                 <option value=''>Selecione o status</option>
                                 <option value='ATIVA'>Ativa</option>
@@ -93,19 +81,19 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                     <div className='row mt-3'>
                         <div className='col'>
                             <p>Uuid</p>
-                            <p>{associacaoAutocomplete && associacaoAutocomplete.uuid ? associacaoAutocomplete.uuid : ''}</p>
+                            <p>{props.stateFormModal.uuid}</p>
                         </div>
                         <div className='col'>
                             <p>ID</p>
-                            <p>{associacaoAutocomplete && associacaoAutocomplete.id ? associacaoAutocomplete.id : ''}</p>
+                            <p>{props.stateFormModal.id}</p>
                         </div>
                     </div>
 
                     <div className="p-Y bd-highlight">
                         <button onClick={props.handleClose} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
                         <button
-                            disabled={readOnly || !stateFormModal.acao || !stateFormModal.status}
-                            onClick={()=>props.handleSubmitModalFormAcoesDasAssociacoes(stateFormModal)}
+                            disabled={props.readOnly || !props.stateFormModal.acao || !props.stateFormModal.status}
+                            onClick={()=>props.handleSubmitModalFormAcoesDasAssociacoes(props.stateFormModal)}
                             type="button"
                             className="btn btn btn-success mt-2"
                         >

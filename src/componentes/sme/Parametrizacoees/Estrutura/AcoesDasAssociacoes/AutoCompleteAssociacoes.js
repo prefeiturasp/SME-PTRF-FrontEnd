@@ -5,7 +5,7 @@ const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete, recebeAcaoAutoComple
     const [selectedAcao, setSelectedAcao] = useState(null);
     const [filteredAcoes, setFilteredAcoes] = useState(null);
 
-    console.log("AUTOCOMPLETE todasAsAcoesAutoComplete ", todasAsAcoesAutoComplete);
+    //console.log("AUTOCOMPLETE todasAsAcoesAutoComplete ", todasAsAcoesAutoComplete);
 
     const searchAcao = (event) => {
         setTimeout(() => {
