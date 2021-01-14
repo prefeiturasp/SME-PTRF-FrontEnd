@@ -12,6 +12,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import AutoCompleteAssociacoes from "./AutoCompleteAssociacoes";
+import {ModalFormAcoesDaAssociacao} from "./ModalFormAcoesDasAssociacoes";
+import {ModalEditarDeletarComentario} from "../../../../dres/PrestacaoDeContas/ModalEditarDeletarComentario";
 
 export const AcoesDasAssociacoes = () => {
 
@@ -27,6 +29,7 @@ export const AcoesDasAssociacoes = () => {
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [listaTiposDeAcao, setListaTiposDeAcao] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showModalForm, setShowModalForm] = useState(false);
 
     const carregaTodasAsAcoes = useCallback(async () => {
         setLoading(true);
@@ -85,9 +88,7 @@ export const AcoesDasAssociacoes = () => {
     const dataTemplate = (rowData) => {
         return rowData.criado_em ? moment(rowData.criado_em).format("DD/MM/YYYY [às] HH[h]mm") : '';
     };
-    const handleEditarAcoes = (rowData) => {
-        console.log('handleEditarAcoes', rowData)
-    };
+
     const acoesTemplate = (rowData) => {
         return (
             <div>
@@ -101,6 +102,24 @@ export const AcoesDasAssociacoes = () => {
         )
     };
 
+    const onHandleClose = () => {
+       setShowModalForm(false)
+    };
+
+    const handleAddAcoes = (rowData) => {
+        setShowModalForm(true)
+        console.log('handleEditarAcoes', rowData)
+    };
+
+    const handleEditarAcoes = (rowData) => {
+        setShowModalForm(true)
+        console.log('handleEditarAcoes', rowData)
+    };
+
+    const handleSubmitModalFormAcoesDasAssociacoes = () =>{
+        console.log('handleSubmitModalFormAcoesDasAssociacoes ')
+    };
+
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Ações das Associações</h1>
@@ -111,6 +130,7 @@ export const AcoesDasAssociacoes = () => {
                 <BtnAddAcoes
                     FontAwesomeIcon={FontAwesomeIcon}
                     faPlus={faPlus}
+                    handleAddAcoes={handleAddAcoes}
                 />
 
                 <button onClick={()=>setCount(prevState => prevState+1)}>Botão Sem Use Calback: {count}</button>
@@ -147,6 +167,16 @@ export const AcoesDasAssociacoes = () => {
                         />
                     </>
                 }
+                <section>
+                    <ModalFormAcoesDaAssociacao
+                        show={showModalForm}
+                        handleClose={onHandleClose}
+                        handleSubmitModalFormAcoesDasAssociacoes={handleSubmitModalFormAcoesDasAssociacoes}
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoCss="outline-success"
+                        todasAsAcoesAutoComplete={todasAsAcoesAutoComplete}
+                    />
+                </section>
             </div>
         </PaginasContainer>
     )
