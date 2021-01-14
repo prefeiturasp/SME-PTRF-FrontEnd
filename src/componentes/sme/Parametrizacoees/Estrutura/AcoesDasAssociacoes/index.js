@@ -11,6 +11,7 @@ import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
+import AutoCompleteAssociacoes from "./AutoCompleteAssociacoes";
 
 export const AcoesDasAssociacoes = () => {
 
@@ -21,6 +22,7 @@ export const AcoesDasAssociacoes = () => {
     };
 
     const [todasAsAcoes, setTodasAsAcoes] = useState([]);
+    const [todasAsAcoesAutoComplete, setTodasAsAcoesAutoComplete] = useState([]);
     const [count, setCount] = useState(0);
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [listaTiposDeAcao, setListaTiposDeAcao] = useState([]);
@@ -31,6 +33,12 @@ export const AcoesDasAssociacoes = () => {
         let todas_acoes = await getTodasAcoesDasAssociacoes();
         console.log('carregaTodasAsAcoes ', todas_acoes);
         setTodasAsAcoes(todas_acoes);
+
+        // Setando sempre todas as ações retornadas para o autocomplete.
+        // Nesessário para quando se usa os filtros.
+        // Senão o objeto retornado para o autocomplete serão só os elementos filtrados.
+        setTodasAsAcoesAutoComplete(todas_acoes);
+
         setLoading(false);
     }, []);
 
@@ -63,6 +71,7 @@ export const AcoesDasAssociacoes = () => {
         setTodasAsAcoes(acoes_filtradas);
         setLoading(false)
     };
+
     const limpaFiltros = async () => {
         setStateFiltros(initialStateFiltros);
         await carregaTodasAsAcoes();
@@ -125,6 +134,9 @@ export const AcoesDasAssociacoes = () => {
                         </div>
                     ) :
                     <>
+                        <AutoCompleteAssociacoes
+                            todasAsAcoesAutoComplete={todasAsAcoesAutoComplete}
+                        />
                         <p>Exibindo <span className='total-acoes'>{totalDeAcoes}</span> ações de associações</p>
                         <TabelaAcoesDasAssociacoes
                             todasAsAcoes={todasAsAcoes}
