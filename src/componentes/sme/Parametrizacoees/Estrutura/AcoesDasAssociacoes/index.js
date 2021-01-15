@@ -34,7 +34,6 @@ export const AcoesDasAssociacoes = () => {
     const carregaTodasAsAcoes = useCallback(async () => {
         setLoading(true);
         let todas_acoes = await getTodasAcoesDasAssociacoes();
-        console.log('carregaTodasAsAcoes ', todas_acoes);
         setTodasAsAcoes(todas_acoes);
 
         // Setando sempre todas as ações retornadas para o autocomplete.
@@ -119,10 +118,8 @@ export const AcoesDasAssociacoes = () => {
     const [associacaoAutocomplete, setAssociacaoAutocomplete] = useState(null);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [readOnly, setReadOnly] = useState(true);
-    const [rateiosAcao, setRateiosAcao] = useState([]);
     const [qtdeRateiosAcao, setQtdeRateiosAcao] = useState(0);
     const [qtdeReceitasAcao, setQtdeReceitasAcao] = useState(0);
-
 
     const recebeAcaoAutoComplete = (selectAcao) =>{
         setAssociacaoAutocomplete(selectAcao);
@@ -161,7 +158,6 @@ export const AcoesDasAssociacoes = () => {
     };
 
     const handleEditarAcoes = (rowData) => {
-        console.log('handleEditarAcoes', rowData)
         setReadOnly(false);
         setStateFormModal({
             associacao:rowData.associacao.uuid,
@@ -177,8 +173,6 @@ export const AcoesDasAssociacoes = () => {
 
     };
     const handleSubmitModalFormAcoesDasAssociacoes = async (stateFormModal) =>{
-        console.log('handleSubmitModalFormAcoesDasAssociacoes stateForm ', stateFormModal);
-
         const payload = {
             associacao: stateFormModal.associacao,
             acao: stateFormModal.acao,
@@ -207,21 +201,14 @@ export const AcoesDasAssociacoes = () => {
     };
 
     const serviceCrudAcoes = async () =>{
-
-        console.log('serviceCrudAcoes ', stateFormModal)
-
+        setShowModalForm(false);
+        setLoading(true);
 
         let rateios_acao = await getRateiosAcao(stateFormModal.uuid, stateFormModal.associacao);
         let receitas_acao = await getReceitasAcao(stateFormModal.associacao, stateFormModal.uuid);
 
-        console.log('serviceCrudAcoes rateios_acao ', rateios_acao)
-        console.log('serviceCrudAcoes receitas_acao ', receitas_acao)
-
         if (rateios_acao.length > 0){
             setQtdeRateiosAcao(rateios_acao.length);
-            rateios_acao.map((rateio)=>(
-                setRateiosAcao(oldProps=>[...oldProps, {nome_fornecedor: rateio.nome_fornecedor, aplicacao_recurso: rateio.aplicacao_recurso, valor_total: rateio.valor_total}]))
-            )
         }
         if (receitas_acao.length > 0){
             setQtdeReceitasAcao(receitas_acao.length);
@@ -229,11 +216,12 @@ export const AcoesDasAssociacoes = () => {
 
         if (rateios_acao.length > 0 || receitas_acao.length > 0){
             setShowModalForm(false);
+            setLoading(false);
             setShowModalInfoQtdeRateiosReceitas(true)
         }else {
+            setLoading(false);
             setShowModalDeleteAcao(true)
         }
-
     };
 
     const onDeleteAcaoTrue = async ()=>{
@@ -247,8 +235,6 @@ export const AcoesDasAssociacoes = () => {
             console.log('Erro ao excluir Ação Associação!! ', e)
         }
     };
-
-    console.log("RATEIOS ACAO XXXXXXXXXXX ", rateiosAcao)
 
     return (
         <PaginasContainer>
@@ -331,7 +317,7 @@ export const AcoesDasAssociacoes = () => {
                         show={showModalInfoQtdeRateiosReceitas}
                         handleClose={handleCloseInfoQtdeRateiosReceitas}
                         titulo="Exclusão não permitida"
-                        texto={`<p class="mb-0">Não é permitido excluir esta ação. </p> ${qtdeRateiosAcao > 0 ? '<p class="mb-0">Existe(m) ' + qtdeRateiosAcao + ' rateio(s).</p>' : ''}${qtdeReceitasAcao > 0 ? '<p class="mb-0">Existe(m) ' + qtdeReceitasAcao + ' receita(s).</p>' : ''} <p>Atribuída(s) a esta ação</p>`}
+                        texto={`<p class="mb-0">Não é permitido excluir esta ação. </p> ${qtdeRateiosAcao > 0 ? '<p class="mb-0">Existe(m) ' + qtdeRateiosAcao + ' rateio(s).</p>' : ''}${qtdeReceitasAcao > 0 ? '<p class="mb-0">Existe(m) ' + qtdeReceitasAcao + ' receita(s).</p>' : ''} <p>Atribuída(s) a esta ação.</p>`}
                         primeiroBotaoTexto="Fechar"
                         primeiroBotaoCss="success"
                     />

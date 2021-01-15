@@ -1,5 +1,7 @@
 import React, {useState, memo} from 'react';
 import {AutoComplete} from 'primereact/autocomplete';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faSearch, faEdit} from "@fortawesome/free-solid-svg-icons";
 
 const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete, recebeAcaoAutoComplete}) => {
     const [selectedAcao, setSelectedAcao] = useState(null);
@@ -33,11 +35,16 @@ const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete, recebeAcaoAutoComple
                     field="associacao.unidade.nome_com_tipo"
                     onChange={(e) => setSelectedAcao(e.value)}
                     inputClassName="form-control"
-                    style={{width: "100%"}}
+                    style={{width: "100%", borderLeft:'none'}}
                 />
             </div>
             <div className="bd-highlight">
-                <button className='btn btn-primary ml-2' onClick={() => recebeAcaoAutoComplete(selectedAcao)} type='button'>Enviar</button>
+                <button className='btn btn-link ml-0 py-1 px-2 ml-n1 border-top border-right border-bottom' onClick={() => recebeAcaoAutoComplete(selectedAcao)} type='button'>
+                    <FontAwesomeIcon
+                        style={{fontSize: '20px', marginRight: "0", color: "#42474A"}}
+                        icon={faSearch}
+                    />
+                </button>
             </div>
         </div>
     )
