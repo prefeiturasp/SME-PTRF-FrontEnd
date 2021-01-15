@@ -25,11 +25,9 @@ export const AcoesDasAssociacoes = () => {
 
     const [todasAsAcoes, setTodasAsAcoes] = useState([]);
     const [todasAsAcoesAutoComplete, setTodasAsAcoesAutoComplete] = useState([]);
-    const [count, setCount] = useState(0);
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [listaTiposDeAcao, setListaTiposDeAcao] = useState([]);
     const [loading, setLoading] = useState(true);
-
 
     const carregaTodasAsAcoes = useCallback(async () => {
         setLoading(true);
@@ -73,7 +71,6 @@ export const AcoesDasAssociacoes = () => {
         setTodasAsAcoes(acoes_filtradas);
         setLoading(false)
     };
-
     const limpaFiltros = async () => {
         setStateFiltros(initialStateFiltros);
         await carregaTodasAsAcoes();
@@ -87,7 +84,6 @@ export const AcoesDasAssociacoes = () => {
     const dataTemplate = (rowData) => {
         return rowData.criado_em ? moment(rowData.criado_em).format("DD/MM/YYYY [às] HH[h]mm") : '';
     };
-
     const acoesTemplate = (rowData) => {
         return (
             <div>
@@ -106,11 +102,11 @@ export const AcoesDasAssociacoes = () => {
         associacao: "",
         acao: "",
         status: "",
-        codigo_eol:"",
-        uuid:"",
-        id:"",
-        nome_unidade:"",
-        operacao:'create',
+        codigo_eol: "",
+        uuid: "",
+        id: "",
+        nome_unidade: "",
+        operacao: 'create',
     };
     const [showModalForm, setShowModalForm] = useState(false);
     const [showModalDeleteAcao, setShowModalDeleteAcao] = useState(false);
@@ -121,9 +117,9 @@ export const AcoesDasAssociacoes = () => {
     const [qtdeRateiosAcao, setQtdeRateiosAcao] = useState(0);
     const [qtdeReceitasAcao, setQtdeReceitasAcao] = useState(0);
 
-    const recebeAcaoAutoComplete = (selectAcao) =>{
+    const recebeAcaoAutoComplete = (selectAcao) => {
         setAssociacaoAutocomplete(selectAcao);
-        if (selectAcao){
+        if (selectAcao) {
             setStateFormModal({
                 ...stateFormModal,
                 associacao: selectAcao.associacao.uuid,
@@ -134,104 +130,96 @@ export const AcoesDasAssociacoes = () => {
             setReadOnly(false)
         }
     };
-
     const onHandleClose = () => {
         setStateFormModal(initialStateFormModal);
         setShowModalForm(false)
     };
-
     const handleCloseDeleteAcao = () => {
         setShowModalDeleteAcao(false)
     };
-
     const handleCloseInfoQtdeRateiosReceitas = () => {
         setShowModalInfoQtdeRateiosReceitas(false);
         setQtdeRateiosAcao(0);
         setQtdeReceitasAcao(0);
     };
-
     const handleChangeFormModal = (name, value) => {
         setStateFormModal({
             ...stateFormModal,
             [name]: value
         });
     };
-
     const handleEditarAcoes = (rowData) => {
         setReadOnly(false);
         setStateFormModal({
-            associacao:rowData.associacao.uuid,
+            associacao: rowData.associacao.uuid,
             acao: rowData.acao.uuid,
             status: rowData.status,
             codigo_eol: rowData.associacao.unidade.codigo_eol,
             uuid: rowData.uuid,
             id: rowData.id,
             nome_unidade: rowData.associacao.unidade.nome_com_tipo,
-            operacao:'edit',
+            operacao: 'edit',
         });
         setShowModalForm(true)
-
     };
-    const handleSubmitModalFormAcoesDasAssociacoes = async (stateFormModal) =>{
+    const handleSubmitModalFormAcoesDasAssociacoes = async (stateFormModal) => {
         const payload = {
             associacao: stateFormModal.associacao,
             acao: stateFormModal.acao,
             status: stateFormModal.status,
         };
 
-        if(stateFormModal.operacao === 'create'){
+        if (stateFormModal.operacao === 'create') {
             try {
                 await postAddAcaoAssociacao(payload);
                 setShowModalForm(false);
                 console.log('Ação Associação criada com sucesso');
                 await carregaTodasAsAcoes();
-            }catch (e) {
+            } catch (e) {
                 console.log('Erro ao criar Ação Associação!! ', e)
             }
-        }else {
+        } else {
             try {
                 await putAtualizarAcaoAssociacao(stateFormModal.uuid, payload);
                 setShowModalForm(false);
                 console.log('Ação Associação alterada com sucesso');
                 await carregaTodasAsAcoes();
-            }catch (e) {
+            } catch (e) {
                 console.log('Erro ao alterar Ação Associação!! ', e)
             }
         }
     };
-
-    const serviceCrudAcoes = async () =>{
+    const serviceCrudAcoes = async () => {
         setShowModalForm(false);
         setLoading(true);
 
         let rateios_acao = await getRateiosAcao(stateFormModal.uuid, stateFormModal.associacao);
         let receitas_acao = await getReceitasAcao(stateFormModal.associacao, stateFormModal.uuid);
 
-        if (rateios_acao.length > 0){
+        if (rateios_acao.length > 0) {
             setQtdeRateiosAcao(rateios_acao.length);
         }
-        if (receitas_acao.length > 0){
+        if (receitas_acao.length > 0) {
             setQtdeReceitasAcao(receitas_acao.length);
         }
 
-        if (rateios_acao.length > 0 || receitas_acao.length > 0){
+        if (rateios_acao.length > 0 || receitas_acao.length > 0) {
             setShowModalForm(false);
             setLoading(false);
             setShowModalInfoQtdeRateiosReceitas(true)
-        }else {
+        } else {
             setLoading(false);
             setShowModalDeleteAcao(true)
         }
     };
-
-    const onDeleteAcaoTrue = async ()=>{
+    const onDeleteAcaoTrue = async () => {
         try {
             await deleteAcaoAssociacao(stateFormModal.uuid);
             setShowModalDeleteAcao(false);
             setShowModalForm(false);
             console.log('Ação Associação excluída com sucesso');
             await carregaTodasAsAcoes();
-        }catch (e) {
+        } catch (e) {
             console.log('Erro ao excluir Ação Associação!! ', e)
         }
     };
@@ -243,24 +231,6 @@ export const AcoesDasAssociacoes = () => {
                 <MenuInterno
                     caminhos_menu_interno={UrlsMenuInterno}
                 />
-                <BtnAddAcoes
-                    FontAwesomeIcon={FontAwesomeIcon}
-                    faPlus={faPlus}
-                    setShowModalForm={setShowModalForm}
-                    initialStateFormModal={initialStateFormModal}
-                    setStateFormModal={setStateFormModal}
-                />
-
-                <button onClick={()=>setCount(prevState => prevState+1)}>Botão Sem Use Calback: {count}</button>
-
-                <Filtros
-                    stateFiltros={stateFiltros}
-                    handleChangeFiltros={handleChangeFiltros}
-                    handleSubmitFiltros={handleSubmitFiltros}
-                    limpaFiltros={limpaFiltros}
-                    listaTiposDeAcao={listaTiposDeAcao}
-                />
-
                 {loading ? (
                         <div className="mt-5">
                             <Loading
@@ -272,6 +242,20 @@ export const AcoesDasAssociacoes = () => {
                         </div>
                     ) :
                     <>
+                        <BtnAddAcoes
+                            FontAwesomeIcon={FontAwesomeIcon}
+                            faPlus={faPlus}
+                            setShowModalForm={setShowModalForm}
+                            initialStateFormModal={initialStateFormModal}
+                            setStateFormModal={setStateFormModal}
+                        />
+                        <Filtros
+                            stateFiltros={stateFiltros}
+                            handleChangeFiltros={handleChangeFiltros}
+                            handleSubmitFiltros={handleSubmitFiltros}
+                            limpaFiltros={limpaFiltros}
+                            listaTiposDeAcao={listaTiposDeAcao}
+                        />
                         <p>Exibindo <span className='total-acoes'>{totalDeAcoes}</span> ações de associações</p>
                         <TabelaAcoesDasAssociacoes
                             todasAsAcoes={todasAsAcoes}

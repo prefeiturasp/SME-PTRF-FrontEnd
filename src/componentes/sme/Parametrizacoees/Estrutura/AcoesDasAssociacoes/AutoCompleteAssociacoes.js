@@ -1,13 +1,11 @@
 import React, {useState, memo} from 'react';
 import {AutoComplete} from 'primereact/autocomplete';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSearch, faEdit} from "@fortawesome/free-solid-svg-icons";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
 
 const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete, recebeAcaoAutoComplete}) => {
     const [selectedAcao, setSelectedAcao] = useState(null);
     const [filteredAcoes, setFilteredAcoes] = useState(null);
-
-    //console.log("AUTOCOMPLETE todasAsAcoesAutoComplete ", todasAsAcoesAutoComplete);
 
     const searchAcao = (event) => {
         setTimeout(() => {

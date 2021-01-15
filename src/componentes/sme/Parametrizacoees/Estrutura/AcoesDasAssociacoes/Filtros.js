@@ -1,7 +1,6 @@
 import React from "react";
 
 export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, listaTiposDeAcao}) =>{
-
     return(
         <>
             <form>
@@ -26,7 +25,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             id="filtrar_por_acao"
                             className="form-control"
                         >
-                            <option>Selecione a ação</option>
+                            <option value=''>Selecione a ação</option>
                             {listaTiposDeAcao && listaTiposDeAcao.length > 0 && listaTiposDeAcao.map(item => (
                                 <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                             ))}
@@ -41,13 +40,12 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             id="filtrar_por_status"
                             className="form-control"
                         >
-                            <option>Selecione o status</option>
+                            <option value=''>Selecione o status</option>
                             <option value='ATIVA'>Ativa</option>
                             <option value='INATIVA'>Inativa</option>
                         </select>
                     </div>
                 </div>
-
                 <div className="d-flex  justify-content-end mt-n2">
                     <button onClick={()=>limpaFiltros()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Limpar</button>
                     <button onClick={handleSubmitFiltros} type="button" className="btn btn-success mt-2">Filtrar</button>
