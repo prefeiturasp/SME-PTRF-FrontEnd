@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback, useMemo} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {getTodasAcoesDasAssociacoes, getListaDeAcoes, getFiltros, postAddAcaoAssociacao, putAtualizarAcaoAssociacao, deleteAcaoAssociacao} from "../../../../../services/sme/Parametrizacoes.service";
+import {getTodasAcoesDasAssociacoes, getListaDeAcoes, getFiltros, postAddAcaoAssociacao, putAtualizarAcaoAssociacao, deleteAcaoAssociacao, getRateiosAcao, getReceitasAcao} from "../../../../../services/sme/Parametrizacoes.service";
 import '../parametrizacoes-estrutura.scss'
 import {MenuInterno} from "../../../../Globais/MenuInterno";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
@@ -13,6 +13,7 @@ import {faPlus, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import {ModalFormAcoesDaAssociacao} from "./ModalFormAcoesDasAssociacoes";
 import {ModalConfirmDeleteAcaoAssociacao} from "./ModalConfirmDeleteAcaoAssociacao";
+import {ModalInfoQtdeRateiosReceitasAcao} from "./ModalInfoQtdeRateiosReceitasAcao";
 
 export const AcoesDasAssociacoes = () => {
 
@@ -114,9 +115,13 @@ export const AcoesDasAssociacoes = () => {
     };
     const [showModalForm, setShowModalForm] = useState(false);
     const [showModalDeleteAcao, setShowModalDeleteAcao] = useState(false);
+    const [showModalInfoQtdeRateiosReceitas, setShowModalInfoQtdeRateiosReceitas] = useState(false);
     const [associacaoAutocomplete, setAssociacaoAutocomplete] = useState(null);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [readOnly, setReadOnly] = useState(true);
+    const [rateiosAcao, setRateiosAcao] = useState([]);
+    const [qtdeRateiosAcao, setQtdeRateiosAcao] = useState(0);
+    const [qtdeReceitasAcao, setQtdeReceitasAcao] = useState(0);
 
 
     const recebeAcaoAutoComplete = (selectAcao) =>{
@@ -140,6 +145,12 @@ export const AcoesDasAssociacoes = () => {
 
     const handleCloseDeleteAcao = () => {
         setShowModalDeleteAcao(false)
+    };
+
+    const handleCloseInfoQtdeRateiosReceitas = () => {
+        setShowModalInfoQtdeRateiosReceitas(false);
+        setQtdeRateiosAcao(0);
+        setQtdeReceitasAcao(0);
     };
 
     const handleChangeFormModal = (name, value) => {
@@ -194,6 +205,37 @@ export const AcoesDasAssociacoes = () => {
             }
         }
     };
+
+    const serviceCrudAcoes = async () =>{
+
+        console.log('serviceCrudAcoes ', stateFormModal)
+
+
+        let rateios_acao = await getRateiosAcao(stateFormModal.uuid, stateFormModal.associacao);
+        let receitas_acao = await getReceitasAcao(stateFormModal.associacao, stateFormModal.uuid);
+
+        console.log('serviceCrudAcoes rateios_acao ', rateios_acao)
+        console.log('serviceCrudAcoes receitas_acao ', receitas_acao)
+
+        if (rateios_acao.length > 0){
+            setQtdeRateiosAcao(rateios_acao.length);
+            rateios_acao.map((rateio)=>(
+                setRateiosAcao(oldProps=>[...oldProps, {nome_fornecedor: rateio.nome_fornecedor, aplicacao_recurso: rateio.aplicacao_recurso, valor_total: rateio.valor_total}]))
+            )
+        }
+        if (receitas_acao.length > 0){
+            setQtdeReceitasAcao(receitas_acao.length);
+        }
+
+        if (rateios_acao.length > 0 || receitas_acao.length > 0){
+            setShowModalForm(false);
+            setShowModalInfoQtdeRateiosReceitas(true)
+        }else {
+            setShowModalDeleteAcao(true)
+        }
+
+    };
+
     const onDeleteAcaoTrue = async ()=>{
         try {
             await deleteAcaoAssociacao(stateFormModal.uuid);
@@ -205,6 +247,8 @@ export const AcoesDasAssociacoes = () => {
             console.log('Erro ao excluir Ação Associação!! ', e)
         }
     };
+
+    console.log("RATEIOS ACAO XXXXXXXXXXX ", rateiosAcao)
 
     return (
         <PaginasContainer>
@@ -263,7 +307,7 @@ export const AcoesDasAssociacoes = () => {
                         stateFormModal={stateFormModal}
                         readOnly={readOnly}
                         listaTiposDeAcao={listaTiposDeAcao}
-                        setShowModalDeleteAcao={setShowModalDeleteAcao}
+                        serviceCrudAcoes={serviceCrudAcoes}
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
                         todasAsAcoesAutoComplete={todasAsAcoesAutoComplete}
@@ -280,6 +324,16 @@ export const AcoesDasAssociacoes = () => {
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="danger"
                         segundoBotaoTexto="Excluir"
+                    />
+                </section>
+                <section>
+                    <ModalInfoQtdeRateiosReceitasAcao
+                        show={showModalInfoQtdeRateiosReceitas}
+                        handleClose={handleCloseInfoQtdeRateiosReceitas}
+                        titulo="Exclusão não permitida"
+                        texto={`<p class="mb-0">Não é permitido excluir esta ação. </p> ${qtdeRateiosAcao > 0 ? '<p class="mb-0">Existe(m) ' + qtdeRateiosAcao + ' rateio(s).</p>' : ''}${qtdeReceitasAcao > 0 ? '<p class="mb-0">Existe(m) ' + qtdeReceitasAcao + ' receita(s).</p>' : ''} <p>Atribuída(s) a esta ação</p>`}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="success"
                     />
                 </section>
             </div>
