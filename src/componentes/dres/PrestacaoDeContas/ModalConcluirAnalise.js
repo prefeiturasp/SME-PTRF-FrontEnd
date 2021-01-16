@@ -5,26 +5,27 @@ import {DatePickerField} from "../../Globais/DatePickerField";
 export const ModalConcluirAnalise = (props) => {
 
     const [selectOptions, setSelectOptions] = useState([]);
+    const [checkBoxOutrosMotivos, setCheckBoxOutrosMotivos] = useState(false);
+    const [txtOutrosMotivos, setTxtOutrosMotivos] = useState('');
 
-    const handleChange = (e) => {
-        let target = e.target
-        let name = target.name
-        //here
+    const handleChangeSelectMultipleMotivos = (e) => {
+        let target = e.target;
         let value = Array.from(target.selectedOptions, option => option.value);
         setSelectOptions(value);
-        // this.setState({
-        //     [name]: value
-        // });
     };
 
-    const exibeMotivosOutros = useCallback(() =>{
-        console.log("Entrei em exibeMotivosOutros")
-        return selectOptions.find(outro=> outro === 'outros')
-    }, [selectOptions])
+    const handleChangeCheckBoxOutrosMotivos = (event) =>{
+        setCheckBoxOutrosMotivos(event.target.checked)
+    };
+
+    const handleChangeTxtOutrosMotivos = (event) =>{
+        setTxtOutrosMotivos(event.target.value)
+    };
 
     const bodyTextarea = () => {
 
-        //console.log("SELECT OPTION ", selectOptions)
+       console.log("SELECT OPTION ", selectOptions);
+       console.log("txt Outros Motivos ", txtOutrosMotivos)
 
         return (
             <form>
@@ -46,18 +47,17 @@ export const ModalConcluirAnalise = (props) => {
                     </div>
 
                     {props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' &&
+                    <>
                         <div className="col-12 mt-2">
                             <label htmlFor="resalvas">Motivo:</label>
 
-                            {/*<select
+                            <select
                                 name="selectOptions"
                                 multiple={true}
                                 onChange={
                                     (e)=>{
-                                        handleChange(e)
-                                        exibeMotivosOutros()
+                                        handleChangeSelectMultipleMotivos(e);
                                     }
-
                                 }
                                 value={selectOptions}
                                 className="form-control"
@@ -65,29 +65,38 @@ export const ModalConcluirAnalise = (props) => {
                                 {props.motivosAprovadoComRessalva && props.motivosAprovadoComRessalva.length > 0 && props.motivosAprovadoComRessalva.map((motivo)=>(
                                     <option key={motivo.uuid} value={motivo.uuid}>{motivo.motivo}</option>
                                 ))}
-                                <option value="outros">Outros</option>
-                                <option value="zen">Zen</option>
-                                <option value="ana">Ana</option>
-                                <option value="junk">Junk</option>
                             </select>
 
-                            {exibeMotivosOutros() &&
+                            <div className="form-check mt-3 pl-0">
+                                <input
+                                    name="check_box_outros_motivos"
+                                    type="checkbox"
+                                    checked={checkBoxOutrosMotivos}
+                                    onChange={(e)=>handleChangeCheckBoxOutrosMotivos(e)}
+                                />
+                                <label className="form-check-label ml-2" htmlFor="defaultCheck1">
+                                    Outros motivos
+                                </label>
+                            </div>
+
+
+                            {checkBoxOutrosMotivos &&
                                 <>
                                     <br/>
-                                    <label htmlFor="resalvas">Outro motivo:</label>
+                                    <label htmlFor="outros_motivos_aprovacao_ressalva">Outro motivo:</label>
                                     <textarea
-                                        name='motivos_outros'
-                                        //value={props.stateConcluirAnalise.motivos_reprovacao}
-                                        //onChange={(e) => props.handleChangeConcluirAnalise(e.target.name, e.target.value)}
+                                        name='outros_motivos_aprovacao_ressalva'
+                                        value={txtOutrosMotivos}
+                                        onChange={(e) => handleChangeTxtOutrosMotivos(e)}
                                         className="form-control"
                                     />
                                 </>
-                            }*/}
+                            }
 
 
 
 
-                            <select
+                            {/*<select
                                 name='resalvas'
                                 value={props.stateConcluirAnalise.resalvas}
                                 onChange={(e) => props.handleChangeConcluirAnalise(e.target.name, e.target.value)}
@@ -97,8 +106,10 @@ export const ModalConcluirAnalise = (props) => {
                                 {props.motivosAprovadoComRessalva && props.motivosAprovadoComRessalva.length > 0 && props.motivosAprovadoComRessalva.map((motivo)=>(
                                     <option key={motivo.uuid} value={motivo.uuid}>{motivo.motivo}</option>
                                 ))}
-                            </select>
+                            </select>*/}
                         </div>
+                        </>
+
                     }
                     {props.stateConcluirAnalise.status === 'REPROVADA' &&
                         <div className="col-12 mt-2">

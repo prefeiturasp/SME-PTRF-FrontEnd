@@ -546,14 +546,14 @@ export const DetalhePrestacaoDeContas = () =>{
         if (formRef.current && informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim') {
             let validar =  await validateFormDevolucaoAoTesouro(formRef.current.values);
             if (!camposObrigatorios && Object.entries(validar).length === 0){
-                await getConcluirAnalise(prestacaoDeContas.uuid, payload);
-                await carregaPrestacaoDeContas();
+                //await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+                //await carregaPrestacaoDeContas();
             }else {
-                return formRef.current.setErrors( validar )
+                //return formRef.current.setErrors( validar )
             }
         }else {
-            await getConcluirAnalise(prestacaoDeContas.uuid, payload);
-            await carregaPrestacaoDeContas();
+            //await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+            //await carregaPrestacaoDeContas();
         }
     };
 
