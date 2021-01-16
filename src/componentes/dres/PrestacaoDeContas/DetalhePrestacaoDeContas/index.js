@@ -396,6 +396,28 @@ export const DetalhePrestacaoDeContas = () =>{
             [name]: value
         });
     };
+
+    const [motivos, setMotivos] = useState([]);
+    const [checkBoxOutrosMotivos, setCheckBoxOutrosMotivos] = useState(false);
+    const [txtOutrosMotivos, setTxtOutrosMotivos] = useState('');
+
+    const handleChangeSelectMultipleMotivos = (e) => {
+        let target = e.target;
+        let value = Array.from(target.selectedOptions, option => option.value);
+        setMotivos(value);
+    };
+
+    const handleChangeCheckBoxOutrosMotivos = (event) =>{
+        setCheckBoxOutrosMotivos(event.target.checked);
+        if (!event.target.checked){
+            setTxtOutrosMotivos('');
+        }
+    };
+
+    const handleChangeTxtOutrosMotivos = (event) =>{
+        setTxtOutrosMotivos(event.target.value)
+    };
+
     // Fim Ata
 
     const handleChangeDataCobranca = (name, value) =>{
@@ -522,7 +544,8 @@ export const DetalhePrestacaoDeContas = () =>{
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
-                motivo_aprovacao_ressalva: stateConcluirAnalise.resalvas,
+                motivo_aprovacao_ressalva: motivos,
+                outros_motivos_aprovacao_ressalva: txtOutrosMotivos,
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }else if (stateConcluirAnalise.status === 'DEVOLVIDA'){
@@ -543,17 +566,19 @@ export const DetalhePrestacaoDeContas = () =>{
             }
         }
 
+        console.log("PAYLOAD XXXXXXXX", payload)
+
         if (formRef.current && informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim') {
             let validar =  await validateFormDevolucaoAoTesouro(formRef.current.values);
             if (!camposObrigatorios && Object.entries(validar).length === 0){
-                //await getConcluirAnalise(prestacaoDeContas.uuid, payload);
-                //await carregaPrestacaoDeContas();
+                await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+                await carregaPrestacaoDeContas();
             }else {
-                //return formRef.current.setErrors( validar )
+                return formRef.current.setErrors( validar )
             }
         }else {
-            //await getConcluirAnalise(prestacaoDeContas.uuid, payload);
-            //await carregaPrestacaoDeContas();
+            await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+            await carregaPrestacaoDeContas();
         }
     };
 
@@ -743,6 +768,13 @@ export const DetalhePrestacaoDeContas = () =>{
                         stateConcluirAnalise={stateConcluirAnalise}
                         motivosAprovadoComRessalva={motivosAprovadoComRessalva}
                         handleChangeConcluirAnalise={handleChangeConcluirAnalise}
+                        motivos={motivos}
+                        txtOutrosMotivos={txtOutrosMotivos}
+                        handleChangeSelectMultipleMotivos={handleChangeSelectMultipleMotivos}
+                        checkBoxOutrosMotivos={checkBoxOutrosMotivos}
+                        handleChangeCheckBoxOutrosMotivos={handleChangeCheckBoxOutrosMotivos}
+                        txtOutrosMotivos={txtOutrosMotivos}
+                        handleChangeTxtOutrosMotivos={handleChangeTxtOutrosMotivos}
                     />
                 </section>
                 <section>

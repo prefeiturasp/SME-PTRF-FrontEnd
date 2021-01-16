@@ -4,28 +4,13 @@ import {DatePickerField} from "../../Globais/DatePickerField";
 
 export const ModalConcluirAnalise = (props) => {
 
-    const [selectOptions, setSelectOptions] = useState([]);
-    const [checkBoxOutrosMotivos, setCheckBoxOutrosMotivos] = useState(false);
-    const [txtOutrosMotivos, setTxtOutrosMotivos] = useState('');
 
-    const handleChangeSelectMultipleMotivos = (e) => {
-        let target = e.target;
-        let value = Array.from(target.selectedOptions, option => option.value);
-        setSelectOptions(value);
-    };
 
-    const handleChangeCheckBoxOutrosMotivos = (event) =>{
-        setCheckBoxOutrosMotivos(event.target.checked)
-    };
-
-    const handleChangeTxtOutrosMotivos = (event) =>{
-        setTxtOutrosMotivos(event.target.value)
-    };
 
     const bodyTextarea = () => {
 
-       console.log("SELECT OPTION ", selectOptions);
-       console.log("txt Outros Motivos ", txtOutrosMotivos)
+       //console.log("PROPS MOTIVOS ", props.motivos);
+       //console.log("PROPS Outros Motivos ", props.txtOutrosMotivos)
 
         return (
             <form>
@@ -52,14 +37,14 @@ export const ModalConcluirAnalise = (props) => {
                             <label htmlFor="resalvas">Motivo:</label>
 
                             <select
-                                name="selectOptions"
+                                name="motivos"
                                 multiple={true}
                                 onChange={
                                     (e)=>{
-                                        handleChangeSelectMultipleMotivos(e);
+                                        props.handleChangeSelectMultipleMotivos(e);
                                     }
                                 }
-                                value={selectOptions}
+                                value={props.motivos}
                                 className="form-control"
                             >
                                 {props.motivosAprovadoComRessalva && props.motivosAprovadoComRessalva.length > 0 && props.motivosAprovadoComRessalva.map((motivo)=>(
@@ -71,8 +56,8 @@ export const ModalConcluirAnalise = (props) => {
                                 <input
                                     name="check_box_outros_motivos"
                                     type="checkbox"
-                                    checked={checkBoxOutrosMotivos}
-                                    onChange={(e)=>handleChangeCheckBoxOutrosMotivos(e)}
+                                    checked={props.checkBoxOutrosMotivos}
+                                    onChange={(e)=>props.handleChangeCheckBoxOutrosMotivos(e)}
                                 />
                                 <label className="form-check-label ml-2" htmlFor="defaultCheck1">
                                     Outros motivos
@@ -80,14 +65,14 @@ export const ModalConcluirAnalise = (props) => {
                             </div>
 
 
-                            {checkBoxOutrosMotivos &&
+                            {props.checkBoxOutrosMotivos &&
                                 <>
                                     <br/>
                                     <label htmlFor="outros_motivos_aprovacao_ressalva">Outro motivo:</label>
                                     <textarea
                                         name='outros_motivos_aprovacao_ressalva'
-                                        value={txtOutrosMotivos}
-                                        onChange={(e) => handleChangeTxtOutrosMotivos(e)}
+                                        value={props.txtOutrosMotivos}
+                                        onChange={(e) => props.handleChangeTxtOutrosMotivos(e)}
                                         className="form-control"
                                     />
                                 </>
@@ -148,7 +133,7 @@ export const ModalConcluirAnalise = (props) => {
                                 onClick={props.onConcluirAnalise}
                                 type="button"
                                 className="btn btn-success mt-2"
-                                disabled={!props.stateConcluirAnalise.status || (props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' && !props.stateConcluirAnalise.resalvas) || (props.stateConcluirAnalise.status === 'DEVOLVIDA' && !props.stateConcluirAnalise.data_limite_devolucao)}
+                                disabled={!props.stateConcluirAnalise.status || (props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' && props.motivos.length <= 0 && !props.txtOutrosMotivos) || (props.stateConcluirAnalise.status === 'DEVOLVIDA' && !props.stateConcluirAnalise.data_limite_devolucao)}
                             >
                                 Confirmar
                             </button>

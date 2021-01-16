@@ -2,6 +2,9 @@ import React from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 
 export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria, handleChangeFormRecebimentoPelaDiretoria, disabledNome, disabledData, disabledStatus, tabelaPrestacoes, prestacaoDeContas, exibeMotivo}) =>{
+
+    console.log("FORM XXXXXX ", prestacaoDeContas)
+
     return(
         <>
             <h4>Recebimento pela Diretoria</h4>
