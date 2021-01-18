@@ -1,7 +1,5 @@
 import api from '../api'
 import { TOKEN_ALIAS } from '../auth.service.js';
-import {ASSOCIACAO_UUID} from "../auth.service";
-
 
 const authHeader = {
     headers: {
@@ -10,6 +8,12 @@ const authHeader = {
     }
 };
 
+// Periodos
+export const getTodosPeriodos = async () => {
+    return (await api.get(`/api/periodos/`, authHeader)).data
+};
+
+// AcoesDasAssociacoes
 export const getTodasAcoesDasAssociacoes = async () => {
     return (await api.get(`/api/acoes-associacoes/`, authHeader)).data
 };
@@ -41,3 +45,5 @@ export const getRateiosAcao = async (acao_associacao_uuid, associacao_uuid) => {
 export const getReceitasAcao = async (associacao_uuid, acao_associacao_uuid) => {
     return (await api.get(`api/receitas/?associacao__uuid=${associacao_uuid}&acao_associacao__uuid=${acao_associacao_uuid}`, authHeader)).data
 };
+
+
