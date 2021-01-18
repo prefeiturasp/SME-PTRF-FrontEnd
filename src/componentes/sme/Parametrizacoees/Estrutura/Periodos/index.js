@@ -6,7 +6,6 @@ import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faEye} from "@fortawesome/free-solid-svg-icons";
 import ModalFormPeriodos from "./ModalFormPeriodos";
-import {ModalFormAcoesDaAssociacao} from "../AcoesDasAssociacoes/ModalFormAcoesDasAssociacoes";
 
 export const Periodos = () =>{
 
@@ -28,11 +27,11 @@ export const Periodos = () =>{
 
     const initialStateFormModal = {
         referencia: "",
+        data_prevista_repasse: "",
         data_inicio_realizacao_despesas: "",
         data_fim_realizacao_despesas: "",
         data_inicio_prestacao_contas: "",
         data_fim_prestacao_contas: "",
-        data_prevista_repasse: "",
         operacao: 'create',
         editavel:"",
     };
@@ -53,13 +52,13 @@ export const Periodos = () =>{
         setStateFormModal({
             ...stateFormModal,
             referencia: rowData.referencia,
+            data_prevista_repasse: rowData.data_prevista_repasse,
             data_inicio_realizacao_despesas: rowData.data_inicio_realizacao_despesas,
-            data_fim_realizacao_despesas: rowData.data_inicio_realizacao_despesas,
-            data_inicio_prestacao_contas: rowData.data_inicio_realizacao_despesas,
-            data_fim_prestacao_contas: rowData.data_inicio_realizacao_despesas,
-            data_prevista_repasse: rowData.data_inicio_realizacao_despesas,
+            data_fim_realizacao_despesas: rowData.data_fim_realizacao_despesas,
+            data_inicio_prestacao_contas: rowData.data_inicio_prestacao_contas,
+            data_fim_prestacao_contas: rowData.data_fim_prestacao_contas,
             editavel: rowData.editavel,
-            operacao: 'create',
+            operacao: 'edit',
         });
         setShowModalForm(true)
     }, [stateFormModal]);
@@ -78,11 +77,13 @@ export const Periodos = () =>{
     }, [handleEditFormModalPeriodos]);
 
     const handleCloseFormModal = useCallback(()=>{
+        console.log('handleCloseFormModal')
         setShowModalForm(false)
     }, []);
 
-    const handleSubmitModalFormPeriodos = useCallback(()=>{
+    const handleSubmitModalFormPeriodos = useCallback((values)=>{
         setShowModalForm(false)
+        console.log("handleSubmitModalFormPeriodos ", values)
     }, []);
 
     return(
@@ -100,9 +101,9 @@ export const Periodos = () =>{
                 <section>
                     <ModalFormPeriodos
                         show={showModalForm}
+                        stateFormModal={stateFormModal}
                         handleClose={handleCloseFormModal}
                         handleSubmitModalFormPeriodos={handleSubmitModalFormPeriodos}
-                        stateFormModal={stateFormModal}
                     />
                 </section>
             </div>

@@ -3,7 +3,6 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
 const TabelaPeriodos = ({rowsPerPage, listaDePeriodos, dataTemplate, acoesTemplate}) =>{
-    console.log("TabelaPeriodos");
     return(
         <DataTable
             value={listaDePeriodos}
@@ -12,6 +11,11 @@ const TabelaPeriodos = ({rowsPerPage, listaDePeriodos, dataTemplate, acoesTempla
             paginatorTemplate="PrevPageLink PageLinks NextPageLink"
         >
             <Column field="referencia" header="Referência"/>
+            <Column
+                field="data_prevista_repasse"
+                header="Data prevista do repasse"
+                body={dataTemplate}
+            />
             <Column
                 field="data_inicio_realizacao_despesas"
                 header="Início realização de despesas"
@@ -30,11 +34,6 @@ const TabelaPeriodos = ({rowsPerPage, listaDePeriodos, dataTemplate, acoesTempla
             <Column
                 field="data_fim_prestacao_contas"
                 header="Fim prestação de contas"
-                body={dataTemplate}
-            />
-            <Column
-                field="data_prevista_repasse"
-                header="Data prevista do repasse"
                 body={dataTemplate}
             />
             <Column
