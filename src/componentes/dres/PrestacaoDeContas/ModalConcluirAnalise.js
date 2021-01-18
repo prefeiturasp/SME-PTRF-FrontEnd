@@ -1,31 +1,9 @@
-import React, {useState, useCallback} from "react";
+import React from "react";
 import {ModalBootstrapFormConcluirAnalise} from "../../Globais/ModalBootstrap";
 import {DatePickerField} from "../../Globais/DatePickerField";
 
 export const ModalConcluirAnalise = (props) => {
-
-    const [selectOptions, setSelectOptions] = useState([]);
-
-    const handleChange = (e) => {
-        let target = e.target
-        let name = target.name
-        //here
-        let value = Array.from(target.selectedOptions, option => option.value);
-        setSelectOptions(value);
-        // this.setState({
-        //     [name]: value
-        // });
-    };
-
-    const exibeMotivosOutros = useCallback(() =>{
-        console.log("Entrei em exibeMotivosOutros")
-        return selectOptions.find(outro=> outro === 'outros')
-    }, [selectOptions])
-
     const bodyTextarea = () => {
-
-        //console.log("SELECT OPTION ", selectOptions)
-
         return (
             <form>
                 <div className='row'>
@@ -46,59 +24,54 @@ export const ModalConcluirAnalise = (props) => {
                     </div>
 
                     {props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' &&
+                    <>
                         <div className="col-12 mt-2">
                             <label htmlFor="resalvas">Motivo:</label>
 
-                            {/*<select
-                                name="selectOptions"
+                            <select
+                                name="motivos"
                                 multiple={true}
                                 onChange={
                                     (e)=>{
-                                        handleChange(e)
-                                        exibeMotivosOutros()
+                                        props.handleChangeSelectMultipleMotivos(e);
                                     }
-
                                 }
-                                value={selectOptions}
+                                value={props.motivos}
                                 className="form-control"
                             >
                                 {props.motivosAprovadoComRessalva && props.motivosAprovadoComRessalva.length > 0 && props.motivosAprovadoComRessalva.map((motivo)=>(
                                     <option key={motivo.uuid} value={motivo.uuid}>{motivo.motivo}</option>
                                 ))}
-                                <option value="outros">Outros</option>
-                                <option value="zen">Zen</option>
-                                <option value="ana">Ana</option>
-                                <option value="junk">Junk</option>
                             </select>
 
-                            {exibeMotivosOutros() &&
+                            <div className="form-check mt-3 pl-0">
+                                <input
+                                    name="check_box_outros_motivos"
+                                    id="check_box_outros_motivos"
+                                    type="checkbox"
+                                    checked={props.checkBoxOutrosMotivos}
+                                    onChange={(e)=>props.handleChangeCheckBoxOutrosMotivos(e)}
+                                />
+                                <label className="form-check-label ml-2" htmlFor="check_box_outros_motivos">
+                                    Outros motivos
+                                </label>
+                            </div>
+
+
+                            {props.checkBoxOutrosMotivos &&
                                 <>
                                     <br/>
-                                    <label htmlFor="resalvas">Outro motivo:</label>
+                                    <label htmlFor="outros_motivos_aprovacao_ressalva">Outro motivo:</label>
                                     <textarea
-                                        name='motivos_outros'
-                                        //value={props.stateConcluirAnalise.motivos_reprovacao}
-                                        //onChange={(e) => props.handleChangeConcluirAnalise(e.target.name, e.target.value)}
+                                        name='outros_motivos_aprovacao_ressalva'
+                                        value={props.txtOutrosMotivos}
+                                        onChange={(e) => props.handleChangeTxtOutrosMotivos(e)}
                                         className="form-control"
                                     />
                                 </>
-                            }*/}
-
-
-
-
-                            <select
-                                name='resalvas'
-                                value={props.stateConcluirAnalise.resalvas}
-                                onChange={(e) => props.handleChangeConcluirAnalise(e.target.name, e.target.value)}
-                                className="form-control"
-                            >
-                                <option value="">Selecione o motivo</option>
-                                {props.motivosAprovadoComRessalva && props.motivosAprovadoComRessalva.length > 0 && props.motivosAprovadoComRessalva.map((motivo)=>(
-                                    <option key={motivo.uuid} value={motivo.uuid}>{motivo.motivo}</option>
-                                ))}
-                            </select>
+                            }
                         </div>
+                        </>
                     }
                     {props.stateConcluirAnalise.status === 'REPROVADA' &&
                         <div className="col-12 mt-2">
@@ -137,7 +110,7 @@ export const ModalConcluirAnalise = (props) => {
                                 onClick={props.onConcluirAnalise}
                                 type="button"
                                 className="btn btn-success mt-2"
-                                disabled={!props.stateConcluirAnalise.status || (props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' && !props.stateConcluirAnalise.resalvas) || (props.stateConcluirAnalise.status === 'DEVOLVIDA' && !props.stateConcluirAnalise.data_limite_devolucao)}
+                                disabled={!props.stateConcluirAnalise.status || (props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' && props.motivos.length <= 0 && !props.txtOutrosMotivos) || (props.stateConcluirAnalise.status === 'DEVOLVIDA' && !props.stateConcluirAnalise.data_limite_devolucao)}
                             >
                                 Confirmar
                             </button>
