@@ -544,7 +544,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
-                motivo_aprovacao_ressalva: motivos,
+                motivos_aprovacao_ressalva: motivos,
                 outros_motivos_aprovacao_ressalva: txtOutrosMotivos,
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
@@ -565,8 +565,6 @@ export const DetalhePrestacaoDeContas = () =>{
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }
-
-        console.log("PAYLOAD XXXXXXXX", payload)
 
         if (formRef.current && informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim') {
             let validar =  await validateFormDevolucaoAoTesouro(formRef.current.values);
@@ -610,8 +608,6 @@ export const DetalhePrestacaoDeContas = () =>{
             }
         }
     };
-
-
 
     const buscaDespesaPorFiltros = async (index) =>{
 
@@ -773,7 +769,6 @@ export const DetalhePrestacaoDeContas = () =>{
                         handleChangeSelectMultipleMotivos={handleChangeSelectMultipleMotivos}
                         checkBoxOutrosMotivos={checkBoxOutrosMotivos}
                         handleChangeCheckBoxOutrosMotivos={handleChangeCheckBoxOutrosMotivos}
-                        txtOutrosMotivos={txtOutrosMotivos}
                         handleChangeTxtOutrosMotivos={handleChangeTxtOutrosMotivos}
                     />
                 </section>

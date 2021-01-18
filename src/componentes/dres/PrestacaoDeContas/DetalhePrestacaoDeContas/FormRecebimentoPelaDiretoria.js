@@ -2,9 +2,6 @@ import React from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 
 export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria, handleChangeFormRecebimentoPelaDiretoria, disabledNome, disabledData, disabledStatus, tabelaPrestacoes, prestacaoDeContas, exibeMotivo}) =>{
-
-    console.log("FORM XXXXXX ", prestacaoDeContas)
-
     return(
         <>
             <h4>Recebimento pela Diretoria</h4>
@@ -46,11 +43,17 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
                             ))}
                         </select>
                     </div>
-                    {exibeMotivo && prestacaoDeContas && prestacaoDeContas.motivo_aprovacao_ressalva && prestacaoDeContas.motivo_aprovacao_ressalva.motivo &&
+                    {exibeMotivo && prestacaoDeContas && (prestacaoDeContas.motivos_aprovacao_ressalva || prestacaoDeContas.outros_motivos_aprovacao_ressalva)  &&
                         <div className='col-12 mt-3'>
                             <label htmlFor="motivo">Motivos:</label>
-                            <textarea defaultValue={prestacaoDeContas.motivo_aprovacao_ressalva.motivo} disabled={true} className="form-control" id="exampleFormControlTextarea1" rows="3">
-                            </textarea>
+                            <div className='border container-exibe-motivos p-2'>
+                                {prestacaoDeContas.motivos_aprovacao_ressalva && prestacaoDeContas.motivos_aprovacao_ressalva.length > 0 && prestacaoDeContas.motivos_aprovacao_ressalva.map((motivo)=>(
+                                    <p key={motivo.uuid}>{motivo.motivo}</p>
+                                ))}
+                                {prestacaoDeContas.outros_motivos_aprovacao_ressalva &&
+                                    <p>{prestacaoDeContas.outros_motivos_aprovacao_ressalva}</p>
+                                }
+                            </div>
                         </div>
                     }
                 </div>

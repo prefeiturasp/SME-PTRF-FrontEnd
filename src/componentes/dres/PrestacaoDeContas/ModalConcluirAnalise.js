@@ -1,17 +1,9 @@
-import React, {useState, useCallback} from "react";
+import React from "react";
 import {ModalBootstrapFormConcluirAnalise} from "../../Globais/ModalBootstrap";
 import {DatePickerField} from "../../Globais/DatePickerField";
 
 export const ModalConcluirAnalise = (props) => {
-
-
-
-
     const bodyTextarea = () => {
-
-       //console.log("PROPS MOTIVOS ", props.motivos);
-       //console.log("PROPS Outros Motivos ", props.txtOutrosMotivos)
-
         return (
             <form>
                 <div className='row'>
@@ -55,11 +47,12 @@ export const ModalConcluirAnalise = (props) => {
                             <div className="form-check mt-3 pl-0">
                                 <input
                                     name="check_box_outros_motivos"
+                                    id="check_box_outros_motivos"
                                     type="checkbox"
                                     checked={props.checkBoxOutrosMotivos}
                                     onChange={(e)=>props.handleChangeCheckBoxOutrosMotivos(e)}
                                 />
-                                <label className="form-check-label ml-2" htmlFor="defaultCheck1">
+                                <label className="form-check-label ml-2" htmlFor="check_box_outros_motivos">
                                     Outros motivos
                                 </label>
                             </div>
@@ -77,24 +70,8 @@ export const ModalConcluirAnalise = (props) => {
                                     />
                                 </>
                             }
-
-
-
-
-                            {/*<select
-                                name='resalvas'
-                                value={props.stateConcluirAnalise.resalvas}
-                                onChange={(e) => props.handleChangeConcluirAnalise(e.target.name, e.target.value)}
-                                className="form-control"
-                            >
-                                <option value="">Selecione o motivo</option>
-                                {props.motivosAprovadoComRessalva && props.motivosAprovadoComRessalva.length > 0 && props.motivosAprovadoComRessalva.map((motivo)=>(
-                                    <option key={motivo.uuid} value={motivo.uuid}>{motivo.motivo}</option>
-                                ))}
-                            </select>*/}
                         </div>
                         </>
-
                     }
                     {props.stateConcluirAnalise.status === 'REPROVADA' &&
                         <div className="col-12 mt-2">
