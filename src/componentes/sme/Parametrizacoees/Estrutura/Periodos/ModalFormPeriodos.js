@@ -2,8 +2,9 @@ import React, {memo} from "react";
 import {ModalFormBodyText} from "../../../../Globais/ModalBootstrap";
 import {Formik} from "formik";
 import {DatePickerField} from "../../../../Globais/DatePickerField";
+import {exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 
-const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModalFormPeriodos}) => {
+const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModalFormPeriodos, listaDePeriodos}) => {
 
     const bodyTextarea = () => {
         return (
@@ -112,7 +113,19 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
 
                                 <div className='row'>
                                     <div className='col'>
-                                        <label htmlFor="data_fim_realizacao_despesas">Período anterior</label>
+                                        <label htmlFor="periodo_anterior">Período anterior</label>
+                                        <select
+                                            value={values.periodo_anterior}
+                                            onChange={props.handleChange}
+                                            disabled={!props.values.editavel}
+                                            name="periodo_anterior"
+                                            id="periodo_anterior"
+                                            className="form-control"
+                                        >
+                                            {listaDePeriodos && listaDePeriodos.filter(element=> element.uuid !== values.uuid).map((periodo) =>
+                                                <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}</option>
+                                            )}
+                                        </select>
                                     </div>
                                 </div>
 

@@ -59,7 +59,7 @@ export const Periodos = () =>{
             data_fim_realizacao_despesas: rowData.data_fim_realizacao_despesas,
             data_inicio_prestacao_contas: rowData.data_inicio_prestacao_contas,
             data_fim_prestacao_contas: rowData.data_fim_prestacao_contas,
-            periodo_anterior: rowData.periodo_anterior,
+            periodo_anterior: rowData.periodo_anterior.uuid,
             editavel: rowData.editavel,
             uuid: rowData.uuid,
             id:"Não é retornado pela API",
@@ -109,6 +109,7 @@ export const Periodos = () =>{
                         stateFormModal={stateFormModal}
                         handleClose={handleCloseFormModal}
                         handleSubmitModalFormPeriodos={handleSubmitModalFormPeriodos}
+                        listaDePeriodos={listaDePeriodos}
                     />
                 </section>
             </div>
