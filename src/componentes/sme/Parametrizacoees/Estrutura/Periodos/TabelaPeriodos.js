@@ -2,7 +2,7 @@ import React, {memo} from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
-const TabelaPeriodos = ({rowsPerPage, listaDePeriodos, dataTemplate}) =>{
+const TabelaPeriodos = ({rowsPerPage, listaDePeriodos, dataTemplate, acoesTemplate}) =>{
     console.log("TabelaPeriodos");
     return(
         <DataTable
@@ -37,8 +37,13 @@ const TabelaPeriodos = ({rowsPerPage, listaDePeriodos, dataTemplate}) =>{
                 header="Data prevista do repasse"
                 body={dataTemplate}
             />
+            <Column
+                field="acoes"
+                header="Ações"
+                body={acoesTemplate}
+            />
         </DataTable>
-    )
+    );
 };
 
 export default memo(TabelaPeriodos)
