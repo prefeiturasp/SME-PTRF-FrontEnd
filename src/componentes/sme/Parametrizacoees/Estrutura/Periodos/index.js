@@ -32,8 +32,10 @@ export const Periodos = () =>{
         data_fim_realizacao_despesas: "",
         data_inicio_prestacao_contas: "",
         data_fim_prestacao_contas: "",
-        operacao: 'create',
         editavel:"",
+        uuid:"",
+        id:"",
+        operacao: 'create',
     };
 
     const [showModalForm, setShowModalForm] = useState(false);
@@ -48,7 +50,7 @@ export const Periodos = () =>{
     }, []);
 
     const handleEditFormModalPeriodos = useCallback( async (rowData) =>{
-        console.log("handleEditFormModalPeriodos ", rowData)
+        console.log("handleEditFormModalPeriodos ", rowData);
         setStateFormModal({
             ...stateFormModal,
             referencia: rowData.referencia,
@@ -57,7 +59,10 @@ export const Periodos = () =>{
             data_fim_realizacao_despesas: rowData.data_fim_realizacao_despesas,
             data_inicio_prestacao_contas: rowData.data_inicio_prestacao_contas,
             data_fim_prestacao_contas: rowData.data_fim_prestacao_contas,
+            periodo_anterior: rowData.periodo_anterior,
             editavel: rowData.editavel,
+            uuid: rowData.uuid,
+            id:"Não é retornado pela API",
             operacao: 'edit',
         });
         setShowModalForm(true)
@@ -77,12 +82,12 @@ export const Periodos = () =>{
     }, [handleEditFormModalPeriodos]);
 
     const handleCloseFormModal = useCallback(()=>{
-        console.log('handleCloseFormModal')
+        console.log('handleCloseFormModal');
         setShowModalForm(false)
     }, []);
 
     const handleSubmitModalFormPeriodos = useCallback((values)=>{
-        setShowModalForm(false)
+        setShowModalForm(false);
         console.log("handleSubmitModalFormPeriodos ", values)
     }, []);
 

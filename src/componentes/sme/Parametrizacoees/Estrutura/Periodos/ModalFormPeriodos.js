@@ -110,20 +110,39 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                     </div>
                                 </div>
 
+                                <div className='row'>
+                                    <div className='col'>
+                                        <label htmlFor="data_fim_realizacao_despesas">Período anterior</label>
+                                    </div>
+                                </div>
+
+                                <div className='row mt-3'>
+                                    <div className='col'>
+                                        <p className='mb-2'>Uuid</p>
+                                        <p className='mb-2'>{values.uuid}</p>
+                                    </div>
+                                    <div className='col'>
+                                        <p className='mb-2'>ID</p>
+                                        <p className='mb-2'>{values.id}</p>
+                                    </div>
+                                </div>
+
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
-                                        {/*{props.stateFormModal && props.stateFormModal.operacao === 'edit' &&*/}
+                                        {values.operacao === 'edit' && values.editavel &&
                                         <button onClick={()=>handleClose()} type="button" className="btn btn btn-danger mt-2 mr-2">
                                             Apagar
                                         </button>
-                                       {/* }*/}
+                                        }
                                     </div>
                                     <div className="p-Y bd-highlight">
-                                        <button onClick={()=>handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                                        <button onClick={()=>handleClose()} type="button" className={`btn btn${values.operacao === 'edit' && values.editavel ? '-outline-success' : '-success'} mt-2 mr-2`}>{values.operacao === 'edit' && values.editavel ? 'Cancelar' : 'Voltar'}</button>
                                     </div>
-                                    <div className="p-Y bd-highlight">
-                                        <button type="submit" className="btn btn btn-success mt-2">Salvar</button>
-                                    </div>
+                                    {values.operacao === 'edit' && values.editavel &&
+                                        <div className="p-Y bd-highlight">
+                                            <button type="submit" className="btn btn btn-success mt-2">Salvar</button>
+                                        </div>
+                                    }
                                 </div>
                             </form>
                         );
@@ -139,6 +158,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
             titulo="Visualizar período"
             //titulo={props.stateFormModal && props.stateFormModal.operacao === 'edit' ? 'Editar ação de associação' : 'Adicionar ação de associação'}
             onHide={handleClose}
+            size='lg'
             bodyText={bodyTextarea()}
         />
     )
