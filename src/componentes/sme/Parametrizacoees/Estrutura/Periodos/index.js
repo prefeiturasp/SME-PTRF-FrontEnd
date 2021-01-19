@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {getTodosPeriodos, getFiltrosPeriodos, getDatasAtendemRegras} from "../../../../../services/sme/Parametrizacoes.service";
+import {getTodosPeriodos, getFiltrosPeriodos, getDatasAtendemRegras, getPeriodoPorUuid, postCriarPeriodo, patchUpdatePeriodo} from "../../../../../services/sme/Parametrizacoes.service";
 import TabelaPeriodos from "./TabelaPeriodos";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -80,7 +80,12 @@ export const Periodos = () =>{
     const [erroDatasAtendemRegras, setErroDatasAtendemRegras] = useState(false);
 
     const handleEditFormModalPeriodos = useCallback( async (rowData) =>{
-        console.log("handleEditFormModalPeriodos ", rowData);
+        console.log("handleEditFormModalPeriodos rowData ", rowData);
+
+        let periodo_por_uuid = await getPeriodoPorUuid(rowData.uuid);
+
+        console.log("handleEditFormModalPeriodos periodo_por_uuid ", periodo_por_uuid);
+
         setStateFormModal({
             ...stateFormModal,
             referencia: rowData.referencia,
@@ -92,7 +97,7 @@ export const Periodos = () =>{
             periodo_anterior: rowData.periodo_anterior && rowData.periodo_anterior.uuid ? rowData.periodo_anterior.uuid : null,
             editavel: rowData.editavel,
             uuid: rowData.uuid,
-            id:"Não é retornado pela API",
+            id: periodo_por_uuid.id,
             operacao: 'edit',
         });
         setShowModalForm(true)
@@ -112,36 +117,70 @@ export const Periodos = () =>{
     }, [handleEditFormModalPeriodos]);
 
     const handleCloseFormModal = useCallback(()=>{
-        console.log('handleCloseFormModal');
-        setStateFormModal(initialStateFormModal)
+        setErroDatasAtendemRegras(false);
+        setStateFormModal(initialStateFormModal);
         setShowModalForm(false)
     }, [initialStateFormModal]);
 
+
+    const salvarPeriodo = async (payload, operacao, _periodo_uuid)=>{
+        console.log('salvarPeriodo salvarPeriodo ', payload);
+        console.log('salvarPeriodo operacao ', operacao);
+        console.log('salvarPeriodo _periodo_uuid ', _periodo_uuid);
+
+        if (operacao === 'create'){
+            try {
+                await postCriarPeriodo(payload);
+                console.log("Pedido criado com sucesso!");
+                await carregaTodosPeriodos();
+            }catch (e) {
+                console.log("Erro ao Criar Pedido ", e)
+            }
+        }else{
+            try {
+                delete payload.periodo_anterior;
+                await patchUpdatePeriodo(_periodo_uuid, payload);
+                console.log("Pedido atualizado com sucesso!");
+                await carregaTodosPeriodos();
+            }catch (e) {
+                console.log("Erro ao Atualizar Pedido ", e)
+            }
+        }
+    };
+
     const handleSubmitModalFormPeriodos = useCallback(async (values)=>{
 
-        console.log("handleSubmitModalFormPeriodos values ", values)
+        let _periodo_uuid = values.uuid ? values.uuid : '';
+        let _referencia = values.referencia;
+        let _data_prevista_repasse = values.data_prevista_repasse ? moment(values.data_prevista_repasse).format("YYYY-MM-DD") : null;
+        let _data_inicio_realizacao_despesas = values.data_inicio_realizacao_despesas ? moment(values.data_inicio_realizacao_despesas).format("YYYY-MM-DD") : null;
+        let _data_fim_realizacao_despesas = values.data_fim_realizacao_despesas ? moment(values.data_fim_realizacao_despesas).format("YYYY-MM-DD") : null;
+        let _data_inicio_prestacao_contas = values.data_inicio_prestacao_contas ? moment(values.data_inicio_prestacao_contas).format("YYYY-MM-DD") : null;
+        let _data_fim_prestacao_contas = values.data_fim_prestacao_contas ? moment(values.data_fim_prestacao_contas).format("YYYY-MM-DD") : null;
+        let _periodo_anterior_uuid = values.periodo_anterior ? values.periodo_anterior : '';
 
+        let datas_atendem = await getDatasAtendemRegras(_data_inicio_realizacao_despesas, _data_fim_realizacao_despesas, _periodo_anterior_uuid, _periodo_uuid);
 
-        let _data_prevista_repasse = values.data_prevista_repasse ? moment(values.data_prevista_repasse).format("YYYY-MM-DD") : '';
-        let _data_inicio_realizacao_despesas = values.data_inicio_realizacao_despesas ? moment(values.data_inicio_realizacao_despesas).format("YYYY-MM-DD") : '';
-        let _data_fim_realizacao_despesas = values.data_fim_realizacao_despesas ? moment(values.data_fim_realizacao_despesas).format("YYYY-MM-DD") : '';
-        let _data_inicio_prestacao_contas = values.data_inicio_prestacao_contas ? moment(values.data_inicio_prestacao_contas).format("YYYY-MM-DD") : '';
-        let _data_fim_prestacao_contas = values.data_fim_prestacao_contas ? moment(values.data_fim_prestacao_contas).format("YYYY-MM-DD") : '';
-        let _periodo_anterior = values.periodo_anterior ? values.periodo_anterior : null;
-
-        let datas_atendem = await getDatasAtendemRegras(_data_inicio_realizacao_despesas, _data_fim_realizacao_despesas, _periodo_anterior);
-        console.log("handleSubmitModalFormPeriodos datas_atendem ", datas_atendem)
-
-        if (datas_atendem.mensagem){
+        if (!datas_atendem.valido){
             setErroDatasAtendemRegras(datas_atendem.mensagem)
         }else {
+            setErroDatasAtendemRegras(false);
             setShowModalForm(false);
+
+            const payload = {
+                referencia: _referencia,
+                data_prevista_repasse: _data_prevista_repasse,
+                data_inicio_realizacao_despesas: _data_inicio_realizacao_despesas,
+                data_fim_realizacao_despesas: _data_fim_realizacao_despesas,
+                data_inicio_prestacao_contas: _data_inicio_prestacao_contas,
+                data_fim_prestacao_contas: _data_fim_prestacao_contas,
+                periodo_anterior: _periodo_anterior_uuid,
+            };
+            salvarPeriodo(payload, values.operacao, _periodo_uuid)
         }
+    }, [salvarPeriodo]);
 
 
-
-
-    }, []);
 
     return(
         <PaginasContainer>
@@ -176,6 +215,7 @@ export const Periodos = () =>{
                         handleClose={handleCloseFormModal}
                         handleSubmitModalFormPeriodos={handleSubmitModalFormPeriodos}
                         listaDePeriodos={listaDePeriodos}
+                        setErroDatasAtendemRegras={setErroDatasAtendemRegras}
                         erroDatasAtendemRegras={erroDatasAtendemRegras}
                     />
                 </section>

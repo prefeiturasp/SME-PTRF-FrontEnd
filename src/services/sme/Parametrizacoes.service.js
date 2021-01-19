@@ -15,10 +15,18 @@ export const getTodosPeriodos = async () => {
 export const getFiltrosPeriodos = async (referencia) => {
     return (await api.get(`/api/periodos/?referencia=${referencia}`, authHeader)).data
 };
-export const getDatasAtendemRegras = async (data_inicio_realizacao_despesas, data_fim_realizacao_despesas, periodo_anterior_uuid) => {
-    return (await api.get(`/api/periodos/verificar-datas/?data_inicio_realizacao_despesas=${data_inicio_realizacao_despesas}&data_fim_realizacao_despesas=${data_fim_realizacao_despesas}&periodo_anterior_uuid=${periodo_anterior_uuid}`, authHeader)).data
+export const getDatasAtendemRegras = async (data_inicio_realizacao_despesas, data_fim_realizacao_despesas, periodo_anterior_uuid, periodo_uuid) => {
+    return (await api.get(`/api/periodos/verificar-datas/?data_inicio_realizacao_despesas=${data_inicio_realizacao_despesas}&data_fim_realizacao_despesas=${data_fim_realizacao_despesas}&periodo_anterior_uuid=${periodo_anterior_uuid}${periodo_uuid ? '&periodo_uuid='+periodo_uuid : ''}`, authHeader)).data
 };
-
+export const getPeriodoPorUuid = async (periodo_uuid) => {
+    return (await api.get(`/api/periodos/${periodo_uuid}/`, authHeader)).data
+};
+export const postCriarPeriodo = async (payload) => {
+    return (await api.post(`/api/periodos/`, payload, authHeader)).data
+};
+export const patchUpdatePeriodo = async (periodo_uuid, payload) => {
+    return (await api.patch(`/api/periodos/${periodo_uuid}/`, payload, authHeader)).data
+};
 
 // AcoesDasAssociacoes
 export const getTodasAcoesDasAssociacoes = async () => {

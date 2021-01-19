@@ -5,9 +5,9 @@ import {DatePickerField} from "../../../../Globais/DatePickerField";
 import {exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import {YupSignupSchemaPeriodos} from "./YupSignupSchemaPeriodos";
 
-const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModalFormPeriodos, listaDePeriodos, erroDatasAtendemRegras}) => {
+const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModalFormPeriodos, listaDePeriodos, setErroDatasAtendemRegras, erroDatasAtendemRegras}) => {
 
-    console.log("erroDatasAtendemRegras ", erroDatasAtendemRegras)
+    console.log("erroDatasAtendemRegras ", erroDatasAtendemRegras);
 
     const bodyTextarea = () => {
         return (
@@ -64,7 +64,10 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                                 name="data_inicio_realizacao_despesas"
                                                 id="data_inicio_realizacao_despesas"
                                                 value={values.data_inicio_realizacao_despesas != null ? values.data_inicio_realizacao_despesas : ""}
-                                                onChange={setFieldValue}
+                                                onChange={(name, value)=>{
+                                                    setFieldValue(name, value);
+                                                    setErroDatasAtendemRegras(false);
+                                                }}
                                                 disabled={!props.values.editavel}
                                             />
                                             {props.touched.data_inicio_realizacao_despesas && props.errors.data_inicio_realizacao_despesas && <span className="span_erro text-danger mt-1"> {props.errors.data_inicio_realizacao_despesas} </span>}
@@ -118,8 +121,11 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                     <div className='col'>
                                         <label htmlFor="periodo_anterior">Período anterior</label>
                                         <select
-                                            value={values.periodo_anterior}
-                                            onChange={props.handleChange}
+                                            value={values.periodo_anterior ? values.periodo_anterior : ""}
+                                            onChange={(e)=>{
+                                                props.handleChange(e);
+                                                setErroDatasAtendemRegras(false);
+                                            }}
                                             disabled={!props.values.editavel}
                                             name="periodo_anterior"
                                             id="periodo_anterior"
