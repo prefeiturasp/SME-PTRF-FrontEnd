@@ -77,6 +77,7 @@ export const Periodos = () =>{
 
     const [showModalForm, setShowModalForm] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
+    const [erroDatasAtendemRegras, setErroDatasAtendemRegras] = useState(false);
 
     const handleEditFormModalPeriodos = useCallback( async (rowData) =>{
         console.log("handleEditFormModalPeriodos ", rowData);
@@ -117,8 +118,9 @@ export const Periodos = () =>{
     }, [initialStateFormModal]);
 
     const handleSubmitModalFormPeriodos = useCallback(async (values)=>{
-        setShowModalForm(false);
+
         console.log("handleSubmitModalFormPeriodos values ", values)
+
 
         let _data_prevista_repasse = values.data_prevista_repasse ? moment(values.data_prevista_repasse).format("YYYY-MM-DD") : '';
         let _data_inicio_realizacao_despesas = values.data_inicio_realizacao_despesas ? moment(values.data_inicio_realizacao_despesas).format("YYYY-MM-DD") : '';
@@ -127,8 +129,16 @@ export const Periodos = () =>{
         let _data_fim_prestacao_contas = values.data_fim_prestacao_contas ? moment(values.data_fim_prestacao_contas).format("YYYY-MM-DD") : '';
         let _periodo_anterior = values.periodo_anterior ? values.periodo_anterior : null;
 
-        let datas_atendem = await getDatasAtendemRegras(_data_inicio_realizacao_despesas, _data_fim_realizacao_despesas, values.periodo_anterior)
-        console.log("handleSubmitModalFormPeriodos values ", datas_atendem)
+        let datas_atendem = await getDatasAtendemRegras(_data_inicio_realizacao_despesas, _data_fim_realizacao_despesas, _periodo_anterior);
+        console.log("handleSubmitModalFormPeriodos datas_atendem ", datas_atendem)
+
+        if (datas_atendem.mensagem){
+            setErroDatasAtendemRegras(datas_atendem.mensagem)
+        }else {
+            setShowModalForm(false);
+        }
+
+
 
 
     }, []);
@@ -166,6 +176,7 @@ export const Periodos = () =>{
                         handleClose={handleCloseFormModal}
                         handleSubmitModalFormPeriodos={handleSubmitModalFormPeriodos}
                         listaDePeriodos={listaDePeriodos}
+                        erroDatasAtendemRegras={erroDatasAtendemRegras}
                     />
                 </section>
             </div>

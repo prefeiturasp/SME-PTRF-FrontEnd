@@ -5,7 +5,9 @@ import {DatePickerField} from "../../../../Globais/DatePickerField";
 import {exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import {YupSignupSchemaPeriodos} from "./YupSignupSchemaPeriodos";
 
-const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModalFormPeriodos, listaDePeriodos}) => {
+const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModalFormPeriodos, listaDePeriodos, erroDatasAtendemRegras}) => {
+
+    console.log("erroDatasAtendemRegras ", erroDatasAtendemRegras)
 
     const bodyTextarea = () => {
         return (
@@ -130,7 +132,13 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                         </select>
                                     </div>
                                 </div>
-
+                                {erroDatasAtendemRegras &&
+                                    <div className='row mt-2'>
+                                        <div className='col'>
+                                            <p><span className="span_erro text-danger mt-1"><strong>{erroDatasAtendemRegras}</strong></span></p>
+                                        </div>
+                                    </div>
+                                }
                                 <div className='row mt-3'>
                                     <div className='col'>
                                         <p className='mb-2'>Uuid</p>
