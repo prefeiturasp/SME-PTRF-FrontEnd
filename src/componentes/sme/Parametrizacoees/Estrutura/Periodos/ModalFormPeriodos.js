@@ -3,6 +3,7 @@ import {ModalFormBodyText} from "../../../../Globais/ModalBootstrap";
 import {Formik} from "formik";
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 import {exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaPeriodos} from "./YupSignupSchemaPeriodos";
 
 const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModalFormPeriodos, listaDePeriodos}) => {
 
@@ -11,7 +12,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
             <>
                 <Formik
                     initialValues={stateFormModal}
-                    //validationSchema={YupSignupSchemaRecuperarSenha}
+                    validationSchema={YupSignupSchemaPeriodos}
                     validateOnBlur={true}
                     enableReinitialize={true}
                     onSubmit={handleSubmitModalFormPeriodos}
@@ -122,6 +123,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                             id="periodo_anterior"
                                             className="form-control"
                                         >
+                                            <option value=''>Selecione um período</option>
                                             {listaDePeriodos && listaDePeriodos.filter(element=> element.uuid !== values.uuid).map((periodo) =>
                                                 <option key={periodo.uuid} value={periodo.uuid}>{`${periodo.referencia} - ${periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-"} até ${periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-"}`}</option>
                                             )}
@@ -142,20 +144,20 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
 
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
-                                        {values.operacao === 'edit' && values.editavel &&
-                                        <button onClick={()=>handleClose()} type="button" className="btn btn btn-danger mt-2 mr-2">
-                                            Apagar
-                                        </button>
-                                        }
+                                        {values.operacao === 'create' || (values.operacao === 'edit' && values.editavel) ? (
+                                            <button onClick={()=>handleClose()} type="button" className="btn btn btn-danger mt-2 mr-2">
+                                                Apagar
+                                            </button>
+                                        ): null}
                                     </div>
                                     <div className="p-Y bd-highlight">
                                         <button onClick={()=>handleClose()} type="button" className={`btn btn${values.operacao === 'edit' && values.editavel ? '-outline-success' : '-success'} mt-2 mr-2`}>{values.operacao === 'edit' && values.editavel ? 'Cancelar' : 'Voltar'}</button>
                                     </div>
-                                    {values.operacao === 'edit' && values.editavel &&
+                                    {values.operacao === 'create' || (values.operacao === 'edit' && values.editavel) ? (
                                         <div className="p-Y bd-highlight">
                                             <button type="submit" className="btn btn btn-success mt-2">Salvar</button>
                                         </div>
-                                    }
+                                    ):null}
                                 </div>
                             </form>
                         );

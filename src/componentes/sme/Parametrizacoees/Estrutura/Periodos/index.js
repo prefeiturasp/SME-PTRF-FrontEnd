@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {getTodosPeriodos} from "../../../../../services/sme/Parametrizacoes.service";
+import {getTodosPeriodos, getFiltrosPeriodos, getDatasAtendemRegras} from "../../../../../services/sme/Parametrizacoes.service";
 import TabelaPeriodos from "./TabelaPeriodos";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -40,9 +40,10 @@ export const Periodos = () =>{
         });
     }, [stateFiltros]);
 
-    const handleSubmitFiltros = useCallback(async () => {
-
-    }, []);
+    const handleSubmitFiltros = async () => {
+        let periodos_filtrados = await getFiltrosPeriodos(stateFiltros.filtrar_por_referencia);
+        setListaDePeriodos(periodos_filtrados);
+    };
 
     const limpaFiltros = async () => {
         setStateFiltros(initialStateFiltros);
@@ -52,22 +53,6 @@ export const Periodos = () =>{
     // TabelaPeriodos
     const rowsPerPage = 20;
 
-    const initialStateFormModal = {
-        referencia: "",
-        data_prevista_repasse: "",
-        data_inicio_realizacao_despesas: "",
-        data_fim_realizacao_despesas: "",
-        data_inicio_prestacao_contas: "",
-        data_fim_prestacao_contas: "",
-        editavel:"",
-        uuid:"",
-        id:"",
-        operacao: 'create',
-    };
-
-    const [showModalForm, setShowModalForm] = useState(false);
-    const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
-
     const dataTemplate = useCallback((rowData, column) => {
         return (
             <div>
@@ -75,6 +60,23 @@ export const Periodos = () =>{
             </div>
         )
     }, []);
+
+    // Modal
+    const initialStateFormModal = {
+        referencia: "",
+        data_prevista_repasse: "",
+        data_inicio_realizacao_despesas: "",
+        data_fim_realizacao_despesas: "",
+        data_inicio_prestacao_contas: "",
+        data_fim_prestacao_contas: "",
+        editavel:true,
+        uuid:"",
+        id:"",
+        operacao: 'create',
+    };
+
+    const [showModalForm, setShowModalForm] = useState(false);
+    const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
 
     const handleEditFormModalPeriodos = useCallback( async (rowData) =>{
         console.log("handleEditFormModalPeriodos ", rowData);
@@ -110,12 +112,25 @@ export const Periodos = () =>{
 
     const handleCloseFormModal = useCallback(()=>{
         console.log('handleCloseFormModal');
+        setStateFormModal(initialStateFormModal)
         setShowModalForm(false)
-    }, []);
+    }, [initialStateFormModal]);
 
-    const handleSubmitModalFormPeriodos = useCallback((values)=>{
+    const handleSubmitModalFormPeriodos = useCallback(async (values)=>{
         setShowModalForm(false);
-        console.log("handleSubmitModalFormPeriodos ", values)
+        console.log("handleSubmitModalFormPeriodos values ", values)
+
+        let _data_prevista_repasse = values.data_prevista_repasse ? moment(values.data_prevista_repasse).format("YYYY-MM-DD") : '';
+        let _data_inicio_realizacao_despesas = values.data_inicio_realizacao_despesas ? moment(values.data_inicio_realizacao_despesas).format("YYYY-MM-DD") : '';
+        let _data_fim_realizacao_despesas = values.data_fim_realizacao_despesas ? moment(values.data_fim_realizacao_despesas).format("YYYY-MM-DD") : '';
+        let _data_inicio_prestacao_contas = values.data_inicio_prestacao_contas ? moment(values.data_inicio_prestacao_contas).format("YYYY-MM-DD") : '';
+        let _data_fim_prestacao_contas = values.data_fim_prestacao_contas ? moment(values.data_fim_prestacao_contas).format("YYYY-MM-DD") : '';
+        let _periodo_anterior = values.periodo_anterior ? values.periodo_anterior : null;
+
+        let datas_atendem = await getDatasAtendemRegras(_data_inicio_realizacao_despesas, _data_fim_realizacao_despesas, values.periodo_anterior)
+        console.log("handleSubmitModalFormPeriodos values ", datas_atendem)
+
+
     }, []);
 
     return(

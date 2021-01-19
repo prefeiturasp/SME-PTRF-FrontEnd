@@ -12,6 +12,13 @@ const authHeader = {
 export const getTodosPeriodos = async () => {
     return (await api.get(`/api/periodos/`, authHeader)).data
 };
+export const getFiltrosPeriodos = async (referencia) => {
+    return (await api.get(`/api/periodos/?referencia=${referencia}`, authHeader)).data
+};
+export const getDatasAtendemRegras = async (data_inicio_realizacao_despesas, data_fim_realizacao_despesas, periodo_anterior_uuid) => {
+    return (await api.get(`/api/periodos/verificar-datas/?data_inicio_realizacao_despesas=${data_inicio_realizacao_despesas}&data_fim_realizacao_despesas=${data_fim_realizacao_despesas}&periodo_anterior_uuid=${periodo_anterior_uuid}`, authHeader)).data
+};
+
 
 // AcoesDasAssociacoes
 export const getTodasAcoesDasAssociacoes = async () => {
