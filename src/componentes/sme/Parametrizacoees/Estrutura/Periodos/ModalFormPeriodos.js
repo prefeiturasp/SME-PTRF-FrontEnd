@@ -5,7 +5,7 @@ import {DatePickerField} from "../../../../Globais/DatePickerField";
 import {exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import {YupSignupSchemaPeriodos} from "./YupSignupSchemaPeriodos";
 
-const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModalFormPeriodos, listaDePeriodos, setErroDatasAtendemRegras, erroDatasAtendemRegras}) => {
+const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModalFormPeriodos, listaDePeriodos, setErroDatasAtendemRegras, erroDatasAtendemRegras, setShowModalConfirmDeletePeriodo}) => {
 
     console.log("erroDatasAtendemRegras ", erroDatasAtendemRegras);
 
@@ -159,7 +159,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'create' || (values.operacao === 'edit' && values.editavel) ? (
-                                            <button onClick={()=>handleClose()} type="button" className="btn btn btn-danger mt-2 mr-2">
+                                            <button onClick={()=>setShowModalConfirmDeletePeriodo(true)} type="button" className="btn btn btn-danger mt-2 mr-2">
                                                 Apagar
                                             </button>
                                         ): null}

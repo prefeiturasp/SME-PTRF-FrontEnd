@@ -1,13 +1,15 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {getTodosPeriodos, getFiltrosPeriodos, getDatasAtendemRegras, getPeriodoPorUuid, postCriarPeriodo, patchUpdatePeriodo} from "../../../../../services/sme/Parametrizacoes.service";
+import {getTodosPeriodos, getFiltrosPeriodos, getDatasAtendemRegras, getPeriodoPorUuid, postCriarPeriodo, patchUpdatePeriodo, deletePeriodo} from "../../../../../services/sme/Parametrizacoes.service";
 import TabelaPeriodos from "./TabelaPeriodos";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faEye, faPlus} from "@fortawesome/free-solid-svg-icons";
 import ModalFormPeriodos from "./ModalFormPeriodos";
+import {ModalConfirmDeletePeriodo} from "./ModalConfirmDeletePeriodo";
 import {Filtros} from "./Filtros";
 import {BtnAddPeriodos} from "./BtnAddPeriodoss";
+import {ModalConfirmDeleteAcaoAssociacao} from "../AcoesDasAssociacoes/ModalConfirmDeleteAcaoAssociacao";
 
 export const Periodos = () =>{
 
@@ -76,6 +78,7 @@ export const Periodos = () =>{
     };
 
     const [showModalForm, setShowModalForm] = useState(false);
+    const [showModalConfirmDeletePeriodo, setShowModalConfirmDeletePeriodo] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [erroDatasAtendemRegras, setErroDatasAtendemRegras] = useState(false);
 
@@ -122,11 +125,13 @@ export const Periodos = () =>{
         setShowModalForm(false)
     }, [initialStateFormModal]);
 
+    const handleCloseConfirmDeletePeriodo = useCallback(()=>{
+        setShowModalConfirmDeletePeriodo(false)
+    }, []);
+
 
     const salvarPeriodo = async (payload, operacao, _periodo_uuid)=>{
-        console.log('salvarPeriodo salvarPeriodo ', payload);
-        console.log('salvarPeriodo operacao ', operacao);
-        console.log('salvarPeriodo _periodo_uuid ', _periodo_uuid);
+        console.log('salvarPeriodo payload ', payload);
 
         if (operacao === 'create'){
             try {
@@ -138,7 +143,7 @@ export const Periodos = () =>{
             }
         }else{
             try {
-                delete payload.periodo_anterior;
+                //delete payload.periodo_anterior;
                 await patchUpdatePeriodo(_periodo_uuid, payload);
                 console.log("Pedido atualizado com sucesso!");
                 await carregaTodosPeriodos();
@@ -180,6 +185,9 @@ export const Periodos = () =>{
         }
     }, [salvarPeriodo]);
 
+    const onDeletePeriodoTrue = async ()=>{
+        console.log('onDeletePeriodoTrue ', stateFormModal)
+    };
 
 
     return(
@@ -217,6 +225,20 @@ export const Periodos = () =>{
                         listaDePeriodos={listaDePeriodos}
                         setErroDatasAtendemRegras={setErroDatasAtendemRegras}
                         erroDatasAtendemRegras={erroDatasAtendemRegras}
+                        setShowModalConfirmDeletePeriodo={setShowModalConfirmDeletePeriodo}
+                    />
+                </section>
+                <section>
+                    <ModalConfirmDeletePeriodo
+                        show={showModalConfirmDeletePeriodo}
+                        handleClose={handleCloseConfirmDeletePeriodo}
+                        onDeletePeriodoTrue={onDeletePeriodoTrue}
+                        titulo="Excluir Período"
+                        texto="<p>Deseja realmente excluir este período?</p>"
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="danger"
+                        segundoBotaoTexto="Excluir"
                     />
                 </section>
             </div>

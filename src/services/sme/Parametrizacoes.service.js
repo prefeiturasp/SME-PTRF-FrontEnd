@@ -27,6 +27,9 @@ export const postCriarPeriodo = async (payload) => {
 export const patchUpdatePeriodo = async (periodo_uuid, payload) => {
     return (await api.patch(`/api/periodos/${periodo_uuid}/`, payload, authHeader)).data
 };
+export const deletePeriodo = async (periodo_uuid) => {
+    return (await api.delete(`/api/periodos/${periodo_uuid}/`, authHeader))
+};
 
 // AcoesDasAssociacoes
 export const getTodasAcoesDasAssociacoes = async () => {
