@@ -9,7 +9,6 @@ import ModalFormPeriodos from "./ModalFormPeriodos";
 import {ModalConfirmDeletePeriodo} from "./ModalConfirmDeletePeriodo";
 import {Filtros} from "./Filtros";
 import {BtnAddPeriodos} from "./BtnAddPeriodoss";
-import {ModalConfirmDeleteAcaoAssociacao} from "../AcoesDasAssociacoes/ModalConfirmDeleteAcaoAssociacao";
 
 export const Periodos = () =>{
 
@@ -130,7 +129,7 @@ export const Periodos = () =>{
     }, []);
 
 
-    const salvarPeriodo = async (payload, operacao, _periodo_uuid)=>{
+    const salvarPeriodo = useCallback(async (payload, operacao, _periodo_uuid)=>{
         console.log('salvarPeriodo payload ', payload);
 
         if (operacao === 'create'){
@@ -151,7 +150,7 @@ export const Periodos = () =>{
                 console.log("Erro ao Atualizar Pedido ", e)
             }
         }
-    };
+    }, [carregaTodosPeriodos]);
 
     const handleSubmitModalFormPeriodos = useCallback(async (values)=>{
 
@@ -185,9 +184,16 @@ export const Periodos = () =>{
         }
     }, [salvarPeriodo]);
 
-    const onDeletePeriodoTrue = async ()=>{
-        console.log('onDeletePeriodoTrue ', stateFormModal)
-    };
+    const onDeletePeriodoTrue = useCallback(async ()=>{
+        console.log('onDeletePeriodoTrue ', stateFormModal);
+        try {
+            let delete_periodo = await deletePeriodo(stateFormModal.uuid);
+            console.log("DELETE PERIODO ", delete_periodo);
+            console.log("Período excluído com sucesso");
+        }catch (e) {
+            console.log("Erro ao excluir período ", e);
+        }
+    }, [stateFormModal]);
 
 
     return(
@@ -201,7 +207,7 @@ export const Periodos = () =>{
                     initialStateFormModal={initialStateFormModal}
                     setStateFormModal={setStateFormModal}
                 />
-                {/*<button onClick={()=>setCount(prevState => prevState+1)}>Botão Sem Use Calback - {count}</button>*/}
+                <button onClick={()=>setCount(prevState => prevState+1)}>Botão Sem Use Calback - {count}</button>
                 <Filtros
                     stateFiltros={stateFiltros}
                     handleChangeFiltros={handleChangeFiltros}
