@@ -7,8 +7,6 @@ import {YupSignupSchemaPeriodos} from "./YupSignupSchemaPeriodos";
 
 const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModalFormPeriodos, listaDePeriodos, setErroDatasAtendemRegras, erroDatasAtendemRegras, setShowModalConfirmDeletePeriodo}) => {
 
-    console.log("erroDatasAtendemRegras ", erroDatasAtendemRegras);
-
     const bodyTextarea = () => {
         return (
             <>
@@ -184,8 +182,8 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
     return (
         <ModalFormBodyText
             show={show}
-            titulo="Visualizar período"
-            //titulo={props.stateFormModal && props.stateFormModal.operacao === 'edit' ? 'Editar ação de associação' : 'Adicionar ação de associação'}
+            //titulo="Visualizar período"
+            titulo={stateFormModal && !stateFormModal.editavel ? 'Visualizar período' : stateFormModal && stateFormModal.operacao === 'edit' ? 'Editar período' : 'Adicionar período'}
             onHide={handleClose}
             size='lg'
             bodyText={bodyTextarea()}

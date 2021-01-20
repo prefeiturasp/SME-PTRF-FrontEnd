@@ -18,7 +18,6 @@ export const Periodos = () =>{
 
     const carregaTodosPeriodos =  useCallback( async ()=>{
         let periodos = await getTodosPeriodos();
-        console.log('carregaTodosPeriodos ', periodos);
         setListaDePeriodos(periodos);
     }, []);
 
@@ -85,11 +84,7 @@ export const Periodos = () =>{
     const [erroExclusaoNaoPermitida, setErroExclusaoNaoPermitida] = useState(false);
 
     const handleEditFormModalPeriodos = useCallback( async (rowData) =>{
-        console.log("handleEditFormModalPeriodos rowData ", rowData);
-
         let periodo_por_uuid = await getPeriodoPorUuid(rowData.uuid);
-
-        console.log("handleEditFormModalPeriodos periodo_por_uuid ", periodo_por_uuid);
 
         setStateFormModal({
             ...stateFormModal,
@@ -139,7 +134,6 @@ export const Periodos = () =>{
 
 
     const salvarPeriodo = useCallback(async (payload, operacao, _periodo_uuid)=>{
-        console.log('salvarPeriodo payload ', payload);
 
         if (operacao === 'create'){
             try {
@@ -151,7 +145,6 @@ export const Periodos = () =>{
             }
         }else{
             try {
-                //delete payload.periodo_anterior;
                 await patchUpdatePeriodo(_periodo_uuid, payload);
                 console.log("Pedido atualizado com sucesso!");
                 await carregaTodosPeriodos();
@@ -194,7 +187,6 @@ export const Periodos = () =>{
     }, [salvarPeriodo]);
 
     const onDeletePeriodoTrue = useCallback(async ()=>{
-        console.log('onDeletePeriodoTrue ', stateFormModal);
         try {
             let delete_periodo = await deletePeriodo(stateFormModal.uuid);
             console.log("DELETE PERIODO ", delete_periodo);
