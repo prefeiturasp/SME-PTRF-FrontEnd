@@ -41,3 +41,27 @@ export const getRateiosAcao = async (acao_associacao_uuid, associacao_uuid) => {
 export const getReceitasAcao = async (associacao_uuid, acao_associacao_uuid) => {
     return (await api.get(`api/receitas/?associacao__uuid=${associacao_uuid}&acao_associacao__uuid=${acao_associacao_uuid}`, authHeader)).data
 };
+
+export const getAcoesFiltradas = async (nome='') => {
+    return (await api.get(`/api/acoes/?nome=${nome}`, authHeader)).data
+};
+
+export const postAddAcao = async (payload) => {
+    return (await api.post(`/api/acoes/`, payload, authHeader)).data
+};
+
+export const putAtualizarAcao = async (acao_uuid, payload) => {
+    return (await api.put(`/api/acoes/${acao_uuid}/`, payload, authHeader)).data
+};
+
+export const deleteAcao = async (acao_uuid) => {
+    return (await api.delete(`/api/acoes/${acao_uuid}/`, authHeader))
+};
+
+export const getRateiosPorTipoAcao = async (acao_uuid) => {
+    return (await api.get(`api/rateios-despesas/?acao_associacao__acao__uuid=${acao_uuid}`, authHeader)).data
+};
+
+export const getReceitasPoTipoAcao = async (acao_uuid) => {
+    return (await api.get(`api/receitas/?acao_associacao__acao__uuid=${acao_uuid}`, authHeader)).data
+};

@@ -6,7 +6,7 @@ export const ModalFormAcoesDaAssociacao = (props) => {
     const bodyTextarea = () => {
         return (
             <>
-                <form onSubmit={props.handleSubmitModalFormAcoesDasAssociacoes}>
+                <form onSubmit={props.handleSubmitModalFormAcoes}>
                     {props.stateFormModal && props.stateFormModal.operacao === 'edit' ? (
                         <div className='row'>
                             <div className='col'>
@@ -104,7 +104,7 @@ export const ModalFormAcoesDaAssociacao = (props) => {
                         <div className="p-Y bd-highlight">
                             <button
                                 disabled={props.readOnly || !props.stateFormModal.acao || !props.stateFormModal.status}
-                                onClick={()=>props.handleSubmitModalFormAcoesDasAssociacoes(props.stateFormModal)}
+                                onClick={()=>props.handleSubmitModalFormAcoes(props.stateFormModal)}
                                 type="button"
                                 className="btn btn btn-success mt-2"
                             >

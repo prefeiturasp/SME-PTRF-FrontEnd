@@ -48,6 +48,7 @@ import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioCons
 import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
 import {AcompanhamentoPcsSmePage} from "../paginas/SME/AcompanhamentoPcsSme";
 import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoees/Estrutura/AcoesDasAssociacoes";
+import {Acoes} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes"
 
 const routesConfig = [
     {
@@ -298,6 +299,12 @@ const routesConfig = [
         exact: true,
         path: "/",
         component: RedirectLoginVisaoUe,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/parametro-acoes",
+        component: Acoes,
         permissoes: ['view_default'],
     },
 ];

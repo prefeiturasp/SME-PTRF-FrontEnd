@@ -270,7 +270,7 @@ export const AcoesDasAssociacoes = () => {
                     <ModalFormAcoesDaAssociacao
                         show={showModalForm}
                         handleClose={onHandleClose}
-                        handleSubmitModalFormAcoesDasAssociacoes={handleSubmitModalFormAcoesDasAssociacoes}
+                        handleSubmitModalFormAcoes={handleSubmitModalFormAcoesDasAssociacoes}
                         recebeAcaoAutoComplete={recebeAcaoAutoComplete}
                         associacaoAutocomplete={associacaoAutocomplete}
                         handleChangeFormModal={handleChangeFormModal}
