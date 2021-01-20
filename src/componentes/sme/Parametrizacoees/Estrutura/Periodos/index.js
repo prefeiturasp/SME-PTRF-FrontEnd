@@ -9,6 +9,7 @@ import ModalFormPeriodos from "./ModalFormPeriodos";
 import {ModalConfirmDeletePeriodo} from "./ModalConfirmDeletePeriodo";
 import {Filtros} from "./Filtros";
 import {BtnAddPeriodos} from "./BtnAddPeriodoss";
+import {ModalInfoExclusaoNaoPermitida} from "./ModalInfoExclusaoNaoPermitida";
 
 export const Periodos = () =>{
 
@@ -78,8 +79,10 @@ export const Periodos = () =>{
 
     const [showModalForm, setShowModalForm] = useState(false);
     const [showModalConfirmDeletePeriodo, setShowModalConfirmDeletePeriodo] = useState(false);
+    const [showModalInfoExclusaoNaoPermitida, setShowModalInfoExclusaoNaoPermitida] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [erroDatasAtendemRegras, setErroDatasAtendemRegras] = useState(false);
+    const [erroExclusaoNaoPermitida, setErroExclusaoNaoPermitida] = useState(false);
 
     const handleEditFormModalPeriodos = useCallback( async (rowData) =>{
         console.log("handleEditFormModalPeriodos rowData ", rowData);
@@ -125,6 +128,12 @@ export const Periodos = () =>{
     }, [initialStateFormModal]);
 
     const handleCloseConfirmDeletePeriodo = useCallback(()=>{
+        setShowModalConfirmDeletePeriodo(false)
+    }, []);
+
+    const handleCloseModalInfoExclusaoNaoPermitida = useCallback(()=>{
+        setShowModalInfoExclusaoNaoPermitida(false);
+        setErroExclusaoNaoPermitida(false);
         setShowModalConfirmDeletePeriodo(false)
     }, []);
 
@@ -191,7 +200,11 @@ export const Periodos = () =>{
             console.log("DELETE PERIODO ", delete_periodo);
             console.log("Período excluído com sucesso");
         }catch (e) {
-            console.log("Erro ao excluir período ", e);
+            console.log("Erro ao excluir período ", e.response);
+            if (e.response.data && e.response.data.mensagem){
+                setErroExclusaoNaoPermitida(e.response.data.mensagem)
+                setShowModalInfoExclusaoNaoPermitida(true)
+            }
         }
     }, [stateFormModal]);
 
@@ -245,6 +258,16 @@ export const Periodos = () =>{
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="danger"
                         segundoBotaoTexto="Excluir"
+                    />
+                </section>
+                <section>
+                    <ModalInfoExclusaoNaoPermitida
+                        show={showModalInfoExclusaoNaoPermitida}
+                        handleClose={handleCloseModalInfoExclusaoNaoPermitida}
+                        titulo="Exclusão não permitida"
+                        texto={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="success"
                     />
                 </section>
             </div>
