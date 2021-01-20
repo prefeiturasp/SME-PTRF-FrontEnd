@@ -139,7 +139,6 @@ export const Periodos = () =>{
         setShowModalConfirmDeletePeriodo(false)
     }, []);
 
-
     const salvarPeriodo = useCallback(async (payload, operacao, _periodo_uuid)=>{
         setLoading(true);
         if (operacao === 'create'){
@@ -212,7 +211,6 @@ export const Periodos = () =>{
         }
         setLoading(false);
     }, [stateFormModal, carregaTodosPeriodos]);
-
 
     return(
         <PaginasContainer>
