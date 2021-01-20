@@ -1,7 +1,5 @@
 import api from '../api'
 import { TOKEN_ALIAS } from '../auth.service.js';
-import {ASSOCIACAO_UUID} from "../auth.service";
-
 
 const authHeader = {
     headers: {
@@ -10,6 +8,30 @@ const authHeader = {
     }
 };
 
+// Periodos
+export const getTodosPeriodos = async () => {
+    return (await api.get(`/api/periodos/`, authHeader)).data
+};
+export const getFiltrosPeriodos = async (referencia) => {
+    return (await api.get(`/api/periodos/?referencia=${referencia}`, authHeader)).data
+};
+export const getDatasAtendemRegras = async (data_inicio_realizacao_despesas, data_fim_realizacao_despesas, periodo_anterior_uuid, periodo_uuid) => {
+    return (await api.get(`/api/periodos/verificar-datas/?data_inicio_realizacao_despesas=${data_inicio_realizacao_despesas}&data_fim_realizacao_despesas=${data_fim_realizacao_despesas}&periodo_anterior_uuid=${periodo_anterior_uuid}${periodo_uuid ? '&periodo_uuid='+periodo_uuid : ''}`, authHeader)).data
+};
+export const getPeriodoPorUuid = async (periodo_uuid) => {
+    return (await api.get(`/api/periodos/${periodo_uuid}/`, authHeader)).data
+};
+export const postCriarPeriodo = async (payload) => {
+    return (await api.post(`/api/periodos/`, payload, authHeader)).data
+};
+export const patchUpdatePeriodo = async (periodo_uuid, payload) => {
+    return (await api.patch(`/api/periodos/${periodo_uuid}/`, payload, authHeader)).data
+};
+export const deletePeriodo = async (periodo_uuid) => {
+    return (await api.delete(`/api/periodos/${periodo_uuid}/`, authHeader))
+};
+
+// AcoesDasAssociacoes
 export const getTodasAcoesDasAssociacoes = async () => {
     return (await api.get(`/api/acoes-associacoes/`, authHeader)).data
 };
@@ -41,3 +63,5 @@ export const getRateiosAcao = async (acao_associacao_uuid, associacao_uuid) => {
 export const getReceitasAcao = async (associacao_uuid, acao_associacao_uuid) => {
     return (await api.get(`api/receitas/?associacao__uuid=${associacao_uuid}&acao_associacao__uuid=${acao_associacao_uuid}`, authHeader)).data
 };
+
+

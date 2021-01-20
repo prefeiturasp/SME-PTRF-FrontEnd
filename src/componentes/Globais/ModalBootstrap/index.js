@@ -298,3 +298,19 @@ export const ModalFormParametrizacoesAcoesDaAssociacao = (propriedades) =>{
         </Fragment>
     )
 };
+
+export const ModalFormBodyText = (props) =>{
+    return (
+        <Fragment>
+            <Modal centered show={props.show} onHide={props.onHide} size={props.size}>
+                <Modal.Header>
+                    <Modal.Title>{props.titulo}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {props.bodyText}
+                </Modal.Body>
+            </Modal>
+        </Fragment>
+    )
+};
+

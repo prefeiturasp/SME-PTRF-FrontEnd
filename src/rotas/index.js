@@ -48,6 +48,7 @@ import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioCons
 import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
 import {AcompanhamentoPcsSmePage} from "../paginas/SME/AcompanhamentoPcsSme";
 import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoees/Estrutura/AcoesDasAssociacoes";
+import {Periodos} from "../componentes/sme/Parametrizacoees/Estrutura/Periodos";
 
 const routesConfig = [
     {
@@ -286,6 +287,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-acoes-associacoes",
         component: AcoesDasAssociacoes,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/parametro-periodos",
+        component: Periodos,
         permissoes: ['view_default'],
     },
     {

@@ -3,7 +3,7 @@ import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import {getTodasAcoesDasAssociacoes, getListaDeAcoes, getFiltros, postAddAcaoAssociacao, putAtualizarAcaoAssociacao, deleteAcaoAssociacao, getRateiosAcao, getReceitasAcao} from "../../../../../services/sme/Parametrizacoes.service";
 import '../parametrizacoes-estrutura.scss'
 import {MenuInterno} from "../../../../Globais/MenuInterno";
-import {UrlsMenuInterno} from "../UrlsMenuInterno";
+import {UrlsMenuInterno} from "./UrlsMenuInterno";
 import {Filtros} from "./Filtros";
 import {BtnAddAcoes} from "./BtnAddAcoes";
 import {TabelaAcoesDasAssociacoes} from "./TabelaAcoesDasAssociacoes";
