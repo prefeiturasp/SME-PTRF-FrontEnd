@@ -10,15 +10,19 @@ import {ModalConfirmDeletePeriodo} from "./ModalConfirmDeletePeriodo";
 import {Filtros} from "./Filtros";
 import {BtnAddPeriodos} from "./BtnAddPeriodoss";
 import {ModalInfoExclusaoNaoPermitida} from "./ModalInfoExclusaoNaoPermitida";
+import Loading from "../../../../../utils/Loading";
 
 export const Periodos = () =>{
 
     const [count, setCount] = useState(0);
     const [listaDePeriodos, setListaDePeriodos] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const carregaTodosPeriodos =  useCallback( async ()=>{
+        setLoading(true);
         let periodos = await getTodosPeriodos();
         setListaDePeriodos(periodos);
+        setLoading(false);
     }, []);
 
     useEffect(()=>{
@@ -42,13 +46,17 @@ export const Periodos = () =>{
     }, [stateFiltros]);
 
     const handleSubmitFiltros = async () => {
+        setLoading(true);
         let periodos_filtrados = await getFiltrosPeriodos(stateFiltros.filtrar_por_referencia);
         setListaDePeriodos(periodos_filtrados);
+        setLoading(false);
     };
 
     const limpaFiltros = async () => {
+        setLoading(true);
         setStateFiltros(initialStateFiltros);
         await carregaTodosPeriodos();
+        setLoading(false);
     };
 
     // TabelaPeriodos
@@ -134,7 +142,7 @@ export const Periodos = () =>{
 
 
     const salvarPeriodo = useCallback(async (payload, operacao, _periodo_uuid)=>{
-
+        setLoading(true);
         if (operacao === 'create'){
             try {
                 await postCriarPeriodo(payload);
@@ -143,6 +151,7 @@ export const Periodos = () =>{
             }catch (e) {
                 console.log("Erro ao Criar Pedido ", e)
             }
+            setLoading(false);
         }else{
             try {
                 await patchUpdatePeriodo(_periodo_uuid, payload);
@@ -151,6 +160,7 @@ export const Periodos = () =>{
             }catch (e) {
                 console.log("Erro ao Atualizar Pedido ", e)
             }
+            setLoading(false);
         }
     }, [carregaTodosPeriodos]);
 
@@ -187,82 +197,98 @@ export const Periodos = () =>{
     }, [salvarPeriodo]);
 
     const onDeletePeriodoTrue = useCallback(async ()=>{
+        setLoading(true);
         try {
-            let delete_periodo = await deletePeriodo(stateFormModal.uuid);
-            console.log("DELETE PERIODO ", delete_periodo);
+            await deletePeriodo(stateFormModal.uuid);
             console.log("Período excluído com sucesso");
+            setShowModalConfirmDeletePeriodo(false);
+            setShowModalForm(false);
+            await carregaTodosPeriodos();
         }catch (e) {
             console.log("Erro ao excluir período ", e.response);
             if (e.response.data && e.response.data.mensagem){
-                setErroExclusaoNaoPermitida(e.response.data.mensagem)
+                setErroExclusaoNaoPermitida(e.response.data.mensagem);
                 setShowModalInfoExclusaoNaoPermitida(true)
             }
         }
+        setLoading(false);
     }, [stateFormModal]);
 
 
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Períodos</h1>
-            <div className="page-content-inner">
-                <BtnAddPeriodos
-                    FontAwesomeIcon={FontAwesomeIcon}
-                    faPlus={faPlus}
-                    setShowModalForm={setShowModalForm}
-                    initialStateFormModal={initialStateFormModal}
-                    setStateFormModal={setStateFormModal}
-                />
-                <button onClick={()=>setCount(prevState => prevState+1)}>Botão Sem Use Calback - {count}</button>
-                <Filtros
-                    stateFiltros={stateFiltros}
-                    handleChangeFiltros={handleChangeFiltros}
-                    handleSubmitFiltros={handleSubmitFiltros}
-                    limpaFiltros={limpaFiltros}
-                />
-                <p>Exibindo <span className='total-acoes'>{totalDePeriodos}</span> períodos</p>
-                <TabelaPeriodos
-                    rowsPerPage={rowsPerPage}
-                    listaDePeriodos={listaDePeriodos}
-                    acoesTemplate={acoesTemplate}
-                    dataTemplate={dataTemplate}
-                    handleEditFormModalPeriodos={handleEditFormModalPeriodos}
-                />
-                <section>
-                    <ModalFormPeriodos
-                        show={showModalForm}
-                        stateFormModal={stateFormModal}
-                        handleClose={handleCloseFormModal}
-                        handleSubmitModalFormPeriodos={handleSubmitModalFormPeriodos}
+            {loading ? (
+                    <div className="mt-5">
+                        <Loading
+                            corGrafico="black"
+                            corFonte="dark"
+                            marginTop="0"
+                            marginBottom="0"
+                        />
+                    </div>
+                ) :
+                <div className="page-content-inner">
+                    <BtnAddPeriodos
+                        FontAwesomeIcon={FontAwesomeIcon}
+                        faPlus={faPlus}
+                        setShowModalForm={setShowModalForm}
+                        initialStateFormModal={initialStateFormModal}
+                        setStateFormModal={setStateFormModal}
+                    />
+                    <button onClick={() => setCount(prevState => prevState + 1)}>Botão Sem Use Calback
+                        - {count}</button>
+                    <Filtros
+                        stateFiltros={stateFiltros}
+                        handleChangeFiltros={handleChangeFiltros}
+                        handleSubmitFiltros={handleSubmitFiltros}
+                        limpaFiltros={limpaFiltros}
+                    />
+                    <p>Exibindo <span className='total-acoes'>{totalDePeriodos}</span> períodos</p>
+                    <TabelaPeriodos
+                        rowsPerPage={rowsPerPage}
                         listaDePeriodos={listaDePeriodos}
-                        setErroDatasAtendemRegras={setErroDatasAtendemRegras}
-                        erroDatasAtendemRegras={erroDatasAtendemRegras}
-                        setShowModalConfirmDeletePeriodo={setShowModalConfirmDeletePeriodo}
+                        acoesTemplate={acoesTemplate}
+                        dataTemplate={dataTemplate}
+                        handleEditFormModalPeriodos={handleEditFormModalPeriodos}
                     />
-                </section>
-                <section>
-                    <ModalConfirmDeletePeriodo
-                        show={showModalConfirmDeletePeriodo}
-                        handleClose={handleCloseConfirmDeletePeriodo}
-                        onDeletePeriodoTrue={onDeletePeriodoTrue}
-                        titulo="Excluir Período"
-                        texto="<p>Deseja realmente excluir este período?</p>"
-                        primeiroBotaoTexto="Cancelar"
-                        primeiroBotaoCss="outline-success"
-                        segundoBotaoCss="danger"
-                        segundoBotaoTexto="Excluir"
-                    />
-                </section>
-                <section>
-                    <ModalInfoExclusaoNaoPermitida
-                        show={showModalInfoExclusaoNaoPermitida}
-                        handleClose={handleCloseModalInfoExclusaoNaoPermitida}
-                        titulo="Exclusão não permitida"
-                        texto={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
-                        primeiroBotaoTexto="Fechar"
-                        primeiroBotaoCss="success"
-                    />
-                </section>
-            </div>
+                    <section>
+                        <ModalFormPeriodos
+                            show={showModalForm}
+                            stateFormModal={stateFormModal}
+                            handleClose={handleCloseFormModal}
+                            handleSubmitModalFormPeriodos={handleSubmitModalFormPeriodos}
+                            listaDePeriodos={listaDePeriodos}
+                            setErroDatasAtendemRegras={setErroDatasAtendemRegras}
+                            erroDatasAtendemRegras={erroDatasAtendemRegras}
+                            setShowModalConfirmDeletePeriodo={setShowModalConfirmDeletePeriodo}
+                        />
+                    </section>
+                    <section>
+                        <ModalConfirmDeletePeriodo
+                            show={showModalConfirmDeletePeriodo}
+                            handleClose={handleCloseConfirmDeletePeriodo}
+                            onDeletePeriodoTrue={onDeletePeriodoTrue}
+                            titulo="Excluir Período"
+                            texto="<p>Deseja realmente excluir este período?</p>"
+                            primeiroBotaoTexto="Cancelar"
+                            primeiroBotaoCss="outline-success"
+                            segundoBotaoCss="danger"
+                            segundoBotaoTexto="Excluir"
+                        />
+                    </section>
+                    <section>
+                        <ModalInfoExclusaoNaoPermitida
+                            show={showModalInfoExclusaoNaoPermitida}
+                            handleClose={handleCloseModalInfoExclusaoNaoPermitida}
+                            titulo="Exclusão não permitida"
+                            texto={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
+                            primeiroBotaoTexto="Fechar"
+                            primeiroBotaoCss="success"
+                        />
+                    </section>
+                </div>
+            }
         </PaginasContainer>
     );
 };
