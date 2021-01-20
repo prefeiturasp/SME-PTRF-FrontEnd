@@ -156,14 +156,14 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
 
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
-                                        {values.operacao === 'create' || (values.operacao === 'edit' && values.editavel) ? (
+                                        {values.operacao === 'edit' && values.editavel ? (
                                             <button onClick={()=>setShowModalConfirmDeletePeriodo(true)} type="button" className="btn btn btn-danger mt-2 mr-2">
                                                 Apagar
                                             </button>
                                         ): null}
                                     </div>
                                     <div className="p-Y bd-highlight">
-                                        <button onClick={()=>handleClose()} type="button" className={`btn btn${values.operacao === 'edit' && values.editavel ? '-outline-success' : '-success'} mt-2 mr-2`}>{values.operacao === 'edit' && values.editavel ? 'Cancelar' : 'Voltar'}</button>
+                                        <button onClick={()=>handleClose()} type="button" className={`btn btn${values.editavel ? '-outline-success' : '-success'} mt-2 mr-2`}>{values.editavel ? 'Cancelar' : 'Voltar'}</button>
                                     </div>
                                     {values.operacao === 'create' || (values.operacao === 'edit' && values.editavel) ? (
                                         <div className="p-Y bd-highlight">
@@ -182,7 +182,6 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
     return (
         <ModalFormBodyText
             show={show}
-            //titulo="Visualizar período"
             titulo={stateFormModal && !stateFormModal.editavel ? 'Visualizar período' : stateFormModal && stateFormModal.operacao === 'edit' ? 'Editar período' : 'Adicionar período'}
             onHide={handleClose}
             size='lg'

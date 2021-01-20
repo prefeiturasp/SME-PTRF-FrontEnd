@@ -8,13 +8,12 @@ import {faEdit, faEye, faPlus} from "@fortawesome/free-solid-svg-icons";
 import ModalFormPeriodos from "./ModalFormPeriodos";
 import {ModalConfirmDeletePeriodo} from "./ModalConfirmDeletePeriodo";
 import {Filtros} from "./Filtros";
-import {BtnAddPeriodos} from "./BtnAddPeriodoss";
+import {BtnAddPeriodos} from "./BtnAddPeriodos";
 import {ModalInfoExclusaoNaoPermitida} from "./ModalInfoExclusaoNaoPermitida";
 import Loading from "../../../../../utils/Loading";
 
 export const Periodos = () =>{
 
-    const [count, setCount] = useState(0);
     const [listaDePeriodos, setListaDePeriodos] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -205,14 +204,14 @@ export const Periodos = () =>{
             setShowModalForm(false);
             await carregaTodosPeriodos();
         }catch (e) {
-            console.log("Erro ao excluir período ", e.response);
+            console.log("Erro ao excluir período ", e.response.data);
             if (e.response.data && e.response.data.mensagem){
                 setErroExclusaoNaoPermitida(e.response.data.mensagem);
                 setShowModalInfoExclusaoNaoPermitida(true)
             }
         }
         setLoading(false);
-    }, [stateFormModal]);
+    }, [stateFormModal, carregaTodosPeriodos]);
 
 
     return(
@@ -236,8 +235,6 @@ export const Periodos = () =>{
                         initialStateFormModal={initialStateFormModal}
                         setStateFormModal={setStateFormModal}
                     />
-                    <button onClick={() => setCount(prevState => prevState + 1)}>Botão Sem Use Calback
-                        - {count}</button>
                     <Filtros
                         stateFiltros={stateFiltros}
                         handleChangeFiltros={handleChangeFiltros}
