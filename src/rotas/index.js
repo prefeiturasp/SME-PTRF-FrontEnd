@@ -49,6 +49,7 @@ import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelPa
 import {AcompanhamentoPcsSmePage} from "../paginas/SME/AcompanhamentoPcsSme";
 import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoees/Estrutura/AcoesDasAssociacoes";
 import {Acoes} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes"
+import {AssociacoesDaAcao} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes/AssociacoesDaAcao"
 
 const routesConfig = [
     {
@@ -305,6 +306,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-acoes",
         component: Acoes,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/associacoes-da-acao/:acao_uuid?",
+        component: AssociacoesDaAcao,
         permissoes: ['view_default'],
     },
 ];

@@ -58,10 +58,11 @@ export const deleteAcao = async (acao_uuid) => {
     return (await api.delete(`/api/acoes/${acao_uuid}/`, authHeader))
 };
 
-export const getRateiosPorTipoAcao = async (acao_uuid) => {
-    return (await api.get(`api/rateios-despesas/?acao_associacao__acao__uuid=${acao_uuid}`, authHeader)).data
+export const getUnidadesPorAcao = async (acao_uuid, nome="") => {
+    console.log("Buscando ação >>> ",acao_uuid, nome)
+    return (await api.get(`api/acoes-associacoes/?acao__uuid=${acao_uuid}&nome=${nome}`, authHeader)).data
 };
 
-export const getReceitasPoTipoAcao = async (acao_uuid) => {
-    return (await api.get(`api/receitas/?acao_associacao__acao__uuid=${acao_uuid}`, authHeader)).data
+export const getAcao = async (uuid='') => {
+    return (await api.get(`/api/acoes/${uuid}/`, authHeader)).data
 };

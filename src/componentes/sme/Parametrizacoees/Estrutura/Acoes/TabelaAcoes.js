@@ -3,7 +3,7 @@ import {DataTable} from 'primereact/datatable'
 import {Column} from 'primereact/column'
 
 
-export const TabelaAcoes = ({todasAsAcoes, rowsPerPage, statusTemplate, dataTemplate, acoesTemplate}) => {
+export const TabelaAcoes = ({todasAsAcoes, rowsPerPage, acoesTemplate, conferirUnidadesTemplate}) => {
 
     return(
         <DataTable
@@ -13,6 +13,10 @@ export const TabelaAcoes = ({todasAsAcoes, rowsPerPage, statusTemplate, dataTemp
             rows={rowsPerPage}
         >
             <Column field="nome" header="Nome"/>
+
+            <Column body={conferirUnidadesTemplate} header='UEs vinculadas'
+                                                style={{textAlign: 'center'}}/>
+
             <Column
                 field="acoes"
                 header="Ações"

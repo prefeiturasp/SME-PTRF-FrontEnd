@@ -6,11 +6,12 @@ import {Filtros} from "./Filtros";
 import {BtnAddAcoes} from "./BtnAddAcoes";
 import {TabelaAcoes} from "./TabelaAcoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus, faEdit} from "@fortawesome/free-solid-svg-icons";
+import {faPlus, faEdit, faClipboardList} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import {ModalFormAcoes} from "./ModalFormAcoes";
 import {ModalConfirmDeleteAcao} from "./ModalConfirmDeleteAcao";
 import {ModalInfoNaoPodeExcluir} from "./ModalInfoNaoPodeExcluir";
+import {Link} from "react-router-dom";
 
 
 export const Acoes = () => {
@@ -67,6 +68,20 @@ export const Acoes = () => {
                         icon={faEdit}
                     />
                 </button>
+            </div>
+        )
+    };
+
+    const conferirUnidadesTemplate = (rowData, column) => {
+        return (
+            <div>
+                <Link to={`/associacoes-da-acao/${rowData['uuid']}`} className="link-green" onClick={() => {}}>
+                    <FontAwesomeIcon
+                        style={{fontSize: '15px', marginRight: "0"}}
+                        icon={faClipboardList}
+                    />
+                    <span> Ver UEs vinculadas</span>
+                </Link>
             </div>
         )
     };
@@ -200,6 +215,7 @@ export const Acoes = () => {
                             todasAsAcoes={todasAsAcoes}
                             rowsPerPage={rowsPerPage}
                             acoesTemplate={acoesTemplate}
+                            conferirUnidadesTemplate={conferirUnidadesTemplate}
                         />
                     </>
                 }
