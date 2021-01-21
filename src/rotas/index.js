@@ -49,6 +49,7 @@ import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelPa
 import {AcompanhamentoPcsSmePage} from "../paginas/SME/AcompanhamentoPcsSme";
 import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoees/Estrutura/AcoesDasAssociacoes";
 import {Periodos} from "../componentes/sme/Parametrizacoees/Estrutura/Periodos";
+import {Associacoes} from "../componentes/sme/Parametrizacoees/Estrutura/Associacoes";
 
 const routesConfig = [
     {
@@ -281,6 +282,12 @@ const routesConfig = [
         exact: true,
         path: "/painel-parametrizacoes",
         component: PainelParametrizacoesPage,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/parametro-associacoes",
+        component: Associacoes,
         permissoes: ['view_default'],
     },
     {
