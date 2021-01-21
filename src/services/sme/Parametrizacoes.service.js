@@ -8,6 +8,11 @@ const authHeader = {
     }
 };
 
+// Associacoes
+export const getAssociacoes = async () => {
+    return (await api.get(`api/associacoes/`, authHeader)).data
+};
+
 // Periodos
 export const getTodosPeriodos = async () => {
     return (await api.get(`/api/periodos/`, authHeader)).data
