@@ -13,6 +13,14 @@ export const getAssociacoes = async () => {
     return (await api.get(`api/associacoes/`, authHeader)).data
 };
 
+export const getTabelaAssociacoes = async () => {
+    return (await api.get(`api/associacoes/tabelas/`, authHeader)).data
+};
+
+export const getFiltrosAssociacoes = async (tipo_unidade, unidade__dre__uuid, nome) => {
+    return (await api.get(`/api/associacoes/?unidade__tipo_unidade=${tipo_unidade}&unidade__dre__uuid=${unidade__dre__uuid}&nome=${nome}`, authHeader)).data
+};
+
 // Periodos
 export const getTodosPeriodos = async () => {
     return (await api.get(`/api/periodos/`, authHeader)).data
