@@ -2,7 +2,13 @@ import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import {UrlsMenuInterno} from "./UrlsMenuInterno";
 import {MenuInterno} from "../../../../Globais/MenuInterno";
-import {getAssociacoes, getTabelaAssociacoes, getFiltrosAssociacoes} from "../../../../../services/sme/Parametrizacoes.service";
+import {
+    getAssociacoes,
+    getTabelaAssociacoes,
+    getFiltrosAssociacoes,
+    getAssociacaoPorUuid,
+    getTodosPeriodos
+} from "../../../../../services/sme/Parametrizacoes.service";
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
@@ -27,7 +33,7 @@ export const Associacoes = () => {
 
     const carregaTabelasAssociacoes = useCallback(async () => {
         let tabela = await getTabelaAssociacoes();
-        console.log("TABELA ", tabela);
+        console.log("tabela ", tabela);
         setTabelaAssociacoes(tabela);
     }, []);
 
@@ -66,13 +72,16 @@ export const Associacoes = () => {
 
     // Modais
     const initialStateFormModal = {
-        referencia: "",
-        data_prevista_repasse: "",
-        data_inicio_realizacao_despesas: "",
-        data_fim_realizacao_despesas: "",
-        data_inicio_prestacao_contas: "",
-        data_fim_prestacao_contas: "",
-        editavel:true,
+        nome: '',
+        codigo_eol_unidade: '',
+        tipo_unidade: '',
+        nome_unidade: '',
+        cnpj: '',
+        periodo_inicial: '' ,
+        ccm: '',
+        email: '',
+        status_regularidade: '',
+        processo_regularidade: '',
         uuid:"",
         id:"",
         operacao: 'create',
@@ -80,24 +89,51 @@ export const Associacoes = () => {
 
     const [showModalForm, setShowModalForm] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
+    const [listaDePeriodos, setListaDePeriodos] = useState([]);
+
+    const carregaTodosPeriodos =  useCallback( async ()=>{
+        let periodos = await getTodosPeriodos();
+        setListaDePeriodos(periodos);
+    }, []);
+
+    useEffect(()=>{
+        carregaTodosPeriodos();
+    }, [carregaTodosPeriodos]);
 
     const handleCloseFormModal = useCallback(()=>{
         setStateFormModal(initialStateFormModal);
         setShowModalForm(false)
     }, [initialStateFormModal]);
-    
-    // Tabela Associacoes
-    const rowsPerPage = 20;
 
     const handleEditFormModalAssociacoes = useCallback( async (rowData) =>{
-        console.log("handleEditFormModalAssociacoes handleEditFormModalAssociacoes", rowData);
+        let associacao_por_uuid = await getAssociacaoPorUuid(rowData.uuid);
+        console.log("Associacao por UUID ", associacao_por_uuid);
+        setStateFormModal({
+            ...stateFormModal,
+            nome: associacao_por_uuid.nome,
+            codigo_eol_unidade: associacao_por_uuid.unidade.codigo_eol,
+            tipo_unidade: associacao_por_uuid.unidade.tipo_unidade,
+            nome_unidade: associacao_por_uuid.unidade.nome,
+            cnpj: associacao_por_uuid.cnpj,
+            periodo_inicial: associacao_por_uuid.periodo_inicial && associacao_por_uuid.periodo_inicial.uuid ? associacao_por_uuid.periodo_inicial.uuid : '' ,
+            ccm: associacao_por_uuid.ccm ? associacao_por_uuid.ccm : "",
+            email: associacao_por_uuid.email ? associacao_por_uuid.email : "",
+            status_regularidade: associacao_por_uuid.status_regularidade,
+            processo_regularidade: associacao_por_uuid.processo_regularidade ? associacao_por_uuid.processo_regularidade : "-",
+            uuid: associacao_por_uuid.uuid,
+            id: associacao_por_uuid.id,
+            operacao: 'edit',
+        });
         setShowModalForm(true)
 
-    }, []);
+    }, [stateFormModal]);
 
     const handleSubmitModalFormAssociacoes = useCallback(async ()=>{
 
     }, []);
+    
+    // Tabela Associacoes
+    const rowsPerPage = 20;
 
     const acoesTemplate = useCallback((rowData) =>{
         return (
@@ -138,6 +174,8 @@ export const Associacoes = () => {
                     <ModalFormAssociacoes
                         show={showModalForm}
                         stateFormModal={stateFormModal}
+                        listaDePeriodos={listaDePeriodos}
+                        tabelaAssociacoes={tabelaAssociacoes}
                         handleClose={handleCloseFormModal}
                         handleSubmitModalFormAssociacoes={handleSubmitModalFormAssociacoes}
                     />
