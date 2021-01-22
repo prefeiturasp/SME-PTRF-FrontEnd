@@ -4,7 +4,7 @@ import {Formik} from "formik";
 import {exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import {YupSignupSchemaAssociacoes} from "./YupSignupSchemaAssociacoes";
 
-const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitModalFormAssociacoes, listaDePeriodos, tabelaAssociacoes, carregaUnidadePeloCodigoEol, errosCodigoEol}) => {
+const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitModalFormAssociacoes, listaDePeriodos, tabelaAssociacoes, carregaUnidadePeloCodigoEol, errosCodigoEol, setShowModalConfirmDeleteAssociacao}) => {
 
     const bodyTextarea = () => {
         return (
@@ -187,7 +187,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'edit' &&
-                                            <button type="button" className="btn btn btn-danger mt-2 mr-2">
+                                            <button onClick={()=>setShowModalConfirmDeleteAssociacao(true)} type="button" className="btn btn btn-danger mt-2 mr-2">
                                                 Apagar
                                             </button>
                                         }

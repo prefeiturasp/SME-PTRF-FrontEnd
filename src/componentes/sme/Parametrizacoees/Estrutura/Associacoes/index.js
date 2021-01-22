@@ -11,6 +11,7 @@ import {
     getUnidadePeloCodigoEol,
     postCriarAssociacao,
     patchUpdateAssociacao,
+    deleteAssociacao,
 } from "../../../../../services/sme/Parametrizacoes.service";
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -18,6 +19,7 @@ import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {Filtros} from "./Filtros";
 import ModalFormAssociacoes from "./ModalFormAssociacoes";
 import {BtnAddAssociacoes} from "./BtnAddAssociacoes";
+import {ModalConfirmDeleteAssociacao} from "./ModalConfirmDeleteAssociacao";
 
 export const Associacoes = () => {
 
@@ -95,6 +97,7 @@ export const Associacoes = () => {
     };
 
     const [showModalForm, setShowModalForm] = useState(false);
+    const [showModalConfirmDeleteAssociacao, setShowModalConfirmDeleteAssociacao] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [listaDePeriodos, setListaDePeriodos] = useState([]);
     const [errosCodigoEol, setErrosCodigoEol] = useState('');
@@ -114,6 +117,10 @@ export const Associacoes = () => {
         setErrosCodigoEol('');
         setShowModalForm(false)
     }, [initialStateFormModal]);
+
+    const handleCloseConfirmDeleteAssociacao = useCallback(()=>{
+        setShowModalConfirmDeleteAssociacao(false);
+    }, []);
 
     const handleEditFormModalAssociacoes = useCallback( async (rowData) =>{
         let associacao_por_uuid = await getAssociacaoPorUuid(rowData.uuid);
@@ -166,7 +173,6 @@ export const Associacoes = () => {
         let cnpj_existente=false;
         if (verifica_alteracao_cnpj !== values.cnpj.trim()){
             cnpj_existente = listaDeAssociacoesFiltrarCnpj.find(element=> element.cnpj === values.cnpj);
-            console.log("cpf_existente ", cnpj_existente);
         }
 
         if (cnpj_existente){
@@ -197,9 +203,10 @@ export const Associacoes = () => {
                         }
                     };
                     try {
-                        let criar_associacao = await postCriarAssociacao(payload);
-                        console.log("CRIAR ASSOCIACAO ", criar_associacao);
+                        await postCriarAssociacao(payload);
                         console.log('Associação criada com sucesso.');
+                        setShowModalForm(false);
+                        carregaTodasAsAssociacoes();
                     }catch (e) {
                         console.log('Erro ao criar associação ', e.response.data)
                     }
@@ -215,11 +222,11 @@ export const Associacoes = () => {
                         unidade: values.uuid_unidade,
 
                     };
-                    console.log("PAYLOAD ", payload)
                     try {
-                        let editar_associacao = await patchUpdateAssociacao(values.uuid, payload);
-                        console.log("EDITAR ASSOCIACAO ", editar_associacao);
+                        await patchUpdateAssociacao(values.uuid, payload);
                         console.log('Associação editada com sucesso.');
+                        setShowModalForm(false);
+                        carregaTodasAsAssociacoes();
                     }catch (e) {
                         console.log('Erro ao editar associação ', e.response.data)
                     }
@@ -227,7 +234,19 @@ export const Associacoes = () => {
 
             }
         }
-    }, [errosCodigoEol, listaDeAssociacoesFiltrarCnpj, verifica_alteracao_cnpj]);
+    }, [errosCodigoEol, listaDeAssociacoesFiltrarCnpj, verifica_alteracao_cnpj, carregaTodasAsAssociacoes]);
+
+    const onDeleteAssociacaoTrue = useCallback(async ()=>{
+        try {
+            await deleteAssociacao(stateFormModal.uuid);
+            console.log('Associação excluida com sucesso.');
+            setShowModalConfirmDeleteAssociacao(false);
+            setShowModalForm(false);
+            carregaTodasAsAssociacoes();
+        }catch (e) {
+            console.log('Erro ao excluir associação ', e.response.data)
+        }
+    }, [stateFormModal.uuid, carregaTodasAsAssociacoes]);
     
     // Tabela Associacoes
     const rowsPerPage = 20;
@@ -284,6 +303,20 @@ export const Associacoes = () => {
                         errosCodigoEol={errosCodigoEol}
                         handleClose={handleCloseFormModal}
                         handleSubmitModalFormAssociacoes={handleSubmitModalFormAssociacoes}
+                        setShowModalConfirmDeleteAssociacao={setShowModalConfirmDeleteAssociacao}
+                    />
+                </section>
+                <section>
+                    <ModalConfirmDeleteAssociacao
+                        show={showModalConfirmDeleteAssociacao}
+                        handleClose={handleCloseConfirmDeleteAssociacao}
+                        onDeleteAssociacaoTrue={onDeleteAssociacaoTrue}
+                        titulo="Excluir Associação"
+                        texto="<p>Deseja realmente excluir esta associação?</p>"
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="danger"
+                        segundoBotaoTexto="Excluir"
                     />
                 </section>
             </div>

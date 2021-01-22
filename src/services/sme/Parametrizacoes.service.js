@@ -30,6 +30,9 @@ export const postCriarAssociacao = async (payload) => {
 export const patchUpdateAssociacao = async (associacao_uuid, payload) => {
     return (await api.patch(`/api/associacoes/${associacao_uuid}/`, payload, authHeader)).data
 };
+export const deleteAssociacao = async (associacao_uuid) => {
+    return (await api.delete(`/api/associacoes/${associacao_uuid}/`, authHeader))
+};
 
 
 // Periodos
