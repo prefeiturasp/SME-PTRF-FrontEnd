@@ -27,6 +27,9 @@ export const getUnidadePeloCodigoEol = async (codigo_eol_unidade) => {
 export const postCriarAssociacao = async (payload) => {
     return (await api.post(`/api/associacoes/`, payload, authHeader)).data
 };
+export const patchUpdateAssociacao = async (associacao_uuid, payload) => {
+    return (await api.patch(`/api/associacoes/${associacao_uuid}/`, payload, authHeader)).data
+};
 
 
 // Periodos

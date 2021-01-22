@@ -53,6 +53,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                     props.handleChange(e);
                                                     carregaUnidadePeloCodigoEol(e.target.value, setFieldValue)
                                                 }}
+                                                disabled={props.values.operacao === 'edit'}
                                             />
                                             {errosCodigoEol &&
                                             <div className='row mt-2'>

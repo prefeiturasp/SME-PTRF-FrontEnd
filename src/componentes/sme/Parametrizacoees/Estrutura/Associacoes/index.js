@@ -10,6 +10,7 @@ import {
     getTodosPeriodos,
     getUnidadePeloCodigoEol,
     postCriarAssociacao,
+    patchUpdateAssociacao,
 } from "../../../../../services/sme/Parametrizacoes.service";
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -22,14 +23,14 @@ export const Associacoes = () => {
 
     const [count, setCount] = useState(0);
     const [listaDeAssociacoes, setListaDeAssociacoes] = useState([]);
-    const [listaDeAssociacoesFiltrarCpf, setListaDeAssociacoesFiltrarCpf] = useState([]);
+    const [listaDeAssociacoesFiltrarCnpj, setListaDeAssociacoesFiltrarCnpj] = useState([]);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState([]);
 
     const carregaTodasAsAssociacoes = useCallback(async () => {
         let todas_associacoes = await getAssociacoes();
         console.log("Associacoes ", todas_associacoes);
         setListaDeAssociacoes(todas_associacoes);
-        setListaDeAssociacoesFiltrarCpf(todas_associacoes);
+        setListaDeAssociacoesFiltrarCnpj(todas_associacoes);
     }, []);
 
     useEffect(() => {
@@ -78,6 +79,7 @@ export const Associacoes = () => {
     // Modais
     const initialStateFormModal = {
         nome: '',
+        uuid_unidade: '',
         codigo_eol_unidade: '',
         tipo_unidade: '',
         nome_unidade: '',
@@ -99,13 +101,13 @@ export const Associacoes = () => {
 
     const carregaTodosPeriodos =  useCallback( async ()=>{
         let periodos = await getTodosPeriodos();
+        console.log("PERIODOS ", periodos);
         setListaDePeriodos(periodos);
     }, []);
 
     useEffect(()=>{
         carregaTodosPeriodos();
     }, [carregaTodosPeriodos]);
-
 
     const handleCloseFormModal = useCallback(()=>{
         setStateFormModal(initialStateFormModal);
@@ -119,6 +121,7 @@ export const Associacoes = () => {
         setStateFormModal({
             ...stateFormModal,
             nome: associacao_por_uuid.nome,
+            uuid_unidade: associacao_por_uuid.unidade.uuid,
             codigo_eol_unidade: associacao_por_uuid.unidade.codigo_eol,
             tipo_unidade: associacao_por_uuid.unidade.tipo_unidade,
             nome_unidade: associacao_por_uuid.unidade.nome,
@@ -134,6 +137,7 @@ export const Associacoes = () => {
         });
         setShowModalForm(true)
     }, [stateFormModal]);
+
 
     const carregaUnidadePeloCodigoEol = async (codigo_eol_unidade, setFieldValue) =>{
 
@@ -153,57 +157,77 @@ export const Associacoes = () => {
                 setErrosCodigoEol(e.response.data.mensagem);
             }
         }
-
     };
+
+    const verifica_alteracao_cnpj =  useMemo(() => stateFormModal.cnpj, [stateFormModal.cnpj]);
 
     const handleSubmitModalFormAssociacoes = useCallback(async (values,{setErrors})=>{
         console.log("handleSubmitModalFormAssociacoes values ", values);
-        console.log("handleSubmitModalFormAssociacoes erros ", errosCodigoEol);
-        console.log("handleSubmitModalFormAssociacoes listaDeAssociacoesFiltrarCpf ", listaDeAssociacoesFiltrarCpf);
+        let cnpj_existente=false;
+        if (verifica_alteracao_cnpj !== values.cnpj.trim()){
+            cnpj_existente = listaDeAssociacoesFiltrarCnpj.find(element=> element.cnpj === values.cnpj);
+            console.log("cpf_existente ", cnpj_existente);
+        }
 
-        let cnpj_existente = listaDeAssociacoesFiltrarCpf.find(element=> element.cnpj === values.cnpj);
-        console.log("cpf_existente ", cnpj_existente)
-
-        if (Object.entries(cnpj_existente).length > 0){
+        if (cnpj_existente){
             setErrors({ cnpj: 'Associação com este CNPJ já existe.' });
-        }
+        }else {
+            let payload;
+            if (!errosCodigoEol){
+                if (values.operacao === 'create'){
+                    payload = {
+                        nome: values.nome,
+                        cnpj: values.cnpj,
+                        periodo_inicial: values.periodo_inicial,
+                        ccm: values.ccm,
+                        email: values.email,
+                        status_regularidade: values.status_regularidade,
+                        processo_regularidade: values.processo_regularidade,
+                        unidade: {
+                            codigo_eol: values.codigo_eol_unidade,
+                            nome: values.nome_unidade,
+                            tipo_unidade: values.tipo_unidade,
+                            email: '',
+                            telefone: '',
+                            numero: '',
+                            tipo_logradouro: '',
+                            logradouro: '',
+                            bairro: '',
+                            cep: ''
+                        }
+                    };
+                    try {
+                        let criar_associacao = await postCriarAssociacao(payload);
+                        console.log("CRIAR ASSOCIACAO ", criar_associacao);
+                        console.log('Associação criada com sucesso.');
+                    }catch (e) {
+                        console.log('Erro ao criar associação ', e.response.data)
+                    }
+                }else {
+                    payload = {
+                        nome: values.nome,
+                        cnpj: values.cnpj,
+                        periodo_inicial: values.periodo_inicial,
+                        ccm: values.ccm,
+                        email: values.email,
+                        status_regularidade: values.status_regularidade,
+                        processo_regularidade: values.processo_regularidade,
+                        unidade: values.uuid_unidade,
 
-        if (!errosCodigoEol){
-
-            let payload = {
-                nome: values.nome,
-                cnpj: values.cnpj,
-                periodo_inicial: values.periodo_inicial,
-                ccm: values.ccm,
-                email: values.email,
-                processo_regularidade: values.processo_regularidade,
-                unidade: {
-                   codigo_eol: values.codigo_eol_unidade,
-                   nome: '',
-                   email: '',
-                   telefone: '',
-                   numero: '',
-                   tipo_logradouro: '',
-                   logradouro: '',
-                   bairro: '',
-                   cep: ''
+                    };
+                    console.log("PAYLOAD ", payload)
+                    try {
+                        let editar_associacao = await patchUpdateAssociacao(values.uuid, payload);
+                        console.log("EDITAR ASSOCIACAO ", editar_associacao);
+                        console.log('Associação editada com sucesso.');
+                    }catch (e) {
+                        console.log('Erro ao editar associação ', e.response.data)
+                    }
                 }
-            };
 
-            if (values.operacao === 'create'){
-
-                try {
-                    let criar_associacao = await postCriarAssociacao(payload);
-                    console.log("CRIAR ASSOCIACAO ", criar_associacao);
-                    console.log('Associação criada com sucesso.');
-                }catch (e) {
-                    console.log('Erro ao criar associação ', e.response)
-                }
             }
-
         }
-
-    }, [errosCodigoEol, listaDeAssociacoesFiltrarCpf]);
+    }, [errosCodigoEol, listaDeAssociacoesFiltrarCnpj, verifica_alteracao_cnpj]);
     
     // Tabela Associacoes
     const rowsPerPage = 20;
