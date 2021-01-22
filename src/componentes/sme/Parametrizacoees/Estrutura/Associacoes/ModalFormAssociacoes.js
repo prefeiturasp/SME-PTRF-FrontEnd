@@ -2,15 +2,16 @@ import React, {memo} from "react";
 import {ModalFormBodyText} from "../../../../Globais/ModalBootstrap";
 import {Formik} from "formik";
 import {exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaAssociacoes} from "./YupSignupSchemaAssociacoes";
 
-const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitModalFormAssociacoes, listaDePeriodos, tabelaAssociacoes}) => {
+const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitModalFormAssociacoes, listaDePeriodos, tabelaAssociacoes, carregaUnidadePeloCodigoEol, errosCodigoEol}) => {
 
     const bodyTextarea = () => {
         return (
             <>
                 <Formik
                     initialValues={stateFormModal}
-                    //validationSchema={YupSignupSchemaPeriodos}
+                    validationSchema={YupSignupSchemaAssociacoes}
                     validateOnBlur={true}
                     enableReinitialize={true}
                     onSubmit={handleSubmitModalFormAssociacoes}
@@ -18,6 +19,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                     {props => {
                         const {
                             values,
+                            setFieldValue,
                         } = props;
                         return(
                             <form onSubmit={props.handleSubmit}>
@@ -47,8 +49,18 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 name="codigo_eol_unidade"
                                                 id="codigo_eol_unidade"
                                                 className="form-control"
-                                                onChange={props.handleChange}
+                                                onChange={(e)=>{
+                                                    props.handleChange(e);
+                                                    carregaUnidadePeloCodigoEol(e.target.value, setFieldValue)
+                                                }}
                                             />
+                                            {errosCodigoEol &&
+                                            <div className='row mt-2'>
+                                                <div className='col'>
+                                                    <p><span className="span_erro text-danger mt-1">{errosCodigoEol}</span></p>
+                                                </div>
+                                            </div>
+                                            }
                                             {props.touched.codigo_eol_unidade && props.errors.codigo_eol_unidade && <span className="span_erro text-danger mt-1"> {props.errors.codigo_eol_unidade} </span>}
                                         </div>
                                     </div>
@@ -197,7 +209,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
     return (
         <ModalFormBodyText
             show={show}
-            titulo={stateFormModal && stateFormModal && stateFormModal.operacao === 'edit' ? 'Editar associção' : 'Adicionar associção'}
+            titulo={stateFormModal && stateFormModal && stateFormModal.operacao === 'edit' ? 'Editar associação' : 'Adicionar associação'}
             onHide={handleClose}
             size='lg'
             bodyText={bodyTextarea()}
