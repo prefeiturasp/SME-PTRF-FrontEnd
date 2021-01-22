@@ -2,9 +2,6 @@ import React, {useEffect, useState} from "react";
 import Toast from 'react-bootstrap/Toast'
 import Dropdown from 'react-bootstrap/Dropdown';
 import "../../../../../Globais/ModalBootstrap/modal-bootstrap.scss"
-
-import {atribuirTecnicos, filtrosUnidadesParaAtribuir, retirarAtribuicoes} from "../../../../../../services/dres/Atribuicoes.service";
-
 import Img404 from "../../../../../../assets/img/img-404.svg";
 import Loading from "../../../../../../utils/Loading";
 import {Filtros} from "./FormFiltros";
@@ -13,15 +10,14 @@ import {Column} from "primereact/column";
 import {MsgImgCentralizada} from  "../../../../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../../../../Globais/Mensagens/MsgImgLadoDireito";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faClipboardList, faSignInAlt, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
-import {
-    ModalAtribuir, 
-    ModalConfirmarRetiradaAtribuicoes,
-    ModalInformativoCopiaPeriodo} from "./Modais";
+import {faArrowLeft, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
+import {ModalDesvincularLote} from "./Modais";
 import "./associacoes.scss";
 import {Link, useParams} from 'react-router-dom';
 import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
-import {getUnidadesPorAcao, getAcao} from "../../../../../../services/sme/Parametrizacoes.service"
+import {getUnidadesPorAcao, getAcao, deleteAcaoAssociacao, deleteAcoesAssociacoesEmLote} from "../../../../../../services/sme/Parametrizacoes.service"
+import {ModalConfirmDesvincularAcaoAssociacao} from "./ModalConfirmDesvincularAcaoAssociacao"
+import {ModalInfoNaoPodeExcluir} from "../ModalInfoNaoPodeExcluir";
 
 const CustomToast = (propriedades) => {
     return (
@@ -41,8 +37,8 @@ const CustomToast = (propriedades) => {
               alt=""
             />
             
-            <div>Associações participantes da ação "{propriedades.tecnico}".</div>
-            <a onClick={e => propriedades.desfazer()} style={{marginLeft: "30px", marginRight: "30px", textDecoration: "underline", color: "#17a2b8", cursor:"pointer"}}><strong>Desfazer</strong></a>
+            <div>"{propriedades.mensagem}"</div>
+
           </Toast.Header>
         </Toast>
     )
@@ -59,21 +55,17 @@ export const AssociacoesDaAcao = () => {
 
     const [loading, setLoading] = useState(true);
     const [acao, setAcao] = useState(null);
-    const [periodoAtual, setPeriodoAtual] = useState(null);
-    const [dreUuid, setDreUuid] = useState(null);
+    const [acaoAssociacaoUuid, setAcaoAssociacaoUuid] = useState(null);
     const [unidades, setUnidades] = useState([]);
-    const [tecnicosList, setTecnicosList] = useState([]);
     const [estadoFiltros, setEstadoFiltros] = useState(estadoInicialFiltros);
     const [buscaUtilizandoFiltros, setBuscaUtilizandoFiltros] = useState(false);
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
-    const [show, setShow] = useState(false);
-    const [showConfirma, setShowConfirma] = useState(false);
+    const [showModalDesvincular, setShowModalDesvincular] = useState(false);
     const [showToast, setShowToast] = useState(false);
-    const [showInformativoCopia, setShowInformativoCopia] = useState(false);
-    const [tecnico, setTecnico] = useState("");
-    const [copiaUnidades, setCopiaUnidades] = useState([]);
-    const [escolhaTags, setEscolhaTags] = useState(false);
-    const [periodoACopiar, setPeriodoACopiar] = useState(null);
+    const [showConfirmaDesvinculo, setShowConfirmaDesvinculo] = useState(false);
+    const [showModalInfoNaoPodeExcluir, setShowModalInfoNaoPodeExcluir] = useState(false);
+    const [mensagemModalInfoNaoPodeExcluir, setMensagemModalInfoNaoPodeExcluir] = useState("");
+    const [mensagemToast, setMensagemToast] = useState("");
 
     useEffect(() => {
         buscaUnidadesDaAcao(acao_uuid).then(() => setLoading(false));
@@ -82,7 +74,6 @@ export const AssociacoesDaAcao = () => {
     const buscaUnidadesDaAcao = async (acaoUuid) => {
         if (acaoUuid){
             let acao = await getAcao(acaoUuid)
-            console.log("Ação", acao)
             setAcao(acao);
 
             let acoesAssociacoes = await getUnidadesPorAcao(acaoUuid);
@@ -122,13 +113,19 @@ export const AssociacoesDaAcao = () => {
         setEstadoFiltros(estadoInicialFiltros);
         await buscaUnidadesDaAcao(acao_uuid);
         setShowToast(false);
-        setTecnico("");
         setLoading(false)
     };
 
-    const fechaModalInformativo = () => {
-        setShowInformativoCopia(false);
-    }
+    const atualizaListaUnidades = async () => {
+        setLoading(true);
+        if (buscaUtilizandoFiltros) {
+            await aplicaFiltrosUnidades()
+        }
+        else {
+            await buscaUnidadesDaAcao(acao_uuid)
+        }
+        setLoading(false);
+    };
 
     const selecionarTodos = (event) => {
         event.preventDefault();
@@ -158,24 +155,8 @@ export const AssociacoesDaAcao = () => {
         }, []);
         setUnidades(result);
         setQuantidadeSelecionada(0);
-    }
+    };
 
-    const selecionarApenasUesNaoSemAtribuicao = (event) => {
-        event.preventDefault();
-        let cont = quantidadeSelecionada;
-        let result = unidades.reduce((acc, o) => {    
-            let obj = o.atribuicao.id === "" ? Object.assign(o, { selecionado: true }) : o;
-            if (obj.selecionado) {
-                cont = cont + 1;
-            }
-            acc.push(obj);
-        
-            return acc;
-        
-        }, []);
-        setUnidades(result);
-        setQuantidadeSelecionada(cont);
-    }
 
     const selecionarTemplate = (rowData) => {
         return (
@@ -210,8 +191,6 @@ export const AssociacoesDaAcao = () => {
               <Dropdown.Menu>
                 <Dropdown.Item onClick={(e) => selecionarTodos(e)}>Selecionar todos</Dropdown.Item>
                 <Dropdown.Item onClick={(e) => desmarcarTodos(e)}>Desmarcar todos</Dropdown.Item>
-                <Dropdown.Item onClick={(e) => modalConfirmarRetirada(e)}>Retirar Atribuições</Dropdown.Item>
-                <Dropdown.Item onClick={(e) => selecionarApenasUesNaoSemAtribuicao(e)}>Selecionar apenas UEs sem atribuição</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
             </div>
@@ -220,8 +199,7 @@ export const AssociacoesDaAcao = () => {
 
     const tratarSelecionado = (e, unidadeUuid) => {
         if (showToast === true) {
-            alert("A mensagem para Desfazer atribuições está aberta, feche a mensagem  no 'x' ou clique  em 'Desfazer' para liberar a seleção das unidades.");
-            return 
+           setShowToast(false)
         }
 
         let cont = quantidadeSelecionada;
@@ -253,7 +231,7 @@ export const AssociacoesDaAcao = () => {
         )
     }
 
-    const montagemAtribuir = () => {
+    const montagemDesvincularLote = () => {
         return (
             <div className="row">
                 <div className="col-12" style={{background: "#00585E", color: 'white', padding:"15px", margin:"0px 15px", flex:"100%"}}>
@@ -268,12 +246,12 @@ export const AssociacoesDaAcao = () => {
                                         <strong>Cancelar</strong>
                                     </a>
                                     <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                    <a className="float-right" onClick={(e) => modalAtribuir()} style={{textDecoration:"underline", cursor:"pointer"}}>
+                                    <a className="float-right" onClick={(e) => modalDesvincular()} style={{textDecoration:"underline", cursor:"pointer"}}>
                                         <FontAwesomeIcon
                                             style={{color: "white", fontSize: '15px', marginRight: "2px"}}
-                                            icon={faSignInAlt}
+                                            icon={faTimesCircle}
                                         />
-                                        <strong>Atribuir a um técnico</strong>
+                                        <strong>Desvincular da ação</strong>
                                     </a>
                                 </div>
                                 
@@ -285,95 +263,23 @@ export const AssociacoesDaAcao = () => {
         )
     }
 
-    const modalAtribuir = () => {
-        setShow(true);
+    const modalDesvincular = () => {
+        setShowModalDesvincular(true);
     }
 
     const onHide = () => {
-        setShow(false);
-        setTecnico("");
-    }
+        setShowModalDesvincular(false);
 
-    const selecionarTecnico = (value) => {
-        setTecnico(value);
-    }
-
-    const atribuir = async () => {
-        setShow(false);
-        setLoading(true);
-        let atribuirData = {
-            periodo: periodoAtual.uuid,
-            tecnico: tecnico,
-            unidades: []
-        }
-
-        let unis = unidades.filter(u => u.selecionado === true).map(item => {return {uuid: item.uuid}});
-        setCopiaUnidades(unidades.filter(u => u.selecionado === true));
-        atribuirData.unidades = unis;
-        try {
-            let response = await atribuirTecnicos(atribuirData);
-            // buscarUnidadesParaAtribuicao(dreUuid, periodoAtual.uuid);
-            console.log("Tecnico atribuido com sucesso!");
-        } catch(e) {
-            console.log("erro ao atribuir");
-            console.log(e);
-        }
-        setLoading(false);
-        setShowToast(true);
-    }
-
-    const modalConfirmarRetirada = () => {
-        if (quantidadeSelecionada) {
-            setShowConfirma(true);
-        } else {
-            alert("Nenhuma unidade selecionada!");
-        }
-    }
-
-    const onHideConfirma = () => {
-        setShowConfirma(false);
     }
 
     const fecharToast = () => {
         setShowToast(false);
-        setTecnico("");
-        setCopiaUnidades([]);
     }
-
-    const retiraAtribuicoes = async () => {
-        setLoading(true);
-        let unidadesData = {
-            periodo: periodoAtual.uuid,
-            unidades: []
-        }
-
-        let unis = unidades.filter(u => u.selecionado === true).map(item => {return {uuid: item.uuid}});
-        unidadesData.unidades = unis;
-        try {
-            let response = await retirarAtribuicoes(unidadesData);
-            // buscarUnidadesParaAtribuicao(dreUuid, periodoAtual.uuid);
-            console.log("Atribuições retiradas com sucesso!");
-        } catch(e) {
-            console.log("erro ao retirar atribuições");
-            console.log(e);
-        }
-        setShowConfirma(false);
-        setLoading(false);
-    };
-
-    const montaNome = (nomeTecnico) => {
-        let nome = nomeTecnico.split(" ");
-        return nome.length > 1 ? `${nome[0]} ${nome[1]}`: nome[0] 
-    };
-
-    const handleDesvinculaUE = (rowData) => {
-
-    };
 
     const acoesTemplate = (rowData) => {
         return (
             <div>
-                <Link className="link-red" onClick={handleDesvinculaUE(rowData['uuid'])}>
+                <Link className="link-red" onClick={() => {handleDesvinculaUE(rowData['uuid'])}}>
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "#B40C02"}}
                         icon={faTimesCircle}
@@ -384,8 +290,71 @@ export const AssociacoesDaAcao = () => {
         )
     };
 
+    const handleDesvinculaUE = (acaoAssociacaoUuid) => {
+        setAcaoAssociacaoUuid(acaoAssociacaoUuid)
+        setShowConfirmaDesvinculo(true);
+    };
+
+    const handleCloseDesvinculaAssociacao = () => {
+        setShowConfirmaDesvinculo(false)
+    };
+
+    const onDesvinculaAssociacaoTrue = async () => {
+        try {
+            setShowConfirmaDesvinculo(false);
+            const result = await deleteAcaoAssociacao(acaoAssociacaoUuid);
+            console.log('Associação desvinculada com sucesso', acaoAssociacaoUuid);
+            await atualizaListaUnidades()
+        } catch (e) {
+            if (e.response && e.response.data && e.response.data.mensagem){
+                setMensagemModalInfoNaoPodeExcluir(e.response.data.mensagem);
+                setShowModalInfoNaoPodeExcluir(true);
+                console.log(e.response.data.mensagem)
+            }
+            console.log('Erro ao desvincular associação!! ', e.response.data)
+        }
+        setAcaoAssociacaoUuid(null);
+    };
+
+    const desvincularAssociacoesEmLote = async () => {
+        setShowModalDesvincular(false);
+        setLoading(true);
+        let payLoad = {
+            lista_uuids: []
+        };
+
+        let uuids = unidades.filter(u => u.selecionado === true).map(item => {return item.uuid});
+
+        console.log("Lista de uuids", uuids)
+
+        payLoad.lista_uuids = uuids;
+
+        try {
+            let response = await deleteAcoesAssociacoesEmLote(payLoad);
+            console.log("Associações desvinculadas com sucesso!");
+            console.log(response.mensagem);
+            setMensagemToast(response.mensagem ? response.mensagem : "Associações desvinculadas com sucesso!")
+        } catch(e) {
+            console.log("Erro ao tentar desvincular associações");
+            console.log(e.response.data);
+            setMensagemToast(e.response && e.response.mensagem ? e.response.mensagem : "Erro ao tentar desvincular associações")
+        }
+        await atualizaListaUnidades();
+        setLoading(false);
+        setShowToast(true);
+    };
+
+    const handleCloseInfoNaoPodeExcluir = () => {
+        setShowModalInfoNaoPodeExcluir(false);
+        setMensagemModalInfoNaoPodeExcluir("");
+    };
+
     return (
-            <PaginasContainer>
+        <PaginasContainer>
+            <h1 className="titulo-itens-painel mt-5">Unidades vinculadas à ação {acao ? acao.nome : ""}</h1>
+            <div className="page-content-inner">
+
+
                 {loading ? (
                         <div className="mt-5">
                             <Loading
@@ -397,94 +366,109 @@ export const AssociacoesDaAcao = () => {
                         </div>
                     ) :
 
-                (
-                    <>
-                    <div className="d-flex bd-highlight">
-                        <div className="p-2 flex-grow-1 bd-highlight">
-                            <h1 className="titulo-itens-painel mt-5">Unidades vinculadas à ação {acao ? acao.nome : ""}</h1>
-                        </div>
-                    </div>
-                    <div className="page-content-inner">
-                        <Filtros
-                            estadoFiltros={estadoFiltros}
-                            mudancasFiltros={mudancasFiltros}
-                            enviarFiltrosAssociacao={aplicaFiltrosUnidades}
-                            limparFiltros={limparFiltros}
-                        />
-                        <ModalAtribuir
-                            show={show}
-                            onHide={onHide}
-                            titulo="Atribuir a um técnico"
-                            tecnico={tecnico}
-                            tecnicosList={tecnicosList}
-                            selecionarTecnico={selecionarTecnico}
-                            quantidadeSelecionada={quantidadeSelecionada}
-                            primeiroBotaoOnclick={atribuir}
-                            primeiroBotaoTexto="OK"/>
-
-                        <ModalConfirmarRetiradaAtribuicoes
-                            show={showConfirma}
-                            onHide={onHideConfirma}
-                            titulo="Retirada de Atribuições"
-                            primeiroBotaoOnclick={retiraAtribuicoes}
-                            primeiroBotaoTexto="OK"
-                        />
-
-                        <CustomToast
-                            show={showToast}
-                            fecharToast={fecharToast}
-                            tecnico={tecnico !== "" ? montaNome(tecnicosList.filter(t => t.uuid === tecnico)[0].nome) : ""}
-                            // desfazer={desfazer}
-                        />
-
-                        <ModalInformativoCopiaPeriodo
-                            show={showInformativoCopia}
-                            onHide={fechaModalInformativo}
-                            titulo="Cópia de períodos"
-                            periodo={periodoACopiar}
-                        />
-
-                        {quantidadeSelecionada > 0 ?
-                            (montagemAtribuir()):
-                            (mensagemQuantidadeExibida())
-                        }
-                        <div className="row">
-                            <div className="col-12">
-                                {unidades.length > 0 ? (
-                                <DataTable
-                                    value={unidades}
-                                    className="datatable-footer-coad"
-                                    paginator={unidades.length > rowsPerPage}
-                                    rows={rowsPerPage}
-                                    paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                                    autoLayout={true}
-                                    selectionMode="single"
+                    (
+                        <>
+                            <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
+                                <Link
+                                    to='/parametro-acoes'
+                                    className="btn btn-success ml-2"
                                 >
-                                    <Column header={selecionarHeader()} body={selecionarTemplate}/>
-                                    <Column field='associacao.unidade.codigo_eol' header='Código Eol'/>
-                                    <Column field='associacao.unidade.nome_com_tipo' header='Nome UE'/>
-                                    <Column
-                                        field="acoes"
-                                        header="Ações"
-                                        body={acoesTemplate}
+                                    <FontAwesomeIcon
+                                        style={{marginRight: "5px", color: '#fff'}}
+                                        icon={faArrowLeft}
                                     />
-                                </DataTable>
-                                ) : buscaUtilizandoFiltros ?
-                                    <MsgImgCentralizada
-                                        texto='Não encontramos unidades que atendam aos filtros informados.'
-                                        img={Img404}
-                                    />
-                                  :
-                                    <MsgImgLadoDireito
-                                        texto='Não há nenhuma unidade vinculada a essa ação'
-                                        img={Img404}
-                                    />}
+                                    Voltar para lista de Ações
+                                </Link>
                             </div>
-                        </div>
-                    </div>
-                    </>)
+                            <div className="page-content-inner">
+                                <Filtros
+                                    estadoFiltros={estadoFiltros}
+                                    mudancasFiltros={mudancasFiltros}
+                                    enviarFiltrosAssociacao={aplicaFiltrosUnidades}
+                                    limparFiltros={limparFiltros}
+                                />
+                                <ModalDesvincularLote
+                                    show={showModalDesvincular}
+                                    onHide={onHide}
+                                    titulo="Desvincular unidades da ação"
+                                    quantidadeSelecionada={quantidadeSelecionada}
+                                    primeiroBotaoOnclick={desvincularAssociacoesEmLote}
+                                    primeiroBotaoTexto="OK"
+                                />
+
+
+                                <CustomToast
+                                    show={showToast}
+                                    fecharToast={fecharToast}
+                                    mensagem={mensagemToast}
+                                />
+
+
+                                {quantidadeSelecionada > 0 ?
+                                    (montagemDesvincularLote()) :
+                                    (mensagemQuantidadeExibida())
+                                }
+                                <div className="row">
+                                    <div className="col-12">
+                                        {unidades.length > 0 ? (
+                                            <DataTable
+                                                value={unidades}
+                                                className="datatable-footer-coad"
+                                                paginator={unidades.length > rowsPerPage}
+                                                rows={rowsPerPage}
+                                                paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                                                autoLayout={true}
+                                                selectionMode="single"
+                                            >
+                                                <Column header={selecionarHeader()} body={selecionarTemplate}/>
+                                                <Column field='associacao.unidade.codigo_eol' header='Código Eol'/>
+                                                <Column field='associacao.unidade.nome_com_tipo' header='Nome UE'/>
+                                                <Column
+                                                    field="acoes"
+                                                    header="Ações"
+                                                    body={acoesTemplate}
+                                                />
+                                            </DataTable>
+                                        ) : buscaUtilizandoFiltros ?
+                                            <MsgImgCentralizada
+                                                texto='Não encontramos unidades que atendam aos filtros informados.'
+                                                img={Img404}
+                                            />
+                                            :
+                                            <MsgImgLadoDireito
+                                                texto='Não há nenhuma unidade vinculada a essa ação'
+                                                img={Img404}
+                                            />}
+                                    </div>
+                                </div>
+                            </div>
+                        </>)
                 }
-            </PaginasContainer>
+                <section>
+                    <ModalConfirmDesvincularAcaoAssociacao
+                        show={showConfirmaDesvinculo}
+                        handleClose={handleCloseDesvinculaAssociacao}
+                        onDeleteAcaoTrue={onDesvinculaAssociacaoTrue}
+                        titulo="Desvincular associação da ação"
+                        texto="<p>Deseja realmente desvincular essa associação da ação?</p>"
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="danger"
+                        segundoBotaoTexto="Desvincular"
+                    />
+                </section>
+                <section>
+                    <ModalInfoNaoPodeExcluir
+                        show={showModalInfoNaoPodeExcluir}
+                        handleClose={handleCloseInfoNaoPodeExcluir}
+                        titulo="Exclusão não permitida"
+                        texto={mensagemModalInfoNaoPodeExcluir}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="success"
+                    />
+                </section>
+            </div>
+        </PaginasContainer>
 
     )
 }

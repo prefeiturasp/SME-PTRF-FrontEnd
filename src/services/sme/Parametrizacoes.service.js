@@ -66,3 +66,7 @@ export const getUnidadesPorAcao = async (acao_uuid, nome="") => {
 export const getAcao = async (uuid='') => {
     return (await api.get(`/api/acoes/${uuid}/`, authHeader)).data
 };
+
+export const deleteAcoesAssociacoesEmLote = async (payload) => {
+    return (await api.post(`/api/acoes-associacoes/excluir-lote/`, payload, authHeader)).data
+};

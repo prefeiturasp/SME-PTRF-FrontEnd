@@ -3,10 +3,9 @@ import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import {getListaDeAcoes, getAcoesFiltradas, postAddAcao, putAtualizarAcao, deleteAcao} from "../../../../../services/sme/Parametrizacoes.service";
 import '../parametrizacoes-estrutura.scss'
 import {Filtros} from "./Filtros";
-import {BtnAddAcoes} from "./BtnAddAcoes";
 import {TabelaAcoes} from "./TabelaAcoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus, faEdit, faClipboardList} from "@fortawesome/free-solid-svg-icons";
+import {faPlus, faEdit, faClipboardList, faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import {ModalFormAcoes} from "./ModalFormAcoes";
 import {ModalConfirmDeleteAcao} from "./ModalConfirmDeleteAcao";
@@ -101,7 +100,7 @@ export const Acoes = () => {
     const [mensagemModalInfoNaoPodeExcluir, setMensagemModalInfoNaoPodeExcluir] = useState("");
 
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
-    const [readOnly, setReadOnly] = useState(true);
+    const [readOnly, setReadOnly] = useState(false);
 
     ;
     const onHandleClose = () => {
@@ -197,13 +196,21 @@ export const Acoes = () => {
                         </div>
                     ) :
                     <>
-                        <BtnAddAcoes
-                            FontAwesomeIcon={FontAwesomeIcon}
-                            faPlus={faPlus}
-                            setShowModalForm={setShowModalForm}
-                            initialStateFormModal={initialStateFormModal}
-                            setStateFormModal={setStateFormModal}
-                        />
+                        <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
+                            <Link
+                                onClick={() => {
+                                    setStateFormModal(initialStateFormModal);
+                                    setShowModalForm(true);
+                                }}
+                                className="btn btn-success ml-2"
+                            >
+                                <FontAwesomeIcon
+                                    style={{marginRight: "5px", color: '#fff'}}
+                                    icon={faPlus}
+                                />
+                                Adicionar ação
+                            </Link>
+                        </div>
                         <Filtros
                             stateFiltros={stateFiltros}
                             handleChangeFiltros={handleChangeFiltros}
