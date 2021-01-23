@@ -20,6 +20,7 @@ import {Filtros} from "./Filtros";
 import ModalFormAssociacoes from "./ModalFormAssociacoes";
 import {BtnAddAssociacoes} from "./BtnAddAssociacoes";
 import {ModalConfirmDeleteAssociacao} from "./ModalConfirmDeleteAssociacao";
+import {ModalInfoExclusaoNaoPermitida} from "./ModalInfoExclusaoNaoPermitida";
 
 export const Associacoes = () => {
 
@@ -99,8 +100,10 @@ export const Associacoes = () => {
     const [showModalForm, setShowModalForm] = useState(false);
     const [showModalConfirmDeleteAssociacao, setShowModalConfirmDeleteAssociacao] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
+    const [showModalInfoExclusaoNaoPermitida, setShowModalInfoExclusaoNaoPermitida] = useState(false);
     const [listaDePeriodos, setListaDePeriodos] = useState([]);
     const [errosCodigoEol, setErrosCodigoEol] = useState('');
+    const [erroExclusaoNaoPermitida, setErroExclusaoNaoPermitida] = useState(false);
 
     const carregaTodosPeriodos =  useCallback( async ()=>{
         let periodos = await getTodosPeriodos();
@@ -120,6 +123,12 @@ export const Associacoes = () => {
 
     const handleCloseConfirmDeleteAssociacao = useCallback(()=>{
         setShowModalConfirmDeleteAssociacao(false);
+    }, []);
+
+    const handleCloseModalInfoExclusaoNaoPermitida = useCallback(()=>{
+        setShowModalInfoExclusaoNaoPermitida(false);
+        setErroExclusaoNaoPermitida(false);
+        setShowModalConfirmDeleteAssociacao(false)
     }, []);
 
     const handleEditFormModalAssociacoes = useCallback( async (rowData) =>{
@@ -245,6 +254,10 @@ export const Associacoes = () => {
             carregaTodasAsAssociacoes();
         }catch (e) {
             console.log('Erro ao excluir associação ', e.response.data)
+            if (e.response.data && e.response.data.mensagem){
+                setErroExclusaoNaoPermitida(e.response.data.mensagem);
+                setShowModalInfoExclusaoNaoPermitida(true)
+            }
         }
     }, [stateFormModal.uuid, carregaTodasAsAssociacoes]);
     
@@ -317,6 +330,16 @@ export const Associacoes = () => {
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="danger"
                         segundoBotaoTexto="Excluir"
+                    />
+                </section>
+                <section>
+                    <ModalInfoExclusaoNaoPermitida
+                        show={showModalInfoExclusaoNaoPermitida}
+                        handleClose={handleCloseModalInfoExclusaoNaoPermitida}
+                        titulo="Exclusão não permitida"
+                        texto={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="success"
                     />
                 </section>
             </div>
