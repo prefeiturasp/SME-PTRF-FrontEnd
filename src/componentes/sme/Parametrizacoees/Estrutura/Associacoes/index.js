@@ -21,6 +21,7 @@ import ModalFormAssociacoes from "./ModalFormAssociacoes";
 import {BtnAddAssociacoes} from "./BtnAddAssociacoes";
 import {ModalConfirmDeleteAssociacao} from "./ModalConfirmDeleteAssociacao";
 import {ModalInfoExclusaoNaoPermitida} from "./ModalInfoExclusaoNaoPermitida";
+import Loading from "../../../../../utils/Loading";
 
 export const Associacoes = () => {
 
@@ -28,12 +29,14 @@ export const Associacoes = () => {
     const [listaDeAssociacoes, setListaDeAssociacoes] = useState([]);
     const [listaDeAssociacoesFiltrarCnpj, setListaDeAssociacoesFiltrarCnpj] = useState([]);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const carregaTodasAsAssociacoes = useCallback(async () => {
+        setLoading(true);
         let todas_associacoes = await getAssociacoes();
-        console.log("Associacoes ", todas_associacoes);
         setListaDeAssociacoes(todas_associacoes);
         setListaDeAssociacoesFiltrarCnpj(todas_associacoes);
+        setLoading(false);
     }, []);
 
     useEffect(() => {
@@ -42,7 +45,6 @@ export const Associacoes = () => {
 
     const carregaTabelasAssociacoes = useCallback(async () => {
         let tabela = await getTabelaAssociacoes();
-        console.log("tabela ", tabela);
         setTabelaAssociacoes(tabela);
     }, []);
 
@@ -69,14 +71,17 @@ export const Associacoes = () => {
     }, [stateFiltros]);
 
     const handleSubmitFiltros = async () => {
+        setLoading(true);
         let associacoes_filtradas = await getFiltrosAssociacoes(stateFiltros.filtrar_por_tipo_ue, stateFiltros.filtrar_por_dre, stateFiltros.filtrar_por_associacao);
-        console.log("handleSubmitFiltros ", associacoes_filtradas);
         setListaDeAssociacoes(associacoes_filtradas);
+        setLoading(false);
     };
 
     const limpaFiltros = async () => {
+        setLoading(true);
         setStateFiltros(initialStateFiltros);
         await carregaTodasAsAssociacoes();
+        setLoading(false);
     };
 
     // Modais
@@ -107,7 +112,6 @@ export const Associacoes = () => {
 
     const carregaTodosPeriodos =  useCallback( async ()=>{
         let periodos = await getTodosPeriodos();
-        console.log("PERIODOS ", periodos);
         setListaDePeriodos(periodos);
     }, []);
 
@@ -133,7 +137,6 @@ export const Associacoes = () => {
 
     const handleEditFormModalAssociacoes = useCallback( async (rowData) =>{
         let associacao_por_uuid = await getAssociacaoPorUuid(rowData.uuid);
-        console.log("Associacao por UUID ", associacao_por_uuid);
         setStateFormModal({
             ...stateFormModal,
             nome: associacao_por_uuid.nome,
@@ -159,8 +162,6 @@ export const Associacoes = () => {
 
         try {
             let unidade = await getUnidadePeloCodigoEol(codigo_eol_unidade);
-            console.log("carregaUnidadePeloCodigoEol unidade ", unidade);
-
             if (Object.entries(unidade).length > 0){
                 setFieldValue('tipo_unidade', unidade.tipo_unidade.trim());
                 setFieldValue('nome_unidade', unidade.nome.trim());
@@ -178,7 +179,6 @@ export const Associacoes = () => {
     const verifica_alteracao_cnpj =  useMemo(() => stateFormModal.cnpj, [stateFormModal.cnpj]);
 
     const handleSubmitModalFormAssociacoes = useCallback(async (values,{setErrors})=>{
-        console.log("handleSubmitModalFormAssociacoes values ", values);
         let cnpj_existente=false;
         if (verifica_alteracao_cnpj !== values.cnpj.trim()){
             cnpj_existente = listaDeAssociacoesFiltrarCnpj.find(element=> element.cnpj === values.cnpj);
@@ -189,6 +189,7 @@ export const Associacoes = () => {
         }else {
             let payload;
             if (!errosCodigoEol){
+                setLoading(true);
                 if (values.operacao === 'create'){
                     payload = {
                         nome: values.nome,
@@ -215,11 +216,13 @@ export const Associacoes = () => {
                         await postCriarAssociacao(payload);
                         console.log('Associação criada com sucesso.');
                         setShowModalForm(false);
-                        carregaTodasAsAssociacoes();
+                        await carregaTodasAsAssociacoes();
                     }catch (e) {
                         console.log('Erro ao criar associação ', e.response.data)
                     }
+                    setLoading(false);
                 }else {
+                    setLoading(true);
                     payload = {
                         nome: values.nome,
                         cnpj: values.cnpj,
@@ -235,30 +238,32 @@ export const Associacoes = () => {
                         await patchUpdateAssociacao(values.uuid, payload);
                         console.log('Associação editada com sucesso.');
                         setShowModalForm(false);
-                        carregaTodasAsAssociacoes();
+                        await carregaTodasAsAssociacoes();
                     }catch (e) {
                         console.log('Erro ao editar associação ', e.response.data)
                     }
+                    setLoading(false);
                 }
-
             }
         }
     }, [errosCodigoEol, listaDeAssociacoesFiltrarCnpj, verifica_alteracao_cnpj, carregaTodasAsAssociacoes]);
 
     const onDeleteAssociacaoTrue = useCallback(async ()=>{
+        setLoading(true);
         try {
             await deleteAssociacao(stateFormModal.uuid);
-            console.log('Associação excluida com sucesso.');
+            console.log('Associação excluída com sucesso.');
             setShowModalConfirmDeleteAssociacao(false);
             setShowModalForm(false);
-            carregaTodasAsAssociacoes();
+            await carregaTodasAsAssociacoes();
         }catch (e) {
-            console.log('Erro ao excluir associação ', e.response.data)
+            console.log('Erro ao excluir associação ', e.response.data);
             if (e.response.data && e.response.data.mensagem){
                 setErroExclusaoNaoPermitida(e.response.data.mensagem);
                 setShowModalInfoExclusaoNaoPermitida(true)
             }
         }
+        setLoading(false);
     }, [stateFormModal.uuid, carregaTodasAsAssociacoes]);
     
     // Tabela Associacoes
@@ -281,68 +286,80 @@ export const Associacoes = () => {
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Associações</h1>
-            <div className="page-content-inner">
-                <MenuInterno
-                    caminhos_menu_interno={UrlsMenuInterno}
-                />
-                <BtnAddAssociacoes
-                    FontAwesomeIcon={FontAwesomeIcon}
-                    faPlus={faPlus}
-                    setShowModalForm={setShowModalForm}
-                    initialStateFormModal={initialStateFormModal}
-                    setStateFormModal={setStateFormModal}
-                />
-                <Filtros
-                    stateFiltros={stateFiltros}
-                    handleChangeFiltros={handleChangeFiltros}
-                    handleSubmitFiltros={handleSubmitFiltros}
-                    limpaFiltros={limpaFiltros}
-                    tabelaAssociacoes={tabelaAssociacoes}
-                />
-                <button onClick={()=>setCount(prevState => prevState+1)}>Botão Sem Use Calback - {count}</button>
-                <p>Exibindo <span className='total-acoes'>{totalDeAssociacoes}</span> associações</p>
-                <TabelaAssociacoes
-                    rowsPerPage={rowsPerPage}
-                    listaDeAssociacoes={listaDeAssociacoes}
-                    acoesTemplate={acoesTemplate}
-                />
-                <section>
-                    <ModalFormAssociacoes
-                        show={showModalForm}
-                        stateFormModal={stateFormModal}
-                        listaDePeriodos={listaDePeriodos}
+            {loading ? (
+                    <div className="mt-5">
+                        <Loading
+                            corGrafico="black"
+                            corFonte="dark"
+                            marginTop="0"
+                            marginBottom="0"
+                        />
+                    </div>
+                ) :
+                <div className="page-content-inner">
+                    <MenuInterno
+                        caminhos_menu_interno={UrlsMenuInterno}
+                    />
+                    <BtnAddAssociacoes
+                        FontAwesomeIcon={FontAwesomeIcon}
+                        faPlus={faPlus}
+                        setShowModalForm={setShowModalForm}
+                        initialStateFormModal={initialStateFormModal}
+                        setStateFormModal={setStateFormModal}
+                    />
+                    <Filtros
+                        stateFiltros={stateFiltros}
+                        handleChangeFiltros={handleChangeFiltros}
+                        handleSubmitFiltros={handleSubmitFiltros}
+                        limpaFiltros={limpaFiltros}
                         tabelaAssociacoes={tabelaAssociacoes}
-                        carregaUnidadePeloCodigoEol={carregaUnidadePeloCodigoEol}
-                        errosCodigoEol={errosCodigoEol}
-                        handleClose={handleCloseFormModal}
-                        handleSubmitModalFormAssociacoes={handleSubmitModalFormAssociacoes}
-                        setShowModalConfirmDeleteAssociacao={setShowModalConfirmDeleteAssociacao}
                     />
-                </section>
-                <section>
-                    <ModalConfirmDeleteAssociacao
-                        show={showModalConfirmDeleteAssociacao}
-                        handleClose={handleCloseConfirmDeleteAssociacao}
-                        onDeleteAssociacaoTrue={onDeleteAssociacaoTrue}
-                        titulo="Excluir Associação"
-                        texto="<p>Deseja realmente excluir esta associação?</p>"
-                        primeiroBotaoTexto="Cancelar"
-                        primeiroBotaoCss="outline-success"
-                        segundoBotaoCss="danger"
-                        segundoBotaoTexto="Excluir"
+                    <button onClick={() => setCount(prevState => prevState + 1)}>Botão Sem Use Calback
+                        - {count}</button>
+                    <p>Exibindo <span className='total-acoes'>{totalDeAssociacoes}</span> associações</p>
+                    <TabelaAssociacoes
+                        rowsPerPage={rowsPerPage}
+                        listaDeAssociacoes={listaDeAssociacoes}
+                        acoesTemplate={acoesTemplate}
                     />
-                </section>
-                <section>
-                    <ModalInfoExclusaoNaoPermitida
-                        show={showModalInfoExclusaoNaoPermitida}
-                        handleClose={handleCloseModalInfoExclusaoNaoPermitida}
-                        titulo="Exclusão não permitida"
-                        texto={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
-                        primeiroBotaoTexto="Fechar"
-                        primeiroBotaoCss="success"
-                    />
-                </section>
-            </div>
+                    <section>
+                        <ModalFormAssociacoes
+                            show={showModalForm}
+                            stateFormModal={stateFormModal}
+                            listaDePeriodos={listaDePeriodos}
+                            tabelaAssociacoes={tabelaAssociacoes}
+                            carregaUnidadePeloCodigoEol={carregaUnidadePeloCodigoEol}
+                            errosCodigoEol={errosCodigoEol}
+                            handleClose={handleCloseFormModal}
+                            handleSubmitModalFormAssociacoes={handleSubmitModalFormAssociacoes}
+                            setShowModalConfirmDeleteAssociacao={setShowModalConfirmDeleteAssociacao}
+                        />
+                    </section>
+                    <section>
+                        <ModalConfirmDeleteAssociacao
+                            show={showModalConfirmDeleteAssociacao}
+                            handleClose={handleCloseConfirmDeleteAssociacao}
+                            onDeleteAssociacaoTrue={onDeleteAssociacaoTrue}
+                            titulo="Excluir Associação"
+                            texto="<p>Deseja realmente excluir esta associação?</p>"
+                            primeiroBotaoTexto="Cancelar"
+                            primeiroBotaoCss="outline-success"
+                            segundoBotaoCss="danger"
+                            segundoBotaoTexto="Excluir"
+                        />
+                    </section>
+                    <section>
+                        <ModalInfoExclusaoNaoPermitida
+                            show={showModalInfoExclusaoNaoPermitida}
+                            handleClose={handleCloseModalInfoExclusaoNaoPermitida}
+                            titulo="Exclusão não permitida"
+                            texto={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
+                            primeiroBotaoTexto="Fechar"
+                            primeiroBotaoCss="success"
+                        />
+                    </section>
+                </div>
+            }
         </PaginasContainer>
     )
 };
