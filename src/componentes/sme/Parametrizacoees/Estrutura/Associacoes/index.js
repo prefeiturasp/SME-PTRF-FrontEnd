@@ -25,7 +25,6 @@ import Loading from "../../../../../utils/Loading";
 
 export const Associacoes = () => {
 
-    const [count, setCount] = useState(0);
     const [listaDeAssociacoes, setListaDeAssociacoes] = useState([]);
     const [listaDeAssociacoesFiltrarCnpj, setListaDeAssociacoesFiltrarCnpj] = useState([]);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState([]);
@@ -314,8 +313,6 @@ export const Associacoes = () => {
                         limpaFiltros={limpaFiltros}
                         tabelaAssociacoes={tabelaAssociacoes}
                     />
-                    <button onClick={() => setCount(prevState => prevState + 1)}>Botão Sem Use Calback
-                        - {count}</button>
                     <p>Exibindo <span className='total-acoes'>{totalDeAssociacoes}</span> associações</p>
                     <TabelaAssociacoes
                         rowsPerPage={rowsPerPage}
@@ -341,7 +338,7 @@ export const Associacoes = () => {
                             handleClose={handleCloseConfirmDeleteAssociacao}
                             onDeleteAssociacaoTrue={onDeleteAssociacaoTrue}
                             titulo="Excluir Associação"
-                            texto="<p>Deseja realmente excluir esta associação?</p>"
+                            texto="<p>Deseja realmente excluir esta associação?<br/> <strong>Atenção</strong> ao apagar esta associação estará apagando operações ligadas a ela como prestações de contas, por exemplo</p>"
                             primeiroBotaoTexto="Cancelar"
                             primeiroBotaoCss="outline-success"
                             segundoBotaoCss="danger"
