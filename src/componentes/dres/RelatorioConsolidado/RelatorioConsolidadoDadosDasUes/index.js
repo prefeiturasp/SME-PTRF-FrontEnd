@@ -3,12 +3,15 @@ import {useParams} from "react-router-dom";
 import {visoesService} from "../../../../services/visoes.service";
 import {auxGetNomes} from "../auxGetNomes";
 import {TopoComBotoes} from "./TopoComBotoes";
-import {getListaPrestacaoDeContasDaDre, getTiposDeUnidade, getStatusPc, getListaPrestacaoDeContasDaDreFiltros} from "../../../../services/dres/RelatorioConsolidado.service";
+import {getListaPrestacaoDeContasDaDre, getTiposDeUnidade, getStatusPc, getListaPrestacaoDeContasDaDreFiltros, getListaAssociacoesNaoRegularizadas} from "../../../../services/dres/RelatorioConsolidado.service";
 import {TabelaListaPrestacoesDaDre} from "./TabelaListaPrestacoesDaDre";
 import {FormFiltros} from "./FormFiltros";
 import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg"
 import AssociacoesNaoRegularizadas from "./AssociacoesNaoRegularizadas";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEdit} from "@fortawesome/free-solid-svg-icons";
+import moment from "moment";
 
 export const RelatorioConsolidadoDadosDasUes = () => {
 
@@ -100,6 +103,46 @@ export const RelatorioConsolidadoDadosDasUes = () => {
         setListaPrestacoes(lista_prestacoes_filtros)
     };
 
+    // Associacoes Nao Regularizadas
+    const [listaAssociacoesNaoRegularizadas, setListaAssociacoesNaoRegularizadas] = useState([]);
+
+    const carregaAssociacoesNaoRegularizadas = useCallback(async ()=>{
+        let assoc_nao_regul = await getListaAssociacoesNaoRegularizadas(dre_uuid);
+        console.log("Assoc Nao Regul ", assoc_nao_regul)
+        setListaAssociacoesNaoRegularizadas(assoc_nao_regul)
+    }, [dre_uuid]);
+
+    useEffect(()=>{
+        carregaAssociacoesNaoRegularizadas();
+    }, [carregaAssociacoesNaoRegularizadas]);
+
+    const acoesTemplate = useCallback((rowData, column) =>{
+        console.log("acoesTemplate ", rowData);
+        return (
+            <div>
+                <button className="btn-editar-membro">
+                    <FontAwesomeIcon
+                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                        icon={faEdit}
+                    />
+                </button>
+            </div>
+        )
+    }, []);
+
+    const motivoTemplate = useCallback((rowData, column)=>{
+        return (
+          <div>
+              {rowData[column.field] ? (
+                <span>{rowData[column.field]}</span>
+              ):
+                  <span className='span-motivo-associacao-nao-regularizada'>Informe motivo no “Ver regularidade” da Associação</span>
+              }
+          </div>
+        );
+
+    }, []);
+
     return (
         <>
             <div className="col-12 container-visualizacao-da-ata mb-5">
@@ -110,7 +153,11 @@ export const RelatorioConsolidadoDadosDasUes = () => {
                         periodo_uuid={periodo_uuid}
                         conta_uuid={conta_uuid}
                     />
-                    <AssociacoesNaoRegularizadas/>
+                    <AssociacoesNaoRegularizadas
+                        listaAssociacoesNaoRegularizadas={listaAssociacoesNaoRegularizadas}
+                        motivoTemplate={motivoTemplate}
+                        acoesTemplate={acoesTemplate}
+                    />
                     <FormFiltros
                         handleChangeFiltros={handleChangeFiltros}
                         limpaFiltros={limpaFiltros}
