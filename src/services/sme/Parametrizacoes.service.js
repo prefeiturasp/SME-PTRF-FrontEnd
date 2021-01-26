@@ -8,6 +8,33 @@ const authHeader = {
     }
 };
 
+// Associacoes
+export const getAssociacoes = async () => {
+    return (await api.get(`/api/associacoes/`, authHeader)).data
+};
+export const getTabelaAssociacoes = async () => {
+    return (await api.get(`/api/associacoes/tabelas/`, authHeader)).data
+};
+export const getFiltrosAssociacoes = async (tipo_unidade, unidade__dre__uuid, nome) => {
+    return (await api.get(`/api/associacoes/?unidade__tipo_unidade=${tipo_unidade}&unidade__dre__uuid=${unidade__dre__uuid}&nome=${nome}`, authHeader)).data
+};
+export const getAssociacaoPorUuid = async (associacao_uuid) => {
+    return (await api.get(`/api/associacoes/${associacao_uuid}/`, authHeader)).data
+};
+export const getUnidadePeloCodigoEol = async (codigo_eol_unidade) => {
+    return (await api.get(`/api/associacoes/eol/?codigo_eol=${codigo_eol_unidade}`, authHeader)).data
+};
+export const postCriarAssociacao = async (payload) => {
+    return (await api.post(`/api/associacoes/`, payload, authHeader)).data
+};
+export const patchUpdateAssociacao = async (associacao_uuid, payload) => {
+    return (await api.patch(`/api/associacoes/${associacao_uuid}/`, payload, authHeader)).data
+};
+export const deleteAssociacao = async (associacao_uuid) => {
+    return (await api.delete(`/api/associacoes/${associacao_uuid}/`, authHeader))
+};
+
+
 // Periodos
 export const getTodosPeriodos = async () => {
     return (await api.get(`/api/periodos/`, authHeader)).data
