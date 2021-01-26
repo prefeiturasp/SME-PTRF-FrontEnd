@@ -8,6 +8,7 @@ import {TabelaListaPrestacoesDaDre} from "./TabelaListaPrestacoesDaDre";
 import {FormFiltros} from "./FormFiltros";
 import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg"
+import AssociacoesNaoRegularizadas from "./AssociacoesNaoRegularizadas";
 
 export const RelatorioConsolidadoDadosDasUes = () => {
 
@@ -109,6 +110,7 @@ export const RelatorioConsolidadoDadosDasUes = () => {
                         periodo_uuid={periodo_uuid}
                         conta_uuid={conta_uuid}
                     />
+                    <AssociacoesNaoRegularizadas/>
                     <FormFiltros
                         handleChangeFiltros={handleChangeFiltros}
                         limpaFiltros={limpaFiltros}
