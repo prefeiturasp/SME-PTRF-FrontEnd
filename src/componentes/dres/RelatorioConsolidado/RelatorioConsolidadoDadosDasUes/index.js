@@ -13,7 +13,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import {getAssociacao, getContasAssociacao} from "../../../../services/dres/Associacoes.service";
 import {DADOS_DA_ASSOCIACAO} from "../../../../services/auth.service";
-import {Redirect} from "react-router-dom";
 
 export const RelatorioConsolidadoDadosDasUes = () => {
 
@@ -110,30 +109,14 @@ export const RelatorioConsolidadoDadosDasUes = () => {
 
     const carregaAssociacoesNaoRegularizadas = useCallback(async ()=>{
         let assoc_nao_regul = await getListaAssociacoesNaoRegularizadas(dre_uuid);
-        console.log("Assoc Nao Regul ", assoc_nao_regul)
-        setListaAssociacoesNaoRegularizadas(assoc_nao_regul)
+        setListaAssociacoesNaoRegularizadas(assoc_nao_regul);
     }, [dre_uuid]);
 
     useEffect(()=>{
         carregaAssociacoesNaoRegularizadas();
     }, [carregaAssociacoesNaoRegularizadas]);
 
-    const acoesTemplate = useCallback((rowData) =>{
-        console.log("acoesTemplate ", rowData);
-        return (
-            <div>
-                <button onClick={()=>handleClickAssociacoesNaoRegularizadas(rowData)} className="btn-editar-membro">
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                </button>
-            </div>
-        )
-    }, []);
-
     const handleClickAssociacoesNaoRegularizadas = useCallback(async (rowData)=>{
-        console.log('handleClickAssociacoesNaoRegularizadas ', rowData)
         try {
             let associacao = await getAssociacao(rowData.uuid);
             let contas = await getContasAssociacao(rowData.uuid);
@@ -152,6 +135,28 @@ export const RelatorioConsolidadoDadosDasUes = () => {
 
     },[]);
 
+    const nomeTemplate = useCallback((rowData, column)=>{
+        return (
+            <div>
+                <span>{rowData.unidade.codigo_eol} - {rowData[column.field]}</span>
+            </div>
+        );
+    }, []);
+
+    const acoesTemplate = useCallback((rowData) =>{
+        console.log("acoesTemplate ", rowData);
+        return (
+            <div>
+                <button onClick={()=>handleClickAssociacoesNaoRegularizadas(rowData)} className="btn-editar-membro">
+                    <FontAwesomeIcon
+                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                        icon={faEdit}
+                    />
+                </button>
+            </div>
+        )
+    }, [handleClickAssociacoesNaoRegularizadas]);
+
     const motivoTemplate = useCallback((rowData, column)=>{
         return (
           <div>
@@ -162,7 +167,6 @@ export const RelatorioConsolidadoDadosDasUes = () => {
               }
           </div>
         );
-
     }, []);
 
     return (
@@ -177,6 +181,7 @@ export const RelatorioConsolidadoDadosDasUes = () => {
                     />
                     <AssociacoesNaoRegularizadas
                         listaAssociacoesNaoRegularizadas={listaAssociacoesNaoRegularizadas}
+                        nomeTemplate={nomeTemplate}
                         motivoTemplate={motivoTemplate}
                         acoesTemplate={acoesTemplate}
                     />

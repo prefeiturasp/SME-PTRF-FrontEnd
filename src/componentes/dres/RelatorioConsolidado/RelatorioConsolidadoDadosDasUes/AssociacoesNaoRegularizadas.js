@@ -2,7 +2,7 @@ import React, {memo} from "react";
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
 
-const AssociacoesNaoRegularizadas = ({listaAssociacoesNaoRegularizadas, motivoTemplate, acoesTemplate}) => {
+const AssociacoesNaoRegularizadas = ({listaAssociacoesNaoRegularizadas, nomeTemplate, motivoTemplate, acoesTemplate}) => {
     return (
         <>
             <div className='row'>
@@ -20,6 +20,7 @@ const AssociacoesNaoRegularizadas = ({listaAssociacoesNaoRegularizadas, motivoTe
                         <Column
                             field="nome"
                             header="Associações não regularizadas"
+                            body={nomeTemplate}
                             style={{width:'45%'}}
                         />
                         <Column
