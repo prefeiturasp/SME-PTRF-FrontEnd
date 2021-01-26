@@ -11,7 +11,9 @@ import Img404 from "../../../../assets/img/img-404.svg"
 import AssociacoesNaoRegularizadas from "./AssociacoesNaoRegularizadas";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
-import moment from "moment";
+import {getAssociacao, getContasAssociacao} from "../../../../services/dres/Associacoes.service";
+import {DADOS_DA_ASSOCIACAO} from "../../../../services/auth.service";
+import {Redirect} from "react-router-dom";
 
 export const RelatorioConsolidadoDadosDasUes = () => {
 
@@ -116,11 +118,11 @@ export const RelatorioConsolidadoDadosDasUes = () => {
         carregaAssociacoesNaoRegularizadas();
     }, [carregaAssociacoesNaoRegularizadas]);
 
-    const acoesTemplate = useCallback((rowData, column) =>{
+    const acoesTemplate = useCallback((rowData) =>{
         console.log("acoesTemplate ", rowData);
         return (
             <div>
-                <button className="btn-editar-membro">
+                <button onClick={()=>handleClickAssociacoesNaoRegularizadas(rowData)} className="btn-editar-membro">
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                         icon={faEdit}
@@ -129,6 +131,26 @@ export const RelatorioConsolidadoDadosDasUes = () => {
             </div>
         )
     }, []);
+
+    const handleClickAssociacoesNaoRegularizadas = useCallback(async (rowData)=>{
+        console.log('handleClickAssociacoesNaoRegularizadas ', rowData)
+        try {
+            let associacao = await getAssociacao(rowData.uuid);
+            let contas = await getContasAssociacao(rowData.uuid);
+
+            let dados_da_associacao = {
+                dados_da_associacao: {
+                    ...associacao,
+                    contas
+                }
+            };
+            localStorage.setItem(DADOS_DA_ASSOCIACAO, JSON.stringify(dados_da_associacao));
+            window.location.assign('/dre-regularidade-unidade-educacional')
+        }catch (e) {
+            console.log("Erro ao buscar associação ", e)
+        }
+
+    },[]);
 
     const motivoTemplate = useCallback((rowData, column)=>{
         return (

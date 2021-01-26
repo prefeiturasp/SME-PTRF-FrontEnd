@@ -104,9 +104,9 @@
   color: #B40C02;
   font-weight: bold;
 }
-//
-//body .tabela-associacoes-nao-regularizadas .p-datatable-tbody > tr > td, body .tabela-associacoes-nao-regularizadas .p-datatable-thead > tr > th {
-//
-//  width: calc(100% / 2) !important;
-//
-//}
+
+body .tabela-associacoes-nao-regularizadas .p-datatable-tbody > tr > td, body .tabela-associacoes-nao-regularizadas .p-datatable-thead > tr > th {
+
+  padding: 15px !important;
+
+}
