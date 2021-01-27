@@ -31,7 +31,7 @@ export const ModalDevolucaoAoTesouro = ({show, handleClose, onSubmitModalDevoluc
             <ModalBootstrapDevolucaoAoTesouroAta
                 show={show}
                 onHide={handleClose}
-                titulo="Devouluções ao Tesouro"
+                titulo="Devoluções ao Tesouro"
                 bodyText={bodyTextarea()}
                 primeiroBotaoOnclick={handleClose}
                 primeiroBotaoTexto="Cancelar"

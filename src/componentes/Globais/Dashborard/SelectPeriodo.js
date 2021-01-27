@@ -8,7 +8,7 @@ export const SelectPeriodo = ({periodosAssociacao, handleChangePeriodo, selectPe
             </div>
             <div className="col-auto my-1">
                 <select
-                    value={!selectPeriodo ? periodosAssociacao.uuid : ""}
+                    value={selectPeriodo}
                     onChange={(e) => handleChangePeriodo(e.target.value)}
                     name="periodo"
                     id="periodo"

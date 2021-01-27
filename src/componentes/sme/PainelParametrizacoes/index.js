@@ -44,8 +44,8 @@ export const PainelParametrizacoes = () => {
             icone: IconeTags,
         },
         {
-            parametro: 'Tipos de Ação',
-            url: 'parametro-tipos-acao',
+            parametro: 'Ações',
+            url: 'parametro-acoes',
             icone: IconeTiposAcao,
         },
         {
