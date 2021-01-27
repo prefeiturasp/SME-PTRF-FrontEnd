@@ -92,3 +92,44 @@ export const getReceitasAcao = async (associacao_uuid, acao_associacao_uuid) => 
 };
 
 
+export const getAcoesFiltradas = async (nome='') => {
+    return (await api.get(`/api/acoes/?nome=${nome}`, authHeader)).data
+};
+
+export const postAddAcao = async (payload) => {
+    return (await api.post(`/api/acoes/`, payload, authHeader)).data
+};
+
+export const putAtualizarAcao = async (acao_uuid, payload) => {
+    return (await api.put(`/api/acoes/${acao_uuid}/`, payload, authHeader)).data
+};
+
+export const deleteAcao = async (acao_uuid) => {
+    return (await api.delete(`/api/acoes/${acao_uuid}/`, authHeader))
+};
+
+export const getUnidadesPorAcao = async (acao_uuid, nome="") => {
+    return (await api.get(`api/acoes-associacoes/?acao__uuid=${acao_uuid}&nome=${nome}`, authHeader)).data
+};
+
+export const getAcao = async (uuid='') => {
+    return (await api.get(`/api/acoes/${uuid}/`, authHeader)).data
+};
+
+export const deleteAcoesAssociacoesEmLote = async (payload) => {
+    return (await api.post(`/api/acoes-associacoes/excluir-lote/`, payload, authHeader)).data
+};
+
+export const getAssociacoesNaoVinculadasAAcao = async (acao_uuid, nome="") => {
+    if (nome === ""){
+        return (await api.get(`api/acoes/${acao_uuid}/associacoes-nao-vinculadas/`, authHeader)).data
+    }
+    else {
+        return (await api.get(`api/acoes/${acao_uuid}/associacoes-nao-vinculadas-por-nome/${nome}/`, authHeader)).data
+    }
+
+};
+
+export const addAcoesAssociacoesEmLote = async (payload) => {
+    return (await api.post(`/api/acoes-associacoes/incluir-lote/`, payload, authHeader)).data
+};
