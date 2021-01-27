@@ -51,6 +51,8 @@ import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoees/Estrutura
 import {Acoes} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes";
 import {AssociacoesDaAcao} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes/AssociacoesDaAcao";
 import {VinculaAssociacoesAAcao} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes/VinculaAssociacoesAAcao";
+import {Periodos} from "../componentes/sme/Parametrizacoees/Estrutura/Periodos";
+import {Associacoes} from "../componentes/sme/Parametrizacoees/Estrutura/Associacoes";
 
 const routesConfig = [
     {
@@ -287,8 +289,20 @@ const routesConfig = [
     },
     {
         exact: true,
+        path: "/parametro-associacoes",
+        component: Associacoes,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
         path: "/parametro-acoes-associacoes",
         component: AcoesDasAssociacoes,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/parametro-periodos",
+        component: Periodos,
         permissoes: ['view_default'],
     },
     {

@@ -121,3 +121,9 @@ export const getDownloadPreviaRelatorio = async (payload) => {
     });
 };
 
+export const getListaAssociacoesNaoRegularizadas = async (dre_uuid) => {
+    return (await api.get(`/api/associacoes/?unidade__dre__uuid=${dre_uuid}&status_regularidade=PENDENTE`, authHeader)).data
+};
+
+
+

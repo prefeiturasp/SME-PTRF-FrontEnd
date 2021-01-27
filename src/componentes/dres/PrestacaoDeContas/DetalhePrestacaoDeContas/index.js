@@ -396,6 +396,28 @@ export const DetalhePrestacaoDeContas = () =>{
             [name]: value
         });
     };
+
+    const [motivos, setMotivos] = useState([]);
+    const [checkBoxOutrosMotivos, setCheckBoxOutrosMotivos] = useState(false);
+    const [txtOutrosMotivos, setTxtOutrosMotivos] = useState('');
+
+    const handleChangeSelectMultipleMotivos = (e) => {
+        let target = e.target;
+        let value = Array.from(target.selectedOptions, option => option.value);
+        setMotivos(value);
+    };
+
+    const handleChangeCheckBoxOutrosMotivos = (event) =>{
+        setCheckBoxOutrosMotivos(event.target.checked);
+        if (!event.target.checked){
+            setTxtOutrosMotivos('');
+        }
+    };
+
+    const handleChangeTxtOutrosMotivos = (event) =>{
+        setTxtOutrosMotivos(event.target.value)
+    };
+
     // Fim Ata
 
     const handleChangeDataCobranca = (name, value) =>{
@@ -522,7 +544,8 @@ export const DetalhePrestacaoDeContas = () =>{
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
-                motivo_aprovacao_ressalva: stateConcluirAnalise.resalvas,
+                motivos_aprovacao_ressalva: motivos,
+                outros_motivos_aprovacao_ressalva: txtOutrosMotivos,
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }else if (stateConcluirAnalise.status === 'DEVOLVIDA'){
@@ -585,8 +608,6 @@ export const DetalhePrestacaoDeContas = () =>{
             }
         }
     };
-
-
 
     const buscaDespesaPorFiltros = async (index) =>{
 
@@ -743,6 +764,12 @@ export const DetalhePrestacaoDeContas = () =>{
                         stateConcluirAnalise={stateConcluirAnalise}
                         motivosAprovadoComRessalva={motivosAprovadoComRessalva}
                         handleChangeConcluirAnalise={handleChangeConcluirAnalise}
+                        motivos={motivos}
+                        txtOutrosMotivos={txtOutrosMotivos}
+                        handleChangeSelectMultipleMotivos={handleChangeSelectMultipleMotivos}
+                        checkBoxOutrosMotivos={checkBoxOutrosMotivos}
+                        handleChangeCheckBoxOutrosMotivos={handleChangeCheckBoxOutrosMotivos}
+                        handleChangeTxtOutrosMotivos={handleChangeTxtOutrosMotivos}
                     />
                 </section>
                 <section>
