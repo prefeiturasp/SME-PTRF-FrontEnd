@@ -59,7 +59,6 @@ export const deleteAcao = async (acao_uuid) => {
 };
 
 export const getUnidadesPorAcao = async (acao_uuid, nome="") => {
-    console.log("Buscando ação >>> ",acao_uuid, nome)
     return (await api.get(`api/acoes-associacoes/?acao__uuid=${acao_uuid}&nome=${nome}`, authHeader)).data
 };
 
@@ -69,4 +68,18 @@ export const getAcao = async (uuid='') => {
 
 export const deleteAcoesAssociacoesEmLote = async (payload) => {
     return (await api.post(`/api/acoes-associacoes/excluir-lote/`, payload, authHeader)).data
+};
+
+export const getAssociacoesNaoVinculadasAAcao = async (acao_uuid, nome="") => {
+    if (nome === ""){
+        return (await api.get(`api/acoes/${acao_uuid}/associacoes-nao-vinculadas/`, authHeader)).data
+    }
+    else {
+        return (await api.get(`api/acoes/${acao_uuid}/associacoes-nao-vinculadas-por-nome/${nome}/`, authHeader)).data
+    }
+
+};
+
+export const addAcoesAssociacoesEmLote = async (payload) => {
+    return (await api.post(`/api/acoes-associacoes/incluir-lote/`, payload, authHeader)).data
 };

@@ -48,8 +48,9 @@ import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioCons
 import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
 import {AcompanhamentoPcsSmePage} from "../paginas/SME/AcompanhamentoPcsSme";
 import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoees/Estrutura/AcoesDasAssociacoes";
-import {Acoes} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes"
-import {AssociacoesDaAcao} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes/AssociacoesDaAcao"
+import {Acoes} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes";
+import {AssociacoesDaAcao} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes/AssociacoesDaAcao";
+import {VinculaAssociacoesAAcao} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes/VinculaAssociacoesAAcao";
 
 const routesConfig = [
     {
@@ -312,6 +313,12 @@ const routesConfig = [
         exact: true,
         path: "/associacoes-da-acao/:acao_uuid?",
         component: AssociacoesDaAcao,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/vincula-associacoes-a-acao/:acao_uuid?",
+        component: VinculaAssociacoesAAcao,
         permissoes: ['view_default'],
     },
 ];

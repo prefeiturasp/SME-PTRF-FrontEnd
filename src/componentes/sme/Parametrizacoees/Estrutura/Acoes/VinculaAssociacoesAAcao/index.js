@@ -10,14 +10,14 @@ import {Column} from "primereact/column";
 import {MsgImgCentralizada} from  "../../../../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../../../../Globais/Mensagens/MsgImgLadoDireito";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeft, faPlus, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
-import {ModalDesvincularLote} from "./Modais";
+import {faArrowLeft, faPlusCircle, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
+import {ModalVincularLote} from "./Modais";
 import "./associacoes.scss";
 import {Link, useParams} from 'react-router-dom';
 import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
-import {getUnidadesPorAcao, getAcao, deleteAcaoAssociacao, deleteAcoesAssociacoesEmLote} from "../../../../../../services/sme/Parametrizacoes.service"
-import {ModalConfirmDesvincularAcaoAssociacao} from "./ModalConfirmDesvincularAcaoAssociacao"
-import {ModalInfoNaoPodeExcluir} from "../ModalInfoNaoPodeExcluir";
+import {getAssociacoesNaoVinculadasAAcao, getAcao, postAddAcaoAssociacao, addAcoesAssociacoesEmLote} from "../../../../../../services/sme/Parametrizacoes.service"
+import {ModalConfirmVincularAcaoAssociacao} from "./ModalConfirmVincularAcaoAssociacao"
+import {ModalInfoNaoPodeVincular} from "./ModalInfoNaoPodeVincular";
 
 const CustomToast = (propriedades) => {
     return (
@@ -45,7 +45,7 @@ const CustomToast = (propriedades) => {
 }
 
 
-export const AssociacoesDaAcao = () => {
+export const VinculaAssociacoesAAcao = () => {
     const rowsPerPage = 10;
     let {acao_uuid} = useParams();
 
@@ -55,29 +55,29 @@ export const AssociacoesDaAcao = () => {
 
     const [loading, setLoading] = useState(true);
     const [acao, setAcao] = useState(null);
-    const [acaoAssociacaoUuid, setAcaoAssociacaoUuid] = useState(null);
+    const [associacaoUuid, setAssociacaoUuid] = useState(null);
     const [unidades, setUnidades] = useState([]);
     const [estadoFiltros, setEstadoFiltros] = useState(estadoInicialFiltros);
     const [buscaUtilizandoFiltros, setBuscaUtilizandoFiltros] = useState(false);
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
-    const [showModalDesvincular, setShowModalDesvincular] = useState(false);
+    const [showModalVincular, setShowModalVincular] = useState(false);
     const [showToast, setShowToast] = useState(false);
-    const [showConfirmaDesvinculo, setShowConfirmaDesvinculo] = useState(false);
-    const [showModalInfoNaoPodeExcluir, setShowModalInfoNaoPodeExcluir] = useState(false);
-    const [mensagemModalInfoNaoPodeExcluir, setMensagemModalInfoNaoPodeExcluir] = useState("");
+    const [showConfirmaVinculo, setShowConfirmaVinculo] = useState(false);
+    const [showModalInfoNaoPodeVincular, setShowModalInfoNaoPodeVincular] = useState(false);
+    const [mensagemModalInfoNaoPodeVincular, setMensagemModalInfoNaoPodeVincular] = useState("");
     const [mensagemToast, setMensagemToast] = useState("");
 
     useEffect(() => {
-        buscaUnidadesDaAcao(acao_uuid).then(() => setLoading(false));
+        buscaUnidadesNaoVinculadasAAcao(acao_uuid).then(() => setLoading(false));
     }, []);
 
-    const buscaUnidadesDaAcao = async (acaoUuid) => {
+    const buscaUnidadesNaoVinculadasAAcao = async (acaoUuid) => {
         if (acaoUuid){
             let acao = await getAcao(acaoUuid)
             setAcao(acao);
 
-            let acoesAssociacoes = await getUnidadesPorAcao(acaoUuid);
-            setUnidades(acoesAssociacoes);
+            let associacoes = await getAssociacoesNaoVinculadasAAcao(acaoUuid);
+            setUnidades(associacoes);
 
             setQuantidadeSelecionada(0);
         }
@@ -92,13 +92,15 @@ export const AssociacoesDaAcao = () => {
     };
 
     const aplicaFiltrosUnidades = async (event)=>{
+        console.log("Aplicar filtro", estadoFiltros)
         setLoading(true);
         setBuscaUtilizandoFiltros(true);
         if (event) {
             event.preventDefault();
         }
-        let resultado_filtros = await getUnidadesPorAcao(acao_uuid, estadoFiltros.filtrar_por_nome);
-    
+
+        let resultado_filtros = await getAssociacoesNaoVinculadasAAcao(acao_uuid, estadoFiltros.filtrar_por_nome);
+
         let unis = resultado_filtros.map(obj => {
             return {
                 ...obj,
@@ -112,7 +114,7 @@ export const AssociacoesDaAcao = () => {
     const limparFiltros = async () => {
         setLoading(true);
         setEstadoFiltros(estadoInicialFiltros);
-        await buscaUnidadesDaAcao(acao_uuid);
+        await buscaUnidadesNaoVinculadasAAcao(acao_uuid);
         setShowToast(false);
         setLoading(false)
     };
@@ -123,7 +125,7 @@ export const AssociacoesDaAcao = () => {
             await aplicaFiltrosUnidades()
         }
         else {
-            await buscaUnidadesDaAcao(acao_uuid)
+            await buscaUnidadesNaoVinculadasAAcao(acao_uuid)
         }
         setLoading(false);
     };
@@ -133,11 +135,11 @@ export const AssociacoesDaAcao = () => {
         let result = unidades.reduce((acc, o) => {
 
             let obj = Object.assign(o, { selecionado: true }) ;
-        
+
             acc.push(obj);
-        
+
             return acc;
-        
+
         }, []);
         setUnidades(result);
         setQuantidadeSelecionada(unidades.length);
@@ -148,11 +150,11 @@ export const AssociacoesDaAcao = () => {
         let result = unidades.reduce((acc, o) => {
 
             let obj = Object.assign(o, { selecionado: false }) ;
-        
+
             acc.push(obj);
-        
+
             return acc;
-        
+
         }, []);
         setUnidades(result);
         setQuantidadeSelecionada(0);
@@ -213,11 +215,11 @@ export const AssociacoesDaAcao = () => {
         let result2 = unidades.reduce((acc, o) => {
 
             let obj = unidadeUuid === o.uuid ? Object.assign(o, { selecionado: e.target.checked }) : o;
-        
+
             acc.push(obj);
-        
+
             return acc;
-        
+
         }, []);
         setUnidades(result2);
     }
@@ -232,7 +234,7 @@ export const AssociacoesDaAcao = () => {
         )
     }
 
-    const montagemDesvincularLote = () => {
+    const montagemVincularLote = () => {
         return (
             <div className="row">
                 <div className="col-12" style={{background: "#00585E", color: 'white', padding:"15px", margin:"0px 15px", flex:"100%"}}>
@@ -247,16 +249,16 @@ export const AssociacoesDaAcao = () => {
                                         <strong>Cancelar</strong>
                                     </a>
                                     <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                    <a className="float-right" onClick={(e) => modalDesvincular()} style={{textDecoration:"underline", cursor:"pointer"}}>
+                                    <a className="float-right" onClick={(e) => modalVincular()} style={{textDecoration:"underline", cursor:"pointer"}}>
                                         <FontAwesomeIcon
                                             style={{color: "white", fontSize: '15px', marginRight: "2px"}}
-                                            icon={faTimesCircle}
+                                            icon={faPlusCircle}
                                         />
-                                        <strong>Desvincular da ação</strong>
+                                        <strong>Vincular à ação</strong>
                                     </a>
                                 </div>
-                                
-                            </div> 
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -264,12 +266,12 @@ export const AssociacoesDaAcao = () => {
         )
     }
 
-    const modalDesvincular = () => {
-        setShowModalDesvincular(true);
+    const modalVincular = () => {
+        setShowModalVincular(true);
     }
 
     const onHide = () => {
-        setShowModalDesvincular(false);
+        setShowModalVincular(false);
 
     }
 
@@ -280,63 +282,66 @@ export const AssociacoesDaAcao = () => {
     const acoesTemplate = (rowData) => {
         return (
             <div>
-                <Link className="link-red" onClick={() => {handleDesvinculaUE(rowData['uuid'])}}>
+                <Link className="link-green" onClick={() => {handleVinculaUE(rowData['uuid'])}}>
                     <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#B40C02"}}
-                        icon={faTimesCircle}
+                        style={{fontSize: '20px', marginRight: "0"}}
+                        icon={faPlusCircle}
                     />
-                    <span> Desvincular</span>
+                    <span> Vincular</span>
                 </Link>
             </div>
         )
     };
 
-    const handleDesvinculaUE = (acaoAssociacaoUuid) => {
-        setAcaoAssociacaoUuid(acaoAssociacaoUuid)
-        setShowConfirmaDesvinculo(true);
+    const handleVinculaUE = (acaoAssociacaoUuid) => {
+        setAssociacaoUuid(acaoAssociacaoUuid)
+        setShowConfirmaVinculo(true);
     };
 
-    const handleCloseDesvinculaAssociacao = () => {
-        setShowConfirmaDesvinculo(false)
+    const handleCloseVinculaAssociacao = () => {
+        setShowConfirmaVinculo(false)
     };
 
-    const onDesvinculaAssociacaoTrue = async () => {
-        setShowConfirmaDesvinculo(false);
+    const onVinculaAssociacaoTrue = async () => {
+        const payload = {
+            associacao: associacaoUuid,
+            acao: acao_uuid,
+            status: 'ATIVA',
+        };
+        setShowConfirmaVinculo(false);
         try {
-            const result = await deleteAcaoAssociacao(acaoAssociacaoUuid);
-            console.log('Associação desvinculada com sucesso', acaoAssociacaoUuid);
+            const result = await postAddAcaoAssociacao(payload)
+            console.log('Associação vinculada com sucesso', associacaoUuid);
         } catch (e) {
-            if (e.response && e.response.data && e.response.data.mensagem){
-                setMensagemModalInfoNaoPodeExcluir(e.response.data.mensagem);
-                setShowModalInfoNaoPodeExcluir(true);
-                console.log(e.response.data.mensagem)
-            }
-            console.log('Erro ao desvincular associação!! ', e.response.data)
+            console.log('Erro ao vincular associação!! ', e)
         }
         await atualizaListaUnidades()
-        setAcaoAssociacaoUuid(null);
+        setAssociacaoUuid(null);
     };
 
-    const desvincularAssociacoesEmLote = async () => {
-        setShowModalDesvincular(false);
+    const vincularAssociacoesEmLote = async () => {
+        setShowModalVincular(false);
         setLoading(true);
         let payLoad = {
-            lista_uuids: []
+            acao_uuid: acao_uuid,
+            associacoes_uuids: []
         };
 
         let uuids = unidades.filter(u => u.selecionado === true).map(item => {return item.uuid});
 
-        payLoad.lista_uuids = uuids;
+        console.log("Lista de uuids", uuids)
+
+        payLoad.associacoes_uuids = uuids;
 
         try {
-            let response = await deleteAcoesAssociacoesEmLote(payLoad);
-            console.log("Associações desvinculadas com sucesso!");
+            let response = await addAcoesAssociacoesEmLote(payLoad);
+            console.log("Associações vinculadas com sucesso!");
             console.log(response.mensagem);
-            setMensagemToast(response.mensagem ? response.mensagem : "Associações desvinculadas com sucesso!")
+            setMensagemToast(response.mensagem ? response.mensagem : "Associações vinculadas com sucesso!")
         } catch(e) {
-            console.log("Erro ao tentar desvincular associações");
+            console.log("Erro ao tentar vincular associações");
             console.log(e.response.data);
-            setMensagemToast(e.response && e.response.mensagem ? e.response.mensagem : "Erro ao tentar desvincular associações")
+            setMensagemToast(e.response && e.response.mensagem ? e.response.mensagem : "Erro ao tentar vincular associações")
         }
         await atualizaListaUnidades();
         setLoading(false);
@@ -344,14 +349,14 @@ export const AssociacoesDaAcao = () => {
         setQuantidadeSelecionada(0);
     };
 
-    const handleCloseInfoNaoPodeExcluir = () => {
-        setShowModalInfoNaoPodeExcluir(false);
-        setMensagemModalInfoNaoPodeExcluir("");
+    const handleCloseInfoNaoPodeVincular = () => {
+        setShowModalInfoNaoPodeVincular(false);
+        setMensagemModalInfoNaoPodeVincular("");
     };
 
     return (
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Unidades vinculadas à ação {acao ? acao.nome : ""}</h1>
+            <h1 className="titulo-itens-painel mt-5">Vincula associações à ação {acao ? acao.nome : ""}</h1>
             <div className="page-content-inner">
 
 
@@ -368,35 +373,18 @@ export const AssociacoesDaAcao = () => {
 
                     (
                         <>
-                            <div className="d-flex  justify-content-end mt-n2">
-                                <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
-                                    <Link
-                                        to='/parametro-acoes'
-                                        className="btn btn-outline-success ml-2"
-                                    >
-                                        <FontAwesomeIcon
-                                            style={{marginRight: "5px"}}
-                                            icon={faArrowLeft}
-                                        />
-                                        Voltar para lista de Ações
-                                    </Link>
-                                </div>
-                                <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
-                                    <Link
-                                        to={`/vincula-associacoes-a-acao/${acao_uuid}`}
-                                        className="btn btn-success ml-2"
-                                    >
-                                        <FontAwesomeIcon
-                                            style={{marginRight: "5px", color: '#fff'}}
-                                            icon={faPlus}
-                                        />
-                                        Vincular Associações
-                                    </Link>
-                                </div>
+                            <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
+                                <Link
+                                    to={`/associacoes-da-acao/${acao_uuid}`}
+                                    className="btn btn-success ml-2"
+                                >
+                                    <FontAwesomeIcon
+                                        style={{marginRight: "5px", color: '#fff'}}
+                                        icon={faArrowLeft}
+                                    />
+                                    Voltar para lista de UE's vinculadas
+                                </Link>
                             </div>
-
-
-
                             <div className="page-content-inner">
                                 <Filtros
                                     estadoFiltros={estadoFiltros}
@@ -404,12 +392,12 @@ export const AssociacoesDaAcao = () => {
                                     enviarFiltrosAssociacao={aplicaFiltrosUnidades}
                                     limparFiltros={limparFiltros}
                                 />
-                                <ModalDesvincularLote
-                                    show={showModalDesvincular}
+                                <ModalVincularLote
+                                    show={showModalVincular}
                                     onHide={onHide}
-                                    titulo="Desvincular unidades da ação"
+                                    titulo="Vincular unidades à ação"
                                     quantidadeSelecionada={quantidadeSelecionada}
-                                    primeiroBotaoOnclick={desvincularAssociacoesEmLote}
+                                    primeiroBotaoOnclick={vincularAssociacoesEmLote}
                                     primeiroBotaoTexto="OK"
                                 />
 
@@ -422,7 +410,7 @@ export const AssociacoesDaAcao = () => {
 
 
                                 {quantidadeSelecionada > 0 ?
-                                    (montagemDesvincularLote()) :
+                                    (montagemVincularLote()) :
                                     (mensagemQuantidadeExibida())
                                 }
                                 <div className="row">
@@ -438,8 +426,8 @@ export const AssociacoesDaAcao = () => {
                                                 selectionMode="single"
                                             >
                                                 <Column header={selecionarHeader()} body={selecionarTemplate}/>
-                                                <Column field='associacao.unidade.codigo_eol' header='Código Eol'/>
-                                                <Column field='associacao.unidade.nome_com_tipo' header='Nome UE'/>
+                                                <Column field='unidade.codigo_eol' header='Código Eol'/>
+                                                <Column field='unidade.nome_com_tipo' header='Nome UE'/>
                                                 <Column
                                                     field="acoes"
                                                     header="Ações"
@@ -462,24 +450,24 @@ export const AssociacoesDaAcao = () => {
                         </>)
                 }
                 <section>
-                    <ModalConfirmDesvincularAcaoAssociacao
-                        show={showConfirmaDesvinculo}
-                        handleClose={handleCloseDesvinculaAssociacao}
-                        onDeleteAcaoTrue={onDesvinculaAssociacaoTrue}
-                        titulo="Desvincular associação da ação"
-                        texto="<p>Deseja realmente desvincular essa associação da ação?</p>"
+                    <ModalConfirmVincularAcaoAssociacao
+                        show={showConfirmaVinculo}
+                        handleClose={handleCloseVinculaAssociacao}
+                        onDeleteAcaoTrue={onVinculaAssociacaoTrue}
+                        titulo="Vincular unidade à ação"
+                        texto="<p>Deseja realmente vincular essa unidade à ação?</p>"
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="danger"
-                        segundoBotaoTexto="Desvincular"
+                        segundoBotaoTexto="Vincular"
                     />
                 </section>
                 <section>
-                    <ModalInfoNaoPodeExcluir
-                        show={showModalInfoNaoPodeExcluir}
-                        handleClose={handleCloseInfoNaoPodeExcluir}
+                    <ModalInfoNaoPodeVincular
+                        show={showModalInfoNaoPodeVincular}
+                        handleClose={handleCloseInfoNaoPodeVincular}
                         titulo="Exclusão não permitida"
-                        texto={mensagemModalInfoNaoPodeExcluir}
+                        texto={mensagemModalInfoNaoPodeVincular}
                         primeiroBotaoTexto="Fechar"
                         primeiroBotaoCss="success"
                     />

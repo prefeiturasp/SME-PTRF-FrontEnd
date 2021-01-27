@@ -10,6 +10,7 @@ import Loading from "../../../../../utils/Loading";
 import {ModalFormAcoes} from "./ModalFormAcoes";
 import {ModalConfirmDeleteAcao} from "./ModalConfirmDeleteAcao";
 import {ModalInfoNaoPodeExcluir} from "./ModalInfoNaoPodeExcluir";
+import {ModalInfoNaoPodeGravar} from "./ModalInfoNaoPodeGravar";
 import {Link} from "react-router-dom";
 
 
@@ -98,11 +99,12 @@ export const Acoes = () => {
     const [showModalDeleteAcao, setShowModalDeleteAcao] = useState(false);
     const [showModalInfoNaoPodeExcluir, setShowModalInfoNaoPodeExcluir] = useState(false);
     const [mensagemModalInfoNaoPodeExcluir, setMensagemModalInfoNaoPodeExcluir] = useState("");
+    const [showModalInfoNaoPodeGravar, setShowModalInfoNaoPodeGravar] = useState(false);
+    const [mensagemModalInfoNaoPodeGravar, setMensagemModalInfoNaoPodeGravar] = useState("");
 
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [readOnly, setReadOnly] = useState(false);
 
-    ;
     const onHandleClose = () => {
         setStateFormModal(initialStateFormModal);
         setShowModalForm(false)
@@ -113,6 +115,10 @@ export const Acoes = () => {
     const handleCloseInfoNaoPodeExcluir = () => {
         setShowModalInfoNaoPodeExcluir(false);
         setMensagemModalInfoNaoPodeExcluir("");
+    };
+    const handleCloseInfoNaoPodeGravar = () => {
+        setShowModalInfoNaoPodeGravar(false);
+        setMensagemModalInfoNaoPodeGravar("");
     };
     const handleChangeFormModal = (name, value, e=null) => {
         setStateFormModal({
@@ -146,7 +152,15 @@ export const Acoes = () => {
                 console.log('Ação criada com sucesso');
                 await carregaTodasAsAcoes();
             } catch (e) {
-                console.log('Erro ao criar Ação!! ', e)
+                console.log('Erro ao criar Ação!!! ', e.response.data)
+                if (e.response.data && e.response.data.non_field_errors) {
+                    setMensagemModalInfoNaoPodeGravar('Ja existe uma ação com esse nome.');
+                    setShowModalInfoNaoPodeGravar(true);
+                } else {
+                    setMensagemModalInfoNaoPodeGravar('Houve um erro ao tentar fazer essa atualização.');
+                    setShowModalInfoNaoPodeGravar(true);
+                }
+
             }
         } else {
             try {
@@ -156,6 +170,13 @@ export const Acoes = () => {
                 await carregaTodasAsAcoes();
             } catch (e) {
                 console.log('Erro ao alterar Ação!! ', e)
+                if (e.response.data && e.response.data.non_field_errors) {
+                    setMensagemModalInfoNaoPodeGravar('Ja existe uma ação com esse nome.');
+                    setShowModalInfoNaoPodeGravar(true);
+                } else {
+                    setMensagemModalInfoNaoPodeGravar('Houve um erro ao tentar fazer essa atualização.');
+                    setShowModalInfoNaoPodeGravar(true);
+                }
             }
         }
     };
@@ -258,6 +279,16 @@ export const Acoes = () => {
                         handleClose={handleCloseInfoNaoPodeExcluir}
                         titulo="Exclusão não permitida"
                         texto={mensagemModalInfoNaoPodeExcluir}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="success"
+                    />
+                </section>
+                <section>
+                    <ModalInfoNaoPodeGravar
+                        show={showModalInfoNaoPodeGravar}
+                        handleClose={handleCloseInfoNaoPodeGravar}
+                        titulo="Atualização não permitida"
+                        texto={mensagemModalInfoNaoPodeGravar}
                         primeiroBotaoTexto="Fechar"
                         primeiroBotaoCss="success"
                     />

@@ -33,6 +33,7 @@ export const ModalFormAcoes = (props) => {
                                 type="text"
                                 className="form-control"
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
+                                maxLength={10}
                             />
                         </div>
 
