@@ -2,7 +2,7 @@ import React, {useEffect, useState, useMemo} from "react";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
 import {EditarMembro} from "../ModalMembros";
-import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarCpfResponsavel, getUsuarios, deleteMembroAssociacao} from "../../../../services/escolas/Associacao.service";
+import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarCpfResponsavel, getUsuarios, deleteMembroAssociacao, getUsuarioPeloUsername} from "../../../../services/escolas/Associacao.service";
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
@@ -156,10 +156,19 @@ export const MembrosDaAssociacao = () =>{
         }
     };
 
-    const onShowEditarMembro = (infoMembroSelecionado)=>{
+    const onShowEditarMembro = async (infoMembroSelecionado)=>{
         setShowEditarMembro(true);
+        console.log("onShowEditarMembro ", infoMembroSelecionado);
         let init;
+        let usuario_existente;
         if (infoMembroSelecionado && infoMembroSelecionado.infos){
+
+            if (infoMembroSelecionado.infos.representacao === 'SERVIDOR' || infoMembroSelecionado.infos.representacao === 'ESTUDANTE'){
+                usuario_existente = await getUsuarioPeloUsername(infoMembroSelecionado.infos.codigo_identificacao.trim());
+            }else {
+                usuario_existente = await getUsuarioPeloUsername(infoMembroSelecionado.infos.cpf.trim());
+            }
+
              init = {
                 uuid: infoMembroSelecionado.infos.uuid ? infoMembroSelecionado.infos.uuid : "",
                 nome: infoMembroSelecionado.infos.nome ? infoMembroSelecionado.infos.nome : "",
@@ -169,8 +178,9 @@ export const MembrosDaAssociacao = () =>{
                 codigo_identificacao: infoMembroSelecionado.infos.codigo_identificacao ? infoMembroSelecionado.infos.codigo_identificacao : "",
                 email: infoMembroSelecionado.infos.email ? infoMembroSelecionado.infos.email : "",
                 cpf: infoMembroSelecionado.infos.cpf ? infoMembroSelecionado.infos.cpf : "",
-                usuario: infoMembroSelecionado.infos.usuario ? infoMembroSelecionado.infos.usuario : "",
-            };
+                usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
+
+        };
         }else {
             init = {
                 uuid: "",
@@ -200,7 +210,7 @@ export const MembrosDaAssociacao = () =>{
         setShowEditarMembro(false);
     };
 
-    const handleChangeEditarMembro = (name, value) => {
+    const handleChangeEditarMembro = async (name, value) => {
         setStateFormEditarMembro({
             ...stateFormEditarMembro,
             [name]: value
@@ -213,11 +223,11 @@ export const MembrosDaAssociacao = () =>{
 
     const validateFormMembros = async (values) => {
         const errors = {};
-
             if (values.representacao === "SERVIDOR"){
                 try {
                     if (cod_identificacao_rf !== values.codigo_identificacao.trim()){
                         let rf = await consultarRF(values.codigo_identificacao.trim());
+                        let usuario_existente = await getUsuarioPeloUsername(values.codigo_identificacao.trim());
                         if (rf.status === 200 || rf.status === 201) {
                             const init = {
                                 ...stateFormEditarMembro,
@@ -228,7 +238,7 @@ export const MembrosDaAssociacao = () =>{
                                 representacao: values.representacao,
                                 email: values.email,
                                 cpf: values.cpf,
-                                usuario: values.usuario,
+                                usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
                             };
                             setStateFormEditarMembro(init);
                         }
@@ -247,6 +257,7 @@ export const MembrosDaAssociacao = () =>{
                 try {
                     if (cod_identificacao_eol !== values.codigo_identificacao){
                         let cod_eol = await consultarCodEol(values.codigo_identificacao);
+                        let usuario_existente = await getUsuarioPeloUsername(values.codigo_identificacao.trim());
                         if (cod_eol.status === 200 || cod_eol.status === 201){
                             const init = {
                                 ...stateFormEditarMembro,
@@ -257,7 +268,7 @@ export const MembrosDaAssociacao = () =>{
                                 representacao: values.representacao,
                                 email: values.email,
                                 cpf: values.cpf,
-                                usuario: values.usuario,
+                                usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
                             };
                             setStateFormEditarMembro(init);
                         }
@@ -294,8 +305,7 @@ export const MembrosDaAssociacao = () =>{
     };
 
     const onSubmitEditarMembro = async () =>{
-
-        setLoading(true)
+        setLoading(true);
         setShowEditarMembro(false);
         let payload = {};
         let usuario;
@@ -316,7 +326,7 @@ export const MembrosDaAssociacao = () =>{
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
                 'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
-                //'usuario': usuario
+                'usuario': usuario
             };
         }else if(stateFormEditarMembro && stateFormEditarMembro.representacao === "ESTUDANTE"){
             payload = {
@@ -328,7 +338,7 @@ export const MembrosDaAssociacao = () =>{
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
                 'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
-                //'usuario': usuario
+                'usuario': usuario
             };
         }else if (stateFormEditarMembro && stateFormEditarMembro.representacao === "PAI_RESPONSAVEL"){
             payload = {
@@ -340,7 +350,7 @@ export const MembrosDaAssociacao = () =>{
                 'codigo_identificacao': "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
                 'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
-                //'usuario': usuario
+                'usuario': usuario
             };
         }
 

@@ -173,6 +173,26 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                         </div>
                                     </div>
 
+                                    <div className="col-12">
+                                        <div className="form-group">
+                                            <label htmlFor="usuario">Usuário do SIG - Escola</label>
+                                            <input
+                                                type="text"
+                                                value={props.values.usuario}
+                                                onChange={(e) => {
+                                                    //props.handleChange(e);
+                                                    //handleChangeEditarMembro(e.target.name, e.target.value);
+                                                }
+                                                }
+                                                name="usuario"
+                                                className="form-control"
+                                                //placeholder="Insira seu email se desejar"
+                                                readOnly={true}
+                                            />
+                                            {props.errors.usuario && <span className="span_erro text-danger mt-1"> {props.errors.usuario}</span>}
+                                        </div>
+                                    </div>
+
                                     {/*<div className='col-12'>
                                         <div className='form-group'>
                                             <label htmlFor="usuario">Usuário do SIG - Escola</label>
