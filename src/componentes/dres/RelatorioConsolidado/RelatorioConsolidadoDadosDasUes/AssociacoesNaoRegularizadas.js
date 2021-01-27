@@ -31,7 +31,7 @@ const AssociacoesNaoRegularizadas = ({listaAssociacoesNaoRegularizadas, nomeTemp
                         />
                         <Column
                             field="acoes"
-                            header="Ações"
+                            header=""
                             body={acoesTemplate}
                             style={{width:'10%'}}
                         />

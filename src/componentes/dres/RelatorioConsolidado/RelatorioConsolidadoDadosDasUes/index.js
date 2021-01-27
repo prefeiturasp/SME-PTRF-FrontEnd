@@ -10,7 +10,7 @@ import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada"
 import Img404 from "../../../../assets/img/img-404.svg"
 import AssociacoesNaoRegularizadas from "./AssociacoesNaoRegularizadas";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit} from "@fortawesome/free-solid-svg-icons";
+import {faEye} from "@fortawesome/free-solid-svg-icons";
 import {getAssociacao, getContasAssociacao} from "../../../../services/dres/Associacoes.service";
 import {DADOS_DA_ASSOCIACAO} from "../../../../services/auth.service";
 
@@ -144,13 +144,12 @@ export const RelatorioConsolidadoDadosDasUes = () => {
     }, []);
 
     const acoesTemplate = useCallback((rowData) =>{
-        console.log("acoesTemplate ", rowData);
         return (
             <div>
                 <button onClick={()=>handleClickAssociacoesNaoRegularizadas(rowData)} className="btn-editar-membro">
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
+                        icon={faEye}
                     />
                 </button>
             </div>
