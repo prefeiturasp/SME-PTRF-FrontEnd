@@ -215,7 +215,6 @@ export const MembrosDaAssociacao = () =>{
         const errors = {};
 
             if (values.representacao === "SERVIDOR"){
-                //setBtnSalvarReadOnly(true);
                 try {
                     if (cod_identificacao_rf !== values.codigo_identificacao.trim()){
                         let rf = await consultarRF(values.codigo_identificacao.trim());
@@ -245,7 +244,6 @@ export const MembrosDaAssociacao = () =>{
                     }
                 }
             } else if(values.representacao === "ESTUDANTE"){
-                //setBtnSalvarReadOnly(true);
                 try {
                     if (cod_identificacao_eol !== values.codigo_identificacao){
                         let cod_eol = await consultarCodEol(values.codigo_identificacao);
@@ -262,7 +260,6 @@ export const MembrosDaAssociacao = () =>{
                                 usuario: values.usuario,
                             };
                             setStateFormEditarMembro(init);
-
                         }
                     }
                     setBtnSalvarReadOnly(false);
@@ -319,7 +316,7 @@ export const MembrosDaAssociacao = () =>{
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
                 'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
-                'usuario': usuario
+                //'usuario': usuario
             };
         }else if(stateFormEditarMembro && stateFormEditarMembro.representacao === "ESTUDANTE"){
             payload = {
@@ -331,7 +328,7 @@ export const MembrosDaAssociacao = () =>{
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
                 'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
-                'usuario': usuario
+                //'usuario': usuario
             };
         }else if (stateFormEditarMembro && stateFormEditarMembro.representacao === "PAI_RESPONSAVEL"){
             payload = {
@@ -343,7 +340,7 @@ export const MembrosDaAssociacao = () =>{
                 'codigo_identificacao': "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
                 'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
-                'usuario': usuario
+                //'usuario': usuario
             };
         }
 
@@ -377,7 +374,7 @@ export const MembrosDaAssociacao = () =>{
     };
 
     const handleDeleteMembroAction = (infoMembroSelecionado) => {
-        setInfosMembroSelecionado(infoMembroSelecionado)
+        setInfosMembroSelecionado(infoMembroSelecionado);
         setShowConfirmDelete(true);
     };
 

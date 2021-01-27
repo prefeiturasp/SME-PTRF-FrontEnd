@@ -173,7 +173,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                         </div>
                                     </div>
 
-                                    <div className='col-12'>
+                                    {/*<div className='col-12'>
                                         <div className='form-group'>
                                             <label htmlFor="usuario">Usuário do SIG - Escola</label>
                                             <select
@@ -195,7 +195,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                             </select>
                                             {props.errors.representacao && <span className="span_erro text-danger mt-1"> {props.errors.representacao}</span>}
                                         </div>
-                                    </div>
+                                    </div>*/}
 
                                 </div>
                                 <div className="d-flex  justify-content-end pb-3 mt-3">
