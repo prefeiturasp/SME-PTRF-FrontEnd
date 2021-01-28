@@ -162,13 +162,11 @@ export const MembrosDaAssociacao = () =>{
         let init;
         let usuario_existente;
         if (infoMembroSelecionado && infoMembroSelecionado.infos){
-
             if (infoMembroSelecionado.infos.representacao === 'SERVIDOR' || infoMembroSelecionado.infos.representacao === 'ESTUDANTE'){
                 usuario_existente = await getUsuarioPeloUsername(infoMembroSelecionado.infos.codigo_identificacao.trim());
             }else {
                 usuario_existente = await getUsuarioPeloUsername(infoMembroSelecionado.infos.cpf.trim());
             }
-
              init = {
                 uuid: infoMembroSelecionado.infos.uuid ? infoMembroSelecionado.infos.uuid : "",
                 nome: infoMembroSelecionado.infos.nome ? infoMembroSelecionado.infos.nome : "",
@@ -179,7 +177,6 @@ export const MembrosDaAssociacao = () =>{
                 email: infoMembroSelecionado.infos.email ? infoMembroSelecionado.infos.email : "",
                 cpf: infoMembroSelecionado.infos.cpf ? infoMembroSelecionado.infos.cpf : "",
                 usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
-
         };
         }else {
             init = {
@@ -288,6 +285,17 @@ export const MembrosDaAssociacao = () =>{
                     try {
                         await consultarCpfResponsavel(values.cpf);
                         setBtnSalvarReadOnly(false);
+                        let usuario_existente = await getUsuarioPeloUsername(values.cpf.trim());
+                        const init = {
+                            ...stateFormEditarMembro,
+                            cargo_associacao: values.cargo_associacao,
+                            cargo_educacao: "",
+                            representacao: values.representacao,
+                            email: values.email,
+                            cpf: values.cpf,
+                            usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
+                        };
+                        setStateFormEditarMembro(init);
                     } catch (e) {
                         let data = e.response.data;
                         if (data !== undefined && data.detail !== undefined) {

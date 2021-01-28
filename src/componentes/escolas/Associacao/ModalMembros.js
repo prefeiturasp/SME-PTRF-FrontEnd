@@ -179,11 +179,6 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                             <input
                                                 type="text"
                                                 value={props.values.usuario}
-                                                onChange={(e) => {
-                                                    //props.handleChange(e);
-                                                    //handleChangeEditarMembro(e.target.name, e.target.value);
-                                                }
-                                                }
                                                 name="usuario"
                                                 className="form-control"
                                                 //placeholder="Insira seu email se desejar"
@@ -192,31 +187,6 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                             {props.errors.usuario && <span className="span_erro text-danger mt-1"> {props.errors.usuario}</span>}
                                         </div>
                                     </div>
-
-                                    {/*<div className='col-12'>
-                                        <div className='form-group'>
-                                            <label htmlFor="usuario">Usuário do SIG - Escola</label>
-                                            <select
-                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
-                                                value={props.values.usuario.id}
-                                                onChange={(e) => {
-                                                    props.handleChange(e);
-                                                    handleChangeEditarMembro(e.target.name, e.target.value);
-                                                }
-                                                }
-                                                name="usuario"
-                                                className="form-control"
-                                            >
-                                                <option value="">Escolha seu usuário</option>
-                                                {usuarios && usuarios.length > 0 && usuarios.map(usuario=>
-                                                    <option key={usuario.id} value={usuario.id}>{usuario.name}</option>
-                                                )}
-
-                                            </select>
-                                            {props.errors.representacao && <span className="span_erro text-danger mt-1"> {props.errors.representacao}</span>}
-                                        </div>
-                                    </div>*/}
-
                                 </div>
                                 <div className="d-flex  justify-content-end pb-3 mt-3">
                                     <button onClick={()=>handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>

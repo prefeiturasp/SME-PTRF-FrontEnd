@@ -12,7 +12,7 @@ export const BtnAddAssociacoes = ({FontAwesomeIcon, faPlus, setShowModalForm, in
                     style={{fontSize: '15px', marginRight: "5", color:"#fff"}}
                     icon={faPlus}
                 />
-                Adicionar período
+                Adicionar associação
             </button>
         </div>
     );
