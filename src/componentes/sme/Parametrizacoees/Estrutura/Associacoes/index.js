@@ -179,10 +179,9 @@ export const Associacoes = () => {
 
     const handleSubmitModalFormAssociacoes = useCallback(async (values,{setErrors})=>{
         let cnpj_existente=false;
-        if (verifica_alteracao_cnpj !== values.cnpj.trim()){
+        if (verifica_alteracao_cnpj !== values.cnpj.trim() || !values.cnpj.trim()){
             cnpj_existente = listaDeAssociacoesFiltrarCnpj.find(element=> element.cnpj === values.cnpj);
         }
-
         if (cnpj_existente){
             setErrors({ cnpj: 'Associação com este CNPJ já existe.' });
         }else {

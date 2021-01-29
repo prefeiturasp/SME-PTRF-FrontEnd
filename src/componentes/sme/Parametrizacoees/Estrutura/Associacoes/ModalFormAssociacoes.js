@@ -1,8 +1,8 @@
 import React, {memo} from "react";
 import {ModalFormBodyText} from "../../../../Globais/ModalBootstrap";
 import {Formik} from "formik";
-import {exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
-import {YupSignupSchemaAssociacoes} from "./YupSignupSchemaAssociacoes";
+import {YupSignupSchemaAssociacoes, exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
+import MaskedInput from "react-text-mask";
 
 const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitModalFormAssociacoes, listaDePeriodos, tabelaAssociacoes, carregaUnidadePeloCodigoEol, errosCodigoEol, setShowModalConfirmDeleteAssociacao}) => {
 
@@ -84,14 +84,22 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                     <div className='col'>
                                         <div className="form-group">
                                             <label htmlFor="cnpj">CNPJ</label>
-                                            <input
-                                                type="text"
+                                            <MaskedInput
+                                                mask={[/\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, '-', /\d/,/\d/]}
                                                 value={props.values.cnpj}
                                                 name="cnpj"
                                                 id="cnpj"
                                                 className="form-control"
                                                 onChange={props.handleChange}
                                             />
+                                            {/*<input
+                                                type="text"
+                                                value={props.values.cnpj}
+                                                name="cnpj"
+                                                id="cnpj"
+                                                className="form-control"
+                                                onChange={props.handleChange}
+                                            />*/}
                                             {props.touched.cnpj && props.errors.cnpj && <span className="span_erro text-danger mt-1"> {props.errors.cnpj} </span>}
                                         </div>
                                     </div>
