@@ -96,3 +96,8 @@ export const getPeriodosDePrestacaoDeContasDaAssociacao = async () => {
 export const getUsuarios = async () => {
     return (await api.get(`/api/usuarios/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
+
+export const getUsuarioPeloUsername = async (username) => {
+    return (await api.get(`/api/usuarios/?username=${username}`, authHeader)).data
+};
+
