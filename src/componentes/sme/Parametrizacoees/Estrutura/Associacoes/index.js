@@ -183,7 +183,7 @@ export const Associacoes = () => {
             cnpj_existente = listaDeAssociacoesFiltrarCnpj.find(element=> element.cnpj === values.cnpj);
         }
 
-        if (cnpj_existente){
+        if (cnpj_existente || !cnpj_existente){
             setErrors({ cnpj: 'Associação com este CNPJ já existe.' });
         }else {
             let payload;
