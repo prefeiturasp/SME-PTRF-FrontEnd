@@ -70,7 +70,7 @@ export const MembrosDaAssociacao = () =>{
 
     useEffect(()=>{
         setLoading(false)
-    }, [])
+    }, []);
 
     const carregaMembros = async ()=>{
         let membros = await getMembrosAssociacao();
@@ -85,7 +85,6 @@ export const MembrosDaAssociacao = () =>{
     const buscaDadosMembros = (id_cargo) =>{
         return membros.find(element => element.cargo_associacao === id_cargo);
     };
-
 
     const mesclaMembros = async ()=>{
         let cargos_e_infos_diretoria = [];
@@ -158,7 +157,6 @@ export const MembrosDaAssociacao = () =>{
 
     const onShowEditarMembro = async (infoMembroSelecionado)=>{
         setShowEditarMembro(true);
-        console.log("onShowEditarMembro ", infoMembroSelecionado);
         let init;
         let usuario_existente;
         if (infoMembroSelecionado && infoMembroSelecionado.infos){
@@ -194,7 +192,6 @@ export const MembrosDaAssociacao = () =>{
         setStateFormEditarMembro(init);
         setInfosMembroSelecionado(infoMembroSelecionado)
     };
-
 
     const toggleIcon = (id) => {
         setClickIconeToogle({
@@ -418,54 +415,50 @@ export const MembrosDaAssociacao = () =>{
             } catch (error) {
                 console.log(error)
             }
-
         }
     };
 
-
     return(
         <div className="row">
-                <div className="col-12">
-                    {loading ? (
-                            <Loading
-                                corGrafico="black"
-                                corFonte="dark"
-                                marginTop="0"
-                                marginBottom="0"
-                            />
-                        ) :
-                    <>
-                        <MenuInterno
-                            caminhos_menu_interno={UrlsMenuInterno}
+            <div className="col-12">
+                {loading ? (
+                        <Loading
+                            corGrafico="black"
+                            corFonte="dark"
+                            marginTop="0"
+                            marginBottom="0"
                         />
-                        <ExportaDadosDaAsssociacao/>
-                        <TabelaMembros
-                            titulo="Diretoria Executiva"
-                            clickIconeToogle={clickIconeToogle}
-                            toggleIcon={toggleIcon}
-                            onShowEditarMembro={onShowEditarMembro}
-                            onDeleteMembro={handleDeleteMembroAction}
-                            cargos={initialValuesMembrosDiretoria}
-                            converteNomeRepresentacao={converteNomeRepresentacao}
-                            retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
-                        />
-                        <hr/>
+                    ) :
+                <>
+                    <MenuInterno
+                        caminhos_menu_interno={UrlsMenuInterno}
+                    />
+                    <ExportaDadosDaAsssociacao/>
+                    <TabelaMembros
+                        titulo="Diretoria Executiva"
+                        clickIconeToogle={clickIconeToogle}
+                        toggleIcon={toggleIcon}
+                        onShowEditarMembro={onShowEditarMembro}
+                        onDeleteMembro={handleDeleteMembroAction}
+                        cargos={initialValuesMembrosDiretoria}
+                        converteNomeRepresentacao={converteNomeRepresentacao}
+                        retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
+                    />
+                    <hr/>
 
-                        <TabelaMembros
-                            titulo="Conselho Fiscal"
-                            clickIconeToogle={clickIconeToogle}
-                            toggleIcon={toggleIcon}
-                            onShowEditarMembro={onShowEditarMembro}
-                            onDeleteMembro={handleDeleteMembroAction}
-                            cargos={initialValuesMembrosConselho}
-                            converteNomeRepresentacao={converteNomeRepresentacao}
-                            retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
-                        />
-                    </>
-                    }
-                </div>
-
-
+                    <TabelaMembros
+                        titulo="Conselho Fiscal"
+                        clickIconeToogle={clickIconeToogle}
+                        toggleIcon={toggleIcon}
+                        onShowEditarMembro={onShowEditarMembro}
+                        onDeleteMembro={handleDeleteMembroAction}
+                        cargos={initialValuesMembrosConselho}
+                        converteNomeRepresentacao={converteNomeRepresentacao}
+                        retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
+                    />
+                </>
+                }
+            </div>
             <section>
                 <EditarMembro
                     show={showEditarMembro}
@@ -480,7 +473,6 @@ export const MembrosDaAssociacao = () =>{
                     visoesService={visoesService}
                 />
             </section>
-
             <section>
                 <ConfirmaDeleteMembro
                     show={showConfirmDelete}
@@ -488,7 +480,6 @@ export const MembrosDaAssociacao = () =>{
                     onConfirmDelete={handleDeleteConfirmation}
                 />
             </section>
-
         </div>
     );
 };
