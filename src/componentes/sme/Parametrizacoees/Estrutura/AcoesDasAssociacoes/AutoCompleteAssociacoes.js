@@ -14,7 +14,7 @@ const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete, recebeAcaoAutoComple
                 filteredAcoes = [...todasAsAcoesAutoComplete];
             } else {
                 filteredAcoes = todasAsAcoesAutoComplete.filter((acaoAtiva) => {
-                    return acaoAtiva.associacao.unidade.nome_com_tipo.toLowerCase().includes(event.query.toLowerCase())
+                    return acaoAtiva.unidade.nome_com_tipo.toLowerCase().includes(event.query.toLowerCase())
                 })
             }
             setFilteredAcoes(filteredAcoes);
@@ -30,19 +30,20 @@ const AutoCompleteAssociacoes = ({todasAsAcoesAutoComplete, recebeAcaoAutoComple
                     inputId='selectedAcao'
                     suggestions={filteredAcoes}
                     completeMethod={searchAcao}
-                    field="associacao.unidade.nome_com_tipo"
+                    field="unidade.nome_com_tipo"
                     onChange={(e) => setSelectedAcao(e.value)}
                     inputClassName="form-control"
+                    onSelect={(e) => recebeAcaoAutoComplete(e.value)}
                     style={{width: "100%", borderLeft:'none'}}
                 />
             </div>
-            <div className="bd-highlight">
-                <button className='btn btn-link ml-0 py-1 px-2 ml-n1 border-top border-right border-bottom' onClick={() => recebeAcaoAutoComplete(selectedAcao)} type='button'>
+            <div className="bd-highlight ml-0 py-1 px-3 ml-n3 border-top border-right border-bottom">
+                {/*<button className='btn btn-link ml-0 py-1 px-2 ml-n1 border-top border-right border-bottom' type='button'>*/}
                     <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#42474A"}}
+                        style={{fontSize: '18px', marginRight: "0", color: "#42474A"}}
                         icon={faSearch}
                     />
-                </button>
+                {/*</button>*/}
             </div>
         </div>
     )

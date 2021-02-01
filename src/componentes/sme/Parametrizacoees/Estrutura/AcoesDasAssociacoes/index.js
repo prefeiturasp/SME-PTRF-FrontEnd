@@ -1,6 +1,16 @@
 import React, {useState, useEffect, useCallback, useMemo} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {getTodasAcoesDasAssociacoes, getListaDeAcoes, getFiltros, postAddAcaoAssociacao, putAtualizarAcaoAssociacao, deleteAcaoAssociacao, getRateiosAcao, getReceitasAcao} from "../../../../../services/sme/Parametrizacoes.service";
+import {
+    getTodasAcoesDasAssociacoes,
+    getListaDeAcoes,
+    getFiltros,
+    postAddAcaoAssociacao,
+    putAtualizarAcaoAssociacao,
+    deleteAcaoAssociacao,
+    getRateiosAcao,
+    getReceitasAcao,
+    getAssociacoes
+} from "../../../../../services/sme/Parametrizacoes.service";
 import '../parametrizacoes-estrutura.scss'
 import {MenuInterno} from "../../../../Globais/MenuInterno";
 import {UrlsMenuInterno} from "./UrlsMenuInterno";
@@ -34,10 +44,8 @@ export const AcoesDasAssociacoes = () => {
         let todas_acoes = await getTodasAcoesDasAssociacoes();
         setTodasAsAcoes(todas_acoes);
 
-        // Setando sempre todas as ações retornadas para o autocomplete.
-        // Nesessário para quando se usa os filtros.
-        // Senão o objeto retornado para o autocomplete serão só os elementos filtrados.
-        setTodasAsAcoesAutoComplete(todas_acoes);
+        let todas_associacoes = await getAssociacoes();
+        setTodasAsAcoesAutoComplete(todas_associacoes);
 
         setLoading(false);
     }, []);
@@ -122,10 +130,10 @@ export const AcoesDasAssociacoes = () => {
         if (selectAcao) {
             setStateFormModal({
                 ...stateFormModal,
-                associacao: selectAcao.associacao.uuid,
-                codigo_eol: selectAcao.associacao.unidade.codigo_eol,
-                uuid: selectAcao.uuid,
-                id: selectAcao.id,
+                associacao: selectAcao.uuid,
+                codigo_eol: selectAcao.unidade.codigo_eol,
+                uuid: selectAcao.acao && selectAcao.acao.uuid ? selectAcao.acao.uuid : "",
+                id: selectAcao.acao && selectAcao.acao.id ? selectAcao.acao.id : "",
             });
             setReadOnly(false)
         }
@@ -168,7 +176,6 @@ export const AcoesDasAssociacoes = () => {
             acao: stateFormModal.acao,
             status: stateFormModal.status,
         };
-
         if (stateFormModal.operacao === 'create') {
             try {
                 await postAddAcaoAssociacao(payload);
