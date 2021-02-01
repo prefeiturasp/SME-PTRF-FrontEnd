@@ -142,7 +142,7 @@ export const AcoesDasAssociacoes = () => {
     const handleCloseDeleteAcao = () => {
         setShowModalDeleteAcao(false)
     };
-    const handleCloseInfoQtdeRateiosReceitas = () => {
+    const handleCloseModalInfoExclusaoNaoPermitida = () => {
         setShowModalInfoExclusaoNaoPermitida(false);
     };
     const handleChangeFormModal = (name, value) => {
@@ -272,8 +272,8 @@ export const AcoesDasAssociacoes = () => {
                         show={showModalDeleteAcao}
                         handleClose={handleCloseDeleteAcao}
                         onDeleteAcaoTrue={onDeleteAcaoTrue}
-                        titulo="Excluir Ação"
-                        texto="<p>Deseja realmente excluir esta ação?</p>"
+                        titulo="Excluir Ação de Associação"
+                        texto="<p>Deseja realmente excluir esta ação de associação?</p>"
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="danger"
@@ -283,7 +283,7 @@ export const AcoesDasAssociacoes = () => {
                 <section>
                     <ModalInfoQtdeRateiosReceitasAcao
                         show={showModalInfoExclusaoNaoPermitida}
-                        handleClose={handleCloseInfoQtdeRateiosReceitas}
+                        handleClose={handleCloseModalInfoExclusaoNaoPermitida}
                         titulo="Exclusão não permitida"
                         texto={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
                         primeiroBotaoTexto="Fechar"
