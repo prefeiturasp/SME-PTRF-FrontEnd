@@ -7,8 +7,6 @@ import {
     postAddAcaoAssociacao,
     putAtualizarAcaoAssociacao,
     deleteAcaoAssociacao,
-    getRateiosAcao,
-    getReceitasAcao,
     getAssociacoes
 } from "../../../../../services/sme/Parametrizacoes.service";
 import '../parametrizacoes-estrutura.scss'
@@ -118,12 +116,11 @@ export const AcoesDasAssociacoes = () => {
     };
     const [showModalForm, setShowModalForm] = useState(false);
     const [showModalDeleteAcao, setShowModalDeleteAcao] = useState(false);
-    const [showModalInfoQtdeRateiosReceitas, setShowModalInfoQtdeRateiosReceitas] = useState(false);
+    const [erroExclusaoNaoPermitida, setErroExclusaoNaoPermitida] = useState(false);
+    const [showModalInfoExclusaoNaoPermitida, setShowModalInfoExclusaoNaoPermitida] = useState(false);
     const [associacaoAutocomplete, setAssociacaoAutocomplete] = useState(null);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [readOnly, setReadOnly] = useState(true);
-    const [qtdeRateiosAcao, setQtdeRateiosAcao] = useState(0);
-    const [qtdeReceitasAcao, setQtdeReceitasAcao] = useState(0);
 
     const recebeAcaoAutoComplete = (selectAcao) => {
         setAssociacaoAutocomplete(selectAcao);
@@ -145,10 +142,8 @@ export const AcoesDasAssociacoes = () => {
     const handleCloseDeleteAcao = () => {
         setShowModalDeleteAcao(false)
     };
-    const handleCloseInfoQtdeRateiosReceitas = () => {
-        setShowModalInfoQtdeRateiosReceitas(false);
-        setQtdeRateiosAcao(0);
-        setQtdeReceitasAcao(0);
+    const handleCloseModalInfoExclusaoNaoPermitida = () => {
+        setShowModalInfoExclusaoNaoPermitida(false);
     };
     const handleChangeFormModal = (name, value) => {
         setStateFormModal({
@@ -196,29 +191,6 @@ export const AcoesDasAssociacoes = () => {
             }
         }
     };
-    const serviceCrudAcoes = async () => {
-        setShowModalForm(false);
-        setLoading(true);
-
-        let rateios_acao = await getRateiosAcao(stateFormModal.uuid, stateFormModal.associacao);
-        let receitas_acao = await getReceitasAcao(stateFormModal.associacao, stateFormModal.uuid);
-
-        if (rateios_acao.length > 0) {
-            setQtdeRateiosAcao(rateios_acao.length);
-        }
-        if (receitas_acao.length > 0) {
-            setQtdeReceitasAcao(receitas_acao.length);
-        }
-
-        if (rateios_acao.length > 0 || receitas_acao.length > 0) {
-            setShowModalForm(false);
-            setLoading(false);
-            setShowModalInfoQtdeRateiosReceitas(true)
-        } else {
-            setLoading(false);
-            setShowModalDeleteAcao(true)
-        }
-    };
     const onDeleteAcaoTrue = async () => {
         try {
             await deleteAcaoAssociacao(stateFormModal.uuid);
@@ -227,7 +199,12 @@ export const AcoesDasAssociacoes = () => {
             console.log('Ação Associação excluída com sucesso');
             await carregaTodasAsAcoes();
         } catch (e) {
-            console.log('Erro ao excluir Ação Associação!! ', e)
+            console.log('Erro ao excluir ação associação ', e.response.data);
+            if (e.response.data && e.response.data.mensagem){
+                setErroExclusaoNaoPermitida(e.response.data.mensagem);
+                setShowModalDeleteAcao(false);
+                setShowModalInfoExclusaoNaoPermitida(true)
+            }
         }
     };
 
@@ -284,7 +261,7 @@ export const AcoesDasAssociacoes = () => {
                         stateFormModal={stateFormModal}
                         readOnly={readOnly}
                         listaTiposDeAcao={listaTiposDeAcao}
-                        serviceCrudAcoes={serviceCrudAcoes}
+                        setShowModalDeleteAcao={setShowModalDeleteAcao}
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
                         todasAsAcoesAutoComplete={todasAsAcoesAutoComplete}
@@ -295,8 +272,8 @@ export const AcoesDasAssociacoes = () => {
                         show={showModalDeleteAcao}
                         handleClose={handleCloseDeleteAcao}
                         onDeleteAcaoTrue={onDeleteAcaoTrue}
-                        titulo="Excluir Ação"
-                        texto="<p>Deseja realmente excluir esta ação?</p>"
+                        titulo="Excluir Ação de Associação"
+                        texto="<p>Deseja realmente excluir esta ação de associação?</p>"
                         primeiroBotaoTexto="Cancelar"
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="danger"
@@ -305,10 +282,10 @@ export const AcoesDasAssociacoes = () => {
                 </section>
                 <section>
                     <ModalInfoQtdeRateiosReceitasAcao
-                        show={showModalInfoQtdeRateiosReceitas}
-                        handleClose={handleCloseInfoQtdeRateiosReceitas}
+                        show={showModalInfoExclusaoNaoPermitida}
+                        handleClose={handleCloseModalInfoExclusaoNaoPermitida}
                         titulo="Exclusão não permitida"
-                        texto={`<p class="mb-0">Não é permitido excluir esta ação. </p> ${qtdeRateiosAcao > 0 ? '<p class="mb-0">Existe(m) ' + qtdeRateiosAcao + ' rateio(s).</p>' : ''}${qtdeReceitasAcao > 0 ? '<p class="mb-0">Existe(m) ' + qtdeReceitasAcao + ' receita(s).</p>' : ''} <p>Atribuída(s) a esta ação.</p>`}
+                        texto={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
                         primeiroBotaoTexto="Fechar"
                         primeiroBotaoCss="success"
                     />
