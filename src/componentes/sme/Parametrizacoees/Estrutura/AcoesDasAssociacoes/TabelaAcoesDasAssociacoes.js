@@ -21,12 +21,12 @@ export const TabelaAcoesDasAssociacoes = ({todasAsAcoes, rowsPerPage, statusTemp
                 body={statusTemplate}
             />
             <Column
-                field="acao.nome"
-                header="Status"
+                field="criado_em"
+                header="Criado em"
                 body={dataTemplate}
             />
             <Column
-                field="acoes"
+                field="status"
                 header="Ações"
                 body={acoesTemplate}
             />

@@ -116,7 +116,7 @@ export const AcoesDasAssociacoes = () => {
     };
     const [showModalForm, setShowModalForm] = useState(false);
     const [showModalDeleteAcao, setShowModalDeleteAcao] = useState(false);
-    const [erroExclusaoNaoPermitida, setErroExclusaoNaoPermitida] = useState(false);
+    const [erroExclusaoNaoPermitida, setErroExclusaoNaoPermitida] = useState('');
     const [showModalInfoExclusaoNaoPermitida, setShowModalInfoExclusaoNaoPermitida] = useState(false);
     const [associacaoAutocomplete, setAssociacaoAutocomplete] = useState(null);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
@@ -202,6 +202,10 @@ export const AcoesDasAssociacoes = () => {
             console.log('Erro ao excluir ação associação ', e.response.data);
             if (e.response.data && e.response.data.mensagem){
                 setErroExclusaoNaoPermitida(e.response.data.mensagem);
+                setShowModalDeleteAcao(false);
+                setShowModalInfoExclusaoNaoPermitida(true)
+            }else{
+                setErroExclusaoNaoPermitida('Houve um problema ao realizar esta operação, tente novamente.');
                 setShowModalDeleteAcao(false);
                 setShowModalInfoExclusaoNaoPermitida(true)
             }
