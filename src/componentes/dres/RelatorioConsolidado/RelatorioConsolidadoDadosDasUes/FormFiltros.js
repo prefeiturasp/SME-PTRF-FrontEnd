@@ -4,6 +4,9 @@ export const FormFiltros = ({stateFiltros, handleChangeFiltros, limpaFiltros, ha
     return(
         <form onSubmit={handleSubmitFiltros} method="post">
             <div className="row mt-3 mb-3">
+                <div className='col-12 mb-3'>
+                    <h5>Dados Físico-Financeiros da Execução</h5>
+                </div>
                 <div className="col">
                     <label htmlFor="filtrar_por_ue">Filtrar por unidade educacional</label>
                     <input

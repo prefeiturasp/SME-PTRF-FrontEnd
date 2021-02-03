@@ -68,7 +68,7 @@ export const ParametrizacaoCard = ({itensParametrizacao, nomeGrupo}) => {
                             <Card
                                 className="servico h-"
                                 style={cardStyle}
-                                onClick={() => redirect("#/contratos-continuos/?equipamento=CEU")}
+                                onClick={() => redirect(card.url)}
 
                             >
                                 <CardImg top width="100%" src={card.icone} alt="Icone de seleção" height="71"/>

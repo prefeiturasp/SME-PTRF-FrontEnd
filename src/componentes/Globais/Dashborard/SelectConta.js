@@ -8,7 +8,7 @@ export const SelectConta = ({handleChangeConta, selectConta, tiposConta}) =>{
             </div>
             <div className="col-auto my-1">
                 <select
-                    value={!selectConta ? tiposConta.uuid : ""}
+                    value={selectConta}
                     onChange={(e) => handleChangeConta(e.target.value)}
                     name="periodo"
                     id="periodo"

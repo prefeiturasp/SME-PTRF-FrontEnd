@@ -25,9 +25,9 @@ export const TabelaListaPrestacoesDaDre = ({listaPrestacoes, valorTemplate})=>{
     const reprogramadoTemplate = (rowData) =>{
          return (
              <React.Fragment>
-                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.saldo_reprogramado_periodo_anterior_capital)}</span></p>
-                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.saldo_reprogramado_periodo_anterior_custeio)}</span></p>
-                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.saldo_reprogramado_periodo_anterior_livre)}</span></p>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.saldo_reprogramado_periodo_anterior_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.saldo_reprogramado_periodo_anterior_custeio)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.saldo_reprogramado_periodo_anterior_livre)}</span></p>
              </React.Fragment>
          )
      };
@@ -35,9 +35,9 @@ export const TabelaListaPrestacoesDaDre = ({listaPrestacoes, valorTemplate})=>{
     const repasseTemplate = (rowData) =>{
          return (
              <React.Fragment>
-                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.repasses_no_periodo_capital)}</span></p>
-                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.repasses_no_periodo_custeio)}</span></p>
-                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.repasses_no_periodo_livre)}</span></p>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.repasses_no_periodo_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.repasses_no_periodo_custeio)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.repasses_no_periodo_livre)}</span></p>
              </React.Fragment>
          )
      };
@@ -45,9 +45,9 @@ export const TabelaListaPrestacoesDaDre = ({listaPrestacoes, valorTemplate})=>{
      const rendimentoTemplate = (rowData) =>{
          return (
              <React.Fragment>
-                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.receitas_rendimento_no_periodo_capital)}</span></p>
-                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.receitas_rendimento_no_periodo_custeio)}</span></p>
-                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.receitas_rendimento_no_periodo_livre)}</span></p>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.receitas_rendimento_no_periodo_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.receitas_rendimento_no_periodo_custeio)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.receitas_rendimento_no_periodo_livre)}</span></p>
              </React.Fragment>
          )
      };
@@ -55,9 +55,9 @@ export const TabelaListaPrestacoesDaDre = ({listaPrestacoes, valorTemplate})=>{
      const devolucaoPtrfTemplate = (rowData) =>{
          return (
              <React.Fragment>
-                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.receitas_devolucao_no_periodo_capital)}</span></p>
-                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.receitas_devolucao_no_periodo_custeio)}</span></p>
-                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.receitas_devolucao_no_periodo_livre)}</span></p>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.receitas_devolucao_no_periodo_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.receitas_devolucao_no_periodo_custeio)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.receitas_devolucao_no_periodo_livre)}</span></p>
              </React.Fragment>
          )
      };
@@ -65,9 +65,9 @@ export const TabelaListaPrestacoesDaDre = ({listaPrestacoes, valorTemplate})=>{
      const demaisCreditosTemplate = (rowData) =>{
          return (
              <React.Fragment>
-                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_capital)}</span></p>
-                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_custeio)}</span></p>
-                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.demais_creditos_no_periodo_livre)}</span></p>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.demais_creditos_no_periodo_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.demais_creditos_no_periodo_custeio)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.demais_creditos_no_periodo_livre)}</span></p>
              </React.Fragment>
          )
      };
@@ -75,8 +75,8 @@ export const TabelaListaPrestacoesDaDre = ({listaPrestacoes, valorTemplate})=>{
      const despesaRealizadaTemplate = (rowData) =>{
          return (
              <React.Fragment>
-                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.despesas_no_periodo_capital)}</span></p>
-                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.despesas_no_periodo_custeio)}</span></p>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.despesas_no_periodo_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.despesas_no_periodo_custeio)}</span></p>
                  <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">-</span></p>
              </React.Fragment>
          )
@@ -84,9 +84,9 @@ export const TabelaListaPrestacoesDaDre = ({listaPrestacoes, valorTemplate})=>{
      const saldoTemplate = (rowData) =>{
          return (
              <React.Fragment>
-                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.saldo_reprogramado_proximo_periodo_capital)}</span></p>
-                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.saldo_reprogramado_proximo_periodo_custeio)}</span></p>
-                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.saldo_reprogramado_proximo_periodo_livre)}</span></p>
+                 <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.saldo_reprogramado_proximo_periodo_capital)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.saldo_reprogramado_proximo_periodo_custeio)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.saldo_reprogramado_proximo_periodo_livre)}</span></p>
              </React.Fragment>
          )
      };
@@ -95,7 +95,7 @@ export const TabelaListaPrestacoesDaDre = ({listaPrestacoes, valorTemplate})=>{
              <React.Fragment>
                  <p className='mb-0 p-0'><span className="py-2 px-2 conteudo-celulas-lista-dres">-</span></p>
                  <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">-</span></p>
-                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{valorTemplate(rowData.valores.devolucoes_ao_tesouro_no_periodo_total)}</span></p>
+                 <p className='mb-0 border-top'><span className="p-2 py-2 px-2 conteudo-celulas-lista-dres">{rowData.status_prestacao_contas === 'NAO_APRESENTADA' ? <span>&nbsp;</span> : valorTemplate(rowData.valores.devolucoes_ao_tesouro_no_periodo_total)}</span></p>
              </React.Fragment>
          )
      };

@@ -2,7 +2,7 @@ import React, {useEffect, useState, useMemo} from "react";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
 import {EditarMembro} from "../ModalMembros";
-import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarCpfResponsavel, getUsuarios, deleteMembroAssociacao} from "../../../../services/escolas/Associacao.service";
+import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarCpfResponsavel, getUsuarios, deleteMembroAssociacao, getUsuarioPeloUsername} from "../../../../services/escolas/Associacao.service";
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
@@ -70,7 +70,7 @@ export const MembrosDaAssociacao = () =>{
 
     useEffect(()=>{
         setLoading(false)
-    }, [])
+    }, []);
 
     const carregaMembros = async ()=>{
         let membros = await getMembrosAssociacao();
@@ -85,7 +85,6 @@ export const MembrosDaAssociacao = () =>{
     const buscaDadosMembros = (id_cargo) =>{
         return membros.find(element => element.cargo_associacao === id_cargo);
     };
-
 
     const mesclaMembros = async ()=>{
         let cargos_e_infos_diretoria = [];
@@ -156,10 +155,16 @@ export const MembrosDaAssociacao = () =>{
         }
     };
 
-    const onShowEditarMembro = (infoMembroSelecionado)=>{
+    const onShowEditarMembro = async (infoMembroSelecionado)=>{
         setShowEditarMembro(true);
         let init;
+        let usuario_existente;
         if (infoMembroSelecionado && infoMembroSelecionado.infos){
+            if (infoMembroSelecionado.infos.representacao === 'SERVIDOR' || infoMembroSelecionado.infos.representacao === 'ESTUDANTE'){
+                usuario_existente = await getUsuarioPeloUsername(infoMembroSelecionado.infos.codigo_identificacao.trim());
+            }else {
+                usuario_existente = await getUsuarioPeloUsername(infoMembroSelecionado.infos.cpf.trim());
+            }
              init = {
                 uuid: infoMembroSelecionado.infos.uuid ? infoMembroSelecionado.infos.uuid : "",
                 nome: infoMembroSelecionado.infos.nome ? infoMembroSelecionado.infos.nome : "",
@@ -169,8 +174,8 @@ export const MembrosDaAssociacao = () =>{
                 codigo_identificacao: infoMembroSelecionado.infos.codigo_identificacao ? infoMembroSelecionado.infos.codigo_identificacao : "",
                 email: infoMembroSelecionado.infos.email ? infoMembroSelecionado.infos.email : "",
                 cpf: infoMembroSelecionado.infos.cpf ? infoMembroSelecionado.infos.cpf : "",
-                usuario: infoMembroSelecionado.infos.usuario ? infoMembroSelecionado.infos.usuario : "",
-            };
+                usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
+        };
         }else {
             init = {
                 uuid: "",
@@ -188,7 +193,6 @@ export const MembrosDaAssociacao = () =>{
         setInfosMembroSelecionado(infoMembroSelecionado)
     };
 
-
     const toggleIcon = (id) => {
         setClickIconeToogle({
             ...clickIconeToogle,
@@ -200,7 +204,7 @@ export const MembrosDaAssociacao = () =>{
         setShowEditarMembro(false);
     };
 
-    const handleChangeEditarMembro = (name, value) => {
+    const handleChangeEditarMembro = async (name, value) => {
         setStateFormEditarMembro({
             ...stateFormEditarMembro,
             [name]: value
@@ -213,12 +217,11 @@ export const MembrosDaAssociacao = () =>{
 
     const validateFormMembros = async (values) => {
         const errors = {};
-
             if (values.representacao === "SERVIDOR"){
-                //setBtnSalvarReadOnly(true);
                 try {
                     if (cod_identificacao_rf !== values.codigo_identificacao.trim()){
                         let rf = await consultarRF(values.codigo_identificacao.trim());
+                        let usuario_existente = await getUsuarioPeloUsername(values.codigo_identificacao.trim());
                         if (rf.status === 200 || rf.status === 201) {
                             const init = {
                                 ...stateFormEditarMembro,
@@ -229,7 +232,7 @@ export const MembrosDaAssociacao = () =>{
                                 representacao: values.representacao,
                                 email: values.email,
                                 cpf: values.cpf,
-                                usuario: values.usuario,
+                                usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
                             };
                             setStateFormEditarMembro(init);
                         }
@@ -245,10 +248,10 @@ export const MembrosDaAssociacao = () =>{
                     }
                 }
             } else if(values.representacao === "ESTUDANTE"){
-                //setBtnSalvarReadOnly(true);
                 try {
                     if (cod_identificacao_eol !== values.codigo_identificacao){
                         let cod_eol = await consultarCodEol(values.codigo_identificacao);
+                        let usuario_existente = await getUsuarioPeloUsername(values.codigo_identificacao.trim());
                         if (cod_eol.status === 200 || cod_eol.status === 201){
                             const init = {
                                 ...stateFormEditarMembro,
@@ -259,10 +262,9 @@ export const MembrosDaAssociacao = () =>{
                                 representacao: values.representacao,
                                 email: values.email,
                                 cpf: values.cpf,
-                                usuario: values.usuario,
+                                usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
                             };
                             setStateFormEditarMembro(init);
-
                         }
                     }
                     setBtnSalvarReadOnly(false);
@@ -280,6 +282,17 @@ export const MembrosDaAssociacao = () =>{
                     try {
                         await consultarCpfResponsavel(values.cpf);
                         setBtnSalvarReadOnly(false);
+                        let usuario_existente = await getUsuarioPeloUsername(values.cpf.trim());
+                        const init = {
+                            ...stateFormEditarMembro,
+                            cargo_associacao: values.cargo_associacao,
+                            cargo_educacao: "",
+                            representacao: values.representacao,
+                            email: values.email,
+                            cpf: values.cpf,
+                            usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
+                        };
+                        setStateFormEditarMembro(init);
                     } catch (e) {
                         let data = e.response.data;
                         if (data !== undefined && data.detail !== undefined) {
@@ -297,8 +310,7 @@ export const MembrosDaAssociacao = () =>{
     };
 
     const onSubmitEditarMembro = async () =>{
-
-        setLoading(true)
+        setLoading(true);
         setShowEditarMembro(false);
         let payload = {};
         let usuario;
@@ -377,7 +389,7 @@ export const MembrosDaAssociacao = () =>{
     };
 
     const handleDeleteMembroAction = (infoMembroSelecionado) => {
-        setInfosMembroSelecionado(infoMembroSelecionado)
+        setInfosMembroSelecionado(infoMembroSelecionado);
         setShowConfirmDelete(true);
     };
 
@@ -403,54 +415,50 @@ export const MembrosDaAssociacao = () =>{
             } catch (error) {
                 console.log(error)
             }
-
         }
     };
 
-
     return(
         <div className="row">
-                <div className="col-12">
-                    {loading ? (
-                            <Loading
-                                corGrafico="black"
-                                corFonte="dark"
-                                marginTop="0"
-                                marginBottom="0"
-                            />
-                        ) :
-                    <>
-                        <MenuInterno
-                            caminhos_menu_interno={UrlsMenuInterno}
+            <div className="col-12">
+                {loading ? (
+                        <Loading
+                            corGrafico="black"
+                            corFonte="dark"
+                            marginTop="0"
+                            marginBottom="0"
                         />
-                        <ExportaDadosDaAsssociacao/>
-                        <TabelaMembros
-                            titulo="Diretoria Executiva"
-                            clickIconeToogle={clickIconeToogle}
-                            toggleIcon={toggleIcon}
-                            onShowEditarMembro={onShowEditarMembro}
-                            onDeleteMembro={handleDeleteMembroAction}
-                            cargos={initialValuesMembrosDiretoria}
-                            converteNomeRepresentacao={converteNomeRepresentacao}
-                            retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
-                        />
-                        <hr/>
+                    ) :
+                <>
+                    <MenuInterno
+                        caminhos_menu_interno={UrlsMenuInterno}
+                    />
+                    <ExportaDadosDaAsssociacao/>
+                    <TabelaMembros
+                        titulo="Diretoria Executiva"
+                        clickIconeToogle={clickIconeToogle}
+                        toggleIcon={toggleIcon}
+                        onShowEditarMembro={onShowEditarMembro}
+                        onDeleteMembro={handleDeleteMembroAction}
+                        cargos={initialValuesMembrosDiretoria}
+                        converteNomeRepresentacao={converteNomeRepresentacao}
+                        retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
+                    />
+                    <hr/>
 
-                        <TabelaMembros
-                            titulo="Conselho Fiscal"
-                            clickIconeToogle={clickIconeToogle}
-                            toggleIcon={toggleIcon}
-                            onShowEditarMembro={onShowEditarMembro}
-                            onDeleteMembro={handleDeleteMembroAction}
-                            cargos={initialValuesMembrosConselho}
-                            converteNomeRepresentacao={converteNomeRepresentacao}
-                            retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
-                        />
-                    </>
-                    }
-                </div>
-
-
+                    <TabelaMembros
+                        titulo="Conselho Fiscal"
+                        clickIconeToogle={clickIconeToogle}
+                        toggleIcon={toggleIcon}
+                        onShowEditarMembro={onShowEditarMembro}
+                        onDeleteMembro={handleDeleteMembroAction}
+                        cargos={initialValuesMembrosConselho}
+                        converteNomeRepresentacao={converteNomeRepresentacao}
+                        retornaDadosAdicionaisTabela={retornaDadosAdicionaisTabela}
+                    />
+                </>
+                }
+            </div>
             <section>
                 <EditarMembro
                     show={showEditarMembro}
@@ -465,7 +473,6 @@ export const MembrosDaAssociacao = () =>{
                     visoesService={visoesService}
                 />
             </section>
-
             <section>
                 <ConfirmaDeleteMembro
                     show={showConfirmDelete}
@@ -473,7 +480,6 @@ export const MembrosDaAssociacao = () =>{
                     onConfirmDelete={handleDeleteConfirmation}
                 />
             </section>
-
         </div>
     );
 };

@@ -28,7 +28,9 @@ export const DreDashboard = () => {
         let periodos = await getPeriodos();
         setPeriodos(periodos);
         if (periodos && periodos.length > 0){
-            setPeriodoEsolhido(periodos[0].uuid)
+            //Caso exista mais de um período seleciona por default o anterior ao corrente.
+            const periodoIndex = periodos.length > 1 ? 1 : 0;
+            setPeriodoEsolhido(periodos[periodoIndex].uuid)
         }
         setLoading(false);
     };

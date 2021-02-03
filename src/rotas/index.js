@@ -47,6 +47,13 @@ import {RelatorioConsolidadoApuracao} from "../componentes/dres/RelatorioConsoli
 import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoDadosDasUes";
 import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
 import {AcompanhamentoPcsSmePage} from "../paginas/SME/AcompanhamentoPcsSme";
+import {AcoesDasAssociacoes} from "../componentes/sme/Parametrizacoees/Estrutura/AcoesDasAssociacoes";
+import {Acoes} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes";
+import {AssociacoesDaAcao} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes/AssociacoesDaAcao";
+import {VinculaAssociacoesAAcao} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes/VinculaAssociacoesAAcao";
+import {Periodos} from "../componentes/sme/Parametrizacoees/Estrutura/Periodos";
+import {Associacoes} from "../componentes/sme/Parametrizacoees/Estrutura/Associacoes";
+
 const routesConfig = [
     {
         exact: true,
@@ -282,6 +289,24 @@ const routesConfig = [
     },
     {
         exact: true,
+        path: "/parametro-associacoes",
+        component: Associacoes,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/parametro-acoes-associacoes",
+        component: AcoesDasAssociacoes,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/parametro-periodos",
+        component: Periodos,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
         path: "/acompanhamento-pcs-sme",
         component: AcompanhamentoPcsSmePage,
         permissoes: ['view_default'],
@@ -290,6 +315,24 @@ const routesConfig = [
         exact: true,
         path: "/",
         component: RedirectLoginVisaoUe,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/parametro-acoes",
+        component: Acoes,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/associacoes-da-acao/:acao_uuid?",
+        component: AssociacoesDaAcao,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/vincula-associacoes-a-acao/:acao_uuid?",
+        component: VinculaAssociacoesAAcao,
         permissoes: ['view_default'],
     },
 ];
