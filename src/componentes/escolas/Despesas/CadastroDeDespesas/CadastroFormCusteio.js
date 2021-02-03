@@ -18,7 +18,7 @@ export const CadastroFormCusteio = (propriedades) => {
             <div className="form-row">
                 <div className="col-12 col-md-6 mt-4">
 
-                    <label htmlFor="tipo_custeio">Tipo de custeio</label>
+                    <label htmlFor="tipo_custeio">Tipo de despesa de custeio</label>
                     <select
                         value={
                             rateio.tipo_custeio !== null ? (
