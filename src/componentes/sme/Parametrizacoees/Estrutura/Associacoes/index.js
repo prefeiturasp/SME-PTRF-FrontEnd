@@ -107,7 +107,7 @@ export const Associacoes = () => {
     const [showModalInfoExclusaoNaoPermitida, setShowModalInfoExclusaoNaoPermitida] = useState(false);
     const [listaDePeriodos, setListaDePeriodos] = useState([]);
     const [errosCodigoEol, setErrosCodigoEol] = useState('');
-    const [erroExclusaoNaoPermitida, setErroExclusaoNaoPermitida] = useState(false);
+    const [erroExclusaoNaoPermitida, setErroExclusaoNaoPermitida] = useState('');
 
     const carregaTodosPeriodos =  useCallback( async ()=>{
         let periodos = await getTodosPeriodos();
@@ -258,6 +258,9 @@ export const Associacoes = () => {
             console.log('Erro ao excluir associação ', e.response.data);
             if (e.response.data && e.response.data.mensagem){
                 setErroExclusaoNaoPermitida(e.response.data.mensagem);
+                setShowModalInfoExclusaoNaoPermitida(true)
+            }else {
+                setErroExclusaoNaoPermitida('Houve um problema ao realizar esta operação, tente novamente.');
                 setShowModalInfoExclusaoNaoPermitida(true)
             }
         }

@@ -123,7 +123,8 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                     <div className='col'>
                                         <div className="form-group">
                                             <label htmlFor="ccm">CCM</label>
-                                            <input
+                                            <MaskedInput
+                                                mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/]}
                                                 type="text"
                                                 value={props.values.ccm}
                                                 name="ccm"
@@ -169,7 +170,8 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                     <div className='col'>
                                         <div className="form-group">
                                             <label htmlFor="processo_regularidade">Nº processo regularidade</label>
-                                            <input
+                                            <MaskedInput
+                                                mask={[/\d/, /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/]}
                                                 type="text"
                                                 value={props.values.processo_regularidade}
                                                 name="processo_regularidade"
@@ -214,7 +216,6 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
             </>
         )
     };
-
     return (
         <ModalFormBodyText
             show={show}
