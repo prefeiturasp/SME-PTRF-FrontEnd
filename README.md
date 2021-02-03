@@ -10,8 +10,17 @@ Versão: 1.5.0
 
 
 ### 1.5.0 - 02/02/2021 - Entregas da Sprint 14
-* Em andamento...
-
+* DRE > Melhorias no relatório consolidado
+* DRE > Motivos de aprovação com ressalvas no acompanhamento de PCs
+* DRE > Seleção de período do acompanhamento de PCs agora inicia com o período anterior e não o corrente
+* DRE > Novo bloco "Associações não regularizadas" no relatório consolidado DRE
+* SME > Cadastro de Associações
+* SME > Cadastro de Ações
+* SME > Cadastro de vínculos de ações e associações
+* SME > Cadastro de Períodos
+* Nova imagem na tela de login do sistema
+* UE > Melhorias na geração de prestações de contas
+* UE > Cadastro de membros agora vincula automaticamente o membro ao seu usuário do sistema 
 
 ### 1.4.0 - 07/01/2021 - Entregas da Sprint 13
 * Visão SME
