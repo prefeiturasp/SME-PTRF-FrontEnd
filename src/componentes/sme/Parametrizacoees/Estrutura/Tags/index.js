@@ -4,9 +4,9 @@ import {getTodasTags, getFiltrosTags} from "../../../../../services/sme/Parametr
 import TabelaTags from "./TabelaTags";
 import {Filtros} from "./Filtros";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faEye} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
 import ModalFormTags from "./ModalFormTags";
-import ModalFormPeriodos from "../Periodos/ModalFormPeriodos";
+import {BtnAddTags} from "./BtnAddTags";
 
 export const Tags = ()=>{
 
@@ -68,7 +68,6 @@ export const Tags = ()=>{
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
 
     const handleEditFormModalTags = useCallback( async (rowData) =>{
-        console.log("handleEditFormModalTags ", rowData)
         setStateFormModal({
             ...stateFormModal,
             nome: rowData.nome,
@@ -77,7 +76,7 @@ export const Tags = ()=>{
             operacao: 'edit',
         });
         setShowModalForm(true)
-    }, []);
+    }, [stateFormModal]);
 
     const acoesTemplate = useCallback((rowData) =>{
         return (
@@ -85,7 +84,7 @@ export const Tags = ()=>{
                 <button className="btn-editar-membro" onClick={()=>handleEditFormModalTags(rowData)}>
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={rowData.editavel ? faEdit : faEye}
+                        icon={faEdit}
                     />
                 </button>
             </div>
@@ -108,6 +107,13 @@ export const Tags = ()=>{
             <h1 className="titulo-itens-painel mt-5">Etiquetas/Tags</h1>
             <div className="page-content-inner">
                 <button onClick={()=>setCount(prevState => prevState+1)}>Count - {count}</button>
+                <BtnAddTags
+                    FontAwesomeIcon={FontAwesomeIcon}
+                    faPlus={faPlus}
+                    setShowModalForm={setShowModalForm}
+                    initialStateFormModal={initialStateFormModal}
+                    setStateFormModal={setStateFormModal}
+                />
                 <Filtros
                     stateFiltros={stateFiltros}
                     handleChangeFiltros={handleChangeFiltros}

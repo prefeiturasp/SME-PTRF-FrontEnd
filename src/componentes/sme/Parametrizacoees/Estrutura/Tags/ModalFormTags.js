@@ -17,7 +17,6 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                     {props => {
                         const {
                             values,
-                            setFieldValue,
                         } = props;
                         return(
                             <form onSubmit={props.handleSubmit}>
@@ -82,7 +81,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
     return (
         <ModalFormBodyText
             show={show}
-            titulo={stateFormModal && !stateFormModal.editavel ? 'Visualizar período' : stateFormModal && stateFormModal.operacao === 'edit' ? 'Editar período' : 'Adicionar período'}
+            titulo={stateFormModal && stateFormModal.uuid ? 'Editar etiqueta/tag' : 'Adicionar etiqueta/tag'}
             onHide={handleClose}
             size='lg'
             bodyText={bodyTextarea()}
