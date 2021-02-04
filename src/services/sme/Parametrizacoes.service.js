@@ -13,8 +13,8 @@ export const getTodasTags = async () => {
     return (await api.get(`/api/tags/`, authHeader)).data
 };
 
-export const getFiltrosTags = async () => {
-    return (await api.get(`/api/tags/`, authHeader)).data
+export const getFiltrosTags = async (nome, status) => {
+    return (await api.get(`/api/tags/?nome=${nome}&status=${status}`, authHeader)).data
 };
 
 // Associacoes
