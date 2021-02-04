@@ -8,6 +8,15 @@ const authHeader = {
     }
 };
 
+// Tags
+export const getTodasTags = async () => {
+    return (await api.get(`/api/tags/`, authHeader)).data
+};
+
+export const getFiltrosTags = async () => {
+    return (await api.get(`/api/tags/`, authHeader)).data
+};
+
 // Associacoes
 export const getAssociacoes = async () => {
     return (await api.get(`/api/associacoes/`, authHeader)).data
