@@ -42,6 +42,10 @@ export const MembrosDaAssociacao = () =>{
         email:"",
         cpf:"",
         usuario:"",
+        telefone:"",
+        cep:"",
+        bairro:"",
+        endereco:""
     };
 
     const [clickIconeToogle, setClickIconeToogle] = useState({});
@@ -175,6 +179,10 @@ export const MembrosDaAssociacao = () =>{
                 email: infoMembroSelecionado.infos.email ? infoMembroSelecionado.infos.email : "",
                 cpf: infoMembroSelecionado.infos.cpf ? infoMembroSelecionado.infos.cpf : "",
                 usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
+                telefone: infoMembroSelecionado.infos.telefone ? infoMembroSelecionado.infos.telefone : "",
+                cep: infoMembroSelecionado.infos.cep ? infoMembroSelecionado.infos.cep : "",
+                bairro: infoMembroSelecionado.infos.bairro ? infoMembroSelecionado.infos.bairro : "",
+                endereco: infoMembroSelecionado.infos.endereco ? infoMembroSelecionado.infos.endereco : "",
         };
         }else {
             init = {
@@ -186,7 +194,11 @@ export const MembrosDaAssociacao = () =>{
                 codigo_identificacao: "",
                 email: "",
                 cpf: "",
-                usuario:"",
+                usuario: "",
+                telefone: "",
+                cep: "",
+                bairro: "",
+                endereco: ""
             };
         }
         setStateFormEditarMembro(init);
@@ -233,6 +245,10 @@ export const MembrosDaAssociacao = () =>{
                                 email: values.email,
                                 cpf: values.cpf,
                                 usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
+                                telefone: values.telefone,
+                                cep: values.cep,
+                                bairro: values.bairro,
+                                endereco: values.endereco,
                             };
                             setStateFormEditarMembro(init);
                         }
@@ -263,6 +279,10 @@ export const MembrosDaAssociacao = () =>{
                                 email: values.email,
                                 cpf: values.cpf,
                                 usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
+                                telefone: values.telefone,
+                                cep: values.cep,
+                                bairro: values.bairro,
+                                endereco: values.endereco,
                             };
                             setStateFormEditarMembro(init);
                         }
@@ -291,6 +311,10 @@ export const MembrosDaAssociacao = () =>{
                             email: values.email,
                             cpf: values.cpf,
                             usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
+                            telefone: values.telefone,
+                            cep: values.cep,
+                            bairro: values.bairro,
+                            endereco: values.endereco,
                         };
                         setStateFormEditarMembro(init);
                     } catch (e) {
@@ -331,7 +355,11 @@ export const MembrosDaAssociacao = () =>{
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
                 'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
-                'usuario': usuario
+                'usuario': usuario,
+                'telefone': stateFormEditarMembro.telefone ? stateFormEditarMembro.telefone : "",
+                'cep': stateFormEditarMembro.cep ? stateFormEditarMembro.cep : "",
+                'bairro': stateFormEditarMembro.bairro ? stateFormEditarMembro.bairro : "",
+                'endereco': stateFormEditarMembro.endereco ? stateFormEditarMembro.endereco : "",
             };
         }else if(stateFormEditarMembro && stateFormEditarMembro.representacao === "ESTUDANTE"){
             payload = {
@@ -343,7 +371,11 @@ export const MembrosDaAssociacao = () =>{
                 'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
                 'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
-                'usuario': usuario
+                'usuario': usuario,
+                'telefone': stateFormEditarMembro.telefone ? stateFormEditarMembro.telefone : "",
+                'cep': stateFormEditarMembro.cep ? stateFormEditarMembro.cep : "",
+                'bairro': stateFormEditarMembro.bairro ? stateFormEditarMembro.bairro : "",
+                'endereco': stateFormEditarMembro.endereco ? stateFormEditarMembro.endereco : "",
             };
         }else if (stateFormEditarMembro && stateFormEditarMembro.representacao === "PAI_RESPONSAVEL"){
             payload = {
@@ -355,7 +387,11 @@ export const MembrosDaAssociacao = () =>{
                 'codigo_identificacao': "",
                 'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
                 'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
-                'usuario': usuario
+                'usuario': usuario,
+                'telefone': stateFormEditarMembro.telefone ? stateFormEditarMembro.telefone : "",
+                'cep': stateFormEditarMembro.cep ? stateFormEditarMembro.cep : "",
+                'bairro': stateFormEditarMembro.bairro ? stateFormEditarMembro.bairro : "",
+                'endereco': stateFormEditarMembro.endereco ? stateFormEditarMembro.endereco : "",
             };
         }
 
