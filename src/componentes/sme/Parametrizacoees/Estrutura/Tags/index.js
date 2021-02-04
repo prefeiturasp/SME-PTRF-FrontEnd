@@ -3,6 +3,10 @@ import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import {getTodasTags, getFiltrosTags} from "../../../../../services/sme/Parametrizacoes.service";
 import TabelaTags from "./TabelaTags";
 import {Filtros} from "./Filtros";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEdit, faEye} from "@fortawesome/free-solid-svg-icons";
+import ModalFormTags from "./ModalFormTags";
+import ModalFormPeriodos from "../Periodos/ModalFormPeriodos";
 
 export const Tags = ()=>{
 
@@ -52,6 +56,53 @@ export const Tags = ()=>{
         return rowData.status && rowData.status === 'ATIVO' ? 'Ativo' : 'Inativo'
     };
 
+    // Modal
+    const initialStateFormModal = {
+        nome: "",
+        status: "",
+        uuid:"",
+        operacao: 'create',
+    };
+
+    const [showModalForm, setShowModalForm] = useState(false);
+    const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
+
+    const handleEditFormModalTags = useCallback( async (rowData) =>{
+        console.log("handleEditFormModalTags ", rowData)
+        setStateFormModal({
+            ...stateFormModal,
+            nome: rowData.nome,
+            status: rowData.status,
+            uuid: rowData.uuid,
+            operacao: 'edit',
+        });
+        setShowModalForm(true)
+    }, []);
+
+    const acoesTemplate = useCallback((rowData) =>{
+        return (
+            <div>
+                <button className="btn-editar-membro" onClick={()=>handleEditFormModalTags(rowData)}>
+                    <FontAwesomeIcon
+                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                        icon={rowData.editavel ? faEdit : faEye}
+                    />
+                </button>
+            </div>
+        )
+    }, [handleEditFormModalTags]);
+
+    const handleCloseFormModal = useCallback(()=>{
+        setStateFormModal(initialStateFormModal);
+        setShowModalForm(false)
+    }, [initialStateFormModal]);
+
+    const handleSubmitModalFormTags = useCallback(async (values)=>{
+
+        console.log('handleSubmitModalFormTags ', values)
+
+    }, []);
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Etiquetas/Tags</h1>
@@ -68,8 +119,17 @@ export const Tags = ()=>{
                     rowsPerPage={rowsPerPage}
                     listaDeTags={listaDeTags}
                     statusTemplate={statusTemplate}
+                    acoesTemplate={acoesTemplate}
                 />
             </div>
+            <section>
+                <ModalFormTags
+                    show={showModalForm}
+                    stateFormModal={stateFormModal}
+                    handleClose={handleCloseFormModal}
+                    handleSubmitModalFormTags={handleSubmitModalFormTags}
+                />
+            </section>
         </PaginasContainer>
     )
 };
