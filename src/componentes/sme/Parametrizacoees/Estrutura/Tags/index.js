@@ -15,16 +15,18 @@ import ModalFormTags from "./ModalFormTags";
 import {ModalInfoNaoPermitido} from "./ModalInfoNaoPermitido";
 import {ModalConfirmDeleteTag} from "./ModalConfirmDeleteTag";
 import {BtnAddTags} from "./BtnAddTags";
+import Loading from "../../../../../utils/Loading";
 
 export const Tags = ()=>{
 
-    const [count, setCount] = useState(0);
     const [listaDeTags, setListaDeTags] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const carregaTodasAsTags = useCallback(async ()=>{
+        setLoading(true);
         let todas_tags = await getTodasTags();
         setListaDeTags(todas_tags);
-        console.log('Todas as tags ', todas_tags)
+        setLoading(false);
     }, []);
 
     useEffect(()=>{
@@ -49,13 +51,17 @@ export const Tags = ()=>{
     }, [stateFiltros]);
 
     const handleSubmitFiltros = async () => {
+        setLoading(true);
         let tags_filtradas = await getFiltrosTags(stateFiltros.filtrar_por_nome, stateFiltros.filtrar_por_status);
         setListaDeTags(tags_filtradas);
+        setLoading(false);
     };
 
     const limpaFiltros = async () => {
+        setLoading(true);
         setStateFiltros(initialStateFiltros);
         await carregaTodasAsTags();
+        setLoading(false);
     };
 
     // TabelaTags
@@ -69,6 +75,7 @@ export const Tags = ()=>{
         nome: "",
         status: "",
         uuid:"",
+        id:"",
         operacao: 'create',
     };
 
@@ -84,6 +91,7 @@ export const Tags = ()=>{
             nome: rowData.nome,
             status: rowData.status,
             uuid: rowData.uuid,
+            id: rowData.id,
             operacao: 'edit',
         });
         setShowModalForm(true)
@@ -102,10 +110,7 @@ export const Tags = ()=>{
         )
     }, [handleEditFormModalTags]);
 
-
     const handleSubmitModalFormTags = useCallback(async (values)=>{
-        console.log('handleSubmitModalFormTags ', values);
-
         let payload = {
             nome: values.nome,
             status: values.status,
@@ -116,7 +121,7 @@ export const Tags = ()=>{
                 await postCreateTag(payload);
                 console.log('Tag criada com sucesso');
                 setShowModalForm(false);
-                carregaTodasAsTags();
+                await carregaTodasAsTags();
             }catch (e) {
                 console.log('Erro ao criar tag ', e.response.data);
                 if (e.response.data && e.response.data.non_field_errors) {
@@ -127,12 +132,13 @@ export const Tags = ()=>{
                     setShowModalInfoNaoPermitido(true)
                 }
             }
+
         }else {
             try {
                 await patchAlterarTag(values.uuid, payload);
                 console.log('Tag alterada com sucesso');
                 setShowModalForm(false);
-                carregaTodasAsTags();
+                await carregaTodasAsTags();
             }catch (e) {
                 console.log('Erro ao alterar tag ', e.response.data);
                 if (e.response.data && e.response.data.non_field_errors) {
@@ -143,13 +149,15 @@ export const Tags = ()=>{
                     setShowModalInfoNaoPermitido(true);
                 }
             }
+            setLoading(false);
         }
     }, [carregaTodasAsTags]);
 
     const onDeleteTagTrue = useCallback(async ()=>{
+        setLoading(true);
         try {
             await deleteTag(stateFormModal.uuid);
-            console.log("Tag excluído com sucesso");
+            console.log("Tag excluída com sucesso");
             setShowModalConfirmDeleteTag(false);
             setShowModalForm(false);
             await carregaTodasAsTags();
@@ -163,6 +171,7 @@ export const Tags = ()=>{
                 setShowModalInfoNaoPermitido(true);
             }
         }
+        setLoading(false);
     }, [stateFormModal, carregaTodasAsTags]);
 
     const handleCloseFormModal = useCallback(()=>{
@@ -172,76 +181,86 @@ export const Tags = ()=>{
 
     const handleCloseModalInfoNaoPermitido = useCallback(()=>{
         setShowModalInfoNaoPermitido(false);
-        //setShowModalConfirmDeleteTag(false)
     }, []);
     
     const handleCloseConfirmDeleteTag = useCallback(()=>{
         setShowModalConfirmDeleteTag(false)
     }, []);
 
-
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Etiquetas/Tags</h1>
-            <div className="page-content-inner">
-                <button onClick={()=>setCount(prevState => prevState+1)}>Count - {count}</button>
-                <BtnAddTags
-                    FontAwesomeIcon={FontAwesomeIcon}
-                    faPlus={faPlus}
-                    setShowModalForm={setShowModalForm}
-                    initialStateFormModal={initialStateFormModal}
-                    setStateFormModal={setStateFormModal}
-                />
-                <Filtros
-                    stateFiltros={stateFiltros}
-                    handleChangeFiltros={handleChangeFiltros}
-                    handleSubmitFiltros={handleSubmitFiltros}
-                    limpaFiltros={limpaFiltros}
-                />
-                <p>Exibindo <span className='total-acoes'>{totalDeTags}</span> etiquetas/tags</p>
-                <TabelaTags
-                    rowsPerPage={rowsPerPage}
-                    listaDeTags={listaDeTags}
-                    statusTemplate={statusTemplate}
-                    acoesTemplate={acoesTemplate}
-                />
-            </div>
-            <section>
-                <ModalFormTags
-                    show={showModalForm}
-                    stateFormModal={stateFormModal}
-                    handleClose={handleCloseFormModal}
-                    handleSubmitModalFormTags={handleSubmitModalFormTags}
-                    setShowModalConfirmDeleteTag={setShowModalConfirmDeleteTag}
-                />
-            </section>
-            <section>
-                <ModalInfoNaoPermitido
-                    show={showModalInfoNaoPermitido}
-                    handleClose={handleCloseModalInfoNaoPermitido}
-                    titulo={
-                        stateFormModal.operacao === 'create' ? 'Inclusão não permitida' :
-                            stateFormModal.operacao === 'edit' ? 'Alteração não permitida' :
-                                'Exclusão não permitida'
-                    }
-                    texto={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
-                    primeiroBotaoTexto="Fechar"
-                    primeiroBotaoCss="success"
-                />
-            </section>
-            <section>
-                <ModalConfirmDeleteTag
-                    show={showModalConfirmDeleteTag}
-                    handleClose={handleCloseConfirmDeleteTag}
-                    onDeleteTagTrue={onDeleteTagTrue}
-                    titulo="Excluir Tag"
-                    texto="<p>Deseja realmente excluir esta Tag?</p>"
-                    primeiroBotaoTexto="Cancelar"
-                    primeiroBotaoCss="outline-success"
-                    segundoBotaoCss="danger"
-                    segundoBotaoTexto="Excluir"
-                />
-            </section>
+            {loading ? (
+                    <div className="mt-5">
+                        <Loading
+                            corGrafico="black"
+                            corFonte="dark"
+                            marginTop="0"
+                            marginBottom="0"
+                        />
+                    </div>
+                ) :
+                <>
+                    <div className="page-content-inner">
+                        <BtnAddTags
+                            FontAwesomeIcon={FontAwesomeIcon}
+                            faPlus={faPlus}
+                            setShowModalForm={setShowModalForm}
+                            initialStateFormModal={initialStateFormModal}
+                            setStateFormModal={setStateFormModal}
+                        />
+                        <Filtros
+                            stateFiltros={stateFiltros}
+                            handleChangeFiltros={handleChangeFiltros}
+                            handleSubmitFiltros={handleSubmitFiltros}
+                            limpaFiltros={limpaFiltros}
+                        />
+                        <p>Exibindo <span className='total-acoes'>{totalDeTags}</span> etiquetas/tags</p>
+                        <TabelaTags
+                            rowsPerPage={rowsPerPage}
+                            listaDeTags={listaDeTags}
+                            statusTemplate={statusTemplate}
+                            acoesTemplate={acoesTemplate}
+                        />
+                    </div>
+                    <section>
+                        <ModalFormTags
+                            show={showModalForm}
+                            stateFormModal={stateFormModal}
+                            handleClose={handleCloseFormModal}
+                            handleSubmitModalFormTags={handleSubmitModalFormTags}
+                            setShowModalConfirmDeleteTag={setShowModalConfirmDeleteTag}
+                        />
+                    </section>
+                    <section>
+                        <ModalInfoNaoPermitido
+                            show={showModalInfoNaoPermitido}
+                            handleClose={handleCloseModalInfoNaoPermitido}
+                            titulo={
+                                stateFormModal.operacao === 'create' ? 'Inclusão não permitida' :
+                                    stateFormModal.operacao === 'edit' ? 'Alteração não permitida' :
+                                        'Exclusão não permitida'
+                            }
+                            texto={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
+                            primeiroBotaoTexto="Fechar"
+                            primeiroBotaoCss="success"
+                        />
+                    </section>
+                    <section>
+                        <ModalConfirmDeleteTag
+                            show={showModalConfirmDeleteTag}
+                            handleClose={handleCloseConfirmDeleteTag}
+                            onDeleteTagTrue={onDeleteTagTrue}
+                            titulo="Excluir Tag"
+                            texto="<p>Deseja realmente excluir esta Tag?</p>"
+                            primeiroBotaoTexto="Cancelar"
+                            primeiroBotaoCss="outline-success"
+                            segundoBotaoCss="danger"
+                            segundoBotaoTexto="Excluir"
+                        />
+                    </section>
+                </>
+            }
         </PaginasContainer>
     )
 };

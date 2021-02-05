@@ -52,7 +52,16 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                         </select>
                                     </div>
                                 </div>
-
+                                <div className='row mt-3'>
+                                    <div className='col'>
+                                        <p className='mb-2'>Uuid</p>
+                                        <p className='mb-2'>{values.uuid}</p>
+                                    </div>
+                                    <div className='col'>
+                                        <p className='mb-2'>ID</p>
+                                        <p className='mb-2'>{values.id}</p>
+                                    </div>
+                                </div>
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'edit' ? (
@@ -68,7 +77,6 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                     <div className="p-Y bd-highlight">
                                         <button type="submit" className="btn btn btn-success mt-2">Salvar</button>
                                     </div>
-
                                 </div>
                             </form>
                         );
