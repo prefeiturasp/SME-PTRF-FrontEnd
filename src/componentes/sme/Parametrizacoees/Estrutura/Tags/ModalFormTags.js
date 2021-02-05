@@ -1,15 +1,16 @@
 import React, {memo} from "react";
 import {ModalFormBodyText} from "../../../../Globais/ModalBootstrap";
 import {Formik} from "formik";
+import {YupSignupSchemaTags} from "./YupSignupSchemaTags";
 
-const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModalFormTags}) => {
+const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModalFormTags, setShowModalConfirmDeleteTag}) => {
 
     const bodyTextarea = () => {
         return (
             <>
                 <Formik
                     initialValues={stateFormModal}
-                    //validationSchema={YupSignupSchemaPeriodos}
+                    validationSchema={YupSignupSchemaTags}
                     validateOnBlur={true}
                     enableReinitialize={true}
                     onSubmit={handleSubmitModalFormTags}
@@ -46,9 +47,8 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                             id="status"
                                             className="form-control"
                                         >
-                                            <option value=''>Selecione o status</option>
-                                            <option value='ATIVO'>Ativo</option>
                                             <option value='INATIVO'>Inativo</option>
+                                            <option value='ATIVO'>Ativo</option>
                                         </select>
                                     </div>
                                 </div>
@@ -56,7 +56,7 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'edit' ? (
-                                            <button type="button" className="btn btn btn-danger mt-2 mr-2">
+                                            <button onClick={()=>setShowModalConfirmDeleteTag(true)} type="button" className="btn btn btn-danger mt-2 mr-2">
                                                 Apagar
                                             </button>
                                         ): null}

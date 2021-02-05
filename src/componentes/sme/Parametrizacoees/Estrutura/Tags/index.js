@@ -1,12 +1,19 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {getTodasTags, getFiltrosTags, postCreateTag} from "../../../../../services/sme/Parametrizacoes.service";
+import {
+    getTodasTags,
+    getFiltrosTags,
+    postCreateTag,
+    patchAlterarTag,
+    deleteTag,
+} from "../../../../../services/sme/Parametrizacoes.service";
 import TabelaTags from "./TabelaTags";
 import {Filtros} from "./Filtros";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
 import ModalFormTags from "./ModalFormTags";
 import {ModalInfoNaoPermitido} from "./ModalInfoNaoPermitido";
+import {ModalConfirmDeleteTag} from "./ModalConfirmDeleteTag";
 import {BtnAddTags} from "./BtnAddTags";
 
 export const Tags = ()=>{
@@ -67,6 +74,7 @@ export const Tags = ()=>{
 
     const [showModalForm, setShowModalForm] = useState(false);
     const [showModalInfoNaoPermitido, setShowModalInfoNaoPermitido] = useState(false);
+    const [showModalConfirmDeleteTag, setShowModalConfirmDeleteTag] = useState(false);
     const [erroExclusaoNaoPermitida, setErroExclusaoNaoPermitida] = useState('');
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
 
@@ -94,6 +102,7 @@ export const Tags = ()=>{
         )
     }, [handleEditFormModalTags]);
 
+
     const handleSubmitModalFormTags = useCallback(async (values)=>{
         console.log('handleSubmitModalFormTags ', values);
 
@@ -104,12 +113,12 @@ export const Tags = ()=>{
 
         if (values.operacao === 'create'){
             try{
-                let criar_tag = await postCreateTag(payload);
-                console.log("CRIAR ", criar_tag);
+                await postCreateTag(payload);
                 console.log('Tag criada com sucesso');
-                carregaTodasAsTags()
+                setShowModalForm(false);
+                carregaTodasAsTags();
             }catch (e) {
-                console.log('Erro ao criar tag ', e.response.data)
+                console.log('Erro ao criar tag ', e.response.data);
                 if (e.response.data && e.response.data.non_field_errors) {
                     setErroExclusaoNaoPermitida('Ja existe uma tag com esse nome');
                     setShowModalInfoNaoPermitido(true)
@@ -118,8 +127,43 @@ export const Tags = ()=>{
                     setShowModalInfoNaoPermitido(true)
                 }
             }
+        }else {
+            try {
+                await patchAlterarTag(values.uuid, payload);
+                console.log('Tag alterada com sucesso');
+                setShowModalForm(false);
+                carregaTodasAsTags();
+            }catch (e) {
+                console.log('Erro ao alterar tag ', e.response.data);
+                if (e.response.data && e.response.data.non_field_errors) {
+                    setErroExclusaoNaoPermitida('Ja existe uma tag com esse nome');
+                    setShowModalInfoNaoPermitido(true);
+                } else {
+                    setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
+                    setShowModalInfoNaoPermitido(true);
+                }
+            }
         }
     }, [carregaTodasAsTags]);
+
+    const onDeleteTagTrue = useCallback(async ()=>{
+        try {
+            await deleteTag(stateFormModal.uuid);
+            console.log("Tag excluído com sucesso");
+            setShowModalConfirmDeleteTag(false);
+            setShowModalForm(false);
+            await carregaTodasAsTags();
+        }catch (e) {
+            console.log('Erro ao excluir tag ', e.response.data);
+            if (e.response.data && e.response.data.non_field_errors) {
+                setErroExclusaoNaoPermitida('Ja existe uma tag com esse nome');
+                setShowModalInfoNaoPermitido(true);
+            } else {
+                setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
+                setShowModalInfoNaoPermitido(true);
+            }
+        }
+    }, [stateFormModal, carregaTodasAsTags]);
 
     const handleCloseFormModal = useCallback(()=>{
         setStateFormModal(initialStateFormModal);
@@ -128,9 +172,13 @@ export const Tags = ()=>{
 
     const handleCloseModalInfoNaoPermitido = useCallback(()=>{
         setShowModalInfoNaoPermitido(false);
-        setErroExclusaoNaoPermitida(false);
-        //setShowModalConfirmDeletePeriodo(false)
+        //setShowModalConfirmDeleteTag(false)
     }, []);
+    
+    const handleCloseConfirmDeleteTag = useCallback(()=>{
+        setShowModalConfirmDeleteTag(false)
+    }, []);
+
 
     return(
         <PaginasContainer>
@@ -164,16 +212,34 @@ export const Tags = ()=>{
                     stateFormModal={stateFormModal}
                     handleClose={handleCloseFormModal}
                     handleSubmitModalFormTags={handleSubmitModalFormTags}
+                    setShowModalConfirmDeleteTag={setShowModalConfirmDeleteTag}
                 />
             </section>
             <section>
                 <ModalInfoNaoPermitido
                     show={showModalInfoNaoPermitido}
                     handleClose={handleCloseModalInfoNaoPermitido}
-                    titulo="Exclusão não permitida"
+                    titulo={
+                        stateFormModal.operacao === 'create' ? 'Inclusão não permitida' :
+                            stateFormModal.operacao === 'edit' ? 'Alteração não permitida' :
+                                'Exclusão não permitida'
+                    }
                     texto={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
                     primeiroBotaoTexto="Fechar"
                     primeiroBotaoCss="success"
+                />
+            </section>
+            <section>
+                <ModalConfirmDeleteTag
+                    show={showModalConfirmDeleteTag}
+                    handleClose={handleCloseConfirmDeleteTag}
+                    onDeleteTagTrue={onDeleteTagTrue}
+                    titulo="Excluir Tag"
+                    texto="<p>Deseja realmente excluir esta Tag?</p>"
+                    primeiroBotaoTexto="Cancelar"
+                    primeiroBotaoCss="outline-success"
+                    segundoBotaoCss="danger"
+                    segundoBotaoTexto="Excluir"
                 />
             </section>
         </PaginasContainer>
