@@ -1,11 +1,12 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {getTodasTags, getFiltrosTags} from "../../../../../services/sme/Parametrizacoes.service";
+import {getTodasTags, getFiltrosTags, postCreateTag} from "../../../../../services/sme/Parametrizacoes.service";
 import TabelaTags from "./TabelaTags";
 import {Filtros} from "./Filtros";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
 import ModalFormTags from "./ModalFormTags";
+import {ModalInfoNaoPermitido} from "./ModalInfoNaoPermitido";
 import {BtnAddTags} from "./BtnAddTags";
 
 export const Tags = ()=>{
@@ -65,6 +66,8 @@ export const Tags = ()=>{
     };
 
     const [showModalForm, setShowModalForm] = useState(false);
+    const [showModalInfoNaoPermitido, setShowModalInfoNaoPermitido] = useState(false);
+    const [erroExclusaoNaoPermitida, setErroExclusaoNaoPermitida] = useState('');
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
 
     const handleEditFormModalTags = useCallback( async (rowData) =>{
@@ -91,15 +94,42 @@ export const Tags = ()=>{
         )
     }, [handleEditFormModalTags]);
 
+    const handleSubmitModalFormTags = useCallback(async (values)=>{
+        console.log('handleSubmitModalFormTags ', values);
+
+        let payload = {
+            nome: values.nome,
+            status: values.status,
+        };
+
+        if (values.operacao === 'create'){
+            try{
+                let criar_tag = await postCreateTag(payload);
+                console.log("CRIAR ", criar_tag);
+                console.log('Tag criada com sucesso');
+                carregaTodasAsTags()
+            }catch (e) {
+                console.log('Erro ao criar tag ', e.response.data)
+                if (e.response.data && e.response.data.non_field_errors) {
+                    setErroExclusaoNaoPermitida('Ja existe uma tag com esse nome');
+                    setShowModalInfoNaoPermitido(true)
+                } else {
+                    setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
+                    setShowModalInfoNaoPermitido(true)
+                }
+            }
+        }
+    }, [carregaTodasAsTags]);
+
     const handleCloseFormModal = useCallback(()=>{
         setStateFormModal(initialStateFormModal);
         setShowModalForm(false)
     }, [initialStateFormModal]);
 
-    const handleSubmitModalFormTags = useCallback(async (values)=>{
-
-        console.log('handleSubmitModalFormTags ', values)
-
+    const handleCloseModalInfoNaoPermitido = useCallback(()=>{
+        setShowModalInfoNaoPermitido(false);
+        setErroExclusaoNaoPermitida(false);
+        //setShowModalConfirmDeletePeriodo(false)
     }, []);
 
     return(
@@ -134,6 +164,16 @@ export const Tags = ()=>{
                     stateFormModal={stateFormModal}
                     handleClose={handleCloseFormModal}
                     handleSubmitModalFormTags={handleSubmitModalFormTags}
+                />
+            </section>
+            <section>
+                <ModalInfoNaoPermitido
+                    show={showModalInfoNaoPermitido}
+                    handleClose={handleCloseModalInfoNaoPermitido}
+                    titulo="Exclusão não permitida"
+                    texto={`<p class="mb-0"> ${erroExclusaoNaoPermitida}</p>`}
+                    primeiroBotaoTexto="Fechar"
+                    primeiroBotaoCss="success"
                 />
             </section>
         </PaginasContainer>

@@ -12,9 +12,11 @@ const authHeader = {
 export const getTodasTags = async () => {
     return (await api.get(`/api/tags/`, authHeader)).data
 };
-
 export const getFiltrosTags = async (nome, status) => {
     return (await api.get(`/api/tags/?nome=${nome}&status=${status}`, authHeader)).data
+};
+export const postCreateTag = async (payload) => {
+    return (await api.post(`/api/tags/`, payload, authHeader)).data
 };
 
 // Associacoes
