@@ -8,6 +8,15 @@ const authHeader = {
     }
 };
 
+// ***** Edição de Textos *****
+export const patchAlterarFiqueDeOlhoPrestacoesDeContas = async (payload) => {
+    return (await api.patch(`/api/prestacoes-contas/update-fique-de-olho/`, payload, authHeader)).data
+};
+export const patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre = async (payload) => {
+    return (await api.patch(`/api/relatorios-consolidados-dre/update-fique-de-olho/`, payload, authHeader)).data
+};
+
+// ***** Estrutura *****
 // Tags
 export const getTodasTags = async () => {
     return (await api.get(`/api/tags/`, authHeader)).data

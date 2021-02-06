@@ -6,7 +6,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import {getFiqueDeOlhoPrestacoesDeContas} from "../../../../../services/escolas/PrestacaoDeContas.service";
 import {getFiqueDeOlhoRelatoriosConsolidados} from "../../../../../services/dres/RelatorioConsolidado.service";
-import EditorDeTexto from "./EditorDeTexto";
+import {patchAlterarFiqueDeOlhoPrestacoesDeContas, patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre} from "../../../../../services/sme/Parametrizacoes.service";
+import EditorWysiwyg from "../../../../Globais/EditorWysiwyg";
 
 export const FiqueDeOlho = ()=>{
 
@@ -15,9 +16,14 @@ export const FiqueDeOlho = ()=>{
         textoDre: ''
     };
 
+    const initalTextoSelecionado = {
+        titulo:'',
+        textoSelecionado: ''
+    };
+
     const [textosFiqueDeOlho, setTextosFiqueDeOlho] = useState(initalTextos);
     const [tipoDeTexto, setTipoDeTexto] = useState('');
-    const [textoSelecionado, setTextoSelecionado] = useState('');
+    const [textoSelecionado, setTextoSelecionado] = useState(initalTextoSelecionado);
 
     const carregaTextos = useCallback(async ()=>{
         let fique_de_olho_associacao = await getFiqueDeOlhoPrestacoesDeContas();
@@ -37,9 +43,15 @@ export const FiqueDeOlho = ()=>{
     const handleEditarTextos = useCallback(async (tipo_texto)=>{
         setTipoDeTexto(tipo_texto);
         if (tipo_texto === 'associacoes'){
-            setTextoSelecionado(textosFiqueDeOlho.textoAssociacao.detail)
+            setTextoSelecionado({
+                titulo: 'ASSOCIAÇÕES - Prestação de Contas',
+                textoSelecionado: textosFiqueDeOlho.textoAssociacao.detail,
+            })
         }else if (tipo_texto === 'dre'){
-            setTextoSelecionado(textosFiqueDeOlho.textoDre.detail)
+            setTextoSelecionado({
+                titulo: 'ASSOCIAÇÕES - Prestação de Contas',
+                textoSelecionado: textosFiqueDeOlho.textoDre.detail,
+            });
         }
 
     }, [textosFiqueDeOlho]);
@@ -57,26 +69,41 @@ export const FiqueDeOlho = ()=>{
         )
     };
 
-    const handleSubmitTexto = useCallback(async ()=>{
-        console.log("handleSubmitTexto")
-    }, []);
-
-    console.log("TipoDeTexto ", tipoDeTexto);
-    console.log("Textos Fique de Olho ", textosFiqueDeOlho);
-    console.log("Textos Selecionado ", textoSelecionado);
+    const handleSubmitEditor = useCallback(async (textoEditor) =>{
+        let payload = {
+            fique_de_olho: textoEditor
+        };
+        if (tipoDeTexto === 'associacoes'){
+            try {
+                await patchAlterarFiqueDeOlhoPrestacoesDeContas(payload);
+                console.log("Texto alterado com sucesso")
+            }catch (e) {
+                console.log("Erro ao alterar texto ", e.response)
+            }
+        }else if (tipoDeTexto === 'dre'){
+            try {
+                let alterar_texto = await patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre(payload);
+                console.log("SUBMIT ", alterar_texto)
+                console.log("Texto alterado com sucesso")
+            }catch (e) {
+                console.log("Erro ao alterar texto ", e.response)
+            }
+        }
+        setTextoSelecionado(initalTextoSelecionado)
+    });
 
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Textos do Fique de Olho </h1>
             <div className="page-content-inner">
-                {!textoSelecionado ? (
+                {!textoSelecionado.textoSelecionado ? (
                     <TabelaFiqueDeOlho
                         acoesTemplate={acoesTemplate}
                     />
                 ):
-                    <EditorDeTexto
-                        textoSelecionado={textoSelecionado}
-                        handleSubmitTexto={handleSubmitTexto}
+                    <EditorWysiwyg
+                        textoInicial={textoSelecionado}
+                        handleSubmitEditor={handleSubmitEditor}
                     />
                 }
 
