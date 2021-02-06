@@ -2,16 +2,16 @@ import React, {memo, useState} from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import "./editor-wysiwyg.scss"
 
-const EditorWysiwyg = ({textoInicial, handleSubmitEditor})=>{
+const EditorWysiwyg = ({textoInicialEditor, tituloEditor, handleSubmitEditor})=>{
 
-    const [textoEditor, setTextoEditor] = useState(textoInicial.textoSelecionado);
+    const [textoEditor, setTextoEditor] = useState(textoInicialEditor);
 
     return(
         <>
-            <p className='titulo-editor-fique-de-olho'>{textoInicial.titulo}</p>
+            <p className='titulo-editor-fique-de-olho'>{tituloEditor}</p>
             <Editor
                 apiKey={process.env.REACT_APP_EDITOR_KEY}
-                initialValue={textoInicial.textoSelecionado}
+                initialValue={textoInicialEditor}
                 init={{
                     height: 500,
                     menubar: false,
@@ -31,8 +31,6 @@ const EditorWysiwyg = ({textoInicial, handleSubmitEditor})=>{
             <div className="d-flex  justify-content-end pb-3 mt-3">
                 <button className='btn btn-success' onClick={()=>handleSubmitEditor(textoEditor)} type='button'>Salvar</button>
             </div>
-
-
         </>
     )
 };
