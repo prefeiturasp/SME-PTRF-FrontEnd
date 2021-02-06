@@ -28,7 +28,7 @@ const EditorWysiwyg = ({textoInicial, handleSubmitEditor})=>{
                 onEditorChange={setTextoEditor}
             />
             <div className="d-flex  justify-content-end pb-3 mt-3">
-                <button onClick={()=>handleSubmitEditor(textoEditor)} type='button'>Salvar</button>
+                <button className='btn btn-success' onClick={()=>handleSubmitEditor(textoEditor)} type='button'>Salvar</button>
             </div>
 
 

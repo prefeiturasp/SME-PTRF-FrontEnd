@@ -8,6 +8,8 @@ import {getFiqueDeOlhoPrestacoesDeContas} from "../../../../../services/escolas/
 import {getFiqueDeOlhoRelatoriosConsolidados} from "../../../../../services/dres/RelatorioConsolidado.service";
 import {patchAlterarFiqueDeOlhoPrestacoesDeContas, patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre} from "../../../../../services/sme/Parametrizacoes.service";
 import EditorWysiwyg from "../../../../Globais/EditorWysiwyg";
+import {ModalInfoFiqueDeOlho} from "./ModalInfoFiqueDeOlho";
+import Loading from "../../../../../utils/Loading";
 
 export const FiqueDeOlho = ()=>{
 
@@ -24,16 +26,20 @@ export const FiqueDeOlho = ()=>{
     const [textosFiqueDeOlho, setTextosFiqueDeOlho] = useState(initalTextos);
     const [tipoDeTexto, setTipoDeTexto] = useState('');
     const [textoSelecionado, setTextoSelecionado] = useState(initalTextoSelecionado);
+    const [showModalInfoFiqueDeOlho, setShowModalInfoFiqueDeOlho] = useState(false);
+    const [infoModalFiqueDeOlho, setInfoModalFiqueDeOlho] = useState('');
+    const [loading, setLoading] = useState(true);
+
 
     const carregaTextos = useCallback(async ()=>{
+        setLoading(true);
         let fique_de_olho_associacao = await getFiqueDeOlhoPrestacoesDeContas();
         let fique_de_olho_dre = await getFiqueDeOlhoRelatoriosConsolidados();
-
         setTextosFiqueDeOlho({
             textoAssociacao:fique_de_olho_associacao,
             textoDre: fique_de_olho_dre,
-        })
-
+        });
+        setLoading(false);
     }, []);
 
     useEffect(()=>{
@@ -53,7 +59,6 @@ export const FiqueDeOlho = ()=>{
                 textoSelecionado: textosFiqueDeOlho.textoDre.detail,
             });
         }
-
     }, [textosFiqueDeOlho]);
 
     const acoesTemplate = (tipo_texto) =>{
@@ -76,27 +81,52 @@ export const FiqueDeOlho = ()=>{
         if (tipoDeTexto === 'associacoes'){
             try {
                 await patchAlterarFiqueDeOlhoPrestacoesDeContas(payload);
-                console.log("Texto alterado com sucesso")
+                console.log("Texto alterado com sucesso");
+                setInfoModalFiqueDeOlho('Texto alterado com sucesso');
+                setShowModalInfoFiqueDeOlho(true);
+                await carregaTextos();
             }catch (e) {
-                console.log("Erro ao alterar texto ", e.response)
+                console.log("Erro ao alterar texto ", e.response);
+                setInfoModalFiqueDeOlho('Erro ao alterar texto');
+                setShowModalInfoFiqueDeOlho(true);
             }
         }else if (tipoDeTexto === 'dre'){
             try {
-                let alterar_texto = await patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre(payload);
-                console.log("SUBMIT ", alterar_texto)
-                console.log("Texto alterado com sucesso")
+                await patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre(payload);
+                console.log("Texto alterado com sucesso");
+                setInfoModalFiqueDeOlho('Texto alterado com sucesso');
+                setShowModalInfoFiqueDeOlho(true)
+                await carregaTextos();
             }catch (e) {
-                console.log("Erro ao alterar texto ", e.response)
+                console.log("Erro ao alterar texto ", e.response);
+                setInfoModalFiqueDeOlho('Erro ao alterar texto');
+                setShowModalInfoFiqueDeOlho(true);
             }
         }
         setTextoSelecionado(initalTextoSelecionado)
-    });
+    }, [initalTextoSelecionado, tipoDeTexto, carregaTextos]);
+
+    const handleCloseModalInfoFiqueDeOlho = useCallback(()=>{
+        setShowModalInfoFiqueDeOlho(false);
+    }, []);
 
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Textos do Fique de Olho </h1>
             <div className="page-content-inner">
-                {!textoSelecionado.textoSelecionado ? (
+
+                {loading ? (
+                        <div className="mt-5">
+                            <Loading
+                                corGrafico="black"
+                                corFonte="dark"
+                                marginTop="0"
+                                marginBottom="0"
+                            />
+                        </div>
+                    ) :
+
+                !textoSelecionado.textoSelecionado ? (
                     <TabelaFiqueDeOlho
                         acoesTemplate={acoesTemplate}
                     />
@@ -106,9 +136,18 @@ export const FiqueDeOlho = ()=>{
                         handleSubmitEditor={handleSubmitEditor}
                     />
                 }
-
+                
             </div>
+            <section>
+                <ModalInfoFiqueDeOlho
+                    show={showModalInfoFiqueDeOlho}
+                    handleClose={handleCloseModalInfoFiqueDeOlho}
+                    titulo='Fique de Olho'
+                    texto={`<p class="mb-0"> ${infoModalFiqueDeOlho}</p>`}
+                    primeiroBotaoTexto="Fechar"
+                    primeiroBotaoCss="success"
+                />
+            </section>
         </PaginasContainer>
     );
-
 };
