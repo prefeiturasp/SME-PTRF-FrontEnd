@@ -16,7 +16,7 @@ const TabelaFiqueDeOlho = ({acoesTemplate}) => {
                 </tr>
                 <tr className='bg-cinza'>
                     <td>DIRETORIAS -  Acompanhamento Prestação de Contas</td>
-                    <td>{acoesTemplate('dres')}</td>
+                    <td>{acoesTemplate('dre')}</td>
                 </tr>
             </tbody>
         </table>
