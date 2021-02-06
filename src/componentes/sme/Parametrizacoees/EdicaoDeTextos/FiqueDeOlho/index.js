@@ -95,7 +95,7 @@ export const FiqueDeOlho = ()=>{
                 await patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre(payload);
                 console.log("Texto alterado com sucesso");
                 setInfoModalFiqueDeOlho('Texto alterado com sucesso');
-                setShowModalInfoFiqueDeOlho(true)
+                setShowModalInfoFiqueDeOlho(true);
                 await carregaTextos();
             }catch (e) {
                 console.log("Erro ao alterar texto ", e.response);
@@ -136,7 +136,7 @@ export const FiqueDeOlho = ()=>{
                         handleSubmitEditor={handleSubmitEditor}
                     />
                 }
-                
+
             </div>
             <section>
                 <ModalInfoFiqueDeOlho

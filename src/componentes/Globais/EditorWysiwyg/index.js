@@ -1,5 +1,6 @@
 import React, {memo, useState} from "react";
 import { Editor } from "@tinymce/tinymce-react";
+import "./editor-wysiwyg.scss"
 
 const EditorWysiwyg = ({textoInicial, handleSubmitEditor})=>{
 
@@ -7,7 +8,7 @@ const EditorWysiwyg = ({textoInicial, handleSubmitEditor})=>{
 
     return(
         <>
-            <h1>{textoInicial.titulo}</h1>
+            <p className='titulo-editor-fique-de-olho'>{textoInicial.titulo}</p>
             <Editor
                 apiKey={process.env.REACT_APP_EDITOR_KEY}
                 initialValue={textoInicial.textoSelecionado}
