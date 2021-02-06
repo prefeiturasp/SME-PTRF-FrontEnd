@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getFiqueDeOlho, getConsultarStatus, getTiposConta, getDownloadRelatorio, getDownloadPreviaRelatorio} from "../../../services/dres/RelatorioConsolidado.service";
+import {getFiqueDeOlhoRelatoriosConsolidados, getConsultarStatus, getTiposConta, getDownloadRelatorio, getDownloadPreviaRelatorio} from "../../../services/dres/RelatorioConsolidado.service";
 import {getItensDashboard, getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
@@ -78,7 +78,7 @@ export const RelatorioConsolidado = () => {
     };
 
     const buscaFiqueDeOlho = async () => {
-        let fique_de_olho = await getFiqueDeOlho();
+        let fique_de_olho = await getFiqueDeOlhoRelatoriosConsolidados();
         setFiqueDeOlho(fique_de_olho.detail);
     };
 
