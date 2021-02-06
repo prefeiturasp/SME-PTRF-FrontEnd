@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import "../parametrizacoes-edica-de-textos.scss"
+import "../parametrizacoes-edicao-de-textos.scss"
 import TabelaFiqueDeOlho from "./TabelaFiqueDeOlho";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
@@ -55,7 +55,7 @@ export const FiqueDeOlho = ()=>{
             })
         }else if (tipo_texto === 'dre'){
             setTextoSelecionado({
-                titulo: 'ASSOCIAÇÕES - Prestação de Contas',
+                titulo: 'DIRETORIAS -  Acompanhamento Prestação de Contas',
                 textoSelecionado: textosFiqueDeOlho.textoDre.detail,
             });
         }
