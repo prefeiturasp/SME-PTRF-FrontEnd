@@ -25,6 +25,7 @@ export const FiqueDeOlho = () => {
     const [tipoDeTexto, setTipoDeTexto] = useState('');
     const [textoInicialEditor, setTextoInicialEditor] = useState('');
     const [tituloEditor, setTituloEditor] = useState('');
+    const [exibeEditor, setExibeEditor] = useState(false);
     const [showModalInfoFiqueDeOlho, setShowModalInfoFiqueDeOlho] = useState(false);
     const [infoModalFiqueDeOlho, setInfoModalFiqueDeOlho] = useState('');
     const [loading, setLoading] = useState(true);
@@ -46,6 +47,7 @@ export const FiqueDeOlho = () => {
 
     const handleEditarTextos = useCallback(async (tipo_texto) => {
         setTipoDeTexto(tipo_texto);
+        setExibeEditor(true)
         if (tipo_texto === 'associacoes') {
             setTextoInicialEditor(textosFiqueDeOlho.textoAssociacao.detail);
             setTituloEditor('ASSOCIAÇÕES - Prestação de Contas')
@@ -99,6 +101,7 @@ export const FiqueDeOlho = () => {
         }
         setTextoInicialEditor('');
         setTituloEditor('');
+        setExibeEditor(false);
     }, [tipoDeTexto, carregaTextos]);
 
     const handleCloseModalInfoFiqueDeOlho = useCallback(() => {
@@ -120,7 +123,7 @@ export const FiqueDeOlho = () => {
                             />
                         </div>
                     ) :
-                    !textoInicialEditor ? (
+                    !exibeEditor ? (
                             <TabelaFiqueDeOlho
                                 acoesTemplate={acoesTemplate}
                             />

@@ -8,15 +8,17 @@ const EditorWysiwyg = ({textoInicialEditor, tituloEditor, handleSubmitEditor})=>
 
     return(
         <>
-            <p className='titulo-editor-fique-de-olho'>{tituloEditor}</p>
+            {tituloEditor &&
+                <p className='titulo-editor-fique-de-olho'>{tituloEditor}</p>
+            }
             <Editor
                 apiKey={process.env.REACT_APP_EDITOR_KEY}
-                initialValue={textoInicialEditor}
+                initialValue={textoInicialEditor ? textoInicialEditor : '<p> </p>'}
                 init={{
                     height: 500,
                     menubar: false,
                     plugins: [
-                        'advlist autolink lists link image charmap print preview anchor',
+                        'advlist autolink lists link image charmap print preview anchor code',
                         'searchreplace visualblocks code fullscreen',
                         'insertdatetime media table paste code help wordcount'
                     ],
@@ -24,7 +26,7 @@ const EditorWysiwyg = ({textoInicialEditor, tituloEditor, handleSubmitEditor})=>
                     // eslint-disable-next-line no-multi-str
                         'undo redo | formatselect | bold italic backcolor | \
                         alignleft aligncenter alignright alignjustify | \
-                        bullist numlist outdent indent | removeformat | link | table | help '
+                        bullist numlist outdent indent | removeformat | link | table | code | help '
                 }}
                 onEditorChange={setTextoEditor}
             />
