@@ -122,3 +122,5 @@ fabric.properties
 yarn.lock
 
 .env
+
+.vscode/
