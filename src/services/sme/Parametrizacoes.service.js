@@ -13,8 +13,8 @@ export const getTabelaArquivos = async () => {
     return (await api.get(`/api/arquivos/tabelas/`, authHeader)).data
 };
 
-export const getArquivosFiltros = async (tipo_carga, identificador, previsao) => {
-    return (await api.get(`/api/arquivos/?tipo_carga=${tipo_carga}${identificador ? '&identificador='+ identificador : ''}${previsao ? '&previsao='+previsao : ''}`, authHeader)).data
+export const getArquivosFiltros = async (tipo_carga, identificador, status, data_execucao) => {
+    return (await api.get(`/api/arquivos/?tipo_carga=${tipo_carga}${identificador ? '&identificador='+ identificador : ''}${status ? '&status='+status : ''}${data_execucao ? '&data_execucao='+data_execucao : ''}`, authHeader)).data
 };
 
 // ***** Edição de Textos *****
