@@ -13,34 +13,55 @@ import {UrlsMenuInterno} from "../../sme/Parametrizacoees/Estrutura/Associacoes/
 import {MenuInterno} from "../MenuInterno";
 
 const ArquivosDeCarga = () => {
+
     const url_params = useParams();
+    const dadosDeOrigem = useMemo(()=>{
+        let obj = {
+            titulo: '',
+            acesso_permitido: false
+        };
+
+        if (url_params.tipo_de_carga === 'CARGA_ASSOCIACOES'){
+            obj = {
+                titulo: 'Associações',
+                acesso_permitido: true
+            }
+        }
+        return obj
+    }, [url_params]);
 
     const [tabelaArquivos, setTabelaArquivos] = useState([]);
     const [arquivos, setArquivos] = useState([]);
 
     const carregaTabelaArquivos = useCallback(async ()=>{
-        let tabela = await getTabelaArquivos();
-        console.log("TABELA ", tabela);
-        setTabelaArquivos(tabela)
-    }, []);
+        if (dadosDeOrigem.acesso_permitido) {
+            let tabela = await getTabelaArquivos();
+            console.log("TABELA ", tabela);
+            setTabelaArquivos(tabela)
+        }
+    }, [dadosDeOrigem.acesso_permitido]);
 
     useEffect(()=>{
         carregaTabelaArquivos();
     }, [carregaTabelaArquivos]);
 
     const carregaArquivosPeloTipoDeCarga = useCallback(async ()=>{
-        try {
-            let arquivos = await getArquivosFiltros(url_params.tipo_de_carga);
-            console.log("Arquivos ", arquivos);
-            setArquivos(arquivos)
-        }catch (e) {
-            console.log("Erro ao carregar arquivos")
+        if (dadosDeOrigem.acesso_permitido){
+            try {
+                let arquivos = await getArquivosFiltros(url_params.tipo_de_carga);
+                console.log("Arquivos ", arquivos);
+                setArquivos(arquivos)
+            }catch (e) {
+                console.log("Erro ao carregar arquivos")
+            }
         }
-    }, [url_params]);
+
+    }, [url_params, dadosDeOrigem.acesso_permitido]);
 
     useEffect(()=>{
         carregaArquivosPeloTipoDeCarga()
     }, [carregaArquivosPeloTipoDeCarga]);
+
 
 
     // Quando a state de todasAsAcoes sofrer alteração
@@ -120,38 +141,40 @@ const ArquivosDeCarga = () => {
 
     return (
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Associações</h1>
             <>
-                {url_params.tipo_de_carga !== 'CARGA_ASSOCIACOES' ? (
+                {!dadosDeOrigem.acesso_permitido ? (
                     <Redirect
                         to={{
                             pathname: '/painel-parametrizacoes',
                         }}
                     />
                 ) :
-                    <div className="page-content-inner">
-                        <MenuInterno
-                            caminhos_menu_interno={UrlsMenuInterno}
-                        />
-                        <BotoesTopo/>
-                        <Filtros
-                            stateFiltros={stateFiltros}
-                            handleChangeFiltros={handleChangeFiltros}
-                            handleSubmitFiltros={handleSubmitFiltros}
-                            limpaFiltros={limpaFiltros}
-                            tabelaArquivos={tabelaArquivos}
-                        />
-                        <p>Exibindo <span className='total-acoes'>{totalDeArquivos}</span> cargas de arquivo</p>
-                        <TabelaArquivosDeCarga
-                            arquivos={arquivos}
-                            rowsPerPage={rowsPerPage}
-                            conteudoTemplate={conteudoTemplate}
-                            dataTemplate={dataTemplate}
-                            dataHoraTemplate={dataHoraTemplate}
-                            statusTemplate={statusTemplate}
-                            acoesTemplate={acoesTemplate}
-                        />
-                    </div>
+                    <>
+                        <h1 className="titulo-itens-painel mt-5">{dadosDeOrigem.titulo}</h1>
+                        <div className="page-content-inner">
+                            <MenuInterno
+                                caminhos_menu_interno={UrlsMenuInterno}
+                            />
+                            <BotoesTopo/>
+                            <Filtros
+                                stateFiltros={stateFiltros}
+                                handleChangeFiltros={handleChangeFiltros}
+                                handleSubmitFiltros={handleSubmitFiltros}
+                                limpaFiltros={limpaFiltros}
+                                tabelaArquivos={tabelaArquivos}
+                            />
+                            <p>Exibindo <span className='total-acoes'>{totalDeArquivos}</span> cargas de arquivo</p>
+                            <TabelaArquivosDeCarga
+                                arquivos={arquivos}
+                                rowsPerPage={rowsPerPage}
+                                conteudoTemplate={conteudoTemplate}
+                                dataTemplate={dataTemplate}
+                                dataHoraTemplate={dataHoraTemplate}
+                                statusTemplate={statusTemplate}
+                                acoesTemplate={acoesTemplate}
+                            />
+                        </div>
+                    </>
                 }
             </>
         </PaginasContainer>
