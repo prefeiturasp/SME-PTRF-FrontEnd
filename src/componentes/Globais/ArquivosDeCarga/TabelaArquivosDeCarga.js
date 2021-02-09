@@ -5,10 +5,12 @@ import { Column } from 'primereact/column';
 const TabelaArquivosDeCarga = ({arquivos, rowsPerPage, conteudoTemplate, dataTemplate, dataHoraTemplate, statusTemplate, acoesTemplate}) =>{
     return(
         <DataTable
+            className='container-tabela-associacoes'
             value={arquivos}
             rows={rowsPerPage}
             paginator={arquivos.length > rowsPerPage}
             paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+            autoLayout={true}
         >
             <Column
                 field="identificador"
@@ -38,7 +40,7 @@ const TabelaArquivosDeCarga = ({arquivos, rowsPerPage, conteudoTemplate, dataTem
             <Column
                 field="acoes"
                 header="Ações"
-                style={{width:'100px'}}
+
                 body={acoesTemplate}
             />
         </DataTable>

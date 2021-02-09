@@ -1,5 +1,6 @@
 import React, {memo, useMemo, useCallback, useEffect, useState} from "react";
 import "./arquivos-de-carga.scss"
+import "../../dres/Associacoes/associacoes.scss"
 import {Redirect, useParams} from 'react-router-dom'
 import {BotoesTopo} from "./BotoesTopo";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
@@ -7,7 +8,7 @@ import {getTabelaArquivos, getArquivosFiltros} from "../../../services/sme/Param
 import moment from "moment";
 import TabelaArquivosDeCarga from "./TabelaArquivosDeCarga";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import {Filtros} from "./Filtros";
 import {UrlsMenuInterno} from "../../sme/Parametrizacoees/Estrutura/Associacoes/UrlsMenuInterno";
 import {MenuInterno} from "../MenuInterno";
@@ -62,8 +63,6 @@ const ArquivosDeCarga = () => {
         carregaArquivosPeloTipoDeCarga()
     }, [carregaArquivosPeloTipoDeCarga]);
 
-
-
     // Quando a state de todasAsAcoes sofrer alteração
     const totalDeArquivos = useMemo(() => arquivos.length, [arquivos]);
 
@@ -105,7 +104,7 @@ const ArquivosDeCarga = () => {
 
     const statusTemplate = useCallback( (rowData) => {
         if (tabelaArquivos && tabelaArquivos.status && tabelaArquivos.status.length > 0 ){
-            let status_retornar = tabelaArquivos.status.filter(item => item.id === rowData.status)
+            let status_retornar = tabelaArquivos.status.filter(item => item.id === rowData.status);
             return status_retornar[0].nome
         }
     }, [tabelaArquivos]);
@@ -128,13 +127,14 @@ const ArquivosDeCarga = () => {
 
     const acoesTemplate = useCallback((rowData) =>{
         return (
-            <div>
-                <button className="btn-editar-membro" onClick={()=>handleEditarArquivos(rowData)}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                </button>
+
+            <div className="dropdown">
+                <a href="#" id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button className="btn-acoes"><span className="btn-acoes-dots">...</span></button>
+                </a>
+                <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <button className="btn btn-link dropdown-item" type="button">Ver dados unidade</button>
+                </div>
             </div>
         )
     }, [handleEditarArquivos]);
