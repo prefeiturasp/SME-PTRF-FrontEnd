@@ -54,6 +54,7 @@ import {VinculaAssociacoesAAcao} from "../componentes/sme/Parametrizacoees/Estru
 import {Periodos} from "../componentes/sme/Parametrizacoees/Estrutura/Periodos";
 import {Associacoes} from "../componentes/sme/Parametrizacoees/Estrutura/Associacoes";
 import {Tags} from "../componentes/sme/Parametrizacoees/Estrutura/Tags";
+import {FiqueDeOlho} from "../componentes/sme/Parametrizacoees/EdicaoDeTextos/FiqueDeOlho";
 
 const routesConfig = [
     {
@@ -322,6 +323,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-acoes",
         component: Acoes,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/parametro-textos-fique-de-olho",
+        component: FiqueDeOlho,
         permissoes: ['view_default'],
     },
     {

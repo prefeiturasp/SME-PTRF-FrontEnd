@@ -5,3 +5,5 @@ SENTRY_URL=""
 
 # Só é usada no ambiente local
 #REACT_APP_NODE_ENV="local"
+
+REACT_APP_EDITOR_KEY

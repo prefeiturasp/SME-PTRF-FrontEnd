@@ -107,7 +107,7 @@ export const getConcluirPrestacaoDeConta = async (
 };
 
 
-export const getFiqueDeOlho = async () => {
+export const getFiqueDeOlhoPrestacoesDeContas = async () => {
   return (await api.get(`/api/prestacoes-contas/fique-de-olho/`,authHeader)).data
 };
 
