@@ -46,39 +46,6 @@ export const SidebarLeft = () => {
                 <SideNav.Toggle/>
                 <SideNav.Nav defaultSelected={urls.dados_iniciais.default_selected}>
 
-                    {sidebarStatus.sideBarStatus &&
-                    <>
-                        <NavItem
-                            navitemClassName={sidebarStatus.sideBarStatus ? 'navItemCustomizadoNome esconde-icone mb-n2' : 'navItemCustomizadoNome'}
-                            eventKey={urls.dados_iniciais.default_selected}
-                        >
-                            <NavIcon>&nbsp;</NavIcon>
-                            <NavText>
-                                <div className="container-nome-instituicao">
-                                  <span className="border border-white rounded-pill px-4 py-1">
-                                    {urls ? urls.dados_iniciais.usuario : ''}
-                                  </span>
-                                </div>
-                            </NavText>
-                        </NavItem>
-                    </>
-                    }
-                    <NavItem
-                        data-tip="Meus Dados" data-for='meus_dados'
-                        eventKey="meus-dados"
-                    >
-                        <NavIcon>{!sidebarStatus.sideBarStatus ? <img src={IconeMenuMeuPerfil} alt=""/> : ""} </NavIcon>
-                        <NavText>
-                            <div
-                                className="container-meus-dados mt-n4 d-flex justify-content-center align-items-center">
-                                {sidebarStatus.sideBarStatus ?
-                                    <img src={IconeMenuMeuPerfil} className="mr-1" alt=""/> : ""}
-                                Meus Dados
-                            </div>
-                        </NavText>
-                    </NavItem>
-                    <ReactTooltip disable={sidebarStatus.sideBarStatus} id='meus_dados'>{}</ReactTooltip>
-
                     {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index) => {
                             return (
                                 visoesService.getPermissoes(url.permissoes) ? (

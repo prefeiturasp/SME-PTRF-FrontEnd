@@ -3,10 +3,13 @@ import {useHistory } from "react-router-dom";
 import "./cabecalho.scss"
 import LogoPtrf from "../../../assets/img/logo-ptrf-verde.png"
 import IconeSair from "../../../assets/img/sair.svg"
+import IconeMenuMeuPerfil from "../../../assets/img/icone-menu-meu-perfil.png"
 import { authService, USUARIO_LOGIN } from '../../../services/auth.service';
 import {visoesService} from "../../../services/visoes.service";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import {ModalConfirmaLogout} from "./ModalConfirmaLogout";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faBell, faChevronDown, faTrash, faUser} from "@fortawesome/free-solid-svg-icons";
 
 export const Cabecalho = () => {
 
@@ -106,7 +109,7 @@ export const Cabecalho = () => {
                                     <img className="logo-cabecalho ml-3" src={LogoPtrf} alt=""/>
                                 </div>
                             </div>
-                            <div className="col col-md-4 col-lg-7 col-xl-8 mt-2 pl-lg-0 pl-xl-3">
+                            <div className="col col-md-3 col-lg-5 col-xl-6 mt-2 pl-lg-0 pl-xl-2">
                                 {exibeMenu &&
                                 <div className="pt-2 container-select-visoes">
                                     <div className="d-flex mb-3 w-100">
@@ -148,22 +151,55 @@ export const Cabecalho = () => {
                                 </div>
                                 }
                             </div>
-                            <div className="col col-md-2 col-lg-1">
-                                <div className="p-2 text-center">
+                            <div className="col col-md-5 col-lg-4">
+                                <div className="row">
+                                    <div className="col-3 p-0 m-0 text-right pt-4">
                                     <button
                                         onClick={()=>redirectCentralDeNotificacoes()}
-                                        className="btn-sair ml-lg-4 ml-xl-0">
-                                        <img className="icone-sair" src={IconeSair} alt=""/>
+                                        className="btn-sair">
+                                        <span className="span-icone-verde">
+                                            <FontAwesomeIcon
+                                                style={{fontSize: '16px', color:'#fff'}}
+                                                icon={faBell}
+                                            />
                                         <span className={notificacaoContext.qtdeNotificacoesNaoLidas && notificacaoContext.qtdeNotificacoesNaoLidas >= 10 ? `span-notificacoes-maior-que-10` : 'span-notificacoes-menor-que-10'} >{notificacaoContext.qtdeNotificacoesNaoLidas ? notificacaoContext.qtdeNotificacoesNaoLidas : 0}</span>
+                                        </span>
                                     </button>
-                                    <p>Notificações</p>
-                                </div>
-                            </div>
-                            <div className="col col-md-1">
-                                <div className="p-2 text-center">
-                                    <button className="btn-sair" onClick={()=>onShow()}><img className="icone-sair" src={IconeSair} alt=""/></button>
-                                    <p>Sair</p>
-                                </div>
+                                    </div>
+                                    <div className="col text-left pt-xl-3 m-0">
+                                    <li className="link-acoes nav-link dropdown">
+                                        <a href="#" id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <button className="btn-sair">
+                                            <span className="span-icone-verde">
+                                            <FontAwesomeIcon
+                                                style={{fontSize: '16px', color:'#fff'}}
+                                                icon={faUser}
+                                            />
+                                            </span>
+                                            <span className="span-text-dropdown">
+                                                {dados_usuario_logado
+                                                    .usuario_logado
+                                                    .nome
+                                                    .toLowerCase()
+                                                    .replace(/(?:^|\s|['`‘’.-])[^\x00-\x60^\x7B-\xDF](?!(\s|$))/g, function (a) {
+                                                        return a.toUpperCase();
+                                                    })
+                                                }
+                                            </span>
+                                            <FontAwesomeIcon
+                                                style={{fontSize: '16px', color:'#0'}}
+                                                icon={faChevronDown}
+                                            />
+                                            </button>
+                                        </a>
+
+                                        <div className={`dropdown-menu dropdown-menu-opcoes`}aria-labelledby="linkDropdownAcoes">
+                                            <button className="btn-sair" onClick={()=>history.push(`/meus-dados`)}>Meus dados</button><br />
+                                            <button className="btn-sair" onClick={()=>onShow()}>Sair</button>
+                                        </div>
+                                    </li>
+                                    </div>
+                                </div>    
                             </div>
                         </div>
                     </div>
@@ -184,3 +220,4 @@ export const Cabecalho = () => {
         </>
     );
 };
+
