@@ -286,7 +286,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/parametro-arquivos-de-carga/:origem/",
+        path: "/parametro-arquivos-de-carga/:tipo_de_carga/",
         component: ArquivosDeCarga,
         permissoes: ['view_default'],
     },

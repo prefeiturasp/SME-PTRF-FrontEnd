@@ -8,6 +8,15 @@ const authHeader = {
     }
 };
 
+// ***** Cargas *****
+export const getTabelaArquivos = async () => {
+    return (await api.get(`/api/arquivos/tabelas/`, authHeader)).data
+};
+
+export const getArquivosFiltros = async (tipo_carga, identificador, previsao) => {
+    return (await api.get(`/api/arquivos/?tipo_carga=${tipo_carga}${identificador ? '&identificador='+ identificador : ''}${previsao ? '&previsao='+previsao : ''}`, authHeader)).data
+};
+
 // ***** Edição de Textos *****
 export const patchAlterarFiqueDeOlhoPrestacoesDeContas = async (payload) => {
     return (await api.patch(`/api/prestacoes-contas/update-fique-de-olho/`, payload, authHeader)).data
