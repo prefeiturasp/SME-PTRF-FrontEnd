@@ -47,7 +47,7 @@ export const FiqueDeOlho = () => {
 
     const handleEditarTextos = useCallback(async (tipo_texto) => {
         setTipoDeTexto(tipo_texto);
-        setExibeEditor(true)
+        setExibeEditor(true);
         if (tipo_texto === 'associacoes') {
             setTextoInicialEditor(textosFiqueDeOlho.textoAssociacao.detail);
             setTituloEditor('ASSOCIAÇÕES - Prestação de Contas')
@@ -112,7 +112,6 @@ export const FiqueDeOlho = () => {
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Textos do Fique de Olho </h1>
             <div className="page-content-inner">
-
                 {loading ? (
                         <div className="mt-5">
                             <Loading
