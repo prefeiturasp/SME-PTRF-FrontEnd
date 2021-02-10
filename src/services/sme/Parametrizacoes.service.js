@@ -1,6 +1,8 @@
 import api from '../api'
 import { TOKEN_ALIAS } from '../auth.service.js';
 
+import Axios from "axios";
+
 const authHeader = {
     headers: {
         'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
@@ -8,13 +10,30 @@ const authHeader = {
     }
 };
 
-// ***** Cargas *****
-export const getTabelaArquivos = async () => {
+// ***** Cargas Associacoes *****
+export const getTabelaArquivosDeCarga = async () => {
     return (await api.get(`/api/arquivos/tabelas/`, authHeader)).data
 };
 
-export const getArquivosFiltros = async (tipo_carga, identificador, status, data_execucao) => {
+export const getArquivosDeCargaFiltros = async (tipo_carga, identificador, status, data_execucao) => {
     return (await api.get(`/api/arquivos/?tipo_carga=${tipo_carga}${identificador ? '&identificador='+ identificador : ''}${status ? '&status='+status : ''}${data_execucao ? '&data_execucao='+data_execucao : ''}`, authHeader)).data
+};
+export const postCreateArquivoDeCarga = async (payload) => {
+    const formData = new FormData();
+    formData.append("identificador", payload.identificador);
+    formData.append("tipo_carga", payload.tipo_carga);
+    formData.append("tipo_delimitador", payload.tipo_delimitador);
+    formData.append("status", payload.status);
+    formData.append("conteudo", payload.conteudo);
+    return (await api.post(`/api/arquivos/`, formData, authHeader)).data
+};
+
+export const patchAlterarArquivoDeCarga = async (uuid_arquivo_de_carga, payload) => {
+    const formData = new FormData();
+    formData.append("identificador", payload.identificador);
+    formData.append("tipo_delimitador", payload.tipo_delimitador);
+    formData.append("conteudo", payload.conteudo);
+    return (await api.patch(`/api/arquivos/${uuid_arquivo_de_carga}`, formData, authHeader)).data
 };
 
 // ***** Edição de Textos *****

@@ -4,7 +4,7 @@ import "../../dres/Associacoes/associacoes.scss"
 import {Redirect, useParams} from 'react-router-dom'
 import {BotoesTopo} from "./BotoesTopo";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
-import {getTabelaArquivos, getArquivosFiltros} from "../../../services/sme/Parametrizacoes.service";
+import {getTabelaArquivosDeCarga, getArquivosDeCargaFiltros, postCreateArquivoDeCarga, patchAlterarArquivoDeCarga} from "../../../services/sme/Parametrizacoes.service";
 import moment from "moment";
 import TabelaArquivosDeCarga from "./TabelaArquivosDeCarga";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -43,7 +43,7 @@ const ArquivosDeCarga = () => {
 
     const carregaTabelaArquivos = useCallback(async () => {
         if (dadosDeOrigem.acesso_permitido) {
-            let tabela = await getTabelaArquivos();
+            let tabela = await getTabelaArquivosDeCarga();
             console.log("TABELA ", tabela);
             setTabelaArquivos(tabela)
         }
@@ -56,7 +56,7 @@ const ArquivosDeCarga = () => {
     const carregaArquivosPeloTipoDeCarga = useCallback(async () => {
         if (dadosDeOrigem.acesso_permitido) {
             try {
-                let arquivos = await getArquivosFiltros(url_params.tipo_de_carga);
+                let arquivos = await getArquivosDeCargaFiltros(url_params.tipo_de_carga);
                 console.log("Arquivos ", arquivos);
                 setArquivos(arquivos)
             } catch (e) {
@@ -89,7 +89,7 @@ const ArquivosDeCarga = () => {
     }, [stateFiltros]);
 
     const handleSubmitFiltros = async () => {
-        let arquivos_filtrados = await getArquivosFiltros(url_params.tipo_de_carga, stateFiltros.filtrar_por_identificador, stateFiltros.filtrar_por_status, stateFiltros.filtrar_por_data_de_execucao ? moment(stateFiltros.filtrar_por_data_de_execucao).format('YYYY-MM-DD') : '');
+        let arquivos_filtrados = await getArquivosDeCargaFiltros(url_params.tipo_de_carga, stateFiltros.filtrar_por_identificador, stateFiltros.filtrar_por_status, stateFiltros.filtrar_por_data_de_execucao ? moment(stateFiltros.filtrar_por_data_de_execucao).format('YYYY-MM-DD') : '');
         setArquivos(arquivos_filtrados);
     };
 
@@ -116,8 +116,9 @@ const ArquivosDeCarga = () => {
                 status_retornar = tabelaArquivos.status.filter(item => item.id === rowData.status);
             }else if(status_estatico){
                 status_retornar = tabelaArquivos.status.filter(item => item.id === status_estatico);
+            }else {
+                return ''
             }
-
             return status_retornar[0].nome
         }
     }, [tabelaArquivos]);
@@ -211,8 +212,37 @@ const ArquivosDeCarga = () => {
         )
     }, [handleEditarArquivos]);
 
-    const handleSubmitModalForm = (values) => {
-        console.log("handleSubmitModalFormAssociacoes ", values)
+    const handleSubmitModalForm = async (values) => {
+        console.log("handleSubmitModalFormAssociacoes ", values);
+        if (values.operacao === 'create'){
+            try {
+                let payload = {
+                    'identificador': values.identificador,
+                    'tipo_carga': url_params.tipo_de_carga,
+                    'tipo_delimitador': values.tipo_delimitador,
+                    'status': 'PENDENTE',
+                    'conteudo': values.conteudo
+                };
+                let create_arquivo_de_carga = await postCreateArquivoDeCarga(payload);
+                console.log("create_arquivo_de_carga ", create_arquivo_de_carga);
+                console.log("Arquivo de carga criado com sucesso")
+            }catch (e) {
+                console.log("Erro ao criar Arquivo de carga ", e.response.data)
+            }
+        }else if (values.operacao === 'edit'){
+            try {
+                let payload = {
+                    'identificador': values.identificador,
+                    'tipo_delimitador': values.tipo_delimitador,
+                    'conteudo': values.conteudo
+                };
+                let update_arquivo_de_carga = await patchAlterarArquivoDeCarga(values.uuid, payload);
+                console.log("create_arquivo_de_carga ", update_arquivo_de_carga);
+                console.log("Arquivo de carga alterado com sucesso")
+            }catch (e) {
+                console.log("Erro ao alterar Arquivo de carga ", e.response.data);
+            }
+        }
     };
 
     const handleCloseFormModal = () => {

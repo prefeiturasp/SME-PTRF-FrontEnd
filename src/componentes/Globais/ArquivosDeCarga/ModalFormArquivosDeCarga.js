@@ -43,8 +43,13 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                     <div className='col'>
                                         <div className="form-group">
                                             <label htmlFor="conteudo">Conteúdo</label>
-                                            <input className="form-control-file" id="file" name="file" type="file" onChange={(event) => {
-                                                setFieldValue("file", event.currentTarget.files[0]);
+                                            <input
+                                                className="form-control-file"
+                                                id="conteudo"
+                                                name="conteudo"
+                                                type="file"
+                                                onChange={(event) => {
+                                                setFieldValue("conteudo", event.currentTarget.files[0]);
                                             }} />
                                             {props.touched.conteudo && props.errors.conteudo && <span className="span_erro text-danger mt-1"> {props.errors.conteudo} </span>}
                                         </div>
