@@ -112,20 +112,9 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                     </div>
                                 </div>
 
-                                <div className="d-flex bd-highlight mt-2">
-                                    <div className="p-Y flex-grow-1 bd-highlight">
-                                        {values.operacao === 'edit' &&
-                                            <button type="button" className="btn btn btn-danger mt-2 mr-2">
-                                                Apagar
-                                            </button>
-                                        }
-                                    </div>
-                                    <div className="p-Y bd-highlight">
-                                        <button onClick={()=>handleClose()} type="button" className='btn btn-outline-success mt-2 mr-2'>Cancelar</button>
-                                    </div>
-                                    <div className="p-Y bd-highlight">
-                                        <button type="submit" className="btn btn-success mt-2">Salvar</button>
-                                    </div>
+                                <div className="d-flex justify-content-end mt-2">
+                                    <button onClick={()=>handleClose()} type="button" className='btn btn-outline-success mt-2 mr-2'>Cancelar</button>
+                                    <button type="submit" className="btn btn-success mt-2">Salvar e enviar</button>
                                 </div>
                             </form>
                         );

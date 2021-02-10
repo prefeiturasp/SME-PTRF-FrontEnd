@@ -9,7 +9,8 @@ import {
     getArquivosDeCargaFiltros,
     postCreateArquivoDeCarga,
     patchAlterarArquivoDeCarga,
-    deleteTag
+    deleteArquivoDeCarga,
+    getDownloadArquivoDeCarga,
 } from "../../../services/sme/Parametrizacoes.service";
 import moment from "moment";
 import TabelaArquivosDeCarga from "./TabelaArquivosDeCarga";
@@ -109,10 +110,10 @@ const ArquivosDeCarga = () => {
     //Para a Tabela
     const rowsPerPage = 10;
 
-    const conteudoTemplate = (rowData, column) => {
+    const conteudoTemplate = (rowData) => {
         return (
             <div className='quebra-palavra'>
-                {rowData[column.field].split('/').pop()}
+                {rowData.conteudo.split('/').pop()}
             </div>
         )
     };
@@ -173,11 +174,31 @@ const ArquivosDeCarga = () => {
             status: rowData.status,
             conteudo: rowData.conteudo,
             uuid: rowData.uuid,
-            log: rowData.log,
+            log: rowData.uuid,
             operacao: 'edit',
             }
         )
     }, [stateFormModal]);
+
+    const handleClickDeleteArquivoDeCarga = useCallback((uuid_arquivo_de_carga)=>{
+        setStateFormModal({
+            ...stateFormModal,
+            uuid: uuid_arquivo_de_carga,
+        });
+        setShowModalConfirmDeleteArquivosDeCarga(true);
+    }, [stateFormModal]);
+
+    const handleClickDownloadArquivoDeCarga = useCallback(async (rowData)=>{
+        let nome_do_arquivo_com_extensao = conteudoTemplate(rowData).props.children;
+        console.log("Nome do arquivo ", nome_do_arquivo_com_extensao);
+        console.log("handleClickDownloadArquivoDeCarga ", rowData);
+        try {
+            await getDownloadArquivoDeCarga(rowData.uuid, nome_do_arquivo_com_extensao);
+            console.log("Download efetuado com sucesso");
+        }catch (e) {
+            console.log("Erro ao efetuar o download ", e.response);
+        }
+    }, []);
 
     const acoesTemplate = useCallback((rowData) => {
         return (
@@ -202,14 +223,14 @@ const ArquivosDeCarga = () => {
                         />
                         <strong>Editar</strong>
                     </button>
-                    <button className="btn btn-link dropdown-item fonte-14" type="button">
+                    <button onClick={()=>handleClickDownloadArquivoDeCarga(rowData)} className="btn btn-link dropdown-item fonte-14" type="button">
                         <FontAwesomeIcon
                             style={{fontSize: '15px', marginRight: "5px", color: "#00585E"}}
                             icon={faDownload}
                         />
                         <strong>Baixar</strong>
                     </button>
-                    <button onClick={()=>setShowModalConfirmDeleteArquivosDeCarga(true)} className="btn btn-link dropdown-item fonte-14" type="button">
+                    <button onClick={()=>handleClickDeleteArquivoDeCarga(rowData.uuid)} className="btn btn-link dropdown-item fonte-14" type="button">
                         <FontAwesomeIcon
                             style={{fontSize: '15px', marginRight: "5px", color: "#B40C02"}}
                             icon={faTrashAlt}
@@ -219,9 +240,9 @@ const ArquivosDeCarga = () => {
                 </div>
             </div>
         )
-    }, [handleEditarArquivos]);
+    }, [handleClickDeleteArquivoDeCarga, handleClickDownloadArquivoDeCarga, handleEditarArquivos]);
 
-    const handleSubmitModalForm = async (values) => {
+    const handleSubmitModalForm = useCallback(async (values) => {
         console.log("handleSubmitModalFormAssociacoes ", values);
         if (values.operacao === 'create'){
             try {
@@ -270,23 +291,21 @@ const ArquivosDeCarga = () => {
                 }
             }
         }
-    };
+    }, [carregaArquivosPeloTipoDeCarga, url_params]);
 
     const onDeleteArquivoDeCargaTrue = async ()=>{
         try {
-            await deleteTag(stateFormModal.uuid);
+            await deleteArquivoDeCarga(stateFormModal.uuid);
             console.log("Arquivo de Carga excluído com sucesso");
             setShowModalConfirmDeleteArquivosDeCarga(false);
             setShowModalForm(false);
+            setInfoModalArquivosDeCarga('Arquivo de Carga excluído com sucesso');
+            setShowModalInfoArquivosDeCarga(true);
             await carregaArquivosPeloTipoDeCarga();
         }catch (e) {
             console.log("Erro ao excluir Arquivo de carga ", e.response.data);
             setInfoModalArquivosDeCarga('Erro ao excluir Arquivo de carga');
             setShowModalInfoArquivosDeCarga(true);
-            if (e.response.data.identificador[0]){
-                setInfoModalArquivosDeCarga(e.response.data.identificador[0]);
-                setShowModalInfoArquivosDeCarga(true);
-            }
         }
     };
 
@@ -301,7 +320,6 @@ const ArquivosDeCarga = () => {
     const handleCloseConfirmDeleteArquivoDeCarga = useCallback(()=>{
         setShowModalConfirmDeleteArquivosDeCarga(false)
     }, []);
-
 
     return (
         <PaginasContainer>

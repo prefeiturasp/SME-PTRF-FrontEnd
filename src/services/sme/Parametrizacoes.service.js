@@ -27,13 +27,42 @@ export const postCreateArquivoDeCarga = async (payload) => {
     formData.append("conteudo", payload.conteudo);
     return (await api.post(`/api/arquivos/`, formData, authHeader)).data
 };
-
 export const patchAlterarArquivoDeCarga = async (uuid_arquivo_de_carga, payload) => {
     const formData = new FormData();
     formData.append("identificador", payload.identificador);
     formData.append("tipo_delimitador", payload.tipo_delimitador);
     formData.append("conteudo", payload.conteudo);
     return (await api.patch(`/api/arquivos/${uuid_arquivo_de_carga}`, formData, authHeader)).data
+};
+export const deleteArquivoDeCarga = async (uuid_arquivo_de_carga) => {
+    return (await api.delete(`/api/arquivos/${uuid_arquivo_de_carga}`, authHeader))
+};
+
+// export const getDownloadArquivoDeCarga = async (uuid_arquivo_de_carga) => {
+//     return (await api.get(`/api/arquivos/${uuid_arquivo_de_carga}/download/`, authHeader)).data
+// };
+
+export const getDownloadArquivoDeCarga = async (uuid_arquivo_de_carga, nome_do_arquivo_com_extensao) => {
+    return (await api
+        .get(`/api/arquivos/${uuid_arquivo_de_carga}/download/`, {
+            responseType: 'blob',
+            timeout: 30000,
+            headers: {
+                'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', nome_do_arquivo_com_extensao);
+            document.body.appendChild(link);
+            link.click();
+        }).catch(error => {
+            return error.response;
+        })
+    )
 };
 
 // ***** Edição de Textos *****
