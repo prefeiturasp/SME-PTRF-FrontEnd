@@ -60,6 +60,28 @@ export const getDownloadArquivoDeCarga = async (uuid_arquivo_de_carga, nome_do_a
 export const postProcessarArquivoDeCarga = async (uuid_arquivo_de_carga) => {
     return (await api.post(`/api/arquivos/${uuid_arquivo_de_carga}/processar/`, authHeader)).data
 };
+export const getDownloadModeloArquivoDeCarga = async (tipo_arquivo_de_carga) => {
+    return (await api
+        .get(`/api/modelos-cargas/${tipo_arquivo_de_carga}/download/`, {
+            responseType: 'blob',
+            timeout: 30000,
+            headers: {
+                'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'Modelo_Carga_Associacoes.xlsx');
+            document.body.appendChild(link);
+            link.click();
+        }).catch(error => {
+            return error.response;
+        })
+    )
+};
 
 // ***** Edição de Textos *****
 export const patchAlterarFiqueDeOlhoPrestacoesDeContas = async (payload) => {

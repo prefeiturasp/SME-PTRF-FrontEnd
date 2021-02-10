@@ -60,7 +60,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                 </div>
                                 <div className='row'>
                                     <div className='col'>
-                                        <label htmlFor="tipo_delimitador">Período inicial</label>
+                                        <label htmlFor="tipo_delimitador">Tipo delimitador</label>
                                         <select
                                             value={props.values.tipo_delimitador && props.values.tipo_delimitador ? props.values.tipo_delimitador : ""}
                                             onChange={props.handleChange}
@@ -109,6 +109,16 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                     <div className='col'>
                                         <p className='mb-2'>Log</p>
                                         <p className='mb-2'>{props.values.log ? props.values.log : '-'}</p>
+                                    </div>
+                                </div>
+                                <div className='row mt-3'>
+                                    <div className='col'>
+                                        <p className='mb-2'>Uuid</p>
+                                        <p className='mb-2'>{values.uuid}</p>
+                                    </div>
+                                    <div className='col'>
+                                        <p className='mb-2'>ID</p>
+                                        <p className='mb-2'>{values.id}</p>
                                     </div>
                                 </div>
 

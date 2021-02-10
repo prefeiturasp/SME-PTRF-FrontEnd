@@ -2,7 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUpload, faDownload} from "@fortawesome/free-solid-svg-icons";
 
-export const BotoesTopo = ({setShowModalForm, setStateFormModal, initialStateFormModal}) =>{
+export const BotoesTopo = ({setShowModalForm, setStateFormModal, initialStateFormModal, handleClickDownloadModeloArquivoDeCarga}) =>{
     return(
         <>
             <div className="d-flex  justify-content-end pb-3">
@@ -13,7 +13,6 @@ export const BotoesTopo = ({setShowModalForm, setStateFormModal, initialStateFor
                         setStateFormModal(initialStateFormModal);
                         setShowModalForm(true);
                     }}
-                    //onClick={()=>setShowModalForm(true)}
                 >
                     <FontAwesomeIcon
                         style={{fontSize: '15px', marginRight: "3px", color:"#fff"}}
@@ -21,7 +20,7 @@ export const BotoesTopo = ({setShowModalForm, setStateFormModal, initialStateFor
                     />
                     Adicionar carga
                 </button>
-                <button type="submit" className="btn btn-outline-success mt-2 ml-2">
+                <button onClick={()=>handleClickDownloadModeloArquivoDeCarga()} type="submit" className="btn btn-outline-success mt-2 ml-2">
                     <FontAwesomeIcon
                         style={{fontSize: '15px', marginRight: "3px"}}
                         icon={faDownload}

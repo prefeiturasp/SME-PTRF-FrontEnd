@@ -12,6 +12,7 @@ import {
     deleteArquivoDeCarga,
     getDownloadArquivoDeCarga,
     postProcessarArquivoDeCarga,
+    getDownloadModeloArquivoDeCarga,
 } from "../../../services/sme/Parametrizacoes.service";
 import moment from "moment";
 import TabelaArquivosDeCarga from "./TabelaArquivosDeCarga";
@@ -154,6 +155,7 @@ const ArquivosDeCarga = () => {
         status: '',
         conteudo: '',
         uuid: "",
+        id: "",
         log: "",
         operacao: 'create',
     };
@@ -175,6 +177,7 @@ const ArquivosDeCarga = () => {
             status: rowData.status,
             conteudo: rowData.conteudo,
             uuid: rowData.uuid,
+            id: rowData.id,
             log: rowData.log,
             operacao: 'edit',
             }
@@ -210,9 +213,17 @@ const ArquivosDeCarga = () => {
         }
     }, [carregaArquivosPeloTipoDeCarga]);
 
+    const handleClickDownloadModeloArquivoDeCarga = useCallback(async ()=>{
+        try {
+            await getDownloadModeloArquivoDeCarga(url_params.tipo_de_carga);
+            console.log("Download do modelo efetuado com sucesso");
+        }catch (e) {
+            console.log("Erro ao fazer o download do modelo ", e.response);
+        }
+    }, [url_params.tipo_de_carga]);
+
     const acoesTemplate = useCallback((rowData) => {
         return (
-
             <div className="dropdown">
                 <span id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true"
                    aria-expanded="false">
@@ -351,6 +362,7 @@ const ArquivosDeCarga = () => {
                                 setShowModalForm={setShowModalForm}
                                 setStateFormModal={setStateFormModal}
                                 initialStateFormModal={initialStateFormModal}
+                                handleClickDownloadModeloArquivoDeCarga={handleClickDownloadModeloArquivoDeCarga}
                             />
                             <Filtros
                                 stateFiltros={stateFiltros}
