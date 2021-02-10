@@ -92,14 +92,6 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                                 className="form-control"
                                                 onChange={props.handleChange}
                                             />
-                                            {/*<input
-                                                type="text"
-                                                value={props.values.cnpj}
-                                                name="cnpj"
-                                                id="cnpj"
-                                                className="form-control"
-                                                onChange={props.handleChange}
-                                            />*/}
                                             {props.touched.cnpj && props.errors.cnpj && <span className="span_erro text-danger mt-1"> {props.errors.cnpj} </span>}
                                         </div>
                                     </div>

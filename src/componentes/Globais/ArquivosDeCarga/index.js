@@ -8,33 +8,40 @@ import {getTabelaArquivos, getArquivosFiltros} from "../../../services/sme/Param
 import moment from "moment";
 import TabelaArquivosDeCarga from "./TabelaArquivosDeCarga";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faCogs, faDownload, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {Filtros} from "./Filtros";
-import {UrlsMenuInterno} from "../../sme/Parametrizacoees/Estrutura/Associacoes/UrlsMenuInterno";
 import {MenuInterno} from "../MenuInterno";
+import ModalFormArquivosDeCarga from "./ModalFormArquivosDeCarga";
 
 const ArquivosDeCarga = () => {
 
     const url_params = useParams();
-    const dadosDeOrigem = useMemo(()=>{
+    const dadosDeOrigem = useMemo(() => {
         let obj = {
             titulo: '',
-            acesso_permitido: false
+            acesso_permitido: false,
+            url: "",
+            origem:''
         };
 
-        if (url_params.tipo_de_carga === 'CARGA_ASSOCIACOES'){
+        if (url_params.tipo_de_carga === 'CARGA_ASSOCIACOES') {
             obj = {
                 titulo: 'Associações',
-                acesso_permitido: true
+                acesso_permitido: true,
+                UrlsMenuInterno:[
+                    {label: "Dados das associações", url: "parametro-associacoes"},
+                    {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_ASSOCIACOES'},
+                ],
             }
         }
         return obj
     }, [url_params]);
 
+
     const [tabelaArquivos, setTabelaArquivos] = useState([]);
     const [arquivos, setArquivos] = useState([]);
 
-    const carregaTabelaArquivos = useCallback(async ()=>{
+    const carregaTabelaArquivos = useCallback(async () => {
         if (dadosDeOrigem.acesso_permitido) {
             let tabela = await getTabelaArquivos();
             console.log("TABELA ", tabela);
@@ -42,24 +49,24 @@ const ArquivosDeCarga = () => {
         }
     }, [dadosDeOrigem.acesso_permitido]);
 
-    useEffect(()=>{
+    useEffect(() => {
         carregaTabelaArquivos();
     }, [carregaTabelaArquivos]);
 
-    const carregaArquivosPeloTipoDeCarga = useCallback(async ()=>{
-        if (dadosDeOrigem.acesso_permitido){
+    const carregaArquivosPeloTipoDeCarga = useCallback(async () => {
+        if (dadosDeOrigem.acesso_permitido) {
             try {
                 let arquivos = await getArquivosFiltros(url_params.tipo_de_carga);
                 console.log("Arquivos ", arquivos);
                 setArquivos(arquivos)
-            }catch (e) {
+            } catch (e) {
                 console.log("Erro ao carregar arquivos")
             }
         }
 
     }, [url_params, dadosDeOrigem.acesso_permitido]);
 
-    useEffect(()=>{
+    useEffect(() => {
         carregaArquivosPeloTipoDeCarga()
     }, [carregaArquivosPeloTipoDeCarga]);
 
@@ -94,17 +101,23 @@ const ArquivosDeCarga = () => {
     //Para a Tabela
     const rowsPerPage = 10;
 
-    const conteudoTemplate = (rowData, column) =>{
-        return(
+    const conteudoTemplate = (rowData, column) => {
+        return (
             <div className='quebra-palavra'>
                 {rowData[column.field].split('/').pop()}
             </div>
         )
     };
 
-    const statusTemplate = useCallback( (rowData) => {
-        if (tabelaArquivos && tabelaArquivos.status && tabelaArquivos.status.length > 0 ){
-            let status_retornar = tabelaArquivos.status.filter(item => item.id === rowData.status);
+    const statusTemplate = useCallback((rowData='', status_estatico='') => {
+        if (tabelaArquivos && tabelaArquivos.status && tabelaArquivos.status.length > 0) {
+            let status_retornar;
+            if (rowData){
+                status_retornar = tabelaArquivos.status.filter(item => item.id === rowData.status);
+            }else if(status_estatico){
+                status_retornar = tabelaArquivos.status.filter(item => item.id === status_estatico);
+            }
+
             return status_retornar[0].nome
         }
     }, [tabelaArquivos]);
@@ -121,41 +134,111 @@ const ArquivosDeCarga = () => {
         return rowData[column.field] ? moment(rowData[column.field]).format("DD/MM/YYYY [às] HH[h]mm") : '-'
     };
 
-    const handleEditarArquivos = useCallback(async (rowData)=>{
-        console.log('handleEditarArquivos ', rowData)
-    }, []);
+    // Modais
+    const initialStateFormModal = {
+        identificador: '',
+        tipo_carga: url_params.tipo_de_carga,
+        tipo_delimitador: '',
+        ultima_execucao: '',
+        status: '',
+        conteudo: '',
+        uuid: "",
+        log: "",
+        operacao: 'create',
+    };
 
-    const acoesTemplate = useCallback((rowData) =>{
+    const [showModalForm, setShowModalForm] = useState(false);
+    const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
+
+    const handleEditarArquivos = useCallback(async (rowData) => {
+        console.log('handleEditarArquivos ', rowData);
+        setShowModalForm(true);
+        setStateFormModal({
+            ...stateFormModal,
+            identificador: rowData.identificador,
+            tipo_carga: rowData.tipo_carga,
+            tipo_delimitador: rowData.tipo_delimitador,
+            ultima_execucao: rowData.ultima_execucao ? moment(rowData.ultima_execucao).format('DD/MM/YYYY') : '-',
+            status: rowData.status,
+            conteudo: rowData.conteudo,
+            uuid: rowData.uuid,
+            log: rowData.log,
+            operacao: 'edit',
+            }
+        )
+    }, [stateFormModal]);
+
+    const acoesTemplate = useCallback((rowData) => {
         return (
 
             <div className="dropdown">
-                <a href="#" id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a href="#" id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true"
+                   aria-expanded="false">
                     <button className="btn-acoes"><span className="btn-acoes-dots">...</span></button>
                 </a>
                 <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <button className="btn btn-link dropdown-item" type="button">Ver dados unidade</button>
+                    <button className="btn btn-link dropdown-item fonte-14" type="button">
+                        <FontAwesomeIcon
+                            style={{fontSize: '15px', marginRight: "5px", color: "#00585E"}}
+                            icon={faCogs}
+                        />
+                        <strong>Processar</strong>
+                    </button>
+                    <button onClick={() => handleEditarArquivos(rowData)}
+                            className="btn btn-link dropdown-item fonte-14" type="button">
+                        <FontAwesomeIcon
+                            style={{fontSize: '15px', marginRight: "5px", color: "#00585E"}}
+                            icon={faEdit}
+                        />
+                        <strong>Editar</strong>
+                    </button>
+                    <button className="btn btn-link dropdown-item fonte-14" type="button">
+                        <FontAwesomeIcon
+                            style={{fontSize: '15px', marginRight: "5px", color: "#00585E"}}
+                            icon={faDownload}
+                        />
+                        <strong>Baixar</strong>
+                    </button>
+                    <button className="btn btn-link dropdown-item fonte-14" type="button">
+                        <FontAwesomeIcon
+                            style={{fontSize: '15px', marginRight: "5px", color: "#B40C02"}}
+                            icon={faTrashAlt}
+                        />
+                        <strong>Excluir</strong>
+                    </button>
                 </div>
             </div>
         )
     }, [handleEditarArquivos]);
 
+    const handleSubmitModalForm = (values) => {
+        console.log("handleSubmitModalFormAssociacoes ", values)
+    };
+
+    const handleCloseFormModal = () => {
+        setShowModalForm(false)
+    };
+
+
     return (
         <PaginasContainer>
             <>
                 {!dadosDeOrigem.acesso_permitido ? (
-                    <Redirect
-                        to={{
-                            pathname: '/painel-parametrizacoes',
-                        }}
-                    />
-                ) :
+                        <Redirect
+                            to={{
+                                pathname: '/painel-parametrizacoes',
+                            }}
+                        />
+                    ) :
                     <>
                         <h1 className="titulo-itens-painel mt-5">{dadosDeOrigem.titulo}</h1>
                         <div className="page-content-inner">
                             <MenuInterno
-                                caminhos_menu_interno={UrlsMenuInterno}
+                                caminhos_menu_interno={dadosDeOrigem.UrlsMenuInterno}
                             />
-                            <BotoesTopo/>
+                            <BotoesTopo
+                                setShowModalForm={setShowModalForm}
+                            />
                             <Filtros
                                 stateFiltros={stateFiltros}
                                 handleChangeFiltros={handleChangeFiltros}
@@ -176,6 +259,16 @@ const ArquivosDeCarga = () => {
                         </div>
                     </>
                 }
+                <section>
+                    <ModalFormArquivosDeCarga
+                        show={showModalForm}
+                        stateFormModal={stateFormModal}
+                        tabelaArquivos={tabelaArquivos}
+                        statusTemplate={statusTemplate}
+                        handleClose={handleCloseFormModal}
+                        handleSubmitModalForm={handleSubmitModalForm}
+                    />
+                </section>
             </>
         </PaginasContainer>
     );
