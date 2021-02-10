@@ -25,6 +25,7 @@ export const MeusDados = () => {
                     <FormInicialEditar
                         setShowEditarEmail={setShowEditarEmail}
                         setShowEditarSenha={setShowEditarSenha}
+                        emailAtual={localStorage.getItem(USUARIO_EMAIL)}
                     />
                 </div>
                 <section>

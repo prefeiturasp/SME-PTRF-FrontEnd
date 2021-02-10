@@ -20,6 +20,13 @@ const authHeader = {
     'Content-Type': 'application/json'
 };
 
+const authHeaderAuthorization = {
+    headers: {
+        'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+        'Content-Type': 'application/json'
+    }
+};
+
 const setDataLogin = async ()=>{
     let data_login = localStorage.getItem(DATA_LOGIN);
     if(data_login){
@@ -134,11 +141,11 @@ export const redefinirMinhaSenha = async (payload) => {
 };
 
 export const alterarMeuEmail = async (usuario, payload) => {
-    return (await api.patch(`api/usuarios/${usuario}/altera-email/`, payload, authHeader))
+    return (await api.patch(`api/usuarios/${usuario}/altera-email/`, payload, authHeaderAuthorization))
 };
 
 export const alterarMinhaSenha = async (usuario, payload) => {
-    return (await api.patch(`/api/usuarios/${usuario}/altera-senha/`, payload, authHeader))
+    return (await api.patch(`/api/usuarios/${usuario}/altera-senha/`, payload, authHeaderAuthorization))
 };
 
 
