@@ -1,6 +1,6 @@
 import React from "react";
 
-export const FormInicialEditar = ({setShowEditarEmail, setShowEditarSenha}) => {
+export const FormInicialEditar = ({setShowEditarEmail, setShowEditarSenha, emailAtual}) => {
 
     return(
         <form>
@@ -10,7 +10,7 @@ export const FormInicialEditar = ({setShowEditarEmail, setShowEditarSenha}) => {
                 </div>
                 <div className='col-10'>
                     <div className="form-group">
-                        <input readOnly={true} name="email" type="email" className="form-control" id="email" placeholder="Clique em editar para inserir um e-mail"/>
+                        <input readOnly={true} name="email" type="email" className="form-control" id="email" placeholder="Clique em editar para inserir um e-mail" value={emailAtual}/>
                     </div>
                 </div>
                 <div className='col-2'>
