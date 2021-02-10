@@ -154,6 +154,8 @@ const ArquivosDeCarga = () => {
         ultima_execucao: '',
         status: '',
         conteudo: '',
+        valida_conteudo: true,
+        nome_arquivo: '',
         uuid: "",
         id: "",
         log: "",
@@ -166,7 +168,7 @@ const ArquivosDeCarga = () => {
     const [showModalConfirmDeleteArquivosDeCarga, setShowModalConfirmDeleteArquivosDeCarga] = useState(false);
     const [infoModalArquivosDeCarga, setInfoModalArquivosDeCarga] = useState('');
 
-    const handleEditarArquivos = useCallback(async (rowData) => {
+    const handleClickEditarArquivos = useCallback(async (rowData) => {
         setShowModalForm(true);
         setStateFormModal({
             ...stateFormModal,
@@ -175,7 +177,9 @@ const ArquivosDeCarga = () => {
             tipo_delimitador: rowData.tipo_delimitador,
             ultima_execucao: rowData.ultima_execucao ? moment(rowData.ultima_execucao).format('DD/MM/YYYY') : '-',
             status: rowData.status,
-            conteudo: rowData.conteudo,
+            conteudo: '',
+            valida_conteudo: false,
+            nome_arquivo: rowData.conteudo,
             uuid: rowData.uuid,
             id: rowData.id,
             log: rowData.log,
@@ -237,7 +241,7 @@ const ArquivosDeCarga = () => {
                         />
                         <strong>Processar</strong>
                     </button>
-                    <button onClick={() => handleEditarArquivos(rowData)} className="btn btn-link dropdown-item fonte-14" type="button">
+                    <button onClick={() => handleClickEditarArquivos(rowData)} className="btn btn-link dropdown-item fonte-14" type="button">
                         <FontAwesomeIcon
                             style={{fontSize: '15px', marginRight: "5px", color: "#00585E"}}
                             icon={faEdit}
@@ -261,10 +265,9 @@ const ArquivosDeCarga = () => {
                 </div>
             </div>
         )
-    }, [handleClickDeleteArquivoDeCarga, handleClickDownloadArquivoDeCarga, handleEditarArquivos, handleClickProcessarArquivoDeCarga]);
+    }, [handleClickDeleteArquivoDeCarga, handleClickDownloadArquivoDeCarga, handleClickEditarArquivos, handleClickProcessarArquivoDeCarga]);
 
     const handleSubmitModalForm = useCallback(async (values) => {
-        console.log("handleSubmitModalFormAssociacoes ", values);
         if (values.operacao === 'create'){
             try {
                 let payload = {
@@ -290,12 +293,20 @@ const ArquivosDeCarga = () => {
                 }
             }
         }else if (values.operacao === 'edit'){
-            try {
-                let payload = {
+            let payload;
+            if (values.conteudo){
+                payload = {
                     'identificador': values.identificador,
                     'tipo_delimitador': values.tipo_delimitador,
                     'conteudo': values.conteudo
                 };
+            }else {
+                payload = {
+                    'identificador': values.identificador,
+                    'tipo_delimitador': values.tipo_delimitador,
+                };
+            }
+            try {
                 await patchAlterarArquivoDeCarga(values.uuid, payload);
                 console.log("Arquivo de carga alterado com sucesso");
                 setShowModalForm(false);

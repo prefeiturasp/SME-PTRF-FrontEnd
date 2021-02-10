@@ -4,7 +4,6 @@ import {Formik} from "formik";
 import {YupSignupSchemaArquivosDeCarga} from "./YupSignupSchemaArquivosDeCarga";
 
 const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubmitModalForm, tabelaArquivos, statusTemplate}) => {
-
     const bodyTextarea = () => {
         return (
             <>
@@ -42,14 +41,16 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                 <div className='row'>
                                     <div className='col'>
                                         <div className="form-group">
-                                            <label htmlFor="conteudo">Conteúdo</label>
+                                            <label className='mb-0' htmlFor="conteudo">Conteúdo</label>
+                                            {props.values.nome_arquivo && props.values.operacao === 'edit' &&
+                                            <p className='mb-1'><small><strong>Atualmente: </strong>{props.values.nome_arquivo.split('/').pop()}</small></p>
+                                            }
                                             <input
                                                 accept=".csv"
                                                 className="form-control-file"
                                                 id="conteudo"
                                                 name="conteudo"
                                                 type="file"
-                                                //value={props.values.conteudo}
                                                 onChange={(event) => {
                                                     setFieldValue("conteudo", event.currentTarget.files[0]);
                                                 }}

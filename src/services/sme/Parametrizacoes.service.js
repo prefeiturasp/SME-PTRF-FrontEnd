@@ -28,7 +28,9 @@ export const patchAlterarArquivoDeCarga = async (uuid_arquivo_de_carga, payload)
     const formData = new FormData();
     formData.append("identificador", payload.identificador);
     formData.append("tipo_delimitador", payload.tipo_delimitador);
-    formData.append("conteudo", payload.conteudo);
+    if (payload.conteudo){
+        formData.append("conteudo", payload.conteudo);
+    }
     return (await api.patch(`/api/arquivos/${uuid_arquivo_de_carga}`, formData, authHeader)).data
 };
 export const deleteArquivoDeCarga = async (uuid_arquivo_de_carga) => {
