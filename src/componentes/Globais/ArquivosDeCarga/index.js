@@ -12,6 +12,7 @@ import {faEdit, faCogs, faDownload, faTrashAlt} from "@fortawesome/free-solid-sv
 import {Filtros} from "./Filtros";
 import {MenuInterno} from "../MenuInterno";
 import ModalFormArquivosDeCarga from "./ModalFormArquivosDeCarga";
+import {ModalInfoArquivoDeCargas} from "./ModalInfoArquivoDeCargas";
 
 const ArquivosDeCarga = () => {
 
@@ -150,9 +151,10 @@ const ArquivosDeCarga = () => {
 
     const [showModalForm, setShowModalForm] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
+    const [showModalInfoArquivosDeCarga, setShowModalInfoArquivosDeCarga] = useState(false);
+    const [infoModalArquivosDeCarga, setInfoModalArquivosDeCarga] = useState('');
 
     const handleEditarArquivos = useCallback(async (rowData) => {
-        console.log('handleEditarArquivos ', rowData);
         setShowModalForm(true);
         setStateFormModal({
             ...stateFormModal,
@@ -212,7 +214,7 @@ const ArquivosDeCarga = () => {
         )
     }, [handleEditarArquivos]);
 
-    const handleSubmitModalForm = async (values) => {
+    const handleSubmitModalForm = async (values,) => {
         console.log("handleSubmitModalFormAssociacoes ", values);
         if (values.operacao === 'create'){
             try {
@@ -223,11 +225,20 @@ const ArquivosDeCarga = () => {
                     'status': 'PENDENTE',
                     'conteudo': values.conteudo
                 };
-                let create_arquivo_de_carga = await postCreateArquivoDeCarga(payload);
-                console.log("create_arquivo_de_carga ", create_arquivo_de_carga);
-                console.log("Arquivo de carga criado com sucesso")
+                await postCreateArquivoDeCarga(payload);
+                console.log("Arquivo de carga criado com sucesso");
+                setShowModalForm(false);
+                setInfoModalArquivosDeCarga('Arquivo de carga criado com sucesso');
+                setShowModalInfoArquivosDeCarga(true);
+                await carregaArquivosPeloTipoDeCarga();
             }catch (e) {
-                console.log("Erro ao criar Arquivo de carga ", e.response.data)
+                console.log("Erro ao criar Arquivo de carga ", e.response.data);
+                setInfoModalArquivosDeCarga('Erro ao criar Arquivo de carga');
+                setShowModalInfoArquivosDeCarga(true);
+                if (e.response.data.identificador[0]){
+                    setInfoModalArquivosDeCarga(e.response.data.identificador[0]);
+                    setShowModalInfoArquivosDeCarga(true);
+                }
             }
         }else if (values.operacao === 'edit'){
             try {
@@ -236,11 +247,20 @@ const ArquivosDeCarga = () => {
                     'tipo_delimitador': values.tipo_delimitador,
                     'conteudo': values.conteudo
                 };
-                let update_arquivo_de_carga = await patchAlterarArquivoDeCarga(values.uuid, payload);
-                console.log("create_arquivo_de_carga ", update_arquivo_de_carga);
-                console.log("Arquivo de carga alterado com sucesso")
+                await patchAlterarArquivoDeCarga(values.uuid, payload);
+                console.log("Arquivo de carga alterado com sucesso");
+                setShowModalForm(false);
+                setInfoModalArquivosDeCarga('Arquivo de carga alterado com sucesso');
+                await carregaArquivosPeloTipoDeCarga();
+                setShowModalInfoArquivosDeCarga(true);
             }catch (e) {
                 console.log("Erro ao alterar Arquivo de carga ", e.response.data);
+                setInfoModalArquivosDeCarga('Erro ao criar Arquivo de carga');
+                setShowModalInfoArquivosDeCarga(true);
+                if (e.response.data.identificador[0]){
+                    setInfoModalArquivosDeCarga(e.response.data.identificador[0]);
+                    setShowModalInfoArquivosDeCarga(true);
+                }
             }
         }
     };
@@ -248,6 +268,10 @@ const ArquivosDeCarga = () => {
     const handleCloseFormModal = () => {
         setShowModalForm(false)
     };
+
+    const handleCloseModalInfoArquivosDeCarga = useCallback(() => {
+        setShowModalInfoArquivosDeCarga(false);
+    }, []);
 
 
     return (
@@ -268,6 +292,8 @@ const ArquivosDeCarga = () => {
                             />
                             <BotoesTopo
                                 setShowModalForm={setShowModalForm}
+                                setStateFormModal={setStateFormModal}
+                                initialStateFormModal={initialStateFormModal}
                             />
                             <Filtros
                                 stateFiltros={stateFiltros}
@@ -297,6 +323,16 @@ const ArquivosDeCarga = () => {
                         statusTemplate={statusTemplate}
                         handleClose={handleCloseFormModal}
                         handleSubmitModalForm={handleSubmitModalForm}
+                    />
+                </section>
+                <section>
+                    <ModalInfoArquivoDeCargas
+                        show={showModalInfoArquivosDeCarga}
+                        handleClose={handleCloseModalInfoArquivosDeCarga}
+                        titulo='Arquivos de Carga'
+                        texto={`<p class="mb-0"> ${infoModalArquivosDeCarga}</p>`}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="success"
                     />
                 </section>
             </>

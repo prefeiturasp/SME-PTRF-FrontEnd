@@ -2,14 +2,18 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUpload, faDownload} from "@fortawesome/free-solid-svg-icons";
 
-export const BotoesTopo = ({setShowModalForm}) =>{
+export const BotoesTopo = ({setShowModalForm, setStateFormModal, initialStateFormModal}) =>{
     return(
         <>
             <div className="d-flex  justify-content-end pb-3">
                 <button
                     type="reset"
                     className="btn btn btn-success mt-2"
-                    onClick={()=>setShowModalForm(true)}
+                    onClick={()=>{
+                        setStateFormModal(initialStateFormModal);
+                        setShowModalForm(true);
+                    }}
+                    //onClick={()=>setShowModalForm(true)}
                 >
                     <FontAwesomeIcon
                         style={{fontSize: '15px', marginRight: "3px", color:"#fff"}}

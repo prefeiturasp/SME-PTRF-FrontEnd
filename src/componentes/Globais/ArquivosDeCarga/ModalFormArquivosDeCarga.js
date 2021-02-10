@@ -1,7 +1,7 @@
 import React, {memo} from "react";
 import {ModalFormBodyText} from "../ModalBootstrap";
 import {Formik} from "formik";
-//import {YupSignupSchemaAssociacoes, exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaArquivosDeCarga} from "./YupSignupSchemaArquivosDeCarga";
 
 const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubmitModalForm, tabelaArquivos, statusTemplate}) => {
 
@@ -10,7 +10,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
             <>
                 <Formik
                     initialValues={stateFormModal}
-                    //validationSchema={YupSignupSchemaAssociacoes}
+                    validationSchema={YupSignupSchemaArquivosDeCarga}
                     validateOnBlur={true}
                     enableReinitialize={true}
                     onSubmit={handleSubmitModalForm}
@@ -44,13 +44,16 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                         <div className="form-group">
                                             <label htmlFor="conteudo">Conteúdo</label>
                                             <input
+                                                accept=".csv"
                                                 className="form-control-file"
                                                 id="conteudo"
                                                 name="conteudo"
                                                 type="file"
+                                                //value={props.values.conteudo}
                                                 onChange={(event) => {
-                                                setFieldValue("conteudo", event.currentTarget.files[0]);
-                                            }} />
+                                                    setFieldValue("conteudo", event.currentTarget.files[0]);
+                                                }}
+                                            />
                                             {props.touched.conteudo && props.errors.conteudo && <span className="span_erro text-danger mt-1"> {props.errors.conteudo} </span>}
                                         </div>
                                     </div>
