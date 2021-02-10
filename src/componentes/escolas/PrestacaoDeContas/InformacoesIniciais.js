@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import {
-    getFiqueDeOlho,
+    getFiqueDeOlhoPrestacoesDeContas,
 } from "../../../services/escolas/PrestacaoDeContas.service";
 
 export const InformacoesIniciais = () => {
@@ -11,7 +11,7 @@ export const InformacoesIniciais = () => {
     }, []);
 
     const buscaFiqueDeOlho = async () => {
-        await getFiqueDeOlho().then((response) => {
+        await getFiqueDeOlhoPrestacoesDeContas().then((response) => {
             setFiqueDeOlho(response.detail);
         }).catch((error) => {
             console.log(error);
