@@ -4,7 +4,13 @@ import "../../dres/Associacoes/associacoes.scss"
 import {Redirect, useParams} from 'react-router-dom'
 import {BotoesTopo} from "./BotoesTopo";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
-import {getTabelaArquivosDeCarga, getArquivosDeCargaFiltros, postCreateArquivoDeCarga, patchAlterarArquivoDeCarga} from "../../../services/sme/Parametrizacoes.service";
+import {
+    getTabelaArquivosDeCarga,
+    getArquivosDeCargaFiltros,
+    postCreateArquivoDeCarga,
+    patchAlterarArquivoDeCarga,
+    deleteTag
+} from "../../../services/sme/Parametrizacoes.service";
 import moment from "moment";
 import TabelaArquivosDeCarga from "./TabelaArquivosDeCarga";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -13,6 +19,7 @@ import {Filtros} from "./Filtros";
 import {MenuInterno} from "../MenuInterno";
 import ModalFormArquivosDeCarga from "./ModalFormArquivosDeCarga";
 import {ModalInfoArquivoDeCargas} from "./ModalInfoArquivoDeCargas";
+import {ModalConfirmDeleteArquivoDeCarga} from "./ModalConfirmDeleteArquivoDeCarga";
 
 const ArquivosDeCarga = () => {
 
@@ -152,6 +159,7 @@ const ArquivosDeCarga = () => {
     const [showModalForm, setShowModalForm] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [showModalInfoArquivosDeCarga, setShowModalInfoArquivosDeCarga] = useState(false);
+    const [showModalConfirmDeleteArquivosDeCarga, setShowModalConfirmDeleteArquivosDeCarga] = useState(false);
     const [infoModalArquivosDeCarga, setInfoModalArquivosDeCarga] = useState('');
 
     const handleEditarArquivos = useCallback(async (rowData) => {
@@ -175,10 +183,10 @@ const ArquivosDeCarga = () => {
         return (
 
             <div className="dropdown">
-                <a href="#" id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true"
+                <span id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true"
                    aria-expanded="false">
                     <button className="btn-acoes"><span className="btn-acoes-dots">...</span></button>
-                </a>
+                </span>
                 <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <button className="btn btn-link dropdown-item fonte-14" type="button">
                         <FontAwesomeIcon
@@ -187,8 +195,7 @@ const ArquivosDeCarga = () => {
                         />
                         <strong>Processar</strong>
                     </button>
-                    <button onClick={() => handleEditarArquivos(rowData)}
-                            className="btn btn-link dropdown-item fonte-14" type="button">
+                    <button onClick={() => handleEditarArquivos(rowData)} className="btn btn-link dropdown-item fonte-14" type="button">
                         <FontAwesomeIcon
                             style={{fontSize: '15px', marginRight: "5px", color: "#00585E"}}
                             icon={faEdit}
@@ -202,7 +209,7 @@ const ArquivosDeCarga = () => {
                         />
                         <strong>Baixar</strong>
                     </button>
-                    <button className="btn btn-link dropdown-item fonte-14" type="button">
+                    <button onClick={()=>setShowModalConfirmDeleteArquivosDeCarga(true)} className="btn btn-link dropdown-item fonte-14" type="button">
                         <FontAwesomeIcon
                             style={{fontSize: '15px', marginRight: "5px", color: "#B40C02"}}
                             icon={faTrashAlt}
@@ -214,7 +221,7 @@ const ArquivosDeCarga = () => {
         )
     }, [handleEditarArquivos]);
 
-    const handleSubmitModalForm = async (values,) => {
+    const handleSubmitModalForm = async (values) => {
         console.log("handleSubmitModalFormAssociacoes ", values);
         if (values.operacao === 'create'){
             try {
@@ -265,12 +272,34 @@ const ArquivosDeCarga = () => {
         }
     };
 
+    const onDeleteArquivoDeCargaTrue = async ()=>{
+        try {
+            await deleteTag(stateFormModal.uuid);
+            console.log("Arquivo de Carga excluído com sucesso");
+            setShowModalConfirmDeleteArquivosDeCarga(false);
+            setShowModalForm(false);
+            await carregaArquivosPeloTipoDeCarga();
+        }catch (e) {
+            console.log("Erro ao excluir Arquivo de carga ", e.response.data);
+            setInfoModalArquivosDeCarga('Erro ao excluir Arquivo de carga');
+            setShowModalInfoArquivosDeCarga(true);
+            if (e.response.data.identificador[0]){
+                setInfoModalArquivosDeCarga(e.response.data.identificador[0]);
+                setShowModalInfoArquivosDeCarga(true);
+            }
+        }
+    };
+
     const handleCloseFormModal = () => {
         setShowModalForm(false)
     };
 
     const handleCloseModalInfoArquivosDeCarga = useCallback(() => {
         setShowModalInfoArquivosDeCarga(false);
+    }, []);
+
+    const handleCloseConfirmDeleteArquivoDeCarga = useCallback(()=>{
+        setShowModalConfirmDeleteArquivosDeCarga(false)
     }, []);
 
 
@@ -333,6 +362,19 @@ const ArquivosDeCarga = () => {
                         texto={`<p class="mb-0"> ${infoModalArquivosDeCarga}</p>`}
                         primeiroBotaoTexto="Fechar"
                         primeiroBotaoCss="success"
+                    />
+                </section>
+                <section>
+                    <ModalConfirmDeleteArquivoDeCarga
+                        show={showModalConfirmDeleteArquivosDeCarga}
+                        handleClose={handleCloseConfirmDeleteArquivoDeCarga}
+                        onDeleteArquivoDeCargaTrue={onDeleteArquivoDeCargaTrue}
+                        titulo="Excluir Arquivo de Carga"
+                        texto="<p>Deseja realmente excluir este Arquivo de Carga?</p>"
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="danger"
+                        segundoBotaoTexto="Excluir"
                     />
                 </section>
             </>
