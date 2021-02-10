@@ -1,8 +1,6 @@
 import api from '../api'
 import { TOKEN_ALIAS } from '../auth.service.js';
 
-import Axios from "axios";
-
 const authHeader = {
     headers: {
         'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
@@ -14,7 +12,6 @@ const authHeader = {
 export const getTabelaArquivosDeCarga = async () => {
     return (await api.get(`/api/arquivos/tabelas/`, authHeader)).data
 };
-
 export const getArquivosDeCargaFiltros = async (tipo_carga, identificador, status, data_execucao) => {
     return (await api.get(`/api/arquivos/?tipo_carga=${tipo_carga}${identificador ? '&identificador='+ identificador : ''}${status ? '&status='+status : ''}${data_execucao ? '&data_execucao='+data_execucao : ''}`, authHeader)).data
 };
@@ -37,11 +34,6 @@ export const patchAlterarArquivoDeCarga = async (uuid_arquivo_de_carga, payload)
 export const deleteArquivoDeCarga = async (uuid_arquivo_de_carga) => {
     return (await api.delete(`/api/arquivos/${uuid_arquivo_de_carga}`, authHeader))
 };
-
-// export const getDownloadArquivoDeCarga = async (uuid_arquivo_de_carga) => {
-//     return (await api.get(`/api/arquivos/${uuid_arquivo_de_carga}/download/`, authHeader)).data
-// };
-
 export const getDownloadArquivoDeCarga = async (uuid_arquivo_de_carga, nome_do_arquivo_com_extensao) => {
     return (await api
         .get(`/api/arquivos/${uuid_arquivo_de_carga}/download/`, {
@@ -63,6 +55,10 @@ export const getDownloadArquivoDeCarga = async (uuid_arquivo_de_carga, nome_do_a
             return error.response;
         })
     )
+};
+
+export const postProcessarArquivoDeCarga = async (uuid_arquivo_de_carga) => {
+    return (await api.post(`/api/arquivos/${uuid_arquivo_de_carga}/processar/`, authHeader)).data
 };
 
 // ***** Edição de Textos *****
@@ -165,15 +161,6 @@ export const putAtualizarAcaoAssociacao = async (acao_associacao_uuid, payload) 
 export const deleteAcaoAssociacao = async (acao_associacao_uuid) => {
     return (await api.delete(`/api/acoes-associacoes/${acao_associacao_uuid}/`, authHeader))
 };
-
-export const getRateiosAcao = async (acao_associacao_uuid, associacao_uuid) => {
-    return (await api.get(`api/rateios-despesas/?acao_associacao__uuid=${acao_associacao_uuid}&associacao__uuid=${associacao_uuid}`, authHeader)).data
-};
-
-export const getReceitasAcao = async (associacao_uuid, acao_associacao_uuid) => {
-    return (await api.get(`api/receitas/?associacao__uuid=${associacao_uuid}&acao_associacao__uuid=${acao_associacao_uuid}`, authHeader)).data
-};
-
 
 export const getAcoesFiltradas = async (nome='') => {
     return (await api.get(`/api/acoes/?nome=${nome}`, authHeader)).data

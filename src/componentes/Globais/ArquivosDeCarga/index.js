@@ -11,6 +11,7 @@ import {
     patchAlterarArquivoDeCarga,
     deleteArquivoDeCarga,
     getDownloadArquivoDeCarga,
+    postProcessarArquivoDeCarga,
 } from "../../../services/sme/Parametrizacoes.service";
 import moment from "moment";
 import TabelaArquivosDeCarga from "./TabelaArquivosDeCarga";
@@ -174,7 +175,7 @@ const ArquivosDeCarga = () => {
             status: rowData.status,
             conteudo: rowData.conteudo,
             uuid: rowData.uuid,
-            log: rowData.uuid,
+            log: rowData.log,
             operacao: 'edit',
             }
         )
@@ -190,8 +191,6 @@ const ArquivosDeCarga = () => {
 
     const handleClickDownloadArquivoDeCarga = useCallback(async (rowData)=>{
         let nome_do_arquivo_com_extensao = conteudoTemplate(rowData).props.children;
-        console.log("Nome do arquivo ", nome_do_arquivo_com_extensao);
-        console.log("handleClickDownloadArquivoDeCarga ", rowData);
         try {
             await getDownloadArquivoDeCarga(rowData.uuid, nome_do_arquivo_com_extensao);
             console.log("Download efetuado com sucesso");
@@ -199,6 +198,17 @@ const ArquivosDeCarga = () => {
             console.log("Erro ao efetuar o download ", e.response);
         }
     }, []);
+
+    const handleClickProcessarArquivoDeCarga = useCallback(async (rowData)=>{
+        try {
+            let processar = await postProcessarArquivoDeCarga(rowData.uuid);
+            console.log("Processar ", processar);
+            console.log("Arquivo de Carga processado efetuado com sucesso");
+            await carregaArquivosPeloTipoDeCarga()
+        }catch (e) {
+            console.log("Erro ao processar o Arquivo de Carga  ", e.response);
+        }
+    }, [carregaArquivosPeloTipoDeCarga]);
 
     const acoesTemplate = useCallback((rowData) => {
         return (
@@ -209,7 +219,7 @@ const ArquivosDeCarga = () => {
                     <button className="btn-acoes"><span className="btn-acoes-dots">...</span></button>
                 </span>
                 <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <button className="btn btn-link dropdown-item fonte-14" type="button">
+                    <button onClick={()=>handleClickProcessarArquivoDeCarga(rowData)} className="btn btn-link dropdown-item fonte-14" type="button">
                         <FontAwesomeIcon
                             style={{fontSize: '15px', marginRight: "5px", color: "#00585E"}}
                             icon={faCogs}
@@ -240,7 +250,7 @@ const ArquivosDeCarga = () => {
                 </div>
             </div>
         )
-    }, [handleClickDeleteArquivoDeCarga, handleClickDownloadArquivoDeCarga, handleEditarArquivos]);
+    }, [handleClickDeleteArquivoDeCarga, handleClickDownloadArquivoDeCarga, handleEditarArquivos, handleClickProcessarArquivoDeCarga]);
 
     const handleSubmitModalForm = useCallback(async (values) => {
         console.log("handleSubmitModalFormAssociacoes ", values);
