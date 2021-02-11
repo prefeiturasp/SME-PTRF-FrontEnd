@@ -161,7 +161,6 @@ const ArquivosDeCarga = () => {
         log: "",
         operacao: 'create',
     };
-
     const [showModalForm, setShowModalForm] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [showModalInfoArquivosDeCarga, setShowModalInfoArquivosDeCarga] = useState(false);
