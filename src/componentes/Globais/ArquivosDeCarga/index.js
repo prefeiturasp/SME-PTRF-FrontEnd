@@ -52,6 +52,18 @@ const ArquivosDeCarga = () => {
     const [tabelaArquivos, setTabelaArquivos] = useState([]);
     const [arquivos, setArquivos] = useState([]);
 
+    useEffect(() => {
+        console.log("Entrei 01 ", arquivos.filter(arquivo=> arquivo.status === 'PROCESSANDO' ));
+        if (arquivos && arquivos.length > 0 && arquivos.filter(arquivo=> arquivo.status === 'PROCESSANDO' ).length > 0){
+            console.log("Entrei 02 ", arquivos.filter(arquivo=> arquivo.status === 'PROCESSANDO' ));
+            const timer = setInterval(() => {
+                carregaArquivosPeloTipoDeCarga();
+            }, 5000);
+            // clearing interval
+            return () => clearInterval(timer);
+        }
+    });
+
     const carregaTabelaArquivos = useCallback(async () => {
         if (dadosDeOrigem.acesso_permitido) {
             let tabela = await getTabelaArquivosDeCarga();
@@ -209,11 +221,11 @@ const ArquivosDeCarga = () => {
         try {
             let processar = await postProcessarArquivoDeCarga(rowData.uuid);
             console.log("Processar ", processar);
-            console.log("Arquivo de Carga processado efetuado com sucesso");
-            await carregaArquivosPeloTipoDeCarga()
+            console.log("Arquivo de Carga processado com sucesso");
         }catch (e) {
             console.log("Erro ao processar o Arquivo de Carga  ", e.response);
         }
+        await carregaArquivosPeloTipoDeCarga()
     }, [carregaArquivosPeloTipoDeCarga]);
 
     const handleClickDownloadModeloArquivoDeCarga = useCallback(async ()=>{
