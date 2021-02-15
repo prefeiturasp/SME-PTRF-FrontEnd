@@ -69,7 +69,7 @@ const ModalFormArquivosDeCarga = ({show, stateFormModal, handleClose, handleSubm
                                             id="tipo_delimitador"
                                             className="form-control"
                                         >
-                                            <option value=''>Selecione um período</option>
+                                            <option value=''>Selecione delimitador</option>
                                             {tabelaArquivos && tabelaArquivos.tipos_delimitadores && tabelaArquivos.tipos_delimitadores.length > 0 &&  tabelaArquivos.tipos_delimitadores.map((delimitador) =>
                                                 <option key={delimitador.id} value={delimitador.id}>{delimitador.nome}</option>
                                             )}
