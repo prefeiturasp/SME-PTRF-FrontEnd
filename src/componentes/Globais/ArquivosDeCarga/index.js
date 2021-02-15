@@ -51,11 +51,10 @@ const ArquivosDeCarga = () => {
 
     const [tabelaArquivos, setTabelaArquivos] = useState([]);
     const [arquivos, setArquivos] = useState([]);
+    const [clickProcessar, setClickProcessar] = useState(false);
 
     useEffect(() => {
-        console.log("Entrei 01 ", arquivos.filter(arquivo=> arquivo.status === 'PROCESSANDO' ));
         if (arquivos && arquivos.length > 0 && arquivos.filter(arquivo=> arquivo.status === 'PROCESSANDO' ).length > 0){
-            console.log("Entrei 02 ", arquivos.filter(arquivo=> arquivo.status === 'PROCESSANDO' ));
             const timer = setInterval(() => {
                 carregaArquivosPeloTipoDeCarga();
             }, 5000);
@@ -64,10 +63,10 @@ const ArquivosDeCarga = () => {
         }
     });
 
+
     const carregaTabelaArquivos = useCallback(async () => {
         if (dadosDeOrigem.acesso_permitido) {
             let tabela = await getTabelaArquivosDeCarga();
-            console.log("TABELA ", tabela);
             setTabelaArquivos(tabela)
         }
     }, [dadosDeOrigem.acesso_permitido]);
@@ -80,7 +79,6 @@ const ArquivosDeCarga = () => {
         if (dadosDeOrigem.acesso_permitido) {
             try {
                 let arquivos = await getArquivosDeCargaFiltros(url_params.tipo_de_carga);
-                console.log("Arquivos ", arquivos);
                 setArquivos(arquivos)
             } catch (e) {
                 console.log("Erro ao carregar arquivos")
@@ -219,9 +217,10 @@ const ArquivosDeCarga = () => {
 
     const handleClickProcessarArquivoDeCarga = useCallback(async (rowData)=>{
         try {
-            let processar = await postProcessarArquivoDeCarga(rowData.uuid);
-            console.log("Processar ", processar);
+            await postProcessarArquivoDeCarga(rowData.uuid);
             console.log("Arquivo de Carga processado com sucesso");
+            setClickProcessar(true);
+            await carregaArquivosPeloTipoDeCarga()
         }catch (e) {
             console.log("Erro ao processar o Arquivo de Carga  ", e.response);
         }
