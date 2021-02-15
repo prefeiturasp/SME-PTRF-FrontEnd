@@ -10,7 +10,18 @@ export const YupSignupSchemaArquivosDeCarga  = yup.object().shape({
         .test(
             "fileFormat",
             "Arquivo de Carga é obrigatório e só permitido arquivos.csv",
-            (value) => value && 'application/vnd.ms-excel'.includes(value.type)
+            (value) => value &&
+                (
+                    'application/vnd.ms-excel'.includes(value.type) ||
+                    'text/plain'.includes(value.type) ||
+                    'text/x-csv'.includes(value.type) ||
+                    'application/csv'.includes(value.type) ||
+                    'application/x-csv'.includes(value.type) ||
+                    'text/csv'.includes(value.type) ||
+                    'text/comma-separated-values'.includes(value.type) ||
+                    'text/x-comma-separated-values'.includes(value.type) ||
+                    'text/tab-separated-values'.includes(value.type)
+                )
         )
     })
 });
