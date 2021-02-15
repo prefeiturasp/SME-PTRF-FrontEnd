@@ -123,9 +123,12 @@ export const FiqueDeOlho = () => {
                         </div>
                     ) :
                     !exibeEditor ? (
+                        <>
+                            <p>Exibindo <span className='total-acoes'>2</span> textos do fique de olho</p>
                             <TabelaFiqueDeOlho
                                 acoesTemplate={acoesTemplate}
                             />
+                        </>
                         ) :
                         <EditorWysiwyg
                             textoInicialEditor={textoInicialEditor}

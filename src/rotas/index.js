@@ -55,6 +55,7 @@ import {Periodos} from "../componentes/sme/Parametrizacoees/Estrutura/Periodos";
 import {Associacoes} from "../componentes/sme/Parametrizacoees/Estrutura/Associacoes";
 import {Tags} from "../componentes/sme/Parametrizacoees/Estrutura/Tags";
 import {FiqueDeOlho} from "../componentes/sme/Parametrizacoees/EdicaoDeTextos/FiqueDeOlho";
+import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
 
 const routesConfig = [
     {
@@ -282,6 +283,12 @@ const routesConfig = [
         path: "/dre-relatorio-consolidado-dados-das-ues/:periodo_uuid/:conta_uuid/",
         component: RelatorioConsolidadoDadosDasUes,
         permissoes: ['view_dashboard_dre'],
+    },
+    {
+        exact: true,
+        path: "/parametro-arquivos-de-carga/:tipo_de_carga/",
+        component: ArquivosDeCarga,
+        permissoes: ['view_default'],
     },
     {
         exact: true,
