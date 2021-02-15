@@ -56,6 +56,7 @@ import {Associacoes} from "../componentes/sme/Parametrizacoees/Estrutura/Associa
 import {Tags} from "../componentes/sme/Parametrizacoees/Estrutura/Tags";
 import {FiqueDeOlho} from "../componentes/sme/Parametrizacoees/EdicaoDeTextos/FiqueDeOlho";
 import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
+import {TiposDeCusteio} from "../componentes/sme/Parametrizacoees/Despesas/TiposDeCusteio"
 
 const routesConfig = [
     {
@@ -354,6 +355,12 @@ const routesConfig = [
         exact: true,
         path: "/",
         component: RedirectLoginVisaoUe,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/parametro-tipos-custeio",
+        component: TiposDeCusteio,
         permissoes: ['view_default'],
     },
 

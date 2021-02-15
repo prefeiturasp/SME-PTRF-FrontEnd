@@ -227,3 +227,21 @@ export const getAssociacoesNaoVinculadasAAcao = async (acao_uuid, nome="") => {
 export const addAcoesAssociacoesEmLote = async (payload) => {
     return (await api.post(`/api/acoes-associacoes/incluir-lote/`, payload, authHeader)).data
 };
+
+
+// Tipos de Custeio
+export const getTodosTiposDeCusteio = async () => {
+    return (await api.get(`/api/tipos-custeio/`, authHeader)).data
+};
+export const getFiltrosTiposDeCusteio = async (nome, status) => {
+    return (await api.get(`/api/tipos-custeio/?nome=${nome}`, authHeader)).data
+};
+export const postCreateTipoDeCusteio = async (payload) => {
+    return (await api.post(`/api/tipos-custeio/`, payload, authHeader)).data
+};
+export const patchAlterarTipoDeCusteio = async (tag_uuid, payload) => {
+    return (await api.patch(`/api/tipos-custeio/${tag_uuid}/`, payload, authHeader)).data
+};
+export const deleteTipoDeCusteio = async (tag_uuid) => {
+    return (await api.delete(`/api/tipos-custeio/${tag_uuid}/`, authHeader))
+};
