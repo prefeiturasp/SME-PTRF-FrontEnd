@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import "../associacao.scss"
-import {exportarDadosAssociacao} from "../../../../services/escolas/Associacao.service";
+import {exportarDadosAssociacao, exportarDadosAssociacaoPdf} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
 import {visoesService} from "../../../../services/visoes.service";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -15,6 +15,12 @@ export const ExportaDadosDaAsssociacao = () => {
         setLoading(false);
     };
 
+    const exportarDadosPdf = async () => {
+        setLoading(true);
+        await exportarDadosAssociacaoPdf();
+        setLoading(false);
+    };
+
     return (
         <>
             {loading ? (
@@ -26,6 +32,13 @@ export const ExportaDadosDaAsssociacao = () => {
                     />
                 ) :
                 <div className="d-flex  justify-content-end pb-3 mt-3">
+                    <span>
+                        <FontAwesomeIcon
+                            style={{color: `${!visoesService.getPermissoes(['change_associacao']) ? '#7D7D7D' : '#00585E'}`, marginRight:'3px'}}
+                            icon={faDownload}
+                        />
+                    <strong>Exportar :</strong>
+                    </span>
                     <button
                         disabled={!visoesService.getPermissoes(['change_associacao'])}
                         onClick={exportarDados}
@@ -35,11 +48,20 @@ export const ExportaDadosDaAsssociacao = () => {
                             style={{color: `${!visoesService.getPermissoes(['change_associacao']) ? '#7D7D7D' : '#00585E'}`, marginRight:'3px'}}
                             icon={faDownload}
                         />
-                        <strong>Exportar</strong>
+                        <strong>Excel</strong>
+                    </button>
+                    <button
+                        disabled={!visoesService.getPermissoes(['change_associacao'])}
+                        onClick={exportarDadosPdf}
+                        className={`link-exportar ${!visoesService.getPermissoes(['change_associacao']) ? 'link-exportar-disabled' : ''}`}
+                    >
+                        <FontAwesomeIcon
+                            style={{color: `${!visoesService.getPermissoes(['change_associacao']) ? '#7D7D7D' : '#00585E'}`, marginRight:'3px'}}
+                            icon={faDownload}
+                        />
+                        <strong>Pdf</strong>
                     </button>
                 </div>
-
-
             }
         </>
     );
