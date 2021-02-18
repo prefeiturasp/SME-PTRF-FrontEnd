@@ -89,6 +89,28 @@ export const exportarDadosAssociacao = async () => {
             });
 };
 
+export const exportarDadosAssociacaoPdf = async () => {
+    return api
+            .get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/exportar-pdf`, {
+                responseType: 'blob',
+                timeout: 30000,
+                headers: {
+                    'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                    'Content-Type': 'application/json'
+                }
+              })
+            .then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'associacao.pdf');
+                document.body.appendChild(link);
+                link.click();
+            }).catch(error => {
+                return error.response;
+            });
+};
+
 export const getPeriodosDePrestacaoDeContasDaAssociacao = async () => {
     return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/periodos-para-prestacao-de-contas/`, authHeader)).data
 };
