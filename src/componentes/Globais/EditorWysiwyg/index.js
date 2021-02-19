@@ -4,6 +4,12 @@ import "./editor-wysiwyg.scss"
 
 const EditorWysiwyg = ({textoInicialEditor, tituloEditor, handleSubmitEditor})=>{
 
+    let REACT_APP_EDITOR_KEY = "EDITOR_KEY_REPLACE_ME";
+
+    if (process.env.REACT_APP_NODE_ENV === "local") {
+        REACT_APP_EDITOR_KEY = process.env.REACT_APP_EDITOR_KEY;
+    }
+
     const [textoEditor, setTextoEditor] = useState(textoInicialEditor);
 
     return(
@@ -12,7 +18,7 @@ const EditorWysiwyg = ({textoInicialEditor, tituloEditor, handleSubmitEditor})=>
                 <p className='titulo-editor-fique-de-olho'>{tituloEditor}</p>
             }
             <Editor
-                apiKey={process.env.REACT_APP_EDITOR_KEY}
+                apiKey={REACT_APP_EDITOR_KEY}
                 initialValue={textoInicialEditor ? textoInicialEditor : '<p> </p>'}
                 init={{
                     height: 500,
