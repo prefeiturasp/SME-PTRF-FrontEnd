@@ -16,7 +16,6 @@ export const DATA_HORA_USUARIO_LOGADO = "DATA_HORA_USUARIO_LOGADO";
 const forcarNovoLogin = ()=>{
     const data_hora_atual = moment().format("YYYY-MM-DD HH:mm:ss");
     const data_hora_localstorage = localStorage.getItem(DATA_HORA_USUARIO_LOGADO);
-    //debugger
     if(data_hora_localstorage){
         const diferenca = moment(data_hora_atual).diff(moment(data_hora_localstorage), 'minutes');
         if (diferenca >= 1440){ // Equivale a 24 horas
