@@ -11,7 +11,7 @@ set -xe
   : "${API_URL?Precisa de uma variavel de ambiente API_URL}"
 
 set -xe
-  : "${REACT_APP_EDITOR_KEY?Precisa de uma variavel de ambiente API_URL}"
+  : "${REACT_APP_EDITOR_KEY?Precisa de uma variavel de ambiente REACT_APP_EDITOR_KEY}"
 
 set -xe
   : "${SERVER_NAME?Precisa de uma variavel de ambiente SERVER_NAME}"
