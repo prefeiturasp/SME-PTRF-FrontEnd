@@ -8,6 +8,9 @@ Versão: 1.6.0
 
 ## Release Notes
 
+### 1.7.0 - 05/03/2021 - Entregas da Sprint 16
+* Em andamento...
+
 ### 1.6.0 - 16/02/2021 - Entregas da Sprint 15
 * Informações do usuário agora no topo da tela
 * UE > Campos para telefone e endereço no cadastro do presidente da associação
