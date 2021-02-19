@@ -17,8 +17,10 @@ const forcarNovoLogin = ()=>{
     const data_hora_atual = moment().format("YYYY-MM-DD HH:mm:ss");
     const data_hora_localstorage = localStorage.getItem(DATA_HORA_USUARIO_LOGADO);
     if(data_hora_localstorage){
-        const diferenca = moment(data_hora_atual).diff(moment(data_hora_localstorage), 'minutes');
-        if (diferenca >= 600){ // Equivale a 10 horas
+        const diferenca = moment(data_hora_atual).diff(moment(data_hora_localstorage), 'seconds');
+        //const diferenca = moment(data_hora_atual).diff(moment(data_hora_localstorage), 'minutes');
+        if (diferenca >= 60){ // Equivale a 10 horas
+        //if (diferenca >= 600){ // Equivale a 10 horas
             localStorage.setItem(DATA_HORA_USUARIO_LOGADO, data_hora_atual);
             authService.logout();
         }
