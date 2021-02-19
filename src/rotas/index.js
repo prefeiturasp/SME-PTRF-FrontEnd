@@ -53,6 +53,10 @@ import {AssociacoesDaAcao} from "../componentes/sme/Parametrizacoees/Estrutura/A
 import {VinculaAssociacoesAAcao} from "../componentes/sme/Parametrizacoees/Estrutura/Acoes/VinculaAssociacoesAAcao";
 import {Periodos} from "../componentes/sme/Parametrizacoees/Estrutura/Periodos";
 import {Associacoes} from "../componentes/sme/Parametrizacoees/Estrutura/Associacoes";
+import {Tags} from "../componentes/sme/Parametrizacoees/Estrutura/Tags";
+import {FiqueDeOlho} from "../componentes/sme/Parametrizacoees/EdicaoDeTextos/FiqueDeOlho";
+import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
+import {TiposDeCusteio} from "../componentes/sme/Parametrizacoees/Despesas/TiposDeCusteio"
 
 const routesConfig = [
     {
@@ -283,6 +287,12 @@ const routesConfig = [
     },
     {
         exact: true,
+        path: "/parametro-arquivos-de-carga/:tipo_de_carga/",
+        component: ArquivosDeCarga,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
         path: "/painel-parametrizacoes",
         component: PainelParametrizacoesPage,
         permissoes: ['view_default'],
@@ -307,20 +317,26 @@ const routesConfig = [
     },
     {
         exact: true,
+        path: "/parametro-tags",
+        component: Tags,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
         path: "/acompanhamento-pcs-sme",
         component: AcompanhamentoPcsSmePage,
         permissoes: ['view_default'],
     },
     {
         exact: true,
-        path: "/",
-        component: RedirectLoginVisaoUe,
+        path: "/parametro-acoes",
+        component: Acoes,
         permissoes: ['view_default'],
     },
     {
         exact: true,
-        path: "/parametro-acoes",
-        component: Acoes,
+        path: "/parametro-textos-fique-de-olho",
+        component: FiqueDeOlho,
         permissoes: ['view_default'],
     },
     {
@@ -335,6 +351,19 @@ const routesConfig = [
         component: VinculaAssociacoesAAcao,
         permissoes: ['view_default'],
     },
+    {
+        exact: true,
+        path: "/",
+        component: RedirectLoginVisaoUe,
+        permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/parametro-tipos-custeio",
+        component: TiposDeCusteio,
+        permissoes: ['view_default'],
+    },
+
 ];
 
 const PrivateRouter = (

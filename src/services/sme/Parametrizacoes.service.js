@@ -8,6 +8,109 @@ const authHeader = {
     }
 };
 
+// ***** Cargas Associacoes *****
+export const getTabelaArquivosDeCarga = async () => {
+    return (await api.get(`/api/arquivos/tabelas/`, authHeader)).data
+};
+export const getArquivosDeCargaFiltros = async (tipo_carga, identificador, status, data_execucao) => {
+    return (await api.get(`/api/arquivos/?tipo_carga=${tipo_carga}${identificador ? '&identificador='+ identificador : ''}${status ? '&status='+status : ''}${data_execucao ? '&data_execucao='+data_execucao : ''}`, authHeader)).data
+};
+export const postCreateArquivoDeCarga = async (payload) => {
+    const formData = new FormData();
+    formData.append("identificador", payload.identificador);
+    formData.append("tipo_carga", payload.tipo_carga);
+    formData.append("tipo_delimitador", payload.tipo_delimitador);
+    formData.append("status", payload.status);
+    formData.append("conteudo", payload.conteudo);
+    return (await api.post(`/api/arquivos/`, formData, authHeader)).data
+};
+export const patchAlterarArquivoDeCarga = async (uuid_arquivo_de_carga, payload) => {
+    const formData = new FormData();
+    formData.append("identificador", payload.identificador);
+    formData.append("tipo_delimitador", payload.tipo_delimitador);
+    if (payload.conteudo){
+        formData.append("conteudo", payload.conteudo);
+    }
+    return (await api.patch(`/api/arquivos/${uuid_arquivo_de_carga}`, formData, authHeader)).data
+};
+export const deleteArquivoDeCarga = async (uuid_arquivo_de_carga) => {
+    return (await api.delete(`/api/arquivos/${uuid_arquivo_de_carga}`, authHeader))
+};
+export const getDownloadArquivoDeCarga = async (uuid_arquivo_de_carga, nome_do_arquivo_com_extensao) => {
+    return (await api
+        .get(`/api/arquivos/${uuid_arquivo_de_carga}/download/`, {
+            responseType: 'blob',
+            timeout: 30000,
+            headers: {
+                'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', nome_do_arquivo_com_extensao);
+            document.body.appendChild(link);
+            link.click();
+        }).catch(error => {
+            return error.response;
+        })
+    )
+};
+
+export const postProcessarArquivoDeCarga = async (uuid_arquivo_de_carga) => {
+    return (await api.post(`/api/arquivos/${uuid_arquivo_de_carga}/processar/`, authHeader)).data
+};
+export const getDownloadModeloArquivoDeCarga = async (tipo_arquivo_de_carga) => {
+    return (await api
+        .get(`/api/modelos-cargas/${tipo_arquivo_de_carga}/download/`, {
+            responseType: 'blob',
+            timeout: 30000,
+            headers: {
+                'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'Modelo_Carga_Associacoes.xlsx');
+            document.body.appendChild(link);
+            link.click();
+        }).catch(error => {
+            return error.response;
+        })
+    )
+};
+
+// ***** Edição de Textos *****
+export const patchAlterarFiqueDeOlhoPrestacoesDeContas = async (payload) => {
+    return (await api.patch(`/api/prestacoes-contas/update-fique-de-olho/`, payload, authHeader)).data
+};
+export const patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre = async (payload) => {
+    return (await api.patch(`/api/relatorios-consolidados-dre/update-fique-de-olho/`, payload, authHeader)).data
+};
+
+// ***** Estrutura *****
+// Tags
+export const getTodasTags = async () => {
+    return (await api.get(`/api/tags/`, authHeader)).data
+};
+export const getFiltrosTags = async (nome, status) => {
+    return (await api.get(`/api/tags/?nome=${nome}&status=${status}`, authHeader)).data
+};
+export const postCreateTag = async (payload) => {
+    return (await api.post(`/api/tags/`, payload, authHeader)).data
+};
+export const patchAlterarTag = async (tag_uuid, payload) => {
+    return (await api.patch(`/api/tags/${tag_uuid}/`, payload, authHeader)).data
+};
+export const deleteTag = async (tag_uuid) => {
+    return (await api.delete(`/api/tags/${tag_uuid}/`, authHeader))
+};
+
 // Associacoes
 export const getAssociacoes = async () => {
     return (await api.get(`/api/associacoes/`, authHeader)).data
@@ -83,15 +186,6 @@ export const deleteAcaoAssociacao = async (acao_associacao_uuid) => {
     return (await api.delete(`/api/acoes-associacoes/${acao_associacao_uuid}/`, authHeader))
 };
 
-export const getRateiosAcao = async (acao_associacao_uuid, associacao_uuid) => {
-    return (await api.get(`api/rateios-despesas/?acao_associacao__uuid=${acao_associacao_uuid}&associacao__uuid=${associacao_uuid}`, authHeader)).data
-};
-
-export const getReceitasAcao = async (associacao_uuid, acao_associacao_uuid) => {
-    return (await api.get(`api/receitas/?associacao__uuid=${associacao_uuid}&acao_associacao__uuid=${acao_associacao_uuid}`, authHeader)).data
-};
-
-
 export const getAcoesFiltradas = async (nome='') => {
     return (await api.get(`/api/acoes/?nome=${nome}`, authHeader)).data
 };
@@ -132,4 +226,22 @@ export const getAssociacoesNaoVinculadasAAcao = async (acao_uuid, nome="") => {
 
 export const addAcoesAssociacoesEmLote = async (payload) => {
     return (await api.post(`/api/acoes-associacoes/incluir-lote/`, payload, authHeader)).data
+};
+
+
+// Tipos de Custeio
+export const getTodosTiposDeCusteio = async () => {
+    return (await api.get(`/api/tipos-custeio/`, authHeader)).data
+};
+export const getFiltrosTiposDeCusteio = async (nome, status) => {
+    return (await api.get(`/api/tipos-custeio/?nome=${nome}`, authHeader)).data
+};
+export const postCreateTipoDeCusteio = async (payload) => {
+    return (await api.post(`/api/tipos-custeio/`, payload, authHeader)).data
+};
+export const patchAlterarTipoDeCusteio = async (tag_uuid, payload) => {
+    return (await api.patch(`/api/tipos-custeio/${tag_uuid}/`, payload, authHeader)).data
+};
+export const deleteTipoDeCusteio = async (tag_uuid) => {
+    return (await api.delete(`/api/tipos-custeio/${tag_uuid}/`, authHeader))
 };

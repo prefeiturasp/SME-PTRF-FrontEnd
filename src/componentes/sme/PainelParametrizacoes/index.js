@@ -14,6 +14,7 @@ import IconeTiposDocumento from "../../../assets/img/icone-parametro-tipos-docum
 import IconeTiposTransacao from "../../../assets/img/icone-parametro-tipos-transacao.svg"
 import IconeTiposReceita from "../../../assets/img/icone-parametro-tipos-receita.svg"
 import IconeUsuarios from "../../../assets/img/icone-parametro-usuarios.svg"
+import IconeTextosFiqueDeOlho from "../../../assets/img/icone-parametro-textos-fique-de-olho.svg"
 
 export const PainelParametrizacoes = () => {
 
@@ -86,6 +87,14 @@ export const PainelParametrizacoes = () => {
         }
     ];
 
+    const itensParametrizacaoEdicaoDeTexto = [
+        {
+            parametro: 'Textos do Fique de Olho',
+            url: 'parametro-textos-fique-de-olho',
+            icone: IconeTextosFiqueDeOlho,
+        }
+    ];
+
     const itensParametrizacaoGestaoSme = [
         {
             parametro: 'Usuários',
@@ -107,6 +116,10 @@ export const PainelParametrizacoes = () => {
             <ParametrizacaoCard
                 itensParametrizacao={itensParametrizacaoReceitas}
                 nomeGrupo='Receitas'
+            />
+            <ParametrizacaoCard
+                itensParametrizacao={itensParametrizacaoEdicaoDeTexto}
+                nomeGrupo='Edição de texto'
             />
             <ParametrizacaoCard
                 itensParametrizacao={itensParametrizacaoGestaoSme}

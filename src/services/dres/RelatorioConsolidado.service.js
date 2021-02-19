@@ -9,7 +9,7 @@ const authHeader = {
     }
 };
 
-export const getFiqueDeOlho = async () => {
+export const getFiqueDeOlhoRelatoriosConsolidados = async () => {
     return (await api.get(`/api/relatorios-consolidados-dre/fique-de-olho/`, authHeader)).data
 };
 
