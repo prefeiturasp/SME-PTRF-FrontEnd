@@ -1,7 +1,7 @@
 import decode from "jwt-decode";
 import api from './api';
 import HTTP_STATUS from "http-status-codes";
-import {visoesService} from "./visoes.service";
+import {DATA_HORA_USUARIO_LOGADO, visoesService} from "./visoes.service";
 import moment from "moment";
 
 export const TOKEN_ALIAS = "TOKEN";
@@ -30,6 +30,7 @@ const authHeaderAuthorization = {
 const setDataLogin = async ()=>{
     let data_login = localStorage.getItem(DATA_LOGIN);
     if(data_login){
+        const data_hora_atual = moment().format("YYYY-MM-DD HH:mm:ss");
         const now = moment(new Date().toISOString().slice(0,10)); // Data atual
         const past = moment(data_login); // Data do login
         const duration = moment.duration(now.diff(past)); // Calcula diferença entre datas
@@ -37,6 +38,7 @@ const setDataLogin = async ()=>{
         if (days >= 1){
             localStorage.removeItem('DADOS_USUARIO_LOGADO');
             localStorage.setItem(DATA_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"));
+            localStorage.setItem(DATA_HORA_USUARIO_LOGADO, data_hora_atual);
             await logout();
         }
     }else {
