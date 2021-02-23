@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {SelectAcaoLancamento} from "./SelectAcaoLancamento";
 import {TabelaDeLancamentosDespesas} from "./TabelaDeLancamentosDespesas";
 import {TabelaDeLancamentosReceitas} from "./TabelaDeLancamentosReceitas";
-import {TabelaValoresPendentesPorAcao} from "./TabelaValoresPendentesPorAcao";
+import TabelaValoresPendentesPorAcao from "./TabelaValoresPendentesPorAcao";
 import {Justificativa} from "./Justivicativa";
 import {getTabelasReceita} from "../../../../services/escolas/Receitas.service";
 import {
@@ -24,6 +24,7 @@ import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada"
 import Img404 from "../../../../assets/img/img-404.svg";
 import {ModalConfirmaSalvar} from "../../../../utils/Modais";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
+import {tabelaValoresPendentes} from "../../../../services/escolas/TabelaValoresPendentesPorAcao.service";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -341,7 +342,7 @@ export const DetalheDasPrestacoes = () => {
         let msg = (notificar_dias_nao_conferido <= 59) ? `1 mês.` : `${meses} meses.` 
 
         return `Não demonstrado por ${msg}`;
-    }
+    };
 
     const verificaSePeriodoEstaAberto = async (periodoUuid) => {
         if (periodosAssociacao) {
@@ -356,7 +357,31 @@ export const DetalheDasPrestacoes = () => {
                 });
             }
         }
-    }
+    };
+
+    // Tabela ValoresPendentes por Ação
+    const [valoresPendentes, setValoresPendentes] = useState({});
+
+    const carregaValoresPendentes = useCallback(async ()=>{
+        let valores_pendentes = await tabelaValoresPendentes(periodoConta.periodo, periodoConta.conta);
+        setValoresPendentes(valores_pendentes)
+    }, [periodoConta.periodo, periodoConta.conta]);
+
+    useEffect(()=>{
+        if (periodoConta.periodo && periodoConta.conta){
+            carregaValoresPendentes()
+        }
+
+    }, [periodoConta.periodo, periodoConta.conta, carregaValoresPendentes]);
+
+    const valorTemplate = (valor) => {
+        let valor_formatado = Number(valor).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+        valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
+        return valor_formatado
+    };
 
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
@@ -397,8 +422,8 @@ export const DetalheDasPrestacoes = () => {
                             />
 
                             <TabelaValoresPendentesPorAcao
-                                periodo={periodoConta.periodo}
-                                conta={periodoConta.conta}
+                                valoresPendentes={valoresPendentes}
+                                valorTemplate={valorTemplate}
                             />
 
                             <SelectAcaoLancamento

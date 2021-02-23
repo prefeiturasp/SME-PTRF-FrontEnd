@@ -1,3 +1,11 @@
 .datatable-header-cursor {
     cursor: pointer;
 }
+
+.cabecalho-cinza-claro{
+    background-color: #F5F6F8 !important;
+}
+
+.coluna-cinza-escuro{
+    background-color: #DADADA;
+}
