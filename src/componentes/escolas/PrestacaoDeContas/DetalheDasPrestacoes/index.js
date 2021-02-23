@@ -37,8 +37,6 @@ export const DetalheDasPrestacoes = () => {
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [contaConciliacao, setContaConciliacao] = useState("");
-    const [btnCadastrarTexto, setBtnCadastrarTexto] = useState("");
-    const [btnCadastrarUrl, setBtnCadastrarUrl] = useState("");
     const [acaoLancamento, setAcaoLancamento] = useState("");
     const [acoesAssociacao, setAcoesAssociacao] = useState(false);
 
@@ -78,8 +76,6 @@ export const DetalheDasPrestacoes = () => {
             setReceitasNaoConferidas([]);
 
             if (acaoLancamento.lancamento === 'receitas-lancadas') {
-                setBtnCadastrarTexto("Cadastrar Receita");
-                setBtnCadastrarUrl("/cadastro-de-credito/tabela-de-lancamentos-receitas");
                 setDespesasNaoConferidas([]);
                 setDespesasConferidas([]);
                 getReceitasNaoConferidas();
@@ -87,13 +83,10 @@ export const DetalheDasPrestacoes = () => {
             } else if (acaoLancamento.lancamento === 'despesas-lancadas') {
                 setReceitasNaoConferidas([]);
                 setReceitasConferidas([]);
-                setBtnCadastrarTexto("Cadastrar Despesa");
-                setBtnCadastrarUrl("/cadastro-de-despesa/tabela-de-lancamentos-despesas");
                 getDespesasNaoConferidas();
                 getDespesasConferidas();
             }
         } else {
-            setBtnCadastrarTexto("");
             setReceitasNaoConferidas([]);
             setReceitasConferidas([]);
             setDespesasNaoConferidas([]);
@@ -334,10 +327,6 @@ export const DetalheDasPrestacoes = () => {
         setShowSalvar(false);
     };
 
-    const handleClickCadastrar = () => {
-        window.location.assign(btnCadastrarUrl)
-    };
-
     const dataTip = (notificar_dias_nao_conferido) => {
         let meses = Math.trunc(notificar_dias_nao_conferido/30)
         let msg = (notificar_dias_nao_conferido <= 59) ? `1 mês.` : `${meses} meses.` 
@@ -423,8 +412,6 @@ export const DetalheDasPrestacoes = () => {
                     {periodoConta.periodo && periodoConta.conta ? (
                         <>
                             <TopoComBotoes
-                                handleClickCadastrar={handleClickCadastrar}
-                                btnCadastrarTexto={btnCadastrarTexto}
                                 setShowSalvar={setShowSalvar}
                                 showSalvar={!periodoFechado}
                                 onSalvarTrue={onSalvarTrue}

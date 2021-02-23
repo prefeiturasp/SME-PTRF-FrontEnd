@@ -1,22 +1,29 @@
 import React from "react";
 import {visoesService} from "../../../../../services/visoes.service";
 
-export const TopoComBotoes = ({handleClickCadastrar, btnCadastrarTexto, onSalvarTrue, contaConciliacao, showSalvar}) => {
+export const TopoComBotoes = ({onSalvarTrue, contaConciliacao, showSalvar}) => {
     return (
-        <div className="row mt-3">
-            <div className='col-12 col-md-6 mt-2'>
-                <p className='detalhe-das-prestacoes-titulo'>Demonstrativo financeiro da conta {contaConciliacao}</p>
-            </div>
-            {btnCadastrarTexto &&
-                <div className='col-12 col-md-6 text-right'>
-                    {(btnCadastrarTexto.includes('Receita') & visoesService.getPermissoes(['add_receita'])) | (btnCadastrarTexto.includes('Despesa') & visoesService.getPermissoes(['add_despesa']))
-                    ? <button type="button" onClick={handleClickCadastrar} className="btn btn-outline-success mr-2 mt-2"> <strong>{btnCadastrarTexto}</strong></button>
-                    : null}
-                    {visoesService.getPermissoes(['change_conciliacao_bancaria'])
-                     ?  <button type="button" onClick={()=>onSalvarTrue()} className="btn btn-outline-success mt-2" disabled={!showSalvar}><strong>Salvar</strong></button>
-                     : null}
+        <>
+            <div className="d-flex bd-highlight mt-3 mb-3">
+                <div className="flex-grow-1 bd-highlight">
+                    <p className='detalhe-das-prestacoes-titulo'>Demonstrativo financeiro da conta {contaConciliacao}</p>
                 </div>
-            }
-        </div>
+                {visoesService.getPermissoes(['add_despesa']) &&
+                    <div className="bd-highlight">
+                        <button type="button" onClick={()=>window.location.assign('/cadastro-de-despesa/tabela-de-lancamentos-despesas')} className="btn btn-outline-success mr-2 mt-2"><strong>Cadastrar despesa</strong></button>
+                    </div>
+                }
+                {visoesService.getPermissoes(['add_receita']) &&
+                    <div className="bd-highlight">
+                        <button type="button" onClick={()=>window.location.assign('/cadastro-de-credito/tabela-de-lancamentos-receitas')} className="btn btn-outline-success mr-2 mt-2"><strong>Cadastrar receita</strong></button>
+                    </div>
+                }
+                {visoesService.getPermissoes(['change_conciliacao_bancaria']) &&
+                    <div className="bd-highlight">
+                    <button type="button" onClick={() => onSalvarTrue()} className="btn btn-outline-success mt-2" disabled={!showSalvar}><strong>Salvar</strong></button>
+                    </div>
+                }
+            </div>
+        </>
     );
 };
