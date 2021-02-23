@@ -26,6 +26,8 @@ import {ModalConfirmaSalvar} from "../../../../utils/Modais";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {tabelaValoresPendentes} from "../../../../services/escolas/TabelaValoresPendentesPorAcao.service";
 import DataSaldoBancario from "./DataSaldoBancario";
+import moment from "moment";
+import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -48,7 +50,6 @@ export const DetalheDasPrestacoes = () => {
     const [despesasConferidas, setDespesasConferidas] = useState([]);
     const [checkboxDespesas, setCheckboxDespesas] = useState(false);
 
-    const [observacoes, setObservacoes] = useState([]);
     const [textareaJustificativa, setTextareaJustificativa] = useState("");
 
     useEffect(()=>{
@@ -240,70 +241,28 @@ export const DetalheDasPrestacoes = () => {
             ...acaoLancamento,
             [name]: value
         });
-
-        if (name === 'acao' && value !== '') {
-            if (observacoes && observacoes.length > 0){
-                const obs = observacoes.find((acao) => acao.acao_associacao_uuid === value);
-                if (obs && obs.observacao){
-                    setTextareaJustificativa(obs.observacao);
-                }else {
-                    setTextareaJustificativa('');
-                }
-            }
-
-
-        } else if(name === 'acao') {
-            setTextareaJustificativa('');
-        }
     };
 
     const handleChangeTextareaJustificativa = (event) => {
-        const obs = observacoes.map((acao) => (
-            {
-                ...acao,
-                observacao: acao.acao_associacao_uuid === acaoLancamento.acao ? event.target.value : acao.observacao
-            }
-        ));
-        setObservacoes(obs);
         setTextareaJustificativa(event.target.value);
     };
 
     const carregaObservacoes = async () => {
 
-        if (acoesAssociacao && periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== "") {
-            let acoes = acoesAssociacao;
+        if (periodoConta.periodo && periodoConta.conta) {
             let periodo_uuid = periodoConta.periodo;
             let conta_uuid = periodoConta.conta;
 
-            await getObservacoes(periodo_uuid, conta_uuid).then(response => {
-                let observs = acoes.map((acao) => (
-                    {
-                        acao_associacao_uuid: acao.uuid,
-                        observacao: ''
-                    }
-                ));
+            let observacao = await getObservacoes(periodo_uuid, conta_uuid);
 
-                if (response) {
-                    observs = observs.map((obs) => {
-                        let obs_resp = response.find((acao) => acao.acao_associacao_uuid === obs.acao_associacao_uuid);
+            console.log("carregaObservacoes ", observacao)
 
-                        return {
-                            ...obs,
-                            observacao: obs_resp !== undefined ? obs_resp.observacao : obs.observacao
-                        }
-                    });
+            setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
+            setDataSaldoBancario({
+                data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
+                saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : '',
+            })
 
-                    const files = JSON.parse(localStorage.getItem('acaoLancamento'));
-                    if (files.acao !== "") {
-                        const observacao = observs.find((acao) => acao.acao_associacao_uuid === files.acao);
-                        setTextareaJustificativa(observacao.observacao);
-                    }
-                }
-                setObservacoes(observs);
-
-            }).catch(error => {
-                console.log(error);
-            });
         }
     };
 
@@ -312,12 +271,14 @@ export const DetalheDasPrestacoes = () => {
         let payload = {
             "periodo_uuid": periodoConta.periodo,
             "conta_associacao_uuid": periodoConta.conta,
-            "observacoes": observacoes
+            "observacao": textareaJustificativa,
+            "data_extrato": dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): '',
+            "saldo_extrato": dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : '',
         };
-
         try {
-           await getSalvarPrestacaoDeConta(periodoConta.periodo, periodoConta.conta, payload);
-            setShowSalvar(true)
+            await getSalvarPrestacaoDeConta(periodoConta.periodo, periodoConta.conta, payload);
+            setShowSalvar(true);
+            await carregaObservacoes();
         } catch (e) {
             console.log("Erro: ", e.message)
         }
@@ -328,8 +289,8 @@ export const DetalheDasPrestacoes = () => {
     };
 
     const dataTip = (notificar_dias_nao_conferido) => {
-        let meses = Math.trunc(notificar_dias_nao_conferido/30)
-        let msg = (notificar_dias_nao_conferido <= 59) ? `1 mês.` : `${meses} meses.` 
+        let meses = Math.trunc(notificar_dias_nao_conferido/30);
+        let msg = (notificar_dias_nao_conferido <= 59) ? `1 mês.` : `${meses} meses.`;
 
         return `Não demonstrado por ${msg}`;
     };

@@ -13,9 +13,9 @@ export const Justificativa = ({textareaJustificativa, handleChangeTextareaJustif
                 id="justificativa"
                 name="justificativa"
                 placeholder="Escreva o comentário"
-                disabled={periodoFechado | !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
+                disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
             >
             </textarea>
         </div>
     );
-}
+};
