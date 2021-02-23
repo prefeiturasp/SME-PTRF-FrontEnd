@@ -1,9 +1,10 @@
-import React from "react";
+import React, {memo} from "react";
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 import CurrencyInput from "react-currency-input";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
+import './data-saldo-bancario.scss'
 
-export const DataSaldoBancario = () => {
+const DataSaldoBancario = ({valoresPendentes, dataSaldoBancario, handleChangaDataSaldo}) => {
     return(
         <>
             <form method="post">
@@ -16,8 +17,8 @@ export const DataSaldoBancario = () => {
                                     <div className="col">
                                         <label htmlFor="data_extrato">Data</label>
                                         <DatePickerField
-                                            //value={analisesDeContaDaPrestacao[index].data_extrato ? analisesDeContaDaPrestacao[index].data_extrato : ''}
-                                            //onChange={handleChangeAnalisesDeContaDaPrestacao}
+                                            value={dataSaldoBancario.data_extrato ? dataSaldoBancario.data_extrato : ''}
+                                            onChange={handleChangaDataSaldo}
                                             name='data_extrato'
                                             type="date"
                                             className="form-control"
@@ -30,11 +31,11 @@ export const DataSaldoBancario = () => {
                                             prefix='R$'
                                             decimalSeparator=","
                                             thousandSeparator="."
-                                            //value={analisesDeContaDaPrestacao[index].saldo_extrato ? analisesDeContaDaPrestacao[index].saldo_extrato : ''}
+                                            value={dataSaldoBancario.saldo_extrato ? dataSaldoBancario.saldo_extrato : 0}
                                             id="saldo_extrato"
                                             name="saldo_extrato"
                                             className="form-control"
-                                            //onChangeEvent={(e) => handleChangeAnalisesDeContaDaPrestacao(e.target.name, e.target.value)}
+                                            onChangeEvent={(e) => handleChangaDataSaldo(e.target.name, e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -47,15 +48,15 @@ export const DataSaldoBancario = () => {
                                 <h5 className="card-title titulo">Diferença em relação a prestação de contas</h5>
                                 <div className='row'>
                                     <div className="col-12">
-                                        <label htmlFor="diferenca">Valor</label>
+                                        <label htmlFor="diferenca_prestacao_de_conta">Valor</label>
                                         <CurrencyInput
-                                            allowNegative={false}
+                                            allowNegative={true}
                                             prefix='R$'
                                             decimalSeparator=","
                                             thousandSeparator="."
-                                            //value={infoAta.totais.saldo_atual_total - trataNumericos(analisesDeContaDaPrestacao[index].saldo_extrato)}
-                                            id="diferenca"
-                                            name="diferenca"
+                                            value={dataSaldoBancario.saldo_extrato ? valoresPendentes.saldo_posterior_total - trataNumericos(dataSaldoBancario.saldo_extrato) : valoresPendentes.saldo_posterior_total}
+                                            id="diferenca_prestacao_de_conta"
+                                            name="diferenca_prestacao_de_conta"
                                             className="form-control"
                                             disabled={true}
                                         />
@@ -69,3 +70,5 @@ export const DataSaldoBancario = () => {
         </>
     )
 };
+
+export default memo(DataSaldoBancario)

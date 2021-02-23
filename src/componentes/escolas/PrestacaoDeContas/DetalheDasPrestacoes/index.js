@@ -25,6 +25,7 @@ import Img404 from "../../../../assets/img/img-404.svg";
 import {ModalConfirmaSalvar} from "../../../../utils/Modais";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {tabelaValoresPendentes} from "../../../../services/escolas/TabelaValoresPendentesPorAcao.service";
+import DataSaldoBancario from "./DataSaldoBancario";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -383,6 +384,16 @@ export const DetalheDasPrestacoes = () => {
         return valor_formatado
     };
 
+    // Data Saldo Bancário
+    const [dataSaldoBancario, setDataSaldoBancario]= useState([])
+
+    const handleChangaDataSaldo = useCallback((name, value) => {
+        setDataSaldoBancario({
+            ...dataSaldoBancario,
+            [name]: value
+        });
+    }, [dataSaldoBancario]);
+
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
             <div className="row">
@@ -424,6 +435,12 @@ export const DetalheDasPrestacoes = () => {
                             <TabelaValoresPendentesPorAcao
                                 valoresPendentes={valoresPendentes}
                                 valorTemplate={valorTemplate}
+                            />
+
+                            <DataSaldoBancario
+                                valoresPendentes={valoresPendentes}
+                                dataSaldoBancario={dataSaldoBancario}
+                                handleChangaDataSaldo={handleChangaDataSaldo}
                             />
 
                             <SelectAcaoLancamento
