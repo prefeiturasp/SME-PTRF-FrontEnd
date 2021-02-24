@@ -3,8 +3,9 @@ import {DatePickerField} from "../../../../Globais/DatePickerField";
 import CurrencyInput from "react-currency-input";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import './data-saldo-bancario.scss'
+import {visoesService} from "../../../../../services/visoes.service";
 
-const DataSaldoBancario = ({valoresPendentes, dataSaldoBancario, handleChangaDataSaldo}) => {
+const DataSaldoBancario = ({valoresPendentes, dataSaldoBancario, handleChangaDataSaldo, periodoFechado}) => {
     return(
         <>
             <form method="post">
@@ -22,6 +23,7 @@ const DataSaldoBancario = ({valoresPendentes, dataSaldoBancario, handleChangaDat
                                             name='data_extrato'
                                             type="date"
                                             className="form-control"
+                                            disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
                                         />
                                     </div>
                                     <div className="col">
@@ -36,6 +38,7 @@ const DataSaldoBancario = ({valoresPendentes, dataSaldoBancario, handleChangaDat
                                             name="saldo_extrato"
                                             className="form-control"
                                             onChangeEvent={(e) => handleChangaDataSaldo(e.target.name, e.target.value)}
+                                            disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
                                         />
                                     </div>
                                 </div>
@@ -70,5 +73,4 @@ const DataSaldoBancario = ({valoresPendentes, dataSaldoBancario, handleChangaDat
         </>
     )
 };
-
 export default memo(DataSaldoBancario)

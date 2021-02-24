@@ -255,8 +255,6 @@ export const DetalheDasPrestacoes = () => {
 
             let observacao = await getObservacoes(periodo_uuid, conta_uuid);
 
-            console.log("carregaObservacoes ", observacao)
-
             setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
             setDataSaldoBancario({
                 data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
@@ -272,8 +270,8 @@ export const DetalheDasPrestacoes = () => {
             "periodo_uuid": periodoConta.periodo,
             "conta_associacao_uuid": periodoConta.conta,
             "observacao": textareaJustificativa,
-            "data_extrato": dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): '',
-            "saldo_extrato": dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : '',
+            "data_extrato": dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null,
+            "saldo_extrato": dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : 0,
         };
         try {
             await getSalvarPrestacaoDeConta(periodoConta.periodo, periodoConta.conta, payload);
@@ -335,7 +333,7 @@ export const DetalheDasPrestacoes = () => {
     };
 
     // Data Saldo Bancário
-    const [dataSaldoBancario, setDataSaldoBancario]= useState([])
+    const [dataSaldoBancario, setDataSaldoBancario]= useState([]);
 
     const handleChangaDataSaldo = useCallback((name, value) => {
         setDataSaldoBancario({
@@ -389,6 +387,7 @@ export const DetalheDasPrestacoes = () => {
                                 valoresPendentes={valoresPendentes}
                                 dataSaldoBancario={dataSaldoBancario}
                                 handleChangaDataSaldo={handleChangaDataSaldo}
+                                periodoFechado={periodoFechado}
                             />
 
                             <SelectAcaoLancamento
