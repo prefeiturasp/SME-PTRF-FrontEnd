@@ -25,6 +25,9 @@ import Img404 from "../../../../assets/img/img-404.svg";
 import {ModalConfirmaSalvar} from "../../../../utils/Modais";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {tabelaValoresPendentes} from "../../../../services/escolas/TabelaValoresPendentesPorAcao.service";
+import DataSaldoBancario from "./DataSaldoBancario";
+import moment from "moment";
+import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -36,8 +39,6 @@ export const DetalheDasPrestacoes = () => {
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [contaConciliacao, setContaConciliacao] = useState("");
-    const [btnCadastrarTexto, setBtnCadastrarTexto] = useState("");
-    const [btnCadastrarUrl, setBtnCadastrarUrl] = useState("");
     const [acaoLancamento, setAcaoLancamento] = useState("");
     const [acoesAssociacao, setAcoesAssociacao] = useState(false);
 
@@ -49,7 +50,6 @@ export const DetalheDasPrestacoes = () => {
     const [despesasConferidas, setDespesasConferidas] = useState([]);
     const [checkboxDespesas, setCheckboxDespesas] = useState(false);
 
-    const [observacoes, setObservacoes] = useState([]);
     const [textareaJustificativa, setTextareaJustificativa] = useState("");
 
     useEffect(()=>{
@@ -77,8 +77,6 @@ export const DetalheDasPrestacoes = () => {
             setReceitasNaoConferidas([]);
 
             if (acaoLancamento.lancamento === 'receitas-lancadas') {
-                setBtnCadastrarTexto("Cadastrar Receita");
-                setBtnCadastrarUrl("/cadastro-de-credito/tabela-de-lancamentos-receitas");
                 setDespesasNaoConferidas([]);
                 setDespesasConferidas([]);
                 getReceitasNaoConferidas();
@@ -86,13 +84,10 @@ export const DetalheDasPrestacoes = () => {
             } else if (acaoLancamento.lancamento === 'despesas-lancadas') {
                 setReceitasNaoConferidas([]);
                 setReceitasConferidas([]);
-                setBtnCadastrarTexto("Cadastrar Despesa");
-                setBtnCadastrarUrl("/cadastro-de-despesa/tabela-de-lancamentos-despesas");
                 getDespesasNaoConferidas();
                 getDespesasConferidas();
             }
         } else {
-            setBtnCadastrarTexto("");
             setReceitasNaoConferidas([]);
             setReceitasConferidas([]);
             setDespesasNaoConferidas([]);
@@ -246,70 +241,26 @@ export const DetalheDasPrestacoes = () => {
             ...acaoLancamento,
             [name]: value
         });
-
-        if (name === 'acao' && value !== '') {
-            if (observacoes && observacoes.length > 0){
-                const obs = observacoes.find((acao) => acao.acao_associacao_uuid === value);
-                if (obs && obs.observacao){
-                    setTextareaJustificativa(obs.observacao);
-                }else {
-                    setTextareaJustificativa('');
-                }
-            }
-
-
-        } else if(name === 'acao') {
-            setTextareaJustificativa('');
-        }
     };
 
     const handleChangeTextareaJustificativa = (event) => {
-        const obs = observacoes.map((acao) => (
-            {
-                ...acao,
-                observacao: acao.acao_associacao_uuid === acaoLancamento.acao ? event.target.value : acao.observacao
-            }
-        ));
-        setObservacoes(obs);
         setTextareaJustificativa(event.target.value);
     };
 
     const carregaObservacoes = async () => {
 
-        if (acoesAssociacao && periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== "") {
-            let acoes = acoesAssociacao;
+        if (periodoConta.periodo && periodoConta.conta) {
             let periodo_uuid = periodoConta.periodo;
             let conta_uuid = periodoConta.conta;
 
-            await getObservacoes(periodo_uuid, conta_uuid).then(response => {
-                let observs = acoes.map((acao) => (
-                    {
-                        acao_associacao_uuid: acao.uuid,
-                        observacao: ''
-                    }
-                ));
+            let observacao = await getObservacoes(periodo_uuid, conta_uuid);
 
-                if (response) {
-                    observs = observs.map((obs) => {
-                        let obs_resp = response.find((acao) => acao.acao_associacao_uuid === obs.acao_associacao_uuid);
+            setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
+            setDataSaldoBancario({
+                data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
+                saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : '',
+            })
 
-                        return {
-                            ...obs,
-                            observacao: obs_resp !== undefined ? obs_resp.observacao : obs.observacao
-                        }
-                    });
-
-                    const files = JSON.parse(localStorage.getItem('acaoLancamento'));
-                    if (files.acao !== "") {
-                        const observacao = observs.find((acao) => acao.acao_associacao_uuid === files.acao);
-                        setTextareaJustificativa(observacao.observacao);
-                    }
-                }
-                setObservacoes(observs);
-
-            }).catch(error => {
-                console.log(error);
-            });
         }
     };
 
@@ -318,12 +269,14 @@ export const DetalheDasPrestacoes = () => {
         let payload = {
             "periodo_uuid": periodoConta.periodo,
             "conta_associacao_uuid": periodoConta.conta,
-            "observacoes": observacoes
+            "observacao": textareaJustificativa,
+            "data_extrato": dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null,
+            "saldo_extrato": dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : 0,
         };
-
         try {
-           await getSalvarPrestacaoDeConta(periodoConta.periodo, periodoConta.conta, payload);
-            setShowSalvar(true)
+            await getSalvarPrestacaoDeConta(periodoConta.periodo, periodoConta.conta, payload);
+            setShowSalvar(true);
+            await carregaObservacoes();
         } catch (e) {
             console.log("Erro: ", e.message)
         }
@@ -333,13 +286,9 @@ export const DetalheDasPrestacoes = () => {
         setShowSalvar(false);
     };
 
-    const handleClickCadastrar = () => {
-        window.location.assign(btnCadastrarUrl)
-    };
-
     const dataTip = (notificar_dias_nao_conferido) => {
-        let meses = Math.trunc(notificar_dias_nao_conferido/30)
-        let msg = (notificar_dias_nao_conferido <= 59) ? `1 mês.` : `${meses} meses.` 
+        let meses = Math.trunc(notificar_dias_nao_conferido/30);
+        let msg = (notificar_dias_nao_conferido <= 59) ? `1 mês.` : `${meses} meses.`;
 
         return `Não demonstrado por ${msg}`;
     };
@@ -383,6 +332,16 @@ export const DetalheDasPrestacoes = () => {
         return valor_formatado
     };
 
+    // Data Saldo Bancário
+    const [dataSaldoBancario, setDataSaldoBancario]= useState([]);
+
+    const handleChangaDataSaldo = useCallback((name, value) => {
+        setDataSaldoBancario({
+            ...dataSaldoBancario,
+            [name]: value
+        });
+    }, [dataSaldoBancario]);
+
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
             <div className="row">
@@ -412,8 +371,6 @@ export const DetalheDasPrestacoes = () => {
                     {periodoConta.periodo && periodoConta.conta ? (
                         <>
                             <TopoComBotoes
-                                handleClickCadastrar={handleClickCadastrar}
-                                btnCadastrarTexto={btnCadastrarTexto}
                                 setShowSalvar={setShowSalvar}
                                 showSalvar={!periodoFechado}
                                 onSalvarTrue={onSalvarTrue}
@@ -424,6 +381,13 @@ export const DetalheDasPrestacoes = () => {
                             <TabelaValoresPendentesPorAcao
                                 valoresPendentes={valoresPendentes}
                                 valorTemplate={valorTemplate}
+                            />
+
+                            <DataSaldoBancario
+                                valoresPendentes={valoresPendentes}
+                                dataSaldoBancario={dataSaldoBancario}
+                                handleChangaDataSaldo={handleChangaDataSaldo}
+                                periodoFechado={periodoFechado}
                             />
 
                             <SelectAcaoLancamento
