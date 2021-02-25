@@ -15,7 +15,8 @@ import {
     getDesconciliarDespesa,
     getSalvarPrestacaoDeConta,
     getObservacoes,
-    getStatusPeriodoPorData
+    getStatusPeriodoPorData,
+    getTransacoes,
 } from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getContas, getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
@@ -28,6 +29,7 @@ import {tabelaValoresPendentes} from "../../../../services/escolas/TabelaValores
 import DataSaldoBancario from "./DataSaldoBancario";
 import moment from "moment";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import TabelaTransacoes from "./TabelaTransacoes";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -342,6 +344,38 @@ export const DetalheDasPrestacoes = () => {
         });
     }, [dataSaldoBancario]);
 
+    // Transacoes Conciliadas e Não Conciliadas
+    const [transacoesConciliadas, setTransacoesConciliadas] = useState([]);
+    const [transacoesNaoConciliadas, setTransacoesNaoConciliadas] = useState([]);
+    const [checkboxTransacoes, setCheckboxTransacoes] = useState(false);
+
+    const carregaTransacoes = useCallback(async ()=>{
+
+        if (periodoConta.periodo && periodoConta.conta){
+            let transacoes_conciliadas = await getTransacoes(periodoConta.periodo, periodoConta.conta, 'True');
+            console.log("carregaTransacoes True ", transacoes_conciliadas)
+            setTransacoesConciliadas(transacoes_conciliadas);
+            let transacoes_nao_conciliadas = await getTransacoes(periodoConta.periodo, periodoConta.conta, 'False');
+            console.log("carregaTransacoes False ", transacoes_nao_conciliadas)
+            setTransacoesNaoConciliadas(transacoes_nao_conciliadas);
+        }
+    }, [periodoConta]);
+
+    useEffect(()=>{
+        carregaTransacoes();
+    }, [carregaTransacoes]);
+
+    const handleChangeCheckboxTransacoes = async (event, rateio_uuid) => {
+        setCheckboxTransacoes(event.target.checked);
+        if (event.target.checked) {
+            //await conciliarDespesas(rateio_uuid);
+        } else if (!event.target.checked) {
+            //await desconciliarDespesas(rateio_uuid)
+        }
+        //await getDespesasNaoConferidas();
+        //await getDespesasConferidas();
+    };
+
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
             <div className="row">
@@ -389,8 +423,20 @@ export const DetalheDasPrestacoes = () => {
                                 handleChangaDataSaldo={handleChangaDataSaldo}
                                 periodoFechado={periodoFechado}
                             />
+                            {transacoesNaoConciliadas && transacoesNaoConciliadas.length >0 ?(
+                                <TabelaTransacoes
+                                    transacoes={transacoesNaoConciliadas}
+                                    conciliados={false}
+                                    checkboxTransacoes={checkboxTransacoes}
+                                    periodoFechado={periodoFechado}
+                                    handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
+                                />
+                            ):
+                                <p className="mt-5"><strong>Não existem lançamentos não conciliados...</strong></p>
+                            }
 
-                            <SelectAcaoLancamento
+
+                            {/*<SelectAcaoLancamento
                                 acaoLancamento={acaoLancamento}
                                 handleChangeSelectAcoes={handleChangeSelectAcoes}
                                 acoesAssociacao={acoesAssociacao}
@@ -446,7 +492,7 @@ export const DetalheDasPrestacoes = () => {
                                 dataTip={dataTip}
                                 periodoFechado={periodoFechado}
                             />
-                            }
+                            }*/}
 
                             <Justificativa
                                 textareaJustificativa={textareaJustificativa}

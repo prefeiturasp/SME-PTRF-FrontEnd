@@ -50,6 +50,12 @@ export const getReabrirPeriodo = async (uuid, payload) => {
 };
 
 // Detalhe Prestação de Contas
+// *** Novas implementações História 34038 - Sprint 16 ***
+
+export const getTransacoes = async (periodo_uuid, conta_uuid, conferido) => {
+  return (await api.get(`/api/conciliacoes/transacoes/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&conferido=${conferido}`, authHeader)).data
+};
+
 export const getDespesasPrestacaoDeContas = async (periodo_uuid, conta_uuid, acao_associacao_uuid, conferido) => {
   return (await api.get(`/api/conciliacoes/despesas/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&acao_associacao=${acao_associacao_uuid}&conferido=${conferido}`, authHeader)).data
 };
