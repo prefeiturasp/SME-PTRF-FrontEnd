@@ -286,6 +286,10 @@
   }
 }
 
+.tabela-transacoes .p-datatable-tbody > tr:nth-child(even) {
+  background-color: #fff !important;
+}
+
 .transacoes-numero-documento{
   word-break: break-all;
 }
