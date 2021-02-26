@@ -10,8 +10,8 @@ export const FiltrosTransacoes = ({conciliado, stateFiltros, tabelasDespesa, han
                         <select
                             value={stateFiltros.filtrar_por_acao}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
-                            name='filtrar_por_acao'
-                            id="filtrar_por_acao"
+                            name={`filtrar_por_acao_${conciliado}`}
+                            id={`filtrar_por_acao_${conciliado}`}
                             className="form-control"
                         >
                             <option value=''>Selecione a ação</option>
@@ -25,8 +25,8 @@ export const FiltrosTransacoes = ({conciliado, stateFiltros, tabelasDespesa, han
                         <select
                             value={stateFiltros.filtrar_por_lancamento}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
-                            name='filtrar_por_lancamento'
-                            id="filtrar_por_lancamento"
+                            name={`filtrar_por_lancamento_${conciliado}`}
+                            id={`filtrar_por_lancamento_${conciliado}`}
                             className="form-control"
                         >
                             <option value=''>Selecione o tipo de lançamento</option>

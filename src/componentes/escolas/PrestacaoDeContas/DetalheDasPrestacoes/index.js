@@ -34,6 +34,7 @@ import TabelaTransacoes from "./TabelaTransacoes";
 import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {FiltrosTransacoes} from "./FiltrosTransacoes";
 import {Filtros} from "../../../sme/Parametrizacoees/Estrutura/Tags/Filtros";
+import {LoginContainer} from "../../../../paginas/LoginContainer";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -410,9 +411,10 @@ export const DetalheDasPrestacoes = () => {
         filtrar_por_acao: "",
         filtrar_por_lancamento: "",
     };
-    const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
+    const [stateFiltros, setStateFiltros] = useState({});
 
     const handleChangeFiltros = useCallback((name, value) => {
+        console.log("handleChangeFiltros ", name)
         setStateFiltros({
             ...stateFiltros,
             [name]: value
@@ -421,9 +423,9 @@ export const DetalheDasPrestacoes = () => {
 
     const handleSubmitFiltros = async (conciliado) => {
         //setLoading(true);
-        if (conciliado){
+        if (conciliado=== 'CONCILIADO'){
             try {
-                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento)
+                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO, stateFiltros.filtrar_por_lancamento_CONCILIADO)
                 console.log("handleSubmitFiltros Conciliados ", transacoes)
                 setTransacoesConciliadas(transacoes)
             }catch (e) {
@@ -431,8 +433,8 @@ export const DetalheDasPrestacoes = () => {
             }
         }else {
             try {
-                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'False', stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento)
-                setTransacoesNaoConciliadas(transacoes)
+                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'False', stateFiltros.filtrar_por_acao_NAO_CONCILIADO, stateFiltros.filtrar_por_lancamento_NAO_CONCILIADO)
+                setTransacoesNaoConciliadas(transacoes);
                 console.log("handleSubmitFiltros NÃO Conciliados ", transacoes)
             }catch (e) {
                 console.log("Erro ao filtrar não conciliados")
@@ -443,7 +445,7 @@ export const DetalheDasPrestacoes = () => {
 
     const limpaFiltros = async () => {
         setLoading(true);
-        setStateFiltros(initialStateFiltros);
+        setStateFiltros({});
         await carregaTransacoes();
         setLoading(false);
     };
@@ -499,7 +501,7 @@ export const DetalheDasPrestacoes = () => {
 
                             <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Lançamentos pendentes de conciliação</p>
                             <FiltrosTransacoes
-                                conciliado={false}
+                                conciliado='NAO_CONCILIADO'
                                 stateFiltros={stateFiltros}
                                 tabelasDespesa={tabelasDespesa}
                                 handleChangeFiltros={handleChangeFiltros}
@@ -522,7 +524,7 @@ export const DetalheDasPrestacoes = () => {
 
                             <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Lançamentos conciliados</p>
                             <FiltrosTransacoes
-                                conciliado={true}
+                                conciliado='CONCILIADO'
                                 stateFiltros={stateFiltros}
                                 tabelasDespesa={tabelasDespesa}
                                 handleChangeFiltros={handleChangeFiltros}
