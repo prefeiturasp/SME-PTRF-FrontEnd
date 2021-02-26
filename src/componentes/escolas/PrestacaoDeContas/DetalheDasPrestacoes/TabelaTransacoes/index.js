@@ -48,22 +48,6 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
         return notificarDiasNaoConferido > 0 ? {color: 'red', fontWeight: 'bold'} : {color: 'black'}
     };
 
-    const conferidoTemplate = useCallback((rowData) => {
-        return (
-            <div className="align-middle text-center">
-                <input
-                    //checked={conciliados}
-                    type="checkbox"
-                    value={checkboxTransacoes}
-                    onChange={(e) => handleChangeCheckboxTransacoes(e, rowData.uuid)}
-                    name="checkConferido"
-                    id="checkConferido"
-                    disabled={periodoFechado}
-                />
-            </div>
-        )
-    }, [checkboxTransacoes, handleChangeCheckboxTransacoes, periodoFechado]);
-
     const dataTemplate = (rowData = null, column = null, data = null) => {
         let data_para_verificar;
         if (data) {
@@ -137,8 +121,8 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
     };
 
     const rowExpansionTemplate = (data) => {
-        console.log('EXPANDIR expandedRows ', expandedRows)
-        console.log('EXPANDIR data ', data)
+        // console.log('EXPANDIR expandedRows ', expandedRows)
+        // console.log('EXPANDIR data ', data)
         if (data.tipo_transacao === 'Crédito') {
             return (
                 receitaTemplate(data)
@@ -148,6 +132,38 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
                 despesaTemplate(data)
             )
         }
+    };
+
+    const conferidoTemplate = (rowData) => {
+        return (
+            <div className="align-middle text-center">
+                <input
+                    defaultChecked={conciliados}
+                    type="checkbox"
+                    value={checkboxTransacoes}
+                    onChange={(e) => handleChangeCheckboxTransacoes(e, rowData.documento_mestre.uuid, true)}
+                    name="checkConferido"
+                    id="checkConferido"
+                    disabled={periodoFechado}
+                />
+            </div>
+        )
+    };
+
+    const conferidoRateioTemplate = (rateio) => {
+        return (
+            <div>
+                <input
+                    defaultChecked={rateio.conferido}
+                    type="checkbox"
+                    value={checkboxTransacoes}
+                    onChange={(e) => handleChangeCheckboxTransacoes(e, rateio.uuid, false)}
+                    name="checkConferido"
+                    id="checkConferido"
+                    disabled={periodoFechado}
+                />
+            </div>
+        )
     };
 
     const despesaTemplate = (data) => {
@@ -208,6 +224,10 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
                         <div className='col border-left'>
                             <p className='mb-0 font-weight-bold'>Valor:</p>
                             {rateio.valor_rateio ? valorTemplate(null, null, rateio.valor_rateio) : 0}
+                        </div>
+                        <div className='col border-left align-middle text-center'>
+                            <p className='mb-0 font-weight-bold'>Demonstrado:</p>
+                            {conferidoRateioTemplate(rateio)}
                         </div>
                     </div>
                 ))}
@@ -273,6 +293,7 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
                         <Column
                             field="conferido"
                             header="Demonstrado"
+                            className='align-middle text-center'
                             body={conferidoTemplate}
                         />
                     </DataTable>

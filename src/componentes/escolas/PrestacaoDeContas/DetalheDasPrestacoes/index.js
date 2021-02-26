@@ -370,7 +370,6 @@ export const DetalheDasPrestacoes = () => {
     useEffect(() => {
         const carregaTabelasDespesa = async () => {
             const resp = await getDespesasTabelas();
-            console.log("carregaTabelasDespesas ", resp);
             setTabelasDespesa(resp);
         };
         carregaTabelasDespesa();
@@ -379,7 +378,6 @@ export const DetalheDasPrestacoes = () => {
     useEffect(() => {
         const carregaTabelasReceita = async () => {
             getTabelasReceita().then(response => {
-                console.log("carregaTabelasReceita ", response.data);
                 setTabelasReceita(response.data);
             }).catch(error => {
                 console.log(error);
@@ -388,7 +386,10 @@ export const DetalheDasPrestacoes = () => {
         carregaTabelasReceita()
     }, []);
 
-    const handleChangeCheckboxTransacoes = async (event, rateio_uuid) => {
+    const handleChangeCheckboxTransacoes = async (event, rateio_uuid, todos=null) => {
+        //console.log('handleChangeCheckboxTransacoes CHECADO ', event.target.checked)
+        //console.log('handleChangeCheckboxTransacoes UUID ', rateio_uuid)
+        //console.log('handleChangeCheckboxTransacoes TODOS ', todos)
         setCheckboxTransacoes(event.target.checked);
         if (event.target.checked) {
             //await conciliarDespesas(rateio_uuid);
@@ -446,7 +447,7 @@ export const DetalheDasPrestacoes = () => {
                                 handleChangaDataSaldo={handleChangaDataSaldo}
                                 periodoFechado={periodoFechado}
                             />
-                            {transacoesNaoConciliadas && transacoesNaoConciliadas.length >0 ?(
+                            {transacoesNaoConciliadas && transacoesNaoConciliadas.length > 0 ?(
                                 <TabelaTransacoes
                                     transacoes={transacoesNaoConciliadas}
                                     conciliados={false}
@@ -458,6 +459,19 @@ export const DetalheDasPrestacoes = () => {
                                 />
                             ):
                                 <p className="mt-5"><strong>Não existem lançamentos não conciliados...</strong></p>
+                            }
+                            {transacoesConciliadas && transacoesConciliadas.length > 0 ?(
+                                    <TabelaTransacoes
+                                        transacoes={transacoesConciliadas}
+                                        conciliados={true}
+                                        checkboxTransacoes={checkboxTransacoes}
+                                        periodoFechado={periodoFechado}
+                                        handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
+                                        tabelasDespesa={tabelasDespesa}
+                                        tabelasReceita={tabelasReceita}
+                                    />
+                                ):
+                                <p className="mt-5"><strong>Não existem lançamentos conciliados...</strong></p>
                             }
 
 
