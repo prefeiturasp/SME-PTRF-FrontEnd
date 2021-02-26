@@ -1,4 +1,5 @@
 import React, {memo, useState, useCallback} from "react";
+import {useHistory} from 'react-router-dom';
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import moment from "moment";
@@ -6,10 +7,35 @@ import IconeNaoDemonstrado from "../../../../../assets/img/icone-nao-demonstrado
 import ReactTooltip from "react-tooltip";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons'
+import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
 
 const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleChangeCheckboxTransacoes, periodoFechado}) => {
 
+    let history = useHistory();
+    const rowsPerPage = 10;
+
     const [expandedRows, setExpandedRows] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [uuid, setUuid] = useState('');
+
+    const onShowModal = () => {
+        setShowModal(true);
+    };
+
+    const onHandleClose = () => {
+        setShowModal(false);
+    };
+
+    const onCancelarTrue = () => {
+        setShowModal(false);
+        const url = '/edicao-de-despesa/' + uuid + '/tabela-de-lancamentos-despesas';
+        history.push(url);
+    };
+
+    const redirecionaDetalhe = value => {
+        setUuid(value.documento_mestre.uuid);
+        onShowModal();
+    };
 
     const dataTip = (notificar_dias_nao_conferido) => {
         let meses = Math.trunc(notificar_dias_nao_conferido / 30);
@@ -146,11 +172,16 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
                         <p className='mb-0 font-weight-bold'>Data de transação:</p>
                         {dataTemplate(null, null, data.documento_mestre.data_transacao)}
                     </div>
-                    {data.documento_mestre.tipo_transacao.nome === 'Cheque' &&
-                    <div className='col border-left'>
-                        <p className='mb-0 font-weight-bold'>Número do cheque:</p>
-                        API NÃO TEM NUMERO CHEQUE
-                    </div>
+                    {data.documento_mestre.tipo_transacao.nome === 'Cheque' ? (
+                        <div className='col border-left'>
+                            <p className='mb-0 font-weight-bold'>Número do cheque:</p>
+                            {data.documento_mestre.documento_transacao}
+                        </div>
+                    ):
+                        <div className='col border-left'>
+                            <p className='mb-0 font-weight-bold'>Número do documento:</p>
+                            {data.documento_mestre.documento_transacao}
+                        </div>
                     }
                 </div>
 
@@ -213,6 +244,12 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
                         rowExpansionTemplate={rowExpansionTemplate}
                         dataKey="documento_mestre.uuid"
                         className='tabela-transacoes tabela-transacoes tabela-lancamentos-despesas p-datatable-responsive-demo'
+                        paginator={transacoes.length > rowsPerPage}
+                        rows={rowsPerPage}
+                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                        //autoLayout={true}
+                        //selectionMode="single"
+                        onRowClick={e => redirecionaDetalhe(e.data)}
                     >
                         <Column expander style={{width: '3em', borderRight: 'none'}}/>
                         <Column
@@ -237,6 +274,9 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
                     </DataTable>
                 </div>
             </div>
+            <section>
+                <RedirectModalTabelaLancamentos show={showModal} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+            </section>
         </div>
     )
 };

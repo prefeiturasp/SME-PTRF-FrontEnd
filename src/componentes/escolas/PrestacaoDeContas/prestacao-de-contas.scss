@@ -286,8 +286,20 @@
   }
 }
 
-.tabela-transacoes .p-datatable-tbody > tr:nth-child(even) {
-  background-color: #fff !important;
+.tabela-transacoes .p-datatable-tbody > .p-datatable-row:nth-child(even), .tabela-transacoes .p-datatable-tbody > tr{
+  background-color: #fff;
+}
+
+.tabela-lancamentos-despesas .p-datatable-row:hover{
+  background-color: #00585e;
+  color: #fff;
+  cursor: pointer;
+}
+
+.tabela-transacoes .p-datatable-tbody > .p-datatable-row:nth-child(even):hover {
+  background-color: #00585e;
+  color: #fff;
+  cursor: pointer;
 }
 
 .quebra-palavra{
