@@ -1,4 +1,4 @@
-import React, {memo, useState, useCallback} from "react";
+import React, {memo, useState} from "react";
 import {useHistory} from 'react-router-dom';
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
@@ -261,7 +261,6 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
     return (
         <div className="row mt-4">
             <div className="col-12">
-                <p className="detalhe-das-prestacoes-titulo-lancamentos">Lançamentos {conciliados ? "conciliados" : "pendentes de conciliação"}</p>
                 <div className="datatable-responsive-demo">
                     <DataTable
                         value={transacoes}
