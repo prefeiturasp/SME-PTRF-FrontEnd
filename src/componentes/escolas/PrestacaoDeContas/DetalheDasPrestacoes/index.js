@@ -18,6 +18,8 @@ import {
     getStatusPeriodoPorData,
     getTransacoes,
     getTransacoesFiltros,
+    patchConciliarTransacao,
+    patchDesconciliarTransacao,
 } from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getContas, getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
@@ -33,8 +35,6 @@ import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios"
 import TabelaTransacoes from "./TabelaTransacoes";
 import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {FiltrosTransacoes} from "./FiltrosTransacoes";
-import {Filtros} from "../../../sme/Parametrizacoees/Estrutura/Tags/Filtros";
-import {LoginContainer} from "../../../../paginas/LoginContainer";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -374,7 +374,7 @@ export const DetalheDasPrestacoes = () => {
     useEffect(() => {
         const carregaTabelasDespesa = async () => {
             const resp = await getDespesasTabelas();
-            console.log("Tabelas Despesas ", resp)
+            //console.log("Tabelas Despesas ", resp)
             setTabelasDespesa(resp);
         };
         carregaTabelasDespesa();
@@ -383,7 +383,7 @@ export const DetalheDasPrestacoes = () => {
     useEffect(() => {
         const carregaTabelasReceita = async () => {
             getTabelasReceita().then(response => {
-                console.log("Tabelas Receitas ", response.data)
+                //console.log("Tabelas Receitas ", response.data)
                 setTabelasReceita(response.data);
             }).catch(error => {
                 console.log(error);
@@ -392,29 +392,40 @@ export const DetalheDasPrestacoes = () => {
         carregaTabelasReceita()
     }, []);
 
-    const handleChangeCheckboxTransacoes = async (event, rateio_uuid, todos=null) => {
-        //console.log('handleChangeCheckboxTransacoes CHECADO ', event.target.checked)
-        //console.log('handleChangeCheckboxTransacoes UUID ', rateio_uuid)
-        //console.log('handleChangeCheckboxTransacoes TODOS ', todos)
+    const handleChangeCheckboxTransacoes = async (event, rateio_uuid, todos=null, tipo_transacao) => {
+        console.log('handleChangeCheckboxTransacoes TODOS ', todos)
+        console.log('handleChangeCheckboxTransacoes tipo_transacao ', tipo_transacao)
         setCheckboxTransacoes(event.target.checked);
         if (event.target.checked) {
-            //await conciliarDespesas(rateio_uuid);
+            if (!todos){
+                await conciliarDespesas(rateio_uuid);
+            }else {
+                if (tipo_transacao==='Crédito'){
+                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'CREDITO')
+                }else {
+                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'GASTO')
+                }
+            }
         } else if (!event.target.checked) {
-            //await desconciliarDespesas(rateio_uuid)
+            if (!todos){
+                await desconciliarDespesas(rateio_uuid)
+            }else {
+                if (tipo_transacao==='Crédito'){
+                    await patchDesconciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'CREDITO')
+                }else {
+                    await patchDesconciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'GASTO')
+                }
+            }
         }
+        await carregaTransacoes()
         //await getDespesasNaoConferidas();
         //await getDespesasConferidas();
     };
 
     // Filtros Transacoes
-    const initialStateFiltros = {
-        filtrar_por_acao: "",
-        filtrar_por_lancamento: "",
-    };
     const [stateFiltros, setStateFiltros] = useState({});
 
     const handleChangeFiltros = useCallback((name, value) => {
-        console.log("handleChangeFiltros ", name)
         setStateFiltros({
             ...stateFiltros,
             [name]: value
@@ -425,17 +436,15 @@ export const DetalheDasPrestacoes = () => {
         //setLoading(true);
         if (conciliado=== 'CONCILIADO'){
             try {
-                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO, stateFiltros.filtrar_por_lancamento_CONCILIADO)
-                console.log("handleSubmitFiltros Conciliados ", transacoes)
+                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO, stateFiltros.filtrar_por_lancamento_CONCILIADO);
                 setTransacoesConciliadas(transacoes)
             }catch (e) {
                 console.log("Erro ao filtrar conciliados")
             }
         }else {
             try {
-                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'False', stateFiltros.filtrar_por_acao_NAO_CONCILIADO, stateFiltros.filtrar_por_lancamento_NAO_CONCILIADO)
+                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'False', stateFiltros.filtrar_por_acao_NAO_CONCILIADO, stateFiltros.filtrar_por_lancamento_NAO_CONCILIADO);
                 setTransacoesNaoConciliadas(transacoes);
-                console.log("handleSubmitFiltros NÃO Conciliados ", transacoes)
             }catch (e) {
                 console.log("Erro ao filtrar não conciliados")
             }

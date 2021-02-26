@@ -135,13 +135,14 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
     };
 
     const conferidoTemplate = (rowData) => {
+        //console.log("conferidoTemplate ", rowData)
         return (
             <div className="align-middle text-center">
                 <input
-                    defaultChecked={conciliados}
+                    checked={conciliados}
                     type="checkbox"
                     value={checkboxTransacoes}
-                    onChange={(e) => handleChangeCheckboxTransacoes(e, rowData.documento_mestre.uuid, true)}
+                    onChange={(e) => handleChangeCheckboxTransacoes(e, rowData.documento_mestre.uuid, true, rowData.tipo_transacao)}
                     name="checkConferido"
                     id="checkConferido"
                     disabled={periodoFechado}
@@ -157,7 +158,7 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
                     defaultChecked={rateio.conferido}
                     type="checkbox"
                     value={checkboxTransacoes}
-                    onChange={(e) => handleChangeCheckboxTransacoes(e, rateio.uuid, false)}
+                    onChange={(e) => handleChangeCheckboxTransacoes(e, rateio.uuid, false, rateio.tipo_transacao)}
                     name="checkConferido"
                     id="checkConferido"
                     disabled={periodoFechado}
