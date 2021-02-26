@@ -30,6 +30,7 @@ import DataSaldoBancario from "./DataSaldoBancario";
 import moment from "moment";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import TabelaTransacoes from "./TabelaTransacoes";
+import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -348,9 +349,10 @@ export const DetalheDasPrestacoes = () => {
     const [transacoesConciliadas, setTransacoesConciliadas] = useState([]);
     const [transacoesNaoConciliadas, setTransacoesNaoConciliadas] = useState([]);
     const [checkboxTransacoes, setCheckboxTransacoes] = useState(false);
+    const [tabelasDespesa, setTabelasDespesa] = useState([]);
+    const [tabelasReceita, setTabelasReceita] = useState([]);
 
     const carregaTransacoes = useCallback(async ()=>{
-
         if (periodoConta.periodo && periodoConta.conta){
             let transacoes_conciliadas = await getTransacoes(periodoConta.periodo, periodoConta.conta, 'True');
             console.log("carregaTransacoes True ", transacoes_conciliadas)
@@ -364,6 +366,27 @@ export const DetalheDasPrestacoes = () => {
     useEffect(()=>{
         carregaTransacoes();
     }, [carregaTransacoes]);
+
+    useEffect(() => {
+        const carregaTabelasDespesa = async () => {
+            const resp = await getDespesasTabelas();
+            console.log("carregaTabelasDespesas ", resp);
+            setTabelasDespesa(resp);
+        };
+        carregaTabelasDespesa();
+    }, []);
+
+    useEffect(() => {
+        const carregaTabelasReceita = async () => {
+            getTabelasReceita().then(response => {
+                console.log("carregaTabelasReceita ", response.data);
+                setTabelasReceita(response.data);
+            }).catch(error => {
+                console.log(error);
+            });
+        };
+        carregaTabelasReceita()
+    }, []);
 
     const handleChangeCheckboxTransacoes = async (event, rateio_uuid) => {
         setCheckboxTransacoes(event.target.checked);
@@ -430,6 +453,8 @@ export const DetalheDasPrestacoes = () => {
                                     checkboxTransacoes={checkboxTransacoes}
                                     periodoFechado={periodoFechado}
                                     handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
+                                    tabelasDespesa={tabelasDespesa}
+                                    tabelasReceita={tabelasReceita}
                                 />
                             ):
                                 <p className="mt-5"><strong>Não existem lançamentos não conciliados...</strong></p>

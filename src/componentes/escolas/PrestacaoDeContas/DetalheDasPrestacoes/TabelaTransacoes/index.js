@@ -9,7 +9,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons'
 import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
 
-const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleChangeCheckboxTransacoes, periodoFechado}) => {
+const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleChangeCheckboxTransacoes, periodoFechado, tabelasDespesa, tabelasReceita}) => {
 
     let history = useHistory();
     const rowsPerPage = 10;
@@ -134,8 +134,6 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
         }else {
             return valor_formatado
         }
-
-
     };
 
     const rowExpansionTemplate = (data) => {
@@ -201,7 +199,11 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
                         </div>
                         <div className='col border-left'>
                             <p className='mb-0 font-weight-bold'>Tipo de aplicação:</p>
-                            {rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ''}
+                            {rateio.aplicacao_recurso ? tabelasDespesa.tipos_aplicacao_recurso.find(element => element.id === rateio.aplicacao_recurso).nome : ''}
+                        </div>
+                        <div className='col border-left'>
+                            <p className='mb-0 font-weight-bold'>Ação:</p>
+                            {rateio.acao_associacao.nome}
                         </div>
                         <div className='col border-left'>
                             <p className='mb-0 font-weight-bold'>Valor:</p>
@@ -225,7 +227,11 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
                     </div>
                     <div className='col border-left'>
                         <p className='mb-0 font-weight-bold'>Classificação do crédito:</p>
-                        {data.documento_mestre.categoria_receita}
+                        {data.documento_mestre.categoria_receita ? tabelasReceita.categorias_receita.find(elemnt => elemnt.id === data.documento_mestre.categoria_receita).nome : ''}
+                    </div>
+                    <div className='col border-left'>
+                        <p className='mb-0 font-weight-bold'>Ação:</p>
+                        {data.documento_mestre.acao_associacao.nome}
                     </div>
                 </div>
             </>
@@ -247,8 +253,6 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
                         paginator={transacoes.length > rowsPerPage}
                         rows={rowsPerPage}
                         paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                        //autoLayout={true}
-                        //selectionMode="single"
                         onRowClick={e => redirecionaDetalhe(e.data)}
                     >
                         <Column expander style={{width: '3em', borderRight: 'none'}}/>
