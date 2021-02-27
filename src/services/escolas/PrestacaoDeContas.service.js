@@ -64,7 +64,6 @@ export const patchConciliarTransacao = async (periodo_uuid, conta_uuid, transaca
 export const patchDesconciliarTransacao = async (periodo_uuid, conta_uuid, transacao_uuid, tipo_transacao) => {
   return (await api.patch(`/api/conciliacoes/desconciliar-transacao/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&transacao=${transacao_uuid}&tipo=${tipo_transacao}`, {}, authHeader)).data
 };
-
 // *** Fim novas implementaçãoes ***
 
 export const getDespesasPrestacaoDeContas = async (periodo_uuid, conta_uuid, acao_associacao_uuid, conferido) => {
