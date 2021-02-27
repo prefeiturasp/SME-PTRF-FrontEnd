@@ -15,7 +15,11 @@ import {
     getDesconciliarDespesa,
     getSalvarPrestacaoDeConta,
     getObservacoes,
-    getStatusPeriodoPorData
+    getStatusPeriodoPorData,
+    getTransacoes,
+    getTransacoesFiltros,
+    patchConciliarTransacao,
+    patchDesconciliarTransacao,
 } from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getContas, getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
@@ -28,6 +32,9 @@ import {tabelaValoresPendentes} from "../../../../services/escolas/TabelaValores
 import DataSaldoBancario from "./DataSaldoBancario";
 import moment from "moment";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import TabelaTransacoes from "./TabelaTransacoes";
+import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
+import {FiltrosTransacoes} from "./FiltrosTransacoes";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -342,6 +349,117 @@ export const DetalheDasPrestacoes = () => {
         });
     }, [dataSaldoBancario]);
 
+    // Transacoes Conciliadas e Não Conciliadas
+    const [transacoesConciliadas, setTransacoesConciliadas] = useState([]);
+    const [transacoesNaoConciliadas, setTransacoesNaoConciliadas] = useState([]);
+    const [checkboxTransacoes, setCheckboxTransacoes] = useState(false);
+    const [tabelasDespesa, setTabelasDespesa] = useState([]);
+    const [tabelasReceita, setTabelasReceita] = useState([]);
+
+    const carregaTransacoes = useCallback(async ()=>{
+        if (periodoConta.periodo && periodoConta.conta){
+            let transacoes_conciliadas = await getTransacoes(periodoConta.periodo, periodoConta.conta, 'True');
+            console.log("carregaTransacoes True ", transacoes_conciliadas)
+            setTransacoesConciliadas(transacoes_conciliadas);
+            let transacoes_nao_conciliadas = await getTransacoes(periodoConta.periodo, periodoConta.conta, 'False');
+            console.log("carregaTransacoes False ", transacoes_nao_conciliadas)
+            setTransacoesNaoConciliadas(transacoes_nao_conciliadas);
+        }
+    }, [periodoConta]);
+
+    useEffect(()=>{
+        carregaTransacoes();
+    }, [carregaTransacoes]);
+
+    useEffect(() => {
+        const carregaTabelasDespesa = async () => {
+            const resp = await getDespesasTabelas();
+            //console.log("Tabelas Despesas ", resp)
+            setTabelasDespesa(resp);
+        };
+        carregaTabelasDespesa();
+    }, []);
+
+    useEffect(() => {
+        const carregaTabelasReceita = async () => {
+            getTabelasReceita().then(response => {
+                //console.log("Tabelas Receitas ", response.data)
+                setTabelasReceita(response.data);
+            }).catch(error => {
+                console.log(error);
+            });
+        };
+        carregaTabelasReceita()
+    }, []);
+
+    const handleChangeCheckboxTransacoes = async (event, rateio_uuid, todos=null, tipo_transacao) => {
+        console.log('handleChangeCheckboxTransacoes TODOS ', todos)
+        console.log('handleChangeCheckboxTransacoes tipo_transacao ', tipo_transacao)
+        setCheckboxTransacoes(event.target.checked);
+        if (event.target.checked) {
+            if (!todos){
+                await conciliarDespesas(rateio_uuid);
+            }else {
+                if (tipo_transacao==='Crédito'){
+                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'CREDITO')
+                }else {
+                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'GASTO')
+                }
+            }
+        } else if (!event.target.checked) {
+            if (!todos){
+                await desconciliarDespesas(rateio_uuid)
+            }else {
+                if (tipo_transacao==='Crédito'){
+                    await patchDesconciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'CREDITO')
+                }else {
+                    await patchDesconciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'GASTO')
+                }
+            }
+        }
+        await carregaTransacoes()
+        //await getDespesasNaoConferidas();
+        //await getDespesasConferidas();
+    };
+
+    // Filtros Transacoes
+    const [stateFiltros, setStateFiltros] = useState({});
+
+    const handleChangeFiltros = useCallback((name, value) => {
+        setStateFiltros({
+            ...stateFiltros,
+            [name]: value
+        });
+    }, [stateFiltros]);
+
+    const handleSubmitFiltros = async (conciliado) => {
+        //setLoading(true);
+        if (conciliado=== 'CONCILIADO'){
+            try {
+                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO, stateFiltros.filtrar_por_lancamento_CONCILIADO);
+                setTransacoesConciliadas(transacoes)
+            }catch (e) {
+                console.log("Erro ao filtrar conciliados")
+            }
+        }else {
+            try {
+                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'False', stateFiltros.filtrar_por_acao_NAO_CONCILIADO, stateFiltros.filtrar_por_lancamento_NAO_CONCILIADO);
+                setTransacoesNaoConciliadas(transacoes);
+            }catch (e) {
+                console.log("Erro ao filtrar não conciliados")
+            }
+        }
+        //setLoading(false);
+    };
+
+    const limpaFiltros = async () => {
+        setLoading(true);
+        setStateFiltros({});
+        await carregaTransacoes();
+        setLoading(false);
+    };
+
+
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
             <div className="row">
@@ -390,7 +508,55 @@ export const DetalheDasPrestacoes = () => {
                                 periodoFechado={periodoFechado}
                             />
 
-                            <SelectAcaoLancamento
+                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Lançamentos pendentes de conciliação</p>
+                            <FiltrosTransacoes
+                                conciliado='NAO_CONCILIADO'
+                                stateFiltros={stateFiltros}
+                                tabelasDespesa={tabelasDespesa}
+                                handleChangeFiltros={handleChangeFiltros}
+                                handleSubmitFiltros={handleSubmitFiltros}
+                                limpaFiltros={limpaFiltros}
+                            />
+                            {transacoesNaoConciliadas && transacoesNaoConciliadas.length > 0 ?(
+                                <TabelaTransacoes
+                                    transacoes={transacoesNaoConciliadas}
+                                    conciliados={false}
+                                    checkboxTransacoes={checkboxTransacoes}
+                                    periodoFechado={periodoFechado}
+                                    handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
+                                    tabelasDespesa={tabelasDespesa}
+                                    tabelasReceita={tabelasReceita}
+                                />
+                            ):
+                                <p className="mt-5"><strong>Não existem lançamentos não conciliados...</strong></p>
+                            }
+
+                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Lançamentos conciliados</p>
+                            <FiltrosTransacoes
+                                conciliado='CONCILIADO'
+                                stateFiltros={stateFiltros}
+                                tabelasDespesa={tabelasDespesa}
+                                handleChangeFiltros={handleChangeFiltros}
+                                handleSubmitFiltros={handleSubmitFiltros}
+                                limpaFiltros={limpaFiltros}
+                            />
+
+                            {transacoesConciliadas && transacoesConciliadas.length > 0 ?(
+                                <TabelaTransacoes
+                                    transacoes={transacoesConciliadas}
+                                    conciliados={true}
+                                    checkboxTransacoes={checkboxTransacoes}
+                                    periodoFechado={periodoFechado}
+                                    handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
+                                    tabelasDespesa={tabelasDespesa}
+                                    tabelasReceita={tabelasReceita}
+                                />
+                            ):
+                                <p className="mt-5"><strong>Não existem lançamentos conciliados...</strong></p>
+                            }
+
+
+                            {/*<SelectAcaoLancamento
                                 acaoLancamento={acaoLancamento}
                                 handleChangeSelectAcoes={handleChangeSelectAcoes}
                                 acoesAssociacao={acoesAssociacao}
@@ -446,7 +612,7 @@ export const DetalheDasPrestacoes = () => {
                                 dataTip={dataTip}
                                 periodoFechado={periodoFechado}
                             />
-                            }
+                            }*/}
 
                             <Justificativa
                                 textareaJustificativa={textareaJustificativa}
