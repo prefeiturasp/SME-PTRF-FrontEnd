@@ -75,39 +75,11 @@ export const DetalheDasPrestacoes = () => {
         carregaObservacoes();
     }, [periodoConta, acoesAssociacao, acaoLancamento]);
 
-    useEffect(() => {
-
-        localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento));
-
-        if (acaoLancamento.acao && acaoLancamento.lancamento) {
-            setReceitasConferidas([]);
-            setReceitasNaoConferidas([]);
-
-            if (acaoLancamento.lancamento === 'receitas-lancadas') {
-                setDespesasNaoConferidas([]);
-                setDespesasConferidas([]);
-                getReceitasNaoConferidas();
-                getReceitasConferidas();
-            } else if (acaoLancamento.lancamento === 'despesas-lancadas') {
-                setReceitasNaoConferidas([]);
-                setReceitasConferidas([]);
-                getDespesasNaoConferidas();
-                getDespesasConferidas();
-            }
-        } else {
-            setReceitasNaoConferidas([]);
-            setReceitasConferidas([]);
-            setDespesasNaoConferidas([]);
-            setDespesasConferidas([]);
-        }
-    }, [acaoLancamento, periodoConta, acoesAssociacao]);
-
     useEffect(()=>{
         setLoading(false)
     }, []);
 
-    useEffect(
-        () => {
+    useEffect(() => {
             verificaSePeriodoEstaAberto(periodoConta.periodo)
         }, [periodoConta, periodosAssociacao]
     );
@@ -157,45 +129,103 @@ export const DetalheDasPrestacoes = () => {
         })
     };
 
+
+
+    // useEffect(() => {
+    //
+    //     localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento));
+    //
+    //     if (acaoLancamento.acao && acaoLancamento.lancamento) {
+    //         setReceitasConferidas([]);
+    //         setReceitasNaoConferidas([]);
+    //
+    //         if (acaoLancamento.lancamento === 'receitas-lancadas') {
+    //             setDespesasNaoConferidas([]);
+    //             setDespesasConferidas([]);
+    //             getReceitasNaoConferidas();
+    //             getReceitasConferidas();
+    //         } else if (acaoLancamento.lancamento === 'despesas-lancadas') {
+    //             setReceitasNaoConferidas([]);
+    //             setReceitasConferidas([]);
+    //             getDespesasNaoConferidas();
+    //             getDespesasConferidas();
+    //         }
+    //     } else {
+    //         setReceitasNaoConferidas([]);
+    //         setReceitasConferidas([]);
+    //         setDespesasNaoConferidas([]);
+    //         setDespesasConferidas([]);
+    //     }
+    // }, [acaoLancamento, periodoConta, acoesAssociacao]);
+
+    // const getReceitasNaoConferidas = async () => {
+    //     setLoading(true);
+    //     if (checaCondicoes()){
+    //         const naoConferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False");
+    //         setReceitasNaoConferidas(naoConferidas);
+    //     }
+    //     setLoading(false);
+    // };
+    //
+    // const getReceitasConferidas = async () => {
+    //     setLoading(true);
+    //     if (checaCondicoes()) {
+    //         const conferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
+    //         setReceitasConferidas(conferidas);
+    //     }
+    //     setLoading(false);
+    // };
+    //
+    // const getDespesasNaoConferidas = async () => {
+    //     setLoading(true);
+    //     if (checaCondicoes()) {
+    //         const naoConferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "False");
+    //         setDespesasNaoConferidas(naoConferidas);
+    //     }
+    //     setLoading(false);
+    // };
+    //
+    // const getDespesasConferidas = async () => {
+    //     setLoading(true);
+    //     if (checaCondicoes()) {
+    //         const conferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
+    //         setDespesasConferidas(conferidas);
+    //     }
+    //     setLoading(false);
+    // };
+
     const checaCondicoes = () =>{
         let periodo_e_conta = JSON.parse(localStorage.getItem('periodoConta'));
         return !!(periodo_e_conta && periodo_e_conta.periodo && periodo_e_conta.conta);
     };
 
-    const getReceitasNaoConferidas = async () => {
-        setLoading(true);
-        if (checaCondicoes()){
-            const naoConferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False");
-            setReceitasNaoConferidas(naoConferidas);
+    const handleChangeCheckboxReceitas = async (event, receita_uuid) => {
+        // setCheckboxReceitas(event.target.checked);
+        if (event.target.checked) {
+            await conciliarReceitas(receita_uuid);
+        } else if (!event.target.checked) {
+            await desconciliarReceitas(receita_uuid)
         }
-        setLoading(false);
+        //await getReceitasNaoConferidas();
+        //await getReceitasConferidas();
     };
 
-    const getReceitasConferidas = async () => {
-        setLoading(true);
-        if (checaCondicoes()) {
-            const conferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
-            setReceitasConferidas(conferidas);
+    const handleChangeCheckboxDespesas = async (event, rateio_uuid) => {
+        //setCheckboxDespesas(event.target.checked);
+        if (event.target.checked) {
+            await conciliarDespesas(rateio_uuid);
+        } else if (!event.target.checked) {
+            await desconciliarDespesas(rateio_uuid)
         }
-        setLoading(false);
+        //await getDespesasNaoConferidas();
+        //await getDespesasConferidas();
     };
 
-    const getDespesasNaoConferidas = async () => {
-        setLoading(true);
-        if (checaCondicoes()) {
-            const naoConferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "False");
-            setDespesasNaoConferidas(naoConferidas);
-        }
-        setLoading(false);
-    };
-
-    const getDespesasConferidas = async () => {
-        setLoading(true);
-        if (checaCondicoes()) {
-            const conferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
-            setDespesasConferidas(conferidas);
-        }
-        setLoading(false);
+    const handleChangeSelectAcoes = (name, value) => {
+        setAcaoLancamento({
+            ...acaoLancamento,
+            [name]: value
+        });
     };
 
     const conciliarReceitas = async (receita_uuid) => {
@@ -206,35 +236,17 @@ export const DetalheDasPrestacoes = () => {
         await getDesconciliarReceita(receita_uuid, periodoConta.periodo);
     };
 
-    const handleChangeCheckboxReceitas = async (event, receita_uuid) => {
-        setCheckboxReceitas(event.target.checked);
-        if (event.target.checked) {
-            await conciliarReceitas(receita_uuid);
-        } else if (!event.target.checked) {
-            await desconciliarReceitas(receita_uuid)
-        }
-        await getReceitasNaoConferidas();
-        await getReceitasConferidas();
-    };
 
-    const conciliarDespesas = async (rateio_uuid) => {
+
+    const conciliarDespesas = useCallback(async (rateio_uuid) => {
         await getConciliarDespesa(rateio_uuid, periodoConta.periodo);
-    };
+    }, [periodoConta.periodo]) ;
 
-    const desconciliarDespesas = async (rateio_uuid) => {
+    const desconciliarDespesas = useCallback(async (rateio_uuid) => {
         await getDesconciliarDespesa(rateio_uuid, periodoConta.periodo);
-    };
+    }, [periodoConta.periodo]) ;
 
-    const handleChangeCheckboxDespesas = async (event, rateio_uuid) => {
-        setCheckboxDespesas(event.target.checked);
-        if (event.target.checked) {
-            await conciliarDespesas(rateio_uuid);
-        } else if (!event.target.checked) {
-            await desconciliarDespesas(rateio_uuid)
-        }
-        await getDespesasNaoConferidas();
-        await getDespesasConferidas();
-    };
+
 
     const handleChangePeriodoConta = (name, value) => {
         setPeriodoConta({
@@ -243,12 +255,7 @@ export const DetalheDasPrestacoes = () => {
         });
     };
 
-    const handleChangeSelectAcoes = (name, value) => {
-        setAcaoLancamento({
-            ...acaoLancamento,
-            [name]: value
-        });
-    };
+
 
     const handleChangeTextareaJustificativa = (event) => {
         setTextareaJustificativa(event.target.value);
@@ -293,13 +300,6 @@ export const DetalheDasPrestacoes = () => {
         setShowSalvar(false);
     };
 
-    const dataTip = (notificar_dias_nao_conferido) => {
-        let meses = Math.trunc(notificar_dias_nao_conferido/30);
-        let msg = (notificar_dias_nao_conferido <= 59) ? `1 mês.` : `${meses} meses.`;
-
-        return `Não demonstrado por ${msg}`;
-    };
-
     const verificaSePeriodoEstaAberto = async (periodoUuid) => {
         if (periodosAssociacao) {
             const periodo = periodosAssociacao.find(o => o.uuid === periodoUuid);
@@ -340,7 +340,7 @@ export const DetalheDasPrestacoes = () => {
     };
 
     // Data Saldo Bancário
-    const [dataSaldoBancario, setDataSaldoBancario]= useState([]);
+    const [dataSaldoBancario, setDataSaldoBancario]= useState({});
 
     const handleChangaDataSaldo = useCallback((name, value) => {
         setDataSaldoBancario({
@@ -392,35 +392,37 @@ export const DetalheDasPrestacoes = () => {
         carregaTabelasReceita()
     }, []);
 
-    const handleChangeCheckboxTransacoes = async (event, rateio_uuid, todos=null, tipo_transacao) => {
+    const handleChangeCheckboxTransacoes = useCallback(async (event, transacao_ou_rateio_uuid, todos=null, tipo_transacao) => {
         console.log('handleChangeCheckboxTransacoes TODOS ', todos)
         console.log('handleChangeCheckboxTransacoes tipo_transacao ', tipo_transacao)
+        setLoading(true);
         setCheckboxTransacoes(event.target.checked);
         if (event.target.checked) {
             if (!todos){
-                await conciliarDespesas(rateio_uuid);
+                await conciliarDespesas(transacao_ou_rateio_uuid);
             }else {
                 if (tipo_transacao==='Crédito'){
-                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'CREDITO')
+                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'CREDITO')
                 }else {
-                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'GASTO')
+                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'GASTO')
                 }
             }
         } else if (!event.target.checked) {
             if (!todos){
-                await desconciliarDespesas(rateio_uuid)
+                await desconciliarDespesas(transacao_ou_rateio_uuid)
             }else {
                 if (tipo_transacao==='Crédito'){
-                    await patchDesconciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'CREDITO')
+                    await patchDesconciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'CREDITO')
                 }else {
-                    await patchDesconciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'GASTO')
+                    await patchDesconciliarTransacao(periodoConta.conta, transacao_ou_rateio_uuid, 'GASTO')
                 }
             }
         }
         await carregaTransacoes()
+        setLoading(false);
         //await getDespesasNaoConferidas();
         //await getDespesasConferidas();
-    };
+    }, [periodoConta, carregaTransacoes, conciliarDespesas, desconciliarDespesas]);
 
     // Filtros Transacoes
     const [stateFiltros, setStateFiltros] = useState({});
@@ -433,7 +435,7 @@ export const DetalheDasPrestacoes = () => {
     }, [stateFiltros]);
 
     const handleSubmitFiltros = async (conciliado) => {
-        //setLoading(true);
+        setLoading(true);
         if (conciliado=== 'CONCILIADO'){
             try {
                 let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO, stateFiltros.filtrar_por_lancamento_CONCILIADO);
@@ -449,7 +451,7 @@ export const DetalheDasPrestacoes = () => {
                 console.log("Erro ao filtrar não conciliados")
             }
         }
-        //setLoading(false);
+        setLoading(false);
     };
 
     const limpaFiltros = async () => {
