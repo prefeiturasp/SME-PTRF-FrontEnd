@@ -9,7 +9,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons'
 import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
 
-const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleChangeCheckboxTransacoes, periodoFechado, tabelasDespesa, tabelasReceita}) => {
+const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxTransacoes, periodoFechado, tabelasDespesa, tabelasReceita}) => {
 
     let history = useHistory();
     const rowsPerPage = 10;
@@ -135,11 +135,10 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
     };
 
     const conferidoTemplate = (rowData) => {
-        //console.log("conferidoTemplate ", rowData)
         return (
             <div className="align-middle text-center">
                 <input
-                    checked={conciliados}
+                    checked={rowData.conferido}
                     type="checkbox"
                     value={checkboxTransacoes}
                     onChange={(e) => handleChangeCheckboxTransacoes(e, rowData.documento_mestre.uuid, true, rowData.tipo_transacao)}
@@ -155,7 +154,7 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
         return (
             <div>
                 <input
-                    defaultChecked={rateio.conferido}
+                    checked={rateio.conferido}
                     type="checkbox"
                     value={checkboxTransacoes}
                     onChange={(e) => handleChangeCheckboxTransacoes(e, rateio.uuid, false, rateio.tipo_transacao)}

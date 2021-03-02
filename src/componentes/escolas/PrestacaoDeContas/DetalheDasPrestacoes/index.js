@@ -59,75 +59,6 @@ export const DetalheDasPrestacoes = () => {
 
     const [textareaJustificativa, setTextareaJustificativa] = useState("");
 
-    useEffect(()=>{
-        getPeriodoConta();
-        getAcaoLancamento();
-        carregaTabelas();
-        carregaPeriodos();
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem('periodoConta', JSON.stringify(periodoConta));
-        carregaContas();
-    }, [periodoConta]);
-
-    useEffect(()=>{
-        carregaObservacoes();
-    }, [periodoConta, acoesAssociacao, acaoLancamento]);
-
-    useEffect(()=>{
-        setLoading(false)
-    }, []);
-
-    useEffect(() => {
-            verificaSePeriodoEstaAberto(periodoConta.periodo)
-        }, [periodoConta, periodosAssociacao]
-    );
-
-    const getPeriodoConta = () => {
-        if (localStorage.getItem('periodoConta')) {
-            const periodoConta = JSON.parse(localStorage.getItem('periodoConta'));
-            setPeriodoConta(periodoConta)
-        } else {
-            setPeriodoConta({periodo: "", conta: ""})
-        }
-    };
-
-    const getAcaoLancamento = () => {
-        let acao_lancamento = JSON.parse(localStorage.getItem('acaoLancamento'));
-        if (acao_lancamento) {
-            const files = JSON.parse(localStorage.getItem('acaoLancamento'));
-            setAcaoLancamento(files);
-        } else {
-            setAcaoLancamento({acao: "", lancamento: ""})
-        }
-    };
-
-    const carregaTabelas = async () => {
-        await getTabelasReceita().then(response => {
-            setContasAssociacao(response.data.contas_associacao);
-            setAcoesAssociacao(response.data.acoes_associacao);
-        }).catch(error => {
-            console.log(error);
-        });
-    };
-
-    const carregaPeriodos = async () => {
-        let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
-        setPeriodosAssociacao(periodos);
-    };
-
-    const carregaContas = async () => {
-        await getContas().then(response => {
-            const files = JSON.parse(localStorage.getItem('periodoConta'));
-            if (files && files.conta !== "") {
-                const conta = response.find(conta => conta.uuid === files.conta);
-                setContaConciliacao(conta.tipo_conta.nome);
-            }
-        }).catch(error => {
-            console.log(error);
-        })
-    };
 
 
 
@@ -227,6 +158,79 @@ export const DetalheDasPrestacoes = () => {
             [name]: value
         });
     };
+
+
+    useEffect(()=>{
+        getPeriodoConta();
+        getAcaoLancamento();
+        carregaTabelas();
+        carregaPeriodos();
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('periodoConta', JSON.stringify(periodoConta));
+        carregaContas();
+    }, [periodoConta]);
+
+    useEffect(()=>{
+        carregaObservacoes();
+    }, [periodoConta, acoesAssociacao, acaoLancamento]);
+
+    useEffect(()=>{
+        setLoading(false)
+    }, []);
+
+    useEffect(() => {
+            verificaSePeriodoEstaAberto(periodoConta.periodo)
+        }, [periodoConta, periodosAssociacao]
+    );
+
+    const getPeriodoConta = () => {
+        if (localStorage.getItem('periodoConta')) {
+            const periodoConta = JSON.parse(localStorage.getItem('periodoConta'));
+            setPeriodoConta(periodoConta)
+        } else {
+            setPeriodoConta({periodo: "", conta: ""})
+        }
+    };
+
+    const getAcaoLancamento = () => {
+        let acao_lancamento = JSON.parse(localStorage.getItem('acaoLancamento'));
+        if (acao_lancamento) {
+            const files = JSON.parse(localStorage.getItem('acaoLancamento'));
+            setAcaoLancamento(files);
+        } else {
+            setAcaoLancamento({acao: "", lancamento: ""})
+        }
+    };
+
+    const carregaTabelas = async () => {
+        await getTabelasReceita().then(response => {
+            setContasAssociacao(response.data.contas_associacao);
+            setAcoesAssociacao(response.data.acoes_associacao);
+        }).catch(error => {
+            console.log(error);
+        });
+    };
+
+    const carregaPeriodos = async () => {
+        let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
+        setPeriodosAssociacao(periodos);
+    };
+
+    const carregaContas = async () => {
+        await getContas().then(response => {
+            const files = JSON.parse(localStorage.getItem('periodoConta'));
+            if (files && files.conta !== "") {
+                const conta = response.find(conta => conta.uuid === files.conta);
+                setContaConciliacao(conta.tipo_conta.nome);
+            }
+        }).catch(error => {
+            console.log(error);
+        })
+    };
+
+
 
     const conciliarReceitas = async (receita_uuid) => {
         await getConciliarReceita(receita_uuid, periodoConta.periodo)
@@ -392,13 +396,11 @@ export const DetalheDasPrestacoes = () => {
         carregaTabelasReceita()
     }, []);
 
-    const handleChangeCheckboxTransacoes = useCallback(async (event, transacao_ou_rateio_uuid, todos=null, tipo_transacao) => {
-        console.log('handleChangeCheckboxTransacoes TODOS ', todos)
-        console.log('handleChangeCheckboxTransacoes tipo_transacao ', tipo_transacao)
+    const handleChangeCheckboxTransacoes = useCallback(async (event, transacao_ou_rateio_uuid, documento_mestre=null, tipo_transacao) => {
         setLoading(true);
         setCheckboxTransacoes(event.target.checked);
         if (event.target.checked) {
-            if (!todos){
+            if (!documento_mestre){
                 await conciliarDespesas(transacao_ou_rateio_uuid);
             }else {
                 if (tipo_transacao==='Crédito'){
@@ -408,7 +410,7 @@ export const DetalheDasPrestacoes = () => {
                 }
             }
         } else if (!event.target.checked) {
-            if (!todos){
+            if (!documento_mestre){
                 await desconciliarDespesas(transacao_ou_rateio_uuid)
             }else {
                 if (tipo_transacao==='Crédito'){
@@ -522,7 +524,6 @@ export const DetalheDasPrestacoes = () => {
                             {transacoesNaoConciliadas && transacoesNaoConciliadas.length > 0 ?(
                                 <TabelaTransacoes
                                     transacoes={transacoesNaoConciliadas}
-                                    conciliados={false}
                                     checkboxTransacoes={checkboxTransacoes}
                                     periodoFechado={periodoFechado}
                                     handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
@@ -546,7 +547,6 @@ export const DetalheDasPrestacoes = () => {
                             {transacoesConciliadas && transacoesConciliadas.length > 0 ?(
                                 <TabelaTransacoes
                                     transacoes={transacoesConciliadas}
-                                    conciliados={true}
                                     checkboxTransacoes={checkboxTransacoes}
                                     periodoFechado={periodoFechado}
                                     handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
