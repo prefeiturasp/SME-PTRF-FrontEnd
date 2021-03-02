@@ -41,20 +41,11 @@ export const getIniciarPrestacaoDeContas = async (conta_uuid, periodo_uuid) => {
   ).data
 };
 
-export const getReabrirPeriodo = async (uuid, payload) => {
-  return await api.patch(
-    `/api/prestacoes-contas/${uuid}/revisar/`,
-    payload,
-    authHeader
-  )
-};
-
 // Detalhe Prestação de Contas
 // *** Novas implementações História 34038 - Sprint 16 ***
 export const getTransacoes = async (periodo_uuid, conta_uuid, conferido) => {
   return (await api.get(`/api/conciliacoes/transacoes/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&conferido=${conferido}`, authHeader)).data
 };
-
 export const getTransacoesFiltros = async (periodo_uuid, conta_uuid, conferido, acao_associacao_uuid, tipo_lancamento) => {
   return (await api.get(`/api/conciliacoes/transacoes/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&conferido=${conferido}${acao_associacao_uuid ? '&acao_associacao='+acao_associacao_uuid : ''}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}`, authHeader)).data
 };
@@ -82,11 +73,11 @@ export const getDesconciliarReceita = async (receita_uuid, periodo_uuid) => {
   return (await api.patch(`/api/receitas/${receita_uuid}/desconciliar/?periodo=${periodo_uuid}`, {}, authHeader)).data
 };
 
-export const getConciliarDespesa = async (rateio_uuid, periodo_uuid) => {
+export const getConciliar = async (rateio_uuid, periodo_uuid) => {
   return (await api.patch(`/api/rateios-despesas/${rateio_uuid}/conciliar/?periodo=${periodo_uuid}`, {}, authHeader)).data
 };
 
-export const getDesconciliarDespesa = async (rateio_uuid, periodo_uuid) => {
+export const getDesconciliar = async (rateio_uuid, periodo_uuid) => {
   return (await api.patch(`/api/rateios-despesas/${rateio_uuid}/desconciliar/?periodo=${periodo_uuid}`, {}, authHeader)).data
 };
 

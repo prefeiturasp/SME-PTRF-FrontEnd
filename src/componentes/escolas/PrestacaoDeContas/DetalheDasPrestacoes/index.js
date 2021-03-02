@@ -4,12 +4,8 @@ import TabelaValoresPendentesPorAcao from "./TabelaValoresPendentesPorAcao";
 import {Justificativa} from "./Justivicativa";
 import {getTabelasReceita} from "../../../../services/escolas/Receitas.service";
 import {
-    getDespesasPrestacaoDeContas,
-    getReceitasPrestacaoDeContas,
-    getConciliarReceita,
-    getDesconciliarReceita,
-    getConciliarDespesa,
-    getDesconciliarDespesa,
+    getConciliar,
+    getDesconciliar,
     getSalvarPrestacaoDeConta,
     getObservacoes,
     getStatusPeriodoPorData,
@@ -47,8 +43,6 @@ export const DetalheDasPrestacoes = () => {
     const [acoesAssociacao, setAcoesAssociacao] = useState(false);
 
     const [textareaJustificativa, setTextareaJustificativa] = useState("");
-
-
 
 
     useEffect(()=>{
@@ -121,24 +115,12 @@ export const DetalheDasPrestacoes = () => {
         })
     };
 
-
-
-    const conciliarReceitas = async (receita_uuid) => {
-        await getConciliarReceita(receita_uuid, periodoConta.periodo)
-    };
-
-    const desconciliarReceitas = async (receita_uuid) => {
-        await getDesconciliarReceita(receita_uuid, periodoConta.periodo);
-    };
-
-
-
     const conciliarDespesas = useCallback(async (rateio_uuid) => {
-        await getConciliarDespesa(rateio_uuid, periodoConta.periodo);
+        await getConciliar(rateio_uuid, periodoConta.periodo);
     }, [periodoConta.periodo]) ;
 
     const desconciliarDespesas = useCallback(async (rateio_uuid) => {
-        await getDesconciliarDespesa(rateio_uuid, periodoConta.periodo);
+        await getDesconciliar(rateio_uuid, periodoConta.periodo);
     }, [periodoConta.periodo]) ;
 
 
