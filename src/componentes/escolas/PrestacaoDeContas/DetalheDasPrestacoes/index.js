@@ -1,8 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {TopoComBotoes} from "./TopoComBotoes";
-import {SelectAcaoLancamento} from "./SelectAcaoLancamento";
-import {TabelaDeLancamentosDespesas} from "./TabelaDeLancamentosDespesas";
-import {TabelaDeLancamentosReceitas} from "./TabelaDeLancamentosReceitas";
 import TabelaValoresPendentesPorAcao from "./TabelaValoresPendentesPorAcao";
 import {Justificativa} from "./Justivicativa";
 import {getTabelasReceita} from "../../../../services/escolas/Receitas.service";
@@ -49,115 +46,9 @@ export const DetalheDasPrestacoes = () => {
     const [acaoLancamento, setAcaoLancamento] = useState("");
     const [acoesAssociacao, setAcoesAssociacao] = useState(false);
 
-    const [receitasNaoConferidas, setReceitasNaoConferidas] = useState([]);
-    const [receitasConferidas, setReceitasConferidas] = useState([]);
-    const [checkboxReceitas, setCheckboxReceitas] = useState(false);
-
-    const [despesasNaoConferidas, setDespesasNaoConferidas] = useState([]);
-    const [despesasConferidas, setDespesasConferidas] = useState([]);
-    const [checkboxDespesas, setCheckboxDespesas] = useState(false);
-
     const [textareaJustificativa, setTextareaJustificativa] = useState("");
 
 
-
-
-    // useEffect(() => {
-    //
-    //     localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento));
-    //
-    //     if (acaoLancamento.acao && acaoLancamento.lancamento) {
-    //         setReceitasConferidas([]);
-    //         setReceitasNaoConferidas([]);
-    //
-    //         if (acaoLancamento.lancamento === 'receitas-lancadas') {
-    //             setDespesasNaoConferidas([]);
-    //             setDespesasConferidas([]);
-    //             getReceitasNaoConferidas();
-    //             getReceitasConferidas();
-    //         } else if (acaoLancamento.lancamento === 'despesas-lancadas') {
-    //             setReceitasNaoConferidas([]);
-    //             setReceitasConferidas([]);
-    //             getDespesasNaoConferidas();
-    //             getDespesasConferidas();
-    //         }
-    //     } else {
-    //         setReceitasNaoConferidas([]);
-    //         setReceitasConferidas([]);
-    //         setDespesasNaoConferidas([]);
-    //         setDespesasConferidas([]);
-    //     }
-    // }, [acaoLancamento, periodoConta, acoesAssociacao]);
-
-    // const getReceitasNaoConferidas = async () => {
-    //     setLoading(true);
-    //     if (checaCondicoes()){
-    //         const naoConferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False");
-    //         setReceitasNaoConferidas(naoConferidas);
-    //     }
-    //     setLoading(false);
-    // };
-    //
-    // const getReceitasConferidas = async () => {
-    //     setLoading(true);
-    //     if (checaCondicoes()) {
-    //         const conferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
-    //         setReceitasConferidas(conferidas);
-    //     }
-    //     setLoading(false);
-    // };
-    //
-    // const getDespesasNaoConferidas = async () => {
-    //     setLoading(true);
-    //     if (checaCondicoes()) {
-    //         const naoConferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "False");
-    //         setDespesasNaoConferidas(naoConferidas);
-    //     }
-    //     setLoading(false);
-    // };
-    //
-    // const getDespesasConferidas = async () => {
-    //     setLoading(true);
-    //     if (checaCondicoes()) {
-    //         const conferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
-    //         setDespesasConferidas(conferidas);
-    //     }
-    //     setLoading(false);
-    // };
-
-    const checaCondicoes = () =>{
-        let periodo_e_conta = JSON.parse(localStorage.getItem('periodoConta'));
-        return !!(periodo_e_conta && periodo_e_conta.periodo && periodo_e_conta.conta);
-    };
-
-    const handleChangeCheckboxReceitas = async (event, receita_uuid) => {
-        // setCheckboxReceitas(event.target.checked);
-        if (event.target.checked) {
-            await conciliarReceitas(receita_uuid);
-        } else if (!event.target.checked) {
-            await desconciliarReceitas(receita_uuid)
-        }
-        //await getReceitasNaoConferidas();
-        //await getReceitasConferidas();
-    };
-
-    const handleChangeCheckboxDespesas = async (event, rateio_uuid) => {
-        //setCheckboxDespesas(event.target.checked);
-        if (event.target.checked) {
-            await conciliarDespesas(rateio_uuid);
-        } else if (!event.target.checked) {
-            await desconciliarDespesas(rateio_uuid)
-        }
-        //await getDespesasNaoConferidas();
-        //await getDespesasConferidas();
-    };
-
-    const handleChangeSelectAcoes = (name, value) => {
-        setAcaoLancamento({
-            ...acaoLancamento,
-            [name]: value
-        });
-    };
 
 
     useEffect(()=>{
@@ -556,66 +447,6 @@ export const DetalheDasPrestacoes = () => {
                             ):
                                 <p className="mt-5"><strong>Não existem lançamentos conciliados...</strong></p>
                             }
-
-
-                            {/*<SelectAcaoLancamento
-                                acaoLancamento={acaoLancamento}
-                                handleChangeSelectAcoes={handleChangeSelectAcoes}
-                                acoesAssociacao={acoesAssociacao}
-                            />
-
-                            {!receitasNaoConferidas.length > 0 && !receitasConferidas.length > 0 && acaoLancamento.lancamento === "receitas-lancadas" &&
-                                <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
-                            }
-
-                            {receitasNaoConferidas && receitasNaoConferidas.length > 0 && (
-                                <TabelaDeLancamentosReceitas
-                                    conciliados={false}
-                                    receitas={receitasNaoConferidas}
-                                    checkboxReceitas={checkboxReceitas}
-                                    handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
-                                    dataTip={dataTip}
-                                    periodoFechado={periodoFechado}
-                                />
-                            )}
-
-                            {receitasConferidas && receitasConferidas.length > 0 && (
-                                <TabelaDeLancamentosReceitas
-                                    conciliados={true}
-                                    receitas={receitasConferidas}
-                                    checkboxReceitas={checkboxReceitas}
-                                    handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
-                                    dataTip={dataTip}
-                                    periodoFechado={periodoFechado}
-                                />
-                            )}
-
-                            {!despesasNaoConferidas.length > 0 && !despesasConferidas.length > 0 && acaoLancamento.lancamento === "despesas-lancadas" &&
-                                <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
-                            }
-
-                            {despesasNaoConferidas && despesasNaoConferidas.length > 0 &&
-                            <TabelaDeLancamentosDespesas
-                                conciliados={false}
-                                despesas={despesasNaoConferidas}
-                                checkboxDespesas={checkboxDespesas}
-                                handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
-                                dataTip={dataTip}
-                                periodoFechado={periodoFechado}
-                            />
-                            }
-
-                            {despesasConferidas && despesasConferidas.length > 0 &&
-                            <TabelaDeLancamentosDespesas
-                                conciliados={true}
-                                despesas={despesasConferidas}
-                                checkboxDespesas={checkboxDespesas}
-                                handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
-                                dataTip={dataTip}
-                                periodoFechado={periodoFechado}
-                            />
-                            }*/}
-
                             <Justificativa
                                 textareaJustificativa={textareaJustificativa}
                                 handleChangeTextareaJustificativa={handleChangeTextareaJustificativa}
