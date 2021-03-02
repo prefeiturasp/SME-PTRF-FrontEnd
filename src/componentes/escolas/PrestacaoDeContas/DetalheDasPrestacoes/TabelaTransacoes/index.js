@@ -16,6 +16,7 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
 
     const [expandedRows, setExpandedRows] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [urlRedirect, setUrlRedirect] = useState('');
     const [uuid, setUuid] = useState('');
 
     const onShowModal = () => {
@@ -28,12 +29,20 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
 
     const onCancelarTrue = () => {
         setShowModal(false);
-        const url = '/edicao-de-despesa/' + uuid + '/tabela-de-lancamentos-despesas';
+        const url = urlRedirect + uuid + '/tabela-de-lancamentos-despesas';
         history.push(url);
     };
 
     const redirecionaDetalhe = value => {
         setUuid(value.documento_mestre.uuid);
+        console.log("redirecionaDetalhe ", value)
+        let url;
+        if (value.tipo_transacao === 'Crédito'){
+            url = '/edicao-de-receita/'
+        }else{
+            url = '/edicao-de-despesa/'
+        }
+        setUrlRedirect(url)
         onShowModal();
     };
 

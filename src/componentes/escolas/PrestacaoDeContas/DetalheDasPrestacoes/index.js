@@ -132,8 +132,6 @@ export const DetalheDasPrestacoes = () => {
         });
     };
 
-
-
     const handleChangeTextareaJustificativa = (event) => {
         setTextareaJustificativa(event.target.value);
     };
@@ -295,8 +293,6 @@ export const DetalheDasPrestacoes = () => {
         }
         await carregaTransacoes()
         setLoading(false);
-        //await getDespesasNaoConferidas();
-        //await getDespesasConferidas();
     }, [periodoConta, carregaTransacoes, conciliarDespesas, desconciliarDespesas]);
 
     // Filtros Transacoes
@@ -310,7 +306,7 @@ export const DetalheDasPrestacoes = () => {
     }, [stateFiltros]);
 
     const handleSubmitFiltros = async (conciliado) => {
-        setLoading(true);
+        //setLoading(true);
         if (conciliado=== 'CONCILIADO'){
             try {
                 let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO, stateFiltros.filtrar_por_lancamento_CONCILIADO);
@@ -326,7 +322,7 @@ export const DetalheDasPrestacoes = () => {
                 console.log("Erro ao filtrar não conciliados")
             }
         }
-        setLoading(false);
+        //setLoading(false);
     };
 
     const limpaFiltros = async () => {
