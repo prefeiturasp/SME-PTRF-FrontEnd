@@ -44,7 +44,6 @@ export const DetalheDasPrestacoes = () => {
 
     const [textareaJustificativa, setTextareaJustificativa] = useState("");
 
-
     useEffect(()=>{
         getPeriodoConta();
         getAcaoLancamento();
@@ -122,7 +121,6 @@ export const DetalheDasPrestacoes = () => {
     const desconciliarDespesas = useCallback(async (rateio_uuid) => {
         await getDesconciliar(rateio_uuid, periodoConta.periodo);
     }, [periodoConta.periodo]) ;
-
 
 
     const handleChangePeriodoConta = (name, value) => {
@@ -232,14 +230,14 @@ export const DetalheDasPrestacoes = () => {
     const [tabelasReceita, setTabelasReceita] = useState([]);
 
     const carregaTransacoes = useCallback(async ()=>{
+        setLoading(true)
         if (periodoConta.periodo && periodoConta.conta){
             let transacoes_conciliadas = await getTransacoes(periodoConta.periodo, periodoConta.conta, 'True');
-            console.log("carregaTransacoes True ", transacoes_conciliadas)
             setTransacoesConciliadas(transacoes_conciliadas);
             let transacoes_nao_conciliadas = await getTransacoes(periodoConta.periodo, periodoConta.conta, 'False');
-            console.log("carregaTransacoes False ", transacoes_nao_conciliadas)
             setTransacoesNaoConciliadas(transacoes_nao_conciliadas);
         }
+        setLoading(false)
     }, [periodoConta]);
 
     useEffect(()=>{
@@ -249,7 +247,6 @@ export const DetalheDasPrestacoes = () => {
     useEffect(() => {
         const carregaTabelasDespesa = async () => {
             const resp = await getDespesasTabelas();
-            //console.log("Tabelas Despesas ", resp)
             setTabelasDespesa(resp);
         };
         carregaTabelasDespesa();
@@ -258,7 +255,6 @@ export const DetalheDasPrestacoes = () => {
     useEffect(() => {
         const carregaTabelasReceita = async () => {
             getTabelasReceita().then(response => {
-                //console.log("Tabelas Receitas ", response.data)
                 setTabelasReceita(response.data);
             }).catch(error => {
                 console.log(error);
@@ -268,7 +264,7 @@ export const DetalheDasPrestacoes = () => {
     }, []);
 
     const handleChangeCheckboxTransacoes = useCallback(async (event, transacao_ou_rateio_uuid, documento_mestre=null, tipo_transacao) => {
-        setLoading(true);
+
         setCheckboxTransacoes(event.target.checked);
         if (event.target.checked) {
             if (!documento_mestre){
@@ -292,7 +288,7 @@ export const DetalheDasPrestacoes = () => {
             }
         }
         await carregaTransacoes()
-        setLoading(false);
+
     }, [periodoConta, carregaTransacoes, conciliarDespesas, desconciliarDespesas]);
 
     // Filtros Transacoes
@@ -305,8 +301,7 @@ export const DetalheDasPrestacoes = () => {
         });
     }, [stateFiltros]);
 
-    const handleSubmitFiltros = async (conciliado) => {
-        //setLoading(true);
+    const handleSubmitFiltros = useCallback(async (conciliado) => {
         if (conciliado=== 'CONCILIADO'){
             try {
                 let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO, stateFiltros.filtrar_por_lancamento_CONCILIADO);
@@ -322,16 +317,14 @@ export const DetalheDasPrestacoes = () => {
                 console.log("Erro ao filtrar não conciliados")
             }
         }
-        //setLoading(false);
-    };
+    }, [periodoConta, stateFiltros]);
 
-    const limpaFiltros = async () => {
+    const limpaFiltros = async (conciliado) => {
         setLoading(true);
         setStateFiltros({});
         await carregaTransacoes();
         setLoading(false);
     };
-
 
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
@@ -350,7 +343,6 @@ export const DetalheDasPrestacoes = () => {
                         marginBottom="0"
                     />
                 ) :
-
                 <>
                     <SelectPeriodoConta
                         periodoConta={periodoConta}
@@ -400,7 +392,7 @@ export const DetalheDasPrestacoes = () => {
                                     tabelasReceita={tabelasReceita}
                                 />
                             ):
-                                <p className="mt-5"><strong>Não existem lançamentos não conciliados...</strong></p>
+                                <p className="mt-2"><strong>Não existem lançamentos não conciliados...</strong></p>
                             }
 
                             <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Lançamentos conciliados</p>
@@ -423,7 +415,7 @@ export const DetalheDasPrestacoes = () => {
                                     tabelasReceita={tabelasReceita}
                                 />
                             ):
-                                <p className="mt-5"><strong>Não existem lançamentos conciliados...</strong></p>
+                                <p className="mt-2"><strong>Não existem lançamentos conciliados...</strong></p>
                             }
                             <Justificativa
                                 textareaJustificativa={textareaJustificativa}

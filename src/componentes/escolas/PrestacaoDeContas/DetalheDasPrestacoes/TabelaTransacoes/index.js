@@ -35,7 +35,6 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
 
     const redirecionaDetalhe = value => {
         setUuid(value.documento_mestre.uuid);
-        console.log("redirecionaDetalhe ", value)
         let url;
         if (value.tipo_transacao === 'Crédito'){
             url = '/edicao-de-receita/'
@@ -130,8 +129,6 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
     };
 
     const rowExpansionTemplate = (data) => {
-        // console.log('EXPANDIR expandedRows ', expandedRows)
-        // console.log('EXPANDIR data ', data)
         if (data.tipo_transacao === 'Crédito') {
             return (
                 receitaTemplate(data)

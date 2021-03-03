@@ -55,6 +55,13 @@ export const patchConciliarTransacao = async (periodo_uuid, conta_uuid, transaca
 export const patchDesconciliarTransacao = async (conta_uuid, transacao_uuid, tipo_transacao) => {
   return (await api.patch(`/api/conciliacoes/desconciliar-transacao/?conta_associacao=${conta_uuid}&transacao=${transacao_uuid}&tipo=${tipo_transacao}`, {}, authHeader)).data
 };
+export const getConciliar = async (rateio_uuid, periodo_uuid) => {
+  return (await api.patch(`/api/rateios-despesas/${rateio_uuid}/conciliar/?periodo=${periodo_uuid}`, {}, authHeader)).data
+};
+
+export const getDesconciliar = async (rateio_uuid, periodo_uuid) => {
+  return (await api.patch(`/api/rateios-despesas/${rateio_uuid}/desconciliar/?periodo=${periodo_uuid}`, {}, authHeader)).data
+};
 // *** Fim novas implementaçãoes ***
 
 export const getDespesasPrestacaoDeContas = async (periodo_uuid, conta_uuid, acao_associacao_uuid, conferido) => {
@@ -71,14 +78,6 @@ export const getConciliarReceita = async (receita_uuid, periodo_uuid) => {
 
 export const getDesconciliarReceita = async (receita_uuid, periodo_uuid) => {
   return (await api.patch(`/api/receitas/${receita_uuid}/desconciliar/?periodo=${periodo_uuid}`, {}, authHeader)).data
-};
-
-export const getConciliar = async (rateio_uuid, periodo_uuid) => {
-  return (await api.patch(`/api/rateios-despesas/${rateio_uuid}/conciliar/?periodo=${periodo_uuid}`, {}, authHeader)).data
-};
-
-export const getDesconciliar = async (rateio_uuid, periodo_uuid) => {
-  return (await api.patch(`/api/rateios-despesas/${rateio_uuid}/desconciliar/?periodo=${periodo_uuid}`, {}, authHeader)).data
 };
 
 export const getObservacoes = async (periodo_uuid, conta_uuid) => {
