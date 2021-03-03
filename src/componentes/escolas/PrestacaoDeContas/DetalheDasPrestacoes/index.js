@@ -1,18 +1,11 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {TopoComBotoes} from "./TopoComBotoes";
-import {SelectAcaoLancamento} from "./SelectAcaoLancamento";
-import {TabelaDeLancamentosDespesas} from "./TabelaDeLancamentosDespesas";
-import {TabelaDeLancamentosReceitas} from "./TabelaDeLancamentosReceitas";
 import TabelaValoresPendentesPorAcao from "./TabelaValoresPendentesPorAcao";
 import {Justificativa} from "./Justivicativa";
 import {getTabelasReceita} from "../../../../services/escolas/Receitas.service";
 import {
-    getDespesasPrestacaoDeContas,
-    getReceitasPrestacaoDeContas,
-    getConciliarReceita,
-    getDesconciliarReceita,
-    getConciliarDespesa,
-    getDesconciliarDespesa,
+    getConciliar,
+    getDesconciliar,
     getSalvarPrestacaoDeConta,
     getObservacoes,
     getStatusPeriodoPorData,
@@ -49,14 +42,6 @@ export const DetalheDasPrestacoes = () => {
     const [acaoLancamento, setAcaoLancamento] = useState("");
     const [acoesAssociacao, setAcoesAssociacao] = useState(false);
 
-    const [receitasNaoConferidas, setReceitasNaoConferidas] = useState([]);
-    const [receitasConferidas, setReceitasConferidas] = useState([]);
-    const [checkboxReceitas, setCheckboxReceitas] = useState(false);
-
-    const [despesasNaoConferidas, setDespesasNaoConferidas] = useState([]);
-    const [despesasConferidas, setDespesasConferidas] = useState([]);
-    const [checkboxDespesas, setCheckboxDespesas] = useState(false);
-
     const [textareaJustificativa, setTextareaJustificativa] = useState("");
 
     useEffect(()=>{
@@ -75,39 +60,11 @@ export const DetalheDasPrestacoes = () => {
         carregaObservacoes();
     }, [periodoConta, acoesAssociacao, acaoLancamento]);
 
-    useEffect(() => {
-
-        localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento));
-
-        if (acaoLancamento.acao && acaoLancamento.lancamento) {
-            setReceitasConferidas([]);
-            setReceitasNaoConferidas([]);
-
-            if (acaoLancamento.lancamento === 'receitas-lancadas') {
-                setDespesasNaoConferidas([]);
-                setDespesasConferidas([]);
-                getReceitasNaoConferidas();
-                getReceitasConferidas();
-            } else if (acaoLancamento.lancamento === 'despesas-lancadas') {
-                setReceitasNaoConferidas([]);
-                setReceitasConferidas([]);
-                getDespesasNaoConferidas();
-                getDespesasConferidas();
-            }
-        } else {
-            setReceitasNaoConferidas([]);
-            setReceitasConferidas([]);
-            setDespesasNaoConferidas([]);
-            setDespesasConferidas([]);
-        }
-    }, [acaoLancamento, periodoConta, acoesAssociacao]);
-
     useEffect(()=>{
         setLoading(false)
     }, []);
 
-    useEffect(
-        () => {
+    useEffect(() => {
             verificaSePeriodoEstaAberto(periodoConta.periodo)
         }, [periodoConta, periodosAssociacao]
     );
@@ -157,95 +114,18 @@ export const DetalheDasPrestacoes = () => {
         })
     };
 
-    const checaCondicoes = () =>{
-        let periodo_e_conta = JSON.parse(localStorage.getItem('periodoConta'));
-        return !!(periodo_e_conta && periodo_e_conta.periodo && periodo_e_conta.conta);
-    };
+    const conciliarDespesas = useCallback(async (rateio_uuid) => {
+        await getConciliar(rateio_uuid, periodoConta.periodo);
+    }, [periodoConta.periodo]) ;
 
-    const getReceitasNaoConferidas = async () => {
-        setLoading(true);
-        if (checaCondicoes()){
-            const naoConferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False");
-            setReceitasNaoConferidas(naoConferidas);
-        }
-        setLoading(false);
-    };
+    const desconciliarDespesas = useCallback(async (rateio_uuid) => {
+        await getDesconciliar(rateio_uuid, periodoConta.periodo);
+    }, [periodoConta.periodo]) ;
 
-    const getReceitasConferidas = async () => {
-        setLoading(true);
-        if (checaCondicoes()) {
-            const conferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
-            setReceitasConferidas(conferidas);
-        }
-        setLoading(false);
-    };
-
-    const getDespesasNaoConferidas = async () => {
-        setLoading(true);
-        if (checaCondicoes()) {
-            const naoConferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "False");
-            setDespesasNaoConferidas(naoConferidas);
-        }
-        setLoading(false);
-    };
-
-    const getDespesasConferidas = async () => {
-        setLoading(true);
-        if (checaCondicoes()) {
-            const conferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
-            setDespesasConferidas(conferidas);
-        }
-        setLoading(false);
-    };
-
-    const conciliarReceitas = async (receita_uuid) => {
-        await getConciliarReceita(receita_uuid, periodoConta.periodo)
-    };
-
-    const desconciliarReceitas = async (receita_uuid) => {
-        await getDesconciliarReceita(receita_uuid, periodoConta.periodo);
-    };
-
-    const handleChangeCheckboxReceitas = async (event, receita_uuid) => {
-        setCheckboxReceitas(event.target.checked);
-        if (event.target.checked) {
-            await conciliarReceitas(receita_uuid);
-        } else if (!event.target.checked) {
-            await desconciliarReceitas(receita_uuid)
-        }
-        await getReceitasNaoConferidas();
-        await getReceitasConferidas();
-    };
-
-    const conciliarDespesas = async (rateio_uuid) => {
-        await getConciliarDespesa(rateio_uuid, periodoConta.periodo);
-    };
-
-    const desconciliarDespesas = async (rateio_uuid) => {
-        await getDesconciliarDespesa(rateio_uuid, periodoConta.periodo);
-    };
-
-    const handleChangeCheckboxDespesas = async (event, rateio_uuid) => {
-        setCheckboxDespesas(event.target.checked);
-        if (event.target.checked) {
-            await conciliarDespesas(rateio_uuid);
-        } else if (!event.target.checked) {
-            await desconciliarDespesas(rateio_uuid)
-        }
-        await getDespesasNaoConferidas();
-        await getDespesasConferidas();
-    };
 
     const handleChangePeriodoConta = (name, value) => {
         setPeriodoConta({
             ...periodoConta,
-            [name]: value
-        });
-    };
-
-    const handleChangeSelectAcoes = (name, value) => {
-        setAcaoLancamento({
-            ...acaoLancamento,
             [name]: value
         });
     };
@@ -293,13 +173,6 @@ export const DetalheDasPrestacoes = () => {
         setShowSalvar(false);
     };
 
-    const dataTip = (notificar_dias_nao_conferido) => {
-        let meses = Math.trunc(notificar_dias_nao_conferido/30);
-        let msg = (notificar_dias_nao_conferido <= 59) ? `1 mês.` : `${meses} meses.`;
-
-        return `Não demonstrado por ${msg}`;
-    };
-
     const verificaSePeriodoEstaAberto = async (periodoUuid) => {
         if (periodosAssociacao) {
             const periodo = periodosAssociacao.find(o => o.uuid === periodoUuid);
@@ -340,7 +213,7 @@ export const DetalheDasPrestacoes = () => {
     };
 
     // Data Saldo Bancário
-    const [dataSaldoBancario, setDataSaldoBancario]= useState([]);
+    const [dataSaldoBancario, setDataSaldoBancario]= useState({});
 
     const handleChangaDataSaldo = useCallback((name, value) => {
         setDataSaldoBancario({
@@ -357,14 +230,14 @@ export const DetalheDasPrestacoes = () => {
     const [tabelasReceita, setTabelasReceita] = useState([]);
 
     const carregaTransacoes = useCallback(async ()=>{
+        setLoading(true)
         if (periodoConta.periodo && periodoConta.conta){
             let transacoes_conciliadas = await getTransacoes(periodoConta.periodo, periodoConta.conta, 'True');
-            console.log("carregaTransacoes True ", transacoes_conciliadas)
             setTransacoesConciliadas(transacoes_conciliadas);
             let transacoes_nao_conciliadas = await getTransacoes(periodoConta.periodo, periodoConta.conta, 'False');
-            console.log("carregaTransacoes False ", transacoes_nao_conciliadas)
             setTransacoesNaoConciliadas(transacoes_nao_conciliadas);
         }
+        setLoading(false)
     }, [periodoConta]);
 
     useEffect(()=>{
@@ -374,7 +247,6 @@ export const DetalheDasPrestacoes = () => {
     useEffect(() => {
         const carregaTabelasDespesa = async () => {
             const resp = await getDespesasTabelas();
-            //console.log("Tabelas Despesas ", resp)
             setTabelasDespesa(resp);
         };
         carregaTabelasDespesa();
@@ -383,7 +255,6 @@ export const DetalheDasPrestacoes = () => {
     useEffect(() => {
         const carregaTabelasReceita = async () => {
             getTabelasReceita().then(response => {
-                //console.log("Tabelas Receitas ", response.data)
                 setTabelasReceita(response.data);
             }).catch(error => {
                 console.log(error);
@@ -392,35 +263,33 @@ export const DetalheDasPrestacoes = () => {
         carregaTabelasReceita()
     }, []);
 
-    const handleChangeCheckboxTransacoes = async (event, rateio_uuid, todos=null, tipo_transacao) => {
-        console.log('handleChangeCheckboxTransacoes TODOS ', todos)
-        console.log('handleChangeCheckboxTransacoes tipo_transacao ', tipo_transacao)
+    const handleChangeCheckboxTransacoes = useCallback(async (event, transacao_ou_rateio_uuid, documento_mestre=null, tipo_transacao) => {
+
         setCheckboxTransacoes(event.target.checked);
         if (event.target.checked) {
-            if (!todos){
-                await conciliarDespesas(rateio_uuid);
+            if (!documento_mestre){
+                await conciliarDespesas(transacao_ou_rateio_uuid);
             }else {
                 if (tipo_transacao==='Crédito'){
-                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'CREDITO')
+                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'CREDITO')
                 }else {
-                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'GASTO')
+                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'GASTO')
                 }
             }
         } else if (!event.target.checked) {
-            if (!todos){
-                await desconciliarDespesas(rateio_uuid)
+            if (!documento_mestre){
+                await desconciliarDespesas(transacao_ou_rateio_uuid)
             }else {
                 if (tipo_transacao==='Crédito'){
-                    await patchDesconciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'CREDITO')
+                    await patchDesconciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'CREDITO')
                 }else {
-                    await patchDesconciliarTransacao(periodoConta.periodo, periodoConta.conta, rateio_uuid, 'GASTO')
+                    await patchDesconciliarTransacao(periodoConta.conta, transacao_ou_rateio_uuid, 'GASTO')
                 }
             }
         }
         await carregaTransacoes()
-        //await getDespesasNaoConferidas();
-        //await getDespesasConferidas();
-    };
+
+    }, [periodoConta, carregaTransacoes, conciliarDespesas, desconciliarDespesas]);
 
     // Filtros Transacoes
     const [stateFiltros, setStateFiltros] = useState({});
@@ -432,8 +301,7 @@ export const DetalheDasPrestacoes = () => {
         });
     }, [stateFiltros]);
 
-    const handleSubmitFiltros = async (conciliado) => {
-        //setLoading(true);
+    const handleSubmitFiltros = useCallback(async (conciliado) => {
         if (conciliado=== 'CONCILIADO'){
             try {
                 let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO, stateFiltros.filtrar_por_lancamento_CONCILIADO);
@@ -449,16 +317,14 @@ export const DetalheDasPrestacoes = () => {
                 console.log("Erro ao filtrar não conciliados")
             }
         }
-        //setLoading(false);
-    };
+    }, [periodoConta, stateFiltros]);
 
-    const limpaFiltros = async () => {
+    const limpaFiltros = async (conciliado) => {
         setLoading(true);
         setStateFiltros({});
         await carregaTransacoes();
         setLoading(false);
     };
-
 
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
@@ -477,7 +343,6 @@ export const DetalheDasPrestacoes = () => {
                         marginBottom="0"
                     />
                 ) :
-
                 <>
                     <SelectPeriodoConta
                         periodoConta={periodoConta}
@@ -520,7 +385,6 @@ export const DetalheDasPrestacoes = () => {
                             {transacoesNaoConciliadas && transacoesNaoConciliadas.length > 0 ?(
                                 <TabelaTransacoes
                                     transacoes={transacoesNaoConciliadas}
-                                    conciliados={false}
                                     checkboxTransacoes={checkboxTransacoes}
                                     periodoFechado={periodoFechado}
                                     handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
@@ -528,7 +392,7 @@ export const DetalheDasPrestacoes = () => {
                                     tabelasReceita={tabelasReceita}
                                 />
                             ):
-                                <p className="mt-5"><strong>Não existem lançamentos não conciliados...</strong></p>
+                                <p className="mt-2"><strong>Não existem lançamentos não conciliados...</strong></p>
                             }
 
                             <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Lançamentos conciliados</p>
@@ -544,7 +408,6 @@ export const DetalheDasPrestacoes = () => {
                             {transacoesConciliadas && transacoesConciliadas.length > 0 ?(
                                 <TabelaTransacoes
                                     transacoes={transacoesConciliadas}
-                                    conciliados={true}
                                     checkboxTransacoes={checkboxTransacoes}
                                     periodoFechado={periodoFechado}
                                     handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
@@ -552,68 +415,8 @@ export const DetalheDasPrestacoes = () => {
                                     tabelasReceita={tabelasReceita}
                                 />
                             ):
-                                <p className="mt-5"><strong>Não existem lançamentos conciliados...</strong></p>
+                                <p className="mt-2"><strong>Não existem lançamentos conciliados...</strong></p>
                             }
-
-
-                            {/*<SelectAcaoLancamento
-                                acaoLancamento={acaoLancamento}
-                                handleChangeSelectAcoes={handleChangeSelectAcoes}
-                                acoesAssociacao={acoesAssociacao}
-                            />
-
-                            {!receitasNaoConferidas.length > 0 && !receitasConferidas.length > 0 && acaoLancamento.lancamento === "receitas-lancadas" &&
-                                <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
-                            }
-
-                            {receitasNaoConferidas && receitasNaoConferidas.length > 0 && (
-                                <TabelaDeLancamentosReceitas
-                                    conciliados={false}
-                                    receitas={receitasNaoConferidas}
-                                    checkboxReceitas={checkboxReceitas}
-                                    handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
-                                    dataTip={dataTip}
-                                    periodoFechado={periodoFechado}
-                                />
-                            )}
-
-                            {receitasConferidas && receitasConferidas.length > 0 && (
-                                <TabelaDeLancamentosReceitas
-                                    conciliados={true}
-                                    receitas={receitasConferidas}
-                                    checkboxReceitas={checkboxReceitas}
-                                    handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
-                                    dataTip={dataTip}
-                                    periodoFechado={periodoFechado}
-                                />
-                            )}
-
-                            {!despesasNaoConferidas.length > 0 && !despesasConferidas.length > 0 && acaoLancamento.lancamento === "despesas-lancadas" &&
-                                <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
-                            }
-
-                            {despesasNaoConferidas && despesasNaoConferidas.length > 0 &&
-                            <TabelaDeLancamentosDespesas
-                                conciliados={false}
-                                despesas={despesasNaoConferidas}
-                                checkboxDespesas={checkboxDespesas}
-                                handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
-                                dataTip={dataTip}
-                                periodoFechado={periodoFechado}
-                            />
-                            }
-
-                            {despesasConferidas && despesasConferidas.length > 0 &&
-                            <TabelaDeLancamentosDespesas
-                                conciliados={true}
-                                despesas={despesasConferidas}
-                                checkboxDespesas={checkboxDespesas}
-                                handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
-                                dataTip={dataTip}
-                                periodoFechado={periodoFechado}
-                            />
-                            }*/}
-
                             <Justificativa
                                 textareaJustificativa={textareaJustificativa}
                                 handleChangeTextareaJustificativa={handleChangeTextareaJustificativa}

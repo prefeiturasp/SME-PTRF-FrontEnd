@@ -20,7 +20,7 @@ export const TopoComBotoes = ({onSalvarTrue, contaConciliacao, showSalvar}) => {
                 }
                 {visoesService.getPermissoes(['change_conciliacao_bancaria']) &&
                     <div className="bd-highlight">
-                    <button type="button" onClick={() => onSalvarTrue()} className="btn btn-outline-success mt-2" disabled={!showSalvar}><strong>Salvar</strong></button>
+                    <button type="button" onClick={() => onSalvarTrue()} className="btn btn-success mt-2" disabled={!showSalvar}><strong>Salvar</strong></button>
                     </div>
                 }
             </div>
