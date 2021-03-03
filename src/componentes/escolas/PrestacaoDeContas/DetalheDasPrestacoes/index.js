@@ -1,21 +1,18 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {TopoComBotoes} from "./TopoComBotoes";
-import {SelectAcaoLancamento} from "./SelectAcaoLancamento";
-import {TabelaDeLancamentosDespesas} from "./TabelaDeLancamentosDespesas";
-import {TabelaDeLancamentosReceitas} from "./TabelaDeLancamentosReceitas";
-import {TabelaValoresPendentesPorAcao} from "./TabelaValoresPendentesPorAcao";
+import TabelaValoresPendentesPorAcao from "./TabelaValoresPendentesPorAcao";
 import {Justificativa} from "./Justivicativa";
 import {getTabelasReceita} from "../../../../services/escolas/Receitas.service";
 import {
-    getDespesasPrestacaoDeContas,
-    getReceitasPrestacaoDeContas,
-    getConciliarReceita,
-    getDesconciliarReceita,
-    getConciliarDespesa,
-    getDesconciliarDespesa,
+    getConciliar,
+    getDesconciliar,
     getSalvarPrestacaoDeConta,
     getObservacoes,
-    getStatusPeriodoPorData
+    getStatusPeriodoPorData,
+    getTransacoes,
+    getTransacoesFiltros,
+    patchConciliarTransacao,
+    patchDesconciliarTransacao,
 } from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getContas, getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
@@ -24,6 +21,13 @@ import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada"
 import Img404 from "../../../../assets/img/img-404.svg";
 import {ModalConfirmaSalvar} from "../../../../utils/Modais";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
+import {tabelaValoresPendentes} from "../../../../services/escolas/TabelaValoresPendentesPorAcao.service";
+import DataSaldoBancario from "./DataSaldoBancario";
+import moment from "moment";
+import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import TabelaTransacoes from "./TabelaTransacoes";
+import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
+import {FiltrosTransacoes} from "./FiltrosTransacoes";
 
 export const DetalheDasPrestacoes = () => {
 
@@ -35,20 +39,9 @@ export const DetalheDasPrestacoes = () => {
     const [contasAssociacao, setContasAssociacao] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
     const [contaConciliacao, setContaConciliacao] = useState("");
-    const [btnCadastrarTexto, setBtnCadastrarTexto] = useState("");
-    const [btnCadastrarUrl, setBtnCadastrarUrl] = useState("");
     const [acaoLancamento, setAcaoLancamento] = useState("");
     const [acoesAssociacao, setAcoesAssociacao] = useState(false);
 
-    const [receitasNaoConferidas, setReceitasNaoConferidas] = useState([]);
-    const [receitasConferidas, setReceitasConferidas] = useState([]);
-    const [checkboxReceitas, setCheckboxReceitas] = useState(false);
-
-    const [despesasNaoConferidas, setDespesasNaoConferidas] = useState([]);
-    const [despesasConferidas, setDespesasConferidas] = useState([]);
-    const [checkboxDespesas, setCheckboxDespesas] = useState(false);
-
-    const [observacoes, setObservacoes] = useState([]);
     const [textareaJustificativa, setTextareaJustificativa] = useState("");
 
     useEffect(()=>{
@@ -67,44 +60,11 @@ export const DetalheDasPrestacoes = () => {
         carregaObservacoes();
     }, [periodoConta, acoesAssociacao, acaoLancamento]);
 
-    useEffect(() => {
-
-        localStorage.setItem('acaoLancamento', JSON.stringify(acaoLancamento));
-
-        if (acaoLancamento.acao && acaoLancamento.lancamento) {
-            setReceitasConferidas([]);
-            setReceitasNaoConferidas([]);
-
-            if (acaoLancamento.lancamento === 'receitas-lancadas') {
-                setBtnCadastrarTexto("Cadastrar Receita");
-                setBtnCadastrarUrl("/cadastro-de-credito/tabela-de-lancamentos-receitas");
-                setDespesasNaoConferidas([]);
-                setDespesasConferidas([]);
-                getReceitasNaoConferidas();
-                getReceitasConferidas();
-            } else if (acaoLancamento.lancamento === 'despesas-lancadas') {
-                setReceitasNaoConferidas([]);
-                setReceitasConferidas([]);
-                setBtnCadastrarTexto("Cadastrar Despesa");
-                setBtnCadastrarUrl("/cadastro-de-despesa/tabela-de-lancamentos-despesas");
-                getDespesasNaoConferidas();
-                getDespesasConferidas();
-            }
-        } else {
-            setBtnCadastrarTexto("");
-            setReceitasNaoConferidas([]);
-            setReceitasConferidas([]);
-            setDespesasNaoConferidas([]);
-            setDespesasConferidas([]);
-        }
-    }, [acaoLancamento, periodoConta, acoesAssociacao]);
-
     useEffect(()=>{
         setLoading(false)
     }, []);
 
-    useEffect(
-        () => {
+    useEffect(() => {
             verificaSePeriodoEstaAberto(periodoConta.periodo)
         }, [periodoConta, periodosAssociacao]
     );
@@ -154,84 +114,14 @@ export const DetalheDasPrestacoes = () => {
         })
     };
 
-    const checaCondicoes = () =>{
-        let periodo_e_conta = JSON.parse(localStorage.getItem('periodoConta'));
-        return !!(periodo_e_conta && periodo_e_conta.periodo && periodo_e_conta.conta);
-    };
+    const conciliarDespesas = useCallback(async (rateio_uuid) => {
+        await getConciliar(rateio_uuid, periodoConta.periodo);
+    }, [periodoConta.periodo]) ;
 
-    const getReceitasNaoConferidas = async () => {
-        setLoading(true);
-        if (checaCondicoes()){
-            const naoConferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao,"False");
-            setReceitasNaoConferidas(naoConferidas);
-        }
-        setLoading(false);
-    };
+    const desconciliarDespesas = useCallback(async (rateio_uuid) => {
+        await getDesconciliar(rateio_uuid, periodoConta.periodo);
+    }, [periodoConta.periodo]) ;
 
-    const getReceitasConferidas = async () => {
-        setLoading(true);
-        if (checaCondicoes()) {
-            const conferidas = await getReceitasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
-            setReceitasConferidas(conferidas);
-        }
-        setLoading(false);
-    };
-
-    const getDespesasNaoConferidas = async () => {
-        setLoading(true);
-        if (checaCondicoes()) {
-            const naoConferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "False");
-            setDespesasNaoConferidas(naoConferidas);
-        }
-        setLoading(false);
-    };
-
-    const getDespesasConferidas = async () => {
-        setLoading(true);
-        if (checaCondicoes()) {
-            const conferidas = await getDespesasPrestacaoDeContas(periodoConta.periodo, periodoConta.conta, acaoLancamento.acao, "True");
-            setDespesasConferidas(conferidas);
-        }
-        setLoading(false);
-    };
-
-    const conciliarReceitas = async (receita_uuid) => {
-        await getConciliarReceita(receita_uuid, periodoConta.periodo)
-    };
-
-    const desconciliarReceitas = async (receita_uuid) => {
-        await getDesconciliarReceita(receita_uuid, periodoConta.periodo);
-    };
-
-    const handleChangeCheckboxReceitas = async (event, receita_uuid) => {
-        setCheckboxReceitas(event.target.checked);
-        if (event.target.checked) {
-            await conciliarReceitas(receita_uuid);
-        } else if (!event.target.checked) {
-            await desconciliarReceitas(receita_uuid)
-        }
-        await getReceitasNaoConferidas();
-        await getReceitasConferidas();
-    };
-
-    const conciliarDespesas = async (rateio_uuid) => {
-        await getConciliarDespesa(rateio_uuid, periodoConta.periodo);
-    };
-
-    const desconciliarDespesas = async (rateio_uuid) => {
-        await getDesconciliarDespesa(rateio_uuid, periodoConta.periodo);
-    };
-
-    const handleChangeCheckboxDespesas = async (event, rateio_uuid) => {
-        setCheckboxDespesas(event.target.checked);
-        if (event.target.checked) {
-            await conciliarDespesas(rateio_uuid);
-        } else if (!event.target.checked) {
-            await desconciliarDespesas(rateio_uuid)
-        }
-        await getDespesasNaoConferidas();
-        await getDespesasConferidas();
-    };
 
     const handleChangePeriodoConta = (name, value) => {
         setPeriodoConta({
@@ -240,75 +130,24 @@ export const DetalheDasPrestacoes = () => {
         });
     };
 
-    const handleChangeSelectAcoes = (name, value) => {
-        setAcaoLancamento({
-            ...acaoLancamento,
-            [name]: value
-        });
-
-        if (name === 'acao' && value !== '') {
-            if (observacoes && observacoes.length > 0){
-                const obs = observacoes.find((acao) => acao.acao_associacao_uuid === value);
-                if (obs && obs.observacao){
-                    setTextareaJustificativa(obs.observacao);
-                }else {
-                    setTextareaJustificativa('');
-                }
-            }
-
-
-        } else if(name === 'acao') {
-            setTextareaJustificativa('');
-        }
-    };
-
     const handleChangeTextareaJustificativa = (event) => {
-        const obs = observacoes.map((acao) => (
-            {
-                ...acao,
-                observacao: acao.acao_associacao_uuid === acaoLancamento.acao ? event.target.value : acao.observacao
-            }
-        ));
-        setObservacoes(obs);
         setTextareaJustificativa(event.target.value);
     };
 
     const carregaObservacoes = async () => {
 
-        if (acoesAssociacao && periodoConta.periodo !== undefined && periodoConta.periodo !== "" && periodoConta.conta !== undefined && periodoConta.conta !== "") {
-            let acoes = acoesAssociacao;
+        if (periodoConta.periodo && periodoConta.conta) {
             let periodo_uuid = periodoConta.periodo;
             let conta_uuid = periodoConta.conta;
 
-            await getObservacoes(periodo_uuid, conta_uuid).then(response => {
-                let observs = acoes.map((acao) => (
-                    {
-                        acao_associacao_uuid: acao.uuid,
-                        observacao: ''
-                    }
-                ));
+            let observacao = await getObservacoes(periodo_uuid, conta_uuid);
 
-                if (response) {
-                    observs = observs.map((obs) => {
-                        let obs_resp = response.find((acao) => acao.acao_associacao_uuid === obs.acao_associacao_uuid);
+            setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
+            setDataSaldoBancario({
+                data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
+                saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : '',
+            })
 
-                        return {
-                            ...obs,
-                            observacao: obs_resp !== undefined ? obs_resp.observacao : obs.observacao
-                        }
-                    });
-
-                    const files = JSON.parse(localStorage.getItem('acaoLancamento'));
-                    if (files.acao !== "") {
-                        const observacao = observs.find((acao) => acao.acao_associacao_uuid === files.acao);
-                        setTextareaJustificativa(observacao.observacao);
-                    }
-                }
-                setObservacoes(observs);
-
-            }).catch(error => {
-                console.log(error);
-            });
         }
     };
 
@@ -317,12 +156,14 @@ export const DetalheDasPrestacoes = () => {
         let payload = {
             "periodo_uuid": periodoConta.periodo,
             "conta_associacao_uuid": periodoConta.conta,
-            "observacoes": observacoes
+            "observacao": textareaJustificativa,
+            "data_extrato": dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null,
+            "saldo_extrato": dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : 0,
         };
-
         try {
-           await getSalvarPrestacaoDeConta(periodoConta.periodo, periodoConta.conta, payload);
-            setShowSalvar(true)
+            await getSalvarPrestacaoDeConta(periodoConta.periodo, periodoConta.conta, payload);
+            setShowSalvar(true);
+            await carregaObservacoes();
         } catch (e) {
             console.log("Erro: ", e.message)
         }
@@ -331,17 +172,6 @@ export const DetalheDasPrestacoes = () => {
     const onHandleClose = () => {
         setShowSalvar(false);
     };
-
-    const handleClickCadastrar = () => {
-        window.location.assign(btnCadastrarUrl)
-    };
-
-    const dataTip = (notificar_dias_nao_conferido) => {
-        let meses = Math.trunc(notificar_dias_nao_conferido/30)
-        let msg = (notificar_dias_nao_conferido <= 59) ? `1 mês.` : `${meses} meses.` 
-
-        return `Não demonstrado por ${msg}`;
-    }
 
     const verificaSePeriodoEstaAberto = async (periodoUuid) => {
         if (periodosAssociacao) {
@@ -356,7 +186,145 @@ export const DetalheDasPrestacoes = () => {
                 });
             }
         }
-    }
+    };
+
+    // Tabela ValoresPendentes por Ação
+    const [valoresPendentes, setValoresPendentes] = useState({});
+
+    const carregaValoresPendentes = useCallback(async ()=>{
+        let valores_pendentes = await tabelaValoresPendentes(periodoConta.periodo, periodoConta.conta);
+        setValoresPendentes(valores_pendentes)
+    }, [periodoConta.periodo, periodoConta.conta]);
+
+    useEffect(()=>{
+        if (periodoConta.periodo && periodoConta.conta){
+            carregaValoresPendentes()
+        }
+
+    }, [periodoConta.periodo, periodoConta.conta, carregaValoresPendentes]);
+
+    const valorTemplate = (valor) => {
+        let valor_formatado = Number(valor).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+        valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
+        return valor_formatado
+    };
+
+    // Data Saldo Bancário
+    const [dataSaldoBancario, setDataSaldoBancario]= useState({});
+
+    const handleChangaDataSaldo = useCallback((name, value) => {
+        setDataSaldoBancario({
+            ...dataSaldoBancario,
+            [name]: value
+        });
+    }, [dataSaldoBancario]);
+
+    // Transacoes Conciliadas e Não Conciliadas
+    const [transacoesConciliadas, setTransacoesConciliadas] = useState([]);
+    const [transacoesNaoConciliadas, setTransacoesNaoConciliadas] = useState([]);
+    const [checkboxTransacoes, setCheckboxTransacoes] = useState(false);
+    const [tabelasDespesa, setTabelasDespesa] = useState([]);
+    const [tabelasReceita, setTabelasReceita] = useState([]);
+
+    const carregaTransacoes = useCallback(async ()=>{
+        setLoading(true)
+        if (periodoConta.periodo && periodoConta.conta){
+            let transacoes_conciliadas = await getTransacoes(periodoConta.periodo, periodoConta.conta, 'True');
+            setTransacoesConciliadas(transacoes_conciliadas);
+            let transacoes_nao_conciliadas = await getTransacoes(periodoConta.periodo, periodoConta.conta, 'False');
+            setTransacoesNaoConciliadas(transacoes_nao_conciliadas);
+        }
+        setLoading(false)
+    }, [periodoConta]);
+
+    useEffect(()=>{
+        carregaTransacoes();
+    }, [carregaTransacoes]);
+
+    useEffect(() => {
+        const carregaTabelasDespesa = async () => {
+            const resp = await getDespesasTabelas();
+            setTabelasDespesa(resp);
+        };
+        carregaTabelasDespesa();
+    }, []);
+
+    useEffect(() => {
+        const carregaTabelasReceita = async () => {
+            getTabelasReceita().then(response => {
+                setTabelasReceita(response.data);
+            }).catch(error => {
+                console.log(error);
+            });
+        };
+        carregaTabelasReceita()
+    }, []);
+
+    const handleChangeCheckboxTransacoes = useCallback(async (event, transacao_ou_rateio_uuid, documento_mestre=null, tipo_transacao) => {
+
+        setCheckboxTransacoes(event.target.checked);
+        if (event.target.checked) {
+            if (!documento_mestre){
+                await conciliarDespesas(transacao_ou_rateio_uuid);
+            }else {
+                if (tipo_transacao==='Crédito'){
+                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'CREDITO')
+                }else {
+                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'GASTO')
+                }
+            }
+        } else if (!event.target.checked) {
+            if (!documento_mestre){
+                await desconciliarDespesas(transacao_ou_rateio_uuid)
+            }else {
+                if (tipo_transacao==='Crédito'){
+                    await patchDesconciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'CREDITO')
+                }else {
+                    await patchDesconciliarTransacao(periodoConta.conta, transacao_ou_rateio_uuid, 'GASTO')
+                }
+            }
+        }
+        await carregaTransacoes()
+
+    }, [periodoConta, carregaTransacoes, conciliarDespesas, desconciliarDespesas]);
+
+    // Filtros Transacoes
+    const [stateFiltros, setStateFiltros] = useState({});
+
+    const handleChangeFiltros = useCallback((name, value) => {
+        setStateFiltros({
+            ...stateFiltros,
+            [name]: value
+        });
+    }, [stateFiltros]);
+
+    const handleSubmitFiltros = useCallback(async (conciliado) => {
+        if (conciliado=== 'CONCILIADO'){
+            try {
+                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO, stateFiltros.filtrar_por_lancamento_CONCILIADO);
+                setTransacoesConciliadas(transacoes)
+            }catch (e) {
+                console.log("Erro ao filtrar conciliados")
+            }
+        }else {
+            try {
+                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'False', stateFiltros.filtrar_por_acao_NAO_CONCILIADO, stateFiltros.filtrar_por_lancamento_NAO_CONCILIADO);
+                setTransacoesNaoConciliadas(transacoes);
+            }catch (e) {
+                console.log("Erro ao filtrar não conciliados")
+            }
+        }
+    }, [periodoConta, stateFiltros]);
+
+    const limpaFiltros = async (conciliado) => {
+        setLoading(true);
+        setStateFiltros({});
+        await carregaTransacoes();
+        setLoading(false);
+    };
 
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
@@ -375,7 +343,6 @@ export const DetalheDasPrestacoes = () => {
                         marginBottom="0"
                     />
                 ) :
-
                 <>
                     <SelectPeriodoConta
                         periodoConta={periodoConta}
@@ -387,8 +354,6 @@ export const DetalheDasPrestacoes = () => {
                     {periodoConta.periodo && periodoConta.conta ? (
                         <>
                             <TopoComBotoes
-                                handleClickCadastrar={handleClickCadastrar}
-                                btnCadastrarTexto={btnCadastrarTexto}
                                 setShowSalvar={setShowSalvar}
                                 showSalvar={!periodoFechado}
                                 onSalvarTrue={onSalvarTrue}
@@ -397,68 +362,61 @@ export const DetalheDasPrestacoes = () => {
                             />
 
                             <TabelaValoresPendentesPorAcao
-                                periodo={periodoConta.periodo}
-                                conta={periodoConta.conta}
+                                valoresPendentes={valoresPendentes}
+                                valorTemplate={valorTemplate}
                             />
 
-                            <SelectAcaoLancamento
-                                acaoLancamento={acaoLancamento}
-                                handleChangeSelectAcoes={handleChangeSelectAcoes}
-                                acoesAssociacao={acoesAssociacao}
-                            />
-
-                            {!receitasNaoConferidas.length > 0 && !receitasConferidas.length > 0 && acaoLancamento.lancamento === "receitas-lancadas" &&
-                                <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
-                            }
-
-                            {receitasNaoConferidas && receitasNaoConferidas.length > 0 && (
-                                <TabelaDeLancamentosReceitas
-                                    conciliados={false}
-                                    receitas={receitasNaoConferidas}
-                                    checkboxReceitas={checkboxReceitas}
-                                    handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
-                                    dataTip={dataTip}
-                                    periodoFechado={periodoFechado}
-                                />
-                            )}
-
-                            {receitasConferidas && receitasConferidas.length > 0 && (
-                                <TabelaDeLancamentosReceitas
-                                    conciliados={true}
-                                    receitas={receitasConferidas}
-                                    checkboxReceitas={checkboxReceitas}
-                                    handleChangeCheckboxReceitas={handleChangeCheckboxReceitas}
-                                    dataTip={dataTip}
-                                    periodoFechado={periodoFechado}
-                                />
-                            )}
-
-                            {!despesasNaoConferidas.length > 0 && !despesasConferidas.length > 0 && acaoLancamento.lancamento === "despesas-lancadas" &&
-                                <p className="mt-5"><strong>Não existem lançamentos conciliados/não conciliados...</strong></p>
-                            }
-
-                            {despesasNaoConferidas && despesasNaoConferidas.length > 0 &&
-                            <TabelaDeLancamentosDespesas
-                                conciliados={false}
-                                despesas={despesasNaoConferidas}
-                                checkboxDespesas={checkboxDespesas}
-                                handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
-                                dataTip={dataTip}
+                            <DataSaldoBancario
+                                valoresPendentes={valoresPendentes}
+                                dataSaldoBancario={dataSaldoBancario}
+                                handleChangaDataSaldo={handleChangaDataSaldo}
                                 periodoFechado={periodoFechado}
                             />
-                            }
 
-                            {despesasConferidas && despesasConferidas.length > 0 &&
-                            <TabelaDeLancamentosDespesas
-                                conciliados={true}
-                                despesas={despesasConferidas}
-                                checkboxDespesas={checkboxDespesas}
-                                handleChangeCheckboxDespesas={handleChangeCheckboxDespesas}
-                                dataTip={dataTip}
-                                periodoFechado={periodoFechado}
+                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Lançamentos pendentes de conciliação</p>
+                            <FiltrosTransacoes
+                                conciliado='NAO_CONCILIADO'
+                                stateFiltros={stateFiltros}
+                                tabelasDespesa={tabelasDespesa}
+                                handleChangeFiltros={handleChangeFiltros}
+                                handleSubmitFiltros={handleSubmitFiltros}
+                                limpaFiltros={limpaFiltros}
                             />
+                            {transacoesNaoConciliadas && transacoesNaoConciliadas.length > 0 ?(
+                                <TabelaTransacoes
+                                    transacoes={transacoesNaoConciliadas}
+                                    checkboxTransacoes={checkboxTransacoes}
+                                    periodoFechado={periodoFechado}
+                                    handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
+                                    tabelasDespesa={tabelasDespesa}
+                                    tabelasReceita={tabelasReceita}
+                                />
+                            ):
+                                <p className="mt-2"><strong>Não existem lançamentos não conciliados...</strong></p>
                             }
 
+                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Lançamentos conciliados</p>
+                            <FiltrosTransacoes
+                                conciliado='CONCILIADO'
+                                stateFiltros={stateFiltros}
+                                tabelasDespesa={tabelasDespesa}
+                                handleChangeFiltros={handleChangeFiltros}
+                                handleSubmitFiltros={handleSubmitFiltros}
+                                limpaFiltros={limpaFiltros}
+                            />
+
+                            {transacoesConciliadas && transacoesConciliadas.length > 0 ?(
+                                <TabelaTransacoes
+                                    transacoes={transacoesConciliadas}
+                                    checkboxTransacoes={checkboxTransacoes}
+                                    periodoFechado={periodoFechado}
+                                    handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
+                                    tabelasDespesa={tabelasDespesa}
+                                    tabelasReceita={tabelasReceita}
+                                />
+                            ):
+                                <p className="mt-2"><strong>Não existem lançamentos conciliados...</strong></p>
+                            }
                             <Justificativa
                                 textareaJustificativa={textareaJustificativa}
                                 handleChangeTextareaJustificativa={handleChangeTextareaJustificativa}

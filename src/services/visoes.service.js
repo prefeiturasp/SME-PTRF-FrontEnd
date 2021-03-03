@@ -5,7 +5,7 @@ import {
     ASSOCIACAO_TIPO_ESCOLA,
     ASSOCIACAO_NOME_ESCOLA,
     ASSOCIACAO_NOME,
-    authService
+    authService, DATA_LOGIN
 } from "./auth.service";
 import {redirect} from "../utils/redirect";
 import moment from "moment";
@@ -18,7 +18,12 @@ const forcarNovoLogin = ()=>{
     const data_hora_localstorage = localStorage.getItem(DATA_HORA_USUARIO_LOGADO);
     if(data_hora_localstorage){
         const diferenca = moment(data_hora_atual).diff(moment(data_hora_localstorage), 'minutes');
-        if (diferenca >= 600){ // Equivale a 10 horas
+        if (diferenca >= 1440){ // Equivale a 24 horas
+            localStorage.setItem(DATA_HORA_USUARIO_LOGADO, data_hora_atual);
+            localStorage.removeItem('DADOS_USUARIO_LOGADO');
+            localStorage.setItem(DATA_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"));
+            authService.logout();
+        }else if (diferenca >= 600 && diferenca <= 1339){ // Equivale a 10 horas e menos que 24 horas
             localStorage.setItem(DATA_HORA_USUARIO_LOGADO, data_hora_atual);
             authService.logout();
         }
