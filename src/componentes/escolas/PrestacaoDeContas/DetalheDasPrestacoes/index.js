@@ -114,11 +114,11 @@ export const DetalheDasPrestacoes = () => {
         })
     };
 
-    const conciliarDespesas = useCallback(async (rateio_uuid) => {
+    const conciliar = useCallback(async (rateio_uuid) => {
         await getConciliar(rateio_uuid, periodoConta.periodo);
     }, [periodoConta.periodo]) ;
 
-    const desconciliarDespesas = useCallback(async (rateio_uuid) => {
+    const desconciliar = useCallback(async (rateio_uuid) => {
         await getDesconciliar(rateio_uuid, periodoConta.periodo);
     }, [periodoConta.periodo]) ;
 
@@ -268,7 +268,7 @@ export const DetalheDasPrestacoes = () => {
         setCheckboxTransacoes(event.target.checked);
         if (event.target.checked) {
             if (!documento_mestre){
-                await conciliarDespesas(transacao_ou_rateio_uuid);
+                await conciliar(transacao_ou_rateio_uuid);
             }else {
                 if (tipo_transacao==='Crédito'){
                     await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'CREDITO')
@@ -278,10 +278,10 @@ export const DetalheDasPrestacoes = () => {
             }
         } else if (!event.target.checked) {
             if (!documento_mestre){
-                await desconciliarDespesas(transacao_ou_rateio_uuid)
+                await desconciliar(transacao_ou_rateio_uuid)
             }else {
                 if (tipo_transacao==='Crédito'){
-                    await patchDesconciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'CREDITO')
+                    await patchDesconciliarTransacao(periodoConta.conta, transacao_ou_rateio_uuid, 'CREDITO')
                 }else {
                     await patchDesconciliarTransacao(periodoConta.conta, transacao_ou_rateio_uuid, 'GASTO')
                 }
@@ -289,7 +289,7 @@ export const DetalheDasPrestacoes = () => {
         }
         await carregaTransacoes()
 
-    }, [periodoConta, carregaTransacoes, conciliarDespesas, desconciliarDespesas]);
+    }, [periodoConta, carregaTransacoes, conciliar, desconciliar]);
 
     // Filtros Transacoes
     const [stateFiltros, setStateFiltros] = useState({});
