@@ -182,17 +182,17 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
                     </div>
                     <div className='col border-left'>
                         <p className='mb-0 font-weight-bold'>Tipo de documento:</p>
-                        {data.documento_mestre.tipo_documento.nome}
+                        {data.documento_mestre.tipo_documento && data.documento_mestre.tipo_documento.nome ? data.documento_mestre.tipo_documento.nome : ''}
                     </div>
                     <div className='col border-left'>
                         <p className='mb-0 font-weight-bold'>Tipo de transação:</p>
-                        {data.documento_mestre.tipo_transacao.nome}
+                        {data.documento_mestre.tipo_transacao && data.documento_mestre.tipo_transacao.nome ? data.documento_mestre.tipo_transacao.nome : ''}
                     </div>
                     <div className='col border-left'>
                         <p className='mb-0 font-weight-bold'>Data de transação:</p>
-                        {dataTemplate(null, null, data.documento_mestre.data_transacao)}
+                        {data.documento_mestre.data_transacao ? dataTemplate(null, null, data.documento_mestre.data_transacao) : ''}
                     </div>
-                    {data.documento_mestre.tipo_transacao.nome === 'Cheque' ? (
+                    {data.documento_mestre.tipo_transacao && data.documento_mestre.tipo_transacao.nome && data.documento_mestre.tipo_transacao.nome === 'Cheque' ? (
                         <div className='col border-left'>
                             <p className='mb-0 font-weight-bold'>Número do cheque:</p>
                             {data.documento_mestre.documento_transacao}
@@ -225,7 +225,7 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
                         </div>
                         <div className='col border-left'>
                             <p className='mb-0 font-weight-bold'>Ação:</p>
-                            {rateio.acao_associacao.nome}
+                            {rateio.acao_associacao && rateio.acao_associacao.nome ? rateio.acao_associacao.nome : ''}
                         </div>
                         <div className='col border-left'>
                             <p className='mb-0 font-weight-bold'>Valor:</p>
@@ -249,15 +249,15 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
                 <div className='row'>
                     <div className='col'>
                         <p className='mb-0 font-weight-bold'>Detalhamento do crédito:</p>
-                        {data.documento_mestre.detalhamento}
+                        {data.documento_mestre && data.documento_mestre.detalhamento ? data.documento_mestre.detalhamento : ''}
                     </div>
                     <div className='col border-left'>
                         <p className='mb-0 font-weight-bold'>Classificação do crédito:</p>
-                        {data.documento_mestre.categoria_receita ? tabelasReceita.categorias_receita.find(elemnt => elemnt.id === data.documento_mestre.categoria_receita).nome : ''}
+                        {data.documento_mestre && data.documento_mestre.categoria_receita ? tabelasReceita.categorias_receita.find(elemnt => elemnt.id === data.documento_mestre.categoria_receita).nome : ''}
                     </div>
                     <div className='col border-left'>
                         <p className='mb-0 font-weight-bold'>Ação:</p>
-                        {data.documento_mestre.acao_associacao.nome}
+                        {data.documento_mestre && data.documento_mestre.acao_associacao && data.documento_mestre.acao_associacao.nome ? data.documento_mestre.acao_associacao.nome : ''}
                     </div>
                 </div>
             </>
