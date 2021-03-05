@@ -20,9 +20,6 @@ ${SUCCESS MODAL CLOSE BUTTON}           ${SUCCESS MODAL}>div.modal-content>div.m
 
 ${FORM INPUT SLEEP TIME}                1s
 
-${RANDOM DOC ID}=                        Evaluate    random.randint(0, sys.maxsize)    random
-${RANDOM DOC TRANSACTION ID}=            Evaluate    random.randint(0, sys.maxsize)    random
-
 *** Keywords ***
 Navigate To School Credits
     Click Element                       css=${SCHOOL CREDIT MENU ITEM}
@@ -96,6 +93,7 @@ Fill New School Debit Form And Save
     
     Sleep                               ${FORM INPUT SLEEP TIME}
     Click Element                       id=numero_documento
+    ${RANDOM DOC ID}=                   Evaluate    random.randint(0, sys.maxsize)    random
     Input Text                          id=numero_documento             ${RANDOM DOC ID}
 
     Sleep                               ${FORM INPUT SLEEP TIME}
@@ -108,6 +106,7 @@ Fill New School Debit Form And Save
 
     Sleep                               ${FORM INPUT SLEEP TIME}
     Click Element                       id=documento_transacao
+    ${RANDOM DOC TRANSACTION ID}=       Evaluate    random.randint(0, sys.maxsize)    random
     Input Text                          id=documento_transacao          ${RANDOM DOC TRANSACTION ID}
 
     Sleep                               ${FORM INPUT SLEEP TIME}
@@ -130,10 +129,16 @@ Fill New School Debit Form And Save
     Click Element                       id=conta_associacao
     Select From List By Label           id=conta_associacao         Cheque
 
+    # TODO Id do campo está duplicado, forçando utilizar o nome no lugar
     Sleep                               ${FORM INPUT SLEEP TIME}
     Click Element                       name=rateios[0].valor_original
     Input Text                          name=rateios[0].valor_original               R$ 1,00
     
+    # TODO Checar comportamento de validação de campos que ocorre duas vezes
     Sleep                               ${FORM INPUT SLEEP TIME}
     Click Element                       css=${SAVE DEBIT BUTTON}
+    Capture Page Screenshot
+    Sleep                               2s
+    Click Element                       css=${SAVE DEBIT BUTTON}
+    Capture Page Screenshot
     Wait Until Element Is Visible       css=h1.titulo-itens-painel

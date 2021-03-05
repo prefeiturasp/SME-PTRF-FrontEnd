@@ -16,14 +16,15 @@ Teardown
 User Jorney
     Open Browser To Login Page
     Login Into System
-    
+
     Select School
     
-    # Navigate To New School Credit
-    # Fill New School Credit Form And Save
-
+    Navigate To New School Credit
+    Fill New School Credit Form And Save
+    Sleep                                   5s
+    
     Navigate To New School Debit
     Fill New School Debit Form And Save
-
-    Sleep                                   2s
+    Sleep                                   5s
+    
     [Teardown]  Teardown
