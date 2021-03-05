@@ -9,13 +9,14 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons'
 import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
 
-const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleChangeCheckboxTransacoes, periodoFechado, tabelasDespesa, tabelasReceita}) => {
+const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxTransacoes, periodoFechado, tabelasDespesa, tabelasReceita}) => {
 
     let history = useHistory();
     const rowsPerPage = 10;
 
     const [expandedRows, setExpandedRows] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [urlRedirect, setUrlRedirect] = useState('');
     const [uuid, setUuid] = useState('');
 
     const onShowModal = () => {
@@ -28,12 +29,19 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
 
     const onCancelarTrue = () => {
         setShowModal(false);
-        const url = '/edicao-de-despesa/' + uuid + '/tabela-de-lancamentos-despesas';
+        const url = urlRedirect + uuid + '/tabela-de-lancamentos-despesas';
         history.push(url);
     };
 
     const redirecionaDetalhe = value => {
         setUuid(value.documento_mestre.uuid);
+        let url;
+        if (value.tipo_transacao === 'Crédito'){
+            url = '/edicao-de-receita/'
+        }else{
+            url = '/edicao-de-despesa/'
+        }
+        setUrlRedirect(url)
         onShowModal();
     };
 
@@ -121,8 +129,6 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
     };
 
     const rowExpansionTemplate = (data) => {
-        // console.log('EXPANDIR expandedRows ', expandedRows)
-        // console.log('EXPANDIR data ', data)
         if (data.tipo_transacao === 'Crédito') {
             return (
                 receitaTemplate(data)
@@ -135,11 +141,10 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
     };
 
     const conferidoTemplate = (rowData) => {
-        //console.log("conferidoTemplate ", rowData)
         return (
             <div className="align-middle text-center">
                 <input
-                    checked={conciliados}
+                    checked={rowData.conferido}
                     type="checkbox"
                     value={checkboxTransacoes}
                     onChange={(e) => handleChangeCheckboxTransacoes(e, rowData.documento_mestre.uuid, true, rowData.tipo_transacao)}
@@ -155,7 +160,7 @@ const TabelaTransacoes = ({transacoes, conciliados, checkboxTransacoes, handleCh
         return (
             <div>
                 <input
-                    defaultChecked={rateio.conferido}
+                    checked={rateio.conferido}
                     type="checkbox"
                     value={checkboxTransacoes}
                     onChange={(e) => handleChangeCheckboxTransacoes(e, rateio.uuid, false, rateio.tipo_transacao)}

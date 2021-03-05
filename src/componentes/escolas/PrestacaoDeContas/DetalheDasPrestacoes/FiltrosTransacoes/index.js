@@ -36,7 +36,7 @@ export const FiltrosTransacoes = ({conciliado, stateFiltros, tabelasDespesa, han
                     </div>
                 </div>
                 <div className="d-flex  justify-content-end mt-n2">
-                    <button onClick={() => limpaFiltros()} type="button" className="btn btn btn-outline-success mr-2">Limpar</button>
+                    <button onClick={() => limpaFiltros(conciliado)} type="button" className="btn btn btn-outline-success mr-2">Limpar</button>
                     <button onClick={()=>handleSubmitFiltros(conciliado)} type="button" className="btn btn-success">Filtrar</button>
                 </div>
             </form>
