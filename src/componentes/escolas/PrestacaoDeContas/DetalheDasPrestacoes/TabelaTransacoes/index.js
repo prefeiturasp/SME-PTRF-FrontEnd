@@ -85,7 +85,6 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
             )
         }
     };
-
     const valorTemplate = (rowData = null, column = null, valor = null) => {
         let valor_para_formatar;
         if (valor) {
