@@ -285,6 +285,30 @@
 
   }
 }
+
+.tabela-transacoes .p-datatable-tbody > .p-datatable-row:nth-child(even), .tabela-transacoes .p-datatable-tbody > tr{
+  background-color: #fff;
+}
+
+.tabela-lancamentos-despesas .p-datatable-row:hover{
+  background-color: #00585e;
+  color: #fff;
+  cursor: pointer;
+}
+
+.tabela-transacoes .p-datatable-tbody > .p-datatable-row:nth-child(even):hover {
+  background-color: #00585e;
+  color: #fff;
+  cursor: pointer;
+}
+
+.quebra-palavra{
+  word-break: break-all;
+}
+
+.titulo-row-expanded{
+  color: #00585e;
+}
 /*.btn-escolhe-acao {
     font-weight: bold !important;
     color: #A4A4A4;
