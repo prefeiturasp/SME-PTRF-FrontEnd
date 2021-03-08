@@ -9,7 +9,9 @@ Versão: 1.7.0
 ## Release Notes
 
 ### 1.7.0 - 05/03/2021 - Entregas da Sprint 16
-* Em andamento...
+* UE > Ficha cadastral da associação e de seu presidente (PDF)
+* UE > Várias melhorias no processo de conciliação bancária 
+* 🐞 Correção de bugs
 
 ### 1.6.0 - 16/02/2021 - Entregas da Sprint 15
 * Informações do usuário agora no topo da tela
