@@ -124,3 +124,8 @@ yarn.lock
 .env
 
 .vscode/
+
+selenium-screenshot-*.png
+report.html
+log.html
+output.xml
