@@ -51,12 +51,19 @@
 
   .navItemCustomizado:hover, .navItemCustomizadoNome:hover, .navItemCustomizadoNome{
     background-color: #00585E;
+    text-align: center !important;
+  }
+
+  .navItemCustomizadoNome .sidenav---navtext---1AE_f{
+    text-align: center !important;
+    width: 100% !important;
+
   }
 
   .container-nome-instituicao, .container-meus-dados{
     text-align: center;
     display: inline-block;
-    width: 220px;
+    width: 100%;
     white-space: normal;
     line-height: normal;
     position: relative;

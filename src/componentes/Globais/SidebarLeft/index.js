@@ -5,11 +5,13 @@ import './siderbarLeft.scss'
 import LogoSP from '../../../assets/img/logo-menu-tratado.png'
 import {SidebarContext} from '../../../context/Sidebar'
 import {useHistory} from 'react-router-dom'
-import {Versao} from '../Versao'
+import {Versao} from "../Versao";
 import ReactTooltip from "react-tooltip";
 import {getUrls} from "./getUrls";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import {visoesService} from "../../../services/visoes.service";
+import {Ambientes} from "../Ambientes";
+import {AmbientesApi} from "../AmbientesApi";
 
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
@@ -97,11 +99,24 @@ export const SidebarLeft = () => {
                         navitemClassName={!sidebarStatus.sideBarStatus ? 'escondeItem' : 'navItemCustomizadoNome'}
                         eventKey={urls.dados_iniciais.default_selected}
                     >
-                        <NavIcon>&nbsp;</NavIcon>
                         <NavText>
-                            <div>
-                                <Versao/>
-                            </div>
+                            <Versao/>
+                        </NavText>
+                    </NavItem>
+                    <NavItem
+                        navitemClassName={!sidebarStatus.sideBarStatus ? 'escondeItem' : 'navItemCustomizadoNome'}
+                        eventKey={urls.dados_iniciais.default_selected}
+                    >
+                        <NavText>
+                            <Ambientes/>
+                        </NavText>
+                    </NavItem>
+                    <NavItem
+                        navitemClassName={!sidebarStatus.sideBarStatus ? 'escondeItem' : 'navItemCustomizadoNome'}
+                        eventKey={urls.dados_iniciais.default_selected}
+                    >
+                        <NavText>
+                            <AmbientesApi/>
                         </NavText>
                     </NavItem>
                 </SideNav.Nav>
