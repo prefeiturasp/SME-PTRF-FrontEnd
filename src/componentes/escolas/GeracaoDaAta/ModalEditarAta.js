@@ -1,9 +1,11 @@
 import React from "react";
 import {ModalBootstrapEditarAta} from "../../Globais/ModalBootstrap";
 import {DatePickerField} from "../../Globais/DatePickerField";
+import {visoesService} from "../../../services/visoes.service";
 
 export const ModalEditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, onChange, stateFormEditarAta, tabelas}) =>{
     const bodyTextarea = () => {
+        const podeEditarAta = [['change_ata_prestacao_contas']].some(visoesService.getPermissoes)
         return (
             <form className="form-group">
                 <div className="row">
@@ -15,6 +17,7 @@ export const ModalEditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, 
                             onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="tipo_reuniao"
                             className="form-control"
+                            disabled={!podeEditarAta}
                         >
                             {tabelas && tabelas.tipos_reuniao && tabelas.tipos_reuniao.map((tipo) =>
                                 <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
@@ -28,6 +31,7 @@ export const ModalEditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, 
                             onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="local_reuniao"
                             className="form-control"
+                            disabled={!podeEditarAta}
                         />
 
                         <label htmlFor="presidente_reuniao" className="mt-3">Presidente da reunião</label>
@@ -36,6 +40,7 @@ export const ModalEditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, 
                             onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="presidente_reuniao"
                             className="form-control"
+                            disabled={!podeEditarAta}
                         />
 
                         <label htmlFor="secretario_reuniao" className="mt-3">Secretário da reunião</label>
@@ -44,6 +49,7 @@ export const ModalEditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, 
                             onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="secretario_reuniao"
                             className="form-control"
+                            disabled={!podeEditarAta}
                         />
 
                     </div>
@@ -54,6 +60,7 @@ export const ModalEditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, 
                             name="data_reuniao"
                             value={stateFormEditarAta.data_reuniao}
                             onChange={onChange}
+                            disabled={!podeEditarAta}
                         />
 
                         <label htmlFor="convocacao" className="mt-3">Abertura da reunião</label>
@@ -62,6 +69,7 @@ export const ModalEditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, 
                             onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="convocacao"
                             className="form-control"
+                            disabled={!podeEditarAta}
                         >
                             {tabelas && tabelas.convocacoes && tabelas.convocacoes.map((tipo) =>
                                 <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
@@ -74,6 +82,7 @@ export const ModalEditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, 
                             onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="cargo_presidente_reuniao"
                             className="form-control"
+                            disabled={!podeEditarAta}
                         />
 
                         <label htmlFor="cargo_secretaria_reuniao" className="mt-3">Cargo</label>
@@ -82,6 +91,7 @@ export const ModalEditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, 
                             onChange={(e) => onChange(e.target.name, e.target.value)}
                             name="cargo_secretaria_reuniao"
                             className="form-control"
+                            disabled={!podeEditarAta}
                         />
 
                     </div>
@@ -99,6 +109,7 @@ export const ModalEditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, 
                                     onChange={(e) => onChange(e.target.name, e.target.value)}
                                     name="retificacoes"
                                     className="form-control"
+                                    disabled={!podeEditarAta}
                                 />
                             </div>
                         </div>
@@ -118,6 +129,7 @@ export const ModalEditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, 
                                 onChange={(e) => onChange(e.target.name, e.target.value)}
                                 name="comentarios"
                                 className="form-control"
+                                disabled={!podeEditarAta}
                             />
                         </div>
 
@@ -128,6 +140,7 @@ export const ModalEditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, 
                                 onChange={(e) => onChange(e.target.name, e.target.value)}
                                 name="parecer_conselho"
                                 className="form-control"
+                                disabled={!podeEditarAta}
                             >
                                 {tabelas && tabelas.pareceres && tabelas.pareceres.map((tipo) =>
                                     <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
@@ -142,6 +155,7 @@ export const ModalEditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, 
         )
 
     };
+    const podeEditarAta = [['change_ata_prestacao_contas']].some(visoesService.getPermissoes)
     return (
         <ModalBootstrapEditarAta
             show={show}
@@ -152,7 +166,7 @@ export const ModalEditarAta = ({dadosAta, show, handleClose, onSubmitEditarAta, 
             primeiroBotaoTexto="Cancelar"
             primeiroBotaoCss="outline-success"
             segundoBotaoOnclick={onSubmitEditarAta}
-            segundoBotaoTexto="Salvar"
+            segundoBotaoTexto={podeEditarAta ? "Salvar" : ""}
             segundoBotaoCss="success"
         />
     )

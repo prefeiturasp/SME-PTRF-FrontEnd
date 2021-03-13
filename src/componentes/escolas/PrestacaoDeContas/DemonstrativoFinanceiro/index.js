@@ -133,11 +133,14 @@ export class DemonstrativoFinanceiro extends Component {
     getBotoes = (rowData) => {
         return (
             <div className="text-right">
-                {this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
+                {this.props.podeGerarPrevias && this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
                     <button onClick={(e) => this.showPrevia(rowData['acaoUuid'])} type="button" disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className="btn btn-outline-success mr-2">prévia </button>
                 }
-                {/*<button type="button" onClick={(e) => this.gerarPrevia(rowData['acaoUuid'])} className="btn btn-outline-success mr-2">prévia </button>*/}
-                <button disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} onClick={(e) => this.gerarDocumentoFinal(rowData['acaoUuid'])} type="button" className="btn btn-success">documento final</button>
+
+                {this.props.podeBaixarDocumentos &&
+                    <button disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} onClick={(e) => this.gerarDocumentoFinal(rowData['acaoUuid'])} type="button" className="btn btn-success">documento final</button>
+                }
+
             </div>
         )
     };
@@ -166,6 +169,7 @@ export class DemonstrativoFinanceiro extends Component {
 
     render() {
         const {estado, rowsPerPage} = this.state;
+
         return (
             <>
                 {estado && estado.length > 0 ? (
