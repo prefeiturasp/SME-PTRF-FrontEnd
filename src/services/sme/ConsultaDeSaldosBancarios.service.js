@@ -15,3 +15,7 @@ export const getPeriodos = async () => {
 export const getTiposDeConta = async () => {
     return (await api.get(`/api/tipos-conta/`, authHeader)).data
 };
+
+export const getSaldosPorTipoDeUnidade = async (periodo_uuid, conta_uuid) => {
+    return (await api.get(`/api/saldos-bancarios-sme/saldo-por-tipo-unidade/?periodo=${periodo_uuid}&conta=${conta_uuid}`, authHeader)).data
+};
