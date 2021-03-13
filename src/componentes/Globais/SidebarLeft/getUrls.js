@@ -8,11 +8,11 @@ import IconeMenuGastosDaEscola from '../../../assets/img/icone-menu-gastos-da-es
 import IconeMenuPrestacaoDeContas from '../../../assets/img/icone-menu-prestacao-de-contas.svg'
 import IconeDadosDaDiretoria from '../../../assets/img/icone-dados-da-diretoria.svg'
 import IconeAcompanhamento from "../../../assets/img/icone-menu-dre-acompanhamento.svg"
-import IconePainel from "../../../assets/img/icone-menu-dre-painel.svg"
 import IconeRelatorio from "../../../assets/img/icone-menu-dre-relatorio.svg"
 import IconeApoioDiretoria from "../../../assets/img/icone-apoio-a-diretoria.svg"
 import IconeGestaoDePerfis from "../../../assets/img/icone-menu-gestao-de-perfis.svg"
 import IconeMenuParametrizacoes from "../../../assets/img/icone-menu-parametrizacoes.svg"
+import IconeMenuSaldosBancarios from "../../../assets/img/icone-menu-sme-saldos-bancarios.svg"
 
 const getDadosUsuario = () =>{
     let usuario = localStorage.getItem(USUARIO_NOME);
@@ -87,6 +87,7 @@ const UrlsMenuSME ={
         {label: "Parametrizações", url: "painel-parametrizacoes", dataFor:"sme_painel_parametrizacoes", icone:IconeMenuParametrizacoes, permissoes: ['access_painel_parametrizacoes'],},
         {label: "Acompanhamento de PCs", url: "acompanhamento-pcs-sme", dataFor:"acompanhamento_pcs_sme", icone:IconeAcompanhamento, permissoes: ['access_acompanhamento_pc_sme'],},
         {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_ue', 'access_gestao_perfis_dre', 'access_gestao_perfis_sme'],},
+        {label: "Consulta de saldos bancários", url: "consulta-de-saldos-bancarios", dataFor:"consulta_de_saldos_bancarios", icone:IconeMenuSaldosBancarios, permissoes: ['access_gestao_perfis_ue', 'access_gestao_perfis_dre', 'access_gestao_perfis_sme'],},
     ]
 };
 
