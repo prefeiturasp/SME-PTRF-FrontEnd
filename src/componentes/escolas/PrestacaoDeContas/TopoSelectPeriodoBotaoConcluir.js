@@ -1,7 +1,19 @@
 import React from "react";
 import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {visoesService} from "../../../services/visoes.service";
 
-export const TopoSelectPeriodoBotaoConcluir = ({periodoPrestacaoDeConta, handleChangePeriodoPrestacaoDeConta, periodosAssociacao, retornaObjetoPeriodoPrestacaoDeConta, statusPrestacaoDeConta, checkCondicaoExibicao, setShow}) => {
+export const TopoSelectPeriodoBotaoConcluir = ({
+                                                   periodoPrestacaoDeConta,
+                                                   handleChangePeriodoPrestacaoDeConta,
+                                                   periodosAssociacao,
+                                                   retornaObjetoPeriodoPrestacaoDeConta,
+                                                   statusPrestacaoDeConta,
+                                                   checkCondicaoExibicao,
+                                                   setShow,
+                                                   podeConcluir
+
+                                               }) => {
+
     return (
         <>
             <form id="periodo_conta">
@@ -43,9 +55,16 @@ export const TopoSelectPeriodoBotaoConcluir = ({periodoPrestacaoDeConta, handleC
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-12 col-lg-5 col-xl-7 mb-md-2 text-right">
+                    <div
+                        className="col-md-12 col-lg-5 col-xl-7 mb-md-2 text-right"
+                        style={
+                            {visibility: podeConcluir ? "visible" : "hidden"}
+                        }
+                    >
                         {checkCondicaoExibicao(periodoPrestacaoDeConta) && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && !statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
-                            <button onClick={()=>setShow(true)} disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className='btn btn-success' type="button">Concluir período</button>
+                        <button onClick={() => setShow(true)}
+                                disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados}
+                                className='btn btn-success' type="button">Concluir período</button>
                             /*<button onClick={handleClickBtnConcluirPeriodo} disabled={statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className='btn btn-success' type="button">Concluir período</button>*/
                         }
                     </div>
