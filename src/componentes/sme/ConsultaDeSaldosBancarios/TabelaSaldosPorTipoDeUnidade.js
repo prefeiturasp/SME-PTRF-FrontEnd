@@ -1,6 +1,7 @@
 import React from "react";
 
 export const TabelaSaldosPorTipoDeUnidade = ({saldosPorTipoDeUnidade, valorTemplate})=>{
+
     return(
         <>
             {saldosPorTipoDeUnidade && saldosPorTipoDeUnidade.length > 0 ? (
@@ -16,8 +17,8 @@ export const TabelaSaldosPorTipoDeUnidade = ({saldosPorTipoDeUnidade, valorTempl
                         <tbody>
                         {saldosPorTipoDeUnidade && saldosPorTipoDeUnidade.length > 0 && saldosPorTipoDeUnidade.map((item, index)=>(
                             <tr key={index}>
-                                <td>{item.associacao__unidade__tipo_unidade}</td>
-                                <td>325 unidades</td>
+                                <td>{item.tipo_de_unidade}</td>
+                                <td>{item.total_unidades} unidades</td>
                                 <td>{item.qtde_unidades_informadas} unidades</td>
                                 <td><strong>{item.saldo_bancario_informado ? valorTemplate(item.saldo_bancario_informado) : 0}</strong></td>
                             </tr>

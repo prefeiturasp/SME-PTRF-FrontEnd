@@ -43,7 +43,6 @@ export const ConsultaDeSaldosBancarios = () => {
     const carregaSaldosPorTipoDeUnidade = useCallback(async ()=>{
         if (selectPeriodo && selectTipoDeConta){
             let saldos_por_tipo_de_unidade = await getSaldosPorTipoDeUnidade(selectPeriodo, selectTipoDeConta)
-            console.log("carregaSaldosPorTipoDeUnidade ", saldos_por_tipo_de_unidade)
             setSaldosPorTipoDeUnidade(saldos_por_tipo_de_unidade)
         }
     }, [selectPeriodo, selectTipoDeConta])

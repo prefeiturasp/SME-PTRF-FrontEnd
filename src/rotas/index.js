@@ -362,7 +362,7 @@ const routesConfig = [
         exact: true,
         path: "/consulta-de-saldos-bancarios",
         component: ConsultaDeSaldosBancarios,
-        permissoes: ['access_painel_parametrizacoes'],
+        permissoes: ['access_consulta_saldo_bancario'],
     },
     {
         exact: true,
