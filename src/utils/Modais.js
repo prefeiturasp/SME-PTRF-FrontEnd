@@ -280,10 +280,18 @@ export const SaldoInsuficienteConta = (propriedades) => {
 
     const listaDeSaldosInsuficientes = () => {
 
+        let mensagem = ""
+
+        if (propriedades.saldosInsuficientesDaConta.situacao_do_saldo === "lancamento_anterior_implantacao"){
+            mensagem = "Você está tentando lançar uma despesa em uma data anterior ao período inicial de uso do sistema."
+        }
+        else {
+            mensagem = "Não há saldo disponível para a despesa cadastrada na conta selecionada."
+        }
+
         return (
             <>
-                <p>Não há saldo disponível para a despesa cadastrada na conta
-                    selecionada. {propriedades.saldosInsuficientesDaConta.aceitar_lancamento ? "Deseja salvar assim mesmo?" : ""}</p>
+                <p>{mensagem} {propriedades.saldosInsuficientesDaConta.aceitar_lancamento ? "Confirma a operação?" : ""}</p>
                 {propriedades.saldosInsuficientesDaConta.saldos_insuficientes && propriedades.saldosInsuficientesDaConta.saldos_insuficientes.length > 0 && propriedades.saldosInsuficientesDaConta.saldos_insuficientes.map((item, index) =>
                     <ul key={index} className="list-group list-group-flush mb-3">
                         <li className="list-group-item p-0">
@@ -307,11 +315,19 @@ export const SaldoInsuficienteConta = (propriedades) => {
             </>
         )
     };
+    let titulo = ""
+    if (propriedades.saldosInsuficientesDaConta.situacao_do_saldo === "lancamento_anterior_implantacao"){
+        titulo = "Despesa anterior ao período inicial"
+    }
+    else {
+        titulo = "Saldo da Conta Insuficiente"
+    }
+
     return (
         <ModalBootstrapSaldoInsuficienteDaconta
             show={propriedades.show}
             onHide={propriedades.handleClose}
-            titulo="Saldo da Conta Insuficiente"
+            titulo={titulo}
             bodyText={listaDeSaldosInsuficientes()}
             aceitarLancamento={propriedades.saldosInsuficientesDaConta.aceitar_lancamento}
             primeiroBotaoOnclick={propriedades.onSaldoInsuficienteContaTrue}
