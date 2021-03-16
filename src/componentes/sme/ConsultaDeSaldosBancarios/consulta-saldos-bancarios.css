@@ -1,0 +1,19 @@
+.linha-cinza{
+    background-color: #F5F6F8;
+}
+
+.tab-saldos-bancarios{
+    border: 1px solid #A4A4A4 !important;
+    background-color: #F3F3F3;
+    color: #000;
+    margin-right: 5px;
+}
+
+.nav-tabs{
+    border-bottom: none !important;
+}
+
+.nav-tabs .nav-item.show .tab-saldos-bancarios, .nav-tabs .tab-saldos-bancarios.active{
+    color: #2B7D83;
+    border-bottom: none !important;
+}
