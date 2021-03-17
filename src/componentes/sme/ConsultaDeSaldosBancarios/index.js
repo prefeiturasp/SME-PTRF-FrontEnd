@@ -1,13 +1,14 @@
 import React, {useCallback, useEffect, useState} from "react";
 import "./consulta-saldos-bancarios.css"
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
-import {getPeriodos, getTiposDeConta, getSaldosPorTipoDeUnidade} from "../../../services/sme/ConsultaDeSaldosBancarios.service";
+import {getPeriodos, getTiposDeConta, getSaldosPorTipoDeUnidade, getSaldosPorDre} from "../../../services/sme/ConsultaDeSaldosBancarios.service";
 import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../assets/img/img-404.svg"
 import {TabelaSaldosPorTipoDeUnidade} from "./TabelaSaldosPorTipoDeUnidade";
+import {TabelaSaldosPorDre} from "./TabelaSaldosPorDre";
 
 export const ConsultaDeSaldosBancarios = () => {
 
@@ -16,6 +17,7 @@ export const ConsultaDeSaldosBancarios = () => {
     const [tiposDeConta, setTiposDeConta] = useState([])
     const [selectTipoDeConta, setSelectTipoDeConta] = useState('');
     const [saldosPorTipoDeUnidade, setSaldosPorTipoDeUnidade] = useState([])
+    const [saldosPorDre, setSaldosDre] = useState([])
 
     const carregaPeriodos = useCallback(async () => {
         let periodos = await getPeriodos()
@@ -47,9 +49,20 @@ export const ConsultaDeSaldosBancarios = () => {
         }
     }, [selectPeriodo, selectTipoDeConta])
 
+    const carregaSaldosPorDre = useCallback(async ()=>{
+        if (selectPeriodo && selectTipoDeConta){
+            let saldos_por_dre = await getSaldosPorDre(selectPeriodo, selectTipoDeConta)
+            setSaldosDre(saldos_por_dre)
+        }
+    }, [selectPeriodo, selectTipoDeConta])
+
     useEffect(()=>{
         carregaSaldosPorTipoDeUnidade()
     }, [carregaSaldosPorTipoDeUnidade])
+
+    useEffect(()=>{
+        carregaSaldosPorDre()
+    }, [carregaSaldosPorDre])
 
     const valorTemplate = (valor) => {
         let valor_formatado = Number(valor).toLocaleString('pt-BR', {
@@ -81,7 +94,7 @@ export const ConsultaDeSaldosBancarios = () => {
                         <nav className='mt-5'>
                             <div className="nav nav-tabs" id="nav-tab" role="tablist">
                                 <a onClick={()=>carregaSaldosPorTipoDeUnidade()} className="nav-link tab-saldos-bancarios active" id="nav-por-tipo-de-unidade-tab" data-toggle="tab" href="#nav-por-tipo-de-unidade" role="tab" aria-controls="nav-por-tipo-de-unidade" aria-selected="true">Exibição por tipo de unidade</a>
-                                <a className="nav-link tab-saldos-bancarios" id="nav-por-dre-tab" data-toggle="tab" href="#nav-por-dre" role="tab" aria-controls="nav-por-dre" aria-selected="false">Exibição por Diretoria</a>
+                                <a onClick={()=>carregaSaldosPorDre()} className="nav-link tab-saldos-bancarios" id="nav-por-dre-tab" data-toggle="tab" href="#nav-por-dre" role="tab" aria-controls="nav-por-dre" aria-selected="false">Exibição por Diretoria</a>
                                 <a className="nav-link tab-saldos-bancarios" id="nav-por-ue-dre-tab" data-toggle="tab" href="#nav-por-ue-dre" role="tab" aria-controls="nav-por-ue-dre" aria-selected="false">Exibição por tipo de UE e DRE</a>
                             </div>
                         </nav>
@@ -93,7 +106,10 @@ export const ConsultaDeSaldosBancarios = () => {
                                 />
                             </div>
                             <div className="tab-pane fade" id="nav-por-dre" role="tabpanel" aria-labelledby="nav-por-dre-tab">
-                                2 ...
+                                <TabelaSaldosPorDre
+                                    saldosPorDre={saldosPorDre}
+                                    valorTemplate={valorTemplate}
+                                />
                             </div>
                             <div className="tab-pane fade" id="nav-por-ue-dre" role="tabpanel" aria-labelledby="nav-por-ue-dre-tab">
                                 3 ...
