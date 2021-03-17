@@ -131,7 +131,8 @@ export const CadastroForm = ({verbo_http}) => {
 
             let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
 
-            if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente"){
+            if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente" ||
+                retorno_saldo.situacao_do_saldo === "lancamento_anterior_implantacao"){
                 setSaldosInsuficientesDaConta(retorno_saldo);
                 setShowSaldoInsuficienteConta(true)
 
@@ -139,11 +140,11 @@ export const CadastroForm = ({verbo_http}) => {
                 setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes);
                 setShowSaldoInsuficiente(true);
 
-            // Checando se depesa já foi conferida
+            // Checando se despesa já foi conferida
             }else if (values.rateios.find(element=> element.conferido)) {
                 setShowDespesaConferida(true)
 
-                // Checando se depesa já foi cadastrada
+                // Checando se despesa já foi cadastrada
             }else if (values.tipo_documento && values.numero_documento) {
                 try {
                     let despesa_cadastrada = await getDespesaCadastrada(values.tipo_documento, values.numero_documento, values.cpf_cnpj_fornecedor, despesaContext.idDespesa);

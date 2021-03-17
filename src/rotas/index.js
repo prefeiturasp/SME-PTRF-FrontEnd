@@ -27,6 +27,7 @@ import {authService} from '../services/auth.service';
 import {visoesService} from "../services/visoes.service";
 import {PaginaSemPermissao} from "../paginas/SemPermissao";
 import {GestaoDePerfisPage} from "../paginas/GestaoDePerfis";
+import {ConsultaDeSaldosBancarios} from "../componentes/sme/ConsultaDeSaldosBancarios";
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
 import {DadosDaUnidadeEducacionalPage} from "../paginas/dres/Associacoes/DadosDaUnidadeEducacional";
@@ -353,15 +354,21 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/",
-        component: RedirectLoginVisaoUe,
-        permissoes: ['view_default'],
-    },
-    {
-        exact: true,
         path: "/parametro-tipos-custeio",
         component: TiposDeCusteio,
         permissoes: ['access_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/consulta-de-saldos-bancarios",
+        component: ConsultaDeSaldosBancarios,
+        permissoes: ['access_consulta_saldo_bancario'],
+    },
+    {
+        exact: true,
+        path: "/",
+        component: RedirectLoginVisaoUe,
+        permissoes: ['view_default'],
     },
 
 ];
