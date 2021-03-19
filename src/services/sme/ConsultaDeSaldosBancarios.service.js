@@ -19,3 +19,11 @@ export const getTiposDeConta = async () => {
 export const getSaldosPorTipoDeUnidade = async (periodo_uuid, conta_uuid) => {
     return (await api.get(`/api/saldos-bancarios-sme/saldo-por-tipo-unidade/?periodo=${periodo_uuid}&conta=${conta_uuid}`, authHeader)).data
 };
+
+export const getSaldosPorDre = async (periodo_uuid, conta_uuid) => {
+    return (await api.get(`/api/saldos-bancarios-sme/saldo-por-dre/?periodo=${periodo_uuid}&conta=${conta_uuid}`, authHeader)).data
+};
+
+export const getSaldosPorUeDre = async (periodo_uuid, conta_uuid) => {
+    return (await api.get(`/api/saldos-bancarios-sme/saldo-por-ue-dre/?periodo=${periodo_uuid}&conta=${conta_uuid}`, authHeader)).data
+};
