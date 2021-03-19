@@ -5,6 +5,7 @@ import {getStatusPeriodoPorData, getConcluirPeriodo, getDataPreenchimentoAta, ge
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import {DemonstrativoFinanceiro} from "./DemonstrativoFinanceiro";
+import DemonstrativoFinanceiroPorConta from "./DemonstrativoFinanceiroPorConta";
 import RelacaoDeBens from "./RelacaoDeBens";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../assets/img/img-404.svg";
@@ -303,7 +304,7 @@ export const PrestacaoDeContas = () => {
                                                 </Fragment>
                                             )}
                                         </nav>
-                                        <DemonstrativoFinanceiro
+                                        <DemonstrativoFinanceiroPorConta
                                             periodoPrestacaoDeConta={periodoPrestacaoDeConta}
                                             statusPrestacaoDeConta={statusPrestacaoDeConta}
                                             contaPrestacaoDeContas={contaPrestacaoDeContas}
