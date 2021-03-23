@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
+import {Link, useParams} from "react-router-dom";
 import "./consulta-saldos-bancarios.css"
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {getPeriodos, getTiposDeConta, getSaldosPorTipoDeUnidade, getSaldosPorDre, getSaldosPorUeDre} from "../../../services/sme/ConsultaDeSaldosBancarios.service";
@@ -11,14 +12,16 @@ import {TabelaSaldosPorTipoDeUnidade} from "./TabelaSaldosPorTipoDeUnidade";
 import {TabelaSaldosPorDre} from "./TabelaSaldosPorDre";
 import {TabelaSaldosPorUeDre} from "./TabelaSaldosPorUeDre";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faEye} from "@fortawesome/free-solid-svg-icons";
+import {faEye} from "@fortawesome/free-solid-svg-icons";
 
 export const ConsultaDeSaldosBancarios = () => {
 
+    let {periodo_uuid, conta_uuid} = useParams();
+
     const [periodos, setPeriodos] = useState([])
-    const [selectPeriodo, setSelectPeriodo] = useState('');
+    const [selectPeriodo, setSelectPeriodo] = useState(periodo_uuid);
     const [tiposDeConta, setTiposDeConta] = useState([])
-    const [selectTipoDeConta, setSelectTipoDeConta] = useState('');
+    const [selectTipoDeConta, setSelectTipoDeConta] = useState(conta_uuid);
     const [saldosPorTipoDeUnidade, setSaldosPorTipoDeUnidade] = useState([])
     const [saldosPorDre, setSaldosDre] = useState([])
     const [saldosPorUeDre, setSaldosPorUeDre] = useState([])
@@ -105,24 +108,20 @@ export const ConsultaDeSaldosBancarios = () => {
         }
     }, [saldosPorUeDre]) ;
 
-
-    const handleClickAcoesTemplate = (rowData) =>{
-        console.log("handleClickAcoesTemplate ", rowData)
-    }
-
-    const acoesTemplate = (rowData) =>{
+    const acoesTemplate = (dre_uuid) =>{
         return (
             <div>
-                <button className="btn-editar-membro" onClick={()=>handleClickAcoesTemplate(rowData)}>
+                <Link
+                    to={`/consulta-de-saldos-bancarios-detalhes-associacoes/${selectPeriodo}/${selectTipoDeConta}/${dre_uuid}`}
+                >
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                         icon={faEye}
                     />
-                </button>
+                </Link>
             </div>
         )
     };
-
 
     return (
         <PaginasContainer>
