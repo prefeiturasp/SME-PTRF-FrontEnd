@@ -27,7 +27,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             className="form-control"
                         >
                             <option value=''>Selecione o tipo</option>
-                            {tabelaAssociacoes && tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.map(item => (
+                            {tabelaAssociacoes && tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0  && tabelaAssociacoes.tipos_unidade.filter(elemento=> elemento.nome !== 'ADM' && elemento.nome !== 'DRE').map(item => (
                                 <option key={item.id} value={item.id}>{item.nome}</option>
                             ))}
                         </select>

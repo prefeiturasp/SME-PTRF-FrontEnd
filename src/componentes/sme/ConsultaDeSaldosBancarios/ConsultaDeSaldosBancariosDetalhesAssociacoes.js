@@ -1,12 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
-import {
-    getPeriodos,
-    getTiposDeConta,
-    getDres,
-    getSaldosDetalhesAssociacoes,
-} from "../../../services/sme/ConsultaDeSaldosBancarios.service";
+import {getPeriodos, getTiposDeConta, getDres, getSaldosDetalhesAssociacoes} from "../../../services/sme/ConsultaDeSaldosBancarios.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {SelectConta} from "./SelectConta";
@@ -16,6 +11,8 @@ import {getTabelaAssociacoes} from "../../../services/sme/Parametrizacoes.servic
 import {Filtros} from "./Filtros";
 import {TabelaSaldosDetalhesAssociacoes} from "./TabelaSaldosDetalhesAssociacoes";
 import moment from "moment";
+import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
+import Img404 from "../../../assets/img/img-404.svg"
 
 export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
 
@@ -44,7 +41,6 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
 
     const carregaDres = useCallback(async ()=>{
         let dres = await getDres()
-        console.log("DRES ", dres)
         setDres(dres)
     }, [])
 
@@ -67,7 +63,6 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
     const carregaSaldosDetalhesAssociacoes = useCallback(async ()=>{
         if (selectPeriodo && selectTipoDeConta){
             let saldos_detalhes_associacoes = await getSaldosDetalhesAssociacoes(selectPeriodo, selectTipoDeConta, dre_uuid)
-            console.log("carregaSaldosDetalhesAssociacoes ", saldos_detalhes_associacoes)
             setSaldosDetalhesAssociacoes(saldos_detalhes_associacoes)
         }
     }, [selectPeriodo, selectTipoDeConta, dre_uuid])
@@ -78,7 +73,7 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
 
     const exibeNomeDre = useCallback((dre_uuid)=> {
         if (dres && dres.length > 0 && dre_uuid){
-            return dres.find(elemento => elemento.uuid === dre_uuid).nome
+            return 'Diretoria ' + dres.find(elemento => elemento.uuid === dre_uuid).nome
         }
     }, [dres])
 
@@ -156,15 +151,12 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
     const carregaSaldosDetalhesAssociacoesFiltros = useCallback(async ()=>{
         if (selectPeriodo && selectTipoDeConta){
             let saldos_detalhes_associacoes_filtros = await getSaldosDetalhesAssociacoes(selectPeriodo, selectTipoDeConta, dre_uuid, stateFiltros.filtrar_por_unidade, stateFiltros.filtrar_por_tipo_ue)
-            console.log("carregaSaldosDetalhesAssociacoesFiltros ", saldos_detalhes_associacoes_filtros)
             setSaldosDetalhesAssociacoes(saldos_detalhes_associacoes_filtros)
         }
     }, [selectPeriodo, selectTipoDeConta, dre_uuid, stateFiltros])
 
     const handleSubmitFiltros = async () => {
-        console.log("Submit Filtros ", stateFiltros)
         await carregaSaldosDetalhesAssociacoesFiltros()
-
     };
 
     const limpaFiltros = async () => {
@@ -206,20 +198,29 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
                         </Link>
                     </div>
                 </div>
-                <Filtros
-                    stateFiltros={stateFiltros}
-                    handleChangeFiltros={handleChangeFiltros}
-                    handleSubmitFiltros={handleSubmitFiltros}
-                    limpaFiltros={limpaFiltros}
-                    tabelaAssociacoes={tabelaAssociacoes}
-                />
-                <TabelaSaldosDetalhesAssociacoes
-                    saldosDetalhesAssociacoes={saldosDetalhesAssociacoes}
-                    valorTemplate={valorTemplate}
-                    dataTemplate={dataTemplate}
-                    acoesTemplate={acoesTemplate}
-                    rowsPerPage={rowsPerPage}
-                />
+                {selectPeriodo && selectTipoDeConta ? (
+                <>
+                    <Filtros
+                        stateFiltros={stateFiltros}
+                        handleChangeFiltros={handleChangeFiltros}
+                        handleSubmitFiltros={handleSubmitFiltros}
+                        limpaFiltros={limpaFiltros}
+                        tabelaAssociacoes={tabelaAssociacoes}
+                    />
+                    <TabelaSaldosDetalhesAssociacoes
+                        saldosDetalhesAssociacoes={saldosDetalhesAssociacoes}
+                        valorTemplate={valorTemplate}
+                        dataTemplate={dataTemplate}
+                        acoesTemplate={acoesTemplate}
+                        rowsPerPage={rowsPerPage}
+                    />
+                </>
+                    ):
+                    <MsgImgCentralizada
+                        texto='Selecione um período e um tipo de conta para consultar os saldos bancários'
+                        img={Img404}
+                    />
+                }
             </div>
         </PaginasContainer>
     )
