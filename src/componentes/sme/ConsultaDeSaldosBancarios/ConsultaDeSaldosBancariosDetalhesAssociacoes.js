@@ -70,7 +70,7 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
             console.log("carregaSaldosDetalhesAssociacoes ", saldos_detalhes_associacoes)
             setSaldosDetalhesAssociacoes(saldos_detalhes_associacoes)
         }
-    }, [selectPeriodo, selectTipoDeConta])
+    }, [selectPeriodo, selectTipoDeConta, dre_uuid])
 
     useEffect(()=>{
         carregaSaldosDetalhesAssociacoes()
@@ -153,13 +153,23 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
         });
     }, [stateFiltros]);
 
+    const carregaSaldosDetalhesAssociacoesFiltros = useCallback(async ()=>{
+        if (selectPeriodo && selectTipoDeConta){
+            let saldos_detalhes_associacoes_filtros = await getSaldosDetalhesAssociacoes(selectPeriodo, selectTipoDeConta, dre_uuid, stateFiltros.filtrar_por_unidade, stateFiltros.filtrar_por_tipo_ue)
+            console.log("carregaSaldosDetalhesAssociacoesFiltros ", saldos_detalhes_associacoes_filtros)
+            setSaldosDetalhesAssociacoes(saldos_detalhes_associacoes_filtros)
+        }
+    }, [selectPeriodo, selectTipoDeConta, dre_uuid, stateFiltros])
+
     const handleSubmitFiltros = async () => {
         console.log("Submit Filtros ", stateFiltros)
+        await carregaSaldosDetalhesAssociacoesFiltros()
 
     };
 
     const limpaFiltros = async () => {
         setStateFiltros(initialStateFiltros);
+        await carregaSaldosDetalhesAssociacoes()
     };
 
     return(

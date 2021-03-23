@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 
 export const TabelaSaldosDetalhesAssociacoes = ({saldosDetalhesAssociacoes, valorTemplate, dataTemplate, acoesTemplate, rowsPerPage}) =>{
     return(
-        <>
+        <div className='mt-3'>
             <DataTable
                 value={saldosDetalhesAssociacoes}
                 paginator={saldosDetalhesAssociacoes.length > rowsPerPage}
@@ -17,6 +17,6 @@ export const TabelaSaldosDetalhesAssociacoes = ({saldosDetalhesAssociacoes, valo
                 <Column field="obs_periodo__saldo_extrato" header="Valor informado (R$)" body={valorTemplate} sortable/>
                 <Column field="acoes" header="Ações" body={acoesTemplate}/>
             </DataTable>
-        </>
+        </div>
     )
 };
