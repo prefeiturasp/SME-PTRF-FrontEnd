@@ -2,3 +2,24 @@
   font-weight: bold;
   color: #B40C02;
 }
+
+.container-upload-extrato{
+  background-color: #fff;
+  padding: 4px;
+  color: #42474A;
+}
+
+.container-upload-extrato .btn-apagar-comprovante-extrato {
+  border-left: solid 1px #42474A;
+  padding-left: 10px;
+}
+
+#upload_extrato{
+  display: inline !important;
+  width: auto !important;
+}
+
+.exibe-data-comprovante-extrato{
+  display: block;
+  font-size: 12px;
+}
