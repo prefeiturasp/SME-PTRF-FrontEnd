@@ -17,3 +17,16 @@
     color: #2B7D83;
     border-bottom: none !important;
 }
+
+.nome-dre{
+    font-size: 24px;
+    font-weight: bold;
+    color: #2B7D83;
+}
+.link-voltar{
+    color: #00585E;
+    font-weight: 900;
+    font-size: 16px;
+    line-height: 18px;
+    letter-spacing: 0.01em;
+}

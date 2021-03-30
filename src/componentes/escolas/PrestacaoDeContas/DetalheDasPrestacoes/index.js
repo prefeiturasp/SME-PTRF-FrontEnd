@@ -147,22 +147,43 @@ export const DetalheDasPrestacoes = () => {
                 data_extrato: observacao.data_extrato ? observacao.data_extrato : '',
                 saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : '',
             })
-
+            setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
+            setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY"))
+            if (observacao.comprovante_extrato && observacao.data_extrato){
+                setExibeBtnDownload(true)
+            }
         }
     };
 
     const onSalvarTrue = async () => {
+        let payload;
 
-        let payload = {
-            "periodo_uuid": periodoConta.periodo,
-            "conta_associacao_uuid": periodoConta.conta,
-            "observacao": textareaJustificativa,
-            "data_extrato": dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null,
-            "saldo_extrato": dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : 0,
-        };
+         if (dataAtualizacaoComprovanteExtrato){
+             payload = {
+                 "periodo_uuid": periodoConta.periodo,
+                 "conta_associacao_uuid": periodoConta.conta,
+                 "observacao": textareaJustificativa,
+                 "data_extrato": dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null,
+                 "saldo_extrato": dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : 0,
+                 "comprovante_extrato": selectedFile,
+                 "data_atualizacao_comprovante_extrato": dataAtualizacaoComprovanteExtrato,
+             }
+         }else {
+             payload = {
+                 "periodo_uuid": periodoConta.periodo,
+                 "conta_associacao_uuid": periodoConta.conta,
+                 "observacao": textareaJustificativa,
+                 "data_extrato": dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null,
+                 "saldo_extrato": dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : 0,
+             }
+         }
+
         try {
-            await getSalvarPrestacaoDeConta(periodoConta.periodo, periodoConta.conta, payload);
+            await getSalvarPrestacaoDeConta(payload);
             setShowSalvar(true);
+            setDataAtualizacaoComprovanteExtrato('')
+            setSelectedFile(null)
+            setMsgErroExtensaoArquivo('')
             await carregaObservacoes();
         } catch (e) {
             console.log("Erro: ", e.message)
@@ -211,16 +232,6 @@ export const DetalheDasPrestacoes = () => {
         valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
         return valor_formatado
     };
-
-    // Data Saldo Bancário
-    const [dataSaldoBancario, setDataSaldoBancario]= useState({});
-
-    const handleChangaDataSaldo = useCallback((name, value) => {
-        setDataSaldoBancario({
-            ...dataSaldoBancario,
-            [name]: value
-        });
-    }, [dataSaldoBancario]);
 
     // Transacoes Conciliadas e Não Conciliadas
     const [transacoesConciliadas, setTransacoesConciliadas] = useState([]);
@@ -319,12 +330,71 @@ export const DetalheDasPrestacoes = () => {
         }
     }, [periodoConta, stateFiltros]);
 
-    const limpaFiltros = async (conciliado) => {
+    const limpaFiltros = async () => {
         setLoading(true);
         setStateFiltros({});
         await carregaTransacoes();
         setLoading(false);
     };
+
+    // Data Saldo Bancário
+    let uploadExtratoInputRef = React.useRef();
+    const [dataSaldoBancario, setDataSaldoBancario]= useState({});
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [nomeComprovanteExtrato, setNomeComprovanteExtrato] = useState('');
+    const [dataAtualizacaoComprovanteExtrato, setDataAtualizacaoComprovanteExtrato] = useState('');
+    const [exibeBtnDownload, setExibeBtnDownload] = useState(false);
+    const [msgErroExtensaoArquivo, setMsgErroExtensaoArquivo] = useState('');
+
+    const validaUploadExtrato = (event) =>{
+        let ext = event.target.files[0].type
+        let tamanho = event.target.files[0].size
+        let array_extensoes = ['image/jpeg','image/jpg','image/bmp','image/png', 'image/tif', 'application/pdf' ]
+        if (tamanho <= 500395){
+            let result = array_extensoes.filter(item => ext.indexOf(item) > -1);
+            if (result <=0){
+                setMsgErroExtensaoArquivo(`A extensão ${ext} não é permitida, tente novamente`)
+                return false
+            }else {
+                setMsgErroExtensaoArquivo('')
+                return true
+            }
+        }else {
+            setMsgErroExtensaoArquivo('O tamanho do arquivo excede o limite de 500kb, tente novamente.')
+            return false
+        }
+    }
+
+    const changeUploadExtrato = (event) => {
+        if (validaUploadExtrato(event)){
+            setSelectedFile(event.target.files[0]);
+            setNomeComprovanteExtrato(event.target.files[0].name)
+            setDataAtualizacaoComprovanteExtrato(moment().format("YYYY-MM-DD HH:mm:ss"))
+            setExibeBtnDownload(false)
+            setMsgErroExtensaoArquivo('')
+        }else {
+            reiniciaUploadExtrato()
+        }
+    };
+
+    const reiniciaUploadExtrato =()=>{
+        uploadExtratoInputRef.current.value = ""; //Resets the file name of the file input
+        setSelectedFile(null)
+        setNomeComprovanteExtrato('')
+        setDataAtualizacaoComprovanteExtrato('')
+        setExibeBtnDownload(false)
+    }
+
+    const downloadComprovanteExtrato = useCallback(async ()=>{
+        console.log("downloadComprovanteExtrato")
+    }, [])
+
+    const handleChangaDataSaldo = useCallback((name, value) => {
+        setDataSaldoBancario({
+            ...dataSaldoBancario,
+            [name]: value
+        });
+    }, [dataSaldoBancario]);
 
     return (
         <div className="detalhe-das-prestacoes-container mb-5 mt-5">
@@ -371,6 +441,14 @@ export const DetalheDasPrestacoes = () => {
                                 dataSaldoBancario={dataSaldoBancario}
                                 handleChangaDataSaldo={handleChangaDataSaldo}
                                 periodoFechado={periodoFechado}
+                                nomeComprovanteExtrato={nomeComprovanteExtrato}
+                                dataAtualizacaoComprovanteExtrato={dataAtualizacaoComprovanteExtrato}
+                                exibeBtnDownload={exibeBtnDownload}
+                                msgErroExtensaoArquivo={msgErroExtensaoArquivo}
+                                changeUploadExtrato={changeUploadExtrato}
+                                reiniciaUploadExtrato={reiniciaUploadExtrato}
+                                downloadComprovanteExtrato={downloadComprovanteExtrato}
+                                uploadExtratoInputRef={uploadExtratoInputRef}
                             />
 
                             <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Lançamentos pendentes de conciliação</p>
