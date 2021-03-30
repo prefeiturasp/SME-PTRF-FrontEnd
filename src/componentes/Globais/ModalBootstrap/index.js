@@ -314,6 +314,21 @@ export const ModalFormBodyText = (props) =>{
     )
 };
 
+export const ModalFormBodyTextCloseButtonCabecalho = (props) =>{
+    return (
+        <Fragment>
+            <Modal centered show={props.show} onHide={props.onHide} size={props.size}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{props.titulo}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {props.bodyText}
+                </Modal.Body>
+            </Modal>
+        </Fragment>
+    )
+};
+
 export const ModalFormParametrizacoesAcoes = (propriedades) =>{
     // Os botões de Cancelar e Salvar estão dentro do próprio form, pois utilizei Formik para validações
     return (
