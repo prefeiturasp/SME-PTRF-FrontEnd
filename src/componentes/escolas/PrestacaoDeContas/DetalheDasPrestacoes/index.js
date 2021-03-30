@@ -13,6 +13,7 @@ import {
     getTransacoesFiltros,
     patchConciliarTransacao,
     patchDesconciliarTransacao,
+    getDownloadExtratoBancario,
 } from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getContas, getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
@@ -34,6 +35,7 @@ export const DetalheDasPrestacoes = () => {
     // Alteracoes
     const [loading, setLoading] = useState(true);
     const [showSalvar, setShowSalvar] = useState(false);
+    const [observacaoUuid, setObservacaoUuid] = useState("");
     const [periodoConta, setPeriodoConta] = useState("");
     const [periodoFechado, setPeriodoFechado] = useState(true);
     const [contasAssociacao, setContasAssociacao] = useState(false);
@@ -141,6 +143,8 @@ export const DetalheDasPrestacoes = () => {
             let conta_uuid = periodoConta.conta;
 
             let observacao = await getObservacoes(periodo_uuid, conta_uuid);
+
+            setObservacaoUuid(observacao.observacao_uuid)
 
             setTextareaJustificativa(observacao.observacao ? observacao.observacao : '');
             setDataSaldoBancario({
@@ -386,8 +390,13 @@ export const DetalheDasPrestacoes = () => {
     }
 
     const downloadComprovanteExtrato = useCallback(async ()=>{
-        console.log("downloadComprovanteExtrato")
-    }, [])
+        try {
+            await getDownloadExtratoBancario(nomeComprovanteExtrato, observacaoUuid);
+            console.log("Download efetuado com sucesso");
+        }catch (e) {
+            console.log("Erro ao efetuar o download ", e.response);
+        }
+    }, [nomeComprovanteExtrato, observacaoUuid])
 
     const handleChangaDataSaldo = useCallback((name, value) => {
         setDataSaldoBancario({

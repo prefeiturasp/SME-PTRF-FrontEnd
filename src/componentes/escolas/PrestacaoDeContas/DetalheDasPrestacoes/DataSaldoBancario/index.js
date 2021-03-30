@@ -55,7 +55,7 @@ const DataSaldoBancario = ({valoresPendentes, dataSaldoBancario, handleChangaDat
                                                 <input
                                                     type="file"
                                                     ref={uploadExtratoInputRef}
-                                                    accept=".gif,.jpg,.jpeg,.png,.doc,.docx"
+                                                    accept=".gif,.jpg,.jpeg,.png, .pdf"
                                                     name="upload_extrato"
                                                     id='upload_extrato'
                                                     onChange={changeUploadExtrato}
