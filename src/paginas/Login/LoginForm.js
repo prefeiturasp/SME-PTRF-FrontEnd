@@ -70,14 +70,14 @@ export const LoginForm = ({redefinicaoDeSenha}) => {
             </div>
 
             {redefinicaoDeSenha && redefinicaoDeSenha.msg && redefinicaoDeSenha.alertCss &&
-                <div className='text-center mt-2'>
-                    <div className={`${redefinicaoDeSenha.alertCss} alert-dismissible fade show`} role="alert">
-                        {redefinicaoDeSenha.msg}
-                        <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+            <div className='text-center mt-2'>
+                <div className={`${redefinicaoDeSenha.alertCss} alert-dismissible fade show`} role="alert">
+                    {redefinicaoDeSenha.msg}
+                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
+            </div>
             }
         </div>
     )

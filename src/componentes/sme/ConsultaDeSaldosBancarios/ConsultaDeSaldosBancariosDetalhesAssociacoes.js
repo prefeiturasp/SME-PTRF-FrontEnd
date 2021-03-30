@@ -13,6 +13,8 @@ import {TabelaSaldosDetalhesAssociacoes} from "./TabelaSaldosDetalhesAssociacoes
 import moment from "moment";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../assets/img/img-404.svg"
+import {getDownloadExtratoBancario} from "../../../services/escolas/PrestacaoDeContas.service";
+import ModalVisualizarExtrato from "./ModalVisualizarExtrato";
 
 export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
 
@@ -59,6 +61,8 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
     // Tabela Saldos Detalhes Associacoes
     const rowsPerPage = 10
     const [saldosDetalhesAssociacoes, setSaldosDetalhesAssociacoes] = useState([])
+    const [show, setShow] = useState(false)
+    const [observacaoUuid, setObservacaoUuid ] = useState('')
 
     const carregaSaldosDetalhesAssociacoes = useCallback(async ()=>{
         if (selectPeriodo && selectTipoDeConta){
@@ -99,29 +103,47 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
     const acoesTemplate = (rowData) =>{
         return (
             <div>
-                <button className="btn-editar-membro mr-2" onClick={()=>handleClickVerExtrato(rowData)}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faSearch}
-                    />
-                </button>
-                <button className="btn-editar-membro" onClick={()=>handleClickDownloadExtrato(rowData)}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faDownload}
-                    />
-                </button>
+                {rowData.obs_periodo__uuid && rowData.obs_periodo__comprovante_extrato ? (
+                    <>
+                        <button className="btn-editar-membro mr-2" onClick={()=>handleClickVerExtrato(rowData)}>
+                            <FontAwesomeIcon
+                                style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                                icon={faSearch}
+                            />
+                        </button>
+                        <button className="btn-editar-membro" onClick={()=>handleClickDownloadExtrato(rowData)}>
+                            <FontAwesomeIcon
+                                style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                                icon={faDownload}
+                            />
+                        </button>
+                    </>
+                ):
+                    <span>Sem comprovante</span>
+                }
+
             </div>
         )
     };
 
-    const handleClickVerExtrato = (rowData) =>{
-        console.log('handleClickVerExtrato ', rowData)
-    }
+    const handleCloseFormModal = useCallback(()=>{
+        setShow(false)
+    }, []);
 
-    const handleClickDownloadExtrato = (rowData) =>{
-        console.log('handleClickDownloadExtrato ', rowData)
-    }
+    const handleClickVerExtrato = useCallback(async (rowData) =>{
+        setObservacaoUuid(rowData.obs_periodo__uuid)
+        setShow(true)
+    }, []);
+
+    const handleClickDownloadExtrato = useCallback(async (rowData)=>{
+        try {
+            await getDownloadExtratoBancario(rowData.obs_periodo__comprovante_extrato, rowData.obs_periodo__uuid);
+            console.log("Download efetuado com sucesso");
+        }catch (e) {
+            console.log("Erro ao efetuar o download ", e.response);
+        }
+    }, [])
+
 
     // Filtros
     const initialStateFiltros = {
@@ -221,6 +243,16 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
                         img={Img404}
                     />
                 }
+                {observacaoUuid &&
+                    <section>
+                        <ModalVisualizarExtrato
+                            show={show}
+                            handleClose={handleCloseFormModal}
+                            observacaoUuid={observacaoUuid}
+                        />
+                    </section>
+                }
+
             </div>
         </PaginasContainer>
     )

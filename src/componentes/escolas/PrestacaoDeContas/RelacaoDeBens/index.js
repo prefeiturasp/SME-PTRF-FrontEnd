@@ -174,6 +174,7 @@ export default class RelacaoDeBens extends Component {
     render() {
         const {mensagem, status, previaEmAndamento} = this.state;
         const exibeLoading = status === 'EM_PROCESSAMENTO' || previaEmAndamento;
+        const documentoPrevio = mensagem.includes('prévio');
         let classeMensagem = "documento-gerado"
         if (mensagem.includes('pendente') || mensagem.includes('Não houve')) {
             classeMensagem = "documento-pendente"
@@ -192,7 +193,7 @@ export default class RelacaoDeBens extends Component {
                         {mensagem}
                         {exibeLoading ? <img src={Spinner} style={{height: "22px"}}/> : ''}
 
-                        {status === 'CONCLUIDO' &&
+                        {status === 'CONCLUIDO' && documentoPrevio &&
                         <>
                             <button className='btn-editar-membro' type='button' onClick={this.downloadDocumentoPrevia}>
                                 <FontAwesomeIcon
