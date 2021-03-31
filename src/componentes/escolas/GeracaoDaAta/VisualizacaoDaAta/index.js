@@ -73,7 +73,6 @@ export const VisualizacaoDaAta = () => {
         let dados_ata = await getAtas(uuid_ata);
         let prestacao = await getPrestacaoDeContasDetalhe(dados_ata.prestacao_conta);
         setPrestacaoDeContasDetalhe(prestacao);
-        console.log(prestacao.devolucoes_ao_tesouro_da_prestacao);
         let data_da_reuniao = dados_ata.data_reuniao ? dados_ata.data_reuniao : "";
         setStateFormEditarAta({
             comentarios: dados_ata.comentarios,
