@@ -60,15 +60,14 @@ const UrlsMenuDres ={
         associacao_nome_escola: getDadosUnidade().nome_escola
     },
     lista_de_urls:[
-        /*{label: "Painel", url: "dre-dashboard", dataFor:"dre_dashboard", icone:IconePainel, permissoes: ['view_dashboard_dre'],},*/
         {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola, permissoes: ['access_associacao_dre'],},
         {label: "Acompanhamento de PC", url: "dre-dashboard", dataFor:"dre_dashboard", icone:IconeAcompanhamento, permissoes: ['access_dados_diretoria'],},
         {label: "Relatório consolidado", url: "dre-relatorio-consolidado", dataFor:"dre_relatorio_consolidado", icone:IconeRelatorio, permissoes: ['access_relatorio_consolidado_dre']},
         {label: "Dados da Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria, permissoes: ['access_dados_diretoria']},
-        {label: "Apoio à Diretoria", url: "dre-dados-da-diretoria", dataFor:"dre_dados_da_diretoria", icone:IconeApoioDiretoria, permissoes: ['access_dados_diretoria'],
+        {label: "Apoio à Diretoria", url: "apoio-a-diretoria", dataFor:"apoio_a_diretoria", icone:IconeApoioDiretoria, permissoes: ['access_dados_diretoria'],
             subItens: [
                 {
-                    label: "Perguntas Frequentes", url: "dre-faq", dataFor:"dre_dados_da_diretoria", icone:IconeDadosDaDiretoria, permissoes: ['access_faq_dre']
+                    label: "Perguntas Frequentes", url: "dre-faq", dataFor:"dre_faq", icone:IconeDadosDaDiretoria, permissoes: ['access_faq_dre']
                 }
             ]
         },
