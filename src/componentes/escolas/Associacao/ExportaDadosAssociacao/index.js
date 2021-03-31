@@ -32,13 +32,6 @@ export const ExportaDadosDaAsssociacao = () => {
                     />
                 ) :
                 <div className="d-flex  justify-content-end pb-3 mt-3">
-                    <span>
-                        <FontAwesomeIcon
-                            style={{color: `${!visoesService.getPermissoes(['change_associacao']) ? '#7D7D7D' : '#00585E'}`, marginRight:'3px'}}
-                            icon={faDownload}
-                        />
-                    <strong>Exportar :</strong>
-                    </span>
                     <button
                         disabled={!visoesService.getPermissoes(['change_associacao'])}
                         onClick={exportarDados}
@@ -48,8 +41,9 @@ export const ExportaDadosDaAsssociacao = () => {
                             style={{color: `${!visoesService.getPermissoes(['change_associacao']) ? '#7D7D7D' : '#00585E'}`, marginRight:'3px'}}
                             icon={faDownload}
                         />
-                        <strong>Excel</strong>
+                        <strong>Exportar dados da associação</strong>
                     </button>
+                    <span> | </span>
                     <button
                         disabled={!visoesService.getPermissoes(['change_associacao'])}
                         onClick={exportarDadosPdf}
@@ -59,7 +53,7 @@ export const ExportaDadosDaAsssociacao = () => {
                             style={{color: `${!visoesService.getPermissoes(['change_associacao']) ? '#7D7D7D' : '#00585E'}`, marginRight:'3px'}}
                             icon={faDownload}
                         />
-                        <strong>Pdf</strong>
+                        <strong>Exportar ficha cadastral</strong>
                     </button>
                 </div>
             }
