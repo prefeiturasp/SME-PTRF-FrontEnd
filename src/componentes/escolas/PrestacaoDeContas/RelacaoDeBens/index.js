@@ -200,6 +200,7 @@ export default class RelacaoDeBens extends Component {
                                     style={{fontSize: '18px',}}
                                     icon={faDownload}
                                 />
+                                &nbsp;XLSX
                             </button>
                         </>
                         }
