@@ -25,9 +25,9 @@ export const previa = async (conta_associacao, periodo, data_inicio, data_fim) =
     return (await api.get(`/api/demonstrativo-financeiro/previa/?conta-associacao=${conta_associacao}&periodo=${periodo}&data_inicio=${data_inicio}&data_fim=${data_fim}`, authHeader)).data
 };
 
-export const documentoFinal = async (conta_associacao, periodo) => {
+export const documentoFinal = async (conta_associacao, periodo, formato) => {
     return api
-            .get(`/api/demonstrativo-financeiro/documento-final/?conta-associacao=${conta_associacao}&periodo=${periodo}`, {
+            .get(`/api/demonstrativo-financeiro/documento-final/?conta-associacao=${conta_associacao}&periodo=${periodo}&formato_arquivo=${formato}`, {
                 responseType: 'blob',
                 timeout: 30000,
                 headers: {
@@ -47,9 +47,9 @@ export const documentoFinal = async (conta_associacao, periodo) => {
             });
 };
 
-export const documentoPrevia = async (conta_associacao, periodo) => {
+export const documentoPrevia = async (conta_associacao, periodo, formato) => {
     return api
-            .get(`/api/demonstrativo-financeiro/documento-previa/?conta-associacao=${conta_associacao}&periodo=${periodo}`, {
+            .get(`/api/demonstrativo-financeiro/documento-previa/?conta-associacao=${conta_associacao}&periodo=${periodo}&formato_arquivo=${formato}`, {
                 responseType: 'blob',
                 timeout: 30000,
                 headers: {
