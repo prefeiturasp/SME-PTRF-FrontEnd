@@ -1,0 +1,41 @@
+.linha-cinza{
+    background-color: #F5F6F8;
+}
+
+.tab-saldos-bancarios{
+    border: 1px solid #A4A4A4 !important;
+    background-color: #F3F3F3;
+    color: #000;
+    margin-right: 5px;
+}
+
+.nav-tabs{
+    border-bottom: none !important;
+}
+
+.nav-tabs .nav-item.show .tab-saldos-bancarios, .nav-tabs .tab-saldos-bancarios.active{
+    color: #2B7D83;
+    border-bottom: none !important;
+}
+
+.nome-dre{
+    font-size: 24px;
+    font-weight: bold;
+    color: #2B7D83;
+}
+.link-voltar{
+    color: #00585E;
+    font-weight: 900;
+    font-size: 16px;
+    line-height: 18px;
+    letter-spacing: 0.01em;
+}
+
+.close{
+    color: #000 !important;
+}
+
+#comprovante_extrato_bancario{
+    min-height: 500px;
+    width: 100%;
+}

@@ -3,6 +3,10 @@
   height: 35px !important;
 }
 
+.sidenav---sidenav---_2tBP.sidenav---expanded---1KdUL{
+  min-width: 300px !important;
+}
+
 .sidenav---sidenav---_2tBP.sidenav---expanded---1KdUL .sidenav---sidenav-subnav---1EN61 > .sidenav---sidenav-subnavitem---1cD47.sidenav---selected---1EK3y > .sidenav---navitem---9uL5T::before {
   border: none !important;
 }
@@ -51,12 +55,19 @@
 
   .navItemCustomizado:hover, .navItemCustomizadoNome:hover, .navItemCustomizadoNome{
     background-color: #00585E;
+    text-align: center !important;
+  }
+
+  .navItemCustomizadoNome .sidenav---navtext---1AE_f{
+    text-align: center !important;
+    width: 100% !important;
+
   }
 
   .container-nome-instituicao, .container-meus-dados{
     text-align: center;
     display: inline-block;
-    width: 220px;
+    width: 100%;
     white-space: normal;
     line-height: normal;
     position: relative;

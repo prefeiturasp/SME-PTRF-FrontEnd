@@ -5,6 +5,7 @@ import {getStatusPeriodoPorData, getConcluirPeriodo, getDataPreenchimentoAta, ge
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import {DemonstrativoFinanceiro} from "./DemonstrativoFinanceiro";
+import DemonstrativoFinanceiroPorConta from "./DemonstrativoFinanceiroPorConta";
 import RelacaoDeBens from "./RelacaoDeBens";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../assets/img/img-404.svg";
@@ -14,6 +15,7 @@ import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import {BoxPrestacaoDeContasPorPeriodo} from "../GeracaoDaAta/BoxPrestacaoDeContasPorPeriodo";
 import {GeracaoAtaRetificadora} from "../GeracaoAtaRetificadora";
 import {exibeDateTimePT_BR_Ata} from "../../../utils/ValidacoesAdicionaisFormularios";
+import {visoesService} from "../../../services/visoes.service";
 
 export const PrestacaoDeContas = () => {
 
@@ -238,6 +240,10 @@ export const PrestacaoDeContas = () => {
         setShow(false);
     };
 
+    const podeConcluir = [['concluir_periodo_prestacao_contas']].some(visoesService.getPermissoes)
+    const podeGerarPrevias = [['gerar_previas_prestacao_contas']].some(visoesService.getPermissoes)
+    const podeBaixarDocumentos = [['baixar_documentos_prestacao_contas']].some(visoesService.getPermissoes)
+
     return (
         <>
             {loading ? (
@@ -277,6 +283,7 @@ export const PrestacaoDeContas = () => {
                                 checkCondicaoExibicao={checkCondicaoExibicao}
                                 concluirPeriodo={concluirPeriodo}
                                 setShow={setShow}
+                                podeConcluir={podeConcluir}
                             />
                             {checkCondicaoExibicao(periodoPrestacaoDeConta)  ? (
                                     <>
@@ -297,17 +304,21 @@ export const PrestacaoDeContas = () => {
                                                 </Fragment>
                                             )}
                                         </nav>
-                                        <DemonstrativoFinanceiro
+                                        <DemonstrativoFinanceiroPorConta
                                             periodoPrestacaoDeConta={periodoPrestacaoDeConta}
                                             statusPrestacaoDeConta={statusPrestacaoDeConta}
                                             contaPrestacaoDeContas={contaPrestacaoDeContas}
                                             setLoading={setLoading}
+                                            podeGerarPrevias={podeGerarPrevias}
+                                            podeBaixarDocumentos={podeBaixarDocumentos}
                                         />
                                         <RelacaoDeBens
                                             periodoPrestacaoDeConta={periodoPrestacaoDeConta}
                                             statusPrestacaoDeConta={statusPrestacaoDeConta}
                                             contaPrestacaoDeContas={contaPrestacaoDeContas}
                                             setLoading={setLoading}
+                                            podeGerarPrevias={podeGerarPrevias}
+                                            podeBaixarDocumentos={podeBaixarDocumentos}
                                         />
                                         {localStorage.getItem('uuidPrestacaoConta') &&
                                         <BoxPrestacaoDeContasPorPeriodo

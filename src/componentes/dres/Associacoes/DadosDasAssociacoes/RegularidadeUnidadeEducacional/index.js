@@ -6,6 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronUp, faChevronDown, faExclamationTriangle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import {verificacaoRegularidade, salvarItensRegularidade} from "../../../../../services/dres/RegularidadeUnidadeEducaional.service";
 import {ModalConfirmaSalvar} from "../../../../../utils/Modais";
+import {visoesService} from "../../../../../services/visoes.service";
 
 export const RegularidadeUnidadeEducacional = () => {
     let dadosDaAssociacao = JSON.parse(localStorage.getItem("DADOS_DA_ASSOCIACAO"));
@@ -113,6 +114,8 @@ export const RegularidadeUnidadeEducacional = () => {
     }
 
     const montaListaVerificacao = (listaVerificacao) => {
+        const podeSalvar = [['change_regularidade']].some(visoesService.getPermissoes)
+
       return (
         listaVerificacao.map((obj, index) => (
           <Card key={index}>
@@ -144,14 +147,28 @@ export const RegularidadeUnidadeEducacional = () => {
                 <Form.Group controlId="formBasicCheckbox">
                   <div className="row">
                     <div className="col-10">
-                    <Form.Check type="checkbox" label="Selecionar todos" key={index} onChange={e => selecionarTodos(obj, e)} />
+                    <Form.Check
+                        type="checkbox"
+                        label="Selecionar todos"
+                        key={index} onChange={e => selecionarTodos(obj, e)}
+                        disabled={!podeSalvar}
+                    />
                     </div>
-                    <div className="col-2">
-                      <Button variant="success" className="btn btn-sucess" onClick={e => salvarItemVerificacao(obj)}>Salvar</Button>
+                    <div
+                        className="col-2"
+                        style={
+                            {visibility:podeSalvar ? "visible" : "hidden"}
+                        }
+                    >
+                      <Button
+                          variant="success"
+                          className="btn btn-sucess"
+                          onClick={e => salvarItemVerificacao(obj)}
+                      >Salvar</Button>
                     </div>
                   </div>
                   
-                  {montaItens(obj)}
+                  {montaItens(obj, podeSalvar)}
                 </Form.Group>
               </Form>
             </Card.Body>
@@ -161,11 +178,18 @@ export const RegularidadeUnidadeEducacional = () => {
       )
     }
 
-    const montaItens = (ListaVerificacao) => {
+    const montaItens = (ListaVerificacao, podeSalvar) => {
       return (
         checklists[ListaVerificacao.uuid] !== undefined 
         ? checklists[ListaVerificacao.uuid].map((obj, index) => (
-          <Form.Check type="checkbox" checked={ dicionarioDeItens[obj.uuid] !== undefined ? dicionarioDeItens[obj.uuid].regular: false} label={obj.descricao} key={index} onChange={e => selecionarItem(ListaVerificacao, obj)}/>
+          <Form.Check
+              type="checkbox"
+              checked={ dicionarioDeItens[obj.uuid] !== undefined ? dicionarioDeItens[obj.uuid].regular: false}
+              label={obj.descricao}
+              key={index}
+              onChange={e => selecionarItem(ListaVerificacao, obj)}
+              disabled={!podeSalvar}
+          />
         )): null
       )
     }

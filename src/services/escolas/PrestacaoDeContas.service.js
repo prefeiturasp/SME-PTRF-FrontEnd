@@ -84,8 +84,70 @@ export const getObservacoes = async (periodo_uuid, conta_uuid) => {
   return (await api.get(`/api/conciliacoes/observacoes/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}`,authHeader)).data
 };
 
-export const getSalvarPrestacaoDeConta = async (periodo_uuid, conta_uuid, payload) => {
-  return (await api.patch(`/api/conciliacoes/salvar-observacoes/`, payload, authHeader)).data
+export const getVisualizarExtratoBancario = async (observacao_uuid) => {
+    return (await api
+            .get(`/api/conciliacoes/download-extrato-bancario/?observacao_uuid=${observacao_uuid}`, {
+                responseType: 'blob',
+                timeout: 30000,
+                headers: {
+                    'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then((response) => {
+                //Create a Blob from the arquivo Stream
+                const file = new Blob([response.data], {type: response.data.type});
+                //Build a URL from the file
+                const fileURL = URL.createObjectURL(file);
+                let objeto = document.querySelector( "#comprovante_extrato_bancario" );
+                objeto.data = fileURL;
+            }).catch(error => {
+                return error.response;
+            })
+    )
+};
+
+export const getDownloadExtratoBancario = async (nome_do_arquivo_com_extensao, observacao_uuid) => {
+  return (await api
+          .get(`/api/conciliacoes/download-extrato-bancario/?observacao_uuid=${observacao_uuid}`, {
+            responseType: 'blob',
+            timeout: 30000,
+            headers: {
+              'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+              'Content-Type': 'application/json',
+            }
+          })
+          .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', nome_do_arquivo_com_extensao);
+            document.body.appendChild(link);
+            link.click();
+          }).catch(error => {
+            return error.response;
+          })
+  )
+};
+
+export const getSalvarPrestacaoDeConta = async (payload) => {
+  const formData = new FormData();
+  formData.append("periodo_uuid", payload.periodo_uuid);
+  formData.append("conta_associacao_uuid", payload.conta_associacao_uuid);
+  formData.append("observacao", payload.observacao);
+  formData.append("saldo_extrato", payload.saldo_extrato);
+
+  // Nesessário pois o formData retornava um string 'null' e não null
+  if (payload.data_extrato){
+    formData.append("data_extrato", payload.data_extrato);
+  }
+  if (payload.data_atualizacao_comprovante_extrato){
+    formData.append("data_atualizacao_comprovante_extrato", payload.data_atualizacao_comprovante_extrato);
+  }
+  if (payload.comprovante_extrato){
+    formData.append("comprovante_extrato", payload.comprovante_extrato);
+  }
+  return (await api.patch(`/api/conciliacoes/salvar-observacoes/`, formData, authHeader)).data
 };
 
 export const getDataPreenchimentoAta = async (uuidPrestacaoDeContas) => {
