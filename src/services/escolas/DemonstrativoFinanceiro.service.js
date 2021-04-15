@@ -26,6 +26,7 @@ export const previa = async (conta_associacao, periodo, data_inicio, data_fim) =
 };
 
 export const documentoFinal = async (conta_associacao, periodo, formato) => {
+    let extensao = formato.toLowerCase();
     return api
             .get(`/api/demonstrativo-financeiro/documento-final/?conta-associacao=${conta_associacao}&periodo=${periodo}&formato_arquivo=${formato}`, {
                 responseType: 'blob',
@@ -39,7 +40,7 @@ export const documentoFinal = async (conta_associacao, periodo, formato) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'demonstrativo_financeiro.xlsx');
+                link.setAttribute('download', `demonstrativo_financeiro.${extensao}`);
                 document.body.appendChild(link);
                 link.click();
             }).catch(error => {
@@ -48,6 +49,7 @@ export const documentoFinal = async (conta_associacao, periodo, formato) => {
 };
 
 export const documentoPrevia = async (conta_associacao, periodo, formato) => {
+    let extensao = formato.toLowerCase();
     return api
             .get(`/api/demonstrativo-financeiro/documento-previa/?conta-associacao=${conta_associacao}&periodo=${periodo}&formato_arquivo=${formato}`, {
                 responseType: 'blob',
@@ -61,7 +63,7 @@ export const documentoPrevia = async (conta_associacao, periodo, formato) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'demonstrativo_financeiro.xlsx');
+                link.setAttribute('download', `demonstrativo_financeiro.${extensao}`);
                 document.body.appendChild(link);
                 link.click();
             }).catch(error => {
