@@ -518,14 +518,30 @@ export const ReceitaForm = () => {
         }
     };
 
-    const trataRepasse = (repasse_row, setFieldValue) => {
+    const trataRepasse = (repasse_row, setFieldValue, valor, nome_classificacao) => {
         console.log("trataRepasse ", repasse_row)
         setaRepasse(repasse_row);
         setFieldValue('acao_associacao', repasse_row.acao_associacao.uuid);
         setFieldValue('conta_associacao', repasse_row.conta_associacao.uuid);
-        setFieldValue('valor', '0,00');
+        setFieldValue('valor', valor);
+        setFieldValue('categoria_receita', retornaIdClassificacao(nome_classificacao))
         setReadOnlyValor(true);
         setShowSelecionaRepasse(false);
+    }
+
+    const retornaIdClassificacao = (classificacao_nome)=>{
+
+        let id_classificacao = ""
+
+        if (classificacao_nome === 'valor_custeio'){
+            id_classificacao = "CUSTEIO"
+        }else if (classificacao_nome === 'valor_capital'){
+            id_classificacao = "CAPITAL"
+        }else {
+            id_classificacao = "LIVRE"
+        }
+
+        return id_classificacao
 
     }
 
@@ -743,7 +759,8 @@ export const ReceitaForm = () => {
                                         }
                                         onBlur={props.handleBlur}
                                         className="form-control"
-                                        disabled={readOnlyClassificacaoReceita || readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                        disabled={readOnlyClassificacaoReceita || readOnlyCampos || readOnlyValor || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+
                                     >
                                         {receita.categorias_receita ? null :
                                             <option key={0} value="">Escolha a classificação</option>}

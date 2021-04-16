@@ -17,7 +17,7 @@ export const ModalSelecionaRepasse = (propriedades) => {
             })
             : '';
         return (
-            <button onClick={()=>onClickColumn(rowData, column)}><span>{valorFormatado}</span></button>
+            <button onClick={()=>propriedades.trataRepasse(rowData, propriedades.setFieldValue, valorFormatado, column.field)}><span>{valorFormatado}</span></button>
         )
     };
 
