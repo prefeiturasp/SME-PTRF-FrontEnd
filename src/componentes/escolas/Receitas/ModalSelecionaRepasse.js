@@ -15,11 +15,14 @@ export const ModalSelecionaRepasse = (propriedades) => {
                 currency: 'BRL'
             })
             : '';
-        return (<span>{valorFormatado}</span>)
+        return (
+            <button onClick={()=>onClickColumn(rowData, column)}><span>{valorFormatado}</span></button>
+        )
     };
 
-    const onClickCell = (rowData, column) =>{
-
+    const onClickColumn=(rowData, column) =>{
+        console.log("onClickColumn rowData: ", rowData)
+        console.log("onClickColumn column: ", rowData[column.field])
     }
 
     return (
@@ -38,7 +41,8 @@ export const ModalSelecionaRepasse = (propriedades) => {
                             paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                             autoLayout={true}
                             selectionMode="single"
-                            onRowClick={e => propriedades.trataRepasse(e.data, propriedades.setFieldValue)}
+                            //onRowClick={e => propriedades.trataRepasse(e.data, propriedades.setFieldValue)}
+
                         >
                             <Column field='conta_associacao.nome' header='Conta'/>
                             <Column field='acao_associacao.nome' header='Ação'/>
