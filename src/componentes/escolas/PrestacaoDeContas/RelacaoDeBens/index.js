@@ -6,6 +6,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faDownload} from '@fortawesome/free-solid-svg-icons'
 import Spinner from "../../../../assets/img/spinner.gif";
 import {ModalPreviaSendoGerada} from "../ModalGerarPreviaSendogerada";
+import { SplitButton } from 'primereact/splitbutton';
 
 export default class RelacaoDeBens extends Component {
     _isMounted = false;
@@ -152,20 +153,20 @@ export default class RelacaoDeBens extends Component {
 
     };
 
-    downloadDocumentoFinal = async () => {
+    downloadDocumentoFinal = async (formato) => {
         // this.props.setLoading(true);
         const periodo = this.props.periodoPrestacaoDeConta.periodo_uuid;
         const conta = this.props.contaPrestacaoDeContas.conta_uuid;
-        await documentoFinal(conta, periodo);
+        await documentoFinal(conta, periodo, formato);
         await this.relacaoBensInfo();
         // this.props.setLoading(false);
     };
 
-    downloadDocumentoPrevia = async () => {
+    downloadDocumentoPrevia = async (formato) => {
         // this.props.setLoading(true);
         const periodo = this.props.periodoPrestacaoDeConta.periodo_uuid;
         const conta = this.props.contaPrestacaoDeContas.conta_uuid;
-        await documentoPrevia(conta, periodo);
+        await documentoPrevia(conta, periodo, formato);
         await this.relacaoBensInfo();
         // this.props.setLoading(false);
     };
@@ -183,6 +184,17 @@ export default class RelacaoDeBens extends Component {
             classeMensagem = "documento-processando"
         }
 
+        const formatos = [
+            {
+                label: 'Baixar em .PDF',
+                command: () => {this.downloadDocumentoFinal("PDF")}
+            },
+            {
+                label: 'Baixar em .XLSX',
+                command: () => {this.downloadDocumentoFinal("XLSX")}
+            }
+        ];
+
         return (
             <div className="relacao-bens-container mt-5">
                 <p className="relacao-bens-title">Relação de Bens adquiridos ou produzidos</p>
@@ -195,12 +207,26 @@ export default class RelacaoDeBens extends Component {
 
                         {status === 'CONCLUIDO' && documentoPrevio &&
                         <>
-                            <button className='btn-editar-membro' type='button' onClick={this.downloadDocumentoPrevia}>
+                            <button
+                                className='btn-editar-membro'
+                                type='button'
+                                onClick={() => {this.downloadDocumentoPrevia("XLSX")}}
+                            >
                                 <FontAwesomeIcon
                                     style={{fontSize: '18px',}}
                                     icon={faDownload}
                                 />
                                 &nbsp;XLSX
+                            </button>
+                            <button className='btn-editar-membro'
+                                    type='button'
+                                    onClick={() => {this.downloadDocumentoPrevia("PDF")}}
+                            >
+                                <FontAwesomeIcon
+                                    style={{fontSize: '18px',}}
+                                    icon={faDownload}
+                                />
+                                &nbsp;PDF
                             </button>
                         </>
                         }
@@ -211,7 +237,24 @@ export default class RelacaoDeBens extends Component {
                             <button onClick={(e) => this.showPrevia()} type="button" disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} className="btn btn-outline-success mr-2">prévia </button>
                         }
                         {this.props.podeBaixarDocumentos &&
-                            <button disabled={(this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados) || mensagem.includes('Não houve')} onClick={this.downloadDocumentoFinal} type="button" className="btn btn-success">documento final</button>
+                            <>
+                                {/*<button disabled={(this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados) || mensagem.includes('Não houve')} onClick={this.downloadDocumentoFinal} type="button" className="btn btn-success">documento final</button>*/}
+                            <SplitButton
+                                className="btn-split"
+                                label="documento final"
+                                onClick={
+                                    () => {
+                                        this.downloadDocumentoFinal("PDF");
+                                        this.downloadDocumentoFinal("XLSX");
+                                    }
+                                }
+                                model={formatos}
+                                menuStyle={{textAlign: "left"}}
+                                disabled={(this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados) || mensagem.includes('Não houve')}
+                            >
+                            </SplitButton>
+                        </>
+
                         }
 
                     </div>
