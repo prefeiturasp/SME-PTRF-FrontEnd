@@ -6,6 +6,7 @@ import {Column} from 'primereact/column';
 
 
 export const ModalSelecionaRepasse = (propriedades) => {
+
     const rowsPerPage = 7;
 
     const valorTemplate = (rowData, column) => {
@@ -22,7 +23,8 @@ export const ModalSelecionaRepasse = (propriedades) => {
 
     const onClickColumn=(rowData, column) =>{
         console.log("onClickColumn rowData: ", rowData)
-        console.log("onClickColumn column: ", rowData[column.field])
+        console.log("onClickColumn rowData[column.field] ", rowData[column.field])
+        console.log("onClickColumn column.field: ", column.field)
     }
 
     return (
