@@ -10,13 +10,17 @@ export const ModalSelecionaRepasse = (propriedades) => {
 
     const valorTemplate = (rowData, column) => {
         const valorFormatado = rowData[column.field]
-            ? new Number(rowData[column.field]).toLocaleString('pt-BR', {
+            ? Number(rowData[column.field]).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
             : '';
         return (<span>{valorFormatado}</span>)
     };
+
+    const onClickCell = (rowData, column) =>{
+
+    }
 
     return (
         <Fragment>

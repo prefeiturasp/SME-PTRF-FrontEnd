@@ -519,6 +519,7 @@ export const ReceitaForm = () => {
     };
 
     const trataRepasse = (repasse_row, setFieldValue) => {
+        console.log("trataRepasse ", repasse_row)
         setaRepasse(repasse_row);
         setFieldValue('acao_associacao', repasse_row.acao_associacao.uuid);
         setFieldValue('conta_associacao', repasse_row.conta_associacao.uuid);
