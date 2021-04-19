@@ -6,16 +6,29 @@ import {Column} from 'primereact/column';
 
 
 export const ModalSelecionaRepasse = (propriedades) => {
+
     const rowsPerPage = 7;
 
     const valorTemplate = (rowData, column) => {
+        console.log("Valor Template ", rowData[column.field])
         const valorFormatado = rowData[column.field]
-            ? new Number(rowData[column.field]).toLocaleString('pt-BR', {
+            ? Number(rowData[column.field]).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
             : '';
-        return (<span>{valorFormatado}</span>)
+
+        if (rowData[column.field] > 0) {
+            return (
+                <button className='btn-valores-repasses' onClick={() => propriedades.trataRepasse(rowData, propriedades.setFieldValue, valorFormatado, column.field)}>
+                    <span>{valorFormatado}</span>
+                </button>
+            )
+        } else {
+            return (
+                <span className='sem-selecao'>{valorFormatado}</span>
+            )
+        }
     };
 
     return (
@@ -26,34 +39,33 @@ export const ModalSelecionaRepasse = (propriedades) => {
                 </Modal.Header>
                 <Modal.Body>
                     {propriedades.repasses.length > 0 ? (
-                        <DataTable
-                            value={propriedades.repasses}
-                            className="mt-3 datatable-footer-coad"
-                            paginator={propriedades.repasses.length > rowsPerPage}
-                            rows={rowsPerPage}
-                            paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                            autoLayout={true}
-                            selectionMode="single"
-                            onRowClick={e => propriedades.trataRepasse(e.data, propriedades.setFieldValue)}
-                        >
-                            <Column field='conta_associacao.nome' header='Conta'/>
-                            <Column field='acao_associacao.nome' header='Ação'/>
-                        
-                            <Column
-                                field='valor_capital'
-                                header='Valor Capital'
-                                body={valorTemplate}/>
+                            <DataTable
+                                value={propriedades.repasses}
+                                className="mt-3 datatable-footer-coad"
+                                paginator={propriedades.repasses.length > rowsPerPage}
+                                rows={rowsPerPage}
+                                paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                                autoLayout={true}
+                                selectionMode="single"
+                            >
+                                <Column className='sem-selecao' field='conta_associacao.nome' header='Conta'/>
+                                <Column className='sem-selecao' field='acao_associacao.nome' header='Ação'/>
 
-                            <Column
-                                field='valor_custeio'
-                                header='Valor Custeio'
-                                body={valorTemplate}/>
+                                <Column
+                                    field='valor_capital'
+                                    header='Valor Capital'
+                                    body={valorTemplate}/>
 
-                            <Column
-                                field='valor_livre'
-                                header='Valor Livre'
-                                body={valorTemplate}/> 
-                        </DataTable>)
+                                <Column
+                                    field='valor_custeio'
+                                    header='Valor Custeio'
+                                    body={valorTemplate}/>
+
+                                <Column
+                                    field='valor_livre'
+                                    header='Valor Livre'
+                                    body={valorTemplate}/>
+                            </DataTable>)
                         : <> <p>No momento não existem repasses pendentes para a associação.</p> </>}
                 </Modal.Body>
                 <Modal.Footer>

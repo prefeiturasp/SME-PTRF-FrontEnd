@@ -238,7 +238,6 @@ export default class RelacaoDeBens extends Component {
                         }
                         {this.props.podeBaixarDocumentos &&
                             <>
-                                {/*<button disabled={(this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados) || mensagem.includes('Não houve')} onClick={this.downloadDocumentoFinal} type="button" className="btn btn-success">documento final</button>*/}
                             <SplitButton
                                 className="btn-split"
                                 label="documento final"
