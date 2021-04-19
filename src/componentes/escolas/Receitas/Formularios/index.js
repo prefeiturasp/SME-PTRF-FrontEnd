@@ -21,6 +21,7 @@ import {CancelarModalReceitas} from "../CancelarModalReceitas";
 import {ModalReceitaConferida} from "../ModalReceitaJaConferida";
 import {ModalSelecionaRepasse} from "../ModalSelecionaRepasse";
 import {visoesService} from "../../../../services/visoes.service";
+import "../receitas.scss"
 
 
 export const ReceitaForm = () => {
@@ -100,7 +101,7 @@ export const ReceitaForm = () => {
                         conta_associacao: resp.conta_associacao.uuid,
                         referencia_devolucao: resp.referencia_devolucao,
                         data: resp.data,
-                        valor: resp.valor ? new Number(resp.valor).toLocaleString('pt-BR', {
+                        valor: resp.valor ? Number(resp.valor).toLocaleString('pt-BR', {
                             style: 'currency',
                             currency: 'BRL'
                         }) : "",
@@ -261,7 +262,6 @@ export const ReceitaForm = () => {
         if (value) {
             setRepasse(value);
         }
-        
     };
 
     const consultaRepasses = async (value) => {
@@ -518,9 +518,10 @@ export const ReceitaForm = () => {
         }
     };
 
-    const trataRepasse = (repasse_row, setFieldValue, valor, nome_classificacao) => {
+
+    const trataRepasse = async (repasse_row, setFieldValue, valor, nome_classificacao) => {
         console.log("trataRepasse ", repasse_row)
-        setaRepasse(repasse_row);
+        await setaRepasse(repasse_row);
         setFieldValue('acao_associacao', repasse_row.acao_associacao.uuid);
         setFieldValue('conta_associacao', repasse_row.conta_associacao.uuid);
         setFieldValue('valor', valor);
@@ -530,9 +531,7 @@ export const ReceitaForm = () => {
     }
 
     const retornaIdClassificacao = (classificacao_nome)=>{
-
         let id_classificacao = ""
-
         if (classificacao_nome === 'valor_custeio'){
             id_classificacao = "CUSTEIO"
         }else if (classificacao_nome === 'valor_capital'){
@@ -540,14 +539,12 @@ export const ReceitaForm = () => {
         }else {
             id_classificacao = "LIVRE"
         }
-
         return id_classificacao
-
     }
 
     const atualizaValorRepasse = (value, setFieldValue) => {
         if (Object.keys(repasse).length !== 0) {
-            let valor_formatado = new Number(repasse[`valor_${value.toLowerCase()}`]).toLocaleString('pt-BR', {
+            let valor_formatado = Number(repasse[`valor_${value.toLowerCase()}`]).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             });
@@ -555,8 +552,6 @@ export const ReceitaForm = () => {
             setFieldValue('valor', valor_formatado);
         }
     }
-
-
 
     return (
         <>
