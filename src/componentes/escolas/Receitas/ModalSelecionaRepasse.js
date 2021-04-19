@@ -10,7 +10,6 @@ export const ModalSelecionaRepasse = (propriedades) => {
     const rowsPerPage = 7;
 
     const valorTemplate = (rowData, column) => {
-        console.log("Valor Template ", rowData[column.field])
         const valorFormatado = rowData[column.field]
             ? Number(rowData[column.field]).toLocaleString('pt-BR', {
                 style: 'currency',
