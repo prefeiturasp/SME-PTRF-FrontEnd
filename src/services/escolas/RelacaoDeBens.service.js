@@ -14,9 +14,10 @@ export const previa = async (conta_associacao, periodo, data_inicio, data_fim) =
 
 };
 
-export const documentoFinal = async (conta_associacao, periodo) => {
+export const documentoFinal = async (conta_associacao, periodo, formato) => {
+    let extensao = formato.toLowerCase();
     return api
-            .get(`/api/relacao-bens/documento-final/?conta-associacao=${conta_associacao}&periodo=${periodo}`, {
+            .get(`/api/relacao-bens/documento-final/?conta-associacao=${conta_associacao}&periodo=${periodo}&formato_arquivo=${formato}`, {
                 responseType: 'blob',
                 timeout: 30000,
                 headers: {
@@ -28,7 +29,7 @@ export const documentoFinal = async (conta_associacao, periodo) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'relacao-bens.xlsx');
+                link.setAttribute('download', `relacao-bens.${extensao}`);
                 document.body.appendChild(link);
                 link.click();
             }).catch(error => {
@@ -36,9 +37,10 @@ export const documentoFinal = async (conta_associacao, periodo) => {
             });
 };
 
-export const documentoPrevia = async (conta_associacao, periodo) => {
+export const documentoPrevia = async (conta_associacao, periodo, formato) => {
+    let extensao = formato.toLowerCase();
     return api
-            .get(`/api/relacao-bens/documento-previa/?conta-associacao=${conta_associacao}&periodo=${periodo}`, {
+            .get(`/api/relacao-bens/documento-previa/?conta-associacao=${conta_associacao}&periodo=${periodo}&formato_arquivo=${formato}`, {
                 responseType: 'blob',
                 timeout: 30000,
                 headers: {
@@ -50,7 +52,7 @@ export const documentoPrevia = async (conta_associacao, periodo) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'relacao-bens.xlsx');
+                link.setAttribute('download', `relacao-bens.${extensao}`);
                 document.body.appendChild(link);
                 link.click();
             }).catch(error => {
