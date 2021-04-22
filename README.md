@@ -9,7 +9,12 @@ Versão: 1.9.0
 ## Release Notes
 
 ### 1.9.0 - 20/04/2021 - Entregas da Sprint 18
-* Em andamento...
+* ADM > Carga de usuários atualizando CoreSSO
+* UE > Atualização de informações das escolas a partir do EOL agora inclui os CEUs
+* UE > No lançamento de repasses agora é possível selecionar uma destinação específica
+* UE > Demonstrativo Financeiro em PDF
+* UE > Relação de Bens em PDF
+* 🐞 Correção de alguns bugs
 
 ### 1.8.0 - 06/04/2021 - Entregas da Sprint 17
 * UE > Upload de extrato bancário na conciliação
