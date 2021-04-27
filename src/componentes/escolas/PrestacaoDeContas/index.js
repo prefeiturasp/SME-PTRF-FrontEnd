@@ -4,7 +4,6 @@ import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/esco
 import {getStatusPeriodoPorData, getConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
-import {DemonstrativoFinanceiro} from "./DemonstrativoFinanceiro";
 import DemonstrativoFinanceiroPorConta from "./DemonstrativoFinanceiroPorConta";
 import RelacaoDeBens from "./RelacaoDeBens";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
@@ -32,6 +31,7 @@ export const PrestacaoDeContas = () => {
     const [textoBoxPrestacaoDeContasPorPeriodo, setTextoBoxPrestacaoDeContasPorPeriodo] = useState("");
     const [dataBoxPrestacaoDeContasPorPeriodo, setDataBoxPrestacaoDeContasPorPeriodo] = useState("");
     const [uuidAtaApresentacao, setUuidAtaApresentacao] = useState("");
+    const [gerarAta, setGerarAta] = useState(false);
 
     useEffect(() => {
         if (statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'EM_PROCESSAMENTO'){
@@ -208,10 +208,12 @@ export const PrestacaoDeContas = () => {
                 if (data_preenchimento.alterado_em === null){
                     setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
                     setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
+                    setGerarAta(false)
                 }
                 else {
                     setCorBoxPrestacaoDeContasPorPeriodo("verde");
                     setDataBoxPrestacaoDeContasPorPeriodo("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
+                    setGerarAta(true)
                 }
 
             }catch (e) {
@@ -221,6 +223,7 @@ export const PrestacaoDeContas = () => {
                 setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
                 setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
                 setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
+                setGerarAta(false)
             }
         }
         setLoading(false);
@@ -328,6 +331,9 @@ export const PrestacaoDeContas = () => {
                                             textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
                                             dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
                                             uuidAtaApresentacao={uuidAtaApresentacao}
+                                            uuidPrestacaoConta={uuidPrestacaoConta}
+                                            periodoPrestacaoDeConta={periodoPrestacaoDeConta}
+                                            gerarAta={gerarAta}
                                         />
                                         }
 
