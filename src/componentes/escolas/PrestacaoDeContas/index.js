@@ -332,7 +332,6 @@ export const PrestacaoDeContas = () => {
                                             dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
                                             uuidAtaApresentacao={uuidAtaApresentacao}
                                             uuidPrestacaoConta={uuidPrestacaoConta}
-                                            periodoPrestacaoDeConta={periodoPrestacaoDeConta}
                                             gerarAta={gerarAta}
                                         />
                                         }

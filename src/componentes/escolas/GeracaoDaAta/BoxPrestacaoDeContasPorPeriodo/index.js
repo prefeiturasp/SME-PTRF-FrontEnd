@@ -5,7 +5,7 @@ import Spinner from "../../../../assets/img/spinner.gif";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faDownload} from '@fortawesome/free-solid-svg-icons'
 
-export const BoxPrestacaoDeContasPorPeriodo = ({gerarAta, uuidAtaApresentacao, uuidPrestacaoConta, periodoPrestacaoDeConta, corBoxPrestacaoDeContasPorPeriodo, textoBoxPrestacaoDeContasPorPeriodo, dataBoxPrestacaoDeContasPorPeriodo, setLoading, onClickVisualizarAta}) => {
+export const BoxPrestacaoDeContasPorPeriodo = ({gerarAta, uuidAtaApresentacao, uuidPrestacaoConta, corBoxPrestacaoDeContasPorPeriodo, textoBoxPrestacaoDeContasPorPeriodo, dataBoxPrestacaoDeContasPorPeriodo, onClickVisualizarAta}) => {
 
     const [dadosAta, setDadosAta] = useState({});
 
