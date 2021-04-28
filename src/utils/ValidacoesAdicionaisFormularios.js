@@ -92,7 +92,6 @@ export const YupSignupSchemaLogin = yup.object().shape({
 
 export const YupSignupSchemaMembros = yup.object().shape({
   representacao: yup.string().required("Representação é obrigatório"),
-  email: yup.string().email("Digite um email válido"),
 
   codigo_identificacao: yup.string()
     .test('test-name', 'É obrigatório e não pode ultrapassar 10 caracteres',
@@ -122,17 +121,6 @@ export const YupSignupSchemaMembros = yup.object().shape({
         const { representacao } = this.parent;
         if(representacao === "SERVIDOR"){
             return !(!value || value.trim() === "" || value.length > 45);
-        }else {
-          return true
-        }
-      }),
-
-  cpf: yup.string()
-  .test('test-name', 'CPF inválido',
-      function (value) {
-        const { representacao } = this.parent;
-        if(representacao === "PAI_RESPONSAVEL"){
-          return !(!value || value.trim() === "" || !valida_cpf_cnpj(value));
         }else {
           return true
         }
@@ -464,7 +452,7 @@ export const processoIncorporacaoMask = (value) => {
   return mask
 }
 
-function valida_cpf_cnpj ( valor ) {
+export function valida_cpf_cnpj ( valor ) {
 
   // Remove caracteres inválidos do valor
   if (valor){

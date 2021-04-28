@@ -117,6 +117,7 @@ export const DadosDaAsssociacao = () => {
                                 {props => {
                                     const {
                                         setErrors,
+                                        errors,
                                     } = props;
                                     return(
                                         <form onSubmit={props.handleSubmit}>
@@ -215,7 +216,13 @@ export const DadosDaAsssociacao = () => {
                                                         id="email"
                                                         className="form-control"
                                                         onChange={props.handleChange}
-                                                        onClick={() => setErrors({email: ""})}
+                                                        //onClick={() => setErrors({email: ""})}
+                                                        onClick={() => setErrors(
+                                                            {
+                                                                ...errors,
+                                                                email:"",
+                                                            }
+                                                        )}
                                                         disabled={!visoesService.getPermissoes(['change_associacao'])}
                                                     />
                                                     {props.touched.email && props.errors.email &&
