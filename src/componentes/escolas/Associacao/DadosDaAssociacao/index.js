@@ -108,10 +108,11 @@ export const DadosDaAsssociacao = () => {
 
                             <Formik
                                 initialValues={stateAssociacao}
-                                validateOnBlur={true}
-                                validationSchema={YupSignupSchemaDadosDaAssociacao}
                                 enableReinitialize={true}
                                 onSubmit={handleSubmit}
+                                validateOnChange={false}
+                                validateOnBlur={false}
+                                validationSchema={YupSignupSchemaDadosDaAssociacao}
                             >
                                 {props => (
                                     <form onSubmit={props.handleSubmit}>
