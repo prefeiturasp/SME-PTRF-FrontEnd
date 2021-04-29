@@ -6,8 +6,8 @@ export const RecuperarMinhaSenha = ({initialValuesRecuperarSenha, onSubmitReuper
         <>
         <div className="esqueci-minha-senha-inner-texto">
             <h1 className="titulo-services">Recuperação de Senha</h1>
-            <p>Caso você tenha cadastrado um endereço de e-mail, informe seu usuário ou RF e ao continuar você receberá um e-mail com as orientações para redefinição da sua senha.</p>
-            <p>Se você não tem um e-mail cadastrado ou não tem mais acesso ao endereço de e-mail cadastrado, procure o responsável pelo SGP na sua unidade</p>
+            <p>Insira seu usuário (RF para servidor ou CPF para demais membros de Associação) e ao continuar você receberá um e-mail com as orientações para redefinição da sua senha.</p>
+            <p>Caso você não tenha um e-mail cadastrado ou não tenha mais acesso ao endereço de e-mail cadastrado, procure o responsável pelo SIG-Escola na sua unidade.</p>
         </div>
         <div className='col-12'>
             <Formik

@@ -103,16 +103,13 @@ const DataSaldoBancario = ({valoresPendentes, dataSaldoBancario, handleChangaDat
                         <div className="card container-diferenca">
                             <div className="card-body">
                                 <div className='row'>
-                                    <div className='col-6'>
-                                        <h5 className="card-title titulo mt-3 mb-0">Diferença em relação a prestação de contas</h5>
+                                    <div className='col-9'>
+                                        <h5 className="card-title titulo mt-3 mb-0">Diferença entre o saldo bancário declarado e o saldo atual do período calculado pelo sistema</h5>
                                     </div>
-                                    <div className="col-auto">
-                                        <label className='mt-3 mb-0' htmlFor="diferenca_prestacao_de_conta">Comprovante do extrato bancário</label>
-                                    </div>
-                                    <div className="col">
+                                    <div className="col-3">
                                         <CurrencyInput
                                             allowNegative={true}
-                                            prefix='R$'
+                                            prefix='R$ '
                                             decimalSeparator=","
                                             thousandSeparator="."
                                             value={dataSaldoBancario.saldo_extrato ? valoresPendentes.saldo_posterior_total - trataNumericos(dataSaldoBancario.saldo_extrato) : valoresPendentes.saldo_posterior_total}
