@@ -7,11 +7,18 @@ import {faTrash, faPlus, faClipboardList, faEdit} from "@fortawesome/free-solid-
 import Img404 from "../../../../assets/img/img-404.svg";
 import Loading from "../../../../utils/Loading";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
-import {getTecnicosDre, createTecnicoDre, deleteTecnicoDre, getTecnicoDrePorRf, updateTecnicoDre} from "../../../../services/dres/TecnicosDre.service";
+import {
+    getTecnicosDre,
+    createTecnicoDre,
+    deleteTecnicoDre,
+    getTecnicoDrePorRf,
+    updateTecnicoDre
+} from "../../../../services/dres/TecnicosDre.service";
 import {TecnicoDreForm} from "./TecnicoDreForm";
 import {ConfirmaDeleteTecnico} from "./ConfirmaDeleteTecnicoDialog";
 import {consultarRF} from "../../../../services/escolas/Associacao.service";
 import {Link} from "react-router-dom";
+import {valida_cpf_cnpj} from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 export const CadastroTecnicosDre = ({dadosDaDre}) => {
 
@@ -43,17 +50,17 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     const deleteTecnico = async () => {
         setLoading(true);
         if (stateTecnicoForm.uuid) {
-                try {
-                    const response = await deleteTecnicoDre(stateTecnicoForm.uuid, stateSelectDeleteTecnico);
-                    if (response.status === 204 || response.status === 200) {
-                        await carregaTecnicos();
-                        console.log("Operação realizada com sucesso!");
-                    } else {
-                        console.log("Erro ao excluir Técnico")
-                    }
-                } catch (error) {
-                    console.log(error)
+            try {
+                const response = await deleteTecnicoDre(stateTecnicoForm.uuid, stateSelectDeleteTecnico);
+                if (response.status === 204 || response.status === 200) {
+                    await carregaTecnicos();
+                    console.log("Operação realizada com sucesso!");
+                } else {
+                    console.log("Erro ao excluir Técnico")
                 }
+            } catch (error) {
+                console.log(error)
+            }
         }
         setLoading(false)
     };
@@ -91,47 +98,63 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
         setShowTecnicoForm(false);
     };
 
-    const handleSubmitTecnicoForm = async () => {
-        setLoading(true);
-        setShowTecnicoForm(false);
-        const payload = {
-            'dre': dreUuid,
-            'rf': stateTecnicoForm.rf,
-            'nome': stateTecnicoForm.nome,
-            'email': stateTecnicoForm.email,
-            'telefone': stateTecnicoForm.telefone,
-        };
+    const handleSubmitTecnicoForm = async (values, {setErrors}) => {
 
-        const payloadEdit = {
-            'dre': dreUuid,
-            ...stateTecnicoForm
-        };
-
-        if (stateTecnicoForm.uuid) {
-            try {
-                await updateTecnicoDre(stateTecnicoForm.uuid, payloadEdit);
-                await carregaTecnicos();
-            }catch (e) {
-                console.log("Erro ao editar técnico ", e)
+        let enviar_formulario = true
+        let erros = {};
+        const regex_email = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+        if (values.email && !regex_email.test(values.email)) {
+            enviar_formulario = false
+            erros = {
+                ...erros,
+                email: "Digite um email válido"
             }
-
-        } else {
-            try {
-                const response = await createTecnicoDre(payload);
-                if (response.status === 201) {
-                    console.log("Técnico criado com sucesso!");
-                    await carregaTecnicos();
-                } else if (response.status === 400 && response.data.rf) {
-                    console.log("Técnico já existe")
-                } else {
-                    console.log("Erro ao criar Tecnico");
-                    console.log(response)
-                }
-            } catch (error) {
-                console.log(error)
-            }
+            setErrors({...erros})
         }
-        setLoading(false)
+
+        if (enviar_formulario) {
+
+            setLoading(true);
+            setShowTecnicoForm(false);
+            const payload = {
+                'dre': dreUuid,
+                'rf': stateTecnicoForm.rf,
+                'nome': stateTecnicoForm.nome,
+                'email': stateTecnicoForm.email,
+                'telefone': stateTecnicoForm.telefone,
+            };
+
+            const payloadEdit = {
+                'dre': dreUuid,
+                ...stateTecnicoForm
+            };
+
+            if (stateTecnicoForm.uuid) {
+                try {
+                    await updateTecnicoDre(stateTecnicoForm.uuid, payloadEdit);
+                    await carregaTecnicos();
+                } catch (e) {
+                    console.log("Erro ao editar técnico ", e)
+                }
+
+            } else {
+                try {
+                    const response = await createTecnicoDre(payload);
+                    if (response.status === 201) {
+                        console.log("Técnico criado com sucesso!");
+                        await carregaTecnicos();
+                    } else if (response.status === 400 && response.data.rf) {
+                        console.log("Técnico já existe")
+                    } else {
+                        console.log("Erro ao criar Tecnico");
+                        console.log(response)
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+            setLoading(false)
+        }
     };
 
     const handleChangesInTecnicoForm = (name, value) => {
@@ -183,7 +206,8 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     const conferirAtribuicoesTemplate = (rowData, column) => {
         return (
             <div>
-                <Link to={`/dre-atribuicoes/${rowData['uuid']}`} className="link-green" onClick={() => {}}>
+                <Link to={`/dre-atribuicoes/${rowData['uuid']}`} className="link-green" onClick={() => {
+                }}>
                     <FontAwesomeIcon
                         style={{fontSize: '15px', marginRight: "0"}}
                         icon={faClipboardList}
@@ -257,26 +281,27 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                         <div className="row">
                             <div className="col-12">
                                 {tecnicosList.length > 0 ? (
-                                    <DataTable
-                                        value={tecnicosList}
-                                        className="mt-3 datatable-footer-coad"
-                                        paginator={tecnicosList.length > rowsPerPage}
-                                        rows={rowsPerPage}
-                                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                                        autoLayout={true}
-                                        selectionMode="single"
-                                    >
-                                        <Column field='rf' header='Registro funcional'/>
-                                        <Column field='nome' header='Nome completo'/>
-                                        <Column field='telefone' header='Telefone'/>
-                                        <Column field='email' header='E-mail'/>
+                                        <DataTable
+                                            value={tecnicosList}
+                                            className="mt-3 datatable-footer-coad"
+                                            paginator={tecnicosList.length > rowsPerPage}
+                                            rows={rowsPerPage}
+                                            paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                                            autoLayout={true}
+                                            selectionMode="single"
+                                        >
+                                            <Column field='rf' header='Registro funcional'/>
+                                            <Column field='nome' header='Nome completo'/>
+                                            <Column field='telefone' header='Telefone'/>
+                                            <Column field='email' header='E-mail'/>
 
-                                        <Column body={conferirAtribuicoesTemplate} header='Unidades escolares atribuidas'
-                                                style={{textAlign: 'center'}}/>
+                                            <Column body={conferirAtribuicoesTemplate}
+                                                    header='Unidades escolares atribuidas'
+                                                    style={{textAlign: 'center'}}/>
 
-                                        <Column body={tableActionsTemplate} header='Ações'
-                                                style={{textAlign: 'center', width: '8em'}}/>
-                                    </DataTable>)
+                                            <Column body={tableActionsTemplate} header='Ações'
+                                                    style={{textAlign: 'center', width: '8em'}}/>
+                                        </DataTable>)
                                     : (
                                         <MsgImgLadoDireito
                                             texto='Não há nenhum técnico cadastrado ainda, clique em "+adicionar" para incluir um.'
