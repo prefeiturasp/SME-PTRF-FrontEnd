@@ -18,7 +18,7 @@ export const ResumoFinanceiroTabelaTotais = ({infoAta, valorTemplate}) => {
                     </thead>
                     <tbody>
                     <tr>
-                        <td><strong>Saldo inicial  (reprogramado do período anterios)</strong></td>
+                        <td><strong>Saldo inicial (reprogramado do período anterior)</strong></td>
                         <td>{valorTemplate(infoAta.totais.saldo_reprogramado_custeio)}</td>
                         <td>{valorTemplate(infoAta.totais.saldo_reprogramado_capital)}</td>
                         <td>{valorTemplate(infoAta.totais.saldo_reprogramado_livre)}</td>
