@@ -6,7 +6,7 @@ import {
     cpfMaskContitional, valida_cpf_cnpj,
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask';
-import {getDespesasTabelas, criarDespesa, getNomeRazaoSocial} from "../../../../services/escolas/Despesas.service";
+import {getDespesasTabelas, criarDespesa} from "../../../../services/escolas/Despesas.service";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import {useParams} from 'react-router-dom';
 import {DespesaContext} from "../../../../context/Despesa";
@@ -75,9 +75,7 @@ export const CadastroSaidaForm = (props) => {
         } else {
             setEnviarFormulario(true)
         }
-
         return erros;
-
     }, [])
 
     const onSubmit = async (values) => {
@@ -97,7 +95,6 @@ export const CadastroSaidaForm = (props) => {
             values.rateios[0].valor_rateio = values.valor_original
 
             try {
-
                 const response = await criarDespesa(values);
                 if (response.status === HTTP_STATUS.CREATED) {
                     console.log("Operação realizada com sucesso!");
@@ -109,10 +106,7 @@ export const CadastroSaidaForm = (props) => {
                 console.log(error);
                 setLoading(false);
             }
-
         }
-
-
     };
 
     const onCancelarTrue = () => {
@@ -139,8 +133,6 @@ export const CadastroSaidaForm = (props) => {
                         const {
                             values,
                             setFieldValue,
-                            setErrors,
-                            errors,
                         } = props;
 
                         return (
@@ -160,7 +152,6 @@ export const CadastroSaidaForm = (props) => {
                                                     aux.get_nome_razao_social(e.target.value, setFieldValue);
                                                 }}
                                                 onClick={() => {
-                                                    setErrors({...errors, cpf_cnpj_fornecedor: ""})
                                                     setFormErrors({cpf_cnpj_fornecedor: ""})
                                                 }}
                                                 name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
