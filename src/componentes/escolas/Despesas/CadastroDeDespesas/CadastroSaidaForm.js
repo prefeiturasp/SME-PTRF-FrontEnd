@@ -33,8 +33,6 @@ export const CadastroSaidaForm = (props) => {
     const [receita, setReceita] = useState(true);
 
 
-
-
     useEffect(() => {
         const carregaTabelasDespesas = async () => {
             const resp = await getDespesasTabelas();
@@ -60,65 +58,36 @@ export const CadastroSaidaForm = (props) => {
         return despesaContext.initialValues;
     };
 
-
-    const get_nome_razao_social = async (cpf_cnpj, setFieldValue, errors, {setErrors}) => {
-        // let resp = await getNomeRazaoSocial(cpf_cnpj);
-        // if (resp && resp.length > 0 && resp[0].nome){
-        //     //setFieldValue("nome_fornecedor", resp[0].nome);
-        // }else {
-        //     //setFieldValue("nome_fornecedor", "");
-        // }
-        //setErrors(errors)
-    };
-
     // Validações adicionais
     const [formErrors, setFormErrors] = useState({});
-    const [enviarFormulario, setEnviarFormulario] = useState(1);
+    const [enviarFormulario, setEnviarFormulario] = useState(true);
 
+    const validacoesPersonalizadas = useCallback((values) => {
 
-    const validateCpfCnpj = useCallback((valor_cpf_cnpj) =>{
+        let erros = {};
+        let cpf_cnpj_valido = !(!values.cpf_cnpj_fornecedor || values.cpf_cnpj_fornecedor.trim() === "" || !valida_cpf_cnpj(values.cpf_cnpj_fornecedor));
 
-        debugger
-
-        let errors = {};
-        let enviar_formulario = !(!valor_cpf_cnpj || valor_cpf_cnpj.trim() === "" || !valida_cpf_cnpj(valor_cpf_cnpj));
-
-        if (!enviar_formulario) {
-            //errors.cpf_cnpj_fornecedor = "Ollyver Digite um CPF ou um CNPJ válido";
-            errors = {
-                cpf_cnpj_fornecedor: "Ollyver Digite um CPF ou um CNPJ válido"
+        if (!cpf_cnpj_valido) {
+            erros = {
+                cpf_cnpj_fornecedor: "Digite um CPF ou um CNPJ válido"
             }
-            setEnviarFormulario(0)
-        }else {
-            setEnviarFormulario(1)
+            setEnviarFormulario(false)
+        } else {
+            setEnviarFormulario(true)
         }
 
-        //setFormErrors(errors)
+        return erros;
 
-        return errors;
-
-        // let erros = {};
-        // let enviar_formulario = !(!valor_cpf_cnpj || valor_cpf_cnpj.trim() === "" || !valida_cpf_cnpj(valor_cpf_cnpj));
-        // if (!enviar_formulario) {
-        //     erros = {
-        //         cpf_cnpj_fornecedor: "Ollyver Digite um CPF ou um CNPJ válido"
-        //     }
-        //     setErrors({...erros})
-        // }
     }, [])
 
-    const onSubmit = async (values, {setErrors}) => {
-        // let erros = {};
-        // let enviar_formulario = !(!values.cpf || values.cpf.trim() === "" || !valida_cpf_cnpj(values.cpf));
-        // if (!enviar_formulario) {
-        //     erros = {
-        //         cpf_cnpj_fornecedor: "Digite um CPF ou um CNPJ válido"
-        //     }
-        //     setErrors({...erros})
-        // }
+    const onSubmit = async (values) => {
 
-        //if (enviar_formulario) {
+        setFormErrors(validacoesPersonalizadas(values));
+        let erros_personalizados = validacoesPersonalizadas(values)
 
+        if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
+
+            console.log('Enviar')
             setLoading(true);
             validaPayloadDespesas(values, despesasTabelas);
 
@@ -140,7 +109,9 @@ export const CadastroSaidaForm = (props) => {
                 console.log(error);
                 setLoading(false);
             }
-        //}
+
+        }
+
 
     };
 
@@ -175,7 +146,6 @@ export const CadastroSaidaForm = (props) => {
                         return (
                             <>
                                 <form method="POST" onSubmit={props.handleSubmit}>
-                                    <p>XXXXXXXX {JSON.stringify(enviarFormulario)}</p>
                                     <div className="form-row">
                                         <div className="col-12 col-md-6 mt-4">
                                             <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
@@ -186,21 +156,19 @@ export const CadastroSaidaForm = (props) => {
                                                     props.handleChange(e);
                                                 }}
                                                 onBlur={(e) => {
-                                                    //validateCpfCnpj(e.target.value, {setErrors})
-                                                    setFormErrors(validateCpfCnpj(e.target.value));
+                                                    setFormErrors(validacoesPersonalizadas(values));
                                                     aux.get_nome_razao_social(e.target.value, setFieldValue);
-
                                                 }}
                                                 onClick={() => {
-                                                    setErrors({...errors, cpf_cnpj_fornecedor:""})
-                                                    setFormErrors({cpf_cnpj_fornecedor:""})
+                                                    setErrors({...errors, cpf_cnpj_fornecedor: ""})
+                                                    setFormErrors({cpf_cnpj_fornecedor: ""})
                                                 }}
                                                 name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
                                                 className={`${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 placeholder="Digite o número do CNPJ ou CPF (apenas algarismos)"
                                             />
+                                            {/* Validações personalizadas */}
                                             {formErrors.cpf_cnpj_fornecedor && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.cpf_cnpj_fornecedor}</span></p>}
-                                            {props.errors.cpf_cnpj_fornecedor && <p className='mb-0'><span className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span></p>}
                                         </div>
                                         <div className="col-12 col-md-6  mt-4">
                                             <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
