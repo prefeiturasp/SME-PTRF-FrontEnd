@@ -23,16 +23,16 @@ const TabelaValoresPendentesPorAcao = ({valoresPendentes, valorTemplate}) =>{
                     <td className='coluna-cinza-escuro'> </td>
                 </tr>
                 <tr>
-                    <th scope="row">Despesas</th>
-                    <td>{valorTemplate(valoresPendentes.despesas_total)}</td>
-                    <td>{valorTemplate(valoresPendentes.despesas_conciliadas)}</td>
-                    <td>{valorTemplate(valoresPendentes.despesas_nao_conciliadas)}</td>
-                </tr>
-                <tr>
                     <th scope="row">Créditos</th>
                     <td>{valorTemplate(valoresPendentes.receitas_total)}</td>
                     <td>{valorTemplate(valoresPendentes.receitas_conciliadas)}</td>
                     <td>{valorTemplate(valoresPendentes.receitas_nao_conciliadas)}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Despesas</th>
+                    <td>{valorTemplate(valoresPendentes.despesas_total)}</td>
+                    <td>{valorTemplate(valoresPendentes.despesas_conciliadas)}</td>
+                    <td>{valorTemplate(valoresPendentes.despesas_nao_conciliadas)}</td>
                 </tr>
                 <tr>
                     <th scope="row">Saldo reprogramado</th>
