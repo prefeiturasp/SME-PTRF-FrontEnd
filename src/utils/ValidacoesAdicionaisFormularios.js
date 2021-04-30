@@ -152,6 +152,7 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
 
 export const YupSignupSchemaCadastroDespesaSaida = yup.object().shape({
 
+  cpf_cnpj_fornecedor: yup.string().required("CPF ou CNPJ Fornecedor é obrigatório"),
   nome_fornecedor: yup.string().required("Nome Fornecedor é obrigatório")
   .test('test-nome-fornecedor', 'Digite um nome de fornecedor válido',
       function (value) {
