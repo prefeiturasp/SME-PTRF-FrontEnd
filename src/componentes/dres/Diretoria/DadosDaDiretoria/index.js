@@ -117,8 +117,8 @@ export const DadosDaDiretoria = () => {
                                 />
                                 <Formik
                                     initialValues={stateFormDiretoria}
-                                    validateOnBlur={true}
-                                    //validate={validateFormDiretoria}
+                                    validateOnBlur={false}
+                                    validateOnChange={false}
                                     validationSchema={YupSignupSchemaDreDadosDiretoria}
                                     enableReinitialize={true}
                                     onSubmit={handleSubmit}
@@ -126,6 +126,8 @@ export const DadosDaDiretoria = () => {
                                     {props => {
                                         const {
                                             setFieldValue,
+                                            setErrors,
+                                            errors,
                                         } = props;
                                         return(
                                         <form onSubmit={props.handleSubmit}>
@@ -141,6 +143,12 @@ export const DadosDaDiretoria = () => {
                                                         className="form-control"
                                                         onChange={props.handleChange}
                                                         onBlur={props.handleBlur}
+                                                        onClick={() => setErrors(
+                                                            {
+                                                                ...errors,
+                                                                dre_cnpj:"",
+                                                            }
+                                                        )}
                                                     />
                                                     {props.touched.dre_cnpj && props.errors.dre_cnpj && <span className="span_erro text-danger mt-1"> {props.errors.dre_cnpj} </span>}
                                                 </div>
