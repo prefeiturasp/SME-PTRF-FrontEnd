@@ -1,4 +1,3 @@
-import decode from "jwt-decode";
 import api from './api';
 import HTTP_STATUS from "http-status-codes";
 import {DATA_HORA_USUARIO_LOGADO, visoesService} from "./visoes.service";
@@ -58,7 +57,7 @@ const login = async (login, senha) => {
 
         if (response.status === HTTP_STATUS.OK) {
             if (resp.detail) {
-                return "RF incorreto"
+                return resp
             }
 
             await setDataLogin();
@@ -86,22 +85,17 @@ const login = async (login, senha) => {
 
             await visoesService.setDadosPrimeiroAcesso(resp);
 
-            const decoded = decode(resp.token);
             window.location.href = "/";
         } 
     } catch (error) {
-        console.log('ERROR');
-        console.log(error.response.data);
-        return error.response.data.data.detail;
+        console.log("Erro ao efetuar o login ", error.response.data)
+        return error.response.data;
     }
 };
 
 const isLoggedIn = () => {
     const token = localStorage.getItem(TOKEN_ALIAS);
-    if (token) {
-      return true;
-    }
-    return false;
+    return !!token;
   };
 
 const getToken = () => {
@@ -130,7 +124,6 @@ const logout = () => {
     localStorage.removeItem(USUARIO_LOGIN);
     localStorage.removeItem(USUARIO_CPF);
     localStorage.removeItem(DADOS_DA_ASSOCIACAO);
-    //window.location.reload();
     window.location.assign("/login")
 };
 
@@ -149,7 +142,6 @@ export const alterarMeuEmail = async (usuario, payload) => {
 export const alterarMinhaSenha = async (usuario, payload) => {
     return (await api.patch(`/api/usuarios/${usuario}/altera-senha/`, payload, authHeaderAuthorization))
 };
-
 
 export const authService = {
     login,
