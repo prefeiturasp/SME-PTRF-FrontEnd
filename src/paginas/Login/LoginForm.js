@@ -2,26 +2,32 @@ import React, {useState} from "react";
 import {Formik} from "formik";
 import {YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
 import { authService } from "../../services/auth.service";
+import ReactTooltip from "react-tooltip";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons'
 
 export const LoginForm = ({redefinicaoDeSenha}) => {
-    const [mensagem, setMensagem] = useState('');
+    const [msgUsuario, setMsgUsuario] = useState('');
+    const [msgSenha, setMsgSenha] = useState('');
 
     const initialValues = () => (
         {login: "", senha: ""}
     );
 
     const onSubmit = async (values) => {
-        try {
-            const msg = await authService.login(values.login, values.senha);
-            setMensagem(msg);
-        }catch (e) {
-            setMensagem("Senha incorreta")
+        let msg = await authService.login(values.login, values.senha);
+
+        if(msg && msg.detail){
+            if (msg.detail === 'Senha inválida!'){
+                setMsgSenha('Senha incorreta')
+            }else {
+                setMsgUsuario('Número de usuário inválido')
+            }
         }
     };
 
     return (
         <div className="w-75">
-
             <Formik
                 initialValues={initialValues()}
                 validationSchema={YupSignupSchemaLogin}
@@ -32,18 +38,27 @@ export const LoginForm = ({redefinicaoDeSenha}) => {
                 {props => (
                     <form onSubmit={props.handleSubmit}>
                         <div className="form-group">
-                            <label htmlFor="login">Registro Funcional</label>
-
+                            <label htmlFor="login">Usuário</label>
+                            <span data-html={true} data-tip='Digite, sem ponto nem traço, </br>o RF para servidor, ou o CPF <br/>para usuário não servidor'>
+                                <FontAwesomeIcon
+                                    style={{fontSize: '18px', marginLeft: "3px", color:'#42474A'}}
+                                    icon={faQuestionCircle}
+                                />
+                            </span>
+                            <ReactTooltip html={true}/>
                             <input
                                 type="text"
                                 value={props.values.login}
                                 name="login"
                                 id="login"
-                                className="form-control"
+                                className={`form-control ${msgUsuario ? 'falha-login' : ''}`}
                                 onChange={props.handleChange}
                                 onBlur={props.handleBlur}
+                                maxLength='60'
+                                onClick={()=>setMsgUsuario('')}
                             />
                             {props.touched.login && props.errors.login && <span className="span_erro text-danger mt-1"> {props.errors.login} </span>}
+                            {msgUsuario && !props.errors.login && <span className="span_erro text-danger mt-1">{msgUsuario}</span>}
 
                         </div>
                         <div className="form-group">
@@ -53,14 +68,15 @@ export const LoginForm = ({redefinicaoDeSenha}) => {
                                 value={props.values.senha}
                                 name="senha"
                                 id="senha"
-                                className="form-control"
+                                className={`form-control ${msgSenha ? 'falha-login' : ''}`}
                                 onChange={props.handleChange}
                                 onBlur={props.handleBlur}
+                                maxLength='16'
+                                onClick={()=>setMsgSenha('')}
                             />
                             {props.touched.login && props.errors.senha && <span className="span_erro text-danger mt-1"> {props.errors.senha} </span>}
-
+                            {msgSenha && !props.errors.login && <span className="span_erro text-danger mt-1">{msgSenha}</span>}
                         </div>
-                        {mensagem && <span className="span_erro text-danger mt-1">{mensagem}</span>}
                         <button type="submit" className="btn btn-success  btn-block  mt-2">Acessar</button>
                     </form>
                 )}

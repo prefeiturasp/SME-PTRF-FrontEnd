@@ -11,7 +11,7 @@ export const checkDuplicateInObject = (propertyName, inputArray) => {
       testObject = {};
 
   inputArray.map((item) => {
-    var itemPropertyName = item[propertyName];
+    let itemPropertyName = item[propertyName];
     if (itemPropertyName in testObject) {
       testObject[itemPropertyName].duplicate = true;
       item.duplicate = true;
@@ -86,8 +86,8 @@ export const YupSignupSchemaRecuperarSenha = yup.object().shape({
 });
 
 export const YupSignupSchemaLogin = yup.object().shape({
-  login: yup.string().required("Campo código RF é obrigatório"),
-  senha: yup.string().required("Campo código Senha é obrigatório"),
+  login: yup.string().required("Campo Usuário é obrigatório"),
+  senha: yup.string().required("Campo Senha é obrigatório"),
 });
 
 export const YupSignupSchemaMembros = yup.object().shape({
