@@ -37,8 +37,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                     {props => {
                         const {
                             errors,
-                            values,
-                            setFieldValue,
+                            setErrors,
                         } = props;
                         return(
                             <form method="POST" id="membrosForm" onSubmit={props.handleSubmit}>
@@ -157,6 +156,12 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                                 }
                                                 name="cpf"
                                                 className="form-control"
+                                                onClick={() => setErrors(
+                                                    {
+                                                        ...errors,
+                                                        cpf:"",
+                                                    }
+                                                )}
                                             />
                                             {props.errors.cpf &&
                                             <span className="span_erro text-danger mt-1"> {props.errors.cpf}</span>}
@@ -307,6 +312,12 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                                     handleChangeEditarMembro(e.target.name, e.target.value);
                                                 }
                                                 }
+                                                onClick={() => setErrors(
+                                                    {
+                                                        ...errors,
+                                                        email:"",
+                                                    }
+                                                )}
                                                 name="email"
                                                 className="form-control"
                                                 placeholder="Insira seu email se desejar"

@@ -216,7 +216,6 @@ export const DadosDaAsssociacao = () => {
                                                         id="email"
                                                         className="form-control"
                                                         onChange={props.handleChange}
-                                                        //onClick={() => setErrors({email: ""})}
                                                         onClick={() => setErrors(
                                                             {
                                                                 ...errors,
