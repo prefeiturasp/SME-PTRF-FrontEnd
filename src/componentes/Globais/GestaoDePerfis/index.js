@@ -6,10 +6,10 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import {ModalPerfisForm} from "./ModalPerfisForm";
 import {ModalConfirmDeletePerfil} from "./ModalConfirmDeletePerfil";
-import {getGrupos, getUsuarios, postCriarUsuario, putEditarUsuario, deleteUsuario, getUsuariosFiltros} from "../../../services/GestaoDePerfis.service";
+import {getGrupos, getUsuarios, deleteUsuario, getUsuariosFiltros} from "../../../services/GestaoDePerfis.service";
 import {visoesService} from "../../../services/visoes.service";
+import {Link} from "react-router-dom";
 
 export const GestaoDePerfis = () => {
 
@@ -50,6 +50,8 @@ export const GestaoDePerfis = () => {
     const exibeUsuarios = async () =>{
         let _usuarios = await getUsuarios(visao_selecionada);
         setUsuarios(_usuarios);
+
+        console.log("EXIBE USUARIOS ", _usuarios)
     };
 
     const handleChangeFiltros = (name, value) => {
@@ -84,70 +86,20 @@ export const GestaoDePerfis = () => {
     const acoesTemplate = (rowData) =>{
         return (
             <div>
-                <button className="btn-editar-membro" onClick={()=>handleEditarPerfisForm(rowData)}>
+                <Link
+                    className="link-green float-right"
+                    to={{
+                        pathname: `/gestao-de-perfis-form/${rowData.id}`,
+                        // pathname: "/gestao-de-perfis-form/id_usuario=",
+                    }}
+                >
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                         icon={faEdit}
                     />
-                </button>
+                </Link>
             </div>
         )
-    };
-
-    const handleEditarPerfisForm = (rowData) =>{
-        let ids_grupos =[];
-        if (rowData && rowData.groups && rowData.groups.length > 0){
-            rowData.groups.map((grupo)=>
-                ids_grupos.push(grupo.id)
-            );
-        }
-        const initFormPerfis = {
-            id: rowData.id,
-            tipo_usuario: rowData.tipo_usuario,
-            nome_usuario: rowData.username,
-            nome_completo: rowData.name,
-            email: rowData.email ? rowData.email : '',
-            grupo_acesso: ids_grupos,
-        };
-        setStatePerfisForm(initFormPerfis);
-        setShowPerfisForm(true)
-    };
-
-    const handleChangesPerfisForm = (name, value) => {
-        setStatePerfisForm({
-            ...statePerfisForm,
-            [name]: value
-        });
-    };
-
-    const handleSubmitPerfisForm = async (values)=>{
-        let payload = {
-            username: values.nome_usuario,
-            email: values.email ? values.email : "",
-            name: values.nome_completo,
-            tipo_usuario: values.tipo_usuario,
-            visao: visao_selecionada,
-            groups: values.grupo_acesso,
-        };
-
-        if(values.id){
-            try {
-                await putEditarUsuario(values.id, payload);
-                console.log('Usuário editado com sucesso')
-            }catch (e) {
-                console.log('Erro ao editar usuário ', e)
-            }
-
-        }else {
-            try {
-                await postCriarUsuario(payload);
-                console.log('Usuário criado com sucesso')
-            }catch (e) {
-                console.log('Erro ao criar usuário ', e)
-            }
-        }
-        setShowPerfisForm(false);
-        await exibeUsuarios();
     };
 
     const onDeletePerfilTrue = async () =>{
@@ -160,10 +112,6 @@ export const GestaoDePerfis = () => {
             console.log('Erro ao deletar usuário ', e);
         }
         await exibeUsuarios()
-    };
-
-    const handleClose = () => {
-        setShowPerfisForm(false);
     };
 
     const handleCloseDeletePerfil = () => {
@@ -189,18 +137,18 @@ export const GestaoDePerfis = () => {
             <div className="d-flex bd-highlight mt-4">
                 <div className="flex-grow-1 bd-highlight mb-3"><h4>Lista de perfis com acesso  </h4></div>
                 <div className="p-2 bd-highlight">
-                    <a className="link-green float-right" onClick={()=>{
-                        setStatePerfisForm(initPerfisForm);
-                        setShowPerfisForm(true);
-                        }
-                        }
+                    <Link
+                        className="link-green float-right"
+                        to={{
+                            pathname: "/gestao-de-perfis-form/",
+                        }}
                     >
                         <FontAwesomeIcon
                             style={{fontSize: '15px', marginRight: "0"}}
                             icon={faPlus}
                         />
                         <strong> adicionar</strong>
-                    </a>
+                    </Link>
                 </div>
             </div>
 
@@ -223,22 +171,6 @@ export const GestaoDePerfis = () => {
                     </DataTable>
                 </div>
             }
-            <section>
-                <ModalPerfisForm
-                    show={showPerfisForm}
-                    handleClose={handleClose}
-                    onSubmit={handleSubmitPerfisForm}
-                    handleChange={handleChangesPerfisForm}
-                    setShowModalDeletePerfil={setShowModalDeletePerfil}
-                    statePerfisForm={statePerfisForm}
-                    setStatePerfisForm={setStatePerfisForm}
-                    grupos={grupos}
-                    primeiroBotaoTexto="Cancelar"
-                    primeiroBotaoCss="outline-success"
-                    segundoBotaoCss="success"
-                    segundoBotaoTexto="Confirmar"
-                />
-            </section>
             <section>
                 <ModalConfirmDeletePerfil
                     show={showModalDeletePerfil}

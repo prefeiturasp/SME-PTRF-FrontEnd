@@ -8,6 +8,18 @@ const authHeader = {
     }
 };
 
+export const getUsuario = async (id_usuario) =>{
+    return (await api.get(`/api/usuarios/${id_usuario}`, authHeader)).data
+};
+
+export const getUsuarioStatus = async (username, e_servidor, uuid_unidade="") =>{
+    return (await api.get(`/api/usuarios/status/?username=${username}&servidor=${e_servidor}${uuid_unidade ? "&unidade=" + uuid_unidade : "" }`, authHeader)).data
+};
+
+export const getCodigoEolUnidade = async (uuid_unidade) =>{
+    return (await api.get(`/api/unidades/${uuid_unidade}`, authHeader)).data
+};
+
 export const getGrupos = async (visao_selecionada) =>{
     return (await api.get(`/api/usuarios/grupos/?visao=${visao_selecionada}`, authHeader)).data
 };
@@ -25,7 +37,7 @@ export const postCriarUsuario = async (payload) => {
 };
 
 export const putEditarUsuario = async (usuario_id, payload) => {
-    return (await api.put(`/api/usuarios/${usuario_id}`, payload, authHeader)).data
+    return (await api.put(`/api/usuarios/${usuario_id}/`, payload, authHeader)).data
 };
 
 export const deleteUsuario = async (usuario_id) => {
