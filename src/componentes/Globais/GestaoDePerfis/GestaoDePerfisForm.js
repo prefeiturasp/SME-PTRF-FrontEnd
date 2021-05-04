@@ -6,14 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import {visoesService} from "../../../services/visoes.service";
 import {YupSignupSchemaPerfis} from "./YupSignupSchemaPerfis";
-import {
-    getUsuario,
-    getUsuarioStatus,
-    getCodigoEolUnidade,
-    getGrupos,
-    postCriarUsuario,
-    putEditarUsuario, deleteUsuario
-} from "../../../services/GestaoDePerfis.service";
+import {getUsuario, getUsuarioStatus, getCodigoEolUnidade, getGrupos, postCriarUsuario, putEditarUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
 import {ModalUsuarioNaoCadastrado} from "./ModalUsuarioNaoCadastrado";
 import {ModalUsuarioCadastradoVinculado} from "./ModalUsuarioCadastradoVinculado";
 import {ModalConfirmDeletePerfil} from "./ModalConfirmDeletePerfil";
@@ -24,9 +17,7 @@ import MaskedInput from 'react-text-mask'
 export const GestaoDePerfisForm = () =>{
 
     const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
-
     const uuid_unidade = visoesService.getItemUsuarioLogado('unidade_selecionada.uuid');
-
     const uuid_associacao = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
 
     let {id_usuario} = useParams();
@@ -47,17 +38,12 @@ export const GestaoDePerfisForm = () =>{
     const [bloquearCampoName, setBloquearCampoName] = useState(true)
     const [bloquearCampoEmail, setBloquearCampoEmail] = useState(false)
 
-
     const carregaCodigoEolUnidade = useCallback(async ()=>{
-
         if (visao_selecionada !== "SME"){
             let unidade = await getCodigoEolUnidade(uuid_unidade)
-            console.log("Codigo Eol Unidade XXXX ", unidade.codigo_eol)
             setCodigoEolUnidade(unidade.codigo_eol)
-
             return unidade.codigo_eol
         }
-
     }, [visao_selecionada, uuid_unidade])
 
     useEffect(()=>{
@@ -66,7 +52,6 @@ export const GestaoDePerfisForm = () =>{
 
     const exibeGrupos =  useCallback(async ()=>{
         let grupos = await getGrupos(visao_selecionada);
-        console.log("GRUPOS ", grupos)
         setGrupos(grupos);
     }, [visao_selecionada]);
 
@@ -77,9 +62,6 @@ export const GestaoDePerfisForm = () =>{
     const carregaDadosUsuario = useCallback(async ()=>{
         if (id_usuario){
             let dados_usuario = await getUsuario(id_usuario)
-            console.log('carregaDadosUsuario ', dados_usuario)
-
-
             let ids_grupos =[];
             if (dados_usuario.groups && dados_usuario.groups.length > 0){
                 dados_usuario.groups.map((grupo)=>
@@ -99,18 +81,11 @@ export const GestaoDePerfisForm = () =>{
             };
             setStatePerfisForm(initPerfisForm)
         }
-
     }, [id_usuario, visao_selecionada, codigoEolUnidade])
 
     useEffect(()=>{
         carregaDadosUsuario()
     }, [carregaDadosUsuario])
-
-
-    const [showModalUsuarioNaoCadastrado, setShowModalUsuarioNaoCadastrado] = useState(false)
-    const [showModalUsuarioCadastradoVinculado, setShowModalUsuarioCadastradoVinculado] = useState(false)
-    const [showModalDeletePerfil, setShowModalDeletePerfil] = useState(false);
-
 
     const handleCloseUsuarioNaoCadastrado = () => {
         setShowModalUsuarioNaoCadastrado(false);
@@ -133,6 +108,9 @@ export const GestaoDePerfisForm = () =>{
     };
 
     // Validações adicionais
+    const [showModalUsuarioNaoCadastrado, setShowModalUsuarioNaoCadastrado] = useState(false)
+    const [showModalUsuarioCadastradoVinculado, setShowModalUsuarioCadastradoVinculado] = useState(false)
+    const [showModalDeletePerfil, setShowModalDeletePerfil] = useState(false);
     const [showModalInfo, setShowModalInfo] = useState(false);
     const [tituloModalInfo, setTituloModalInfo] = useState('');
     const [textoModalInfo, setTextoModalInfo] = useState('');
@@ -141,7 +119,6 @@ export const GestaoDePerfisForm = () =>{
     const [usuariosStatus, setUsuariosStatus] = useState({});
 
     const idUsuarioCondicionalMask = useCallback((e_servidor) => {
-        console.log("idUsuarioCondicionalMask ", e_servidor)
         let mask;
         if (e_servidor === "True"){
             mask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
@@ -168,7 +145,6 @@ export const GestaoDePerfisForm = () =>{
     }, [carregaCodigoEolUnidade, visao_selecionada, initPerfisForm]) ;
 
     const serviceVisaoUE = useCallback(async (values, usuario_status, {resetForm})=>{
-
         if (values.e_servidor === "True"){
             if (!usuario_status.e_servidor_na_unidade){
                 setStatePerfisForm(initPerfisForm)
@@ -189,12 +165,9 @@ export const GestaoDePerfisForm = () =>{
                 setShowModalInfo(true)
             }
         }
-
     }, [initPerfisForm, uuid_associacao]);
 
     const serviceVisaoSme = useCallback(async (usuario_status, {setFieldValue, resetForm})=>{
-
-        console.log("serviceVisaoSme usuario_status ", usuario_status)
         if (!usuario_status.usuario_core_sso.info_core_sso && usuario_status.validacao_username.username_e_valido) {
             setShowModalUsuarioNaoCadastrado(true)
         }else if (usuario_status.validacao_username.username_e_valido && usuario_status.usuario_core_sso.info_core_sso && usuario_status.usuario_sig_escola.info_sig_escola && usuario_status.usuario_sig_escola.info_sig_escola.visoes.find(element => element === visao_selecionada)){
@@ -243,6 +216,8 @@ export const GestaoDePerfisForm = () =>{
                 await serviceVisaoSme(usuario_status, {setFieldValue, resetForm})
             }
 
+            console.log("validacoesPersonalizadas usuario_status ", usuario_status)
+
         }catch (e){
             setEnviarFormulario(false)
             erros = {
@@ -251,78 +226,74 @@ export const GestaoDePerfisForm = () =>{
             setFormErrors({...erros})
             console.log("Erro ao buscar status usuário")
         }
-
         return erros;
     }, [uuid_unidade, visao_selecionada, serviceVisaoDre, serviceVisaoUE, serviceVisaoSme])
 
 
     const handleSubmitPerfisForm = async (values, {setFieldValue, resetForm})=>{
 
-            let payload = {
-                e_servidor: values.e_servidor,
-                username: values.username,
-                name: values.name,
-                email: values.email ? values.email : "",
-                visao: visao_selecionada,
-                groups: values.groups,
-                unidade: visao_selecionada !== "SME" ? codigoEolUnidade : null
-            };
+        let payload = {
+            e_servidor: values.e_servidor,
+            username: values.username,
+            name: values.name,
+            email: values.email ? values.email : "",
+            visao: visao_selecionada,
+            groups: values.groups,
+            unidade: visao_selecionada !== "SME" ? codigoEolUnidade : null
+        };
 
-            console.log("handleSubmitPerfisForm payload ", payload)
+        if (values.id || (usuariosStatus.usuario_sig_escola.info_sig_escola && usuariosStatus.usuario_sig_escola.info_sig_escola.user_id)) {
 
-            if (values.id || (usuariosStatus.usuario_sig_escola.info_sig_escola && usuariosStatus.usuario_sig_escola.info_sig_escola.user_id)) {
+            let id_do_usuario;
+            if (values.id){
+                id_do_usuario = values.id
+            }else {
+                id_do_usuario = usuariosStatus.usuario_sig_escola.info_sig_escola.user_id
+            }
 
-                let id_do_usuario;
-                if (values.id){
-                    id_do_usuario = values.id
-                }else {
-                    id_do_usuario = usuariosStatus.usuario_sig_escola.info_sig_escola.user_id
+            try {
+                await putEditarUsuario(id_do_usuario, payload);
+                console.log('Usuário editado com sucesso')
+                window.location.assign('/gestao-de-perfis/')
+            } catch (e) {
+                console.log('Erro ao editar usuário ', e.response.data)
+                setTituloModalInfo('Erro ao atualizar o usuário')
+                if (e.response.data.username && e.response.data.username.length > 0) {
+                    setTextoModalInfo(e.response.data.username[0])
+                } else {
+                    setTextoModalInfo('<p>Não foi possível atualizar o usuário, por favor, tente novamente</p>')
                 }
+                resetForm()
+                setShowModalUsuarioNaoCadastrado(false)
+                setShowModalUsuarioCadastradoVinculado(false)
+                setShowModalInfo(true)
+            }
+
+        } else {
+            setFormErrors(validacoesPersonalizadas(values, {setFieldValue}));
+            let erros_personalizados = validacoesPersonalizadas(values, {setFieldValue})
+
+            if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
 
                 try {
-                    await putEditarUsuario(id_do_usuario, payload);
-                    console.log('Usuário editado com sucesso')
+                    await postCriarUsuario(payload);
+                    console.log('Usuário criado com sucesso')
                     window.location.assign('/gestao-de-perfis/')
                 } catch (e) {
-                    console.log('Erro ao editar usuário ', e.response.data)
-                    setTituloModalInfo('Erro ao atualizar o usuário')
+                    console.log('Erro ao criar usuário ', e.response.data)
+                    setTituloModalInfo('Erro ao criar usuário')
                     if (e.response.data.username && e.response.data.username.length > 0) {
                         setTextoModalInfo(e.response.data.username[0])
                     } else {
-                        setTextoModalInfo('<p>Não foi possível atualizar o usuário, por favor, tente novamente</p>')
+                        setTextoModalInfo('<p>Não foi possível criar o usuário, por favor, tente novamente</p>')
                     }
                     resetForm()
                     setShowModalUsuarioNaoCadastrado(false)
                     setShowModalUsuarioCadastradoVinculado(false)
                     setShowModalInfo(true)
                 }
-
-            } else {
-                setFormErrors(validacoesPersonalizadas(values, {setFieldValue}));
-                let erros_personalizados = validacoesPersonalizadas(values, {setFieldValue})
-
-                if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
-
-                    try {
-                        await postCriarUsuario(payload);
-                        console.log('Usuário criado com sucesso')
-                        window.location.assign('/gestao-de-perfis/')
-                    } catch (e) {
-                        console.log('Erro ao criar usuário ', e.response.data)
-                        setTituloModalInfo('Erro ao criar usuário')
-                        if (e.response.data.username && e.response.data.username.length > 0) {
-                            setTextoModalInfo(e.response.data.username[0])
-                        } else {
-                            setTextoModalInfo('<p>Não foi possível criar o usuário, por favor, tente novamente</p>')
-                        }
-                        resetForm()
-                        setShowModalUsuarioNaoCadastrado(false)
-                        setShowModalUsuarioCadastradoVinculado(false)
-                        setShowModalInfo(true)
-                    }
-                }
             }
-
+        }
     };
 
     return (
@@ -378,8 +349,7 @@ export const GestaoDePerfisForm = () =>{
                                                     value={props.values.e_servidor}
                                                     onChange={(e) => {
                                                         props.handleChange(e);
-                                                    }
-                                                    }
+                                                    }}
                                                     name="e_servidor"
                                                     className="form-control"
                                                     disabled={statePerfisForm.id}
@@ -413,24 +383,7 @@ export const GestaoDePerfisForm = () =>{
                                                     className="form-control"
                                                     placeholder='Insira o nome de usuário'
                                                     disabled={!props.values.e_servidor || statePerfisForm.id}
-                                                    />
-                                                {/*<input
-                                                    type="text"
-                                                    value={props.values.username ? props.values.username : ""}
-                                                    onChange={(e) => {
-                                                        props.handleChange(e);
-                                                    }}
-                                                    onBlur={(e) => {
-                                                        validacoesPersonalizadas(values, {setFieldValue, resetForm});
-                                                    }}
-                                                    onClick={() => {
-                                                        setFormErrors({username: ""})
-                                                    }}
-                                                    name="username"
-                                                    className="form-control"
-                                                    placeholder='Insira o nome de usuário'
-                                                    disabled={!props.values.e_servidor || statePerfisForm.id}
-                                                />*/}
+                                                />
                                                 {/* Validações personalizadas */}
                                                 {formErrors.username && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.username}</span></p>}
                                             </div>

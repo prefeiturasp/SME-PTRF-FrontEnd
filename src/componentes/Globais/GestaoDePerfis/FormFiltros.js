@@ -53,8 +53,6 @@ export const FormFiltros = ({stateFiltros, handleChangeFiltros, limpaFiltros, ha
                   <button type="submit" className="btn btn-success mt-2">Filtrar</button>
               </div>
           </div>
-
-
       </form>
   );
 };

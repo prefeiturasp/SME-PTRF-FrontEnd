@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import "./gestao-de-perfis.scss"
 import {AccordionInfo} from "./AccordionInfo";
 import {FormFiltros} from "./FormFiltros";
@@ -25,22 +25,21 @@ export const GestaoDePerfis = () => {
     const [usuarios, setUsuarios] = useState({});
     const [grupos, setGrupos] = useState([]);
 
+    const exibeGrupos = useCallback(async ()=>{
+        let grupos = await getGrupos(visao_selecionada);
+        setGrupos(grupos);
+    }, [visao_selecionada]);
+
+    const exibeUsuarios = useCallback(async () =>{
+        let _usuarios = await getUsuarios(visao_selecionada);
+        setUsuarios(_usuarios);
+        console.log("EXIBE USUARIOS ", _usuarios)
+    }, [visao_selecionada]);
+
     useEffect(()=>{
         exibeGrupos();
         exibeUsuarios();
-    }, []);
-
-    const exibeGrupos = async ()=>{
-        let grupos = await getGrupos(visao_selecionada);
-        setGrupos(grupos);
-    };
-
-    const exibeUsuarios = async () =>{
-        let _usuarios = await getUsuarios(visao_selecionada);
-        setUsuarios(_usuarios);
-
-        console.log("EXIBE USUARIOS ", _usuarios)
-    };
+    }, [exibeGrupos, exibeUsuarios]);
 
     const handleChangeFiltros = (name, value) => {
         setStateFiltros({
@@ -52,7 +51,6 @@ export const GestaoDePerfis = () => {
     const limpaFiltros = async () => {
         await setStateFiltros(initialStateFiltros);
         await exibeUsuarios();
-
     };
 
     const handleSubmitFiltros = async (event) => {
@@ -81,7 +79,6 @@ export const GestaoDePerfis = () => {
                 className="link-green text-center"
                 to={{
                     pathname: `/gestao-de-perfis-form/${rowData.id}`,
-                    // pathname: "/gestao-de-perfis-form/id_usuario=",
                 }}
             >
                 <FontAwesomeIcon
@@ -110,7 +107,7 @@ export const GestaoDePerfis = () => {
             />
 
             <div className="d-flex bd-highlight mt-4">
-                <div className="flex-grow-1 bd-highlight mb-3"><h4>Lista de perfis com acesso  </h4></div>
+                <div className="flex-grow-1 bd-highlight mb-3"><h4>Lista de perfis com acesso</h4></div>
                 <div className="p-2 bd-highlight">
                     <Link
                         className="link-green float-right"
