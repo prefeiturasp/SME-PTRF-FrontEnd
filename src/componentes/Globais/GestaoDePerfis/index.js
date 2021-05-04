@@ -6,8 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import {ModalConfirmDeletePerfil} from "./ModalConfirmDeletePerfil";
-import {getGrupos, getUsuarios, deleteUsuario, getUsuariosFiltros} from "../../../services/GestaoDePerfis.service";
+import {getGrupos, getUsuarios, getUsuariosFiltros} from "../../../services/GestaoDePerfis.service";
 import {visoesService} from "../../../services/visoes.service";
 import {Link} from "react-router-dom";
 
@@ -18,22 +17,11 @@ export const GestaoDePerfis = () => {
     const initialStateFiltros = {
         filtrar_por_nome: "",
         filtrar_por_grupo: "",
-    };
-
-    const initPerfisForm = {
-        id: "",
-        tipo_usuario: "",
-        nome_usuario: "",
-        nome_completo: "",
-        email: "",
-        grupo_acesso: [],
+        filtrar_tipo_de_usuario: "",
     };
 
     const [clickBtnInfo, setClickBtnInfo] = useState(false);
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
-    const [statePerfisForm, setStatePerfisForm] = useState(initPerfisForm);
-    const [showPerfisForm, setShowPerfisForm] = useState(false);
-    const [showModalDeletePerfil, setShowModalDeletePerfil] = useState(false);
     const [usuarios, setUsuarios] = useState({});
     const [grupos, setGrupos] = useState([]);
 
@@ -69,7 +57,7 @@ export const GestaoDePerfis = () => {
 
     const handleSubmitFiltros = async (event) => {
         event.preventDefault();
-        let retorno_filtros = await getUsuariosFiltros(visao_selecionada, stateFiltros.filtrar_por_nome, stateFiltros.filtrar_por_grupo);
+        let retorno_filtros = await getUsuariosFiltros(visao_selecionada, stateFiltros.filtrar_por_nome, stateFiltros.filtrar_por_grupo, stateFiltros.filtrar_tipo_de_usuario);
         setUsuarios(retorno_filtros)
     };
 
@@ -83,39 +71,26 @@ export const GestaoDePerfis = () => {
         }
     };
 
+    const tipoUsuarioTemplate = (rowData) =>{
+        return rowData['e_servidor'] ? "Servidor" : "Não Servidor"
+    };
+
     const acoesTemplate = (rowData) =>{
         return (
-            <div>
-                <Link
-                    className="link-green float-right"
-                    to={{
-                        pathname: `/gestao-de-perfis-form/${rowData.id}`,
-                        // pathname: "/gestao-de-perfis-form/id_usuario=",
-                    }}
-                >
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                </Link>
-            </div>
+            <Link
+                className="link-green text-center"
+                to={{
+                    pathname: `/gestao-de-perfis-form/${rowData.id}`,
+                    // pathname: "/gestao-de-perfis-form/id_usuario=",
+                }}
+            >
+                <FontAwesomeIcon
+                    style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                    icon={faEdit}
+                />
+            </Link>
+
         )
-    };
-
-    const onDeletePerfilTrue = async () =>{
-        setShowPerfisForm(false);
-        setShowModalDeletePerfil(false);
-        try {
-            await deleteUsuario(statePerfisForm.id);
-            console.log('Usuário deletado com sucesso');
-        }catch (e) {
-            console.log('Erro ao deletar usuário ', e);
-        }
-        await exibeUsuarios()
-    };
-
-    const handleCloseDeletePerfil = () => {
-        setShowModalDeletePerfil(false);
     };
 
     return (
@@ -163,6 +138,11 @@ export const GestaoDePerfis = () => {
                             body={grupoTemplate}
                         />
                         <Column
+                            field="e_servidor"
+                            header="Tipo de usuário"
+                            body={tipoUsuarioTemplate}
+                        />
+                        <Column
                             field="id"
                             header="Editar"
                             body={acoesTemplate}
@@ -171,19 +151,6 @@ export const GestaoDePerfis = () => {
                     </DataTable>
                 </div>
             }
-            <section>
-                <ModalConfirmDeletePerfil
-                    show={showModalDeletePerfil}
-                    handleClose={handleCloseDeletePerfil}
-                    onDeletePerfilTrue={onDeletePerfilTrue}
-                    titulo="Excluir Perfil"
-                    texto="<p>Deseja realmente excluir este perfil?</p>"
-                    primeiroBotaoTexto="Cancelar"
-                    primeiroBotaoCss="outline-success"
-                    segundoBotaoCss="danger"
-                    segundoBotaoTexto="Excluir"
-                />
-            </section>
         </>
     );
 };
