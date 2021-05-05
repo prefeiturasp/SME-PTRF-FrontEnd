@@ -36,7 +36,7 @@ export const GestaoDePerfisForm = () =>{
     const [grupos, setGrupos] = useState([]);
     const [codigoEolUnidade, setCodigoEolUnidade] = useState('');
     const [bloquearCampoName, setBloquearCampoName] = useState(true)
-    const [bloquearCampoEmail, setBloquearCampoEmail] = useState(false)
+    const [bloquearCampoEmail, setBloquearCampoEmail] = useState(true)
 
     const carregaCodigoEolUnidade = useCallback(async ()=>{
         if (visao_selecionada !== "SME"){
@@ -87,7 +87,8 @@ export const GestaoDePerfisForm = () =>{
         carregaDadosUsuario()
     }, [carregaDadosUsuario])
 
-    const handleCloseUsuarioNaoCadastrado = () => {
+    const handleCloseUsuarioNaoCadastrado = ({resetForm}) => {
+        resetForm()
         setShowModalUsuarioNaoCadastrado(false);
         setStatePerfisForm(initPerfisForm)
     };
@@ -139,6 +140,7 @@ export const GestaoDePerfisForm = () =>{
             resetForm()
             setShowModalUsuarioCadastradoVinculado(true)
         }else if (usuario_status.usuario_core_sso.info_core_sso){
+            setBloquearCampoEmail(false);
             setFieldValue('name', usuario_status.usuario_core_sso.info_core_sso.nome)
             setFieldValue('email', usuario_status.usuario_core_sso.info_core_sso.email)
         }
@@ -160,6 +162,7 @@ export const GestaoDePerfisForm = () =>{
                     setShowModalUsuarioCadastradoVinculado(true);
                 }else {
                     setShowModalInfo(false)
+                    setBloquearCampoEmail(false);
                     setFieldValue('name', usuario_status.usuario_core_sso.info_core_sso.nome)
                     setFieldValue('email', usuario_status.usuario_core_sso.info_core_sso.email)
                 }
@@ -181,6 +184,7 @@ export const GestaoDePerfisForm = () =>{
                     if (!usuario_status.usuario_core_sso.info_core_sso && usuario_status.validacao_username.username_e_valido) {
                         setShowModalUsuarioNaoCadastrado(true)
                     }else if (usuario_status.usuario_core_sso.info_core_sso){
+                        setBloquearCampoEmail(false);
                         setFieldValue('name', usuario_status.usuario_core_sso.info_core_sso.nome)
                         setFieldValue('email', usuario_status.usuario_core_sso.info_core_sso.email)
                     }
@@ -203,11 +207,25 @@ export const GestaoDePerfisForm = () =>{
     }, [visao_selecionada, initPerfisForm]) ;
 
     const validacoesPersonalizadas = useCallback(async (values, {setFieldValue, resetForm}) => {
+
         let erros = {};
+
+        if (!values.username){
+            erros = {
+                ...erros,
+                username: "ID de Usuário é um campo obrigatório"
+            }
+            setFormErrors({...erros})
+            setEnviarFormulario(false)
+        } else {
+            setEnviarFormulario(true)
+        }
+
         if (values.e_servidor === 'False'){
             let cpf_cnpj_valido = !(!values.username || values.username.trim() === "" || !valida_cpf_cnpj(values.username));
             if (!cpf_cnpj_valido) {
                 erros = {
+                    ...erros,
                     username: "Digite um CPF válido (apenas dígitos)"
                 }
                 setFormErrors({...erros})
@@ -216,29 +234,32 @@ export const GestaoDePerfisForm = () =>{
                 setEnviarFormulario(true)
             }
         }
-        try {
-            let usuario_status;
-            if (visao_selecionada !== 'SME'){
-                usuario_status = await getUsuarioStatus(values.username, values.e_servidor, uuid_unidade);
-                setUsuariosStatus(usuario_status)
-                console.log("validacoesPersonalizadas usuario_status ", usuario_status)
-                if (visao_selecionada === "DRE"){
-                    await serviceVisaoDre(usuario_status, {setFieldValue, resetForm})
-                }else if (visao_selecionada === "UE"){
-                    await serviceVisaoUE(values, usuario_status, {setFieldValue, resetForm})
+
+        if (Object.keys(erros).length === 0){
+            try {
+                let usuario_status;
+                if (visao_selecionada !== 'SME'){
+                    usuario_status = await getUsuarioStatus(values.username, values.e_servidor, uuid_unidade);
+                    setUsuariosStatus(usuario_status)
+                    console.log("validacoesPersonalizadas usuario_status ", usuario_status)
+                    if (visao_selecionada === "DRE"){
+                        await serviceVisaoDre(usuario_status, {setFieldValue, resetForm})
+                    }else if (visao_selecionada === "UE"){
+                        await serviceVisaoUE(values, usuario_status, {setFieldValue, resetForm})
+                    }
+                }else {
+                    usuario_status = await getUsuarioStatus(values.username, values.e_servidor);
+                    setUsuariosStatus(usuario_status)
+                    await serviceVisaoSme(usuario_status, {setFieldValue, resetForm})
                 }
-            }else {
-                usuario_status = await getUsuarioStatus(values.username, values.e_servidor);
-                setUsuariosStatus(usuario_status)
-                await serviceVisaoSme(usuario_status, {setFieldValue, resetForm})
+            }catch (e){
+                console.log("Erro ao buscar usuário")
+                setEnviarFormulario(false)
+                erros = {
+                    username: "Erro ao buscar usuário"
+                }
+                setFormErrors({...erros})
             }
-        }catch (e){
-            console.log("Erro ao buscar usuário")
-            setEnviarFormulario(false)
-            erros = {
-                username: "Erro ao buscar usuário"
-            }
-            setFormErrors({...erros})
         }
         return erros;
     }, [uuid_unidade, visao_selecionada, serviceVisaoDre, serviceVisaoUE, serviceVisaoSme])
@@ -246,49 +267,45 @@ export const GestaoDePerfisForm = () =>{
 
     const handleSubmitPerfisForm = async (values, {setFieldValue, resetForm})=>{
 
-        let payload = {
-            e_servidor: values.e_servidor,
-            username: values.username,
-            name: values.name,
-            email: values.email ? values.email : "",
-            visao: visao_selecionada,
-            groups: values.groups,
-            unidade: visao_selecionada !== "SME" ? codigoEolUnidade : null
-        };
+        if (enviarFormulario) {
+            let payload = {
+                e_servidor: values.e_servidor,
+                username: values.username,
+                name: values.name,
+                email: values.email ? values.email : "",
+                visao: visao_selecionada,
+                groups: values.groups,
+                unidade: visao_selecionada !== "SME" ? codigoEolUnidade : null
+            };
 
-        if (values.id || (usuariosStatus.usuario_sig_escola.info_sig_escola && usuariosStatus.usuario_sig_escola.info_sig_escola.user_id)) {
+            if (values.id || (usuariosStatus.usuario_sig_escola.info_sig_escola && usuariosStatus.usuario_sig_escola.info_sig_escola.user_id)) {
 
-            let id_do_usuario;
-            if (values.id){
-                id_do_usuario = values.id
-            }else {
-                id_do_usuario = usuariosStatus.usuario_sig_escola.info_sig_escola.user_id
-            }
-
-            try {
-                await putEditarUsuario(id_do_usuario, payload);
-                console.log('Usuário editado com sucesso')
-                window.location.assign('/gestao-de-perfis/')
-            } catch (e) {
-                console.log('Erro ao editar usuário ', e.response.data)
-                setTituloModalInfo('Erro ao atualizar o usuário')
-                if (e.response.data.username && e.response.data.username.length > 0) {
-                    setTextoModalInfo(e.response.data.username[0])
-                } else {
-                    setTextoModalInfo('<p>Não foi possível atualizar o usuário, por favor, tente novamente</p>')
+                let id_do_usuario;
+                if (values.id){
+                    id_do_usuario = values.id
+                }else {
+                    id_do_usuario = usuariosStatus.usuario_sig_escola.info_sig_escola.user_id
                 }
-                resetForm()
-                setShowModalUsuarioNaoCadastrado(false)
-                setShowModalUsuarioCadastradoVinculado(false)
-                setShowModalInfo(true)
-            }
 
-        } else {
-            setFormErrors(validacoesPersonalizadas(values, {setFieldValue}));
-            let erros_personalizados = validacoesPersonalizadas(values, {setFieldValue})
+                try {
+                    await putEditarUsuario(id_do_usuario, payload);
+                    console.log('Usuário editado com sucesso')
+                    window.location.assign('/gestao-de-perfis/')
+                } catch (e) {
+                    console.log('Erro ao editar usuário ', e.response.data)
+                    setTituloModalInfo('Erro ao atualizar o usuário')
+                    if (e.response.data.username && e.response.data.username.length > 0) {
+                        setTextoModalInfo(e.response.data.username[0])
+                    } else {
+                        setTextoModalInfo('<p>Não foi possível atualizar o usuário, por favor, tente novamente</p>')
+                    }
+                    resetForm()
+                    setShowModalUsuarioNaoCadastrado(false)
+                    setShowModalUsuarioCadastradoVinculado(false)
+                    setShowModalInfo(true)
+                }
 
-            if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
-
+            } else {
                 try {
                     await postCriarUsuario(payload);
                     console.log('Usuário criado com sucesso')
@@ -367,6 +384,12 @@ export const GestaoDePerfisForm = () =>{
                                                     name="e_servidor"
                                                     className="form-control"
                                                     disabled={statePerfisForm.id}
+                                                    onBlur={() => {
+                                                        validacoesPersonalizadas(values, {setFieldValue, resetForm});
+                                                    }}
+                                                    onClick={() => {
+                                                        setFormErrors({username: ""})
+                                                    }}
                                                 >
                                                     <option value="">Escolha o tipo de usuário</option>
                                                     <option value="True">Servidor</option>
@@ -461,66 +484,64 @@ export const GestaoDePerfisForm = () =>{
                                             </div>
                                         </div>
                                     </div>
-
-
+                                    <section>
+                                        <ModalUsuarioNaoCadastrado
+                                            show={showModalUsuarioNaoCadastrado}
+                                            handleClose={()=>handleCloseUsuarioNaoCadastrado({resetForm})}
+                                            onCadastrarTrue={()=>{
+                                                setBloquearCampoName(false)
+                                                setBloquearCampoEmail(false)
+                                                setShowModalUsuarioNaoCadastrado(false)
+                                            }}
+                                            titulo="Usuário não cadastrado"
+                                            texto="<p>O usuário não existe no CoreSSO deseja criá-lo?</p>"
+                                            primeiroBotaoTexto="Cancelar"
+                                            primeiroBotaoCss="outline-success"
+                                            segundoBotaoCss="success"
+                                            segundoBotaoTexto="Cadastrar"
+                                        />
+                                    </section>
+                                    <section>
+                                        <ModalUsuarioCadastradoVinculado
+                                            show={showModalUsuarioCadastradoVinculado}
+                                            handleClose={()=> {
+                                                setShowModalUsuarioCadastradoVinculado(false);
+                                                setStatePerfisForm(initPerfisForm)
+                                            }}
+                                            titulo="Usuário já vinculado"
+                                            texto="<p>Este usuário já está vinculado</p>"
+                                            primeiroBotaoTexto="Fechar"
+                                            primeiroBotaoCss="success"
+                                        />
+                                    </section>
+                                    <section>
+                                        <ModalConfirmDeletePerfil
+                                            show={showModalDeletePerfil}
+                                            handleClose={handleCloseDeletePerfil}
+                                            onDeletePerfilTrue={onDeletePerfilTrue}
+                                            titulo="Excluir Perfil"
+                                            texto="<p>Deseja realmente excluir este perfil?</p>"
+                                            primeiroBotaoTexto="Cancelar"
+                                            primeiroBotaoCss="outline-success"
+                                            segundoBotaoCss="danger"
+                                            segundoBotaoTexto="Excluir"
+                                        />
+                                    </section>
+                                    <section>
+                                        <ModalInfo
+                                            show={showModalInfo}
+                                            handleClose={()=>setShowModalInfo(false)}
+                                            titulo={tituloModalInfo}
+                                            texto={textoModalInfo}
+                                            primeiroBotaoTexto="Fechar"
+                                            primeiroBotaoCss="success"
+                                        />
+                                    </section>
                                 </form>
                             );
                         }}
                     </Formik>
                 </>
-                <section>
-                    <ModalUsuarioNaoCadastrado
-                        show={showModalUsuarioNaoCadastrado}
-                        handleClose={handleCloseUsuarioNaoCadastrado}
-                        onCadastrarTrue={()=>{
-                            setBloquearCampoName(false)
-                            setBloquearCampoEmail(false)
-                            setShowModalUsuarioNaoCadastrado(false)
-                        }}
-                        titulo="Usuário não cadastrado"
-                        texto="<p>O usuário não existe no CoreSSO deseja criá-lo?</p>"
-                        primeiroBotaoTexto="Cancelar"
-                        primeiroBotaoCss="outline-success"
-                        segundoBotaoCss="success"
-                        segundoBotaoTexto="Cadastrar"
-                    />
-                </section>
-                <section>
-                    <ModalUsuarioCadastradoVinculado
-                        show={showModalUsuarioCadastradoVinculado}
-                        handleClose={()=> {
-                            setShowModalUsuarioCadastradoVinculado(false);
-                            setStatePerfisForm(initPerfisForm)
-                        }}
-                        titulo="Usuário já vinculado"
-                        texto="<p>Este usuário já está vinculado</p>"
-                        primeiroBotaoTexto="Fechar"
-                        primeiroBotaoCss="success"
-                    />
-                </section>
-                <section>
-                    <ModalConfirmDeletePerfil
-                        show={showModalDeletePerfil}
-                        handleClose={handleCloseDeletePerfil}
-                        onDeletePerfilTrue={onDeletePerfilTrue}
-                        titulo="Excluir Perfil"
-                        texto="<p>Deseja realmente excluir este perfil?</p>"
-                        primeiroBotaoTexto="Cancelar"
-                        primeiroBotaoCss="outline-success"
-                        segundoBotaoCss="danger"
-                        segundoBotaoTexto="Excluir"
-                    />
-                </section>
-                <section>
-                    <ModalInfo
-                        show={showModalInfo}
-                        handleClose={()=>setShowModalInfo(false)}
-                        titulo={tituloModalInfo}
-                        texto={textoModalInfo}
-                        primeiroBotaoTexto="Fechar"
-                        primeiroBotaoCss="success"
-                    />
-                </section>
             </div>
         </PaginasContainer>
     )
