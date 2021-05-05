@@ -121,7 +121,7 @@ export const GestaoDePerfisForm = () =>{
     const idUsuarioCondicionalMask = useCallback((e_servidor) => {
         let mask;
         if (e_servidor === "True"){
-            mask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
+            mask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
         }else {
             mask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
         }
@@ -144,28 +144,50 @@ export const GestaoDePerfisForm = () =>{
         }
     }, [carregaCodigoEolUnidade, visao_selecionada, initPerfisForm]) ;
 
-    const serviceVisaoUE = useCallback(async (values, usuario_status, {resetForm})=>{
+    const serviceVisaoUE = useCallback(async (values, usuario_status, {setFieldValue, resetForm})=>{
+
         if (values.e_servidor === "True"){
             if (!usuario_status.e_servidor_na_unidade){
-                setStatePerfisForm(initPerfisForm)
-                resetForm()
-                setTituloModalInfo("Erro ao criar o usuário")
-                setTextoModalInfo("<p>O usuário precisa ser um servidor da escola</p>")
-                setShowModalInfo(true)
-
+                setStatePerfisForm(initPerfisForm);
+                resetForm();
+                setTituloModalInfo("Erro ao criar o usuário");
+                setTextoModalInfo("<p>O usuário precisa ser um servidor da escola</p>");
+                setShowModalInfo(true);
             }else {
-                setShowModalInfo(false)
+                if (usuario_status.validacao_username.username_e_valido && usuario_status.usuario_core_sso.info_core_sso && usuario_status.usuario_sig_escola.info_sig_escola && usuario_status.usuario_sig_escola.info_sig_escola.visoes.find(element => element === visao_selecionada) && usuario_status.usuario_sig_escola.info_sig_escola.unidades.find(element => element === codigoEolUnidade)) {
+                    setStatePerfisForm(initPerfisForm);
+                    resetForm();
+                    setShowModalUsuarioCadastradoVinculado(true);
+                }else {
+                    setShowModalInfo(false)
+                    setFieldValue('name', usuario_status.usuario_core_sso.info_core_sso.nome)
+                    setFieldValue('email', usuario_status.usuario_core_sso.info_core_sso.email)
+                }
             }
         }else {
-            if (!usuario_status.usuario_sig_escola.info_sig_escola || !usuario_status.usuario_sig_escola.info_sig_escola.associacoes_que_e_membro.find(element => element === uuid_associacao)){
+            if (!usuario_status.usuario_sig_escola.associacoes_que_e_membro.find(element => element === uuid_associacao)){
                 setStatePerfisForm(initPerfisForm)
                 resetForm()
                 setTituloModalInfo("Erro ao criar o usuário")
                 setTextoModalInfo("<p>Usuários não servidores só podem ser adicionados à unidade educacional que sejam membros atuais da Associação e cadastrado nos dados da Associação</p>")
                 setShowModalInfo(true)
+            }else{
+
+                if (usuario_status.validacao_username.username_e_valido && usuario_status.usuario_core_sso.info_core_sso && usuario_status.usuario_sig_escola.info_sig_escola && usuario_status.usuario_sig_escola.info_sig_escola.visoes.find(element => element === visao_selecionada) && usuario_status.usuario_sig_escola.info_sig_escola.unidades.find(element => element === codigoEolUnidade)) {
+                    setStatePerfisForm(initPerfisForm);
+                    resetForm();
+                    setShowModalUsuarioCadastradoVinculado(true);
+                }else {
+                    if (!usuario_status.usuario_core_sso.info_core_sso && usuario_status.validacao_username.username_e_valido) {
+                        setShowModalUsuarioNaoCadastrado(true)
+                    }else if (usuario_status.usuario_core_sso.info_core_sso){
+                        setFieldValue('name', usuario_status.usuario_core_sso.info_core_sso.nome)
+                        setFieldValue('email', usuario_status.usuario_core_sso.info_core_sso.email)
+                    }
+                }
             }
         }
-    }, [initPerfisForm, uuid_associacao]);
+    }, [initPerfisForm, uuid_associacao, codigoEolUnidade, visao_selecionada]);
 
     const serviceVisaoSme = useCallback(async (usuario_status, {setFieldValue, resetForm})=>{
         if (!usuario_status.usuario_core_sso.info_core_sso && usuario_status.validacao_username.username_e_valido) {
@@ -204,19 +226,19 @@ export const GestaoDePerfisForm = () =>{
                 usuario_status = await getUsuarioStatus(values.username, values.e_servidor, uuid_unidade);
                 setUsuariosStatus(usuario_status)
 
+                console.log("validacoesPersonalizadas usuario_status ", usuario_status)
+
                 if (visao_selecionada === "DRE"){
                     await serviceVisaoDre(usuario_status, {setFieldValue, resetForm})
 
                 }else if (visao_selecionada === "UE"){
-                    await serviceVisaoUE(values, usuario_status, {resetForm})
+                    await serviceVisaoUE(values, usuario_status, {setFieldValue, resetForm})
                 }
             }else {
                 usuario_status = await getUsuarioStatus(values.username, values.e_servidor);
                 setUsuariosStatus(usuario_status)
                 await serviceVisaoSme(usuario_status, {setFieldValue, resetForm})
             }
-
-            console.log("validacoesPersonalizadas usuario_status ", usuario_status)
 
         }catch (e){
             setEnviarFormulario(false)
