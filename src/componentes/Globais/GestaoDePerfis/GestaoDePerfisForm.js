@@ -203,9 +203,7 @@ export const GestaoDePerfisForm = () =>{
     }, [visao_selecionada, initPerfisForm]) ;
 
     const validacoesPersonalizadas = useCallback(async (values, {setFieldValue, resetForm}) => {
-
         let erros = {};
-
         if (values.e_servidor === 'False'){
             let cpf_cnpj_valido = !(!values.username || values.username.trim() === "" || !valida_cpf_cnpj(values.username));
             if (!cpf_cnpj_valido) {
@@ -218,19 +216,14 @@ export const GestaoDePerfisForm = () =>{
                 setEnviarFormulario(true)
             }
         }
-
         try {
             let usuario_status;
             if (visao_selecionada !== 'SME'){
-
                 usuario_status = await getUsuarioStatus(values.username, values.e_servidor, uuid_unidade);
                 setUsuariosStatus(usuario_status)
-
                 console.log("validacoesPersonalizadas usuario_status ", usuario_status)
-
                 if (visao_selecionada === "DRE"){
                     await serviceVisaoDre(usuario_status, {setFieldValue, resetForm})
-
                 }else if (visao_selecionada === "UE"){
                     await serviceVisaoUE(values, usuario_status, {setFieldValue, resetForm})
                 }
@@ -239,14 +232,13 @@ export const GestaoDePerfisForm = () =>{
                 setUsuariosStatus(usuario_status)
                 await serviceVisaoSme(usuario_status, {setFieldValue, resetForm})
             }
-
         }catch (e){
+            console.log("Erro ao buscar usuário")
             setEnviarFormulario(false)
             erros = {
-                username: "Erro ao buscar status usuário"
+                username: "Erro ao buscar usuário"
             }
             setFormErrors({...erros})
-            console.log("Erro ao buscar status usuário")
         }
         return erros;
     }, [uuid_unidade, visao_selecionada, serviceVisaoDre, serviceVisaoUE, serviceVisaoSme])
@@ -419,8 +411,7 @@ export const GestaoDePerfisForm = () =>{
                                                     value={props.values.name ? props.values.name : ""}
                                                     onChange={(e) => {
                                                         props.handleChange(e);
-                                                    }
-                                                    }
+                                                    }}
                                                     name="name"
                                                     className="form-control"
                                                     readOnly={bloquearCampoName}
@@ -438,8 +429,7 @@ export const GestaoDePerfisForm = () =>{
                                                     value={props.values.email ? props.values.email : ''}
                                                     onChange={(e) => {
                                                         props.handleChange(e);
-                                                    }
-                                                    }
+                                                    }}
                                                     name="email"
                                                     className="form-control"
                                                     placeholder='Insira seu email se desejar'
@@ -534,5 +524,4 @@ export const GestaoDePerfisForm = () =>{
             </div>
         </PaginasContainer>
     )
-
 };
