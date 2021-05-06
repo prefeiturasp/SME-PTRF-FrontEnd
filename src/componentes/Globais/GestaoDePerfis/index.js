@@ -85,7 +85,6 @@ export const GestaoDePerfis = () => {
                     icon={faEdit}
                 />
             </Link>
-
         )
     };
 
@@ -104,7 +103,6 @@ export const GestaoDePerfis = () => {
                 stateFiltros={stateFiltros}
                 grupos={grupos}
             />
-
             <div className="d-flex bd-highlight mt-4">
                 <div className="flex-grow-1 bd-highlight mb-3"><h4>Lista de perfis com acesso</h4></div>
                 <div className="p-2 bd-highlight">
@@ -122,7 +120,6 @@ export const GestaoDePerfis = () => {
                     </Link>
                 </div>
             </div>
-
             {usuarios && Object.entries(usuarios).length > 0 &&
                 <div className="card">
                     <DataTable value={usuarios} className='tabela-lista-perfis'>

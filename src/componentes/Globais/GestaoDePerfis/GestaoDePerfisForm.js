@@ -1,19 +1,11 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {useParams} from 'react-router-dom'
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
-import {Field, Formik} from "formik";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import {visoesService} from "../../../services/visoes.service";
-import {YupSignupSchemaPerfis} from "./YupSignupSchemaPerfis";
 import {getUsuario, getUsuarioStatus, getCodigoEolUnidade, getGrupos, postCriarUsuario, putEditarUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
-import {ModalUsuarioNaoCadastrado} from "./ModalUsuarioNaoCadastrado";
-import {ModalUsuarioCadastradoVinculado} from "./ModalUsuarioCadastradoVinculado";
-import {ModalConfirmDeletePerfil} from "./ModalConfirmDeletePerfil";
-import {ModalInfo} from "./ModalInfo";
 import {valida_cpf_cnpj} from "../../../utils/ValidacoesAdicionaisFormularios";
-import MaskedInput from 'react-text-mask'
 import Loading from "../../../utils/Loading";
+import {GestaoDePerfisFormFormik} from "./GestaoDePerfisFormFormik";
 
 export const GestaoDePerfisForm = () =>{
 
@@ -82,6 +74,7 @@ export const GestaoDePerfisForm = () =>{
                 unidade: codigoEolUnidade ? codigoEolUnidade : ""
             };
             setStatePerfisForm(initPerfisForm)
+            setBloquearCampoEmail(false)
         }
     }, [id_usuario, visao_selecionada, codigoEolUnidade])
 
@@ -246,7 +239,6 @@ export const GestaoDePerfisForm = () =>{
                 if (visao_selecionada !== 'SME'){
                     usuario_status = await getUsuarioStatus(values.username, values.e_servidor, uuid_unidade);
                     setUsuariosStatus(usuario_status)
-                    console.log("validacoesPersonalizadas usuario_status ", usuario_status)
                     if (visao_selecionada === "DRE"){
                         await serviceVisaoDre(usuario_status, {setFieldValue, resetForm})
                     }else if (visao_selecionada === "UE"){
@@ -258,10 +250,10 @@ export const GestaoDePerfisForm = () =>{
                     await serviceVisaoSme(usuario_status, {setFieldValue, resetForm})
                 }
             }catch (e){
-                console.log("Erro ao buscar usuário")
+                console.log("Erro ao buscar usuário ", e)
                 setEnviarFormulario(false)
                 erros = {
-                    username: "Erro ao buscar usuário"
+                    username: "Erro ao buscar usuário, tente novamente"
                 }
                 setFormErrors({...erros})
             }
@@ -270,7 +262,7 @@ export const GestaoDePerfisForm = () =>{
     }, [uuid_unidade, visao_selecionada, serviceVisaoDre, serviceVisaoUE, serviceVisaoSme])
 
 
-    const handleSubmitPerfisForm = async (values, {setFieldValue, resetForm})=>{
+    const handleSubmitPerfisForm = async (values, {resetForm})=>{
 
         if (enviarFormulario) {
 
@@ -353,239 +345,34 @@ export const GestaoDePerfisForm = () =>{
                 <>
                     <h1 className="titulo-itens-painel mt-5">Gestao de perfis</h1>
                     <div className="page-content-inner">
-                        <>
-
-                            <Formik
-                                initialValues={statePerfisForm}
-                                validationSchema={YupSignupSchemaPerfis}
-                                enableReinitialize={true}
-                                validateOnBlur={true}
-                                onSubmit={handleSubmitPerfisForm}
-                            >
-                                {props => {
-                                    const {
-                                        setFieldValue,
-                                        resetForm,
-                                        values,
-                                    } = props;
-                                    return (
-                                        <form onSubmit={props.handleSubmit}>
-
-                                            <div className="d-flex bd-highlight mt-2">
-                                                <div className="p-Y flex-grow-1 bd-highlight">
-                                                    <p className='titulo-gestao-de-perfis-form'>{!statePerfisForm.id ? 'Adicionar' : 'Editar'} usuário</p>
-                                                </div>
-                                                <div className="p-Y bd-highlight">
-                                                    {statePerfisForm.id &&
-                                                    <button onClick={() => setShowModalDeletePerfil(true)} type="button"
-                                                            className="btn btn btn-danger mt-2">
-                                                        <FontAwesomeIcon
-                                                            style={{
-                                                                fontSize: '15px',
-                                                                marginRight: "5px",
-                                                                color: '#fff'
-                                                            }}
-                                                            icon={faTrash}
-                                                        />
-                                                        Deletar usuário
-                                                    </button>
-                                                    }
-                                                </div>
-                                                <div className="p-Y bd-highlight">
-                                                    <button type="submit"
-                                                            className="btn btn-success mt-2 ml-2">{!statePerfisForm.id ? 'Adicionar' : 'Salvar'}</button>
-                                                </div>
-                                                <div className="p-Y bd-highlight">
-                                                    <button onClick={() => window.location.assign('/gestao-de-perfis/')}
-                                                            type="button"
-                                                            className="btn btn btn-outline-success mt-2 ml-2">voltar
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            <div className="row">
-                                                <div className="col-12 col-md-6">
-                                                    <div className="form-group">
-                                                        <label htmlFor="e_servidor">Tipo de usuário</label>
-                                                        <select
-                                                            value={props.values.e_servidor}
-                                                            onChange={(e) => {
-                                                                props.handleChange(e);
-                                                            }}
-                                                            name="e_servidor"
-                                                            className="form-control"
-                                                            disabled={statePerfisForm.id}
-                                                            onBlur={() => {
-                                                                validacoesPersonalizadas(values, {
-                                                                    setFieldValue,
-                                                                    resetForm
-                                                                });
-                                                            }}
-                                                            onClick={() => {
-                                                                setFormErrors({username: ""})
-                                                            }}
-                                                        >
-                                                            <option value="">Escolha o tipo de usuário</option>
-                                                            <option value="True">Servidor</option>
-                                                            <option value="False">Não Servidor</option>
-                                                        </select>
-                                                        {props.errors.e_servidor && <span
-                                                            className="span_erro text-danger mt-1"> {props.errors.e_servidor}</span>}
-                                                    </div>
-                                                </div>
-
-                                                <div className="col-12 col-md-6">
-                                                    <div className="form-group">
-                                                        <label htmlFor="username">ID do usuário</label>
-                                                        <MaskedInput
-                                                            mask={idUsuarioCondicionalMask(props.values.e_servidor)}
-                                                            showMask={false}
-                                                            guide={false}
-                                                            value={props.values.username ? props.values.username : ""}
-                                                            onChange={(e) => {
-                                                                props.handleChange(e);
-                                                            }}
-                                                            onBlur={() => {
-                                                                validacoesPersonalizadas(values, {
-                                                                    setFieldValue,
-                                                                    resetForm
-                                                                });
-                                                            }}
-                                                            onClick={() => {
-                                                                setFormErrors({username: ""})
-                                                            }}
-                                                            name="username"
-                                                            className="form-control"
-                                                            placeholder='Insira o nome de usuário'
-                                                            disabled={!props.values.e_servidor || statePerfisForm.id}
-                                                        />
-                                                        {/* Validações personalizadas */}
-                                                        {formErrors.username && <p className='mb-0'><span
-                                                            className="span_erro text-danger mt-1">{formErrors.username}</span>
-                                                        </p>}
-                                                    </div>
-                                                </div>
-
-                                                <div className="col-12">
-                                                    <div className="form-group">
-                                                        <label htmlFor="name">Nome Completo</label>
-                                                        <input
-                                                            type="text"
-                                                            value={props.values.name ? props.values.name : ""}
-                                                            onChange={(e) => {
-                                                                props.handleChange(e);
-                                                            }}
-                                                            name="name"
-                                                            className="form-control"
-                                                            readOnly={bloquearCampoName}
-                                                            maxLength='255'
-                                                        />
-                                                        {props.errors.name && <span
-                                                            className="span_erro text-danger mt-1"> {props.errors.name}</span>}
-                                                    </div>
-                                                </div>
-
-                                                <div className="col-12">
-                                                    <div className="form-group">
-                                                        <label htmlFor="email">Email</label>
-                                                        <input
-                                                            type="text"
-                                                            value={props.values.email ? props.values.email : ''}
-                                                            onChange={(e) => {
-                                                                props.handleChange(e);
-                                                            }}
-                                                            name="email"
-                                                            className="form-control"
-                                                            placeholder='Insira seu email se desejar'
-                                                            readOnly={bloquearCampoEmail}
-                                                            maxLength='254'
-                                                        />
-                                                        {props.errors.email && <span
-                                                            className="span_erro text-danger mt-1"> {props.errors.email}</span>}
-                                                    </div>
-                                                </div>
-
-                                                <div className="col-12">
-                                                    <div className="form-group">
-                                                        <label htmlFor="groups">Grupo de acesso</label>
-                                                        <Field
-                                                            component="select"
-                                                            name="groups"
-                                                            className="form-control"
-                                                            multiple={true}
-                                                            value={props.values.groups ? props.values.groups : []}
-                                                            onChange={evt =>
-                                                                setFieldValue("groups", [].slice.call(evt.target.selectedOptions).map(option => option.value))
-                                                            }
-                                                        >
-                                                            {grupos && grupos.length > 0 && grupos.map((grupo, index) => (
-                                                                <option key={index}
-                                                                        value={grupo.id}>{grupo.nome}</option>
-                                                            ))}
-                                                        </Field>
-                                                        {props.errors.groups && <span
-                                                            className="span_erro text-danger mt-1"> {props.errors.groups}</span>}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <section>
-                                                <ModalUsuarioNaoCadastrado
-                                                    show={showModalUsuarioNaoCadastrado}
-                                                    handleClose={() => handleCloseUsuarioNaoCadastrado({resetForm})}
-                                                    onCadastrarTrue={() => {
-                                                        setBloquearCampoName(false)
-                                                        setBloquearCampoEmail(false)
-                                                        setShowModalUsuarioNaoCadastrado(false)
-                                                    }}
-                                                    titulo="Usuário não cadastrado"
-                                                    texto="<p>O usuário não existe no CoreSSO deseja criá-lo?</p>"
-                                                    primeiroBotaoTexto="Cancelar"
-                                                    primeiroBotaoCss="outline-success"
-                                                    segundoBotaoCss="success"
-                                                    segundoBotaoTexto="Cadastrar"
-                                                />
-                                            </section>
-                                            <section>
-                                                <ModalUsuarioCadastradoVinculado
-                                                    show={showModalUsuarioCadastradoVinculado}
-                                                    handleClose={() => {
-                                                        setShowModalUsuarioCadastradoVinculado(false);
-                                                        setStatePerfisForm(initPerfisForm)
-                                                    }}
-                                                    titulo="Usuário já vinculado"
-                                                    texto="<p>Este usuário já está vinculado</p>"
-                                                    primeiroBotaoTexto="Fechar"
-                                                    primeiroBotaoCss="success"
-                                                />
-                                            </section>
-                                            <section>
-                                                <ModalConfirmDeletePerfil
-                                                    show={showModalDeletePerfil}
-                                                    handleClose={handleCloseDeletePerfil}
-                                                    onDeletePerfilTrue={onDeletePerfilTrue}
-                                                    titulo="Excluir Perfil"
-                                                    texto="<p>Deseja realmente excluir este perfil?</p>"
-                                                    primeiroBotaoTexto="Cancelar"
-                                                    primeiroBotaoCss="outline-success"
-                                                    segundoBotaoCss="danger"
-                                                    segundoBotaoTexto="Excluir"
-                                                />
-                                            </section>
-                                            <section>
-                                                <ModalInfo
-                                                    show={showModalInfo}
-                                                    handleClose={() => setShowModalInfo(false)}
-                                                    titulo={tituloModalInfo}
-                                                    texto={textoModalInfo}
-                                                    primeiroBotaoTexto="Fechar"
-                                                    primeiroBotaoCss="success"
-                                                />
-                                            </section>
-                                        </form>
-                                    );
-                                }}
-                            </Formik>
-                        </>
+                            <GestaoDePerfisFormFormik
+                                initPerfisForm={initPerfisForm}
+                                setStatePerfisForm={setStatePerfisForm}
+                                statePerfisForm={statePerfisForm}
+                                handleSubmitPerfisForm={handleSubmitPerfisForm}
+                                setShowModalDeletePerfil={setShowModalDeletePerfil}
+                                validacoesPersonalizadas={validacoesPersonalizadas}
+                                setFormErrors={setFormErrors}
+                                formErrors={formErrors}
+                                idUsuarioCondicionalMask={idUsuarioCondicionalMask}
+                                setBloquearCampoName={setBloquearCampoName}
+                                bloquearCampoName={bloquearCampoName}
+                                setBloquearCampoEmail={setBloquearCampoEmail}
+                                bloquearCampoEmail={bloquearCampoEmail}
+                                grupos={grupos}
+                                showModalUsuarioNaoCadastrado={showModalUsuarioNaoCadastrado}
+                                handleCloseUsuarioNaoCadastrado={handleCloseUsuarioNaoCadastrado}
+                                showModalUsuarioCadastradoVinculado={showModalUsuarioCadastradoVinculado}
+                                setShowModalUsuarioNaoCadastrado={setShowModalUsuarioNaoCadastrado}
+                                setShowModalUsuarioCadastradoVinculado={setShowModalUsuarioCadastradoVinculado}
+                                showModalDeletePerfil={showModalDeletePerfil}
+                                handleCloseDeletePerfil={handleCloseDeletePerfil}
+                                onDeletePerfilTrue={onDeletePerfilTrue}
+                                showModalInfo={showModalInfo}
+                                setShowModalInfo={setShowModalInfo}
+                                tituloModalInfo={tituloModalInfo}
+                                textoModalInfo={textoModalInfo}
+                            />
                     </div>
                 </>
             }
