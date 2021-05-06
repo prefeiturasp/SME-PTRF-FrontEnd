@@ -408,7 +408,6 @@ export const MembrosDaAssociacao = () => {
                     setStateFormEditarMembro(init);
                 } catch (e) {
                     let data = e.response.data;
-                    console.log("VALIDATE CPF ", data)
                     if (data !== undefined && data.detail !== undefined) {
                         errors.cpf = 'CPF já cadastrado'
                     }

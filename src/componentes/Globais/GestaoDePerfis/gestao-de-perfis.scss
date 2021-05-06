@@ -4,15 +4,22 @@
 
 .tabela-lista-perfis{
   th, td{
-    width: calc(100% / 5) !important;
+    width: calc(100% / 6) !important;
   }
 
   .coluna-editar{
     width: 56px !important;
+    text-align: center;
   }
 }
 
 .grupo-nome{
   color: #00585e;
   font-weight: bold;
+}
+
+.titulo-gestao-de-perfis-form{
+  font-size: 20px;
+  color: #2B7D83;
+  font-weight: 700;
 }

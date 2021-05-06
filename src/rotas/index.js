@@ -27,6 +27,7 @@ import {authService} from '../services/auth.service';
 import {visoesService} from "../services/visoes.service";
 import {PaginaSemPermissao} from "../paginas/SemPermissao";
 import {GestaoDePerfisPage} from "../paginas/GestaoDePerfis";
+import {GestaoDePerfisForm} from "../componentes/Globais/GestaoDePerfis/GestaoDePerfisForm";
 import {ConsultaDeSaldosBancarios} from "../componentes/sme/ConsultaDeSaldosBancarios";
 import {ConsultaDeSaldosBancariosDetalhesAssociacoes} from "../componentes/sme/ConsultaDeSaldosBancarios/ConsultaDeSaldosBancariosDetalhesAssociacoes";
 // Faz o redirect de acordo com a Visao Selecionada
@@ -265,6 +266,13 @@ const routesConfig = [
         exact: true,
         path: "/gestao-de-perfis",
         component: GestaoDePerfisPage,
+        permissoes: ['access_gestao_perfis_ue', 'access_gestao_perfis_dre', 'access_gestao_perfis_sme'],
+    },
+
+    {
+        exact: true,
+        path: "/gestao-de-perfis-form/:id_usuario?",
+        component: GestaoDePerfisForm,
         permissoes: ['access_gestao_perfis_ue', 'access_gestao_perfis_dre', 'access_gestao_perfis_sme'],
     },
 
