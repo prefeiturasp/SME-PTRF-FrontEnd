@@ -120,7 +120,7 @@ export const GestaoDePerfisForm = () =>{
     const idUsuarioCondicionalMask = useCallback((e_servidor) => {
         let mask;
         if (e_servidor === "True"){
-            mask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
+            mask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
         }else {
             mask = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]
         }

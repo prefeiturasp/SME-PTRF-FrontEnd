@@ -28,7 +28,7 @@ export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, 
                             className="form-control"
                         >
                             <option value="">Selecione um tipo</option>
-                            {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.map(item => (
+                            {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element=> element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
                                 <option key={item.id} value={item.id}>{item.nome}</option>
                             ))}
                         </select>
