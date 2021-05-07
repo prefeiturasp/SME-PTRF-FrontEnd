@@ -306,13 +306,13 @@ export const CadastroSaidaForm = (props) => {
                                                     aux.setValorRealizado(setFieldValue, e.target.value);
                                                 }}
                                             />
-                                            {props.errors.valor_original && exibeMsgErroValorOriginal &&
-                                            <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
+                                            {/*Alteração de exibição de label feita pela PO em Review da Sprint 19*/}
+                                            {/*{props.errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}*/}
+                                            {props.errors.valor_total && <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
                                         </div>
 
                                         <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="valor_total" className="label-valor-realizado">Valor
-                                                realizado</label>
+                                            <label htmlFor="valor_total" className="label-valor-realizado">Valor realizado</label>
                                             <CurrencyInput
                                                 allowNegative={false}
                                                 prefix='R$'
@@ -327,9 +327,7 @@ export const CadastroSaidaForm = (props) => {
                                                     props.handleChange(e);
                                                 }}
                                             />
-                                            {props.errors.valor_total &&
-                                            <span
-                                                className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
+
                                         </div>
                                     </div>
                                     <div className="d-flex  justify-content-end pb-3 mt-3">

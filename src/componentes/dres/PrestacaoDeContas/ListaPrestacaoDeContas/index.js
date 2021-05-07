@@ -171,7 +171,7 @@ export const ListaPrestacaoDeContas = () => {
     const nomeTemplate = (rowData) => {
         return (
             <div>
-                {rowData['unidade_nome'] ? <strong>{rowData['unidade_tipo_unidade']} - {rowData['unidade_nome']}</strong> : ''}
+                {rowData['unidade_nome'] ? <strong>{rowData['unidade_tipo_unidade']} {rowData['unidade_nome']}</strong> : ''}
             </div>
         )
     };
