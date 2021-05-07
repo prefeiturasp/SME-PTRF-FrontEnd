@@ -33,7 +33,7 @@ export const FormFiltros = ({stateFiltros, handleChangeFiltros, limpaFiltros, ha
                   </select>
               </div>
               <div className="col">
-                  <label htmlFor="filtrar_por_grupo">Filtrar por grupo</label>
+                  <label htmlFor="filtrar_por_grupo">Filtrar por tipo de usuário</label>
 
                   <select
                       value={stateFiltros.filtrar_tipo_de_usuario}

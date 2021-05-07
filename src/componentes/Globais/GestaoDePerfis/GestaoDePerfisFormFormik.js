@@ -43,7 +43,8 @@ export const GestaoDePerfisFormFormik = (
             initialValues={statePerfisForm}
             validationSchema={YupSignupSchemaPerfis}
             enableReinitialize={true}
-            validateOnBlur={true}
+            validateOnBlur={false}
+            validateOnChange={false}
             onSubmit={handleSubmitPerfisForm}
         >
             {props => {
@@ -140,7 +141,8 @@ export const GestaoDePerfisFormFormik = (
                                         }}
                                         name="username"
                                         className="form-control"
-                                        placeholder='Insira o nome de usuário'
+                                        placeholder={props.values.e_servidor === "False" ? "Digite um CPF válido" : "Insira um RF válido"}
+                                        //placeholder='Insira o nome de usuário'
                                         disabled={!props.values.e_servidor || statePerfisForm.id}
                                     />
                                     {/*Validações personalizadas*/}
