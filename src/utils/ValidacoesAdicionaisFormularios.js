@@ -11,7 +11,7 @@ export const checkDuplicateInObject = (propertyName, inputArray) => {
       testObject = {};
 
   inputArray.map((item) => {
-    var itemPropertyName = item[propertyName];
+    let itemPropertyName = item[propertyName];
     if (itemPropertyName in testObject) {
       testObject[itemPropertyName].duplicate = true;
       item.duplicate = true;
@@ -86,13 +86,12 @@ export const YupSignupSchemaRecuperarSenha = yup.object().shape({
 });
 
 export const YupSignupSchemaLogin = yup.object().shape({
-  login: yup.string().required("Campo código RF é obrigatório"),
-  senha: yup.string().required("Campo código Senha é obrigatório"),
+  login: yup.string().required("Campo Usuário é obrigatório"),
+  senha: yup.string().required("Campo Senha é obrigatório"),
 });
 
 export const YupSignupSchemaMembros = yup.object().shape({
   representacao: yup.string().required("Representação é obrigatório"),
-  email: yup.string().email("Digite um email válido"),
 
   codigo_identificacao: yup.string()
     .test('test-name', 'É obrigatório e não pode ultrapassar 10 caracteres',
@@ -126,17 +125,6 @@ export const YupSignupSchemaMembros = yup.object().shape({
           return true
         }
       }),
-
-  cpf: yup.string()
-  .test('test-name', 'CPF inválido',
-      function (value) {
-        const { representacao } = this.parent;
-        if(representacao === "PAI_RESPONSAVEL"){
-          return !(!value || value.trim() === "" || !valida_cpf_cnpj(value));
-        }else {
-          return true
-        }
-      }),
 });
 
 export const YupSignupSchemaCadastroDespesa = yup.object().shape({
@@ -163,15 +151,6 @@ export const YupSignupSchemaCadastroDespesa = yup.object().shape({
 });
 
 export const YupSignupSchemaCadastroDespesaSaida = yup.object().shape({
-  cpf_cnpj_fornecedor: yup.string().required("Campo CNPJ ou CPF é obrigatório")
-  .test('test-name', 'Digite um CPF ou um CNPJ válido',
-      function (value) {
-        if(value !== undefined){
-          return valida_cpf_cnpj(value)
-        }else {
-          return true
-        }
-      }),
 
   nome_fornecedor: yup.string().required("Nome Fornecedor é obrigatório")
   .test('test-nome-fornecedor', 'Digite um nome de fornecedor válido',
@@ -464,7 +443,7 @@ export const processoIncorporacaoMask = (value) => {
   return mask
 }
 
-function valida_cpf_cnpj ( valor ) {
+export function valida_cpf_cnpj ( valor ) {
 
   // Remove caracteres inválidos do valor
   if (valor){

@@ -7,7 +7,6 @@ import MaskedInput from "react-text-mask";
 
 export const YupSignupSchemaTecnico = yup.object().shape({
     rf: yup.string().required("Campo RF do técnico é obrigatório"),
-    email: yup.string().email("Digite um email válido"),
 });
 
 export const telefoneMaskContitional = (value) => {
@@ -39,8 +38,7 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                         {props => {
                             const {
                                 errors,
-                                values,
-                                setFieldValue,
+                                setErrors,
                             } = props;
                             return (
                                 <form method="POST" id="membrosForm" onSubmit={props.handleSubmit}>
@@ -100,19 +98,6 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                                     className="form-control"
                                                     placeholder='Insira seu telefone se desejar'
                                                 />
-
-                                                {/*<input
-                                                    type="text"
-                                                    value={props.values.telefone}
-                                                    onChange={(e) => {
-                                                        props.handleChange(e);
-                                                        handleChange(e.target.name, e.target.value);
-                                                    }
-                                                    }
-                                                    name="telefone"
-                                                    className="form-control"
-                                                    placeholder='Insira seu telefone se desejar'
-                                                />*/}
                                                 {props.errors.telefone && <span className="span_erro text-danger mt-1"> {props.errors.telefone}</span>}
                                             </div>
                                         </div>
@@ -131,6 +116,12 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                                     name="email"
                                                     className="form-control"
                                                     placeholder='Insira seu email se desejar'
+                                                    onClick={() => setErrors(
+                                                        {
+                                                            ...errors,
+                                                            email:"",
+                                                        }
+                                                    )}
                                                 />
                                                 {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
                                             </div>

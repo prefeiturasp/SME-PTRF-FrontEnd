@@ -116,7 +116,6 @@ export const ListaPrestacaoDeContas = () => {
             }else {
                 prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status, stateFiltros.filtrar_por_tecnico_atribuido, data_inicio, data_fim);
             }
-
             setPrestacaoDeContas(prestacoes_de_contas)
         }
         setLoading(false);
@@ -172,7 +171,7 @@ export const ListaPrestacaoDeContas = () => {
     const nomeTemplate = (rowData) => {
         return (
             <div>
-                {rowData['unidade_nome'] ? <strong>{rowData['unidade_nome']}</strong> : ''}
+                {rowData['unidade_nome'] ? <strong>{rowData['unidade_tipo_unidade']} {rowData['unidade_nome']}</strong> : ''}
             </div>
         )
     };

@@ -51,7 +51,6 @@ const DataSaldoBancario = ({valoresPendentes, dataSaldoBancario, handleChangaDat
                                         <div className="form-group">
                                             <label htmlFor="upload_extrato">Valor</label>
                                             <div className='container-upload-extrato'>
-                                                {/*<input type="file" className="form-control-file" id="upload_extrato"/>*/}
                                                 <input
                                                     type="file"
                                                     ref={uploadExtratoInputRef}
@@ -103,22 +102,19 @@ const DataSaldoBancario = ({valoresPendentes, dataSaldoBancario, handleChangaDat
                         <div className="card container-diferenca">
                             <div className="card-body">
                                 <div className='row'>
-                                    <div className='col-6'>
-                                        <h5 className="card-title titulo mt-3 mb-0">Diferença em relação a prestação de contas</h5>
+                                    <div className='col-9 d-flex align-items-center'>
+                                        <h5 className="card-title titulo mb-0">Diferença entre o saldo bancário declarado e o saldo atual do período calculado pelo sistema</h5>
                                     </div>
-                                    <div className="col-auto">
-                                        <label className='mt-3 mb-0' htmlFor="diferenca_prestacao_de_conta">Comprovante do extrato bancário</label>
-                                    </div>
-                                    <div className="col">
+                                    <div className="col-3 d-flex align-items-center">
                                         <CurrencyInput
                                             allowNegative={true}
-                                            prefix='R$'
+                                            prefix='R$ '
                                             decimalSeparator=","
                                             thousandSeparator="."
                                             value={dataSaldoBancario.saldo_extrato ? valoresPendentes.saldo_posterior_total - trataNumericos(dataSaldoBancario.saldo_extrato) : valoresPendentes.saldo_posterior_total}
                                             id="diferenca_prestacao_de_conta"
                                             name="diferenca_prestacao_de_conta"
-                                            className="form-control mt-2 mb-0"
+                                            className="form-control mb-0"
                                             disabled={true}
                                         />
                                     </div>

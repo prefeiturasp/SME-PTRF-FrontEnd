@@ -347,7 +347,7 @@ export const RelatorioConsolidadoApuracao = () => {
                                 show={showModalAssociacoesEmAnalise}
                                 handleClose={onHandleClose}
                                 titulo='Associações em análise'
-                                texto={`Ainda constam ${totalEmAnalise} Associações em análise nas prestações de contas. Deseja fechar relatória parcial?`}
+                                texto={`Ainda constam ${totalEmAnalise} Associações com prestação de contas "Em análise". Deseja ainda assim gerar um relatório parcial?`}
                                 onGerarRelatorio={onGerarRelatorio}
                             />
                         </section>
