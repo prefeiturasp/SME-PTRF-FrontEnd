@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
 import {
     YupSignupSchemaCadastroDespesa,
@@ -6,7 +6,7 @@ import {
     cpfMaskContitional,
     calculaValorRecursoAcoes,
     periodoFechado,
-    comparaObjetos
+    comparaObjetos, valida_cpf_cnpj
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import {getDespesasTabelas, criarDespesa, alterarDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getDespesaCadastrada} from "../../../../services/escolas/Despesas.service";
@@ -108,56 +108,88 @@ export const CadastroForm = ({verbo_http}) => {
         setShowErroGeral(true);
     };
 
+    // Validações adicionais
+    const [formErrors, setFormErrors] = useState({});
+    const [enviarFormulario, setEnviarFormulario] = useState(true);
+
+    const validacoesPersonalizadas = useCallback((values, setFieldValue) => {
+
+        let erros = {};
+        let cpf_cnpj_valido = !(!values.cpf_cnpj_fornecedor || values.cpf_cnpj_fornecedor.trim() === "" || !valida_cpf_cnpj(values.cpf_cnpj_fornecedor));
+
+        if (!cpf_cnpj_valido) {
+            erros = {
+                cpf_cnpj_fornecedor: "Digite um CPF ou um CNPJ válido"
+            }
+            setEnviarFormulario(false)
+        } else {
+            setEnviarFormulario(true)
+        }
+        return erros;
+    }, [])
+
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
 
         // Necessário atribuir o valor ao campo cpf_cnpj_fornecedor para chamar o YupSignupSchemaCadastroDespesa
-        setFieldValue("cpf_cnpj_fornecedor", values.cpf_cnpj_fornecedor);
+        //setFieldValue("cpf_cnpj_fornecedor", values.cpf_cnpj_fornecedor);
 
-        if (errors && errors.valor_recusos_acoes){
-            setExibeMsgErroValorRecursos(true)
-        }else {
-            setExibeMsgErroValorRecursos(false)
-        }
+        setFormErrors(validacoesPersonalizadas(values));
+        let erros_personalizados = validacoesPersonalizadas(values)
 
-        if (errors && errors.valor_original){
-            setExibeMsgErroValorOriginal(true)
-        }else {
-            setExibeMsgErroValorOriginal(false)
-        }
+        if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
 
-        validaPayloadDespesas(values);
+            if (errors && errors.valor_recusos_acoes) {
+                setExibeMsgErroValorRecursos(true)
+            } else {
+                setExibeMsgErroValorRecursos(false)
+            }
 
-        if (Object.entries(errors).length === 0 && values.cpf_cnpj_fornecedor) {
+            if (errors && errors.valor_original) {
+                setExibeMsgErroValorOriginal(true)
+            } else {
+                setExibeMsgErroValorOriginal(false)
+            }
 
-            let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
+            validaPayloadDespesas(values);
 
-            if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente" ||
-                retorno_saldo.situacao_do_saldo === "lancamento_anterior_implantacao"){
-                setSaldosInsuficientesDaConta(retorno_saldo);
-                setShowSaldoInsuficienteConta(true)
+            console.log("onShowSaldoInsuficiente ", errors)
 
-            }else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
-                setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes);
-                setShowSaldoInsuficiente(true);
+            if (Object.entries(errors).length === 0) {
 
-            // Checando se despesa já foi conferida
-            }else if (values.rateios.find(element=> element.conferido)) {
-                setShowDespesaConferida(true)
+                if (values.data_documento) {
+                    let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
 
-                // Checando se despesa já foi cadastrada
-            }else if (values.tipo_documento && values.numero_documento) {
-                try {
-                    let despesa_cadastrada = await getDespesaCadastrada(values.tipo_documento, values.numero_documento, values.cpf_cnpj_fornecedor, despesaContext.idDespesa);
-                    if (despesa_cadastrada.despesa_ja_lancada){
-                        setShowDespesaCadastrada(true)
-                    }else {
+                    if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente" ||
+                        retorno_saldo.situacao_do_saldo === "lancamento_anterior_implantacao") {
+                        setSaldosInsuficientesDaConta(retorno_saldo);
+                        setShowSaldoInsuficienteConta(true)
+
+                    } else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
+                        setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes);
+                        setShowSaldoInsuficiente(true);
+
+                        // Checando se despesa já foi conferida
+                    } else if (values.rateios.find(element => element.conferido)) {
+                        setShowDespesaConferida(true)
+
+                        // Checando se despesa já foi cadastrada
+                    } else if (values.tipo_documento && values.numero_documento) {
+                        try {
+                            let despesa_cadastrada = await getDespesaCadastrada(values.tipo_documento, values.numero_documento, values.cpf_cnpj_fornecedor, despesaContext.idDespesa);
+                            if (despesa_cadastrada.despesa_ja_lancada) {
+                                setShowDespesaCadastrada(true)
+                            } else {
+                                onSubmit(values);
+                            }
+                        } catch (e) {
+                            console.log("Erro ao buscar despesa cadastrada ", e);
+                        }
+                    } else {
                         onSubmit(values);
                     }
-                }catch (e) {
-                    console.log("Erro ao buscar despesa cadastrada ", e);
+                } else {
+                    onSubmit(values)
                 }
-            } else {
-                onSubmit(values);
             }
         }
     };
@@ -286,8 +318,9 @@ export const CadastroForm = ({verbo_http}) => {
                 :
                 <Formik
                     initialValues={initialValues()}
-                    validationSchema={YupSignupSchemaCadastroDespesa}
-                    validateOnBlur={true}
+                    //validationSchema={YupSignupSchemaCadastroDespesa}
+                    validateOnBlur={false}
+                    validateOnChange={false}
                     onSubmit={onSubmit}
                     enableReinitialize={true}
                     validate={validateFormDespesas}
@@ -320,16 +353,22 @@ export const CadastroForm = ({verbo_http}) => {
                                                 value={props.values.cpf_cnpj_fornecedor}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
-                                                    aux.get_nome_razao_social(e.target.value, setFieldValue)
-                                                }
-                                                }
-                                                onBlur={props.handleBlur}
+                                                }}
+                                                onBlur={(e) => {
+                                                    setFormErrors(validacoesPersonalizadas(values, setFieldValue));
+                                                    aux.get_nome_razao_social(e.target.value, setFieldValue);
+                                                }}
+                                                onClick={() => {
+                                                    setFormErrors({cpf_cnpj_fornecedor: ""})
+                                                }}
                                                 name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
                                                 className={`${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 placeholder="Digite o número do CNPJ ou CPF (apenas algarismos)"
                                             />
-                                            {props.errors.cpf_cnpj_fornecedor && <span
-                                                className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
+                                            {/*{props.errors.cpf_cnpj_fornecedor && <span*/}
+                                            {/*    className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}*/}
+                                            {/* Validações personalizadas */}
+                                            {formErrors.cpf_cnpj_fornecedor && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.cpf_cnpj_fornecedor}</span></p>}
                                         </div>
                                         <div className="col-12 col-md-6  mt-4">
                                             <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
