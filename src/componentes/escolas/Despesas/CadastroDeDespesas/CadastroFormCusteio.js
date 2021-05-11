@@ -1,7 +1,6 @@
 import React from "react";
 import CurrencyInput from "react-currency-input";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
-import {Tags} from "../Tags";
 import {visoesService} from "../../../../services/visoes.service";
 
 
@@ -44,7 +43,7 @@ export const CadastroFormCusteio = (propriedades) => {
 
             <div className="form-row">
                 <div className="col-12 mt-4">
-                    <label htmlFor="especificacao_material_servico">Especificação do material ou serviço</label>
+                    <label htmlFor={`especificacao_material_servico_${index}`}>Especificação do material ou serviço</label>
                     <select
                         value={
                             rateio.especificacao_material_servico !== null ? (
@@ -53,7 +52,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         }
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].especificacao_material_servico`}
-                        id='especificacao_material_servico'
+                        id={`especificacao_material_servico_${index}`}
                         className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} form-control`}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
@@ -112,7 +111,7 @@ export const CadastroFormCusteio = (propriedades) => {
                 </div>
 
                 <div className="col-12 col-md-3 mt-4">
-                    <label htmlFor="valor_original">Valor</label>
+                    <label htmlFor="valor_original_form_custeio">Valor</label>
                     <CurrencyInput
                         allowNegative={false}
                         prefix='R$'
@@ -120,7 +119,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         thousandSeparator="."
                         value={rateio.valor_original}
                         name={`rateios[${index}].valor_original`}
-                        id="valor_original"
+                        id="valor_original_form_custeio"
                         className={`form-control`}
                         onChangeEvent={(e) => {
                             formikProps.handleChange(e);

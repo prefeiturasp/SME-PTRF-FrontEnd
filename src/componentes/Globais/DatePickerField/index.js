@@ -9,7 +9,7 @@ import moment from "moment";
 registerLocale("pt", pt );
 
 
-export const DatePickerField = ({ name, about, value, onChange, disabled, placeholderText }) => {
+export const DatePickerField = ({ name, about, value, onChange, onCalendarClose, disabled, placeholderText }) => {
 
     return (
         <DatePicker
@@ -20,6 +20,7 @@ export const DatePickerField = ({ name, about, value, onChange, disabled, placeh
             onChange={val => {
                 onChange(name, val);
             }}
+            onCalendarClose={onCalendarClose}
             dateFormat="dd/MM/yyyy"
             name={name}
             locale="pt"

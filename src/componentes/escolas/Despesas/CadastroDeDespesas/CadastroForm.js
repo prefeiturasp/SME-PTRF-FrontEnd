@@ -1,12 +1,11 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
 import {
-    YupSignupSchemaCadastroDespesa,
     validaPayloadDespesas,
     cpfMaskContitional,
     calculaValorRecursoAcoes,
     periodoFechado,
-    comparaObjetos
+    comparaObjetos, valida_cpf_cnpj
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import {getDespesasTabelas, criarDespesa, alterarDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getDespesaCadastrada} from "../../../../services/escolas/Despesas.service";
@@ -26,6 +25,8 @@ import Loading from "../../../../utils/Loading";
 import {Tags} from "../Tags";
 import {metodosAuxiliares} from "../metodosAuxiliares";
 import {visoesService} from "../../../../services/visoes.service";
+import moment from "moment";
+import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -108,112 +109,165 @@ export const CadastroForm = ({verbo_http}) => {
         setShowErroGeral(true);
     };
 
+    // Validações adicionais
+    const [formErrors, setFormErrors] = useState({});
+    const [enviarFormulario, setEnviarFormulario] = useState(true);
+
+    const validacoesPersonalizadas = useCallback(async (values, setFieldValue) => {
+
+        let erros = {};
+        let cpf_cnpj_valido = !(!values.cpf_cnpj_fornecedor || values.cpf_cnpj_fornecedor.trim() === "" || !valida_cpf_cnpj(values.cpf_cnpj_fornecedor));
+
+        if (!cpf_cnpj_valido) {
+            erros = {
+                cpf_cnpj_fornecedor: "Digite um CPF ou um CNPJ válido"
+            }
+            setEnviarFormulario(false)
+        } else {
+            aux.get_nome_razao_social(values.cpf_cnpj_fornecedor, setFieldValue);
+            setEnviarFormulario(true)
+        }
+
+
+        // Verifica período fechado para a receita
+        if (values.data_documento){
+            //await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
+            let data = moment(values.data_documento, "YYYY-MM-DD").format("YYYY-MM-DD");
+            try {
+                let periodo_fechado = await getPeriodoFechado(data);
+
+                if (!periodo_fechado.aceita_alteracoes){
+                    erros = {
+                        data_documento: "Período Fechado"
+                    }
+                    setEnviarFormulario(false)
+                    setReadOnlyBtnAcao(true);
+                    setShowPeriodoFechado(true);
+                    setReadOnlyCampos(true);
+                }else {
+                    setEnviarFormulario(true)
+                    setReadOnlyBtnAcao(false);
+                    setShowPeriodoFechado(false);
+                    setReadOnlyCampos(false);
+                }
+            }
+            catch (e) {
+                setReadOnlyBtnAcao(true);
+                setShowPeriodoFechado(true);
+                setReadOnlyCampos(true);
+                onShowErroGeral();
+                console.log("Erro ao buscar perído ", e)
+            }
+        }
+        return erros;
+    }, [aux])
+
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
 
-        // Necessário atribuir o valor ao campo cpf_cnpj_fornecedor para chamar o YupSignupSchemaCadastroDespesa
-        setFieldValue("cpf_cnpj_fornecedor", values.cpf_cnpj_fornecedor);
+            if (errors && errors.valor_recusos_acoes) {
+                setExibeMsgErroValorRecursos(true)
+            } else {
+                setExibeMsgErroValorRecursos(false)
+            }
 
-        if (errors && errors.valor_recusos_acoes){
-            setExibeMsgErroValorRecursos(true)
-        }else {
-            setExibeMsgErroValorRecursos(false)
-        }
-
-        if (errors && errors.valor_original){
-            setExibeMsgErroValorOriginal(true)
-        }else {
-            setExibeMsgErroValorOriginal(false)
-        }
+            if (errors && errors.valor_original) {
+                setExibeMsgErroValorOriginal(true)
+            } else {
+                setExibeMsgErroValorOriginal(false)
+            }
 
         validaPayloadDespesas(values);
 
-        if (Object.entries(errors).length === 0 && values.cpf_cnpj_fornecedor) {
+            if (Object.entries(errors).length === 0) {
 
-            let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
+                if (values.data_documento) {
+                    let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
 
-            if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente" ||
-                retorno_saldo.situacao_do_saldo === "lancamento_anterior_implantacao"){
-                setSaldosInsuficientesDaConta(retorno_saldo);
-                setShowSaldoInsuficienteConta(true)
+                    if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente" ||
+                        retorno_saldo.situacao_do_saldo === "lancamento_anterior_implantacao") {
+                        setSaldosInsuficientesDaConta(retorno_saldo);
+                        setShowSaldoInsuficienteConta(true)
 
-            }else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
-                setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes);
-                setShowSaldoInsuficiente(true);
+                    } else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
+                        setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes);
+                        setShowSaldoInsuficiente(true);
 
-            // Checando se despesa já foi conferida
-            }else if (values.rateios.find(element=> element.conferido)) {
-                setShowDespesaConferida(true)
+                        // Checando se despesa já foi conferida
+                    } else if (values.rateios.find(element => element.conferido)) {
+                        setShowDespesaConferida(true)
 
-                // Checando se despesa já foi cadastrada
-            }else if (values.tipo_documento && values.numero_documento) {
-                try {
-                    let despesa_cadastrada = await getDespesaCadastrada(values.tipo_documento, values.numero_documento, values.cpf_cnpj_fornecedor, despesaContext.idDespesa);
-                    if (despesa_cadastrada.despesa_ja_lancada){
-                        setShowDespesaCadastrada(true)
-                    }else {
-                        onSubmit(values);
+                        // Checando se despesa já foi cadastrada
+                    } else if (values.tipo_documento && values.numero_documento) {
+                        try {
+                            let despesa_cadastrada = await getDespesaCadastrada(values.tipo_documento, values.numero_documento, values.cpf_cnpj_fornecedor, despesaContext.idDespesa);
+                            if (despesa_cadastrada.despesa_ja_lancada) {
+                                setShowDespesaCadastrada(true)
+                            } else {
+                                onSubmit(values, setFieldValue);
+                            }
+                        } catch (e) {
+                            console.log("Erro ao buscar despesa cadastrada ", e);
+                        }
+                    } else {
+                        onSubmit(values, setFieldValue);
                     }
-                }catch (e) {
-                    console.log("Erro ao buscar despesa cadastrada ", e);
+                } else {
+                    onSubmit(values, setFieldValue)
                 }
-            } else {
-                onSubmit(values);
             }
-        }
     };
 
-    const onSubmit = async (values) => {
+    const onSubmit = async (values, setFieldValue) => {
 
-        setLoading(true);
+        // Inclusão de validações personalizadas para reduzir o numero de requisições a API Campo: cpf_cnpj_fornecedor
+        // Agora o campo cpf_cnpj_fornecedor, é validado no onBlur e quando o form tenta ser submetido
+        // A chamada a api /api/fornecedores/?uuid=&cpf_cnpj=${cpf_cnpj}, só é realizada quando um cpf for válido
+        setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
+        let erros_personalizados = await validacoesPersonalizadas(values, setFieldValue)
 
-        setBtnSubmitDisable(true);
-        setShowSaldoInsuficiente(false);
+        if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
 
-        validaPayloadDespesas(values, despesasTabelas);
+            setLoading(true);
 
-        if( despesaContext.verboHttp === "POST"){
-            try {
-                const response = await criarDespesa(values);
-                if (response.status === HTTP_STATUS.CREATED) {
-                    console.log("Operação realizada com sucesso!");
-                    //resetForm({values: ""})
-                    aux.getPath(origem);
-                } else {
+            setBtnSubmitDisable(true);
+            setShowSaldoInsuficiente(false);
+
+            validaPayloadDespesas(values, despesasTabelas);
+
+            if (despesaContext.verboHttp === "POST") {
+                try {
+                    const response = await criarDespesa(values);
+                    if (response.status === HTTP_STATUS.CREATED) {
+                        console.log("Operação realizada com sucesso!");
+                        aux.getPath(origem);
+                    } else {
+                        setLoading(false);
+                    }
+                } catch (error) {
+                    console.log(error);
                     setLoading(false);
                 }
-            } catch (error) {
-                console.log(error);
-                setLoading(false);
-            }
-        }else if(despesaContext.verboHttp === "PUT"){
+            } else if (despesaContext.verboHttp === "PUT") {
 
-            try {
-                const response = await alterarDespesa(values, despesaContext.idDespesa);
-                if (response.status === 200) {
-                    console.log("Operação realizada com sucesso!");
-                    //resetForm({values: ""})
-                    aux.getPath(origem);
-                } else {
+                try {
+                    const response = await alterarDespesa(values, despesaContext.idDespesa);
+                    if (response.status === 200) {
+                        console.log("Operação realizada com sucesso!");
+                        aux.getPath(origem);
+                    } else {
+                        setLoading(false);
+                    }
+                } catch (error) {
+                    console.log(error);
                     setLoading(false);
                 }
-            } catch (error) {
-                console.log(error);
-                setLoading(false);
             }
         }
     };
 
     const validateFormDespesas = async (values) => {
-        // Causador erro de não mostrar validações
-        //setExibeMsgErroValorRecursos(false);
-       //setExibeMsgErroValorOriginal(false);
 
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
-
-        // Verifica período fechado para a receita
-        if (values.data_documento){
-            await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
-        }
 
         const errors = {};
 
@@ -221,10 +275,13 @@ export const CadastroForm = ({verbo_http}) => {
         if (values.tipo_documento){
             let exibe_campo_numero_documento;
             let so_numeros;
-            if (values.tipo_documento.id){
-                so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
-            }else {
-                so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
+            // verificando se despesasTabelas já está preenchido
+            if (despesasTabelas && despesasTabelas.tipos_documento){
+                if (values.tipo_documento.id){
+                    so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
+                }else {
+                    so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
+                }
             }
 
             // Verificando se exibe campo Número do Documento
@@ -286,7 +343,6 @@ export const CadastroForm = ({verbo_http}) => {
                 :
                 <Formik
                     initialValues={initialValues()}
-                    validationSchema={YupSignupSchemaCadastroDespesa}
                     validateOnBlur={true}
                     onSubmit={onSubmit}
                     enableReinitialize={true}
@@ -320,16 +376,21 @@ export const CadastroForm = ({verbo_http}) => {
                                                 value={props.values.cpf_cnpj_fornecedor}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
-                                                    aux.get_nome_razao_social(e.target.value, setFieldValue)
-                                                }
-                                                }
-                                                onBlur={props.handleBlur}
+                                                }}
+                                                onBlur={async () => {
+                                                    setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
+                                                }}
+                                                onClick={() => {
+                                                    setFormErrors({cpf_cnpj_fornecedor: ""})
+                                                }}
                                                 name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
                                                 className={`${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 placeholder="Digite o número do CNPJ ou CPF (apenas algarismos)"
                                             />
-                                            {props.errors.cpf_cnpj_fornecedor && <span
-                                                className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}
+                                            {/*{props.errors.cpf_cnpj_fornecedor && <span*/}
+                                            {/*    className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}*/}
+                                            {/* Validações personalizadas */}
+                                            {formErrors.cpf_cnpj_fornecedor && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.cpf_cnpj_fornecedor}</span></p>}
                                         </div>
                                         <div className="col-12 col-md-6  mt-4">
                                             <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
@@ -376,6 +437,9 @@ export const CadastroForm = ({verbo_http}) => {
                                                 id="data_documento"
                                                 value={values.data_documento != null ? values.data_documento : ""}
                                                 onChange={setFieldValue}
+                                                onCalendarClose={async () => {
+                                                    setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
+                                                }}
                                                 about={despesaContext.verboHttp}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
@@ -458,16 +522,15 @@ export const CadastroForm = ({verbo_http}) => {
 
                                     <div className="form-row">
                                         <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="valor_original">Valor total do documento</label>
+                                            <label htmlFor="valor_original_form_principal">Valor total do documento</label>
                                             <CurrencyInput
                                                 allowNegative={false}
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
-                                                //value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado && !valorRateioOriginalAlterado ? calculaValorOriginal(values) : props.values.valor_original }
                                                 value={ props.values.valor_original }
                                                 name="valor_original"
-                                                id="valor_original"
+                                                id="valor_original_form_principal"
                                                 className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 selectAllOnFocus={true}
                                                 onChangeEvent={(e) => {
@@ -585,7 +648,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                                                 <div className="col-12 col-md-6 mt-4">
 
-                                                                    <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
+                                                                    <label htmlFor={`aplicacao_recurso_${index}`}>Tipo de aplicação do recurso</label>
                                                                     <select
                                                                         value={rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ""}
                                                                         onChange={(e) => {
@@ -596,7 +659,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                                                         }}
                                                                         name={`rateios[${index}].aplicacao_recurso`}
-                                                                        id='aplicacao_recurso'
+                                                                        id={`aplicacao_recurso_${index}`}
                                                                         className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                                         disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                                                     >
@@ -736,7 +799,7 @@ export const CadastroForm = ({verbo_http}) => {
                                             saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
                                             show={showSaldoInsuficiente}
                                             handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
-                                            onSaldoInsuficienteTrue={() => onSubmit(values, {resetForm})}
+                                            onSaldoInsuficienteTrue={() => onSubmit(values, setFieldValue)}
                                         />
                                     </section>
                                     <section>
@@ -744,20 +807,20 @@ export const CadastroForm = ({verbo_http}) => {
                                             saldosInsuficientesDaConta={saldosInsuficientesDaConta}
                                             show={showSaldoInsuficienteConta}
                                             handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
-                                            onSaldoInsuficienteContaTrue={() => onSubmit(values, {resetForm})}
+                                            onSaldoInsuficienteContaTrue={() => onSubmit(values, setFieldValue)}
                                         />
                                     </section>
                                     <section>
                                         <ChecarDespesaExistente
                                             show={showDespesaCadastrada}
                                             handleClose={()=>setShowDespesaCadastrada(false)}
-                                            onSalvarDespesaCadastradaTrue={ () => onSubmit(values, {resetForm}) }/>
+                                            onSalvarDespesaCadastradaTrue={ () => onSubmit(values, setFieldValue) }/>
                                     </section>
                                     <section>
                                         <ModalDespesaConferida
                                             show={showDespesaConferida}
                                             handleClose={()=>setShowDespesaConferida(false)}
-                                            onSalvarDespesaConferida={ () => onSubmit(values, {resetForm}) }
+                                            onSalvarDespesaConferida={ () => onSubmit(values, setFieldValue) }
                                             titulo="Despesa já demonstrada"
                                             texto="<p>Atenção. Essa despesa já foi demonstrada, caso a alteração seja gravada ela voltará a ser não demonstrada. Confirma a gravação?</p>"
                                         />
