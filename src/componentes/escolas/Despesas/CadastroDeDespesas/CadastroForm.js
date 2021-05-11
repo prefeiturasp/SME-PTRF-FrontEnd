@@ -161,13 +161,11 @@ export const CadastroForm = ({verbo_http}) => {
                     setReadOnlyBtnAcao(true);
                     setShowPeriodoFechado(true);
                     setReadOnlyCampos(true);
-                    setBtnSubmitDisable(true)
                 } else {
                     setEnviarFormulario(true)
                     setReadOnlyBtnAcao(false);
                     setShowPeriodoFechado(false);
                     setReadOnlyCampos(false);
-                    setBtnSubmitDisable(false)
                 }
             } catch (e) {
                 setReadOnlyBtnAcao(true);
@@ -180,7 +178,110 @@ export const CadastroForm = ({verbo_http}) => {
         return erros;
     }, [aux])
 
+    // let obj = {
+    //     firstname: "John",
+    //     middlename: null,
+    //     lastname: "Mayer",
+    //     age: "",
+    //     gender: "Male",
+    //     outro:{
+    //         nome: "Ollyver",
+    //         minha_idade: ""
+    //     }
+    // };
+    //
+    // // let result = Object.keys(obj).filter(o => obj[o] === '' || obj[o] === null);
+    // // console.log(result);
+    //
+    // const emptyishProperties = Object.entries(obj).filter(([, val]) => val === null || val === undefined || val === '').map(([key]) => key);
+    // console.log(emptyishProperties);
+
+    let obj = {
+        "India" : {
+            "Karnataka" : ["Bangalore", "Mysore"],
+            "Maharashtra" : ["Mumbai", "Pune"]
+        },
+        "USA" : {
+            "Texas" : ["Dallas", "Houston"],
+            "IL" : ["Chicago", "Aurora", "Pune"]
+        }
+    }
+
+    let objeto_test = {
+        alterado_em: "2021-05-11T14:08:10.550823",
+        status: "INCOMPLETO",
+        USA : {
+            Texas : "Dallas",
+        }
+        //tipo_documento: null,
+        // tipo_transacao: null,
+        // uuid: "45ec4dc5-3f36-4ef0-a7e9-16560eb247f8",
+        // valor_original: "R$ 0,00",
+        // valor_original_total: "R$ 0,00",
+        // valor_recursos_proprios: "R$ 0,00",
+        // valor_total: "R$ 0,00",
+        // valor_total_dos_rateios: ""
+    }
+
+    // function checkIfExistingValue(obj, key, value) {
+    //     return obj.hasOwnProperty(key) && obj[key] === value;
+    // }
+    // var test = [{name : "jack", sex: 'F'}, {name: "joe", sex: 'M'}]
+    //
+    // console.log(
+    //     test.some(
+    //         function(person) {
+    //             return checkIfExistingValue(person, "name", "jack");
+    //         })
+    // );
+
+    // function nameCity(e){
+    //     var finalAns = []
+    //     var ans = [];
+    //     ans = Object.keys(e).forEach((a)=>{
+    //         for(var c in e[a]){
+    //             e[a][c].forEach(v=>{
+    //                 if(v === "Pune"){
+    //                     finalAns.push(c)
+    //                 }
+    //             })
+    //
+    //         }
+    //     })
+    //     console.log(finalAns)
+    // }
+    // nameCity(obj)
+
+    function hasValueDeep(json, findValue) {
+        debugger;
+        const values = Object.values(json);
+        let hasValue = values.includes(findValue);
+        values.forEach(function(value) {
+            if (typeof value === "object") {
+                hasValue = hasValue || hasValueDeep(value, findValue);
+            }
+        })
+        return hasValue;
+    }
+
+
+
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
+
+        let objeto_test = {
+            alterado_em: "2021-05-11T14:08:10.550823",
+            status: "INCOMPLETO",
+            tipo_documento: null,
+            tipo_transacao: null,
+            uuid: "45ec4dc5-3f36-4ef0-a7e9-16560eb247f8",
+            valor_original: "R$ 0,00",
+            valor_original_total: "R$ 0,00",
+            valor_recursos_proprios: "R$ 0,00",
+            valor_total: "R$ 0,00",
+            valor_total_dos_rateios: ""
+        }
+        console.log("XXXXXx ", hasValueDeep(objeto_test, null))
+
 
         if (errors && errors.valor_recusos_acoes) {
             setExibeMsgErroValorRecursos(true)
@@ -257,7 +358,7 @@ export const CadastroForm = ({verbo_http}) => {
                     const response = await criarDespesa(values);
                     if (response.status === HTTP_STATUS.CREATED) {
                         console.log("Operação realizada com sucesso!");
-                        aux.getPath(origem);
+                        //aux.getPath(origem);
                     } else {
                         setLoading(false);
                     }
@@ -271,7 +372,7 @@ export const CadastroForm = ({verbo_http}) => {
                     const response = await alterarDespesa(values, despesaContext.idDespesa);
                     if (response.status === 200) {
                         console.log("Operação realizada com sucesso!");
-                        aux.getPath(origem);
+                        //aux.getPath(origem);
                     } else {
                         setLoading(false);
                     }
