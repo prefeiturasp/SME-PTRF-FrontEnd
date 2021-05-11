@@ -123,18 +123,19 @@ export const CadastroForm = ({verbo_http}) => {
             }
             setEnviarFormulario(false)
         } else {
+            aux.get_nome_razao_social(values.cpf_cnpj_fornecedor, setFieldValue);
             setEnviarFormulario(true)
         }
         return erros;
-    }, [])
+    }, [aux])
 
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
 
-        // Necessário atribuir o valor ao campo cpf_cnpj_fornecedor para chamar o YupSignupSchemaCadastroDespesa
-        //setFieldValue("cpf_cnpj_fornecedor", values.cpf_cnpj_fornecedor);
-
-        setFormErrors(validacoesPersonalizadas(values));
-        let erros_personalizados = validacoesPersonalizadas(values)
+        // Inclusão de validações personalizadas para reduzir o numero de requisições a API Campo: cpf_cnpj_fornecedor
+        // Agora o campo cpf_cnpj_fornecedor, é validado no onBlur e quando o form tenta ser submetido
+        // A chamada a api /api/fornecedores/?uuid=&cpf_cnpj=${cpf_cnpj}, só é realizada quando um cpf for válido
+        setFormErrors(validacoesPersonalizadas(values, setFieldValue));
+        let erros_personalizados = validacoesPersonalizadas(values, setFieldValue)
 
         if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
 
@@ -236,9 +237,6 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const validateFormDespesas = async (values) => {
-        // Causador erro de não mostrar validações
-        //setExibeMsgErroValorRecursos(false);
-       //setExibeMsgErroValorOriginal(false);
 
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
@@ -354,9 +352,9 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                 }}
-                                                onBlur={(e) => {
+                                                onBlur={() => {
                                                     setFormErrors(validacoesPersonalizadas(values, setFieldValue));
-                                                    aux.get_nome_razao_social(e.target.value, setFieldValue);
+
                                                 }}
                                                 onClick={() => {
                                                     setFormErrors({cpf_cnpj_fornecedor: ""})
