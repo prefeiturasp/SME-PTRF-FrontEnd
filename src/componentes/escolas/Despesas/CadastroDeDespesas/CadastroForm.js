@@ -281,10 +281,13 @@ export const CadastroForm = ({verbo_http}) => {
         if (values.tipo_documento){
             let exibe_campo_numero_documento;
             let so_numeros;
-            if (values.tipo_documento.id){
-                so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
-            }else {
-                so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
+            // verificando se despesasTabelas já está preenchido
+            if (despesasTabelas && despesasTabelas.tipos_documento){
+                if (values.tipo_documento.id){
+                    so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
+                }else {
+                    so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
+                }
             }
 
             // Verificando se exibe campo Número do Documento
@@ -805,7 +808,7 @@ export const CadastroForm = ({verbo_http}) => {
                                             saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
                                             show={showSaldoInsuficiente}
                                             handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
-                                            onSaldoInsuficienteTrue={() => onSubmit(values, {resetForm})}
+                                            onSaldoInsuficienteTrue={() => onSubmit(values, setFieldValue)}
                                         />
                                     </section>
                                     <section>
@@ -813,20 +816,20 @@ export const CadastroForm = ({verbo_http}) => {
                                             saldosInsuficientesDaConta={saldosInsuficientesDaConta}
                                             show={showSaldoInsuficienteConta}
                                             handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
-                                            onSaldoInsuficienteContaTrue={() => onSubmit(values, {resetForm})}
+                                            onSaldoInsuficienteContaTrue={() => onSubmit(values, setFieldValue)}
                                         />
                                     </section>
                                     <section>
                                         <ChecarDespesaExistente
                                             show={showDespesaCadastrada}
                                             handleClose={()=>setShowDespesaCadastrada(false)}
-                                            onSalvarDespesaCadastradaTrue={ () => onSubmit(values, {resetForm}) }/>
+                                            onSalvarDespesaCadastradaTrue={ () => onSubmit(values, setFieldValue) }/>
                                     </section>
                                     <section>
                                         <ModalDespesaConferida
                                             show={showDespesaConferida}
                                             handleClose={()=>setShowDespesaConferida(false)}
-                                            onSalvarDespesaConferida={ () => onSubmit(values, {resetForm}) }
+                                            onSalvarDespesaConferida={ () => onSubmit(values, setFieldValue) }
                                             titulo="Despesa já demonstrada"
                                             texto="<p>Atenção. Essa despesa já foi demonstrada, caso a alteração seja gravada ela voltará a ser não demonstrada. Confirma a gravação?</p>"
                                         />

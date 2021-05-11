@@ -82,7 +82,7 @@ const get_nome_razao_social = async (cpf_cnpj, setFieldValue) => {
 };
 
 const exibeDocumentoTransacao = (valor, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas) => {
-    if (valor){
+    if (valor && despesasTabelas && despesasTabelas.tipos_transacao){
         let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor));
         if (exibe_documento_transacao.tem_documento){
             setCssEscondeDocumentoTransacao("");
