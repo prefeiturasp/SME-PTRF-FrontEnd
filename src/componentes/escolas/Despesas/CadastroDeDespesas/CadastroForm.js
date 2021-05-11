@@ -26,6 +26,8 @@ import Loading from "../../../../utils/Loading";
 import {Tags} from "../Tags";
 import {metodosAuxiliares} from "../metodosAuxiliares";
 import {visoesService} from "../../../../services/visoes.service";
+import moment from "moment";
+import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -112,7 +114,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [formErrors, setFormErrors] = useState({});
     const [enviarFormulario, setEnviarFormulario] = useState(true);
 
-    const validacoesPersonalizadas = useCallback((values, setFieldValue) => {
+    const validacoesPersonalizadas = useCallback(async (values, setFieldValue) => {
 
         let erros = {};
         let cpf_cnpj_valido = !(!values.cpf_cnpj_fornecedor || values.cpf_cnpj_fornecedor.trim() === "" || !valida_cpf_cnpj(values.cpf_cnpj_fornecedor));
@@ -126,18 +128,45 @@ export const CadastroForm = ({verbo_http}) => {
             aux.get_nome_razao_social(values.cpf_cnpj_fornecedor, setFieldValue);
             setEnviarFormulario(true)
         }
+
+
+        // Verifica período fechado para a receita
+        if (values.data_documento){
+            //await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
+            let data = moment(values.data_documento, "YYYY-MM-DD").format("YYYY-MM-DD");
+            try {
+                let periodo_fechado = await getPeriodoFechado(data);
+
+                if (!periodo_fechado.aceita_alteracoes){
+                    erros = {
+                        data_documento: "Período Fechado"
+                    }
+                    setEnviarFormulario(false)
+                    setReadOnlyBtnAcao(true);
+                    setShowPeriodoFechado(true);
+                    setReadOnlyCampos(true);
+                }else {
+                    setEnviarFormulario(true)
+                    setReadOnlyBtnAcao(false);
+                    setShowPeriodoFechado(false);
+                    setReadOnlyCampos(false);
+                }
+            }
+            catch (e) {
+                setReadOnlyBtnAcao(true);
+                setShowPeriodoFechado(true);
+                setReadOnlyCampos(true);
+                onShowErroGeral();
+                console.log("Erro ao buscar perído ", e)
+            }
+        }
+
+
+
         return erros;
     }, [aux])
 
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
-
-        // Inclusão de validações personalizadas para reduzir o numero de requisições a API Campo: cpf_cnpj_fornecedor
-        // Agora o campo cpf_cnpj_fornecedor, é validado no onBlur e quando o form tenta ser submetido
-        // A chamada a api /api/fornecedores/?uuid=&cpf_cnpj=${cpf_cnpj}, só é realizada quando um cpf for válido
-        setFormErrors(validacoesPersonalizadas(values, setFieldValue));
-        let erros_personalizados = validacoesPersonalizadas(values, setFieldValue)
-
-        if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
 
             if (errors && errors.valor_recusos_acoes) {
                 setExibeMsgErroValorRecursos(true)
@@ -151,7 +180,7 @@ export const CadastroForm = ({verbo_http}) => {
                 setExibeMsgErroValorOriginal(false)
             }
 
-            validaPayloadDespesas(values);
+        validaPayloadDespesas(values);
 
             console.log("onShowSaldoInsuficiente ", errors)
 
@@ -180,58 +209,64 @@ export const CadastroForm = ({verbo_http}) => {
                             if (despesa_cadastrada.despesa_ja_lancada) {
                                 setShowDespesaCadastrada(true)
                             } else {
-                                onSubmit(values);
+                                onSubmit(values, setFieldValue);
                             }
                         } catch (e) {
                             console.log("Erro ao buscar despesa cadastrada ", e);
                         }
                     } else {
-                        onSubmit(values);
+                        onSubmit(values, setFieldValue);
                     }
                 } else {
-                    onSubmit(values)
+                    onSubmit(values, setFieldValue)
                 }
             }
-        }
     };
 
-    const onSubmit = async (values) => {
+    const onSubmit = async (values, setFieldValue) => {
 
-        setLoading(true);
+        // Inclusão de validações personalizadas para reduzir o numero de requisições a API Campo: cpf_cnpj_fornecedor
+        // Agora o campo cpf_cnpj_fornecedor, é validado no onBlur e quando o form tenta ser submetido
+        // A chamada a api /api/fornecedores/?uuid=&cpf_cnpj=${cpf_cnpj}, só é realizada quando um cpf for válido
+        setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
+        let erros_personalizados = await validacoesPersonalizadas(values, setFieldValue)
 
-        setBtnSubmitDisable(true);
-        setShowSaldoInsuficiente(false);
+        if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
 
-        validaPayloadDespesas(values, despesasTabelas);
+            setLoading(true);
 
-        if( despesaContext.verboHttp === "POST"){
-            try {
-                const response = await criarDespesa(values);
-                if (response.status === HTTP_STATUS.CREATED) {
-                    console.log("Operação realizada com sucesso!");
-                    //resetForm({values: ""})
-                    aux.getPath(origem);
-                } else {
+            setBtnSubmitDisable(true);
+            setShowSaldoInsuficiente(false);
+
+            validaPayloadDespesas(values, despesasTabelas);
+
+            if (despesaContext.verboHttp === "POST") {
+                try {
+                    const response = await criarDespesa(values);
+                    if (response.status === HTTP_STATUS.CREATED) {
+                        console.log("Operação realizada com sucesso!");
+                        aux.getPath(origem);
+                    } else {
+                        setLoading(false);
+                    }
+                } catch (error) {
+                    console.log(error);
                     setLoading(false);
                 }
-            } catch (error) {
-                console.log(error);
-                setLoading(false);
-            }
-        }else if(despesaContext.verboHttp === "PUT"){
+            } else if (despesaContext.verboHttp === "PUT") {
 
-            try {
-                const response = await alterarDespesa(values, despesaContext.idDespesa);
-                if (response.status === 200) {
-                    console.log("Operação realizada com sucesso!");
-                    //resetForm({values: ""})
-                    aux.getPath(origem);
-                } else {
+                try {
+                    const response = await alterarDespesa(values, despesaContext.idDespesa);
+                    if (response.status === 200) {
+                        console.log("Operação realizada com sucesso!");
+                        aux.getPath(origem);
+                    } else {
+                        setLoading(false);
+                    }
+                } catch (error) {
+                    console.log(error);
                     setLoading(false);
                 }
-            } catch (error) {
-                console.log(error);
-                setLoading(false);
             }
         }
     };
@@ -239,11 +274,6 @@ export const CadastroForm = ({verbo_http}) => {
     const validateFormDespesas = async (values) => {
 
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
-
-        // Verifica período fechado para a receita
-        if (values.data_documento){
-            await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
-        }
 
         const errors = {};
 
@@ -317,8 +347,8 @@ export const CadastroForm = ({verbo_http}) => {
                 <Formik
                     initialValues={initialValues()}
                     //validationSchema={YupSignupSchemaCadastroDespesa}
-                    validateOnBlur={false}
-                    validateOnChange={false}
+                    validateOnBlur={true}
+                    // validateOnChange={false}
                     onSubmit={onSubmit}
                     enableReinitialize={true}
                     validate={validateFormDespesas}
@@ -352,9 +382,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                 }}
-                                                onBlur={() => {
-                                                    setFormErrors(validacoesPersonalizadas(values, setFieldValue));
-
+                                                onBlur={async () => {
+                                                    setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
                                                 }}
                                                 onClick={() => {
                                                     setFormErrors({cpf_cnpj_fornecedor: ""})
@@ -413,6 +442,9 @@ export const CadastroForm = ({verbo_http}) => {
                                                 id="data_documento"
                                                 value={values.data_documento != null ? values.data_documento : ""}
                                                 onChange={setFieldValue}
+                                                onCalendarClose={async () => {
+                                                    setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
+                                                }}
                                                 about={despesaContext.verboHttp}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
