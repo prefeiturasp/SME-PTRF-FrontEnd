@@ -530,7 +530,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                     <div className="form-row">
                                         <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="valor_original">Valor total do documento</label>
+                                            <label htmlFor="valor_original_form_principal">Valor total do documento</label>
                                             <CurrencyInput
                                                 allowNegative={false}
                                                 prefix='R$'
@@ -539,7 +539,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 //value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado && !valorRateioOriginalAlterado ? calculaValorOriginal(values) : props.values.valor_original }
                                                 value={ props.values.valor_original }
                                                 name="valor_original"
-                                                id="valor_original"
+                                                id="valor_original_form_principal"
                                                 className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 selectAllOnFocus={true}
                                                 onChangeEvent={(e) => {
@@ -657,7 +657,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                                                 <div className="col-12 col-md-6 mt-4">
 
-                                                                    <label htmlFor="aplicacao_recurso">Tipo de aplicação do recurso</label>
+                                                                    <label htmlFor={`aplicacao_recurso_${index}`}>Tipo de aplicação do recurso</label>
                                                                     <select
                                                                         value={rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ""}
                                                                         onChange={(e) => {
@@ -668,7 +668,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                                                         }}
                                                                         name={`rateios[${index}].aplicacao_recurso`}
-                                                                        id='aplicacao_recurso'
+                                                                        id={`aplicacao_recurso_${index}`}
                                                                         className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                                         disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                                                     >

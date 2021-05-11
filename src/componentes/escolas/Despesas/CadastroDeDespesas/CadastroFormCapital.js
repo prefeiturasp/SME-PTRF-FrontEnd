@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import NumberFormat from "react-number-format";
 import {calculaValorRateio, trataNumericos, processoIncorporacaoMask} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import CurrencyInput from "react-currency-input";
@@ -30,7 +30,7 @@ export const CadastroFormCapital = (propriedades) => {
         <>
             <div className="row mt-4">
                 <div className="col-12">
-                    <label htmlFor="especificacao_material_servico">Especificação do material ou serviço</label>
+                    <label htmlFor={`especificacao_material_servico_${index}`}>Especificação do material ou serviço</label>
                     <select
                         value={
                             rateio.especificacao_material_servico !== null ? (
@@ -39,7 +39,7 @@ export const CadastroFormCapital = (propriedades) => {
                         }
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].especificacao_material_servico`}
-                        id='especificacao_material_servico'
+                        id={`especificacao_material_servico_${index}`}
                         className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} form-control`}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
@@ -51,7 +51,7 @@ export const CadastroFormCapital = (propriedades) => {
                 </div>
 
                 <div className="col-12 col-md-6 mt-4">
-                    <label htmlFor="acao_associacao">Ação</label>
+                    <label htmlFor={`acao_associacao_form_capital_${index}`}>Ação</label>
                     <select
                         value={
                             rateio.acao_associacao !== null ? (
@@ -60,7 +60,7 @@ export const CadastroFormCapital = (propriedades) => {
                         }
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].acao_associacao`}
-                        id='acao_associacao'
+                        id={`acao_associacao_form_capital_${index}`}
                         className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
@@ -85,14 +85,14 @@ export const CadastroFormCapital = (propriedades) => {
                                 }}
                                 name={`rateios[${index}].quantidade_itens_capital`}
                                 decimalScale={0}
-                                id="quantidade_itens_capital"
+                                id={`quantidade_itens_capital_${index}`}
                                 className={`${(!rateio.quantidade_itens_capital || rateio.quantidade_itens_capital === '0') && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                                 disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                             />
                         </div>
 
                         <div className="col-12 col-md-6 mt-4">
-                            <label htmlFor="valor_item_capital">Valor unitário </label>
+                            <label htmlFor={`valor_item_capital_${index}`}>Valor unitário </label>
                             <CurrencyInput
                                 allowNegative={false}
                                 prefix='R$'
@@ -100,7 +100,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 thousandSeparator="."
                                 value={rateio.valor_item_capital}
                                 name={`rateios[${index}].valor_item_capital`}
-                                id="valor_item_capital"
+                                id={`valor_item_capital_${index}`}
                                 className={`${trataNumericos(rateio.valor_item_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                                 onChangeEvent={(e) => {
                                     formikProps.handleChange(e);
@@ -113,7 +113,7 @@ export const CadastroFormCapital = (propriedades) => {
                 </div>
 
                 <div className="col-12 col-md-6 mt-4">
-                    <label htmlFor="numero_processo_incorporacao_capital">Número do processo de incorporação</label>
+                    <label htmlFor={`numero_processo_incorporacao_capital_${index}`}>Número do processo de incorporação</label>
                     <MaskedInput
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                         mask={(valor) => processoIncorporacaoMask(valor)}
@@ -122,13 +122,13 @@ export const CadastroFormCapital = (propriedades) => {
                         className={`${!rateio.numero_processo_incorporacao_capital && verboHttp === "PUT" && "is_invalid "} form-control`}
                         placeholder="Escreva o número do processo"
                         defaultValue={rateio.numero_processo_incorporacao_capital}
-                        id='numero_processo_incorporacao_capital'
+                        id={`numero_processo_incorporacao_capital_${index}`}
                     />
                 </div>
 
 
                     <div className="col-12 col-md-6 mt-4">
-                        <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
+                        <label htmlFor={`conta_associacao_${index}`}>Tipo de conta utilizada</label>
                         <select
                             value={
                                 rateio.conta_associacao !== null ? (
@@ -137,7 +137,7 @@ export const CadastroFormCapital = (propriedades) => {
                             }
                             onChange={formikProps.handleChange}
                             name={`rateios[${index}].conta_associacao`}
-                            id='conta_associacao'
+                            id={`conta_associacao_${index}`}
                             className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
                             disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                         >
@@ -149,7 +149,7 @@ export const CadastroFormCapital = (propriedades) => {
                     </div>
 
                     <div className="col-12 col-md-6 mt-4">
-                        <label htmlFor="valor_original">Valor total do capital</label>
+                        <label htmlFor={`valor_original_form_capital_${index}`}>Valor total do capital</label>
                         <CurrencyInput
                             allowNegative={false}
                             prefix='R$'
@@ -157,7 +157,7 @@ export const CadastroFormCapital = (propriedades) => {
                             thousandSeparator="."
                             value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
                             name={`rateios[${index}].valor_original`}
-                            id="valor_original"
+                            id={`valor_original_form_capital_${index}`}
                             className={`${ calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
                             onChangeEvent={formikProps.handleChange}
                             disabled={true}
@@ -166,7 +166,7 @@ export const CadastroFormCapital = (propriedades) => {
                     </div>
 
                     <div className="col-12 col-md-6 mt-4">
-                        <label htmlFor="valor_rateio" className="label-valor-realizado">Valor realizado</label>
+                        <label htmlFor={`valor_rateio_${index}`} className="label-valor-realizado">Valor realizado</label>
                         <CurrencyInput
                             allowNegative={false}
                             prefix='R$'
@@ -174,7 +174,7 @@ export const CadastroFormCapital = (propriedades) => {
                             thousandSeparator="."
                             value={rateio.valor_rateio}
                             name={`rateios[${index}].valor_rateio`}
-                            id="valor_rateio"
+                            id={`valor_rateio_${index}`}
                             className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control ${trataNumericos(rateio.valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
                             onChangeEvent={(e) => {
                                 formikProps.handleChange(e);
