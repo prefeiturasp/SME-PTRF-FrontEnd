@@ -1,7 +1,6 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
 import {Formik, FieldArray, Field} from "formik";
 import {
-    YupSignupSchemaCadastroDespesa,
     validaPayloadDespesas,
     cpfMaskContitional,
     calculaValorRecursoAcoes,
@@ -160,9 +159,6 @@ export const CadastroForm = ({verbo_http}) => {
                 console.log("Erro ao buscar perído ", e)
             }
         }
-
-
-
         return erros;
     }, [aux])
 
@@ -181,8 +177,6 @@ export const CadastroForm = ({verbo_http}) => {
             }
 
         validaPayloadDespesas(values);
-
-            console.log("onShowSaldoInsuficiente ", errors)
 
             if (Object.entries(errors).length === 0) {
 
@@ -349,9 +343,7 @@ export const CadastroForm = ({verbo_http}) => {
                 :
                 <Formik
                     initialValues={initialValues()}
-                    //validationSchema={YupSignupSchemaCadastroDespesa}
                     validateOnBlur={true}
-                    // validateOnChange={false}
                     onSubmit={onSubmit}
                     enableReinitialize={true}
                     validate={validateFormDespesas}
@@ -536,7 +528,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
-                                                //value={verbo_http === "PUT" ? props.values.valor_original : !valorOriginalAlterado && !valorRateioOriginalAlterado ? calculaValorOriginal(values) : props.values.valor_original }
                                                 value={ props.values.valor_original }
                                                 name="valor_original"
                                                 id="valor_original_form_principal"
