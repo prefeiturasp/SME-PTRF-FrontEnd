@@ -8,7 +8,14 @@ import {
     comparaObjetos, valida_cpf_cnpj
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
-import {getDespesasTabelas, criarDespesa, alterarDespesa, getEspecificacoesCapital, getEspecificacoesCusteio, getDespesaCadastrada} from "../../../../services/escolas/Despesas.service";
+import {
+    getDespesasTabelas,
+    criarDespesa,
+    alterarDespesa,
+    getEspecificacoesCapital,
+    getEspecificacoesCusteio,
+    getDespesaCadastrada
+} from "../../../../services/escolas/Despesas.service";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import {useParams} from 'react-router-dom';
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
@@ -17,7 +24,16 @@ import {DespesaContext} from "../../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import CurrencyInput from "react-currency-input";
-import { AvisoCapitalModal, CancelarModal, DeletarModal, ErroGeral, PeriodoFechado, SaldoInsuficiente, SaldoInsuficienteConta, ChecarDespesaExistente, } from "../../../../utils/Modais"
+import {
+    AvisoCapitalModal,
+    CancelarModal,
+    DeletarModal,
+    ErroGeral,
+    PeriodoFechado,
+    SaldoInsuficiente,
+    SaldoInsuficienteConta,
+    ChecarDespesaExistente,
+} from "../../../../utils/Modais"
 import {ModalDespesaConferida} from "./ModalDespesaJaConferida";
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
@@ -61,14 +77,14 @@ export const CadastroForm = ({verbo_http}) => {
 
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
 
-    useEffect(()=>{
-        if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT"){
+    useEffect(() => {
+        if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT") {
             aux.exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas);
         }
-        if (despesaContext.initialValues.data_documento && verbo_http === "PUT"){
+        if (despesaContext.initialValues.data_documento && verbo_http === "PUT") {
             periodoFechado(despesaContext.initialValues.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
         }
-        if (verbo_http === "PUT"){
+        if (verbo_http === "PUT") {
             setObjetoParaComparacao(despesaContext.initialValues)
         }
     }, [despesaContext.initialValues]);
@@ -81,7 +97,7 @@ export const CadastroForm = ({verbo_http}) => {
             const array_tipos_custeio = resp.tipos_custeio;
             let let_especificacoes_custeio = [];
 
-            array_tipos_custeio.map( async (tipoCusteio) => {
+            array_tipos_custeio.map(async (tipoCusteio) => {
                 const resposta = await getEspecificacoesCusteio(tipoCusteio.id);
                 let_especificacoes_custeio[tipoCusteio.id] = await resposta
             });
@@ -97,7 +113,7 @@ export const CadastroForm = ({verbo_http}) => {
         })();
     }, []);
 
-    useEffect(()=>{
+    useEffect(() => {
         setLoading(false)
     }, []);
 
@@ -123,20 +139,21 @@ export const CadastroForm = ({verbo_http}) => {
                 cpf_cnpj_fornecedor: "Digite um CPF ou um CNPJ válido"
             }
             setEnviarFormulario(false)
+            setBtnSubmitDisable(true)
         } else {
             aux.get_nome_razao_social(values.cpf_cnpj_fornecedor, setFieldValue);
             setEnviarFormulario(true)
+            setBtnSubmitDisable(false)
         }
 
-
         // Verifica período fechado para a receita
-        if (values.data_documento){
+        if (values.data_documento) {
             //await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
             let data = moment(values.data_documento, "YYYY-MM-DD").format("YYYY-MM-DD");
             try {
                 let periodo_fechado = await getPeriodoFechado(data);
 
-                if (!periodo_fechado.aceita_alteracoes){
+                if (!periodo_fechado.aceita_alteracoes) {
                     erros = {
                         data_documento: "Período Fechado"
                     }
@@ -144,14 +161,15 @@ export const CadastroForm = ({verbo_http}) => {
                     setReadOnlyBtnAcao(true);
                     setShowPeriodoFechado(true);
                     setReadOnlyCampos(true);
-                }else {
+                    setBtnSubmitDisable(true)
+                } else {
                     setEnviarFormulario(true)
                     setReadOnlyBtnAcao(false);
                     setShowPeriodoFechado(false);
                     setReadOnlyCampos(false);
+                    setBtnSubmitDisable(false)
                 }
-            }
-            catch (e) {
+            } catch (e) {
                 setReadOnlyBtnAcao(true);
                 setShowPeriodoFechado(true);
                 setReadOnlyCampos(true);
@@ -164,57 +182,57 @@ export const CadastroForm = ({verbo_http}) => {
 
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
 
-            if (errors && errors.valor_recusos_acoes) {
-                setExibeMsgErroValorRecursos(true)
-            } else {
-                setExibeMsgErroValorRecursos(false)
-            }
+        if (errors && errors.valor_recusos_acoes) {
+            setExibeMsgErroValorRecursos(true)
+        } else {
+            setExibeMsgErroValorRecursos(false)
+        }
 
-            if (errors && errors.valor_original) {
-                setExibeMsgErroValorOriginal(true)
-            } else {
-                setExibeMsgErroValorOriginal(false)
-            }
+        if (errors && errors.valor_original) {
+            setExibeMsgErroValorOriginal(true)
+        } else {
+            setExibeMsgErroValorOriginal(false)
+        }
 
         validaPayloadDespesas(values);
 
-            if (Object.entries(errors).length === 0) {
+        if (Object.entries(errors).length === 0) {
 
-                if (values.data_documento) {
-                    let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
+            if (values.data_documento) {
+                let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
 
-                    if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente" ||
-                        retorno_saldo.situacao_do_saldo === "lancamento_anterior_implantacao") {
-                        setSaldosInsuficientesDaConta(retorno_saldo);
-                        setShowSaldoInsuficienteConta(true)
+                if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente" ||
+                    retorno_saldo.situacao_do_saldo === "lancamento_anterior_implantacao") {
+                    setSaldosInsuficientesDaConta(retorno_saldo);
+                    setShowSaldoInsuficienteConta(true)
 
-                    } else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
-                        setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes);
-                        setShowSaldoInsuficiente(true);
+                } else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
+                    setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes);
+                    setShowSaldoInsuficiente(true);
 
-                        // Checando se despesa já foi conferida
-                    } else if (values.rateios.find(element => element.conferido)) {
-                        setShowDespesaConferida(true)
+                    // Checando se despesa já foi conferida
+                } else if (values.rateios.find(element => element.conferido)) {
+                    setShowDespesaConferida(true)
 
-                        // Checando se despesa já foi cadastrada
-                    } else if (values.tipo_documento && values.numero_documento) {
-                        try {
-                            let despesa_cadastrada = await getDespesaCadastrada(values.tipo_documento, values.numero_documento, values.cpf_cnpj_fornecedor, despesaContext.idDespesa);
-                            if (despesa_cadastrada.despesa_ja_lancada) {
-                                setShowDespesaCadastrada(true)
-                            } else {
-                                onSubmit(values, setFieldValue);
-                            }
-                        } catch (e) {
-                            console.log("Erro ao buscar despesa cadastrada ", e);
+                    // Checando se despesa já foi cadastrada
+                } else if (values.tipo_documento && values.numero_documento) {
+                    try {
+                        let despesa_cadastrada = await getDespesaCadastrada(values.tipo_documento, values.numero_documento, values.cpf_cnpj_fornecedor, despesaContext.idDespesa);
+                        if (despesa_cadastrada.despesa_ja_lancada) {
+                            setShowDespesaCadastrada(true)
+                        } else {
+                            onSubmit(values, setFieldValue);
                         }
-                    } else {
-                        onSubmit(values, setFieldValue);
+                    } catch (e) {
+                        console.log("Erro ao buscar despesa cadastrada ", e);
                     }
                 } else {
-                    onSubmit(values, setFieldValue)
+                    onSubmit(values, setFieldValue);
                 }
+            } else {
+                onSubmit(values, setFieldValue)
             }
+        }
     };
 
     const onSubmit = async (values, setFieldValue) => {
@@ -272,43 +290,43 @@ export const CadastroForm = ({verbo_http}) => {
         const errors = {};
 
         // Validando se tipo de documento aceita apenas numéricos e se exibe campo Número do Documento
-        if (values.tipo_documento){
+        if (values.tipo_documento) {
             let exibe_campo_numero_documento;
             let so_numeros;
             // verificando se despesasTabelas já está preenchido
-            if (despesasTabelas && despesasTabelas.tipos_documento){
-                if (values.tipo_documento.id){
+            if (despesasTabelas && despesasTabelas.tipos_documento) {
+                if (values.tipo_documento.id) {
                     so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
-                }else {
+                } else {
                     so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
                 }
             }
 
             // Verificando se exibe campo Número do Documento
             exibe_campo_numero_documento = so_numeros;
-            if (exibe_campo_numero_documento && !exibe_campo_numero_documento.numero_documento_digitado){
+            if (exibe_campo_numero_documento && !exibe_campo_numero_documento.numero_documento_digitado) {
                 values.numero_documento = "";
                 setNumeroDocumentoReadOnly(true)
-            }else {
+            } else {
                 setNumeroDocumentoReadOnly(false)
             }
 
-            if (so_numeros && so_numeros.apenas_digitos && values.numero_documento){
-                if (isNaN(values.numero_documento)){
-                    errors.numero_documento="Este campo deve conter apenas algarismos numéricos."
+            if (so_numeros && so_numeros.apenas_digitos && values.numero_documento) {
+                if (isNaN(values.numero_documento)) {
+                    errors.numero_documento = "Este campo deve conter apenas algarismos numéricos."
                 }
             }
         }
 
         // Verificando erros nos valores de rateios e rateios original
-        if (await aux.getErroValorRealizadoRateios(values) !== 0){
+        if (await aux.getErroValorRealizadoRateios(values) !== 0) {
             let diferenca = Number(aux.getErroValorRealizadoRateios(values)).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             });
-            errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa. Diferença de  R$ '+ diferenca;
+            errors.valor_recusos_acoes = 'O total das despesas classificadas deve corresponder ao valor total dos recursos do Programa. Diferença de  R$ ' + diferenca;
         }
-        if (await aux.getErroValorOriginalRateios(values) !== 0){
+        if (await aux.getErroValorOriginalRateios(values) !== 0) {
             let diferenca = Number(aux.getErroValorOriginalRateios(values)).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
@@ -328,7 +346,7 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const houveAlteracoes = (values) => {
-        return !comparaObjetos(values,objetoParaComparacao)
+        return !comparaObjetos(values, objetoParaComparacao)
     }
 
     return (
@@ -360,11 +378,12 @@ export const CadastroForm = ({verbo_http}) => {
                             <>
                                 {props.values.status === 'COMPLETO' ?
                                     null :
-                                props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
-                                <div className="col-12 barra-status-erros pt-1 pb-1">
-                                    <p className="titulo-status pt-1 pb-1 mb-0">
-                                        O cadastro possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
-                                </div>
+                                    props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
+                                    <div className="col-12 barra-status-erros pt-1 pb-1">
+                                        <p className="titulo-status pt-1 pb-1 mb-0">
+                                            O cadastro possui {props.values.qtde_erros_form_despesa} campos não
+                                            preechidos, você pode completá-los agora ou terminar depois.</p>
+                                    </div>
                                 }
                                 <form onSubmit={props.handleSubmit}>
                                     <div className="form-row">
@@ -390,7 +409,9 @@ export const CadastroForm = ({verbo_http}) => {
                                             {/*{props.errors.cpf_cnpj_fornecedor && <span*/}
                                             {/*    className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}*/}
                                             {/* Validações personalizadas */}
-                                            {formErrors.cpf_cnpj_fornecedor && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.cpf_cnpj_fornecedor}</span></p>}
+                                            {formErrors.cpf_cnpj_fornecedor && <p className='mb-0'><span
+                                                className="span_erro text-danger mt-1">{formErrors.cpf_cnpj_fornecedor}</span>
+                                            </p>}
                                         </div>
                                         <div className="col-12 col-md-6  mt-4">
                                             <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
@@ -443,7 +464,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                 about={despesaContext.verboHttp}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
-                                            {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
+                                            {props.errors.data_documento && <span
+                                                className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                         </div>
 
                                         <div className="col-12 col-md-6 mt-4">
@@ -455,11 +477,12 @@ export const CadastroForm = ({verbo_http}) => {
                                                 name="numero_documento"
                                                 id="numero_documento" type="text"
                                                 /*className={`${ numeroDocumentoReadOnly ? "form-control" : !props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid form-control" : ""}`}*/
-                                                className={`${ !numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid " : ""} form-control`}
+                                                className={`${!numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid " : ""} form-control`}
                                                 placeholder="Digite o número"
                                                 disabled={readOnlyCampos || numeroDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
-                                            {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
+                                            {props.errors.numero_documento && <span
+                                                className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
                                         </div>
 
                                         <div className="col-12 col-md-6 mt-4">
@@ -498,12 +521,14 @@ export const CadastroForm = ({verbo_http}) => {
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                             {props.errors.data_transacao &&
-                                            <span className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
+                                            <span
+                                                className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
                                         </div>
 
                                         <div className="col-12 col-md-3 mt-4">
                                             <div className={cssEscondeDocumentoTransacao}>
-                                                <label htmlFor="documento_transacao">Número do {labelDocumentoTransacao}</label>
+                                                <label htmlFor="documento_transacao">Número
+                                                    do {labelDocumentoTransacao}</label>
                                                 <input
                                                     value={props.values.documento_transacao}
                                                     onChange={props.handleChange}
@@ -515,20 +540,22 @@ export const CadastroForm = ({verbo_http}) => {
                                                     placeholder="Digite o número do documento"
                                                     disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                                 />
-                                                {props.errors.documento_transacao && <span className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
+                                                {props.errors.documento_transacao && <span
+                                                    className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="form-row">
                                         <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="valor_original_form_principal">Valor total do documento</label>
+                                            <label htmlFor="valor_original_form_principal">Valor total do
+                                                documento</label>
                                             <CurrencyInput
                                                 allowNegative={false}
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
-                                                value={ props.values.valor_original }
+                                                value={props.values.valor_original}
                                                 name="valor_original"
                                                 id="valor_original_form_principal"
                                                 className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
@@ -539,11 +566,13 @@ export const CadastroForm = ({verbo_http}) => {
                                                 }}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
-                                            {props.errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
+                                            {props.errors.valor_original && exibeMsgErroValorOriginal &&
+                                            <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
                                         </div>
 
                                         <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="valor_total" className="label-valor-realizado">Valor realizado</label>
+                                            <label htmlFor="valor_total" className="label-valor-realizado">Valor
+                                                realizado</label>
                                             <CurrencyInput
                                                 allowNegative={false}
                                                 prefix='R$'
@@ -560,7 +589,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                             {props.errors.valor_total &&
-                                            <span className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
+                                            <span
+                                                className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
                                         </div>
 
                                         <div className="col-12 col-md-3 mt-4">
@@ -603,7 +633,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                     />
                                                 )}
                                             </Field>
-                                            {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                                            {errors.valor_recusos_acoes && exibeMsgErroValorRecursos &&
+                                            <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                                         </div>
                                     </div>
 
@@ -641,14 +672,16 @@ export const CadastroForm = ({verbo_http}) => {
                                                             <div className="form-row">
 
                                                                 <div className="col-12 mt-4 ml-0">
-                                                                    <p className='mb-0'><strong>Despesa {index + 1}</strong>
+                                                                    <p className='mb-0'>
+                                                                        <strong>Despesa {index + 1}</strong>
                                                                     </p>
                                                                     <hr className='mt-0 mb-1'/>
                                                                 </div>
 
                                                                 <div className="col-12 col-md-6 mt-4">
 
-                                                                    <label htmlFor={`aplicacao_recurso_${index}`}>Tipo de aplicação do recurso</label>
+                                                                    <label htmlFor={`aplicacao_recurso_${index}`}>Tipo
+                                                                        de aplicação do recurso</label>
                                                                     <select
                                                                         value={rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ""}
                                                                         onChange={(e) => {
@@ -663,7 +696,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                                         disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                                                     >
-                                                                        <option key={0} value="">Escolha uma opção</option>
+                                                                        <option key={0} value="">Escolha uma opção
+                                                                        </option>
                                                                         {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map(item => (
                                                                             <option key={item.id}
                                                                                     value={item.id}>{item.nome}</option>
@@ -704,7 +738,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                                 ) : null}
 
                                                             {index >= 1 && values.rateios.length > 1 && (
-                                                                <div className="d-flex  justify-content-start mt-3 mb-3">
+                                                                <div
+                                                                    className="d-flex  justify-content-start mt-3 mb-3">
                                                                     <button
                                                                         type="button"
                                                                         className="btn btn btn-outline-success mt-2 mr-2"
@@ -747,12 +782,12 @@ export const CadastroForm = ({verbo_http}) => {
                                                             aux.setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
                                                             aux.setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
                                                         }}
-                                                        onClick={() =>  {
+                                                        onClick={() => {
                                                             push(
                                                                 {
                                                                     associacao: localStorage.getItem(ASSOCIACAO_UUID),
-                                                                    escolha_tags:"",
-                                                                    tag:"",
+                                                                    escolha_tags: "",
+                                                                    tag: "",
                                                                     conta_associacao: "",
                                                                     acao_associacao: "",
                                                                     aplicacao_recurso: "",
@@ -775,30 +810,39 @@ export const CadastroForm = ({verbo_http}) => {
                                         )}
                                     />
                                     <div className="d-flex  justify-content-end pb-3 mt-3">
-                                        <button type="reset" onClick={houveAlteracoes(values) ? onShowModal: onCancelarTrue}
+                                        <button type="reset"
+                                                onClick={houveAlteracoes(values) ? onShowModal : onCancelarTrue}
                                                 className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                         </button>
                                         {despesaContext.idDespesa
-                                            ? <button disabled={readOnlyBtnAcao || !visoesService.getPermissoes(["delete_despesa"])} type="reset" onClick={()=>aux.onShowDeleteModal(setShowDelete)}
-                                                      className="btn btn btn-danger mt-2 mr-2">Deletar</button>
+                                            ? <button
+                                                disabled={readOnlyBtnAcao || !visoesService.getPermissoes(["delete_despesa"])}
+                                                type="reset" onClick={() => aux.onShowDeleteModal(setShowDelete)}
+                                                className="btn btn btn-danger mt-2 mr-2"
+                                            >Deletar
+                                        </button>
                                             : null}
-                                        <button disabled={btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)} type="button"
-                                                onClick={() => onShowSaldoInsuficiente(values, errors, setFieldValue, {resetForm})}
-                                                className="btn btn-success mt-2">Salvar
+                                        <button
+                                            disabled={btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                            type="button"
+                                            onClick={() => onShowSaldoInsuficiente(values, errors, setFieldValue, {resetForm})}
+                                            className="btn btn-success mt-2">Salvar
                                         </button>
                                     </div>
                                     <div className="d-flex justify-content-end">
-                                        <p>{errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}</p>
+                                        <p>{errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span
+                                            className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}</p>
                                     </div>
                                     <div className="d-flex justify-content-end">
-                                        <p>{errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> {errors.valor_original}</span>}</p>
+                                        <p>{errors.valor_original && exibeMsgErroValorOriginal && <span
+                                            className="span_erro text-danger mt-1"> {errors.valor_original}</span>}</p>
                                     </div>
 
                                     <section>
                                         <SaldoInsuficiente
                                             saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
                                             show={showSaldoInsuficiente}
-                                            handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                                            handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
                                             onSaldoInsuficienteTrue={() => onSubmit(values, setFieldValue)}
                                         />
                                     </section>
@@ -806,21 +850,21 @@ export const CadastroForm = ({verbo_http}) => {
                                         <SaldoInsuficienteConta
                                             saldosInsuficientesDaConta={saldosInsuficientesDaConta}
                                             show={showSaldoInsuficienteConta}
-                                            handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                                            handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
                                             onSaldoInsuficienteContaTrue={() => onSubmit(values, setFieldValue)}
                                         />
                                     </section>
                                     <section>
                                         <ChecarDespesaExistente
                                             show={showDespesaCadastrada}
-                                            handleClose={()=>setShowDespesaCadastrada(false)}
-                                            onSalvarDespesaCadastradaTrue={ () => onSubmit(values, setFieldValue) }/>
+                                            handleClose={() => setShowDespesaCadastrada(false)}
+                                            onSalvarDespesaCadastradaTrue={() => onSubmit(values, setFieldValue)}/>
                                     </section>
                                     <section>
                                         <ModalDespesaConferida
                                             show={showDespesaConferida}
-                                            handleClose={()=>setShowDespesaConferida(false)}
-                                            onSalvarDespesaConferida={ () => onSubmit(values, setFieldValue) }
+                                            handleClose={() => setShowDespesaConferida(false)}
+                                            onSalvarDespesaConferida={() => onSubmit(values, setFieldValue)}
                                             titulo="Despesa já demonstrada"
                                             texto="<p>Atenção. Essa despesa já foi demonstrada, caso a alteração seja gravada ela voltará a ser não demonstrada. Confirma a gravação?</p>"
                                         />
@@ -832,21 +876,28 @@ export const CadastroForm = ({verbo_http}) => {
                 </Formik>
             }
             <section>
-                <CancelarModal show={show} handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)} onCancelarTrue={()=>aux.onCancelarTrue (setShow, setLoading, origem)}/>
+                <CancelarModal show={show}
+                               handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                               onCancelarTrue={() => aux.onCancelarTrue(setShow, setLoading, origem)}/>
             </section>
             <section>
-                <AvisoCapitalModal show={showAvisoCapital} handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)} />
+                <AvisoCapitalModal show={showAvisoCapital}
+                                   handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}/>
             </section>
             {despesaContext.idDespesa
                 ?
-                <DeletarModal show={showDelete} handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)} onDeletarTrue={()=>aux.onDeletarTrue(setShowDelete, setLoading, despesaContext, origem)}/>
+                <DeletarModal show={showDelete}
+                              handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                              onDeletarTrue={() => aux.onDeletarTrue(setShowDelete, setLoading, despesaContext, origem)}/>
                 : null
             }
             <section>
-                <PeriodoFechado show={showPeriodoFechado} handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}/>
+                <PeriodoFechado show={showPeriodoFechado}
+                                handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}/>
             </section>
             <section>
-                <ErroGeral show={showErroGeral} handleClose={()=>aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}/>
+                <ErroGeral show={showErroGeral}
+                           handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}/>
             </section>
         </>
     );
