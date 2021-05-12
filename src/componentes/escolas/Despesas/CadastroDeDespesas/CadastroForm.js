@@ -199,9 +199,13 @@ export const CadastroForm = ({verbo_http}) => {
 
         validaPayloadDespesas(values);
 
+
         if (Object.entries(errors).length === 0) {
 
-            if (values.despesa_incompleta > 0 && enviarFormulario) {
+            setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
+            let erros_personalizados = await validacoesPersonalizadas(values, setFieldValue)
+
+            if (values.despesa_incompleta > 0 && enviarFormulario && Object.keys(erros_personalizados).length === 0) {
                 setShowModalDespesaIncompleta(true)
 
             }else if (values.data_documento) {
@@ -263,7 +267,7 @@ export const CadastroForm = ({verbo_http}) => {
                     const response = await criarDespesa(values);
                     if (response.status === HTTP_STATUS.CREATED) {
                         console.log("Operação realizada com sucesso!");
-                        //aux.getPath(origem);
+                        aux.getPath(origem);
                     } else {
                         setLoading(false);
                     }
@@ -277,7 +281,7 @@ export const CadastroForm = ({verbo_http}) => {
                     const response = await alterarDespesa(values, despesaContext.idDespesa);
                     if (response.status === 200) {
                         console.log("Operação realizada com sucesso!");
-                        //aux.getPath(origem);
+                        aux.getPath(origem);
                     } else {
                         setLoading(false);
                     }
