@@ -180,38 +180,10 @@ export const CadastroForm = ({verbo_http}) => {
         return erros;
     }, [aux])
 
-    const onShowModalDespesaIncompleta = () =>{
-        setShowModalDespesaIncompleta(true)
-    }
-
-    const onCloseModalDespesaIncompleta = () =>{
-        setShowModalDespesaIncompleta(false)
-    }
-
-
-
-    const hasValueDeep = (json, findValue) => {
-        if (json) {
-            const values = Object.values(json);
-            let hasValue = values.includes(findValue);
-            values.forEach(function (value) {
-                if (typeof value === "object") {
-                    hasValue = hasValue || hasValueDeep(value, findValue);
-                }
-            })
-            return hasValue;
-        }
-
-    }
-
-
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
         console.log("VALUES ", values)
 
-
         console.log('XXXXXXXXXXXXXXXXX', values.despesa_incompleta = document.getElementsByClassName("despesa_incompleta").length);
-
-        //console.log('XXXXXXXXXXXXXXXXX ', hasValueDeep(values, 'Afinação de instrumentos musicais'))
 
         if (errors && errors.valor_recusos_acoes) {
             setExibeMsgErroValorRecursos(true)
@@ -410,13 +382,10 @@ export const CadastroForm = ({verbo_http}) => {
 
                         return (
                             <>
-                                {props.values.status === 'COMPLETO' ?
-                                    null :
+                                {props.values.status === 'COMPLETO' ? null :
                                     props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
                                     <div className="col-12 barra-status-erros pt-1 pb-1">
-                                        <p className="titulo-status pt-1 pb-1 mb-0">
-                                            O cadastro possui {props.values.qtde_erros_form_despesa} campos não
-                                            preechidos, você pode completá-los agora ou terminar depois.</p>
+                                        <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
                                     </div>
                                 }
                                 <form onSubmit={props.handleSubmit}>
@@ -440,11 +409,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                 className={`${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.cpf_cnpj_fornecedor && 'despesa_incompleta'} form-control`}
                                                 placeholder="Digite o número do CNPJ ou CPF (apenas algarismos)"
                                             />
-                                            {/*{props.errors.cpf_cnpj_fornecedor && <span*/}
-                                            {/*    className="span_erro text-danger mt-1"> {props.errors.cpf_cnpj_fornecedor}</span>}*/}
                                             {/* Validações personalizadas */}
-                                            {formErrors.cpf_cnpj_fornecedor && <p className='mb-0'><span
-                                                className="span_erro text-danger mt-1">{formErrors.cpf_cnpj_fornecedor}</span>
+                                            {formErrors.cpf_cnpj_fornecedor && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.cpf_cnpj_fornecedor}</span>
                                             </p>}
                                         </div>
                                         <div className="col-12 col-md-6  mt-4">
@@ -495,11 +461,11 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onCalendarClose={async () => {
                                                     setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
                                                 }}
+                                                className={`${ !values.data_documento && verbo_http === "PUT" ? 'is_invalid' : ""} ${ !props.values.data_documento && "despesa_incompleta"} form-control`}
                                                 about={despesaContext.verboHttp}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
-                                            {props.errors.data_documento && <span
-                                                className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
+                                            {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                         </div>
 
                                         <div className="col-12 col-md-6 mt-4">
@@ -510,13 +476,11 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onBlur={props.handleBlur}
                                                 name="numero_documento"
                                                 id="numero_documento" type="text"
-                                                /*className={`${ numeroDocumentoReadOnly ? "form-control" : !props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid form-control" : ""}`}*/
-                                                className={`${!numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid " : ""} form-control`}
+                                                className={`${!numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid " : ""} ${!numeroDocumentoReadOnly && !values.numero_documento && 'despesa_incompleta'} form-control`}
                                                 placeholder="Digite o número"
                                                 disabled={readOnlyCampos || numeroDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
-                                            {props.errors.numero_documento && <span
-                                                className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
+                                            {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
                                         </div>
 
                                         <div className="col-12 col-md-6 mt-4">
@@ -534,7 +498,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onBlur={props.handleBlur}
                                                 name='tipo_transacao'
                                                 id='tipo_transacao'
-                                                className={`${!props.values.tipo_transacao && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                className={`${!props.values.tipo_transacao && despesaContext.verboHttp === "PUT" && "is_invalid "} ${ !props.values.tipo_transacao && "despesa_incompleta"} form-control`}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             >
                                                 <option key={0} value="">Selecione o tipo</option>
@@ -552,6 +516,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 value={values.data_transacao != null ? values.data_transacao : ""}
                                                 onChange={setFieldValue}
                                                 about={despesaContext.verboHttp}
+                                                className={`${ !values.data_transacao && verbo_http === "PUT" ? 'is_invalid' : ""} ${ !values.data_transacao && "despesa_incompleta"} form-control`}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
                                             {props.errors.data_transacao &&
@@ -561,8 +526,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                         <div className="col-12 col-md-3 mt-4">
                                             <div className={cssEscondeDocumentoTransacao}>
-                                                <label htmlFor="documento_transacao">Número
-                                                    do {labelDocumentoTransacao}</label>
+                                                <label htmlFor="documento_transacao">Número do {labelDocumentoTransacao}</label>
                                                 <input
                                                     value={props.values.documento_transacao}
                                                     onChange={props.handleChange}
@@ -582,8 +546,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                     <div className="form-row">
                                         <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="valor_original_form_principal">Valor total do
-                                                documento</label>
+                                            <label htmlFor="valor_original_form_principal">Valor total do documento</label>
                                             <CurrencyInput
                                                 allowNegative={false}
                                                 prefix='R$'
@@ -592,7 +555,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 value={props.values.valor_original}
                                                 name="valor_original"
                                                 id="valor_original_form_principal"
-                                                className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} ${ trataNumericos(props.values.valor_total) === 0 && "despesa_incompleta"} form-control`}
                                                 selectAllOnFocus={true}
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
@@ -615,7 +578,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 value={values.valor_total}
                                                 name="valor_total"
                                                 id="valor_total"
-                                                className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control ${trataNumericos(props.values.valor_total) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
+                                                className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control ${trataNumericos(props.values.valor_total) === 0 && "despesa_incompleta"} ${trataNumericos(props.values.valor_total) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
                                                 selectAllOnFocus={true}
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
@@ -686,7 +649,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 }}
                                                 name='mais_de_um_tipo_despesa'
                                                 id='mais_de_um_tipo_despesa'
-                                                className={`${!props.values.mais_de_um_tipo_despesa && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                className={`${!props.values.mais_de_um_tipo_despesa && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!values.mais_de_um_tipo_despesa && "despesa_incompleta"} form-control`}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             >
                                                 <option value="">Selecione</option>
