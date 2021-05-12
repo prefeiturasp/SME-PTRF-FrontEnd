@@ -43,6 +43,7 @@ import {metodosAuxiliares} from "../metodosAuxiliares";
 import {visoesService} from "../../../../services/visoes.service";
 import moment from "moment";
 import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
+import {ModalDespesaIncompleta} from "./ModalDespesaIncompleta";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -128,6 +129,7 @@ export const CadastroForm = ({verbo_http}) => {
     // Validações adicionais
     const [formErrors, setFormErrors] = useState({});
     const [enviarFormulario, setEnviarFormulario] = useState(true);
+    const [showModalDespesaIncompleta, setShowModalDespesaIncompleta] = useState(false);
 
     const validacoesPersonalizadas = useCallback(async (values, setFieldValue) => {
 
@@ -178,110 +180,38 @@ export const CadastroForm = ({verbo_http}) => {
         return erros;
     }, [aux])
 
-    // let obj = {
-    //     firstname: "John",
-    //     middlename: null,
-    //     lastname: "Mayer",
-    //     age: "",
-    //     gender: "Male",
-    //     outro:{
-    //         nome: "Ollyver",
-    //         minha_idade: ""
-    //     }
-    // };
-    //
-    // // let result = Object.keys(obj).filter(o => obj[o] === '' || obj[o] === null);
-    // // console.log(result);
-    //
-    // const emptyishProperties = Object.entries(obj).filter(([, val]) => val === null || val === undefined || val === '').map(([key]) => key);
-    // console.log(emptyishProperties);
+    const onShowModalDespesaIncompleta = () =>{
+        setShowModalDespesaIncompleta(true)
+    }
 
-    let obj = {
-        "India" : {
-            "Karnataka" : ["Bangalore", "Mysore"],
-            "Maharashtra" : ["Mumbai", "Pune"]
-        },
-        "USA" : {
-            "Texas" : ["Dallas", "Houston"],
-            "IL" : ["Chicago", "Aurora", "Pune"]
+    const onCloseModalDespesaIncompleta = () =>{
+        setShowModalDespesaIncompleta(false)
+    }
+
+
+
+    const hasValueDeep = (json, findValue) => {
+        if (json) {
+            const values = Object.values(json);
+            let hasValue = values.includes(findValue);
+            values.forEach(function (value) {
+                if (typeof value === "object") {
+                    hasValue = hasValue || hasValueDeep(value, findValue);
+                }
+            })
+            return hasValue;
         }
+
     }
-
-    let objeto_test = {
-        alterado_em: "2021-05-11T14:08:10.550823",
-        status: "INCOMPLETO",
-        USA : {
-            Texas : "Dallas",
-        }
-        //tipo_documento: null,
-        // tipo_transacao: null,
-        // uuid: "45ec4dc5-3f36-4ef0-a7e9-16560eb247f8",
-        // valor_original: "R$ 0,00",
-        // valor_original_total: "R$ 0,00",
-        // valor_recursos_proprios: "R$ 0,00",
-        // valor_total: "R$ 0,00",
-        // valor_total_dos_rateios: ""
-    }
-
-    // function checkIfExistingValue(obj, key, value) {
-    //     return obj.hasOwnProperty(key) && obj[key] === value;
-    // }
-    // var test = [{name : "jack", sex: 'F'}, {name: "joe", sex: 'M'}]
-    //
-    // console.log(
-    //     test.some(
-    //         function(person) {
-    //             return checkIfExistingValue(person, "name", "jack");
-    //         })
-    // );
-
-    // function nameCity(e){
-    //     var finalAns = []
-    //     var ans = [];
-    //     ans = Object.keys(e).forEach((a)=>{
-    //         for(var c in e[a]){
-    //             e[a][c].forEach(v=>{
-    //                 if(v === "Pune"){
-    //                     finalAns.push(c)
-    //                 }
-    //             })
-    //
-    //         }
-    //     })
-    //     console.log(finalAns)
-    // }
-    // nameCity(obj)
-
-    function hasValueDeep(json, findValue) {
-        debugger;
-        const values = Object.values(json);
-        let hasValue = values.includes(findValue);
-        values.forEach(function(value) {
-            if (typeof value === "object") {
-                hasValue = hasValue || hasValueDeep(value, findValue);
-            }
-        })
-        return hasValue;
-    }
-
 
 
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
+        console.log("VALUES ", values)
 
-        let objeto_test = {
-            alterado_em: "2021-05-11T14:08:10.550823",
-            status: "INCOMPLETO",
-            tipo_documento: null,
-            tipo_transacao: null,
-            uuid: "45ec4dc5-3f36-4ef0-a7e9-16560eb247f8",
-            valor_original: "R$ 0,00",
-            valor_original_total: "R$ 0,00",
-            valor_recursos_proprios: "R$ 0,00",
-            valor_total: "R$ 0,00",
-            valor_total_dos_rateios: ""
-        }
-        console.log("XXXXXx ", hasValueDeep(objeto_test, null))
 
+        console.log('XXXXXXXXXXXXXXXXX', values.despesa_incompleta = document.getElementsByClassName("despesa_incompleta").length);
+
+        //console.log('XXXXXXXXXXXXXXXXX ', hasValueDeep(values, 'Afinação de instrumentos musicais'))
 
         if (errors && errors.valor_recusos_acoes) {
             setExibeMsgErroValorRecursos(true)
@@ -299,7 +229,10 @@ export const CadastroForm = ({verbo_http}) => {
 
         if (Object.entries(errors).length === 0) {
 
-            if (values.data_documento) {
+            if (values.despesa_incompleta > 0 && enviarFormulario) {
+                setShowModalDespesaIncompleta(true)
+
+            }else if (values.data_documento) {
                 let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
 
                 if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente" ||
@@ -504,7 +437,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                     setFormErrors({cpf_cnpj_fornecedor: ""})
                                                 }}
                                                 name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
-                                                className={`${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                className={`${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.cpf_cnpj_fornecedor && 'despesa_incompleta'} form-control`}
                                                 placeholder="Digite o número do CNPJ ou CPF (apenas algarismos)"
                                             />
                                             {/*{props.errors.cpf_cnpj_fornecedor && <span*/}
@@ -521,7 +454,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
                                                 name="nome_fornecedor" id="nome_fornecedor" type="text"
-                                                className={`${!props.values.nome_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                className={`${!props.values.nome_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.nome_fornecedor && 'despesa_incompleta'} form-control`}
                                                 placeholder="Digite o nome"
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
@@ -541,7 +474,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onBlur={props.handleBlur}
                                                 name='tipo_documento'
                                                 id='tipo_documento'
-                                                className={`${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                className={`${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.tipo_documento && 'despesa_incompleta'} form-control`}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             >
                                                 <option key={0} value="">Selecione o tipo</option>
@@ -921,7 +854,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 type="reset" onClick={() => aux.onShowDeleteModal(setShowDelete)}
                                                 className="btn btn btn-danger mt-2 mr-2"
                                             >Deletar
-                                        </button>
+                                            </button>
                                             : null}
                                         <button
                                             disabled={btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
@@ -970,6 +903,15 @@ export const CadastroForm = ({verbo_http}) => {
                                             texto="<p>Atenção. Essa despesa já foi demonstrada, caso a alteração seja gravada ela voltará a ser não demonstrada. Confirma a gravação?</p>"
                                         />
                                     </section>
+                                    <section>
+                                        <ModalDespesaIncompleta
+                                            show={showModalDespesaIncompleta}
+                                            handleClose={() => setShowModalDespesaIncompleta(false)}
+                                            onSalvarDespesaIncompleta={() => onSubmit(values, setFieldValue)}
+                                            titulo="Despesa incompleta"
+                                            texto="<p>Esta despesa encontra-se incompleta. Você pode concluir o cadastro agora ou  editá-lo posteriormente. Deseja finalizar o cadastro agora?</p>"
+                                        />
+                                    </section>
                                 </form>
                             </>
                         ); /*Return metodo principal*/
@@ -977,28 +919,38 @@ export const CadastroForm = ({verbo_http}) => {
                 </Formik>
             }
             <section>
-                <CancelarModal show={show}
-                               handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
-                               onCancelarTrue={() => aux.onCancelarTrue(setShow, setLoading, origem)}/>
+                <CancelarModal
+                    show={show}
+                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                    onCancelarTrue={() => aux.onCancelarTrue(setShow, setLoading, origem)}
+                />
             </section>
             <section>
-                <AvisoCapitalModal show={showAvisoCapital}
-                                   handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}/>
+                <AvisoCapitalModal
+                    show={showAvisoCapital}
+                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                />
             </section>
             {despesaContext.idDespesa
                 ?
-                <DeletarModal show={showDelete}
-                              handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
-                              onDeletarTrue={() => aux.onDeletarTrue(setShowDelete, setLoading, despesaContext, origem)}/>
+                <DeletarModal
+                    show={showDelete}
+                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                    onDeletarTrue={() => aux.onDeletarTrue(setShowDelete, setLoading, despesaContext, origem)}
+                />
                 : null
             }
             <section>
-                <PeriodoFechado show={showPeriodoFechado}
-                                handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}/>
+                <PeriodoFechado
+                    show={showPeriodoFechado}
+                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                />
             </section>
             <section>
-                <ErroGeral show={showErroGeral}
-                           handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}/>
+                <ErroGeral
+                    show={showErroGeral}
+                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                />
             </section>
         </>
     );
