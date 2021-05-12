@@ -16,7 +16,6 @@ export const CadastroFormCusteio = (propriedades) => {
         <>
             <div className="form-row">
                 <div className="col-12 col-md-6 mt-4">
-
                     <label htmlFor="tipo_custeio">Tipo de despesa de custeio</label>
                     <select
                         value={
@@ -29,7 +28,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         }}
                         name={`rateios[${index}].tipo_custeio`}
                         id='tipo_custeio'
-                        className={`${!rateio.tipo_custeio && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        className={`${!rateio.tipo_custeio && verboHttp === "PUT" && "is_invalid "} ${!rateio.tipo_custeio && 'despesa_incompleta'} form-control`}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option value="">Selecione um tipo</option>
@@ -38,7 +37,6 @@ export const CadastroFormCusteio = (propriedades) => {
                         ))}
                     </select>
                 </div>
-
             </div>
 
             <div className="form-row">
@@ -53,7 +51,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].especificacao_material_servico`}
                         id={`especificacao_material_servico_${index}`}
-                        className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} ${!rateio.especificacao_material_servico && 'despesa_incompleta'} form-control`}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option key={0} value="">Selecione uma especificação</option>
@@ -80,7 +78,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].acao_associacao`}
                         id='acao_associacao'
-                        className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} ${!rateio.acao_associacao && 'despesa_incompleta'} form-control`}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option key={0} value="">Selecione uma ação</option>
@@ -100,7 +98,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].conta_associacao`}
                         id='conta_associacao'
-                        className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} ${!rateio.conta_associacao && 'despesa_incompleta'} form-control`}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option key={0} value="">Selecione uma conta</option>
@@ -129,7 +127,6 @@ export const CadastroFormCusteio = (propriedades) => {
                     />
                     {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
                 </div>
-
                 <div className="col-12 col-md-3 mt-4">
                     <label htmlFor="valor_rateio" className="label-valor-realizado">Valor realizado</label>
                     <CurrencyInput
@@ -140,7 +137,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         value={rateio.valor_rateio}
                         name={`rateios[${index}].valor_rateio`}
                         id="valor_rateio"
-                        className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control ${trataNumericos(rateio.valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
+                        className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} ${trataNumericos(rateio.valor_rateio) === 0 && 'despesa_incompleta'} form-control ${trataNumericos(rateio.valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
                         onChangeEvent={formikProps.handleChange}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     />
