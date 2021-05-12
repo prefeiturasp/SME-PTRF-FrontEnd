@@ -16,7 +16,6 @@ export const CadastroFormCusteio = (propriedades) => {
         <>
             <div className="form-row">
                 <div className="col-12 col-md-6 mt-4">
-
                     <label htmlFor="tipo_custeio">Tipo de despesa de custeio</label>
                     <select
                         value={
@@ -38,7 +37,6 @@ export const CadastroFormCusteio = (propriedades) => {
                         ))}
                     </select>
                 </div>
-
             </div>
 
             <div className="form-row">
@@ -129,7 +127,6 @@ export const CadastroFormCusteio = (propriedades) => {
                     />
                     {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
                 </div>
-
                 <div className="col-12 col-md-3 mt-4">
                     <label htmlFor="valor_rateio" className="label-valor-realizado">Valor realizado</label>
                     <CurrencyInput
