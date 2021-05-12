@@ -40,7 +40,7 @@ export const CadastroFormCapital = (propriedades) => {
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].especificacao_material_servico`}
                         id={`especificacao_material_servico_${index}`}
-                        className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} ${!rateio.especificacao_material_servico && 'despesa_incompleta'} form-control`}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option key={0} value="">Selecione uma especificação</option>
@@ -61,7 +61,7 @@ export const CadastroFormCapital = (propriedades) => {
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].acao_associacao`}
                         id={`acao_associacao_form_capital_${index}`}
-                        className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} ${!rateio.acao_associacao && 'despesa_incompleta'} form-control`}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option value="">Selecione uma ação</option>
@@ -86,7 +86,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 name={`rateios[${index}].quantidade_itens_capital`}
                                 decimalScale={0}
                                 id={`quantidade_itens_capital_${index}`}
-                                className={`${(!rateio.quantidade_itens_capital || rateio.quantidade_itens_capital === '0') && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                                className={`${(!rateio.quantidade_itens_capital || rateio.quantidade_itens_capital === '0') && verboHttp === "PUT" ? "is_invalid" : ""} ${(!rateio.quantidade_itens_capital || rateio.quantidade_itens_capital === '0') && 'despesa_incompleta'} form-control`}
                                 disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                             />
                         </div>
@@ -101,7 +101,7 @@ export const CadastroFormCapital = (propriedades) => {
                                 value={rateio.valor_item_capital}
                                 name={`rateios[${index}].valor_item_capital`}
                                 id={`valor_item_capital_${index}`}
-                                className={`${trataNumericos(rateio.valor_item_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                                className={`${trataNumericos(rateio.valor_item_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} ${trataNumericos(rateio.valor_item_capital) === 0 && 'despesa_incompleta'} form-control`}
                                 onChangeEvent={(e) => {
                                     formikProps.handleChange(e);
                                     handleChangeData(rateio.quantidade_itens_capital, e.target.value, formikProps.setFieldValue);
@@ -119,7 +119,7 @@ export const CadastroFormCapital = (propriedades) => {
                         mask={(valor) => processoIncorporacaoMask(valor)}
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].numero_processo_incorporacao_capital`}
-                        className={`${!rateio.numero_processo_incorporacao_capital && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        className={`${!rateio.numero_processo_incorporacao_capital && verboHttp === "PUT" && "is_invalid "} ${!rateio.numero_processo_incorporacao_capital && 'despesa_incompleta'} form-control`}
                         placeholder="Escreva o número do processo"
                         defaultValue={rateio.numero_processo_incorporacao_capital}
                         id={`numero_processo_incorporacao_capital_${index}`}
@@ -138,7 +138,7 @@ export const CadastroFormCapital = (propriedades) => {
                             onChange={formikProps.handleChange}
                             name={`rateios[${index}].conta_associacao`}
                             id={`conta_associacao_${index}`}
-                            className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
+                            className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} ${!rateio.conta_associacao && 'despesa_incompleta'} form-control`}
                             disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                         >
                             <option key={0} value="">Selecione uma conta</option>
@@ -158,7 +158,7 @@ export const CadastroFormCapital = (propriedades) => {
                             value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
                             name={`rateios[${index}].valor_original`}
                             id={`valor_original_form_capital_${index}`}
-                            className={`${ calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                            className={`${ calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} ${calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital) === 0 && 'despesa_incompleta'} form-control`}
                             onChangeEvent={formikProps.handleChange}
                             disabled={true}
                         />
@@ -175,7 +175,7 @@ export const CadastroFormCapital = (propriedades) => {
                             value={rateio.valor_rateio}
                             name={`rateios[${index}].valor_rateio`}
                             id={`valor_rateio_${index}`}
-                            className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control ${trataNumericos(rateio.valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
+                            className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} ${trataNumericos(rateio.valor_rateio) === 0 && 'despesa_incompleta'} form-control ${trataNumericos(rateio.valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
                             onChangeEvent={(e) => {
                                 formikProps.handleChange(e);
                                 //setValorItemRateio({...valorItemRateio, [index]: e.target.value})
