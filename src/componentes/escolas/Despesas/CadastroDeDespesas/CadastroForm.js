@@ -181,9 +181,6 @@ export const CadastroForm = ({verbo_http}) => {
     }, [aux])
 
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
-        console.log("VALUES ", values)
-
-        console.log('XXXXXXXXXXXXXXXXX', values.despesa_incompleta = document.getElementsByClassName("despesa_incompleta").length);
 
         if (errors && errors.valor_recusos_acoes) {
             setExibeMsgErroValorRecursos(true)

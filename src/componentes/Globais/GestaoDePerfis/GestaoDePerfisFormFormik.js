@@ -83,7 +83,7 @@ export const GestaoDePerfisFormFormik = (
                             <div className="p-Y bd-highlight">
                                 <button onClick={() => window.location.assign('/gestao-de-perfis/')}
                                         type="button"
-                                        className="btn btn btn-outline-success mt-2 ml-2">voltar
+                                        className="btn btn btn-outline-success mt-2 ml-2">Voltar
                                 </button>
                             </div>
                         </div>
