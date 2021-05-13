@@ -166,7 +166,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/dre-dados-da-unidade-educacional",
+        path: "/dre-dados-da-unidade-educacional/:origem?/:periodo_uuid?/:conta_uuid?",
         component: DadosDaUnidadeEducacionalPage,
         permissoes: ['access_associacao_dre', 'access_dados_unidade_dre'],
     },
@@ -196,13 +196,13 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/dre-regularidade-unidade-educacional",
+        path: "/dre-regularidade-unidade-educacional/:origem?/:periodo_uuid?/:conta_uuid?",
         component: PaginaRegularidadeUnidadeEducacional,
         permissoes: ['access_associacao_dre', 'access_regularidade_dre'],
     },
     {
         exact: true,
-        path: "/dre-situacao-financeira-unidade-educacional",
+        path: "/dre-situacao-financeira-unidade-educacional/:origem?/:periodo_uuid?/:conta_uuid?",
         component: SituacaoFinanceiraUnidadeEducacionalPage,
         permissoes: ['access_associacao_dre', 'access_situacao_financeira_dre'],
     },

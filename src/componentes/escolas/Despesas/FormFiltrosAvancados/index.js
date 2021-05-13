@@ -66,8 +66,11 @@ export const FormFiltrosAvancados = (props) => {
                         <div className="form-group col-md-6">
                             <label htmlFor="acao_associacao">Filtrar por ação</label>
                             <select value={state.acao_associacao}
-                                    onChange={(e) => handleChange(e.target.name, e.target.value)} name="acao_associacao"
-                                    id="acao_associacao" className="form-control">
+                                    onChange={(e) => handleChange(e.target.name, e.target.value)}
+                                    name="acao_associacao"
+                                    id="acao_associacao_form_filtros_avancados_despesas"
+                                    className="form-control"
+                            >
                                 <option key={0} value="">Selecione uma ação</option>
                                 {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
                                     <option key={item.uuid} value={item.uuid}>{item.nome}</option>
@@ -78,7 +81,10 @@ export const FormFiltrosAvancados = (props) => {
                             <label htmlFor="aplicacao_recurso">Filtrar por tipo de aplicação</label>
                             <select value={state.aplicacao_recurso}
                                     onChange={(e) => handleChange(e.target.name, e.target.value)}
-                                    name="aplicacao_recurso" id="aplicacao_recurso" className="form-control">
+                                    name="aplicacao_recurso"
+                                    id="aplicacao_recurso_form_filtros_avancados_despesas"
+                                    className="form-control"
+                            >
                                 <option key={0} value="">Selecione um tipo</option>
                                 {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map(item => (
                                     <option key={item.id} value={item.id}>{item.nome}</option>

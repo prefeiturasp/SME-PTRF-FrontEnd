@@ -9,22 +9,21 @@ import moment from "moment";
 registerLocale("pt", pt );
 
 
-export const DatePickerField = ({ name, about, value, onChange, disabled, placeholderText }) => {
+export const DatePickerField = ({ name, about, value, className="form-control", onChange, onCalendarClose, disabled, placeholderText }) => {
 
     return (
         <DatePicker
             disabled={disabled}
-            //selected={(value && new Date(moment(value).format('MMMM D, YYYY'))) || null}
-            //selected={(value && new Date(value)) || null}
             selected={(value && new Date(moment(value))) || null}
             onChange={val => {
                 onChange(name, val);
             }}
+            onCalendarClose={onCalendarClose}
             dateFormat="dd/MM/yyyy"
             name={name}
             locale="pt"
             showYearDropdown
-            className={`${ (name === "data_documento" || name === "data_transacao") && !value && about === "PUT" ? 'is_invalid' : ""} form-control`}
+            className = {className}
             placeholderText={placeholderText}
             customInput={
                 <MaskedInput

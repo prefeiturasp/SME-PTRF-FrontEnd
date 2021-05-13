@@ -1,27 +1,36 @@
-import React, {useState} from "react";
+import React from "react";
 import NumberFormat from "react-number-format";
-import {calculaValorRateio, trataNumericos, processoIncorporacaoMask} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {
+    calculaValorRateio,
+    trataNumericos,
+    processoIncorporacaoMask
+} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import CurrencyInput from "react-currency-input";
 import MaskedInput from "react-text-mask";
 import {visoesService} from "../../../../services/visoes.service";
 
 export const CadastroFormCapital = (propriedades) => {
-    const {formikProps, rateio, rateios, index, despesasTabelas, especificaoes_capital, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal, setFieldValue} = propriedades;
-    //const [valorItemRateio, setValorItemRateio] = useState({[index]: rateio.valor_rateio});
+    const {
+        formikProps,
+        rateio,
+        rateios,
+        index,
+        despesasTabelas,
+        especificaoes_capital,
+        verboHttp,
+        disabled,
+        errors,
+        exibeMsgErroValorRecursos,
+        exibeMsgErroValorOriginal
+    } = propriedades;
 
     const handleChangeData = (quantidade, valor, setFieldValue) => {
         let val = calculaValorRateio(quantidade, trataNumericos(valor));
-        /*let d = {
-            ...valorItemRateio,
-            [index]: val
-        };
-        setValorItemRateio(d);*/
         setFieldValue(`rateios[${index}].valor_rateio`, val)
-
     };
 
     const handleChangeQtdeItens = (valor, setFieldValue) => {
-        if (formikProps.values.mais_de_um_tipo_despesa === 'nao' && valor !== '1'){
+        if (formikProps.values.mais_de_um_tipo_despesa === 'nao' && valor !== '1') {
             setFieldValue(`rateios[${index}].valor_item_capital`, 0)
         }
     };
@@ -30,7 +39,8 @@ export const CadastroFormCapital = (propriedades) => {
         <>
             <div className="row mt-4">
                 <div className="col-12">
-                    <label htmlFor="especificacao_material_servico">Especificação do material ou serviço</label>
+                    <label htmlFor={`especificacao_material_servico_${index}`}>Especificação do material ou
+                        serviço</label>
                     <select
                         value={
                             rateio.especificacao_material_servico !== null ? (
@@ -39,8 +49,8 @@ export const CadastroFormCapital = (propriedades) => {
                         }
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].especificacao_material_servico`}
-                        id='especificacao_material_servico'
-                        className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        id={`especificacao_material_servico_${index}`}
+                        className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} ${!rateio.especificacao_material_servico && 'despesa_incompleta'} form-control`}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option key={0} value="">Selecione uma especificação</option>
@@ -51,7 +61,7 @@ export const CadastroFormCapital = (propriedades) => {
                 </div>
 
                 <div className="col-12 col-md-6 mt-4">
-                    <label htmlFor="acao_associacao">Ação</label>
+                    <label htmlFor={`acao_associacao_form_capital_${index}`}>Ação</label>
                     <select
                         value={
                             rateio.acao_associacao !== null ? (
@@ -60,8 +70,8 @@ export const CadastroFormCapital = (propriedades) => {
                         }
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].acao_associacao`}
-                        id='acao_associacao'
-                        className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        id={`acao_associacao_form_capital_${index}`}
+                        className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} ${!rateio.acao_associacao && 'despesa_incompleta'} form-control`}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option value="">Selecione uma ação</option>
@@ -85,14 +95,14 @@ export const CadastroFormCapital = (propriedades) => {
                                 }}
                                 name={`rateios[${index}].quantidade_itens_capital`}
                                 decimalScale={0}
-                                id="quantidade_itens_capital"
-                                className={`${(!rateio.quantidade_itens_capital || rateio.quantidade_itens_capital === '0') && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                                id={`quantidade_itens_capital_${index}`}
+                                className={`${(!rateio.quantidade_itens_capital || rateio.quantidade_itens_capital === '0') && verboHttp === "PUT" ? "is_invalid" : ""} ${(!rateio.quantidade_itens_capital || rateio.quantidade_itens_capital === '0') && 'despesa_incompleta'} form-control`}
                                 disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                             />
                         </div>
 
                         <div className="col-12 col-md-6 mt-4">
-                            <label htmlFor="valor_item_capital">Valor unitário </label>
+                            <label htmlFor={`valor_item_capital_${index}`}>Valor unitário </label>
                             <CurrencyInput
                                 allowNegative={false}
                                 prefix='R$'
@@ -100,8 +110,8 @@ export const CadastroFormCapital = (propriedades) => {
                                 thousandSeparator="."
                                 value={rateio.valor_item_capital}
                                 name={`rateios[${index}].valor_item_capital`}
-                                id="valor_item_capital"
-                                className={`${trataNumericos(rateio.valor_item_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
+                                id={`valor_item_capital_${index}`}
+                                className={`${trataNumericos(rateio.valor_item_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} ${trataNumericos(rateio.valor_item_capital) === 0 && 'despesa_incompleta'} form-control`}
                                 onChangeEvent={(e) => {
                                     formikProps.handleChange(e);
                                     handleChangeData(rateio.quantidade_itens_capital, e.target.value, formikProps.setFieldValue);
@@ -113,78 +123,78 @@ export const CadastroFormCapital = (propriedades) => {
                 </div>
 
                 <div className="col-12 col-md-6 mt-4">
-                    <label htmlFor="numero_processo_incorporacao_capital">Número do processo de incorporação</label>
+                    <label htmlFor={`numero_processo_incorporacao_capital_${index}`}>Número do processo de
+                        incorporação</label>
                     <MaskedInput
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                         mask={(valor) => processoIncorporacaoMask(valor)}
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].numero_processo_incorporacao_capital`}
-                        className={`${!rateio.numero_processo_incorporacao_capital && verboHttp === "PUT" && "is_invalid "} form-control`}
+                        className={`${!rateio.numero_processo_incorporacao_capital && verboHttp === "PUT" && "is_invalid "} ${!rateio.numero_processo_incorporacao_capital && 'despesa_incompleta'} form-control`}
                         placeholder="Escreva o número do processo"
                         defaultValue={rateio.numero_processo_incorporacao_capital}
-                        id='numero_processo_incorporacao_capital'
+                        id={`numero_processo_incorporacao_capital_${index}`}
                     />
                 </div>
-
-
-                    <div className="col-12 col-md-6 mt-4">
-                        <label htmlFor="conta_associacao">Tipo de conta utilizada</label>
-                        <select
-                            value={
-                                rateio.conta_associacao !== null ? (
-                                    typeof rateio.conta_associacao === "object" ? rateio.conta_associacao.uuid : rateio.conta_associacao
-                                ) : ""
-                            }
-                            onChange={formikProps.handleChange}
-                            name={`rateios[${index}].conta_associacao`}
-                            id='conta_associacao'
-                            className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} form-control`}
-                            disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                        >
-                            <option key={0} value="">Selecione uma conta</option>
-                            {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
-                                <option key={item.uuid} value={item.uuid}>{item.nome}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="col-12 col-md-6 mt-4">
-                        <label htmlFor="valor_original">Valor total do capital</label>
-                        <CurrencyInput
-                            allowNegative={false}
-                            prefix='R$'
-                            decimalSeparator=","
-                            thousandSeparator="."
-                            value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
-                            name={`rateios[${index}].valor_original`}
-                            id="valor_original"
-                            className={`${ calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control`}
-                            onChangeEvent={formikProps.handleChange}
-                            disabled={true}
-                        />
-                        {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
-                    </div>
-
-                    <div className="col-12 col-md-6 mt-4">
-                        <label htmlFor="valor_rateio" className="label-valor-realizado">Valor realizado</label>
-                        <CurrencyInput
-                            allowNegative={false}
-                            prefix='R$'
-                            decimalSeparator=","
-                            thousandSeparator="."
-                            value={rateio.valor_rateio}
-                            name={`rateios[${index}].valor_rateio`}
-                            id="valor_rateio"
-                            className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} form-control ${trataNumericos(rateio.valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
-                            onChangeEvent={(e) => {
-                                formikProps.handleChange(e);
-                                //setValorItemRateio({...valorItemRateio, [index]: e.target.value})
-                            }}
-                            disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                        />
-                        {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
-                    </div>
+                <div className="col-12 col-md-6 mt-4">
+                    <label htmlFor={`conta_associacao_${index}`}>Tipo de conta utilizada</label>
+                    <select
+                        value={
+                            rateio.conta_associacao !== null ? (
+                                typeof rateio.conta_associacao === "object" ? rateio.conta_associacao.uuid : rateio.conta_associacao
+                            ) : ""
+                        }
+                        onChange={formikProps.handleChange}
+                        name={`rateios[${index}].conta_associacao`}
+                        id={`conta_associacao_${index}`}
+                        className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} ${!rateio.conta_associacao && 'despesa_incompleta'} form-control`}
+                        disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                    >
+                        <option key={0} value="">Selecione uma conta</option>
+                        {despesasTabelas.contas_associacao && despesasTabelas.contas_associacao.map(item => (
+                            <option key={item.uuid} value={item.uuid}>{item.nome}</option>
+                        ))}
+                    </select>
                 </div>
+
+                <div className="col-12 col-md-6 mt-4">
+                    <label htmlFor={`valor_original_form_capital_${index}`}>Valor total do capital</label>
+                    <CurrencyInput
+                        allowNegative={false}
+                        prefix='R$'
+                        decimalSeparator=","
+                        thousandSeparator="."
+                        value={calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital)}
+                        name={`rateios[${index}].valor_original`}
+                        id={`valor_original_form_capital_${index}`}
+                        className={`${calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} ${calculaValorRateio(rateio.valor_item_capital, rateio.quantidade_itens_capital) === 0 && 'despesa_incompleta'} form-control`}
+                        onChangeEvent={formikProps.handleChange}
+                        disabled={true}
+                    />
+                    {errors.valor_original && exibeMsgErroValorOriginal &&
+                    <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
+                </div>
+
+                <div className="col-12 col-md-6 mt-4">
+                    <label htmlFor={`valor_rateio_${index}`} className="label-valor-realizado">Valor realizado</label>
+                    <CurrencyInput
+                        allowNegative={false}
+                        prefix='R$'
+                        decimalSeparator=","
+                        thousandSeparator="."
+                        value={rateio.valor_rateio}
+                        name={`rateios[${index}].valor_rateio`}
+                        id={`valor_rateio_${index}`}
+                        className={`${trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} ${trataNumericos(rateio.valor_rateio) === 0 && 'despesa_incompleta'} form-control ${trataNumericos(rateio.valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
+                        onChangeEvent={(e) => {
+                            formikProps.handleChange(e);
+                        }}
+                        disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                    />
+                    {errors.valor_recusos_acoes && exibeMsgErroValorRecursos &&
+                    <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                </div>
+            </div>
         </>
     )
 };
