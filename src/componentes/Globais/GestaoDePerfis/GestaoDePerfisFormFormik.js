@@ -227,8 +227,7 @@ export const GestaoDePerfisFormFormik = (
                                         }
                                     >
                                         {grupos && grupos.length > 0 && grupos.map((grupo, index) => (
-                                            <option key={index}
-                                                    value={grupo.id}>{grupo.nome}</option>
+                                            <option key={index} value={grupo.id}>{grupo.nome}</option>
                                         ))}
                                     </Field>
                                     {props.errors.groups && <span
