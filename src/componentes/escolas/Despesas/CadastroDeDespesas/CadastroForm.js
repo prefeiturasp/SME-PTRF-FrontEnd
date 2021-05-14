@@ -150,7 +150,6 @@ export const CadastroForm = ({verbo_http}) => {
 
         // Verifica período fechado para a receita
         if (values.data_documento) {
-            //await periodoFechado(values.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
             let data = moment(values.data_documento, "YYYY-MM-DD").format("YYYY-MM-DD");
             try {
                 let periodo_fechado = await getPeriodoFechado(data);
@@ -181,6 +180,7 @@ export const CadastroForm = ({verbo_http}) => {
     }, [aux])
 
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
+        values.despesa_incompleta = document.getElementsByClassName("despesa_incompleta").length
 
         if (errors && errors.valor_recusos_acoes) {
             setExibeMsgErroValorRecursos(true)
@@ -821,7 +821,7 @@ export const CadastroForm = ({verbo_http}) => {
                                             </button>
                                             : null}
                                         <button
-                                            disabled={btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                            disabled={!props.values.cpf_cnpj_fornecedor || btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             type="button"
                                             onClick={() => onShowSaldoInsuficiente(values, errors, setFieldValue, {resetForm})}
                                             className="btn btn-success mt-2">Salvar

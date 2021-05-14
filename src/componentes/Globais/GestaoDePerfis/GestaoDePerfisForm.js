@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import {useParams} from 'react-router-dom'
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {visoesService} from "../../../services/visoes.service";
-import {getUsuario, getUsuarioStatus, getCodigoEolUnidade, getGrupos, postCriarUsuario, putEditarUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
+import {getUsuario, getUsuarioStatus, getCodigoEolUnidade, getGrupos, getUsuarioUnidadesVinculadas, postCriarUsuario, putEditarUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
 import {valida_cpf_cnpj} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
 import {GestaoDePerfisFormFormik} from "./GestaoDePerfisFormFormik";
@@ -22,7 +22,8 @@ export const GestaoDePerfisForm = () =>{
         email: '',
         visao: visao_selecionada,
         groups: [],
-        unidade: ""
+        visoes: [],
+        unidade: "",
     };
 
     const [statePerfisForm, setStatePerfisForm] = useState(initPerfisForm);
@@ -31,6 +32,7 @@ export const GestaoDePerfisForm = () =>{
     const [bloquearCampoName, setBloquearCampoName] = useState(true)
     const [bloquearCampoEmail, setBloquearCampoEmail] = useState(true)
     const [loading, setLoading] = useState(false);
+    const [visoes, setVisoes] = useState([]);
 
     const carregaCodigoEolUnidade = useCallback(async ()=>{
         if (visao_selecionada !== "SME"){
@@ -53,13 +55,52 @@ export const GestaoDePerfisForm = () =>{
         exibeGrupos()
     }, [exibeGrupos])
 
+    const exibeVisoes = useCallback(()=>{
+        let _visoes;
+
+        if (visao_selecionada === "SME"){
+            _visoes = [
+                {nome: "SME", id: 3,editavel: true},
+                {nome: "DRE", id: 2, editavel: true},
+                {nome: "UE", id: 1, editavel: true},
+            ]
+        }else if (visao_selecionada === "DRE"){
+            _visoes = [
+                {nome: "SME", id: 3,editavel: false},
+                {nome: "DRE", id: 2, editavel: true},
+                {nome: "UE", id: 1, editavel: true},
+            ]
+        }else if (visao_selecionada === "UE"){
+            _visoes = [
+                {nome: "SME", id: 3,editavel: false},
+                {nome: "DRE", id: 2, editavel: false},
+                {nome: "UE", id: 1, editavel: true},
+            ]
+        }
+        setVisoes(_visoes)
+    }, [visao_selecionada])
+
+    useEffect(()=>{
+        exibeVisoes()
+    }, [exibeVisoes])
+
     const carregaDadosUsuario = useCallback(async ()=>{
         if (id_usuario){
             let dados_usuario = await getUsuario(id_usuario)
+
+            console.log("carregaDadosUsuario ", dados_usuario)
+
             let ids_grupos =[];
             if (dados_usuario.groups && dados_usuario.groups.length > 0){
                 dados_usuario.groups.map((grupo)=>
                     ids_grupos.push(grupo.id)
+                );
+            }
+
+            let ids_visoes = [];
+            if (dados_usuario.visoes && dados_usuario.visoes.length > 0){
+                dados_usuario.visoes.map((visao)=>
+                    ids_visoes.push(visao.id)
                 );
             }
 
@@ -71,6 +112,7 @@ export const GestaoDePerfisForm = () =>{
                 email: dados_usuario.email,
                 visao: visao_selecionada,
                 groups: ids_grupos,
+                visoes: ids_visoes,
                 unidade: codigoEolUnidade ? codigoEolUnidade : ""
             };
             setStatePerfisForm(initPerfisForm)
@@ -269,6 +311,8 @@ export const GestaoDePerfisForm = () =>{
                 if (visao_selecionada !== 'SME'){
                     usuario_status = await getUsuarioStatus(values.username, values.e_servidor, uuid_unidade);
 
+                    console.log("USUARIO STATUS Não SME ", usuario_status)
+
                     setUsuariosStatus(usuario_status)
                     if (visao_selecionada === "DRE"){
                         await serviceVisaoDre(usuario_status, {setFieldValue, resetForm})
@@ -277,6 +321,7 @@ export const GestaoDePerfisForm = () =>{
                     }
                 }else {
                     usuario_status = await getUsuarioStatus(values.username, values.e_servidor);
+                    console.log("USUARIO STATUS SME ", usuario_status)
                     setUsuariosStatus(usuario_status)
                     await serviceVisaoSme(usuario_status, {setFieldValue, resetForm})
                 }
@@ -391,6 +436,7 @@ export const GestaoDePerfisForm = () =>{
                                 setBloquearCampoEmail={setBloquearCampoEmail}
                                 bloquearCampoEmail={bloquearCampoEmail}
                                 grupos={grupos}
+                                visoes={visoes}
                                 showModalUsuarioNaoCadastrado={showModalUsuarioNaoCadastrado}
                                 handleCloseUsuarioNaoCadastrado={handleCloseUsuarioNaoCadastrado}
                                 showModalUsuarioCadastradoVinculado={showModalUsuarioCadastradoVinculado}

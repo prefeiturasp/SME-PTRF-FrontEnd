@@ -25,6 +25,7 @@ export const GestaoDePerfisFormFormik = (
             bloquearCampoEmail,
             setBloquearCampoEmail,
             grupos,
+            visoes,
             showModalUsuarioNaoCadastrado,
             handleCloseUsuarioNaoCadastrado,
             showModalUsuarioCadastradoVinculado,
@@ -142,7 +143,6 @@ export const GestaoDePerfisFormFormik = (
                                         name="username"
                                         className="form-control"
                                         placeholder={props.values.e_servidor === "False" ? "Digite um CPF válido" : "Insira um RF válido"}
-                                        //placeholder='Insira o nome de usuário'
                                         disabled={!props.values.e_servidor || statePerfisForm.id}
                                     />
                                     {/*Validações personalizadas*/}
@@ -191,9 +191,31 @@ export const GestaoDePerfisFormFormik = (
                                 </div>
                             </div>
 
-                            <div className="col-12">
+                            <div className="col-6">
                                 <div className="form-group">
-                                    <label htmlFor="groups">Grupo de acesso</label>
+                                    <label htmlFor="visoes">Visões</label>
+                                    <Field
+                                        component="select"
+                                        name="visoes"
+                                        className="form-control"
+                                        multiple={true}
+                                        value={props.values.visoes ? props.values.visoes : []}
+                                        onChange={evt =>
+                                            setFieldValue("visoes", [].slice.call(evt.target.selectedOptions).map(option => option.value))
+                                        }
+                                    >
+                                        {visoes && visoes.length > 0 && visoes.map((visao, index) => (
+                                            <option disabled={!visao.editavel} key={index} value={visao.id}>{visao.nome}</option>
+                                        ))}
+                                    </Field>
+                                    {props.errors.groups && <span
+                                        className="span_erro text-danger mt-1"> {props.errors.groups}</span>}
+                                </div>
+                            </div>
+
+                            <div className="col-6">
+                                <div className="form-group">
+                                    <label htmlFor="groups">Grupos</label>
                                     <Field
                                         component="select"
                                         name="groups"
@@ -213,6 +235,8 @@ export const GestaoDePerfisFormFormik = (
                                         className="span_erro text-danger mt-1"> {props.errors.groups}</span>}
                                 </div>
                             </div>
+
+
                         </div>
                         <section>
                             <ModalUsuarioNaoCadastrado

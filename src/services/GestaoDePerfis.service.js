@@ -28,6 +28,14 @@ export const getConsultarUsuario = async (visao_selecionada, username) =>{
     return (await api.get(`/api/usuarios/consultar/?visao=${visao_selecionada}&username=${username}`, authHeader))
 };
 
+export const getUsuariosFiltros = async (visao_selecionada, nome="", group="", tipo_de_usuario="", unidade_nome="") =>{
+    return (await api.get(`/api/usuarios/?visao=${visao_selecionada}${nome ? '&search='+nome : ''}${group ? '&groups__id='+group : ''}${tipo_de_usuario ? '&servidor='+tipo_de_usuario : ''}${unidade_nome ? '&unidade_nome='+unidade_nome : ''}`, authHeader)).data
+};
+
+export const getUsuarioUnidadesVinculadas = async (usuario_id, visao, unidade_logada_uuid="") =>{
+    return (await api.get(`/api/usuarios/${usuario_id}/unidades-e-permissoes-na-visao/${visao}/?unidade_logada_uuid=${unidade_logada_uuid}`, authHeader)).data
+};
+
 export const getUsuarios = async (visao_selecionada) =>{
     return (await api.get(`/api/usuarios/?visao=${visao_selecionada}`, authHeader)).data
 };
@@ -44,6 +52,3 @@ export const deleteUsuario = async (usuario_id) => {
     return (await api.delete(`/api/usuarios/${usuario_id}`, authHeader))
 };
 
-export const getUsuariosFiltros = async (visao_selecionada, nome="", group="", tipo_de_usuario="", unidade_nome="") =>{
-    return (await api.get(`/api/usuarios/?visao=${visao_selecionada}${nome ? '&search='+nome : ''}${group ? '&groups__id='+group : ''}${tipo_de_usuario ? '&servidor='+tipo_de_usuario : ''}${unidade_nome ? '&unidade_nome='+unidade_nome : ''}`, authHeader)).data
-};
