@@ -42,8 +42,10 @@ export const GestaoDePerfisFormFormik = (
         tabelaAssociacoes,
         handleChangeTipoUnidade,
         unidadesPorTipo,
-        recebeAcaoAutoComplete,
+        vinculaUnidadeUsuario,
         desvinculaUnidadeUsuario,
+        btnAdicionarDisabled,
+        btnExcluirDisabled,
     }) => {
 
     return (
@@ -212,8 +214,7 @@ export const GestaoDePerfisFormFormik = (
                                         }
                                     >
                                         {visoes && visoes.length > 0 && visoes.map((visao, index) => (
-                                            <option disabled={!visao.editavel} key={index}
-                                                    value={visao.id}>{visao.nome}</option>
+                                            <option disabled={!visao.editavel} key={index} value={visao.id}>{visao.nome}</option>
                                         ))}
                                     </Field>
                                     {props.errors.visoes &&
@@ -257,7 +258,7 @@ export const GestaoDePerfisFormFormik = (
                                                                 onChange={
                                                                     (e) => {
                                                                         props.handleChange(e);
-                                                                        handleChangeTipoUnidade(e.target.value)
+                                                                        handleChangeTipoUnidade(e.target.value, values)
                                                                     }}
                                                                 name={`unidades_vinculadas[${index}].tipo_unidade`}
                                                                 id={`tipo_unidade_${index}`}
@@ -265,6 +266,7 @@ export const GestaoDePerfisFormFormik = (
                                                                 disabled={unidade_vinculada.nome}
                                                             >
                                                                 <option value="">Selecione um tipo de unidade</option>
+                                                                    <option value="DRE">DIRETORIA</option>
                                                                 {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
                                                                     <option key={item.id} value={item.id}>{item.nome}</option>
                                                                 ))}
@@ -288,9 +290,8 @@ export const GestaoDePerfisFormFormik = (
                                                                 ):
                                                                     <GestaoDePerfisFormAutocomplete
                                                                         todasAsAcoesAutoComplete={unidadesPorTipo}
-                                                                        //recebeAcaoAutoComplete={recebeAcaoAutoComplete}
                                                                         setFieldValue={setFieldValue}
-                                                                        recebeAcaoAutoComplete={recebeAcaoAutoComplete}
+                                                                        recebeAcaoAutoComplete={vinculaUnidadeUsuario}
                                                                         index={index}
                                                                     />
                                                                 }
@@ -299,15 +300,20 @@ export const GestaoDePerfisFormFormik = (
                                                             }
                                                         </div>
 
-                                                        {index >= 0 && values.unidades_vinculadas.length > 0 && unidade_vinculada.pode_excluir && (
+                                                        {index >= 0 && values.unidades_vinculadas.length > 0 && (
                                                             <div className="col-auto mt-4 d-flex justify-content-center">
                                                                 <button
-                                                                    onClick={() => {remove(index)}} className="btn btn-link dropdown-item fonte-14"
+                                                                    onClick={async () => {
+                                                                            await desvinculaUnidadeUsuario(unidade_vinculada)
+                                                                            remove(index)
+                                                                            }}
+                                                                    className="btn btn-link fonte-14 pt-3 mt-4"
                                                                     type="button"
+                                                                    disabled={!unidade_vinculada.pode_excluir && btnExcluirDisabled}
                                                                 >
                                                                     <FontAwesomeIcon
                                                                         style={{
-                                                                            fontSize: '15px',
+                                                                            fontSize: '20px',
                                                                             marginRight: "5px",
                                                                             color: "#B40C02"
                                                                         }}
@@ -321,18 +327,18 @@ export const GestaoDePerfisFormFormik = (
                                             )
                                         })}
 
-                                        <div className="d-flex  justify-content-start mt-3 mb-3">
+                                        <div className="d-flex col-12 justify-content-start mt-3 mb-3">
                                             <button
                                                 type="button"
                                                 className="btn btn btn-success mt-2 mr-2"
+                                                disabled={btnAdicionarDisabled}
                                                 onClick={() => {
                                                     push({
                                                             unidade_vinculada: '',
                                                             tipo_unidade: '',
                                                         }
                                                     );
-                                                }
-                                                }
+                                                }}
                                             >
                                                 + Adicionar
                                             </button>

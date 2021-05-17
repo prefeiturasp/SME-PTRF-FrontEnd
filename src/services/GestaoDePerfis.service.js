@@ -40,12 +40,20 @@ export const getUsuarios = async (visao_selecionada) =>{
     return (await api.get(`/api/usuarios/?visao=${visao_selecionada}`, authHeader)).data
 };
 
-export const getUnidadesPorTipo = async (tipo_unidade) =>{
-    return (await api.get(`/api/unidades/?tipo_unidade=${tipo_unidade}`, authHeader)).data
+export const getUnidadesPorTipo = async (tipo_unidade, dre_uuid="") =>{
+    return (await api.get(`/api/unidades/?tipo_unidade=${tipo_unidade}${dre_uuid ? "&dre__uuid=" + dre_uuid : ""}`, authHeader)).data
+};
+
+export const getUnidadePorUuid = async (uuid_unidade) =>{
+    return (await api.get(`api/unidades/${uuid_unidade}`, authHeader)).data
 };
 
 export const postCriarUsuario = async (payload) => {
     return (await api.post(`/api/usuarios/`, payload, authHeader)).data
+};
+
+export const postVincularUnidadeUsuario = async (usuario_id, payload) => {
+    return (await api.post(`/api/usuarios/${usuario_id}/unidades/`, payload, authHeader)).data
 };
 
 export const putEditarUsuario = async (usuario_id, payload) => {
@@ -54,5 +62,9 @@ export const putEditarUsuario = async (usuario_id, payload) => {
 
 export const deleteUsuario = async (usuario_id) => {
     return (await api.delete(`/api/usuarios/${usuario_id}`, authHeader))
+};
+
+export const deleteDesvincularUnidadeUsuario = async (usuario_id, unidade_codigo_eol) => {
+    return (await api.delete(`/api/usuarios/${usuario_id}/unidades/${unidade_codigo_eol}/`, authHeader))
 };
 
