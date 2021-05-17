@@ -2,10 +2,11 @@ import React, {useCallback, useEffect, useState} from "react";
 import {useParams} from 'react-router-dom'
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {visoesService} from "../../../services/visoes.service";
-import {getUsuario, getUsuarioStatus, getCodigoEolUnidade, getGrupos, getUsuarioUnidadesVinculadas, postCriarUsuario, putEditarUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
+import {getUsuario, getUsuarioStatus, getCodigoEolUnidade, getGrupos, getUsuarioUnidadesVinculadas, getUnidadesPorTipo, postCriarUsuario, putEditarUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
 import {valida_cpf_cnpj} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
 import {GestaoDePerfisFormFormik} from "./GestaoDePerfisFormFormik";
+import {getTabelaAssociacoes} from "../../../services/dres/Associacoes.service";
 
 export const GestaoDePerfisForm = () =>{
 
@@ -24,6 +25,7 @@ export const GestaoDePerfisForm = () =>{
         groups: [],
         visoes: [],
         unidade: "",
+        unidades_vinculadas: [],
     };
 
     const [statePerfisForm, setStatePerfisForm] = useState(initPerfisForm);
@@ -34,6 +36,8 @@ export const GestaoDePerfisForm = () =>{
     const [loading, setLoading] = useState(false);
     const [visoes, setVisoes] = useState([]);
     const [gruposJaVinculados, setGruposJaVinculados] = useState([]);
+    const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
+    const [unidadesPorTipo, setUnidadesPorTipo] = useState([]);
 
     const carregaCodigoEolUnidade = useCallback(async ()=>{
         if (visao_selecionada !== "SME"){
@@ -100,11 +104,35 @@ export const GestaoDePerfisForm = () =>{
         return array
     }
 
+    const carregaUnidadesVinculadas = useCallback( async ()=>{
+        let unidades_vinculadas = [];
+
+        if (visao_selecionada !== "SME"){
+            unidades_vinculadas = await getUsuarioUnidadesVinculadas(id_usuario, visao_selecionada, uuid_unidade)
+        }else if (visao_selecionada === "SME"){
+            unidades_vinculadas = await getUsuarioUnidadesVinculadas(id_usuario, visao_selecionada)
+        }
+
+        return unidades_vinculadas
+
+    }, [id_usuario, visao_selecionada, uuid_unidade])
+
+    const buscaTabelaAssociacoes = useCallback(async ()=>{
+        let tabela_associacoes = await getTabelaAssociacoes();
+        setTabelaAssociacoes(tabela_associacoes);
+    }, []);
+
+    useEffect(()=>{
+        buscaTabelaAssociacoes()
+    }, [buscaTabelaAssociacoes])
+
     const carregaDadosUsuario = useCallback(async ()=>{
         if (id_usuario){
             let dados_usuario = await getUsuario(id_usuario)
             let grupos = await exibeGrupos()
+            let unidades_vinculadas = await carregaUnidadesVinculadas()
 
+            console.log("unidades_vinculadas ", unidades_vinculadas)
             console.log("carregaDadosUsuario ", dados_usuario)
 
             let ids_grupos =[];
@@ -120,10 +148,6 @@ export const GestaoDePerfisForm = () =>{
                     ids_grupos_que_tem_direito.push(grupo.id)
                 )
             }
-
-            //console.log("ids_grupos_ja_inseridos ", ids_grupos)
-            //console.log("ids_grupos_que_tem_direito ", ids_grupos_que_tem_direito)
-            //console.log("FINAL ", removeItensArray(ids_grupos_que_tem_direito, ids_grupos))
 
             setGruposJaVinculados(removeItensArray(ids_grupos_que_tem_direito, ids_grupos))
 
@@ -143,12 +167,13 @@ export const GestaoDePerfisForm = () =>{
                 visao: visao_selecionada,
                 groups: ids_grupos,
                 visoes: ids_visoes,
-                unidade: codigoEolUnidade ? codigoEolUnidade : ""
+                unidade: codigoEolUnidade ? codigoEolUnidade : "",
+                unidades_vinculadas: unidades_vinculadas,
             };
             setStatePerfisForm(initPerfisForm)
             setBloquearCampoEmail(false)
         }
-    }, [exibeGrupos, id_usuario, visao_selecionada, codigoEolUnidade])
+    }, [carregaUnidadesVinculadas, exibeGrupos, id_usuario, visao_selecionada, codigoEolUnidade])
 
     useEffect(()=>{
         carregaDadosUsuario()
@@ -367,15 +392,17 @@ export const GestaoDePerfisForm = () =>{
         return erros;
     }, [uuid_unidade, visao_selecionada, serviceVisaoDre, serviceVisaoUE, serviceVisaoSme])
 
-
-
     const handleSubmitPerfisForm = async (values, {resetForm})=>{
+
+        console.log("handleSubmitPerfisForm ", values)
 
         if (enviarFormulario) {
 
-            //setLoading(true)
+            setLoading(true)
 
+            // Concatenando os grupos que ele já tinha vinculado com os grupos que ele escolheu
             let grupos_concatenados = values.groups.concat(gruposJaVinculados)
+
             // Removendo itens duplicados
             let grupos_concatenados_sem_repeticao = [...new Set(grupos_concatenados)]
 
@@ -447,6 +474,36 @@ export const GestaoDePerfisForm = () =>{
         }
     };
 
+    const handleChangeTipoUnidade = useCallback(async (tipo_unidade)=>{
+        console.log("handleChangeTipoUnidade ", tipo_unidade)
+        if (tipo_unidade){
+            let unidades_por_tipo = await getUnidadesPorTipo(tipo_unidade)
+            console.log("unidades_por_tipo ", unidades_por_tipo)
+            setUnidadesPorTipo(unidades_por_tipo)
+        }
+    }, [])
+
+    const recebeAcaoAutoComplete = (selectAcao, {setFieldValue}, nome_do_campo) => {
+        console.log("recebeAcaoAutoComplete selectAcao ", selectAcao)
+        console.log("recebeAcaoAutoComplete nome_do_campo ", nome_do_campo)
+
+        setFieldValue(nome_do_campo, selectAcao)
+        if (selectAcao) {
+            // setStateFormModal({
+            //         ...stateFormModal,
+            //         associacao: selectAcao.uuid,
+            //         codigo_eol: selectAcao.unidade.codigo_eol,
+            //         uuid: selectAcao.acao && selectAcao.acao.uuid ? selectAcao.acao.uuid : "",
+            //         id: selectAcao.acao && selectAcao.acao.id ? selectAcao.acao.id : "",
+            // });
+
+        }
+    };
+
+    const desvinculaUnidadeUsuario = useCallback(async ()=>{
+
+    }, [])
+
     return (
         <PaginasContainer>
 
@@ -491,6 +548,11 @@ export const GestaoDePerfisForm = () =>{
                                 setShowModalInfo={setShowModalInfo}
                                 tituloModalInfo={tituloModalInfo}
                                 textoModalInfo={textoModalInfo}
+                                tabelaAssociacoes={tabelaAssociacoes}
+                                handleChangeTipoUnidade={handleChangeTipoUnidade}
+                                unidadesPorTipo={unidadesPorTipo}
+                                recebeAcaoAutoComplete={recebeAcaoAutoComplete}
+                                desvinculaUnidadeUsuario={desvinculaUnidadeUsuario}
                             />
                     </div>
                 </>

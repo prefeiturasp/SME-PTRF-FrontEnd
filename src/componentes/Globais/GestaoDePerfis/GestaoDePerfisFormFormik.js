@@ -1,45 +1,52 @@
-import React from "react";
-import {Field, Formik} from "formik";
+import React, {useCallback} from "react";
+import {Field, FieldArray, Formik} from "formik";
 import {YupSignupSchemaPerfis} from "./YupSignupSchemaPerfis";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faTrash, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import MaskedInput from "react-text-mask";
 import {ModalUsuarioNaoCadastrado} from "./ModalUsuarioNaoCadastrado";
 import {ModalUsuarioCadastradoVinculado} from "./ModalUsuarioCadastradoVinculado";
 import {ModalConfirmDeletePerfil} from "./ModalConfirmDeletePerfil";
 import {ModalInfo} from "./ModalInfo";
+import GestaoDePerfisFormAutocomplete from "./GestaoDePerfisFormAutocomplete";
 
 export const GestaoDePerfisFormFormik = (
-        {
-            initPerfisForm,
-            setStatePerfisForm,
-            statePerfisForm,
-            handleSubmitPerfisForm,
-            setShowModalDeletePerfil,
-            validacoesPersonalizadas,
-            setFormErrors,
-            formErrors,
-            idUsuarioCondicionalMask,
-            setBloquearCampoName,
-            bloquearCampoName,
-            bloquearCampoEmail,
-            setBloquearCampoEmail,
-            grupos,
-            visoes,
-            showModalUsuarioNaoCadastrado,
-            handleCloseUsuarioNaoCadastrado,
-            showModalUsuarioCadastradoVinculado,
-            setShowModalUsuarioNaoCadastrado,
-            setShowModalUsuarioCadastradoVinculado,
-            showModalDeletePerfil,
-            handleCloseDeletePerfil,
-            onDeletePerfilTrue,
-            showModalInfo,
-            setShowModalInfo,
-            tituloModalInfo,
-            textoModalInfo,
-        }) =>{
-    return(
+    {
+        initPerfisForm,
+        setStatePerfisForm,
+        statePerfisForm,
+        handleSubmitPerfisForm,
+        setShowModalDeletePerfil,
+        validacoesPersonalizadas,
+        setFormErrors,
+        formErrors,
+        idUsuarioCondicionalMask,
+        setBloquearCampoName,
+        bloquearCampoName,
+        bloquearCampoEmail,
+        setBloquearCampoEmail,
+        grupos,
+        visoes,
+        showModalUsuarioNaoCadastrado,
+        handleCloseUsuarioNaoCadastrado,
+        showModalUsuarioCadastradoVinculado,
+        setShowModalUsuarioNaoCadastrado,
+        setShowModalUsuarioCadastradoVinculado,
+        showModalDeletePerfil,
+        handleCloseDeletePerfil,
+        onDeletePerfilTrue,
+        showModalInfo,
+        setShowModalInfo,
+        tituloModalInfo,
+        textoModalInfo,
+        tabelaAssociacoes,
+        handleChangeTipoUnidade,
+        unidadesPorTipo,
+        recebeAcaoAutoComplete,
+        desvinculaUnidadeUsuario,
+    }) => {
+
+    return (
         <Formik
             initialValues={statePerfisForm}
             validationSchema={YupSignupSchemaPerfis}
@@ -205,11 +212,12 @@ export const GestaoDePerfisFormFormik = (
                                         }
                                     >
                                         {visoes && visoes.length > 0 && visoes.map((visao, index) => (
-                                            <option disabled={!visao.editavel} key={index} value={visao.id}>{visao.nome}</option>
+                                            <option disabled={!visao.editavel} key={index}
+                                                    value={visao.id}>{visao.nome}</option>
                                         ))}
                                     </Field>
-                                    {props.errors.groups && <span
-                                        className="span_erro text-danger mt-1"> {props.errors.groups}</span>}
+                                    {props.errors.visoes &&
+                                    <span className="span_erro text-danger mt-1"> {props.errors.visoes}</span>}
                                 </div>
                             </div>
 
@@ -222,18 +230,116 @@ export const GestaoDePerfisFormFormik = (
                                         className="form-control"
                                         multiple={true}
                                         value={props.values.groups ? props.values.groups : []}
-                                        onChange={evt =>
+                                        onChange={evt => {
                                             setFieldValue("groups", [].slice.call(evt.target.selectedOptions).map(option => option.value))
-                                        }
+                                        }}
                                     >
                                         {grupos && grupos.length > 0 && grupos.map((grupo, index) => (
-                                            <option key={index} value={grupo.id}>{grupo.nome}</option>
-                                        ))}
+                                            <option key={index} value={grupo.id}>{grupo.nome}</option>))}
                                     </Field>
-                                    {props.errors.groups && <span
-                                        className="span_erro text-danger mt-1"> {props.errors.groups}</span>}
+                                    {props.errors.groups &&
+                                    <span className="span_erro text-danger mt-1"> {props.errors.groups}</span>}
                                 </div>
                             </div>
+
+                            <FieldArray
+                                name="unidades_vinculadas"
+                                render={({remove, push}) => (
+                                    <>
+                                        {props.values.unidades_vinculadas && props.values.unidades_vinculadas.length > 0 && props.values.unidades_vinculadas.map((unidade_vinculada, index) => {
+                                            return (
+                                                <div className="col-12" key={index}>
+                                                    <div className='row'>
+                                                        <div className='col mt-4'>
+                                                            <label htmlFor="tipo_de_unidade">Tipo de Unidade {index + 1}</label>
+                                                            <select
+                                                                value={unidade_vinculada.tipo_unidade ? unidade_vinculada.tipo_unidade : ""}
+                                                                onChange={
+                                                                    (e) => {
+                                                                        props.handleChange(e);
+                                                                        handleChangeTipoUnidade(e.target.value)
+                                                                    }}
+                                                                name={`unidades_vinculadas[${index}].tipo_unidade`}
+                                                                id={`tipo_unidade_${index}`}
+                                                                className="form-control"
+                                                                disabled={unidade_vinculada.nome}
+                                                            >
+                                                                <option value="">Selecione um tipo de unidade</option>
+                                                                {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
+                                                                    <option key={item.id} value={item.id}>{item.nome}</option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+
+                                                        <div className="col mt-4">
+                                                            <label htmlFor="groups">Unidade {index + 1}</label>
+                                                                {unidade_vinculada.nome ? (
+                                                                    <input
+                                                                        value={unidade_vinculada.nome}
+                                                                        name={`unidades_vinculadas[${index}].unidade_vinculada`}
+                                                                        id={`unidade_vinculada_${index}`}
+                                                                        className="form-control"
+                                                                        onChange={(e) => {
+                                                                                props.handleChange(e);
+                                                                        }}
+                                                                        placeholder='Escolha uma unidade'
+                                                                        disabled={true}
+                                                                    />
+                                                                ):
+                                                                    <GestaoDePerfisFormAutocomplete
+                                                                        todasAsAcoesAutoComplete={unidadesPorTipo}
+                                                                        //recebeAcaoAutoComplete={recebeAcaoAutoComplete}
+                                                                        setFieldValue={setFieldValue}
+                                                                        recebeAcaoAutoComplete={recebeAcaoAutoComplete}
+                                                                        index={index}
+                                                                    />
+                                                                }
+
+                                                                {props.touched.unidade_vinculada && props.errors.unidade_vinculada && <span className="text-danger mt-1"> {props.errors.unidade_vinculada}</span>
+                                                            }
+                                                        </div>
+
+                                                        {index >= 0 && values.unidades_vinculadas.length > 0 && unidade_vinculada.pode_excluir && (
+                                                            <div className="col-auto mt-4 d-flex justify-content-center">
+                                                                <button
+                                                                    onClick={() => {remove(index)}} className="btn btn-link dropdown-item fonte-14"
+                                                                    type="button"
+                                                                >
+                                                                    <FontAwesomeIcon
+                                                                        style={{
+                                                                            fontSize: '15px',
+                                                                            marginRight: "5px",
+                                                                            color: "#B40C02"
+                                                                        }}
+                                                                        icon={faTrashAlt}
+                                                                    />
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+
+                                        <div className="d-flex  justify-content-start mt-3 mb-3">
+                                            <button
+                                                type="button"
+                                                className="btn btn btn-success mt-2 mr-2"
+                                                onClick={() => {
+                                                    push({
+                                                            unidade_vinculada: '',
+                                                            tipo_unidade: '',
+                                                        }
+                                                    );
+                                                }
+                                                }
+                                            >
+                                                + Adicionar
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+                            />
 
 
                         </div>

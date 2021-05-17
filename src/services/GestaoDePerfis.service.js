@@ -40,6 +40,10 @@ export const getUsuarios = async (visao_selecionada) =>{
     return (await api.get(`/api/usuarios/?visao=${visao_selecionada}`, authHeader)).data
 };
 
+export const getUnidadesPorTipo = async (tipo_unidade) =>{
+    return (await api.get(`/api/unidades/?tipo_unidade=${tipo_unidade}`, authHeader)).data
+};
+
 export const postCriarUsuario = async (payload) => {
     return (await api.post(`/api/usuarios/`, payload, authHeader)).data
 };
