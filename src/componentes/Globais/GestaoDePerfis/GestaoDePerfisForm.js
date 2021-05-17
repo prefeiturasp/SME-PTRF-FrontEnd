@@ -82,9 +82,7 @@ export const GestaoDePerfisForm = () =>{
         }else if (visao_selecionada === "SME"){
             unidades_vinculadas = await getUsuarioUnidadesVinculadas(id_usuario, visao_selecionada)
         }
-
         return unidades_vinculadas
-
     }, [id_usuario, visao_selecionada, uuid_unidade])
 
 
@@ -102,15 +100,21 @@ export const GestaoDePerfisForm = () =>{
             ]
         }else if (visao_selecionada === "DRE"){
             let tem_unidade_dre = unidades_vinculadas.find(element => element.tipo_unidade === "DRE")
+            let tem_unidade_ue = unidades_vinculadas.find(element => element.tipo_unidade && element.tipo_unidade !== "SME" && element.tipo_unidade !== "DRE")
+
             console.log("_XXXXXXXXxxx ", tem_unidade_dre)
             _visoes = [
-                {nome: "SME", id: 3,editavel: false},
+                {nome: "SME", id: 3, editavel: false},
                 {
                     nome: "DRE",
                     id: 2,
                     editavel: !tem_unidade_dre
                 },
-                {nome: "UE", id: 1, editavel: true},
+                {
+                    nome: "UE",
+                    id: 1,
+                    editavel: !tem_unidade_ue
+                },
             ]
         }else if (visao_selecionada === "UE"){
             _visoes = [
@@ -120,7 +124,7 @@ export const GestaoDePerfisForm = () =>{
             ]
         }
         setVisoes(_visoes)
-    }, [visao_selecionada, carregaUnidadesVinculadas])
+    }, [visao_selecionada, carregaUnidadesVinculadas, tabelaAssociacoes])
 
     useEffect(()=>{
         exibeVisoes()
@@ -129,6 +133,7 @@ export const GestaoDePerfisForm = () =>{
     const buscaTabelaAssociacoes = useCallback(async ()=>{
         let tabela_associacoes = await getTabelaAssociacoes();
         setTabelaAssociacoes(tabela_associacoes);
+        console.log("TABELA ASSOCIACOES ", tabela_associacoes.tipos_unidade)
     }, []);
 
     useEffect(()=>{
@@ -404,7 +409,7 @@ export const GestaoDePerfisForm = () =>{
 
     const handleSubmitPerfisForm = async (values, {resetForm})=>{
 
-       // console.log("handleSubmitPerfisForm ", values)
+        console.log("handleSubmitPerfisForm ", values)
 
         if (enviarFormulario) {
 
@@ -486,6 +491,7 @@ export const GestaoDePerfisForm = () =>{
         }
     };
 
+
     const handleChangeTipoUnidade = useCallback(async (tipo_unidade, values)=>{
         setBtnAdicionarDisabled(true)
         setBtnExcluirDisabled(false)
@@ -564,6 +570,17 @@ export const GestaoDePerfisForm = () =>{
 
     }
 
+    const handleChangeVisao = (e, setFieldValue, values) => {
+        //debugger
+        const { checked, name, value } = e.target;
+        if (checked) {
+            setFieldValue("visoes", [...values.visoes, parseInt(value)]);
+        } else {
+            setFieldValue("visoes", values.visoes.filter((v) => v !== parseInt(value))
+            );
+        }
+    };
+
     return (
         <PaginasContainer>
 
@@ -615,6 +632,7 @@ export const GestaoDePerfisForm = () =>{
                                 desvinculaUnidadeUsuario={desvinculaUnidadeUsuario}
                                 btnAdicionarDisabled={btnAdicionarDisabled}
                                 btnExcluirDisabled={btnExcluirDisabled}
+                                handleChangeVisao={handleChangeVisao}
                             />
                     </div>
                 </>
