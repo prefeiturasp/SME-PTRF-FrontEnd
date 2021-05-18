@@ -124,7 +124,7 @@ export const GestaoDePerfisForm = () =>{
             ]
         }
         setVisoes(_visoes)
-    }, [visao_selecionada, carregaUnidadesVinculadas, tabelaAssociacoes])
+    }, [visao_selecionada, carregaUnidadesVinculadas])
 
     useEffect(()=>{
         exibeVisoes()
@@ -133,7 +133,6 @@ export const GestaoDePerfisForm = () =>{
     const buscaTabelaAssociacoes = useCallback(async ()=>{
         let tabela_associacoes = await getTabelaAssociacoes();
         setTabelaAssociacoes(tabela_associacoes);
-        console.log("TABELA ASSOCIACOES ", tabela_associacoes.tipos_unidade)
     }, []);
 
     useEffect(()=>{
@@ -227,6 +226,7 @@ export const GestaoDePerfisForm = () =>{
     const [usuariosStatus, setUsuariosStatus] = useState({});
     const [btnAdicionarDisabled, setBtnAdicionarDisabled] = useState(false);
     const [btnExcluirDisabled, setBtnExcluirDisabled] = useState(false);
+    const [visoesChecked, setVisoesChecked] = useState({});
 
     const idUsuarioCondicionalMask = useCallback((e_servidor) => {
         let mask;
@@ -421,11 +421,6 @@ export const GestaoDePerfisForm = () =>{
             // Removendo itens duplicados
             let grupos_concatenados_sem_repeticao = [...new Set(grupos_concatenados)]
 
-            // console.log("Grupos Já vinculados ", gruposJaVinculados)
-            // console.log("Values.groups ", values.groups)
-            // console.log("Grupos Concatenados ", grupos_concatenados_sem_repeticao)
-            //console.log("values.unidades ", values.unidades)
-
             let payload = {
                 e_servidor: values.e_servidor,
                 username: values.username,
@@ -440,54 +435,54 @@ export const GestaoDePerfisForm = () =>{
 
            // console.log("PAYLOAD ", payload)
 
-            if (values.id || (usuariosStatus.usuario_sig_escola.info_sig_escola && usuariosStatus.usuario_sig_escola.info_sig_escola.user_id)) {
-
-                let id_do_usuario;
-                if (values.id){
-                    id_do_usuario = values.id
-                }else {
-                    id_do_usuario = usuariosStatus.usuario_sig_escola.info_sig_escola.user_id
-                }
-
-                try {
-                    await putEditarUsuario(id_do_usuario, payload);
-                    console.log('Usuário editado com sucesso')
-                    window.location.assign('/gestao-de-perfis/')
-                } catch (e) {
-                    setLoading(false)
-                    console.log('Erro ao editar usuário ', e.response.data)
-                    setTituloModalInfo('Erro ao atualizar o usuário')
-                    if (e.response.data.username && e.response.data.username.length > 0) {
-                        setTextoModalInfo(e.response.data.username[0])
-                    } else {
-                        setTextoModalInfo('<p>Não foi possível atualizar o usuário, por favor, tente novamente</p>')
-                    }
-                    resetForm()
-                    setShowModalUsuarioNaoCadastrado(false)
-                    setShowModalUsuarioCadastradoVinculado(false)
-                    setShowModalInfo(true)
-                }
-
-            } else {
-                try {
-                    await postCriarUsuario(payload);
-                    console.log('Usuário criado com sucesso')
-                    window.location.assign('/gestao-de-perfis/')
-                } catch (e) {
-                    setLoading(false)
-                    console.log('Erro ao criar usuário ', e.response.data)
-                    setTituloModalInfo('Erro ao criar usuário')
-                    if (e.response.data.username && e.response.data.username.length > 0) {
-                        setTextoModalInfo(e.response.data.username[0])
-                    } else {
-                        setTextoModalInfo('<p>Não foi possível criar o usuário, por favor, tente novamente</p>')
-                    }
-                    resetForm()
-                    setShowModalUsuarioNaoCadastrado(false)
-                    setShowModalUsuarioCadastradoVinculado(false)
-                    setShowModalInfo(true)
-                }
-            }
+            // if (values.id || (usuariosStatus.usuario_sig_escola.info_sig_escola && usuariosStatus.usuario_sig_escola.info_sig_escola.user_id)) {
+            //
+            //     let id_do_usuario;
+            //     if (values.id){
+            //         id_do_usuario = values.id
+            //     }else {
+            //         id_do_usuario = usuariosStatus.usuario_sig_escola.info_sig_escola.user_id
+            //     }
+            //
+            //     try {
+            //         await putEditarUsuario(id_do_usuario, payload);
+            //         console.log('Usuário editado com sucesso')
+            //         window.location.assign('/gestao-de-perfis/')
+            //     } catch (e) {
+            //         setLoading(false)
+            //         console.log('Erro ao editar usuário ', e.response.data)
+            //         setTituloModalInfo('Erro ao atualizar o usuário')
+            //         if (e.response.data.username && e.response.data.username.length > 0) {
+            //             setTextoModalInfo(e.response.data.username[0])
+            //         } else {
+            //             setTextoModalInfo('<p>Não foi possível atualizar o usuário, por favor, tente novamente</p>')
+            //         }
+            //         resetForm()
+            //         setShowModalUsuarioNaoCadastrado(false)
+            //         setShowModalUsuarioCadastradoVinculado(false)
+            //         setShowModalInfo(true)
+            //     }
+            //
+            // } else {
+            //     try {
+            //         await postCriarUsuario(payload);
+            //         console.log('Usuário criado com sucesso')
+            //         window.location.assign('/gestao-de-perfis/')
+            //     } catch (e) {
+            //         setLoading(false)
+            //         console.log('Erro ao criar usuário ', e.response.data)
+            //         setTituloModalInfo('Erro ao criar usuário')
+            //         if (e.response.data.username && e.response.data.username.length > 0) {
+            //             setTextoModalInfo(e.response.data.username[0])
+            //         } else {
+            //             setTextoModalInfo('<p>Não foi possível criar o usuário, por favor, tente novamente</p>')
+            //         }
+            //         resetForm()
+            //         setShowModalUsuarioNaoCadastrado(false)
+            //         setShowModalUsuarioCadastradoVinculado(false)
+            //         setShowModalInfo(true)
+            //     }
+            // }
         }
     };
 
@@ -572,7 +567,7 @@ export const GestaoDePerfisForm = () =>{
 
     const handleChangeVisao = (e, setFieldValue, values) => {
         //debugger
-        const { checked, name, value } = e.target;
+        const { checked, value } = e.target;
         if (checked) {
             setFieldValue("visoes", [...values.visoes, parseInt(value)]);
         } else {
@@ -580,6 +575,59 @@ export const GestaoDePerfisForm = () =>{
             );
         }
     };
+
+    const getEstadoInicialVisoesChecked = useCallback(()=>{
+
+        var check = document.getElementsByName("visoes");
+
+        console.log("getEstadoInicialVisoesChecked ", check)
+
+        for (var i=0;i<check.length;i++){
+            console.log("ID: ", check[i].id, "CHECKED: ", check[i].checked)
+
+            if (check[i].checked === true){
+                setVisoesChecked({
+                    ...visoesChecked,
+                    [check[i].id]: true
+                })
+
+            }  else {
+                setVisoesChecked({
+                    ...visoesChecked,
+                    [check.id]: false
+                })
+            }
+        }
+
+        // console.log('getEstadoInicialVisoesChecked ', statePerfisForm)
+        //
+        // debugger
+        //
+        // if (visoes && visoes.length > 0){
+        //     visoes.map((visao)=>(
+        //         setVisoesChecked({
+        //             ...visoesChecked,
+        //             [visao.nome]: statePerfisForm.visoes.filter((v) => v === visao.id)
+        //         })
+        //     ))
+        // }
+    }, [visoes, statePerfisForm])
+
+    useEffect(()=>{
+        getEstadoInicialVisoesChecked()
+
+    }, [getEstadoInicialVisoesChecked])
+
+    const handleChangeVisoesChecked = (e, setFieldValue, values) =>{
+        const { checked, id } = e.target;
+
+        console.log("handleChangeVisoesChecked checked ", checked)
+        console.log("handleChangeVisoesChecked values ", id)
+        setVisoesChecked({
+            ...visoesChecked,
+            [id]:checked
+        })
+    }
 
     return (
         <PaginasContainer>
@@ -633,6 +681,8 @@ export const GestaoDePerfisForm = () =>{
                                 btnAdicionarDisabled={btnAdicionarDisabled}
                                 btnExcluirDisabled={btnExcluirDisabled}
                                 handleChangeVisao={handleChangeVisao}
+                                handleChangeVisoesChecked={handleChangeVisoesChecked}
+                                visoesChecked={visoesChecked}
                             />
                     </div>
                 </>

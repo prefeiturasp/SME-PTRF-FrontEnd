@@ -47,8 +47,13 @@ export const GestaoDePerfisFormFormik = (
         btnAdicionarDisabled,
         btnExcluirDisabled,
         handleChangeVisao,
+        handleChangeVisoesChecked,
+        visoesChecked,
     }) => {
 
+        if (statePerfisForm && statePerfisForm.visoes){
+                console.log("XXXXXXXXXX ", statePerfisForm.visoes.filter((v) => v === 3))
+        }
 
         return (
         <Formik
@@ -216,7 +221,10 @@ export const GestaoDePerfisFormFormik = (
                                                         name="visoes"
                                                         id={visao.nome}
                                                         value={visao.id}
-                                                        onChange={(e)=>handleChangeVisao(e, setFieldValue, values)}
+                                                        onChange={(e)=> {
+                                                                handleChangeVisao(e, setFieldValue, values)
+                                                                handleChangeVisoesChecked(e, setFieldValue, values)
+                                                        }}
                                                         defaultChecked={values.visoes.filter((v) => v === visao.id)}
                                                         disabled={!visao.editavel}
                                                     />
@@ -276,6 +284,8 @@ export const GestaoDePerfisFormFormik = (
                                                 <div className="col-12" key={index}>
                                                     <div className='row'>
                                                         <div className='col mt-4'>
+                                                                <p>{JSON.stringify(visoesChecked)}</p>
+                                                                <p>{visoesChecked && visoesChecked.dre && JSON.stringify(visoesChecked.DRE)}</p>
                                                             <label htmlFor="tipo_de_unidade">Tipo de Unidade {index + 1}</label>
                                                             <select
                                                                 value={unidade_vinculada.tipo_unidade ? unidade_vinculada.tipo_unidade : ""}
@@ -290,8 +300,11 @@ export const GestaoDePerfisFormFormik = (
                                                                 disabled={unidade_vinculada.nome}
                                                             >
                                                                 <option value="">Selecione um tipo de unidade</option>
-                                                                <option value="DRE">DIRETORIA</option>
-                                                                {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
+                                                                    {visoesChecked.DRE &&
+                                                                        <option value="DRE">DIRETORIA</option>
+                                                                    }
+
+                                                                {visoesChecked.UE && tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
                                                                     <option key={item.id} value={item.id}>{item.nome}</option>
                                                                 ))}
                                                             </select>
@@ -320,10 +333,7 @@ export const GestaoDePerfisFormFormik = (
                                                                 />
                                                             }
 
-                                                            {props.touched.unidade_vinculada && props.errors.unidade_vinculada &&
-                                                            <span
-                                                                className="text-danger mt-1"> {props.errors.unidade_vinculada}</span>
-                                                            }
+                                                            {props.touched.unidade_vinculada && props.errors.unidade_vinculada && <span className="text-danger mt-1"> {props.errors.unidade_vinculada}</span>}
                                                         </div>
 
                                                         {index >= 0 && values.unidades_vinculadas.length > 0 && (
