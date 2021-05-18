@@ -49,15 +49,8 @@ export const GestaoDePerfisFormFormik = (
         handleChangeVisao,
         visoesChecked,
         getEstadoInicialVisoesChecked,
+        acessoCadastrarUnidade,
     }) => {
-
-    const acessoCadastrarUnidade = (tipo_unidade) => {
-        if (visoesChecked && visoesChecked.length > 0) {
-            let ret = visoesChecked.find(element => element.nome === tipo_unidade)
-            console.log(ret)
-            return ret.checked
-        }
-    }
 
     return (
         <Formik
@@ -290,13 +283,11 @@ export const GestaoDePerfisFormFormik = (
                                                                 disabled={unidade_vinculada.nome}
                                                             >
                                                                 <option value="">Selecione um tipo de unidade</option>
-                                                                {acessoCadastrarUnidade('DRE') &&
-                                                                <option value="DRE">DIRETORIA</option>
-                                                                }
+                                                                <option disabled={!acessoCadastrarUnidade('DRE')} value="DRE">DIRETORIA</option>
 
-                                                                {acessoCadastrarUnidade('UE') && tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
-                                                                    <option key={item.id}
-                                                                            value={item.id}>{item.nome}</option>
+
+                                                                {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
+                                                                    <option disabled={!acessoCadastrarUnidade('UE')} key={item.id} value={item.id}>{item.nome}</option>
                                                                 ))}
                                                             </select>
                                                         </div>

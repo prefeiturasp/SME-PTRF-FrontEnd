@@ -92,17 +92,17 @@ export const GestaoDePerfisForm = () =>{
 
         console.log("exibeVisoes ", unidades_vinculadas)
 
+        let tem_unidade_dre = unidades_vinculadas.find(element => element.tipo_unidade === "DRE")
+        let tem_unidade_ue = unidades_vinculadas.find(element => element.tipo_unidade && element.tipo_unidade !== "SME" && element.tipo_unidade !== "DRE")
+
+
         if (visao_selecionada === "SME"){
             _visoes = [
                 {nome: "SME", id: 3,editavel: true},
-                {nome: "DRE", id: 2, editavel: true},
-                {nome: "UE", id: 1, editavel: true},
+                {nome: "DRE", id: 2, editavel: !tem_unidade_dre},
+                {nome: "UE", id: 1, editavel: !tem_unidade_ue},
             ]
         }else if (visao_selecionada === "DRE"){
-            let tem_unidade_dre = unidades_vinculadas.find(element => element.tipo_unidade === "DRE")
-            let tem_unidade_ue = unidades_vinculadas.find(element => element.tipo_unidade && element.tipo_unidade !== "SME" && element.tipo_unidade !== "DRE")
-
-            console.log("_XXXXXXXXxxx ", tem_unidade_dre)
             _visoes = [
                 {nome: "SME", id: 3, editavel: false},
                 {
@@ -486,6 +486,36 @@ export const GestaoDePerfisForm = () =>{
         }
     };
 
+    const serviceUnidadesPorTipoVisaoSME = useCallback(async (tipo_unidade, values)=>{
+        let unidades_por_tipo = []
+
+        if(tipo_unidade === "DRE") {
+            let dre = await getUnidadePorUuid(uuid_unidade)
+            unidades_por_tipo.push(dre)
+        }else {
+            unidades_por_tipo = await getUnidadesPorTipo(tipo_unidade, uuid_unidade)
+        }
+
+        let uuid_unidades_por_tipo = [];
+        if (unidades_por_tipo && unidades_por_tipo.length > 0){
+            unidades_por_tipo.forEach(item=>{
+                uuid_unidades_por_tipo.push(item.uuid)
+            })
+        }
+
+        let index;
+        values.unidades_vinculadas.forEach(item=> {
+            index = uuid_unidades_por_tipo.indexOf(item.uuid)
+            if ( index > -1) {
+                unidades_por_tipo.splice(index, 1);
+                uuid_unidades_por_tipo.splice(index, 1);
+            }
+        })
+
+        return unidades_por_tipo
+
+    }, [uuid_unidade])
+
 
     const handleChangeTipoUnidade = useCallback(async (tipo_unidade, values)=>{
         setBtnAdicionarDisabled(true)
@@ -493,38 +523,12 @@ export const GestaoDePerfisForm = () =>{
 
         if (tipo_unidade){
 
-            let unidades_por_tipo = []
-
             if (visao_selecionada === "DRE"){
-
-                if(tipo_unidade === "DRE") {
-                    let dre = await getUnidadePorUuid(uuid_unidade)
-                    //console.log("getUnidadePorUuid ", dre)
-                    unidades_por_tipo.push(dre)
-                }else {
-                    unidades_por_tipo = await getUnidadesPorTipo(tipo_unidade, uuid_unidade)
-                }
-
-                let uuid_unidades_por_tipo = [];
-                if (unidades_por_tipo && unidades_por_tipo.length > 0){
-                    unidades_por_tipo.forEach(item=>{
-                        uuid_unidades_por_tipo.push(item.uuid)
-                    })
-                }
-
-                let index;
-                values.unidades_vinculadas.forEach(item=> {
-                    index = uuid_unidades_por_tipo.indexOf(item.uuid)
-                    if ( index > -1) {
-                        unidades_por_tipo.splice(index, 1);
-                        uuid_unidades_por_tipo.splice(index, 1);
-                    }
-                })
-
+                setUnidadesPorTipo(await serviceUnidadesPorTipoVisaoSME(tipo_unidade, values))
             }
-            setUnidadesPorTipo(unidades_por_tipo)
+
         }
-    }, [visao_selecionada, uuid_unidade])
+    }, [visao_selecionada, serviceUnidadesPorTipoVisaoSME])
 
     const vinculaUnidadeUsuario = async (selectAcao) => {
         setBtnAdicionarDisabled(true)
@@ -587,6 +591,13 @@ export const GestaoDePerfisForm = () =>{
 
     }
 
+    const acessoCadastrarUnidade = (tipo_unidade) => {
+        if (visoesChecked && visoesChecked.length > 0) {
+            let ret = visoesChecked.find(element => element.nome === tipo_unidade)
+            return ret.checked
+        }
+    }
+
     return (
         <PaginasContainer>
 
@@ -641,6 +652,7 @@ export const GestaoDePerfisForm = () =>{
                                 handleChangeVisao={handleChangeVisao}
                                 visoesChecked={visoesChecked}
                                 getEstadoInicialVisoesChecked={getEstadoInicialVisoesChecked}
+                                acessoCadastrarUnidade={acessoCadastrarUnidade}
                             />
                     </div>
                 </>
