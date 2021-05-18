@@ -548,9 +548,6 @@ export const GestaoDePerfisForm = () =>{
 
     const desvinculaUnidadeUsuario = async (unidade)=>{
         setBtnAdicionarDisabled(false)
-
-        //console.log("desvinculaUnidadeUsuario ", unidade)
-
         if (unidade && unidade.uuid){
             try {
                 await deleteDesvincularUnidadeUsuario(id_usuario, unidade.codigo_eol)
@@ -562,11 +559,9 @@ export const GestaoDePerfisForm = () =>{
                 await exibeVisoes()
             }
         }
-
     }
 
     const handleChangeVisao = (e, setFieldValue, values) => {
-        //debugger
         const { checked, value } = e.target;
         if (checked) {
             setFieldValue("visoes", [...values.visoes, parseInt(value)]);
@@ -578,70 +573,18 @@ export const GestaoDePerfisForm = () =>{
 
     const getEstadoInicialVisoesChecked = ()=>{
 
-        var check = document.getElementsByName("visoes");
+        let check = document.getElementsByName("visoes");
+        let arrayVisoes = [];
+        for (let i=0; i<check.length; i++){
 
-        console.log("getEstadoInicialVisoesChecked ", visoesChecked)
-        console.log("getEstadoInicialVisoesChecked check ", check)
-
-
-
-        for (var i=0; i<check.length; i++){
-
-            //console.log("ID: ", check[i].id, "CHECKED: ", check[i].checked)
-            //debugger
-
-            let { checked, id } = check[i];
-
-            setVisoesChecked(oldInputs => [...oldInputs, {[id]: checked}])
-
-            // setVisoesChecked({
-            //     ...visoesChecked,
-            //     [id]: checked
-            // })
-
-            // if (check[i].checked === true){
-            //     debugger
-            //     setVisoesChecked({
-            //         ...visoesChecked,
-            //         [id]: true
-            //     })
-            //
-            // }  else {
-            //     setVisoesChecked({
-            //         ...visoesChecked,
-            //         [id]: false
-            //     })
-            // }
+        let { checked, id } = check[i];
+            arrayVisoes.push({
+                nome: id,
+                checked: checked,
+            })
         }
+        setVisoesChecked(arrayVisoes)
 
-        // console.log('getEstadoInicialVisoesChecked ', statePerfisForm)
-        //
-        // debugger
-        //
-        // if (visoes && visoes.length > 0){
-        //     visoes.map((visao)=>(
-        //         setVisoesChecked({
-        //             ...visoesChecked,
-        //             [visao.nome]: statePerfisForm.visoes.filter((v) => v === visao.id)
-        //         })
-        //     ))
-        // }
-    }
-    //
-    // useEffect(()=>{
-    //     getEstadoInicialVisoesChecked()
-    //
-    // }, [getEstadoInicialVisoesChecked])
-
-    const handleChangeVisoesChecked = (e, setFieldValue, values) =>{
-        const { checked, id } = e.target;
-
-        console.log("handleChangeVisoesChecked checked ", checked)
-        console.log("handleChangeVisoesChecked values ", id)
-        setVisoesChecked({
-            ...visoesChecked,
-            [id]:checked
-        })
     }
 
     return (
@@ -696,7 +639,6 @@ export const GestaoDePerfisForm = () =>{
                                 btnAdicionarDisabled={btnAdicionarDisabled}
                                 btnExcluirDisabled={btnExcluirDisabled}
                                 handleChangeVisao={handleChangeVisao}
-                                handleChangeVisoesChecked={handleChangeVisoesChecked}
                                 visoesChecked={visoesChecked}
                                 getEstadoInicialVisoesChecked={getEstadoInicialVisoesChecked}
                             />
