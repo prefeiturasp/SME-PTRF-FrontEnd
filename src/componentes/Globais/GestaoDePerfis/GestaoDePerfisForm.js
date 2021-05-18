@@ -145,9 +145,6 @@ export const GestaoDePerfisForm = () =>{
             let grupos = await exibeGrupos()
             let unidades_vinculadas = await carregaUnidadesVinculadas()
 
-            //console.log("unidades_vinculadas ", unidades_vinculadas)
-            //console.log("carregaDadosUsuario ", dados_usuario)
-
             let ids_grupos =[];
             if (dados_usuario.groups && dados_usuario.groups.length > 0){
                 dados_usuario.groups.map((grupo)=>
@@ -486,35 +483,44 @@ export const GestaoDePerfisForm = () =>{
         }
     };
 
-    const serviceUnidadesPorTipoVisaoSME = useCallback(async (tipo_unidade, values)=>{
-        let unidades_por_tipo = []
+    const serviceRemoveVinculoDuplicadoUnidades = (unidades_por_tipo, values) =>{
+        let uuid_unidades_por_tipo = [];
+        let _unidades_por_tipo = [...unidades_por_tipo]
+        if (_unidades_por_tipo && _unidades_por_tipo.length > 0){
+            _unidades_por_tipo.forEach(item=>{
+                uuid_unidades_por_tipo.push(item.uuid)
+            })
+        }
+        let index;
+        values.unidades_vinculadas.forEach(item=> {
+            index = uuid_unidades_por_tipo.indexOf(item.uuid)
+            if ( index > -1) {
+                _unidades_por_tipo.splice(index, 1);
+                uuid_unidades_por_tipo.splice(index, 1);
+            }
+        })
+        return _unidades_por_tipo
+    }
 
+    const serviceUnidadesPorTipoVisaoDRE = useCallback(async (tipo_unidade, values)=>{
+        let unidades_por_tipo = []
         if(tipo_unidade === "DRE") {
             let dre = await getUnidadePorUuid(uuid_unidade)
             unidades_por_tipo.push(dre)
         }else {
             unidades_por_tipo = await getUnidadesPorTipo(tipo_unidade, uuid_unidade)
         }
-
-        let uuid_unidades_por_tipo = [];
-        if (unidades_por_tipo && unidades_por_tipo.length > 0){
-            unidades_por_tipo.forEach(item=>{
-                uuid_unidades_por_tipo.push(item.uuid)
-            })
-        }
-
-        let index;
-        values.unidades_vinculadas.forEach(item=> {
-            index = uuid_unidades_por_tipo.indexOf(item.uuid)
-            if ( index > -1) {
-                unidades_por_tipo.splice(index, 1);
-                uuid_unidades_por_tipo.splice(index, 1);
-            }
-        })
-
-        return unidades_por_tipo
-
+        let retorno = serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, values)
+        return retorno
     }, [uuid_unidade])
+
+    const serviceUnidadesPorTipoVisaoSME = useCallback(async (tipo_unidade, values) =>{
+        let unidades_por_tipo = []
+        let unidades = await getUnidadesPorTipo(tipo_unidade)
+        unidades_por_tipo = [...unidades]
+        let retorno = serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, values)
+        return retorno
+    }, [])
 
 
     const handleChangeTipoUnidade = useCallback(async (tipo_unidade, values)=>{
@@ -524,11 +530,13 @@ export const GestaoDePerfisForm = () =>{
         if (tipo_unidade){
 
             if (visao_selecionada === "DRE"){
+                setUnidadesPorTipo(await serviceUnidadesPorTipoVisaoDRE(tipo_unidade, values))
+            }else if(visao_selecionada === "SME"){
                 setUnidadesPorTipo(await serviceUnidadesPorTipoVisaoSME(tipo_unidade, values))
             }
 
         }
-    }, [visao_selecionada, serviceUnidadesPorTipoVisaoSME])
+    }, [visao_selecionada, serviceUnidadesPorTipoVisaoDRE, serviceUnidadesPorTipoVisaoSME])
 
     const vinculaUnidadeUsuario = async (selectAcao) => {
         setBtnAdicionarDisabled(true)

@@ -268,8 +268,7 @@ export const GestaoDePerfisFormFormik = (
                                                 <div className="col-12" key={index}>
                                                     <div className='row'>
                                                         <div className='col mt-4'>
-                                                            <label htmlFor="tipo_de_unidade">Tipo de
-                                                                Unidade {index + 1}</label>
+                                                            <label htmlFor="tipo_de_unidade">Tipo de Unidade {index + 1}</label>
                                                             <select
                                                                 value={unidade_vinculada.tipo_unidade ? unidade_vinculada.tipo_unidade : ""}
                                                                 onChange={
