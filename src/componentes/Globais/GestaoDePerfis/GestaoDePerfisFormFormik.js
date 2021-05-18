@@ -51,10 +51,6 @@ export const GestaoDePerfisFormFormik = (
         visoesChecked,
     }) => {
 
-        if (statePerfisForm && statePerfisForm.visoes){
-                console.log("XXXXXXXXXX ", statePerfisForm.visoes.filter((v) => v === 3))
-        }
-
         return (
         <Formik
             initialValues={statePerfisForm}
@@ -183,8 +179,7 @@ export const GestaoDePerfisFormFormik = (
                                         readOnly={bloquearCampoName}
                                         maxLength='255'
                                     />
-                                    {props.errors.name && <span
-                                        className="span_erro text-danger mt-1"> {props.errors.name}</span>}
+                                    {props.errors.name && <span className="span_erro text-danger mt-1"> {props.errors.name}</span>}
                                 </div>
                             </div>
 
@@ -211,6 +206,10 @@ export const GestaoDePerfisFormFormik = (
                             <div className="col-6">
                                 <div className="form-group">
                                     <label htmlFor="visoes">Visões</label>
+                                        <div className='col-12'>
+                                                <p>{JSON.stringify(visoesChecked)}</p>
+                                                <p>{visoesChecked && visoesChecked.dre && JSON.stringify(visoesChecked.DRE)}</p>
+                                        </div>
                                     <div className="card">
                                         <div className="card-body p-2">
                                             {visoes && visoes.length > 0 && visoes.map((visao, index) => (
@@ -225,7 +224,7 @@ export const GestaoDePerfisFormFormik = (
                                                                 handleChangeVisao(e, setFieldValue, values)
                                                                 handleChangeVisoesChecked(e, setFieldValue, values)
                                                         }}
-                                                        defaultChecked={values.visoes.filter((v) => v === visao.id)}
+                                                        checked={props.values.visoes.includes(parseInt(visao.id))}
                                                         disabled={!visao.editavel}
                                                     />
                                                     <label className="form-check-label" htmlFor={visao.nome}>{visao.nome}</label>
@@ -233,22 +232,6 @@ export const GestaoDePerfisFormFormik = (
                                             ))}
                                         </div>
                                     </div>
-
-
-                                    {/*<Field
-                                        component="select"
-                                        name="visoes"
-                                        className="form-control"
-                                        multiple={true}
-                                        value={props.values.visoes ? props.values.visoes : []}
-                                        onChange={evt =>
-                                            setFieldValue("visoes", [].slice.call(evt.target.selectedOptions).map(option => option.value))
-                                        }
-                                    >
-                                        {visoes && visoes.length > 0 && visoes.map((visao, index) => (
-                                            <option disabled={!visao.editavel} key={index} value={visao.id}>{visao.nome}</option>
-                                        ))}
-                                    </Field>*/}
                                     {props.errors.visoes &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.visoes}</span>}
                                 </div>
@@ -284,8 +267,6 @@ export const GestaoDePerfisFormFormik = (
                                                 <div className="col-12" key={index}>
                                                     <div className='row'>
                                                         <div className='col mt-4'>
-                                                                <p>{JSON.stringify(visoesChecked)}</p>
-                                                                <p>{visoesChecked && visoesChecked.dre && JSON.stringify(visoesChecked.DRE)}</p>
                                                             <label htmlFor="tipo_de_unidade">Tipo de Unidade {index + 1}</label>
                                                             <select
                                                                 value={unidade_vinculada.tipo_unidade ? unidade_vinculada.tipo_unidade : ""}

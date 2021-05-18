@@ -435,54 +435,54 @@ export const GestaoDePerfisForm = () =>{
 
            // console.log("PAYLOAD ", payload)
 
-            // if (values.id || (usuariosStatus.usuario_sig_escola.info_sig_escola && usuariosStatus.usuario_sig_escola.info_sig_escola.user_id)) {
-            //
-            //     let id_do_usuario;
-            //     if (values.id){
-            //         id_do_usuario = values.id
-            //     }else {
-            //         id_do_usuario = usuariosStatus.usuario_sig_escola.info_sig_escola.user_id
-            //     }
-            //
-            //     try {
-            //         await putEditarUsuario(id_do_usuario, payload);
-            //         console.log('Usuário editado com sucesso')
-            //         window.location.assign('/gestao-de-perfis/')
-            //     } catch (e) {
-            //         setLoading(false)
-            //         console.log('Erro ao editar usuário ', e.response.data)
-            //         setTituloModalInfo('Erro ao atualizar o usuário')
-            //         if (e.response.data.username && e.response.data.username.length > 0) {
-            //             setTextoModalInfo(e.response.data.username[0])
-            //         } else {
-            //             setTextoModalInfo('<p>Não foi possível atualizar o usuário, por favor, tente novamente</p>')
-            //         }
-            //         resetForm()
-            //         setShowModalUsuarioNaoCadastrado(false)
-            //         setShowModalUsuarioCadastradoVinculado(false)
-            //         setShowModalInfo(true)
-            //     }
-            //
-            // } else {
-            //     try {
-            //         await postCriarUsuario(payload);
-            //         console.log('Usuário criado com sucesso')
-            //         window.location.assign('/gestao-de-perfis/')
-            //     } catch (e) {
-            //         setLoading(false)
-            //         console.log('Erro ao criar usuário ', e.response.data)
-            //         setTituloModalInfo('Erro ao criar usuário')
-            //         if (e.response.data.username && e.response.data.username.length > 0) {
-            //             setTextoModalInfo(e.response.data.username[0])
-            //         } else {
-            //             setTextoModalInfo('<p>Não foi possível criar o usuário, por favor, tente novamente</p>')
-            //         }
-            //         resetForm()
-            //         setShowModalUsuarioNaoCadastrado(false)
-            //         setShowModalUsuarioCadastradoVinculado(false)
-            //         setShowModalInfo(true)
-            //     }
-            // }
+            if (values.id || (usuariosStatus.usuario_sig_escola.info_sig_escola && usuariosStatus.usuario_sig_escola.info_sig_escola.user_id)) {
+
+                let id_do_usuario;
+                if (values.id){
+                    id_do_usuario = values.id
+                }else {
+                    id_do_usuario = usuariosStatus.usuario_sig_escola.info_sig_escola.user_id
+                }
+
+                try {
+                    await putEditarUsuario(id_do_usuario, payload);
+                    console.log('Usuário editado com sucesso')
+                    window.location.assign('/gestao-de-perfis/')
+                } catch (e) {
+                    setLoading(false)
+                    console.log('Erro ao editar usuário ', e.response.data)
+                    setTituloModalInfo('Erro ao atualizar o usuário')
+                    if (e.response.data.username && e.response.data.username.length > 0) {
+                        setTextoModalInfo(e.response.data.username[0])
+                    } else {
+                        setTextoModalInfo('<p>Não foi possível atualizar o usuário, por favor, tente novamente</p>')
+                    }
+                    resetForm()
+                    setShowModalUsuarioNaoCadastrado(false)
+                    setShowModalUsuarioCadastradoVinculado(false)
+                    setShowModalInfo(true)
+                }
+
+            } else {
+                try {
+                    await postCriarUsuario(payload);
+                    console.log('Usuário criado com sucesso')
+                    window.location.assign('/gestao-de-perfis/')
+                } catch (e) {
+                    setLoading(false)
+                    console.log('Erro ao criar usuário ', e.response.data)
+                    setTituloModalInfo('Erro ao criar usuário')
+                    if (e.response.data.username && e.response.data.username.length > 0) {
+                        setTextoModalInfo(e.response.data.username[0])
+                    } else {
+                        setTextoModalInfo('<p>Não foi possível criar o usuário, por favor, tente novamente</p>')
+                    }
+                    resetForm()
+                    setShowModalUsuarioNaoCadastrado(false)
+                    setShowModalUsuarioCadastradoVinculado(false)
+                    setShowModalInfo(true)
+                }
+            }
         }
     };
 
@@ -576,7 +576,7 @@ export const GestaoDePerfisForm = () =>{
         }
     };
 
-    const getEstadoInicialVisoesChecked = useCallback(()=>{
+    const getEstadoInicialVisoesChecked = ()=>{
 
         var check = document.getElementsByName("visoes");
 
@@ -611,12 +611,12 @@ export const GestaoDePerfisForm = () =>{
         //         })
         //     ))
         // }
-    }, [visoes, statePerfisForm])
-
-    useEffect(()=>{
-        getEstadoInicialVisoesChecked()
-
-    }, [getEstadoInicialVisoesChecked])
+    }
+    //
+    // useEffect(()=>{
+    //     getEstadoInicialVisoesChecked()
+    //
+    // }, [getEstadoInicialVisoesChecked])
 
     const handleChangeVisoesChecked = (e, setFieldValue, values) =>{
         const { checked, id } = e.target;
