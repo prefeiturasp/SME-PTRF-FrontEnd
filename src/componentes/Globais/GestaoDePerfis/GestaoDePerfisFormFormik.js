@@ -49,7 +49,14 @@ export const GestaoDePerfisFormFormik = (
         handleChangeVisao,
         handleChangeVisoesChecked,
         visoesChecked,
+        getEstadoInicialVisoesChecked,
     }) => {
+
+        if (visoesChecked && visoesChecked.length > 0){
+                console.log("visoesChecked XXXXXXXXXXXXXXXXXX ", visoesChecked)
+                let ret = visoesChecked.filter(element => element === "DRE")
+                console.log("visoesChecked XXXXXXXXXXXXXXXXXX ", ret)
+        }
 
         return (
         <Formik
@@ -351,6 +358,7 @@ export const GestaoDePerfisFormFormik = (
                                                 className="btn btn btn-success mt-2 mr-2"
                                                 disabled={btnAdicionarDisabled}
                                                 onClick={() => {
+                                                        getEstadoInicialVisoesChecked()
                                                     push({
                                                             unidade_vinculada: '',
                                                             tipo_unidade: '',

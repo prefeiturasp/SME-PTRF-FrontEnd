@@ -226,7 +226,7 @@ export const GestaoDePerfisForm = () =>{
     const [usuariosStatus, setUsuariosStatus] = useState({});
     const [btnAdicionarDisabled, setBtnAdicionarDisabled] = useState(false);
     const [btnExcluirDisabled, setBtnExcluirDisabled] = useState(false);
-    const [visoesChecked, setVisoesChecked] = useState({});
+    const [visoesChecked, setVisoesChecked] = useState([]);
 
     const idUsuarioCondicionalMask = useCallback((e_servidor) => {
         let mask;
@@ -580,23 +580,38 @@ export const GestaoDePerfisForm = () =>{
 
         var check = document.getElementsByName("visoes");
 
-        console.log("getEstadoInicialVisoesChecked ", check)
+        console.log("getEstadoInicialVisoesChecked ", visoesChecked)
+        console.log("getEstadoInicialVisoesChecked check ", check)
 
-        for (var i=0;i<check.length;i++){
-            console.log("ID: ", check[i].id, "CHECKED: ", check[i].checked)
 
-            if (check[i].checked === true){
-                setVisoesChecked({
-                    ...visoesChecked,
-                    [check[i].id]: true
-                })
 
-            }  else {
-                setVisoesChecked({
-                    ...visoesChecked,
-                    [check.id]: false
-                })
-            }
+        for (var i=0; i<check.length; i++){
+
+            //console.log("ID: ", check[i].id, "CHECKED: ", check[i].checked)
+            //debugger
+
+            let { checked, id } = check[i];
+
+            setVisoesChecked(oldInputs => [...oldInputs, {[id]: checked}])
+
+            // setVisoesChecked({
+            //     ...visoesChecked,
+            //     [id]: checked
+            // })
+
+            // if (check[i].checked === true){
+            //     debugger
+            //     setVisoesChecked({
+            //         ...visoesChecked,
+            //         [id]: true
+            //     })
+            //
+            // }  else {
+            //     setVisoesChecked({
+            //         ...visoesChecked,
+            //         [id]: false
+            //     })
+            // }
         }
 
         // console.log('getEstadoInicialVisoesChecked ', statePerfisForm)
@@ -683,6 +698,7 @@ export const GestaoDePerfisForm = () =>{
                                 handleChangeVisao={handleChangeVisao}
                                 handleChangeVisoesChecked={handleChangeVisoesChecked}
                                 visoesChecked={visoesChecked}
+                                getEstadoInicialVisoesChecked={getEstadoInicialVisoesChecked}
                             />
                     </div>
                 </>
