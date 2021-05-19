@@ -36,7 +36,7 @@ const GestaoDePerfisFormAutocomplete = ({todasAsAcoesAutoComplete, recebeAcaoAut
                     onSelect={(e) => recebeAcaoAutoComplete(e.value, {setFieldValue},`unidades_vinculadas[${index}].unidade_vinculada` )}
                     style={{width: "100%", borderLeft:'none'}}
                     disabled={todasAsAcoesAutoComplete.length < 1}
-                    placeholder={todasAsAcoesAutoComplete.length < 1 ? "Não existem escolas para o tipo de unidade" : ""}
+                    placeholder={todasAsAcoesAutoComplete.length < 1 ? "Não existem unidades para o tipo de unidade selecionada" : ""}
                 />
             </div>
             <div className="bd-highlight ml-0 py-1 px-3 ml-n3 border-top border-right border-bottom">

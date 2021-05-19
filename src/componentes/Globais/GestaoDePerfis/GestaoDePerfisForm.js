@@ -88,6 +88,14 @@ export const GestaoDePerfisForm = () =>{
         return unidades_vinculadas
     }, [id_usuario, visao_selecionada, uuid_unidade])
 
+    const serviceTemUnidadeDre = useCallback((unidades_vinculadas)=>{
+        return unidades_vinculadas.find(element => element.tipo_unidade === "DRE")
+    }, [])
+
+    const serviceTemUnidadeUE = useCallback((unidades_vinculadas)=>{
+        return unidades_vinculadas.find(element => element.tipo_unidade && element.tipo_unidade !== "SME" && element.tipo_unidade !== "DRE")
+    }, [])
+
 
     const exibeVisoes = useCallback(async ()=>{
         let _visoes;
@@ -95,8 +103,8 @@ export const GestaoDePerfisForm = () =>{
 
         console.log("exibeVisoes ", unidades_vinculadas)
 
-        let tem_unidade_dre = unidades_vinculadas.find(element => element.tipo_unidade === "DRE")
-        let tem_unidade_ue = unidades_vinculadas.find(element => element.tipo_unidade && element.tipo_unidade !== "SME" && element.tipo_unidade !== "DRE")
+        let tem_unidade_dre = serviceTemUnidadeDre(unidades_vinculadas)
+        let tem_unidade_ue = serviceTemUnidadeUE(unidades_vinculadas)
 
 
         if (visao_selecionada === "SME"){
@@ -119,7 +127,7 @@ export const GestaoDePerfisForm = () =>{
             ]
         }
         setVisoes(_visoes)
-    }, [visao_selecionada, carregaUnidadesVinculadas])
+    }, [visao_selecionada, carregaUnidadesVinculadas, serviceTemUnidadeDre, serviceTemUnidadeUE])
 
     useEffect(()=>{
         exibeVisoes()
@@ -547,7 +555,6 @@ export const GestaoDePerfisForm = () =>{
 
     const handleChangeTipoUnidade = useCallback(async (tipo_unidade, values)=>{
         setBtnAdicionarDisabled(true)
-        setBtnExcluirDisabled(false)
 
         if (tipo_unidade){
 
@@ -591,7 +598,7 @@ export const GestaoDePerfisForm = () =>{
                 await exibeVisoes()
                 console.log("Unidade excluída com sucesso")
             }catch (e) {
-                console.log("Erro ao deletar unidade ao usuario ", e.response.data)
+                console.log("Erro ao excluir unidade ao usuario ", e.response.data)
                 await exibeVisoes()
             }
         }
@@ -619,6 +626,7 @@ export const GestaoDePerfisForm = () =>{
                 checked: checked,
             })
         }
+        console.log("getEstadoInicialVisoesChecked ", arrayVisoes)
         setVisoesChecked(arrayVisoes)
     }
 
@@ -685,6 +693,8 @@ export const GestaoDePerfisForm = () =>{
                                 getEstadoInicialVisoesChecked={getEstadoInicialVisoesChecked}
                                 acessoCadastrarUnidade={acessoCadastrarUnidade}
                                 unidadeVisaoUE={unidadeVisaoUE}
+                                serviceTemUnidadeDre={serviceTemUnidadeDre}
+                                serviceTemUnidadeUE={serviceTemUnidadeUE}
                             />
                     </div>
                 </>

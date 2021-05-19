@@ -33,7 +33,7 @@ export const getUsuariosFiltros = async (visao_selecionada, nome="", group="", t
 };
 
 export const getUsuarioUnidadesVinculadas = async (usuario_id, visao, unidade_logada_uuid="") =>{
-    return (await api.get(`/api/usuarios/${usuario_id}/unidades-e-permissoes-na-visao/${visao}/?unidade_logada_uuid=${unidade_logada_uuid}`, authHeader)).data
+    return (await api.get(`/api/usuarios/${usuario_id}/unidades-e-permissoes-na-visao/${visao}/${unidade_logada_uuid ? "?unidade_logada_uuid="+unidade_logada_uuid : ""}`, authHeader)).data
 };
 
 export const getUsuarios = async (visao_selecionada) =>{
