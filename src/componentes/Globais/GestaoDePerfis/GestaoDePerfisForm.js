@@ -38,6 +38,7 @@ export const GestaoDePerfisForm = () =>{
     const [gruposJaVinculados, setGruposJaVinculados] = useState([]);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
     const [unidadesPorTipo, setUnidadesPorTipo] = useState([]);
+    const [unidadeVisaoUE, setUnidadeVisaoUE] = useState({});
 
     const carregaCodigoEolUnidade = useCallback(async ()=>{
         if (visao_selecionada !== "SME"){
@@ -76,12 +77,14 @@ export const GestaoDePerfisForm = () =>{
 
     const carregaUnidadesVinculadas = useCallback( async ()=>{
         let unidades_vinculadas = [];
-
-        if (visao_selecionada !== "SME"){
-            unidades_vinculadas = await getUsuarioUnidadesVinculadas(id_usuario, visao_selecionada, uuid_unidade)
-        }else if (visao_selecionada === "SME"){
-            unidades_vinculadas = await getUsuarioUnidadesVinculadas(id_usuario, visao_selecionada)
+        if (id_usuario){
+            if (visao_selecionada !== "SME"){
+                unidades_vinculadas = await getUsuarioUnidadesVinculadas(id_usuario, visao_selecionada, uuid_unidade)
+            }else if (visao_selecionada === "SME"){
+                unidades_vinculadas = await getUsuarioUnidadesVinculadas(id_usuario, visao_selecionada)
+            }
         }
+
         return unidades_vinculadas
     }, [id_usuario, visao_selecionada, uuid_unidade])
 
@@ -105,22 +108,14 @@ export const GestaoDePerfisForm = () =>{
         }else if (visao_selecionada === "DRE"){
             _visoes = [
                 {nome: "SME", id: 3, editavel: false},
-                {
-                    nome: "DRE",
-                    id: 2,
-                    editavel: !tem_unidade_dre
-                },
-                {
-                    nome: "UE",
-                    id: 1,
-                    editavel: !tem_unidade_ue
-                },
+                {nome: "DRE", id: 2, editavel: !tem_unidade_dre},
+                {nome: "UE", id: 1, editavel: !tem_unidade_ue},
             ]
         }else if (visao_selecionada === "UE"){
             _visoes = [
                 {nome: "SME", id: 3,editavel: false},
                 {nome: "DRE", id: 2, editavel: false},
-                {nome: "UE", id: 1, editavel: true},
+                {nome: "UE", id: 1, editavel: !tem_unidade_ue},
             ]
         }
         setVisoes(_visoes)
@@ -138,6 +133,25 @@ export const GestaoDePerfisForm = () =>{
     useEffect(()=>{
         buscaTabelaAssociacoes()
     }, [buscaTabelaAssociacoes])
+
+    const buscaTipoUnidadeVisaoUE = useCallback( async ()=>{
+        let unidade={
+            tipo_unidade:""
+        }
+        if (uuid_unidade && visao_selecionada && visao_selecionada === "UE"){
+            try {
+                unidade = await getUnidadePorUuid(uuid_unidade)
+            }catch (e) {
+                console.log("Erro ao buscar unidade, método: buscaTipoUnidadeVisaoUE ", e.response.data)
+            }
+        }
+        setUnidadeVisaoUE(unidade)
+
+    },[uuid_unidade, visao_selecionada])
+
+    useEffect(()=>{
+        buscaTipoUnidadeVisaoUE()
+    }, [buscaTipoUnidadeVisaoUE])
 
     const carregaDadosUsuario = useCallback(async ()=>{
         if (id_usuario){
@@ -522,6 +536,14 @@ export const GestaoDePerfisForm = () =>{
         return retorno
     }, [])
 
+    const serviceUnidadesPorTipoVisaoUE = useCallback(async (tipo_unidade, values)=>{
+        let unidades_por_tipo = []
+        let ue = await getUnidadePorUuid(uuid_unidade)
+        unidades_por_tipo.push(ue)
+        let retorno = serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, values)
+        return retorno
+    }, [uuid_unidade])
+
 
     const handleChangeTipoUnidade = useCallback(async (tipo_unidade, values)=>{
         setBtnAdicionarDisabled(true)
@@ -533,10 +555,12 @@ export const GestaoDePerfisForm = () =>{
                 setUnidadesPorTipo(await serviceUnidadesPorTipoVisaoDRE(tipo_unidade, values))
             }else if(visao_selecionada === "SME"){
                 setUnidadesPorTipo(await serviceUnidadesPorTipoVisaoSME(tipo_unidade, values))
+            }else if (visao_selecionada === "UE"){
+                setUnidadesPorTipo(await serviceUnidadesPorTipoVisaoUE(tipo_unidade, values))
             }
 
         }
-    }, [visao_selecionada, serviceUnidadesPorTipoVisaoDRE, serviceUnidadesPorTipoVisaoSME])
+    }, [visao_selecionada, serviceUnidadesPorTipoVisaoDRE, serviceUnidadesPorTipoVisaoSME, serviceUnidadesPorTipoVisaoUE])
 
     const vinculaUnidadeUsuario = async (selectAcao) => {
         setBtnAdicionarDisabled(true)
@@ -596,7 +620,6 @@ export const GestaoDePerfisForm = () =>{
             })
         }
         setVisoesChecked(arrayVisoes)
-
     }
 
     const acessoCadastrarUnidade = (tipo_unidade) => {
@@ -661,6 +684,7 @@ export const GestaoDePerfisForm = () =>{
                                 visoesChecked={visoesChecked}
                                 getEstadoInicialVisoesChecked={getEstadoInicialVisoesChecked}
                                 acessoCadastrarUnidade={acessoCadastrarUnidade}
+                                unidadeVisaoUE={unidadeVisaoUE}
                             />
                     </div>
                 </>

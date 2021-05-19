@@ -50,6 +50,7 @@ export const GestaoDePerfisFormFormik = (
         visoesChecked,
         getEstadoInicialVisoesChecked,
         acessoCadastrarUnidade,
+        unidadeVisaoUE,
     }) => {
 
     return (
@@ -252,13 +253,21 @@ export const GestaoDePerfisFormFormik = (
                                         }}
                                     >
                                         {grupos && grupos.length > 0 && grupos.map((grupo, index) => (
-                                            <option key={index} value={grupo.id}>{grupo.nome}</option>))}
+                                            <option key={index} value={grupo.id}>{grupo.nome}</option>
+                                        ))}
                                     </Field>
                                     {props.errors.groups &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.groups}</span>}
                                 </div>
                             </div>
 
+                            <div className='col-12'>
+                                {/*!statePerfisForm.id*/}
+                                <p>
+                                    <strong>{values.id ? "Unidades que possui acesso" : "É necessario salvar o usuário para incluir unidades"}</strong>
+                                </p>
+                            </div>
+                            {values.id &&
                             <FieldArray
                                 name="unidades_vinculadas"
                                 render={({remove, push}) => (
@@ -268,27 +277,46 @@ export const GestaoDePerfisFormFormik = (
                                                 <div className="col-12" key={index}>
                                                     <div className='row'>
                                                         <div className='col mt-4'>
-                                                            <label htmlFor="tipo_de_unidade">Tipo de Unidade {index + 1}</label>
-                                                            <select
-                                                                value={unidade_vinculada.tipo_unidade ? unidade_vinculada.tipo_unidade : ""}
-                                                                onChange={
-                                                                    (e) => {
-                                                                        props.handleChange(e);
-                                                                        handleChangeTipoUnidade(e.target.value, values)
-                                                                    }}
-                                                                name={`unidades_vinculadas[${index}].tipo_unidade`}
-                                                                id={`tipo_unidade_${index}`}
-                                                                className="form-control"
-                                                                disabled={unidade_vinculada.nome}
-                                                            >
-                                                                <option value="">Selecione um tipo de unidade</option>
-                                                                <option disabled={!acessoCadastrarUnidade('DRE')} value="DRE">DIRETORIA</option>
-
-
-                                                                {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
-                                                                    <option disabled={!acessoCadastrarUnidade('UE')} key={item.id} value={item.id}>{item.nome}</option>
-                                                                ))}
-                                                            </select>
+                                                            <label htmlFor="tipo_de_unidade">Tipo de
+                                                                Unidade {index + 1}</label>
+                                                            {values.visao === "UE" ? (
+                                                                    <select
+                                                                        value={unidade_vinculada.tipo_unidade ? unidade_vinculada.tipo_unidade : ""}
+                                                                        onChange={
+                                                                            (e) => {
+                                                                                props.handleChange(e);
+                                                                                handleChangeTipoUnidade(e.target.value, values)
+                                                                            }}
+                                                                        name={`unidades_vinculadas[${index}].tipo_unidade`}
+                                                                        id={`tipo_unidade_${index}`}
+                                                                        className="form-control"
+                                                                        disabled={unidade_vinculada.nome}
+                                                                    >
+                                                                        <option value="">Selecione um tipo de unidade
+                                                                        </option>
+                                                                        <option disabled={!acessoCadastrarUnidade('UE')} value={unidadeVisaoUE.tipo_unidade}>{unidadeVisaoUE.tipo_unidade}</option>
+                                                                    </select>
+                                                                ) :
+                                                                <select
+                                                                    value={unidade_vinculada.tipo_unidade ? unidade_vinculada.tipo_unidade : ""}
+                                                                    onChange={
+                                                                        (e) => {
+                                                                            props.handleChange(e);
+                                                                            handleChangeTipoUnidade(e.target.value, values)
+                                                                        }}
+                                                                    name={`unidades_vinculadas[${index}].tipo_unidade`}
+                                                                    id={`tipo_unidade_${index}`}
+                                                                    className="form-control"
+                                                                    disabled={unidade_vinculada.nome}
+                                                                >
+                                                                    <option value="">Selecione um tipo de unidade
+                                                                    </option>
+                                                                    <option disabled={!acessoCadastrarUnidade('DRE')}value="DRE">DIRETORIA</option>
+                                                                    {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
+                                                                        <option disabled={!acessoCadastrarUnidade('UE')}key={item.id} value={item.id}>{item.nome}</option>
+                                                                    ))}
+                                                                </select>
+                                                            }
                                                         </div>
 
                                                         <div className="col mt-4">
@@ -313,10 +341,7 @@ export const GestaoDePerfisFormFormik = (
                                                                     index={index}
                                                                 />
                                                             }
-
-                                                            {props.touched.unidade_vinculada && props.errors.unidade_vinculada &&
-                                                            <span
-                                                                className="text-danger mt-1"> {props.errors.unidade_vinculada}</span>}
+                                                            {props.touched.unidade_vinculada && props.errors.unidade_vinculada && <span className="text-danger mt-1"> {props.errors.unidade_vinculada}</span>}
                                                         </div>
 
                                                         {index >= 0 && values.unidades_vinculadas.length > 0 && (
@@ -367,6 +392,7 @@ export const GestaoDePerfisFormFormik = (
                                     </>
                                 )}
                             />
+                            }
 
 
                         </div>
@@ -426,6 +452,6 @@ export const GestaoDePerfisFormFormik = (
                     </form>
                 );
             }}
-        </Formik>
-    )
-}
+                </Formik>
+                )
+            }
