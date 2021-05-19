@@ -3,7 +3,7 @@ import {DashboardCard} from "./DashboardCard";
 import {DashboardCardInfoConta} from "./DashboardCardInfoConta";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
-import {getPeriodosNaoFuturos, getStatusPeriodoPorData} from "../../../services/escolas/PrestacaoDeContas.service";
+import {getPeriodosAteAgoraForaImplantacaoDaAssociacao, getStatusPeriodoPorData} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getAcoesAssociacao, getAcoesAssociacaoPorPeriodoConta, getTabelas} from "../../../services/Dashboard.service";
 import {exibeDataPT_BR, getCorStatusPeriodo} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
@@ -57,7 +57,7 @@ export const Dashboard = () => {
     }, [acoesAssociacao]);
 
     const buscaPeriodos = async () => {
-        let periodos = await getPeriodosNaoFuturos();
+        let periodos = await getPeriodosAteAgoraForaImplantacaoDaAssociacao();
         setSelectPeriodo(periodos[0].uuid)
         setPeriodosAssociacao(periodos);
     };
