@@ -637,6 +637,18 @@ export const GestaoDePerfisForm = () =>{
         }
     }
 
+    const pesquisaVisao = useCallback((nome_visao)=>{
+
+        let visao = visoes.find(element => element.nome === nome_visao)
+        return visao
+
+    }, [visoes])
+
+    useEffect(()=>{
+        let visao = pesquisaVisao("SME")
+        console.log("VISAO XXXXXXX ", visao)
+    }, [pesquisaVisao])
+
     return (
         <PaginasContainer>
 
@@ -695,6 +707,7 @@ export const GestaoDePerfisForm = () =>{
                                 unidadeVisaoUE={unidadeVisaoUE}
                                 serviceTemUnidadeDre={serviceTemUnidadeDre}
                                 serviceTemUnidadeUE={serviceTemUnidadeUE}
+                                pesquisaVisao={pesquisaVisao}
                             />
                     </div>
                 </>

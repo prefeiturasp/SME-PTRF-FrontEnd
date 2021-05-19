@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {Field, FieldArray, Formik} from "formik";
 import {YupSignupSchemaPerfis} from "./YupSignupSchemaPerfis";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -53,12 +53,8 @@ export const GestaoDePerfisFormFormik = (
         unidadeVisaoUE,
         serviceTemUnidadeDre,
         serviceTemUnidadeUE,
+        pesquisaVisao,
     }) => {
-
-        useEffect(()=>{
-                let visoes_checked = getEstadoInicialVisoesChecked()
-        }, [])
-
 
     return (
         <Formik
@@ -83,22 +79,24 @@ export const GestaoDePerfisFormFormik = (
                             </div>
                             <div className="p-Y bd-highlight">
                                 {statePerfisForm.id &&
-                                <button
-                                    disabled={serviceTemUnidadeDre(props.values.unidades_vinculadas) || serviceTemUnidadeUE(props.values.unidades_vinculadas) || acessoCadastrarUnidade('SME')}
-                                    onClick={() => setShowModalDeletePerfil(true)}
-                                    type="button"
-                                    className="btn btn btn-danger mt-2"
-                                >
-                                    <FontAwesomeIcon
-                                        style={{
-                                            fontSize: '15px',
-                                            marginRight: "5px",
-                                            color: '#fff'
-                                        }}
-                                        icon={faTrash}
-                                    />
-                                    Deletar usuário
-                                </button>
+                                        <button
+                                            disabled={serviceTemUnidadeDre(props.values.unidades_vinculadas) || serviceTemUnidadeUE(props.values.unidades_vinculadas) || props.values.visoes.includes(pesquisaVisao("SME").id)}
+                                            onClick={() => {
+                                                    setShowModalDeletePerfil(true)
+                                            }}
+                                            type="button"
+                                            className="btn btn btn-danger mt-2"
+                                        >
+                                            <FontAwesomeIcon
+                                                style={{
+                                                    fontSize: '15px',
+                                                    marginRight: "5px",
+                                                    color: '#fff'
+                                                }}
+                                                icon={faTrash}
+                                            />
+                                            Deletar usuário
+                                        </button>
                                 }
                             </div>
                             <div className="p-Y bd-highlight">
