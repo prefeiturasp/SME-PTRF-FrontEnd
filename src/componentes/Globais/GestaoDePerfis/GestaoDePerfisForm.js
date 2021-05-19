@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import {useParams} from 'react-router-dom'
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {visoesService} from "../../../services/visoes.service";
-import {getUsuario, getUsuarioStatus, getCodigoEolUnidade, getGrupos, getUsuarioUnidadesVinculadas, getUnidadesPorTipo, getUnidadePorUuid, postVincularUnidadeUsuario, postCriarUsuario, putEditarUsuario, deleteDesvincularUnidadeUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
+import {getUsuario, getUsuarioStatus, getCodigoEolUnidade, getGrupos, getVisoes, getUsuarioUnidadesVinculadas, getUnidadesPorTipo, getUnidadePorUuid, postVincularUnidadeUsuario, postCriarUsuario, putEditarUsuario, deleteDesvincularUnidadeUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
 import {valida_cpf_cnpj} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
 import {GestaoDePerfisFormFormik} from "./GestaoDePerfisFormFormik";
@@ -101,31 +101,31 @@ export const GestaoDePerfisForm = () =>{
         let _visoes;
         let unidades_vinculadas = await carregaUnidadesVinculadas()
 
-        console.log("exibeVisoes ", unidades_vinculadas)
+        let get_visoes = await getVisoes()
 
         let tem_unidade_dre = serviceTemUnidadeDre(unidades_vinculadas)
         let tem_unidade_ue = serviceTemUnidadeUE(unidades_vinculadas)
 
-
         if (visao_selecionada === "SME"){
             _visoes = [
-                {nome: "SME", id: 3,editavel: true},
-                {nome: "DRE", id: 2, editavel: !tem_unidade_dre},
-                {nome: "UE", id: 1, editavel: !tem_unidade_ue},
+                {nome: "SME", id: parseInt(get_visoes.find(element => element.nome === "SME").id),  editavel: true},
+                {nome: "DRE", id: parseInt(get_visoes.find(element => element.nome === "DRE").id),  editavel: !tem_unidade_dre},
+                {nome: "UE",  id: parseInt(get_visoes.find(element => element.nome === "UE").id),   editavel: !tem_unidade_ue},
             ]
         }else if (visao_selecionada === "DRE"){
             _visoes = [
-                {nome: "SME", id: 3, editavel: false},
-                {nome: "DRE", id: 2, editavel: !tem_unidade_dre},
-                {nome: "UE", id: 1, editavel: !tem_unidade_ue},
+                {nome: "SME", id: parseInt(get_visoes.find(element => element.nome === "SME").id), editavel: false},
+                {nome: "DRE", id: parseInt(get_visoes.find(element => element.nome === "DRE").id), editavel: !tem_unidade_dre},
+                {nome: "UE",  id: parseInt(get_visoes.find(element => element.nome === "UE").id),  editavel: !tem_unidade_ue},
             ]
         }else if (visao_selecionada === "UE"){
             _visoes = [
-                {nome: "SME", id: 3,editavel: false},
-                {nome: "DRE", id: 2, editavel: false},
-                {nome: "UE", id: 1, editavel: !tem_unidade_ue},
+                {nome: "SME", id: parseInt(get_visoes.find(element => element.nome === "SME").id), editavel: false},
+                {nome: "DRE", id: parseInt(get_visoes.find(element => element.nome === "DRE").id),  editavel: false},
+                {nome: "UE",  id: parseInt(get_visoes.find(element => element.nome === "UE").id),   editavel: !tem_unidade_ue},
             ]
         }
+
         setVisoes(_visoes)
     }, [visao_selecionada, carregaUnidadesVinculadas, serviceTemUnidadeDre, serviceTemUnidadeUE])
 
@@ -308,7 +308,7 @@ export const GestaoDePerfisForm = () =>{
             setStatePerfisForm(initPerfisForm);
             resetForm();
             setTituloModalInfo("Erro ao criar o usuário");
-            setTextoModalInfo("<p>O usuário precisa ser um servidor da escola</p>");
+            setTextoModalInfo("<p>O usuário precisa ser um servidor da unidade</p>");
             setShowModalInfo(true);
         }
         return e_servidor_da_escola
@@ -445,14 +445,14 @@ export const GestaoDePerfisForm = () =>{
                 username: values.username,
                 name: values.name,
                 email: values.email ? values.email : "",
-                visao: visao_selecionada,
+                //visao: visao_selecionada,
                 groups: grupos_concatenados_sem_repeticao,
                 //unidade: visao_selecionada !== "SME" ? codigoEolUnidade : null,
                 unidade: null,
                 visoes: values.visoes,
             };
 
-           // console.log("PAYLOAD ", payload)
+            console.log("PAYLOAD ", payload)
 
             if (values.id || (usuariosStatus.usuario_sig_escola.info_sig_escola && usuariosStatus.usuario_sig_escola.info_sig_escola.user_id)) {
 
@@ -464,8 +464,8 @@ export const GestaoDePerfisForm = () =>{
                 }
 
                 try {
-                    await putEditarUsuario(id_do_usuario, payload);
-                    console.log('Usuário editado com sucesso')
+                    let ret = await putEditarUsuario(id_do_usuario, payload);
+                    console.log('Usuário editado com sucesso ', ret)
                     window.location.assign('/gestao-de-perfis/')
                 } catch (e) {
                     setLoading(false)
@@ -484,9 +484,9 @@ export const GestaoDePerfisForm = () =>{
 
             } else {
                 try {
-                    await postCriarUsuario(payload);
-                    console.log('Usuário criado com sucesso')
-                    window.location.assign('/gestao-de-perfis/')
+                    let ret = await postCriarUsuario(payload);
+                    console.log('Usuário criado com sucesso ', ret)
+                    window.location.assign(`/gestao-de-perfis-form/${ret.id}`)
                 } catch (e) {
                     setLoading(false)
                     console.log('Erro ao criar usuário ', e.response.data)
@@ -615,7 +615,6 @@ export const GestaoDePerfisForm = () =>{
     };
 
     const getEstadoInicialVisoesChecked = ()=>{
-
         let check = document.getElementsByName("visoes");
         let arrayVisoes = [];
         for (let i=0; i<check.length; i++){
@@ -626,7 +625,6 @@ export const GestaoDePerfisForm = () =>{
                 checked: checked,
             })
         }
-        console.log("getEstadoInicialVisoesChecked ", arrayVisoes)
         setVisoesChecked(arrayVisoes)
     }
 
@@ -638,16 +636,13 @@ export const GestaoDePerfisForm = () =>{
     }
 
     const pesquisaVisao = useCallback((nome_visao)=>{
-
-        let visao = visoes.find(element => element.nome === nome_visao)
-        return visao
-
+        let ret = visoes.find(element => element.nome === nome_visao)
+        if (ret && ret.id){
+            return ret
+        }else {
+            return true
+        }
     }, [visoes])
-
-    useEffect(()=>{
-        let visao = pesquisaVisao("SME")
-        console.log("VISAO XXXXXXX ", visao)
-    }, [pesquisaVisao])
 
     return (
         <PaginasContainer>

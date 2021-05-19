@@ -24,6 +24,10 @@ export const getGrupos = async (visao_selecionada) =>{
     return (await api.get(`/api/usuarios/grupos/?visao=${visao_selecionada}`, authHeader)).data
 };
 
+export const getVisoes = async () =>{
+    return (await api.get(`/api/usuarios/visoes/`, authHeader)).data
+};
+
 export const getConsultarUsuario = async (visao_selecionada, username) =>{
     return (await api.get(`/api/usuarios/consultar/?visao=${visao_selecionada}&username=${username}`, authHeader))
 };

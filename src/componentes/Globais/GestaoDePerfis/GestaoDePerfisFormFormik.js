@@ -80,7 +80,7 @@ export const GestaoDePerfisFormFormik = (
                             <div className="p-Y bd-highlight">
                                 {statePerfisForm.id &&
                                         <button
-                                            disabled={serviceTemUnidadeDre(props.values.unidades_vinculadas) || serviceTemUnidadeUE(props.values.unidades_vinculadas) || props.values.visoes.includes(pesquisaVisao("SME").id)}
+                                            disabled={serviceTemUnidadeDre(props.values.unidades_vinculadas) || serviceTemUnidadeUE(props.values.unidades_vinculadas) || props.values.visoes.includes(pesquisaVisao("SME").id) }
                                             onClick={() => {
                                                     setShowModalDeletePerfil(true)
                                             }}
@@ -164,7 +164,7 @@ export const GestaoDePerfisFormFormik = (
                                         }}
                                         name="username"
                                         className="form-control"
-                                        placeholder={props.values.e_servidor === "False" ? "Digite um CPF válido" : "Insira um RF válido"}
+                                        placeholder={props.values.e_servidor === "False" ? "Insira o CPF do usuário, sem ponto nem traço" : "Insira o RF do servidor, sem ponto nem traço"}
                                         disabled={!props.values.e_servidor || statePerfisForm.id}
                                     />
                                     {/*Validações personalizadas*/}
