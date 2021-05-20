@@ -12,6 +12,10 @@ export const getUsuario = async (id_usuario) =>{
     return (await api.get(`/api/usuarios/${id_usuario}`, authHeader)).data
 };
 
+export const getMembroAssociacao = async (associacao_uuid, membro_associacao_cpf) =>{
+    return (await api.get(`/api/membros-associacao/?associacao_uuid=${associacao_uuid}&cpf=${membro_associacao_cpf}`, authHeader)).data
+};
+
 export const getUsuarioStatus = async (username, e_servidor, uuid_unidade="") =>{
     return (await api.get(`/api/usuarios/status/?username=${username}&servidor=${e_servidor}${uuid_unidade ? "&unidade=" + uuid_unidade : "" }`, authHeader)).data
 };

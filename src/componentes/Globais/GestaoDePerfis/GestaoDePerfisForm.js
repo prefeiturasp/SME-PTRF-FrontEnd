@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import {useParams} from 'react-router-dom'
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {visoesService} from "../../../services/visoes.service";
-import {getUsuario, getUsuarioStatus, getCodigoEolUnidade, getGrupos, getVisoes, getUsuarioUnidadesVinculadas, getUnidadesPorTipo, getUnidadePorUuid, postVincularUnidadeUsuario, postCriarUsuario, putEditarUsuario, deleteDesvincularUnidadeUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
+import {getUsuario, getMembroAssociacao, getUsuarioStatus, getCodigoEolUnidade, getGrupos, getVisoes, getUsuarioUnidadesVinculadas, getUnidadesPorTipo, getUnidadePorUuid, postVincularUnidadeUsuario, postCriarUsuario, putEditarUsuario, deleteDesvincularUnidadeUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
 import {valida_cpf_cnpj} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
 import {GestaoDePerfisFormFormik} from "./GestaoDePerfisFormFormik";
@@ -273,7 +273,18 @@ export const GestaoDePerfisForm = () =>{
         return usuario_cadastrado_e_vinculado
     }, [initPerfisForm, visao_selecionada])
 
-    const serviceUsuarioNaoCadastrado = useCallback((usuario_status, {resetForm})=>{
+    const  formataCPF = (cpf) => {
+
+        let cpfAtualizado;
+
+        cpfAtualizado = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,
+            function( regex, argumento1, argumento2, argumento3, argumento4 ) {
+                return argumento1 + '.' + argumento2 + '.' + argumento3 + '-' + argumento4;
+            })
+        return cpfAtualizado
+    }
+
+    const serviceUsuarioNaoCadastrado = useCallback(async (usuario_status, {resetForm, setFieldValue=""}, values="")=>{
         let usuario_nao_cadastrado = !usuario_status.usuario_core_sso.info_core_sso && usuario_status.usuario_core_sso.mensagem !== "Erro ao buscar usuário no CoreSSO!" && usuario_status.validacao_username.username_e_valido
 
         if (usuario_status.usuario_core_sso.mensagem === "Erro ao buscar usuário no CoreSSO!"){
@@ -285,11 +296,24 @@ export const GestaoDePerfisForm = () =>{
 
         }else if (usuario_nao_cadastrado){
             setShowModalUsuarioNaoCadastrado(true)
+
+            if (values.username){
+                console.log("CPF MASCARA ", formataCPF(values.username))
+                let cpf_mascara = formataCPF(values.username)
+                let membro_associacao = await getMembroAssociacao(uuid_associacao, cpf_mascara)
+                console.log("serviceUsuarioNaoCadastrado ", membro_associacao)
+                if (membro_associacao){
+                    setFieldValue('name', membro_associacao[0].nome)
+                    setFieldValue('email', membro_associacao[0].email)
+                }
+            }
         }
         return usuario_nao_cadastrado
-    }, [initPerfisForm])
+    }, [uuid_associacao, initPerfisForm])
 
     const serviceUsuarioCadastrado = useCallback((usuario_status, {setFieldValue})=>{
+
+        console.log("serviceUsuarioCadastrado ", usuario_status)
 
         // TODO refatorar esse método para exibir nome e email do info_core_sso ou quando estiver retornando do info_sig_escola
 
@@ -344,7 +368,7 @@ export const GestaoDePerfisForm = () =>{
             }else{
                 if (serviceUsuarioCadastradoVinculado(usuario_status, {resetForm}, codigoEolUnidade)) {
                 }else {
-                    if (serviceUsuarioNaoCadastrado(usuario_status, {resetForm})){}
+                    if (serviceUsuarioNaoCadastrado(usuario_status, {resetForm, setFieldValue},values)){}
                     else if (serviceUsuarioCadastrado(usuario_status, {setFieldValue})){}
                 }
             }
