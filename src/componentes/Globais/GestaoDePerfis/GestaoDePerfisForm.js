@@ -259,6 +259,15 @@ export const GestaoDePerfisForm = () =>{
         return mask
     }, [])
 
+    const  formataCPF = (cpf) => {
+        let cpfAtualizado;
+        cpfAtualizado = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,
+            function( regex, argumento1, argumento2, argumento3, argumento4 ) {
+                return argumento1 + '.' + argumento2 + '.' + argumento3 + '-' + argumento4;
+            })
+        return cpfAtualizado
+    }
+
     const serviceUsuarioCadastradoVinculado = useCallback((usuario_status, {resetForm}, _codigoEolUnidade="")=>{
         let usuario_cadastrado_e_vinculado
         if (_codigoEolUnidade){
@@ -275,16 +284,7 @@ export const GestaoDePerfisForm = () =>{
         return usuario_cadastrado_e_vinculado
     }, [initPerfisForm, visao_selecionada])
 
-    const  formataCPF = (cpf) => {
-        let cpfAtualizado;
-        cpfAtualizado = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,
-            function( regex, argumento1, argumento2, argumento3, argumento4 ) {
-                return argumento1 + '.' + argumento2 + '.' + argumento3 + '-' + argumento4;
-            })
-        return cpfAtualizado
-    }
-
-    const serviceUsuarioNaoCadastrado = useCallback(async (usuario_status, {resetForm, setFieldValue=""}, values="")=>{
+    const serviceUsuarioNaoCadastrado = useCallback((usuario_status, {resetForm})=>{
         let usuario_nao_cadastrado = !usuario_status.usuario_core_sso.info_core_sso && usuario_status.usuario_core_sso.mensagem !== "Erro ao buscar usuário no CoreSSO!" && usuario_status.validacao_username.username_e_valido
 
         if (usuario_status.usuario_core_sso.mensagem === "Erro ao buscar usuário no CoreSSO!"){
@@ -296,19 +296,14 @@ export const GestaoDePerfisForm = () =>{
 
         }else if (usuario_nao_cadastrado){
             setShowModalUsuarioNaoCadastrado(true)
-            if (values.username && visao_selecionada === "UE"){
-                let cpf_mascara = formataCPF(values.username)
-                let membro_associacao = await getMembroAssociacao(uuid_associacao, cpf_mascara)
-                if (membro_associacao && membro_associacao.length > 0){
-                    setFieldValue('name', membro_associacao[0].nome)
-                    setFieldValue('email', membro_associacao[0].email)
-                }
-            }
         }
         return usuario_nao_cadastrado
-    }, [uuid_associacao, initPerfisForm, visao_selecionada])
+    }, [initPerfisForm])
 
     const serviceUsuarioCadastrado = useCallback((usuario_status, {setFieldValue})=>{
+
+        // TODO refatorar esse método para exibir nome e email do info_core_sso ou quando estiver retornando do info_sig_escola
+
         let usuario_cadastrado = usuario_status.usuario_core_sso.info_core_sso
         if (usuario_cadastrado){
             setBloquearCampoEmail(false);
@@ -317,6 +312,57 @@ export const GestaoDePerfisForm = () =>{
         }
         return usuario_cadastrado
     }, [])
+
+    // const serviceUsuarioCadastradoVinculado = useCallback((usuario_status, {resetForm}, _codigoEolUnidade="")=>{
+    //     let usuario_cadastrado_e_vinculado
+    //     if (_codigoEolUnidade){
+    //         usuario_cadastrado_e_vinculado = usuario_status.validacao_username.username_e_valido && usuario_status.usuario_core_sso.info_core_sso && usuario_status.usuario_sig_escola.info_sig_escola && usuario_status.usuario_sig_escola.info_sig_escola.visoes.find(element => element === visao_selecionada) && usuario_status.usuario_sig_escola.info_sig_escola.unidades.find(element => element === _codigoEolUnidade)
+    //     }else {
+    //         // Visão SME não recebe o codigo da unidade
+    //         usuario_cadastrado_e_vinculado = usuario_status.validacao_username.username_e_valido && usuario_status.usuario_core_sso.info_core_sso && usuario_status.usuario_sig_escola.info_sig_escola && usuario_status.usuario_sig_escola.info_sig_escola.visoes.find(element => element === visao_selecionada)
+    //     }
+    //     if (usuario_cadastrado_e_vinculado){
+    //         setStatePerfisForm(initPerfisForm);
+    //         resetForm();
+    //         setShowModalUsuarioCadastradoVinculado(true);
+    //     }
+    //     return usuario_cadastrado_e_vinculado
+    // }, [initPerfisForm, visao_selecionada])
+    //
+    //
+    // const serviceUsuarioNaoCadastrado = useCallback(async (usuario_status, {resetForm, setFieldValue=""}, values="")=>{
+    //     let usuario_nao_cadastrado = !usuario_status.usuario_core_sso.info_core_sso && usuario_status.usuario_core_sso.mensagem !== "Erro ao buscar usuário no CoreSSO!" && usuario_status.validacao_username.username_e_valido
+    //
+    //     if (usuario_status.usuario_core_sso.mensagem === "Erro ao buscar usuário no CoreSSO!"){
+    //         setStatePerfisForm(initPerfisForm);
+    //         resetForm();
+    //         setTituloModalInfo("Erro ao criar o usuário");
+    //         setTextoModalInfo(usuario_status.mensagem);
+    //         setShowModalInfo(true);
+    //
+    //     }else if (usuario_nao_cadastrado){
+    //         setShowModalUsuarioNaoCadastrado(true)
+    //         if (values.username && visao_selecionada === "UE"){
+    //             let cpf_mascara = formataCPF(values.username)
+    //             let membro_associacao = await getMembroAssociacao(uuid_associacao, cpf_mascara)
+    //             if (membro_associacao && membro_associacao.length > 0){
+    //                 setFieldValue('name', membro_associacao[0].nome)
+    //                 setFieldValue('email', membro_associacao[0].email)
+    //             }
+    //         }
+    //     }
+    //     return usuario_nao_cadastrado
+    // }, [uuid_associacao, initPerfisForm, visao_selecionada])
+    //
+    // const serviceUsuarioCadastrado = useCallback((usuario_status, {setFieldValue})=>{
+    //     let usuario_cadastrado = usuario_status.usuario_core_sso.info_core_sso
+    //     if (usuario_cadastrado){
+    //         setBloquearCampoEmail(false);
+    //         setFieldValue('name', usuario_status.usuario_core_sso.info_core_sso.nome)
+    //         setFieldValue('email', usuario_status.usuario_core_sso.info_core_sso.email)
+    //     }
+    //     return usuario_cadastrado
+    // }, [])
 
     const serviceServidorEscola = useCallback((usuario_status, {resetForm})=>{
         let e_servidor_da_escola = usuario_status.e_servidor_na_unidade
@@ -360,7 +406,7 @@ export const GestaoDePerfisForm = () =>{
             }else{
                 if (serviceUsuarioCadastradoVinculado(usuario_status, {resetForm}, codigoEolUnidade)) {
                 }else {
-                    if (serviceUsuarioNaoCadastrado(usuario_status, {resetForm, setFieldValue},values)){}
+                    if (serviceUsuarioNaoCadastrado(usuario_status, {resetForm, setFieldValue})){}
                     else if (serviceUsuarioCadastrado(usuario_status, {setFieldValue})){}
                 }
             }
