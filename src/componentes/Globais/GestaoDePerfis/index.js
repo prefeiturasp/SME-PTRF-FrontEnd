@@ -33,7 +33,6 @@ export const GestaoDePerfis = () => {
 
     const exibeUsuarios = useCallback(async () =>{
         let _usuarios = await getUsuarios(visao_selecionada);
-        console.log("exibeUsuarios ", _usuarios)
         setUsuarios(_usuarios);
     }, [visao_selecionada]);
 

@@ -3,7 +3,7 @@ import {AutoComplete} from 'primereact/autocomplete';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
 
-const GestaoDePerfisFormAutocomplete = ({todasAsAcoesAutoComplete, recebeAcaoAutoComplete, index, setFieldValue, inputAutoCompleteDisabled}) => {
+const GestaoDePerfisFormAutocomplete = ({todasAsAcoesAutoComplete, recebeAcaoAutoComplete, index, setFieldValue}) => {
     const [selectedAcao, setSelectedAcao] = useState(null);
     const [filteredAcoes, setFilteredAcoes] = useState(null);
 
@@ -33,10 +33,9 @@ const GestaoDePerfisFormAutocomplete = ({todasAsAcoesAutoComplete, recebeAcaoAut
                     field="nome"
                     onChange={(e) => setSelectedAcao(e.value)}
                     inputClassName="form-control"
-                    onSelect={(e) => recebeAcaoAutoComplete(e.value, {setFieldValue},`unidades_vinculadas[${index}]` )}
-                    //onSelect={(e) => recebeAcaoAutoComplete(e.value, `unidades_vinculadas[${index}]` )}
+                    onSelect={(e) => recebeAcaoAutoComplete(e.value, {setFieldValue},`unidades_vinculadas[${index}].unidade_vinculada` )}
                     style={{width: "100%", borderLeft:'none'}}
-                    disabled={todasAsAcoesAutoComplete.length < 1 || inputAutoCompleteDisabled}
+                    disabled={todasAsAcoesAutoComplete.length < 1}
                     placeholder={todasAsAcoesAutoComplete.length < 1 ? "Não existem unidades para o tipo de unidade selecionada" : ""}
                 />
             </div>

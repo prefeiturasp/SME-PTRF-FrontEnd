@@ -54,11 +54,6 @@ export const GestaoDePerfisFormFormik = (
         serviceTemUnidadeDre,
         serviceTemUnidadeUE,
         pesquisaVisao,
-        selectTipoUnidadeDisabled,
-        inputAutoCompleteDisabled,
-        setSelectTipoUnidadeDisabled,
-        setInputAutoCompleteDisabled,
-            selectTipoUnidadeDisabledNomes,
     }) => {
 
     return (
@@ -84,24 +79,24 @@ export const GestaoDePerfisFormFormik = (
                             </div>
                             <div className="p-Y bd-highlight">
                                 {statePerfisForm.id &&
-                                        <button
-                                            disabled={serviceTemUnidadeDre(props.values.unidades_vinculadas) || serviceTemUnidadeUE(props.values.unidades_vinculadas) || props.values.visoes.includes(pesquisaVisao("SME").id) }
-                                            onClick={() => {
-                                                    setShowModalDeletePerfil(true)
-                                            }}
-                                            type="button"
-                                            className="btn btn btn-danger mt-2"
-                                        >
-                                            <FontAwesomeIcon
-                                                style={{
-                                                    fontSize: '15px',
-                                                    marginRight: "5px",
-                                                    color: '#fff'
-                                                }}
-                                                icon={faTrash}
-                                            />
-                                            Deletar usuário
-                                        </button>
+                                <button
+                                    disabled={serviceTemUnidadeDre(props.values.unidades_vinculadas) || serviceTemUnidadeUE(props.values.unidades_vinculadas) || props.values.visoes.includes(pesquisaVisao("SME").id)}
+                                    onClick={() => {
+                                        setShowModalDeletePerfil(true)
+                                    }}
+                                    type="button"
+                                    className="btn btn btn-danger mt-2"
+                                >
+                                    <FontAwesomeIcon
+                                        style={{
+                                            fontSize: '15px',
+                                            marginRight: "5px",
+                                            color: '#fff'
+                                        }}
+                                        icon={faTrash}
+                                    />
+                                    Deletar usuário
+                                </button>
                                 }
                             </div>
                             <div className="p-Y bd-highlight">
@@ -286,8 +281,7 @@ export const GestaoDePerfisFormFormik = (
                                                 <div className="col-12" key={index_field_array}>
                                                     <div className='row'>
                                                         <div className='col mt-4'>
-                                                            <label htmlFor="tipo_de_unidade">Tipo de
-                                                                Unidade {index_field_array + 1}</label>
+                                                            <label htmlFor="tipo_de_unidade">Tipo de Unidade {index_field_array + 1}</label>
                                                             {values.visao === "UE" ? (
                                                                     <select
                                                                         value={unidade_vinculada.tipo_unidade ? unidade_vinculada.tipo_unidade : ""}
@@ -299,13 +293,18 @@ export const GestaoDePerfisFormFormik = (
                                                                         name={`unidades_vinculadas[${index_field_array}].tipo_unidade`}
                                                                         id={`tipo_unidade_${index_field_array}`}
                                                                         className="form-control"
-                                                                        disabled={unidade_vinculada.nome || selectTipoUnidadeDisabledNomes.find(element => element === `unidades_vinculadas[${index_field_array}].tipo_unidade`)}
+                                                                        disabled={unidade_vinculada.nome}
                                                                     >
-                                                                        <option value="">Selecione um tipo de unidade</option>
-                                                                            <option disabled={true} value="DRE">DIRETORIA</option>
-                                                                            {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
-                                                                                <option disabled={!acessoCadastrarUnidade('UE') || item.id !== unidadeVisaoUE.tipo_unidade} key={item.id} value={item.id}>{item.nome}</option>
-                                                                            ))}
+                                                                        <option value="">Selecione um tipo de unidade
+                                                                        </option>
+                                                                        <option disabled={true} value="DRE">DIRETORIA
+                                                                        </option>
+                                                                        {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
+                                                                            <option
+                                                                                disabled={!acessoCadastrarUnidade('UE') || item.id !== unidadeVisaoUE.tipo_unidade}
+                                                                                key={item.id}
+                                                                                value={item.id}>{item.nome}</option>
+                                                                        ))}
                                                                     </select>
                                                                 ) :
                                                                 <select
@@ -318,13 +317,17 @@ export const GestaoDePerfisFormFormik = (
                                                                     name={`unidades_vinculadas[${index_field_array}].tipo_unidade`}
                                                                     id={`tipo_unidade_${index_field_array}`}
                                                                     className="form-control"
-                                                                    disabled={unidade_vinculada.nome || selectTipoUnidadeDisabledNomes.find(element => element === `unidades_vinculadas[${index_field_array}]`)}
+                                                                    disabled={unidade_vinculada.nome}
                                                                 >
                                                                     <option value="">Selecione um tipo de unidade
                                                                     </option>
-                                                                    <option disabled={!acessoCadastrarUnidade('DRE')} value="DRE">DIRETORIA</option>
+                                                                    <option disabled={!acessoCadastrarUnidade('DRE')}
+                                                                            value="DRE">DIRETORIA
+                                                                    </option>
                                                                     {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
-                                                                        <option disabled={!acessoCadastrarUnidade('UE')} key={item.id} value={item.id}>{item.nome}</option>
+                                                                        <option disabled={!acessoCadastrarUnidade('UE')}
+                                                                                key={item.id}
+                                                                                value={item.id}>{item.nome}</option>
                                                                     ))}
                                                                 </select>
                                                             }
@@ -350,24 +353,26 @@ export const GestaoDePerfisFormFormik = (
                                                                     setFieldValue={setFieldValue}
                                                                     recebeAcaoAutoComplete={vinculaUnidadeUsuario}
                                                                     index={index_field_array}
-                                                                    inputAutoCompleteDisabled={inputAutoCompleteDisabled}
                                                                 />
                                                             }
-                                                            {props.touched.unidade_vinculada && props.errors.unidade_vinculada && <span className="text-danger mt-1"> {props.errors.unidade_vinculada}</span>}
+                                                            {props.touched.unidade_vinculada && props.errors.unidade_vinculada &&
+                                                            <span
+                                                                className="text-danger mt-1"> {props.errors.unidade_vinculada}</span>}
                                                         </div>
 
                                                         {index_field_array >= 0 && values.unidades_vinculadas.length > 0 && (
-                                                            <div className="col-auto mt-4 d-flex justify-content-center">
+                                                            <div
+                                                                className="col-auto mt-4 d-flex justify-content-center">
                                                                 <button
                                                                     onClick={async () => {
-                                                                            if (unidade_vinculada){
-                                                                                await desvinculaUnidadeUsuario(unidade_vinculada, `unidades_vinculadas[${index_field_array}]`)
-                                                                            }
+                                                                        if (unidade_vinculada) {
+                                                                            await desvinculaUnidadeUsuario(unidade_vinculada)
+                                                                        }
                                                                         remove(index_field_array)
                                                                     }}
                                                                     className="btn btn-link fonte-14 pt-3 mt-4"
                                                                     type="button"
-                                                                    //disabled={unidade_vinculada && unidade_vinculada.uuid ? !unidade_vinculada.pode_excluir || btnExcluirDisabled : btnExcluirDisabled}
+                                                                    disabled={unidade_vinculada && unidade_vinculada.uuid ? !unidade_vinculada.pode_excluir || btnExcluirDisabled : btnExcluirDisabled}
                                                                 >
                                                                     <FontAwesomeIcon
                                                                         style={{
@@ -392,8 +397,6 @@ export const GestaoDePerfisFormFormik = (
                                                 disabled={btnAdicionarDisabled}
                                                 onClick={() => {
                                                     getEstadoInicialVisoesChecked()
-                                                        setSelectTipoUnidadeDisabled(false)
-                                                        setInputAutoCompleteDisabled(false)
                                                     push({
                                                             unidade_vinculada: '',
                                                             tipo_unidade: '',
@@ -467,6 +470,6 @@ export const GestaoDePerfisFormFormik = (
                     </form>
                 );
             }}
-                </Formik>
-                )
-            }
+        </Formik>
+    )
+}
