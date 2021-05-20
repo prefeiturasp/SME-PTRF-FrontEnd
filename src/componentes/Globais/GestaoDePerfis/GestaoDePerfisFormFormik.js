@@ -220,10 +220,6 @@ export const GestaoDePerfisFormFormik = (
                             <div className="col-6">
                                 <div className="form-group">
                                     <label htmlFor="visoes">Visões</label>
-                                    <div className='col-12'>
-                                        <p>{JSON.stringify(visoesChecked)}</p>
-                                        <p>{visoesChecked && visoesChecked.dre && JSON.stringify(visoesChecked.DRE)}</p>
-                                    </div>
                                     <div className="card">
                                         <div className="card-body p-2">
                                             {visoes && visoes.length > 0 && visoes.map((visao, index_visoes) => (

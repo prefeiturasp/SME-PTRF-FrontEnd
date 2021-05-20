@@ -517,7 +517,7 @@ export const GestaoDePerfisForm = () =>{
         }
     };
 
-    const serviceRemoveVinculoDuplicadoUnidades = (unidades_por_tipo, unidades_vinculadas) =>{
+    const serviceRemoveVinculoDuplicadoUnidades = useCallback((unidades_por_tipo, unidades_vinculadas) =>{
         let uuid_unidades_por_tipo = [];
         let _unidades_por_tipo = [...unidades_por_tipo]
         if (_unidades_por_tipo && _unidades_por_tipo.length > 0){
@@ -534,7 +534,7 @@ export const GestaoDePerfisForm = () =>{
             }
         })
         return _unidades_por_tipo
-    }
+    }, [])
 
     const serviceUnidadesPorTipoVisaoDRE = useCallback(async (tipo_unidade)=>{
         let unidades_por_tipo = []
