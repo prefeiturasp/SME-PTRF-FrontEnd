@@ -33,7 +33,8 @@ const GestaoDePerfisFormAutocomplete = ({todasAsAcoesAutoComplete, recebeAcaoAut
                     field="nome"
                     onChange={(e) => setSelectedAcao(e.value)}
                     inputClassName="form-control"
-                    onSelect={(e) => recebeAcaoAutoComplete(e.value, {setFieldValue},`unidades_vinculadas[${index}].unidade_vinculada` )}
+                    onSelect={(e) => recebeAcaoAutoComplete(e.value, {setFieldValue},`unidades_vinculadas[${index}]` )}
+                    //onSelect={(e) => recebeAcaoAutoComplete(e.value, `unidades_vinculadas[${index}]` )}
                     style={{width: "100%", borderLeft:'none'}}
                     disabled={todasAsAcoesAutoComplete.length < 1 || inputAutoCompleteDisabled}
                     placeholder={todasAsAcoesAutoComplete.length < 1 ? "Não existem unidades para o tipo de unidade selecionada" : ""}

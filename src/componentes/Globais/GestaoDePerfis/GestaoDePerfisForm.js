@@ -248,6 +248,7 @@ export const GestaoDePerfisForm = () =>{
     const [visoesChecked, setVisoesChecked] = useState([]);
     const [selectTipoUnidadeDisabled, setSelectTipoUnidadeDisabled] = useState(false);
     const [inputAutoCompleteDisabled, setInputAutoCompleteDisabled] = useState(false);
+    const [selectTipoUnidadeDisabledNomes, setSelectTipoUnidadeDisabledNomes] = useState([]);
 
     const idUsuarioCondicionalMask = useCallback((e_servidor) => {
         let mask;
@@ -630,7 +631,9 @@ export const GestaoDePerfisForm = () =>{
         }
     }, [visao_selecionada, serviceUnidadesPorTipoVisaoDRE, serviceUnidadesPorTipoVisaoSME, serviceUnidadesPorTipoVisaoUE])
 
-    const vinculaUnidadeUsuario = async (selectAcao) => {
+    const vinculaUnidadeUsuario = async (selectAcao, {setFieldValue}, nome_select) => {
+        console.log("vinculaUnidadeUsuario selectAcao ", selectAcao)
+        setFieldValue(nome_select, selectAcao)
         setBtnAdicionarDisabled(true)
         let payload = {
             codigo_eol: selectAcao.codigo_eol
@@ -642,6 +645,7 @@ export const GestaoDePerfisForm = () =>{
                 setBtnAdicionarDisabled(false)
                 setSelectTipoUnidadeDisabled(true)
                 setInputAutoCompleteDisabled(true)
+                setSelectTipoUnidadeDisabledNomes([...selectTipoUnidadeDisabledNomes, nome_select])
             }catch (e){
                 console.log("Erro ao vincular unidade ao usuario ", e.response.data)
                 await exibeVisoes()
@@ -650,13 +654,17 @@ export const GestaoDePerfisForm = () =>{
         }
     };
 
-    const desvinculaUnidadeUsuario = async (unidade)=>{
+    const desvinculaUnidadeUsuario = async (unidade, nome_select)=>{
+        console.log("desvinculaUnidadeUsuario unidade ", unidade)
+        console.log("desvinculaUnidadeUsuario nome_select ", nome_select)
         setBtnAdicionarDisabled(false)
         if (unidade && unidade.uuid){
             try {
                 await deleteDesvincularUnidadeUsuario(id_usuario, unidade.codigo_eol)
                 await exibeVisoes()
                 console.log("Unidade excluída com sucesso")
+                //setSelectTipoUnidadeDisabledNomes(list => list.filter(item => item !== nome_select))
+                setSelectTipoUnidadeDisabledNomes(selectTipoUnidadeDisabledNomes.filter((v) => v === nome_select))
             }catch (e) {
                 console.log("Erro ao excluir unidade ao usuario ", e.response.data)
                 await exibeVisoes()
@@ -703,6 +711,8 @@ export const GestaoDePerfisForm = () =>{
             return true
         }
     }, [visoes])
+
+    console.log("Nomes Selects ", selectTipoUnidadeDisabledNomes)
 
     return (
         <PaginasContainer>
@@ -767,6 +777,7 @@ export const GestaoDePerfisForm = () =>{
                                 setInputAutoCompleteDisabled={setInputAutoCompleteDisabled}
                                 selectTipoUnidadeDisabled={selectTipoUnidadeDisabled}
                                 inputAutoCompleteDisabled={inputAutoCompleteDisabled}
+                                selectTipoUnidadeDisabledNomes={selectTipoUnidadeDisabledNomes}
                             />
                     </div>
                 </>

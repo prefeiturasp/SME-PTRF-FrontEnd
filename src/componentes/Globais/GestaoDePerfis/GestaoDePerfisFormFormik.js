@@ -58,6 +58,7 @@ export const GestaoDePerfisFormFormik = (
         inputAutoCompleteDisabled,
         setSelectTipoUnidadeDisabled,
         setInputAutoCompleteDisabled,
+            selectTipoUnidadeDisabledNomes,
     }) => {
 
     return (
@@ -298,7 +299,7 @@ export const GestaoDePerfisFormFormik = (
                                                                         name={`unidades_vinculadas[${index_field_array}].tipo_unidade`}
                                                                         id={`tipo_unidade_${index_field_array}`}
                                                                         className="form-control"
-                                                                        disabled={unidade_vinculada.nome || selectTipoUnidadeDisabled}
+                                                                        disabled={unidade_vinculada.nome || selectTipoUnidadeDisabledNomes.find(element => element === `unidades_vinculadas[${index_field_array}].tipo_unidade`)}
                                                                     >
                                                                         <option value="">Selecione um tipo de unidade</option>
                                                                             <option disabled={true} value="DRE">DIRETORIA</option>
@@ -317,7 +318,7 @@ export const GestaoDePerfisFormFormik = (
                                                                     name={`unidades_vinculadas[${index_field_array}].tipo_unidade`}
                                                                     id={`tipo_unidade_${index_field_array}`}
                                                                     className="form-control"
-                                                                    disabled={unidade_vinculada.nome || selectTipoUnidadeDisabled}
+                                                                    disabled={unidade_vinculada.nome || selectTipoUnidadeDisabledNomes.find(element => element === `unidades_vinculadas[${index_field_array}]`)}
                                                                 >
                                                                     <option value="">Selecione um tipo de unidade
                                                                     </option>
@@ -360,13 +361,13 @@ export const GestaoDePerfisFormFormik = (
                                                                 <button
                                                                     onClick={async () => {
                                                                             if (unidade_vinculada){
-                                                                                await desvinculaUnidadeUsuario(unidade_vinculada)
+                                                                                await desvinculaUnidadeUsuario(unidade_vinculada, `unidades_vinculadas[${index_field_array}]`)
                                                                             }
                                                                         remove(index_field_array)
                                                                     }}
                                                                     className="btn btn-link fonte-14 pt-3 mt-4"
                                                                     type="button"
-                                                                    disabled={unidade_vinculada && unidade_vinculada.uuid ? !unidade_vinculada.pode_excluir || btnExcluirDisabled : btnExcluirDisabled}
+                                                                    //disabled={unidade_vinculada && unidade_vinculada.uuid ? !unidade_vinculada.pode_excluir || btnExcluirDisabled : btnExcluirDisabled}
                                                                 >
                                                                     <FontAwesomeIcon
                                                                         style={{
