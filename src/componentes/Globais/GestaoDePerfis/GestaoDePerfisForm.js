@@ -84,8 +84,8 @@ export const GestaoDePerfisForm = () =>{
                 unidades_vinculadas = await getUsuarioUnidadesVinculadas(id_usuario, visao_selecionada)
             }
         }
-
         return unidades_vinculadas
+
     }, [id_usuario, visao_selecionada, uuid_unidade])
 
     const serviceTemUnidadeDre = useCallback((unidades_vinculadas)=>{
@@ -246,6 +246,8 @@ export const GestaoDePerfisForm = () =>{
     const [btnAdicionarDisabled, setBtnAdicionarDisabled] = useState(false);
     const [btnExcluirDisabled, setBtnExcluirDisabled] = useState(false);
     const [visoesChecked, setVisoesChecked] = useState([]);
+    const [selectTipoUnidadeDisabled, setSelectTipoUnidadeDisabled] = useState(false);
+    const [inputAutoCompleteDisabled, setInputAutoCompleteDisabled] = useState(false);
 
     const idUsuarioCondicionalMask = useCallback((e_servidor) => {
         let mask;
@@ -274,9 +276,7 @@ export const GestaoDePerfisForm = () =>{
     }, [initPerfisForm, visao_selecionada])
 
     const  formataCPF = (cpf) => {
-
         let cpfAtualizado;
-
         cpfAtualizado = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,
             function( regex, argumento1, argumento2, argumento3, argumento4 ) {
                 return argumento1 + '.' + argumento2 + '.' + argumento3 + '-' + argumento4;
@@ -296,27 +296,19 @@ export const GestaoDePerfisForm = () =>{
 
         }else if (usuario_nao_cadastrado){
             setShowModalUsuarioNaoCadastrado(true)
-
-            if (values.username){
-                console.log("CPF MASCARA ", formataCPF(values.username))
+            if (values.username && visao_selecionada === "UE"){
                 let cpf_mascara = formataCPF(values.username)
                 let membro_associacao = await getMembroAssociacao(uuid_associacao, cpf_mascara)
-                console.log("serviceUsuarioNaoCadastrado ", membro_associacao)
-                if (membro_associacao){
+                if (membro_associacao && membro_associacao.length > 0){
                     setFieldValue('name', membro_associacao[0].nome)
                     setFieldValue('email', membro_associacao[0].email)
                 }
             }
         }
         return usuario_nao_cadastrado
-    }, [uuid_associacao, initPerfisForm])
+    }, [uuid_associacao, initPerfisForm, visao_selecionada])
 
     const serviceUsuarioCadastrado = useCallback((usuario_status, {setFieldValue})=>{
-
-        console.log("serviceUsuarioCadastrado ", usuario_status)
-
-        // TODO refatorar esse método para exibir nome e email do info_core_sso ou quando estiver retornando do info_sig_escola
-
         let usuario_cadastrado = usuario_status.usuario_core_sso.info_core_sso
         if (usuario_cadastrado){
             setBloquearCampoEmail(false);
@@ -423,9 +415,6 @@ export const GestaoDePerfisForm = () =>{
                 let usuario_status;
                 if (visao_selecionada !== 'SME'){
                     usuario_status = await getUsuarioStatus(values.username, values.e_servidor, uuid_unidade);
-
-                   // console.log("USUARIO STATUS Não SME ", usuario_status)
-
                     setUsuariosStatus(usuario_status)
                     if (visao_selecionada === "DRE"){
                         await serviceVisaoDre(usuario_status, {setFieldValue, resetForm})
@@ -434,7 +423,6 @@ export const GestaoDePerfisForm = () =>{
                     }
                 }else {
                     usuario_status = await getUsuarioStatus(values.username, values.e_servidor);
-                   // console.log("USUARIO STATUS SME ", usuario_status)
                     setUsuariosStatus(usuario_status)
                     await serviceVisaoSme(usuario_status, {setFieldValue, resetForm})
                 }
@@ -529,7 +517,7 @@ export const GestaoDePerfisForm = () =>{
         }
     };
 
-    const serviceRemoveVinculoDuplicadoUnidades = (unidades_por_tipo, values) =>{
+    const serviceRemoveVinculoDuplicadoUnidades = (unidades_por_tipo, unidades_vinculadas) =>{
         let uuid_unidades_por_tipo = [];
         let _unidades_por_tipo = [...unidades_por_tipo]
         if (_unidades_por_tipo && _unidades_por_tipo.length > 0){
@@ -538,7 +526,7 @@ export const GestaoDePerfisForm = () =>{
             })
         }
         let index;
-        values.unidades_vinculadas.forEach(item=> {
+        unidades_vinculadas.forEach(item=> {
             index = uuid_unidades_por_tipo.indexOf(item.uuid)
             if ( index > -1) {
                 _unidades_por_tipo.splice(index, 1);
@@ -548,7 +536,7 @@ export const GestaoDePerfisForm = () =>{
         return _unidades_por_tipo
     }
 
-    const serviceUnidadesPorTipoVisaoDRE = useCallback(async (tipo_unidade, values)=>{
+    const serviceUnidadesPorTipoVisaoDRE = useCallback(async (tipo_unidade)=>{
         let unidades_por_tipo = []
         if(tipo_unidade === "DRE") {
             let dre = await getUnidadePorUuid(uuid_unidade)
@@ -556,25 +544,28 @@ export const GestaoDePerfisForm = () =>{
         }else {
             unidades_por_tipo = await getUnidadesPorTipo(tipo_unidade, uuid_unidade)
         }
-        let retorno = serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, values)
+        let unidades_vinculadas = await carregaUnidadesVinculadas()
+        let retorno = serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, unidades_vinculadas)
         return retorno
-    }, [uuid_unidade])
+    }, [uuid_unidade, serviceRemoveVinculoDuplicadoUnidades, carregaUnidadesVinculadas])
 
-    const serviceUnidadesPorTipoVisaoSME = useCallback(async (tipo_unidade, values) =>{
+    const serviceUnidadesPorTipoVisaoSME = useCallback(async (tipo_unidade) =>{
         let unidades_por_tipo = []
         let unidades = await getUnidadesPorTipo(tipo_unidade)
         unidades_por_tipo = [...unidades]
-        let retorno = serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, values)
+        let unidades_vinculadas = await carregaUnidadesVinculadas()
+        let retorno = serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, unidades_vinculadas)
         return retorno
-    }, [])
+    }, [serviceRemoveVinculoDuplicadoUnidades, carregaUnidadesVinculadas])
 
-    const serviceUnidadesPorTipoVisaoUE = useCallback(async (tipo_unidade, values)=>{
+    const serviceUnidadesPorTipoVisaoUE = useCallback(async ()=>{
         let unidades_por_tipo = []
         let ue = await getUnidadePorUuid(uuid_unidade)
         unidades_por_tipo.push(ue)
-        let retorno = serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, values)
+        let unidades_vinculadas = await carregaUnidadesVinculadas()
+        let retorno = serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, unidades_vinculadas)
         return retorno
-    }, [uuid_unidade])
+    }, [uuid_unidade, serviceRemoveVinculoDuplicadoUnidades, carregaUnidadesVinculadas])
 
 
     const handleChangeTipoUnidade = useCallback(async (tipo_unidade, values)=>{
@@ -583,11 +574,11 @@ export const GestaoDePerfisForm = () =>{
         if (tipo_unidade){
 
             if (visao_selecionada === "DRE"){
-                setUnidadesPorTipo(await serviceUnidadesPorTipoVisaoDRE(tipo_unidade, values))
+                setUnidadesPorTipo(await serviceUnidadesPorTipoVisaoDRE(tipo_unidade))
             }else if(visao_selecionada === "SME"){
-                setUnidadesPorTipo(await serviceUnidadesPorTipoVisaoSME(tipo_unidade, values))
+                setUnidadesPorTipo(await serviceUnidadesPorTipoVisaoSME(tipo_unidade))
             }else if (visao_selecionada === "UE"){
-                setUnidadesPorTipo(await serviceUnidadesPorTipoVisaoUE(tipo_unidade, values))
+                setUnidadesPorTipo(await serviceUnidadesPorTipoVisaoUE())
             }
 
         }
@@ -601,10 +592,10 @@ export const GestaoDePerfisForm = () =>{
         if (selectAcao && id_usuario) {
             try {
                 await postVincularUnidadeUsuario(id_usuario, payload)
-                console.log("Unidade vinculada com sucesso")
-                await carregaDadosUsuario()
                 await exibeVisoes()
                 setBtnAdicionarDisabled(false)
+                setSelectTipoUnidadeDisabled(true)
+                setInputAutoCompleteDisabled(true)
             }catch (e){
                 console.log("Erro ao vincular unidade ao usuario ", e.response.data)
                 await exibeVisoes()
@@ -618,7 +609,6 @@ export const GestaoDePerfisForm = () =>{
         if (unidade && unidade.uuid){
             try {
                 await deleteDesvincularUnidadeUsuario(id_usuario, unidade.codigo_eol)
-                await carregaDadosUsuario()
                 await exibeVisoes()
                 console.log("Unidade excluída com sucesso")
             }catch (e) {
@@ -727,6 +717,10 @@ export const GestaoDePerfisForm = () =>{
                                 serviceTemUnidadeDre={serviceTemUnidadeDre}
                                 serviceTemUnidadeUE={serviceTemUnidadeUE}
                                 pesquisaVisao={pesquisaVisao}
+                                setSelectTipoUnidadeDisabled={setSelectTipoUnidadeDisabled}
+                                setInputAutoCompleteDisabled={setInputAutoCompleteDisabled}
+                                selectTipoUnidadeDisabled={selectTipoUnidadeDisabled}
+                                inputAutoCompleteDisabled={inputAutoCompleteDisabled}
                             />
                     </div>
                 </>

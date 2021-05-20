@@ -54,6 +54,10 @@ export const GestaoDePerfisFormFormik = (
         serviceTemUnidadeDre,
         serviceTemUnidadeUE,
         pesquisaVisao,
+        selectTipoUnidadeDisabled,
+        inputAutoCompleteDisabled,
+        setSelectTipoUnidadeDisabled,
+        setInputAutoCompleteDisabled,
     }) => {
 
     return (
@@ -298,7 +302,7 @@ export const GestaoDePerfisFormFormik = (
                                                                         name={`unidades_vinculadas[${index_field_array}].tipo_unidade`}
                                                                         id={`tipo_unidade_${index_field_array}`}
                                                                         className="form-control"
-                                                                        disabled={unidade_vinculada.nome}
+                                                                        disabled={unidade_vinculada.nome || selectTipoUnidadeDisabled}
                                                                     >
                                                                         <option value="">Selecione um tipo de unidade</option>
                                                                             <option disabled={true} value="DRE">DIRETORIA</option>
@@ -317,7 +321,7 @@ export const GestaoDePerfisFormFormik = (
                                                                     name={`unidades_vinculadas[${index_field_array}].tipo_unidade`}
                                                                     id={`tipo_unidade_${index_field_array}`}
                                                                     className="form-control"
-                                                                    disabled={unidade_vinculada.nome}
+                                                                    disabled={unidade_vinculada.nome || selectTipoUnidadeDisabled}
                                                                 >
                                                                     <option value="">Selecione um tipo de unidade
                                                                     </option>
@@ -349,6 +353,7 @@ export const GestaoDePerfisFormFormik = (
                                                                     setFieldValue={setFieldValue}
                                                                     recebeAcaoAutoComplete={vinculaUnidadeUsuario}
                                                                     index={index_field_array}
+                                                                    inputAutoCompleteDisabled={inputAutoCompleteDisabled}
                                                                 />
                                                             }
                                                             {props.touched.unidade_vinculada && props.errors.unidade_vinculada && <span className="text-danger mt-1"> {props.errors.unidade_vinculada}</span>}
@@ -390,6 +395,8 @@ export const GestaoDePerfisFormFormik = (
                                                 disabled={btnAdicionarDisabled}
                                                 onClick={() => {
                                                     getEstadoInicialVisoesChecked()
+                                                        setSelectTipoUnidadeDisabled(false)
+                                                        setInputAutoCompleteDisabled(false)
                                                     push({
                                                             unidade_vinculada: '',
                                                             tipo_unidade: '',

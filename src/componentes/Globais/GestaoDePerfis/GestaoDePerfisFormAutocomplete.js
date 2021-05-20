@@ -3,7 +3,7 @@ import {AutoComplete} from 'primereact/autocomplete';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
 
-const GestaoDePerfisFormAutocomplete = ({todasAsAcoesAutoComplete, recebeAcaoAutoComplete, index, setFieldValue}) => {
+const GestaoDePerfisFormAutocomplete = ({todasAsAcoesAutoComplete, recebeAcaoAutoComplete, index, setFieldValue, inputAutoCompleteDisabled}) => {
     const [selectedAcao, setSelectedAcao] = useState(null);
     const [filteredAcoes, setFilteredAcoes] = useState(null);
 
@@ -35,7 +35,7 @@ const GestaoDePerfisFormAutocomplete = ({todasAsAcoesAutoComplete, recebeAcaoAut
                     inputClassName="form-control"
                     onSelect={(e) => recebeAcaoAutoComplete(e.value, {setFieldValue},`unidades_vinculadas[${index}].unidade_vinculada` )}
                     style={{width: "100%", borderLeft:'none'}}
-                    disabled={todasAsAcoesAutoComplete.length < 1}
+                    disabled={todasAsAcoesAutoComplete.length < 1 || inputAutoCompleteDisabled}
                     placeholder={todasAsAcoesAutoComplete.length < 1 ? "Não existem unidades para o tipo de unidade selecionada" : ""}
                 />
             </div>
