@@ -125,7 +125,6 @@ export const GestaoDePerfisForm = () =>{
                 {nome: "UE",  id: parseInt(get_visoes.find(element => element.nome === "UE").id),   editavel: !tem_unidade_ue},
             ]
         }
-
         setVisoes(_visoes)
     }, [visao_selecionada, carregaUnidadesVinculadas, serviceTemUnidadeDre, serviceTemUnidadeUE])
 
@@ -244,7 +243,6 @@ export const GestaoDePerfisForm = () =>{
     const [enviarFormulario, setEnviarFormulario] = useState(true);
     const [usuariosStatus, setUsuariosStatus] = useState({});
     const [btnAdicionarDisabled, setBtnAdicionarDisabled] = useState(false);
-    const [btnExcluirDisabled, setBtnExcluirDisabled] = useState(false);
     const [visoesChecked, setVisoesChecked] = useState([]);
 
     const idUsuarioCondicionalMask = useCallback((e_servidor) => {
@@ -419,9 +417,6 @@ export const GestaoDePerfisForm = () =>{
                 let usuario_status;
                 if (visao_selecionada !== 'SME'){
                     usuario_status = await getUsuarioStatus(values.username, values.e_servidor, uuid_unidade);
-
-                    // console.log("USUARIO STATUS Não SME ", usuario_status)
-
                     setUsuariosStatus(usuario_status)
                     if (visao_selecionada === "DRE"){
                         await serviceVisaoDre(usuario_status, {setFieldValue, resetForm})
@@ -430,7 +425,6 @@ export const GestaoDePerfisForm = () =>{
                     }
                 }else {
                     usuario_status = await getUsuarioStatus(values.username, values.e_servidor);
-                    // console.log("USUARIO STATUS SME ", usuario_status)
                     setUsuariosStatus(usuario_status)
                     await serviceVisaoSme(usuario_status, {setFieldValue, resetForm})
                 }
@@ -448,11 +442,9 @@ export const GestaoDePerfisForm = () =>{
 
     const handleSubmitPerfisForm = async (values, {resetForm})=>{
 
-        console.log("handleSubmitPerfisForm ", values)
-
         if (enviarFormulario) {
 
-            // setLoading(true)
+            setLoading(true)
 
             // Concatenando os grupos que ele já tinha vinculado com os grupos que ele escolheu
             let grupos_concatenados = values.groups.concat(gruposJaVinculados)
@@ -471,8 +463,6 @@ export const GestaoDePerfisForm = () =>{
                 unidade: null,
                 visoes: values.visoes,
             };
-
-            console.log("PAYLOAD ", payload)
 
             if (values.id || (usuariosStatus.usuario_sig_escola.info_sig_escola && usuariosStatus.usuario_sig_escola.info_sig_escola.user_id)) {
 
@@ -501,7 +491,6 @@ export const GestaoDePerfisForm = () =>{
                     setShowModalUsuarioCadastradoVinculado(false)
                     setShowModalInfo(true)
                 }
-
             } else {
                 try {
                     let ret = await postCriarUsuario(payload);
@@ -552,32 +541,25 @@ export const GestaoDePerfisForm = () =>{
         }else {
             unidades_por_tipo = await getUnidadesPorTipo(tipo_unidade, uuid_unidade)
         }
-        let retorno = serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, values)
-        return retorno
+        return serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, values)
     }, [uuid_unidade])
 
     const serviceUnidadesPorTipoVisaoSME = useCallback(async (tipo_unidade, values) =>{
-        let unidades_por_tipo = []
         let unidades = await getUnidadesPorTipo(tipo_unidade)
-        unidades_por_tipo = [...unidades]
-        let retorno = serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, values)
-        return retorno
+        let unidades_por_tipo = [...unidades]
+        return serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, values)
     }, [])
 
     const serviceUnidadesPorTipoVisaoUE = useCallback(async (tipo_unidade, values)=>{
         let unidades_por_tipo = []
         let ue = await getUnidadePorUuid(uuid_unidade)
         unidades_por_tipo.push(ue)
-        let retorno = serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, values)
-        return retorno
+        return serviceRemoveVinculoDuplicadoUnidades(unidades_por_tipo, values)
     }, [uuid_unidade])
-
 
     const handleChangeTipoUnidade = useCallback(async (tipo_unidade, values)=>{
         setBtnAdicionarDisabled(true)
-
         if (tipo_unidade){
-
             if (visao_selecionada === "DRE"){
                 setUnidadesPorTipo(await serviceUnidadesPorTipoVisaoDRE(tipo_unidade, values))
             }else if(visao_selecionada === "SME"){
@@ -585,11 +567,10 @@ export const GestaoDePerfisForm = () =>{
             }else if (visao_selecionada === "UE"){
                 setUnidadesPorTipo(await serviceUnidadesPorTipoVisaoUE(tipo_unidade, values))
             }
-
         }
     }, [visao_selecionada, serviceUnidadesPorTipoVisaoDRE, serviceUnidadesPorTipoVisaoSME, serviceUnidadesPorTipoVisaoUE])
 
-    const vinculaUnidadeUsuario = async (selectAcao) => {
+    const vinculaUnidadeUsuario = async (selectAcao, {setFieldValue}) => {
         setBtnAdicionarDisabled(true)
         let payload = {
             codigo_eol: selectAcao.codigo_eol
@@ -598,7 +579,8 @@ export const GestaoDePerfisForm = () =>{
             try {
                 await postVincularUnidadeUsuario(id_usuario, payload)
                 console.log("Unidade vinculada com sucesso")
-                await carregaDadosUsuario()
+                let ret = await carregaUnidadesVinculadas()
+                setFieldValue('unidades_vinculadas', ret)
                 await exibeVisoes()
                 setBtnAdicionarDisabled(false)
             }catch (e){
@@ -614,7 +596,7 @@ export const GestaoDePerfisForm = () =>{
         if (unidade && unidade.uuid){
             try {
                 await deleteDesvincularUnidadeUsuario(id_usuario, unidade.codigo_eol)
-                await carregaDadosUsuario()
+                await carregaUnidadesVinculadas()
                 await exibeVisoes()
                 console.log("Unidade excluída com sucesso")
             }catch (e) {
@@ -714,9 +696,7 @@ export const GestaoDePerfisForm = () =>{
                             vinculaUnidadeUsuario={vinculaUnidadeUsuario}
                             desvinculaUnidadeUsuario={desvinculaUnidadeUsuario}
                             btnAdicionarDisabled={btnAdicionarDisabled}
-                            btnExcluirDisabled={btnExcluirDisabled}
                             handleChangeVisao={handleChangeVisao}
-                            visoesChecked={visoesChecked}
                             getEstadoInicialVisoesChecked={getEstadoInicialVisoesChecked}
                             acessoCadastrarUnidade={acessoCadastrarUnidade}
                             unidadeVisaoUE={unidadeVisaoUE}

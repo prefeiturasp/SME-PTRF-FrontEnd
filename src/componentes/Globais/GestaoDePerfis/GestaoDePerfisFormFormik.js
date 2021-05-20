@@ -45,9 +45,7 @@ export const GestaoDePerfisFormFormik = (
         vinculaUnidadeUsuario,
         desvinculaUnidadeUsuario,
         btnAdicionarDisabled,
-        btnExcluirDisabled,
         handleChangeVisao,
-        visoesChecked,
         getEstadoInicialVisoesChecked,
         acessoCadastrarUnidade,
         unidadeVisaoUE,
@@ -100,11 +98,11 @@ export const GestaoDePerfisFormFormik = (
                                 }
                             </div>
                             <div className="p-Y bd-highlight">
-                                <button type="submit"
-                                        className="btn btn-success mt-2 ml-2">{!statePerfisForm.id ? 'Adicionar' : 'Salvar'}</button>
+                                <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
                             </div>
                             <div className="p-Y bd-highlight">
-                                <button onClick={() => window.location.assign('/gestao-de-perfis/')}
+                                <button
+                                        onClick={() => window.location.assign('/gestao-de-perfis/')}
                                         type="button"
                                         className="btn btn btn-outline-success mt-2 ml-2">Voltar
                                 </button>
@@ -137,8 +135,7 @@ export const GestaoDePerfisFormFormik = (
                                         <option value="True">Servidor</option>
                                         <option value="False">Não Servidor</option>
                                     </select>
-                                    {props.errors.e_servidor && <span
-                                        className="span_erro text-danger mt-1"> {props.errors.e_servidor}</span>}
+                                    {props.errors.e_servidor && <span className="span_erro text-danger mt-1"> {props.errors.e_servidor}</span>}
                                 </div>
                             </div>
 
@@ -168,9 +165,9 @@ export const GestaoDePerfisFormFormik = (
                                         disabled={!props.values.e_servidor || statePerfisForm.id}
                                     />
                                     {/*Validações personalizadas*/}
-                                    {formErrors.username && <p className='mb-0'><span
-                                        className="span_erro text-danger mt-1">{formErrors.username}</span>
-                                    </p>}
+                                    {formErrors.username &&
+                                            <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.username}</span></p>
+                                    }
                                 </div>
                             </div>
 
@@ -189,7 +186,8 @@ export const GestaoDePerfisFormFormik = (
                                         maxLength='255'
                                     />
                                     {props.errors.name &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.name}</span>}
+                                        <span className="span_erro text-danger mt-1"> {props.errors.name}</span>
+                                    }
                                 </div>
                             </div>
 
@@ -208,8 +206,9 @@ export const GestaoDePerfisFormFormik = (
                                         readOnly={bloquearCampoEmail}
                                         maxLength='254'
                                     />
-                                    {props.errors.email && <span
-                                        className="span_erro text-danger mt-1"> {props.errors.email}</span>}
+                                    {props.errors.email &&
+                                        <span className="span_erro text-danger mt-1"> {props.errors.email}</span>
+                                    }
                                 </div>
                             </div>
 
@@ -233,14 +232,14 @@ export const GestaoDePerfisFormFormik = (
                                                         checked={props.values.visoes.includes(parseInt(visao.id))}
                                                         disabled={!visao.editavel}
                                                     />
-                                                    <label className="form-check-label"
-                                                           htmlFor={visao.nome}>{visao.nome}</label>
+                                                    <label className="form-check-label" htmlFor={visao.nome}>{visao.nome}</label>
                                                 </div>
                                             ))}
                                         </div>
                                     </div>
                                     {props.errors.visoes &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.visoes}</span>}
+                                        <span className="span_erro text-danger mt-1"> {props.errors.visoes}</span>
+                                    }
                                 </div>
                             </div>
 
@@ -267,9 +266,7 @@ export const GestaoDePerfisFormFormik = (
                             </div>
 
                             <div className='col-12'>
-                                <p>
-                                    <strong>{values.id ? "Unidades que possui acesso" : "Salve o usuário para poder vincular as unidades."}</strong>
-                                </p>
+                                <p><strong>{values.id ? "Unidades que possui acesso" : "Salve o usuário para poder vincular as unidades."}</strong></p>
                             </div>
                             {values.id &&
                             <FieldArray
@@ -295,15 +292,10 @@ export const GestaoDePerfisFormFormik = (
                                                                         className="form-control"
                                                                         disabled={unidade_vinculada.nome}
                                                                     >
-                                                                        <option value="">Selecione um tipo de unidade
-                                                                        </option>
-                                                                        <option disabled={true} value="DRE">DIRETORIA
-                                                                        </option>
+                                                                        <option value="">Selecione um tipo de unidade</option>
+                                                                        <option disabled={true} value="DRE">DIRETORIA</option>
                                                                         {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
-                                                                            <option
-                                                                                disabled={!acessoCadastrarUnidade('UE') || item.id !== unidadeVisaoUE.tipo_unidade}
-                                                                                key={item.id}
-                                                                                value={item.id}>{item.nome}</option>
+                                                                            <option disabled={!acessoCadastrarUnidade('UE') || item.id !== unidadeVisaoUE.tipo_unidade} key={item.id} value={item.id}>{item.nome}</option>
                                                                         ))}
                                                                     </select>
                                                                 ) :
@@ -325,9 +317,7 @@ export const GestaoDePerfisFormFormik = (
                                                                             value="DRE">DIRETORIA
                                                                     </option>
                                                                     {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
-                                                                        <option disabled={!acessoCadastrarUnidade('UE')}
-                                                                                key={item.id}
-                                                                                value={item.id}>{item.nome}</option>
+                                                                        <option disabled={!acessoCadastrarUnidade('UE')} key={item.id} value={item.id}>{item.nome}</option>
                                                                     ))}
                                                                 </select>
                                                             }
@@ -356,8 +346,8 @@ export const GestaoDePerfisFormFormik = (
                                                                 />
                                                             }
                                                             {props.touched.unidade_vinculada && props.errors.unidade_vinculada &&
-                                                            <span
-                                                                className="text-danger mt-1"> {props.errors.unidade_vinculada}</span>}
+                                                                <span className="text-danger mt-1"> {props.errors.unidade_vinculada}</span>
+                                                            }
                                                         </div>
 
                                                         {index_field_array >= 0 && values.unidades_vinculadas.length > 0 && (
@@ -372,7 +362,7 @@ export const GestaoDePerfisFormFormik = (
                                                                     }}
                                                                     className="btn btn-link fonte-14 pt-3 mt-4"
                                                                     type="button"
-                                                                    disabled={unidade_vinculada && unidade_vinculada.uuid ? !unidade_vinculada.pode_excluir || btnExcluirDisabled : btnExcluirDisabled}
+                                                                    disabled={unidade_vinculada && unidade_vinculada.uuid ? !unidade_vinculada.pode_excluir : false}
                                                                 >
                                                                     <FontAwesomeIcon
                                                                         style={{
@@ -411,8 +401,6 @@ export const GestaoDePerfisFormFormik = (
                                 )}
                             />
                             }
-
-
                         </div>
                         <section>
                             <ModalUsuarioNaoCadastrado
