@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import {useParams} from 'react-router-dom'
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {visoesService} from "../../../services/visoes.service";
-import {getUsuario, getUsuarioStatus, getCodigoEolUnidade, getGrupos, getVisoes, getUsuarioUnidadesVinculadas, getUnidadesPorTipo, getUnidadePorUuid, postVincularUnidadeUsuario, postCriarUsuario, putEditarUsuario, deleteDesvincularUnidadeUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
+import {getUsuario, getUsuarioStatus, getCodigoEolUnidade, getGrupos, getVisoes, getUsuarioUnidadesVinculadas, getUnidadesPorTipo, getUnidadePorUuid, getMembroAssociacao, postVincularUnidadeUsuario, postCriarUsuario, putEditarUsuario, deleteDesvincularUnidadeUsuario, deleteUsuario} from "../../../services/GestaoDePerfis.service";
 import {valida_cpf_cnpj} from "../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../utils/Loading";
 import {GestaoDePerfisFormFormik} from "./GestaoDePerfisFormFormik";
@@ -257,6 +257,15 @@ export const GestaoDePerfisForm = () =>{
         return mask
     }, [])
 
+    const  formataCPF = (cpf) => {
+        let cpfAtualizado;
+        cpfAtualizado = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,
+            function( regex, argumento1, argumento2, argumento3, argumento4 ) {
+                return argumento1 + '.' + argumento2 + '.' + argumento3 + '-' + argumento4;
+            })
+        return cpfAtualizado
+    }
+
     const serviceUsuarioCadastradoVinculado = useCallback((usuario_status, {resetForm}, _codigoEolUnidade="")=>{
         let usuario_cadastrado_e_vinculado
         if (_codigoEolUnidade){
@@ -273,8 +282,13 @@ export const GestaoDePerfisForm = () =>{
         return usuario_cadastrado_e_vinculado
     }, [initPerfisForm, visao_selecionada])
 
-    const serviceUsuarioNaoCadastrado = useCallback((usuario_status, {resetForm})=>{
-        let usuario_nao_cadastrado = !usuario_status.usuario_core_sso.info_core_sso && usuario_status.usuario_core_sso.mensagem !== "Erro ao buscar usuário no CoreSSO!" && usuario_status.validacao_username.username_e_valido
+    const serviceUsuarioNaoCadastrado = useCallback(async (usuario_status, {resetForm}, values="")=>{
+        let usuario_nao_cadastrado_membro_associacao = false
+        if (values.username){
+            let cpf_mascara = formataCPF(values.username)
+            usuario_nao_cadastrado_membro_associacao = await getMembroAssociacao(uuid_associacao, cpf_mascara)
+        }
+        let usuario_nao_cadastrado = !usuario_status.usuario_core_sso.info_core_sso && !usuario_nao_cadastrado_membro_associacao && usuario_status.usuario_core_sso.mensagem !== "Erro ao buscar usuário no CoreSSO!" && usuario_status.validacao_username.username_e_valido
 
         if (usuario_status.usuario_core_sso.mensagem === "Erro ao buscar usuário no CoreSSO!"){
             setStatePerfisForm(initPerfisForm);
@@ -282,25 +296,31 @@ export const GestaoDePerfisForm = () =>{
             setTituloModalInfo("Erro ao criar o usuário");
             setTextoModalInfo(usuario_status.mensagem);
             setShowModalInfo(true);
-
         }else if (usuario_nao_cadastrado){
             setShowModalUsuarioNaoCadastrado(true)
         }
         return usuario_nao_cadastrado
-    }, [initPerfisForm])
+    }, [uuid_associacao, initPerfisForm])
 
-    const serviceUsuarioCadastrado = useCallback((usuario_status, {setFieldValue})=>{
-
-        // TODO refatorar esse método para exibir nome e email do info_core_sso ou quando estiver retornando do info_sig_escola
-
-        let usuario_cadastrado = usuario_status.usuario_core_sso.info_core_sso
-        if (usuario_cadastrado){
+    const serviceUsuarioCadastrado = useCallback(async (usuario_status, {setFieldValue}, values="")=>{
+        let usuario_cadastrado_core_sso = usuario_status.usuario_core_sso.info_core_sso
+        if (usuario_cadastrado_core_sso){
             setBloquearCampoEmail(false);
             setFieldValue('name', usuario_status.usuario_core_sso.info_core_sso.nome)
             setFieldValue('email', usuario_status.usuario_core_sso.info_core_sso.email)
+            return usuario_cadastrado_core_sso
+        }else {
+            if (values.username){
+                let cpf_mascara = formataCPF(values.username)
+                let usuario_cadastrado_membro_associacao = await getMembroAssociacao(uuid_associacao, cpf_mascara)
+                if (usuario_cadastrado_membro_associacao){
+                    setFieldValue('name', usuario_cadastrado_membro_associacao[0].nome)
+                    setFieldValue('email', usuario_cadastrado_membro_associacao[0].email)
+                    return usuario_cadastrado_membro_associacao
+                }
+            }
         }
-        return usuario_cadastrado
-    }, [])
+    }, [uuid_associacao])
 
     const serviceServidorEscola = useCallback((usuario_status, {resetForm})=>{
         let e_servidor_da_escola = usuario_status.e_servidor_na_unidade
@@ -336,7 +356,7 @@ export const GestaoDePerfisForm = () =>{
                 if (serviceUsuarioCadastradoVinculado(usuario_status, {resetForm}, codigoEolUnidade)){
                 }else {
                     setShowModalInfo(false)
-                    serviceUsuarioCadastrado(usuario_status, {setFieldValue})
+                    await serviceUsuarioCadastrado(usuario_status, {setFieldValue}, values)
                 }
             }
         }else {
@@ -344,8 +364,8 @@ export const GestaoDePerfisForm = () =>{
             }else{
                 if (serviceUsuarioCadastradoVinculado(usuario_status, {resetForm}, codigoEolUnidade)) {
                 }else {
-                    if (serviceUsuarioNaoCadastrado(usuario_status, {resetForm})){}
-                    else if (serviceUsuarioCadastrado(usuario_status, {setFieldValue})){}
+                    if (await serviceUsuarioNaoCadastrado(usuario_status, {resetForm}, values)){
+                    }else if (await serviceUsuarioCadastrado(usuario_status, {setFieldValue}, values)){}
                 }
             }
         }
@@ -353,16 +373,16 @@ export const GestaoDePerfisForm = () =>{
 
     const serviceVisaoDre = useCallback(async (usuario_status, {setFieldValue, resetForm})=>{
         const codigoEolUnidade = await carregaCodigoEolUnidade()
-        if (serviceUsuarioNaoCadastrado(usuario_status, {resetForm})) {}
+        if (await serviceUsuarioNaoCadastrado(usuario_status, {resetForm})) {}
         else if (serviceUsuarioCadastradoVinculado(usuario_status, {resetForm}, codigoEolUnidade)){}
-        else if (serviceUsuarioCadastrado(usuario_status, {setFieldValue})){}
+        else if (await serviceUsuarioCadastrado(usuario_status, {setFieldValue})){}
 
     }, [carregaCodigoEolUnidade, serviceUsuarioCadastradoVinculado, serviceUsuarioNaoCadastrado, serviceUsuarioCadastrado]) ;
 
     const serviceVisaoSme = useCallback(async (usuario_status, {setFieldValue, resetForm})=>{
-        if (serviceUsuarioNaoCadastrado(usuario_status, {resetForm})){}
+        if (await serviceUsuarioNaoCadastrado(usuario_status, {resetForm})){}
         else if (serviceUsuarioCadastradoVinculado(usuario_status, {resetForm})){}
-        else if (serviceUsuarioCadastrado(usuario_status, {setFieldValue})){}
+        else if (await serviceUsuarioCadastrado(usuario_status, {setFieldValue})){}
     }, [serviceUsuarioNaoCadastrado, serviceUsuarioCadastradoVinculado, serviceUsuarioCadastrado]) ;
 
     const validacoesPersonalizadas = useCallback(async (values, {setFieldValue, resetForm}) => {
