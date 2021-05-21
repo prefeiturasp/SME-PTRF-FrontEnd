@@ -72,12 +72,12 @@ const getPath = (origem) => {
     window.location.assign(path)
 };
 
-const get_nome_razao_social = async (cpf_cnpj, setFieldValue) => {
-    let resp = await getNomeRazaoSocial(cpf_cnpj);
-    if (resp && resp.length > 0 && resp[0].nome){
-        setFieldValue("nome_fornecedor", resp[0].nome);
-    }else {
-        setFieldValue("nome_fornecedor", "");
+const get_nome_razao_social = async (cpf_cnpj, setFieldValue, nome_fornecedor="") => {
+    if (!nome_fornecedor){
+        let resp = await getNomeRazaoSocial(cpf_cnpj);
+        if (resp && resp.length > 0 && resp[0].nome){
+            setFieldValue("nome_fornecedor", resp[0].nome);
+        }
     }
 };
 

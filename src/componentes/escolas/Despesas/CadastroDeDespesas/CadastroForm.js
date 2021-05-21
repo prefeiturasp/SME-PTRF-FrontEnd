@@ -143,7 +143,7 @@ export const CadastroForm = ({verbo_http}) => {
             setEnviarFormulario(false)
             setBtnSubmitDisable(true)
         } else {
-            aux.get_nome_razao_social(values.cpf_cnpj_fornecedor, setFieldValue);
+            aux.get_nome_razao_social(values.cpf_cnpj_fornecedor, setFieldValue, values.nome_fornecedor);
             setEnviarFormulario(true)
             setBtnSubmitDisable(false)
         }
