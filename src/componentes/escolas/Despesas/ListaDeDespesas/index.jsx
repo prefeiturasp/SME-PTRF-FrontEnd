@@ -54,8 +54,8 @@ export class ListaDeDespesas extends Component {
                 : 'ptrf-despesa-status-inativo';
         const statusText =
             rowData['status_despesa'] === 'COMPLETO'
-                ? 'Status: Completo'
-                : 'Status: Incompleto';
+                ? 'Status: COMPLETO'
+                : 'Status: RASCUNHO';
         return (
             <div>
                 <span>{rowData['numero_documento']}</span>

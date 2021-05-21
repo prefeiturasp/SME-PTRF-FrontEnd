@@ -97,8 +97,8 @@ export const FormFiltrosAvancados = (props) => {
                                     onChange={(e) => handleChange(e.target.name, e.target.value)} name="despesa_status"
                                     id="despesa_status" className="form-control">
                                 <option key={0} value="">Selecione status</option>
-                                <option key="COMPLETO" value="COMPLETO">Completo</option>
-                                <option key="INCOMPLETO" value="INCOMPLETO">Incompleto</option>
+                                <option key="COMPLETO" value="COMPLETO">COMPLETO</option>
+                                <option key="INCOMPLETO" value="INCOMPLETO">RASCUNHO</option>
                             </select>
                         </div>
                         <div className="form-group col-md-6">
