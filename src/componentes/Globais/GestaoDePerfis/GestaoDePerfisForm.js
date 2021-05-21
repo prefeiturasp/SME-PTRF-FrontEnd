@@ -160,9 +160,15 @@ export const GestaoDePerfisForm = () =>{
         buscaTipoUnidadeVisaoUE()
     }, [buscaTipoUnidadeVisaoUE])
 
-    const carregaDadosUsuario = useCallback(async ()=>{
-        if (id_usuario){
-            let dados_usuario = await getUsuario(id_usuario)
+    const carregaDadosUsuario = useCallback(async (id_usuario_passado="")=>{
+        if (id_usuario || id_usuario_passado){
+            let dados_usuario;
+            if (id_usuario_passado){
+                dados_usuario = await getUsuario(id_usuario_passado)
+            }else {
+                dados_usuario = await getUsuario(id_usuario)
+            }
+
             let grupos = await exibeGrupos()
             let unidades_vinculadas = await carregaUnidadesVinculadas()
 
@@ -418,6 +424,13 @@ export const GestaoDePerfisForm = () =>{
                 if (visao_selecionada !== 'SME'){
                     usuario_status = await getUsuarioStatus(values.username, values.e_servidor, uuid_unidade);
                     setUsuariosStatus(usuario_status)
+                    // TODO Refatorar, criar método que checa se usuario já tem ID ou fazer esse controle nos métodos já existentes serviceVisaoDre, serviceVisaoUE, serviceVisaoSme
+                    let id_usuario;
+                    if (usuario_status && usuario_status.usuario_sig_escola && usuario_status.usuario_sig_escola.info_sig_escola && usuario_status.usuario_sig_escola.info_sig_escola.user_id){
+                        id_usuario = usuario_status.usuario_sig_escola.info_sig_escola.user_id
+                        console.log("USUARIO ID USUARIO ", id_usuario)
+                        window.location.assign(`/gestao-de-perfis-form/${id_usuario}`)
+                    }
                     if (visao_selecionada === "DRE"){
                         await serviceVisaoDre(usuario_status, {setFieldValue, resetForm})
                     }else if (visao_selecionada === "UE"){
@@ -426,6 +439,12 @@ export const GestaoDePerfisForm = () =>{
                 }else {
                     usuario_status = await getUsuarioStatus(values.username, values.e_servidor);
                     setUsuariosStatus(usuario_status)
+                    let id_usuario;
+                    if (usuario_status && usuario_status.usuario_sig_escola && usuario_status.usuario_sig_escola.info_sig_escola && usuario_status.usuario_sig_escola.info_sig_escola.user_id){
+                        id_usuario = usuario_status.usuario_sig_escola.info_sig_escola.user_id
+                        console.log("USUARIO ID USUARIO ", id_usuario)
+                        window.location.assign(`/gestao-de-perfis-form/${id_usuario}`)
+                    }
                     await serviceVisaoSme(usuario_status, {setFieldValue, resetForm})
                 }
             }catch (e){
