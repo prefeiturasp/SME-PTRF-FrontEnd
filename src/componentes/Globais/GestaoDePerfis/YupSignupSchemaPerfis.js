@@ -5,5 +5,5 @@ export const YupSignupSchemaPerfis = yup.object().shape({
     name: yup.string().required("Nome de usuário é obrigatório"),
     email: yup.string().email("Digite um email válido").nullable(),
     groups: yup.string().required("Grupo de acesso é obrigatório"),
-    //visoes: yup.string().required("Visões é obrigatório"),
+    visoes: yup.string().required("Visão é obrigatório"),
 });
