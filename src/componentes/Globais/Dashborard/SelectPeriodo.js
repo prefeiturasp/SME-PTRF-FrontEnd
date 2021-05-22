@@ -4,7 +4,7 @@ export const SelectPeriodo = ({periodosAssociacao, handleChangePeriodo, selectPe
     return(
         <>
             <div className="col-auto my-1">
-                <h2 className="subtitulo-itens-painel-out mb-0">Ações recebidas no período:</h2>
+                <h2 className="subtitulo-itens-painel-out mb-0">Período:</h2>
             </div>
             <div className="col-auto my-1">
                 <select

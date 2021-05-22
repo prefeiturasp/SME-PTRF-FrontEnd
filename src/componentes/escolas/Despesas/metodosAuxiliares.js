@@ -72,17 +72,17 @@ const getPath = (origem) => {
     window.location.assign(path)
 };
 
-const get_nome_razao_social = async (cpf_cnpj, setFieldValue) => {
-    let resp = await getNomeRazaoSocial(cpf_cnpj);
-    if (resp && resp.length > 0 && resp[0].nome){
-        setFieldValue("nome_fornecedor", resp[0].nome);
-    }else {
-        setFieldValue("nome_fornecedor", "");
+const get_nome_razao_social = async (cpf_cnpj, setFieldValue, nome_fornecedor="") => {
+    if (!nome_fornecedor){
+        let resp = await getNomeRazaoSocial(cpf_cnpj);
+        if (resp && resp.length > 0 && resp[0].nome){
+            setFieldValue("nome_fornecedor", resp[0].nome);
+        }
     }
 };
 
 const exibeDocumentoTransacao = (valor, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas) => {
-    if (valor){
+    if (valor && despesasTabelas && despesasTabelas.tipos_transacao){
         let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor));
         if (exibe_documento_transacao.tem_documento){
             setCssEscondeDocumentoTransacao("");

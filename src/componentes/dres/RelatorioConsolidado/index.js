@@ -131,11 +131,11 @@ export const RelatorioConsolidado = () => {
 
     const textoBtnRelatorio = () =>{
         if (statusRelatorio.status_geracao === 'GERADO_TOTAL'){
-            return 'Relatório consolidado gerado'
+            return 'Documento gerado'
         }else if (statusRelatorio.status_geracao === 'GERADO_PARCIAL'){
-            return 'Relatório parcial gerado'
+            return 'Documento parcial gerado'
         }else if (statusRelatorio.status_geracao === 'NAO_GERADO'){
-            return 'Relatório não gerado'
+            return 'Documento não gerado'
         }
     };
 

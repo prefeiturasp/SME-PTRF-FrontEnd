@@ -18,6 +18,7 @@ export const GestaoDePerfis = () => {
         filtrar_por_nome: "",
         filtrar_por_grupo: "",
         filtrar_tipo_de_usuario: "",
+        filtrar_por_nome_unidade: "",
     };
 
     const [clickBtnInfo, setClickBtnInfo] = useState(false);
@@ -54,7 +55,7 @@ export const GestaoDePerfis = () => {
 
     const handleSubmitFiltros = async (event) => {
         event.preventDefault();
-        let retorno_filtros = await getUsuariosFiltros(visao_selecionada, stateFiltros.filtrar_por_nome, stateFiltros.filtrar_por_grupo, stateFiltros.filtrar_tipo_de_usuario);
+        let retorno_filtros = await getUsuariosFiltros(visao_selecionada, stateFiltros.filtrar_por_nome, stateFiltros.filtrar_por_grupo, stateFiltros.filtrar_tipo_de_usuario, stateFiltros.filtrar_por_nome_unidade);
         setUsuarios(retorno_filtros)
     };
 
@@ -63,6 +64,16 @@ export const GestaoDePerfis = () => {
             return(
                 rowData['groups'].map((grupo, index)=>(
                     <p key={index} className='mb-0'>{grupo.name} </p>
+                ))
+            )
+        }
+    };
+
+    const unidadesTemplate = (rowData) =>{
+        if (rowData['unidades'] && rowData['unidades'].length > 0){
+            return(
+                rowData['unidades'].map((unidade, index)=>(
+                    <p key={index} className='mb-0'>{unidade.tipo_unidade} {unidade.nome} </p>
                 ))
             )
         }
@@ -102,6 +113,7 @@ export const GestaoDePerfis = () => {
                 handleSubmitFiltros={handleSubmitFiltros}
                 stateFiltros={stateFiltros}
                 grupos={grupos}
+                visao_selecionada={visao_selecionada}
             />
             <div className="d-flex bd-highlight mt-4">
                 <div className="flex-grow-1 bd-highlight mb-3"><h4>Lista de perfis com acesso</h4></div>
@@ -124,16 +136,23 @@ export const GestaoDePerfis = () => {
                 <div className="card">
                     <DataTable value={usuarios} className='tabela-lista-perfis'>
                         <Column field="name" header="Nome completo"/>
-                        <Column field="username" header="Nome de usuário"/>
-                        <Column
-                            field="groups"
-                            header="Grupo de acesso"
-                            body={grupoTemplate}
-                        />
+                        <Column field="username" header="Id. de usuário"/>
+                        {(visao_selecionada === "DRE" || visao_selecionada === "SME") &&
+                            <Column
+                                field="unidades"
+                                header="Unid. correspondente"
+                                body={unidadesTemplate}
+                            />
+                        }
                         <Column
                             field="e_servidor"
                             header="Tipo de usuário"
                             body={tipoUsuarioTemplate}
+                        />
+                        <Column
+                            field="groups"
+                            header="Grupo de acesso"
+                            body={grupoTemplate}
                         />
                         <Column
                             field="id"
