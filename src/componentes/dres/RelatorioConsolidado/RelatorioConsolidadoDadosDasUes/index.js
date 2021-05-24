@@ -139,6 +139,7 @@ export const RelatorioConsolidadoDadosDasUes = () => {
             window.location.assign(`/dre-regularidade-unidade-educacional/dre-relatorio-consolidado/${periodo_uuid}/${conta_uuid}`)
         }catch (e) {
             console.log("Erro ao buscar associação ", e)
+            setLoading(false)
         }
 
     },[conta_uuid, periodo_uuid]);
