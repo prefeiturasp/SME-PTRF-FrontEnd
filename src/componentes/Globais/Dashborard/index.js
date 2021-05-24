@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {DashboardCard} from "./DashboardCard";
 import {DashboardCardInfoConta} from "./DashboardCardInfoConta";
 import {SelectPeriodo} from "./SelectPeriodo";
@@ -32,10 +32,38 @@ export const Dashboard = () => {
     const [selectConta, setSelectConta] = useState(false);
     const [selectPeriodo, setSelectPeriodo] = useState(false);
 
+    const buscaListaAcoesAssociacao = useCallback(async () => {
+        const listaAcoes = await getAcoesAssociacao(uuid_associacao);
+        setAcoesAssociacao(listaAcoes);
+        setLoading(false);
+    }, [uuid_associacao]);
+
+    const buscaPeriodos = useCallback(async () => {
+        let periodos = await getPeriodosAteAgoraForaImplantacaoDaAssociacao();
+        setSelectPeriodo(periodos[0].uuid)
+        setPeriodosAssociacao(periodos);
+    }, []);
+
+    useEffect(() => {
+        buscaListaAcoesAssociacao();
+    }, [buscaListaAcoesAssociacao]);
+
     useEffect(() => {
         buscaPeriodos();
-        buscaListaAcoesAssociacao();
-    }, []);
+    }, [buscaPeriodos]);
+
+
+    const carregaAcoesAssociacaoPorPeriodoConta = useCallback(async ()=>{
+        if (selectPeriodo) {
+            let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodoConta(uuid_associacao, selectPeriodo);
+            setAcoesAssociacao(acoesPorPeriodo);
+        }
+    }, [uuid_associacao, selectPeriodo])
+
+    useEffect(() => {
+        carregaAcoesAssociacaoPorPeriodoConta();
+    }, [carregaAcoesAssociacaoPorPeriodoConta]);
+
 
     useEffect(() => {
         const carregaTabelas = async () => {
@@ -43,7 +71,8 @@ export const Dashboard = () => {
             setTiposConta(tabela.contas_associacao);
         };
         carregaTabelas()
-    }, []);
+    }, [uuid_associacao]);
+
 
     useEffect(()=>{
         const getStatus = async () =>{
@@ -54,19 +83,8 @@ export const Dashboard = () => {
             }
         };
         getStatus();
-    }, [acoesAssociacao]);
+    }, [uuid_associacao, acoesAssociacao]);
 
-    const buscaPeriodos = async () => {
-        let periodos = await getPeriodosAteAgoraForaImplantacaoDaAssociacao();
-        setSelectPeriodo(periodos[0].uuid)
-        setPeriodosAssociacao(periodos);
-    };
-
-    const buscaListaAcoesAssociacao = async () => {
-        const listaAcoes = await getAcoesAssociacao(uuid_associacao);
-        setAcoesAssociacao(listaAcoes);
-        setLoading(false);
-    };
 
     const handleChangePeriodo = async (periodo_uuid) => {
         setLoading(true);
