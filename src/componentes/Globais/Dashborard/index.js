@@ -53,7 +53,7 @@ export const Dashboard = () => {
     }, [buscaPeriodos]);
 
 
-    const carregaAcoesAssociacaoPorPeriodoConta = useCallback(async ()=>{
+    const carregaAcoesAssociacaoPorPeriodo = useCallback(async ()=>{
         if (selectPeriodo) {
             let acoesPorPeriodo = await getAcoesAssociacaoPorPeriodoConta(uuid_associacao, selectPeriodo);
             setAcoesAssociacao(acoesPorPeriodo);
@@ -61,8 +61,8 @@ export const Dashboard = () => {
     }, [uuid_associacao, selectPeriodo])
 
     useEffect(() => {
-        carregaAcoesAssociacaoPorPeriodoConta();
-    }, [carregaAcoesAssociacaoPorPeriodoConta]);
+        carregaAcoesAssociacaoPorPeriodo();
+    }, [carregaAcoesAssociacaoPorPeriodo]);
 
 
     useEffect(() => {
