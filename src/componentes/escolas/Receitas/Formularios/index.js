@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import HTTP_STATUS from "http-status-codes";
 import {Formik} from 'formik';
 import {DatePickerField} from '../../../Globais/DatePickerField'
@@ -8,9 +8,10 @@ import {
     atualizaReceita,
     deletarReceita,
     getReceita,
-    getTabelasReceita,
+    getTabelasReceitaReceita,
     getRepasses
 } from '../../../../services/escolas/Receitas.service';
+import {getDespesa} from "../../../../services/escolas/Despesas.service";
 import {round, trataNumericos, periodoFechado, comparaObjetos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
@@ -49,6 +50,7 @@ export const ReceitaForm = () => {
         data: "",
         valor: "",
         referencia_devolucao: "",
+        saida_do_recurso: "",
     };
 
     const [tabelas, setTabelas] = useState(tabelaInicial);
@@ -78,53 +80,84 @@ export const ReceitaForm = () => {
     const [repasses, setRepasses] = useState([]);
     const [showSelecionaRepasse, setShowSelecionaRepasse] = useState(false);
 
-    useEffect(() => {
-        const carregaTabelas = async () => {
-            getTabelasReceita().then(response => {
-                setTabelas(response.data);
+    const carregaTabelas = useCallback(async ()=>{
+        let tabelas_receitas = await getTabelasReceitaReceita()
+        setTabelas(tabelas_receitas)
+    }, [])
+
+    useEffect(()=>{
+        carregaTabelas()
+    }, [carregaTabelas]);
+
+    const showBotaoCadastrarSaida = useCallback((uuid_acao_associacao, values) => {
+        if (tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 && uuid_acao_associacao && values && values.tipo_receita) {
+            let e_recurso_proprio = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_recursos_proprios
+            let acao = tabelas.acoes_associacao.find(item => item.uuid === uuid_acao_associacao)
+            if (acao && acao.e_recursos_proprios && e_recurso_proprio && !values.saida_do_recurso) {
+                setShowCadastrarSaida(true);
+            }
+            return acao;
+        } else {
+            setShowCadastrarSaida(false);
+        }
+    }, [tabelas])
+
+    const carregaDespesa = useCallback(async (despesa_uuid)=>{
+        let despesa = ""
+        try {
+            despesa = await getDespesa(despesa_uuid)
+            return despesa.uuid
+        }catch (e) {
+            console.log("Não existe despesa cadastrada com esse uuid método carregaDespesa ", e.response.data)
+            return despesa
+        }
+    }, []) ;
+
+    const buscaReceita = useCallback(async ()=>{
+        if (uuid) {
+            getReceita(uuid).then(async response => {
+                const resp = response.data;
+                // Verificando se a despesa já atrelada não foi deletada
+                let saida_recurso = await carregaDespesa(resp.saida_do_recurso);
+                const init = {
+                    tipo_receita: resp.tipo_receita.id,
+                    detalhe_tipo_receita: resp.detalhe_tipo_receita,
+                    detalhe_outros: resp.detalhe_outros,
+                    categoria_receita: resp.categoria_receita,
+                    conferido: resp.conferido,
+                    acao_associacao: resp.acao_associacao.uuid,
+                    conta_associacao: resp.conta_associacao.uuid,
+                    referencia_devolucao: resp.referencia_devolucao,
+                    data: resp.data,
+                    valor: resp.valor ? Number(resp.valor).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    }) : "",
+                    saida_do_recurso: saida_recurso ? saida_recurso : ""
+                };
+                setObjetoParaComparacao(init);
+                setInitialValue(init);
+                setReceita(resp);
+                if (resp && resp.acao_associacao && resp.acao_associacao.uuid){
+                    setUuidReceita(uuid)
+                    showBotaoCadastrarSaida(resp.acao_associacao.uuid, init)
+                }
+                periodoFechado(resp.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+                if (resp.repasse !== null) {
+                    setRepasse(resp.repasse);
+                    setReadOnlyValor(true);
+                    setreadOnlyClassificacaoReceita(true);
+                    setreadOnlyTipoReceita(true);
+                }
             }).catch(error => {
                 console.log(error);
             });
-        };
+        }
+    }, [carregaDespesa, uuid, showBotaoCadastrarSaida]);
 
-        const buscaReceita = async () => {
-            if (uuid) {
-                getReceita(uuid).then(response => {
-                    const resp = response.data;
-                    const init = {
-                        tipo_receita: resp.tipo_receita.id,
-                        detalhe_tipo_receita: resp.detalhe_tipo_receita,
-                        detalhe_outros: resp.detalhe_outros,
-                        categoria_receita: resp.categoria_receita,
-                        conferido: resp.conferido,
-                        acao_associacao: resp.acao_associacao.uuid,
-                        conta_associacao: resp.conta_associacao.uuid,
-                        referencia_devolucao: resp.referencia_devolucao,
-                        data: resp.data,
-                        valor: resp.valor ? Number(resp.valor).toLocaleString('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL'
-                        }) : "",
-                    };
-                    setObjetoParaComparacao(init);
-                    setInitialValue(init);
-                    setReceita(resp);
-                    periodoFechado(resp.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
-                    if (resp.repasse !== null) {
-                        setRepasse(resp.repasse);
-                        setReadOnlyValor(true);
-                        setreadOnlyClassificacaoReceita(true);
-                        setreadOnlyTipoReceita(true);
-                    }
-                }).catch(error => {
-                    console.log(error);
-                });
-            }
-        };
-        carregaTabelas();
-        buscaReceita();
-        setLoading(false);
-    }, []);
+    useEffect(()=>{
+        buscaReceita()
+    }, [buscaReceita])
 
     useEffect(() => {
         if (tabelas.tipos_receita.length > 0 && initialValue.tipo_receita !== undefined) {
@@ -375,18 +408,7 @@ export const ReceitaForm = () => {
         ))): null
     }
 
-    const showBotaoCadastrarSaida = (uuid_acao_associacao, values) => {
-        if (tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 && uuid_acao_associacao && values && values.tipo_receita) {
-            let e_recurso_proprio = tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_recursos_proprios
-            let acao = tabelas.acoes_associacao.find(item => item.uuid == uuid_acao_associacao)
-            if (acao && acao.e_recursos_proprios && e_recurso_proprio) {
-                setShowCadastrarSaida(true);
-            } 
-            return acao;
-        } else {
-            setShowCadastrarSaida(false);
-        }
-    }
+
 
     const retornaClassificacaoReceita = (values, setFieldValue) => {
         if (tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && values !== undefined && values.acao_associacao && values.tipo_receita && Object.entries(repasse).length > 0 && uuid === undefined) {
@@ -520,7 +542,6 @@ export const ReceitaForm = () => {
 
 
     const trataRepasse = async (repasse_row, setFieldValue, valor, nome_classificacao) => {
-        console.log("trataRepasse ", repasse_row)
         await setaRepasse(repasse_row);
         setFieldValue('acao_associacao', repasse_row.acao_associacao.uuid);
         setFieldValue('conta_associacao', repasse_row.conta_associacao.uuid);
@@ -791,7 +812,7 @@ export const ReceitaForm = () => {
 
                             {/*Botões*/}
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
-                                {showCadastrarSaida == true ?
+                                {showCadastrarSaida === true ?
                                     <button
                                         type="submit"
                                         onClick={() => setRedirectTo('/cadastro-de-despesa-recurso-proprio')}
