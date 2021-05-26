@@ -6,7 +6,7 @@ import {
     cpfMaskContitional, valida_cpf_cnpj,
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask';
-import {getDespesasTabelas, criarDespesa} from "../../../../services/escolas/Despesas.service";
+import {getDespesasTabelas, criarDespesa, patchAtrelarSaidoDoRecurso} from "../../../../services/escolas/Despesas.service";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import {useParams} from 'react-router-dom';
 import {DespesaContext} from "../../../../context/Despesa";
@@ -84,8 +84,6 @@ export const CadastroSaidaForm = (props) => {
         let erros_personalizados = validacoesPersonalizadas(values)
 
         if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
-
-            console.log('Enviar')
             setLoading(true);
             validaPayloadDespesas(values, despesasTabelas);
 
@@ -97,8 +95,14 @@ export const CadastroSaidaForm = (props) => {
             try {
                 const response = await criarDespesa(values);
                 if (response.status === HTTP_STATUS.CREATED) {
-                    console.log("Operação realizada com sucesso!");
-                    aux.getPath();
+                    console.log("Despesa criada com sucesso!");
+                    try {
+                        await patchAtrelarSaidoDoRecurso(uuid, response.data.uuid)
+                        console.log("Saída recurso atrelada com sucesso")
+                        aux.getPath()
+                    }catch (e) {
+                        console.log("Erro ao atrelar saída recurso ", e.response.data)
+                    }
                 } else {
                     setLoading(false);
                 }

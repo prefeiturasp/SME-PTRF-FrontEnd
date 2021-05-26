@@ -20,6 +20,11 @@ export const getTabelasReceita = async () => {
         });
 };
 
+export const getTabelasReceitaReceita = async () => {
+    return (await api.get(`api/receitas/tabelas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
+};
+
+
 export const criarReceita = async payload => {
     return api
         .post(`api/receitas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, payload, authHeader)
