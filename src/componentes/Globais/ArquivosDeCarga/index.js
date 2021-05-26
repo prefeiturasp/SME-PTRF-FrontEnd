@@ -44,6 +44,15 @@ const ArquivosDeCarga = () => {
                     {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_ASSOCIACOES'},
                 ],
             }
+        }else if (url_params.tipo_de_carga === 'CARGA_USUARIOS'){
+            obj = {
+                titulo: 'Usuários',
+                acesso_permitido: true,
+                UrlsMenuInterno:[
+                    // {label: "Dados das associações", url: "parametro-associacoes"},
+                    {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_USUARIOS'},
+                ],
+            }
         }
         return obj
     }, [url_params]);

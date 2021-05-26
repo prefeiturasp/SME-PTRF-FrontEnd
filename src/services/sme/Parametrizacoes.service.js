@@ -60,7 +60,7 @@ export const getDownloadArquivoDeCarga = async (uuid_arquivo_de_carga, nome_do_a
 };
 
 export const postProcessarArquivoDeCarga = async (uuid_arquivo_de_carga) => {
-    return (await api.post(`/api/arquivos/${uuid_arquivo_de_carga}/processar/`, authHeader)).data
+    return (await api.post(`/api/arquivos/${uuid_arquivo_de_carga}/processar/`, {}, authHeader)).data
 };
 export const getDownloadModeloArquivoDeCarga = async (tipo_arquivo_de_carga) => {
     return (await api
