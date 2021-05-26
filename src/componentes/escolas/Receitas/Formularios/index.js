@@ -118,7 +118,11 @@ export const ReceitaForm = () => {
             getReceita(uuid).then(async response => {
                 const resp = response.data;
                 // Verificando se a despesa já atrelada não foi deletada
-                let saida_recurso = await carregaDespesa(resp.saida_do_recurso);
+                let saida_recurso = "";
+                if (resp && resp.saida_do_recurso){
+                    saida_recurso = await carregaDespesa(resp.saida_do_recurso);
+                }
+
                 const init = {
                     tipo_receita: resp.tipo_receita.id,
                     detalhe_tipo_receita: resp.detalhe_tipo_receita,
