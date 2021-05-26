@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {getTabelasReceita} from "../../../../services/escolas/Receitas.service";
+import {getTabelasReceitaReceita} from "../../../../services/escolas/Receitas.service";
 import {filtrosAvancadosReceitas} from "../../../../services/escolas/Receitas.service";
 
 export const FiltroPorTipoReceita = (props) => {
-    const {buscaUtilizandoFiltro, setBuscaUtilizandoFiltro, setLista} = props
+    const {setBuscaUtilizandoFiltro, setLista} = props
 
     const tabelaInicial = {
         tipos_receita: [],
@@ -25,11 +25,8 @@ export const FiltroPorTipoReceita = (props) => {
 
     useEffect(() => {
         const carregaTabelas = async () => {
-            getTabelasReceita().then(response => {
-                setTabelas(response.data);
-            }).catch(error => {
-                console.log(error);
-            });
+            let tabelas_receitas = await getTabelasReceitaReceita()
+            setTabelas(tabelas_receitas)
         };
         carregaTabelas()
     }, []);
