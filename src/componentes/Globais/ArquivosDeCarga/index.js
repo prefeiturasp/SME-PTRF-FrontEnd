@@ -4,16 +4,7 @@ import "../../dres/Associacoes/associacoes.scss"
 import {Redirect, useParams} from 'react-router-dom'
 import {BotoesTopo} from "./BotoesTopo";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
-import {
-    getTabelaArquivosDeCarga,
-    getArquivosDeCargaFiltros,
-    postCreateArquivoDeCarga,
-    patchAlterarArquivoDeCarga,
-    deleteArquivoDeCarga,
-    getDownloadArquivoDeCarga,
-    postProcessarArquivoDeCarga,
-    getDownloadModeloArquivoDeCarga,
-} from "../../../services/sme/Parametrizacoes.service";
+import {getTabelaArquivosDeCarga, getArquivosDeCargaFiltros, postCreateArquivoDeCarga, patchAlterarArquivoDeCarga, deleteArquivoDeCarga, getDownloadArquivoDeCarga, postProcessarArquivoDeCarga, getDownloadModeloArquivoDeCarga} from "../../../services/sme/Parametrizacoes.service";
 import moment from "moment";
 import TabelaArquivosDeCarga from "./TabelaArquivosDeCarga";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -49,7 +40,6 @@ const ArquivosDeCarga = () => {
                 titulo: 'Usuários',
                 acesso_permitido: true,
                 UrlsMenuInterno:[
-                    // {label: "Dados das associações", url: "parametro-associacoes"},
                     {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_USUARIOS'},
                 ],
             }
@@ -72,7 +62,6 @@ const ArquivosDeCarga = () => {
         }
     });
 
-
     const carregaTabelaArquivos = useCallback(async () => {
         if (dadosDeOrigem.acesso_permitido) {
             let tabela = await getTabelaArquivosDeCarga();
@@ -93,7 +82,6 @@ const ArquivosDeCarga = () => {
                 console.log("Erro ao carregar arquivos")
             }
         }
-
     }, [url_params, dadosDeOrigem.acesso_permitido]);
 
     useEffect(() => {
@@ -180,6 +168,7 @@ const ArquivosDeCarga = () => {
         log: "",
         operacao: 'create',
     };
+
     const [showModalForm, setShowModalForm] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [showModalInfoArquivosDeCarga, setShowModalInfoArquivosDeCarga] = useState(false);
