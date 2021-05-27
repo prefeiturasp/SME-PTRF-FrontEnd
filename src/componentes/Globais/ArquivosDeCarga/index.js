@@ -4,16 +4,7 @@ import "../../dres/Associacoes/associacoes.scss"
 import {Redirect, useParams} from 'react-router-dom'
 import {BotoesTopo} from "./BotoesTopo";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
-import {
-    getTabelaArquivosDeCarga,
-    getArquivosDeCargaFiltros,
-    postCreateArquivoDeCarga,
-    patchAlterarArquivoDeCarga,
-    deleteArquivoDeCarga,
-    getDownloadArquivoDeCarga,
-    postProcessarArquivoDeCarga,
-    getDownloadModeloArquivoDeCarga,
-} from "../../../services/sme/Parametrizacoes.service";
+import {getTabelaArquivosDeCarga, getArquivosDeCargaFiltros, postCreateArquivoDeCarga, patchAlterarArquivoDeCarga, deleteArquivoDeCarga, getDownloadArquivoDeCarga, postProcessarArquivoDeCarga, getDownloadModeloArquivoDeCarga} from "../../../services/sme/Parametrizacoes.service";
 import moment from "moment";
 import TabelaArquivosDeCarga from "./TabelaArquivosDeCarga";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -44,6 +35,14 @@ const ArquivosDeCarga = () => {
                     {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_ASSOCIACOES'},
                 ],
             }
+        }else if (url_params.tipo_de_carga === 'CARGA_USUARIOS'){
+            obj = {
+                titulo: 'Usuários',
+                acesso_permitido: true,
+                UrlsMenuInterno:[
+                    {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_USUARIOS'},
+                ],
+            }
         }
         return obj
     }, [url_params]);
@@ -62,7 +61,6 @@ const ArquivosDeCarga = () => {
             return () => clearInterval(timer);
         }
     });
-
 
     const carregaTabelaArquivos = useCallback(async () => {
         if (dadosDeOrigem.acesso_permitido) {
@@ -84,7 +82,6 @@ const ArquivosDeCarga = () => {
                 console.log("Erro ao carregar arquivos")
             }
         }
-
     }, [url_params, dadosDeOrigem.acesso_permitido]);
 
     useEffect(() => {
@@ -171,6 +168,7 @@ const ArquivosDeCarga = () => {
         log: "",
         operacao: 'create',
     };
+
     const [showModalForm, setShowModalForm] = useState(false);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [showModalInfoArquivosDeCarga, setShowModalInfoArquivosDeCarga] = useState(false);
