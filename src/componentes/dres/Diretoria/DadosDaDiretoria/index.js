@@ -168,7 +168,6 @@ export const DadosDaDiretoria = () => {
                                                         }}
                                                         disabled={!visoesService.getPermissoes(['change_dados_diretoria'])}
                                                     />
-                                                    {/*{props.touched.dre_diretor_regional_rf && props.errors.dre_diretor_regional_rf && <span className="span_erro text-danger mt-1"> {props.errors.dre_diretor_regional_rf} </span>}*/}
                                                     {props.touched.dre_diretor_regional_nome && props.errors.dre_diretor_regional_nome && <span className="span_erro text-danger mt-1"> {props.errors.dre_diretor_regional_nome} </span>}
                                                 </div>
                                                 <div className="form-group col-md-6 mt-3">
