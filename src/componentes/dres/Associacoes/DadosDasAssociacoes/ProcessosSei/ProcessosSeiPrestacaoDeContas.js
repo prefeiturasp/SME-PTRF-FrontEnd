@@ -21,6 +21,7 @@ import {
 
 import {ProcessoSeiPrestacaoDeContaForm} from "./ProcessoSeiPrestacaoDeContaForm";
 import {ConfirmaDeleteProcesso} from "./ConfirmaDeleteProcessoDialog";
+import {visoesService} from "../../../../../services/visoes.service";
 
 export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
 
@@ -198,13 +199,13 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                                 <label><strong>Processos SEI de prestação de contas</strong></label>
                             </div>
                             <div className="col-2">
-                                <a className="link-green float-right" onClick={() => handleAddProcessoAction()}>
+                                <button className="link-green float-right btn-disabled" onClick={visoesService.getPermissoes(['change_processo_sei']) ? () => handleAddProcessoAction() : null}>
                                     <FontAwesomeIcon
                                         style={{fontSize: '15px', marginRight: "0"}}
                                         icon={faPlus}
                                     />
                                     <strong> adicionar</strong>
-                                </a>
+                                </button>
                             </div>
                         </div>
                         <div className="row">
