@@ -25,6 +25,7 @@ import {
     ModalInformativoCopiaPeriodo} from "./Modais";
 import "./atribuicoes.scss";
 import {useParams} from 'react-router-dom';
+import {visoesService} from "../../../../services/visoes.service";
 
 
 const CustomToast = (propriedades) => {
@@ -292,6 +293,7 @@ export const Atribuicoes = () => {
                     onChange={(e) => tratarSelecionado(e, rowData.uuid)}
                     name="checkAtribuido"
                     id="checkAtribuido"
+                    disabled={!visoesService.getPermissoes(['change_atribuicao_por_ue'])}
                 />
             </div>
         )
@@ -301,7 +303,7 @@ export const Atribuicoes = () => {
         return (
             <div className="align-middle text-center">
             <Dropdown>
-              <Dropdown.Toggle id="dropdown-basic">
+              <Dropdown.Toggle disabled={!visoesService.getPermissoes(['change_atribuicao_por_ue'])}  id="dropdown-basic">
               <input
                     checked={false}
                     type="checkbox"
@@ -309,11 +311,12 @@ export const Atribuicoes = () => {
                     onChange={(e) => e}
                     name="checkHeader"
                     id="checkHeader"
+                    disabled={!visoesService.getPermissoes(['change_atribuicao_por_ue'])}
                 />
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
-                <Dropdown.Item onClick={(e) => selecionarTodos(e)}>Selecionar todos</Dropdown.Item>
+                <Dropdown.Item  onClick={(e) => selecionarTodos(e)}>Selecionar todos</Dropdown.Item>
                 <Dropdown.Item onClick={(e) => desmarcarTodos(e)}>Desmarcar todos</Dropdown.Item>
                 <Dropdown.Item onClick={(e) => modalConfirmarRetirada(e)}>Retirar Atribuições</Dropdown.Item>
                 <Dropdown.Item onClick={(e) => selecionarApenasUesNaoSemAtribuicao(e)}>Selecionar apenas UEs sem atribuição</Dropdown.Item>
@@ -369,11 +372,15 @@ export const Atribuicoes = () => {
                         <div className="col-7">
                             <div className="row">
                                 <div className="col-12">
-                                    <a className="float-right" onClick={(e) => desmarcarTodos(e)} style={{textDecoration:"underline", cursor:"pointer"}}>
+                                    <a className="float-right" onClick={visoesService.getPermissoes(['change_atribuicao_por_ue']) ? (e) => desmarcarTodos(e) : null} style={{textDecoration:"underline", cursor:"pointer"}}>
                                         <strong>Cancelar</strong>
                                     </a>
                                     <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                    <a className="float-right" onClick={(e) => modalAtribuir()} style={{textDecoration:"underline", cursor:"pointer"}}>
+                                    <a
+                                        className="float-right"
+                                        onClick={visoesService.getPermissoes(['change_atribuicao_por_ue']) ? (e) => modalAtribuir() : null}
+                                        style={{textDecoration:"underline", cursor:"pointer"}}
+                                    >
                                         <FontAwesomeIcon
                                             style={{color: "white", fontSize: '15px', marginRight: "2px"}}
                                             icon={faSignInAlt}
@@ -571,6 +578,7 @@ export const Atribuicoes = () => {
                                                 value="sim"
                                                 className="form-check-input"
                                                 checked={escolhaTags}
+                                                disabled={!visoesService.getPermissoes(['change_atribuicao_por_ue'])}
                                             />
                                             <label className="form-check-label" htmlFor="{`tag_sim_${index}`}"> Sim</label>
                                         </div>
@@ -586,6 +594,7 @@ export const Atribuicoes = () => {
                                                 value="nao"
                                                 className="form-check-input"
                                                 checked={!escolhaTags}
+                                                disabled={!visoesService.getPermissoes(['change_atribuicao_por_ue'])}
                                             />
                                             <label className="form-check-label" htmlFor="{`tag_nao_${index}`}"> Não</label>
                                         </div>

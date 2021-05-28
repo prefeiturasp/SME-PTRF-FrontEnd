@@ -228,7 +228,7 @@ const routesConfig = [
         exact: true,
         path: "/dre-atribuicoes/:tecnico_uuid?",
         component: AtribuicoesPage,
-        permissoes: ['access_dados_diretoria'],
+        permissoes: ['access_atribuicao_por_ue'],
     },
     {
         exact: true,
