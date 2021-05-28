@@ -5,6 +5,7 @@ import Loading from "../../../../../utils/Loading";
 import {Formik} from "formik";
 import {YupSignupSchemaDadosDaAssociacao} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from "react-text-mask";
+import {visoesService} from "../../../../../services/visoes.service";
 
 
 export const ProcessoSeiRegularidade = ({dadosDaAssociacao}) => {
@@ -93,10 +94,16 @@ export const ProcessoSeiRegularidade = ({dadosDaAssociacao}) => {
                                                     value={props.values.processo_regularidade}
                                                     id="processo_regularidade"
                                                     onBlur={props.handleBlur}
+                                                    disabled={!visoesService.getPermissoes(['change_processo_sei'])}
                                                 />
-                                                {props.touched.processo_regularidade && props.errors.processo_regularidade && <span
-                                                    className="span_erro text-danger mt-1"> {props.errors.processo_regularidade} </span>}
-                                                    <button type="submit" className="btn btn btn btn-success mr-0 mb-2 ml-md-2 mt-2">Salvar</button>
+                                                    {props.touched.processo_regularidade && props.errors.processo_regularidade && <span className="span_erro text-danger mt-1"> {props.errors.processo_regularidade} </span>}
+                                                    <button
+                                                        type="submit"
+                                                        className="btn btn btn btn-success mr-0 mb-2 ml-md-2 mt-2"
+                                                        disabled={!visoesService.getPermissoes(['change_processo_sei'])}
+                                                    >
+                                                        Salvar
+                                                    </button>
                                                 </div>
                                             </div>
 
