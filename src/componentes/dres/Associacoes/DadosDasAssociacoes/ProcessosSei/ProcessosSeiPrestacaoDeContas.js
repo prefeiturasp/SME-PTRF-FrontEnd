@@ -166,7 +166,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                         icon={faEdit}
                     />
                 </button>
-                <button className="btn-editar-membro" onClick={() => handleDeleteProcessoAction(rowData)}>
+                <button disabled={!visoesService.getPermissoes(['change_processo_sei'])} className="btn-editar-membro" onClick={() => handleDeleteProcessoAction(rowData)}>
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "red"}}
                         icon={faTrash}
@@ -199,7 +199,7 @@ export const ProcessosSeiPrestacaoDeContas = ({dadosDaAssociacao}) => {
                                 <label><strong>Processos SEI de prestação de contas</strong></label>
                             </div>
                             <div className="col-2">
-                                <button className="link-green float-right btn-disabled" onClick={visoesService.getPermissoes(['change_processo_sei']) ? () => handleAddProcessoAction() : null}>
+                                <button className="link-green float-right btn-sem-borda-fundo" onClick={visoesService.getPermissoes(['change_processo_sei']) ? () => handleAddProcessoAction() : null}>
                                     <FontAwesomeIcon
                                         style={{fontSize: '15px', marginRight: "0"}}
                                         icon={faPlus}

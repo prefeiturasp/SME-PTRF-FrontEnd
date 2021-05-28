@@ -94,6 +94,7 @@ export const ProcessoSeiRegularidade = ({dadosDaAssociacao}) => {
                                                     value={props.values.processo_regularidade}
                                                     id="processo_regularidade"
                                                     onBlur={props.handleBlur}
+                                                    disabled={!visoesService.getPermissoes(['change_processo_sei'])}
                                                 />
                                                     {props.touched.processo_regularidade && props.errors.processo_regularidade && <span className="span_erro text-danger mt-1"> {props.errors.processo_regularidade} </span>}
                                                     <button
