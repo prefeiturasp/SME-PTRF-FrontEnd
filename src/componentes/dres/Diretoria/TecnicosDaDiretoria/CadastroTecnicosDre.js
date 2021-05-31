@@ -18,7 +18,7 @@ import {TecnicoDreForm} from "./TecnicoDreForm";
 import {ConfirmaDeleteTecnico} from "./ConfirmaDeleteTecnicoDialog";
 import {consultarRF} from "../../../../services/escolas/Associacao.service";
 import {Link} from "react-router-dom";
-import {valida_cpf_cnpj} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {visoesService} from "../../../../services/visoes.service";
 
 export const CadastroTecnicosDre = ({dadosDaDre}) => {
 
@@ -206,8 +206,11 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     const conferirAtribuicoesTemplate = (rowData, column) => {
         return (
             <div>
-                <Link to={`/dre-atribuicoes/${rowData['uuid']}`} className="link-green" onClick={() => {
-                }}>
+                <Link
+                    to={visoesService.getPermissoes(['access_atribuicao_por_ue']) ? `/dre-atribuicoes/${rowData['uuid']}` : '#'}
+                    className={`link-green ${!visoesService.getPermissoes(['access_atribuicao_por_ue']) && "link-desabilitado"}`}
+                    onClick={() => {}}
+                >
                     <FontAwesomeIcon
                         style={{fontSize: '15px', marginRight: "0"}}
                         icon={faClipboardList}
@@ -221,13 +224,20 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
     const tableActionsTemplate = (rowData, column) => {
         return (
             <div>
-                <button className="btn-editar-membro" onClick={() => handleEditTecnicoAction(rowData)}>
+                <button
+                    className="btn-editar-membro"
+                    onClick={() => handleEditTecnicoAction(rowData)}
+                >
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                         icon={faEdit}
                     />
                 </button>
-                <button className="btn-editar-membro" onClick={() => handleDeleteTecnicoAction(rowData)}>
+                <button
+                    className="btn-editar-membro"
+                    onClick={() => handleDeleteTecnicoAction(rowData)}
+                    disabled={!visoesService.getPermissoes(['change_tecnicos_da_diretoria'])}
+                >
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "red"}}
                         icon={faTrash}
@@ -269,13 +279,17 @@ export const CadastroTecnicosDre = ({dadosDaDre}) => {
                                 <label><strong>Lista de técnicos</strong></label>
                             </div>
                             <div className="col-2">
-                                <a className="link-green float-right" onClick={() => handleAddTecnicoAction()}>
+                                <button
+                                    className={`link-green float-right btn-sem-borda-fundo ${!visoesService.getPermissoes(['change_tecnicos_da_diretoria']) && "link-desabilitado"}`}
+                                    onClick={() => handleAddTecnicoAction()}
+                                    disabled={!visoesService.getPermissoes(['change_tecnicos_da_diretoria'])}
+                                >
                                     <FontAwesomeIcon
                                         style={{fontSize: '15px', marginRight: "0"}}
                                         icon={faPlus}
                                     />
                                     <strong> adicionar</strong>
-                                </a>
+                                </button>
                             </div>
                         </div>
                         <div className="row">
