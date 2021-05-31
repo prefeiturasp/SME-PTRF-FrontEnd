@@ -5,6 +5,7 @@ import React from "react";
 import * as yup from "yup";
 import {processoIncorporacaoMask} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from "react-text-mask";
+import {visoesService} from "../../../../../services/visoes.service";
 
 export const YupSignupSchemaProcesso = yup.object().shape({
     numero_processo: yup.string().required("Campo Número do processo é obrigatório"),
@@ -100,7 +101,7 @@ export const ProcessoSeiPrestacaoDeContaForm = ({show, handleClose, onSubmit, ha
                                         <button onClick={() => handleClose()} type="button"
                                                 className="btn btn btn-outline-success mt-2 mr-2">Cancelar
                                         </button>
-                                        <button type="submit" className="btn btn-success mt-2">Salvar</button>
+                                        <button disabled={!visoesService.getPermissoes(['change_processo_sei'])} type="submit" className="btn btn-success mt-2">Salvar</button>
                                     </div>
                                 </form>
                             );
