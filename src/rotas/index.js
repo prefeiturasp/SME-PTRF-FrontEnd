@@ -210,7 +210,7 @@ const routesConfig = [
         exact: true,
         path: "/dre-tecnicos-da-diretoria",
         component: TecnicosDaDiretoriaDrePage,
-        permissoes: ['access_dados_diretoria'],
+        permissoes: ['access_tecnicos_da_diretoria'],
     },
     {
         exact: true,
