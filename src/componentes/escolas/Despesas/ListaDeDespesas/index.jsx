@@ -141,7 +141,7 @@ export class ListaDeDespesas extends Component {
                         <>
                             <Row>
                                 <div className="col-12">
-                                    <p>Filtrar por</p>
+                                    <p>Filtrar por {!this.state.btnMaisFiltros ? "especificação do material ou serviço" : ""}</p>
                                 </div>
                                 <Col lg={7} xl={7}
                                      className={`pr-0 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>
