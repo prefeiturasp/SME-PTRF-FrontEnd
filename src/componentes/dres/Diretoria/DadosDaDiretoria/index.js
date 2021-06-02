@@ -79,7 +79,6 @@ export const DadosDaDiretoria = () => {
          }else {
              delete errors.dre_diretor_regional_rf
          }
-
     };
 
     const onHandleClose = () => {
