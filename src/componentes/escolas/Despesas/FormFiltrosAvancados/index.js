@@ -56,7 +56,7 @@ export const FormFiltrosAvancados = (props) => {
                 <form onSubmit={handleSubmit}>
                     <div className="form-row">
                         <div className="form-group col-md-6">
-                            <label htmlFor="filtrar_por_termo">Filtrar por um termo</label>
+                            <label htmlFor="filtrar_por_termo">Filtrar por especificação do material ou serviço</label>
                             <input value={state.filtrar_por_termo}
                                onChange={(e) => handleChange(e.target.name, e.target.value)}
                                name="filtrar_por_termo" id="filtrar_por_termo" type="text" className="form-control"
