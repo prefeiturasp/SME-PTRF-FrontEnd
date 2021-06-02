@@ -2,17 +2,7 @@ import React, {useEffect, useState, useMemo} from "react";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
 import {EditarMembro} from "../ModalMembros";
-import {
-    getMembrosAssociacao,
-    criarMembroAssociacao,
-    editarMembroAssociacao,
-    consultarRF,
-    consultarCodEol,
-    consultarCpfResponsavel,
-    getUsuarios,
-    deleteMembroAssociacao,
-    getUsuarioPeloUsername
-} from "../../../../services/escolas/Associacao.service";
+import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarCpfResponsavel, getUsuarios, deleteMembroAssociacao, getUsuarioPeloUsername} from "../../../../services/escolas/Associacao.service";
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
@@ -408,7 +398,6 @@ export const MembrosDaAssociacao = () => {
                         };
                         setStateFormEditarMembro(init);
                     }
-
                 } catch (e) {
                     let data = e.response.data;
                     if (data !== undefined && data.detail !== undefined) {
@@ -533,11 +522,8 @@ export const MembrosDaAssociacao = () => {
                     console.log(error)
                 }
             }
-
             setLoading(false)
         }
-
-
     };
 
     const handleDeleteMembroAction = (infoMembroSelecionado) => {
