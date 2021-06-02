@@ -19,16 +19,14 @@ import HTTP_STATUS from "http-status-codes";
 import {getReceita} from '../../../../services/escolas/Receitas.service';
 
 
-export const CadastroSaidaForm = (props) => {
+export const CadastroSaidaForm = () => {
     const aux = metodosAuxiliares;
 
     let {uuid} = useParams();
     const despesaContext = useContext(DespesaContext);
     const [cssEscondeDocumentoTransacao, setCssEscondeDocumentoTransacao] = useState('escondeItem');
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
-    const [numeroDocumentoReadOnly, setNumeroDocumentoReadOnly] = useState(false);
     const [despesasTabelas, setDespesasTabelas] = useState([]);
-    const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
     const [loading, setLoading] = useState(true);
     const [receita, setReceita] = useState(true);
 
@@ -225,7 +223,7 @@ export const CadastroSaidaForm = (props) => {
                                                 onBlur={props.handleBlur}
                                                 name="numero_documento"
                                                 id="numero_documento" type="text"
-                                                className={`${!numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid " : ""} form-control`}
+                                                className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid " : ""} form-control`}
                                                 placeholder="Digite o número"
                                             />
                                             {props.errors.numero_documento && <span
