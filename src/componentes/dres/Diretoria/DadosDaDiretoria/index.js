@@ -63,15 +63,21 @@ export const DadosDaDiretoria = () => {
         setLoading(false)
     };
 
-     const validateRf = async (value, setFieldValue) =>{
-         try {
-             let rf = await consultarRF(value);
-             if (rf.status === 200 || rf.status === 201) {
-                 let nome = rf.data[0].nm_pessoa;
-                 setFieldValue("dre_diretor_regional_nome", nome)
+     const validateRf = async (value, setFieldValue, errors) =>{
+         if (value){
+             try {
+                 let rf = await consultarRF(value);
+                 if (rf.status === 200 || rf.status === 201) {
+                     let nome = rf.data[0].nm_pessoa;
+                     delete errors.dre_diretor_regional_rf
+                     setFieldValue("dre_diretor_regional_nome", nome)
+                 }
+             }catch (e) {
+                 setFieldValue("dre_diretor_regional_nome", "")
+                 errors.dre_diretor_regional_rf = "Digite um RF válido"
              }
-         }catch (e) {
-             setFieldValue("dre_diretor_regional_nome", "")
+         }else {
+             delete errors.dre_diretor_regional_rf
          }
     };
 
@@ -164,11 +170,11 @@ export const DadosDaDiretoria = () => {
                                                         className="form-control"
                                                         onChange={(e)=>{
                                                             props.handleChange(e);
-                                                            validateRf(e.target.value, setFieldValue)
+                                                            validateRf(e.target.value, setFieldValue, errors)
                                                         }}
                                                         disabled={!visoesService.getPermissoes(['change_dados_diretoria'])}
                                                     />
-                                                    {props.touched.dre_diretor_regional_nome && props.errors.dre_diretor_regional_nome && <span className="span_erro text-danger mt-1"> {props.errors.dre_diretor_regional_nome} </span>}
+                                                    {props.errors.dre_diretor_regional_rf && <span className="span_erro text-danger mt-1"> {props.errors.dre_diretor_regional_rf} </span>}
                                                 </div>
                                                 <div className="form-group col-md-6 mt-3">
                                                     <label htmlFor="dre_diretor_regional_nome">Nome do Diretor Regional</label>
