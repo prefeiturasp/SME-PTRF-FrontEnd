@@ -872,8 +872,8 @@ export const CadastroForm = ({verbo_http}) => {
                                             show={showModalDespesaIncompleta}
                                             handleClose={() => setShowModalDespesaIncompleta(false)}
                                             onSalvarDespesaIncompleta={() => onSubmit(values, setFieldValue)}
-                                            titulo="Despesa incompleta"
-                                            texto="<p>Esta despesa encontra-se incompleta. Você pode concluir o cadastro agora ou  editá-lo posteriormente. Deseja finalizar o cadastro agora?</p>"
+                                            titulo="Cadastro da despesa"
+                                            texto="<p>O cadastro desta despesa está incompleto. Você deseja finalizá-lo agora?</p>"
                                         />
                                     </section>
                                 </form>

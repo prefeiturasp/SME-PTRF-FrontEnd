@@ -13,6 +13,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye} from "@fortawesome/free-solid-svg-icons";
 import {getAssociacao, getContasAssociacao} from "../../../../services/dres/Associacoes.service";
 import {DADOS_DA_ASSOCIACAO} from "../../../../services/auth.service";
+import Loading from "../../../../utils/Loading";
 
 export const RelatorioConsolidadoDadosDasUes = () => {
 
@@ -32,10 +33,13 @@ export const RelatorioConsolidadoDadosDasUes = () => {
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [tiposDeUnidade, setTiposDeUnidade] = useState([]);
     const [statusPc, setStatusPc] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const carregaListaPrestacaoDeContasDaDre = useCallback(async ()=>{
+        setLoading(true)
         let lista_de_prestacoes = await getListaPrestacaoDeContasDaDre(dre_uuid, periodo_uuid, conta_uuid);
         setListaPrestacoes(lista_de_prestacoes)
+        setLoading(false)
     }, [dre_uuid, periodo_uuid, conta_uuid]);
 
     const carregaTiposDeUnidade = useCallback(async () => {
@@ -108,8 +112,10 @@ export const RelatorioConsolidadoDadosDasUes = () => {
     const [listaAssociacoesNaoRegularizadas, setListaAssociacoesNaoRegularizadas] = useState([]);
 
     const carregaAssociacoesNaoRegularizadas = useCallback(async ()=>{
+        setLoading(true)
         let assoc_nao_regul = await getListaAssociacoesNaoRegularizadas(dre_uuid);
         setListaAssociacoesNaoRegularizadas(assoc_nao_regul);
+        setLoading(false)
     }, [dre_uuid]);
 
     useEffect(()=>{
@@ -118,6 +124,7 @@ export const RelatorioConsolidadoDadosDasUes = () => {
 
     const handleClickAssociacoesNaoRegularizadas = useCallback(async (rowData)=>{
         try {
+            setLoading(true)
             let associacao = await getAssociacao(rowData.uuid);
             let contas = await getContasAssociacao(rowData.uuid);
 
@@ -128,12 +135,14 @@ export const RelatorioConsolidadoDadosDasUes = () => {
                 }
             };
             localStorage.setItem(DADOS_DA_ASSOCIACAO, JSON.stringify(dados_da_associacao));
+            setLoading(false)
             window.location.assign(`/dre-regularidade-unidade-educacional/dre-relatorio-consolidado/${periodo_uuid}/${conta_uuid}`)
         }catch (e) {
             console.log("Erro ao buscar associação ", e)
+            setLoading(false)
         }
 
-    },[]);
+    },[conta_uuid, periodo_uuid]);
 
     const nomeTemplate = useCallback((rowData, column)=>{
         return (
@@ -170,41 +179,53 @@ export const RelatorioConsolidadoDadosDasUes = () => {
 
     return (
         <>
-            <div className="col-12 container-visualizacao-da-ata mb-5">
-                <div className="col-12 mt-5">
-                    <TopoComBotoes
-                        periodoNome={periodoNome}
-                        contaNome={contaNome}
-                        periodo_uuid={periodo_uuid}
-                        conta_uuid={conta_uuid}
+            {loading ? (
+                <div className="col-12 mt-5 pt-5">
+                    <Loading
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="50"
+                        marginBottom="0"
                     />
-                    <AssociacoesNaoRegularizadas
-                        listaAssociacoesNaoRegularizadas={listaAssociacoesNaoRegularizadas}
-                        nomeTemplate={nomeTemplate}
-                        motivoTemplate={motivoTemplate}
-                        acoesTemplate={acoesTemplate}
-                    />
-                    <FormFiltros
-                        handleChangeFiltros={handleChangeFiltros}
-                        limpaFiltros={limpaFiltros}
-                        handleSubmitFiltros={handleSubmitFiltros}
-                        stateFiltros={stateFiltros}
-                        tiposDeUnidade={tiposDeUnidade}
-                        statusPc={statusPc}
-                    />
-                    {listaPrestacoes && listaPrestacoes.length > 0 ?(
-                        <TabelaListaPrestacoesDaDre
-                            listaPrestacoes={listaPrestacoes}
-                            valorTemplate={valorTemplate}
-                        />
-                    ):
-                        <MsgImgCentralizada
-                            texto='Não encontramos nenhuma prestação de contas, tente novamente'
-                            img={Img404}
-                        />
-                    }
                 </div>
-            </div>
+            ):
+                <div className="col-12 container-visualizacao-da-ata mb-5">
+                    <div className="col-12 mt-5">
+                        <TopoComBotoes
+                            periodoNome={periodoNome}
+                            contaNome={contaNome}
+                            periodo_uuid={periodo_uuid}
+                            conta_uuid={conta_uuid}
+                        />
+                        <AssociacoesNaoRegularizadas
+                            listaAssociacoesNaoRegularizadas={listaAssociacoesNaoRegularizadas}
+                            nomeTemplate={nomeTemplate}
+                            motivoTemplate={motivoTemplate}
+                            acoesTemplate={acoesTemplate}
+                        />
+                        <FormFiltros
+                            handleChangeFiltros={handleChangeFiltros}
+                            limpaFiltros={limpaFiltros}
+                            handleSubmitFiltros={handleSubmitFiltros}
+                            stateFiltros={stateFiltros}
+                            tiposDeUnidade={tiposDeUnidade}
+                            statusPc={statusPc}
+                        />
+                        {listaPrestacoes && listaPrestacoes.length > 0 ?(
+                                <TabelaListaPrestacoesDaDre
+                                    listaPrestacoes={listaPrestacoes}
+                                    valorTemplate={valorTemplate}
+                                />
+                            ):
+                            <MsgImgCentralizada
+                                texto='Não encontramos nenhuma prestação de contas, tente novamente'
+                                img={Img404}
+                            />
+                        }
+                    </div>
+                </div>
+            }
+
         </>
     )
 };

@@ -61,4 +61,7 @@ export const getDespesaCadastrada = async (tipo_documento, numero_documento, cpf
     return (await api.get(`api/despesas/ja-lancada/?tipo_documento=${tipo_documento}&numero_documento=${numero_documento}&cpf_cnpj_fornecedor=${cpf_cnpj_fornecedor}${despesa_uuid ? '&despesa_uuid='+despesa_uuid : ''}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
 
+export const patchAtrelarSaidoDoRecurso = async (receita_uuid, despesa_uuid) => {
+    return (await api.patch(`api/receitas/${receita_uuid}/atrelar-saida-recurso/?despesa_uuid=${despesa_uuid}`, {}, authHeader)).data
+};
 

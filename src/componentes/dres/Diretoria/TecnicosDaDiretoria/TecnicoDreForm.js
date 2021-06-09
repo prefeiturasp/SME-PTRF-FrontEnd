@@ -4,6 +4,7 @@ import {ModalBootstrapFormMembros} from "../../../Globais/ModalBootstrap";
 import React from "react";
 import * as yup from "yup";
 import MaskedInput from "react-text-mask";
+import {visoesService} from "../../../../services/visoes.service";
 
 export const YupSignupSchemaTecnico = yup.object().shape({
     rf: yup.string().required("Campo RF do técnico é obrigatório"),
@@ -133,7 +134,7 @@ export const TecnicoDreForm = ({show, handleClose, onSubmit, handleChange, valid
                                         <button onClick={() => handleClose()} type="button"
                                                 className="btn btn btn-outline-success mt-2 mr-2">Cancelar
                                         </button>
-                                        <button disabled={btnSalvarReadOnly} type="submit" className="btn btn-success mt-2">{!initialValues.uuid ? 'Adicionar' : 'Salvar'}</button>
+                                        <button disabled={ btnSalvarReadOnly || !visoesService.getPermissoes(['change_tecnicos_da_diretoria']) } type="submit" className="btn btn-success mt-2">{!initialValues.uuid ? 'Adicionar' : 'Salvar'}</button>
                                     </div>
                                 </form>
                             );

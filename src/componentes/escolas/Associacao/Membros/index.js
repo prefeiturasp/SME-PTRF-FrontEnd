@@ -2,17 +2,7 @@ import React, {useEffect, useState, useMemo} from "react";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
 import {EditarMembro} from "../ModalMembros";
-import {
-    getMembrosAssociacao,
-    criarMembroAssociacao,
-    editarMembroAssociacao,
-    consultarRF,
-    consultarCodEol,
-    consultarCpfResponsavel,
-    getUsuarios,
-    deleteMembroAssociacao,
-    getUsuarioPeloUsername
-} from "../../../../services/escolas/Associacao.service";
+import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarCpfResponsavel, getUsuarios, deleteMembroAssociacao, getUsuarioPeloUsername} from "../../../../services/escolas/Associacao.service";
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
@@ -388,24 +378,26 @@ export const MembrosDaAssociacao = () => {
             }
         } else if (values.representacao === "PAI_RESPONSAVEL") {
             if (cod_identificacao_cpf !== values.cpf.trim()) {
+                setBtnSalvarReadOnly(false);
                 try {
-                    await consultarCpfResponsavel(values.cpf);
-                    setBtnSalvarReadOnly(false);
-                    let usuario_existente = await getUsuarioPeloUsername(values.cpf.trim());
-                    const init = {
-                        ...stateFormEditarMembro,
-                        cargo_associacao: values.cargo_associacao,
-                        cargo_educacao: "",
-                        representacao: values.representacao,
-                        email: values.email,
-                        cpf: values.cpf,
-                        usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
-                        telefone: values.telefone,
-                        cep: values.cep,
-                        bairro: values.bairro,
-                        endereco: values.endereco,
-                    };
-                    setStateFormEditarMembro(init);
+                    if (!(!values.cpf || values.cpf.trim() === "" || !valida_cpf_cnpj(values.cpf))){
+                        await consultarCpfResponsavel(values.cpf);
+                        let usuario_existente = await getUsuarioPeloUsername(values.cpf.trim());
+                        const init = {
+                            ...stateFormEditarMembro,
+                            cargo_associacao: values.cargo_associacao,
+                            cargo_educacao: "",
+                            representacao: values.representacao,
+                            email: values.email,
+                            cpf: values.cpf,
+                            usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
+                            telefone: values.telefone,
+                            cep: values.cep,
+                            bairro: values.bairro,
+                            endereco: values.endereco,
+                        };
+                        setStateFormEditarMembro(init);
+                    }
                 } catch (e) {
                     let data = e.response.data;
                     if (data !== undefined && data.detail !== undefined) {
@@ -530,11 +522,8 @@ export const MembrosDaAssociacao = () => {
                     console.log(error)
                 }
             }
-
             setLoading(false)
         }
-
-
     };
 
     const handleDeleteMembroAction = (infoMembroSelecionado) => {

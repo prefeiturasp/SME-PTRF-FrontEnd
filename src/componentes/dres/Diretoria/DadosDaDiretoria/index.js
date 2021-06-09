@@ -9,6 +9,7 @@ import {YupSignupSchemaDreDadosDiretoria} from "../../../../utils/ValidacoesAdic
 import {consultarRF} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
 import {CancelarModalDiretoria, SalvarModalDiretoria} from "../../../../utils/Modais";
+import {visoesService} from "../../../../services/visoes.service";
 
 export const DadosDaDiretoria = () => {
     const [loading, setLoading] = useState(true);
@@ -62,15 +63,21 @@ export const DadosDaDiretoria = () => {
         setLoading(false)
     };
 
-     const validateRf = async (value, setFieldValue) =>{
-         try {
-             let rf = await consultarRF(value);
-             if (rf.status === 200 || rf.status === 201) {
-                 let nome = rf.data[0].nm_pessoa;
-                 setFieldValue("dre_diretor_regional_nome", nome)
+     const validateRf = async (value, setFieldValue, errors) =>{
+         if (value){
+             try {
+                 let rf = await consultarRF(value);
+                 if (rf.status === 200 || rf.status === 201) {
+                     let nome = rf.data[0].nm_pessoa;
+                     delete errors.dre_diretor_regional_rf
+                     setFieldValue("dre_diretor_regional_nome", nome)
+                 }
+             }catch (e) {
+                 setFieldValue("dre_diretor_regional_nome", "")
+                 errors.dre_diretor_regional_rf = "Digite um RF válido"
              }
-         }catch (e) {
-             setFieldValue("dre_diretor_regional_nome", "")
+         }else {
+             delete errors.dre_diretor_regional_rf
          }
     };
 
@@ -143,6 +150,7 @@ export const DadosDaDiretoria = () => {
                                                         className="form-control"
                                                         onChange={props.handleChange}
                                                         onBlur={props.handleBlur}
+                                                        disabled={!visoesService.getPermissoes(['change_dados_diretoria'])}
                                                         onClick={() => setErrors(
                                                             {
                                                                 ...errors,
@@ -162,11 +170,11 @@ export const DadosDaDiretoria = () => {
                                                         className="form-control"
                                                         onChange={(e)=>{
                                                             props.handleChange(e);
-                                                            validateRf(e.target.value, setFieldValue)
+                                                            validateRf(e.target.value, setFieldValue, errors)
                                                         }}
+                                                        disabled={!visoesService.getPermissoes(['change_dados_diretoria'])}
                                                     />
-                                                    {/*{props.touched.dre_diretor_regional_rf && props.errors.dre_diretor_regional_rf && <span className="span_erro text-danger mt-1"> {props.errors.dre_diretor_regional_rf} </span>}*/}
-                                                    {props.touched.dre_diretor_regional_nome && props.errors.dre_diretor_regional_nome && <span className="span_erro text-danger mt-1"> {props.errors.dre_diretor_regional_nome} </span>}
+                                                    {props.errors.dre_diretor_regional_rf && <span className="span_erro text-danger mt-1"> {props.errors.dre_diretor_regional_rf} </span>}
                                                 </div>
                                                 <div className="form-group col-md-6 mt-3">
                                                     <label htmlFor="dre_diretor_regional_nome">Nome do Diretor Regional</label>
@@ -191,6 +199,7 @@ export const DadosDaDiretoria = () => {
                                                         className="form-control"
                                                         onChange={props.handleChange}
                                                         onBlur={props.handleBlur}
+                                                        disabled={!visoesService.getPermissoes(['change_dados_diretoria'])}
                                                     />
                                                     {props.touched.dre_designacao_portaria && props.errors.dre_designacao_portaria && <span className="span_erro text-danger mt-1"> {props.errors.dre_designacao_portaria} </span>}
                                                 </div>
@@ -205,13 +214,20 @@ export const DadosDaDiretoria = () => {
                                                         className="form-control"
                                                         onChange={props.handleChange}
                                                         onBlur={props.handleBlur}
+                                                        disabled={!visoesService.getPermissoes(['change_dados_diretoria'])}
                                                     />
                                                     {props.touched.dre_designacao_ano && props.errors.dre_designacao_ano && <span className="span_erro text-danger mt-1"> {props.errors.dre_designacao_ano} </span>}
                                                 </div>
                                             </div>
                                             <div className="d-flex  justify-content-end pb-3">
                                                 <button onClick={props.handleReset} type="reset" className="btn btn btn-outline-success mt-2">Cancelar</button>
-                                                <button type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
+                                                <button
+                                                    type="submit"
+                                                    className="btn btn-success mt-2 ml-2"
+                                                    disabled={!visoesService.getPermissoes(['change_dados_diretoria'])}
+                                                >
+                                                    Salvar
+                                                </button>
                                             </div>
                                             <section>
                                                 <CancelarModalDiretoria show={showModalDiretoriaCancelar}

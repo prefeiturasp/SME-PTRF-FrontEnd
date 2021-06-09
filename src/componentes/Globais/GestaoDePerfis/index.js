@@ -9,6 +9,8 @@ import { Column } from 'primereact/column';
 import {getGrupos, getUsuarios, getUsuariosFiltros} from "../../../services/GestaoDePerfis.service";
 import {visoesService} from "../../../services/visoes.service";
 import {Link} from "react-router-dom";
+import {UrlsMenuInterno} from "./UrlsMenuInterno";
+import {MenuInterno} from "../MenuInterno";
 
 export const GestaoDePerfis = () => {
 
@@ -101,6 +103,11 @@ export const GestaoDePerfis = () => {
 
     return (
         <>
+            {visao_selecionada === "SME" &&
+                <MenuInterno
+                    caminhos_menu_interno={UrlsMenuInterno}
+                />
+            }
             <p>Faça a gestão dos seus usuários e determine seus perfis atrelando-os aos grupos de acesso.</p>
             <AccordionInfo
                 clickBtnInfo={clickBtnInfo}

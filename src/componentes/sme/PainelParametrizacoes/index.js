@@ -98,7 +98,7 @@ export const PainelParametrizacoes = () => {
     const itensParametrizacaoGestaoSme = [
         {
             parametro: 'Usuários',
-            url: 'parametro-usuarios',
+            url: 'parametro-arquivos-de-carga/CARGA_USUARIOS/',
             icone: IconeUsuarios,
         }
     ];

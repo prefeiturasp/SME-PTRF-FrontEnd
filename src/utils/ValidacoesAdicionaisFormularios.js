@@ -40,15 +40,6 @@ export const YupSignupSchemaAssociacoes  = yup.object().shape({
 });
 
 export const YupSignupSchemaDreDadosDiretoria = yup.object().shape({
-
-  dre_diretor_regional_nome:yup.string().required("Digite um RF válido para exibir o nome"),
-
-  dre_diretor_regional_rf: yup.string()
-  .test('test-name', 'Digite um RF válido',
-      function (value) {
-        return !(!value || value.trim() === "" || value.length > 10);
-      }),
-
   dre_cnpj: yup.string()
   .test('test-name', 'Digite um CNPJ Válido',
       function (value) {

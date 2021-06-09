@@ -1,12 +1,8 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
 import {Formik} from "formik";
-import {
-    YupSignupSchemaCadastroDespesaSaida,
-    validaPayloadDespesas,
-    cpfMaskContitional, valida_cpf_cnpj,
-} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {YupSignupSchemaCadastroDespesaSaida, validaPayloadDespesas, cpfMaskContitional, valida_cpf_cnpj,} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask';
-import {getDespesasTabelas, criarDespesa} from "../../../../services/escolas/Despesas.service";
+import {getDespesasTabelas, criarDespesa, patchAtrelarSaidoDoRecurso} from "../../../../services/escolas/Despesas.service";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import {useParams} from 'react-router-dom';
 import {DespesaContext} from "../../../../context/Despesa";
@@ -19,16 +15,14 @@ import HTTP_STATUS from "http-status-codes";
 import {getReceita} from '../../../../services/escolas/Receitas.service';
 
 
-export const CadastroSaidaForm = (props) => {
+export const CadastroSaidaForm = () => {
     const aux = metodosAuxiliares;
 
     let {uuid} = useParams();
     const despesaContext = useContext(DespesaContext);
     const [cssEscondeDocumentoTransacao, setCssEscondeDocumentoTransacao] = useState('escondeItem');
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
-    const [numeroDocumentoReadOnly, setNumeroDocumentoReadOnly] = useState(false);
     const [despesasTabelas, setDespesasTabelas] = useState([]);
-    const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
     const [loading, setLoading] = useState(true);
     const [receita, setReceita] = useState(true);
 
@@ -52,7 +46,7 @@ export const CadastroSaidaForm = (props) => {
         buscaReceita();
         carregaTabelasDespesas();
         setLoading(false);
-    }, [])
+    }, [uuid])
 
     const initialValues = () => {
         return despesaContext.initialValues;
@@ -84,8 +78,6 @@ export const CadastroSaidaForm = (props) => {
         let erros_personalizados = validacoesPersonalizadas(values)
 
         if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
-
-            console.log('Enviar')
             setLoading(true);
             validaPayloadDespesas(values, despesasTabelas);
 
@@ -97,8 +89,14 @@ export const CadastroSaidaForm = (props) => {
             try {
                 const response = await criarDespesa(values);
                 if (response.status === HTTP_STATUS.CREATED) {
-                    console.log("Operação realizada com sucesso!");
-                    aux.getPath();
+                    console.log("Despesa criada com sucesso!");
+                    try {
+                        await patchAtrelarSaidoDoRecurso(uuid, response.data.uuid)
+                        console.log("Saída recurso atrelada com sucesso")
+                        aux.getPath()
+                    }catch (e) {
+                        console.log("Erro ao atrelar saída recurso ", e.response.data)
+                    }
                 } else {
                     setLoading(false);
                 }
@@ -126,6 +124,8 @@ export const CadastroSaidaForm = (props) => {
                 <Formik
                     initialValues={initialValues()}
                     validationSchema={YupSignupSchemaCadastroDespesaSaida}
+                    validateOnChange={false}
+                    validateOnBlur={false}
                     enableReinitialize={true}
                     onSubmit={onSubmit}
                 >
@@ -133,6 +133,8 @@ export const CadastroSaidaForm = (props) => {
                         const {
                             values,
                             setFieldValue,
+                            setErrors,
+                            errors,
                         } = props;
 
                         return (
@@ -170,9 +172,11 @@ export const CadastroSaidaForm = (props) => {
                                                 name="nome_fornecedor" id="nome_fornecedor" type="text"
                                                 className={`${!props.values.nome_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
                                                 placeholder="Digite o nome"
+                                                onClick={()=>{
+                                                    setErrors({...errors, nome_fornecedor:""})
+                                                }}
                                             />
-                                            {props.errors.nome_fornecedor && <span
-                                                className="span_erro text-danger mt-1"> {props.errors.nome_fornecedor}</span>}
+                                            {props.errors.nome_fornecedor && <span className="span_erro text-danger mt-1"> {props.errors.nome_fornecedor}</span>}
                                         </div>
                                     </div>
 
@@ -190,6 +194,9 @@ export const CadastroSaidaForm = (props) => {
                                                 name='tipo_documento'
                                                 id='tipo_documento'
                                                 className={`${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
+                                                onClick={()=>{
+                                                    setErrors({...errors, tipo_documento:""})
+                                                }}
                                             >
                                                 <option key={0} value="">Selecione o tipo</option>
                                                 {despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.map(item =>
@@ -208,6 +215,9 @@ export const CadastroSaidaForm = (props) => {
                                                 value={values.data_documento != null ? values.data_documento : ""}
                                                 onChange={setFieldValue}
                                                 about={despesaContext.verboHttp}
+                                                onCalendarOpen={()=>{
+                                                    setErrors({...errors, data_documento:""})
+                                                }}
                                             />
                                             {props.errors.data_documento && <span
                                                 className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
@@ -221,8 +231,11 @@ export const CadastroSaidaForm = (props) => {
                                                 onBlur={props.handleBlur}
                                                 name="numero_documento"
                                                 id="numero_documento" type="text"
-                                                className={`${!numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid " : ""} form-control`}
+                                                className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid " : ""} form-control`}
                                                 placeholder="Digite o número"
+                                                onClick={()=>{
+                                                    setErrors({...errors, numero_documento:""})
+                                                }}
                                             />
                                             {props.errors.numero_documento && <span
                                                 className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
@@ -240,6 +253,9 @@ export const CadastroSaidaForm = (props) => {
                                                     props.handleChange(e);
                                                     aux.exibeDocumentoTransacao(e.target.value, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas)
                                                 }}
+                                                onClick={()=>{
+                                                    setErrors({...errors, tipo_transacao:""})
+                                                }}
                                                 onBlur={props.handleBlur}
                                                 name='tipo_transacao'
                                                 id='tipo_transacao'
@@ -250,8 +266,7 @@ export const CadastroSaidaForm = (props) => {
                                                     <option key={item.id} value={item.id}>{item.nome}</option>
                                                 ))}
                                             </select>
-                                            {props.errors.tipo_transacao && <span
-                                                className="span_erro text-danger mt-1"> {props.errors.tipo_transacao}</span>}
+                                            {props.errors.tipo_transacao && <span className="span_erro text-danger mt-1"> {props.errors.tipo_transacao}</span>}
                                         </div>
 
                                         <div className="col-12 col-md-3 mt-4">
@@ -262,6 +277,9 @@ export const CadastroSaidaForm = (props) => {
                                                 value={values.data_transacao != null ? values.data_transacao : ""}
                                                 onChange={setFieldValue}
                                                 about={despesaContext.verboHttp}
+                                                onCalendarOpen={()=>{
+                                                    setErrors({...errors, data_transacao:""})
+                                                }}
                                             />
                                             {props.errors.data_transacao &&
                                             <span
@@ -270,8 +288,7 @@ export const CadastroSaidaForm = (props) => {
 
                                         <div className="col-12 col-md-3 mt-4">
                                             <div className={cssEscondeDocumentoTransacao}>
-                                                <label htmlFor="documento_transacao">Número
-                                                    do {labelDocumentoTransacao}</label>
+                                                <label htmlFor="documento_transacao">Número do {labelDocumentoTransacao}</label>
                                                 <input
                                                     value={props.values.documento_transacao}
                                                     onChange={props.handleChange}
@@ -281,6 +298,9 @@ export const CadastroSaidaForm = (props) => {
                                                     type="text"
                                                     className="form-control"
                                                     placeholder="Digite o número do documento"
+                                                    onClick={()=>{
+                                                        setErrors({...errors, documento_transacao:""})
+                                                    }}
                                                 />
                                                 {props.errors.documento_transacao && <span
                                                     className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
@@ -304,6 +324,11 @@ export const CadastroSaidaForm = (props) => {
                                                 onChangeEvent={(e) => {
                                                     props.handleChange(e);
                                                     aux.setValorRealizado(setFieldValue, e.target.value);
+                                                    setErrors({
+                                                        ...errors,
+                                                        valor_original:"",
+                                                        valor_total:"",
+                                                    })
                                                 }}
                                             />
                                             {/*Alteração de exibição de label feita pela PO em Review da Sprint 19*/}
@@ -331,18 +356,14 @@ export const CadastroSaidaForm = (props) => {
                                         </div>
                                     </div>
                                     <div className="d-flex  justify-content-end pb-3 mt-3">
-                                        <button type="reset" onClick={onCancelarTrue}
-                                                className="btn btn btn-outline-success mt-2 mr-2">Cancelar
-                                        </button>
-
-                                        <button type="submit"
-                                                className="btn btn-success mt-2">Salvar
-                                        </button>
+                                        <button type="reset" onClick={onCancelarTrue} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
+                                        <button type="submit" className="btn btn-success mt-2">Salvar</button>
                                     </div>
                                 </form>
                             </>
                         )
                     }}
                 </Formik>}
-        </>)
+        </>
+    )
 }
