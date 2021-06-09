@@ -303,8 +303,9 @@ export const DetalheDasPrestacoes = () => {
             }
         }
         await carregaTransacoes()
+        await carregaObservacoes()
 
-    }, [periodoConta, carregaTransacoes, conciliar, desconciliar]);
+    }, [periodoConta, carregaTransacoes, conciliar, desconciliar, carregaObservacoes]);
 
     // Filtros Transacoes
     const [stateFiltros, setStateFiltros] = useState({});
