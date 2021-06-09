@@ -10,9 +10,9 @@ export const ModalDespesaIncompleta = (props) =>{
             bodyText={props.texto}
             primeiroBotaoOnclick={props.handleClose}
             primeiroBotaoTexto="Sim"
-            primeiroBotaoCss="outline-success"
+            primeiroBotaoCss="success"
             segundoBotaoOnclick={props.onSalvarDespesaIncompleta}
-            segundoBotaoCss="success"
+            segundoBotaoCss="outline-success"
             segundoBotaoTexto="Não"
         />
     )
