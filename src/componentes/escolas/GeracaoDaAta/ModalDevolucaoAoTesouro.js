@@ -4,8 +4,6 @@ import {ModalBootstrapDevolucaoAoTesouroAta} from "../../Globais/ModalBootstrap"
 
 export const ModalDevolucaoAoTesouro = ({show, handleClose, onSubmitModalDevolucoesAoTesouro, informacoesPrestacaoDeContas, initialValues, formRef, despesas, buscaDespesaPorFiltros, buscaDespesa, valorTemplate, despesasTabelas, tiposDevolucao, validateFormDevolucaoAoTesouro, camposObrigatorios}) => {
 
-    console.log("ModalDevolucaoAoTesouro ",tiposDevolucao )
-
     const bodyTextarea = () => {
         return (
             <>
