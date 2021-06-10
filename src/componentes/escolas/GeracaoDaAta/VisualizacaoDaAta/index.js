@@ -325,6 +325,7 @@ export const VisualizacaoDaAta = () => {
     useEffect(() => {
         const carregaTiposDevolucao = async () => {
             const resp = await getTiposDevolucao();
+            console.log("carregaTiposDevolucao ", resp)
             setTiposDevolucao(resp);
         };
         carregaTiposDevolucao();

@@ -115,17 +115,14 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                         value={devolucao.busca_por_tipo_documento ? devolucao.busca_por_tipo_documento : '' }
                                                                         onChange={async (e) => {
                                                                             props.handleChange(e);
-                                                                        }
-                                                                        }
+                                                                        }}
                                                                         className='form-control'
                                                                         disabled={setDisabledCampos(devolucao) }
                                                                     >
                                                                         <option value="">Selecione o tipo</option>
                                                                         {despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.map(item =>
                                                                             <option key={item.id} value={item.id}>{item.nome}</option>
-                                                                        )
-                                                                        }
-
+                                                                        )}
                                                                     </select>
                                                                 </div>
 
@@ -220,7 +217,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                     name={`devolucoes_ao_tesouro_da_prestacao[${index}].data`}
                                                                     value={devolucao.data}
                                                                     placeholderText='Preenchimento pela UE.'
-                                                                    disabled={true}
+                                                                    //disabled={true}
                                                                 />
                                                                 {props.errors.data && <span className="text-danger mt-1">{props.errors.data}</span>}
                                                             </div>
