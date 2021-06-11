@@ -9,8 +9,6 @@ import {ModalConfirmaRemocaoDevolucaoAoTesouro} from "../ModalConfirmaRemocaoDev
 
 export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeContas, initialValues, despesas, buscaDespesaPorFiltros, valorTemplate, despesasTabelas, tiposDevolucao, validateFormDevolucaoAoTesouro,}) =>{
 
-    console.log('InformacoesDevolucaoAoTesouro ', initialValues)
-
     const [showConfirmaRemocao, setShowConfirmaRemocao] = useState({abrir:false, indice:0});
 
     const setDisabledCampos = (devolucao) =>{
@@ -139,8 +137,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                         value={devolucao.busca_por_numero_documento ? devolucao.busca_por_numero_documento : ''}
                                                                         onChange={async (e) => {
                                                                             props.handleChange(e);
-                                                                        }
-                                                                        }
+                                                                        }}
                                                                         type="text"
                                                                         className='form-control'
                                                                         disabled={setDisabledCampos(devolucao) }
@@ -202,8 +199,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                     value={devolucao.tipo}
                                                                     onChange={async (e) => {
                                                                         props.handleChange(e);
-                                                                    }
-                                                                    }
+                                                                    }}
                                                                     className='form-control'
                                                                     disabled={setDisabledCampos(devolucao) }
                                                                 >
@@ -224,7 +220,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                     value={devolucao.data}
                                                                     placeholderText='Preenchimento pela UE.'
                                                                     onChange={setFieldValue}
-                                                                    //disabled={true}
+                                                                    disabled={visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE'}
                                                                 />
                                                                 {props.errors.data && <span className="text-danger mt-1">{props.errors.data}</span>}
                                                             </div>

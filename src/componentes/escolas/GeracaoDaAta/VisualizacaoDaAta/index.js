@@ -325,7 +325,6 @@ export const VisualizacaoDaAta = () => {
     useEffect(() => {
         const carregaTiposDevolucao = async () => {
             const resp = await getTiposDevolucao();
-            console.log("carregaTiposDevolucao ", resp)
             setTiposDevolucao(resp);
         };
         carregaTiposDevolucao();
@@ -355,18 +354,20 @@ export const VisualizacaoDaAta = () => {
     };
 
     const validateFormDevolucaoAoTesouro = async (values) => {
-
-        console.log("validateFormDevolucaoAoTesouro ", values)
-
         const errors = {};
-        values.devolucoes_ao_tesouro_da_prestacao.map((devolucao) => {
-            if (!devolucao.data || !devolucao.despesa || devolucao.devolucao_total === '' /*|| !devolucao.motivo*/ || !devolucao.tipo || !devolucao.valor) {
-                setCamposObrigatorios(true);
-                errors.campos_obrigatorios = "Todos os campos são obrigatórios";
-            } else {
-                setCamposObrigatorios(false)
-            }
-        });
+
+        if (values.devolucoes_ao_tesouro_da_prestacao.length > 0){
+            values.devolucoes_ao_tesouro_da_prestacao.map((devolucao) => {
+                if (!devolucao.data || !devolucao.despesa || devolucao.devolucao_total === '' /*|| !devolucao.motivo*/ || !devolucao.tipo || !devolucao.valor) {
+                    setCamposObrigatorios(true);
+                    errors.campos_obrigatorios = "Todos os campos são obrigatórios";
+                } else {
+                    setCamposObrigatorios(false)
+                }
+            });
+        }else {
+            setCamposObrigatorios(false)
+        }
         return errors;
     };
 
