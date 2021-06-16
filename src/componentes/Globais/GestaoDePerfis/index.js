@@ -15,6 +15,7 @@ import {MenuInterno} from "../MenuInterno";
 export const GestaoDePerfis = () => {
 
     const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
+    const unidade_selecionada = visoesService.getItemUsuarioLogado('unidade_selecionada.uuid');
 
     const initialStateFiltros = {
         filtrar_por_nome: "",
@@ -34,9 +35,9 @@ export const GestaoDePerfis = () => {
     }, [visao_selecionada]);
 
     const exibeUsuarios = useCallback(async () =>{
-        let _usuarios = await getUsuarios(visao_selecionada);
+        let _usuarios = await getUsuarios(visao_selecionada, unidade_selecionada);
         setUsuarios(_usuarios);
-    }, [visao_selecionada]);
+    }, [visao_selecionada, unidade_selecionada]);
 
     useEffect(()=>{
         exibeGrupos();
@@ -57,7 +58,14 @@ export const GestaoDePerfis = () => {
 
     const handleSubmitFiltros = async (event) => {
         event.preventDefault();
-        let retorno_filtros = await getUsuariosFiltros(visao_selecionada, stateFiltros.filtrar_por_nome, stateFiltros.filtrar_por_grupo, stateFiltros.filtrar_tipo_de_usuario, stateFiltros.filtrar_por_nome_unidade);
+        let retorno_filtros = await getUsuariosFiltros(
+            visao_selecionada,
+            stateFiltros.filtrar_por_nome,
+            stateFiltros.filtrar_por_grupo,
+            stateFiltros.filtrar_tipo_de_usuario,
+            stateFiltros.filtrar_por_nome_unidade,
+            unidade_selecionada
+        );
         setUsuarios(retorno_filtros)
     };
 
