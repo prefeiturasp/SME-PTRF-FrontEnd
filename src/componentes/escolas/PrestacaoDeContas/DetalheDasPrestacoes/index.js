@@ -213,7 +213,7 @@ export const DetalheDasPrestacoes = () => {
         }
     };
 
-    // Tabela ValoresPendentes por Ação
+    // Tabela Valores Pendentes por Ação
     const [valoresPendentes, setValoresPendentes] = useState({});
 
     const carregaValoresPendentes = useCallback(async ()=>{
@@ -303,8 +303,9 @@ export const DetalheDasPrestacoes = () => {
             }
         }
         await carregaTransacoes()
+        await carregaValoresPendentes()
 
-    }, [periodoConta, carregaTransacoes, conciliar, desconciliar]);
+    }, [periodoConta, carregaTransacoes, conciliar, desconciliar, carregaValoresPendentes]);
 
     // Filtros Transacoes
     const [stateFiltros, setStateFiltros] = useState({});
@@ -482,7 +483,7 @@ export const DetalheDasPrestacoes = () => {
                                 <p className="mt-2"><strong>Não existem lançamentos não conciliados...</strong></p>
                             }
 
-                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Lançamentos conciliados</p>
+                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-5 mb-3">Lançamentos conciliados</p>
                             <FiltrosTransacoes
                                 conciliado='CONCILIADO'
                                 stateFiltros={stateFiltros}
