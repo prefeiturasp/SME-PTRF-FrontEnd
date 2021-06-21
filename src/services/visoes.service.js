@@ -53,13 +53,13 @@ const setDadosPrimeiroAcesso = async (resp) =>{
         uuid_associacao = usuario_logado.associacao_selecionada.uuid;
         nome_associacao = usuario_logado.associacao_selecionada.nome;
     }else {
-        if (resp.visoes.find(visao=> visao === 'SME')){
+        if (resp.visoes.find(visao=> visao === 'SME') && resp.unidades.find(unidade => unidade.tipo_unidade === "SME")){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "SME");
             visao="SME";
             uuid_unidade = unidade.uuid;
             uuid_associacao = unidade.uuid;
             nome_associacao = unidade.nome;
-        }else if (resp.visoes.find(visao=> visao === 'DRE')){
+        }else if (resp.visoes.find(visao=> visao === 'DRE') && resp.unidades.find(unidade => unidade.tipo_unidade === "DRE")){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
             visao="DRE";
             uuid_unidade = unidade.uuid;
@@ -77,10 +77,10 @@ const setDadosPrimeiroAcesso = async (resp) =>{
     if (usuario_logado && usuario_logado.unidade_selecionada.nome){
         unidade_nome = usuario_logado.unidade_selecionada.nome;
     }else{
-        if (resp.visoes.find(visao=> visao === 'SME')){
+        if (resp.visoes.find(visao=> visao === 'SME') && resp.unidades.find(unidade => unidade.tipo_unidade === "SME")){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "SME");
             unidade_nome = unidade.nome;
-        }else if (resp.visoes.find(visao=> visao === 'DRE')){
+        }else if (resp.visoes.find(visao=> visao === 'DRE') && resp.unidades.find(unidade => unidade.tipo_unidade === "DRE")){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
             unidade_nome = unidade.nome;
         }else if (resp.visoes.find(visao=> visao === 'UE')){
@@ -92,9 +92,9 @@ const setDadosPrimeiroAcesso = async (resp) =>{
     if (usuario_logado && usuario_logado.unidade_selecionada.tipo_unidade){
         unidade_tipo = usuario_logado.unidade_selecionada.tipo_unidade;
     }else {
-        if (resp.visoes.find(visao=> visao === 'SME')){
+        if (resp.visoes.find(visao=> visao === 'SME') && resp.unidades.find(unidade => unidade.tipo_unidade === "SME")){
             unidade_tipo = "SME";
-        }else if (resp.visoes.find(visao=> visao === 'DRE')){
+        }else if (resp.visoes.find(visao=> visao === 'DRE') && resp.unidades.find(unidade => unidade.tipo_unidade === "DRE")){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
             unidade_tipo = unidade.tipo_unidade;
         }else if (resp.visoes.find(visao=> visao === 'UE')){
