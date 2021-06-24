@@ -32,7 +32,7 @@ export const DashboardCardInfoConta = ({acoesAssociacao, corIconeFonte}) =>{
                                                 Outras receitas: <strong>{exibeValorFormatadoPT_BR(info.outras_receitas_no_periodo)}</strong>
                                             </p>
                                             <p className={`pt-1 mb-0 texto-com-icone-${corIconeFonte}`}>
-                                                Despesa declarada: <strong>{exibeValorFormatadoPT_BR(info.despesas_no_periodo)}</strong>
+                                                Despesa: <strong>{exibeValorFormatadoPT_BR(info.despesas_no_periodo)}</strong>
                                             </p>
                                         </div>
                                         <div className="col-12 col-md-6 pt-1 pb-1 ml-xl-4 container-lado-direito d-flex align-items-center">

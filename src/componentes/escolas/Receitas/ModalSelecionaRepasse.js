@@ -62,7 +62,7 @@ export const ModalSelecionaRepasse = (propriedades) => {
 
                                 <Column
                                     field='valor_livre'
-                                    header='Valor Livre'
+                                    header='Valor Livre Aplicação'
                                     body={valorTemplate}/>
                             </DataTable>)
                         : <> <p>No momento não existem repasses pendentes para a associação.</p> </>}

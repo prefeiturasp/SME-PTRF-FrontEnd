@@ -49,7 +49,7 @@ const DataSaldoBancario = ({valoresPendentes, dataSaldoBancario, handleChangaDat
                                     </div>
                                     <div className="col-6">
                                         <div className="form-group">
-                                            <label htmlFor="upload_extrato">Valor</label>
+                                            <label htmlFor="upload_extrato">Extrato bancário ou Demonstrativo do cartão</label>
                                             <div className='container-upload-extrato'>
                                                 <input
                                                     type="file"

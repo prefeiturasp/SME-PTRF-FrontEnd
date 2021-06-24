@@ -75,7 +75,7 @@ const ModalForm = ({show, stateFormModal, handleClose, handleSubmitModalForm, se
     return (
         <ModalFormBodyText
             show={show}
-            titulo={stateFormModal && stateFormModal.uuid ? 'Editar tipo de custeio' : 'Adicionar tipo de custeio'}
+            titulo={stateFormModal && stateFormModal.uuid ? 'Editar tipo de despesa de custeio' : 'Adicionar tipo de despesa de custeio'}
             onHide={handleClose}
             size='lg'
             bodyText={bodyTextarea()}

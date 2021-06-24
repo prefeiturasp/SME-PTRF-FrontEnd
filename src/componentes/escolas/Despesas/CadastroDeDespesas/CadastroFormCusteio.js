@@ -41,7 +41,7 @@ export const CadastroFormCusteio = (propriedades) => {
 
             <div className="form-row">
                 <div className="col-12 mt-4">
-                    <label htmlFor={`especificacao_material_servico_${index}`}>Especificação do material ou serviço</label>
+                    <label htmlFor={`especificacao_material_servico_${index}`}>Especificação do bem, material ou serviço</label>
                     <select
                         value={
                             rateio.especificacao_material_servico !== null ? (

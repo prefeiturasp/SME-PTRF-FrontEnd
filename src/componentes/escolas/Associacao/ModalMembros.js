@@ -320,7 +320,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                                 )}
                                                 name="email"
                                                 className="form-control"
-                                                placeholder="Insira seu email se desejar"
+                                                placeholder="Insira o e-mail"
                                             />
                                             {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
                                         </div>
@@ -338,7 +338,6 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                                 value={props.values.usuario}
                                                 name="usuario"
                                                 className="form-control"
-                                                //placeholder="Insira seu email se desejar"
                                                 readOnly={true}
                                             />
                                             {props.errors.usuario && <span className="span_erro text-danger mt-1"> {props.errors.usuario}</span>}
