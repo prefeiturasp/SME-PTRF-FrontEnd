@@ -103,7 +103,7 @@ const setValorRealizado = (setFieldValue, valor) =>{
 const setaValoresCusteioCapital = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
     if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
         setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
-        setFieldValue('rateios[0].quantidade_itens_capital', 1);
+        setFieldValue('rateios[0].quantidade_itens_capital', "");
         setFieldValue('rateios[0].valor_item_capital', calculaValorOriginal(values));
     }
 };
