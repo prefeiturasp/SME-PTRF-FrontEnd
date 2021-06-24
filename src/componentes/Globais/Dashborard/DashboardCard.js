@@ -34,7 +34,7 @@ export const DashboardCard = ({acoesAssociacao, corIconeFonte}) => {
                                                     Outras receitas: <strong>{exibeValorFormatadoPT_BR(acao.outras_receitas_no_periodo)}</strong>
                                                 </p>
                                                 <p className={`pt-1 mb-0 texto-com-icone-${corIconeFonte}`}>
-                                                    Despesa declarada: <strong>{exibeValorFormatadoPT_BR(acao.despesas_no_periodo)}</strong>
+                                                    Despesa: <strong>{exibeValorFormatadoPT_BR(acao.despesas_no_periodo)}</strong>
                                                 </p>
                                                 {acao.acao_associacao_nome.trim() === 'PTRF' ? (
                                                     <p className="pt-1 pb-1 mb-0 mt-4">

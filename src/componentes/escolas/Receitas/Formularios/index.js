@@ -858,7 +858,7 @@ export const ReceitaForm = () => {
                                     repasses={repasses}
                                     trataRepasse={trataRepasse}
                                     setFieldValue={setFieldValue}
-                                    titulo="Selecione o repasse."
+                                    titulo="Selecione o repasse"
                                     bodyText="<p>Atenção. Esse crédito já foi demonstrado, caso a alteração seja gravada ele voltará a ser não demonstrado. Confirma a gravação?</p>"
                                 />
                             </section>

@@ -119,13 +119,13 @@ export const TiposDeCusteio = ()=>{
         if (values.operacao === 'create'){
             try{
                 await postCreateTipoDeCusteio(payload);
-                console.log('Tipo de custeio criado com sucesso');
+                console.log('Tipo de despesa de custeio criado com sucesso');
                 setShowModalForm(false);
                 await carregaTodos();
             }catch (e) {
-                console.log('Erro ao criar Tipo de custeio ', e.response.data);
+                console.log('Erro ao criar Tipo de Despesa de Custeio ', e.response.data);
                 if (e.response.data && e.response.data.non_field_errors) {
-                    setErroExclusaoNaoPermitida('Ja existe um tipo de custeio com esse nome');
+                    setErroExclusaoNaoPermitida('Ja existe um tipo de despesa de custeio com esse nome');
                     setShowModalInfoUpdateNaoPermitido(true)
                 } else {
                     setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
@@ -136,13 +136,13 @@ export const TiposDeCusteio = ()=>{
         }else {
             try {
                 await patchAlterarTipoDeCusteio(values.uuid, payload);
-                console.log('Tipo de custeio alterado com sucesso');
+                console.log('tipo de despesa de custeio alterado com sucesso');
                 setShowModalForm(false);
                 await carregaTodos();
             }catch (e) {
-                console.log('Erro ao alterar tipo de custeio ', e.response.data);
+                console.log('Erro ao alterar tipo de despesa de custeio ', e.response.data);
                 if (e.response.data && e.response.data.non_field_errors) {
-                    setErroExclusaoNaoPermitida('Ja existe um Tipo de custeio com esse nome');
+                    setErroExclusaoNaoPermitida('Ja existe um tipo de despesa de custeio com esse nome');
                     setShowModalInfoUpdateNaoPermitido(true);
                 } else {
                     setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
@@ -158,7 +158,7 @@ export const TiposDeCusteio = ()=>{
         try {
             setShowModalConfirmDelete(false);
             await deleteTipoDeCusteio(stateFormModal.uuid);
-            console.log("Tipo de custeio excluído com sucesso");
+            console.log("tipo de despesa de custeio excluído com sucesso");
             setShowModalForm(false);
             await carregaTodos();
         }catch (e) {
@@ -194,7 +194,7 @@ export const TiposDeCusteio = ()=>{
 
     return(
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Tipos de Custeio</h1>
+            <h1 className="titulo-itens-painel mt-5">Tipo de despesa de custeio</h1>
             {loading ? (
                     <div className="mt-5">
                         <Loading
@@ -220,7 +220,7 @@ export const TiposDeCusteio = ()=>{
                             handleSubmitFiltros={handleSubmitFiltros}
                             limpaFiltros={limpaFiltros}
                         />
-                        <p>Exibindo <span className='total-acoes'>{totalDeTipos}</span> tipos de custeio</p>
+                        <p>Exibindo <span className='total-acoes'>{totalDeTipos}</span> tipo(s) de despesa de custeio</p>
                         <Tabela
                             rowsPerPage={rowsPerPage}
                             lista={listaDeTipos}
@@ -266,8 +266,8 @@ export const TiposDeCusteio = ()=>{
                             show={showModalConfirmDelete}
                             handleClose={handleCloseConfirmDelete}
                             onDeleteTrue={onDeleteTrue}
-                            titulo="Excluir Tipo de Custeio"
-                            texto="<p>Deseja realmente excluir este tipo de custeio?</p>"
+                            titulo="Excluir Tipo de Despesa de Custeio"
+                            texto="<p>Deseja realmente excluir este tipo de despesa de custeio?</p>"
                             primeiroBotaoTexto="Cancelar"
                             primeiroBotaoCss="outline-success"
                             segundoBotaoCss="danger"
