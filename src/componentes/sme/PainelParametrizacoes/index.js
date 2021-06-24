@@ -63,7 +63,7 @@ export const PainelParametrizacoes = () => {
             icone: IconeEspecificacoes,
         },
         {
-            parametro: 'Tipo de despesa de custeio',
+            parametro: 'Tipos de despesa de custeio',
             url: 'parametro-tipos-custeio',
             icone: IconeTiposCusteio,
         },
