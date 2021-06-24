@@ -678,8 +678,7 @@ export const CadastroForm = ({verbo_http}) => {
 
                                                                 <div className="col-12 col-md-6 mt-4">
 
-                                                                    <label htmlFor={`aplicacao_recurso_${index}`}>Tipo
-                                                                        de aplicação do recurso</label>
+                                                                    <label htmlFor={`aplicacao_recurso_${index}`}>Tipo de aplicação do recurso</label>
                                                                     <select
                                                                         value={rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ""}
                                                                         onChange={(e) => {
