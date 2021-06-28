@@ -610,7 +610,7 @@ export const getTextoStatusPeriodo = (statusId) => {
 
 export const getCorStatusPeriodo = (statusId) => {
   let cor = ''
-  if (statusId === 'EM_ANDAMENTO') {
+  if (statusId === 'EM_ANDAMENTO' || (statusId && statusId.prestacao_contas_status && statusId.prestacao_contas_status.texto_status === "Período em andamento. ")) {
     cor = 'amarelo'
   } else if (statusId === 'PENDENTE') {
     cor = 'vermelho'
