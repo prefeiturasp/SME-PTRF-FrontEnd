@@ -23,8 +23,6 @@ export const GestaoDePerfisFormFormik = (
         idUsuarioCondicionalMask,
         setBloquearCampoName,
         bloquearCampoName,
-        bloquearCampoEmail,
-        setBloquearCampoEmail,
         grupos,
         visoes,
         showModalUsuarioNaoCadastrado,
@@ -203,7 +201,7 @@ export const GestaoDePerfisFormFormik = (
                                         name="email"
                                         className="form-control"
                                         placeholder='Insira seu email se desejar'
-                                        readOnly={bloquearCampoEmail}
+                                        //readOnly={bloquearCampoEmail}
                                         maxLength='254'
                                     />
                                     {props.errors.email &&
@@ -408,7 +406,6 @@ export const GestaoDePerfisFormFormik = (
                                 handleClose={() => handleCloseUsuarioNaoCadastrado({resetForm})}
                                 onCadastrarTrue={() => {
                                     setBloquearCampoName(false)
-                                    setBloquearCampoEmail(false)
                                     setShowModalUsuarioNaoCadastrado(false)
                                 }}
                                 titulo="Usuário não cadastrado"
