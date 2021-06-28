@@ -1,14 +1,10 @@
 import React from 'react'
 import '../../../paginas/escolas/404/pagina-404.scss'
-import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
+import {MsgImgLadoDireito} from "../Mensagens/MsgImgLadoDireito";
 import Img404 from '../../../assets/img/img-404.svg'
 import {exibeDataPT_BR, exibeDateTimePT_BR, exibeValorFormatadoPT_BR} from '../../../utils/ValidacoesAdicionaisFormularios'
-import {getAcoesAssociacao} from "../../../services/Dashboard.service";
 
-export const DashboardCard = ({acoesAssociacao, corIconeFonte}) => {
-    const getCorSaldo = (valor_saldo) => {
-        return valor_saldo < 0 ? "texto-cor-vermelha" : "texto-cor-verde"
-    };
+export const DashboardCard = ({acoesAssociacao, getCorSaldo, getCssDestaque}) => {
     return (
         <>
             {acoesAssociacao.info_acoes && acoesAssociacao.info_acoes.length > 0 ? (
@@ -30,11 +26,11 @@ export const DashboardCard = ({acoesAssociacao, corIconeFonte}) => {
                                                 <p className="pt-1 mb-4">
                                                     Repasses no período: <strong>{exibeValorFormatadoPT_BR(acao.repasses_no_periodo)}</strong>
                                                 </p>
-                                                <p className={`pt-1 mb-4 texto-com-icone-${corIconeFonte}`}>
+                                                <p className={getCssDestaque(4)}>
                                                     Outras receitas: <strong>{exibeValorFormatadoPT_BR(acao.outras_receitas_no_periodo)}</strong>
                                                 </p>
-                                                <p className={`pt-1 mb-0 texto-com-icone-${corIconeFonte}`}>
-                                                    Despesa declarada: <strong>{exibeValorFormatadoPT_BR(acao.despesas_no_periodo)}</strong>
+                                                <p className={getCssDestaque(0)}>
+                                                    Despesa: <strong>{exibeValorFormatadoPT_BR(acao.despesas_no_periodo)}</strong>
                                                 </p>
                                                 {acao.acao_associacao_nome.trim() === 'PTRF' ? (
                                                     <p className="pt-1 pb-1 mb-0 mt-4">

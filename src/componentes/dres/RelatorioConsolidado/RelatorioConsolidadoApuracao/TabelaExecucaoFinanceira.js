@@ -12,7 +12,7 @@ export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate, com
                         <th scope="col">Tipo de recurso</th>
                         <th scope="col">Custeio</th>
                         <th scope="col">Capital</th>
-                        <th scope="col">Recurso livre</th>
+                        <th scope="col">Livre Aplicação</th>
                         <th scope="col">Total (R$)</th>
                     </tr>
                     </thead>
