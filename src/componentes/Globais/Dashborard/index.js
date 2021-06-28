@@ -39,7 +39,7 @@ export const Dashboard = () => {
     }, [uuid_associacao]);
 
     const buscaPeriodos = useCallback(async () => {
-        let periodos = await getPeriodosAteAgoraForaImplantacaoDaAssociacao();
+        let periodos = await getPeriodosAteAgoraForaImplantacaoDaAssociacao(uuid_associacao);
         setSelectPeriodo(periodos[0].uuid)
         setPeriodosAssociacao(periodos);
     }, []);
@@ -114,7 +114,7 @@ export const Dashboard = () => {
             if(acoesAssociacao.prestacao_contas_status.periodo_encerrado && acoesAssociacao.prestacao_contas_status.status_prestacao === "APROVADA"){
                 return `pt-1 mb-${tamanho_margin_bottom}`
             }else {
-                return `pt-1 mb-${tamanho_margin_bottom} texto-com-icone-${getCorStatusPeriodo(acoesAssociacao.periodo_status)}`
+                return `pt-1 mb-${tamanho_margin_bottom} texto-com-icone-${getCorStatusPeriodo(statusPeriodoAssociacao)}`
             }
         }
     }

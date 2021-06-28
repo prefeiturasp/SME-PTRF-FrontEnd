@@ -163,16 +163,7 @@ export const YupSignupSchemaCadastroDespesaSaida = yup.object().shape({
         }
       }),
 
-  numero_documento:yup.string().required("Número documento é obrigatório.")
-  .test('test-numero-documento', 'Selecione um número de documento válido',
-    function (value) {
-      if (value !== undefined || value !== '') {
-        return true
-      } else {
-        return false
-      }
-    }),
-  
+
   data_documento: yup.string().required("Data do documento é obrigatório.").nullable(),
   tipo_transacao: yup.string().required("Tipo da transação é obrigatório.").nullable(),
 
@@ -610,7 +601,7 @@ export const getTextoStatusPeriodo = (statusId) => {
 
 export const getCorStatusPeriodo = (statusId) => {
   let cor = ''
-  if (statusId === 'EM_ANDAMENTO') {
+  if (statusId === 'EM_ANDAMENTO' || (statusId && statusId.prestacao_contas_status && statusId.prestacao_contas_status.texto_status === "Período em andamento. ")) {
     cor = 'amarelo'
   } else if (statusId === 'PENDENTE') {
     cor = 'vermelho'
