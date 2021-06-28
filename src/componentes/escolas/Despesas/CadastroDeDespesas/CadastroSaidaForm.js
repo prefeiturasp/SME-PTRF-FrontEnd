@@ -55,6 +55,7 @@ export const CadastroSaidaForm = () => {
     // Validações adicionais
     const [formErrors, setFormErrors] = useState({});
     const [enviarFormulario, setEnviarFormulario] = useState(true);
+    const [numeroDocumentoReadOnly, setNumeroDocumentoReadOnly] = useState(false);
 
     const validacoesPersonalizadas = useCallback((values) => {
 
@@ -69,8 +70,54 @@ export const CadastroSaidaForm = () => {
         } else {
             setEnviarFormulario(true)
         }
+
+        // Validando se tipo de documento aceita apenas numéricos e se exibe campo Número do Documento
+        if (values.tipo_documento) {
+            //debugger
+            let exibe_campo_numero_documento;
+            let so_numeros;
+            // verificando se despesasTabelas já está preenchido
+            if (despesasTabelas && despesasTabelas.tipos_documento) {
+                if (values.tipo_documento.id) {
+                    so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
+                } else {
+                    so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
+                }
+            }
+
+            // Verificando se exibe campo Número do Documento
+            exibe_campo_numero_documento = so_numeros;
+            if (exibe_campo_numero_documento && !exibe_campo_numero_documento.numero_documento_digitado) {
+                values.numero_documento = "";
+                setNumeroDocumentoReadOnly(true)
+            } else {
+                setNumeroDocumentoReadOnly(false)
+            }
+
+            if (exibe_campo_numero_documento && exibe_campo_numero_documento.numero_documento_digitado && !values.numero_documento) {
+                erros = {
+                    ...erros,
+                    numero_documento: "Número do documento é obrigatório"
+                }
+                setEnviarFormulario(false)
+            } else {
+                setEnviarFormulario(true)
+            }
+
+            if (so_numeros && so_numeros.apenas_digitos && values.numero_documento) {
+                if (isNaN(values.numero_documento)) {
+                    erros = {
+                        ...erros,
+                        numero_documento: "Este campo deve conter apenas algarismos numéricos."
+                    }
+                    setEnviarFormulario(false)
+                }
+            }
+        }
+
+
         return erros;
-    }, [])
+    }, [despesasTabelas])
 
     const onSubmit = async (values) => {
 
@@ -190,7 +237,9 @@ export const CadastroSaidaForm = () => {
                                                     ) : ""
                                                 }
                                                 onChange={props.handleChange}
-                                                onBlur={props.handleBlur}
+                                                onBlur={(e) => {
+                                                    setFormErrors(validacoesPersonalizadas(values));
+                                                }}
                                                 name='tipo_documento'
                                                 id='tipo_documento'
                                                 className={`${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
@@ -228,17 +277,20 @@ export const CadastroSaidaForm = () => {
                                             <input
                                                 value={props.values.numero_documento}
                                                 onChange={props.handleChange}
-                                                onBlur={props.handleBlur}
+                                                onBlur={(e) => {
+                                                    setFormErrors(validacoesPersonalizadas(values));
+                                                }}
                                                 name="numero_documento"
                                                 id="numero_documento" type="text"
                                                 className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid " : ""} form-control`}
-                                                placeholder="Digite o número"
+                                                placeholder={numeroDocumentoReadOnly ? "" : "Digite o número"}
+                                                disabled={numeroDocumentoReadOnly}
                                                 onClick={()=>{
                                                     setErrors({...errors, numero_documento:""})
                                                 }}
                                             />
-                                            {props.errors.numero_documento && <span
-                                                className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
+                                            {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
+                                            {!props.errors.numero_documento && formErrors.numero_documento && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.numero_documento}</span></p>}
                                         </div>
 
                                         <div className="col-12 col-md-6 mt-4">
