@@ -73,7 +73,6 @@ export const CadastroSaidaForm = () => {
 
         // Validando se tipo de documento aceita apenas numéricos e se exibe campo Número do Documento
         if (values.tipo_documento) {
-            //debugger
             let exibe_campo_numero_documento;
             let so_numeros;
             // verificando se despesasTabelas já está preenchido
@@ -114,8 +113,6 @@ export const CadastroSaidaForm = () => {
                 }
             }
         }
-
-
         return erros;
     }, [despesasTabelas])
 
