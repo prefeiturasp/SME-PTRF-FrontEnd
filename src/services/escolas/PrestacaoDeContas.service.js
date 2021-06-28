@@ -22,8 +22,8 @@ export const getPeriodosNaoFuturos = async () => {
   return(await api.get('/api/periodos/lookup-until-now/', authHeader)).data
 };
 
-export const getPeriodosAteAgoraForaImplantacaoDaAssociacao = async () => {
-  return(await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/periodos-ate-agora-fora-implantacao/`, authHeader)).data
+export const getPeriodosAteAgoraForaImplantacaoDaAssociacao = async (uuid_associacao) => {
+  return(await api.get(`/api/associacoes/${uuid_associacao}/periodos-ate-agora-fora-implantacao/`, authHeader)).data
 };
 
 
