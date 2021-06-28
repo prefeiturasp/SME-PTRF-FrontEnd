@@ -286,8 +286,7 @@ export const CadastroSaidaForm = () => {
                                                     setErrors({...errors, numero_documento:""})
                                                 }}
                                             />
-                                            {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
-                                            {!props.errors.numero_documento && formErrors.numero_documento && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.numero_documento}</span></p>}
+                                            {formErrors.numero_documento && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.numero_documento}</span></p>}
                                         </div>
 
                                         <div className="col-12 col-md-6 mt-4">
