@@ -59,14 +59,7 @@ export const atualizaReceita = async (uuid, payload) => {
 };
 
 export const deletarReceita = async uuid => {
-    return api
-        .delete(`api/receitas/${uuid}/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)
-        .then(response => {
-            return response;
-        })
-        .catch(error => {
-            return error.response;
-        });
+    return (await api.delete(`api/receitas/${uuid}/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
 
 export const getListaReceitas = async () => {
