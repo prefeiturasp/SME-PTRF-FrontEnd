@@ -11,13 +11,14 @@ import {
     getTabelasReceitaReceita,
     getRepasses
 } from '../../../../services/escolas/Receitas.service';
-import {getDespesa} from "../../../../services/escolas/Despesas.service";
+import {deleteDespesa, getDespesa} from "../../../../services/escolas/Despesas.service";
 import {round, trataNumericos, periodoFechado, comparaObjetos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
-import {DeletarModalReceitas, PeriodoFechado, ErroGeral, SalvarReceita} from "../../../../utils/Modais";
+import {PeriodoFechado, ErroGeral, SalvarReceita} from "../../../../utils/Modais";
+import {ModalDeletarReceita} from "../ModalDeletarReceita";
 import {CancelarModalReceitas} from "../CancelarModalReceitas";
 import {ModalReceitaConferida} from "../ModalReceitaJaConferida";
 import {ModalSelecionaRepasse} from "../ModalSelecionaRepasse";
@@ -80,6 +81,8 @@ export const ReceitaForm = () => {
     const [repasses, setRepasses] = useState([]);
     const [showSelecionaRepasse, setShowSelecionaRepasse] = useState(false);
 
+    const [msgDeletarReceita, setmsgDeletarReceita] = useState('<p>Tem certeza que deseja excluir este crédito? A ação não poderá ser desfeita.</p>')
+
     const carregaTabelas = useCallback(async ()=>{
         let tabelas_receitas = await getTabelasReceitaReceita()
         setTabelas(tabelas_receitas)
@@ -117,6 +120,9 @@ export const ReceitaForm = () => {
         if (uuid) {
             getReceita(uuid).then(async response => {
                 const resp = response.data;
+
+                console.log("RECEITA XXXXXXX ", resp)
+
                 // Verificando se a despesa já atrelada não foi deletada
                 let saida_recurso = "";
                 if (resp && resp.saida_do_recurso){
@@ -265,18 +271,33 @@ export const ReceitaForm = () => {
     };
 
     const onShowDeleteModal = () => {
+
+        if (receita && receita.saida_do_recurso && receita.saida_do_recurso.uuid){
+            setmsgDeletarReceita('<p>Ao excluir este crédito você excluirá também a saída do recurso vinculada. Tem certeza que deseja excluir ambos? A ação não poderá ser desfeita.</p>')
+        }
         setShowDelete(true);
     };
 
-    const onDeletarTrue = () => {
-        deletarReceita(uuid).then(response => {
-            console.log("Crédito deletado com sucesso.");
+    const onDeletarTrue = async () => {
+
+        if (receita && receita.saida_do_recurso && receita.saida_do_recurso.uuid){
+            try {
+                await deleteDespesa(receita.saida_do_recurso.uuid)
+                console.log("Despesa deletada com sucesso.");
+            }catch (e) {
+                console.log("Erro ao excluir despesa ", e);
+            }
+        }
+
+        try {
+            await deletarReceita(uuid)
+            console.log("Receita deletada com sucesso.");
             setShowDelete(false);
             getPath();
-        }).catch(error => {
-            console.log(error);
+        }catch (e) {
+            console.log("Erro ao excluir receita ", e);
             alert("Um Problema Ocorreu. Entre em contato com a equipe para reportar o problema, obrigado.");
-        });
+        }
     };
 
     const onShowErroGeral = () => {
@@ -876,10 +897,11 @@ export const ReceitaForm = () => {
             </section>
             {uuid
                 ?
-                <DeletarModalReceitas
+                <ModalDeletarReceita
                     show={showDelete}
                     handleClose={onHandleClose}
-                  onDeletarTrue={onDeletarTrue}
+                    onDeletarTrue={onDeletarTrue}
+                    texto={msgDeletarReceita}
                 />
                 : null
             }
