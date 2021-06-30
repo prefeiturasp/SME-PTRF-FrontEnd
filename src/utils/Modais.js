@@ -58,20 +58,6 @@ export const DeletarModal = (propriedades) => {
         />
     )
 };
-export const DeletarModalReceitas = (propriedades) => {
-    return (
-        <ModalBootstrap
-            show={propriedades.show}
-            onHide={propriedades.handleClose}
-            titulo="Deseja excluir este Crédito?"
-            bodyText="<p>Tem certeza que deseja excluir este crédito? A ação não poderá ser desfeita.</p>"
-            primeiroBotaoOnclick={propriedades.onDeletarTrue}
-            primeiroBotaoTexto="OK"
-            segundoBotaoOnclick={propriedades.handleClose}
-            segundoBotaoTexto="Fechar"
-        />
-    )
-};
 
 export const CancelarModalAssociacao = (propriedades) => {
     return (
