@@ -83,6 +83,8 @@ export const ReceitaForm = () => {
 
     const [msgDeletarReceita, setmsgDeletarReceita] = useState('<p>Tem certeza que deseja excluir este crédito? A ação não poderá ser desfeita.</p>')
 
+    const [exibeModalSalvoComSucesso, setExibeModalSalvoComSucesso] = useState(true)
+
     const carregaTabelas = useCallback(async ()=>{
         let tabelas_receitas = await getTabelasReceitaReceita()
         setTabelas(tabelas_receitas)
@@ -102,6 +104,7 @@ export const ReceitaForm = () => {
             return acao;
         } else {
             setShowCadastrarSaida(false);
+            return false
         }
     }, [tabelas])
 
@@ -207,14 +210,24 @@ export const ReceitaForm = () => {
         }
 
         setLoading(true);
+
         if (uuid) {
             await atualizar(uuid, payload).then(response => {
-                setShowSalvarReceita(true);
+                if (exibeModalSalvoComSucesso){
+                    setShowSalvarReceita(true);
+                }else {
+                    getPath()
+                }
             });
         } else {
             cadastrar(payload).then(response => {
-                setShowSalvarReceita(true);
-                setUuidReceita(response);
+                if (exibeModalSalvoComSucesso){
+                    setShowSalvarReceita(true);
+                    setUuidReceita(response);
+                }else {
+                    setUuidReceita(response);
+                    getPath(response)
+                }
             });
         }
         setLoading(false);
@@ -304,10 +317,10 @@ export const ReceitaForm = () => {
         setShowErroGeral(true);
     };
 
-    const getPath = () => {
+    const getPath = (uuid_receita_passado='') => {
         let path;
         if (redirectTo !== '') {
-            path = `${redirectTo}/${uuid_receita}`;
+            path = `${redirectTo}/${uuid_receita_passado ? uuid_receita_passado : uuid_receita}`;
         } else if (origem === undefined) {
             path = `/lista-de-receitas`;
         } else {
@@ -840,7 +853,10 @@ export const ReceitaForm = () => {
                                 {showCadastrarSaida === true ?
                                     <button
                                         type="submit"
-                                        onClick={() => setRedirectTo('/cadastro-de-despesa-recurso-proprio')}
+                                        onClick={() => {
+                                            setExibeModalSalvoComSucesso(false)
+                                            setRedirectTo('/cadastro-de-despesa-recurso-proprio')
+                                        }}
                                         className="btn btn btn-outline-success mt-2 mr-2"
                                     >
                                         Cadastrar saída
@@ -855,7 +871,14 @@ export const ReceitaForm = () => {
                                 {uuid ?
                                     <button disabled={readOnlyBtnAcao || !visoesService.getPermissoes(['delete_receita'])} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null
                                 }
-                                <button onClick={(e)=>servicoDeVerificacoes(e, values, errors)} disabled={readOnlyBtnAcao || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)} type="submit" className="btn btn-success mt-2">Salvar </button>
+                                <button
+                                    onClick={(e)=>servicoDeVerificacoes(e, values, errors)}
+                                    disabled={readOnlyBtnAcao || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                    type="submit"
+                                    className="btn btn-success mt-2"
+                                >
+                                    Salvar
+                                </button>
 
                             </div>
                             {/*Fim Botões*/}

@@ -13,18 +13,61 @@ import Loading from "../../../../utils/Loading";
 import CurrencyInput from "react-currency-input";
 import HTTP_STATUS from "http-status-codes";
 import {getReceita} from '../../../../services/escolas/Receitas.service';
+import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
+import {ModalValorReceitaDespesaDiferente} from "./ModalValorReceitaDespesaDiferente";
 
 
 export const CadastroSaidaForm = () => {
     const aux = metodosAuxiliares;
 
-    let {uuid} = useParams();
+    let {uuid_receita, uuid_despesa} = useParams();
+
+    const initial = {
+        associacao: localStorage.getItem(ASSOCIACAO_UUID),
+        tipo_documento: "",
+        tipo_transacao: "",
+        numero_documento: "",
+        data_documento: "",
+        cpf_cnpj_fornecedor: "",
+        nome_fornecedor: "",
+        data_transacao: "",
+        documento_transacao: "",
+        valor_total: "",
+        valor_recursos_proprios: "",
+        // Auxiliares
+        mais_de_um_tipo_despesa: "nao",
+        valor_recusos_acoes:0,
+        valor_total_dos_rateios:0,
+        valor_original:"",
+        valor_original_total:"",
+        // Fim Auxiliares
+        rateios: [
+            {
+                associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                escolha_tags:"",
+                tag:"",
+                conta_associacao: "",
+                acao_associacao: "",
+                aplicacao_recurso: "CUSTEIO",
+                tipo_custeio: "",
+                especificacao_material_servico: "",
+                valor_rateio: "",
+                quantidade_itens_capital: "",
+                valor_item_capital: "",
+                valor_original: "",
+                numero_processo_incorporacao_capital: "",
+            }
+        ],
+    }
+
     const despesaContext = useContext(DespesaContext);
     const [cssEscondeDocumentoTransacao, setCssEscondeDocumentoTransacao] = useState('escondeItem');
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
     const [despesasTabelas, setDespesasTabelas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [receita, setReceita] = useState(true);
+    const [initalValues, setInitialValues] = useState(initial)
+    const [showModalValorReceitaDespesaDiferente, setShowModalValorReceitaDespesaDiferente] = useState(false)
 
 
     useEffect(() => {
@@ -34,9 +77,18 @@ export const CadastroSaidaForm = () => {
         };
 
         const buscaReceita = async () => {
-            if (uuid) {
-                getReceita(uuid).then(response => {
+            if (uuid_receita) {
+                getReceita(uuid_receita).then(response => {
                     const resp = response.data;
+
+                    console.log("RECEITA XXXXXXXXXXXXXXXxx ", resp)
+
+                    setInitialValues({
+                        ...initalValues,
+                        valor_original: parseFloat(resp.valor),
+                        valor_total: parseFloat(resp.valor),
+                    })
+
                     setReceita(resp);
                 }).catch(error => {
                     console.log(error);
@@ -46,11 +98,7 @@ export const CadastroSaidaForm = () => {
         buscaReceita();
         carregaTabelasDespesas();
         setLoading(false);
-    }, [uuid])
-
-    const initialValues = () => {
-        return despesaContext.initialValues;
-    };
+    }, [uuid_receita])
 
     // Validações adicionais
     const [formErrors, setFormErrors] = useState({});
@@ -116,6 +164,21 @@ export const CadastroSaidaForm = () => {
         return erros;
     }, [despesasTabelas])
 
+
+    const onCancelarTrue = () => {
+        aux.getPath();
+    };
+
+    const serviceVerificacoes = useCallback(async (e, values)=>{
+        let valor_receita = parseFloat(receita.valor)
+        let valor_despesa = parseFloat(values.valor_total)
+
+        if (valor_receita !== valor_despesa){
+            e.preventDefault();
+            setShowModalValorReceitaDespesaDiferente(true)
+        }
+    }, [receita])
+
     const onSubmit = async (values) => {
 
         setFormErrors(validacoesPersonalizadas(values));
@@ -135,7 +198,7 @@ export const CadastroSaidaForm = () => {
                 if (response.status === HTTP_STATUS.CREATED) {
                     console.log("Despesa criada com sucesso!");
                     try {
-                        await patchAtrelarSaidoDoRecurso(uuid, response.data.uuid)
+                        await patchAtrelarSaidoDoRecurso(uuid_receita, response.data.uuid)
                         console.log("Saída recurso atrelada com sucesso")
                         aux.getPath()
                     }catch (e) {
@@ -151,9 +214,6 @@ export const CadastroSaidaForm = () => {
         }
     };
 
-    const onCancelarTrue = () => {
-        aux.getPath();
-    };
 
     return (
         <>
@@ -166,7 +226,7 @@ export const CadastroSaidaForm = () => {
                 />
                 :
                 <Formik
-                    initialValues={initialValues()}
+                    initialValues={initalValues}
                     validationSchema={YupSignupSchemaCadastroDespesaSaida}
                     validateOnChange={false}
                     validateOnBlur={false}
@@ -183,7 +243,7 @@ export const CadastroSaidaForm = () => {
 
                         return (
                             <>
-                                <form method="POST" onSubmit={props.handleSubmit}>
+                                <form method="POST" id='form_cadastro_saida' onSubmit={props.handleSubmit}>
                                     <div className="form-row">
                                         <div className="col-12 col-md-6 mt-4">
                                             <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
@@ -405,8 +465,26 @@ export const CadastroSaidaForm = () => {
                                     </div>
                                     <div className="d-flex  justify-content-end pb-3 mt-3">
                                         <button type="reset" onClick={onCancelarTrue} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                                        <button type="submit" className="btn btn-success mt-2">Salvar</button>
+                                        <button
+                                            onClick={(e)=>serviceVerificacoes(e, values)}
+                                            type="submit"
+                                            className="btn btn-success mt-2"
+                                        >
+                                            Salvar
+                                        </button>
                                     </div>
+                                    <section>
+                                        <ModalValorReceitaDespesaDiferente
+                                            show={showModalValorReceitaDespesaDiferente}
+                                            handleClose={() => setShowModalValorReceitaDespesaDiferente(false)}
+                                            onSalvarValoresDiferentes={() => {
+                                                setShowModalValorReceitaDespesaDiferente(false)
+                                                props.handleSubmit()
+                                            }}
+                                            titulo="Valores diferentes"
+                                            texto="<p>O valor da Receita de Recurso Externo e da Saída do Recurso são diferentes, deseja salvar assim mesmo?</p>"
+                                        />
+                                    </section>
                                 </form>
                             </>
                         )
