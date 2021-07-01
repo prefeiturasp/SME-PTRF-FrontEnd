@@ -210,6 +210,7 @@ export const ReceitaForm = () => {
         }
 
         setLoading(true);
+
         if (uuid) {
             await atualizar(uuid, payload).then(response => {
                 if (exibeModalSalvoComSucesso){
@@ -220,11 +221,12 @@ export const ReceitaForm = () => {
             });
         } else {
             cadastrar(payload).then(response => {
-                setUuidReceita(response);
                 if (exibeModalSalvoComSucesso){
                     setShowSalvarReceita(true);
+                    setUuidReceita(response);
                 }else {
-                    getPath()
+                    setUuidReceita(response);
+                    getPath(response)
                 }
             });
         }
@@ -315,10 +317,10 @@ export const ReceitaForm = () => {
         setShowErroGeral(true);
     };
 
-    const getPath = () => {
+    const getPath = (uuid_receita_passado='') => {
         let path;
         if (redirectTo !== '') {
-            path = `${redirectTo}/${uuid_receita}`;
+            path = `${redirectTo}/${uuid_receita_passado ? uuid_receita_passado : uuid_receita}`;
         } else if (origem === undefined) {
             path = `/lista-de-receitas`;
         } else {
