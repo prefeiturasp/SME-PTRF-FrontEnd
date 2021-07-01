@@ -82,7 +82,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/cadastro-de-despesa-recurso-proprio/:uuid?",
+        path: "/cadastro-de-despesa-recurso-proprio/:uuid_receita?/:uuid_despesa?",
         component: CadastroSaida,
         permissoes: ['access_receita']
     },
