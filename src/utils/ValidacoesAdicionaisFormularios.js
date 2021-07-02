@@ -211,8 +211,13 @@ export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFec
 
 export const validaPayloadDespesas = (values, despesasTabelas=null) => {
 
+  let exibe_documento_transacao
   if (despesasTabelas){
-    let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(values.tipo_transacao))
+    if (typeof values.tipo_transacao === 'object'){
+      exibe_documento_transacao = despesasTabelas.tipos_transacao.find(element => element.id === Number(values.tipo_transacao.id))
+    }else {
+      exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(values.tipo_transacao))
+    }
     if(!values.tipo_transacao || !exibe_documento_transacao.tem_documento){
       values.documento_transacao ="";
     }
