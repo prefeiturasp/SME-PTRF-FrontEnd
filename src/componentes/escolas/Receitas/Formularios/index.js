@@ -60,6 +60,7 @@ export const ReceitaForm = () => {
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
     const [showErroGeral, setShowErroGeral] = useState(false);
     const [showCadastrarSaida, setShowCadastrarSaida] = useState(false);
+    const [showEditarSaida, setShowEditarSaida] = useState(false);
     const [showSalvarReceita, setShowSalvarReceita] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
@@ -85,6 +86,8 @@ export const ReceitaForm = () => {
 
     const [exibeModalSalvoComSucesso, setExibeModalSalvoComSucesso] = useState(true)
 
+    const [uuid_despesa, setUuidDespesa] = useState('')
+
     const carregaTabelas = useCallback(async ()=>{
         let tabelas_receitas = await getTabelasReceitaReceita()
         setTabelas(tabelas_receitas)
@@ -108,28 +111,15 @@ export const ReceitaForm = () => {
         }
     }, [tabelas])
 
-    const carregaDespesa = useCallback(async (despesa_uuid)=>{
-        let despesa = ""
-        try {
-            despesa = await getDespesa(despesa_uuid)
-            return despesa.uuid
-        }catch (e) {
-            console.log("Não existe despesa cadastrada com esse uuid método carregaDespesa ", e.response.data)
-            return despesa
-        }
-    }, []) ;
-
     const buscaReceita = useCallback(async ()=>{
         if (uuid) {
             getReceita(uuid).then(async response => {
                 const resp = response.data;
 
-                console.log("RECEITA XXXXXXX ", resp)
-
-                // Verificando se a despesa já atrelada não foi deletada
-                let saida_recurso = "";
-                if (resp && resp.saida_do_recurso){
-                    saida_recurso = await carregaDespesa(resp.saida_do_recurso);
+                if (resp && resp.saida_do_recurso && resp.saida_do_recurso.uuid){
+                    setShowEditarSaida(true)
+                    setShowCadastrarSaida(false)
+                    setUuidDespesa(resp.saida_do_recurso.uuid)
                 }
 
                 const init = {
@@ -146,7 +136,6 @@ export const ReceitaForm = () => {
                         style: 'currency',
                         currency: 'BRL'
                     }) : "",
-                    saida_do_recurso: saida_recurso ? saida_recurso : ""
                 };
                 setObjetoParaComparacao(init);
                 setInitialValue(init);
@@ -166,7 +155,7 @@ export const ReceitaForm = () => {
                 console.log(error);
             });
         }
-    }, [carregaDespesa, uuid, showBotaoCadastrarSaida]);
+    }, [uuid, showBotaoCadastrarSaida]);
 
     useEffect(()=>{
         buscaReceita()
@@ -320,7 +309,7 @@ export const ReceitaForm = () => {
     const getPath = (uuid_receita_passado='') => {
         let path;
         if (redirectTo !== '') {
-            path = `${redirectTo}/${uuid_receita_passado ? uuid_receita_passado : uuid_receita}`;
+            path = `${redirectTo}/${uuid_receita_passado ? uuid_receita_passado : uuid_receita}${uuid_despesa ? '/'+uuid_despesa : ''}`;
         } else if (origem === undefined) {
             path = `/lista-de-receitas`;
         } else {
@@ -850,7 +839,19 @@ export const ReceitaForm = () => {
 
                             {/*Botões*/}
                             <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
-                                {showCadastrarSaida === true ?
+                                {showEditarSaida &&
+                                    <button
+                                        type="submit"
+                                        onClick={() => {
+                                            setExibeModalSalvoComSucesso(false)
+                                            setRedirectTo('/cadastro-de-despesa-recurso-proprio')
+                                        }}
+                                        className="btn btn btn-outline-success mt-2 mr-2"
+                                    >
+                                        Editar saída
+                                    </button>
+                                }
+                                {showCadastrarSaida && !showEditarSaida ?
                                     <button
                                         type="submit"
                                         onClick={() => {
@@ -860,7 +861,8 @@ export const ReceitaForm = () => {
                                         className="btn btn btn-outline-success mt-2 mr-2"
                                     >
                                         Cadastrar saída
-                                    </button> : null}
+                                    </button> : null
+                                }
                                 <button
                                     type="reset"
                                     onClick={comparaObjetos(values,objetoParaComparacao) ? onCancelarTrue : onShowModal}
