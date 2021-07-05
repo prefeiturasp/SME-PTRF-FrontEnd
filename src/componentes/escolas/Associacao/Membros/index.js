@@ -306,6 +306,8 @@ export const MembrosDaAssociacao = () => {
     const cod_identificacao_eol = useMemo(() => stateFormEditarMembro.codigo_identificacao, [stateFormEditarMembro.codigo_identificacao]);
     const cod_identificacao_cpf = useMemo(() => stateFormEditarMembro.cpf, [stateFormEditarMembro.cpf]);
 
+    const [cpfJaUsado, setCpfJaUsado] = useState(false)
+
     const validateFormMembros = async (values) => {
         const errors = {};
         if (values.representacao === "SERVIDOR") {
@@ -343,6 +345,24 @@ export const MembrosDaAssociacao = () => {
                 }
             }
         } else if (values.representacao === "ESTUDANTE") {
+
+            if (cod_identificacao_cpf !== values.cpf.trim()) {
+                try {
+                    if (!(!values.cpf || values.cpf.trim() === "" || !valida_cpf_cnpj(values.cpf))) {
+                        await consultarCpfResponsavel(values.cpf);
+                    }
+                    setCpfJaUsado(false)
+                    setBtnSalvarReadOnly(false);
+                } catch (e) {
+                    let data = e.response.data;
+                    if (data !== undefined && data.detail !== undefined) {
+                        errors.cpf = 'CPF já cadastrado'
+                    }
+                    setBtnSalvarReadOnly(true);
+                    setCpfJaUsado(true)
+                }
+            }
+
             try {
                 if (cod_identificacao_eol !== values.codigo_identificacao) {
                     let cod_eol = await consultarCodEol(values.codigo_identificacao);
@@ -397,6 +417,7 @@ export const MembrosDaAssociacao = () => {
                             endereco: values.endereco,
                         };
                         setStateFormEditarMembro(init);
+                        setBtnSalvarReadOnly(false);
                     }
                 } catch (e) {
                     let data = e.response.data;
@@ -417,7 +438,7 @@ export const MembrosDaAssociacao = () => {
         let erros = {};
         const regex_email = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
-        if (values.representacao === "PAI_RESPONSAVEL") {
+        if (values.representacao === "PAI_RESPONSAVEL" || values.representacao === "ESTUDANTE") {
             enviar_formulario = !(!values.cpf || values.cpf.trim() === "" || !valida_cpf_cnpj(values.cpf));
             if (!enviar_formulario) {
                 erros = {
@@ -426,6 +447,7 @@ export const MembrosDaAssociacao = () => {
                 setErrors({...erros})
             }
         }
+
         if (values.email && !regex_email.test(values.email)) {
             enviar_formulario = false
             erros = {
@@ -607,7 +629,10 @@ export const MembrosDaAssociacao = () => {
                     validateFormMembros={validateFormMembros}
                     stateFormEditarMembro={stateFormEditarMembro}
                     infosMembroSelecionado={infosMembroSelecionado}
+                    setBtnSalvarReadOnly={setBtnSalvarReadOnly}
+                    setCpfJaUsado={setCpfJaUsado}
                     btnSalvarReadOnly={btnSalvarReadOnly}
+                    cpfJaUsado={cpfJaUsado}
                     visoesService={visoesService}
                 />
             </section>

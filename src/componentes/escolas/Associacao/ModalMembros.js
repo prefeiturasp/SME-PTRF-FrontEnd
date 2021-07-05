@@ -15,7 +15,7 @@ export const telefoneMaskContitional = (value) => {
     return mask
 }
 
-export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, validateFormMembros, stateFormEditarMembro, infosMembroSelecionado, btnSalvarReadOnly, usuarios}) => {
+export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMembro, handleChangeEditarMembro, validateFormMembros, stateFormEditarMembro, infosMembroSelecionado, setCpfJaUsado, cpfJaUsado, setBtnSalvarReadOnly, btnSalvarReadOnly}) => {
     const bodyTextarea = () => {
 
         const ePresidente = (infoMembro) => {
@@ -100,8 +100,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                     handleChangeEditarMembro(e.target.name, e.target.value);
-                                                }
-                                                }
+                                                }}
                                                 name="codigo_identificacao"
                                                 className="form-control"
                                             />
@@ -139,39 +138,39 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                 <div className="row">
 
                                     {/*Cargo*/}
-                                    {props.values.representacao === 'PAI_RESPONSAVEL' &&
-                                    <div className="col-12 col-md-6">
-                                        <div className="form-group">
-                                            <label htmlFor="cpf">CPF do pai ou responsável</label>
-                                            <MaskedInput
-                                                mask={[/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/]}
-                                                readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
-                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
-                                                type="text"
-                                                value={props.values.cpf ? props.values.cpf : ""}
-                                                onChange={(e) => {
-                                                    props.handleChange(e);
-                                                    handleChangeEditarMembro(e.target.name, e.target.value);
-                                                }
-                                                }
-                                                name="cpf"
-                                                className="form-control"
-                                                onClick={() => setErrors(
-                                                    {
-                                                        ...errors,
-                                                        cpf:"",
-                                                    }
-                                                )}
-                                            />
-                                            {props.errors.cpf &&
-                                            <span className="span_erro text-danger mt-1"> {props.errors.cpf}</span>}
-                                        </div>
-                                    </div>
+                                    {props.values.representacao === 'PAI_RESPONSAVEL' || props.values.representacao === 'ESTUDANTE' ? (
+                                            <div className="col-12 col-md-6">
+                                                <div className="form-group">
+                                                    <label htmlFor="cpf">{props.values.representacao === 'PAI_RESPONSAVEL' ? "CPF do pai ou responsável" : "CPF"}</label>
+                                                    <MaskedInput
+                                                        mask={[/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/]}
+                                                        readOnly={props.values.representacao !== 'PAI_RESPONSAVEL' && props.values.representacao !== 'ESTUDANTE'}
+                                                        disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                        type="text"
+                                                        value={props.values.cpf ? props.values.cpf : ""}
+                                                        onChange={(e) => {
+                                                            props.handleChange(e);
+                                                            handleChangeEditarMembro(e.target.name, e.target.value);
+                                                        }
+                                                        }
+                                                        name="cpf"
+                                                        className="form-control"
+                                                        onClick={() => setErrors(
+                                                            {
+                                                                ...errors,
+                                                                cpf:"",
+                                                            }
+                                                        )}
+                                                    />
+
+                                                    {props.errors.cpf &&
+                                                    <span className="span_erro text-danger mt-1"> {props.errors.cpf}</span>}
+                                                </div>
+                                            </div>
+                                        ) : null
                                     }
 
-                                    <div
-                                        // className={`col-12 col-md-6 ${props.values.representacao !== 'SERVIDOR' && 'escondeItem'}`}>
-                                        className={(ePresidente(infosMembroSelecionado) ? "col-12 col-md-6" : "col-12") + (props.values.representacao !== 'SERVIDOR' ? " escondeItem" : "")}>
+                                    <div className={(ePresidente(infosMembroSelecionado) ? "col-12 col-md-6" : "col-12") + (props.values.representacao !== 'SERVIDOR' ? " escondeItem" : "")}>
                                         <div className="form-group">
                                             <label htmlFor="cargo_educacao">Cargo na educação</label>
                                             <input
@@ -182,8 +181,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                                 onChange={(e) => {
                                                     props.handleChange(e);
                                                     handleChangeEditarMembro(e.target.name, e.target.value);
-                                                }
-                                                }
+                                                }}
                                                 name="cargo_educacao"
                                                 className="form-control"
                                             />
@@ -347,8 +345,24 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                 {/*Usuário <===*/}
 
                                 <div className="d-flex  justify-content-end pb-3 mt-3">
-                                    <button onClick={()=>handleClose()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                                    <button disabled={btnSalvarReadOnly || !visoesService.getPermissoes(['change_associacao'])} type="submit" className="btn btn-success mt-2">Salvar</button>
+                                    <button
+                                        onClick={()=> {
+                                            handleClose()
+                                            setBtnSalvarReadOnly(false)
+                                            setCpfJaUsado(false)
+                                        }}
+                                        type="button"
+                                        className="btn btn btn-outline-success mt-2 mr-2"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        disabled={cpfJaUsado || btnSalvarReadOnly || !visoesService.getPermissoes(['change_associacao'])}
+                                        type="submit"
+                                        className="btn btn-success mt-2"
+                                    >
+                                        Salvar
+                                    </button>
                                 </div>
                             </form>
                         );
