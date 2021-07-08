@@ -570,8 +570,8 @@ export const CadastroSaidaForm = () => {
                                                 setShowModalValorReceitaDespesaDiferente(false)
                                                 props.handleSubmit()
                                             }}
-                                            titulo="Valores diferentes"
-                                            texto="<p>O valor da Receita de Recurso Externo e da Saída do Recurso são diferentes, deseja salvar assim mesmo?</p>"
+                                            titulo="Valores distintos"
+                                            texto="<p>Os valores cadastrados do crédito de Recurso Externo e de sua saída são distintos, deseja salvar assim mesmo?</p>"
                                         />
                                     </section>
                                     <section>
