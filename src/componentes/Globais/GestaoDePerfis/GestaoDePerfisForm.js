@@ -32,7 +32,6 @@ export const GestaoDePerfisForm = () =>{
     const [grupos, setGrupos] = useState([]);
     const [codigoEolUnidade, setCodigoEolUnidade] = useState('');
     const [bloquearCampoName, setBloquearCampoName] = useState(true)
-    const [bloquearCampoEmail, setBloquearCampoEmail] = useState(true)
     const [loading, setLoading] = useState(false);
     const [visoes, setVisoes] = useState([]);
     const [gruposJaVinculados, setGruposJaVinculados] = useState([]);
@@ -207,7 +206,6 @@ export const GestaoDePerfisForm = () =>{
                 unidades_vinculadas: unidades_vinculadas,
             };
             setStatePerfisForm(initPerfisForm)
-            setBloquearCampoEmail(false)
         }
     }, [carregaUnidadesVinculadas, exibeGrupos, id_usuario, visao_selecionada, codigoEolUnidade])
 
@@ -309,7 +307,6 @@ export const GestaoDePerfisForm = () =>{
     const serviceUsuarioCadastrado = useCallback(async (usuario_status, {setFieldValue}, values="")=>{
         let usuario_cadastrado_core_sso = usuario_status.usuario_core_sso.info_core_sso
         if (usuario_cadastrado_core_sso){
-            setBloquearCampoEmail(false);
             setFieldValue('name', usuario_status.usuario_core_sso.info_core_sso.nome)
             setFieldValue('email', usuario_status.usuario_core_sso.info_core_sso.email)
             return usuario_cadastrado_core_sso
@@ -693,8 +690,6 @@ export const GestaoDePerfisForm = () =>{
                             idUsuarioCondicionalMask={idUsuarioCondicionalMask}
                             setBloquearCampoName={setBloquearCampoName}
                             bloquearCampoName={bloquearCampoName}
-                            setBloquearCampoEmail={setBloquearCampoEmail}
-                            bloquearCampoEmail={bloquearCampoEmail}
                             grupos={grupos}
                             visoes={visoes}
                             showModalUsuarioNaoCadastrado={showModalUsuarioNaoCadastrado}

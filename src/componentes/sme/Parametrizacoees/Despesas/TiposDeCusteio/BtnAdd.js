@@ -12,7 +12,7 @@ export const BtnAdd = ({FontAwesomeIcon, faPlus, setShowModalForm, initialStateF
                     style={{fontSize: '15px', marginRight: "5", color:"#fff"}}
                     icon={faPlus}
                 />
-                Adicionar tipo de custeio
+                Adicionar tipo de despesa de custeio
             </button>
         </div>
     );

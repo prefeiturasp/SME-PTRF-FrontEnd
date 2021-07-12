@@ -39,7 +39,7 @@ export const Dashboard = () => {
     }, [uuid_associacao]);
 
     const buscaPeriodos = useCallback(async () => {
-        let periodos = await getPeriodosAteAgoraForaImplantacaoDaAssociacao();
+        let periodos = await getPeriodosAteAgoraForaImplantacaoDaAssociacao(uuid_associacao);
         setSelectPeriodo(periodos[0].uuid)
         setPeriodosAssociacao(periodos);
     }, []);
@@ -104,6 +104,21 @@ export const Dashboard = () => {
         setLoading(false);
     };
 
+
+    const getCorSaldo = (valor_saldo) => {
+        return valor_saldo < 0 ? "texto-cor-vermelha" : "texto-cor-verde"
+    };
+
+    const getCssDestaque = (tamanho_margin_bottom=1) =>{
+        if (acoesAssociacao && acoesAssociacao.prestacao_contas_status){
+            if(acoesAssociacao.prestacao_contas_status.periodo_encerrado && acoesAssociacao.prestacao_contas_status.status_prestacao === "APROVADA"){
+                return `pt-1 mb-${tamanho_margin_bottom}`
+            }else {
+                return `pt-1 mb-${tamanho_margin_bottom} texto-com-icone-${getCorStatusPeriodo(statusPeriodoAssociacao)}`
+            }
+        }
+    }
+
     return (
         <>
             <div className="form-row align-items-center mb-3">
@@ -133,11 +148,13 @@ export const Dashboard = () => {
                     />
                     <DashboardCardInfoConta
                         acoesAssociacao={acoesAssociacao}
-                        corIconeFonte={getCorStatusPeriodo(acoesAssociacao.periodo_status)}
+                        getCorSaldo={getCorSaldo}
+                        getCssDestaque={getCssDestaque}
                     />
                     <DashboardCard
                         acoesAssociacao={acoesAssociacao}
-                        corIconeFonte={getCorStatusPeriodo(acoesAssociacao.periodo_status)}
+                        getCorSaldo={getCorSaldo}
+                        getCssDestaque={getCssDestaque}
                     />
                 </>
             }

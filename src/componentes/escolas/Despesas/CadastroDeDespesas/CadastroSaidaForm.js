@@ -1,8 +1,19 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
 import {Formik} from "formik";
-import {YupSignupSchemaCadastroDespesaSaida, validaPayloadDespesas, cpfMaskContitional, valida_cpf_cnpj,} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {
+    YupSignupSchemaCadastroDespesaSaida,
+    validaPayloadDespesas,
+    cpfMaskContitional,
+    valida_cpf_cnpj,
+} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask';
-import {getDespesasTabelas, criarDespesa, patchAtrelarSaidoDoRecurso} from "../../../../services/escolas/Despesas.service";
+import {
+    getDespesasTabelas,
+    criarDespesa,
+    patchAtrelarSaidoDoRecurso,
+    alterarDespesa,
+    deleteDespesa
+} from "../../../../services/escolas/Despesas.service";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import {useParams} from 'react-router-dom';
 import {DespesaContext} from "../../../../context/Despesa";
@@ -13,18 +24,71 @@ import Loading from "../../../../utils/Loading";
 import CurrencyInput from "react-currency-input";
 import HTTP_STATUS from "http-status-codes";
 import {getReceita} from '../../../../services/escolas/Receitas.service';
+import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
+import {ModalValorReceitaDespesaDiferente} from "./ModalValorReceitaDespesaDiferente";
+import {ModalDeletarDespesa} from "./ModalDeletarDespesa";
+import {visoesService} from "../../../../services/visoes.service";
 
 
 export const CadastroSaidaForm = () => {
     const aux = metodosAuxiliares;
 
-    let {uuid} = useParams();
+    let {uuid_receita, uuid_despesa} = useParams();
+
+    const initial = {
+        associacao: localStorage.getItem(ASSOCIACAO_UUID),
+        tipo_documento: "",
+        tipo_transacao: "",
+        numero_documento: "",
+        data_documento: "",
+        cpf_cnpj_fornecedor: "",
+        nome_fornecedor: "",
+        data_transacao: "",
+        documento_transacao: "",
+        valor_total: "",
+        valor_recursos_proprios: "",
+        // Auxiliares
+        mais_de_um_tipo_despesa: "nao",
+        valor_recusos_acoes:0,
+        valor_total_dos_rateios:0,
+        valor_original:"",
+        valor_original_total:"",
+        // Fim Auxiliares
+        rateios: [
+            {
+                associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                escolha_tags:"",
+                tag:"",
+                conta_associacao: "",
+                acao_associacao: "",
+                aplicacao_recurso: "CUSTEIO",
+                tipo_custeio: "",
+                especificacao_material_servico: "",
+                valor_rateio: "",
+                quantidade_itens_capital: "",
+                valor_item_capital: "",
+                valor_original: "",
+                numero_processo_incorporacao_capital: "",
+            }
+        ],
+    }
+
     const despesaContext = useContext(DespesaContext);
     const [cssEscondeDocumentoTransacao, setCssEscondeDocumentoTransacao] = useState('escondeItem');
     const [labelDocumentoTransacao, setLabelDocumentoTransacao] = useState('');
     const [despesasTabelas, setDespesasTabelas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [receita, setReceita] = useState(true);
+    const [initalValues, setInitialValues] = useState(initial)
+    const [showModalValorReceitaDespesaDiferente, setShowModalValorReceitaDespesaDiferente] = useState(false)
+    const [showModalDeletarDespesa, setShowModalDeletarDespesa] = useState(false)
+
+
+    useEffect(() => {
+        if (initalValues.tipo_transacao && uuid_despesa) {
+            aux.exibeDocumentoTransacao(initalValues.tipo_transacao.id, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas);
+        }
+    }, [aux, initalValues, despesasTabelas, uuid_despesa]);
 
 
     useEffect(() => {
@@ -34,9 +98,34 @@ export const CadastroSaidaForm = () => {
         };
 
         const buscaReceita = async () => {
-            if (uuid) {
-                getReceita(uuid).then(response => {
+            if (uuid_receita) {
+                if (uuid_despesa){
+                    try {
+                        await patchAtrelarSaidoDoRecurso(uuid_receita, uuid_despesa)
+                        console.log("Despesa atrelada com sucesso!")
+                    }catch (e){
+                        console.log("Erro ao atrelar despesa ", e)
+                    }
+                }
+
+                getReceita(uuid_receita).then(async response => {
                     const resp = response.data;
+
+                    if (uuid_despesa){
+                        setInitialValues({
+                            ...initalValues,
+                            ...resp.saida_do_recurso,
+                            valor_original: parseFloat(resp.saida_do_recurso.valor_ptrf),
+                            valor_total: parseFloat(resp.saida_do_recurso.valor_total),
+                        })
+                    }else {
+                        setInitialValues({
+                            ...initalValues,
+                            valor_original: parseFloat(resp.valor),
+                            valor_total: parseFloat(resp.valor),
+                        })
+                    }
+
                     setReceita(resp);
                 }).catch(error => {
                     console.log(error);
@@ -46,15 +135,41 @@ export const CadastroSaidaForm = () => {
         buscaReceita();
         carregaTabelasDespesas();
         setLoading(false);
-    }, [uuid])
-
-    const initialValues = () => {
-        return despesaContext.initialValues;
-    };
+    }, [uuid_receita, uuid_despesa])
 
     // Validações adicionais
     const [formErrors, setFormErrors] = useState({});
     const [enviarFormulario, setEnviarFormulario] = useState(true);
+    const [numeroDocumentoReadOnly, setNumeroDocumentoReadOnly] = useState(false);
+
+    const validaExibeNumeroDocumento = useCallback((values) =>{
+        if (values.tipo_documento) {
+            let exibe_campo_numero_documento;
+            let so_numeros;
+            // verificando se despesasTabelas já está preenchido
+            if (despesasTabelas && despesasTabelas.tipos_documento) {
+                if (values.tipo_documento.id) {
+                    so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
+                } else {
+                    so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
+                }
+            }
+
+            // Verificando se exibe campo Número do Documento
+            exibe_campo_numero_documento = so_numeros;
+            if (exibe_campo_numero_documento && !exibe_campo_numero_documento.numero_documento_digitado) {
+                values.numero_documento = "";
+                setNumeroDocumentoReadOnly(true)
+            } else {
+                setNumeroDocumentoReadOnly(false)
+            }
+            return exibe_campo_numero_documento
+        }
+    }, [despesasTabelas])
+
+    useEffect(() => {
+        validaExibeNumeroDocumento(initalValues)
+    }, [initalValues, validaExibeNumeroDocumento]);
 
     const validacoesPersonalizadas = useCallback((values) => {
 
@@ -69,8 +184,48 @@ export const CadastroSaidaForm = () => {
         } else {
             setEnviarFormulario(true)
         }
+
+        // Validando se tipo de documento aceita apenas numéricos e se exibe campo Número do Documento
+        if (values.tipo_documento) {
+
+            let exibe_campo_numero_documento = validaExibeNumeroDocumento(values)
+
+            if (exibe_campo_numero_documento && exibe_campo_numero_documento.numero_documento_digitado && !values.numero_documento) {
+                erros = {
+                    ...erros,
+                    numero_documento: "Número do documento é obrigatório"
+                }
+                setEnviarFormulario(false)
+            } else {
+                setEnviarFormulario(true)
+            }
+
+            if (exibe_campo_numero_documento && exibe_campo_numero_documento.apenas_digitos && values.numero_documento) {
+                if (isNaN(values.numero_documento)) {
+                    erros = {
+                        ...erros,
+                        numero_documento: "Este campo deve conter apenas algarismos numéricos."
+                    }
+                    setEnviarFormulario(false)
+                }
+            }
+        }
         return erros;
-    }, [])
+    }, [validaExibeNumeroDocumento])
+
+
+    const onCancelarTrue = () => {
+        aux.getPath();
+    };
+
+    const serviceVerificacoes = useCallback(async (e, values)=>{
+        let valor_receita = parseFloat(receita.valor)
+        let valor_despesa = trataNumericos(values.valor_original)
+        if (valor_receita !== valor_despesa){
+            e.preventDefault();
+            setShowModalValorReceitaDespesaDiferente(true)
+        }
+    }, [receita])
 
     const onSubmit = async (values) => {
 
@@ -86,30 +241,53 @@ export const CadastroSaidaForm = () => {
             values.rateios[0].valor_original = values.valor_original
             values.rateios[0].valor_rateio = values.valor_original
 
-            try {
-                const response = await criarDespesa(values);
-                if (response.status === HTTP_STATUS.CREATED) {
-                    console.log("Despesa criada com sucesso!");
-                    try {
-                        await patchAtrelarSaidoDoRecurso(uuid, response.data.uuid)
-                        console.log("Saída recurso atrelada com sucesso")
-                        aux.getPath()
-                    }catch (e) {
-                        console.log("Erro ao atrelar saída recurso ", e.response.data)
+            if (uuid_despesa){
+                try {
+                    const response = await alterarDespesa(values, uuid_despesa);
+                    if (response.status === 200) {
+                        console.log("Despesa alterada com sucesso!");
+                        aux.getPath();
+                    } else {
+                        setLoading(false);
                     }
-                } else {
+                } catch (error) {
+                    console.log(error);
                     setLoading(false);
                 }
-            } catch (error) {
-                console.log(error);
-                setLoading(false);
+            }else {
+                try {
+                    const response = await criarDespesa(values);
+                    if (response.status === HTTP_STATUS.CREATED) {
+                        console.log("Despesa criada com sucesso!");
+                        try {
+                            await patchAtrelarSaidoDoRecurso(uuid_receita, response.data.uuid)
+                            console.log("Saída recurso atrelada com sucesso")
+                            aux.getPath()
+                        }catch (e) {
+                            console.log("Erro ao atrelar saída recurso ", e.response.data)
+                        }
+                    } else {
+                        setLoading(false);
+                    }
+                } catch (error) {
+                    console.log(error);
+                    setLoading(false);
+                }
             }
         }
     };
 
-    const onCancelarTrue = () => {
-        aux.getPath();
-    };
+    const deletarDespesa = useCallback(async ()=>{
+        setLoading(true)
+        try {
+            await deleteDespesa(uuid_despesa)
+            console.log("Despesa deletada com sucesso!")
+            aux.getPath()
+        }catch (e) {
+            console.log("Erro ao deletar despesa ", e)
+            setLoading(false)
+        }
+    }, [uuid_despesa, aux])
 
     return (
         <>
@@ -122,7 +300,7 @@ export const CadastroSaidaForm = () => {
                 />
                 :
                 <Formik
-                    initialValues={initialValues()}
+                    initialValues={initalValues}
                     validationSchema={YupSignupSchemaCadastroDespesaSaida}
                     validateOnChange={false}
                     validateOnBlur={false}
@@ -136,10 +314,9 @@ export const CadastroSaidaForm = () => {
                             setErrors,
                             errors,
                         } = props;
-
                         return (
                             <>
-                                <form method="POST" onSubmit={props.handleSubmit}>
+                                <form method="POST" id='form_cadastro_saida' onSubmit={props.handleSubmit}>
                                     <div className="form-row">
                                         <div className="col-12 col-md-6 mt-4">
                                             <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
@@ -190,7 +367,9 @@ export const CadastroSaidaForm = () => {
                                                     ) : ""
                                                 }
                                                 onChange={props.handleChange}
-                                                onBlur={props.handleBlur}
+                                                onBlur={() => {
+                                                    setFormErrors(validacoesPersonalizadas(values));
+                                                }}
                                                 name='tipo_documento'
                                                 id='tipo_documento'
                                                 className={`${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
@@ -228,17 +407,19 @@ export const CadastroSaidaForm = () => {
                                             <input
                                                 value={props.values.numero_documento}
                                                 onChange={props.handleChange}
-                                                onBlur={props.handleBlur}
+                                                onBlur={() => {
+                                                    setFormErrors(validacoesPersonalizadas(values));
+                                                }}
                                                 name="numero_documento"
                                                 id="numero_documento" type="text"
                                                 className={`${!props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid " : ""} form-control`}
-                                                placeholder="Digite o número"
+                                                placeholder={numeroDocumentoReadOnly ? "" : "Digite o número"}
+                                                disabled={numeroDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                                 onClick={()=>{
                                                     setErrors({...errors, numero_documento:""})
                                                 }}
                                             />
-                                            {props.errors.numero_documento && <span
-                                                className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
+                                            {formErrors.numero_documento && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.numero_documento}</span></p>}
                                         </div>
 
                                         <div className="col-12 col-md-6 mt-4">
@@ -356,9 +537,54 @@ export const CadastroSaidaForm = () => {
                                         </div>
                                     </div>
                                     <div className="d-flex  justify-content-end pb-3 mt-3">
-                                        <button type="reset" onClick={onCancelarTrue} className="btn btn btn-outline-success mt-2 mr-2">Cancelar</button>
-                                        <button type="submit" className="btn btn-success mt-2">Salvar</button>
+                                        <button
+                                            type="reset"
+                                            onClick={onCancelarTrue}
+                                            className="btn btn btn-outline-success mt-2 mr-2"
+                                        >
+                                            Cancelar
+                                        </button>
+                                        {uuid_despesa &&
+                                            <button
+                                                disabled={!visoesService.getPermissoes(["delete_despesa"])}
+                                                type="reset"
+                                                onClick={() => setShowModalDeletarDespesa(true)}
+                                                className="btn btn btn-danger mt-2 mr-2"
+                                            >
+                                                Deletar
+                                            </button>
+                                           }
+                                        <button
+                                            onClick={(e)=>serviceVerificacoes(e, values)}
+                                            type="submit"
+                                            className="btn btn-success mt-2"
+                                        >
+                                            Salvar
+                                        </button>
                                     </div>
+                                    <section>
+                                        <ModalValorReceitaDespesaDiferente
+                                            show={showModalValorReceitaDespesaDiferente}
+                                            handleClose={() => setShowModalValorReceitaDespesaDiferente(false)}
+                                            onSalvarValoresDiferentes={() => {
+                                                setShowModalValorReceitaDespesaDiferente(false)
+                                                props.handleSubmit()
+                                            }}
+                                            titulo="Valores distintos"
+                                            texto="<p>Os valores cadastrados do crédito de Recurso Externo e de sua saída são distintos, deseja salvar assim mesmo?</p>"
+                                        />
+                                    </section>
+                                    <section>
+                                        <ModalDeletarDespesa
+                                            show={showModalDeletarDespesa}
+                                            handleClose={() => setShowModalDeletarDespesa(false)}
+                                            onDeletarDespesas={() => {
+                                                deletarDespesa()
+                                            }}
+                                            titulo="Deseja excluir esta Despesa?"
+                                            texto="<p>Tem certeza que deseja excluir esta despesa? A ação não poderá ser desfeita.</p>"
+                                        />
+                                    </section>
                                 </form>
                             </>
                         )

@@ -99,7 +99,7 @@ export const YupSignupSchemaMembros = yup.object().shape({
   .test('test-name', 'É obrigatório e não pode ultrapassar 160 caracteres',
       function (value) {
         const { representacao } = this.parent;
-        if(representacao === "PAI_RESPONSAVEL"){
+        if(representacao === "PAI_RESPONSAVEL" || representacao === "ESTUDANTE"){
           return !(!value || value.trim() === "" || value.length > 160);
         }else {
           return true
@@ -163,16 +163,7 @@ export const YupSignupSchemaCadastroDespesaSaida = yup.object().shape({
         }
       }),
 
-  numero_documento:yup.string().required("Número documento é obrigatório.")
-  .test('test-numero-documento', 'Selecione um número de documento válido',
-    function (value) {
-      if (value !== undefined || value !== '') {
-        return true
-      } else {
-        return false
-      }
-    }),
-  
+
   data_documento: yup.string().required("Data do documento é obrigatório.").nullable(),
   tipo_transacao: yup.string().required("Tipo da transação é obrigatório.").nullable(),
 
@@ -220,8 +211,13 @@ export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFec
 
 export const validaPayloadDespesas = (values, despesasTabelas=null) => {
 
+  let exibe_documento_transacao
   if (despesasTabelas){
-    let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(values.tipo_transacao))
+    if (typeof values.tipo_transacao === 'object'){
+      exibe_documento_transacao = despesasTabelas.tipos_transacao.find(element => element.id === Number(values.tipo_transacao.id))
+    }else {
+      exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(values.tipo_transacao))
+    }
     if(!values.tipo_transacao || !exibe_documento_transacao.tem_documento){
       values.documento_transacao ="";
     }
@@ -610,7 +606,7 @@ export const getTextoStatusPeriodo = (statusId) => {
 
 export const getCorStatusPeriodo = (statusId) => {
   let cor = ''
-  if (statusId === 'EM_ANDAMENTO') {
+  if (statusId === 'EM_ANDAMENTO' || (statusId && statusId.prestacao_contas_status && statusId.prestacao_contas_status.texto_status === "Período em andamento. ")) {
     cor = 'amarelo'
   } else if (statusId === 'PENDENTE') {
     cor = 'vermelho'

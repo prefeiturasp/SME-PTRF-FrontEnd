@@ -64,7 +64,7 @@ export const FormFiltrosAvancados = (props) => {
                             <select value={state.tipo_receita}
                                     onChange={(e) => handleChange(e.target.name, e.target.value)}
                                     name="tipo_receita" id="tipo_receita" className="form-control">
-                                <option key={0} value="">Selecione uma tipo</option>
+                                <option key={0} value="">Selecionar um tipo</option>
                                 {tabelas.tipos_receita !== undefined && tabelas.tipos_receita.length > 0 ? (tabelas.tipos_receita.map(item => (
                                     <option key={item.id} value={item.id}>{item.nome}</option>
                                 ))) : null}

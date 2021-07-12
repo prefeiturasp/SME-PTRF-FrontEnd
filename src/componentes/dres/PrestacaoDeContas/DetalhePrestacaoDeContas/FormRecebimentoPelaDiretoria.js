@@ -8,7 +8,7 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
             <form method="post">
                 <div className="row mt-3">
                     <div className="col">
-                        <label htmlFor="tecnico_atribuido">Técnico atribuído</label>
+                        <label htmlFor="tecnico_atribuido">Técnico responsável</label>
                         <input
                             value={stateFormRecebimentoPelaDiretoria.tecnico_atribuido ? stateFormRecebimentoPelaDiretoria.tecnico_atribuido : ''}
                             onChange={(e) => handleChangeFormRecebimentoPelaDiretoria(e.target.name, e.target.value)}
