@@ -81,8 +81,8 @@ export const CadastroFormCusteio = (propriedades) => {
                         className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} ${!rateio.acao_associacao && 'despesa_incompleta'} form-control`}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
-                        <option key={0} value="">Selecione uma ação</option>
-                        {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.map(item => (
+                        <option value="">Selecione uma ação</option>
+                        {despesasTabelas.acoes_associacao && despesasTabelas.acoes_associacao.filter(acao => !acao.e_recursos_proprios).map(item => (
                             <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                         ))}
                     </select>
