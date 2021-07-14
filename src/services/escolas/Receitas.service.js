@@ -66,6 +66,10 @@ export const getListaReceitas = async () => {
     return (await api.get(`api/receitas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
 
+export const getTotaisReceitas = async (tipo_receita, acao_associacao__uuid, conta_associacao__uuid, data_inicio, data_fim) => {
+    return (await api.get(`api/receitas/totais/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&tipo_receita=${tipo_receita}&acao_associacao__uuid=${acao_associacao__uuid}&conta_associacao__uuid=${conta_associacao__uuid}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}`, authHeader)).data
+};
+
 export const filtroPorPalavraReceitas = async (palavra) => {
     return (await api.get(`api/receitas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
