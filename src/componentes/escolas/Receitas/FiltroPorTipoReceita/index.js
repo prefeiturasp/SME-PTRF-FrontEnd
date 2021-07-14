@@ -3,7 +3,7 @@ import {getTabelasReceitaReceita} from "../../../../services/escolas/Receitas.se
 import {filtrosAvancadosReceitas} from "../../../../services/escolas/Receitas.service";
 
 export const FiltroPorTipoReceita = (props) => {
-    const {setBuscaUtilizandoFiltro, setLista} = props
+    const {setBuscaUtilizandoFiltro, setLista, buscaTotaisReceitas} = props
 
     const tabelaInicial = {
         tipos_receita: [],
@@ -40,6 +40,7 @@ export const FiltroPorTipoReceita = (props) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        buscaTotaisReceitas(state.tipo_receita);
         const lista_retorno_api = await filtrosAvancadosReceitas(state.filtrar_por_termo, state.tipo_receita, state.acao_associacao, state.conta_associacao, null, null);
         setLista(lista_retorno_api);
         setBuscaUtilizandoFiltro(true)

@@ -6,7 +6,7 @@ import {Column} from 'primereact/column';
 import {useHistory} from 'react-router-dom';
 import '../../../../paginas/escolas/404/pagina-404.scss'
 import moment from 'moment';
-import {getListaReceitas} from "../../../../services/escolas/Receitas.service";
+import {getListaReceitas, getTotaisReceitas} from "../../../../services/escolas/Receitas.service";
 import {getBotaoValoresReprogramados} from "../../../../services/escolas/ValoresReprogramados.service";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito"
 import {MsgImgCentralizada} from "../../../Globais/Mensagens/MsgImgCentralizada";
@@ -14,6 +14,7 @@ import Img404 from "../../../../assets/img/img-404.svg";
 import "./lista-de-receitas.scss"
 import {FormFiltrosAvancados} from "../FormFiltrosAvancados";
 import {FiltroPorTipoReceita} from "../FiltroPorTipoReceita";
+import {SomaDosCreditos} from "../SomaDosCreditos";
 import Loading from "../../../../utils/Loading";
 import {visoesService} from "../../../../services/visoes.service";
 
@@ -24,6 +25,7 @@ export const ListaDeReceitas = () => {
     const rowsPerPage = 7;
 
     const [receitas, setReceitas] = useState([]);
+    const [totais, setTotais] = useState([]);
     const [inputPesquisa, setInputPesquisa] = useState("");
     const [buscaUtilizandoFiltro, setBuscaUtilizandoFiltro] = useState(false);
     const [btnMaisFiltros, setBtnMaisFiltros] = useState(false);
@@ -31,6 +33,7 @@ export const ListaDeReceitas = () => {
     const [btnValoresReprogramados, setBtnValoresReprogramados] = useState(false);
 
     useEffect(() => {
+        buscaTotaisReceitas()
         buscaListaReceitas()
         botaoValoresReprogramados()
     }, []);
@@ -41,6 +44,12 @@ export const ListaDeReceitas = () => {
         setReceitas(listaReceitas);
 
         setLoading(false);
+    };
+
+    const buscaTotaisReceitas = async (tipo_receita = "", acao_associacao__uuid = "", conta_associacao__uuid = "", data_inicio = "", data_fim = "") => {
+        console.log("entrei aqui");
+        const listaTotais = await getTotaisReceitas(tipo_receita, acao_associacao__uuid, conta_associacao__uuid, data_inicio, data_fim);
+        setTotais(listaTotais);
     };
 
     const botaoValoresReprogramados = async () => {
@@ -100,6 +109,7 @@ export const ListaDeReceitas = () => {
                                 buscaUtilizandoFiltro={buscaUtilizandoFiltro}
                                 setBuscaUtilizandoFiltro={setBuscaUtilizandoFiltro}
                                 setLista={setReceitas}
+                                buscaTotaisReceitas={buscaTotaisReceitas}
                             />
                         </div>
                         <div className={`col-12 col-md-2 mt-2 pl-0 ${!btnMaisFiltros ? "lista-de-receitas-visible" : "lista-de-receitas-invisible"}`}>
@@ -125,33 +135,40 @@ export const ListaDeReceitas = () => {
                         setLista={setReceitas}
                         setBuscaUtilizandoFiltro={setBuscaUtilizandoFiltro}
                         iniciaLista={buscaListaReceitas}
+                        buscaTotaisReceitas={buscaTotaisReceitas}
                         setLoading={setLoading}
 
                     />
 
-                    {receitas.length > 0 ? (
-                        <DataTable
-                            value={receitas}
-                            className="mt-3 datatable-footer-coad"
-                            paginator={receitas.length > rowsPerPage}
-                            rows={rowsPerPage}
-                            paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                            autoLayout={true}
-                            selectionMode="single"
-                            onRowClick={e => redirecionaDetalhe(e.data)}
-                        >
-                            <Column field='tipo_receita.nome' header='Tipo'/>
-                            <Column field='conta_associacao.nome' header='Conta'/>
-                            <Column field='acao_associacao.nome' header='Ação'/>
-                            <Column
-                                field='data'
-                                header='Data'
-                                body={dataTemplate}/>
-                            <Column
-                                field='valor'
-                                header='Valor'
-                                body={valorTemplate}/>
-                        </DataTable>)
+                    {receitas.length > 0  && Object.entries(totais).length > 0 ? (
+                        
+                            <>
+                                <SomaDosCreditos somaDosTotais={totais} />
+                            
+                                <DataTable
+                                    value={receitas}
+                                    className="mt-3 datatable-footer-coad"
+                                    paginator={receitas.length > rowsPerPage}
+                                    rows={rowsPerPage}
+                                    paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                                    autoLayout={true}
+                                    selectionMode="single"
+                                    onRowClick={e => redirecionaDetalhe(e.data)}
+                                >
+                                    <Column field='tipo_receita.nome' header='Tipo'/>
+                                    <Column field='conta_associacao.nome' header='Conta'/>
+                                    <Column field='acao_associacao.nome' header='Ação'/>
+                                    <Column
+                                        field='data'
+                                        header='Data'
+                                        body={dataTemplate}/>
+                                    <Column
+                                        field='valor'
+                                        header='Valor'
+                                        body={valorTemplate}/>
+                                </DataTable>
+                            </>
+                        )
                         : (
                             buscaUtilizandoFiltro ? (
                                     <MsgImgCentralizada
