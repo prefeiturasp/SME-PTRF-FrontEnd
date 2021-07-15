@@ -9,6 +9,7 @@ import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPre
 import {getDespesa} from "../../../../services/escolas/Despesas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
+import {ModalErroPrestacaoDeContasPosterior} from "../ModalErroPrestacaoDeContasPosterior";
 import {ModalNaoRecebida} from "../ModalNaoRecebida";
 import {ModalRecebida} from "../ModalRecebida";
 import {ModalConcluirAnalise} from "../ModalConcluirAnalise";
@@ -101,6 +102,9 @@ export const DetalhePrestacaoDeContas = () =>{
     const [tiposDevolucao, setTiposDevolucao] = useState([]);
     const [camposObrigatorios, setCamposObrigatorios] = useState(false);
     const [motivosAprovadoComRessalva, setMotivosAprovadoComRessalva] = useState([]);
+    const [showErroPrestacaoDeContasPosterior, setshowErroPrestacaoDeContasPosterior] = useState(false);
+    const [tituloErroPrestacaoDeContasPosterior, setTituloErroPrestacaoDeContasPosterior] = useState('');
+    const [textoErroPrestacaoDeContasPosterior, setTextoErroPrestacaoDeContasPosterior] = useState('');
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -276,8 +280,19 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const reabrirPrestacaoDeContas = async ()=>{
-        await getReabrirPrestacaoDeContas(prestacaoDeContas.uuid);
-        setRedirectListaPc(true)
+        try {
+            await getReabrirPrestacaoDeContas(prestacaoDeContas.uuid);
+            setTextoErroPrestacaoDeContasPosterior('')
+            setTituloErroPrestacaoDeContasPosterior('')
+            setRedirectListaPc(true)
+        }catch (e){
+            console.log("reabrirPrestacaoDeContas ", e.response)
+            if (e.response && e.response.data && e.response.data.mensagem){
+                setTituloErroPrestacaoDeContasPosterior('Reabrir período de Prestação de Contas')
+                setTextoErroPrestacaoDeContasPosterior(e.response.data.mensagem)
+                setshowErroPrestacaoDeContasPosterior(true)
+            }
+        }
     };
 
     const desfazerRecebimento = async () =>{
@@ -448,6 +463,7 @@ export const DetalhePrestacaoDeContas = () =>{
         setShowRecebida(false);
         setShowConcluirAnalise(false);
         setShowVoltarParaAnalise(false);
+        setshowErroPrestacaoDeContasPosterior(false)
     };
 
     const onReabrirTrue = async () => {
@@ -569,14 +585,37 @@ export const DetalhePrestacaoDeContas = () =>{
         if (formRef.current && informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim') {
             let validar =  await validateFormDevolucaoAoTesouro(formRef.current.values);
             if (!camposObrigatorios && Object.entries(validar).length === 0){
-                await getConcluirAnalise(prestacaoDeContas.uuid, payload);
-                await carregaPrestacaoDeContas();
+
+                try {
+                    await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+                    setTextoErroPrestacaoDeContasPosterior('')
+                    setTituloErroPrestacaoDeContasPosterior('')
+                    await carregaPrestacaoDeContas();
+                }catch (e){
+                    console.log("onConcluirAnalise ", e.response)
+                    if (e.response && e.response.data && e.response.data.mensagem){
+                        setTituloErroPrestacaoDeContasPosterior('Conclusão da análise da Prestação de Contas')
+                        setTextoErroPrestacaoDeContasPosterior(e.response.data.mensagem)
+                        setshowErroPrestacaoDeContasPosterior(true)
+                    }
+                }
             }else {
                 return formRef.current.setErrors( validar )
             }
         }else {
-            await getConcluirAnalise(prestacaoDeContas.uuid, payload);
-            await carregaPrestacaoDeContas();
+            try {
+                await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+                setTextoErroPrestacaoDeContasPosterior('')
+                setTituloErroPrestacaoDeContasPosterior('')
+                await carregaPrestacaoDeContas();
+            }catch (e){
+                console.log("onConcluirAnalise ", e.response)
+                if (e.response && e.response.data && e.response.data.mensagem){
+                    setTituloErroPrestacaoDeContasPosterior('Conclusão da análise da Prestação de Contas')
+                    setTextoErroPrestacaoDeContasPosterior(e.response.data.mensagem)
+                    setshowErroPrestacaoDeContasPosterior(true)
+                }
+            }
         }
     };
 
@@ -722,6 +761,16 @@ export const DetalhePrestacaoDeContas = () =>{
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="success"
                         segundoBotaoTexto="Confirmar"
+                    />
+                </section>
+                <section>
+                    <ModalErroPrestacaoDeContasPosterior
+                        show={showErroPrestacaoDeContasPosterior}
+                        handleClose={onHandleClose}
+                        titulo={tituloErroPrestacaoDeContasPosterior}
+                        texto={`<p>${textoErroPrestacaoDeContasPosterior}</p>`}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="success"
                     />
                 </section>
                 <section>
