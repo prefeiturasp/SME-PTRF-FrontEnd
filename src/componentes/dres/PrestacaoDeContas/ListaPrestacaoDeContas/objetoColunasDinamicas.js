@@ -7,6 +7,15 @@ export const colunasNaoRecebidas = [
     {field: 'acoes', header: 'Ações'},
 ];
 
+export const colunasTodosOsStatus = [
+    {field: 'unidade_eol', header: 'Código Eol'},
+    {field: 'unidade_nome', header: 'Nome da unidade'},
+    {field: 'tecnico_responsavel', header: 'Técnico atribuído'},
+    {field: 'data_recebimento', header: 'Data de recebimento'},
+    {field: 'status', header: 'Status'},
+    {field: 'acoes', header: 'Ações'},
+];
+
 export const colunasEmAnalise = [
     {field: 'unidade_eol', header: 'Código Eol'},
     {field: 'unidade_nome', header: 'Nome da escola'},

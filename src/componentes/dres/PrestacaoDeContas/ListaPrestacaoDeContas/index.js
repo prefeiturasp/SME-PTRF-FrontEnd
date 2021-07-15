@@ -3,7 +3,7 @@ import {useParams, Link, Redirect} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {getPeriodos} from "../../../../services/dres/Dashboard.service";
 import {TopoSelectPeriodoBotaoVoltar} from "./TopoSelectPeriodoBotaoVoltar";
-import {getPrestacoesDeContas, getPrestacoesDeContasNaoRecebidaNaoGerada, getQtdeUnidadesDre, getTabelasPrestacoesDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getPrestacoesDeContas, getPrestacoesDeContasNaoRecebidaNaoGerada, getQtdeUnidadesDre, getPrestacoesDeContasTodosOsStatus, getTabelasPrestacoesDeContas} from "../../../../services/dres/PrestacaoDeContas.service";
 import {BarraDeStatus} from "./BarraDeStatus";
 import {FormFiltros} from "./FormFiltros";
 import "../prestacao-de-contas.scss"
@@ -12,7 +12,7 @@ import moment from "moment";
 import {TabelaDinamica} from "./TabelaDinamica";
 import {getTecnicosDre} from "../../../../services/dres/TecnicosDre.service";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
-import {colunasAprovada, colunasEmAnalise, colunasNaoRecebidas} from "./objetoColunasDinamicas";
+import {colunasAprovada, colunasEmAnalise, colunasNaoRecebidas, colunasTodosOsStatus} from "./objetoColunasDinamicas";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../utils/Loading";
@@ -111,11 +111,14 @@ export const ListaPrestacaoDeContas = () => {
             let data_fim = stateFiltros.filtrar_por_data_fim ? moment(new Date(stateFiltros.filtrar_por_data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : '';
             let prestacoes_de_contas;
 
-            if (stateFiltros.filtrar_por_status === 'NAO_RECEBIDA' || stateFiltros.filtrar_por_status === 'NAO_APRESENTADA'){
+            if (stateFiltros.filtrar_por_status === 'NAO_RECEBIDA' || stateFiltros.filtrar_por_status === 'NAO_APRESENTADA') {
                 prestacoes_de_contas = await getPrestacoesDeContasNaoRecebidaNaoGerada(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade)
+            }else if (stateFiltros.filtrar_por_status === 'TODOS'){
+                prestacoes_de_contas = await getPrestacoesDeContasTodosOsStatus(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade)
             }else {
                 prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status, stateFiltros.filtrar_por_tecnico_atribuido, data_inicio, data_fim);
             }
+
             setPrestacaoDeContas(prestacoes_de_contas)
         }
         setLoading(false);
@@ -147,6 +150,8 @@ export const ListaPrestacaoDeContas = () => {
             setColumns(colunasEmAnalise)
         } else if (statusPrestacao === 'APROVADA' || statusPrestacao === 'APROVADA_RESSALVA') {
             setColumns(colunasAprovada)
+        } else if (statusPrestacao === 'TODOS') {
+            setColumns(colunasTodosOsStatus)
         } else {
             setColumns(colunasNaoRecebidas)
         }
@@ -227,19 +232,19 @@ export const ListaPrestacaoDeContas = () => {
                         />
                     </button>
                 }
-
             </div>
         )
     };
 
-
     const exibeLabelStatus = (status = null) => {
+
         let status_converter;
         if (status) {
             status_converter = status
         } else {
             status_converter = statusPrestacao
         }
+
         if (status_converter === 'NAO_RECEBIDA') {
             return {
                 texto_barra_de_status: 'não recebidas',
@@ -287,6 +292,12 @@ export const ListaPrestacaoDeContas = () => {
                 texto_barra_de_status: 'reprovadas',
                 texto_col_tabela: 'Reprovada',
                 texto_titulo: 'Prestações de contas reprovadas',
+            }
+        } else if (status_converter === 'TODOS') {
+            return {
+                texto_barra_de_status: 'todos os status',
+                texto_col_tabela: 'Todos',
+                texto_titulo: 'Prestações de contas todos os status',
             }
         } else {
             return {
@@ -354,7 +365,7 @@ export const ListaPrestacaoDeContas = () => {
                         statusDasPrestacoes={exibeLabelStatus(statusPrestacao ? statusPrestacao : stateFiltros.filtrar_por_status).texto_barra_de_status}
                     />
 
-                    <p className='titulo-explicativo mt-4 mb-4'>{exibeLabelStatus(statusPrestacao).texto_titulo}</p>
+                    <p className='titulo-explicativo mt-4 mb-4'>{exibeLabelStatus(statusPrestacao ? statusPrestacao : stateFiltros.filtrar_por_status).texto_titulo}</p>
 
                     <FormFiltros
                         stateFiltros={stateFiltros}
