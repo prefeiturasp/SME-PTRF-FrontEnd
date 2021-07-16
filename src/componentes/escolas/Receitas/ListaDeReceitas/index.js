@@ -47,7 +47,6 @@ export const ListaDeReceitas = () => {
     };
 
     const buscaTotaisReceitas = async (tipo_receita = "", acao_associacao__uuid = "", conta_associacao__uuid = "", data_inicio = "", data_fim = "") => {
-        console.log("entrei aqui");
         const listaTotais = await getTotaisReceitas(tipo_receita, acao_associacao__uuid, conta_associacao__uuid, data_inicio, data_fim);
         setTotais(listaTotais);
     };

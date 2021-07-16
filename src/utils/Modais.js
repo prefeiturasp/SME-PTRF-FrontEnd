@@ -100,6 +100,19 @@ export const SalvarReceita = (propriedades) => {
     )
 };
 
+export const AvisoTipoReceita = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Aviso"
+            bodyText={`<p>${propriedades.texto}</p>`}
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Ok"
+        />
+    )
+};
+
 export const RedirectModalTabelaLancamentos = (propriedades) => {
     return (
         <ModalBootstrap
