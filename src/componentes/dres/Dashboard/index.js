@@ -71,6 +71,7 @@ export const DreDashboard = () => {
                 <>
                     <BarraDeStatus
                         itensDashboard={itensDashboard}
+                        handleClickVerPrestacaoes={handleClickVerPrestacaoes}
                     />
                     <DashboardCard
                         itensDashboard={itensDashboard}
