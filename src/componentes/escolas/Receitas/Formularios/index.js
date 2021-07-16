@@ -17,7 +17,7 @@ import {ReceitaSchema} from '../Schemas';
 import moment from "moment";
 import {useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
-import {PeriodoFechado, ErroGeral, SalvarReceita} from "../../../../utils/Modais";
+import {PeriodoFechado, ErroGeral, SalvarReceita, AvisoTipoReceita} from "../../../../utils/Modais";
 import {ModalDeletarReceita} from "../ModalDeletarReceita";
 import {CancelarModalReceitas} from "../CancelarModalReceitas";
 import {ModalReceitaConferida} from "../ModalReceitaJaConferida";
@@ -61,6 +61,7 @@ export const ReceitaForm = () => {
     const [showErroGeral, setShowErroGeral] = useState(false);
     const [showCadastrarSaida, setShowCadastrarSaida] = useState(false);
     const [showEditarSaida, setShowEditarSaida] = useState(false);
+    const [showAvisoTipoReceita, setShowAvisoTipoReceita] = useState(false);
     const [showSalvarReceita, setShowSalvarReceita] = useState(false);
     const [initialValue, setInitialValue] = useState(initial);
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
@@ -83,6 +84,7 @@ export const ReceitaForm = () => {
     const [showSelecionaRepasse, setShowSelecionaRepasse] = useState(false);
 
     const [msgDeletarReceita, setmsgDeletarReceita] = useState('<p>Tem certeza que deseja excluir este crédito? A ação não poderá ser desfeita.</p>')
+    const [msgAvisoTipoReceita, setMsgAvisoTipoReceita] = useState('');
 
     const [exibeModalSalvoComSucesso, setExibeModalSalvoComSucesso] = useState(true)
 
@@ -145,6 +147,7 @@ export const ReceitaForm = () => {
                     showBotaoCadastrarSaida(resp.acao_associacao.uuid, init)
                 }
                 periodoFechado(resp.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+                getAvisoTipoReceita(resp.tipo_receita.id);
                 if (resp.repasse !== null) {
                     setRepasse(resp.repasse);
                     setReadOnlyValor(true);
@@ -260,6 +263,7 @@ export const ReceitaForm = () => {
         setShowDelete(false);
         setShowPeriodoFechado(false);
         setShowErroGeral(false);
+        setShowAvisoTipoReceita(false);
         
     };
 
@@ -381,6 +385,19 @@ export const ReceitaForm = () => {
             })
         }
     };
+
+    const getAvisoTipoReceita = (id_tipo_receita) => {
+        if(id_tipo_receita){
+            tabelas.tipos_receita.map((item, index) => {
+                if (item.id == id_tipo_receita){
+                    if(item.mensagem_usuario != ""){
+                        setMsgAvisoTipoReceita(item.mensagem_usuario);
+                        setShowAvisoTipoReceita(true);
+                    }
+                }
+            }) 
+        }
+    }
 
     const getDisplayOptionClassificacaoReceita = (id_categoria_receita, id_tipo_receita) => {
 
@@ -633,6 +650,7 @@ export const ReceitaForm = () => {
                                             consultaRepasses(e.target.value);
                                             getClassificacaoReceita(e.target.value, setFieldValue);
                                             setaDetalhesTipoReceita(e.target.value);
+                                            getAvisoTipoReceita(e.target.value);
                                             if (e.target.value !== "" && !tabelas.tipos_receita.find(element => element.id === Number(e.target.value)).e_recursos_proprios) {
                                                 setShowCadastrarSaida(false);
                                             } else if (e.target.value !== "" && tabelas.tipos_receita.find(element => element.id === Number(e.target.value)).e_recursos_proprios) {
@@ -935,6 +953,13 @@ export const ReceitaForm = () => {
             </section>
             <section>
                 <ErroGeral show={showErroGeral} handleClose={onHandleClose}/>
+            </section>
+            <section>
+                <AvisoTipoReceita 
+                    show={showAvisoTipoReceita} 
+                    handleClose={onHandleClose}
+                    texto={msgAvisoTipoReceita}
+                />
             </section>
             <section>
                 <SalvarReceita show={showSalvarReceita} handleClose={fecharSalvarCredito}/>
