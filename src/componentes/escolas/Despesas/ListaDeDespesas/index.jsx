@@ -34,6 +34,7 @@ export class ListaDeDespesas extends Component {
     buscaRateiosDespesas = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "") => {
         const rateiosDespesas = await getListaRateiosDespesas();
         this.setState({rateiosDespesas})
+        this.setState({loading: false})
     };
 
     reusltadoSomaDosTotais = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "", fornecedor = "", data_inicio = "", data_fim = "") => {
@@ -44,7 +45,6 @@ export class ListaDeDespesas extends Component {
     componentDidMount() {
         this.buscaRateiosDespesas();
         this.reusltadoSomaDosTotais();
-        this.setState({loading: false})
     }
 
     numeroDocumentoStatusTemplate(rowData) {

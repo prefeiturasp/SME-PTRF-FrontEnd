@@ -127,6 +127,7 @@ export const CadastroSaidaForm = () => {
                     }
 
                     setReceita(resp);
+                    setLoading(false); 
                 }).catch(error => {
                     console.log(error);
                 });
@@ -134,7 +135,6 @@ export const CadastroSaidaForm = () => {
         };
         buscaReceita();
         carregaTabelasDespesas();
-        setLoading(false);
     }, [uuid_receita, uuid_despesa])
 
     // Validações adicionais
