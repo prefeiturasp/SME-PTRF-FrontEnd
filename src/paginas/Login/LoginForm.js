@@ -4,11 +4,13 @@ import {YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios"
 import { authService } from "../../services/auth.service";
 import ReactTooltip from "react-tooltip";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons'
+import {faQuestionCircle, faEye, faEyeSlash} from '@fortawesome/free-solid-svg-icons'
 
 export const LoginForm = ({redefinicaoDeSenha}) => {
     const [msgUsuario, setMsgUsuario] = useState('');
     const [msgSenha, setMsgSenha] = useState('');
+    const [showPassword, setShowPassword] = useState("password");
+    const [iconShowPassword, setIconShowPassword] = useState(faEyeSlash);
 
     const initialValues = () => (
         {login: "", senha: ""}
@@ -23,6 +25,17 @@ export const LoginForm = ({redefinicaoDeSenha}) => {
             }else {
                 setMsgUsuario('Número de usuário inválido')
             }
+        }
+    };
+
+    const showHidePassword = () => {
+        if (showPassword === "password"){
+            setShowPassword("text");
+            setIconShowPassword(faEye);
+        }
+        else if(showPassword === "text"){
+            setShowPassword("password");
+            setIconShowPassword(faEyeSlash);
         }
     };
 
@@ -63,17 +76,29 @@ export const LoginForm = ({redefinicaoDeSenha}) => {
                         </div>
                         <div className="form-group">
                             <label htmlFor="senha">Senha</label>
-                            <input
-                                type="password"
-                                value={props.values.senha}
-                                name="senha"
-                                id="senha"
-                                className={`form-control ${msgSenha ? 'falha-login' : ''}`}
-                                onChange={props.handleChange}
-                                onBlur={props.handleBlur}
-                                maxLength='16'
-                                onClick={()=>setMsgSenha('')}
-                            />
+                            <div className="input-group">
+                                <input
+                                    type={showPassword}
+                                    value={props.values.senha}
+                                    name="senha"
+                                    id="senha"
+                                    className={`form-control ${msgSenha ? 'falha-login' : ''}`}
+                                    onChange={props.handleChange}
+                                    onBlur={props.handleBlur}
+                                    maxLength='16'
+                                    onClick={()=>setMsgSenha('')}
+                                />
+                                <span className="input-group-btn">
+                                    <button className="btn btn-default" type="button" onClick={() => showHidePassword()}>
+                                        <i className="glyphicon">
+                                            <FontAwesomeIcon
+                                                style={{fontSize: '18px', color:'#42474A'}}
+                                                icon={iconShowPassword}
+                                            />
+                                        </i>
+                                    </button>
+                                </span>
+                            </div>
                             {props.touched.login && props.errors.senha && <span className="span_erro text-danger mt-1"> {props.errors.senha} </span>}
                             {msgSenha && !props.errors.login && <span className="span_erro text-danger mt-1">{msgSenha}</span>}
                         </div>
