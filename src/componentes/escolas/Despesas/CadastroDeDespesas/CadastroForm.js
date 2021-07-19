@@ -102,9 +102,10 @@ export const CadastroForm = ({verbo_http}) => {
                 const resposta = await getEspecificacoesCusteio(tipoCusteio.id);
                 let_especificacoes_custeio[tipoCusteio.id] = await resposta
             });
-            set_especificacoes_custeio(let_especificacoes_custeio)
+            set_especificacoes_custeio(let_especificacoes_custeio);
+            setLoading(false);
         };
-        carregaTabelasDespesas();
+        carregaTabelasDespesas();   
     }, []);
 
     useEffect(() => {
@@ -112,10 +113,6 @@ export const CadastroForm = ({verbo_http}) => {
             const resp = await getEspecificacoesCapital();
             set_especificaoes_capital(resp)
         })();
-    }, []);
-
-    useEffect(() => {
-        setLoading(false)
     }, []);
 
     const initialValues = () => {
