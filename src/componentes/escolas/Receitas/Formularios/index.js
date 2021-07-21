@@ -532,12 +532,28 @@ export const ReceitaForm = () => {
 
     const validateFormReceitas = async (values) => {
         const errors = {};
-
+        
         // Verifica se é devolucao e setando erro caso referencia devolucao vazio
         if (verificaSeDevolucao(values.tipo_receita)  && !values.referencia_devolucao){
             errors.referencia_devolucao = "Campo período é obrigatório"
         }
 
+        // Verifica se o detalhamento deve ser exibido e setando erro caso campo esteja vazio
+        // Condicional para a select box de id detalhe_tipo_receita
+        if(verificaSeExibeDetalhamento(values.tipo_receita) && !values.detalhe_tipo_receita){
+            if(temOpcoesDetalhesTipoReceita(values)){
+                errors.detalhe_tipo_receita = "Campo detalhe é obrigatório";
+            }
+        }
+
+        // Verifica se o detalhamento deve ser exibido e setando erro caso campo esteja vazio
+        // Condicional para o input de id detalhe_outros
+        if(verificaSeExibeDetalhamento(values.tipo_receita) && !values.detalhe_outros){
+            if(temOpcoesDetalhesTipoReceita(values) === false){
+                errors.detalhe_outros = "Campo detalhe é obrigatório";
+            } 
+        }
+        
         // Verifica período fechado para a receita
         if (values.data) {
             await periodoFechado(values.data, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
@@ -584,6 +600,21 @@ export const ReceitaForm = () => {
         }
     };
 
+    const verificaSeExibeDetalhamento = (tipoDeReceitaId) => {
+        let possui_detalhamento = undefined;
+        if(tipoDeReceitaId){
+            let possui_detalhamento = tabelas.tipos_receita.find(element=> element.id === Number(tipoDeReceitaId));
+            if(possui_detalhamento){
+                return possui_detalhamento.possui_detalhamento;
+            }
+            else{
+                return possui_detalhamento;
+            }
+        }
+        else{
+            return possui_detalhamento;
+        }
+    }
 
     const trataRepasse = async (repasse_row, setFieldValue, valor, nome_classificacao) => {
         await setaRepasse(repasse_row);
@@ -678,40 +709,50 @@ export const ReceitaForm = () => {
                                 {/*Fim Tipo de Receita */}
 
                                 {/*Detalhamento do Crédito */}
-                                <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="detalhe_tipo_receita">Detalhamento do crédito</label>
-                                    {temOpcoesDetalhesTipoReceita(props.values) ?
-                                        <select
-                                            id="detalhe_tipo_receita"
-                                            name="detalhe_tipo_receita"
-                                            disabled={readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
-                                            value={props.values.detalhe_tipo_receita ? props.values.detalhe_tipo_receita.id : ""}
-                                            onChange={(e) => {
-                                                props.handleChange(e);
-                                            }
-                                            }
-                                            onBlur={props.handleBlur}
-                                            className="form-control"
-                                        >
-                                            {receita.detalhe_tipo_receita
-                                                ? null
-                                                : <option value="">Selecione o detalhamento</option>}
-                                            {getOpcoesDetalhesTipoReceita(props.values)}
+                                {verificaSeExibeDetalhamento(props.values.tipo_receita) && 
+                                    <div className="col-12 col-md-6 mt-4">
+                                        <label htmlFor="detalhe_tipo_receita">Detalhamento do crédito</label>
+                                        {temOpcoesDetalhesTipoReceita(props.values) ?
+                                            <>
+                                                <select
+                                                    id="detalhe_tipo_receita"
+                                                    name="detalhe_tipo_receita"
+                                                    disabled={readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                                    value={props.values.detalhe_tipo_receita ? props.values.detalhe_tipo_receita.id : ""}
+                                                    onChange={(e) => {
+                                                        props.handleChange(e);
+                                                    }
+                                                    }
+                                                    onBlur={props.handleBlur}
+                                                    className="form-control"
+                                                >
+                                                    {receita.detalhe_tipo_receita
+                                                        ? null
+                                                        : <option value="">Selecione o detalhamento</option>}
+                                                    {getOpcoesDetalhesTipoReceita(props.values)}
 
-                                        </select>
-                                        :
-                                        <input
-                                            value={props.values.detalhe_outros}
-                                            onChange={props.handleChange}
-                                            onBlur={props.handleBlur}
-                                            name="detalhe_outros" id="detalhe_outros" type="text"
-                                            className="form-control"
-                                            placeholder="Digite o detalhamento"
-                                            disabled={readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
-                                        />
-                                    }
-                                    {props.touched.detalhe_tipo_receita && props.errors.detalhe_tipo_receita && <span className="span_erro text-danger mt-1"> {props.errors.detalhe_tipo_receita}</span>}
-                                </div>
+                                                </select>
+                                                {props.touched.detalhe_tipo_receita && props.errors.detalhe_tipo_receita && <span className="span_erro text-danger mt-1"> {props.errors.detalhe_tipo_receita}</span>}
+                                            </>
+                                                :
+                                            <>
+                                                <input
+                                                    value={props.values.detalhe_outros}
+                                                    onChange={(e) => {
+                                                        props.handleChange(e);
+                                                    }
+                                                    }
+                                                    onBlur={props.handleBlur}
+                                                    name="detalhe_outros" id="detalhe_outros" type="text"
+                                                    className="form-control"
+                                                    placeholder="Digite o detalhamento"
+                                                    disabled={readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                                />
+                                                {props.touched.detalhe_outros && props.errors.detalhe_outros && <span className="span_erro text-danger mt-1"> {props.errors.detalhe_outros}</span>}
+                                            </>
+                                        }
+                                    </div>
+                                }
                                 {/*Fim Detalhamento do Crédito */}
 
                                 {/*Periodo Devolução */}
