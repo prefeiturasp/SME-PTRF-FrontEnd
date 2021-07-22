@@ -35,7 +35,7 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
                             onChange={(e) => handleChangeFormRecebimentoPelaDiretoria(e.target.name, e.target.value)}
                             name="status"
                             id="status"
-                            className="form-control"
+                            className="form-control retira-dropdown-select"
                             disabled={disabledStatus}
                         >
                             {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.map(item => (
