@@ -542,7 +542,7 @@ export const ReceitaForm = () => {
         // Condicional para a select box de id detalhe_tipo_receita
         if(verificaSeExibeDetalhamento(values.tipo_receita) && !values.detalhe_tipo_receita){
             if(temOpcoesDetalhesTipoReceita(values)){
-                errors.detalhe_tipo_receita = "Campo detalhe é obrigatório";
+                errors.detalhe_tipo_receita = "Detalhamento do crédito é obrigatório";
             }
         }
 
@@ -550,7 +550,7 @@ export const ReceitaForm = () => {
         // Condicional para o input de id detalhe_outros
         if(verificaSeExibeDetalhamento(values.tipo_receita) && !values.detalhe_outros){
             if(temOpcoesDetalhesTipoReceita(values) === false){
-                errors.detalhe_outros = "Campo detalhe é obrigatório";
+                errors.detalhe_outros = "Detalhamento do crédito é obrigatório";
             } 
         }
         
