@@ -50,6 +50,7 @@ export const GestaoDePerfisFormFormik = (
         serviceTemUnidadeDre,
         serviceTemUnidadeUE,
         pesquisaVisao,
+        pesquisaPermissaoExibicaoVisao,
     }) => {
 
     return (
@@ -255,7 +256,7 @@ export const GestaoDePerfisFormFormik = (
                                         }}
                                     >
                                         {grupos && grupos.length > 0 && grupos.map((grupo, index_grupos) => (
-                                            <option key={index_grupos} value={grupo.id}>{grupo.nome}</option>
+                                                <option disabled={!pesquisaPermissaoExibicaoVisao(grupo.visao)} key={index_grupos} value={grupo.id}>{grupo.nome}</option>
                                         ))}
                                     </Field>
                                     {props.errors.groups &&
