@@ -34,6 +34,7 @@ export class ListaDeDespesas extends Component {
     buscaRateiosDespesas = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "") => {
         const rateiosDespesas = await getListaRateiosDespesas();
         this.setState({rateiosDespesas})
+        this.setState({loading: false})
     };
 
     reusltadoSomaDosTotais = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "", fornecedor = "", data_inicio = "", data_fim = "") => {
@@ -44,7 +45,6 @@ export class ListaDeDespesas extends Component {
     componentDidMount() {
         this.buscaRateiosDespesas();
         this.reusltadoSomaDosTotais();
-        this.setState({loading: false})
     }
 
     numeroDocumentoStatusTemplate(rowData) {
@@ -112,7 +112,12 @@ export class ListaDeDespesas extends Component {
     }
 
     redirecionaDetalhe = value => {
-        const url = '/edicao-de-despesa/' + value.despesa;
+        let url
+        if (value.receitas_saida_do_recurso) {
+            url = `/cadastro-de-despesa-recurso-proprio/${value.receitas_saida_do_recurso}/${value.despesa}`
+        } else {
+            url = '/edicao-de-despesa/' + value.despesa;
+        }
         redirect(url)
     };
 
@@ -126,9 +131,7 @@ export class ListaDeDespesas extends Component {
         const rowsPerPage = 10;
 
         return (
-
             <div>
-
                 {
                     this.state.loading ? (
                             <Loading
@@ -141,7 +144,8 @@ export class ListaDeDespesas extends Component {
                         <>
                             <Row>
                                 <div className="col-12">
-                                    <p>Filtrar por {!this.state.btnMaisFiltros ? "especificação do material ou serviço" : ""}</p>
+                                    <p>Filtrar
+                                        por {!this.state.btnMaisFiltros ? "especificação do material ou serviço" : ""}</p>
                                 </div>
                                 <Col lg={7} xl={7}
                                      className={`pr-0 ${!this.state.btnMaisFiltros ? "lista-de-despesas-visible" : "lista-de-despesas-invisible"}`}>

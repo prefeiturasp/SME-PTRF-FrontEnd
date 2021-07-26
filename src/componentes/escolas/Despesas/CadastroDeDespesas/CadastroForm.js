@@ -14,7 +14,7 @@ import {
     alterarDespesa,
     getEspecificacoesCapital,
     getEspecificacoesCusteio,
-    getDespesaCadastrada
+    getDespesaCadastrada, deleteDespesa
 } from "../../../../services/escolas/Despesas.service";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import {useParams} from 'react-router-dom';
@@ -44,6 +44,8 @@ import {visoesService} from "../../../../services/visoes.service";
 import moment from "moment";
 import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
 import {ModalDespesaIncompleta} from "./ModalDespesaIncompleta";
+import {ModalErroDeletarCadastroDespesa} from "./ModalErroDeletarCadastroDespesa";
+import {ModalDeletarDespesa} from "./ModalDeletarDespesa";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -102,9 +104,10 @@ export const CadastroForm = ({verbo_http}) => {
                 const resposta = await getEspecificacoesCusteio(tipoCusteio.id);
                 let_especificacoes_custeio[tipoCusteio.id] = await resposta
             });
-            set_especificacoes_custeio(let_especificacoes_custeio)
+            set_especificacoes_custeio(let_especificacoes_custeio);
+            setLoading(false);
         };
-        carregaTabelasDespesas();
+        carregaTabelasDespesas();   
     }, []);
 
     useEffect(() => {
@@ -112,10 +115,6 @@ export const CadastroForm = ({verbo_http}) => {
             const resp = await getEspecificacoesCapital();
             set_especificaoes_capital(resp)
         })();
-    }, []);
-
-    useEffect(() => {
-        setLoading(false)
     }, []);
 
     const initialValues = () => {
@@ -355,6 +354,34 @@ export const CadastroForm = ({verbo_http}) => {
     const houveAlteracoes = (values) => {
         return !comparaObjetos(values, objetoParaComparacao)
     }
+
+    const [showModalErroDeletarDespesa, setShowModalErroDeletarDespesa] = useState(false)
+    const [textoModalErroDeletarDespesa, setTextoModalErroDeletarDespesa] = useState('')
+
+    const onDeletarTrue = async (setShowDelete, setLoading, despesaContext, origem) => {
+        setShowDelete(false);
+        setLoading(true);
+
+        try {
+            await deleteDespesa(despesaContext.idDespesa)
+            console.log("Despesa deletada com sucesso.");
+            aux.getPath(origem);
+        }catch (error){
+            console.log(error.response);
+            let texto_erro = ''
+            if (error && error.response && error.response.data && error.response.data.error && error.response.data.error.itens_erro && error.response.data.error.itens_erro.length > 0){
+                texto_erro += '<p class="mb-2">Despesa não pode ser apagada porque os seguintes itens fazem referência a ela:</p>'
+                error.response.data.error.itens_erro.map((erro)=>(
+                    texto_erro += `<p class="mb-1"><small>${erro}</small></p>`
+                ))
+            }else {
+                texto_erro += '<p class="mb-0">Despesa não pode ser apagada porque é referenciada no sistema</p>'
+            }
+            setTextoModalErroDeletarDespesa(texto_erro)
+            setShowModalErroDeletarDespesa(true)
+            setLoading(false);
+        }
+    };
 
     return (
         <>
@@ -899,7 +926,7 @@ export const CadastroForm = ({verbo_http}) => {
                 <DeletarModal
                     show={showDelete}
                     handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
-                    onDeletarTrue={() => aux.onDeletarTrue(setShowDelete, setLoading, despesaContext, origem)}
+                    onDeletarTrue={() => onDeletarTrue(setShowDelete, setLoading, despesaContext, origem)}
                 />
                 : null
             }
@@ -913,6 +940,14 @@ export const CadastroForm = ({verbo_http}) => {
                 <ErroGeral
                     show={showErroGeral}
                     handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                />
+            </section>
+            <section>
+                <ModalErroDeletarCadastroDespesa
+                    show={showModalErroDeletarDespesa}
+                    handleClose={() => setShowModalErroDeletarDespesa(false)}
+                    titulo="Exclusão de Despesa"
+                    texto={textoModalErroDeletarDespesa}
                 />
             </section>
         </>

@@ -14,6 +14,7 @@ export const FormFiltrosAvancados = (props) => {
         fornecedor: "",
         data_inicio: "",
         data_fim: "",
+        conta_associacao: ""
     };
 
     const {btnMaisFiltros, onClickBtnMaisFiltros, setBuscaUtilizandoFiltro, setLista, iniciaLista, reusltadoSomaDosTotais} = props;
@@ -41,7 +42,7 @@ export const FormFiltrosAvancados = (props) => {
         let data_inicio = state.data_inicio ? moment(new Date(state.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
         let data_fim = state.data_fim ? moment(new Date(state.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
         reusltadoSomaDosTotais(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status, state.fornecedor, data_inicio, data_fim);
-        const lista_retorno_api = await filtrosAvancadosRateios(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status, state.fornecedor, data_inicio, data_fim);
+        const lista_retorno_api = await filtrosAvancadosRateios(state.filtrar_por_termo, state.aplicacao_recurso, state.acao_associacao, state.despesa_status, state.fornecedor, data_inicio, data_fim, state.conta_associacao);
         setLista(lista_retorno_api);
         setBuscaUtilizandoFiltro(true);
     };
@@ -101,39 +102,59 @@ export const FormFiltrosAvancados = (props) => {
                                 <option key="INCOMPLETO" value="INCOMPLETO">RASCUNHO</option>
                             </select>
                         </div>
-                        <div className="form-group col-md-6">
-                            <label htmlFor="fornecedor">Filtrar por fornecedor</label>
-                            <input
-                                value={state.fornecedor}
-                                onChange={(e) => handleChange(e.target.name, e.target.value)}
-                                name="fornecedor"
-                                id="fornecedor"
-                                type="text"
-                                className="form-control"
-                                placeholder="Escreva a razão social"
-                            />
-                        </div>
-                        <div className="form-group col-md-6">
-                            <label htmlFor="data_inicio">Filtrar por período</label>
-                            <div className="row align-items-center">
-                                <div className="col-12 col-md-5 pr-0">
-                                    <DatePickerField
-                                        name="data_inicio"
-                                        id="data_inicio"
-                                        value={state.data_inicio}
-                                        onChange={handleChange}
+
+                        <div className="col-12">
+                            <div className="row">
+                                <div className="form-group col-md-5">
+                                    <label htmlFor="fornecedor">Filtrar por fornecedor</label>
+                                    <input
+                                        value={state.fornecedor}
+                                        onChange={(e) => handleChange(e.target.name, e.target.value)}
+                                        name="fornecedor"
+                                        id="fornecedor"
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Escreva a razão social"
                                     />
                                 </div>
-                                <div className="col-12 col-md-2 p-0 text-md-center ">
-                                    <span>até</span>
+
+                                <div className="form-group col-md-3">
+                                    <label htmlFor="conta_associacao">Filtrar por tipo de conta</label>
+                                    <select id="conta_associacao" name="conta_associacao" value={state.conta_associacao}
+                                            onChange={(e) => handleChange(e.target.name, e.target.value)}
+                                            className="form-control"
+                                    >
+                                        <option key={0} value="">Selecione um tipo</option>
+                                        {despesasTabelas.contas_associacao !== undefined && despesasTabelas.contas_associacao.length > 0 ? (despesasTabelas.contas_associacao.map((item, key) => (
+                                            <option key={key} value={item.uuid}>{item.nome}</option>
+                                        ))) : null}
+                                    </select>
                                 </div>
-                                <div className="col-12 col-md-5 pl-0">
-                                    <DatePickerField
-                                        name="data_fim"
-                                        id="data_fim"
-                                        value={state.data_fim}
-                                        onChange={handleChange}
-                                    />
+
+
+                                <div className="form-group col-md-4">
+                                    <label htmlFor="data_inicio">Filtrar por período</label>
+                                    <div className="row align-items-center">
+                                        <div className="col-12 col-md-5 pr-0">
+                                            <DatePickerField
+                                                name="data_inicio"
+                                                id="data_inicio"
+                                                value={state.data_inicio}
+                                                onChange={handleChange}
+                                            />
+                                        </div>
+                                        <div className="col-12 col-md-2 p-0 text-md-center ">
+                                            <span>até</span>
+                                        </div>
+                                        <div className="col-12 col-md-5 pl-0">
+                                            <DatePickerField
+                                                name="data_fim"
+                                                id="data_fim"
+                                                value={state.data_fim}
+                                                onChange={handleChange}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

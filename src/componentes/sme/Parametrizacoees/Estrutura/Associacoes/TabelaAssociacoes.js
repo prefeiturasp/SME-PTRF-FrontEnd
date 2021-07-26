@@ -12,8 +12,8 @@ export const TabelaAssociacoes = ({listaDeAssociacoes, rowsPerPage, acoesTemplat
             rows={rowsPerPage}
         >
             <Column field="nome" header="Nome da Associação"/>
-            <Column field="cnpj" header="CNPJ"/>
             <Column field="unidade.nome_com_tipo" header="Unidade educacional"/>
+            <Column field="unidade.nome_dre" header="DRE"/>
             <Column
                 field="acoes"
                 header="Ações"
