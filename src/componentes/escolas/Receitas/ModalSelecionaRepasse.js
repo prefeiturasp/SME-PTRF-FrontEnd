@@ -32,7 +32,7 @@ export const ModalSelecionaRepasse = (propriedades) => {
 
     return (
         <Fragment>
-            <Modal centered show={propriedades.show}>
+            <Modal size="lg" centered show={propriedades.show}>
                 <Modal.Header>
                     <Modal.Title>{propriedades.titulo}</Modal.Title>
                 </Modal.Header>
