@@ -37,7 +37,7 @@ pipeline {
         
 
         stage('Build') {
-          when { anyOf { branch 'master'; branch 'main'; branch "story/*"; branch 'develop'; branch 'release'; branch 'homolog';  } } 
+          when { anyOf { branch 'master'; branch 'main'; branch "story/*"; branch 'development'; branch 'develop'; branch 'release'; branch 'homolog';  } } 
           steps {
             script {
               imagename1 = "registry.sme.prefeitura.sp.gov.br/${env.branchname}/ptrf-frontend"
@@ -55,32 +55,50 @@ pipeline {
         }
 	    
         stage('Deploy'){
-            when { anyOf {  branch 'master'; branch 'main'; branch 'development'; branch 'develop'; branch 'release'; branch 'homolog';  } }        
+            when { anyOf {  branch 'master'; branch 'main'; branch 'develop'; branch 'development'; branch 'release'; branch 'homolog';  } }        
             steps {
                 script{
                     if ( env.branchname == 'main' ||  env.branchname == 'master' || env.branchname == 'homolog' || env.branchname == 'release' ) {
                         sendTelegram("🤩 [Deploy ${env.branchname}] Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nMe aprove! \nLog: \n${env.BUILD_URL}")
-                        
-			    timeout(time: 24, unit: "HOURS") {
-                            input message: 'Deseja realizar o deploy?', ok: 'SIM', submitter: 'alessandro_fernandes, kelwy_oliveira, anderson_morais, ollyver_ottoboni'
+                        timeout(time: 24, unit: "HOURS") {
+                            input message: 'Deseja realizar o deploy?', ok: 'SIM', submitter: 'kelwy_oliveira, anderson_morais, luis_zimmermann, rodolpho_azeredo'
                         }
-			    
                         withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
                             sh('cp $config '+"$home"+'/.kube/config')
                             sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-ptrf'
-                            sh('rm -f '+"$home"+'/.kube/config')
+                            
                         }
                     }
                     else{
                         withCredentials([file(credentialsId: "${kubeconfig}", variable: 'config')]){
                             sh('cp $config '+"$home"+'/.kube/config')
                             sh 'kubectl rollout restart deployment/ptrf-frontend -n sme-ptrf'
-                            sh('rm -f '+"$home"+'/.kube/config')
+                            
                         }
                     }
                 }
             }           
-        }    
+        } 
+
+        stage('Ambientes'){
+            when { anyOf {  branch 'master'; branch 'main' } }
+            parallel {
+            stage('Treino'){          
+              steps {
+                 sh 'kubectl rollout restart deployment/treinamento-frontend -n sigescola-treinamento'
+              }
+            }
+
+            stage('Pre-Prod'){          
+              steps {
+                  sh 'kubectl rollout restart deployment/sigescolapre-frontend -n sme-sigescola-pre'
+              }
+            }
+
+
+            }  
+        }
+
     }
 
   post {
@@ -108,5 +126,4 @@ def getKubeconf(branchName) {
     else if ("homolog".equals(branchName)) { return "config_hom"; }
     else if ("release".equals(branchName)) { return "config_hom"; }
     else if ("development".equals(branchName)) { return "config_dev"; }
-    else if ("develop".equals(branchName)) { return "config_dev"; }	
 }
