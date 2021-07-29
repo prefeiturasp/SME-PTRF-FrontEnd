@@ -68,21 +68,60 @@ export const GestaoDePerfisFormFormik = (
                     resetForm,
                     values,
                 } = props;
-                return (
+                    let vinculoUnidade = props.values.unidades_vinculadas.find(element => element.uuid === initPerfisForm.unidade_selecionada)
+                    console.log("Unidade selecionada #####", vinculoUnidade)
+                    let exibirBotaoDesvincular = (initPerfisForm.visao === "UE" && vinculoUnidade);
+                    let temOutrasUnidadesOuVisoes = (
+                        (vinculoUnidade && props.values.unidades_vinculadas.length > 1) ||
+                        (!vinculoUnidade && props.values.unidades_vinculadas.length > 0) ||
+                        props.values.visoes.includes(pesquisaVisao("DRE").id) ||
+                        props.values.visoes.includes(pesquisaVisao("SME").id)
+                    )
+                    return (
                     <form onSubmit={props.handleSubmit}>
                         <div className="d-flex bd-highlight mt-2">
                             <div className="p-Y flex-grow-1 bd-highlight">
                                 <p className='titulo-gestao-de-perfis-form'>{!statePerfisForm.id ? 'Adicionar' : 'Editar'} usuário</p>
                             </div>
+
                             <div className="p-Y bd-highlight">
-                                {statePerfisForm.id &&
+                                {statePerfisForm.id && exibirBotaoDesvincular &&
+                                <button
+                                    onClick={async () => {
+                                            if (vinculoUnidade) {
+                                                    await desvinculaUnidadeUsuario(vinculoUnidade)
+                                            }
+                                            if (! temOutrasUnidadesOuVisoes) {
+                                                    setShowModalDeletePerfil(true)
+                                            } else {
+                                                window.location.assign('/gestao-de-perfis/');
+                                            }
+                                    }}
+                                    type="button"
+                                    className="btn btn btn-danger mt-2"
+                                >
+                                    <FontAwesomeIcon
+                                        style={{
+                                            fontSize: '15px',
+                                            marginRight: "5px",
+                                            color: '#fff'
+                                        }}
+                                        icon={faTrash}
+                                    />
+                                        {temOutrasUnidadesOuVisoes ? "Desvincular usuário" : "Desvilcular e excluir"}
+                                </button>
+                                }
+                            </div>
+
+                            <div className="p-Y bd-highlight">
+                                {statePerfisForm.id && initPerfisForm.visao !== "UE" &&
                                 <button
                                     disabled={serviceTemUnidadeDre(props.values.unidades_vinculadas) || serviceTemUnidadeUE(props.values.unidades_vinculadas) || props.values.visoes.includes(pesquisaVisao("SME").id)}
                                     onClick={() => {
                                         setShowModalDeletePerfil(true)
                                     }}
                                     type="button"
-                                    className="btn btn btn-danger mt-2"
+                                    className="btn btn btn-danger mt-2 ml-2"
                                 >
                                     <FontAwesomeIcon
                                         style={{
@@ -231,7 +270,7 @@ export const GestaoDePerfisFormFormik = (
                                                             getEstadoInicialVisoesChecked()
                                                         }}
                                                         checked={props.values.visoes.includes(parseInt(visao.id))}
-                                                        disabled={!visao.editavel}
+                                                        disabled={!visao.editavel || initPerfisForm.visao === "UE"}
                                                     />
                                                     <label className="form-check-label"
                                                            htmlFor={visao.nome}>{visao.nome}</label>
@@ -275,12 +314,13 @@ export const GestaoDePerfisFormFormik = (
                                 </p>
                             </div>
                             }
-                            {values.id && initPerfisForm.visao !== "UE" &&
+                            {values.id  && initPerfisForm.visao !== "UE" &&
                             <FieldArray
                                 name="unidades_vinculadas"
                                 render={({remove, push}) => (
                                     <>
                                         {props.values.unidades_vinculadas && props.values.unidades_vinculadas.length > 0 && props.values.unidades_vinculadas.map((unidade_vinculada, index_field_array) => {
+                                                console.log("UV ********:", unidade_vinculada)
                                             return (
                                                 <div className="col-12" key={index_field_array}>
                                                     <div className='row'>

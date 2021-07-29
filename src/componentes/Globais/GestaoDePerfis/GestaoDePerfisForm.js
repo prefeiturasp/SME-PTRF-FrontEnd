@@ -26,6 +26,7 @@ export const GestaoDePerfisForm = () =>{
         visoes: [],
         unidade: "",
         unidades_vinculadas: [],
+        unidade_selecionada: uuid_unidade
     };
 
     const [statePerfisForm, setStatePerfisForm] = useState(initPerfisForm);
