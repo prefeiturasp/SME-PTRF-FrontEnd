@@ -26,6 +26,7 @@ export const GestaoDePerfisForm = () =>{
         visoes: [],
         unidade: "",
         unidades_vinculadas: [],
+        unidade_selecionada: uuid_unidade
     };
 
     const [statePerfisForm, setStatePerfisForm] = useState(initPerfisForm);
@@ -515,18 +516,28 @@ export const GestaoDePerfisForm = () =>{
             // Removendo itens duplicados
             let grupos_concatenados_sem_repeticao = [...new Set(grupos_concatenados)]
 
-            let payload = {
-                e_servidor: values.e_servidor,
-                username: values.username,
-                name: values.name,
-                email: values.email ? values.email : "",
-                //visao: visao_selecionada,
-                //groups: values.groups,
-                groups: grupos_concatenados_sem_repeticao,
-                //unidade: visao_selecionada !== "SME" ? codigoEolUnidade : null,
-                unidade: null,
-                visoes: values.visoes,
-            };
+            let payload = {}
+            if (visao_selecionada === "UE") {
+                payload = {
+                    e_servidor: values.e_servidor,
+                    username: values.username,
+                    name: values.name,
+                    email: values.email ? values.email : "",
+                    visao: visao_selecionada,
+                    groups: grupos_concatenados_sem_repeticao,
+                    unidade: codigoEolUnidade,
+                };
+            } else {
+                payload = {
+                    e_servidor: values.e_servidor,
+                    username: values.username,
+                    name: values.name,
+                    email: values.email ? values.email : "",
+                    groups: grupos_concatenados_sem_repeticao,
+                    unidade: null,
+                    visoes: values.visoes,
+                };
+            }
 
             if (values.id || (usuariosStatus.usuario_sig_escola.info_sig_escola && usuariosStatus.usuario_sig_escola.info_sig_escola.user_id)) {
 
@@ -729,6 +740,25 @@ export const GestaoDePerfisForm = () =>{
         }
         return editavel
     }, [exibePermissaoExibicaoVisoes])
+
+    const setaVisaoUE = () => {
+        if (visao_selecionada === "UE" && !id_usuario) {
+            let visao = pesquisaVisao("UE")
+
+            let _visoes = []
+
+            _visoes.push(visao.id)
+
+            setStatePerfisForm({
+                ...statePerfisForm,
+                visoes: _visoes
+
+            })
+        }
+    }
+    useEffect(() => {
+        setaVisaoUE()
+    }, [visoes])
 
     return (
         <PaginasContainer>
