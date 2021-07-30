@@ -26,6 +26,7 @@ export const GestaoDePerfisForm = () =>{
         visoes: [],
         unidade: "",
         unidades_vinculadas: [],
+        unidade_selecionada: uuid_unidade
     };
 
     const [statePerfisForm, setStatePerfisForm] = useState(initPerfisForm);
@@ -213,7 +214,6 @@ export const GestaoDePerfisForm = () =>{
                 dados_usuario = await getUsuario(id_usuario)
             }
 
-            let grupos = await exibeGrupos()
             let unidades_vinculadas = await carregaUnidadesVinculadas()
 
             let ids_grupos =[];
@@ -223,13 +223,14 @@ export const GestaoDePerfisForm = () =>{
                 );
             }
 
-            let ids_grupos_que_tem_direito = []
-            if (grupos && grupos.length > 0){
-                grupos.map((grupo)=>
-                    ids_grupos_que_tem_direito.push(grupo.id)
-                )
-            }
-            //setGruposJaVinculados(removeItensArray(ids_grupos_que_tem_direito, ids_grupos))
+            // let grupos = await exibeGrupos()
+            // let ids_grupos_que_tem_direito = []
+            // if (grupos && grupos.length > 0){
+            //     grupos.map((grupo)=>
+            //         ids_grupos_que_tem_direito.push(grupo.id)
+            //     )
+            // }
+            // setGruposJaVinculados(removeItensArray(ids_grupos_que_tem_direito, ids_grupos))
 
             let ids_visoes = [];
             if (dados_usuario.visoes && dados_usuario.visoes.length > 0){
@@ -515,18 +516,28 @@ export const GestaoDePerfisForm = () =>{
             // Removendo itens duplicados
             let grupos_concatenados_sem_repeticao = [...new Set(grupos_concatenados)]
 
-            let payload = {
-                e_servidor: values.e_servidor,
-                username: values.username,
-                name: values.name,
-                email: values.email ? values.email : "",
-                //visao: visao_selecionada,
-                //groups: values.groups,
-                groups: grupos_concatenados_sem_repeticao,
-                //unidade: visao_selecionada !== "SME" ? codigoEolUnidade : null,
-                unidade: null,
-                visoes: values.visoes,
-            };
+            let payload = {}
+            if (visao_selecionada === "UE") {
+                payload = {
+                    e_servidor: values.e_servidor,
+                    username: values.username,
+                    name: values.name,
+                    email: values.email ? values.email : "",
+                    visao: visao_selecionada,
+                    groups: grupos_concatenados_sem_repeticao,
+                    unidade: codigoEolUnidade,
+                };
+            } else {
+                payload = {
+                    e_servidor: values.e_servidor,
+                    username: values.username,
+                    name: values.name,
+                    email: values.email ? values.email : "",
+                    groups: grupos_concatenados_sem_repeticao,
+                    unidade: null,
+                    visoes: values.visoes,
+                };
+            }
 
             if (values.id || (usuariosStatus.usuario_sig_escola.info_sig_escola && usuariosStatus.usuario_sig_escola.info_sig_escola.user_id)) {
 
@@ -685,6 +696,7 @@ export const GestaoDePerfisForm = () =>{
 
     const getEstadoInicialVisoesChecked = useCallback(()=>{
         let check = document.getElementsByName("visoes");
+
         let arrayVisoes = [];
         for (let i=0; i<check.length; i++){
 
@@ -702,6 +714,33 @@ export const GestaoDePerfisForm = () =>{
     useEffect(()=>{
         getEstadoInicialVisoesChecked()
     }, [getEstadoInicialVisoesChecked])
+
+
+    const handleChangeGrupo = (e, setFieldValue, values) => {
+        const { checked, value } = e.target;
+        if (checked) {
+            setFieldValue("groups", [...values.groups, value]);
+        } else {
+            setFieldValue("groups", values.groups.filter((v) => v !== value));
+        }
+    };
+
+    const getEstadoInicialGruposChecked = useCallback(()=>{
+        let check = document.getElementsByName("groups");
+        let arrayVisoes = [];
+        for (let i=0; i<check.length; i++){
+            let { checked, id } = check[i];
+            arrayVisoes.push({
+                nome: id,
+                checked: checked,
+            })
+        }
+        return arrayVisoes
+    }, [])
+
+    useEffect(()=>{
+        getEstadoInicialGruposChecked()
+    }, [getEstadoInicialGruposChecked])
 
     const acessoCadastrarUnidade = (tipo_unidade) => {
         if (visoesChecked && visoesChecked.length > 0) {
@@ -729,6 +768,25 @@ export const GestaoDePerfisForm = () =>{
         }
         return editavel
     }, [exibePermissaoExibicaoVisoes])
+
+    const setaVisaoUE = () => {
+        if (visao_selecionada === "UE" && !id_usuario) {
+            let visao = pesquisaVisao("UE")
+
+            let _visoes = []
+
+            _visoes.push(visao.id)
+
+            setStatePerfisForm({
+                ...statePerfisForm,
+                visoes: _visoes
+
+            })
+        }
+    }
+    useEffect(() => {
+        setaVisaoUE()
+    }, [visoes])
 
     return (
         <PaginasContainer>
@@ -779,7 +837,9 @@ export const GestaoDePerfisForm = () =>{
                             desvinculaUnidadeUsuario={desvinculaUnidadeUsuario}
                             btnAdicionarDisabled={btnAdicionarDisabled}
                             handleChangeVisao={handleChangeVisao}
+                            handleChangeGrupo={handleChangeGrupo}
                             getEstadoInicialVisoesChecked={getEstadoInicialVisoesChecked}
+                            getEstadoInicialGruposChecked={getEstadoInicialGruposChecked}
                             acessoCadastrarUnidade={acessoCadastrarUnidade}
                             unidadeVisaoUE={unidadeVisaoUE}
                             serviceTemUnidadeDre={serviceTemUnidadeDre}
