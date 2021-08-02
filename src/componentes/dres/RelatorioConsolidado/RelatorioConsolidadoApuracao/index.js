@@ -11,7 +11,7 @@ import {
     getDevolucoesAoTesouro,
     putCriarEditarDeletarObservacaoDevolucaoContaPtrf,
     putCriarEditarDeletarObservacaoDevolucaoTesouro,
-    postGerarRelatorio
+    postGerarRelatorio, getConsultarStatus,
 } from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
@@ -57,6 +57,22 @@ export const RelatorioConsolidadoApuracao = () => {
     const [showModalMsgGeracaoRelatorio, setShowModalMsgGeracaoRelatorio] = useState(false);
     const [msgGeracaoRelatorio, setMsgGeracaoRelatorio] = useState('');
 
+    const [statusRelatorio, setStatusRelatorio] = useState(false);
+
+    useEffect(() => {
+        if (statusRelatorio && statusRelatorio.status_geracao && statusRelatorio.status_geracao === "EM_PROCESSAMENTO") {
+            const timer = setInterval(() => {
+                consultarStatus();
+            }, 5000);
+            // clearing interval
+            return () => clearInterval(timer);
+        }
+    });
+
+    useEffect(() => {
+        consultarStatus();
+    }, [periodo_uuid, conta_uuid]);
+
     useEffect(() => {
         carregaItensDashboard();
     }, []);
@@ -70,6 +86,21 @@ export const RelatorioConsolidadoApuracao = () => {
         carregaJustificativa();
         carregaDevolucoesAoTesouro();
     }, [itensDashboard]);
+
+    const consultarStatus = async () => {
+        if (dre_uuid && periodo_uuid && conta_uuid) {
+            let status = await getConsultarStatus(dre_uuid, periodo_uuid, conta_uuid);
+            setStatusRelatorio(status);
+        }
+    };
+
+    const textoBtnRelatorio = () =>{
+        if (statusRelatorio.status_geracao === 'EM_PROCESSAMENTO'){
+            return 'Relatório sendo gerado...'
+        } else{
+            return 'Gerar relatório'
+        }
+    };
 
     const carregaItensDashboard = async () => {
         if (periodo_uuid) {
@@ -261,10 +292,10 @@ export const RelatorioConsolidadoApuracao = () => {
         try {
             setLoading(true);
             await postGerarRelatorio(payload);
-            console.log('Relatório gerado com sucesso');
+            console.log('Solicitação de relatório enviada com sucesso.');
             setShowModalAssociacoesEmAnalise(false);
             setLoading(false);
-            setMsgGeracaoRelatorio('Relatório gerado com sucesso');
+            setMsgGeracaoRelatorio('O relatório está sendo gerado, enquanto isso você pode continuar a usar o sistema. Consulte na tela anterior o status de geração do relatório.');
             setShowModalMsgGeracaoRelatorio(true)
         } catch (e) {
             setShowModalAssociacoesEmAnalise(false);
@@ -295,6 +326,7 @@ export const RelatorioConsolidadoApuracao = () => {
                                 periodoNome={periodoNome}
                                 contaNome={contaNome}
                                 onClickGerarRelatorio={onClickGerarRelatorio}
+                                textoBtnRelatorio={textoBtnRelatorio}
                             />
                             <InfoAssociacoesEmAnalise
                                 totalEmAnalise={totalEmAnalise}
