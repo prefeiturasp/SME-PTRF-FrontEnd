@@ -88,10 +88,23 @@ export const RelatorioConsolidadoApuracao = () => {
     }, [itensDashboard]);
 
     const consultarStatus = async () => {
+        console.log("Consultar status...")
         if (dre_uuid && periodo_uuid && conta_uuid) {
             let status = await getConsultarStatus(dre_uuid, periodo_uuid, conta_uuid);
             setStatusRelatorio(status);
+            console.log('Status:', status)
         }
+    };
+
+    const setaStatusComoProcessando = () => {
+        const statusProcessando = {
+            pcs_em_analise: false,
+            status_geracao: "EM_PROCESSAMENTO",
+            status_txt: "Análise de prestações de contas das associações completa. Relatório em processamento.",
+            cor_idx: 3,
+            status_arquivo: "Relatório sendo gerado. Aguarde."
+        }
+        setStatusRelatorio(statusProcessando);
     };
 
     const textoBtnRelatorio = () =>{
@@ -297,6 +310,7 @@ export const RelatorioConsolidadoApuracao = () => {
             setLoading(false);
             setMsgGeracaoRelatorio('O relatório está sendo gerado, enquanto isso você pode continuar a usar o sistema. Consulte na tela anterior o status de geração do relatório.');
             setShowModalMsgGeracaoRelatorio(true)
+            setaStatusComoProcessando()
         } catch (e) {
             setShowModalAssociacoesEmAnalise(false);
             setLoading(false);
