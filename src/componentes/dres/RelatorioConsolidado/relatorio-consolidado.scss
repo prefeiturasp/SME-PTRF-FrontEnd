@@ -100,9 +100,23 @@
   color: #D06D12;
 }
 
-.span-motivo-associacao-nao-regularizada{
+
+.documento-pendente {
+  font-size: 12px;
   color: #B40C02;
-  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.documento-gerado {
+  font-size: 12px;
+  color: rgba(19, 139, 0, 0.97);
+  margin-bottom: 0;
+}
+
+.documento-processando {
+  font-size: 12px;
+  color: #D06D12;
+  margin-bottom: 0;
 }
 
 body .tabela-associacoes-nao-regularizadas .p-datatable-tbody > tr > td, body .tabela-associacoes-nao-regularizadas .p-datatable-thead > tr > th {
