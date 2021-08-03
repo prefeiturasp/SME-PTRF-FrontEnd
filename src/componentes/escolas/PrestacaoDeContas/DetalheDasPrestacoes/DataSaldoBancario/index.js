@@ -112,7 +112,7 @@ const DataSaldoBancario = ({
                                                         </div>
 
                                                         <div className="col-lg-4 mt-2 text-right">
-                                                            <button className='btn-editar-membro btn-apagar-comprovante-extrato ml-2' type='button' onClick={reiniciaUploadExtrato}>
+                                                            <button disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])} className='btn-editar-membro btn-apagar-comprovante-extrato ml-2' type='button' onClick={reiniciaUploadExtrato}>
                                                                 <FontAwesomeIcon
                                                                 style={{fontSize: '18px', marginRight: "3px", color: "#B40C02"}}
                                                                 icon={faTrashAlt}

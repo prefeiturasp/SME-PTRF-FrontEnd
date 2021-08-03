@@ -406,13 +406,17 @@ export const DetalheDasPrestacoes = () => {
     };
 
     const reiniciaUploadExtrato =()=>{
-        setBtnSalvarExtratoBancarioDisable(false);
+
+        if(nomeComprovanteExtrato != ""){
+            setBtnSalvarExtratoBancarioDisable(false);
             setCheckSalvarExtratoBancario(false);
             setClassBtnSalvarExtratoBancario("success");
+        }
+
         setSelectedFile(null)
-        setNomeComprovanteExtrato('')
         setDataAtualizacaoComprovanteExtrato('')
         setExibeBtnDownload(false)
+        setNomeComprovanteExtrato('')
     }
 
     const downloadComprovanteExtrato = useCallback(async ()=>{
