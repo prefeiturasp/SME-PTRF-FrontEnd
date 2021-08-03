@@ -4,7 +4,7 @@ export const FiltrosTransacoes = ({conciliado, stateFiltros, tabelasDespesa, han
     return(
         <>
             <form>
-                <div className="form-row">
+                <div className="form-row align-items-center">
                     <div className="form-group col">
                         <label htmlFor="filtrar_por_acao">Filtrar por ação</label>
                         <select
@@ -34,10 +34,10 @@ export const FiltrosTransacoes = ({conciliado, stateFiltros, tabelasDespesa, han
                             <option value='GASTOS'>Gastos</option>
                         </select>
                     </div>
-                </div>
-                <div className="d-flex  justify-content-end mt-n2">
-                    <button onClick={() => limpaFiltros(conciliado)} type="button" className="btn btn btn-outline-success mr-2">Limpar</button>
-                    <button onClick={()=>handleSubmitFiltros(conciliado)} type="button" className="btn btn-success">Filtrar</button>
+
+                    <div className="justify-content-end">
+                        <button onClick={()=>handleSubmitFiltros(conciliado)} type="button" className="btn btn-success ml-md-2 mt-3">Filtrar</button>
+                    </div>
                 </div>
             </form>
         </>

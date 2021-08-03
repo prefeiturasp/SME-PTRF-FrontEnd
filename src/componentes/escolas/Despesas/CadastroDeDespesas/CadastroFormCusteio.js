@@ -28,7 +28,6 @@ export const CadastroFormCusteio = (propriedades) => {
                         }}
                         name={`rateios[${index}].tipo_custeio`}
                         id='tipo_custeio'
-                        /* className={`${!rateio.tipo_custeio && verboHttp === "PUT" && "is_invalid "} ${!rateio.tipo_custeio && 'despesa_incompleta'} form-control`} */
                         className={
                             eh_despesa_sem_comprovacao_fiscal(cpf_cnpj) 
                             ? "form-control"
@@ -56,7 +55,6 @@ export const CadastroFormCusteio = (propriedades) => {
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].especificacao_material_servico`}
                         id={`especificacao_material_servico_${index}`}
-                        /* className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} ${!rateio.especificacao_material_servico && 'despesa_incompleta'} form-control`} */
                         className={
                             eh_despesa_sem_comprovacao_fiscal(cpf_cnpj) 
                             ? "form-control"

@@ -134,7 +134,6 @@ export const CadastroForm = ({verbo_http}) => {
     const validacoesPersonalizadas = useCallback(async (values, setFieldValue) => {
 
         let erros = {};
-        /* let cpf_cnpj_valido = !(!values.cpf_cnpj_fornecedor || values.cpf_cnpj_fornecedor.trim() === "" || !valida_cpf_cnpj(values.cpf_cnpj_fornecedor)); */
         let cpf_cnpj_valido = !(!values.cpf_cnpj_fornecedor || values.cpf_cnpj_fornecedor.trim() === "" || !valida_cpf_cnpj_permitindo_cnpj_zerado(values.cpf_cnpj_fornecedor));
 
         

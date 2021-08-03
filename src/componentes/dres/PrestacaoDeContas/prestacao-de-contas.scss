@@ -167,22 +167,31 @@
   color: #000;
 }
 
+.button-upload {
+  color: #00585E;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 22px;
+  align-items: center;
+  background-color: #F3F3F3;
+}
+
 .container-extrato{
-  color: #fff;
-  background-color: #2B7D83;
+  color: #000;
+  background-color: #F3F3F3;
   .titulo{
     font-size: 18px;
-    color: #fff;
+    color: #00585E;
     font-weight: bold;
   }
 }
 
 .container-diferenca{
   color: #fff;
-  background-color: #00585E;
+  background-color: #E7E7E7;
   .titulo{
     font-size: 18px;
-    color: #fff;
+    color: #00585E;
     font-weight: bold;
   }
 }
