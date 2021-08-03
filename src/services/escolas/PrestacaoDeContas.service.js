@@ -140,6 +140,7 @@ export const pathSalvarJustificativaPrestacaoDeConta = async (payload) => {
   formData.append("periodo_uuid", payload.periodo_uuid);
   formData.append("conta_associacao_uuid", payload.conta_associacao_uuid);
   formData.append("observacao", payload.observacao);
+  formData.append("justificativa_ou_extrato_bancario", "JUSTIFICATIVA")
 
   return (await api.patch(`/api/conciliacoes/salvar-observacoes/`, formData, authHeader)).data
 }
@@ -149,6 +150,7 @@ export const pathExtratoBancarioPrestacaoDeConta = async (payload) => {
   formData.append("periodo_uuid", payload.periodo_uuid);
   formData.append("conta_associacao_uuid", payload.conta_associacao_uuid);
   formData.append("saldo_extrato", payload.saldo_extrato);
+  formData.append("justificativa_ou_extrato_bancario", "EXTRATO_BANCARIO")
 
   // Nesessário pois o formData retornava um string 'null' e não null
   if (payload.data_extrato){
