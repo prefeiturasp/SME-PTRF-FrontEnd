@@ -61,6 +61,8 @@ export const GetComportamentoPorStatus = (
         addCobrancaDevolucoes,
         deleteCobrancaDevolucoes,
         setShowVoltarParaAnalise,
+        btnSalvarDisabled,
+        setBtnSalvarDisabled
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
@@ -150,6 +152,7 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                         exibeSalvar={true}
                         metodoSalvarAnalise={salvarAnalise}
+                        btnSalvarDisabled={btnSalvarDisabled}
                     />
                     <BotoesAvancarRetroceder
                         prestacaoDeContas={prestacaoDeContas}
@@ -193,6 +196,7 @@ export const GetComportamentoPorStatus = (
                         despesasTabelas={despesasTabelas}
                         tiposDevolucao={tiposDevolucao}
                         validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
+                        setBtnSalvarDisabled={setBtnSalvarDisabled}
                     />
                     <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}

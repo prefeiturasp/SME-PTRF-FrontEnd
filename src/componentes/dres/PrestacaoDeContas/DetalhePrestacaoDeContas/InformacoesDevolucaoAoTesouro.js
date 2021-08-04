@@ -7,9 +7,13 @@ import MaskedInput from "react-text-mask";
 import {visoesService} from "../../../../services/visoes.service";
 import {ModalConfirmaRemocaoDevolucaoAoTesouro} from "../ModalConfirmaRemocaoDevolucaoAoTesouro";
 
-export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeContas, initialValues, despesas, buscaDespesaPorFiltros, valorTemplate, despesasTabelas, tiposDevolucao, validateFormDevolucaoAoTesouro,}) =>{
-
+export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeContas, initialValues, despesas, buscaDespesaPorFiltros, valorTemplate, despesasTabelas, tiposDevolucao, validateFormDevolucaoAoTesouro, setBtnSalvarDisabled}) =>{
+    
     const [showConfirmaRemocao, setShowConfirmaRemocao] = useState({abrir:false, indice:0});
+
+    const onChangeLiberaBtnSalvar = () => {
+        setBtnSalvarDisabled(false);
+    }
 
     const setDisabledCampos = (devolucao) =>{
        return devolucao.visao_criacao === "DRE" && visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE'
@@ -18,6 +22,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
     const onClickRemoverDevolucao = async (remove, index) =>{
         await remove(index);
         setShowConfirmaRemocao(false);
+        setBtnSalvarDisabled(false);
     };
 
     const onHandleClose = () => {
@@ -198,6 +203,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                     value={devolucao.tipo}
                                                                     onChange={async (e) => {
                                                                         props.handleChange(e);
+                                                                        onChangeLiberaBtnSalvar()
                                                                     }}
                                                                     className='form-control'
                                                                     disabled={setDisabledCampos(devolucao) }
@@ -237,6 +243,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                         let desp = eval('despesas.devolucao_'+index).find(item => item.uuid === values.devolucoes_ao_tesouro_da_prestacao[index].despesa);
                                                                         setFieldValue(`devolucoes_ao_tesouro_da_prestacao[${index}].valor`, valorTemplate(desp.valor_total));
                                                                     }
+                                                                    onChangeLiberaBtnSalvar();
                                                                 }
                                                                 }
                                                                 className='form-control'
@@ -259,6 +266,7 @@ export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeCo
                                                                 name={`devolucoes_ao_tesouro_da_prestacao[${index}].valor`}
                                                                 onChangeEvent={(e) => {
                                                                     props.handleChange(e);
+                                                                    onChangeLiberaBtnSalvar()
                                                                 }}
                                                                 className={`form-control`}
                                                                 selectAllOnFocus={true}

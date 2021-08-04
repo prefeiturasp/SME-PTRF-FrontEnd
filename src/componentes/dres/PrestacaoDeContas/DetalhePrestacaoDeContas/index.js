@@ -17,6 +17,7 @@ import {ModalVoltarParaAnalise} from "../ModalVoltarParaAnalise";
 import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {GetComportamentoPorStatus} from "./GetComportamentoPorStatus";
+import {ModalSalvarPrestacaoDeContasAnalise} from "../../../../utils/Modais";
 
 require("ordinal-pt-br");
 
@@ -105,6 +106,8 @@ export const DetalhePrestacaoDeContas = () =>{
     const [showErroPrestacaoDeContasPosterior, setshowErroPrestacaoDeContasPosterior] = useState(false);
     const [tituloErroPrestacaoDeContasPosterior, setTituloErroPrestacaoDeContasPosterior] = useState('');
     const [textoErroPrestacaoDeContasPosterior, setTextoErroPrestacaoDeContasPosterior] = useState('');
+    const [btnSalvarDisabled, setBtnSalvarDisabled] = useState(true);
+    const [showModalSalvarAnalise, setShowModalSalvarAnalise] = useState(false);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -394,6 +397,7 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const handleChangeAnalisesDeContaDaPrestacao = (name, value) =>{
+        setBtnSalvarDisabled(false);
         let arrayAnalise = analisesDeContaDaPrestacao;
         let analise_index = getObjetoIndexAnalise().analise_index;
 
@@ -451,6 +455,7 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const handleChangeFormInformacoesPrestacaoDeContas = (name, value) => {
+        setBtnSalvarDisabled(false);
         setInformacoesPrestacaoDeContas({
             ...informacoesPrestacaoDeContas,
             [name]: value
@@ -465,6 +470,10 @@ export const DetalhePrestacaoDeContas = () =>{
         setShowVoltarParaAnalise(false);
         setshowErroPrestacaoDeContasPosterior(false)
     };
+
+    const onCloseModalSalvarAnalise = () => {
+        setShowModalSalvarAnalise(false);
+    }
 
     const onReabrirTrue = async () => {
         setShowReabrirPc(false);
@@ -513,12 +522,16 @@ export const DetalhePrestacaoDeContas = () =>{
             let validar =  await validateFormDevolucaoAoTesouro(formRef.current.values);
             if (!camposObrigatorios && Object.entries(validar).length === 0){
                 await getSalvarAnalise(prestacaoDeContas.uuid, payload);
+                setShowModalSalvarAnalise(true);
+                setBtnSalvarDisabled(true);
                 await carregaPrestacaoDeContas();
             }else {
                 return formRef.current.setErrors( validar )
             }
         }else {
             await getSalvarAnalise(prestacaoDeContas.uuid, payload);
+            setShowModalSalvarAnalise(true);
+            setBtnSalvarDisabled(true);
             await carregaPrestacaoDeContas();
         }
     };
@@ -746,6 +759,8 @@ export const DetalhePrestacaoDeContas = () =>{
                                     addCobrancaDevolucoes={addCobrancaDevolucoes}
                                     deleteCobrancaDevolucoes={deleteCobrancaDevolucoes}
                                     setShowVoltarParaAnalise={setShowVoltarParaAnalise}
+                                    btnSalvarDisabled={btnSalvarDisabled}
+                                    setBtnSalvarDisabled={setBtnSalvarDisabled}
                                 />
                         }
                     </>
@@ -832,6 +847,12 @@ export const DetalhePrestacaoDeContas = () =>{
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="success"
                         segundoBotaoTexto="Confirmar"
+                    />
+                </section>
+                <section>
+                    <ModalSalvarPrestacaoDeContasAnalise
+                        show={showModalSalvarAnalise}
+                        handleClose={onCloseModalSalvarAnalise}
                     />
                 </section>
                 {redirectListaPc &&
