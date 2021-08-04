@@ -6,7 +6,6 @@ import {getTabelasReceita} from "../../../../services/escolas/Receitas.service";
 import {
     getConciliar,
     getDesconciliar,
-    getSalvarPrestacaoDeConta,
     getObservacoes,
     getStatusPeriodoPorData,
     getTransacoes,
@@ -14,6 +13,8 @@ import {
     patchConciliarTransacao,
     patchDesconciliarTransacao,
     getDownloadExtratoBancario,
+    pathSalvarJustificativaPrestacaoDeConta,
+    pathExtratoBancarioPrestacaoDeConta
 } from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getContas, getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../../services/escolas/Associacao.service";
 import Loading from "../../../../utils/Loading";
@@ -45,6 +46,14 @@ export const DetalheDasPrestacoes = () => {
     const [acoesAssociacao, setAcoesAssociacao] = useState(false);
 
     const [textareaJustificativa, setTextareaJustificativa] = useState("");
+    const [btnSalvarJustificativaDisable, setBtnSalvarJustificativaDisable] = useState(true);
+    const [classBtnSalvarJustificativa, setClassBtnSalvarJustificativa] = useState("secondary");
+    const [checkSalvarJustificativa, setCheckSalvarJustificativa] = useState(false);
+
+    const [btnSalvarExtratoBancarioDisable, setBtnSalvarExtratoBancarioDisable] = useState(true);
+    const [classBtnSalvarExtratoBancario, setClassBtnSalvarExtratoBancario] = useState("secondary");
+    const [checkSalvarExtratoBancario, setCheckSalvarExtratoBancario] = useState(false);
+    
 
     useEffect(()=>{
         getPeriodoConta();
@@ -126,6 +135,8 @@ export const DetalheDasPrestacoes = () => {
 
 
     const handleChangePeriodoConta = (name, value) => {
+        setCheckSalvarJustificativa(false);
+        setCheckSalvarExtratoBancario(false);
         setPeriodoConta({
             ...periodoConta,
             [name]: value
@@ -134,6 +145,9 @@ export const DetalheDasPrestacoes = () => {
 
     const handleChangeTextareaJustificativa = (event) => {
         setTextareaJustificativa(event.target.value);
+        setBtnSalvarJustificativaDisable(false);
+        setCheckSalvarJustificativa(false);
+        setClassBtnSalvarJustificativa("success");
     };
 
     const carregaObservacoes = async () => {
@@ -159,31 +173,38 @@ export const DetalheDasPrestacoes = () => {
         }
     };
 
-    const onSalvarTrue = async () => {
+    const salvarJustificativa = async () => {
         let payload;
 
-         if (dataAtualizacaoComprovanteExtrato){
-             payload = {
-                 "periodo_uuid": periodoConta.periodo,
-                 "conta_associacao_uuid": periodoConta.conta,
-                 "observacao": textareaJustificativa,
-                 "data_extrato": dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null,
-                 "saldo_extrato": dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : 0,
-                 "comprovante_extrato": selectedFile,
-                 "data_atualizacao_comprovante_extrato": dataAtualizacaoComprovanteExtrato,
-             }
-         }else {
-             payload = {
-                 "periodo_uuid": periodoConta.periodo,
-                 "conta_associacao_uuid": periodoConta.conta,
-                 "observacao": textareaJustificativa,
-                 "data_extrato": dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null,
-                 "saldo_extrato": dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : 0,
-             }
-         }
+        payload = {
+            "periodo_uuid": periodoConta.periodo,
+            "conta_associacao_uuid": periodoConta.conta,
+            "observacao": textareaJustificativa,
+        }
 
         try {
-            await getSalvarPrestacaoDeConta(payload);
+            await pathSalvarJustificativaPrestacaoDeConta(payload);
+            setShowSalvar(true);
+            await carregaObservacoes();
+        } catch (e) {
+            console.log("Erro: ", e.message)
+        }
+    }
+
+    const salvarExtratoBancario = async () => {
+        let payload;
+
+        payload = {
+            "periodo_uuid": periodoConta.periodo,
+            "conta_associacao_uuid": periodoConta.conta,
+            "data_extrato": dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null,
+            "saldo_extrato": dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : 0,
+            "comprovante_extrato": selectedFile,
+            "data_atualizacao_comprovante_extrato": dataAtualizacaoComprovanteExtrato,
+        }
+
+        try {
+            await pathExtratoBancarioPrestacaoDeConta(payload);
             setShowSalvar(true);
             setDataAtualizacaoComprovanteExtrato('')
             setSelectedFile(null)
@@ -192,7 +213,7 @@ export const DetalheDasPrestacoes = () => {
         } catch (e) {
             console.log("Erro: ", e.message)
         }
-    };
+    }
 
     const onHandleClose = () => {
         setShowSalvar(false);
@@ -343,7 +364,6 @@ export const DetalheDasPrestacoes = () => {
     };
 
     // Data Saldo Bancário
-    let uploadExtratoInputRef = React.useRef();
     const [dataSaldoBancario, setDataSaldoBancario]= useState({});
     const [selectedFile, setSelectedFile] = useState(null);
     const [nomeComprovanteExtrato, setNomeComprovanteExtrato] = useState('');
@@ -352,8 +372,8 @@ export const DetalheDasPrestacoes = () => {
     const [msgErroExtensaoArquivo, setMsgErroExtensaoArquivo] = useState('');
 
     const validaUploadExtrato = (event) =>{
-        let ext = event.target.files[0].type
-        let tamanho = event.target.files[0].size
+        let ext = event.file.type
+        let tamanho = event.file.size
         let array_extensoes = ['image/jpeg','image/jpg','image/bmp','image/png', 'image/tif', 'application/pdf' ]
         if (tamanho <= 500395){
             let result = array_extensoes.filter(item => ext.indexOf(item) > -1);
@@ -372,8 +392,11 @@ export const DetalheDasPrestacoes = () => {
 
     const changeUploadExtrato = (event) => {
         if (validaUploadExtrato(event)){
-            setSelectedFile(event.target.files[0]);
-            setNomeComprovanteExtrato(event.target.files[0].name)
+            setBtnSalvarExtratoBancarioDisable(false);
+            setCheckSalvarExtratoBancario(false);
+            setClassBtnSalvarExtratoBancario("success");
+            setSelectedFile(event.file);
+            setNomeComprovanteExtrato(event.file.name)
             setDataAtualizacaoComprovanteExtrato(moment().format("YYYY-MM-DD HH:mm:ss"))
             setExibeBtnDownload(false)
             setMsgErroExtensaoArquivo('')
@@ -383,11 +406,17 @@ export const DetalheDasPrestacoes = () => {
     };
 
     const reiniciaUploadExtrato =()=>{
-        uploadExtratoInputRef.current.value = ""; //Resets the file name of the file input
+
+        if(nomeComprovanteExtrato != ""){
+            setBtnSalvarExtratoBancarioDisable(false);
+            setCheckSalvarExtratoBancario(false);
+            setClassBtnSalvarExtratoBancario("success");
+        }
+
         setSelectedFile(null)
-        setNomeComprovanteExtrato('')
         setDataAtualizacaoComprovanteExtrato('')
         setExibeBtnDownload(false)
+        setNomeComprovanteExtrato('')
     }
 
     const downloadComprovanteExtrato = useCallback(async ()=>{
@@ -400,6 +429,10 @@ export const DetalheDasPrestacoes = () => {
     }, [nomeComprovanteExtrato, observacaoUuid])
 
     const handleChangaDataSaldo = useCallback((name, value) => {
+        setBtnSalvarExtratoBancarioDisable(false);
+        setCheckSalvarExtratoBancario(false);
+        setClassBtnSalvarExtratoBancario("success");
+        
         setDataSaldoBancario({
             ...dataSaldoBancario,
             [name]: value
@@ -435,8 +468,6 @@ export const DetalheDasPrestacoes = () => {
                         <>
                             <TopoComBotoes
                                 setShowSalvar={setShowSalvar}
-                                showSalvar={!periodoFechado}
-                                onSalvarTrue={onSalvarTrue}
                                 onHandleClose={onHandleClose}
                                 contaConciliacao={contaConciliacao}
                             />
@@ -458,7 +489,13 @@ export const DetalheDasPrestacoes = () => {
                                 changeUploadExtrato={changeUploadExtrato}
                                 reiniciaUploadExtrato={reiniciaUploadExtrato}
                                 downloadComprovanteExtrato={downloadComprovanteExtrato}
-                                uploadExtratoInputRef={uploadExtratoInputRef}
+                                salvarExtratoBancario={salvarExtratoBancario}
+                                btnSalvarExtratoBancarioDisable={btnSalvarExtratoBancarioDisable}
+                                setBtnSalvarExtratoBancarioDisable={setBtnSalvarExtratoBancarioDisable}
+                                classBtnSalvarExtratoBancario={classBtnSalvarExtratoBancario}
+                                setClassBtnSalvarExtratoBancario={setClassBtnSalvarExtratoBancario}
+                                checkSalvarExtratoBancario={checkSalvarExtratoBancario}
+                                setCheckSalvarExtratoBancario={setCheckSalvarExtratoBancario}
                             />
 
                             <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Lançamentos pendentes de conciliação</p>
@@ -509,6 +546,14 @@ export const DetalheDasPrestacoes = () => {
                                 textareaJustificativa={textareaJustificativa}
                                 handleChangeTextareaJustificativa={handleChangeTextareaJustificativa}
                                 periodoFechado={periodoFechado}
+                                btnSalvarJustificativaDisable={btnSalvarJustificativaDisable}
+                                setBtnJustificativaSalvarDisable={setBtnSalvarJustificativaDisable}
+                                checkSalvarJustificativa={checkSalvarJustificativa}
+                                setCheckSalvarJustificativa={setCheckSalvarJustificativa}
+                                salvarJustificativa={salvarJustificativa}
+                                classBtnSalvarJustificativa={classBtnSalvarJustificativa}
+                                setClassBtnSalvarJustificativa={setClassBtnSalvarJustificativa}
+
                             />
                         </>
                     ):

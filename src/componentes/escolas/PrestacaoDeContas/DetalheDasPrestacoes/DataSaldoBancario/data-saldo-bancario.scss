@@ -1,16 +1,21 @@
 #diferenca_prestacao_de_conta{
   font-weight: bold;
   color: #B40C02;
+  background-color: #DADADA;
 }
 
 .container-upload-extrato{
-  background-color: #fff;
+  background-color: #F3F3F3;
   padding: 4px;
   color: #42474A;
 }
 
+.container-upload-item{
+  height: 40px;
+  background-color: #E2E2E2;
+}
+
 .container-upload-extrato .btn-apagar-comprovante-extrato {
-  border-left: solid 1px #42474A;
   padding-left: 10px;
 }
 

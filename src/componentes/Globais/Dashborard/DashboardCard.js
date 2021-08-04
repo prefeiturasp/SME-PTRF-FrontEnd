@@ -73,7 +73,7 @@ export const DashboardCard = ({acoesAssociacao, getCorSaldo, getCssDestaque}) =>
                     </div>
                 ) :
                 <MsgImgLadoDireito
-                    texto="A sua escola não possui ações ativas nesse período."
+                    texto="Para a exibição dos dados do período atual é necessário concluir o período anterior."
                     img={Img404}
                 />
             }

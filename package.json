@@ -12,7 +12,7 @@
     "@testing-library/user-event": "^7.2.1",
     "@tinymce/tinymce-react": "^3.10.1",
     "@trendmicro/react-sidenav": "^0.5.0",
-    "antd": "^4.5.2",
+    "antd": "^4.16.9",
     "array-find-duplicates": "^2.0.1",
     "array-move": "^3.0.1",
     "axios": "^0.19.2",

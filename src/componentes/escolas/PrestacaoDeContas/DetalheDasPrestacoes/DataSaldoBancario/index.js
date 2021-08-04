@@ -5,9 +5,29 @@ import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormulari
 import './data-saldo-bancario.scss'
 import {visoesService} from "../../../../../services/visoes.service";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faTrashAlt, faDownload} from '@fortawesome/free-solid-svg-icons'
+import {faTrashAlt, faDownload, faUpload, faPaperclip, faCheck} from '@fortawesome/free-solid-svg-icons'
 
-const DataSaldoBancario = ({valoresPendentes, dataSaldoBancario, handleChangaDataSaldo, periodoFechado, nomeComprovanteExtrato, dataAtualizacaoComprovanteExtrato, exibeBtnDownload, msgErroExtensaoArquivo, changeUploadExtrato, reiniciaUploadExtrato, downloadComprovanteExtrato, uploadExtratoInputRef}) => {
+import 'antd/dist/antd.css';
+import { Upload, Button } from 'antd';
+
+
+
+
+const DataSaldoBancario = ({
+    valoresPendentes, dataSaldoBancario, handleChangaDataSaldo, periodoFechado, 
+    nomeComprovanteExtrato, exibeBtnDownload, msgErroExtensaoArquivo,
+    changeUploadExtrato, reiniciaUploadExtrato, downloadComprovanteExtrato, salvarExtratoBancario,
+    btnSalvarExtratoBancarioDisable, setBtnSalvarExtratoBancarioDisable, classBtnSalvarExtratoBancario,
+    setClassBtnSalvarExtratoBancario, checkSalvarExtratoBancario, setCheckSalvarExtratoBancario
+}) => {
+    
+    const handleOnClick = () => {
+        setBtnSalvarExtratoBancarioDisable(true);
+        setCheckSalvarExtratoBancario(true);
+        setClassBtnSalvarExtratoBancario("secondary");
+        salvarExtratoBancario();
+    }
+    
     return(
         <>
             <form method="post" encType="multipart/form-data">
@@ -30,6 +50,9 @@ const DataSaldoBancario = ({valoresPendentes, dataSaldoBancario, handleChangaDat
                                                     disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
                                                 />
                                             </div>
+                                        </div>
+
+                                        <div className='row'>
                                             <div className="col">
                                                 <label htmlFor="saldo_extrato">Saldo</label>
                                                 <CurrencyInput
@@ -46,85 +69,132 @@ const DataSaldoBancario = ({valoresPendentes, dataSaldoBancario, handleChangaDat
                                                 />
                                             </div>
                                         </div>
+
+                                            
+                                        
                                     </div>
                                     <div className="col-6">
                                         <div className="form-group">
-                                            <label htmlFor="upload_extrato">Extrato bancário ou Demonstrativo do cartão</label>
+                                            <label htmlFor="upload_extrato" className="ml-1">Comprovante do extrato</label>
                                             <div className='container-upload-extrato'>
-                                                <input
-                                                    type="file"
-                                                    ref={uploadExtratoInputRef}
-                                                    accept=".gif,.jpg,.jpeg,.png, .pdf"
-                                                    name="upload_extrato"
-                                                    id='upload_extrato'
-                                                    onChange={changeUploadExtrato}
-                                                    className="form-control-file"
-                                                    disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
-                                                />
-                                                {nomeComprovanteExtrato &&
-                                                    <>
-                                                        <p className='mb-0 mt-2'>
-                                                            <strong>Atualmente: </strong>{nomeComprovanteExtrato}
-                                                            <button className='btn-editar-membro btn-apagar-comprovante-extrato ml-2' type='button' onClick={reiniciaUploadExtrato}>
+                                                <Upload beforeUpload={() => false} disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])} {...{
+                                                    
+                                                    name: 'file',
+                                                    accept: ".gif,.jpg,.jpeg,.png, .pdf",
+                                                    onChange:changeUploadExtrato,
+                                                    showUploadList: false
+                                                    
+                                                }}>
+                                                    <Button icon={
+                                                        <i className="glyphicon mr-2">
+                                                        <FontAwesomeIcon
+                                                            icon={faUpload}
+                                                        />
+                                                    </i>
+                                                    } className="button-upload">Escolher arquivo</Button>
+                                                </Upload>
+                                                <p>Selecione um arquivo jpeg, png ou pdf de no máximo 500kb</p>
+
+                                                {msgErroExtensaoArquivo &&
+                                                    <p className='mt-2 mb-0'>{msgErroExtensaoArquivo}</p>
+                                                }
+
+                                                <div className="container-upload-item mt-n1">
+                                                    <div className="row">
+                                                        <div className="col-lg-8 mt-2">
+                                                            <p>
+                                                                <span className="mr-1 ml-1">
+                                                                    <FontAwesomeIcon 
+                                                                    style={{color:'#000000'}}
+                                                                    icon={faPaperclip}/>
+                                                                </span>{nomeComprovanteExtrato}
+                                                            </p>
+                                                        </div>
+
+                                                        <div className="col-lg-4 mt-2 text-right">
+                                                            <button disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])} className='btn-editar-membro btn-apagar-comprovante-extrato ml-2' type='button' onClick={reiniciaUploadExtrato}>
                                                                 <FontAwesomeIcon
                                                                 style={{fontSize: '18px', marginRight: "3px", color: "#B40C02"}}
                                                                 icon={faTrashAlt}
                                                             />
                                                             </button>
-                                                            {exibeBtnDownload &&
-                                                                <>
-                                                                    <button className='btn-editar-membro' type='button' onClick={downloadComprovanteExtrato}>
-                                                                        <FontAwesomeIcon
-                                                                            style={{fontSize: '18px',}}
-                                                                            icon={faDownload}
-                                                                        />
-                                                                    </button>
-                                                                    <span className='exibe-data-comprovante-extrato'><i>(Envio dia {dataAtualizacaoComprovanteExtrato})</i></span>
-                                                                </>
-                                                            }
-                                                        </p>
-                                                    </>
-                                                }
-                                                {msgErroExtensaoArquivo &&
-                                                    <p className='mt-2 mb-0'>{msgErroExtensaoArquivo}</p>
-                                                }
-                                            </div>
 
+                                                            {exibeBtnDownload &&
+                                                            <>
+                                                                <button className='btn-editar-membro' type='button' onClick={downloadComprovanteExtrato}>
+                                                                    <FontAwesomeIcon
+                                                                        style={{fontSize: '18px',}}
+                                                                        icon={faDownload}
+                                                                    />
+                                                                </button>
+                                                            </>
+                                                    }
+                                                        </div>
+                                                    </div>
+
+                                                    
+                                                    
+                                                </div>
+                                            </div>
+                                            
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="card container-diferenca">
+                                <div className="card-body">
+                                    <div className='row'>
+                                        <div className='col-6 d-flex align-items-center'>
+                                            <h5 className="card-title titulo mb-0">Diferença em relação a prestação de contas</h5>
+                                        </div>
+                                        <div className="col-6 d-flex align-items-center">
+                                            <CurrencyInput
+                                                allowNegative={true}
+                                                prefix='R$ '
+                                                decimalSeparator=","
+                                                thousandSeparator="."
+                                                value={dataSaldoBancario.saldo_extrato ? valoresPendentes.saldo_posterior_total - trataNumericos(dataSaldoBancario.saldo_extrato) : valoresPendentes.saldo_posterior_total}
+                                                id="diferenca_prestacao_de_conta"
+                                                name="diferenca_prestacao_de_conta"
+                                                className="form-control mb-0"
+                                                disabled={true}
+                                            />
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
-                    <div className="col-12 mt-3">
-                        <div className="card container-diferenca">
-                            <div className="card-body">
-                                <div className='row'>
-                                    <div className='col-9 d-flex align-items-center'>
-                                        <h5 className="card-title titulo mb-0">Diferença entre o saldo bancário declarado e o saldo atual do período calculado pelo sistema</h5>
-                                    </div>
-                                    <div className="col-3 d-flex align-items-center">
-                                        <CurrencyInput
-                                            allowNegative={true}
-                                            prefix='R$ '
-                                            decimalSeparator=","
-                                            thousandSeparator="."
-                                            value={dataSaldoBancario.saldo_extrato ? valoresPendentes.saldo_posterior_total - trataNumericos(dataSaldoBancario.saldo_extrato) : valoresPendentes.saldo_posterior_total}
-                                            id="diferenca_prestacao_de_conta"
-                                            name="diferenca_prestacao_de_conta"
-                                            className="form-control mb-0"
-                                            disabled={true}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+                </div>   
             </form>
+
+            {visoesService.getPermissoes(['change_conciliacao_bancaria']) &&
+                <div className="bd-highlight d-flex justify-content-end">
+                    {checkSalvarExtratoBancario &&
+                        <div className="">
+                            <p className="mr-2 mt-3">
+                                <span className="mr-1">
+                                <FontAwesomeIcon
+                                    style={{fontSize: '16px', color:'#297805'}}
+                                    icon={faCheck}
+                                />
+                                </span>Salvo
+                            </p>
+                        </div>
+                    }
+
+                    <button 
+                        disabled={btnSalvarExtratoBancarioDisable} 
+                        type="button" 
+                        className={`btn btn-${classBtnSalvarExtratoBancario} mt-2`}
+                        onClick={handleOnClick}
+                        >
+                            <strong>Salvar Extrato</strong>
+                    </button>
+                </div>
+            }
         </>
     )
 };

@@ -1,10 +1,29 @@
-import React from "react";
+import React, {useState} from "react";
 import {visoesService} from "../../../../../services/visoes.service";
+import {faCheck} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
-export const Justificativa = ({textareaJustificativa, handleChangeTextareaJustificativa, periodoFechado}) => {
+
+export const Justificativa = ({
+    textareaJustificativa, handleChangeTextareaJustificativa, periodoFechado, 
+    btnSalvarJustificativaDisable, setBtnJustificativaSalvarDisable, checkSalvarJustificativa,
+    setCheckSalvarJustificativa, salvarJustificativa, classBtnSalvarJustificativa,
+    setClassBtnSalvarJustificativa}) => {
+
+
+    const handleOnClick = () => {
+        setBtnJustificativaSalvarDisable(true);
+        setCheckSalvarJustificativa(true);
+        setClassBtnSalvarJustificativa("secondary");
+        salvarJustificativa();
+    }
+
+
     return(
         <div className="form-group mt-4">
-            <label htmlFor="justificativa"><strong>Justificativas, informações adicionais e cheques cancelados</strong></label>
+            <p className="justificativas-e-informacoes-adicionais mt-5 mb-3">Justificativas e informações adicionais</p>
+            <p>Adicione justificativas e informações adicionais se necessário (opcional)</p>
+
             <textarea
                 value={textareaJustificativa}
                 onChange={handleChangeTextareaJustificativa}
@@ -16,6 +35,34 @@ export const Justificativa = ({textareaJustificativa, handleChangeTextareaJustif
                 disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
             >
             </textarea>
+
+            {visoesService.getPermissoes(['change_conciliacao_bancaria']) &&
+                <div className="bd-highlight d-flex justify-content-end align-items-center">
+
+                    {checkSalvarJustificativa &&
+                        <div className="">
+                            <p className="mr-2 mt-3">
+                                <span className="mr-1">
+                                <FontAwesomeIcon
+                                    style={{fontSize: '16px', color:'#297805'}}
+                                    icon={faCheck}
+                                />
+                                </span>Salvo
+                            </p>
+                        </div>
+                    }
+                    
+                    <button 
+                        disabled={btnSalvarJustificativaDisable} 
+                        type="button" 
+                        className={`btn btn-${classBtnSalvarJustificativa} mt-2`}
+                        onClick={handleOnClick}
+                        >
+                            <strong>Salvar Justificativas</strong>
+                    </button>
+                </div>
+            }
+            
         </div>
     );
 };
