@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 
-export const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise}) => {
+export const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalvarDisabled}) => {
     return (
         <>
             {Object.entries(prestacaoDeContas).length > 0 &&
@@ -29,6 +29,7 @@ export const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise})
                             <button
                                 onClick={metodoSalvarAnalise}
                                 className="btn btn-success"
+                                disabled={btnSalvarDisabled}
                             >
                                 Salvar
                             </button>
