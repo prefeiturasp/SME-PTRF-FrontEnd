@@ -82,23 +82,25 @@ export const LoginForm = ({redefinicaoDeSenha}) => {
                                     value={props.values.senha}
                                     name="senha"
                                     id="senha"
-                                    className={`form-control ${msgSenha ? 'falha-login' : ''}`}
+                                    className={`form-control ${msgSenha ? 'falha-login-senha' : ''}`}
                                     onChange={props.handleChange}
                                     onBlur={props.handleBlur}
                                     maxLength='16'
                                     onClick={()=>setMsgSenha('')}
+                                    aria-describedby="show_hide_password"
                                 />
-                                <span className="input-group-btn">
-                                    <button className="btn btn-default" type="button" onClick={() => showHidePassword()}>
-                                        <i className="glyphicon">
+                                <div className="input-group-append">
+                                    <span className={`input-group-text ${msgSenha ? 'falha-login-icone-mostrar-senha' : ''}`} id="show_hide_password">
+                                        <i className="glyphicon" onClick={() => showHidePassword()}>
                                             <FontAwesomeIcon
                                                 style={{fontSize: '18px', color:'#42474A'}}
                                                 icon={iconShowPassword}
                                             />
                                         </i>
-                                    </button>
-                                </span>
+                                    </span>
+                                </div>      
                             </div>
+                            
                             {props.touched.login && props.errors.senha && <span className="span_erro text-danger mt-1"> {props.errors.senha} </span>}
                             {msgSenha && !props.errors.login && <span className="span_erro text-danger mt-1">{msgSenha}</span>}
                         </div>
