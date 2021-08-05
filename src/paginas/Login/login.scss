@@ -74,4 +74,22 @@
   border-color: #B40C02 !important;
 }
 
+.falha-login-senha{
+  background-image: url("../../assets/img/icone-falha-login.svg");
+  background-repeat: no-repeat;
+  background-position: 100% 50%;
+  border-color: #B40C02 !important;
+}
 
+.falha-login-icone-mostrar-senha{
+  border-color: #B40C02 !important;
+}
+
+#senha{
+  border-right: none;
+}
+
+#show_hide_password{
+  border-left: none;
+  background-color: #fff;
+}
