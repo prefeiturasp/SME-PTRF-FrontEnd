@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import "./parametrizacoes.scss"
 import {ParametrizacaoCard} from "./ParametrizacaoCard";
 import IconeAssociacoes from "../../../assets/img/icone-parametro-associacoes.svg"
@@ -15,6 +15,7 @@ import IconeTiposTransacao from "../../../assets/img/icone-parametro-tipos-trans
 import IconeTiposReceita from "../../../assets/img/icone-parametro-tipos-receita.svg"
 import IconeUsuarios from "../../../assets/img/icone-parametro-usuarios.svg"
 import IconeTextosFiqueDeOlho from "../../../assets/img/icone-parametro-textos-fique-de-olho.svg"
+import IconeFornecedores from "../../../assets/img/icone-parametro-fornecedores.svg"
 
 export const PainelParametrizacoes = () => {
 
@@ -76,6 +77,11 @@ export const PainelParametrizacoes = () => {
             parametro: 'Tipos de Transação',
             url: 'parametro-tipos-transacao',
             icone: IconeTiposTransacao,
+        },
+        {
+            parametro: 'Fornecedores',
+            url: 'parametro-fornecedores',
+            icone: IconeFornecedores,
         }
     ];
 

@@ -1,45 +1,45 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useState, useMemo} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import {
-    getTodasTags,
-    getFiltrosTags,
-    postCreateTag,
-    patchAlterarTag,
-    deleteTag,
+    getFornecedores,
+    getFiltrosFornecedores,
+    postCreateFornecedor,
+    patchAlterarFornecedor,
+    deleteFornecedor,
 } from "../../../../../services/sme/Parametrizacoes.service";
-import TabelaTags from "./TabelaTags";
-import {Filtros} from "./Filtros";
+import TabelaFornecedores from "./TabelaFornecedores";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
-import ModalFormTags from "./ModalFormTags";
-import {ModalInfoNaoPermitido} from "./ModalInfoNaoPermitido";
-import {ModalConfirmDeleteTag} from "./ModalConfirmDeleteTag";
-import {BtnAddTags} from "./BtnAddTags";
 import Loading from "../../../../../utils/Loading";
+import {Filtros} from "./Filtros";
+import {BtnAddFornecedores} from "./BtnAddFornecedores";
+import ModalFormFornecedores from "./ModalFormFornecedores";
+import {ModalInfoNaoPermitido} from "./ModalInfoNaoPermitido";
+import {ModalConfirmDeleteFornecedor} from "./ModalConfirmDeleteFornecedor";
 
-export const Tags = ()=>{
+export const Fornecedores = () =>{
 
-    const [listaDeTags, setListaDeTags] = useState([]);
+    const [listaDeFornecedores, setListaDeFornecedores] = useState([])
     const [loading, setLoading] = useState(true);
 
-    const carregaTodasAsTags = useCallback(async ()=>{
+    const carregaListaFornecedores = useCallback(async ()=>{
         setLoading(true);
-        let todas_tags = await getTodasTags();
-        setListaDeTags(todas_tags);
+        let lista_fornecedores = await getFornecedores()
+        setListaDeFornecedores(lista_fornecedores)
         setLoading(false);
-    }, []);
+    }, [])
 
     useEffect(()=>{
-        carregaTodasAsTags()
-    }, [carregaTodasAsTags]);
+        carregaListaFornecedores()
+    }, [carregaListaFornecedores])
 
-    // Quando a state de todasAsAcoes sofrer alteração
-    const totalDeTags = useMemo(() => listaDeTags.length, [listaDeTags]);
+    // Quando a state de listaDeFornecedores sofrer alteração
+    const totalDeFornecedores = useMemo(() => listaDeFornecedores.length, [listaDeFornecedores]);
 
     // Filtros
     const initialStateFiltros = {
         filtrar_por_nome: "",
-        filtrar_por_status: "",
+        filtrar_por_cpf_cnpj: "",
     };
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
 
@@ -52,44 +52,41 @@ export const Tags = ()=>{
 
     const handleSubmitFiltros = async () => {
         setLoading(true);
-        let tags_filtradas = await getFiltrosTags(stateFiltros.filtrar_por_nome, stateFiltros.filtrar_por_status);
-        setListaDeTags(tags_filtradas);
+        let tags_filtradas = await getFiltrosFornecedores(stateFiltros.filtrar_por_nome, stateFiltros.filtrar_por_cpf_cnpj);
+        setListaDeFornecedores(tags_filtradas);
         setLoading(false);
     };
 
     const limpaFiltros = async () => {
         setLoading(true);
         setStateFiltros(initialStateFiltros);
-        await carregaTodasAsTags();
+        await carregaListaFornecedores();
         setLoading(false);
     };
 
-    // TabelaTags
-    const rowsPerPage = 20;
-    const statusTemplate = (rowData) => {
-        return rowData.status && rowData.status === 'ATIVO' ? 'Ativo' : 'Inativo'
-    };
+    // TabelaFornecedores
+    const rowsPerPage = 10;
 
     // Modal
     const initialStateFormModal = {
+        id: "",
         nome: "",
-        status: "",
-        uuid:"",
-        id:"",
+        cpf_cnpj: "",
+        uuid: "",
         operacao: 'create',
     };
 
     const [showModalForm, setShowModalForm] = useState(false);
-    const [showModalInfoNaoPermitido, setShowModalInfoNaoPermitido] = useState(false);
-    const [showModalConfirmDeleteTag, setShowModalConfirmDeleteTag] = useState(false);
-    const [erroExclusaoNaoPermitida, setErroExclusaoNaoPermitida] = useState('');
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
+    const [erroExclusaoNaoPermitida, setErroExclusaoNaoPermitida] = useState('');
+    const [showModalInfoNaoPermitido, setShowModalInfoNaoPermitido] = useState(false);
+    const [showModalConfirmDeleteFornecedor, setShowModalConfirmDeleteFornecedor] = useState(false);
 
-    const handleEditFormModalTags = useCallback( async (rowData) =>{
+    const handleEditFormModalFornecedores = useCallback( async (rowData) =>{
         setStateFormModal({
             ...stateFormModal,
             nome: rowData.nome,
-            status: rowData.status,
+            cpf_cnpj: rowData.cpf_cnpj,
             uuid: rowData.uuid,
             id: rowData.id,
             operacao: 'edit',
@@ -100,7 +97,7 @@ export const Tags = ()=>{
     const acoesTemplate = useCallback((rowData) =>{
         return (
             <div>
-                <button className="btn-editar-membro" onClick={()=>handleEditFormModalTags(rowData)}>
+                <button className="btn-editar-membro" onClick={()=>handleEditFormModalFornecedores(rowData)}>
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                         icon={faEdit}
@@ -108,66 +105,71 @@ export const Tags = ()=>{
                 </button>
             </div>
         )
-    }, [handleEditFormModalTags]);
+    }, [handleEditFormModalFornecedores]);
 
-    const handleSubmitModalFormTags = useCallback(async (values)=>{
+    const handleSubmitModalFormFornecedores = useCallback(async (values)=>{
         let payload = {
             nome: values.nome,
-            status: values.status,
+            cpf_cnpj: values.cpf_cnpj,
         };
 
         if (values.operacao === 'create'){
             try{
-                await postCreateTag(payload);
-                console.log('Tag criada com sucesso');
+                await postCreateFornecedor(payload);
+                console.log('Fornecedor criado com sucesso');
                 setShowModalForm(false);
-                await carregaTodasAsTags();
+                await carregaListaFornecedores();
             }catch (e) {
-                console.log('Erro ao criar tag ', e.response.data);
-                if (e.response.data && e.response.data.non_field_errors) {
-                    setErroExclusaoNaoPermitida('Ja existe uma tag com esse nome');
+                console.log('Erro ao criar fornecedor ', e.response.data);
+                if (e.response.data && e.response.data.cpf_cnpj && e.response.data.cpf_cnpj[0]) {
+                    setErroExclusaoNaoPermitida(e.response.data.cpf_cnpj[0]);
                     setShowModalInfoNaoPermitido(true)
                 } else {
-                    setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
+                    setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa operação.');
                     setShowModalInfoNaoPermitido(true)
                 }
             }
 
         }else {
             try {
-                await patchAlterarTag(values.uuid, payload);
-                console.log('Tag alterada com sucesso');
+                await patchAlterarFornecedor(values.id, payload);
+                console.log('Fornecedor alterado com sucesso');
                 setShowModalForm(false);
-                await carregaTodasAsTags();
+                await carregaListaFornecedores();
             }catch (e) {
-                console.log('Erro ao alterar tag ', e.response.data);
-                if (e.response.data && e.response.data.non_field_errors) {
-                    setErroExclusaoNaoPermitida('Ja existe uma tag com esse nome');
-                    setShowModalInfoNaoPermitido(true);
+                console.log('Erro ao alterar fornecedor ', e.response.data);
+                if (e.response.data && e.response.data.cpf_cnpj && e.response.data.cpf_cnpj[0]) {
+                    setErroExclusaoNaoPermitida(e.response.data.cpf_cnpj[0]);
+                    setShowModalInfoNaoPermitido(true)
                 } else {
-                    setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
-                    setShowModalInfoNaoPermitido(true);
+                    setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa operação.');
+                    setShowModalInfoNaoPermitido(true)
                 }
             }
             setLoading(false);
         }
-    }, [carregaTodasAsTags]);
+    }, [carregaListaFornecedores]);
 
-    const onDeleteTagTrue = useCallback(async ()=>{
+    const onDeleteFornecedorTrue = useCallback(async ()=>{
         setLoading(true);
         try {
-            await deleteTag(stateFormModal.uuid);
-            console.log("Tag excluída com sucesso");
-            setShowModalConfirmDeleteTag(false);
+            await deleteFornecedor(stateFormModal.id);
+            console.log("Fornecedor excluído com sucesso");
+            setShowModalConfirmDeleteFornecedor(false);
             setShowModalForm(false);
-            await carregaTodasAsTags();
+            await carregaListaFornecedores();
         }catch (e) {
-            console.log('Erro ao excluir tag ', e.response.data);
-            setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
-            setShowModalInfoNaoPermitido(true);
+            console.log('Erro ao excluir Fornecedor ', e.response.data);
+            if (e.response.data && e.response.data.cpf_cnpj && e.response.data.cpf_cnpj[0]) {
+                setErroExclusaoNaoPermitida(e.response.data.cpf_cnpj[0]);
+                setShowModalInfoNaoPermitido(true)
+            } else {
+                setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa operação.');
+                setShowModalInfoNaoPermitido(true)
+            }
         }
         setLoading(false);
-    }, [stateFormModal, carregaTodasAsTags]);
+    }, [stateFormModal, carregaListaFornecedores]);
 
     const handleCloseFormModal = useCallback(()=>{
         setStateFormModal(initialStateFormModal);
@@ -177,14 +179,14 @@ export const Tags = ()=>{
     const handleCloseModalInfoNaoPermitido = useCallback(()=>{
         setShowModalInfoNaoPermitido(false);
     }, []);
-    
-    const handleCloseConfirmDeleteTag = useCallback(()=>{
-        setShowModalConfirmDeleteTag(false)
+
+    const handleCloseConfirmDeleteFornecedor = useCallback(()=>{
+        setShowModalConfirmDeleteFornecedor(false)
     }, []);
 
     return(
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Etiquetas/Tags</h1>
+            <h1 className="titulo-itens-painel mt-5">Fornecedores</h1>
             {loading ? (
                     <div className="mt-5">
                         <Loading
@@ -197,7 +199,7 @@ export const Tags = ()=>{
                 ) :
                 <>
                     <div className="page-content-inner">
-                        <BtnAddTags
+                        <BtnAddFornecedores
                             FontAwesomeIcon={FontAwesomeIcon}
                             faPlus={faPlus}
                             setShowModalForm={setShowModalForm}
@@ -210,21 +212,20 @@ export const Tags = ()=>{
                             handleSubmitFiltros={handleSubmitFiltros}
                             limpaFiltros={limpaFiltros}
                         />
-                        <p>Exibindo <span className='total-acoes'>{totalDeTags}</span> etiquetas/tags</p>
-                        <TabelaTags
+                        <p>Exibindo <span className='total-acoes'>{totalDeFornecedores}</span> fornecedores</p>
+                        <TabelaFornecedores
                             rowsPerPage={rowsPerPage}
-                            listaDeTags={listaDeTags}
-                            statusTemplate={statusTemplate}
+                            listaDeFornecedores={listaDeFornecedores}
                             acoesTemplate={acoesTemplate}
                         />
                     </div>
                     <section>
-                        <ModalFormTags
+                        <ModalFormFornecedores
                             show={showModalForm}
                             stateFormModal={stateFormModal}
                             handleClose={handleCloseFormModal}
-                            handleSubmitModalFormTags={handleSubmitModalFormTags}
-                            setShowModalConfirmDeleteTag={setShowModalConfirmDeleteTag}
+                            handleSubmitModalFormFornecedores={handleSubmitModalFormFornecedores}
+                            setShowModalConfirmDeleteFornecedor={setShowModalConfirmDeleteFornecedor}
                         />
                     </section>
                     <section>
@@ -242,12 +243,12 @@ export const Tags = ()=>{
                         />
                     </section>
                     <section>
-                        <ModalConfirmDeleteTag
-                            show={showModalConfirmDeleteTag}
-                            handleClose={handleCloseConfirmDeleteTag}
-                            onDeleteTagTrue={onDeleteTagTrue}
-                            titulo="Excluir Tag"
-                            texto="<p>Deseja realmente excluir esta Tag?</p>"
+                        <ModalConfirmDeleteFornecedor
+                            show={showModalConfirmDeleteFornecedor}
+                            handleClose={handleCloseConfirmDeleteFornecedor}
+                            onDeleteFornecedorTrue={onDeleteFornecedorTrue}
+                            titulo="Excluir Fornecedor"
+                            texto="<p>Deseja realmente excluir este Fornecedor?</p>"
                             primeiroBotaoTexto="Cancelar"
                             primeiroBotaoCss="outline-success"
                             segundoBotaoCss="danger"
@@ -258,4 +259,4 @@ export const Tags = ()=>{
             }
         </PaginasContainer>
     )
-};
+}
