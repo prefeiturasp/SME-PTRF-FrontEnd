@@ -25,6 +25,7 @@ import {auxGetNomes} from "../auxGetNomes";
 import {ModalObservacoesRelatorioConsolidadoApuracao} from "../ModalObservacoesRelatorioConsolidadoApuracao";
 import {ModalAssociacoesEmAnalise} from "../ModalAssociacoesEmAnalise";
 import {ModalMsgGeracaoRelatorio} from "../ModalMsgGeracaoRelatorio";
+import {ModalSalvarJustificativa} from "../ModalSalvarJustificativa";
 import Loading from "../../../../utils/Loading";
 
 export const RelatorioConsolidadoApuracao = () => {
@@ -47,6 +48,8 @@ export const RelatorioConsolidadoApuracao = () => {
     const [contaNome, setContaNome] = useState('');
     const [execucaoFinanceira, setExecucaoFinanceira] = useState(false);
     const [justificativaDiferenca, setJustificativaDiferenca] = useState(initJustificativa);
+    const [btnSalvarJustificativaDisable, setBtnSalvarJustificativaDisable] = useState(true);
+    const [showSalvarJustificativa, setShowSalvarJustificativa] = useState(false);
     const [devolucoesContaPtrf, setDevolucoesContaPtrf] = useState(false);
     const [devolucoesAoTesouro, setDevolucoesAoTesouro] = useState(false);
 
@@ -199,6 +202,7 @@ export const RelatorioConsolidadoApuracao = () => {
     };
 
     const onChangeJustificativaDiferenca = (justificativa_texto) => {
+        setBtnSalvarJustificativaDisable(false);
         setJustificativaDiferenca({
             ...justificativaDiferenca,
             texto: justificativa_texto
@@ -211,9 +215,13 @@ export const RelatorioConsolidadoApuracao = () => {
                 texto: justificativaDiferenca.texto
             };
             await patchJustificativa(justificativaDiferenca.uuid, payload)
+            setShowSalvarJustificativa(true);
+            setBtnSalvarJustificativaDisable(true);
         } else {
             delete justificativaDiferenca.uuid;
             await postJustificativa(justificativaDiferenca)
+            setShowSalvarJustificativa(true);
+            setBtnSalvarJustificativaDisable(true);
         }
     };
 
@@ -231,6 +239,10 @@ export const RelatorioConsolidadoApuracao = () => {
         setShowModalAssociacoesEmAnalise(false);
         setShowModalMsgGeracaoRelatorio(false);
     };
+
+    const onHandleCloseSalvarJustificativa = () => {
+        setShowSalvarJustificativa(false);
+    }
 
 
     // Observações
@@ -361,6 +373,8 @@ export const RelatorioConsolidadoApuracao = () => {
                                 setJustificativaDiferenca={setJustificativaDiferenca}
                                 onChangeJustificativaDiferenca={onChangeJustificativaDiferenca}
                                 onSubmitJustificativaDiferenca={onSubmitJustificativaDiferenca}
+                                btnSalvarJustificativaDisable={btnSalvarJustificativaDisable}
+                                setBtnSalvarJustificativaDisable={setBtnSalvarJustificativaDisable}
                             />
                             <TabelaDevolucoesContaPtrf
                                 devolucoesContaPtrf={devolucoesContaPtrf}
@@ -397,6 +411,14 @@ export const RelatorioConsolidadoApuracao = () => {
                                 onGerarRelatorio={onGerarRelatorio}
                             />
                         </section>
+
+                        <section>
+                            <ModalSalvarJustificativa
+                                show={showSalvarJustificativa}
+                                handleClose={onHandleCloseSalvarJustificativa}
+                            />
+                        </section>
+
                         {msgGeracaoRelatorio &&
                             <section>
                                 <ModalMsgGeracaoRelatorio

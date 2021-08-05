@@ -35,7 +35,7 @@ const DataSaldoBancario = ({
                     <div className="col-12">
                         <div className="card container-extrato">
                             <div className="card-body">
-                                <h5 className="card-title titulo">Extrato Bancário da Unidade</h5>
+                                <h5 className="card-title titulo">Saldo bancário da conta</h5>
                                 <div className='row'>
                                     <div className='col-6'>
                                         <div className='row'>
@@ -75,16 +75,20 @@ const DataSaldoBancario = ({
                                     </div>
                                     <div className="col-6">
                                         <div className="form-group">
-                                            <label htmlFor="upload_extrato" className="ml-1">Comprovante do extrato</label>
+                                            <label htmlFor="upload_extrato" className="ml-1">Comprovante do saldo da conta</label>
                                             <div className='container-upload-extrato'>
-                                                <Upload beforeUpload={() => false} disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])} {...{
+                                                <Upload 
+                                                    beforeUpload={() => false} 
+                                                    disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
+                                                    className={`${periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria']) ? 'disabled_upload' : ''}`}
+                                                    {...{
                                                     
-                                                    name: 'file',
-                                                    accept: ".gif,.jpg,.jpeg,.png, .pdf",
-                                                    onChange:changeUploadExtrato,
-                                                    showUploadList: false
+                                                        name: 'file',
+                                                        accept: ".gif,.jpg,.jpeg,.png, .pdf",
+                                                        onChange:changeUploadExtrato,
+                                                        showUploadList: false
                                                     
-                                                }}>
+                                                    }}>
                                                     <Button icon={
                                                         <i className="glyphicon mr-2">
                                                         <FontAwesomeIcon

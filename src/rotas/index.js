@@ -60,6 +60,7 @@ import {Tags} from "../componentes/sme/Parametrizacoees/Estrutura/Tags";
 import {FiqueDeOlho} from "../componentes/sme/Parametrizacoees/EdicaoDeTextos/FiqueDeOlho";
 import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
 import {TiposDeCusteio} from "../componentes/sme/Parametrizacoees/Despesas/TiposDeCusteio"
+import {Fornecedores} from "../componentes/sme/Parametrizacoees/Despesas/Fornecedores";
 
 const routesConfig = [
     {
@@ -365,6 +366,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-tipos-custeio",
         component: TiposDeCusteio,
+        permissoes: ['access_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-Fornecedores",
+        component: Fornecedores,
         permissoes: ['access_painel_parametrizacoes'],
     },
     {

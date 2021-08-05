@@ -496,3 +496,16 @@ export const SalvarModalDiretoria = (propriedades) => {
         />
     )
 };
+
+export const ModalSalvarPrestacaoDeContasAnalise = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Informações salvas"
+            bodyText="<p>Informações salvas com sucesso!</p>"
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="OK"
+        />
+    )
+};
