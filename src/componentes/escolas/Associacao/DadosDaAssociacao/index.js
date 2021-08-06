@@ -229,12 +229,17 @@ export const DadosDaAsssociacao = () => {
                                                     }
                                                 </div>
                                             </div>
-                                            <div className="d-flex  justify-content-end pb-3">
-                                                <button onClick={() => setShowModalDadosAssociacaoCancelar(true)}
-                                                        type="reset" className="btn btn btn-outline-success mt-2">Cancelar
-                                                </button>
-                                                <button disabled={!visoesService.getPermissoes(['change_associacao'])} type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
-                                            </div>
+                                            { visoesService.getPermissoes(['change_associacao']) &&
+                                                <div className="d-flex  justify-content-end pb-3">
+                                                    <button onClick={() => setShowModalDadosAssociacaoCancelar(true)}
+                                                            type="reset"
+                                                            className="btn btn btn-outline-success mt-2">Cancelar
+                                                    </button>
+                                                    <button
+                                                        type="submit" className="btn btn-success mt-2 ml-2">Salvar
+                                                    </button>
+                                                </div>
+                                            }
 
                                             <section>
                                                 <CancelarModalAssociacao show={showModalReceitasCancelar}

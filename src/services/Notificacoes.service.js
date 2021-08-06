@@ -29,7 +29,7 @@ export const getNotificacoesLidasNaoLidasPaginacao = async (lidas, page) =>{
 };
 
 export const getNotificacaoMarcarDesmarcarLida = async (payload) =>{
-    return await api.put(`/api/notificacoes/marcar-lido/`,payload, authHeader).data
+    return (await api.put(`/api/notificacoes/marcar-lido/`,payload, authHeader)).data
 };
 
 export const getNotificacoesTabela = async () =>{
