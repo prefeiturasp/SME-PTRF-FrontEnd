@@ -70,7 +70,7 @@ const UrlsMenuDres ={
                 }
             ]
         },
-        {label: "Fornecedores", url: "parametro-fornecedores", dataFor:"parametro_fornecedores", icone:IconeMenuFornecedores, permissoes: ['access_painel_parametrizacoes'],},
+        {label: "Fornecedores", url: "parametro-fornecedores", dataFor:"parametro_fornecedores", icone:IconeMenuFornecedores, permissoes: ['access_fornecedores'],},
         {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_dados_diretoria'],},
     ]
 };
