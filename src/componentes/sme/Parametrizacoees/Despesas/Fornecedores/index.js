@@ -16,6 +16,7 @@ import {BtnAddFornecedores} from "./BtnAddFornecedores";
 import ModalFormFornecedores from "./ModalFormFornecedores";
 import {ModalInfoNaoPermitido} from "./ModalInfoNaoPermitido";
 import {ModalConfirmDeleteFornecedor} from "./ModalConfirmDeleteFornecedor";
+import {visoesService} from "../../../../../services/visoes.service";
 
 export const Fornecedores = () =>{
 
@@ -97,12 +98,14 @@ export const Fornecedores = () =>{
     const acoesTemplate = useCallback((rowData) =>{
         return (
             <div>
-                <button className="btn-editar-membro" onClick={()=>handleEditFormModalFornecedores(rowData)}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEdit}
-                    />
-                </button>
+                {visoesService.getPermissoes(['change_fornecedores']) && (
+                    <button className="btn-editar-membro" onClick={()=>handleEditFormModalFornecedores(rowData)}>
+                        <FontAwesomeIcon
+                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                            icon={faEdit}
+                        />
+                    </button>
+                )}
             </div>
         )
     }, [handleEditFormModalFornecedores]);
@@ -199,13 +202,15 @@ export const Fornecedores = () =>{
                 ) :
                 <>
                     <div className="page-content-inner">
-                        <BtnAddFornecedores
-                            FontAwesomeIcon={FontAwesomeIcon}
-                            faPlus={faPlus}
-                            setShowModalForm={setShowModalForm}
-                            initialStateFormModal={initialStateFormModal}
-                            setStateFormModal={setStateFormModal}
-                        />
+                        {visoesService.getPermissoes(['change_fornecedores']) && (
+                            <BtnAddFornecedores
+                                FontAwesomeIcon={FontAwesomeIcon}
+                                faPlus={faPlus}
+                                setShowModalForm={setShowModalForm}
+                                initialStateFormModal={initialStateFormModal}
+                                setStateFormModal={setStateFormModal}
+                            />
+                        )}
                         <Filtros
                             stateFiltros={stateFiltros}
                             handleChangeFiltros={handleChangeFiltros}

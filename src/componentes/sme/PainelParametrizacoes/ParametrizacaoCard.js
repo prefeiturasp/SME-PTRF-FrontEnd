@@ -10,6 +10,7 @@ import {
     CardImg,
 } from "reactstrap";
 import {redirect} from "../../../utils/redirect";
+import {visoesService} from "../../../services/visoes.service";
 
 const cardStyle = {
     cursor: "pointer",
@@ -61,26 +62,28 @@ export const ParametrizacaoCard = ({itensParametrizacao, nomeGrupo}) => {
         <>
             <h4 style={GrupoTituloStyle}>{nomeGrupo}</h4>
             <div className="row mt-4">
-                {itensParametrizacao && itensParametrizacao.length > 0 && itensParametrizacao.map((card, index) =>
-                    <div key={index} className="col-sm-12 col-md-4 col-xl-3 mb-4 ">
-                        <div className="card h-100 container-cards-dre-dashboard">
+                {itensParametrizacao && itensParametrizacao.length > 0 && itensParametrizacao.map((card, index) =>{
+                    return (
+                        visoesService.getPermissoes(card.permissoes) ? (
+                            <div key={index} className="col-sm-12 col-md-4 col-xl-3 mb-4 ">
+                                <div className="card h-100 container-cards-dre-dashboard">
+                                    <Card
+                                        className="servico h-"
+                                        style={cardStyle}
+                                        onClick={() => redirect(card.url)}
+                                    >
+                                        <CardImg top width="100%" src={card.icone} alt="Icone de seleção" height="71"/>
+                                        <CardBody>
+                                            <CardTitle style={cardTitleStyle}>{card.parametro}</CardTitle>
+                                            <CardSubtitle style={cardSubTitleStyle}><FontAwesomeIcon style={IconeSetaStyle} icon={faArrowRight}/></CardSubtitle>
+                                        </CardBody>
+                                    </Card>
 
-                            <Card
-                                className="servico h-"
-                                style={cardStyle}
-                                onClick={() => redirect(card.url)}
-
-                            >
-                                <CardImg top width="100%" src={card.icone} alt="Icone de seleção" height="71"/>
-                                <CardBody>
-                                    <CardTitle style={cardTitleStyle}>{card.parametro}</CardTitle>
-                                    <CardSubtitle style={cardSubTitleStyle}><FontAwesomeIcon style={IconeSetaStyle} icon={faArrowRight}/></CardSubtitle>
-                                </CardBody>
-                            </Card>
-
-                        </div>
-                    </div>
-                )}
+                                </div>
+                            </div>
+                        ) : null
+                    )
+                })}
             </div>
         </>
     )
