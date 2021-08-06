@@ -134,6 +134,7 @@ export const CentralDeNotificacoes = () => {
             "lido": checado
         };
         await getNotificacaoMarcarDesmarcarLida(payload);
+        await trazerNotificacoes();
     };
 
     const handleChangeFormFiltros = (name, value) => {
