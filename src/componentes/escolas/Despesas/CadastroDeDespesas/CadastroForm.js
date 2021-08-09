@@ -76,7 +76,6 @@ export const CadastroForm = ({verbo_http}) => {
     const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
     const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
     const [numeroDocumentoReadOnly, setNumeroDocumentoReadOnly] = useState(false);
-    const [razaoSocialReadOnly, setRazaoSocialReadOnly] = useState(false);
     const [showDespesaConferida, setShowDespesaConferida] = useState(false);
 
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
@@ -361,14 +360,6 @@ export const CadastroForm = ({verbo_http}) => {
         setShow(true);
     };
 
-    const setReadOnlyRazaoSocial = (value) => {
-        if(eh_despesa_sem_comprovacao_fiscal(value)){
-            setRazaoSocialReadOnly(true);
-        }
-        else{
-            setRazaoSocialReadOnly(false);
-        }
-    }
 
     const houveAlteracoes = (values) => {
         return !comparaObjetos(values, objetoParaComparacao)
@@ -448,7 +439,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                 }}
                                                 onBlur={async () => {
                                                     setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
-                                                    setReadOnlyRazaoSocial(props.values.cpf_cnpj_fornecedor);
                                                 }}
                                                 onClick={() => {
                                                     setFormErrors({cpf_cnpj_fornecedor: ""})
@@ -464,7 +454,7 @@ export const CadastroForm = ({verbo_http}) => {
                                         <div className="col-12 col-md-6  mt-4">
                                             <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
                                             <input
-                                                readOnly={razaoSocialReadOnly}
+                                                readOnly={eh_despesa_sem_comprovacao_fiscal(props.values.cpf_cnpj_fornecedor)}
                                                 value={props.values.nome_fornecedor}
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
