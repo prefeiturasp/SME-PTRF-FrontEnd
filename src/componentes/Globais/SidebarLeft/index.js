@@ -22,9 +22,6 @@ export const SidebarLeft = () => {
 
     const location = useLocation();
 
-    //console.log("XXXXXXXXXXXXXXXX HISTORY ", history)
-    //console.log("XXXXXXXXXXXXXXXX location ", location)
-
     const onToggle = () => {
         sidebarStatus.setSideBarStatus(!sidebarStatus.sideBarStatus)
     };
@@ -35,12 +32,33 @@ export const SidebarLeft = () => {
         await notificacaoContext.getQtdeNotificacoesNaoLidas()
     };
 
+    const getPathnameExcecoes = (url) =>{
+
+        if(url.match(/parametro-/)){
+            return 'painel-parametrizacoes'
+        }else {
+            switch (url) {
+                case 'cadastro-de-despesa-recurso-proprio':
+                    return 'lista-de-despesas'
+                case 'cadastro-de-despesa':
+                    return 'lista-de-despesas'
+                case 'edicao-de-despesa':
+                    return 'lista-de-despesas'
+                case 'cadastro-de-credito':
+                    return 'lista-de-receitas'
+                case 'edicao-de-receita':
+                    return 'lista-de-receitas'
+                case 'gestao-de-perfis-form':
+                    return 'gestao-de-perfis'
+                default:
+                    return false
+            }
+        }
+    }
+
     const getPathname = () => {
-        let array = location.pathname.split('/');
-        console.log("XXXXXXXXXXXXX getPathname split ", array)
-        let path_name = location.pathname.replace(/\//gi, '')
-        console.log("XXXXXXXXXXXXX getPathname replace ", path_name)
-        return path_name
+        let array_pathname = location.pathname.split('/');
+        return getPathnameExcecoes(array_pathname[1]) ? getPathnameExcecoes(array_pathname[1]) : array_pathname[1]
     }
 
     return (
@@ -50,11 +68,9 @@ export const SidebarLeft = () => {
                 className="sideNavCustomizado"
                 expanded={sidebarStatus.sideBarStatus}
                 onSelect={(selected) => {
-                    console.log("SELECTED ", selected)
                     qtdeNotificacoesNaoLidas();
                     visoesService.forcarNovoLogin();
                     const to = '/' + selected;
-                    console.log("xxxxxxxxxxxX ", history.location.pathname)
                     if (history.location.pathname !== to) {
                         history.push(to)
                     }
