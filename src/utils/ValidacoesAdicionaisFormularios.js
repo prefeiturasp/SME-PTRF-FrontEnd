@@ -353,7 +353,7 @@ export const exibeDateTimePT_BR = (data) => {
   if (data === 'None'){
     data = moment(new Date(), "YYYY-MM-DD").format("DD/MM/YYYY [às] HH:mm:ss");
   }else {
-    data =  moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY [às] HH:mm:ss");
+    data = moment(new Date(data), "YYYY-MM-DD").format("DD/MM/YYYY [às] HH:mm:ss");
   }
   return data
 }
@@ -429,6 +429,67 @@ export const processoIncorporacaoMask = (value) => {
 
   return mask
 }
+
+export function valida_cpf_cnpj_permitindo_cnpj_zerado ( valor ) {
+
+  // Remove caracteres inválidos do valor
+  if (valor){
+    valor = valor.replace(/[^0-9]/g, '');
+  }
+
+  if (
+      !valor ||
+      (valor.length < 11 && valor.length > 14) ||
+      valor === "00000000000" ||
+      valor === "11111111111" ||
+      valor === "11111111111111" ||
+      valor === "22222222222" ||
+      valor === "22222222222222" ||
+      valor === "33333333333" ||
+      valor === "33333333333333" ||
+      valor === "44444444444" ||
+      valor === "44444444444444" ||
+      valor === "55555555555" ||
+      valor === "55555555555555" ||
+      valor === "66666666666" ||
+      valor === "66666666666666" ||
+      valor === "77777777777" ||
+      valor === "77777777777777" ||
+      valor === "88888888888" ||
+      valor === "88888888888888" ||
+      valor === "99999999999" ||
+      valor === "99999999999999"
+  ){
+    return false
+  }
+
+
+  // Verifica se é CPF ou CNPJ
+  let valida = verifica_cpf_cnpj( valor );
+
+  // Garante que o valor é uma string
+  valor = valor.toString();
+
+
+
+  // Valida CPF
+  if ( valida === 'CPF' ) {
+    // Retorna true para cpf válido
+    return valida_cpf( valor );
+  }
+
+  // Valida CNPJ
+  else if ( valida === 'CNPJ' ) {
+    // Retorna true para CNPJ válido
+    return valida_cnpj( valor );
+  }
+
+  // Não retorna nada
+  else {
+    return false;
+  }
+
+} // valida_cpf_cnpj
 
 export function valida_cpf_cnpj ( valor ) {
 

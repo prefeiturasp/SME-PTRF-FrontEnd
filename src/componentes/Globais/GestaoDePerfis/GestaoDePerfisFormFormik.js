@@ -1,5 +1,5 @@
 import React from "react";
-import {Field, FieldArray, Formik} from "formik";
+import {FieldArray, Formik} from "formik";
 import {YupSignupSchemaPerfis} from "./YupSignupSchemaPerfis";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
@@ -44,12 +44,15 @@ export const GestaoDePerfisFormFormik = (
         desvinculaUnidadeUsuario,
         btnAdicionarDisabled,
         handleChangeVisao,
+        handleChangeGrupo,
         getEstadoInicialVisoesChecked,
+        getEstadoInicialGruposChecked,
         acessoCadastrarUnidade,
         unidadeVisaoUE,
         serviceTemUnidadeDre,
         serviceTemUnidadeUE,
         pesquisaVisao,
+        pesquisaPermissaoExibicaoVisao,
     }) => {
 
     return (
@@ -67,21 +70,59 @@ export const GestaoDePerfisFormFormik = (
                     resetForm,
                     values,
                 } = props;
+                let vinculoUnidade = props.values.unidades_vinculadas.find(element => element.uuid === initPerfisForm.unidade_selecionada)
+                let exibirBotaoDesvincular = (initPerfisForm.visao === "UE" && vinculoUnidade);
+                let temOutrasUnidadesOuVisoes = (
+                    (vinculoUnidade && props.values.unidades_vinculadas.length > 1) ||
+                    (!vinculoUnidade && props.values.unidades_vinculadas.length > 0) ||
+                    props.values.visoes.includes(pesquisaVisao("DRE").id) ||
+                    props.values.visoes.includes(pesquisaVisao("SME").id)
+                )
                 return (
                     <form onSubmit={props.handleSubmit}>
                         <div className="d-flex bd-highlight mt-2">
                             <div className="p-Y flex-grow-1 bd-highlight">
                                 <p className='titulo-gestao-de-perfis-form'>{!statePerfisForm.id ? 'Adicionar' : 'Editar'} usuário</p>
                             </div>
+
                             <div className="p-Y bd-highlight">
-                                {statePerfisForm.id &&
+                                {statePerfisForm.id && exibirBotaoDesvincular &&
+                                <button
+                                    onClick={async () => {
+                                        if (vinculoUnidade) {
+                                            await desvinculaUnidadeUsuario(vinculoUnidade)
+                                        }
+                                        if (!temOutrasUnidadesOuVisoes) {
+                                            setShowModalDeletePerfil(true)
+                                        } else {
+                                            window.location.assign('/gestao-de-perfis/');
+                                        }
+                                    }}
+                                    type="button"
+                                    className="btn btn btn-danger mt-2"
+                                >
+                                    <FontAwesomeIcon
+                                        style={{
+                                            fontSize: '15px',
+                                            marginRight: "5px",
+                                            color: '#fff'
+                                        }}
+                                        icon={faTrash}
+                                    />
+                                    {temOutrasUnidadesOuVisoes ? "Desvincular usuário" : "Desvincular e excluir"}
+                                </button>
+                                }
+                            </div>
+
+                            <div className="p-Y bd-highlight">
+                                {statePerfisForm.id && initPerfisForm.visao !== "UE" &&
                                 <button
                                     disabled={serviceTemUnidadeDre(props.values.unidades_vinculadas) || serviceTemUnidadeUE(props.values.unidades_vinculadas) || props.values.visoes.includes(pesquisaVisao("SME").id)}
                                     onClick={() => {
                                         setShowModalDeletePerfil(true)
                                     }}
                                     type="button"
-                                    className="btn btn btn-danger mt-2"
+                                    className="btn btn btn-danger mt-2 ml-2"
                                 >
                                     <FontAwesomeIcon
                                         style={{
@@ -100,9 +141,9 @@ export const GestaoDePerfisFormFormik = (
                             </div>
                             <div className="p-Y bd-highlight">
                                 <button
-                                        onClick={() => window.location.assign('/gestao-de-perfis/')}
-                                        type="button"
-                                        className="btn btn btn-outline-success mt-2 ml-2">Voltar
+                                    onClick={() => window.location.assign('/gestao-de-perfis/')}
+                                    type="button"
+                                    className="btn btn btn-outline-success mt-2 ml-2">Voltar
                                 </button>
                             </div>
                         </div>
@@ -120,10 +161,7 @@ export const GestaoDePerfisFormFormik = (
                                         className="form-control"
                                         disabled={statePerfisForm.id}
                                         onBlur={() => {
-                                            validacoesPersonalizadas(values, {
-                                                setFieldValue,
-                                                resetForm
-                                            });
+                                            validacoesPersonalizadas(values, {setFieldValue, resetForm});
                                         }}
                                         onClick={() => {
                                             setFormErrors({username: ""})
@@ -163,9 +201,7 @@ export const GestaoDePerfisFormFormik = (
                                         disabled={!props.values.e_servidor || statePerfisForm.id}
                                     />
                                     {/*Validações personalizadas*/}
-                                    {formErrors.username &&
-                                            <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.username}</span></p>
-                                    }
+                                    {formErrors.username && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.username}</span></p>}
                                 </div>
                             </div>
 
@@ -183,9 +219,7 @@ export const GestaoDePerfisFormFormik = (
                                         readOnly={bloquearCampoName}
                                         maxLength='255'
                                     />
-                                    {props.errors.name &&
-                                        <span className="span_erro text-danger mt-1"> {props.errors.name}</span>
-                                    }
+                                    {props.errors.name && <span className="span_erro text-danger mt-1"> {props.errors.name}</span>}
                                 </div>
                             </div>
 
@@ -201,12 +235,9 @@ export const GestaoDePerfisFormFormik = (
                                         name="email"
                                         className="form-control"
                                         placeholder='Insira seu email se desejar'
-                                        //readOnly={bloquearCampoEmail}
                                         maxLength='254'
                                     />
-                                    {props.errors.email &&
-                                        <span className="span_erro text-danger mt-1"> {props.errors.email}</span>
-                                    }
+                                    {props.errors.email && <span className="span_erro text-danger mt-1"> {props.errors.email}</span>}
                                 </div>
                             </div>
 
@@ -228,45 +259,57 @@ export const GestaoDePerfisFormFormik = (
                                                             getEstadoInicialVisoesChecked()
                                                         }}
                                                         checked={props.values.visoes.includes(parseInt(visao.id))}
-                                                        disabled={!visao.editavel}
+                                                        disabled={!visao.editavel || initPerfisForm.visao === "UE"}
                                                     />
                                                     <label className="form-check-label" htmlFor={visao.nome}>{visao.nome}</label>
                                                 </div>
                                             ))}
                                         </div>
                                     </div>
-                                    {props.errors.visoes &&
-                                        <span className="span_erro text-danger mt-1"> {props.errors.visoes}</span>
-                                    }
+                                    {props.errors.visoes && <span className="span_erro text-danger mt-1"> {props.errors.visoes}</span>}
                                 </div>
                             </div>
 
                             <div className="col-6">
                                 <div className="form-group">
                                     <label htmlFor="groups">Grupos</label>
-                                    <Field
-                                        component="select"
-                                        name="groups"
-                                        className="form-control"
-                                        multiple={true}
-                                        value={props.values.groups ? props.values.groups : []}
-                                        onChange={evt => {
-                                            setFieldValue("groups", [].slice.call(evt.target.selectedOptions).map(option => option.value))
-                                        }}
-                                    >
-                                        {grupos && grupos.length > 0 && grupos.map((grupo, index_grupos) => (
-                                            <option key={index_grupos} value={grupo.id}>{grupo.nome}</option>
-                                        ))}
-                                    </Field>
-                                    {props.errors.groups &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.groups}</span>}
+                                    <div className="card">
+                                        <div className="card-body p-2">
+                                            {grupos && grupos.length > 0 && grupos.map((grupo, index_grupos) => (
+                                                <div className="form-group form-check mb-0" key={index_grupos}>
+                                                        {pesquisaPermissaoExibicaoVisao(grupo.visao) &&
+                                                            <>
+                                                                <input
+                                                                    className="form-check-input"
+                                                                    type="checkbox"
+                                                                    name="groups"
+                                                                    id={grupo.nome}
+                                                                    value={grupo.id}
+                                                                    onChange={(e) => {
+                                                                            handleChangeGrupo(e, setFieldValue, values)
+                                                                            getEstadoInicialGruposChecked()
+                                                                    }}
+                                                                    checked={props.values.groups.includes(grupo.id)}
+                                                                />
+                                                                <label className="form-check-label" htmlFor={grupo.nome}>{grupo.nome}</label>
+                                                            </>
+                                                        }
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    {props.errors.groups && <span className="span_erro text-danger mt-1"> {props.errors.groups}</span>}
                                 </div>
                             </div>
 
-                            <div className='col-12'>
-                                <p><strong>{values.id ? "Unidades que possui acesso" : "Salve o usuário para poder vincular as unidades."}</strong></p>
-                            </div>
-                            {values.id &&
+                            {initPerfisForm.visao !== "UE" &&
+                                    <div className='col-12'>
+                                        <p>
+                                            <strong>{values.id ? "Unidades que possui acesso" : "Salve o usuário para poder vincular as unidades."}</strong>
+                                        </p>
+                                    </div>
+                            }
+                            {values.id && initPerfisForm.visao !== "UE" &&
                             <FieldArray
                                 name="unidades_vinculadas"
                                 render={({remove, push}) => (
@@ -290,10 +333,15 @@ export const GestaoDePerfisFormFormik = (
                                                                         className="form-control"
                                                                         disabled={unidade_vinculada.nome}
                                                                     >
-                                                                        <option value="">Selecione um tipo de unidade</option>
-                                                                        <option disabled={true} value="DRE">DIRETORIA</option>
+                                                                        <option value="">Selecione um tipo de unidade
+                                                                        </option>
+                                                                        <option disabled={true} value="DRE">DIRETORIA
+                                                                        </option>
                                                                         {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
-                                                                            <option disabled={!acessoCadastrarUnidade('UE') || item.id !== unidadeVisaoUE.tipo_unidade} key={item.id} value={item.id}>{item.nome}</option>
+                                                                            <option
+                                                                                disabled={!acessoCadastrarUnidade('UE') || item.id !== unidadeVisaoUE.tipo_unidade}
+                                                                                key={item.id}
+                                                                                value={item.id}>{item.nome}</option>
                                                                         ))}
                                                                     </select>
                                                                 ) :
@@ -309,11 +357,8 @@ export const GestaoDePerfisFormFormik = (
                                                                     className="form-control"
                                                                     disabled={unidade_vinculada.nome}
                                                                 >
-                                                                    <option value="">Selecione um tipo de unidade
-                                                                    </option>
-                                                                    <option disabled={!acessoCadastrarUnidade('DRE')}
-                                                                            value="DRE">DIRETORIA
-                                                                    </option>
+                                                                    <option value="">Selecione um tipo de unidade</option>
+                                                                    <option disabled={!acessoCadastrarUnidade('DRE')} value="DRE">DIRETORIA</option>
                                                                     {tabelaAssociacoes.tipos_unidade && tabelaAssociacoes.tipos_unidade.length > 0 && tabelaAssociacoes.tipos_unidade.filter(element => element.id !== 'ADM' && element.id !== 'DRE' && element.id !== 'IFSP' && element.id !== 'CMCT').map(item => (
                                                                         <option disabled={!acessoCadastrarUnidade('UE')} key={item.id} value={item.id}>{item.nome}</option>
                                                                     ))}
@@ -343,9 +388,7 @@ export const GestaoDePerfisFormFormik = (
                                                                     index={index_field_array}
                                                                 />
                                                             }
-                                                            {props.touched.unidade_vinculada && props.errors.unidade_vinculada &&
-                                                                <span className="text-danger mt-1"> {props.errors.unidade_vinculada}</span>
-                                                            }
+                                                            {props.touched.unidade_vinculada && props.errors.unidade_vinculada && <span className="text-danger mt-1"> {props.errors.unidade_vinculada}</span>}
                                                         </div>
 
                                                         {index_field_array >= 0 && values.unidades_vinculadas.length > 0 && (
@@ -384,7 +427,8 @@ export const GestaoDePerfisFormFormik = (
                                                 className="btn btn btn-success mt-2 mr-2"
                                                 disabled={btnAdicionarDisabled}
                                                 onClick={() => {
-                                                    getEstadoInicialVisoesChecked()
+                                                    getEstadoInicialVisoesChecked();
+                                                    getEstadoInicialGruposChecked();
                                                     push({
                                                             unidade_vinculada: '',
                                                             tipo_unidade: '',

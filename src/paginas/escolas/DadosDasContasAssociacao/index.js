@@ -6,7 +6,7 @@ import {DadosDasContas} from "../../../componentes/escolas/Associacao/DadosDasCo
 export const DadosDasContasPage = () =>{
     return (
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Membros</h1>
+            <h1 className="titulo-itens-painel mt-5">Dados das contas</h1>
             <div className="page-content-inner">
                 <DadosDasContas/>
             </div>

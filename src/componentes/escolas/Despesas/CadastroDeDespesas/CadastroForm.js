@@ -5,7 +5,7 @@ import {
     cpfMaskContitional,
     calculaValorRecursoAcoes,
     periodoFechado,
-    comparaObjetos, valida_cpf_cnpj
+    comparaObjetos, valida_cpf_cnpj_permitindo_cnpj_zerado
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import {
@@ -133,8 +133,9 @@ export const CadastroForm = ({verbo_http}) => {
     const validacoesPersonalizadas = useCallback(async (values, setFieldValue) => {
 
         let erros = {};
-        let cpf_cnpj_valido = !(!values.cpf_cnpj_fornecedor || values.cpf_cnpj_fornecedor.trim() === "" || !valida_cpf_cnpj(values.cpf_cnpj_fornecedor));
+        let cpf_cnpj_valido = !(!values.cpf_cnpj_fornecedor || values.cpf_cnpj_fornecedor.trim() === "" || !valida_cpf_cnpj_permitindo_cnpj_zerado(values.cpf_cnpj_fornecedor));
 
+        
         if (!cpf_cnpj_valido) {
             erros = {
                 cpf_cnpj_fornecedor: "Digite um CPF ou um CNPJ válido"
@@ -177,6 +178,14 @@ export const CadastroForm = ({verbo_http}) => {
         }
         return erros;
     }, [aux])
+
+    const eh_despesa_sem_comprovacao_fiscal = (cpf_cnpj) => {
+        if(cpf_cnpj == "00.000.000/0000-00"){
+            return true;
+        }
+
+        return false;
+    }
 
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
         values.despesa_incompleta = document.getElementsByClassName("despesa_incompleta").length
@@ -351,6 +360,7 @@ export const CadastroForm = ({verbo_http}) => {
         setShow(true);
     };
 
+
     const houveAlteracoes = (values) => {
         return !comparaObjetos(values, objetoParaComparacao)
     }
@@ -444,6 +454,7 @@ export const CadastroForm = ({verbo_http}) => {
                                         <div className="col-12 col-md-6  mt-4">
                                             <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
                                             <input
+                                                readOnly={eh_despesa_sem_comprovacao_fiscal(props.values.cpf_cnpj_fornecedor)}
                                                 value={props.values.nome_fornecedor}
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
@@ -468,7 +479,11 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onBlur={props.handleBlur}
                                                 name='tipo_documento'
                                                 id='tipo_documento'
-                                                className={`${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.tipo_documento && 'despesa_incompleta'} form-control`}
+                                                className={
+                                                    eh_despesa_sem_comprovacao_fiscal(props.values.cpf_cnpj_fornecedor) 
+                                                    ? "form-control"
+                                                    : `${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.tipo_documento && "despesa_incompleta"} form-control`
+                                                }
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             >
                                                 <option key={0} value="">Selecione o tipo</option>
@@ -489,7 +504,11 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onCalendarClose={async () => {
                                                     setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
                                                 }}
-                                                className={`${ !values.data_documento && verbo_http === "PUT" ? 'is_invalid' : ""} ${ !props.values.data_documento && "despesa_incompleta"} form-control`}
+                                                className={
+                                                    eh_despesa_sem_comprovacao_fiscal(props.values.cpf_cnpj_fornecedor) 
+                                                    ? "form-control"
+                                                    : `${!props.values.data_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.data_documento && "despesa_incompleta"} form-control`
+                                                }
                                                 about={despesaContext.verboHttp}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
@@ -504,7 +523,11 @@ export const CadastroForm = ({verbo_http}) => {
                                                 onBlur={props.handleBlur}
                                                 name="numero_documento"
                                                 id="numero_documento" type="text"
-                                                className={`${!numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" ? "is_invalid " : ""} ${!numeroDocumentoReadOnly && !values.numero_documento && 'despesa_incompleta'} form-control`}
+                                                className={
+                                                    eh_despesa_sem_comprovacao_fiscal(props.values.cpf_cnpj_fornecedor) 
+                                                    ? "form-control"
+                                                    : `${!numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!numeroDocumentoReadOnly && !props.values.numero_documento && "despesa_incompleta"} form-control`
+                                                }
                                                 placeholder={numeroDocumentoReadOnly ? "" : "Digite o número"}
                                                 disabled={readOnlyCampos || numeroDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
@@ -743,6 +766,8 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         errors={errors}
                                                                         exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
                                                                         exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
+                                                                        eh_despesa_sem_comprovacao_fiscal={eh_despesa_sem_comprovacao_fiscal}
+                                                                        cpf_cnpj={props.values.cpf_cnpj_fornecedor}
                                                                     />
                                                                 ) :
                                                                 rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (

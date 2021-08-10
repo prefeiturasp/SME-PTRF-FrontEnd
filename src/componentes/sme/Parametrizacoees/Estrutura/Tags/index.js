@@ -163,13 +163,8 @@ export const Tags = ()=>{
             await carregaTodasAsTags();
         }catch (e) {
             console.log('Erro ao excluir tag ', e.response.data);
-            if (e.response.data && e.response.data.non_field_errors) {
-                setErroExclusaoNaoPermitida('Ja existe uma tag com esse nome');
-                setShowModalInfoNaoPermitido(true);
-            } else {
-                setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
-                setShowModalInfoNaoPermitido(true);
-            }
+            setErroExclusaoNaoPermitida('Houve um erro ao tentar fazer essa atualização.');
+            setShowModalInfoNaoPermitido(true);
         }
         setLoading(false);
     }, [stateFormModal, carregaTodasAsTags]);

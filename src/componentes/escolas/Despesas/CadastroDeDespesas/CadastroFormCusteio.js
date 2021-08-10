@@ -6,7 +6,7 @@ import {visoesService} from "../../../../services/visoes.service";
 
 export const CadastroFormCusteio = (propriedades) => {
 
-    const {formikProps, rateio, rateios, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal} = propriedades
+    const {formikProps, rateio, rateios, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal, eh_despesa_sem_comprovacao_fiscal, cpf_cnpj} = propriedades
 
     const setValorRateioRealizado=(setFieldValue, index, valor)=>{
         setFieldValue(`rateios[${index}].valor_rateio`, trataNumericos(valor))
@@ -28,7 +28,11 @@ export const CadastroFormCusteio = (propriedades) => {
                         }}
                         name={`rateios[${index}].tipo_custeio`}
                         id='tipo_custeio'
-                        className={`${!rateio.tipo_custeio && verboHttp === "PUT" && "is_invalid "} ${!rateio.tipo_custeio && 'despesa_incompleta'} form-control`}
+                        className={
+                            eh_despesa_sem_comprovacao_fiscal(cpf_cnpj) 
+                            ? "form-control"
+                            : `${!rateio.tipo_custeio && verboHttp === "PUT" && "is_invalid "} ${!rateio.tipo_custeio && "despesa_incompleta"} form-control`
+                        }
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option value="">Selecione um tipo</option>
@@ -51,7 +55,11 @@ export const CadastroFormCusteio = (propriedades) => {
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].especificacao_material_servico`}
                         id={`especificacao_material_servico_${index}`}
-                        className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} ${!rateio.especificacao_material_servico && 'despesa_incompleta'} form-control`}
+                        className={
+                            eh_despesa_sem_comprovacao_fiscal(cpf_cnpj) 
+                            ? "form-control"
+                            : `${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} ${!rateio.especificacao_material_servico && "despesa_incompleta"} form-control`
+                        }
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     >
                         <option key={0} value="">Selecione uma especificação</option>

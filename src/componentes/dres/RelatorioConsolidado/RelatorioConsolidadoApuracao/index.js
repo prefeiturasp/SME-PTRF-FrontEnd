@@ -11,7 +11,7 @@ import {
     getDevolucoesAoTesouro,
     putCriarEditarDeletarObservacaoDevolucaoContaPtrf,
     putCriarEditarDeletarObservacaoDevolucaoTesouro,
-    postGerarRelatorio
+    postGerarRelatorio, getConsultarStatus,
 } from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {BoxConsultarDados} from "./BoxConsultarDados";
@@ -25,6 +25,7 @@ import {auxGetNomes} from "../auxGetNomes";
 import {ModalObservacoesRelatorioConsolidadoApuracao} from "../ModalObservacoesRelatorioConsolidadoApuracao";
 import {ModalAssociacoesEmAnalise} from "../ModalAssociacoesEmAnalise";
 import {ModalMsgGeracaoRelatorio} from "../ModalMsgGeracaoRelatorio";
+import {ModalSalvarJustificativa} from "../ModalSalvarJustificativa";
 import Loading from "../../../../utils/Loading";
 
 export const RelatorioConsolidadoApuracao = () => {
@@ -47,6 +48,8 @@ export const RelatorioConsolidadoApuracao = () => {
     const [contaNome, setContaNome] = useState('');
     const [execucaoFinanceira, setExecucaoFinanceira] = useState(false);
     const [justificativaDiferenca, setJustificativaDiferenca] = useState(initJustificativa);
+    const [btnSalvarJustificativaDisable, setBtnSalvarJustificativaDisable] = useState(true);
+    const [showSalvarJustificativa, setShowSalvarJustificativa] = useState(false);
     const [devolucoesContaPtrf, setDevolucoesContaPtrf] = useState(false);
     const [devolucoesAoTesouro, setDevolucoesAoTesouro] = useState(false);
 
@@ -56,6 +59,22 @@ export const RelatorioConsolidadoApuracao = () => {
     const [loading, setLoading] = useState(false);
     const [showModalMsgGeracaoRelatorio, setShowModalMsgGeracaoRelatorio] = useState(false);
     const [msgGeracaoRelatorio, setMsgGeracaoRelatorio] = useState('');
+
+    const [statusRelatorio, setStatusRelatorio] = useState(false);
+
+    useEffect(() => {
+        if (statusRelatorio && statusRelatorio.status_geracao && statusRelatorio.status_geracao === "EM_PROCESSAMENTO") {
+            const timer = setInterval(() => {
+                consultarStatus();
+            }, 5000);
+            // clearing interval
+            return () => clearInterval(timer);
+        }
+    });
+
+    useEffect(() => {
+        consultarStatus();
+    }, [periodo_uuid, conta_uuid]);
 
     useEffect(() => {
         carregaItensDashboard();
@@ -70,6 +89,34 @@ export const RelatorioConsolidadoApuracao = () => {
         carregaJustificativa();
         carregaDevolucoesAoTesouro();
     }, [itensDashboard]);
+
+    const consultarStatus = async () => {
+        console.log("Consultar status...")
+        if (dre_uuid && periodo_uuid && conta_uuid) {
+            let status = await getConsultarStatus(dre_uuid, periodo_uuid, conta_uuid);
+            setStatusRelatorio(status);
+            console.log('Status:', status)
+        }
+    };
+
+    const setaStatusComoProcessando = () => {
+        const statusProcessando = {
+            pcs_em_analise: false,
+            status_geracao: "EM_PROCESSAMENTO",
+            status_txt: "Análise de prestações de contas das associações completa. Relatório em processamento.",
+            cor_idx: 3,
+            status_arquivo: "Relatório sendo gerado. Aguarde."
+        }
+        setStatusRelatorio(statusProcessando);
+    };
+
+    const textoBtnRelatorio = () =>{
+        if (statusRelatorio.status_geracao === 'EM_PROCESSAMENTO'){
+            return 'Relatório sendo gerado...'
+        } else{
+            return 'Gerar relatório'
+        }
+    };
 
     const carregaItensDashboard = async () => {
         if (periodo_uuid) {
@@ -155,6 +202,7 @@ export const RelatorioConsolidadoApuracao = () => {
     };
 
     const onChangeJustificativaDiferenca = (justificativa_texto) => {
+        setBtnSalvarJustificativaDisable(false);
         setJustificativaDiferenca({
             ...justificativaDiferenca,
             texto: justificativa_texto
@@ -167,9 +215,13 @@ export const RelatorioConsolidadoApuracao = () => {
                 texto: justificativaDiferenca.texto
             };
             await patchJustificativa(justificativaDiferenca.uuid, payload)
+            setShowSalvarJustificativa(true);
+            setBtnSalvarJustificativaDisable(true);
         } else {
             delete justificativaDiferenca.uuid;
             await postJustificativa(justificativaDiferenca)
+            setShowSalvarJustificativa(true);
+            setBtnSalvarJustificativaDisable(true);
         }
     };
 
@@ -187,6 +239,10 @@ export const RelatorioConsolidadoApuracao = () => {
         setShowModalAssociacoesEmAnalise(false);
         setShowModalMsgGeracaoRelatorio(false);
     };
+
+    const onHandleCloseSalvarJustificativa = () => {
+        setShowSalvarJustificativa(false);
+    }
 
 
     // Observações
@@ -261,11 +317,12 @@ export const RelatorioConsolidadoApuracao = () => {
         try {
             setLoading(true);
             await postGerarRelatorio(payload);
-            console.log('Relatório gerado com sucesso');
+            console.log('Solicitação de relatório enviada com sucesso.');
             setShowModalAssociacoesEmAnalise(false);
             setLoading(false);
-            setMsgGeracaoRelatorio('Relatório gerado com sucesso');
+            setMsgGeracaoRelatorio('O relatório está sendo gerado, enquanto isso você pode continuar a usar o sistema. Consulte na tela anterior o status de geração do relatório.');
             setShowModalMsgGeracaoRelatorio(true)
+            setaStatusComoProcessando()
         } catch (e) {
             setShowModalAssociacoesEmAnalise(false);
             setLoading(false);
@@ -295,6 +352,7 @@ export const RelatorioConsolidadoApuracao = () => {
                                 periodoNome={periodoNome}
                                 contaNome={contaNome}
                                 onClickGerarRelatorio={onClickGerarRelatorio}
+                                textoBtnRelatorio={textoBtnRelatorio}
                             />
                             <InfoAssociacoesEmAnalise
                                 totalEmAnalise={totalEmAnalise}
@@ -315,6 +373,8 @@ export const RelatorioConsolidadoApuracao = () => {
                                 setJustificativaDiferenca={setJustificativaDiferenca}
                                 onChangeJustificativaDiferenca={onChangeJustificativaDiferenca}
                                 onSubmitJustificativaDiferenca={onSubmitJustificativaDiferenca}
+                                btnSalvarJustificativaDisable={btnSalvarJustificativaDisable}
+                                setBtnSalvarJustificativaDisable={setBtnSalvarJustificativaDisable}
                             />
                             <TabelaDevolucoesContaPtrf
                                 devolucoesContaPtrf={devolucoesContaPtrf}
@@ -351,6 +411,14 @@ export const RelatorioConsolidadoApuracao = () => {
                                 onGerarRelatorio={onGerarRelatorio}
                             />
                         </section>
+
+                        <section>
+                            <ModalSalvarJustificativa
+                                show={showSalvarJustificativa}
+                                handleClose={onHandleCloseSalvarJustificativa}
+                            />
+                        </section>
+
                         {msgGeracaoRelatorio &&
                             <section>
                                 <ModalMsgGeracaoRelatorio

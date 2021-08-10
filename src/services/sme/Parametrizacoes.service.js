@@ -245,3 +245,20 @@ export const patchAlterarTipoDeCusteio = async (tag_uuid, payload) => {
 export const deleteTipoDeCusteio = async (tag_uuid) => {
     return (await api.delete(`/api/tipos-custeio/${tag_uuid}/`, authHeader))
 };
+
+// Fornecedores
+export const getFornecedores = async () => {
+    return (await api.get(`/api/fornecedores/`, authHeader)).data
+};
+export const getFiltrosFornecedores = async (nome, cpf_cnpj) => {
+    return (await api.get(`/api/fornecedores/?nome=${nome}&cpf_cnpj=${cpf_cnpj}`, authHeader)).data
+};
+export const postCreateFornecedor = async (payload) => {
+    return (await api.post(`/api/fornecedores/`, payload, authHeader)).data
+};
+export const patchAlterarFornecedor = async (fornecedores_id, payload) => {
+    return (await api.patch(`/api/fornecedores/${fornecedores_id}/`, payload, authHeader)).data
+};
+export const deleteFornecedor = async (fornecedores_id) => {
+    return (await api.delete(`/api/fornecedores/${fornecedores_id}/`, authHeader))
+};

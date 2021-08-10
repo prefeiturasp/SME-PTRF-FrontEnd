@@ -27,6 +27,16 @@ export const RelatorioConsolidado = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        if (statusRelatorio && statusRelatorio.status_geracao && statusRelatorio.status_geracao === "EM_PROCESSAMENTO") {
+            const timer = setInterval(() => {
+                consultarStatus();
+            }, 5000);
+            // clearing interval
+            return () => clearInterval(timer);
+        }
+    });
+
+    useEffect(() => {
         buscaFiqueDeOlho();
     }, []);
 
@@ -136,6 +146,8 @@ export const RelatorioConsolidado = () => {
             return 'Documento parcial gerado'
         }else if (statusRelatorio.status_geracao === 'NAO_GERADO'){
             return 'Documento não gerado'
+        }else if (statusRelatorio.status_geracao === "EM_PROCESSAMENTO"){
+            return 'Relatório sendo gerado...'
         }
     };
 
