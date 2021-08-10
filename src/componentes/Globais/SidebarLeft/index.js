@@ -31,15 +31,17 @@ export const SidebarLeft = () => {
 
     let urls = getUrls.GetUrls();
 
-    const getPathname = () => {
-        let path_name = location.pathname.replace(/\//gi, '')
-        console.log("XXXXXXXXXXXXX getPathname ", path_name)
-        return path_name
-    }
-
     const qtdeNotificacoesNaoLidas = async () => {
         await notificacaoContext.getQtdeNotificacoesNaoLidas()
     };
+
+    const getPathname = () => {
+        let array = location.pathname.split('/');
+        console.log("XXXXXXXXXXXXX getPathname split ", array)
+        let path_name = location.pathname.replace(/\//gi, '')
+        console.log("XXXXXXXXXXXXX getPathname replace ", path_name)
+        return path_name
+    }
 
     return (
         <>
