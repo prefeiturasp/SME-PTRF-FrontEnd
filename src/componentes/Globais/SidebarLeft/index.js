@@ -32,7 +32,7 @@ export const SidebarLeft = () => {
     let urls = getUrls.GetUrls();
 
     const getPathname = () => {
-        let path_name = location.pathname.replace(/\//, '')
+        let path_name = location.pathname.replace(/\//gi, '')
         console.log("XXXXXXXXXXXXX getPathname ", path_name)
         return path_name
     }
