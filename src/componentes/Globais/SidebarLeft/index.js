@@ -13,16 +13,29 @@ import {visoesService} from "../../../services/visoes.service";
 import {Ambientes} from "../Ambientes";
 import {AmbientesApi} from "../AmbientesApi";
 
+import { useLocation } from 'react-router-dom'
+
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
     const notificacaoContext = useContext(NotificacaoContext);
     let history = useHistory();
+
+    const location = useLocation();
+
+    //console.log("XXXXXXXXXXXXXXXX HISTORY ", history)
+    //console.log("XXXXXXXXXXXXXXXX location ", location)
 
     const onToggle = () => {
         sidebarStatus.setSideBarStatus(!sidebarStatus.sideBarStatus)
     };
 
     let urls = getUrls.GetUrls();
+
+    const getPathname = () => {
+        let path_name = location.pathname.replace(/\//, '')
+        console.log("XXXXXXXXXXXXX getPathname ", path_name)
+        return path_name
+    }
 
     const qtdeNotificacoesNaoLidas = async () => {
         await notificacaoContext.getQtdeNotificacoesNaoLidas()
@@ -35,9 +48,11 @@ export const SidebarLeft = () => {
                 className="sideNavCustomizado"
                 expanded={sidebarStatus.sideBarStatus}
                 onSelect={(selected) => {
+                    console.log("SELECTED ", selected)
                     qtdeNotificacoesNaoLidas();
                     visoesService.forcarNovoLogin();
                     const to = '/' + selected;
+                    console.log("xxxxxxxxxxxX ", history.location.pathname)
                     if (history.location.pathname !== to) {
                         history.push(to)
                     }
@@ -45,8 +60,8 @@ export const SidebarLeft = () => {
                 onToggle={onToggle}
             >
                 <SideNav.Toggle/>
-                <SideNav.Nav defaultSelected={urls.dados_iniciais.default_selected}>
-
+                {/*<SideNav.Nav defaultSelected={urls.dados_iniciais.default_selected}>*/}
+                <SideNav.Nav defaultSelected={getPathname()}>
                     {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index) => {
                             return (
                                 visoesService.getPermissoes(url.permissoes) ? (
