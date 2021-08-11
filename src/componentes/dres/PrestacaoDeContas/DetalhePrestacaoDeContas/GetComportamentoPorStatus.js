@@ -1,4 +1,4 @@
-import React, {Fragment} from "react";
+import React from "react";
 import {Cabecalho} from "./Cabecalho";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
@@ -13,6 +13,7 @@ import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
 import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
 import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
+import {TabsArquivosDeReferencia} from "./TabsArquivosDeReferencia";
 
 
 export const GetComportamentoPorStatus = (
@@ -201,56 +202,34 @@ export const GetComportamentoPorStatus = (
                         setBtnSalvarDisabled={setBtnSalvarDisabled}
                     />
                          {/**************************/}
-                        <nav>
-                                <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                                        {infoAta && infoAta.contas && infoAta.contas.length > 0 && infoAta.contas.map((conta, index)=>
-                                            <Fragment key={conta.conta_associacao.uuid}>
-                                            <a
-                                                onClick={()=>{
-                                                        toggleBtnEscolheConta(index);
-                                                        exibeAtaPorConta(conta.conta_associacao.nome)
-                                                }}
+                    <TabsArquivosDeReferencia
+                        infoAta={infoAta}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        exibeAtaPorConta={exibeAtaPorConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        infoAtaPorConta={infoAtaPorConta}
 
-                                                className={`nav-link btn-escolhe-acao mr-3 ${clickBtnEscolheConta[index] ? "btn-escolhe-acao-active" : ""}`}
-                                                id= {`nav-${conta.conta_associacao.uuid}-tab`}
-                                                //id="nav-home-tab"
-                                                data-toggle="tab"
-                                                href={`#nav-${conta.conta_associacao.uuid}`}
-                                                //href="#nav-home"
-                                                role="tab"
-                                                aria-controls="nav-home"
-                                                aria-selected="true"
-                                            >
-                                                    Conta {conta.conta_associacao.nome}
-                                            </a>
-                                            {/*<button*/}
-                                            {/*    type='button'*/}
-                                            {/*    onClick={()=>{*/}
-                                            {/*            toggleBtnEscolheConta(index);*/}
-                                            {/*            exibeAtaPorConta(conta.conta_associacao.nome)*/}
-                                            {/*    }}*/}
-                                            {/*    className={`nav-link btn-escolhe-acao mr-3 ${clickBtnEscolheConta[index] ? "btn-escolhe-acao-active" : ""}`}*/}
-                                            {/*>*/}
-                                            {/*        Conta {conta.conta_associacao.nome}*/}
-                                            {/*</button>*/}
-                                            </Fragment>
+                        // Props e Componente AnalisesDeContaDaPrestacao
+                        AnalisesDeContaDaPrestacao={AnalisesDeContaDaPrestacao}
+                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
+                        getObjetoIndexAnalise={getObjetoIndexAnalise}
+                        editavel={true}
+                        // Fim Props e Componente AnalisesDeContaDaPrestacao
 
-                                        )}
-                                        <a className="nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Home</a>
-                                </div>
-                        </nav>
-                        {infoAtaPorConta && infoAtaPorConta.conta_associacao && infoAtaPorConta.conta_associacao.uuid &&
-                                <div className="tab-content" id="nav-tabContent">
-                                        <div className="tab-pane fade show active"
-                                             id={`nav-${infoAtaPorConta.conta_associacao.uuid}`}
-                                            //id="nav-home"
-                                             role="tabpanel"
-                                             aria-labelledby={`nav-${infoAtaPorConta.conta_associacao.uuid}-tab`}>OLLYVER {infoAtaPorConta.conta_associacao.nome}</div>
-                                </div>
-                        }
+                        // Props e Componente ResumoFinanceiroTabelaTotais
+                        ResumoFinanceiroTabelaTotais={ResumoFinanceiroTabelaTotais}
+                        valorTemplate={valorTemplate}
+                        // Fim Props e Componente ResumoFinanceiroTabelaTotais
 
+                        // Props e Componente ResumoFinanceiroTabelaAcoes
+                        ResumoFinanceiroTabelaAcoes={ResumoFinanceiroTabelaAcoes}
+                        toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
+                        clickBtnTabelaAcoes={clickBtnTabelaAcoes}
+                        // Fim Props e Componente ResumoFinanceiroTabelaAcoes
+                    />
 
-                    <ResumoFinanceiroSeletorDeContas
+{/*                    <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
                         clickBtnEscolheConta={clickBtnEscolheConta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
@@ -269,12 +248,14 @@ export const GetComportamentoPorStatus = (
                         infoAta={infoAtaPorConta}
                         valorTemplate={valorTemplate}
                     />
+
                     <ResumoFinanceiroTabelaAcoes
                         infoAta={infoAtaPorConta}
                         valorTemplate={valorTemplate}
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
+                    */}
                         {/**************************/}
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
