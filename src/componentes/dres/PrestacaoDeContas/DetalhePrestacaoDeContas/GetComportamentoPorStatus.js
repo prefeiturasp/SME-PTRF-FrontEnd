@@ -7,12 +7,12 @@ import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
 import {InformacoesDevolucaoAoTesouro} from "./InformacoesDevolucaoAoTesouro";
-import {ResumoFinanceiroSeletorDeContas} from "./ResumoFinanceiroSeletorDeContas";
 import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
 import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
 import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
 import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
+import {TabsArquivosDeReferencia} from "./TabsArquivosDeReferencia";
 
 
 export const GetComportamentoPorStatus = (
@@ -198,28 +198,26 @@ export const GetComportamentoPorStatus = (
                         validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
                         setBtnSalvarDisabled={setBtnSalvarDisabled}
                     />
-                    <ResumoFinanceiroSeletorDeContas
+                    <TabsArquivosDeReferencia
                         infoAta={infoAta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         exibeAtaPorConta={exibeAtaPorConta}
-                    />
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        infoAtaPorConta={infoAtaPorConta}
 
-                    <AnalisesDeContaDaPrestacao
-                        infoAta={infoAtaPorConta}
+                        // Props e Componente AnalisesDeContaDaPrestacao
+                        AnalisesDeContaDaPrestacao={AnalisesDeContaDaPrestacao}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                         getObjetoIndexAnalise={getObjetoIndexAnalise}
                         editavel={true}
-                    />
 
-                    <ResumoFinanceiroTabelaTotais
-                        infoAta={infoAtaPorConta}
+                        // Props e Componente ResumoFinanceiroTabelaTotais
+                        ResumoFinanceiroTabelaTotais={ResumoFinanceiroTabelaTotais}
                         valorTemplate={valorTemplate}
-                    />
-                    <ResumoFinanceiroTabelaAcoes
-                        infoAta={infoAtaPorConta}
-                        valorTemplate={valorTemplate}
+
+                        // Props e Componente ResumoFinanceiroTabelaAcoes
+                        ResumoFinanceiroTabelaAcoes={ResumoFinanceiroTabelaAcoes}
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
@@ -275,26 +273,26 @@ export const GetComportamentoPorStatus = (
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
                         editavel={false}
                     />
-                    <ResumoFinanceiroSeletorDeContas
+                    <TabsArquivosDeReferencia
                         infoAta={infoAta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         exibeAtaPorConta={exibeAtaPorConta}
-                    />
-                    <AnalisesDeContaDaPrestacao
-                        infoAta={infoAtaPorConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        infoAtaPorConta={infoAtaPorConta}
+
+                        // Props e Componente AnalisesDeContaDaPrestacao
+                        AnalisesDeContaDaPrestacao={AnalisesDeContaDaPrestacao}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                         getObjetoIndexAnalise={getObjetoIndexAnalise}
                         editavel={false}
-                    />
-                    <ResumoFinanceiroTabelaTotais
-                        infoAta={infoAtaPorConta}
+
+                        // Props e Componente ResumoFinanceiroTabelaTotais
+                        ResumoFinanceiroTabelaTotais={ResumoFinanceiroTabelaTotais}
                         valorTemplate={valorTemplate}
-                    />
-                    <ResumoFinanceiroTabelaAcoes
-                        infoAta={infoAtaPorConta}
-                        valorTemplate={valorTemplate}
+
+                        // Props e Componente ResumoFinanceiroTabelaAcoes
+                        ResumoFinanceiroTabelaAcoes={ResumoFinanceiroTabelaAcoes}
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
@@ -344,26 +342,26 @@ export const GetComportamentoPorStatus = (
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
                         editavel={false}
                     />
-                    <ResumoFinanceiroSeletorDeContas
+                    <TabsArquivosDeReferencia
                         infoAta={infoAta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         exibeAtaPorConta={exibeAtaPorConta}
-                    />
-                    <AnalisesDeContaDaPrestacao
-                        infoAta={infoAtaPorConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        infoAtaPorConta={infoAtaPorConta}
+
+                        // Props e Componente AnalisesDeContaDaPrestacao
+                        AnalisesDeContaDaPrestacao={AnalisesDeContaDaPrestacao}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                         getObjetoIndexAnalise={getObjetoIndexAnalise}
                         editavel={false}
-                    />
-                    <ResumoFinanceiroTabelaTotais
-                        infoAta={infoAtaPorConta}
+
+                        // Props e Componente ResumoFinanceiroTabelaTotais
+                        ResumoFinanceiroTabelaTotais={ResumoFinanceiroTabelaTotais}
                         valorTemplate={valorTemplate}
-                    />
-                    <ResumoFinanceiroTabelaAcoes
-                        infoAta={infoAtaPorConta}
-                        valorTemplate={valorTemplate}
+
+                        // Props e Componente ResumoFinanceiroTabelaAcoes
+                        ResumoFinanceiroTabelaAcoes={ResumoFinanceiroTabelaAcoes}
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
@@ -413,26 +411,26 @@ export const GetComportamentoPorStatus = (
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
                         editavel={false}
                     />
-                    <ResumoFinanceiroSeletorDeContas
+                    <TabsArquivosDeReferencia
                         infoAta={infoAta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         exibeAtaPorConta={exibeAtaPorConta}
-                    />
-                    <AnalisesDeContaDaPrestacao
-                        infoAta={infoAtaPorConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        infoAtaPorConta={infoAtaPorConta}
+
+                        // Props e Componente AnalisesDeContaDaPrestacao
+                        AnalisesDeContaDaPrestacao={AnalisesDeContaDaPrestacao}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                         getObjetoIndexAnalise={getObjetoIndexAnalise}
                         editavel={false}
-                    />
-                    <ResumoFinanceiroTabelaTotais
-                        infoAta={infoAtaPorConta}
+
+                        // Props e Componente ResumoFinanceiroTabelaTotais
+                        ResumoFinanceiroTabelaTotais={ResumoFinanceiroTabelaTotais}
                         valorTemplate={valorTemplate}
-                    />
-                    <ResumoFinanceiroTabelaAcoes
-                        infoAta={infoAtaPorConta}
-                        valorTemplate={valorTemplate}
+
+                        // Props e Componente ResumoFinanceiroTabelaAcoes
+                        ResumoFinanceiroTabelaAcoes={ResumoFinanceiroTabelaAcoes}
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
