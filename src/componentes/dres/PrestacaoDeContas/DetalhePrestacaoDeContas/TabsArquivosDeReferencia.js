@@ -1,4 +1,6 @@
 import React, {Fragment} from "react";
+import {TabsAccordionSinteseRealizacaoDaDespesa} from "./TabsAccordionSinteseRealizacaoDaDespesa";
+import {TabsAccordionSintesePorAcao} from "./TabsAccordionSintesePorAcao";
 
 export const TabsArquivosDeReferencia = (
     {
@@ -10,8 +12,6 @@ export const TabsArquivosDeReferencia = (
         ...componentes
     }
 ) => {
-
-    console.log("XXXXXXXXXXXXXX Componentes ",componentes)
 
     return (
         <>
@@ -49,7 +49,29 @@ export const TabsArquivosDeReferencia = (
                         aria-labelledby={`nav-${infoAtaPorConta.conta_associacao.uuid}-tab`}
                     >
                         <>
-                            {componentes.AnalisesDeContaDaPrestacao &&
+                            <TabsAccordionSinteseRealizacaoDaDespesa
+                                // Props e Componente AnalisesDeContaDaPrestacao
+                                AnalisesDeContaDaPrestacao = {componentes.AnalisesDeContaDaPrestacao}
+                                infoAta={infoAtaPorConta}
+                                analisesDeContaDaPrestacao={componentes.analisesDeContaDaPrestacao}
+                                handleChangeAnalisesDeContaDaPrestacao={componentes.handleChangeAnalisesDeContaDaPrestacao}
+                                getObjetoIndexAnalise={componentes.getObjetoIndexAnalise}
+                                editavel={componentes.editavel}
+
+                                // Props e Componente ResumoFinanceiroTabelaTotais
+                                ResumoFinanceiroTabelaTotais={componentes.ResumoFinanceiroTabelaTotais}
+                                valorTemplate={componentes.valorTemplate}
+                            />
+
+                            <TabsAccordionSintesePorAcao
+                                infoAta={infoAtaPorConta}
+                                ResumoFinanceiroTabelaAcoes={componentes.ResumoFinanceiroTabelaAcoes}
+                                valorTemplate={componentes.valorTemplate}
+                                toggleBtnTabelaAcoes={componentes.toggleBtnTabelaAcoes}
+                                clickBtnTabelaAcoes={componentes.clickBtnTabelaAcoes}
+                            />
+
+                            {/*{componentes.AnalisesDeContaDaPrestacao &&
                                 <componentes.AnalisesDeContaDaPrestacao
                                     infoAta={infoAtaPorConta}
                                     analisesDeContaDaPrestacao={componentes.analisesDeContaDaPrestacao}
@@ -63,15 +85,15 @@ export const TabsArquivosDeReferencia = (
                                     infoAta={infoAtaPorConta}
                                     valorTemplate={componentes.valorTemplate}
                                 />
-                            }
-                            {componentes.ResumoFinanceiroTabelaAcoes &&
+                            }*/}
+                            {/*{componentes.ResumoFinanceiroTabelaAcoes &&
                                 <componentes.ResumoFinanceiroTabelaAcoes
                                     infoAta={infoAtaPorConta}
                                     valorTemplate={componentes.valorTemplate}
                                     toggleBtnTabelaAcoes={componentes.toggleBtnTabelaAcoes}
                                     clickBtnTabelaAcoes={componentes.clickBtnTabelaAcoes}
                                 />
-                            }
+                            }*/}
                         </>
                     </div>
                 </div>

@@ -5,12 +5,11 @@ import {faChevronUp, faChevronDown} from "@fortawesome/free-solid-svg-icons";
 export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTabelaAcoes, clickBtnTabelaAcoes}) => {
     return (
         <>
-
                 {infoAta && infoAta.acoes && infoAta.acoes.length > 0 &&
                 <>
                     <p className='titulo-tabela'>Ver dados por ação</p>
 
-                    <div className="accordion" id="accordionFaq">
+                    <div className="accordion" id="accordionResumoFinanceiroTabelaAcoes">
                         {infoAta.acoes && infoAta.acoes.length > 0 && infoAta.acoes.map((info, index) =>
                             <div className="card" key={info.acao_associacao_uuid}>
 
@@ -18,34 +17,37 @@ export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTa
                                     <h2 className="mb-0">
                                         <div className="row">
                                             <div className="col-11">
-                                                <button onClick={() => toggleBtnTabelaAcoes(index)}
-                                                        className="btn btn-link btn-block text-left btn-container-titulo-acoes pl-0"
-                                                        type="button" data-toggle="collapse"
-                                                        data-target={`#collapse${index}`} aria-expanded="true"
-                                                        aria-controls={`collapse${index}`}>
+                                                <button
+                                                    onClick={() => toggleBtnTabelaAcoes(info.acao_associacao_uuid)}
+                                                    className="btn btn-link btn-block text-left btn-container-pergunta pl-0"
+                                                    type="button" data-toggle="collapse"
+                                                    data-target={`#collapse${index}`} aria-expanded="true"
+                                                    aria-controls={`collapse${index}`}
+                                                >
                                                     {info.acao_associacao_nome}
                                                 </button>
                                             </div>
                                             <div className="col-1">
-                                                <button onClick={() => toggleBtnTabelaAcoes(index)}
+                                                <button
+                                                    onClick={() => toggleBtnTabelaAcoes(info.acao_associacao_uuid)}
                                                         className="btn btn-link btn-block text-left"
                                                         type="button"
                                                         data-toggle="collapse" data-target={`#collapse${index}`}
-                                                        aria-expanded="true" aria-controls={`collapse${index}`}>
-                                            <span className='span-icone-toogle'>
-                                                <FontAwesomeIcon
-                                                    style={{marginRight: "0", color: 'black'}}
-                                                    icon={clickBtnTabelaAcoes[index] ? faChevronUp : faChevronDown}
-                                                />
-                                            </span>
+                                                        aria-expanded="true" aria-controls={`collapse${index}`}
+                                                >
+                                                <span className='span-icone-toogle'>
+                                                    <FontAwesomeIcon
+                                                        style={{marginRight: "0", color: 'black'}}
+                                                        icon={clickBtnTabelaAcoes[info.acao_associacao_uuid] ? faChevronUp : faChevronDown}
+                                                    />
+                                                </span>
                                                 </button>
                                             </div>
                                         </div>
 
                                     </h2>
                                 </div>
-                                <div id={`collapse${index}`} className="collapse" aria-labelledby="headingOne"
-                                     data-parent="#accordionFaq">
+                                <div id={`collapse${index}`} className={`collapse ${clickBtnTabelaAcoes[info.acao_associacao_uuid] ? "show" : ""}`} aria-labelledby="headingOne" data-parent="#accordionResumoFinanceiroTabelaAcoes">
                                     <div className="card-body p-0 border-0">
                                         <table className="table table-bordered tabela-acoes border-0 mb-0">
                                             <thead>
@@ -116,7 +118,6 @@ export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTa
                     </div>
                 </>
                 }
-
         </>
     )
 };
