@@ -66,8 +66,6 @@ export const GetComportamentoPorStatus = (
         setBtnSalvarDisabled
     }) => {
 
-        console.log("XXXXXXXXXXXXXXX INFO ATA ", infoAtaPorConta)
-
     if (prestacaoDeContas && prestacaoDeContas.status) {
         if (prestacaoDeContas.status === 'NAO_RECEBIDA') {
             return (
@@ -215,18 +213,15 @@ export const GetComportamentoPorStatus = (
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                         getObjetoIndexAnalise={getObjetoIndexAnalise}
                         editavel={true}
-                        // Fim Props e Componente AnalisesDeContaDaPrestacao
 
                         // Props e Componente ResumoFinanceiroTabelaTotais
                         ResumoFinanceiroTabelaTotais={ResumoFinanceiroTabelaTotais}
                         valorTemplate={valorTemplate}
-                        // Fim Props e Componente ResumoFinanceiroTabelaTotais
 
                         // Props e Componente ResumoFinanceiroTabelaAcoes
                         ResumoFinanceiroTabelaAcoes={ResumoFinanceiroTabelaAcoes}
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
-                        // Fim Props e Componente ResumoFinanceiroTabelaAcoes
                     />
 
 {/*                    <ResumoFinanceiroSeletorDeContas
