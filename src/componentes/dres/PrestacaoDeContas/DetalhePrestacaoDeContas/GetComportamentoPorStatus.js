@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {Cabecalho} from "./Cabecalho";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
@@ -64,6 +64,8 @@ export const GetComportamentoPorStatus = (
         btnSalvarDisabled,
         setBtnSalvarDisabled
     }) => {
+
+        console.log("XXXXXXXXXXXXXXX INFO ATA ", infoAtaPorConta)
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
         if (prestacaoDeContas.status === 'NAO_RECEBIDA') {
@@ -198,6 +200,56 @@ export const GetComportamentoPorStatus = (
                         validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
                         setBtnSalvarDisabled={setBtnSalvarDisabled}
                     />
+                         {/**************************/}
+                        <nav>
+                                <div className="nav nav-tabs" id="nav-tab" role="tablist">
+                                        {infoAta && infoAta.contas && infoAta.contas.length > 0 && infoAta.contas.map((conta, index)=>
+                                            <Fragment key={conta.conta_associacao.uuid}>
+                                            <a
+                                                onClick={()=>{
+                                                        toggleBtnEscolheConta(index);
+                                                        exibeAtaPorConta(conta.conta_associacao.nome)
+                                                }}
+
+                                                className={`nav-link btn-escolhe-acao mr-3 ${clickBtnEscolheConta[index] ? "btn-escolhe-acao-active" : ""}`}
+                                                id= {`nav-${conta.conta_associacao.uuid}-tab`}
+                                                //id="nav-home-tab"
+                                                data-toggle="tab"
+                                                href={`#nav-${conta.conta_associacao.uuid}`}
+                                                //href="#nav-home"
+                                                role="tab"
+                                                aria-controls="nav-home"
+                                                aria-selected="true"
+                                            >
+                                                    Conta {conta.conta_associacao.nome}
+                                            </a>
+                                            {/*<button*/}
+                                            {/*    type='button'*/}
+                                            {/*    onClick={()=>{*/}
+                                            {/*            toggleBtnEscolheConta(index);*/}
+                                            {/*            exibeAtaPorConta(conta.conta_associacao.nome)*/}
+                                            {/*    }}*/}
+                                            {/*    className={`nav-link btn-escolhe-acao mr-3 ${clickBtnEscolheConta[index] ? "btn-escolhe-acao-active" : ""}`}*/}
+                                            {/*>*/}
+                                            {/*        Conta {conta.conta_associacao.nome}*/}
+                                            {/*</button>*/}
+                                            </Fragment>
+
+                                        )}
+                                        <a className="nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Home</a>
+                                </div>
+                        </nav>
+                        {infoAtaPorConta && infoAtaPorConta.conta_associacao && infoAtaPorConta.conta_associacao.uuid &&
+                                <div className="tab-content" id="nav-tabContent">
+                                        <div className="tab-pane fade show active"
+                                             id={`nav-${infoAtaPorConta.conta_associacao.uuid}`}
+                                            //id="nav-home"
+                                             role="tabpanel"
+                                             aria-labelledby={`nav-${infoAtaPorConta.conta_associacao.uuid}-tab`}>OLLYVER {infoAtaPorConta.conta_associacao.nome}</div>
+                                </div>
+                        }
+
+
                     <ResumoFinanceiroSeletorDeContas
                         infoAta={infoAta}
                         clickBtnEscolheConta={clickBtnEscolheConta}
@@ -223,6 +275,7 @@ export const GetComportamentoPorStatus = (
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
+                        {/**************************/}
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
                     />
