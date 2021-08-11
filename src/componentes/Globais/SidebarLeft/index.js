@@ -50,6 +50,10 @@ export const SidebarLeft = () => {
                     return 'lista-de-receitas'
                 case 'gestao-de-perfis-form':
                     return 'gestao-de-perfis'
+                case 'dre-lista-prestacao-de-contas':
+                    return 'dre-dashboard'
+                case 'dre-detalhe-prestacao-de-contas':
+                    return 'dre-dashboard'
                 default:
                     return false
             }

@@ -8,7 +8,6 @@ export const TabsAccordionSintesePorAcao = ({infoAta, ...componentes}) =>{
 
     return(
         <div className="accordion mt-1" id="accordionSinteseRealizacaoPorAcao">
-
             <div className="card">
                 <div className="card-header" id="headingOne">
                     <h2 className="mb-0">
@@ -46,7 +45,7 @@ export const TabsAccordionSintesePorAcao = ({infoAta, ...componentes}) =>{
                     </h2>
                 </div>
                 <div id={`collapseSinteseRealizacaoPorAcao`} className="collapse" aria-labelledby="headingOne"  data-parent="#accordionSinteseRealizacaoPorAcao">
-                    <div className="card-body">
+                    <div className="card-body pl-2 pr-2">
                         {infoAta && componentes.ResumoFinanceiroTabelaAcoes &&
                             <componentes.ResumoFinanceiroTabelaAcoes
                                 infoAta={infoAta}
@@ -58,7 +57,6 @@ export const TabsAccordionSintesePorAcao = ({infoAta, ...componentes}) =>{
                     </div>
                 </div>
             </div>
-
         </div>
     )
 }

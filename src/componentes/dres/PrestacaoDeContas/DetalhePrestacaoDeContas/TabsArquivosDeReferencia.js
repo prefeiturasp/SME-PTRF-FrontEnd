@@ -2,16 +2,7 @@ import React, {Fragment} from "react";
 import {TabsAccordionSinteseRealizacaoDaDespesa} from "./TabsAccordionSinteseRealizacaoDaDespesa";
 import {TabsAccordionSintesePorAcao} from "./TabsAccordionSintesePorAcao";
 
-export const TabsArquivosDeReferencia = (
-    {
-        infoAta,
-        toggleBtnEscolheConta,
-        exibeAtaPorConta,
-        clickBtnEscolheConta,
-        infoAtaPorConta,
-        ...componentes
-    }
-) => {
+export const TabsArquivosDeReferencia = ({infoAta, toggleBtnEscolheConta, exibeAtaPorConta, clickBtnEscolheConta, infoAtaPorConta, ...componentes}) => {
 
     return (
         <>
@@ -70,30 +61,6 @@ export const TabsArquivosDeReferencia = (
                                 toggleBtnTabelaAcoes={componentes.toggleBtnTabelaAcoes}
                                 clickBtnTabelaAcoes={componentes.clickBtnTabelaAcoes}
                             />
-
-                            {/*{componentes.AnalisesDeContaDaPrestacao &&
-                                <componentes.AnalisesDeContaDaPrestacao
-                                    infoAta={infoAtaPorConta}
-                                    analisesDeContaDaPrestacao={componentes.analisesDeContaDaPrestacao}
-                                    handleChangeAnalisesDeContaDaPrestacao={componentes.handleChangeAnalisesDeContaDaPrestacao}
-                                    getObjetoIndexAnalise={componentes.getObjetoIndexAnalise}
-                                    editavel={componentes.editavel}
-                                />
-                            }
-                            {componentes.ResumoFinanceiroTabelaTotais &&
-                                <componentes.ResumoFinanceiroTabelaTotais
-                                    infoAta={infoAtaPorConta}
-                                    valorTemplate={componentes.valorTemplate}
-                                />
-                            }*/}
-                            {/*{componentes.ResumoFinanceiroTabelaAcoes &&
-                                <componentes.ResumoFinanceiroTabelaAcoes
-                                    infoAta={infoAtaPorConta}
-                                    valorTemplate={componentes.valorTemplate}
-                                    toggleBtnTabelaAcoes={componentes.toggleBtnTabelaAcoes}
-                                    clickBtnTabelaAcoes={componentes.clickBtnTabelaAcoes}
-                                />
-                            }*/}
                         </>
                     </div>
                 </div>

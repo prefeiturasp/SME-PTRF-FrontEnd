@@ -6,11 +6,8 @@ export const TabsAccordionSinteseRealizacaoDaDespesa = ({infoAta, ...componentes
 
     const [clickBtnInfoSinteseRealizacaoPorAcao, setClickBtnInfoSinteseRealizacaoPorAcao] = useState(false);
 
-    console.log("XXXXXXXXXXXXXX Componentes ",componentes)
-
     return(
         <div className="accordion mt-1" id="accordionSinteseRealizacaoDeDespesa">
-
             <div className="card">
                 <div className="card-header" id="headingOne">
                     <h2 className="mb-0">
@@ -44,11 +41,10 @@ export const TabsAccordionSinteseRealizacaoDaDespesa = ({infoAta, ...componentes
                                 </button>
                             </div>
                         </div>
-
                     </h2>
                 </div>
                 <div id={`collapseSinteseRealizacaoDeDespesa`} className="collapse" aria-labelledby="headingOne"  data-parent="#accordionSinteseRealizacaoDeDespesa">
-                    <div className="card-body">
+                    <div className="card-body pl-2 pr-2">
                         {infoAta && componentes.AnalisesDeContaDaPrestacao &&
                             <componentes.AnalisesDeContaDaPrestacao
                                 infoAta={infoAta}
@@ -67,7 +63,6 @@ export const TabsAccordionSinteseRealizacaoDaDespesa = ({infoAta, ...componentes
                     </div>
                 </div>
             </div>
-
         </div>
     )
 }
