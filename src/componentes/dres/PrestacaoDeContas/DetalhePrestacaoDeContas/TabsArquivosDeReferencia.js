@@ -11,7 +11,7 @@ export const TabsArquivosDeReferencia = ({infoAta, toggleBtnEscolheConta, exibeA
             <hr className='mt-4 mb-3'/>
             <h4 className='mb-4'>Arquivos de referência</h4>
             <nav>
-                <div className="nav nav-tabs mb-3 menu-interno" id="nav-tab" role="tablist">
+                <div className="nav nav-tabs mb-3 menu-interno-dre-prestacao-de-contas" id="nav-tab" role="tablist">
                     {infoAta && infoAta.contas && infoAta.contas.length > 0 && infoAta.contas.map((conta, index) =>
                         <Fragment key={conta.conta_associacao.uuid}>
                             <a
