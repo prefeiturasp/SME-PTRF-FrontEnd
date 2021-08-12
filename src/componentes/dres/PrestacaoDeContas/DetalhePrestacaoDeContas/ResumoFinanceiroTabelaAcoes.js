@@ -30,8 +30,10 @@ export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTa
                                                 onClick={() => toggleBtnTabelaAcoes(info.acao_associacao_uuid)}
                                                 className="btn btn-link btn-block text-left"
                                                 type="button"
-                                                data-toggle="collapse" data-target={`#collapse${index}`}
-                                                aria-expanded="true" aria-controls={`collapse${index}`}
+                                                data-toggle="collapse"
+                                                data-target={`#collapse${index}`}
+                                                aria-expanded="true"
+                                                aria-controls={`collapse${index}`}
                                             >
                                                 <span className='span-icone-toogle'>
                                                     <FontAwesomeIcon
@@ -45,9 +47,12 @@ export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTa
 
                                 </h2>
                             </div>
-                            <div id={`collapse${index}`}
-                                 className={`collapse ${clickBtnTabelaAcoes[info.acao_associacao_uuid] ? "show" : ""}`}
-                                 aria-labelledby="headingOne" data-parent="#accordionResumoFinanceiroTabelaAcoes">
+                            <div
+                                id={`collapse${index}`}
+                                className={`collapse ${clickBtnTabelaAcoes[info.acao_associacao_uuid] ? "show" : ""}`}
+                                aria-labelledby="headingOne"
+                                data-parent="#accordionResumoFinanceiroTabelaAcoes"
+                            >
                                 <div className="card-body p-0 border-0">
                                     <table className="table table-bordered tabela-acoes border-0 mb-0">
                                         <thead>

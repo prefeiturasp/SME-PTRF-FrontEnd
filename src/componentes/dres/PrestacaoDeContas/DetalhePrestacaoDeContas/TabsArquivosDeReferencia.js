@@ -1,8 +1,10 @@
 import React, {Fragment} from "react";
-import {TabsAccordionSinteseRealizacaoDaDespesa} from "./TabsAccordionSinteseRealizacaoDaDespesa";
-import {TabsAccordionSintesePorAcao} from "./TabsAccordionSintesePorAcao";
+import {TabsArquivosDeReferenciaAccordion} from "./TabsArquivosDeReferenciaAccordion";
+import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
+import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
+import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
 
-export const TabsArquivosDeReferencia = ({infoAta, toggleBtnEscolheConta, exibeAtaPorConta, clickBtnEscolheConta, infoAtaPorConta, ...componentes}) => {
+export const TabsArquivosDeReferencia = ({infoAta, toggleBtnEscolheConta, exibeAtaPorConta, clickBtnEscolheConta, infoAtaPorConta, ...rest}) => {
 
     return (
         <>
@@ -40,27 +42,35 @@ export const TabsArquivosDeReferencia = ({infoAta, toggleBtnEscolheConta, exibeA
                         aria-labelledby={`nav-${infoAtaPorConta.conta_associacao.uuid}-tab`}
                     >
                         <>
-                            <TabsAccordionSinteseRealizacaoDaDespesa
-                                // Props e Componente AnalisesDeContaDaPrestacao
-                                AnalisesDeContaDaPrestacao = {componentes.AnalisesDeContaDaPrestacao}
-                                infoAta={infoAtaPorConta}
-                                analisesDeContaDaPrestacao={componentes.analisesDeContaDaPrestacao}
-                                handleChangeAnalisesDeContaDaPrestacao={componentes.handleChangeAnalisesDeContaDaPrestacao}
-                                getObjetoIndexAnalise={componentes.getObjetoIndexAnalise}
-                                editavel={componentes.editavel}
+                            <TabsArquivosDeReferenciaAccordion
+                                titulo='Síntese do período de realização da despesa'
+                                name='sintese_por_realizacao_da_despesa'
+                            >
+                                <AnalisesDeContaDaPrestacao
+                                    infoAta={infoAtaPorConta}
+                                    analisesDeContaDaPrestacao={rest.analisesDeContaDaPrestacao}
+                                    handleChangeAnalisesDeContaDaPrestacao={rest.handleChangeAnalisesDeContaDaPrestacao}
+                                    getObjetoIndexAnalise={rest.getObjetoIndexAnalise}
+                                    editavel={rest.editavel}
+                                />
+                                <ResumoFinanceiroTabelaTotais
+                                    infoAta={infoAtaPorConta}
+                                    valorTemplate={rest.valorTemplate}
+                                />
+                            </TabsArquivosDeReferenciaAccordion>
 
-                                // Props e Componente ResumoFinanceiroTabelaTotais
-                                ResumoFinanceiroTabelaTotais={componentes.ResumoFinanceiroTabelaTotais}
-                                valorTemplate={componentes.valorTemplate}
-                            />
+                            <TabsArquivosDeReferenciaAccordion
+                                titulo='Síntese do período por ação'
+                                name='sintese_por_acao'
+                            >
 
-                            <TabsAccordionSintesePorAcao
-                                infoAta={infoAtaPorConta}
-                                ResumoFinanceiroTabelaAcoes={componentes.ResumoFinanceiroTabelaAcoes}
-                                valorTemplate={componentes.valorTemplate}
-                                toggleBtnTabelaAcoes={componentes.toggleBtnTabelaAcoes}
-                                clickBtnTabelaAcoes={componentes.clickBtnTabelaAcoes}
-                            />
+                                <ResumoFinanceiroTabelaAcoes
+                                    infoAta={infoAtaPorConta}
+                                    valorTemplate={rest.valorTemplate}
+                                    toggleBtnTabelaAcoes={rest.toggleBtnTabelaAcoes}
+                                    clickBtnTabelaAcoes={rest.clickBtnTabelaAcoes}
+                                />
+                            </TabsArquivosDeReferenciaAccordion>
                         </>
                     </div>
                 </div>

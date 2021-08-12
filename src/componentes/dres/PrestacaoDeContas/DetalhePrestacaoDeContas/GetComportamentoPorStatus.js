@@ -7,9 +7,6 @@ import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
 import {InformacoesDevolucaoAoTesouro} from "./InformacoesDevolucaoAoTesouro";
-import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
-import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
-import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
 import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
 import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
 import {TabsArquivosDeReferencia} from "./TabsArquivosDeReferencia";
@@ -205,19 +202,16 @@ export const GetComportamentoPorStatus = (
                         clickBtnEscolheConta={clickBtnEscolheConta}
                         infoAtaPorConta={infoAtaPorConta}
 
-                        // Props e Componente AnalisesDeContaDaPrestacao
-                        AnalisesDeContaDaPrestacao={AnalisesDeContaDaPrestacao}
+                        // Props AnalisesDeContaDaPrestacao
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                         getObjetoIndexAnalise={getObjetoIndexAnalise}
                         editavel={true}
 
-                        // Props e Componente ResumoFinanceiroTabelaTotais
-                        ResumoFinanceiroTabelaTotais={ResumoFinanceiroTabelaTotais}
+                        // Props ResumoFinanceiroTabelaTotais
                         valorTemplate={valorTemplate}
 
-                        // Props e Componente ResumoFinanceiroTabelaAcoes
-                        ResumoFinanceiroTabelaAcoes={ResumoFinanceiroTabelaAcoes}
+                        // Props ResumoFinanceiroTabelaAcoes
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
@@ -280,19 +274,16 @@ export const GetComportamentoPorStatus = (
                         clickBtnEscolheConta={clickBtnEscolheConta}
                         infoAtaPorConta={infoAtaPorConta}
 
-                        // Props e Componente AnalisesDeContaDaPrestacao
-                        AnalisesDeContaDaPrestacao={AnalisesDeContaDaPrestacao}
+                        // Props AnalisesDeContaDaPrestacao
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                         getObjetoIndexAnalise={getObjetoIndexAnalise}
                         editavel={false}
 
-                        // Props e Componente ResumoFinanceiroTabelaTotais
-                        ResumoFinanceiroTabelaTotais={ResumoFinanceiroTabelaTotais}
+                        // Props ResumoFinanceiroTabelaTotais
                         valorTemplate={valorTemplate}
 
-                        // Props e Componente ResumoFinanceiroTabelaAcoes
-                        ResumoFinanceiroTabelaAcoes={ResumoFinanceiroTabelaAcoes}
+                        // Props ResumoFinanceiroTabelaAcoes
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
@@ -349,19 +340,16 @@ export const GetComportamentoPorStatus = (
                         clickBtnEscolheConta={clickBtnEscolheConta}
                         infoAtaPorConta={infoAtaPorConta}
 
-                        // Props e Componente AnalisesDeContaDaPrestacao
-                        AnalisesDeContaDaPrestacao={AnalisesDeContaDaPrestacao}
+                        // Props AnalisesDeContaDaPrestacao
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                         getObjetoIndexAnalise={getObjetoIndexAnalise}
                         editavel={false}
 
-                        // Props e Componente ResumoFinanceiroTabelaTotais
-                        ResumoFinanceiroTabelaTotais={ResumoFinanceiroTabelaTotais}
+                        // Props ResumoFinanceiroTabelaTotais
                         valorTemplate={valorTemplate}
 
-                        // Props e Componente ResumoFinanceiroTabelaAcoes
-                        ResumoFinanceiroTabelaAcoes={ResumoFinanceiroTabelaAcoes}
+                        // Props ResumoFinanceiroTabelaAcoes
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
@@ -418,19 +406,16 @@ export const GetComportamentoPorStatus = (
                         clickBtnEscolheConta={clickBtnEscolheConta}
                         infoAtaPorConta={infoAtaPorConta}
 
-                        // Props e Componente AnalisesDeContaDaPrestacao
-                        AnalisesDeContaDaPrestacao={AnalisesDeContaDaPrestacao}
+                        // Props AnalisesDeContaDaPrestacao
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                         getObjetoIndexAnalise={getObjetoIndexAnalise}
                         editavel={false}
 
-                        // Props e Componente ResumoFinanceiroTabelaTotais
-                        ResumoFinanceiroTabelaTotais={ResumoFinanceiroTabelaTotais}
+                        // Props ResumoFinanceiroTabelaTotais
                         valorTemplate={valorTemplate}
 
-                        // Props e Componente ResumoFinanceiroTabelaAcoes
-                        ResumoFinanceiroTabelaAcoes={ResumoFinanceiroTabelaAcoes}
+                        // Props ResumoFinanceiroTabelaAcoes
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
                     />
