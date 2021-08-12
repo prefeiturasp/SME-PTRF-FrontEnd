@@ -204,4 +204,8 @@ export const getIniciarAtaRetificadora = async (uuidPrestacaoDeContas) => {
   return (await api.post(`/api/prestacoes-contas/${uuidPrestacaoDeContas}/iniciar-ata-retificacao/`, {}, authHeader)).data
 };
 
+export const getMembrosCargos = async (associacao_uuid) => {
+    return (await api.get(`/api/membros-associacao/membros-cargos/?associacao_uuid=${associacao_uuid}`,authHeader)).data
+};
+
 
