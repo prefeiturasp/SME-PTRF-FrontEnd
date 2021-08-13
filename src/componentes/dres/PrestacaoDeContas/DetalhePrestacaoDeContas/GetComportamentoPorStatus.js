@@ -10,6 +10,7 @@ import {InformacoesDevolucaoAoTesouro} from "./InformacoesDevolucaoAoTesouro";
 import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
 import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
 import {TabsArquivosDeReferencia} from "./TabsArquivosDeReferencia";
+import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferenciaVisualizacaoDownload";
 
 
 export const GetComportamentoPorStatus = (
@@ -214,6 +215,9 @@ export const GetComportamentoPorStatus = (
                         // Props ResumoFinanceiroTabelaAcoes
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
+                    />
+                    <ArquivosDeReferenciaVisualizacaoDownload
+                        prestacaoDeContas={prestacaoDeContas}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
