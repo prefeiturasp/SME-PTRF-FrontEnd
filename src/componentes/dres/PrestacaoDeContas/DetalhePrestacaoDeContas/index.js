@@ -327,9 +327,9 @@ export const DetalhePrestacaoDeContas = () =>{
         });
     };
 
-    const toggleBtnTabelaAcoes = (id) => {
+    const toggleBtnTabelaAcoes = (uuid) => {
         setClickBtnTabelaAcoes({
-            [id]: !clickBtnTabelaAcoes[id]
+            [uuid]: !clickBtnTabelaAcoes[uuid]
         });
     };
 

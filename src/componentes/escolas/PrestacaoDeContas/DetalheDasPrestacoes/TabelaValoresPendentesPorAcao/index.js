@@ -19,7 +19,7 @@ const TabelaValoresPendentesPorAcao = ({valoresPendentes, valorTemplate}) =>{
                 <tr>
                     <th scope="row">Saldo reprogramado anterior</th>
                     <td>{valorTemplate(valoresPendentes.saldo_anterior)}</td>
-                    <td className='coluna-cinza-escuro'> </td>
+                    <td className='coluna-cinza-escuro'>{valorTemplate(valoresPendentes.saldo_anterior)}</td>
                     <td className='coluna-cinza-escuro'> </td>
                 </tr>
                 <tr>

@@ -101,39 +101,37 @@
   font-size: 14px;
 }
 
-.menu-interno {
-  padding-bottom: 1.5rem;
-  li {
-    border: none;
+.menu-interno-dre-prestacao-de-contas {
+  padding-bottom: 0;
+  border-bottom: solid 1px #BFBFBF!important;
+
 
     .btn-escolhe-acao{
-      font-weight: bold !important;
-      color: #A4A4A4;
-      padding-bottom: 1rem;
-      margin-right: 2rem;
-      border: none;
-      outline: 0;
+      color: #42474A;
+      margin-right: 0.5rem;
       background-color: transparent;
-      padding-right: 0;
-      padding-left: 0;
+      border: solid 1px #BFBFBF;
+      border-bottom: none;
     }
 
-    .btn-escolhe-acao:hover{
-      color: #00585E !important;
-      text-decoration: none;
-    }
+  .btn-escolhe-acao:hover, .btn-escolhe-acao:active, .btn-escolhe-acao:focus{
+    border: solid 1px #BFBFBF;
+    border-bottom: none;
+  }
 
     .btn-escolhe-acao-active{
       font-weight: bold !important;
       color: #00585E;
-      border-bottom: solid #00585E 4px;
+      background-color: #F3F3F3;
+      border-bottom: 1px solid #fff;
+      margin-bottom: -1px;
     }
 
     svg{
       fill: red !important;
     }
 
-  }
+
 }
 
 .titulo-tabela{
@@ -187,7 +185,7 @@
 }
 
 .container-diferenca{
-  color: #fff;
+  color: #000;
   background-color: #E7E7E7;
   .titulo{
     font-size: 18px;
@@ -278,3 +276,8 @@
   text-indent: 1px;
   text-overflow: '';
 }
+
+#visualizar_arquivo_de_referencia{
+   min-height: 500px;
+   width: 100%;
+ }

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import "../geracao-da-ata.scss"
 import {TopoComBotoes} from "./TopoComBotoes";
@@ -6,7 +6,7 @@ import {TextoDinamicoSuperior} from "./TextoDinamicoSuperior";
 import {TabelaDinamica} from "./TabelaDinamica";
 import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
 import {TextoCopiado} from "../../../../utils/Modais";
-import {getInfoAta} from "../../../../services/escolas/PrestacaoDeContas.service";
+import {getInfoAta, getMembrosCargos} from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasAtas, atualizarInfoAta, getAtas} from "../../../../services/escolas/AtasAssociacao.service";
 import {getDespesasPorFiltros, getPrestacaoDeContasDetalhe, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
@@ -16,6 +16,7 @@ import {ModalEditarAta} from "../ModalEditarAta";
 import {ModalDevolucaoAoTesouro} from "../ModalDevolucaoAoTesouro";
 import {ModalReverDevolucoesAoTesouro} from "../ModalReverDevolucoesAoTesouro";
 import {getSalvarDevoulucoesAoTesouro} from "../../../../services/dres/PrestacaoDeContas.service";
+import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 
 moment.updateLocale('pt', {
     months: [
@@ -29,6 +30,7 @@ const numero = require('numero-por-extenso');
 export const VisualizacaoDaAta = () => {
 
     let {uuid_ata} = useParams();
+    let uuid_associacao = localStorage.getItem(ASSOCIACAO_UUID);
 
     const [showEditarAta, setShowEditarAta] = useState(false);
     const [showModalDevolucoesAoTesouro, setShowModalDevolucoesAoTesouro] = useState(false);
@@ -52,6 +54,18 @@ export const VisualizacaoDaAta = () => {
     const [tabelas, setTabelas] = useState({});
     const [dadosAta, setDadosAta] = useState({});
     const [prestacaoDeContasDetalhe, setPrestacaoDeContasDetalhe] = useState({});
+    const [membrosCargos, setMembrosCargos] = useState([])
+    const [presidenteNaoMembro, setPresidenteNaoMembro] = useState('')
+    const [secretarioNaoMembro, setSecretarioNaoMembro] = useState('')
+
+    const exibeMembrosCargos = useCallback(async ()=>{
+        let membros_cargos = await getMembrosCargos(uuid_associacao)
+        setMembrosCargos(membros_cargos)
+    }, [uuid_associacao])
+
+    useEffect(()=>{
+        exibeMembrosCargos()
+    }, [exibeMembrosCargos])
 
     useEffect(() => {
         const infoAta = async () => {
@@ -129,6 +143,34 @@ export const VisualizacaoDaAta = () => {
         });
     };
 
+    const handleChangeEditarAtaPresidente = (e) => {
+        let data_objeto = JSON.parse(e.target.options[e.target.selectedIndex].getAttribute('data-objeto'));
+        if (data_objeto && data_objeto.cargo_associacao_value){
+            setStateFormEditarAta(prev => ({...prev, cargo_presidente_reuniao: data_objeto.cargo_associacao_value}));
+        }else {
+            setStateFormEditarAta(prev => ({...prev, presidente_reuniao: ''}));
+        }
+    };
+
+    const handleChangeEditarAtaPresidenteNaoMembro = (value) => {
+        setPresidenteNaoMembro(value)
+        setStateFormEditarAta(prev => ({...prev, presidente_reuniao: ''}));
+    };
+
+    const handleChangeEditarAtaSecretario = (e) => {
+        let data_objeto = JSON.parse(e.target.options[e.target.selectedIndex].getAttribute('data-objeto'));
+        if (data_objeto && data_objeto.cargo_associacao_value){
+            setStateFormEditarAta(prev => ({...prev, cargo_secretaria_reuniao: data_objeto.cargo_associacao_value}));
+        }else {
+            setStateFormEditarAta(prev => ({...prev, secretario_reuniao: ''}));
+        }
+    };
+
+    const handleChangeEditarAtaSecretarioNaoMembro = (value) => {
+        setSecretarioNaoMembro(value)
+        setStateFormEditarAta(prev => ({...prev, secretario_reuniao: ''}));
+    };
+
     const handleClickFecharAta = () => {
         window.location.assign("/prestacao-de-contas")
     };
@@ -170,9 +212,9 @@ export const VisualizacaoDaAta = () => {
             "convocacao": stateFormEditarAta.convocacao,
             "data_reuniao": data_da_reuniao,
             "local_reuniao": stateFormEditarAta.local_reuniao,
-            "presidente_reuniao": stateFormEditarAta.presidente_reuniao,
+            "presidente_reuniao": !stateFormEditarAta.presidente_reuniao ?  presidenteNaoMembro : stateFormEditarAta.presidente_reuniao,
             "cargo_presidente_reuniao": stateFormEditarAta.cargo_presidente_reuniao,
-            "secretario_reuniao": stateFormEditarAta.secretario_reuniao,
+            "secretario_reuniao": !stateFormEditarAta.secretario_reuniao ? secretarioNaoMembro : stateFormEditarAta.secretario_reuniao,
             "cargo_secretaria_reuniao": stateFormEditarAta.cargo_secretaria_reuniao,
             "parecer_conselho": stateFormEditarAta.parecer_conselho,
             "comentarios": stateFormEditarAta.comentarios,
@@ -469,6 +511,11 @@ export const VisualizacaoDaAta = () => {
                     onChange={handleChangeEditarAta}
                     stateFormEditarAta={stateFormEditarAta}
                     tabelas={tabelas}
+                    membrosCargos={membrosCargos}
+                    handleChangeEditarAtaPresidente={handleChangeEditarAtaPresidente}
+                    handleChangeEditarAtaPresidenteNaoMembro={handleChangeEditarAtaPresidenteNaoMembro}
+                    handleChangeEditarAtaSecretario={handleChangeEditarAtaSecretario}
+                    handleChangeEditarAtaSecretarioNaoMembro={handleChangeEditarAtaSecretarioNaoMembro}
                 />
             </section>
             <section>

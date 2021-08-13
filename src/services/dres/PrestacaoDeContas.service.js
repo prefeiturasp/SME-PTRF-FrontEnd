@@ -133,5 +133,74 @@ export const getMotivosAprovadoComRessalva = async () => {
     return (await api.get(`/api/motivos-aprovacao-ressalva/`, authHeader)).data
 };
 
+export const getVisualizarArquivoDeReferencia = async (nome_do_arquivo, uuid, tipo) => {
+
+    let url;
+    if (tipo === "DF"){
+        url = `/api/demonstrativo-financeiro/${uuid}/pdf`
+    }else if(tipo === "RB"){
+        url = `/api/relacao-bens/${uuid}/pdf`
+    }else if(tipo === "EB"){
+        url = `/api/conciliacoes/${uuid}/extrato-bancario`
+    }
+
+    return (await api
+            .get(url, {
+                responseType: 'blob',
+                timeout: 30000,
+                headers: {
+                    'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then((response) => {
+                //Create a Blob from the arquivo Stream
+                const file = new Blob([response.data], {type: response.data.type});
+                //Build a URL from the file
+                const fileURL = URL.createObjectURL(file);
+                let objeto = document.querySelector( "#visualizar_arquivo_de_referencia" );
+                objeto.data = fileURL;
+            }).catch(error => {
+                return error.response;
+            })
+    )
+};
+
+export const getDownloadArquivoDeReferencia = async (nome_do_arquivo, uuid, tipo) => {
+    let url;
+    if (tipo === "DF"){
+        url = `/api/demonstrativo-financeiro/${uuid}/pdf`
+    }else if(tipo === "RB"){
+        url = `/api/relacao-bens/${uuid}/pdf`
+    }else if(tipo === "EB"){
+        url = `/api/conciliacoes/${uuid}/extrato-bancario`
+    }
+
+    return (await api
+            .get(url, {
+                responseType: 'blob',
+                timeout: 30000,
+                headers: {
+                    'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then((response) => {
+                //Create a Blob from the arquivo Stream
+                const file = new Blob([response.data], {type: response.data.type});
+                //Build a URL from the file
+                const url = URL.createObjectURL(file);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', nome_do_arquivo);
+                document.body.appendChild(link);
+                link.click();
+            }).catch(error => {
+                return error.response;
+            })
+    )
+};
+
+
 
 

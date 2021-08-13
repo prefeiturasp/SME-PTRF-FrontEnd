@@ -13,10 +13,14 @@ import {visoesService} from "../../../services/visoes.service";
 import {Ambientes} from "../Ambientes";
 import {AmbientesApi} from "../AmbientesApi";
 
+import { useLocation } from 'react-router-dom'
+
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
     const notificacaoContext = useContext(NotificacaoContext);
     let history = useHistory();
+
+    const location = useLocation();
 
     const onToggle = () => {
         sidebarStatus.setSideBarStatus(!sidebarStatus.sideBarStatus)
@@ -27,6 +31,39 @@ export const SidebarLeft = () => {
     const qtdeNotificacoesNaoLidas = async () => {
         await notificacaoContext.getQtdeNotificacoesNaoLidas()
     };
+
+    const getPathnameExcecoes = (url) =>{
+
+        if(url.match(/parametro-/)){
+            return 'painel-parametrizacoes'
+        }else {
+            switch (url) {
+                case 'cadastro-de-despesa-recurso-proprio':
+                    return 'lista-de-despesas'
+                case 'cadastro-de-despesa':
+                    return 'lista-de-despesas'
+                case 'edicao-de-despesa':
+                    return 'lista-de-despesas'
+                case 'cadastro-de-credito':
+                    return 'lista-de-receitas'
+                case 'edicao-de-receita':
+                    return 'lista-de-receitas'
+                case 'gestao-de-perfis-form':
+                    return 'gestao-de-perfis'
+                case 'dre-lista-prestacao-de-contas':
+                    return 'dre-dashboard'
+                case 'dre-detalhe-prestacao-de-contas':
+                    return 'dre-dashboard'
+                default:
+                    return false
+            }
+        }
+    }
+
+    const getPathname = () => {
+        let array_pathname = location.pathname.split('/');
+        return getPathnameExcecoes(array_pathname[1]) ? getPathnameExcecoes(array_pathname[1]) : array_pathname[1]
+    }
 
     return (
         <>
@@ -45,8 +82,8 @@ export const SidebarLeft = () => {
                 onToggle={onToggle}
             >
                 <SideNav.Toggle/>
-                <SideNav.Nav defaultSelected={urls.dados_iniciais.default_selected}>
-
+                {/*<SideNav.Nav defaultSelected={urls.dados_iniciais.default_selected}>*/}
+                <SideNav.Nav defaultSelected={getPathname()}>
                     {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index) => {
                             return (
                                 visoesService.getPermissoes(url.permissoes) ? (
