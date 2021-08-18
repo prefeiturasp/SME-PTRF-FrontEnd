@@ -45,6 +45,9 @@ const UrlsMenuEscolas ={
                 {
                     label: "Geração de documentos", url: "prestacao-de-contas", dataFor:"prestacao_de_contas", icone:"", permissoes: ['access_prestacao_contas']
                 },
+                {
+                    label: "Análise DRE", url: "analise-dre", dataFor:"analise_dre", icone:"", permissoes: ['access_analise_dre']
+                },
             ]
         },
         {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_ue', 'access_gestao_perfis_dre', 'access_gestao_perfis_sme'],},
