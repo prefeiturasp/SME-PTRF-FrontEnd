@@ -60,8 +60,6 @@ export const AnaliseDre = () =>{
     }, [carregaTabelaPrestacaoDeContas])
 
     const handleChangeFiltros = useCallback((name, value) => {
-        console.log("handleChangeFiltros name ", name)
-        console.log("handleChangeFiltros value ", value)
         setStateFiltros({
             ...stateFiltros,
             [name]: value
