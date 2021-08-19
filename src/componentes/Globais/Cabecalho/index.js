@@ -7,9 +7,10 @@ import IconeMenuMeuPerfil from "../../../assets/img/icone-menu-meu-perfil.png"
 import { authService, USUARIO_LOGIN } from '../../../services/auth.service';
 import {visoesService} from "../../../services/visoes.service";
 import {NotificacaoContext} from "../../../context/Notificacoes";
+import {CentralDeDownloadContext} from "../../../context/CentralDeDownloads"
 import {ModalConfirmaLogout} from "./ModalConfirmaLogout";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBell, faChevronDown, faTrash, faUser} from "@fortawesome/free-solid-svg-icons";
+import {faBell, faChevronDown, faTrash, faUser, faFileDownload} from "@fortawesome/free-solid-svg-icons";
 
 export const Cabecalho = () => {
 
@@ -21,6 +22,7 @@ export const Cabecalho = () => {
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado(login_usuario);
 
     const notificacaoContext = useContext(NotificacaoContext);
+    const centralDownloadContext = useContext(CentralDeDownloadContext)
 
     const [exibeMenu, setExibeMenu] = useState(true);
     const [show, setShow] = useState(false);
@@ -29,9 +31,17 @@ export const Cabecalho = () => {
         qtdeNotificacoesNaoLidas()
     }, []);
 
+    useEffect(()=>{
+        qtdeCentralDeDownloadNaoLidas()
+    }, []);
+
     const qtdeNotificacoesNaoLidas = async () =>{
         await notificacaoContext.getQtdeNotificacoesNaoLidas()
     };
+
+    const qtdeCentralDeDownloadNaoLidas = async () => {
+        await centralDownloadContext.getQtdeNotificacoesNaoLidas()
+    }
 
     const onChangeVisao = (e) =>{
         let obj = JSON.parse(e.target.value);
@@ -74,6 +84,11 @@ export const Cabecalho = () => {
         let path = `/central-de-notificacoes`;
         history.push(path);
     };
+
+    const redirectCentralDeDownloads = () => {
+        let path = `/central-de-downloads`;
+        history.push(path);
+    }
 
     const onShow = async () =>{
         let qtde = await notificacaoContext.getQtdeNotificacoesNaoLidas();
@@ -154,18 +169,32 @@ export const Cabecalho = () => {
                             <div className="col col-md-5 col-lg-4">
                                 <div className="row">
                                     <div className="col-3 p-0 m-0 text-right pt-4">
-                                    <button
-                                        onClick={()=>redirectCentralDeNotificacoes()}
-                                        className="btn-sair">
-                                        <span className="span-icone-verde">
-                                            <FontAwesomeIcon
-                                                style={{fontSize: '16px', color:'#fff'}}
-                                                icon={faBell}
-                                            />
-                                        <span className={notificacaoContext.qtdeNotificacoesNaoLidas && notificacaoContext.qtdeNotificacoesNaoLidas >= 10 ? `span-notificacoes-maior-que-10` : 'span-notificacoes-menor-que-10'} >{notificacaoContext.qtdeNotificacoesNaoLidas ? notificacaoContext.qtdeNotificacoesNaoLidas : 0}</span>
-                                        </span>
-                                    </button>
+                                        <button
+                                            onClick={()=>redirectCentralDeDownloads()}
+                                            className="btn-sair">
+                                            <span className="span-icone-verde">
+                                                <FontAwesomeIcon
+                                                    style={{fontSize: '16px', color:'#fff'}}
+                                                    icon={faFileDownload}
+                                                />
+                                            <span className={centralDownloadContext.qtdeNotificacoesNaoLidas && centralDownloadContext.qtdeNotificacoesNaoLidas >= 10 ? `span-notificacoes-maior-que-10` : 'span-notificacoes-menor-que-10'} >{centralDownloadContext.qtdeNotificacoesNaoLidas ? centralDownloadContext.qtdeNotificacoesNaoLidas : 0}</span>
+                                            </span>
+                                        </button>
+
+                                        <button
+                                            onClick={()=>redirectCentralDeNotificacoes()}
+                                            className="btn-sair">
+                                            <span className="span-icone-verde">
+                                                <FontAwesomeIcon
+                                                    style={{fontSize: '16px', color:'#fff'}}
+                                                    icon={faBell}
+                                                />
+                                            <span className={notificacaoContext.qtdeNotificacoesNaoLidas && notificacaoContext.qtdeNotificacoesNaoLidas >= 10 ? `span-notificacoes-maior-que-10` : 'span-notificacoes-menor-que-10'} >{notificacaoContext.qtdeNotificacoesNaoLidas ? notificacaoContext.qtdeNotificacoesNaoLidas : 0}</span>
+                                            </span>
+                                        </button>
                                     </div>
+
+
                                     <div className="col text-left pt-xl-3 m-0">
                                     <li className="link-acoes nav-link dropdown">
                                         <a href="#" id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
