@@ -61,6 +61,7 @@ import {FiqueDeOlho} from "../componentes/sme/Parametrizacoees/EdicaoDeTextos/Fi
 import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
 import {TiposDeCusteio} from "../componentes/sme/Parametrizacoees/Despesas/TiposDeCusteio"
 import {Fornecedores} from "../componentes/sme/Parametrizacoees/Despesas/Fornecedores";
+import {AnaliseDre} from "../componentes/escolas/AnaliseDre";
 
 const routesConfig = [
     {
@@ -385,6 +386,12 @@ const routesConfig = [
         path: "/consulta-de-saldos-bancarios-detalhes-associacoes/:periodo_uuid/:conta_uuid/:dre_uuid/",
         component: ConsultaDeSaldosBancariosDetalhesAssociacoes,
         permissoes: ['access_consulta_saldo_bancario'],
+    },
+    {
+        exact: true,
+        path: "/analise-dre",
+        component: AnaliseDre,
+        permissoes: ['access_analise_dre'],
     },
     {
         exact: true,
