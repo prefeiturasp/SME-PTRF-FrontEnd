@@ -10,24 +10,21 @@ import {faTrashAlt, faDownload, faUpload, faPaperclip, faCheck} from '@fortaweso
 import 'antd/dist/antd.css';
 import { Upload, Button } from 'antd';
 
-
-
-
 const DataSaldoBancario = ({
-    valoresPendentes, dataSaldoBancario, handleChangaDataSaldo, periodoFechado, 
+    valoresPendentes, dataSaldoBancario, handleChangaDataSaldo, periodoFechado,
     nomeComprovanteExtrato, exibeBtnDownload, msgErroExtensaoArquivo,
     changeUploadExtrato, reiniciaUploadExtrato, downloadComprovanteExtrato, salvarExtratoBancario,
     btnSalvarExtratoBancarioDisable, setBtnSalvarExtratoBancarioDisable, classBtnSalvarExtratoBancario,
-    setClassBtnSalvarExtratoBancario, checkSalvarExtratoBancario, setCheckSalvarExtratoBancario
+    setClassBtnSalvarExtratoBancario, checkSalvarExtratoBancario, setCheckSalvarExtratoBancario, erroDataSaldo
 }) => {
-    
+
     const handleOnClick = () => {
         setBtnSalvarExtratoBancarioDisable(true);
         setCheckSalvarExtratoBancario(true);
         setClassBtnSalvarExtratoBancario("secondary");
         salvarExtratoBancario();
     }
-    
+
     return(
         <>
             <form method="post" encType="multipart/form-data">
@@ -48,7 +45,9 @@ const DataSaldoBancario = ({
                                                     type="date"
                                                     className="form-control"
                                                     disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
+                                                    maxDate={new Date()}
                                                 />
+                                                {erroDataSaldo && <span className="span_erro text-danger mt-1"> {erroDataSaldo}</span>}
                                             </div>
                                         </div>
 
@@ -70,24 +69,23 @@ const DataSaldoBancario = ({
                                             </div>
                                         </div>
 
-                                            
-                                        
+
                                     </div>
                                     <div className="col-6">
                                         <div className="form-group">
                                             <label htmlFor="upload_extrato" className="ml-1">Comprovante do saldo da conta</label>
                                             <div className='container-upload-extrato'>
-                                                <Upload 
-                                                    beforeUpload={() => false} 
+                                                <Upload
+                                                    beforeUpload={() => false}
                                                     disabled={periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria'])}
                                                     className={`${periodoFechado || !visoesService.getPermissoes(['change_conciliacao_bancaria']) ? 'disabled_upload' : ''}`}
                                                     {...{
-                                                    
+
                                                         name: 'file',
                                                         accept: ".gif,.jpg,.jpeg,.png, .pdf",
                                                         onChange:changeUploadExtrato,
                                                         showUploadList: false
-                                                    
+
                                                     }}>
                                                     <Button icon={
                                                         <i className="glyphicon mr-2">
@@ -108,7 +106,7 @@ const DataSaldoBancario = ({
                                                         <div className="col-lg-8 mt-2">
                                                             <p>
                                                                 <span className="mr-1 ml-1">
-                                                                    <FontAwesomeIcon 
+                                                                    <FontAwesomeIcon
                                                                     style={{color:'#000000'}}
                                                                     icon={faPaperclip}/>
                                                                 </span>{nomeComprovanteExtrato}
@@ -136,11 +134,11 @@ const DataSaldoBancario = ({
                                                         </div>
                                                     </div>
 
-                                                    
-                                                    
+
+
                                                 </div>
                                             </div>
-                                            
+
 
                                         </div>
                                     </div>
@@ -171,7 +169,7 @@ const DataSaldoBancario = ({
                             </div>
                         </div>
                     </div>
-                </div>   
+                </div>
             </form>
 
             {visoesService.getPermissoes(['change_conciliacao_bancaria']) &&
@@ -189,9 +187,9 @@ const DataSaldoBancario = ({
                         </div>
                     }
 
-                    <button 
-                        disabled={btnSalvarExtratoBancarioDisable} 
-                        type="button" 
+                    <button
+                        disabled={btnSalvarExtratoBancarioDisable}
+                        type="button"
                         className={`btn btn-${classBtnSalvarExtratoBancario} mt-2`}
                         onClick={handleOnClick}
                         >

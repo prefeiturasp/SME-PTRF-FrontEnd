@@ -304,6 +304,21 @@ export const CadastroForm = ({verbo_http}) => {
 
         const errors = {};
 
+        // Validando se datas são maiores que data de hoje
+
+        let hoje = moment(new Date());
+        let data_digitada_documento = moment(values.data_documento);
+        let data_digitada_transacao = moment(values.data_transacao);
+
+        if (data_digitada_documento > hoje){
+            errors.data_documento = "Data do documento não pode ser maior que a data de hoje"
+        }
+        if (data_digitada_transacao > hoje){
+            errors.data_transacao = "Data da transação não pode ser maior que a data de hoje"
+        }
+
+
+
         // Validando se tipo de documento aceita apenas numéricos e se exibe campo Número do Documento
         if (values.tipo_documento) {
             let exibe_campo_numero_documento;
@@ -511,6 +526,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 }
                                                 about={despesaContext.verboHttp}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                maxDate={new Date()}
                                             />
                                             {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                         </div>
@@ -569,6 +585,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 about={despesaContext.verboHttp}
                                                 className={`${ !values.data_transacao && verbo_http === "PUT" ? 'is_invalid' : ""} ${ !values.data_transacao && "despesa_incompleta"} form-control`}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                maxDate={new Date()}
                                             />
                                             {props.errors.data_transacao &&
                                             <span
