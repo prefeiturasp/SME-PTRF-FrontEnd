@@ -23,6 +23,7 @@ import {MeusDadosPage} from "../paginas/escolas/MeusDados";
 import {AssociacoesPage} from "../paginas/dres/Associacoes";
 import {ProcessosSeiPage} from "../paginas/dres/Associacoes/ProcessosSei";
 import {CentralDeNotificacoesPage} from "../paginas/CentralDeNotificacoes";
+import {CentralDeDownloadsPage} from "../paginas/CentralDeDownloads";
 import {authService} from '../services/auth.service';
 import {visoesService} from "../services/visoes.service";
 import {PaginaSemPermissao} from "../paginas/SemPermissao";
@@ -224,6 +225,12 @@ const routesConfig = [
         path: "/central-de-notificacoes",
         component: CentralDeNotificacoesPage,
         permissoes: ['view_default'],
+    },
+    {
+        exact: true,
+        path: "/central-de-downloads",
+        component: CentralDeDownloadsPage,
+        permissoes: ['view_default']
     },
     {
         exact: true,
