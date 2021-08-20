@@ -138,8 +138,7 @@ export const DadosDaAsssociacao = () => {
                                                         className="span_erro text-danger mt-1"> {props.errors.nome} </span>}
                                                 </div>
                                                 <div className="form-group col-md-6">
-                                                    <label htmlFor="codigo_eol"><strong>Código EOL da Unidade
-                                                        Escolar</strong></label>
+                                                    <label htmlFor="codigo_eol"><strong>Código EOL da Unidade Educacional</strong></label>
                                                     <input
                                                         readOnly={true}
                                                         type="text"
@@ -208,7 +207,7 @@ export const DadosDaAsssociacao = () => {
                                                 </div>
 
                                                 <div className="form-group col-md-6">
-                                                    <label htmlFor="email"><strong>Email da associação</strong></label>
+                                                    <label htmlFor="email"><strong>E-mail da Unidade Educacional</strong></label>
                                                     <input
                                                         type="text"
                                                         value={props.values.email ? props.values.email : ""}
