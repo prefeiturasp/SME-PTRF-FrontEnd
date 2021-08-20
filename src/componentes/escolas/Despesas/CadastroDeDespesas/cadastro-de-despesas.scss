@@ -42,3 +42,11 @@ input[data-state="invalid"] {
 .input-valor-realizado-preenchido{
   color: #495057;
 }
+
+.btn-remover-despesa, .btn-remover-despesa:hover, .btn-remover-despesa:active, .btn-remover-despesa:focus, .btn-remover-despesa:visited{
+  color: #B40C02;
+  font-weight: bold;
+}
+.btn-remover-despesa:hover{
+
+}

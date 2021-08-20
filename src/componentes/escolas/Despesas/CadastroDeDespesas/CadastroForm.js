@@ -45,7 +45,8 @@ import moment from "moment";
 import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
 import {ModalDespesaIncompleta} from "./ModalDespesaIncompleta";
 import {ModalErroDeletarCadastroDespesa} from "./ModalErroDeletarCadastroDespesa";
-import {ModalDeletarDespesa} from "./ModalDeletarDespesa";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -180,11 +181,7 @@ export const CadastroForm = ({verbo_http}) => {
     }, [aux])
 
     const eh_despesa_sem_comprovacao_fiscal = (cpf_cnpj) => {
-        if(cpf_cnpj == "00.000.000/0000-00"){
-            return true;
-        }
-
-        return false;
+        return cpf_cnpj === "00.000.000/0000-00";
     }
 
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
@@ -735,7 +732,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                     return (
                                                         <div key={index}>
 
-                                                            <div className="d-flex bd-highlight border-bottom mt-4 pb-2 align-items-center">
+                                                            <div className="d-flex bd-highlight border-bottom mt-4 align-items-center">
                                                                 <div className="flex-grow-1 bd-highlight">
                                                                     <p className='mb-0'><strong>Despesa {index + 1}</strong></p>
                                                                 </div>
@@ -744,11 +741,15 @@ export const CadastroForm = ({verbo_http}) => {
                                                                         <div className="d-flex  justify-content-start">
                                                                             <button
                                                                                 type="button"
-                                                                                className="btn btn btn-outline-success mr-2"
+                                                                                className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
                                                                                 onClick={() => remove(index)}
                                                                                 disabled={!visoesService.getPermissoes(['delete_despesa'])}
                                                                             >
-                                                                                - Remover Despesa
+                                                                                <FontAwesomeIcon
+                                                                                    style={{fontSize: '17px', marginRight: "4px", color: "#B40C02"}}
+                                                                                    icon={faTimesCircle}
+                                                                                />
+                                                                                Remover Despesa
                                                                             </button>
                                                                         </div>
                                                                     )}
