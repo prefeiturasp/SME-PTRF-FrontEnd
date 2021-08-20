@@ -734,16 +734,17 @@ export const CadastroForm = ({verbo_http}) => {
                                                 {values.rateios.length > 0 && values.rateios.map((rateio, index) => {
                                                     return (
                                                         <div key={index}>
-                                                            <div className="d-flex bd-highlight border-bottom mt-4 align-items-center">
-                                                                <div className="p-2 flex-grow-1 bd-highlight">
+
+                                                            <div className="d-flex bd-highlight border-bottom mt-4 pb-2 align-items-center">
+                                                                <div className="flex-grow-1 bd-highlight">
                                                                     <p className='mb-0'><strong>Despesa {index + 1}</strong></p>
                                                                 </div>
-                                                                <div className="p-2 bd-highlight">
+                                                                <div className="bd-highlight">
                                                                     {index >= 1 && values.rateios.length > 1 && (
-                                                                        <div className="d-flex  justify-content-start mt-3 mb-3">
+                                                                        <div className="d-flex  justify-content-start">
                                                                             <button
                                                                                 type="button"
-                                                                                className="btn btn btn-outline-success mt-2 mr-2"
+                                                                                className="btn btn btn-outline-success mr-2"
                                                                                 onClick={() => remove(index)}
                                                                                 disabled={!visoesService.getPermissoes(['delete_despesa'])}
                                                                             >
