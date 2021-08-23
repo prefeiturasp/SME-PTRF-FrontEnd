@@ -4,8 +4,8 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
     return(
         <>
             <form>
-                <div className="form-row mt-4">
-                    <div className="form-group col">
+                <div className="form-row">
+                    <div className="form-group col-5">
                         <label htmlFor="filtrar_por_associacao">Filtrar por associação</label>
                         <input
                             value={stateFiltros.filtrar_por_unidade}
@@ -17,7 +17,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             placeholder='Escreva o nome da associação'
                         />
                     </div>
-                    <div className="form-group col">
+                    <div className="form-group col-5">
                         <label htmlFor="filtrar_por_tipo_ue">Filtrar pelo tipo de UE</label>
                         <select
                             value={stateFiltros.filtrar_por_tipo_ue}
@@ -32,10 +32,9 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             ))}
                         </select>
                     </div>
-                </div>
-                <div className="d-flex  justify-content-end mt-n2">
-                    <button onClick={()=>limpaFiltros()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Limpar</button>
-                    <button onClick={handleSubmitFiltros} type="button" className="btn btn-success mt-2">Filtrar</button>
+                    <div className="form-group col-2">
+                        <button onClick={handleSubmitFiltros} type="button" className="btn btn-success" style={{marginTop: "1.9em"}}>Filtrar</button>
+                    </div>
                 </div>
             </form>
         </>
