@@ -109,13 +109,11 @@ export const Dashboard = () => {
         return valor_saldo < 0 ? "texto-cor-vermelha" : "texto-cor-verde"
     };
 
-    const getCssDestaque = (tamanho_margin_bottom=1) =>{
-        if (acoesAssociacao && acoesAssociacao.prestacao_contas_status){
-            if(acoesAssociacao.prestacao_contas_status.periodo_encerrado && acoesAssociacao.prestacao_contas_status.status_prestacao === "APROVADA"){
-                return `pt-1 mb-${tamanho_margin_bottom}`
-            }else {
-                return `pt-1 mb-${tamanho_margin_bottom} texto-com-icone-${getCorStatusPeriodo(statusPeriodoAssociacao)}`
-            }
+    const getCssDestaque = (tamanho_margin_bottom= 1, statusPeriodoAssociacao) =>{
+        if (statusPeriodoAssociacao && statusPeriodoAssociacao.aceita_alteracoes){
+            return `pt-1 mb-${tamanho_margin_bottom} texto-com-icone-amarelo`
+        }else {
+            return `pt-1 mb-${tamanho_margin_bottom}`
         }
     }
 
@@ -150,11 +148,13 @@ export const Dashboard = () => {
                         acoesAssociacao={acoesAssociacao}
                         getCorSaldo={getCorSaldo}
                         getCssDestaque={getCssDestaque}
+                        statusPeriodoAssociacao={statusPeriodoAssociacao}
                     />
                     <DashboardCard
                         acoesAssociacao={acoesAssociacao}
                         getCorSaldo={getCorSaldo}
                         getCssDestaque={getCssDestaque}
+                        statusPeriodoAssociacao={statusPeriodoAssociacao}
                     />
                 </>
             }

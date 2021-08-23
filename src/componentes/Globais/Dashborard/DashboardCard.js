@@ -4,7 +4,7 @@ import {MsgImgLadoDireito} from "../Mensagens/MsgImgLadoDireito";
 import Img404 from '../../../assets/img/img-404.svg'
 import {exibeDataPT_BR, exibeDateTimePT_BR, exibeValorFormatadoPT_BR} from '../../../utils/ValidacoesAdicionaisFormularios'
 
-export const DashboardCard = ({acoesAssociacao, getCorSaldo, getCssDestaque}) => {
+export const DashboardCard = ({acoesAssociacao, getCorSaldo, getCssDestaque, statusPeriodoAssociacao}) => {
     return (
         <>
             {acoesAssociacao.info_acoes && acoesAssociacao.info_acoes.length > 0 ? (
@@ -26,10 +26,10 @@ export const DashboardCard = ({acoesAssociacao, getCorSaldo, getCssDestaque}) =>
                                                 <p className="pt-1 mb-4">
                                                     Repasses no período: <strong>{exibeValorFormatadoPT_BR(acao.repasses_no_periodo)}</strong>
                                                 </p>
-                                                <p className={getCssDestaque(4)}>
+                                                <p className={getCssDestaque(4, statusPeriodoAssociacao)}>
                                                     Outras receitas: <strong>{exibeValorFormatadoPT_BR(acao.outras_receitas_no_periodo)}</strong>
                                                 </p>
-                                                <p className={getCssDestaque(0)}>
+                                                <p className={getCssDestaque(0, statusPeriodoAssociacao)}>
                                                     Despesa: <strong>{exibeValorFormatadoPT_BR(acao.despesas_no_periodo)}</strong>
                                                 </p>
                                                 {acao.acao_associacao_nome.trim() === 'PTRF' ? (
