@@ -1,10 +1,14 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import { FormFiltrosDownloads } from "./FormFiltrosDownloads";
 import { TabelaDownloads } from "./TabelaDownloads";
 import { getArquivosDownload, getDownloadArquivo, deleteArquivo, putMarcarDesmarcarLido, getArquivosDownloadFiltros, getStatus } from "../../../services/CentralDeDownload.service";
 import moment from "moment";
+import {CentralDeDownloadContext} from "../../../context/CentralDeDownloads";
 
 export const CentralDeDownloads = () => {
+
+    const centralDeDownloadContext = useContext(CentralDeDownloadContext);
+
     const initialStateFormFiltros = {
         filtro_por_identificador: "",
         filtro_por_status: "",
@@ -24,6 +28,15 @@ export const CentralDeDownloads = () => {
     useEffect(() => {
         trazerStatus()
     }, []);
+
+    useEffect(()=>{
+        qtdeNotificacoesNaoLidas()
+    }, []);
+
+
+    const qtdeNotificacoesNaoLidas = async () =>{
+        await centralDeDownloadContext.getQtdeNotificacoesNaoLidas()
+    };
 
     const trazerArquivos = async () => {
         let arquivos = await getArquivosDownload();
@@ -81,6 +94,7 @@ export const CentralDeDownloads = () => {
         try{
             await putMarcarDesmarcarLido(payload);
             await trazerArquivos();
+            await qtdeNotificacoesNaoLidas();
         }catch(e){
             console.log("Erro ao efetuar atualização ", e.response);
         }

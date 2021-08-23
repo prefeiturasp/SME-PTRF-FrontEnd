@@ -9,6 +9,7 @@ import {Versao} from "../Versao";
 import ReactTooltip from "react-tooltip";
 import {getUrls} from "./getUrls";
 import {NotificacaoContext} from "../../../context/Notificacoes";
+import {CentralDeDownloadContext} from "../../../context/CentralDeDownloads";
 import {visoesService} from "../../../services/visoes.service";
 import {Ambientes} from "../Ambientes";
 import {AmbientesApi} from "../AmbientesApi";
@@ -18,6 +19,7 @@ import { useLocation } from 'react-router-dom'
 export const SidebarLeft = () => {
     const sidebarStatus = useContext(SidebarContext);
     const notificacaoContext = useContext(NotificacaoContext);
+    const centralDeDownloadContext = useContext(CentralDeDownloadContext)
     let history = useHistory();
 
     const location = useLocation();
@@ -30,6 +32,10 @@ export const SidebarLeft = () => {
 
     const qtdeNotificacoesNaoLidas = async () => {
         await notificacaoContext.getQtdeNotificacoesNaoLidas()
+    };
+
+    const qdteCentralDeDownloadsNaoLidas = async () => {
+        await centralDeDownloadContext.getQtdeNotificacoesNaoLidas()
     };
 
     const getPathnameExcecoes = (url) =>{
@@ -73,6 +79,7 @@ export const SidebarLeft = () => {
                 expanded={sidebarStatus.sideBarStatus}
                 onSelect={(selected) => {
                     qtdeNotificacoesNaoLidas();
+                    qdteCentralDeDownloadsNaoLidas();
                     visoesService.forcarNovoLogin();
                     const to = '/' + selected;
                     if (history.location.pathname !== to) {
