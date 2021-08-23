@@ -78,6 +78,7 @@ export const DadosDaDiretoria = () => {
              }
          }else {
              delete errors.dre_diretor_regional_rf
+             setFieldValue('dre_diretor_regional_nome', '')
          }
     };
 
