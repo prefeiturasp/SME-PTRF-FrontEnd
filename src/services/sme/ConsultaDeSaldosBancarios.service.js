@@ -35,3 +35,7 @@ export const getDres = async () => {
 export const getSaldosDetalhesAssociacoes = async (periodo_uuid, conta_uuid, dre_uuid, filtrar_por_unidade, filtrar_por_tipo_ue) => {
     return (await api.get(`/api/saldos-bancarios-sme-detalhes/saldos-detalhes-associacoes/?periodo=${periodo_uuid}&conta=${conta_uuid}&dre=${dre_uuid}${filtrar_por_unidade ? '&unidade='+filtrar_por_unidade : ''}${filtrar_por_tipo_ue ? '&tipo_ue='+filtrar_por_tipo_ue : ''}`, authHeader)).data
 };
+
+export const getSaldosDetalhesAssociacoesExportar = async (periodo_uuid, conta_uuid, dre_uuid, filtrar_por_unidade, filtrar_por_tipo_ue) => {
+    return (await api.get(`/api/saldos-bancarios-sme-detalhes/exporta_pdf/?periodo=${periodo_uuid}&conta=${conta_uuid}&dre=${dre_uuid}${filtrar_por_unidade ? '&unidade='+filtrar_por_unidade : ''}${filtrar_por_tipo_ue ? '&tipo_ue='+filtrar_por_tipo_ue : ''}`, authHeader)).data
+};

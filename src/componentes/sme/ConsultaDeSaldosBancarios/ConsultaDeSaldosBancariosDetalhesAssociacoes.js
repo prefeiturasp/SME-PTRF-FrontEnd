@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
-import {getPeriodos, getTiposDeConta, getDres, getSaldosDetalhesAssociacoes} from "../../../services/sme/ConsultaDeSaldosBancarios.service";
+import {getPeriodos, getTiposDeConta, getDres, getSaldosDetalhesAssociacoes, getSaldosDetalhesAssociacoesExportar} from "../../../services/sme/ConsultaDeSaldosBancarios.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {SelectConta} from "./SelectConta";
@@ -15,11 +15,15 @@ import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../assets/img/img-404.svg"
 import {getDownloadExtratoBancario} from "../../../services/escolas/PrestacaoDeContas.service";
 import ModalVisualizarExtrato from "./ModalVisualizarExtrato";
+import { BtnExportar } from "./BtnExportar";
+
+import {ModalConfirmarExportacao} from "../../../utils/Modais"
 
 export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
 
     let {periodo_uuid, conta_uuid, dre_uuid} = useParams();
 
+    const [showModalConfirmarExportacao, setShowModalConfirmarExportacao] = useState(false);
     const [periodos, setPeriodos] = useState([])
     const [selectPeriodo, setSelectPeriodo] = useState(periodo_uuid);
     const [tiposDeConta, setTiposDeConta] = useState([])
@@ -186,6 +190,16 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
         await carregaSaldosDetalhesAssociacoes()
     };
 
+    const handleOnClickExportar = async() => {
+        await getSaldosDetalhesAssociacoesExportar(selectPeriodo, selectTipoDeConta, dre_uuid, stateFiltros.filtrar_por_unidade, stateFiltros.filtrar_por_tipo_ue);
+        setShowModalConfirmarExportacao(true);
+    }
+
+    
+    const onHandleCloseModalConfirmarExportacao = () => {
+        setShowModalConfirmarExportacao(false);
+    }
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Consulta de saldos bancários</h1>
@@ -222,13 +236,26 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
                 </div>
                 {selectPeriodo && selectTipoDeConta ? (
                 <>
-                    <Filtros
-                        stateFiltros={stateFiltros}
-                        handleChangeFiltros={handleChangeFiltros}
-                        handleSubmitFiltros={handleSubmitFiltros}
-                        limpaFiltros={limpaFiltros}
-                        tabelaAssociacoes={tabelaAssociacoes}
-                    />
+                    <div className="row">
+                        <div className="col-lg-9">
+                            <label><strong>Filtros</strong></label>
+                            <Filtros
+                                stateFiltros={stateFiltros}
+                                handleChangeFiltros={handleChangeFiltros}
+                                handleSubmitFiltros={handleSubmitFiltros}
+                                limpaFiltros={limpaFiltros}
+                                tabelaAssociacoes={tabelaAssociacoes}
+                            />
+                        </div>
+
+                        <div className="col-lg-3">
+                            <label style={{marginLeft: '1.7em'}}><strong>Exportação</strong></label>
+                            <BtnExportar
+                                handleOnClickExportar={handleOnClickExportar}
+                            />
+                        </div>
+                    </div>
+        
                     <TabelaSaldosDetalhesAssociacoes
                         saldosDetalhesAssociacoes={saldosDetalhesAssociacoes}
                         valorTemplate={valorTemplate}
@@ -252,6 +279,13 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
                         />
                     </section>
                 }
+
+                <section>
+                    <ModalConfirmarExportacao
+                        show={showModalConfirmarExportacao}
+                        handleClose={onHandleCloseModalConfirmarExportacao}
+                    />
+                </section>
 
             </div>
         </PaginasContainer>

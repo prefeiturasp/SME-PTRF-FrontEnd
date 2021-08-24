@@ -17,6 +17,9 @@ import {FiltroPorTipoReceita} from "../FiltroPorTipoReceita";
 import {SomaDosCreditos} from "../SomaDosCreditos";
 import Loading from "../../../../utils/Loading";
 import {visoesService} from "../../../../services/visoes.service";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons'
+import ReactTooltip from "react-tooltip";
 
 
 export const ListaDeReceitas = () => {
@@ -61,7 +64,32 @@ export const ListaDeReceitas = () => {
         history.push(url);
     };
 
-    const dataTemplate = (rowData, column) => {
+    const tipoReceitaTemplate = (rowData) => {
+        if (rowData.tipo_receita){
+            if (rowData.tipo_receita.e_recursos_proprios && !rowData.saida_do_recurso){
+                return(
+                    <div>
+                        {rowData.tipo_receita.nome}
+                        <span data-html={true} data-tip='A saída desse crédito ainda <br/> não foi registrada!'>
+                        <FontAwesomeIcon
+                            style={{marginLeft: "3px", color: '#b41d00'}}
+                            icon={faExclamationTriangle}
+                        />
+                        </span>
+                        <ReactTooltip html={true}/>
+                    </div>
+                )
+            }else {
+                return(
+                    <div>
+                        {rowData.tipo_receita.nome}
+                    </div>
+                )
+            }
+        }
+    };
+
+    const dataTemplate = (rowData) => {
         return (
             <div>
 
@@ -72,9 +100,9 @@ export const ListaDeReceitas = () => {
         )
     };
 
-    const valorTemplate = (rowData, column) => {
+    const valorTemplate = (rowData) => {
         const valorFormatado = rowData['valor']
-            ? new Number(rowData['valor']).toLocaleString('pt-BR', {
+            ? Number(rowData['valor']).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
@@ -82,7 +110,7 @@ export const ListaDeReceitas = () => {
         return (<span>{valorFormatado}</span>)
     };
 
-    const onClickBtnMaisFiltros = (event) => {
+    const onClickBtnMaisFiltros = () => {
         setInputPesquisa("")
         setBtnMaisFiltros(!btnMaisFiltros)
     };
@@ -154,7 +182,11 @@ export const ListaDeReceitas = () => {
                                     selectionMode="single"
                                     onRowClick={e => redirecionaDetalhe(e.data)}
                                 >
-                                    <Column field='tipo_receita.nome' header='Tipo'/>
+                                    <Column
+                                        field='tipo_receita.nome'
+                                        header='Tipo'
+                                        body={tipoReceitaTemplate}
+                                    />
                                     <Column field='conta_associacao.nome' header='Conta'/>
                                     <Column field='acao_associacao.nome' header='Ação'/>
                                     <Column

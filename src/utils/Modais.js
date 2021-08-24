@@ -509,3 +509,16 @@ export const ModalSalvarPrestacaoDeContasAnalise = (propriedades) => {
         />
     )
 };
+
+export const ModalConfirmarExportacao = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Geração solicitada com sucesso"
+            bodyText="<p>A geração foi solicitada. Em breve você receberá um aviso na central de downloads com o resultado</p>"
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="OK"
+        />
+    )
+};
