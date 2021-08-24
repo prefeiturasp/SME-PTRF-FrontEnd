@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getFiqueDeOlhoRelatoriosConsolidados, getConsultarStatus, getTiposConta, getDownloadRelatorio, getDownloadPreviaRelatorio} from "../../../services/dres/RelatorioConsolidado.service";
+import {getFiqueDeOlhoRelatoriosConsolidados, getConsultarStatus, getTiposConta, getDownloadRelatorio, postGerarPreviaRelatorio} from "../../../services/dres/RelatorioConsolidado.service";
 import {getItensDashboard, getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
@@ -11,6 +11,7 @@ import {BarraDeStatus} from "./BarraDeStatus";
 import {ExecucaoFinanceira} from "./ExecucaoFinanceira";
 import './relatorio-consolidado.scss'
 import Loading from "../../../utils/Loading";
+import { ModalMsgGeracaoRelatorio } from "./ModalMsgGeracaoRelatorio";
 
 export const RelatorioConsolidado = () => {
 
@@ -25,6 +26,8 @@ export const RelatorioConsolidado = () => {
     const [statusRelatorio, setStatusRelatorio] = useState(false);
     const [totalEmAnalise, setTotalEmAnalise] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [showModalMsgGeracaoRelatorio, setShowModalMsgGeracaoRelatorio] = useState(false);
+    const [msgGeracaoRelatorio, setMsgGeracaoRelatorio] = useState('');
 
     useEffect(() => {
         if (statusRelatorio && statusRelatorio.status_geracao && statusRelatorio.status_geracao === "EM_PROCESSAMENTO") {
@@ -66,6 +69,17 @@ export const RelatorioConsolidado = () => {
         if (periodos && periodos.length > 0){
             setPeriodoEsolhido(periodos[0].uuid)
         }
+    };
+
+    const setaStatusComoProcessando = () => {
+        const statusProcessando = {
+            pcs_em_analise: false,
+            status_geracao: "EM_PROCESSAMENTO",
+            status_txt: "Análise de prestações de contas das associações completa. Relatório em processamento.",
+            cor_idx: 3,
+            status_arquivo: "Previa do relatório sendo gerada. Aguarde."
+        }
+        setStatusRelatorio(statusProcessando);
     };
 
     const carregaContas = async () => {
@@ -140,22 +154,22 @@ export const RelatorioConsolidado = () => {
     };
 
     const textoBtnRelatorio = () =>{
-        if (statusRelatorio.status_geracao === 'GERADO_TOTAL'){
-            return 'Documento gerado'
-        }else if (statusRelatorio.status_geracao === 'GERADO_PARCIAL'){
-            return 'Documento parcial gerado'
-        }else if (statusRelatorio.status_geracao === 'NAO_GERADO'){
-            return 'Documento não gerado'
-        }else if (statusRelatorio.status_geracao === "EM_PROCESSAMENTO"){
-            return 'Relatório sendo gerado...'
+        if(statusRelatorio.versao === "FINAL"){
+            if (statusRelatorio.status_geracao === 'GERADO_TOTAL'){
+                return 'Documento gerado'
+            }else if (statusRelatorio.status_geracao === 'GERADO_PARCIAL'){
+                return 'Documento parcial gerado'
+            }else if (statusRelatorio.status_geracao === 'NAO_GERADO'){
+                return 'Documento não gerado'
+            }else if (statusRelatorio.status_geracao === "EM_PROCESSAMENTO"){
+                return 'Relatório sendo gerado...'
+            }
         }
+
+        return 'Documento não gerado'        
     };
 
-    const downloadRelatorio = async () =>{
-        await getDownloadRelatorio(dre_uuid, periodoEscolhido, contaEscolhida);
-    };
-
-    const downloadPreviaRelatorio = async () =>{
+    const gerarPrevia = async () => {
         let parcial = totalEmAnalise > 0;
         const payload = {
             dre_uuid: dre_uuid,
@@ -163,9 +177,31 @@ export const RelatorioConsolidado = () => {
             tipo_conta_uuid: contaEscolhida,
             parcial: parcial
         };
-        setLoading(true);
-        await getDownloadPreviaRelatorio(payload);
-        setLoading(false);
+
+        try{
+            await postGerarPreviaRelatorio(payload);
+            console.log('Solicitação de previa do relatório enviada com sucesso.');
+            setMsgGeracaoRelatorio('O relatório está sendo gerado, enquanto isso você pode continuar a usar o sistema. Quando a geração for concluída um botão para download ficará disponível.');
+            setShowModalMsgGeracaoRelatorio(true);
+            setaStatusComoProcessando();
+        }catch(e){
+            setMsgGeracaoRelatorio('Erro ao gerar relatório');
+            setShowModalMsgGeracaoRelatorio(true);
+            console.log('Erro ao gerar relatório ', e.response.data);
+        }
+
+    }
+
+    const downloadRelatorio = async () =>{
+        await getDownloadRelatorio(dre_uuid, periodoEscolhido, contaEscolhida, statusRelatorio.versao);
+    };
+
+    const downloadPreviaRelatorio = async () =>{
+        await getDownloadRelatorio(dre_uuid, periodoEscolhido, contaEscolhida, statusRelatorio.versao);
+    };
+
+    const onHandleClose = () => {
+        setShowModalMsgGeracaoRelatorio(false);
     };
 
     return (
@@ -213,6 +249,7 @@ export const RelatorioConsolidado = () => {
                                         statusRelatorio={statusRelatorio}
                                         textoBtnRelatorio={textoBtnRelatorio}
                                         downloadRelatorio={downloadRelatorio}
+                                        gerarPrevia={gerarPrevia}
                                         downloadPreviaRelatorio={downloadPreviaRelatorio}
                                     />
                                 </>
@@ -223,6 +260,16 @@ export const RelatorioConsolidado = () => {
                                 img={Img404}
                             />
                         }
+
+                        <section>
+                            <ModalMsgGeracaoRelatorio
+                                show={showModalMsgGeracaoRelatorio}
+                                handleClose={onHandleClose}
+                                titulo='Geração do relatório'
+                                texto={msgGeracaoRelatorio}
+                            />
+                        </section>
+
                     </div>
                 </>
             }
