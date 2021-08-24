@@ -99,7 +99,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                                 value={props.values.codigo_identificacao ? props.values.codigo_identificacao : ""}
                                                 onChange={(e) => {
                                                     props.handleChange(e);
-                                                    handleChangeEditarMembro(e.target.name, e.target.value);
+                                                    //handleChangeEditarMembro(e.target.name, e.target.value);
                                                 }}
                                                 name="codigo_identificacao"
                                                 className="form-control"
@@ -114,7 +114,7 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                 <div className="row">
                                     <div className="col-12">
                                         <div className="form-group">
-                                            <label htmlFor="cargo_associacao">Nome Completo</label>
+                                            <label htmlFor="nome">Nome Completo</label>
                                             <input
                                                 readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
                                                 disabled={!visoesService.getPermissoes(['change_associacao']) }
@@ -162,7 +162,6 @@ export const EditarMembro = ({visoesService, show, handleClose, onSubmitEditarMe
                                                             }
                                                         )}
                                                     />
-
                                                     {props.errors.cpf &&
                                                     <span className="span_erro text-danger mt-1"> {props.errors.cpf}</span>}
                                                 </div>
