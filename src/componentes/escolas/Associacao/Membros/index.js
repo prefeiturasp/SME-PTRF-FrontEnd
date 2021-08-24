@@ -2,7 +2,17 @@ import React, {useEffect, useState, useMemo} from "react";
 import {MenuInterno} from "../../../Globais/MenuInterno";
 import {TabelaMembros} from "../TabelaMembros";
 import {EditarMembro} from "../ModalMembros";
-import {getMembrosAssociacao, criarMembroAssociacao, editarMembroAssociacao, consultarRF, consultarCodEol, consultarCpfResponsavel, getUsuarios, deleteMembroAssociacao, getUsuarioPeloUsername} from "../../../../services/escolas/Associacao.service";
+import {
+    getMembrosAssociacao,
+    criarMembroAssociacao,
+    editarMembroAssociacao,
+    consultarRF,
+    consultarCodEol,
+    consultarCpfResponsavel,
+    getUsuarios,
+    deleteMembroAssociacao,
+    getUsuarioPeloUsername
+} from "../../../../services/escolas/Associacao.service";
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import Loading from "../../../../utils/Loading";
 import {UrlsMenuInterno} from "../UrlsMenuInterno";
@@ -362,45 +372,54 @@ export const MembrosDaAssociacao = () => {
                     setCpfJaUsado(true)
                 }
             }
+            if (cod_identificacao_eol !== values.codigo_identificacao) {
 
-            try {
-                if (cod_identificacao_eol !== values.codigo_identificacao) {
-                    let cod_eol = await consultarCodEol(values.codigo_identificacao);
-                    let usuario_existente = await getUsuarioPeloUsername(values.codigo_identificacao.trim());
-                    if (cod_eol.status === 200 || cod_eol.status === 201) {
-                        const init = {
-                            ...stateFormEditarMembro,
-                            nome: cod_eol.data.nm_aluno,
-                            codigo_identificacao: values.codigo_identificacao,
-                            cargo_associacao: values.cargo_associacao,
-                            cargo_educacao: "",
-                            representacao: values.representacao,
-                            email: values.email,
-                            cpf: values.cpf,
-                            usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
-                            telefone: values.telefone,
-                            cep: values.cep,
-                            bairro: values.bairro,
-                            endereco: values.endereco,
-                        };
-                        setStateFormEditarMembro(init);
+                if (values.codigo_identificacao.trim().length >=7){
+                    try {
+                        let cod_eol = await consultarCodEol(values.codigo_identificacao.trim());
+                        let usuario_existente = await getUsuarioPeloUsername(values.codigo_identificacao.trim());
+                        if (cod_eol.status === 200 || cod_eol.status === 201) {
+                            const init = {
+                                ...stateFormEditarMembro,
+                                nome: cod_eol.data.nm_aluno,
+                                codigo_identificacao: values.codigo_identificacao,
+                                cargo_associacao: values.cargo_associacao,
+                                cargo_educacao: "",
+                                representacao: values.representacao,
+                                email: values.email,
+                                cpf: values.cpf,
+                                usuario: usuario_existente && usuario_existente.length > 0 ? usuario_existente[0].username : 'Não é usuário do sistema',
+                                telefone: values.telefone,
+                                cep: values.cep,
+                                bairro: values.bairro,
+                                endereco: values.endereco,
+                            };
+                            setStateFormEditarMembro(init);
+                        }
+                        setBtnSalvarReadOnly(false);
+                    } catch (e) {
+                        setBtnSalvarReadOnly(true);
+                        let data = e.response.data;
+                        if (data !== undefined && data.detail !== undefined) {
+                            errors.codigo_identificacao = data.detail
+                        } else {
+                            errors.codigo_identificacao = "Código Eol inválido"
+                        }
                     }
+                }else {
+                    setStateFormEditarMembro({
+                        ...stateFormEditarMembro,
+                        nome: '',
+                        codigo_identificacao:values.codigo_identificacao
+                    })
                 }
-                setBtnSalvarReadOnly(false);
-            } catch (e) {
-                setBtnSalvarReadOnly(true);
-                let data = e.response.data;
-                if (data !== undefined && data.detail !== undefined) {
-                    errors.codigo_identificacao = data.detail
-                } else {
-                    errors.codigo_identificacao = "Código Eol inválido"
-                }
+
             }
         } else if (values.representacao === "PAI_RESPONSAVEL") {
             if (cod_identificacao_cpf !== values.cpf.trim()) {
                 setBtnSalvarReadOnly(false);
                 try {
-                    if (!(!values.cpf || values.cpf.trim() === "" || !valida_cpf_cnpj(values.cpf))){
+                    if (!(!values.cpf || values.cpf.trim() === "" || !valida_cpf_cnpj(values.cpf))) {
                         await consultarCpfResponsavel(values.cpf);
                         let usuario_existente = await getUsuarioPeloUsername(values.cpf.trim());
                         const init = {
@@ -453,6 +472,15 @@ export const MembrosDaAssociacao = () => {
             erros = {
                 ...erros,
                 email: "Digite um email válido"
+            }
+            setErrors({...erros})
+        }
+
+        if (!values.nome.trim()){
+            enviar_formulario = false
+            erros = {
+                ...erros,
+                nome: 'Nome é obrigatório'
             }
             setErrors({...erros})
         }

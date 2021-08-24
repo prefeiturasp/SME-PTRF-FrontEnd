@@ -17,7 +17,8 @@ import {visoesService} from "../../../services/visoes.service";
 
 const cardStyle = {
     cursor: "pointer",
-    paddingTop: "16px"
+    paddingTop: "16px",
+    border: 'none',
 };
 
 
