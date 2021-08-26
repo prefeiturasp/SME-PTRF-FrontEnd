@@ -45,7 +45,8 @@ import moment from "moment";
 import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
 import {ModalDespesaIncompleta} from "./ModalDespesaIncompleta";
 import {ModalErroDeletarCadastroDespesa} from "./ModalErroDeletarCadastroDespesa";
-import {ModalDeletarDespesa} from "./ModalDeletarDespesa";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -180,11 +181,7 @@ export const CadastroForm = ({verbo_http}) => {
     }, [aux])
 
     const eh_despesa_sem_comprovacao_fiscal = (cpf_cnpj) => {
-        if(cpf_cnpj == "00.000.000/0000-00"){
-            return true;
-        }
-
-        return false;
+        return cpf_cnpj === "00.000.000/0000-00";
     }
 
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
@@ -303,6 +300,21 @@ export const CadastroForm = ({verbo_http}) => {
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
         const errors = {};
+
+        // Validando se datas são maiores que data de hoje
+
+        let hoje = moment(new Date());
+        let data_digitada_documento = moment(values.data_documento);
+        let data_digitada_transacao = moment(values.data_transacao);
+
+        if (data_digitada_documento > hoje){
+            errors.data_documento = "Data do documento não pode ser maior que a data de hoje"
+        }
+        if (data_digitada_transacao > hoje){
+            errors.data_transacao = "Data da transação não pode ser maior que a data de hoje"
+        }
+
+
 
         // Validando se tipo de documento aceita apenas numéricos e se exibe campo Número do Documento
         if (values.tipo_documento) {
@@ -511,6 +523,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 }
                                                 about={despesaContext.verboHttp}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                maxDate={new Date()}
                                             />
                                             {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                         </div>
@@ -569,6 +582,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                 about={despesaContext.verboHttp}
                                                 className={`${ !values.data_transacao && verbo_http === "PUT" ? 'is_invalid' : ""} ${ !values.data_transacao && "despesa_incompleta"} form-control`}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                maxDate={new Date()}
                                             />
                                             {props.errors.data_transacao &&
                                             <span
@@ -717,14 +731,32 @@ export const CadastroForm = ({verbo_http}) => {
                                                 {values.rateios.length > 0 && values.rateios.map((rateio, index) => {
                                                     return (
                                                         <div key={index}>
-                                                            <div className="form-row">
 
-                                                                <div className="col-12 mt-4 ml-0">
-                                                                    <p className='mb-0'>
-                                                                        <strong>Despesa {index + 1}</strong>
-                                                                    </p>
-                                                                    <hr className='mt-0 mb-1'/>
+                                                            <div className="d-flex bd-highlight border-bottom mt-4 align-items-center">
+                                                                <div className="flex-grow-1 bd-highlight">
+                                                                    <p className='mb-0'><strong>Despesa {index + 1}</strong></p>
                                                                 </div>
+                                                                <div className="bd-highlight">
+                                                                    {index >= 1 && values.rateios.length > 1 && (
+                                                                        <div className="d-flex  justify-content-start">
+                                                                            <button
+                                                                                type="button"
+                                                                                className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
+                                                                                onClick={() => remove(index)}
+                                                                                disabled={!visoesService.getPermissoes(['delete_despesa'])}
+                                                                            >
+                                                                                <FontAwesomeIcon
+                                                                                    style={{fontSize: '17px', marginRight: "4px", color: "#B40C02"}}
+                                                                                    icon={faTimesCircle}
+                                                                                />
+                                                                                Remover Despesa
+                                                                            </button>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+
+                                                            </div>
+                                                            <div className="form-row">
 
                                                                 <div className="col-12 col-md-6 mt-4">
 
@@ -786,19 +818,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     />
                                                                 ) : null}
 
-                                                            {index >= 1 && values.rateios.length > 1 && (
-                                                                <div
-                                                                    className="d-flex  justify-content-start mt-3 mb-3">
-                                                                    <button
-                                                                        type="button"
-                                                                        className="btn btn btn-outline-success mt-2 mr-2"
-                                                                        onClick={() => remove(index)}
-                                                                        disabled={!visoesService.getPermissoes(['delete_despesa'])}
-                                                                    >
-                                                                        - Remover Despesa
-                                                                    </button>
-                                                                </div>
-                                                            )}
+
                                                             <div className="row">
                                                                 <div className="col-12">
 

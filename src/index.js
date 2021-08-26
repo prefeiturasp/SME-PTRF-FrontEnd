@@ -6,6 +6,7 @@ import {BrowserRouter} from "react-router-dom";
 import {SidebarContextProvider} from "./context/Sidebar";
 import {DespesaContextProvider} from "./context/Despesa";
 import {NotificacaoContextProvider} from "./context/Notificacoes";
+import {CentralDeDownloadContextProvider } from "./context/CentralDeDownloads";
 import * as serviceWorker from './serviceWorker';
 
 if (process.env.NODE_ENV === "production") {
@@ -15,6 +16,7 @@ if (process.env.NODE_ENV === "production") {
 
 ReactDOM.render(
     <NotificacaoContextProvider>
+    <CentralDeDownloadContextProvider>
         <DespesaContextProvider>
             <SidebarContextProvider>
                 <BrowserRouter>
@@ -22,6 +24,7 @@ ReactDOM.render(
                 </BrowserRouter>
             </SidebarContextProvider>
         </DespesaContextProvider>
+    </CentralDeDownloadContextProvider>
     </NotificacaoContextProvider>
 
     , document.getElementById("root"));

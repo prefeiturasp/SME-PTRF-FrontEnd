@@ -9,7 +9,7 @@ import moment from "moment";
 registerLocale("pt", pt );
 
 
-export const DatePickerField = ({ name, about, value, className="form-control", onChange, onCalendarOpen, onCalendarClose, disabled, placeholderText }) => {
+export const DatePickerField = ({ name, about, value, className="form-control", onChange, onCalendarOpen, onCalendarClose, disabled, placeholderText, maxDate=null }) => {
 
     return (
         <DatePicker
@@ -26,6 +26,7 @@ export const DatePickerField = ({ name, about, value, className="form-control", 
             showYearDropdown
             className = {className}
             placeholderText={placeholderText}
+            maxDate={maxDate}
             customInput={
                 <MaskedInput
                     mask = {[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}

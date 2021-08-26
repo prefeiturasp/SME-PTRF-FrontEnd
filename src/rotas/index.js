@@ -23,6 +23,7 @@ import {MeusDadosPage} from "../paginas/escolas/MeusDados";
 import {AssociacoesPage} from "../paginas/dres/Associacoes";
 import {ProcessosSeiPage} from "../paginas/dres/Associacoes/ProcessosSei";
 import {CentralDeNotificacoesPage} from "../paginas/CentralDeNotificacoes";
+import {CentralDeDownloadsPage} from "../paginas/CentralDeDownloads";
 import {authService} from '../services/auth.service';
 import {visoesService} from "../services/visoes.service";
 import {PaginaSemPermissao} from "../paginas/SemPermissao";
@@ -61,6 +62,7 @@ import {FiqueDeOlho} from "../componentes/sme/Parametrizacoees/EdicaoDeTextos/Fi
 import ArquivosDeCarga from "../componentes/Globais/ArquivosDeCarga";
 import {TiposDeCusteio} from "../componentes/sme/Parametrizacoees/Despesas/TiposDeCusteio"
 import {Fornecedores} from "../componentes/sme/Parametrizacoees/Despesas/Fornecedores";
+import {AnaliseDre} from "../componentes/escolas/AnaliseDre";
 
 const routesConfig = [
     {
@@ -227,6 +229,12 @@ const routesConfig = [
     },
     {
         exact: true,
+        path: "/central-de-downloads",
+        component: CentralDeDownloadsPage,
+        permissoes: ['view_default']
+    },
+    {
+        exact: true,
         path: "/dre-atribuicoes/:tecnico_uuid?",
         component: AtribuicoesPage,
         permissoes: ['access_atribuicao_por_ue'],
@@ -385,6 +393,12 @@ const routesConfig = [
         path: "/consulta-de-saldos-bancarios-detalhes-associacoes/:periodo_uuid/:conta_uuid/:dre_uuid/",
         component: ConsultaDeSaldosBancariosDetalhesAssociacoes,
         permissoes: ['access_consulta_saldo_bancario'],
+    },
+    {
+        exact: true,
+        path: "/analise-dre",
+        component: AnaliseDre,
+        permissoes: ['access_analise_dre'],
     },
     {
         exact: true,

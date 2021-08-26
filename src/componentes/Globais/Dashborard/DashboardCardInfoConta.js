@@ -1,7 +1,7 @@
 import React from "react";
 import {exibeValorFormatadoPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 
-export const DashboardCardInfoConta = ({acoesAssociacao, getCorSaldo, getCssDestaque}) =>{
+export const DashboardCardInfoConta = ({acoesAssociacao, getCorSaldo, getCssDestaque, statusPeriodoAssociacao}) =>{
     let info = acoesAssociacao.info_conta;
     return(
         <>
@@ -25,10 +25,10 @@ export const DashboardCardInfoConta = ({acoesAssociacao, getCorSaldo, getCssDest
                                             <p className="pt-1 mb-2">
                                                 Repasses no período: <strong>{exibeValorFormatadoPT_BR(info.repasses_no_periodo)}</strong>
                                             </p>
-                                            <p className={getCssDestaque(2)}>
+                                            <p className={getCssDestaque(2, statusPeriodoAssociacao)}>
                                                 Outras receitas: <strong>{exibeValorFormatadoPT_BR(info.outras_receitas_no_periodo)}</strong>
                                             </p>
-                                            <p className={getCssDestaque(0)}>
+                                            <p className={getCssDestaque(0, statusPeriodoAssociacao)}>
                                                 Despesa: <strong>{exibeValorFormatadoPT_BR(info.despesas_no_periodo)}</strong>
                                             </p>
                                         </div>

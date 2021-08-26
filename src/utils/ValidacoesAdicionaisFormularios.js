@@ -50,7 +50,7 @@ export const YupSignupSchemaDreDadosDiretoria = yup.object().shape({
 });
 
 export const YupSignupSchemaDadosDaAssociacao = yup.object().shape({
-  email: yup.string().email("Digite um email válido"),
+  email: yup.string().email("Digite um email válido").nullable(),
 });
 
 export const YupSignupSchemaAlterarSenha = yup.object().shape({

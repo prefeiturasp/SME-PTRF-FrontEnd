@@ -2,6 +2,8 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowRight} from "@fortawesome/free-solid-svg-icons";
 
+import { useHistory } from 'react-router-dom'
+
 import {
     Card,
     CardBody,
@@ -9,12 +11,14 @@ import {
     CardSubtitle,
     CardImg,
 } from "reactstrap";
-import {redirect} from "../../../utils/redirect";
 import {visoesService} from "../../../services/visoes.service";
+
+
 
 const cardStyle = {
     cursor: "pointer",
-    paddingTop: "16px"
+    paddingTop: "16px",
+    border: 'none',
 };
 
 
@@ -58,6 +62,9 @@ const IconeSetaStyle = {
 };
 
 export const ParametrizacaoCard = ({itensParametrizacao, nomeGrupo}) => {
+
+    const { push } = useHistory()
+
     return (
         <>
             <h4 style={GrupoTituloStyle}>{nomeGrupo}</h4>
@@ -70,7 +77,7 @@ export const ParametrizacaoCard = ({itensParametrizacao, nomeGrupo}) => {
                                     <Card
                                         className="servico h-"
                                         style={cardStyle}
-                                        onClick={() => redirect(card.url)}
+                                        onClick={() => push(card.url)}
                                     >
                                         <CardImg top width="100%" src={card.icone} alt="Icone de seleção" height="71"/>
                                         <CardBody>

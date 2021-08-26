@@ -428,11 +428,25 @@ export const DetalheDasPrestacoes = () => {
         }
     }, [nomeComprovanteExtrato, observacaoUuid])
 
+    const [erroDataSaldo, setErroDataSaldo] = useState('')
+
     const handleChangaDataSaldo = useCallback((name, value) => {
+        if (name === 'data_extrato'){
+            let hoje = moment(new Date());
+            let data_digitada = moment(value);
+            if (data_digitada > hoje){
+                setErroDataSaldo("Data do crédito não pode ser maior que a data de hoje")
+                setDataSaldoBancario(prevState => ({ ...prevState,  [name]: ''}));
+                return
+            }else {
+                setErroDataSaldo('')
+            }
+        }
+
         setBtnSalvarExtratoBancarioDisable(false);
         setCheckSalvarExtratoBancario(false);
         setClassBtnSalvarExtratoBancario("success");
-        
+
         setDataSaldoBancario({
             ...dataSaldoBancario,
             [name]: value
@@ -496,6 +510,7 @@ export const DetalheDasPrestacoes = () => {
                                 setClassBtnSalvarExtratoBancario={setClassBtnSalvarExtratoBancario}
                                 checkSalvarExtratoBancario={checkSalvarExtratoBancario}
                                 setCheckSalvarExtratoBancario={setCheckSalvarExtratoBancario}
+                                erroDataSaldo={erroDataSaldo}
                             />
 
                             <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Lançamentos pendentes de conciliação</p>

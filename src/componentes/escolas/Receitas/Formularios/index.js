@@ -790,6 +790,7 @@ export const ReceitaForm = () => {
                                         onChange={setFieldValue}
                                         onBlur={props.handleBlur}
                                         disabled={![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
+                                        maxDate={new Date()}
                                     />
                                     {props.touched.data && props.errors.data &&
                                     <span className="span_erro text-danger mt-1"> {props.errors.data}</span>}
