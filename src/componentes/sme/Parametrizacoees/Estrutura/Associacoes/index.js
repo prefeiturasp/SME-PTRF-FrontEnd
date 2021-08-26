@@ -130,7 +130,7 @@ export const Associacoes = () => {
 
     const handleCloseModalInfoExclusaoNaoPermitida = useCallback(()=>{
         setShowModalInfoExclusaoNaoPermitida(false);
-        setErroExclusaoNaoPermitida(false);
+        setErroExclusaoNaoPermitida('');
         setShowModalConfirmDeleteAssociacao(false)
     }, []);
 
@@ -257,9 +257,11 @@ export const Associacoes = () => {
         }catch (e) {
             console.log('Erro ao excluir associação ', e.response.data);
             if (e.response.data && e.response.data.mensagem){
+                setShowModalConfirmDeleteAssociacao(false)
                 setErroExclusaoNaoPermitida(e.response.data.mensagem);
                 setShowModalInfoExclusaoNaoPermitida(true)
             }else {
+                setShowModalConfirmDeleteAssociacao(false)
                 setErroExclusaoNaoPermitida('Houve um problema ao realizar esta operação, tente novamente.');
                 setShowModalInfoExclusaoNaoPermitida(true)
             }
@@ -340,7 +342,7 @@ export const Associacoes = () => {
                             handleClose={handleCloseConfirmDeleteAssociacao}
                             onDeleteAssociacaoTrue={onDeleteAssociacaoTrue}
                             titulo="Excluir Associação"
-                            texto="<p>Deseja realmente excluir esta associação?<br/> <strong>Atenção</strong> ao apagar esta associação estará apagando operações ligadas a ela como prestações de contas, por exemplo</p>"
+                            texto="<p>Deseja realmente excluir esta associação?<p/> <p><strong>Atenção!</strong> Essa associação possui informações cadastradas. Todas as informações digitadas no cadastro da Associação serão perdidas.</p>"
                             primeiroBotaoTexto="Cancelar"
                             primeiroBotaoCss="outline-success"
                             segundoBotaoCss="danger"
