@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import "./consulta-saldos-bancarios.css"
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
-import {getPeriodos, getTiposDeConta, getSaldosPorTipoDeUnidade, getSaldosPorDre, getSaldosPorUeDre} from "../../../services/sme/ConsultaDeSaldosBancarios.service";
+import {getPeriodos, getTiposDeConta, getSaldosPorTipoDeUnidade, getSaldosPorDre, getSaldosPorUeDre, getSaldosDetalhesAssociacoesExportar} from "../../../services/sme/ConsultaDeSaldosBancarios.service";
 import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
@@ -13,6 +13,8 @@ import {TabelaSaldosPorDre} from "./TabelaSaldosPorDre";
 import {TabelaSaldosPorUeDre} from "./TabelaSaldosPorUeDre";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye} from "@fortawesome/free-solid-svg-icons";
+import { BtnExportar } from "./BtnExportar";
+import {ModalConfirmarExportacao} from "../../../utils/Modais"
 
 export const ConsultaDeSaldosBancarios = () => {
 
@@ -25,6 +27,7 @@ export const ConsultaDeSaldosBancarios = () => {
     const [saldosPorTipoDeUnidade, setSaldosPorTipoDeUnidade] = useState([])
     const [saldosPorDre, setSaldosDre] = useState([])
     const [saldosPorUeDre, setSaldosPorUeDre] = useState([])
+    const [showModalConfirmarExportacao, setShowModalConfirmarExportacao] = useState(false);
 
     const carregaPeriodos = useCallback(async () => {
         let periodos = await getPeriodos()
@@ -123,6 +126,15 @@ export const ConsultaDeSaldosBancarios = () => {
         )
     };
 
+    const handleOnClickExportar = async() => {
+        await getSaldosDetalhesAssociacoesExportar(selectPeriodo, selectTipoDeConta);
+        setShowModalConfirmarExportacao(true);
+    }
+
+    const onHandleCloseModalConfirmarExportacao = () => {
+        setShowModalConfirmarExportacao(false);
+    }
+
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Consulta de saldos bancários</h1>
@@ -139,6 +151,15 @@ export const ConsultaDeSaldosBancarios = () => {
                         selectConta={selectTipoDeConta}
                         tiposConta={tiposDeConta}
                     />
+
+                    {selectPeriodo && selectTipoDeConta ? (
+                        <BtnExportar
+                            handleOnClickExportar={handleOnClickExportar}
+                        />
+                    ):  null
+
+                    }                    
+                    
                 </div>
                 {selectPeriodo && selectTipoDeConta ? (
                     <>
@@ -178,6 +199,13 @@ export const ConsultaDeSaldosBancarios = () => {
                         img={Img404}
                     />
                 }
+
+                <section>
+                    <ModalConfirmarExportacao
+                        show={showModalConfirmarExportacao}
+                        handleClose={onHandleCloseModalConfirmarExportacao}
+                    />
+                </section>
             </div>
         </PaginasContainer>
     )

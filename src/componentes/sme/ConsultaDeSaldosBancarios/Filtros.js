@@ -33,7 +33,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                         </select>
                     </div>
                     <div className="form-group col-2">
-                        <button onClick={handleSubmitFiltros} type="button" className="btn btn-success" style={{marginTop: "1.9em"}}>Filtrar</button>
+                        <button onClick={handleSubmitFiltros} type="button" className="btn btn-success float-right" style={{marginTop: "1.9em"}}>Filtrar</button>
                     </div>
                 </div>
             </form>
