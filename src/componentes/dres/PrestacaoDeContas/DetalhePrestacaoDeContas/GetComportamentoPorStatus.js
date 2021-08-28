@@ -11,6 +11,7 @@ import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacao
 import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
 import {TabsArquivosDeReferencia} from "./TabsArquivosDeReferencia";
 import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferenciaVisualizacaoDownload";
+import {TabsConferenciaDeLancamentos} from "./TabsConferenciaDeLancamentos";
 
 
 export const GetComportamentoPorStatus = (
@@ -60,7 +61,9 @@ export const GetComportamentoPorStatus = (
         deleteCobrancaDevolucoes,
         setShowVoltarParaAnalise,
         btnSalvarDisabled,
-        setBtnSalvarDisabled
+        setBtnSalvarDisabled,
+        carregaLancamentosParaConferencia,
+        lancamentosParaConferencia,
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
@@ -218,6 +221,16 @@ export const GetComportamentoPorStatus = (
                     />
                     <ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
+                    />
+
+                    <TabsConferenciaDeLancamentos
+                        infoAta={infoAta}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
+                        prestacaoDeContas={prestacaoDeContas}
+                        lancamentosParaConferencia={lancamentosParaConferencia}
+
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}

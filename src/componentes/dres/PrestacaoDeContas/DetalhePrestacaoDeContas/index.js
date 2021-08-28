@@ -5,7 +5,7 @@ import {
     getDesfazerConclusaoAnalise, getMotivosAprovadoComRessalva,
     getPrestacaoDeContasDetalhe
 } from "../../../../services/dres/PrestacaoDeContas.service";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros, getTiposDevolucao, getLancamentosParaConferencia} from "../../../../services/dres/PrestacaoDeContas.service";
 import {getDespesa} from "../../../../services/escolas/Despesas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
@@ -91,7 +91,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [dataCobranca, setDataCobranca] = useState('');
     const [dataCobrancaDevolucoes, setDataCobrancaDevolucoes] = useState('');
     const [informacoesPrestacaoDeContas, setInformacoesPrestacaoDeContas] = useState(initialInformacoesPrestacaoDeContas);
-    const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
+    const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true, key_0: true});
     const [infoAta, setInfoAta] = useState({});
     const [infoAtaPorConta, setInfoAtaPorConta] = useState({});
     const [clickBtnTabelaAcoes, setClickBtnTabelaAcoes] = useState(false);
@@ -173,6 +173,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const carregaPrestacaoDeContas = async () => {
         if (prestacao_conta_uuid){
             let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
+            console.log("XXXXXXXXXXXxx PC ", prestacao)
             setPrestacaoDeContas(prestacao);
             setStateFormRecebimentoPelaDiretoria({
                 ...stateFormRecebimentoPelaDiretoria,
@@ -700,6 +701,23 @@ export const DetalhePrestacaoDeContas = () =>{
         return errors;
     };
 
+    // Conferência de Lançamentos
+    const [lancamentosParaConferencia, setLancamentosParaConferencia] = useState([])
+
+    useEffect(()=>{
+        if (infoAta && infoAta.contas && infoAta.contas.length > 0){
+            carregaLancamentosParaConferencia(prestacaoDeContas, infoAta.contas[0].conta_associacao.uuid)
+        }
+    }, [prestacaoDeContas, infoAta])
+
+    const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid) =>{
+        if (prestacao_de_contas && prestacao_de_contas.uuid && prestacao_de_contas.analise_atual && prestacao_de_contas.analise_atual.uuid && conta_uuid){
+            let lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid)
+            console.log("LANCAMENTOS ", lancamentos)
+            setLancamentosParaConferencia(lancamentos)
+        }
+    }
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -761,6 +779,8 @@ export const DetalhePrestacaoDeContas = () =>{
                                     setShowVoltarParaAnalise={setShowVoltarParaAnalise}
                                     btnSalvarDisabled={btnSalvarDisabled}
                                     setBtnSalvarDisabled={setBtnSalvarDisabled}
+                                    carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
+                                    lancamentosParaConferencia={lancamentosParaConferencia}
                                 />
                         }
                     </>
