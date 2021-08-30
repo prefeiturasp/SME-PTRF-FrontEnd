@@ -713,8 +713,17 @@ export const DetalhePrestacaoDeContas = () =>{
     const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid) =>{
         if (prestacao_de_contas && prestacao_de_contas.uuid && prestacao_de_contas.analise_atual && prestacao_de_contas.analise_atual.uuid && conta_uuid){
             let lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid)
-            console.log("LANCAMENTOS ", lancamentos)
-            setLancamentosParaConferencia(lancamentos)
+
+            // Adicionando a propriedade selecionando a todos os itens
+            if (lancamentos && lancamentos.length > 0){
+                let unis = lancamentos.map((lancamento)=>{
+                    return {
+                        ...lancamento,
+                        selecionado: false
+                    }
+                })
+                setLancamentosParaConferencia(unis)
+            }
         }
     }
 
@@ -780,6 +789,7 @@ export const DetalhePrestacaoDeContas = () =>{
                                     btnSalvarDisabled={btnSalvarDisabled}
                                     setBtnSalvarDisabled={setBtnSalvarDisabled}
                                     carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
+                                    setLancamentosParaConferencia={setLancamentosParaConferencia}
                                     lancamentosParaConferencia={lancamentosParaConferencia}
                                 />
                         }

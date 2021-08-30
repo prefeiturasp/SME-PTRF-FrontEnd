@@ -63,6 +63,7 @@ export const GetComportamentoPorStatus = (
         btnSalvarDisabled,
         setBtnSalvarDisabled,
         carregaLancamentosParaConferencia,
+        setLancamentosParaConferencia,
         lancamentosParaConferencia,
     }) => {
 
@@ -229,6 +230,7 @@ export const GetComportamentoPorStatus = (
                         clickBtnEscolheConta={clickBtnEscolheConta}
                         carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
                         prestacaoDeContas={prestacaoDeContas}
+                        setLancamentosParaConferencia={setLancamentosParaConferencia}
                         lancamentosParaConferencia={lancamentosParaConferencia}
 
                     />

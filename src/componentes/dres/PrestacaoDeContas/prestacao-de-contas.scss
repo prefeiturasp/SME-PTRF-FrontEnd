@@ -285,3 +285,30 @@
 .linha-conferencia-de-lancamentos-correto{
     background-color: #B8D0CD !important;
 }
+
+.titulo-row-expanded-conferencia-de-lancamentos{
+  border-bottom-color: #00585e;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  color: #00585e;
+}
+
+.text-wrap-conferencia-de-lancamentos{
+  overflow-wrap: break-word;
+  hyphens: manual;
+}
+
+.span-rateio-tag-conferencia-de-lancamentos{
+  background: #086397;
+  border-radius: 5px;
+  color: #fff;
+  padding: 5px 0.8rem;
+  margin-top: 3px;
+  display: inline-block;
+}
+
+.btn-montagem-selecionar, .btn-montagem-selecionar:hover, .btn-montagem-selecionar:focus, .btn-montagem-selecionar:visited{
+  color: #fff;
+  padding: 0;
+  margin: 0;
+}

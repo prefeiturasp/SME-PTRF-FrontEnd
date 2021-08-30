@@ -1,7 +1,7 @@
 import React, {Fragment} from "react";
 import {TabelaConferenciaDeLancamentos} from "./TabelaConferenciaDeLancamentos";
 
-export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscolheConta, carregaLancamentosParaConferencia, prestacaoDeContas, lancamentosParaConferencia}) => {
+export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscolheConta, carregaLancamentosParaConferencia, prestacaoDeContas, setLancamentosParaConferencia, lancamentosParaConferencia}) => {
 
     return (
         <>
@@ -39,6 +39,7 @@ export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, cl
                         //aria-labelledby={`nav-conferencia-de-lancamentos-${infoAtaPorConta.conta_associacao.uuid}-tab`}
                     >
                             <TabelaConferenciaDeLancamentos
+                                setLancamentosParaConferencia={setLancamentosParaConferencia}
                                 lancamentosParaConferencia={lancamentosParaConferencia}
                             />
                     </div>
