@@ -18,6 +18,7 @@ import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service"
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {GetComportamentoPorStatus} from "./GetComportamentoPorStatus";
 import {ModalSalvarPrestacaoDeContasAnalise} from "../../../../utils/Modais";
+import Loading from "../../../../utils/Loading";
 
 require("ordinal-pt-br");
 
@@ -108,6 +109,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [textoErroPrestacaoDeContasPosterior, setTextoErroPrestacaoDeContasPosterior] = useState('');
     const [btnSalvarDisabled, setBtnSalvarDisabled] = useState(true);
     const [showModalSalvarAnalise, setShowModalSalvarAnalise] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -173,7 +175,6 @@ export const DetalhePrestacaoDeContas = () =>{
     const carregaPrestacaoDeContas = async () => {
         if (prestacao_conta_uuid){
             let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
-            console.log("XXXXXXXXXXXxx PC ", prestacao)
             setPrestacaoDeContas(prestacao);
             setStateFormRecebimentoPelaDiretoria({
                 ...stateFormRecebimentoPelaDiretoria,
@@ -209,6 +210,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 setInitialFormDevolucaoAoTesouro({devolucoes_ao_tesouro_da_prestacao})
             }
         }
+        setLoading(false)
     };
 
     const carregaTabelaPrestacaoDeContas = async () => {
@@ -703,6 +705,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
     // Conferência de Lançamentos
     const [lancamentosParaConferencia, setLancamentosParaConferencia] = useState([])
+    const [contaUuid, setContaUuid] = useState('')
 
     useEffect(()=>{
         if (infoAta && infoAta.contas && infoAta.contas.length > 0){
@@ -712,6 +715,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
     const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid, filtrar_por_acao=null, filtrar_por_lancamento=null) =>{
         if (prestacao_de_contas && prestacao_de_contas.uuid && prestacao_de_contas.analise_atual && prestacao_de_contas.analise_atual.uuid && conta_uuid){
+            setContaUuid(conta_uuid)
             let lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento)
 
             // Adicionando a propriedade selecionando todos os itens
@@ -723,6 +727,8 @@ export const DetalhePrestacaoDeContas = () =>{
                     }
                 })
                 setLancamentosParaConferencia(unis)
+            }else {
+                setLancamentosParaConferencia([])
             }
         }
     }
@@ -739,7 +745,15 @@ export const DetalhePrestacaoDeContas = () =>{
                         />
                     ) :
                     <>
-                        {
+                    {loading ? (
+                            <Loading
+                                corGrafico="black"
+                                corFonte="dark"
+                                marginTop="0"
+                                marginBottom="0"
+                            />
+                        ) :
+
                             prestacaoDeContas && prestacaoDeContas.status &&
                                 <GetComportamentoPorStatus
                                     prestacaoDeContas={prestacaoDeContas}
@@ -791,6 +805,7 @@ export const DetalhePrestacaoDeContas = () =>{
                                     carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
                                     setLancamentosParaConferencia={setLancamentosParaConferencia}
                                     lancamentosParaConferencia={lancamentosParaConferencia}
+                                    contaUuid={contaUuid}
                                 />
                         }
                     </>

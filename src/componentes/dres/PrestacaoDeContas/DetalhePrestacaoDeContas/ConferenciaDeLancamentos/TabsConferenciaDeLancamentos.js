@@ -1,7 +1,7 @@
 import React, {Fragment} from "react";
 import {TabelaConferenciaDeLancamentos} from "./TabelaConferenciaDeLancamentos";
 
-export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscolheConta, carregaLancamentosParaConferencia, prestacaoDeContas, setLancamentosParaConferencia, lancamentosParaConferencia}) => {
+export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscolheConta, carregaLancamentosParaConferencia, prestacaoDeContas, setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid}) => {
 
     return (
         <>
@@ -30,19 +30,22 @@ export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, cl
                     )}
                 </div>
             </nav>
-            {lancamentosParaConferencia && lancamentosParaConferencia.length > 0 &&
-                <div className="tab-content" id="nav-conferencia-de-lancamentos-tabContent">
-                    <div
-                        className="tab-pane fade show active"
-                        role="tabpanel"
-                    >
-                            <TabelaConferenciaDeLancamentos
-                                setLancamentosParaConferencia={setLancamentosParaConferencia}
-                                lancamentosParaConferencia={lancamentosParaConferencia}
-                            />
-                    </div>
+
+            <div className="tab-content" id="nav-conferencia-de-lancamentos-tabContent">
+                <div
+                    className="tab-pane fade show active"
+                    role="tabpanel"
+                >
+                        <TabelaConferenciaDeLancamentos
+                            setLancamentosParaConferencia={setLancamentosParaConferencia}
+                            lancamentosParaConferencia={lancamentosParaConferencia}
+                            contaUuid={contaUuid}
+                            carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
+                            prestacaoDeContas={prestacaoDeContas}
+                        />
                 </div>
-            }
+            </div>
+
         </>
     )
 }

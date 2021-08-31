@@ -13,8 +13,8 @@ export const deleteDespesa = async uuid => {
     return (await api.delete(`api/despesas/${uuid}/`, authHeader)).data
 };
 
-export const getDespesasTabelas = async () => {
-    return (await api.get(`api/despesas/tabelas/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
+export const getDespesasTabelas = async (associacao_uuid=null) => {
+    return (await api.get(`api/despesas/tabelas/?associacao_uuid=${associacao_uuid ? associacao_uuid : localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
 
 export const getEspecificacoesCapital = async () => {

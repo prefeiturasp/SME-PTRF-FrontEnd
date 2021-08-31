@@ -1,6 +1,7 @@
 import React from "react";
 
 export const FiltrosConferenciaDeLancamentos = ({stateFiltros, tabelasDespesa, handleChangeFiltros, handleSubmitFiltros, limpaFiltros})=>{
+
     return(
         <>
             <form>
@@ -36,6 +37,7 @@ export const FiltrosConferenciaDeLancamentos = ({stateFiltros, tabelasDespesa, h
                     </div>
 
                     <div className="justify-content-end">
+                        <button onClick={()=>limpaFiltros()} type="button" className="btn btn-success ml-md-2 mt-3">Limpar</button>
                         <button onClick={()=>handleSubmitFiltros()} type="button" className="btn btn-success ml-md-2 mt-3">Filtrar</button>
                     </div>
                 </div>

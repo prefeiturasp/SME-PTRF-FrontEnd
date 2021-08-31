@@ -1,277 +1,49 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
-import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import {getTabelasReceita} from "../../../../../services/escolas/Receitas.service";
-import {getDespesasTabelas} from "../../../../../services/escolas/Despesas.service";
+import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import Dropdown from "react-bootstrap/Dropdown";
-import ReactTooltip from "react-tooltip";
 import {ModalCheckNaoPermitidoConfererenciaDeLancamentos} from "./ModalCheckNaoPermitidoConfererenciaDeLancamentos";
+import {FiltrosConferenciaDeLancamentos} from "./FiltrosConferenciaDeLancamentos";
+import {postLancamentosParaConferenciaMarcarComoCorreto, postLancamentosParaConferenciaMarcarNaoConferido} from "../../../../../services/dres/PrestacaoDeContas.service";
+import Loading from "../../../../../utils/Loading";
+import useValorTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
+import {useCarregaTabelaDespesa} from "../../../../../hooks/Globais/useCarregaTabelaDespesa";
+import useDataTemplate from "../../../../../hooks/Globais/useDataTemplate";
+import useConferidoTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useConferidoTemplate";
+import useRowExpansionDespesaTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionDespesaTemplate";
+import useRowExpansionReceitaTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionReceitaTemplate";
+import useNumeroDocumentoTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
 
-export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamentosParaConferencia}) => {
-
-    console.log("XXXXXXXXXXXXXXX LANCAMENTOS ", lancamentosParaConferencia)
+export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, carregaLancamentosParaConferencia, prestacaoDeContas}) => {
 
     const rowsPerPage = 10;
 
     const [expandedRows, setExpandedRows] = useState(null);
-    const [tabelasReceita, setTabelasReceita] = useState([]);
-    const [tabelasDespesa, setTabelasDespesa] = useState([]);
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
     const [exibirBtnMarcarComoCorreto, setExibirBtnMarcarComoCorreto] = useState(false)
     const [exibirBtnMarcarComoNaoConferido, setExibirBtnMarcarComoNaoConferido] = useState(false)
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
+    const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const carregaTabelasReceita = async () => {
-            getTabelasReceita().then(response => {
-                setTabelasReceita(response.data);
-            }).catch(error => {
-                console.log(error);
-            });
-        };
-        carregaTabelasReceita()
-    }, []);
+    // Hooks Personalizados
+    const valor_template = useValorTemplate()
+    const dataTemplate = useDataTemplate()
+    const conferidoTemplate = useConferidoTemplate()
+    const tabelaDespesa = useCarregaTabelaDespesa(prestacaoDeContas)
+    const rowExpansionDespesaTemplate = useRowExpansionDespesaTemplate(prestacaoDeContas)
+    const rowExpansionReceitaTemplate = useRowExpansionReceitaTemplate()
+    const numeroDocumentoTemplate = useNumeroDocumentoTemplate()
 
-    useEffect(() => {
-        const carregaTabelasDespesa = async () => {
-            const resp = await getDespesasTabelas();
-            setTabelasDespesa(resp);
-        };
-        carregaTabelasDespesa();
-    }, []);
-
-    const dataTemplate = (rowData = '', column = '', data_passada = null) => {
-        if (rowData && column) {
-            return (
-                <div className='p-2'>
-                    {rowData[column.field] ? moment(rowData[column.field]).format('DD/MM/YYYY') : '-'}
-                </div>
-            )
-        } else if (data_passada) {
-            return (
-                data_passada ? moment(data_passada).format('DD/MM/YYYY') : '-'
-            )
-        }
-    };
-
-    const numeroDocumentoTemplate = (rowData, column) => {
-        return (
-            <div className='p-2 text-wrap-conferencia-de-lancamentos'>
-                {rowData[column.field] ? rowData[column.field] : '-'}
-            </div>
-        )
-    }
-
-    const valorTemplate = (rowData = null, column = null, valor = null) => {
-        let valor_para_formatar;
-        if (valor) {
-            valor_para_formatar = valor
-        } else {
-            valor_para_formatar = rowData[column.field]
-        }
-        let valor_formatado = Number(valor_para_formatar).toLocaleString('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-        });
-        valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
-
-        if (rowData && rowData.valor_transacao_na_conta !== rowData.valor_transacao_total) {
-            let texto_exibir = `<div><strong>Valor total de despesa:</strong> ${Number(rowData.valor_transacao_total).toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            })}</div>`;
-            rowData.valores_por_conta.map((item) => (
-                texto_exibir += `<div><strong>Conta ${item.conta_associacao__tipo_conta__nome}:</strong> ${Number(item.valor_rateio__sum).toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL'
-                })}</div>`
-            ));
-
-            return (
-                <div data-tip={texto_exibir} data-html={true}>
-                    <span>
-                        {valor_formatado}
-                    </span>
-                    <FontAwesomeIcon
-                        style={{fontSize: '18px', marginLeft: "3px", color: '#C65D00'}}
-                        icon={faInfoCircle}
-                    />
-                    <ReactTooltip/>
-                </div>
-            )
-        } else {
-            return valor_formatado
-        }
-
-    };
-
-    const conferidoTemplate = (rowData, column) => {
-        if (rowData[column.field] && rowData[column.field]['resultado'] && rowData[column.field]['resultado'] === 'CORRETO') {
-            return (
-                <div className='p-2'>
-                    <FontAwesomeIcon
-                        style={{marginRight: "3px", color: '#297805'}}
-                        icon={faCheckCircle}
-                    />
-                </div>
-            )
-        } else if (rowData[column.field] && rowData[column.field]['resultado'] && rowData[column.field]['resultado'] === 'AJUSTE') {
-            return (
-                <div className='p-2'>
-                    <FontAwesomeIcon
-                        style={{marginRight: "3px", color: '#B40C02'}}
-                        icon={faCheckCircle}
-                    />
-                </div>
-            )
-        } else {
-            return (
-                <div className='p-2'>-</div>
-            )
-        }
-    }
-
-    const conferidoRateioTemplate = (rateio) => {
-        return (
-            <div>
-                <input
-                    defaultValue={rateio.conferido}
-                    defaultChecked={rateio.conferido}
-                    type="checkbox"
-                    //value={checkboxTransacoes}
-                    //onChange={()=>{}}
-                    name="checkConferido"
-                    id="checkConferido"
-                    disabled={true}
-                />
-            </div>
-        )
-    };
-
-    const tagRateioTemplate = (rateio) => {
-        if (rateio && rateio.tag && rateio.tag.nome) {
-            return (
-                <span
-                    className='span-rateio-tag-conferencia-de-lancamentos text-wrap-conferencia-de-lancamentos'>rateio.tag.nome</span>
-            )
-        } else {
-            return (
-                <span> - </span>
-            )
-        }
-    }
+    useEffect(()=>{
+        desmarcarTodos()
+    }, [contaUuid])
 
     const rowClassName = (rowData) => {
         if (rowData && rowData.analise_lancamento && rowData.analise_lancamento.resultado) {
             return {'linha-conferencia-de-lancamentos-correto': true}
         }
-    }
-
-    const rowExpansionDespesaTemplate = (data) => {
-        return (
-            <div className='col-12 px-4 py-2'>
-                <div className='row'>
-                    <div className='col border'>
-                        <p className='mt-2 mb-0'><strong>CNPJ / CPF</strong></p>
-                        <p className='mb-2'>{data && data.documento_mestre && data.documento_mestre.cpf_cnpj_fornecedor ? data.documento_mestre.cpf_cnpj_fornecedor : ''}</p>
-                    </div>
-                    <div className='col border-top border-bottom border-right'>
-                        <p className='mt-2 mb-0'><strong>Tipo de documento</strong></p>
-                        <p className='mb-2'>{data && data.documento_mestre && data.documento_mestre.tipo_documento && data.documento_mestre.tipo_documento.nome ? data.documento_mestre.tipo_documento.nome : ''}</p>
-                    </div>
-                    <div className='col border-top border-bottom border-right'>
-                        <p className='mt-2 mb-0'><strong>Tipo de transação</strong></p>
-                        <p className='mb-2'>{data && data.documento_mestre && data.documento_mestre.tipo_transacao && data.documento_mestre.tipo_transacao.nome ? data.documento_mestre.tipo_transacao.nome : ''}</p>
-                    </div>
-                    <div className='col border-top border-bottom border-right'>
-                        <p className='mt-2 mb-0'><strong>Data de transação</strong></p>
-                        <p className='mb-2'>{data && data.documento_mestre && data.documento_mestre.data_transacao ? dataTemplate(null, null, data.documento_mestre.data_transacao) : ''}</p>
-                    </div>
-                    <div className='col border-top border-bottom border-right'>
-                        <p className='mt-2 mb-0'><strong>Número do documento:</strong></p>
-                        <p className='mb-2'>{data.documento_mestre.documento_transacao}</p>
-                    </div>
-                </div>
-                {data.rateios && data.rateios.length > 0 && data.rateios.map((rateio, index) => (
-                    <div key={index} className='row border-bottom border-right border-left pb-3'>
-
-                        <div className='col-12 mb-2'>
-                            <p className='font-weight-bold mb-2 mt-2 pb-2 titulo-row-expanded-conferencia-de-lancamentos'>Despesa {index + 1}</p>
-                        </div>
-
-                        <div className='col-12'>
-                            <div className='col-12 border'>
-                                <div className='row'>
-                                    <div className='col p-2'>
-                                        <p className='mb-0 font-weight-bold'>Tipo de despesa:</p>
-                                        {rateio.tipo_custeio && rateio.tipo_custeio.nome ? rateio.tipo_custeio.nome : ''}
-                                    </div>
-                                    <div className='col border-left p-2'>
-                                        <p className='mb-0 font-weight-bold'>Especificação:</p>
-                                        {rateio.especificacao_material_servico && rateio.especificacao_material_servico.descricao ? rateio.especificacao_material_servico.descricao : ''}
-                                    </div>
-                                    <div className='col border-left p-2'>
-                                        <p className='mb-0 font-weight-bold'>Tipo de aplicação</p>
-                                        {rateio.aplicacao_recurso ? tabelasDespesa.tipos_aplicacao_recurso.find(element => element.id === rateio.aplicacao_recurso).nome : ''}
-                                    </div>
-
-                                    <div className='col border-left p-2'>
-                                        <p className='mb-0 font-weight-bold'>Demonstrado</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className='col-12'>
-                            <div className='col-12 border-bottom border-right border-left'>
-                                <div className='row'>
-                                    <div className='col border-left p-2'>
-                                        <p className='mb-0 font-weight-bold'>Tipo de ação:</p>
-                                        {rateio.acao_associacao && rateio.acao_associacao.nome ? rateio.acao_associacao.nome : ''}
-                                    </div>
-                                    <div className='col border-left p-2'>
-                                        <p className='mb-0 font-weight-bold'>Valor</p>
-                                        {rateio.valor_rateio ? valorTemplate(null, null, rateio.valor_rateio) : 0}
-                                    </div>
-                                    <div className='col border-left p-2'>
-                                        <p className='mb-0 font-weight-bold'>Vínculo a atividade</p>
-                                        {tagRateioTemplate(rateio)}
-                                    </div>
-                                    <div
-                                        className='col border-left p-2 d-flex justify-content-center align-items-center'>
-                                        {conferidoRateioTemplate(rateio)}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        )
-    }
-
-    const rowExpansionReceitaTemplate = (data) => {
-        return (
-            <div className='col-12 px-4 py-2'>
-                <div className='row'>
-                    <div className='col-4 border'>
-                        <p className='mt-2 mb-0'><strong>Detalhamento do crédito</strong></p>
-                        <p className='mb-2'>{data && data.documento_mestre && data.documento_mestre.detalhamento ? data.documento_mestre.detalhamento : ''}</p>
-                    </div>
-                    <div className='col-4 border-top border-bottom border-right'>
-                        <p className='mt-2 mb-0'><strong>Classificação do crédito</strong></p>
-                        <p className='mb-2'>{data.documento_mestre && data.documento_mestre.categoria_receita ? tabelasReceita.categorias_receita.find(elemnt => elemnt.id === data.documento_mestre.categoria_receita).nome : ''}</p>
-                    </div>
-                    <div className='col-4 border-top border-bottom border-right'>
-                        <p className='mt-2 mb-0'><strong>Tipo de ação</strong></p>
-                        <p className='mb-2'>{data.documento_mestre && data.documento_mestre.acao_associacao && data.documento_mestre.acao_associacao.nome ? data.documento_mestre.acao_associacao.nome : ''}</p>
-                    </div>
-                </div>
-            </div>
-        )
     }
 
     const rowExpansionTemplate = (data) => {
@@ -327,13 +99,11 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
                 return acc;
             }, []);
         }
-
         setLancamentosParaConferencia(result);
         setQuantidadeSelecionada(cont);
     }
 
-    const desmarcarTodos = (event) => {
-        event.preventDefault();
+    const desmarcarTodos = () => {
         setExibirBtnMarcarComoCorreto(false)
         setExibirBtnMarcarComoNaoConferido(false)
         let result = lancamentosParaConferencia.reduce((acc, o) => {
@@ -376,10 +146,11 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item onClick={(e) => selecionarTodos(e)}>Selecionar todos</Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => desmarcarTodos(e)}>Desmarcar todos</Dropdown.Item>
+                        {/*<Dropdown.Item onClick={(e) => selecionarTodos(e)}>Selecionar todos</Dropdown.Item>*/}
                         <Dropdown.Item onClick={(e) => selecionarPorStatus(e, "CORRETO")}>Selecionar todos corretos</Dropdown.Item>
                         <Dropdown.Item onClick={(e) => selecionarPorStatus(e, null)}>Selecionar todos não conferidos</Dropdown.Item>
+                        <Dropdown.Item onClick={(e) => desmarcarTodos(e)}>Desmarcar todos</Dropdown.Item>
+
                     </Dropdown.Menu>
                 </Dropdown>
             </div>
@@ -392,7 +163,7 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
                 <div className="col-12" style={{background: "#00585E", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
                     <div className="row">
                         <div className="col-5">
-                            {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "unidade selecionada" : "unidades selecionadas"} / {totalDelancamentosParaConferencia} totais
+                            {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "lançamento selecionado" : "lançamentos selecionados"} / {totalDelancamentosParaConferencia} totais
                         </div>
                         <div className="col-7">
                             <div className="row">
@@ -434,7 +205,6 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
                                         </button>
                                     </>
                                     }
-
                                 </div>
                             </div>
                         </div>
@@ -451,7 +221,7 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
         return (
             <div className="row">
                 <div className="col-12" style={{padding: "15px 0px", margin: "0px 15px", flex: "100%"}}>
-                    Exibindo <span style={{color: "#00585E", fontWeight: "bold"}}>{totalDelancamentosParaConferencia}</span> unidades
+                    Exibindo <span style={{color: "#00585E", fontWeight: "bold"}}>{totalDelancamentosParaConferencia}</span> lançamentos
                 </div>
             </div>
         )
@@ -480,8 +250,6 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
             }
         }
 
-        setExibicaoBotoesMarcarComo(rowData)
-
         if (e.target.checked && status_permitido.length > 0){
             if (status_permitido.includes(rowData.analise_lancamento) || (rowData.analise_lancamento && rowData.analise_lancamento && rowData.analise_lancamento.resultado && status_permitido.includes(rowData.analise_lancamento.resultado) )){
                 return true
@@ -494,10 +262,10 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
         }
     }
 
-
     const tratarSelecionado = (e, lancamentosParaConferenciaUuid, rowData) => {
         let verifica_se_pode_ser_checkado = verificaSePodeSerCheckado(e, rowData)
         if (verifica_se_pode_ser_checkado){
+            setExibicaoBotoesMarcarComo(rowData)
             let cont = quantidadeSelecionada;
             if (e.target.checked) {
                 cont = cont + 1
@@ -514,78 +282,176 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
         }
     }
 
-    const marcarComoCorreto = () => {
+    const marcarComoCorreto = async () => {
         let lancamentos_marcados_como_corretos = getLancamentosSelecionados()
-        console.log("XXXXXXX marcarComoCorreto ", lancamentos_marcados_como_corretos)
+
+        if (lancamentos_marcados_como_corretos && lancamentos_marcados_como_corretos.length > 0) {
+            setLoading(true)
+            let payload = [];
+            lancamentos_marcados_como_corretos.map((lancamento) =>
+                payload.push({
+                    "tipo_lancamento": lancamento.tipo_transacao === 'Gasto' ? 'GASTO' : 'CREDITO',
+                    "lancamento": lancamento.documento_mestre.uuid,
+                })
+            );
+            payload = {
+                'analise_prestacao': prestacaoDeContas.analise_atual.uuid,
+                'lancamentos_corretos': [
+                    ...payload
+                ]
+            }
+            try {
+                await postLancamentosParaConferenciaMarcarComoCorreto(prestacaoDeContas.uuid, payload)
+                console.log("Marcados como correto com sucesso!")
+                desmarcarTodos()
+                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid)
+            }catch (e) {
+                console.log("Erro ao marcar como correto ", e.response)
+            }
+            setLoading(false)
+        }
     }
 
-    const marcarComoNaoConferido = () => {
+    const marcarComoNaoConferido = async () => {
         let lancamentos_marcados_como_nao_conferidos = getLancamentosSelecionados()
-        console.log("XXXXXXX marcarComoNaoConferido ", lancamentos_marcados_como_nao_conferidos)
+
+        if (lancamentos_marcados_como_nao_conferidos && lancamentos_marcados_como_nao_conferidos.length > 0) {
+            setLoading(true)
+
+            let payload = [];
+            lancamentos_marcados_como_nao_conferidos.map((lancamento) =>
+                payload.push({
+                    "tipo_lancamento": lancamento.tipo_transacao === 'Gasto' ? 'GASTO' : 'CREDITO',
+                    "lancamento": lancamento.documento_mestre.uuid,
+                })
+            );
+
+            payload = {
+                'analise_prestacao': prestacaoDeContas.analise_atual.uuid,
+                'lancamentos_nao_conferidos': [
+                    ...payload
+                ]
+            }
+            try {
+                await postLancamentosParaConferenciaMarcarNaoConferido(prestacaoDeContas.uuid, payload)
+                console.log("Marcados como não conferido com sucesso!")
+                desmarcarTodos()
+                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid)
+            }catch (e) {
+                console.log("Erro ao marcar como não conferido ", e.response)
+            }
+            setLoading(false)
+        }
     }
 
     const getLancamentosSelecionados = () =>{
         return lancamentosParaConferencia.filter((lancamento) => lancamento.selecionado)
     }
 
+    // Filtros Lancamentos
+    const initialStateFiltros = {
+        filtrar_por_acao: '',
+        filtrar_por_lancamento: '',
+    }
+    const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
+
+    const handleChangeFiltros = (name, value) => {
+        setStateFiltros({
+            ...stateFiltros,
+            [name]: value
+        });
+    };
+
+    const handleSubmitFiltros = async () => {
+        setLoading(true)
+        desmarcarTodos()
+        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento)
+        setLoading(false)
+    };
+
+    const limpaFiltros = async () => {
+        setLoading(true)
+        setStateFiltros(initialStateFiltros);
+        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid);
+        setLoading(false)
+    };
+
     return (
         <>
-            {quantidadeSelecionada > 0 ?
-                (montagemSelecionar()) :
-                (mensagemQuantidadeExibida())
+            {loading ? (
+                    <Loading
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="0"
+                        marginBottom="0"
+                    />
+                ) :
+                <>
+                    <FiltrosConferenciaDeLancamentos
+                        stateFiltros={stateFiltros}
+                        tabelasDespesa={tabelaDespesa}
+                        handleChangeFiltros={handleChangeFiltros}
+                        handleSubmitFiltros={handleSubmitFiltros}
+                        limpaFiltros={limpaFiltros}
+                    />
+                    {quantidadeSelecionada > 0 ?
+                        montagemSelecionar() :
+                        mensagemQuantidadeExibida()
+                    }
+                    <DataTable
+                        value={lancamentosParaConferencia}
+                        expandedRows={expandedRows}
+                        onRowToggle={(e) => setExpandedRows(e.data)}
+                        rowExpansionTemplate={rowExpansionTemplate}
+                        paginator={lancamentosParaConferencia.length > rowsPerPage}
+                        rows={rowsPerPage}
+                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                        rowClassName={rowClassName}
+                        stripedRows
+                    >
+                        <Column header={selecionarHeader()} body={selecionarTemplate}/>
+                        <Column
+                            field='data'
+                            header='Data'
+                            body={dataTemplate}
+                            className="align-middle text-left borda-coluna"
+                        />
+                        <Column field='tipo_transacao' header='Tipo de lançamento'
+                                className="align-middle text-left borda-coluna"/>
+                        <Column
+                            field='numero_documento'
+                            header='N.º do documento'
+                            body={numeroDocumentoTemplate}
+                            className="align-middle text-left borda-coluna"
+                        />
+                        <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna"/>
+                        <Column
+                            field='valor_transacao_total'
+                            header='Valor (R$)'
+                            body={valor_template}
+                            className="align-middle text-left borda-coluna"
+                        />
+                        <Column
+                            field='analise_lancamento'
+                            header='Conferido'
+                            body={conferidoTemplate}
+                            className="align-middle text-left borda-coluna"
+                            style={{borderRight: 'none'}}
+                        />
+                        <Column expander style={{width: '3em', borderLeft: 'none'}}/>
+                    </DataTable>
+                    <section>
+                        <ModalCheckNaoPermitidoConfererenciaDeLancamentos
+                            show={showModalCheckNaoPermitido}
+                            handleClose={() => setShowModalCheckNaoPermitido(false)}
+                            titulo='Seleção não permitida'
+                            texto='<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>'
+                            primeiroBotaoTexto="Fechar"
+                            primeiroBotaoCss="success"
+                        />
+                    </section>
+                </>
             }
-            <DataTable
-                value={lancamentosParaConferencia}
-                expandedRows={expandedRows}
-                onRowToggle={(e) => setExpandedRows(e.data)}
-                rowExpansionTemplate={rowExpansionTemplate}
-                paginator={lancamentosParaConferencia.length > rowsPerPage}
-                rows={rowsPerPage}
-                paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                rowClassName={rowClassName}
-                stripedRows
-            >
-                <Column header={selecionarHeader()} body={selecionarTemplate}/>
-                <Column
-                    field='data'
-                    header='Data'
-                    body={dataTemplate}
-                    className="align-middle text-left borda-coluna"
-                />
-                <Column field='tipo_transacao' header='Tipo de lançamento'
-                        className="align-middle text-left borda-coluna"/>
-                <Column
-                    field='numero_documento'
-                    header='N.º do documento'
-                    body={numeroDocumentoTemplate}
-                    className="align-middle text-left borda-coluna"
-                />
-                <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna"/>
-                <Column
-                    field='valor_transacao_total'
-                    header='Valor (R$)'
-                    body={valorTemplate}
-                    className="align-middle text-left borda-coluna"
-                />
-                <Column
-                    field='analise_lancamento'
-                    header='Conferido'
-                    body={conferidoTemplate}
-                    className="align-middle text-left borda-coluna"
-                    style={{borderRight: 'none'}}
-                />
-                <Column expander style={{width: '3em', borderLeft: 'none'}}/>
-            </DataTable>
-            <section>
-                <ModalCheckNaoPermitidoConfererenciaDeLancamentos
-                    show={showModalCheckNaoPermitido}
-                    handleClose={()=>setShowModalCheckNaoPermitido(false)}
-                    titulo='Seleção não permitida'
-                    texto='<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>'
-                    primeiroBotaoTexto="Fechar"
-                    primeiroBotaoCss="success"
-                />
-            </section>
         </>
     )
 }

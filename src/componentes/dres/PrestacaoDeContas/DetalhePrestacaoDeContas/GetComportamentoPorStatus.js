@@ -65,6 +65,7 @@ export const GetComportamentoPorStatus = (
         carregaLancamentosParaConferencia,
         setLancamentosParaConferencia,
         lancamentosParaConferencia,
+        contaUuid,
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
@@ -232,6 +233,7 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                         setLancamentosParaConferencia={setLancamentosParaConferencia}
                         lancamentosParaConferencia={lancamentosParaConferencia}
+                        contaUuid={contaUuid}
 
                     />
                     <ComentariosDeAnalise
