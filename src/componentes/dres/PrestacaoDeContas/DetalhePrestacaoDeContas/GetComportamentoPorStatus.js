@@ -9,8 +9,9 @@ import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
 import {InformacoesDevolucaoAoTesouro} from "./InformacoesDevolucaoAoTesouro";
 import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
 import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
-import {TabsArquivosDeReferencia} from "./TabsArquivosDeReferencia";
-import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferenciaVisualizacaoDownload";
+import {TabsArquivosDeReferencia} from "./ArquivosDeReferencia/TabsArquivosDeReferencia";
+import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferencia/ArquivosDeReferenciaVisualizacaoDownload";
+import {TabsConferenciaDeLancamentos} from "./ConferenciaDeLancamentos/TabsConferenciaDeLancamentos";
 
 
 export const GetComportamentoPorStatus = (
@@ -60,7 +61,11 @@ export const GetComportamentoPorStatus = (
         deleteCobrancaDevolucoes,
         setShowVoltarParaAnalise,
         btnSalvarDisabled,
-        setBtnSalvarDisabled
+        setBtnSalvarDisabled,
+        carregaLancamentosParaConferencia,
+        setLancamentosParaConferencia,
+        lancamentosParaConferencia,
+        contaUuid,
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
@@ -218,6 +223,18 @@ export const GetComportamentoPorStatus = (
                     />
                     <ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
+                    />
+
+                    <TabsConferenciaDeLancamentos
+                        infoAta={infoAta}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
+                        prestacaoDeContas={prestacaoDeContas}
+                        setLancamentosParaConferencia={setLancamentosParaConferencia}
+                        lancamentosParaConferencia={lancamentosParaConferencia}
+                        contaUuid={contaUuid}
+
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}

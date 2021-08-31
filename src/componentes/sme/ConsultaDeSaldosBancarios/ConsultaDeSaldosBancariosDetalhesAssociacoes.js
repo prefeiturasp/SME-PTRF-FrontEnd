@@ -23,12 +23,12 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
 
     let {periodo_uuid, conta_uuid, dre_uuid} = useParams();
 
-    const [showModalConfirmarExportacao, setShowModalConfirmarExportacao] = useState(false);
     const [periodos, setPeriodos] = useState([])
     const [selectPeriodo, setSelectPeriodo] = useState(periodo_uuid);
     const [tiposDeConta, setTiposDeConta] = useState([])
     const [selectTipoDeConta, setSelectTipoDeConta] = useState(conta_uuid);
     const [dres, setDres] = useState([])
+    const [showModalConfirmarExportacao, setShowModalConfirmarExportacao] = useState(false);
 
     const carregaPeriodos = useCallback(async () => {
         let periodos = await getPeriodos()
@@ -191,11 +191,10 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
     };
 
     const handleOnClickExportar = async() => {
-        await getSaldosDetalhesAssociacoesExportar(selectPeriodo, selectTipoDeConta, dre_uuid, stateFiltros.filtrar_por_unidade, stateFiltros.filtrar_por_tipo_ue);
+        await getSaldosDetalhesAssociacoesExportar(selectPeriodo, selectTipoDeConta);
         setShowModalConfirmarExportacao(true);
     }
 
-    
     const onHandleCloseModalConfirmarExportacao = () => {
         setShowModalConfirmarExportacao(false);
     }
@@ -216,6 +215,13 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
                         selectConta={selectTipoDeConta}
                         tiposConta={tiposDeConta}
                     />
+                    {selectPeriodo && selectTipoDeConta ? (
+                        <BtnExportar
+                            handleOnClickExportar={handleOnClickExportar}
+                        />
+                    ):  null
+
+                    } 
                 </div>
                 <div className="d-flex bd-highlight mt-5 border-bottom">
                     <div className="flex-grow-1 bd-highlight">
@@ -235,27 +241,15 @@ export const ConsultaDeSaldosBancariosDetalhesAssociacoes = () =>{
                     </div>
                 </div>
                 {selectPeriodo && selectTipoDeConta ? (
-                <>
-                    <div className="row">
-                        <div className="col-lg-9">
-                            <label><strong>Filtros</strong></label>
-                            <Filtros
-                                stateFiltros={stateFiltros}
-                                handleChangeFiltros={handleChangeFiltros}
-                                handleSubmitFiltros={handleSubmitFiltros}
-                                limpaFiltros={limpaFiltros}
-                                tabelaAssociacoes={tabelaAssociacoes}
-                            />
-                        </div>
-
-                        <div className="col-lg-3">
-                            <label style={{marginLeft: '1.7em'}}><strong>Exportação</strong></label>
-                            <BtnExportar
-                                handleOnClickExportar={handleOnClickExportar}
-                            />
-                        </div>
-                    </div>
-        
+                <>    
+                    <Filtros
+                        stateFiltros={stateFiltros}
+                        handleChangeFiltros={handleChangeFiltros}
+                        handleSubmitFiltros={handleSubmitFiltros}
+                        limpaFiltros={limpaFiltros}
+                        tabelaAssociacoes={tabelaAssociacoes}
+                    />
+   
                     <TabelaSaldosDetalhesAssociacoes
                         saldosDetalhesAssociacoes={saldosDetalhesAssociacoes}
                         valorTemplate={valorTemplate}
