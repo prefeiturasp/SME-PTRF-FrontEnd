@@ -34,9 +34,7 @@ export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, cl
                 <div className="tab-content" id="nav-conferencia-de-lancamentos-tabContent">
                     <div
                         className="tab-pane fade show active"
-                        //id={`nav-conferencia-de-lancamentos-${infoAtaPorConta.conta_associacao.uuid}`}
                         role="tabpanel"
-                        //aria-labelledby={`nav-conferencia-de-lancamentos-${infoAtaPorConta.conta_associacao.uuid}-tab`}
                     >
                             <TabelaConferenciaDeLancamentos
                                 setLancamentosParaConferencia={setLancamentosParaConferencia}

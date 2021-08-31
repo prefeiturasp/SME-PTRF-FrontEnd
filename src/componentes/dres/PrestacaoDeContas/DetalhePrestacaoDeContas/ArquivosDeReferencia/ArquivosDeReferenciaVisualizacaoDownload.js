@@ -3,8 +3,8 @@ import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye, faDownload} from "@fortawesome/free-solid-svg-icons";
-import {getDownloadArquivoDeReferencia} from "../../../../services/dres/PrestacaoDeContas.service";
-import ModalVisualizarArquivoDeReferencia from "./ModalVisualizarArquivoDeReferencia";
+import {getDownloadArquivoDeReferencia} from "../../../../../services/dres/PrestacaoDeContas.service";
+import ModalVisualizarArquivoDeReferencia from "../ModalVisualizarArquivoDeReferencia";
 
 const ArquivosDeReferenciaVisualizacaoDownload = ({prestacaoDeContas}) => {
 

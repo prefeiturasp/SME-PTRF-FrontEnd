@@ -1,8 +1,8 @@
 import React, {Fragment} from "react";
 import {TabsArquivosDeReferenciaAccordion} from "./TabsArquivosDeReferenciaAccordion";
-import {ResumoFinanceiroTabelaAcoes} from "./ResumoFinanceiroTabelaAcoes";
-import {AnalisesDeContaDaPrestacao} from "./AnalisesDeContaDaPrestacao";
-import {ResumoFinanceiroTabelaTotais} from "./ResumoFinanceiroTabelaTotais";
+import {ResumoFinanceiroTabelaAcoes} from "../ResumoFinanceiroTabelaAcoes";
+import {AnalisesDeContaDaPrestacao} from "../AnalisesDeContaDaPrestacao";
+import {ResumoFinanceiroTabelaTotais} from "../ResumoFinanceiroTabelaTotais";
 
 export const TabsArquivosDeReferencia = ({infoAta, toggleBtnEscolheConta, exibeAtaPorConta, clickBtnEscolheConta, infoAtaPorConta, ...rest}) => {
 

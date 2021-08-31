@@ -4,10 +4,11 @@ import {DataTable} from "primereact/datatable";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import {getTabelasReceita} from "../../../../services/escolas/Receitas.service";
-import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
+import {getTabelasReceita} from "../../../../../services/escolas/Receitas.service";
+import {getDespesasTabelas} from "../../../../../services/escolas/Despesas.service";
 import Dropdown from "react-bootstrap/Dropdown";
 import ReactTooltip from "react-tooltip";
+import {ModalCheckNaoPermitidoConfererenciaDeLancamentos} from "./ModalCheckNaoPermitidoConfererenciaDeLancamentos";
 
 export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamentosParaConferencia}) => {
 
@@ -21,6 +22,7 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
     const [exibirBtnMarcarComoCorreto, setExibirBtnMarcarComoCorreto] = useState(false)
     const [exibirBtnMarcarComoNaoConferido, setExibirBtnMarcarComoNaoConferido] = useState(false)
+    const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
 
     useEffect(() => {
         const carregaTabelasReceita = async () => {
@@ -387,11 +389,10 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
     const montagemSelecionar = () => {
         return (
             <div className="row">
-                <div className="col-12"
-                     style={{background: "#00585E", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
+                <div className="col-12" style={{background: "#00585E", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
                     <div className="row">
                         <div className="col-5">
-                            {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "unidade selecionada" : "unidades selecionadas"} / {lancamentosParaConferencia.length} totais
+                            {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "unidade selecionada" : "unidades selecionadas"} / {totalDelancamentosParaConferencia} totais
                         </div>
                         <div className="col-7">
                             <div className="row">
@@ -410,7 +411,7 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
                                             style={{textDecoration: "underline", cursor: "pointer"}}
                                         >
                                             <FontAwesomeIcon
-                                                style={{color: "white", fontSize: '15px', marginRight: "2px"}}
+                                                style={{color: "white", fontSize: '15px', marginRight: "3px"}}
                                                 icon={faCheckCircle}
                                             />
                                             <strong>Marcar como Correto</strong>
@@ -426,7 +427,7 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
                                             style={{textDecoration: "underline", cursor: "pointer"}}
                                         >
                                             <FontAwesomeIcon
-                                                style={{color: "white", fontSize: '15px', marginRight: "2px"}}
+                                                style={{color: "white", fontSize: '15px', marginRight: "3px"}}
                                                 icon={faCheckCircle}
                                             />
                                             <strong>Marcar como Não conferido</strong>
@@ -444,35 +445,73 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
     }
 
     // Quando a state da lista sofrer alteração
-    const totalDeTipos = useMemo(() => lancamentosParaConferencia.length, [lancamentosParaConferencia]);
+    const totalDelancamentosParaConferencia = useMemo(() => lancamentosParaConferencia.length, [lancamentosParaConferencia]);
 
     const mensagemQuantidadeExibida = () => {
         return (
             <div className="row">
                 <div className="col-12" style={{padding: "15px 0px", margin: "0px 15px", flex: "100%"}}>
-                    Exibindo <span style={{color: "#00585E", fontWeight: "bold"}}>{totalDeTipos}</span> unidades
+                    Exibindo <span style={{color: "#00585E", fontWeight: "bold"}}>{totalDelancamentosParaConferencia}</span> unidades
                 </div>
             </div>
         )
     }
 
-    const tratarSelecionado = async (e, lancamentosParaConferenciaUuid) => {
+    const setExibicaoBotoesMarcarComo = (rowData) =>{
+        if (rowData.analise_lancamento && rowData.analise_lancamento.resultado === 'CORRETO'){
+            setExibirBtnMarcarComoCorreto(false)
+            setExibirBtnMarcarComoNaoConferido(true)
+        }else {
+            setExibirBtnMarcarComoCorreto(true)
+            setExibirBtnMarcarComoNaoConferido(false)
+        }
+    }
 
-        let cont = quantidadeSelecionada;
+    const verificaSePodeSerCheckado = (e, rowData) => {
 
-        if (e.target.checked) {
-            cont = cont + 1
-        } else {
-            cont = cont - 1
+        let selecionados = getLancamentosSelecionados()
+        let status_permitido=[]
+
+        if (selecionados.length > 0){
+            if (!selecionados[0].analise_lancamento || (selecionados[0].analise_lancamento && selecionados[0].analise_lancamento.resultado && selecionados[0].analise_lancamento.resultado === "AJUSTE")){
+                status_permitido = [null, 'AJUSTE']
+            }else {
+                status_permitido = ['CORRETO']
+            }
         }
 
-        setQuantidadeSelecionada(cont);
-        let result = lancamentosParaConferencia.reduce((acc, o) => {
-            let obj = lancamentosParaConferenciaUuid === o.documento_mestre.uuid ? Object.assign(o, {selecionado: e.target.checked}) : o;
-            acc.push(obj);
-            return acc;
-        }, []);
-        setLancamentosParaConferencia(result);
+        setExibicaoBotoesMarcarComo(rowData)
+
+        if (e.target.checked && status_permitido.length > 0){
+            if (status_permitido.includes(rowData.analise_lancamento) || (rowData.analise_lancamento && rowData.analise_lancamento && rowData.analise_lancamento.resultado && status_permitido.includes(rowData.analise_lancamento.resultado) )){
+                return true
+            }else {
+                setShowModalCheckNaoPermitido(true)
+                return false
+            }
+        }else {
+            return true
+        }
+    }
+
+
+    const tratarSelecionado = (e, lancamentosParaConferenciaUuid, rowData) => {
+        let verifica_se_pode_ser_checkado = verificaSePodeSerCheckado(e, rowData)
+        if (verifica_se_pode_ser_checkado){
+            let cont = quantidadeSelecionada;
+            if (e.target.checked) {
+                cont = cont + 1
+            } else {
+                cont = cont - 1
+            }
+            setQuantidadeSelecionada(cont);
+            let result = lancamentosParaConferencia.reduce((acc, o) => {
+                let obj = lancamentosParaConferenciaUuid === o.documento_mestre.uuid ? Object.assign(o, {selecionado: e.target.checked}) : o;
+                acc.push(obj);
+                return acc;
+            }, []);
+            setLancamentosParaConferencia(result);
+        }
     }
 
     const marcarComoCorreto = () => {
@@ -487,7 +526,6 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
 
     const getLancamentosSelecionados = () =>{
         return lancamentosParaConferencia.filter((lancamento) => lancamento.selecionado)
-
     }
 
     return (
@@ -538,6 +576,16 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
                 />
                 <Column expander style={{width: '3em', borderLeft: 'none'}}/>
             </DataTable>
+            <section>
+                <ModalCheckNaoPermitidoConfererenciaDeLancamentos
+                    show={showModalCheckNaoPermitido}
+                    handleClose={()=>setShowModalCheckNaoPermitido(false)}
+                    titulo='Seleção não permitida'
+                    texto='<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>'
+                    primeiroBotaoTexto="Fechar"
+                    primeiroBotaoCss="success"
+                />
+            </section>
         </>
     )
 }

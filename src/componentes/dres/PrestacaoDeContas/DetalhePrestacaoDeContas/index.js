@@ -710,11 +710,11 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     }, [prestacaoDeContas, infoAta])
 
-    const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid) =>{
+    const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid, filtrar_por_acao=null, filtrar_por_lancamento=null) =>{
         if (prestacao_de_contas && prestacao_de_contas.uuid && prestacao_de_contas.analise_atual && prestacao_de_contas.analise_atual.uuid && conta_uuid){
-            let lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid)
+            let lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento)
 
-            // Adicionando a propriedade selecionando a todos os itens
+            // Adicionando a propriedade selecionando todos os itens
             if (lancamentos && lancamentos.length > 0){
                 let unis = lancamentos.map((lancamento)=>{
                     return {

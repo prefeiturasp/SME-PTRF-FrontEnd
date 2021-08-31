@@ -9,9 +9,9 @@ import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
 import {InformacoesDevolucaoAoTesouro} from "./InformacoesDevolucaoAoTesouro";
 import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
 import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
-import {TabsArquivosDeReferencia} from "./TabsArquivosDeReferencia";
-import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferenciaVisualizacaoDownload";
-import {TabsConferenciaDeLancamentos} from "./TabsConferenciaDeLancamentos";
+import {TabsArquivosDeReferencia} from "./ArquivosDeReferencia/TabsArquivosDeReferencia";
+import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferencia/ArquivosDeReferenciaVisualizacaoDownload";
+import {TabsConferenciaDeLancamentos} from "./ConferenciaDeLancamentos/TabsConferenciaDeLancamentos";
 
 
 export const GetComportamentoPorStatus = (
