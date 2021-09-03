@@ -110,7 +110,10 @@ const getPermissoes = (permissao) =>{
     if (permissao && authService.isLoggedIn()){
         let permissoes = getItemUsuarioLogado('permissoes');
         let result = permissao.filter(item => permissoes.indexOf(item) > -1);
-        let tem_acesso = result.length === permissao.length;
+        // let tem_acesso = result.length === permissao.length;
+        // Alterado para conceder acesso se tiver ao menos uma das permissões da lista passada.
+        // Anteriormente estava exigindo que tivesse todas as permissões passadas na lista o que quebrava o acesso ao perfil de acessos
+        let tem_acesso = result.length > 0;
         return tem_acesso
     }
 
