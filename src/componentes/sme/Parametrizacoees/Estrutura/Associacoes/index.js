@@ -12,6 +12,8 @@ import {
     postCriarAssociacao,
     patchUpdateAssociacao,
     deleteAssociacao,
+    getAcoesAssociacao,
+    getContasAssociacao,
 } from "../../../../../services/sme/Parametrizacoes.service";
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -29,6 +31,7 @@ export const Associacoes = () => {
     const [listaDeAssociacoesFiltrarCnpj, setListaDeAssociacoesFiltrarCnpj] = useState([]);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [mensagemExcluirAssociacao, setMensagemExcluirAssociacao] = useState('<p>Deseja realmente excluir esta associação?<p/>')
 
     const carregaTodasAsAssociacoes = useCallback(async () => {
         setLoading(true);
@@ -246,6 +249,19 @@ export const Associacoes = () => {
         }
     }, [errosCodigoEol, listaDeAssociacoesFiltrarCnpj, verifica_alteracao_cnpj, carregaTodasAsAssociacoes]);
 
+    const onDeleteAssocicacaoTratamento = useCallback(async (values) => {
+        let acoes = await getAcoesAssociacao(values.uuid)
+        let contas = await getContasAssociacao(values.uuid)
+
+        if ((acoes && acoes.length > 0) || (contas && contas.length > 0) ){
+            let memsagem_complementar = '<p><strong>Atenção!</strong> Essa associação possui informações cadastradas. Todas as informações digitadas no cadastro da Associação serão perdidas.</p>'
+            setMensagemExcluirAssociacao(mensagemExcluirAssociacao + memsagem_complementar)
+        }else {
+            setMensagemExcluirAssociacao(mensagemExcluirAssociacao)
+        }
+        setShowModalConfirmDeleteAssociacao(true)
+    }, [])
+
     const onDeleteAssociacaoTrue = useCallback(async ()=>{
         setLoading(true);
         try {
@@ -333,7 +349,7 @@ export const Associacoes = () => {
                             errosCodigoEol={errosCodigoEol}
                             handleClose={handleCloseFormModal}
                             handleSubmitModalFormAssociacoes={handleSubmitModalFormAssociacoes}
-                            setShowModalConfirmDeleteAssociacao={setShowModalConfirmDeleteAssociacao}
+                            onDeleteAssocicacaoTratamento={onDeleteAssocicacaoTratamento}
                         />
                     </section>
                     <section>
@@ -342,7 +358,7 @@ export const Associacoes = () => {
                             handleClose={handleCloseConfirmDeleteAssociacao}
                             onDeleteAssociacaoTrue={onDeleteAssociacaoTrue}
                             titulo="Excluir Associação"
-                            texto="<p>Deseja realmente excluir esta associação?<p/> <p><strong>Atenção!</strong> Essa associação possui informações cadastradas. Todas as informações digitadas no cadastro da Associação serão perdidas.</p>"
+                            texto={mensagemExcluirAssociacao}
                             primeiroBotaoTexto="Cancelar"
                             primeiroBotaoCss="outline-success"
                             segundoBotaoCss="danger"
