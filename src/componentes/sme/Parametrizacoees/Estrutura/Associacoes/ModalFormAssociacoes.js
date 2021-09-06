@@ -4,7 +4,7 @@ import {Formik} from "formik";
 import {YupSignupSchemaAssociacoes, exibeDataPT_BR} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from "react-text-mask";
 
-const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitModalFormAssociacoes, listaDePeriodos, tabelaAssociacoes, carregaUnidadePeloCodigoEol, errosCodigoEol, setShowModalConfirmDeleteAssociacao}) => {
+const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitModalFormAssociacoes, listaDePeriodos, tabelaAssociacoes, carregaUnidadePeloCodigoEol, errosCodigoEol, onDeleteAssocicacaoTratamento}) => {
 
     const bodyTextarea = () => {
         return (
@@ -189,7 +189,7 @@ const ModalFormAssociacoes = ({show, stateFormModal, handleClose, handleSubmitMo
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'edit' &&
-                                            <button onClick={()=>setShowModalConfirmDeleteAssociacao(true)} type="button" className="btn btn btn-danger mt-2 mr-2">
+                                            <button onClick={()=>onDeleteAssocicacaoTratamento(stateFormModal)} type="button" className="btn btn btn-danger mt-2 mr-2">
                                                 Apagar
                                             </button>
                                         }

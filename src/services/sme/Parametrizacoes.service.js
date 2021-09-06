@@ -136,6 +136,14 @@ export const patchUpdateAssociacao = async (associacao_uuid, payload) => {
 export const deleteAssociacao = async (associacao_uuid) => {
     return (await api.delete(`/api/associacoes/${associacao_uuid}/`, authHeader))
 };
+export const getAcoesAssociacao = async (associacao_uuid) => {
+    return (await api.get(`api/acoes-associacoes/?associacao__uuid=${associacao_uuid}`, authHeader)).data
+};
+export const getContasAssociacao = async (associacao_uuid) => {
+    return (await api.get(`api/associacoes/${associacao_uuid}/contas/`, authHeader)).data
+};
+
+
 
 
 // Periodos
