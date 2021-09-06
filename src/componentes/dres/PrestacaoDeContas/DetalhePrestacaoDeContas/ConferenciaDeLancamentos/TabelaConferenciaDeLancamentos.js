@@ -1,13 +1,15 @@
 import React, {useEffect, useMemo, useState} from "react";
+import { useHistory } from "react-router-dom";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
+import {faCheckCircle, faListUl} from "@fortawesome/free-solid-svg-icons";
 import Dropdown from "react-bootstrap/Dropdown";
 import {ModalCheckNaoPermitidoConfererenciaDeLancamentos} from "./ModalCheckNaoPermitidoConfererenciaDeLancamentos";
 import {FiltrosConferenciaDeLancamentos} from "./FiltrosConferenciaDeLancamentos";
 import {postLancamentosParaConferenciaMarcarComoCorreto, postLancamentosParaConferenciaMarcarNaoConferido} from "../../../../../services/dres/PrestacaoDeContas.service";
 import Loading from "../../../../../utils/Loading";
+// Hooks Personalizados
 import useValorTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
 import {useCarregaTabelaDespesa} from "../../../../../hooks/Globais/useCarregaTabelaDespesa";
 import useDataTemplate from "../../../../../hooks/Globais/useDataTemplate";
@@ -15,10 +17,15 @@ import useConferidoTemplate from "../../../../../hooks/dres/PrestacaoDeContas/Co
 import useRowExpansionDespesaTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionDespesaTemplate";
 import useRowExpansionReceitaTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionReceitaTemplate";
 import useNumeroDocumentoTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
+// Redux
+import {useDispatch} from "react-redux";
+import {addDetalharAcertos, limparDetalharAcertos} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
+
 
 export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, carregaLancamentosParaConferencia, prestacaoDeContas}) => {
 
     const rowsPerPage = 10;
+    const history = useHistory();
 
     const [expandedRows, setExpandedRows] = useState(null);
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
@@ -35,6 +42,9 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
     const rowExpansionDespesaTemplate = useRowExpansionDespesaTemplate(prestacaoDeContas)
     const rowExpansionReceitaTemplate = useRowExpansionReceitaTemplate()
     const numeroDocumentoTemplate = useNumeroDocumentoTemplate()
+
+    // Redux
+    const dispatch = useDispatch()
 
     useEffect(()=>{
         desmarcarTodos()
@@ -205,6 +215,18 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
                                         </button>
                                     </>
                                     }
+                                    <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                    <button
+                                        className="float-right btn btn-link btn-montagem-selecionar"
+                                        onClick={() => detalharAcertos()}
+                                        style={{textDecoration: "underline", cursor: "pointer"}}
+                                    >
+                                        <FontAwesomeIcon
+                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                            icon={faListUl}
+                                        />
+                                        <strong>Detalhar acertos</strong>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -376,6 +398,21 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
         setLoading(false)
     };
 
+    const addDispatchRedireciona = (lancamentos) =>{
+        dispatch(limparDetalharAcertos())
+        dispatch(addDetalharAcertos(lancamentos))
+        history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`)
+    }
+
+    const detalharAcertos = () =>{
+        let lancamentos_marcados_para_acertos = getLancamentosSelecionados()
+        addDispatchRedireciona(lancamentos_marcados_para_acertos)
+    }
+
+    const redirecionaDetalhe = (lancamento) =>{
+        addDispatchRedireciona(lancamento)
+    }
+
     return (
         <>
             {loading ? (
@@ -407,6 +444,8 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
                         rows={rowsPerPage}
                         paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                         rowClassName={rowClassName}
+                        selectionMode="single"
+                        onRowClick={e => redirecionaDetalhe(e.data)}
                         stripedRows
                     >
                         <Column header={selecionarHeader()} body={selecionarTemplate}/>
