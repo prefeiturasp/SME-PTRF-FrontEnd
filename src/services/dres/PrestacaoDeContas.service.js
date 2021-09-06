@@ -213,6 +213,18 @@ export const postLancamentosParaConferenciaMarcarNaoConferido = async (prestacao
     return (await api.post(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/lancamentos-nao-conferidos/`, payload, authHeader)).data
 };
 
+export const getTiposDeAcertoLancamentos = async () => {
+    return (await api.get(`/api/tipos-acerto-lancamento/`, authHeader)).data
+};
+
+export const getListaDeSolicitacaoDeAcertos = async (prestacao_de_contas_uuid, analise_lancamento_uuid) => {
+    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/analises-de-lancamento/?analise_lancamento=${analise_lancamento_uuid}`, authHeader)).data
+};
+
+export const postSolicitacoesParaAcertos = async (prestacao_de_contas_uuid, payload) => {
+    return (await api.post(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/solicitacoes-de-acerto/`, payload, authHeader)).data
+};
+
 
 
 
