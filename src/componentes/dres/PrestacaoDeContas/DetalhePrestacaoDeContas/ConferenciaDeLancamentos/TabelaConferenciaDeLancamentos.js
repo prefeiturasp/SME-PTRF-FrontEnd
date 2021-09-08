@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState, memo} from "react";
 import { useHistory } from "react-router-dom";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
@@ -22,7 +22,7 @@ import {useDispatch} from "react-redux";
 import {addDetalharAcertos, limparDetalharAcertos} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 
 
-export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, carregaLancamentosParaConferencia, prestacaoDeContas}) => {
+const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, carregaLancamentosParaConferencia, prestacaoDeContas}) => {
 
     const rowsPerPage = 10;
     const history = useHistory();
@@ -249,13 +249,26 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
         )
     }
 
+    const verificaSeExisteLancamentoComStatusDeAjuste = () => {
+        let marcados =  getLancamentosSelecionados()
+        if (marcados && marcados.length > 0){
+            return marcados.find(element => element && element.analise_lancamento && element.analise_lancamento.resultado === 'AJUSTE')
+        }
+    }
+
     const setExibicaoBotoesMarcarComo = (rowData) =>{
+        let tem_lancamento_status_de_ajuste = verificaSeExisteLancamentoComStatusDeAjuste()
         if (rowData.analise_lancamento && rowData.analise_lancamento.resultado === 'CORRETO'){
             setExibirBtnMarcarComoCorreto(false)
             setExibirBtnMarcarComoNaoConferido(true)
-        }else {
-            setExibirBtnMarcarComoCorreto(true)
-            setExibirBtnMarcarComoNaoConferido(false)
+        }else{
+            if (tem_lancamento_status_de_ajuste === undefined){
+                setExibirBtnMarcarComoCorreto(true)
+                setExibirBtnMarcarComoNaoConferido(false)
+            }else {
+                setExibirBtnMarcarComoCorreto(false)
+                setExibirBtnMarcarComoNaoConferido(false)
+            }
         }
     }
 
@@ -287,7 +300,7 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
     const tratarSelecionado = (e, lancamentosParaConferenciaUuid, rowData) => {
         let verifica_se_pode_ser_checkado = verificaSePodeSerCheckado(e, rowData)
         if (verifica_se_pode_ser_checkado){
-            setExibicaoBotoesMarcarComo(rowData)
+
             let cont = quantidadeSelecionada;
             if (e.target.checked) {
                 cont = cont + 1
@@ -301,6 +314,7 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
                 return acc;
             }, []);
             setLancamentosParaConferencia(result);
+            setExibicaoBotoesMarcarComo(rowData)
         }
     }
 
@@ -494,3 +508,5 @@ export const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, l
         </>
     )
 }
+
+export default memo(TabelaConferenciaDeLancamentos)
