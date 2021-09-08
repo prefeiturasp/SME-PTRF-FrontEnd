@@ -1,5 +1,5 @@
 import React, {Fragment} from "react";
-import {TabelaConferenciaDeLancamentos} from "./TabelaConferenciaDeLancamentos";
+import TabelaConferenciaDeLancamentos from "./TabelaConferenciaDeLancamentos";
 
 export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscolheConta, carregaLancamentosParaConferencia, prestacaoDeContas, setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid}) => {
 
@@ -36,6 +36,7 @@ export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, cl
                     className="tab-pane fade show active"
                     role="tabpanel"
                 >
+                    {lancamentosParaConferencia && lancamentosParaConferencia.length > 0 &&
                         <TabelaConferenciaDeLancamentos
                             setLancamentosParaConferencia={setLancamentosParaConferencia}
                             lancamentosParaConferencia={lancamentosParaConferencia}
@@ -43,6 +44,8 @@ export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, cl
                             carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
                             prestacaoDeContas={prestacaoDeContas}
                         />
+                    }
+
                 </div>
             </div>
 
