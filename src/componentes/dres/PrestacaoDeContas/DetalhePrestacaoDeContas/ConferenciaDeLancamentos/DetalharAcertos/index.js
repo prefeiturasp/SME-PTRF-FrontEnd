@@ -124,7 +124,7 @@ export const DetalharAcertos = () => {
     }, [carregaListaDeSolicicacaoDeAcertos])
 
     const onClickBtnVoltar = () => {
-        history.push(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}`)
+        history.push(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#conferencia_de_lancamentos`)
     }
 
     const handleChangeTipoDeAcertoLancamento = (e) => {

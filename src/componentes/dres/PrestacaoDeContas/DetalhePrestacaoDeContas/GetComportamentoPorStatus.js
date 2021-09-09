@@ -11,7 +11,7 @@ import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacao
 import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
 import {TabsArquivosDeReferencia} from "./ArquivosDeReferencia/TabsArquivosDeReferencia";
 import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferencia/ArquivosDeReferenciaVisualizacaoDownload";
-import {TabsConferenciaDeLancamentos} from "./ConferenciaDeLancamentos/TabsConferenciaDeLancamentos";
+import ConferenciaDeLancamentos from "./ConferenciaDeLancamentos";
 
 
 export const GetComportamentoPorStatus = (
@@ -62,10 +62,6 @@ export const GetComportamentoPorStatus = (
         setShowVoltarParaAnalise,
         btnSalvarDisabled,
         setBtnSalvarDisabled,
-        carregaLancamentosParaConferencia,
-        setLancamentosParaConferencia,
-        lancamentosParaConferencia,
-        contaUuid,
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
@@ -225,17 +221,13 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                     />
 
-                    <TabsConferenciaDeLancamentos
-                        infoAta={infoAta}
-                        toggleBtnEscolheConta={toggleBtnEscolheConta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
-                        carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
-                        prestacaoDeContas={prestacaoDeContas}
-                        setLancamentosParaConferencia={setLancamentosParaConferencia}
-                        lancamentosParaConferencia={lancamentosParaConferencia}
-                        contaUuid={contaUuid}
+                <ConferenciaDeLancamentos
+                    infoAta={infoAta}
+                    toggleBtnEscolheConta={toggleBtnEscolheConta}
+                    clickBtnEscolheConta={clickBtnEscolheConta}
+                    prestacaoDeContas={prestacaoDeContas}
+                />
 
-                    />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
                     />
