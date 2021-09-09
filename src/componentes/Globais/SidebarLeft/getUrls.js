@@ -50,7 +50,7 @@ const UrlsMenuEscolas ={
                 },
             ]
         },
-        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_ue', 'access_gestao_perfis_dre', 'access_gestao_perfis_sme'],},
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_ue'],},
     ]
 };
 
@@ -74,7 +74,7 @@ const UrlsMenuDres ={
             ]
         },
         {label: "Fornecedores", url: "parametro-fornecedores", dataFor:"parametro_fornecedores", icone:IconeMenuFornecedores, permissoes: ['access_fornecedores'],},
-        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_dados_diretoria'],},
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_dre'],},
     ]
 };
 
@@ -88,8 +88,8 @@ const UrlsMenuSME ={
     lista_de_urls:[
         {label: "Parametrizações", url: "painel-parametrizacoes", dataFor:"sme_painel_parametrizacoes", icone:IconeMenuParametrizacoes, permissoes: ['access_painel_parametrizacoes'],},
         {label: "Acompanhamento de PCs", url: "acompanhamento-pcs-sme", dataFor:"acompanhamento_pcs_sme", icone:IconeAcompanhamento, permissoes: ['access_acompanhamento_pc_sme'],},
-        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_ue', 'access_gestao_perfis_dre', 'access_gestao_perfis_sme'],},
         {label: "Consulta de saldos bancários", url: "consulta-de-saldos-bancarios", dataFor:"consulta_de_saldos_bancarios", icone:IconeMenuSaldosBancarios, permissoes: ['access_consulta_saldo_bancario'],},
+        {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_sme'],},
     ]
 };
 

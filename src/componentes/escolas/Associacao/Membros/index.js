@@ -381,7 +381,7 @@ export const MembrosDaAssociacao = () => {
                         if (cod_eol.status === 200 || cod_eol.status === 201) {
                             const init = {
                                 ...stateFormEditarMembro,
-                                nome: cod_eol.data.nm_aluno,
+                                nome: cod_eol.data.nomeAluno,
                                 codigo_identificacao: values.codigo_identificacao,
                                 cargo_associacao: values.cargo_associacao,
                                 cargo_educacao: "",

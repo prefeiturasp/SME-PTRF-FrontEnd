@@ -6,26 +6,30 @@ import {BrowserRouter} from "react-router-dom";
 import {SidebarContextProvider} from "./context/Sidebar";
 import {DespesaContextProvider} from "./context/Despesa";
 import {NotificacaoContextProvider} from "./context/Notificacoes";
-import {CentralDeDownloadContextProvider } from "./context/CentralDeDownloads";
+import {CentralDeDownloadContextProvider} from "./context/CentralDeDownloads";
 import * as serviceWorker from './serviceWorker';
+import {Provider} from "react-redux";
+import {store} from "./store";
 
 if (process.env.NODE_ENV === "production") {
     const SENTRY_URL = "SENTRY_URL_REPLACE_ME";
-    Sentry.init({ dsn: SENTRY_URL });
+    Sentry.init({dsn: SENTRY_URL});
 }
 
 ReactDOM.render(
-    <NotificacaoContextProvider>
-    <CentralDeDownloadContextProvider>
-        <DespesaContextProvider>
-            <SidebarContextProvider>
-                <BrowserRouter>
-                    <App/>
-                </BrowserRouter>
-            </SidebarContextProvider>
-        </DespesaContextProvider>
-    </CentralDeDownloadContextProvider>
-    </NotificacaoContextProvider>
+    <Provider store={store}>
+        <NotificacaoContextProvider>
+            <CentralDeDownloadContextProvider>
+                <DespesaContextProvider>
+                    <SidebarContextProvider>
+                        <BrowserRouter>
+                            <App/>
+                        </BrowserRouter>
+                    </SidebarContextProvider>
+                </DespesaContextProvider>
+            </CentralDeDownloadContextProvider>
+        </NotificacaoContextProvider>
+    </Provider>
 
     , document.getElementById("root"));
 serviceWorker.unregister();
