@@ -7,38 +7,22 @@ import {faCheckCircle, faListUl} from "@fortawesome/free-solid-svg-icons";
 import Dropdown from "react-bootstrap/Dropdown";
 import {ModalCheckNaoPermitidoConfererenciaDeLancamentos} from "./ModalCheckNaoPermitidoConfererenciaDeLancamentos";
 import {FiltrosConferenciaDeLancamentos} from "./FiltrosConferenciaDeLancamentos";
-import {
-    postLancamentosParaConferenciaMarcarComoCorreto,
-    postLancamentosParaConferenciaMarcarNaoConferido
-} from "../../../../../services/dres/PrestacaoDeContas.service";
-import Loading from "../../../../../utils/Loading";
+import {postLancamentosParaConferenciaMarcarComoCorreto, postLancamentosParaConferenciaMarcarNaoConferido} from "../../../../../services/dres/PrestacaoDeContas.service";
+
 // Hooks Personalizados
 import useValorTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
 import {useCarregaTabelaDespesa} from "../../../../../hooks/Globais/useCarregaTabelaDespesa";
 import useDataTemplate from "../../../../../hooks/Globais/useDataTemplate";
-import useConferidoTemplate
-    from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useConferidoTemplate";
-import useRowExpansionDespesaTemplate
-    from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionDespesaTemplate";
-import useRowExpansionReceitaTemplate
-    from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionReceitaTemplate";
-import useNumeroDocumentoTemplate
-    from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
+import useConferidoTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useConferidoTemplate";
+import useRowExpansionDespesaTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionDespesaTemplate";
+import useRowExpansionReceitaTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionReceitaTemplate";
+import useNumeroDocumentoTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
 // Redux
 import {useDispatch} from "react-redux";
-import {
-    addDetalharAcertos,
-    limparDetalharAcertos
-} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
+import {addDetalharAcertos, limparDetalharAcertos} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 
 
-const TabelaConferenciaDeLancamentos = ({
-                                            setLancamentosParaConferencia,
-                                            lancamentosParaConferencia,
-                                            contaUuid,
-                                            carregaLancamentosParaConferencia,
-                                            prestacaoDeContas
-                                        }) => {
+const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, carregaLancamentosParaConferencia,prestacaoDeContas}) => {
 
     const rowsPerPage = 10;
     const history = useHistory();
@@ -48,7 +32,6 @@ const TabelaConferenciaDeLancamentos = ({
     const [exibirBtnMarcarComoCorreto, setExibirBtnMarcarComoCorreto] = useState(false)
     const [exibirBtnMarcarComoNaoConferido, setExibirBtnMarcarComoNaoConferido] = useState(false)
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
-    const [loading, setLoading] = useState(false);
 
     // Hooks Personalizados
     const valor_template = useValorTemplate()
@@ -173,12 +156,9 @@ const TabelaConferenciaDeLancamentos = ({
 
                     <Dropdown.Menu>
                         {/*<Dropdown.Item onClick={(e) => selecionarTodos(e)}>Selecionar todos</Dropdown.Item>*/}
-                        <Dropdown.Item onClick={(e) => selecionarPorStatus(e, "CORRETO")}>Selecionar todos
-                            corretos</Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => selecionarPorStatus(e, null)}>Selecionar todos não
-                            conferidos</Dropdown.Item>
+                        <Dropdown.Item onClick={(e) => selecionarPorStatus(e, "CORRETO")}>Selecionar todos corretos</Dropdown.Item>
+                        <Dropdown.Item onClick={(e) => selecionarPorStatus(e, null)}>Selecionar todos não conferidos</Dropdown.Item>
                         <Dropdown.Item onClick={(e) => desmarcarTodos(e)}>Desmarcar todos</Dropdown.Item>
-
                     </Dropdown.Menu>
                 </Dropdown>
             </div>
@@ -344,7 +324,6 @@ const TabelaConferenciaDeLancamentos = ({
         let lancamentos_marcados_como_corretos = getLancamentosSelecionados()
 
         if (lancamentos_marcados_como_corretos && lancamentos_marcados_como_corretos.length > 0) {
-            setLoading(true)
             let payload = [];
             lancamentos_marcados_como_corretos.map((lancamento) =>
                 payload.push({
@@ -366,7 +345,6 @@ const TabelaConferenciaDeLancamentos = ({
             } catch (e) {
                 console.log("Erro ao marcar como correto ", e.response)
             }
-            setLoading(false)
         }
     }
 
@@ -374,8 +352,6 @@ const TabelaConferenciaDeLancamentos = ({
         let lancamentos_marcados_como_nao_conferidos = getLancamentosSelecionados()
 
         if (lancamentos_marcados_como_nao_conferidos && lancamentos_marcados_como_nao_conferidos.length > 0) {
-            setLoading(true)
-
             let payload = [];
             lancamentos_marcados_como_nao_conferidos.map((lancamento) =>
                 payload.push({
@@ -398,7 +374,6 @@ const TabelaConferenciaDeLancamentos = ({
             } catch (e) {
                 console.log("Erro ao marcar como não conferido ", e.response)
             }
-            setLoading(false)
         }
     }
 
@@ -421,17 +396,13 @@ const TabelaConferenciaDeLancamentos = ({
     };
 
     const handleSubmitFiltros = async () => {
-        setLoading(true)
         desmarcarTodos()
         await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento)
-        setLoading(false)
     };
 
     const limpaFiltros = async () => {
-        setLoading(true)
         setStateFiltros(initialStateFiltros);
         await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid);
-        setLoading(false)
     };
 
     const addDispatchRedireciona = (lancamentos) => {
@@ -450,8 +421,6 @@ const TabelaConferenciaDeLancamentos = ({
     }
 
     return (
-
-
         <>
             <FiltrosConferenciaDeLancamentos
                 stateFiltros={stateFiltros}

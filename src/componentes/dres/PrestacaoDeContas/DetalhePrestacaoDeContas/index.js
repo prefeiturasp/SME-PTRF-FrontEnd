@@ -735,39 +735,6 @@ export const DetalhePrestacaoDeContas = () =>{
         return errors;
     };
 
-    // Conferência de Lançamentos
-    const [lancamentosParaConferencia, setLancamentosParaConferencia] = useState([])
-    const [contaUuid, setContaUuid] = useState('')
-
-    useEffect(()=>{
-        if (infoAta && infoAta.contas && infoAta.contas.length > 0){
-            carregaLancamentosParaConferencia(prestacaoDeContas, infoAta.contas[0].conta_associacao.uuid)
-        }
-    }, [prestacaoDeContas, infoAta])
-
-    const [loadingLancamentosParaConferencia, setLoadingLancamentosParaConferencia] = useState(true)
-
-    const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid, filtrar_por_acao=null, filtrar_por_lancamento=null) =>{
-        if (prestacao_de_contas && prestacao_de_contas.uuid && prestacao_de_contas.analise_atual && prestacao_de_contas.analise_atual.uuid && conta_uuid){
-            setContaUuid(conta_uuid)
-            let lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento)
-
-            // Adicionando a propriedade selecionando todos os itens
-            if (lancamentos && lancamentos.length > 0){
-                let unis = lancamentos.map((lancamento)=>{
-                    return {
-                        ...lancamento,
-                        selecionado: false
-                    }
-                })
-                setLancamentosParaConferencia(unis)
-            }else {
-                setLancamentosParaConferencia([])
-            }
-        }
-        setLoadingLancamentosParaConferencia(false)
-    }
-
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -837,11 +804,6 @@ export const DetalhePrestacaoDeContas = () =>{
                                     setShowVoltarParaAnalise={setShowVoltarParaAnalise}
                                     btnSalvarDisabled={btnSalvarDisabled}
                                     setBtnSalvarDisabled={setBtnSalvarDisabled}
-                                    carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
-                                    setLancamentosParaConferencia={setLancamentosParaConferencia}
-                                    lancamentosParaConferencia={lancamentosParaConferencia}
-                                    contaUuid={contaUuid}
-                                    loadingLancamentosParaConferencia={loadingLancamentosParaConferencia}
                                 />
                         }
                     </>
