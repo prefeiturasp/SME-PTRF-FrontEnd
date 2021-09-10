@@ -3,6 +3,7 @@ import {TabsArquivosDeReferenciaAccordion} from "./TabsArquivosDeReferenciaAccor
 import {ResumoFinanceiroTabelaAcoes} from "../ResumoFinanceiroTabelaAcoes";
 import {AnalisesDeContaDaPrestacao} from "../AnalisesDeContaDaPrestacao";
 import {ResumoFinanceiroTabelaTotais} from "../ResumoFinanceiroTabelaTotais";
+import Loading from "../../../../../utils/Loading";
 
 export const TabsArquivosDeReferencia = ({infoAta, toggleBtnEscolheConta, exibeAtaPorConta, clickBtnEscolheConta, infoAtaPorConta, ...rest}) => {
 
@@ -33,47 +34,55 @@ export const TabsArquivosDeReferencia = ({infoAta, toggleBtnEscolheConta, exibeA
                     )}
                 </div>
             </nav>
-            {infoAtaPorConta && infoAtaPorConta.conta_associacao && infoAtaPorConta.conta_associacao.uuid &&
-                <div className="tab-content" id="nav-tabContent">
-                    <div
-                        className="tab-pane fade show active"
-                        id={`nav-${infoAtaPorConta.conta_associacao.uuid}`}
-                        role="tabpanel"
-                        aria-labelledby={`nav-${infoAtaPorConta.conta_associacao.uuid}-tab`}
-                    >
-                        <>
-                            <TabsArquivosDeReferenciaAccordion
-                                titulo='Síntese do período de realização da despesa'
-                                name='sintese_por_realizacao_da_despesa'
-                            >
-                                <AnalisesDeContaDaPrestacao
-                                    infoAta={infoAtaPorConta}
-                                    analisesDeContaDaPrestacao={rest.analisesDeContaDaPrestacao}
-                                    handleChangeAnalisesDeContaDaPrestacao={rest.handleChangeAnalisesDeContaDaPrestacao}
-                                    getObjetoIndexAnalise={rest.getObjetoIndexAnalise}
-                                    editavel={rest.editavel}
-                                />
-                                <ResumoFinanceiroTabelaTotais
-                                    infoAta={infoAtaPorConta}
-                                    valorTemplate={rest.valorTemplate}
-                                />
-                            </TabsArquivosDeReferenciaAccordion>
+            {infoAtaPorConta && infoAtaPorConta.conta_associacao && infoAtaPorConta.conta_associacao.uuid ? (
+                    <div className="tab-content" id="nav-tabContent">
+                        <div
+                            className="tab-pane fade show active"
+                            id={`nav-${infoAtaPorConta.conta_associacao.uuid}`}
+                            role="tabpanel"
+                            aria-labelledby={`nav-${infoAtaPorConta.conta_associacao.uuid}-tab`}
+                        >
+                            <>
+                                <TabsArquivosDeReferenciaAccordion
+                                    titulo='Síntese do período de realização da despesa'
+                                    name='sintese_por_realizacao_da_despesa'
+                                >
+                                    <AnalisesDeContaDaPrestacao
+                                        infoAta={infoAtaPorConta}
+                                        analisesDeContaDaPrestacao={rest.analisesDeContaDaPrestacao}
+                                        handleChangeAnalisesDeContaDaPrestacao={rest.handleChangeAnalisesDeContaDaPrestacao}
+                                        getObjetoIndexAnalise={rest.getObjetoIndexAnalise}
+                                        editavel={rest.editavel}
+                                    />
+                                    <ResumoFinanceiroTabelaTotais
+                                        infoAta={infoAtaPorConta}
+                                        valorTemplate={rest.valorTemplate}
+                                    />
+                                </TabsArquivosDeReferenciaAccordion>
 
-                            <TabsArquivosDeReferenciaAccordion
-                                titulo='Síntese do período por ação'
-                                name='sintese_por_acao'
-                            >
+                                <TabsArquivosDeReferenciaAccordion
+                                    titulo='Síntese do período por ação'
+                                    name='sintese_por_acao'
+                                >
 
-                                <ResumoFinanceiroTabelaAcoes
-                                    infoAta={infoAtaPorConta}
-                                    valorTemplate={rest.valorTemplate}
-                                    toggleBtnTabelaAcoes={rest.toggleBtnTabelaAcoes}
-                                    clickBtnTabelaAcoes={rest.clickBtnTabelaAcoes}
-                                />
-                            </TabsArquivosDeReferenciaAccordion>
-                        </>
+                                    <ResumoFinanceiroTabelaAcoes
+                                        infoAta={infoAtaPorConta}
+                                        valorTemplate={rest.valorTemplate}
+                                        toggleBtnTabelaAcoes={rest.toggleBtnTabelaAcoes}
+                                        clickBtnTabelaAcoes={rest.clickBtnTabelaAcoes}
+                                    />
+                                </TabsArquivosDeReferenciaAccordion>
+                            </>
+                        </div>
                     </div>
-                </div>
+                ) :
+                <Loading
+                    corGrafico="black"
+                    corFonte="dark"
+                    marginTop="0"
+                    marginBottom="0"
+                />
+
             }
         </>
     )

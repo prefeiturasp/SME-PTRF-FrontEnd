@@ -6,9 +6,6 @@ export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, cl
 
     return (
         <>
-            <hr id='conferencia_de_lancamentos' className='mt-4 mb-3'/>
-            <h4 className='mb-4'>Conferência de lançamentos</h4>
-
             {loadingLancamentosParaConferencia ? (
                     <Loading
                         corGrafico="black"

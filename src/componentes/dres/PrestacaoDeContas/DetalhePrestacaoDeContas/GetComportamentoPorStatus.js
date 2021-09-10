@@ -12,6 +12,7 @@ import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
 import {TabsArquivosDeReferencia} from "./ArquivosDeReferencia/TabsArquivosDeReferencia";
 import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferencia/ArquivosDeReferenciaVisualizacaoDownload";
 import ConferenciaDeLancamentos from "./ConferenciaDeLancamentos";
+import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
 
 
 export const GetComportamentoPorStatus = (
@@ -62,6 +63,7 @@ export const GetComportamentoPorStatus = (
         setShowVoltarParaAnalise,
         btnSalvarDisabled,
         setBtnSalvarDisabled,
+        carregaPrestacaoDeContas,
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
@@ -221,12 +223,17 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                     />
 
-                <ConferenciaDeLancamentos
-                    infoAta={infoAta}
-                    toggleBtnEscolheConta={toggleBtnEscolheConta}
-                    clickBtnEscolheConta={clickBtnEscolheConta}
-                    prestacaoDeContas={prestacaoDeContas}
-                />
+                    <ConferenciaDeLancamentos
+                        infoAta={infoAta}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                    <DevolucaoParaAcertos
+                        prestacaoDeContas={prestacaoDeContas}
+                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        carregaPrestacaoDeContas={carregaPrestacaoDeContas}
+                    />
 
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}

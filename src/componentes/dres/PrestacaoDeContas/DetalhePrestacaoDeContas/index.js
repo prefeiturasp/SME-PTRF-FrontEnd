@@ -5,7 +5,7 @@ import {
     getDesfazerConclusaoAnalise, getMotivosAprovadoComRessalva,
     getPrestacaoDeContasDetalhe
 } from "../../../../services/dres/PrestacaoDeContas.service";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros, getTiposDevolucao, getLancamentosParaConferencia} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
 import {getDespesa} from "../../../../services/escolas/Despesas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
@@ -89,7 +89,6 @@ export const DetalhePrestacaoDeContas = () =>{
         status: "",
         resalvas: '',
         motivos_reprovacao: '',
-        data_limite_devolucao:'',
     };
 
     const initialDevolucaoAoTesouro = {
@@ -396,7 +395,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
         let get_analise = await getAnalisePrestacao();
 
-        if (analise === undefined || !get_analise){
+        if (analise === undefined && !get_analise){
             setAnalisesDeContaDaPrestacao(analise=>[
                 ...analise,
                 {
@@ -405,6 +404,8 @@ export const DetalhePrestacaoDeContas = () =>{
                     saldo_extrato:'',
                 }
             ])
+        }else {
+            setAnalisesDeContaDaPrestacao(analisesDeContaDaPrestacao)
         }
 
     };
@@ -612,14 +613,6 @@ export const DetalhePrestacaoDeContas = () =>{
                 outros_motivos_aprovacao_ressalva: txtOutrosMotivos,
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
-        }else if (stateConcluirAnalise.status === 'DEVOLVIDA'){
-            payload={
-                devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
-                analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
-                resultado_analise: stateConcluirAnalise.status,
-                data_limite_ue: moment(stateConcluirAnalise.data_limite_devolucao).format("YYYY-MM-DD"),
-                devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
-            }
         }else if (stateConcluirAnalise.status === 'REPROVADA'){
             payload={
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
@@ -804,6 +797,7 @@ export const DetalhePrestacaoDeContas = () =>{
                                     setShowVoltarParaAnalise={setShowVoltarParaAnalise}
                                     btnSalvarDisabled={btnSalvarDisabled}
                                     setBtnSalvarDisabled={setBtnSalvarDisabled}
+                                    carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                                 />
                         }
                     </>

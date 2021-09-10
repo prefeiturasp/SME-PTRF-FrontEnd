@@ -15,7 +15,6 @@ const ConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscol
 
 
     const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid, filtrar_por_acao=null, filtrar_por_lancamento=null) =>{
-        console.log("ConferenciaDeLancamentos ")
         setContaUuid(conta_uuid)
         setLoadingLancamentosParaConferencia(true)
         if (prestacao_de_contas && prestacao_de_contas.uuid && prestacao_de_contas.analise_atual && prestacao_de_contas.analise_atual.uuid && conta_uuid){
@@ -39,17 +38,23 @@ const ConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscol
     }
 
     return(
-        <TabsConferenciaDeLancamentos
-            infoAta={infoAta}
-            toggleBtnEscolheConta={toggleBtnEscolheConta}
-            clickBtnEscolheConta={clickBtnEscolheConta}
-            carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
-            prestacaoDeContas={prestacaoDeContas}
-            setLancamentosParaConferencia={setLancamentosParaConferencia}
-            lancamentosParaConferencia={lancamentosParaConferencia}
-            loadingLancamentosParaConferencia={loadingLancamentosParaConferencia}
-            contaUuid={contaUuid}
-        />
+        <>
+            <hr id='conferencia_de_lancamentos' className='mt-4 mb-3'/>
+            <h4 className='mb-4'>Conferência de lançamentos</h4>
+
+            <TabsConferenciaDeLancamentos
+                infoAta={infoAta}
+                toggleBtnEscolheConta={toggleBtnEscolheConta}
+                clickBtnEscolheConta={clickBtnEscolheConta}
+                carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
+                prestacaoDeContas={prestacaoDeContas}
+                setLancamentosParaConferencia={setLancamentosParaConferencia}
+                lancamentosParaConferencia={lancamentosParaConferencia}
+                loadingLancamentosParaConferencia={loadingLancamentosParaConferencia}
+                contaUuid={contaUuid}
+            />
+        </>
+
     )
 }
 export default memo(ConferenciaDeLancamentos)
