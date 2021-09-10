@@ -5,7 +5,7 @@ import '../parametrizacoes-estrutura.scss'
 import {Filtros} from "./Filtros";
 import {TabelaAcoes} from "./TabelaAcoes";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus, faEdit, faClipboardList, faArrowLeft} from "@fortawesome/free-solid-svg-icons";
+import {faPlus, faEdit, faClipboardList} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import {ModalFormAcoes} from "./ModalFormAcoes";
 import {ModalConfirmDeleteAcao} from "./ModalConfirmDeleteAcao";
@@ -72,7 +72,7 @@ export const Acoes = () => {
         )
     };
 
-    const conferirUnidadesTemplate = (rowData, column) => {
+    const conferirUnidadesTemplate = (rowData) => {
         return (
             <div>
                 <Link to={`/associacoes-da-acao/${rowData['uuid']}`} className="link-green" onClick={() => {}}>
@@ -120,7 +120,7 @@ export const Acoes = () => {
         setShowModalInfoNaoPodeGravar(false);
         setMensagemModalInfoNaoPodeGravar("");
     };
-    const handleChangeFormModal = (name, value, e=null) => {
+    const handleChangeFormModal = (name, value) => {
         setStateFormModal({
             ...stateFormModal,
             [name]: value
@@ -187,7 +187,7 @@ export const Acoes = () => {
     const onDeleteAcaoTrue = async () => {
         try {
             setShowModalDeleteAcao(false);
-            const result = await deleteAcao(stateFormModal.uuid);
+            await deleteAcao(stateFormModal.uuid);
             setShowModalForm(false);
             console.log('Ação excluída com sucesso');
             await carregaTodasAsAcoes();

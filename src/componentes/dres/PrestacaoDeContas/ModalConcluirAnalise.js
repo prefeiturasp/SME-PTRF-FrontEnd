@@ -1,6 +1,5 @@
 import React from "react";
 import {ModalBootstrapFormConcluirAnalise} from "../../Globais/ModalBootstrap";
-import {DatePickerField} from "../../Globais/DatePickerField";
 
 export const ModalConcluirAnalise = (props) => {
     const bodyTextarea = () => {
@@ -17,7 +16,7 @@ export const ModalConcluirAnalise = (props) => {
                             className="form-control"
                         >
                             <option value="">Selecione a sua conclusão</option>
-                            {props.tabelaPrestacoes.status && props.tabelaPrestacoes.status.length > 0 && props.tabelaPrestacoes.status.filter(element => element.id !== 'NAO_APRESENTADA' && element.id !== 'NAO_RECEBIDA' && element.id !== 'RECEBIDA' && element.id !== 'EM_ANALISE').map(item => (
+                            {props.tabelaPrestacoes.status && props.tabelaPrestacoes.status.length > 0 && props.tabelaPrestacoes.status.filter(element => element.id !== 'NAO_APRESENTADA' && element.id !== 'NAO_RECEBIDA' && element.id !== 'RECEBIDA' && element.id !== 'EM_ANALISE' && element.id !== 'DEVOLVIDA').map(item => (
                                 <option key={item.id} value={item.id}>{item.nome}</option>
                             ))}
                         </select>
@@ -27,7 +26,6 @@ export const ModalConcluirAnalise = (props) => {
                     <>
                         <div className="col-12 mt-2">
                             <label htmlFor="resalvas">Motivo:</label>
-
                             <select
                                 name="motivos"
                                 multiple={true}
@@ -56,8 +54,6 @@ export const ModalConcluirAnalise = (props) => {
                                     Outros motivos
                                 </label>
                             </div>
-
-
                             {props.checkBoxOutrosMotivos &&
                                 <>
                                     <br/>
@@ -84,24 +80,6 @@ export const ModalConcluirAnalise = (props) => {
                             />
                         </div>
                     }
-                    {props.stateConcluirAnalise.status === 'DEVOLVIDA' &&
-                        <>
-                        <div className="col-12 mt-2">
-                            <label htmlFor="data_limite_devolucao">Data limite da devolução</label>
-                            <DatePickerField
-                                value={props.stateConcluirAnalise.data_limite_devolucao}
-                                onChange={props.handleChangeConcluirAnalise}
-                                name='data_limite_devolucao'
-                                type="date"
-                                className="form-control"
-                            />
-                        </div>
-
-                        <div className="col-12 mt-2">
-                            <p className='info-devolvida'><span>Atenção,</span> a prestação de contas será reaberta para a Associação que poderá fazer alteração e precisará concluí-la novamente.</p>
-                        </div>
-                        </>
-                    }
 
                     <div className='col-12'>
                         <div className="d-flex  justify-content-end pb-3 mt-3">
@@ -110,7 +88,7 @@ export const ModalConcluirAnalise = (props) => {
                                 onClick={props.onConcluirAnalise}
                                 type="button"
                                 className="btn btn-success mt-2"
-                                disabled={!props.stateConcluirAnalise.status || (props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' && props.motivos.length <= 0 && !props.txtOutrosMotivos) || (props.stateConcluirAnalise.status === 'DEVOLVIDA' && !props.stateConcluirAnalise.data_limite_devolucao)}
+                                disabled={!props.stateConcluirAnalise.status || (props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' && props.motivos.length <= 0 && !props.txtOutrosMotivos) || (props.stateConcluirAnalise.status === 'DEVOLVIDA')}
                             >
                                 Confirmar
                             </button>
