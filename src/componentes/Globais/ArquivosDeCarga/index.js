@@ -40,6 +40,7 @@ const ArquivosDeCarga = () => {
                 titulo: 'Usuários',
                 acesso_permitido: true,
                 UrlsMenuInterno:[
+                    {label: "Dados dos perfis", url: "gestao-de-perfis"},
                     {label: "Cargas de arquivo", url: 'parametro-arquivos-de-carga', origem:'CARGA_USUARIOS'},
                 ],
             }
@@ -374,6 +375,7 @@ const ArquivosDeCarga = () => {
                     <>
                         <h1 className="titulo-itens-painel mt-5">{dadosDeOrigem.titulo}</h1>
                         <div className="page-content-inner">
+                            {/* {console.log(dadosDeOrigem.UrlsMenuInterno)} */}
                             <MenuInterno
                                 caminhos_menu_interno={dadosDeOrigem.UrlsMenuInterno}
                             />
