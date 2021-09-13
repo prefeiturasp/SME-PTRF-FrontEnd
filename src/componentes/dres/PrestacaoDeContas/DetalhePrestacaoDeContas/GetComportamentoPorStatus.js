@@ -11,7 +11,8 @@ import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacao
 import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
 import {TabsArquivosDeReferencia} from "./ArquivosDeReferencia/TabsArquivosDeReferencia";
 import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferencia/ArquivosDeReferenciaVisualizacaoDownload";
-import {TabsConferenciaDeLancamentos} from "./ConferenciaDeLancamentos/TabsConferenciaDeLancamentos";
+import ConferenciaDeLancamentos from "./ConferenciaDeLancamentos";
+import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
 
 
 export const GetComportamentoPorStatus = (
@@ -62,10 +63,7 @@ export const GetComportamentoPorStatus = (
         setShowVoltarParaAnalise,
         btnSalvarDisabled,
         setBtnSalvarDisabled,
-        carregaLancamentosParaConferencia,
-        setLancamentosParaConferencia,
-        lancamentosParaConferencia,
-        contaUuid,
+        carregaPrestacaoDeContas,
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
@@ -225,17 +223,18 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                     />
 
-                    <TabsConferenciaDeLancamentos
+                    <ConferenciaDeLancamentos
                         infoAta={infoAta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         clickBtnEscolheConta={clickBtnEscolheConta}
-                        carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
                         prestacaoDeContas={prestacaoDeContas}
-                        setLancamentosParaConferencia={setLancamentosParaConferencia}
-                        lancamentosParaConferencia={lancamentosParaConferencia}
-                        contaUuid={contaUuid}
-
                     />
+                    <DevolucaoParaAcertos
+                        prestacaoDeContas={prestacaoDeContas}
+                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        carregaPrestacaoDeContas={carregaPrestacaoDeContas}
+                    />
+
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
                     />

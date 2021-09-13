@@ -1,11 +1,11 @@
-import React, {useEffect, useRef, useState} from "react";
-import {useParams, Redirect} from "react-router-dom";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import {useParams, Redirect, useLocation} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {
     getDesfazerConclusaoAnalise, getMotivosAprovadoComRessalva,
     getPrestacaoDeContasDetalhe
 } from "../../../../services/dres/PrestacaoDeContas.service";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros, getTiposDevolucao, getLancamentosParaConferencia} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
 import {getDespesa} from "../../../../services/escolas/Despesas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
@@ -24,6 +24,38 @@ require("ordinal-pt-br");
 
 export const DetalhePrestacaoDeContas = () =>{
     let {prestacao_conta_uuid} = useParams();
+
+    const { hash } = useLocation();
+
+    const scrollToLocation = useCallback(() => {
+        const { hash } = window.location;
+        if (hash !== '') {
+            let retries = 0;
+            const id = hash.replace('#', '');
+            const scroll = () => {
+                retries += 0;
+                if (retries > 50) return;
+                const element = document.getElementById(id);
+                if (element) {
+                    setTimeout(() => element.scrollIntoView(), 0);
+                } else {
+                    setTimeout(scroll, 100);
+                }
+            };
+            scroll();
+        }
+    }, [])
+
+    useEffect(() => {
+        // if not a hash link, scroll to top
+        if (hash === '') {
+            window.scrollTo(0, 0);
+        }
+        // else scroll to id
+        else {
+            scrollToLocation()
+        }
+    }, [scrollToLocation, hash]); // do this on route change
 
     const formRef = useRef();
 
@@ -57,7 +89,6 @@ export const DetalhePrestacaoDeContas = () =>{
         status: "",
         resalvas: '',
         motivos_reprovacao: '',
-        data_limite_devolucao:'',
     };
 
     const initialDevolucaoAoTesouro = {
@@ -364,7 +395,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
         let get_analise = await getAnalisePrestacao();
 
-        if (analise === undefined || !get_analise){
+        if (analise === undefined && !get_analise){
             setAnalisesDeContaDaPrestacao(analise=>[
                 ...analise,
                 {
@@ -373,6 +404,8 @@ export const DetalhePrestacaoDeContas = () =>{
                     saldo_extrato:'',
                 }
             ])
+        }else {
+            setAnalisesDeContaDaPrestacao(analisesDeContaDaPrestacao)
         }
 
     };
@@ -580,14 +613,6 @@ export const DetalhePrestacaoDeContas = () =>{
                 outros_motivos_aprovacao_ressalva: txtOutrosMotivos,
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
-        }else if (stateConcluirAnalise.status === 'DEVOLVIDA'){
-            payload={
-                devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
-                analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
-                resultado_analise: stateConcluirAnalise.status,
-                data_limite_ue: moment(stateConcluirAnalise.data_limite_devolucao).format("YYYY-MM-DD"),
-                devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
-            }
         }else if (stateConcluirAnalise.status === 'REPROVADA'){
             payload={
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
@@ -703,36 +728,6 @@ export const DetalhePrestacaoDeContas = () =>{
         return errors;
     };
 
-    // Conferência de Lançamentos
-    const [lancamentosParaConferencia, setLancamentosParaConferencia] = useState([])
-    const [contaUuid, setContaUuid] = useState('')
-
-    useEffect(()=>{
-        if (infoAta && infoAta.contas && infoAta.contas.length > 0){
-            carregaLancamentosParaConferencia(prestacaoDeContas, infoAta.contas[0].conta_associacao.uuid)
-        }
-    }, [prestacaoDeContas, infoAta])
-
-    const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid, filtrar_por_acao=null, filtrar_por_lancamento=null) =>{
-        if (prestacao_de_contas && prestacao_de_contas.uuid && prestacao_de_contas.analise_atual && prestacao_de_contas.analise_atual.uuid && conta_uuid){
-            setContaUuid(conta_uuid)
-            let lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento)
-
-            // Adicionando a propriedade selecionando todos os itens
-            if (lancamentos && lancamentos.length > 0){
-                let unis = lancamentos.map((lancamento)=>{
-                    return {
-                        ...lancamento,
-                        selecionado: false
-                    }
-                })
-                setLancamentosParaConferencia(unis)
-            }else {
-                setLancamentosParaConferencia([])
-            }
-        }
-    }
-
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -802,10 +797,7 @@ export const DetalhePrestacaoDeContas = () =>{
                                     setShowVoltarParaAnalise={setShowVoltarParaAnalise}
                                     btnSalvarDisabled={btnSalvarDisabled}
                                     setBtnSalvarDisabled={setBtnSalvarDisabled}
-                                    carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
-                                    setLancamentosParaConferencia={setLancamentosParaConferencia}
-                                    lancamentosParaConferencia={lancamentosParaConferencia}
-                                    contaUuid={contaUuid}
+                                    carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                                 />
                         }
                     </>
