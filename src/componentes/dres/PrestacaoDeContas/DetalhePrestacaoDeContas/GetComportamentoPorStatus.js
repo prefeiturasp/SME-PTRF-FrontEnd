@@ -13,6 +13,7 @@ import {TabsArquivosDeReferencia} from "./ArquivosDeReferencia/TabsArquivosDeRef
 import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferencia/ArquivosDeReferenciaVisualizacaoDownload";
 import ConferenciaDeLancamentos from "./ConferenciaDeLancamentos";
 import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
+import {BotaoSalvarRodape} from "./BotaoSalvarRodape";
 
 
 export const GetComportamentoPorStatus = (
@@ -238,6 +239,15 @@ export const GetComportamentoPorStatus = (
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
                     />
+                    <div className='d-flex flex-row-reverse bd-highlight'>
+                        <BotaoSalvarRodape
+                            exibeSalvar={true}
+                            textoBtn={'Salvar'}
+                            metodoSalvarAnalise={salvarAnalise}
+                            btnSalvarDisabled={btnSalvarDisabled}
+                        />
+                    </div>
+
                 </>
             )
         } else if (prestacaoDeContas.status === 'DEVOLVIDA') {

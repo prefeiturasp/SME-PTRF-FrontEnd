@@ -65,11 +65,11 @@ export const CadastroFormCusteio = (propriedades) => {
                         <option key={0} value="">Selecione uma especificação</option>
                         {
                             rateio.tipo_custeio !== null && rateio.tipo_custeio !== undefined && rateio.tipo_custeio.id !== null && rateio.tipo_custeio.id !== undefined && typeof especificacoes_custeio === "object" && especificacoes_custeio[rateio.tipo_custeio.id] ? (especificacoes_custeio[rateio.tipo_custeio.id].map((item) => (
-                                    <option key={item.id} value={item.id}>{item.descricao}</option>
+                                    <option className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
                                 )))
                                 : (
                                     especificacoes_custeio && especificacoes_custeio[rateio.tipo_custeio] && especificacoes_custeio[rateio.tipo_custeio].map(item => (
-                                        <option key={item.id} value={item.id}>{item.descricao}</option>
+                                        <option className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
                                     ))
                                 )
                         }
