@@ -10,6 +10,8 @@ import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
 import {DADOS_DA_ASSOCIACAO} from "../../../services/auth.service";
 import {visoesService} from "../../../services/visoes.service";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEye} from "@fortawesome/free-solid-svg-icons";
 
 export const Associacoes = () =>{
 
@@ -95,25 +97,33 @@ export const Associacoes = () =>{
 
     const acoesTemplate = (rowData) =>{
         return (
-            <li className={`nav-item dropdown link-acoes`}>
-                <a href="#" id="linkDropdownAcoes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <button className="btn-acoes"><span className="btn-acoes-dots">...</span></button>
-                </a>
+                <>
 
-                <div className={`dropdown-menu dropdown-menu-opcoes`} aria-labelledby="linkDropdownAcoes">
-                    {visoesService.getPermissoes(["access_dados_unidade_dre"]) ? <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-dados-da-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver dados unidade</button>: null}
-                    {visoesService.getPermissoes(["access_regularidade_dre"]) ? <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-regularidade-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver regularidade</button>: null}
-                    {visoesService.getPermissoes(["access_situacao_financeira_dre"]) ? <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-situacao-financeira-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver situação financeira</button>: null}
-                    {visoesService.getPermissoes(["access_situacao_financeira_dre"]) ? <button onClick={()=>buscaAssociacao(rowData.uuid, "/dre-situacao-financeira-unidade-educacional")} className="btn btn-link dropdown-item" type="button">Ver situação patrimonial</button>: null}
-                    {urlRedirect &&
-                        <Redirect
-                            to={{
-                                pathname: urlRedirect,
-                            }}
+                    <button
+                        onClick={()=>buscaAssociacao(rowData.uuid, "/dre-detalhes-associacao")}
+                        className="btn btn-link"
+                        disabled={
+                            visoesService.getPermissoes(["access_dados_unidade_dre"])       || 
+                            visoesService.getPermissoes(["access_regularidade_dre"])        || 
+                            visoesService.getPermissoes(["access_situacao_financeira_dre"]) ||
+                            visoesService.getPermissoes(['access_processo_sei'])? false : true
+                        }
+                    >
+                        <FontAwesomeIcon
+                            style={{marginRight: "0", color: '#00585E'}}
+                            icon={faEye}
                         />
-                    }
-                </div>
-            </li>
+
+                        {urlRedirect &&
+                            <Redirect
+                                to={{
+                                    pathname: urlRedirect,
+                                }}
+                            />
+                        }
+                    </button>
+                
+                </>
         )
     };
 
