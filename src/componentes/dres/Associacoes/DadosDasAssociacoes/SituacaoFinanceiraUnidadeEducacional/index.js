@@ -4,27 +4,18 @@ import {TopoComBotoes} from "../TopoComBotoes";
 import {Redirect} from "react-router-dom";
 import {Dashboard} from "../../../../Globais/Dashborard";
 
-export const SituacaoFinanceiraUnidadeEducacional = () =>{
-    let dadosDaAssociacao = JSON.parse(localStorage.getItem(DADOS_DA_ASSOCIACAO));
+export const SituacaoFinanceiraUnidadeEducacional = ({dadosDaAssociacao}) =>{
     return(
-        <>
-            {dadosDaAssociacao ? (
-                    <>
-                        <TopoComBotoes
-                            dadosDaAssociacao={dadosDaAssociacao}
-                        />
-                        <div className="page-content-inner">
-                            <h5 className="mb-3">Dados Financeiros do PTRF</h5>
-                            <Dashboard/>
-                        </div>
-                    </>
-                ) :
-                <Redirect
-                    to={{
-                        pathname: "/dre-associacoes",
-                    }}
-                />
-            }
+        <>     
+            <div className="row">
+                <div className="d-flex bd-highlight">
+                    <div className="flex-grow-1 bd-highlight">
+                        <p className="mb-1 ml-2 mb-3 titulo-explicativo-dre-detalhes">Situação financeira da associação</p>
+                    </div>
+                
+                </div>
+            </div>
+            <Dashboard/>  
         </>
     );
 };

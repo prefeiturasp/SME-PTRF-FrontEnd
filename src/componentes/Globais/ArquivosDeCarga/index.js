@@ -375,7 +375,6 @@ const ArquivosDeCarga = () => {
                     <>
                         <h1 className="titulo-itens-painel mt-5">{dadosDeOrigem.titulo}</h1>
                         <div className="page-content-inner">
-                            {/* {console.log(dadosDeOrigem.UrlsMenuInterno)} */}
                             <MenuInterno
                                 caminhos_menu_interno={dadosDeOrigem.UrlsMenuInterno}
                             />
