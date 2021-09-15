@@ -14,6 +14,7 @@ import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferencia/Arq
 import ConferenciaDeLancamentos from "./ConferenciaDeLancamentos";
 import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
 import {BotaoSalvarRodape} from "./BotaoSalvarRodape";
+import ConferenciaDeDocumentos from "./ConferenciaDeDocumentos";
 
 
 export const GetComportamentoPorStatus = (
@@ -223,11 +224,13 @@ export const GetComportamentoPorStatus = (
                     <ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
                     />
-
                     <ConferenciaDeLancamentos
                         infoAta={infoAta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         clickBtnEscolheConta={clickBtnEscolheConta}
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                    <ConferenciaDeDocumentos
                         prestacaoDeContas={prestacaoDeContas}
                     />
                     <DevolucaoParaAcertos
@@ -235,7 +238,6 @@ export const GetComportamentoPorStatus = (
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                     />
-
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
                     />
