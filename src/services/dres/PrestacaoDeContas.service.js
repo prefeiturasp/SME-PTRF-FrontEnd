@@ -225,6 +225,18 @@ export const postSolicitacoesParaAcertos = async (prestacao_de_contas_uuid, payl
     return (await api.post(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/solicitacoes-de-acerto/`, payload, authHeader)).data
 };
 
+export const getDocumentosParaConferencia = async (prestacao_de_contas_uuid, analise_atual_uuid) => {
+    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/documentos/?analise_prestacao=${analise_atual_uuid}`, authHeader)).data
+};
+
+export const postDocumentosParaConferenciaMarcarComoCorreto = async (prestacao_de_contas_uuid, payload) => {
+    return (await api.post(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/documentos-corretos/`, payload, authHeader)).data
+};
+export const postDocumentosParaConferenciaMarcarNaoConferido = async (prestacao_de_contas_uuid, payload) => {
+    return (await api.post(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/documentos-nao-conferidos/`, payload, authHeader)).data
+};
+
+
 
 
 
