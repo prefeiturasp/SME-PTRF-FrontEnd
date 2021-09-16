@@ -1,4 +1,5 @@
 import React, {memo, useCallback, useMemo, useState} from "react";
+import {useHistory} from "react-router-dom";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 
@@ -12,10 +13,19 @@ import {ModalCheckNaoPermitidoConfererenciaDeDocumentos} from "./ModalCheckNaoPe
 import {postDocumentosParaConferenciaMarcarComoCorreto, postDocumentosParaConferenciaMarcarNaoConferido} from "../../../../../services/dres/PrestacaoDeContas.service";
 import Loading from "../../../../../utils/Loading";
 
+// Redux
+import {useDispatch} from "react-redux";
+import {addDetalharAcertosDocumentos, limparDetalharAcertosDocumentos} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/DetalharAcertosDocumentos/actions";
+
 const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia, setListaDeDocumentosParaConferencia, listaDeDocumentosParaConferencia, rowsPerPage, prestacaoDeContas, loadingDocumentosParaConferencia}) =>{
+
+    const history = useHistory();
 
     // Hooks Personalizados
     const conferidoTemplate = useConferidoTemplate()
+
+    // Redux
+    const dispatch = useDispatch()
 
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
     const [exibirBtnMarcarComoCorreto, setExibirBtnMarcarComoCorreto] = useState(false)
@@ -23,16 +33,22 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
     const [textoModalCheckNaoPermitido, setTextoModalCheckNaoPermitido] = useState('')
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
 
-    const acoesTemplate = useCallback((rowData) => {
+    const addDispatchRedireciona = (documento) => {
+        dispatch(limparDetalharAcertosDocumentos())
+        dispatch(addDetalharAcertosDocumentos(documento))
+        history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos-documentos/${prestacaoDeContas.uuid}`)
+    }
+
+    const acoesTemplate = (rowData) => {
         return (
-            <button onClick={() => {}} className="btn btn-link fonte-14" type="button">
+            <button onClick={()=>addDispatchRedireciona(rowData)} className="btn btn-link fonte-14" type="button">
                 <FontAwesomeIcon
-                    style={{fontSize: '15px', marginRight: "5px", color: "#00585E"}}
+                    style={{fontSize: '18px', marginRight: "5px", color: "#00585E"}}
                     icon={faEdit}
                 />
             </button>
         )
-    }, []);
+    };
 
     const rowClassName = (rowData) => {
         if (rowData && rowData.analise_documento && rowData.analise_documento.resultado) {
