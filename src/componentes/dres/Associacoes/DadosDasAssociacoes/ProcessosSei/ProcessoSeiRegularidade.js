@@ -68,53 +68,63 @@ export const ProcessoSeiRegularidade = ({dadosDaAssociacao}) => {
                     />
                 ) :
                 processoRegularidade !== undefined ? (
+                    <>
+                        <div className="row">
+                            <div className="d-flex bd-highlight">
+                                <div className="flex-grow-1 bd-highlight">
+                                    <p className="mb-1 ml-2 titulo-explicativo-dre-detalhes">Processos SEI</p>
+                                </div>
+                            
+                            </div>
+                        </div>
 
-                    <div className="row">
-                        <div className="col-12">
+                        <div className="row">
+                            <div className="col-12 mt-3">
 
-                            <Formik
-                                initialValues={processoRegularidade}
-                                validateOnBlur={true}
-                                validationSchema={YupSignupSchemaDadosDaAssociacao}
-                                enableReinitialize={true}
-                                onSubmit={handleSubmit}
-                            >
-                                {props => (
-                                    <form onSubmit={props.handleSubmit}>
-                                        <div className="form-row ">
-                                            <div className="form-group col-md-12">
-                                                <label htmlFor="processo-regularidade"><strong>Processo SEI de regularidade</strong></label>
-                                                <div className="d-flex align-items-center">
-                                                <MaskedInput
-                                                    mask={(valor) => processoSeiMask(valor)}
-                                                    onChange={props.handleChange}
-                                                    name="processo_regularidade"
-                                                    className="form-control"
-                                                    placeholder="Número do processo SEI"
-                                                    value={props.values.processo_regularidade}
-                                                    id="processo_regularidade"
-                                                    onBlur={props.handleBlur}
-                                                    disabled={!visoesService.getPermissoes(['change_processo_sei'])}
-                                                />
-                                                    {props.touched.processo_regularidade && props.errors.processo_regularidade && <span className="span_erro text-danger mt-1"> {props.errors.processo_regularidade} </span>}
-                                                    <button
-                                                        type="submit"
-                                                        className="btn btn btn btn-success mr-0 mb-2 ml-md-2 mt-2"
+                                <Formik
+                                    initialValues={processoRegularidade}
+                                    validateOnBlur={true}
+                                    validationSchema={YupSignupSchemaDadosDaAssociacao}
+                                    enableReinitialize={true}
+                                    onSubmit={handleSubmit}
+                                >
+                                    {props => (
+                                        <form onSubmit={props.handleSubmit}>
+                                            <div className="form-row ">
+                                                <div className="form-group col-md-12">
+                                                    <label htmlFor="processo-regularidade"><strong>Processo SEI de regularidade</strong></label>
+                                                    <div className="d-flex align-items-center">
+                                                    <MaskedInput
+                                                        mask={(valor) => processoSeiMask(valor)}
+                                                        onChange={props.handleChange}
+                                                        name="processo_regularidade"
+                                                        className="form-control"
+                                                        placeholder="Número do processo SEI"
+                                                        value={props.values.processo_regularidade}
+                                                        id="processo_regularidade"
+                                                        onBlur={props.handleBlur}
                                                         disabled={!visoesService.getPermissoes(['change_processo_sei'])}
-                                                    >
-                                                        Salvar
-                                                    </button>
+                                                    />
+                                                        {props.touched.processo_regularidade && props.errors.processo_regularidade && <span className="span_erro text-danger mt-1"> {props.errors.processo_regularidade} </span>}
+                                                        <button
+                                                            type="submit"
+                                                            className="btn btn btn btn-success mr-0 mb-2 ml-md-2 mt-2"
+                                                            disabled={!visoesService.getPermissoes(['change_processo_sei'])}
+                                                        >
+                                                            Salvar
+                                                        </button>
+                                                    </div>
                                                 </div>
+
+
                                             </div>
 
-
-                                        </div>
-
-                                    </form>
-                                )}
-                            </Formik>
+                                        </form>
+                                    )}
+                                </Formik>
+                            </div>
                         </div>
-                    </div>
+                    </>
                 ) : null}
         </>
     );

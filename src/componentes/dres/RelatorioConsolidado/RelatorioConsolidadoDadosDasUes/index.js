@@ -136,7 +136,7 @@ export const RelatorioConsolidadoDadosDasUes = () => {
             };
             localStorage.setItem(DADOS_DA_ASSOCIACAO, JSON.stringify(dados_da_associacao));
             setLoading(false)
-            window.location.assign(`/dre-regularidade-unidade-educacional/dre-relatorio-consolidado/${periodo_uuid}/${conta_uuid}`)
+            window.location.assign(`/dre-detalhes-associacao/dre-relatorio-consolidado/${periodo_uuid}/${conta_uuid}`)
         }catch (e) {
             console.log("Erro ao buscar associação ", e)
             setLoading(false)

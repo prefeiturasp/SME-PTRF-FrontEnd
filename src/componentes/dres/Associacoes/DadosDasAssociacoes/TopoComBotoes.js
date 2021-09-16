@@ -26,39 +26,6 @@ export const TopoComBotoes = ({dadosDaAssociacao}) => {
                 </div>
             </div>
 
-            <div className="d-flex justify-content-between p-3 mb-4 mt-2 bg-white container-menu-dados-das-associacoes">
-                {visoesService.getPermissoes(["access_dados_unidade_dre"]) ?
-                    <Link
-                        to={`/dre-dados-da-unidade-educacional${origem ? '/' + origem : ''}${periodo_uuid ? '/'+ periodo_uuid : ''}${conta_uuid ? '/'+conta_uuid : ''}`}
-                    >
-                        Dados da unidade
-                    </Link>
-                    : null
-                }
-                {visoesService.getPermissoes(["access_regularidade_dre"]) ?
-                    <Link
-                        to={`/dre-regularidade-unidade-educacional${origem ? '/' + origem : ''}${periodo_uuid ? '/'+ periodo_uuid : ''}${conta_uuid ? '/'+conta_uuid : ''}`}
-                    >
-                        Regularidade
-                    </Link>
-                    : null}
-                {visoesService.getPermissoes(["access_situacao_financeira_dre"]) ?
-                    <Link
-                        to={`/dre-situacao-financeira-unidade-educacional${origem ? '/' + origem : ''}${periodo_uuid ? '/'+ periodo_uuid : ''}${conta_uuid ? '/'+conta_uuid : ''}`}
-                    >
-                        Situação financeira
-                    </Link>
-                    : null
-                }
-                {visoesService.getPermissoes(["access_situacao_financeira_dre"]) ?
-                    <Link
-                        to={`/dre-situacao-financeira-unidade-educacional${origem ? '/' + origem : ''}${periodo_uuid ? '/'+ periodo_uuid : ''}${conta_uuid ? '/'+conta_uuid : ''}`}
-                    >
-                        Situação patrimonial
-                    </Link>
-                    : null
-                }
-            </div>
         </>
     );
 };
