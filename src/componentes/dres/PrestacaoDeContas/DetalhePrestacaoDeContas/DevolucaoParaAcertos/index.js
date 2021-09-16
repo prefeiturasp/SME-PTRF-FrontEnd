@@ -24,15 +24,11 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
             item.saldo_extrato = item.saldo_extrato ? trataNumericos(item.saldo_extrato) : 0;
 
         })
-
         return analises
-
     }, [analisesDeContaDaPrestacao])
 
     const devolverParaAcertos = useCallback(async () =>{
-
         let analises = trataAnalisesDeContaDaPrestacao()
-
         let payload={
             devolucao_tesouro: false,
             analises_de_conta_da_prestacao: analises,
@@ -40,7 +36,6 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
             data_limite_ue: moment(dataLimiteDevolucao).format("YYYY-MM-DD"),
             devolucoes_ao_tesouro_da_prestacao:[]
         }
-
         try {
             await getConcluirAnalise(prestacaoDeContas.uuid, payload);
             console.log("Devolução para acertos concluída com sucesso!")
