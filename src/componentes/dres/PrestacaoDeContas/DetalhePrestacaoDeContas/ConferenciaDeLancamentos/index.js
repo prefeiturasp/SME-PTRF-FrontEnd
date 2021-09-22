@@ -18,7 +18,6 @@ const ConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscol
         setContaUuid(conta_uuid)
         setLoadingLancamentosParaConferencia(true)
         if (prestacao_de_contas && prestacao_de_contas.uuid && prestacao_de_contas.analise_atual && prestacao_de_contas.analise_atual.uuid && conta_uuid){
-            //setContaUuid(conta_uuid)
             let lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento)
 
             // Adicionando a propriedade selecionando todos os itens
