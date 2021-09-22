@@ -16,8 +16,7 @@ export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, cl
                 ) :
                 <>
                     <nav>
-                        <div className="nav nav-tabs mb-3 menu-interno-dre-prestacao-de-contas"
-                             id="nav-tab-conferencia-de-lancamentos" role="tablist">
+                        <div className="nav nav-tabs mb-3 menu-interno-dre-prestacao-de-contas" id="nav-tab-conferencia-de-lancamentos" role="tablist">
                             {infoAta && infoAta.contas && infoAta.contas.length > 0 && infoAta.contas.map((conta, index) =>
                                 <Fragment key={`key_${conta.conta_associacao.uuid}`}>
                                     <a

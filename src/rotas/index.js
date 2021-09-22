@@ -60,6 +60,7 @@ import {Fornecedores} from "../componentes/sme/Parametrizacoees/Despesas/Fornece
 import {AnaliseDre} from "../componentes/escolas/AnaliseDre";
 import {DetalharAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos";
 import DetalharAcertosDocumentos from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/DetalharAcertosDocumentos";
+import {ResumoDosAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ResumoDosAcertos";
 
 const routesConfig = [
     {
@@ -240,6 +241,12 @@ const routesConfig = [
         exact: true,
         path: "/dre-detalhe-prestacao-de-contas-detalhar-acertos-documentos/:prestacao_conta_uuid",
         component: DetalharAcertosDocumentos,
+        permissoes: ['access_acompanhamento_pcs_dre'],
+    },
+    {
+        exact: true,
+        path: "/dre-detalhe-prestacao-de-contas-resumo-acertos/:prestacao_conta_uuid",
+        component: ResumoDosAcertos,
         permissoes: ['access_acompanhamento_pcs_dre'],
     },
 

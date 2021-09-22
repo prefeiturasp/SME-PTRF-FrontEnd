@@ -101,6 +101,33 @@
   font-size: 14px;
 }
 
+.tabs-resumo-dos-acertos{
+  padding-bottom: 0;
+  border-bottom: solid 1px #BFBFBF!important;
+
+  .btn-escolhe-acao{
+    color: #42474A;
+    margin-right: 0.5rem;
+    background-color: transparent;
+    border: solid 1px #BFBFBF;
+    border-bottom: none;
+  }
+
+  .btn-escolhe-acao:hover, .btn-escolhe-acao:active, .btn-escolhe-acao:focus{
+    border: solid 1px #BFBFBF;
+    border-bottom: none;
+  }
+
+  .active{
+    font-weight: bold !important;
+    color: #00585E !important;
+    background-color: #F3F3F3 !important;
+    border-bottom: 1px solid #fff !important;
+    margin-bottom: -1px !important;
+  }
+
+}
+
 .menu-interno-dre-prestacao-de-contas {
   padding-bottom: 0;
   border-bottom: solid 1px #BFBFBF!important;
