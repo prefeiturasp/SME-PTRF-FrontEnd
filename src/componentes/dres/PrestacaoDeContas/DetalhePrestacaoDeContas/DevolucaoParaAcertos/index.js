@@ -1,16 +1,51 @@
-import React, {memo, useCallback, useState} from "react";
+import React, {memo, useCallback, useEffect, useState, useMemo} from "react";
+import {Link} from "react-router-dom";
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 import './devolucao-para-acertos.scss'
 import moment from "moment";
-import {getConcluirAnalise} from "../../../../../services/dres/PrestacaoDeContas.service";
+import {getConcluirAnalise, getLancamentosAjustes, getDocumentosAjustes} from "../../../../../services/dres/PrestacaoDeContas.service";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../../../utils/Loading";
 import {ModalErroDevolverParaAcerto} from "./ModalErroDevolverParaAcerto";
 
-const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas}) => {
+const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas, infoAta, statusPC}) => {
+
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalErroDevolverParaAcerto, setShowModalErroDevolverParaAcerto] = useState(false)
     const [textoErroDevolverParaAcerto, setTextoErroDevolverParaAcerto] = useState('')
+    const [lancamentosAjustes, setLancamentosAjustes] = useState([])
+    const [documentosAjustes, setDocumentosAjustes] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    // Quando a state de listaDeFornecedores sofrer alteração
+    const totalLancamentosAjustes = useMemo(() => lancamentosAjustes.length, [lancamentosAjustes]);
+    const totalDocumentosAjustes = useMemo(() => documentosAjustes.length, [documentosAjustes]);
+
+    useEffect(()=>{
+
+        let mounted = true;
+
+        const verificaSeTemSolicitacaoAcertos = async () =>{
+            if (prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid && infoAta && infoAta.contas && infoAta.contas.length > 0){
+                let analise_atual_uuid = prestacaoDeContas.analise_atual.uuid
+                if (mounted) {
+                    return await infoAta.contas.map(async (conta) => {
+                        let lancamentos_ajustes = await getLancamentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
+                        setLancamentosAjustes(prevState => ([...prevState, ...lancamentos_ajustes]))
+                        let documentos_ajustes = await getDocumentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
+                        setDocumentosAjustes([...documentos_ajustes])
+                    })
+                }
+            }
+        }
+        verificaSeTemSolicitacaoAcertos()
+        setLoading(false)
+
+        return () =>{
+            mounted = false;
+        }
+
+    }, [infoAta, prestacaoDeContas])
 
     const handleChangeDataLimiteDevolucao = useCallback((name, value) => {
         setDataLimiteDevolucao(value)
@@ -52,12 +87,11 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
 
     }, [dataLimiteDevolucao, carregaPrestacaoDeContas, prestacaoDeContas, trataAnalisesDeContaDaPrestacao])
 
-
     return(
         <>
-            <hr id='devolucao_para_acerto' className='mt-4 mb-3'/>
-            <h4 className='mb-4'>Devolução para acertos</h4>
-                {analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0 ? (
+            <hr className='mt-4 mb-3'/>
+            <h4  id='devolucao_para_acerto' className='mb-4'>Devolução para acertos</h4>
+                {analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0 && !loading  ? (
                         <>
                             <p className='mt-4'>Caso deseje enviar todos esses apontamentos a Associação, determine o prazo e clique em "Devolver para a Associação".</p>
                             <div className="d-flex mt-4">
@@ -73,10 +107,30 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                                     />
                                 </div>
                                 <div>
-                                    <button className="btn btn-outline-success mr-2">Ver resumo</button>
+                                    <Link onClick={ totalLancamentosAjustes <= 0 && totalDocumentosAjustes <= 0 ? (event) => event.preventDefault() : null }
+                                        to={{
+                                            pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
+                                            state: {
+                                                analisesDeContaDaPrestacao: analisesDeContaDaPrestacao,
+                                                totalLancamentosAjustes: totalLancamentosAjustes,
+                                                totalDocumentosAjustes: totalDocumentosAjustes,
+                                            }
+                                        }}
+                                        className="btn btn-outline-success mr-2"
+                                        disabled={totalLancamentosAjustes <= 0 && totalDocumentosAjustes <= 0}
+                                        readOnly={totalLancamentosAjustes <= 0 && totalDocumentosAjustes <= 0}
+                                    >
+                                        Ver resumo
+                                    </Link>
                                 </div>
                                 <div>
-                                    <button disabled={!dataLimiteDevolucao} onClick={devolverParaAcertos}  className="btn btn-success">Devolver para Associação</button>
+                                    <button
+                                        disabled={!dataLimiteDevolucao}
+                                        onClick={devolverParaAcertos}
+                                        className="btn btn-success"
+                                    >
+                                        Devolver para Associação
+                                    </button>
                                 </div>
                             </div>
                             <section>
