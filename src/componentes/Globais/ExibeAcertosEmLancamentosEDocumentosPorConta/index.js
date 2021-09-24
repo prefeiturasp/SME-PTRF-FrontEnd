@@ -18,8 +18,11 @@ import {useDispatch} from "react-redux";
 import {addDetalharAcertos, limparDetalharAcertos} from "../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions"
 import TabelaAcertosDocumentos from "./TabelaAcertosDocumentos";
 import {FiltrosAcertosDeLancamentos} from "./FiltrosAcertosDeLancamentos";
+import {useCarregaPrestacaoDeContasPorUuid} from "../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 
-const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContas, analiseAtualUuid}) => {
+const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, analiseAtualUuid}) => {
+
+    const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacaoDeContasUuid)
 
     const history = useHistory();
 
@@ -185,7 +188,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContas, analis
                         <FiltrosAcertosDeLancamentos
                             stateFiltros={stateFiltros}
                             listaTiposDeAcertoLancamentos={listaTiposDeAcertoLancamentos}
-                            tabelasDespesa={[]}
                             handleChangeFiltros={handleChangeFiltros}
                             handleSubmitFiltros={handleSubmitFiltros}
                             limpaFiltros={limpaFiltros}

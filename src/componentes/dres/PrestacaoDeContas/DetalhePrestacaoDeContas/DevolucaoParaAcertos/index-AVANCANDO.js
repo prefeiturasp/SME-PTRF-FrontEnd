@@ -1,14 +1,21 @@
 import React, {memo, useCallback, useEffect, useState, useMemo} from "react";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 import './devolucao-para-acertos.scss'
 import moment from "moment";
-import {getConcluirAnalise, getLancamentosAjustes, getDocumentosAjustes} from "../../../../../services/dres/PrestacaoDeContas.service";
+import {
+    getConcluirAnalise,
+    getLancamentosAjustes,
+    getDocumentosAjustes,
+    getContasDaAssociacao
+} from "../../../../../services/dres/PrestacaoDeContas.service";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../../../utils/Loading";
 import {ModalErroDevolverParaAcerto} from "./ModalErroDevolverParaAcerto";
+import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
+import useValorTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
 
-const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas, infoAta}) => {
+const DevolucaoParaAcertos = ({prestacao_conta_uuid}) => {
 
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalErroDevolverParaAcerto, setShowModalErroDevolverParaAcerto] = useState(false)
@@ -16,21 +23,59 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
     const [lancamentosAjustes, setLancamentosAjustes] = useState([])
     const [documentosAjustes, setDocumentosAjustes] = useState([])
     const [loading, setLoading] = useState(true)
-    const [btnDevolverParaAcertoDisabled, setBtnDevolverParaAcertoDisabled] = useState(false)
+    const [btnDevolverParaAcertoDisable, setBtnDevolverParaAcertoDisable] = useState(false)
+    const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState([]);
+    const [contasAssociacao, setContasAssociacao] = useState([])
+
+    const history = useHistory();
+
+    const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacao_conta_uuid)
+    const valor_template = useValorTemplate()
 
     // Quando a state de listaDeFornecedores sofrer alteração
     const totalLancamentosAjustes = useMemo(() => lancamentosAjustes.length, [lancamentosAjustes]);
     const totalDocumentosAjustes = useMemo(() => documentosAjustes.length, [documentosAjustes]);
+
+
+    const carregaAnalisePrestacao = useCallback(async ()=>{
+        if (prestacaoDeContas && prestacaoDeContas.analises_de_conta_da_prestacao && prestacaoDeContas.analises_de_conta_da_prestacao.length > 0){
+            let arrayAnalises = [];
+            prestacaoDeContas.analises_de_conta_da_prestacao.map((conta)=>{
+                return arrayAnalises.push({
+                    conta_associacao: conta.conta_associacao.uuid,
+                    data_extrato: conta.data_extrato,
+                    saldo_extrato: valor_template(null, null, conta.saldo_extrato),
+                })
+            });
+            setAnalisesDeContaDaPrestacao(arrayAnalises);
+        }
+        setLoading(false)
+    }, [prestacaoDeContas]) ;
+
+    useEffect(()=>{
+        carregaAnalisePrestacao()
+    }, [carregaAnalisePrestacao])
+
+    const carregaDadosDasContasDaAssociacao = useCallback(async () =>{
+        if (prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.uuid){
+            let contas = await getContasDaAssociacao(prestacaoDeContas.associacao.uuid);
+            setContasAssociacao(contas);
+        }
+    }, [prestacaoDeContas]);
+
+    useEffect(()=>{
+        carregaDadosDasContasDaAssociacao()
+    }, [carregaDadosDasContasDaAssociacao])
 
     useEffect(()=>{
 
         let mounted = true;
 
         const verificaSeTemSolicitacaoAcertos = async () =>{
-            if (prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid && infoAta && infoAta.contas && infoAta.contas.length > 0){
+            if (prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid && contasAssociacao && contasAssociacao.contas && contasAssociacao.contas.length > 0){
                 let analise_atual_uuid = prestacaoDeContas.analise_atual.uuid
                 if (mounted) {
-                    return await infoAta.contas.map(async (conta) => {
+                    return await contasAssociacao.contas.map(async (conta) => {
                         let lancamentos_ajustes = await getLancamentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
                         setLancamentosAjustes(prevState => ([...prevState, ...lancamentos_ajustes]))
                         let documentos_ajustes = await getDocumentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
@@ -46,7 +91,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
             mounted = false;
         }
 
-    }, [infoAta, prestacaoDeContas])
+    }, [contasAssociacao, prestacaoDeContas])
 
     const handleChangeDataLimiteDevolucao = useCallback((name, value) => {
         setDataLimiteDevolucao(value)
@@ -64,7 +109,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
     }, [analisesDeContaDaPrestacao])
 
     const devolverParaAcertos = useCallback(async () =>{
-        setBtnDevolverParaAcertoDisabled(true)
+        setBtnDevolverParaAcertoDisable(true)
         let analises = trataAnalisesDeContaDaPrestacao()
         let payload={
             devolucao_tesouro: false,
@@ -74,9 +119,9 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
             devolucoes_ao_tesouro_da_prestacao:[]
         }
         try {
-            await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+            await getConcluirAnalise(prestacao_conta_uuid, payload);
             console.log("Devolução para acertos concluída com sucesso!")
-            await carregaPrestacaoDeContas();
+            window.location.reload()
         }catch (e){
             console.log("Erro ao Devolver para Acerto ", e.response)
             if (e.response.data.mensagem){
@@ -85,16 +130,16 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                 setTextoErroDevolverParaAcerto('Erro ao devolver para acerto!')
             }
             setShowModalErroDevolverParaAcerto(true)
-            setBtnDevolverParaAcertoDisabled(false)
         }
 
-    }, [dataLimiteDevolucao, carregaPrestacaoDeContas, prestacaoDeContas, trataAnalisesDeContaDaPrestacao])
+    }, [dataLimiteDevolucao, trataAnalisesDeContaDaPrestacao, prestacao_conta_uuid])
 
     return(
         <>
             <hr className='mt-4 mb-3'/>
             <h4  id='devolucao_para_acerto' className='mb-4'>Devolução para acertos</h4>
-                {analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0 && !loading  ? (
+                {/*{analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0 && !loading  ? (*/}
+                {!loading  ? (
                         <>
                             <p className='mt-4'>Caso deseje enviar todos esses apontamentos a Associação, determine o prazo e clique em "Devolver para a Associação".</p>
                             <div className="d-flex mt-4">
@@ -110,7 +155,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                                     />
                                 </div>
                                 <div>
-                                    <Link onClick={ totalLancamentosAjustes <= 0 && totalDocumentosAjustes <= 0 ? (event) => event.preventDefault() : null }
+                                    <Link onClick={ (totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null : (event) => event.preventDefault() }
                                         to={{
                                             pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
                                             state: {
@@ -120,15 +165,15 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                                             }
                                         }}
                                         className="btn btn-outline-success mr-2"
-                                        disabled={totalLancamentosAjustes <= 0 && totalDocumentosAjustes <= 0}
-                                        readOnly={totalLancamentosAjustes <= 0 && totalDocumentosAjustes <= 0}
+                                        disabled={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
+                                        readOnly={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
                                     >
                                         Ver resumo
                                     </Link>
                                 </div>
                                 <div>
                                     <button
-                                        disabled={!dataLimiteDevolucao || btnDevolverParaAcertoDisabled}
+                                        disabled={!dataLimiteDevolucao || btnDevolverParaAcertoDisable}
                                         onClick={devolverParaAcertos}
                                         className="btn btn-success"
                                     >
