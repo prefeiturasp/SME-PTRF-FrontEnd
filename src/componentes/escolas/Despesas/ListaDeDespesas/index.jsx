@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
-import {DataTable} from 'primereact/datatable'
-import {Column} from 'primereact/column'
 import {Row, Col} from 'reactstrap'
-import {getListaRateiosDespesas, getSomaDosTotais} from '../../../../services/escolas/RateiosDespesas.service'
+import {getSomaDosTotais} from '../../../../services/escolas/RateiosDespesas.service'
+import {getListaDespesas, getListaDespesasPaginacao, filtrosAvancadosDespesas, filtroPorPalavraDespesas, filtroPorPalavraDespesasPaginacao, filtrosAvancadosDespesasPaginacao} from '../../../../services/escolas/Despesas.service'
 import {redirect} from '../../../../utils/redirect.js'
 import '../../../../paginas/escolas/404/pagina-404.scss'
 import {Route} from 'react-router-dom'
@@ -16,26 +15,103 @@ import {FormFiltrosAvancados} from "../FormFiltrosAvancados";
 import {SomaDasDespesas} from "../SomaDasDespesas";
 import Loading from "../../../../utils/Loading";
 import {visoesService} from "../../../../services/visoes.service";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons'
+import ReactTooltip from "react-tooltip";
+import {Paginacao} from "./Paginacao";
+import { gerarUuid } from '../../../../utils/ValidacoesAdicionaisFormularios';
 
 
 export class ListaDeDespesas extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            rateiosDespesas: [],
+            despesas: [],
             somaDosTotais: {},
             inputPesquisa: "",
             buscaUtilizandoFiltro: false,
             btnMaisFiltros: false,
             loading: true,
+            totalDePaginas : 0,
+            paginacaoAtual: 1,
+            filtrosAvancados: {
+                filtrar_por_termo: "",
+                aplicacao_recurso: "",
+                acao_associacao: "",
+                despesa_status: "",
+                fornecedor: "",
+                data_inicio: "",
+                data_fim: "",
+                conta_associacao: "",
+            },
+            buscaUtilizandoFiltroAvancado: false,
+            buscaUtilizandoFiltroPalavra: false,
+            divisorPaginas: 10,
+            forcarPrimeiraPagina: ''
         }
     }
 
-    buscaRateiosDespesas = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "") => {
-        const rateiosDespesas = await getListaRateiosDespesas();
-        this.setState({rateiosDespesas})
+    buscaDespesas = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "") => {
+        const despesas = await getListaDespesas();
+        const results = despesas.results
+        let numeroDePaginas = despesas.count;
+        this.setState({despesas: results})
+        this.setState({totalDePaginas: Math.ceil((numeroDePaginas)/this.state.divisorPaginas)})
         this.setState({loading: false})
+
     };
+
+    buscaDespesasPaginacao = async (page) => {
+        this.setState({paginacaoAtual: page})
+        let despesas = await getListaDespesasPaginacao(page);
+        let results = despesas.results
+        this.setState({despesas: results})
+        let numeroDePaginas = despesas.count;
+        this.setState({totalDePaginas: Math.ceil((numeroDePaginas)/this.state.divisorPaginas)})
+    }
+
+
+    buscaDespesasFiltrosPorPalavra = async () =>{
+        this.setState({forcarPrimeiraPagina: gerarUuid()})
+        let lista_retorno_api = await filtroPorPalavraDespesas(this.state.inputPesquisa)
+        let results = lista_retorno_api.results
+        this.setState({despesas: results})
+        let numeroDePaginas = lista_retorno_api.count;
+        this.setState({totalDePaginas: Math.ceil((numeroDePaginas)/this.state.divisorPaginas)})
+        this.setState({loading: false})
+    }
+
+    buscaDespesasFiltrosPorPalavraPaginacao = async (page) => {
+        this.setState({paginacaoAtual: page})
+        let lista_retorno_api = await filtroPorPalavraDespesasPaginacao(this.state.inputPesquisa, page)
+        let results = lista_retorno_api.results
+        this.setState({despesas: results})
+        let numeroDePaginas = lista_retorno_api.count;
+        this.setState({totalDePaginas: Math.ceil((numeroDePaginas)/this.state.divisorPaginas)})
+    }
+
+    buscaDespesasFiltrosAvancados = async() => {
+        this.setState({forcarPrimeiraPagina: gerarUuid()})
+        let data_inicio = this.state.filtrosAvancados.data_inicio ? moment(new Date(this.state.filtrosAvancados.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let data_fim = this.state.filtrosAvancados.data_fim ? moment(new Date(this.state.filtrosAvancados.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let lista_retorno_api = await filtrosAvancadosDespesas(this.state.filtrosAvancados.filtrar_por_termo, this.state.filtrosAvancados.aplicacao_recurso, this.state.filtrosAvancados.acao_associacao, this.state.filtrosAvancados.despesa_status, this.state.filtrosAvancados.fornecedor, data_inicio, data_fim, this.state.filtrosAvancados.conta_associacao);
+        let results = lista_retorno_api.results
+        this.setState({despesas: results})
+        let numeroDePaginas = lista_retorno_api.count;
+        this.setState({totalDePaginas: Math.ceil((numeroDePaginas)/this.state.divisorPaginas)})
+        this.setState({loading: false})
+    }
+
+    buscaDespesasFiltrosAvancadosPaginacao = async(page) => {
+        this.setState({paginacaoAtual: page})
+        let data_inicio = this.state.filtrosAvancados.data_inicio ? moment(new Date(this.state.filtrosAvancados.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let data_fim = this.state.filtrosAvancados.data_fim ? moment(new Date(this.state.filtrosAvancados.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let lista_retorno_api = await filtrosAvancadosDespesasPaginacao(this.state.filtrosAvancados.filtrar_por_termo, this.state.filtrosAvancados.aplicacao_recurso, this.state.filtrosAvancados.acao_associacao, this.state.filtrosAvancados.despesa_status, this.state.filtrosAvancados.fornecedor, data_inicio, data_fim, this.state.filtrosAvancados.conta_associacao, page);
+        let results = lista_retorno_api.results
+        this.setState({despesas: results})
+        let numeroDePaginas = lista_retorno_api.count;
+        this.setState({totalDePaginas: Math.ceil((numeroDePaginas)/this.state.divisorPaginas)})
+    }
 
     reusltadoSomaDosTotais = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "", fornecedor = "", data_inicio = "", data_fim = "", conta_associacao__uuid='') => {
         const somaDosTotais = await getSomaDosTotais(palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid);
@@ -43,55 +119,87 @@ export class ListaDeDespesas extends Component {
     };
 
     componentDidMount() {
-        this.buscaRateiosDespesas();
+        this.buscaDespesas();
         this.reusltadoSomaDosTotais();
     }
 
-    numeroDocumentoStatusTemplate(rowData) {
+    numeroDocumentoStatusTemplate(despesa){ 
         const statusColor =
-            rowData['status_despesa'] === 'COMPLETO'
+            despesa.status === 'COMPLETO'
                 ? 'ptrf-despesa-status-ativo'
                 : 'ptrf-despesa-status-inativo';
         const statusText =
-            rowData['status_despesa'] === 'COMPLETO'
+            despesa.status === 'COMPLETO'
                 ? 'Status: COMPLETO'
                 : 'Status: RASCUNHO';
         return (
-            <div>
-                <span>{rowData['numero_documento']}</span>
+            <>    
+                <span>{despesa.numero_documento}</span>
                 <br/>
                 <span className={statusColor}>{statusText}</span>
-            </div>
+            </>
         )
     }
 
-    especificacaoDataTemplate(rowData) {
+    especificacaoDataTemplate(despesa, rateio) {
         return (
             <div>
-        <span>
-          {rowData['especificacao_material_servico']
-              ? rowData['especificacao_material_servico'].descricao
-              : ''}
-        </span>
-                <br/>
                 <span>
-          Data:{' '}
-                    {rowData['data_documento']
-                        ? moment(rowData['data_documento']).format('DD/MM/YYYY')
-                        : ''}
-        </span>
+                {rateio.especificacao_material_servico
+                    ? rateio.especificacao_material_servico.descricao
+                    : ''}
+                </span>
+                        <br/>
+                        <span>
+                Data:{' '}
+                            {despesa.data_documento
+                                ? moment(despesa.data_documento).format('DD/MM/YYYY')
+                                : ''}
+                </span>
             </div>
         )
     }
 
-    valorTotalTemplate(rowData) {
-        const valorFormatado = rowData['valor_total']
-            ? rowData['valor_total'].toLocaleString('pt-BR', {
+    valorTotalTemplate(rateio){
+        const valorFormatado = parseFloat(rateio.valor_rateio)
+            ? parseFloat(rateio.valor_rateio).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
             : '';
-        return <span>{valorFormatado}</span>
+
+        if (rateio.saida_de_recurso_externo){
+            return(
+                <>
+                    <span>{valorFormatado}</span>
+                    <span data-html={true} data-tip='Despesa relativa a um <br/> crédito de recurso externo'>
+                    <FontAwesomeIcon
+                        style={{marginLeft: "3px", color: '#086397'}}
+                        icon={faExclamationCircle}
+                    />
+                    </span>
+                    <ReactTooltip html={true}/>
+                </>
+
+            )
+        }
+        else{
+            return <span>{valorFormatado}</span>
+        }
+    }
+
+
+    tagDataTemplate(rateio) {
+        return (
+            <>
+                {rateio.tag
+                    ?
+                        <span className="badge badge-pill badge-primary d-flex justify-content-center" style={{backgroundColor: '#086397'}}>{rateio.tag.nome}</span>
+                    :
+                        <span>-</span>
+                }
+            </>
+        )
     }
 
     novaDespesaButton() {
@@ -111,12 +219,12 @@ export class ListaDeDespesas extends Component {
         )
     }
 
-    redirecionaDetalhe = value => {
+    redirecionaDetalhe = despesa => {
         let url
-        if (value.receitas_saida_do_recurso) {
-            url = `/cadastro-de-despesa-recurso-proprio/${value.receitas_saida_do_recurso}/${value.despesa}`
+        if (despesa.receitas_saida_do_recurso) {
+            url = `/cadastro-de-despesa-recurso-proprio/${despesa.receitas_saida_do_recurso}/${despesa.uuid}`
         } else {
-            url = '/edicao-de-despesa/' + value.despesa;
+            url = '/edicao-de-despesa/' + despesa.uuid;
         }
         redirect(url)
     };
@@ -127,8 +235,7 @@ export class ListaDeDespesas extends Component {
     };
 
     render() {
-        const {rateiosDespesas, somaDosTotais} = this.state;
-        const rowsPerPage = 10;
+        const {despesas, somaDosTotais} = this.state;
 
         return (
             <div>
@@ -158,10 +265,14 @@ export class ListaDeDespesas extends Component {
                                         setInputPesquisa={(inputPesquisa) => this.setState({inputPesquisa})}
                                         buscaUtilizandoFiltro={this.state.buscaUtilizandoFiltro}
                                         setBuscaUtilizandoFiltro={(buscaUtilizandoFiltro) => this.setState({buscaUtilizandoFiltro})}
-                                        setLista={(rateiosDespesas) => this.setState({rateiosDespesas})}
+                                        setLista={(despesas) => this.setState({despesas})}
                                         reusltadoSomaDosTotais={this.reusltadoSomaDosTotais}
                                         origem="Despesas"
                                         setLoading={(loading) => this.setState({loading})}
+                                        buscaDespesasFiltrosPorPalavra={this.buscaDespesasFiltrosPorPalavra}
+                                        setBuscaUtilizandoFiltroPalavra={(buscaUtilizandoFiltroPalavra) => this.setState({buscaUtilizandoFiltroPalavra})}
+                                        setBuscaUtilizandoFiltroAvancado={(buscaUtilizandoFiltroAvancado) => this.setState({buscaUtilizandoFiltroAvancado})}
+                                        forcarPrimeiraPagina={(forcarPrimeiraPagina) => this.setState({forcarPrimeiraPagina})}
                                     />
                                 </Col>
                                 <Col lg={2} xl={2}
@@ -182,49 +293,83 @@ export class ListaDeDespesas extends Component {
                             <FormFiltrosAvancados
                                 btnMaisFiltros={this.state.btnMaisFiltros}
                                 onClickBtnMaisFiltros={this.onClickBtnMaisFiltros}
-                                buscaUtilizandoFiltro={this.state.buscaUtilizandoFiltro}
                                 setBuscaUtilizandoFiltro={(buscaUtilizandoFiltro) => this.setState({buscaUtilizandoFiltro})}
-                                setLista={(rateiosDespesas) => this.setState({rateiosDespesas})}
                                 reusltadoSomaDosTotais={this.reusltadoSomaDosTotais}
-                                iniciaLista={this.buscaRateiosDespesas}
+                                iniciaLista={this.buscaDespesas}
                                 setLoading={(loading) => this.setState({loading})}
+                                filtrosAvancados={this.state.filtrosAvancados}
+                                setFiltrosAvancados={(filtrosAvancados) => this.setState({filtrosAvancados})}
+                                buscaDespesasFiltrosAvancados={this.buscaDespesasFiltrosAvancados}
+                                setBuscaUtilizandoFiltroAvancado={(buscaUtilizandoFiltroAvancado) => this.setState({buscaUtilizandoFiltroAvancado})}
+                                setBuscaUtilizandoFiltroPalavra={(buscaUtilizandoFiltroPalavra) => this.setState({buscaUtilizandoFiltroPalavra})}
+                                forcarPrimeiraPagina={(forcarPrimeiraPagina) => this.setState({forcarPrimeiraPagina})}
                             />
 
-                            {rateiosDespesas.length > 0 && Object.entries(somaDosTotais).length > 0 ? (
+                            {despesas.length > 0 && Object.entries(somaDosTotais).length > 0 ? (
                                     <>
                                         <SomaDasDespesas
                                             somaDosTotais={somaDosTotais}
                                         />
 
-                                        <DataTable
-                                            value={rateiosDespesas}
-                                            className="mt-3 datatable-footer-coad"
-                                            paginator={rateiosDespesas.length > rowsPerPage}
-                                            rows={rowsPerPage}
-                                            paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                                            autoLayout={true}
-                                            selectionMode="single"
-                                            onRowClick={e => this.redirecionaDetalhe(e.data)}
-                                        >
-                                            <Column
-                                                field="numero_documento"
-                                                header="Número do documento"
-                                                body={this.numeroDocumentoStatusTemplate}
+                                        <table id="tabela-lista-despesas" className="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th style={{ width: '17%'}} scope="col">Nº do documento</th>
+                                                    <th scope="col">Especif. do material ou serviço</th>
+                                                    <th scope="col">Aplicação</th>
+                                                    <th style={{ width: '12%'}} scope="col">Tipo de ação</th>
+                                                    <th scope="col">Vínculo a atividade</th>
+                                                    <th style={{ width: '12%'}} scope="col">Valor (R$)</th>
+                                                </tr>
+                                            </thead>
+                                            {this.state.despesas.map((despesa, index) => 
+                                                <tbody key={`tbody-despesa-${index}`} onClick={e => this.redirecionaDetalhe(despesa)}>
+                                                    <tr key={`tr-despesa-${index}`}>
+                                                        <td key={`td-despesa-numero_documento-${index}`} rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1: 2}>{this.numeroDocumentoStatusTemplate(despesa)}</td>
+                                                    </tr>
+
+                                                    {despesa.rateios.length > 0
+                                                        ?
+                                                            despesa.rateios.map((rateio, index) =>
+                                                                <tr key={`tr-rateio-${index}`}>
+                                                                    <td key={`td-rateio-especificacao-${index}`}>{this.especificacaoDataTemplate(despesa, rateio)}</td> 
+                                                                    <td className="centraliza-conteudo-tabela text-center">{rateio.aplicacao_recurso}</td>
+                                                                    {rateio.acao_associacao
+                                                                        ?
+                                                                            <td className="centraliza-conteudo-tabela text-center" key={`td-rateio-acao-${index}`}>{rateio.acao_associacao.acao.nome}</td> 
+                                                                        :
+                                                                            <td className="centraliza-conteudo-tabela text-center">-</td>
+                                                                    }
+                                                                    <td className="centraliza-conteudo-tabela text-center" key={`td-rateio-tag-${index}`}>{this.tagDataTemplate(rateio)}</td> 
+                                                                    <td className="centraliza-conteudo-tabela text-center" key={`td-rateio-valor-${index}`}>{this.valorTotalTemplate(rateio)}</td>  
+                                                                </tr>       
+                                                            )
+                                                        :
+                                                            <tr>
+                                                                <td>-</td>
+                                                                <td>-</td>
+                                                                <td>-</td>
+                                                                <td>-</td>
+                                                                <td>-</td>
+                                                            </tr>
+                                                    }
+                                                </tbody>    
+                                            )}
+                                        </table>
+
+                                        {this.state.totalDePaginas > 1 && this.state.totalDePaginas >= this.state.paginacaoAtual &&
+                                            <Paginacao
+                                                paginacaoPaginasTotal={this.state.totalDePaginas}
+                                                buscaDespesasPaginacao={this.buscaDespesasPaginacao}
+                                                buscaDespesasFiltrosPorPalavraPaginacao={this.buscaDespesasFiltrosPorPalavraPaginacao}
+                                                buscaDespesasFiltrosAvancadosPaginacao={this.buscaDespesasFiltrosAvancadosPaginacao}
+                                                buscaUtilizandoFiltroPalavra={this.state.buscaUtilizandoFiltroPalavra}
+                                                buscaUtilizandoFiltroAvancado={this.state.buscaUtilizandoFiltroAvancado}
+                                                buscaUtilizandoFiltro={this.state.buscaUtilizandoFiltro}
+                                                forcarPrimeiraPagina={this.state.forcarPrimeiraPagina}
                                             />
-                                            <Column
-                                                field="especificacao_material_servico.descricao"
-                                                header="Especificação do material ou serviço"
-                                                body={this.especificacaoDataTemplate}
-                                            />
-                                            <Column field="aplicacao_recurso" header="Aplicação"/>
-                                            <Column field="acao_associacao.nome" header="Tipo de ação"/>
-                                            <Column
-                                                field="valor_total"
-                                                header="Valor"
-                                                body={this.valorTotalTemplate}
-                                                style={{textAlign: 'right'}}
-                                            />
-                                        </DataTable>
+                                        
+                                        }  
                                     </>
                                 ) :
                                 this.state.buscaUtilizandoFiltro ? (
