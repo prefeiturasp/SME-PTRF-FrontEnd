@@ -24,6 +24,7 @@ export const ResumoDosAcertos = () => {
     const [textoMsg, setTextoMsg] = useState('')
     const [analiseAtualUuid, setAnaliseAtualUuid] = useState('')
     const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
+    const [btnDevolverParaAcertoDisabled, setBtnDevolverParaAcertoDisabled] = useState(false)
 
     // Necessario para quando voltar da aba Histórico para Conferencia atual
     const setAnaliseAtualUuidComPCAnaliseAtualUuid = useCallback(()=>{
@@ -94,6 +95,7 @@ export const ResumoDosAcertos = () => {
     }, [props.state.analisesDeContaDaPrestacao])
 
     const devolverParaAcertos = useCallback(async () => {
+        setBtnDevolverParaAcertoDisabled(true)
         let analises = trataAnalisesDeContaDaPrestacao()
         let payload = {
             devolucao_tesouro: false,
@@ -114,6 +116,7 @@ export const ResumoDosAcertos = () => {
                 setTextoErroDevolverParaAcerto('Erro ao devolver para acerto!')
             }
             setShowModalErroDevolverParaAcerto(true)
+            setBtnDevolverParaAcertoDisabled(false)
         }
     }, [dataLimiteDevolucao, trataAnalisesDeContaDaPrestacao, prestacao_conta_uuid, onClickBtnVoltar])
 
@@ -128,6 +131,7 @@ export const ResumoDosAcertos = () => {
                         dataLimiteDevolucao={dataLimiteDevolucao}
                         qtdeAjustesLancamentos={props.state.totalLancamentosAjustes}
                         qtdeAjustesDocumentos={props.state.totalDocumentosAjustes}
+                        btnDevolverParaAcertoDisabled={btnDevolverParaAcertoDisabled}
                     />
                     {analiseAtualUuid &&
                         <TabsConferenciaAtualHistorico
