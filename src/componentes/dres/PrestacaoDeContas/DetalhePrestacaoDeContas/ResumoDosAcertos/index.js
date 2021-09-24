@@ -50,16 +50,6 @@ export const ResumoDosAcertos = () => {
         }
     }, [prestacao_conta_uuid])
 
-    // Necessario para quando estiver na aba Conferencia atual e clicar na aba Histórico
-    // Essa função já está incorporada no Componente CardsDevolucoesParaAcertoDaDre, que recebe o parâmetro carregaAutomaticamentePrimeiraAnalisePcDevolvida
-    // Aqui não foi possível setar o parametro carregaAutomaticamentePrimeiraAnalisePcDevolvida como true, senão carregaria primeiro a analise devolvida e não da analise atual
-
-    // const setPrimeiraAnalisePcDevolvida = useCallback(() => {
-    //     if (analisesDePcDevolvidas && analisesDePcDevolvidas.length > 0){
-    //         setAnaliseAtualUuid(analisesDePcDevolvidas[0].uuid)
-    //     }
-    // }, [analisesDePcDevolvidas])
-
     const setPrimeiraAnalisePcDevolvida = useCallback(() => {
         if (analisesDePcDevolvidas && analisesDePcDevolvidas.length > 0){
             let ultimo_indice_array = analisesDePcDevolvidas.length - 1
