@@ -1,12 +1,12 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState, useMemo} from "react";
 import {useParams, useLocation, useHistory} from "react-router-dom";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {getConcluirAnalise} from "../../../../../services/dres/PrestacaoDeContas.service";
+import {getConcluirAnalise, getAnalisesDePcDevolvidas} from "../../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {ModalErroDevolverParaAcerto} from "../DevolucaoParaAcertos/ModalErroDevolverParaAcerto";
-import {TabsConferenciaAtualHistorico} from "./TabsConferenciaAtualHistorico";
+import TabsConferenciaAtualHistorico from "./TabsConferenciaAtualHistorico";
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 
 export const ResumoDosAcertos = () => {
@@ -22,6 +22,40 @@ export const ResumoDosAcertos = () => {
     const [exibeMsg, setExibeMsg] = useState(false)
     const [textoErroDevolverParaAcerto, setTextoErroDevolverParaAcerto] = useState('')
     const [textoMsg, setTextoMsg] = useState('')
+    const [analiseAtualUuid, setAnaliseAtualUuid] = useState('')
+    const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
+
+    // Necessario para quando voltar da aba Histórico para Conferencia atual
+    const setAnaliseAtualUuidComPCAnaliseAtualUuid = useCallback(()=>{
+        setAnaliseAtualUuid(prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid ? prestacaoDeContas.analise_atual.uuid : '')
+    }, [prestacaoDeContas])
+
+    useEffect(()=>{
+        setAnaliseAtualUuidComPCAnaliseAtualUuid()
+    }, [setAnaliseAtualUuidComPCAnaliseAtualUuid])
+
+    // Necessario para exibir ou não o botão Histórico da Tabs
+    const totalAnalisesDePcDevolvidas = useMemo(() => analisesDePcDevolvidas.length, [analisesDePcDevolvidas]);
+    useEffect(()=>{
+        let mounted = true;
+        const carregaAnalisesDePcDevolvidas = async () => {
+            if (mounted) {
+                let analises_pc_devolvidas = await getAnalisesDePcDevolvidas(prestacao_conta_uuid)
+                setAnalisesDePcDevolvidas(analises_pc_devolvidas)
+            }
+        }
+        carregaAnalisesDePcDevolvidas()
+        return () =>{
+            mounted = false;
+        }
+    }, [prestacao_conta_uuid])
+
+    const setPrimeiraAnalisePcDevolvida = useCallback(() => {
+        if (analisesDePcDevolvidas && analisesDePcDevolvidas.length > 0){
+            let ultimo_indice_array = analisesDePcDevolvidas.length - 1
+            setAnaliseAtualUuid(analisesDePcDevolvidas[ultimo_indice_array].uuid)
+        }
+    }, [analisesDePcDevolvidas])
 
     const verificaSeExibeMsg = useCallback(()=>{
         const totLancAjus = props.state.totalLancamentosAjustes
@@ -95,14 +129,18 @@ export const ResumoDosAcertos = () => {
                         qtdeAjustesLancamentos={props.state.totalLancamentosAjustes}
                         qtdeAjustesDocumentos={props.state.totalDocumentosAjustes}
                     />
-                    {prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid &&
+                    {analiseAtualUuid &&
                         <TabsConferenciaAtualHistorico
-                            dataLimiteDevolucao={dataLimiteDevolucao}
-                            handleChangeDataLimiteDevolucao={handleChangeDataLimiteDevolucao}
-                            prestacaoDeContas={prestacaoDeContas}
-                            analiseAtualUuid={prestacaoDeContas.analise_atual.uuid}
-                            exibeMsg={exibeMsg}
-                            textoMsg={textoMsg}
+                            dataLimiteDevolucao={dataLimiteDevolucao} // Para Devolver para acertos
+                            handleChangeDataLimiteDevolucao={handleChangeDataLimiteDevolucao} // Para Devolver para acertos
+                            prestacao_conta_uuid={prestacao_conta_uuid} // Para ExibeAcertosEmLancamentosEDocumentosPorConta e CardsDevolucoesParaAcertoDaDre
+                            analiseAtualUuid={analiseAtualUuid} // Para ExibeAcertosEmLancamentosEDocumentosPorConta
+                            setAnaliseAtualUuid={setAnaliseAtualUuid} // Para CardsDevolucoesParaAcertoDaDre
+                            exibeMsg={exibeMsg} // Para TabsConferenciaAtualHistorico
+                            textoMsg={textoMsg} // Para TabsConferenciaAtualHistorico
+                            totalAnalisesDePcDevolvidas={totalAnalisesDePcDevolvidas} // Para TabsConferenciaAtualHistorico
+                            setAnaliseAtualUuidComPCAnaliseAtualUuid={setAnaliseAtualUuidComPCAnaliseAtualUuid} // Para TabsConferenciaAtualHistorico
+                            setPrimeiraAnalisePcDevolvida={setPrimeiraAnalisePcDevolvida} // Para TabsConferenciaAtualHistorico
                         />
                     }
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-export const FiltrosAcertosDeLancamentos = ({stateFiltros, listaTiposDeAcertoLancamentos, tabelasDespesa, handleChangeFiltros, handleSubmitFiltros, limpaFiltros})=>{
+export const FiltrosAcertosDeLancamentos = ({stateFiltros, listaTiposDeAcertoLancamentos, handleChangeFiltros, handleSubmitFiltros, limpaFiltros})=>{
 
     return(
         <>

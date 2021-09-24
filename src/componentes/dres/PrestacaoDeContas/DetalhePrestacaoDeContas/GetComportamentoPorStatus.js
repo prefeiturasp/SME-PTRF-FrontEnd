@@ -238,7 +238,6 @@ export const GetComportamentoPorStatus = (
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
-                        statusPC={prestacaoDeContas.status}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}

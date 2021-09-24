@@ -18,8 +18,11 @@ import {useDispatch} from "react-redux";
 import {addDetalharAcertos, limparDetalharAcertos} from "../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions"
 import TabelaAcertosDocumentos from "./TabelaAcertosDocumentos";
 import {FiltrosAcertosDeLancamentos} from "./FiltrosAcertosDeLancamentos";
+import {useCarregaPrestacaoDeContasPorUuid} from "../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 
-const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContas, analiseAtualUuid}) => {
+const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, analiseAtualUuid}) => {
+
+    const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacaoDeContasUuid)
 
     const history = useHistory();
 
@@ -50,6 +53,15 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContas, analis
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [contaUuid, setContaUuid] = useState('')
     const [listaTiposDeAcertoLancamentos, setListaTiposDeAcertoLancamentos] = useState([])
+    const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0:true});
+
+    const toggleBtnEscolheConta = (id) => {
+        if (id !== Object.keys(clickBtnEscolheConta)[0]){
+            setClickBtnEscolheConta({
+                [id]: !clickBtnEscolheConta[id]
+            });
+        }
+    };
 
     const carregaDadosDasContasDaAssociacao = useCallback(async () =>{
         if (prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.uuid){
@@ -60,7 +72,9 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContas, analis
 
     useEffect(()=>{
         carregaDadosDasContasDaAssociacao()
-    }, [carregaDadosDasContasDaAssociacao])
+    }, [carregaDadosDasContasDaAssociacao, analiseAtualUuid])
+
+
 
     const carregaAcertosLancamentos = useCallback(async (conta_uuid, filtrar_por_lancamento=null, filtrar_por_tipo_de_ajuste=null) => {
         setContaUuid(conta_uuid)
@@ -80,6 +94,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContas, analis
         if (contasAssociacao && contasAssociacao.length > 0){
             carregaAcertosLancamentos(contasAssociacao[0].uuid)
             carregaAcertosDocumentos(contasAssociacao[0].uuid)
+            setClickBtnEscolheConta({0: true})
         }
     }, [contasAssociacao, carregaAcertosLancamentos, carregaAcertosDocumentos])
 
@@ -181,11 +196,13 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContas, analis
                         carregaAcertosLancamentos={carregaAcertosLancamentos}
                         setStateFiltros={setStateFiltros}
                         initialStateFiltros={initialStateFiltros}
+                        analiseAtualUuid={analiseAtualUuid}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
                     >
                         <FiltrosAcertosDeLancamentos
                             stateFiltros={stateFiltros}
                             listaTiposDeAcertoLancamentos={listaTiposDeAcertoLancamentos}
-                            tabelasDespesa={[]}
                             handleChangeFiltros={handleChangeFiltros}
                             handleSubmitFiltros={handleSubmitFiltros}
                             limpaFiltros={limpaFiltros}
