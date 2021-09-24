@@ -53,6 +53,15 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, an
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [contaUuid, setContaUuid] = useState('')
     const [listaTiposDeAcertoLancamentos, setListaTiposDeAcertoLancamentos] = useState([])
+    const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0:true});
+
+    const toggleBtnEscolheConta = (id) => {
+        if (id !== Object.keys(clickBtnEscolheConta)[0]){
+            setClickBtnEscolheConta({
+                [id]: !clickBtnEscolheConta[id]
+            });
+        }
+    };
 
     const carregaDadosDasContasDaAssociacao = useCallback(async () =>{
         if (prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.uuid){
@@ -63,7 +72,9 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, an
 
     useEffect(()=>{
         carregaDadosDasContasDaAssociacao()
-    }, [carregaDadosDasContasDaAssociacao])
+    }, [carregaDadosDasContasDaAssociacao, analiseAtualUuid])
+
+
 
     const carregaAcertosLancamentos = useCallback(async (conta_uuid, filtrar_por_lancamento=null, filtrar_por_tipo_de_ajuste=null) => {
         setContaUuid(conta_uuid)
@@ -83,6 +94,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, an
         if (contasAssociacao && contasAssociacao.length > 0){
             carregaAcertosLancamentos(contasAssociacao[0].uuid)
             carregaAcertosDocumentos(contasAssociacao[0].uuid)
+            setClickBtnEscolheConta({0: true})
         }
     }, [contasAssociacao, carregaAcertosLancamentos, carregaAcertosDocumentos])
 
@@ -184,6 +196,9 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, an
                         carregaAcertosLancamentos={carregaAcertosLancamentos}
                         setStateFiltros={setStateFiltros}
                         initialStateFiltros={initialStateFiltros}
+                        analiseAtualUuid={analiseAtualUuid}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
                     >
                         <FiltrosAcertosDeLancamentos
                             stateFiltros={stateFiltros}
