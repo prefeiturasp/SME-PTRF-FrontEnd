@@ -29,6 +29,30 @@ export const getDespesa = async (idDespesa) => {
     return (await api.get(`api/despesas/${idDespesa}`, authHeader)).data
 };
 
+export const getListaDespesas = async uuid => {
+    return (await api.get( `api/despesas/?associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
+};
+
+export const getListaDespesasPaginacao = async (page) => {
+    return (await api.get( `api/despesas/?associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&page=${page}`, authHeader)).data
+};
+
+export const filtroPorPalavraDespesas = async (palavra) => {
+    return (await api.get(`api/despesas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
+};
+
+export const filtroPorPalavraDespesasPaginacao = async (palavra, page) => {
+    return (await api.get(`api/despesas/?search=${palavra}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&page=${page}`, authHeader)).data
+};
+
+export const filtrosAvancadosDespesas = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid) => {
+    return (await api.get(`api/despesas/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&rateios__acao_associacao__uuid=${acao_associacao__uuid}&status=${despesa__status}&fornecedor=${fornecedor}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&rateios__conta_associacao__uuid=${conta_associacao__uuid}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
+};
+
+export const filtrosAvancadosDespesasPaginacao = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid, page) => {
+    return (await api.get(`api/despesas/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&rateios__acao_associacao__uuid=${acao_associacao__uuid}&status=${despesa__status}&fornecedor=${fornecedor}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&rateios__conta_associacao__uuid=${conta_associacao__uuid}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&page=${page}`, authHeader)).data
+};
+
 export const criarDespesa = async (payload) => {
     return api.post('api/despesas/', payload, authHeader).then(response => {
         return response;
