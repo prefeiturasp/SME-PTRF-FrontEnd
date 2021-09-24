@@ -110,18 +110,18 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                                     />
                                 </div>
                                 <div>
-                                    <Link onClick={ totalLancamentosAjustes <= 0 && totalDocumentosAjustes <= 0 ? (event) => event.preventDefault() : null }
-                                        to={{
-                                            pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
-                                            state: {
-                                                analisesDeContaDaPrestacao: analisesDeContaDaPrestacao,
-                                                totalLancamentosAjustes: totalLancamentosAjustes,
-                                                totalDocumentosAjustes: totalDocumentosAjustes,
-                                            }
-                                        }}
-                                        className="btn btn-outline-success mr-2"
-                                        disabled={totalLancamentosAjustes <= 0 && totalDocumentosAjustes <= 0}
-                                        readOnly={totalLancamentosAjustes <= 0 && totalDocumentosAjustes <= 0}
+                                    <Link onClick={ (totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null : (event) => event.preventDefault() }
+                                          to={{
+                                              pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
+                                              state: {
+                                                  analisesDeContaDaPrestacao: analisesDeContaDaPrestacao,
+                                                  totalLancamentosAjustes: totalLancamentosAjustes,
+                                                  totalDocumentosAjustes: totalDocumentosAjustes,
+                                              }
+                                          }}
+                                          className="btn btn-outline-success mr-2"
+                                          disabled={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
+                                          readOnly={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
                                     >
                                         Ver resumo
                                     </Link>
