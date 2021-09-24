@@ -1,9 +1,10 @@
 import React, {Fragment, memo} from "react";
 
-const TabsAcertosEmLancamentosPorConta = ({contasAssociacao, carregaAcertosLancamentos, children, setStateFiltros, initialStateFiltros}) => {
+const TabsAcertosEmLancamentosPorConta = ({contasAssociacao, carregaAcertosLancamentos, children, setStateFiltros, initialStateFiltros, toggleBtnEscolheConta, clickBtnEscolheConta}) => {
 
     return(
-        <><nav>
+        <>
+            <nav>
             <div className="nav nav-tabs mb-3 tabs-resumo-dos-acertos" id="nav-tab-conferencia-de-lancamentos" role="tablist">
                 {contasAssociacao && contasAssociacao && contasAssociacao.length > 0 && contasAssociacao.map((conta, index) =>
                     <Fragment key={`key_${conta.uuid}`}>
@@ -11,8 +12,9 @@ const TabsAcertosEmLancamentosPorConta = ({contasAssociacao, carregaAcertosLanca
                             onClick={() => {
                                 carregaAcertosLancamentos(conta.uuid)
                                 setStateFiltros(initialStateFiltros)
+                                toggleBtnEscolheConta(`${index}`);
                             }}
-                            className={`nav-link btn-escolhe-acao ${index === 0 && 'active'}`}
+                            className={`nav-link btn-escolhe-acao ${clickBtnEscolheConta[`${index}`] ? "active" : ""}`}
                             id={`nav-conferencia-de-lancamentos-${conta.uuid}-tab`}
                             data-toggle="tab"
                             href={`#nav-conferencia-de-lancamentos-${conta.uuid}`}

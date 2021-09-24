@@ -8,7 +8,7 @@ import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormulari
 import Loading from "../../../../../utils/Loading";
 import {ModalErroDevolverParaAcerto} from "./ModalErroDevolverParaAcerto";
 
-const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas, infoAta, statusPC}) => {
+const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas, infoAta}) => {
 
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalErroDevolverParaAcerto, setShowModalErroDevolverParaAcerto] = useState(false)
@@ -16,6 +16,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
     const [lancamentosAjustes, setLancamentosAjustes] = useState([])
     const [documentosAjustes, setDocumentosAjustes] = useState([])
     const [loading, setLoading] = useState(true)
+    const [btnDevolverParaAcertoDisabled, setBtnDevolverParaAcertoDisabled] = useState(false)
 
     // Quando a state de listaDeFornecedores sofrer alteração
     const totalLancamentosAjustes = useMemo(() => lancamentosAjustes.length, [lancamentosAjustes]);
@@ -63,6 +64,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
     }, [analisesDeContaDaPrestacao])
 
     const devolverParaAcertos = useCallback(async () =>{
+        setBtnDevolverParaAcertoDisabled(true)
         let analises = trataAnalisesDeContaDaPrestacao()
         let payload={
             devolucao_tesouro: false,
@@ -83,6 +85,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                 setTextoErroDevolverParaAcerto('Erro ao devolver para acerto!')
             }
             setShowModalErroDevolverParaAcerto(true)
+            setBtnDevolverParaAcertoDisabled(false)
         }
 
     }, [dataLimiteDevolucao, carregaPrestacaoDeContas, prestacaoDeContas, trataAnalisesDeContaDaPrestacao])
@@ -107,25 +110,25 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                                     />
                                 </div>
                                 <div>
-                                    <Link onClick={ totalLancamentosAjustes <= 0 && totalDocumentosAjustes <= 0 ? (event) => event.preventDefault() : null }
-                                        to={{
-                                            pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
-                                            state: {
-                                                analisesDeContaDaPrestacao: analisesDeContaDaPrestacao,
-                                                totalLancamentosAjustes: totalLancamentosAjustes,
-                                                totalDocumentosAjustes: totalDocumentosAjustes,
-                                            }
-                                        }}
-                                        className="btn btn-outline-success mr-2"
-                                        disabled={totalLancamentosAjustes <= 0 && totalDocumentosAjustes <= 0}
-                                        readOnly={totalLancamentosAjustes <= 0 && totalDocumentosAjustes <= 0}
+                                    <Link onClick={ (totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null : (event) => event.preventDefault() }
+                                          to={{
+                                              pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
+                                              state: {
+                                                  analisesDeContaDaPrestacao: analisesDeContaDaPrestacao,
+                                                  totalLancamentosAjustes: totalLancamentosAjustes,
+                                                  totalDocumentosAjustes: totalDocumentosAjustes,
+                                              }
+                                          }}
+                                          className="btn btn-outline-success mr-2"
+                                          disabled={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
+                                          readOnly={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
                                     >
                                         Ver resumo
                                     </Link>
                                 </div>
                                 <div>
                                     <button
-                                        disabled={!dataLimiteDevolucao}
+                                        disabled={!dataLimiteDevolucao || btnDevolverParaAcertoDisabled}
                                         onClick={devolverParaAcertos}
                                         className="btn btn-success"
                                     >

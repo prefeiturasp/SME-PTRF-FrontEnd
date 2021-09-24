@@ -261,6 +261,11 @@ export const getContasDaAssociacao = async (associacao_uuid) => {
     return (await api.get(`/api/associacoes/${associacao_uuid}/contas/`, authHeader)).data
 };
 
+export const getAnalisesDePcDevolvidas = async (prestacao_de_contas_uuid) => {
+    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/devolucoes/`, authHeader)).data
+};
+
+
 
 
 
