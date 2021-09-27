@@ -61,6 +61,7 @@ import {AnaliseDre} from "../componentes/escolas/AnaliseDre";
 import {DetalharAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos";
 import DetalharAcertosDocumentos from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/DetalharAcertosDocumentos";
 import {ResumoDosAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ResumoDosAcertos";
+import ConsultaDetalhamentoAnaliseDaDre from "../componentes/escolas/AnaliseDre/ConsultaDetalhamentoAnaliseDaDre";
 
 const routesConfig = [
     {
@@ -384,6 +385,12 @@ const routesConfig = [
         exact: true,
         path: "/analise-dre",
         component: AnaliseDre,
+        permissoes: ['access_analise_dre'],
+    },
+    {
+        exact: true,
+        path: "/consulta-detalhamento-analise-da-dre/:prestacao_conta_uuid/",
+        component: ConsultaDetalhamentoAnaliseDaDre,
         permissoes: ['access_analise_dre'],
     },
     {
