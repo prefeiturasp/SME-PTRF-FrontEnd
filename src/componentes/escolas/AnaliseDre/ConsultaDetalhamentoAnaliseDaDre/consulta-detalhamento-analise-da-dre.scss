@@ -1,0 +1,25 @@
+.texto-periodo-topo{
+  color: #00585e;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.texto-legenda-cor-EM_ANDAMENTO {
+  color: #DE9524;
+}
+
+.texto-legenda-cor-NAO_RECEBIDA {
+  color: #086397;
+}
+
+.texto-legenda-cor-NAO_APRESENTADA, .texto-legenda-cor-DEVOLVIDA, .texto-legenda-cor-REPROVADA {
+  color: #B40C02;
+}
+
+.texto-legenda-cor-RECEBIDA {
+  color: #2B7D83;
+}
+
+.texto-legenda-cor-APROVADA, .texto-legenda-cor-APROVADA_RESSALVA {
+  color: #289B00;
+}

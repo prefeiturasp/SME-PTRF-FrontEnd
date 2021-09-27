@@ -48,14 +48,12 @@ const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=
         if (analiseAtualUuid){
             setAnaliseAtualUuid(analiseAtualUuid)
             setUuidAnalisePcDevolvida(analiseAtualUuid)
-
             montaObjetoConteudoCard(analiseAtualUuid)
-
         }else {
             if (analisesDePcDevolvidas && analisesDePcDevolvidas.length > 0){
-                let ultimo_indice_array = analisesDePcDevolvidas.length - 1
-                setAnaliseAtualUuid(analisesDePcDevolvidas[ultimo_indice_array].uuid)
-                montaObjetoConteudoCard(analisesDePcDevolvidas[ultimo_indice_array].uuid)
+                setAnaliseAtualUuid(analisesDePcDevolvidas[0].uuid)
+                setUuidAnalisePcDevolvida(analisesDePcDevolvidas[0].uuid)
+                montaObjetoConteudoCard(analisesDePcDevolvidas[0].uuid)
             }
         }
     }, [analisesDePcDevolvidas, setAnaliseAtualUuid, analiseAtualUuid, montaObjetoConteudoCard])
