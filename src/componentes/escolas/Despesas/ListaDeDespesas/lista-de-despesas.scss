@@ -6,3 +6,24 @@
   display: none;
 }
 
+
+#tabela-lista-despesas tbody:nth-child(odd) {
+  background: #F3F3F3;
+}
+
+#tabela-lista-despesas tbody:hover,
+#tabela-lista-despesas tr.hover,
+#tabela-lista-despesas th.hover,
+#tabela-lista-despesas td.hover,
+#tabela-lista-despesas tr.hoverable:hover {
+    background-color: #CCD7D7;
+    cursor: pointer
+}
+
+#tabela-lista-despesas th{
+    background-color: #F3F3F3;
+}
+
+.centraliza-conteudo-tabela {
+  vertical-align: middle !important
+}
