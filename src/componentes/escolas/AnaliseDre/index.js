@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
+import {Link} from "react-router-dom";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {getListaDeAnalises, getListaDeAnalisesFiltros} from "../../../services/escolas/AnaliseDaDre.service";
 import TabelaAnaliseDre from "./TabelaAnaliseDre";
@@ -82,19 +83,36 @@ export const AnaliseDre = () =>{
 
     const periodoTemplate = (rowData) =>{
         return (
-            <div>
+            <>
                 <span>{rowData.referencia}</span> - <span>{rowData.data_inicio_realizacao_despesas ? exibeDataPT_BR(rowData.data_inicio_realizacao_despesas) : "-"}</span> até <span>{rowData.data_fim_realizacao_despesas ? exibeDataPT_BR(rowData.data_fim_realizacao_despesas) : "-"}</span>
-            </div>
+            </>
         )
     };
+
+    const retornaObjetoPeriodo = (rowData) => {
+        return {
+            referencia: rowData.referencia ? rowData.referencia : '',
+            data_inicio_realizacao_despesas: rowData.data_inicio_realizacao_despesas ? exibeDataPT_BR(rowData.data_inicio_realizacao_despesas) : '',
+            data_fim_realizacao_despesas: rowData.data_fim_realizacao_despesas ? exibeDataPT_BR(rowData.data_fim_realizacao_despesas) : '',
+        }
+
+    }
+
     const acoesTemplate = (rowData) =>{
         return (
             <>
                 {rowData.status_pc === 'APROVADA' || rowData.status_pc === 'APROVADA_RESSALVA' || rowData.status_pc === 'REPROVADA' || rowData.status_pc === 'DEVOLVIDA' ? (
-                    <FontAwesomeIcon
-                        style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
-                        icon={faEye}
-                    />
+                    <Link to={{pathname: `consulta-detalhamento-analise-da-dre/${rowData.prestacao_de_contas_uuid}`,
+                            state: {
+                                periodoFormatado: retornaObjetoPeriodo(rowData),
+                            }
+                        }}
+                    >
+                        <FontAwesomeIcon
+                            style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
+                            icon={faEye}
+                        />
+                    </Link>
                 ):
                     <span> - </span>
                 }
