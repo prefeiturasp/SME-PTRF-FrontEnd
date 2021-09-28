@@ -11,6 +11,7 @@ import {visoesService} from "../../../services/visoes.service";
 import {Link} from "react-router-dom";
 import {UrlsMenuInterno} from "./UrlsMenuInterno";
 import {MenuInterno} from "../MenuInterno";
+import Loading from "../../../utils/Loading";
 
 export const GestaoDePerfis = () => {
 
@@ -28,6 +29,7 @@ export const GestaoDePerfis = () => {
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [usuarios, setUsuarios] = useState({});
     const [grupos, setGrupos] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const exibeGrupos = useCallback(async ()=>{
         let grupos = await getGrupos(visao_selecionada);
@@ -35,8 +37,10 @@ export const GestaoDePerfis = () => {
     }, [visao_selecionada]);
 
     const exibeUsuarios = useCallback(async () =>{
+        setLoading(true)
         let _usuarios = await getUsuarios(visao_selecionada, unidade_selecionada);
         setUsuarios(_usuarios);
+        setLoading(false)
     }, [visao_selecionada, unidade_selecionada]);
 
     useEffect(()=>{
@@ -57,6 +61,7 @@ export const GestaoDePerfis = () => {
     };
 
     const handleSubmitFiltros = async (event) => {
+        setLoading(true)
         event.preventDefault();
         let retorno_filtros = await getUsuariosFiltros(
             visao_selecionada,
@@ -67,6 +72,7 @@ export const GestaoDePerfis = () => {
             unidade_selecionada
         );
         setUsuarios(retorno_filtros)
+        setLoading(false)
     };
 
     const grupoTemplate = (rowData) =>{
@@ -147,7 +153,15 @@ export const GestaoDePerfis = () => {
                     </Link>
                 </div>
             </div>
-            {usuarios && Object.entries(usuarios).length > 0 &&
+            {loading ? (
+                <Loading
+                    corGrafico="black"
+                    corFonte="dark"
+                    marginTop="0"
+                    marginBottom="0"
+                />
+            ) :
+                usuarios && Object.entries(usuarios).length > 0 &&
                 <div className="card">
                     <DataTable value={usuarios} className='tabela-lista-perfis'>
                         <Column field="name" header="Nome completo"/>
