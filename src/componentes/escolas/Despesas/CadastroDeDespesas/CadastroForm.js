@@ -85,8 +85,8 @@ export const CadastroForm = ({verbo_http}) => {
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT") {
             aux.exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas);
         }
-        if (despesaContext.initialValues.data_documento && verbo_http === "PUT") {
-            periodoFechado(despesaContext.initialValues.data_documento, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
+        if (despesaContext.initialValues.data_transacao && verbo_http === "PUT") {
+            periodoFechado(despesaContext.initialValues.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
         }
         if (verbo_http === "PUT") {
             setObjetoParaComparacao(despesaContext.initialValues)
@@ -150,14 +150,14 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
         // Verifica período fechado para a receita
-        if (values.data_documento) {
-            let data = moment(values.data_documento, "YYYY-MM-DD").format("YYYY-MM-DD");
+        if (values.data_transacao) {
+            let data = moment(values.data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
             try {
                 let periodo_fechado = await getPeriodoFechado(data);
 
                 if (!periodo_fechado.aceita_alteracoes) {
                     erros = {
-                        data_documento: "Período Fechado"
+                        data_transacao: "Período Fechado"
                     }
                     setEnviarFormulario(false)
                     setReadOnlyBtnAcao(true);
@@ -210,7 +210,7 @@ export const CadastroForm = ({verbo_http}) => {
             if (values.despesa_incompleta > 0 && enviarFormulario && Object.keys(erros_personalizados).length === 0) {
                 setShowModalDespesaIncompleta(true)
 
-            }else if (values.data_documento) {
+            }else if (values.data_transacao) {
                 let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
 
                 if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente" ||
@@ -513,9 +513,6 @@ export const CadastroForm = ({verbo_http}) => {
                                                 id="data_documento"
                                                 value={values.data_documento != null ? values.data_documento : ""}
                                                 onChange={setFieldValue}
-                                                onCalendarClose={async () => {
-                                                    setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
-                                                }}
                                                 className={
                                                     eh_despesa_sem_comprovacao_fiscal(props.values.cpf_cnpj_fornecedor) 
                                                     ? "form-control"
@@ -579,6 +576,9 @@ export const CadastroForm = ({verbo_http}) => {
                                                 id="data_transacao"
                                                 value={values.data_transacao != null ? values.data_transacao : ""}
                                                 onChange={setFieldValue}
+                                                onCalendarClose={async () => {
+                                                    setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
+                                                }}
                                                 about={despesaContext.verboHttp}
                                                 className={`${ !values.data_transacao && verbo_http === "PUT" ? 'is_invalid' : ""} ${ !values.data_transacao && "despesa_incompleta"} form-control`}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
