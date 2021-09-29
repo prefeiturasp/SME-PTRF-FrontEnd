@@ -1,8 +1,6 @@
 import React from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
-import {MsgImgCentralizada} from "../Mensagens/MsgImgCentralizada";
-import Img404 from "../../../assets/img/img-404.svg";
 
 export const TabelaAcertosLancamentos = ({lancamentosAjustes, setExpandedRowsLancamentos, expandedRowsLancamentos, rowExpansionTemplateLancamentos, rowsPerPageAcertosLancamentos, dataTemplate, numeroDocumentoTemplate, valor_template}) => {
     return(
@@ -41,10 +39,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, setExpandedRowsLan
                     <Column expander style={{width: '3em', borderLeft: 'none'}}/>
                 </DataTable>
             ):
-                <MsgImgCentralizada
-                    texto="Não existem ajustes para serem exibidos"
-                    img={Img404}
-                />
+                <p className='text-center fonte-18 mt-4'><strong>Não existem ajustes para serem exibidos</strong></p>
             }
         </>
     )
