@@ -8,8 +8,7 @@ import {verificacaoRegularidade, salvarItensRegularidade} from "../../../../../s
 import {ModalConfirmaSalvar} from "../../../../../utils/Modais";
 import {visoesService} from "../../../../../services/visoes.service";
 
-export const RegularidadeUnidadeEducacional = () => {
-    let dadosDaAssociacao = JSON.parse(localStorage.getItem("DADOS_DA_ASSOCIACAO"));
+export const RegularidadeUnidadeEducacional = ({dadosDaAssociacao}) => {
 
     const [dadosRegularidade, setDadosRegularidade] = useState({});
     const [checklists, setChecklists] = useState({});
@@ -52,7 +51,7 @@ export const RegularidadeUnidadeEducacional = () => {
 
     const montaGrupo = (grupo, index) => {
       return (
-        <div key={index}>
+        <div className="mt-3" key={index}>
           <div style={{margin: "2px 0px 20px 0px", fontWeight: 'bold'}}>
             {grupo.titulo}
           </div>
@@ -208,33 +207,28 @@ export const RegularidadeUnidadeEducacional = () => {
 
     return (
         <>
-            {dadosDaAssociacao ? (
-                    <>
-                        <TopoComBotoes
-                            dadosDaAssociacao={dadosDaAssociacao}
-                        />
-                        <div className="page-content-inner">
-                        {dadosRegularidade !== {} && dadosRegularidade.verificacao_regularidade !== undefined ? (
-                          dadosRegularidade.verificacao_regularidade.grupos_verificacao.map((grupo, index) => (
-                            montaGrupo(grupo, index)
-                          ))
-                        ) : null}
-                        <ModalConfirmaSalvar
-                          show={showSalvar}
-                          handleClose={()=>setShowSalvar(false)}
-                          titulo="Itens salvos!"
-                          texto="Os dados foram salvos com sucesso."
-                          primeiroBotaoCss="success"
-                        />
-                        </div>
-                    </>
-                ) :
-                <Redirect
-                    to={{
-                        pathname: "/dre-associacoes",
-                    }}
-                />
-            }
+            <div className="row">
+                <div className="d-flex bd-highlight">
+                    <div className="flex-grow-1 bd-highlight">
+                        <p className="mb-1 ml-2 titulo-explicativo-dre-detalhes">Regularidade da associação</p>
+                    </div>
+                
+                </div>
+            </div>
+          
+          {dadosRegularidade !== {} && dadosRegularidade.verificacao_regularidade !== undefined ? (
+            dadosRegularidade.verificacao_regularidade.grupos_verificacao.map((grupo, index) => (
+              montaGrupo(grupo, index)
+            ))
+          ) : null}
+          <ModalConfirmaSalvar
+            show={showSalvar}
+            handleClose={()=>setShowSalvar(false)}
+            titulo="Itens salvos!"
+            texto="Os dados foram salvos com sucesso."
+            primeiroBotaoCss="success"
+          />
+          
         </>
     );
 };

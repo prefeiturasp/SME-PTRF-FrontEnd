@@ -1,9 +1,8 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useHistory} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
 import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
-import {getPrestacaoDeContasDetalhe, getTiposDeAcertoLancamentos, getTiposDevolucao, getListaDeSolicitacaoDeAcertos, postSolicitacoesParaAcertos} from "../../../../../../services/dres/PrestacaoDeContas.service";
+import {getTiposDeAcertoLancamentos, getTiposDevolucao, getListaDeSolicitacaoDeAcertos, postSolicitacoesParaAcertos} from "../../../../../../services/dres/PrestacaoDeContas.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {TabelaDetalharAcertos} from "./TabelaDetalharAcertos";
 import {FormularioAcertos} from "./FormularioAcertos";
@@ -11,6 +10,7 @@ import {trataNumericos} from "../../../../../../utils/ValidacoesAdicionaisFormul
 import Loading from "../../../../../../utils/Loading";
 // Hooks Personalizados
 import useDataTemplate from "../../../../../../hooks/Globais/useDataTemplate";
+import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 
 export const DetalharAcertos = () => {
 
@@ -18,9 +18,11 @@ export const DetalharAcertos = () => {
     const formRef = useRef();
     const {lancamentos_para_acertos} = useSelector(state => state.DetalharAcertos)
     const history = useHistory();
-    const dataTemplate = useDataTemplate()
 
-    const [prestacaoDeContas, setPrestacaoDeContas] = useState({})
+    // Hooks Personalizados
+    const dataTemplate = useDataTemplate()
+    const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacao_conta_uuid)
+
     const [listaTiposDeAcertoLancamentos, setListaTiposDeAcertoLancamentos] = useState([])
     const [acertos, setInitialAcertos] = useState({});
     const [exibeCamposCategoriaDevolucao, setExibeCamposCategoriaDevolucao] = useState({})
@@ -29,17 +31,6 @@ export const DetalharAcertos = () => {
     const [loading, setLoading] = useState(true)
 
     const totalDelancamentosParaConferencia = useMemo(() => lancamentos_para_acertos.length, [lancamentos_para_acertos]);
-
-    const carregaPrestacaoDeContasPorUuid = useCallback(async () => {
-        setLoading(true)
-        let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
-        setPrestacaoDeContas(prestacao)
-        setLoading(false)
-    }, [prestacao_conta_uuid])
-
-    useEffect(() => {
-        carregaPrestacaoDeContasPorUuid()
-    }, [carregaPrestacaoDeContasPorUuid])
 
     const verificaSeTemLancamentosDoTipoGasto = useCallback(() => {
         let tem_gasto
@@ -61,17 +52,44 @@ export const DetalharAcertos = () => {
     }, [verificaSeTemLancamentosDoTipoGasto])
 
     useEffect(() => {
+
+        let mounted = true;
+
+        const carregaTiposDeAcertoLancamentos = async () => {
+            if (mounted){
+                setLoading(true)
+                let tipos_de_acerto_lancamentos = await getTiposDeAcertoLancamentos()
+                let tem_gasto = verificaSeTemLancamentosDoTipoGasto()
+                if (!tem_gasto) {
+                    tipos_de_acerto_lancamentos = tipos_de_acerto_lancamentos.filter(elemento => elemento.categoria !== 'DEVOLUCAO')
+                }
+                setListaTiposDeAcertoLancamentos(tipos_de_acerto_lancamentos)
+                setLoading(false)
+            }
+        }
         carregaTiposDeAcertoLancamentos()
-    }, [carregaTiposDeAcertoLancamentos])
+
+        return () =>{
+            mounted = false;
+        }
+
+    }, [verificaSeTemLancamentosDoTipoGasto])
 
     useEffect(() => {
+        let mounted = true;
         const carregaTiposDevolucao = async () => {
-            setLoading(true)
             const resp = await getTiposDevolucao();
-            setTiposDevolucao(resp);
-            setLoading(false)
+            if (mounted){
+                setLoading(true)
+                setTiposDevolucao(resp);
+                setLoading(false)
+            }
         };
         carregaTiposDevolucao();
+
+        return () =>{
+            mounted = false;
+        }
     }, []);
 
     const addBloqueiaSelectTipoDeAcertoJaCadastrado = (acertos) => {
@@ -86,45 +104,55 @@ export const DetalharAcertos = () => {
         setBloqueiaSelectTipoDeAcerto(prevState => prevState.filter((acerto, i) => i !== index_array_acertos));
     }
 
-    const carregaListaDeSolicicacaoDeAcertos = useCallback(async () => {
-        setLoading(true)
-        if (totalDelancamentosParaConferencia === 1 && prestacao_conta_uuid) {
-            let analise_lancamento_uuid = lancamentos_para_acertos[0] && lancamentos_para_acertos[0].analise_lancamento && lancamentos_para_acertos[0].analise_lancamento.uuid ? lancamentos_para_acertos[0].analise_lancamento.uuid : null
-            if (analise_lancamento_uuid) {
-                let acertos = await getListaDeSolicitacaoDeAcertos(prestacao_conta_uuid, analise_lancamento_uuid)
+    useEffect(() => {
+        let mounted = true;
 
-                let _acertos = []
-                if (acertos && acertos.solicitacoes_de_ajuste_da_analise && acertos.solicitacoes_de_ajuste_da_analise.length > 0) {
-                    acertos.solicitacoes_de_ajuste_da_analise.map((acerto) =>
-                        _acertos.push({
-                            tipo_acerto: acerto.tipo_acerto.uuid,
-                            detalhamento: acerto.detalhamento,
-                            devolucao_tesouro: acerto.devolucao_ao_tesouro && acerto.devolucao_ao_tesouro.uuid ? {
-                                uuid: acerto.devolucao_ao_tesouro.uuid,
-                                tipo: acerto.devolucao_ao_tesouro.tipo && acerto.devolucao_ao_tesouro.tipo.uuid ? acerto.devolucao_ao_tesouro.tipo.uuid : acerto.devolucao_ao_tesouro.tipo,
-                                data: acerto.devolucao_ao_tesouro.data ? dataTemplate(acerto.devolucao_ao_tesouro.data) : null,
-                                devolucao_total: acerto.devolucao_ao_tesouro.devolucao_total,
-                                valor: acerto.devolucao_ao_tesouro.valor ? Number(acerto.devolucao_ao_tesouro.valor).toLocaleString('pt-BR', {
-                                    style: 'currency',
-                                    currency: 'BRL'
-                                }) : ""
-                            } : {...acerto.devolucao_ao_tesouro}
-                        })
-                    )
-                    addBloqueiaSelectTipoDeAcertoJaCadastrado(acertos)
+        const carregaListaDeSolicicacaoDeAcertos = async () => {
+
+            if (mounted){
+                setLoading(true)
+                if (totalDelancamentosParaConferencia === 1 && prestacao_conta_uuid) {
+                    let analise_lancamento_uuid = lancamentos_para_acertos[0] && lancamentos_para_acertos[0].analise_lancamento && lancamentos_para_acertos[0].analise_lancamento.uuid ? lancamentos_para_acertos[0].analise_lancamento.uuid : null
+                    if (analise_lancamento_uuid) {
+                        let acertos = await getListaDeSolicitacaoDeAcertos(prestacao_conta_uuid, analise_lancamento_uuid)
+
+                        let _acertos = []
+                        if (acertos && acertos.solicitacoes_de_ajuste_da_analise && acertos.solicitacoes_de_ajuste_da_analise.length > 0) {
+                            acertos.solicitacoes_de_ajuste_da_analise.map((acerto) =>
+                                _acertos.push({
+                                    tipo_acerto: acerto.tipo_acerto.uuid,
+                                    detalhamento: acerto.detalhamento,
+                                    devolucao_tesouro: acerto.devolucao_ao_tesouro && acerto.devolucao_ao_tesouro.uuid ? {
+                                        uuid: acerto.devolucao_ao_tesouro.uuid,
+                                        tipo: acerto.devolucao_ao_tesouro.tipo && acerto.devolucao_ao_tesouro.tipo.uuid ? acerto.devolucao_ao_tesouro.tipo.uuid : acerto.devolucao_ao_tesouro.tipo,
+                                        data: acerto.devolucao_ao_tesouro.data ? dataTemplate(acerto.devolucao_ao_tesouro.data) : null,
+                                        devolucao_total: acerto.devolucao_ao_tesouro.devolucao_total,
+                                        valor: acerto.devolucao_ao_tesouro.valor ? Number(acerto.devolucao_ao_tesouro.valor).toLocaleString('pt-BR', {
+                                            style: 'currency',
+                                            currency: 'BRL'
+                                        }) : ""
+                                    } : {...acerto.devolucao_ao_tesouro}
+                                })
+                            )
+                            addBloqueiaSelectTipoDeAcertoJaCadastrado(acertos)
+                        }
+                        setInitialAcertos({solicitacoes_acerto: [..._acertos]})
+                    }
                 }
-                setInitialAcertos({solicitacoes_acerto: [..._acertos]})
+                setLoading(false)
             }
         }
-        setLoading(false)
-    }, [totalDelancamentosParaConferencia, prestacao_conta_uuid, lancamentos_para_acertos])
 
-    useEffect(() => {
         carregaListaDeSolicicacaoDeAcertos()
-    }, [carregaListaDeSolicicacaoDeAcertos])
+
+        return () =>{
+            mounted = false;
+        }
+
+    }, [lancamentos_para_acertos, prestacao_conta_uuid, totalDelancamentosParaConferencia])
 
     const onClickBtnVoltar = () => {
-        history.push(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}`)
+        history.push(`/dre-detalhe-prestacao-de-contas/${prestacao_conta_uuid}#conferencia_de_lancamentos`)
     }
 
     const handleChangeTipoDeAcertoLancamento = (e) => {
@@ -147,7 +175,7 @@ export const DetalharAcertos = () => {
 
     const onSubmitFormAcertos = async () => {
 
-        if (!formRef.current.errors.solicitacoes_acerto) {
+        if (!formRef.current.errors.solicitacoes_acerto && formRef.current.values && formRef.current.values.solicitacoes_acerto) {
 
             let _lancamentos = []
 

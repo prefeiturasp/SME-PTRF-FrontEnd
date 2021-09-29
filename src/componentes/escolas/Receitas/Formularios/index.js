@@ -79,6 +79,7 @@ export const ReceitaForm = () => {
     const [idxTipoDespesa, setIdxTipoDespesa] = useState(0);
 
     const [showReceitaConferida, setShowReceitaConferida] = useState(false);
+    const [showReceitaRepasse, setShowReceitaRepasse] = useState(false);
 
     const [repasses, setRepasses] = useState([]);
     const [showSelecionaRepasse, setShowSelecionaRepasse] = useState(false);
@@ -90,10 +91,14 @@ export const ReceitaForm = () => {
 
     const [uuid_despesa, setUuidDespesa] = useState('')
 
+    const [exibirDeleteDespesa, setExibirDeleteDespesa] = useState(true);
+
     const carregaTabelas = useCallback(async ()=>{
         let tabelas_receitas = await getTabelasReceitaReceita()
         setTabelas(tabelas_receitas)
     }, [])
+
+
 
     useEffect(()=>{
         carregaTabelas()
@@ -171,6 +176,13 @@ export const ReceitaForm = () => {
     }, [tabelas, initialValue.tipo_receita]);
 
     const servicoDeVerificacoes = (e, values, errors) =>{
+
+        // Valida se despesa é do tipo Repasse
+        if (!exibirDeleteDespesa) {
+            e.preventDefault();
+            setShowReceitaRepasse(true)
+        }
+
         // Validando se receita é conferida
         if (Object.entries(errors).length === 0 ) {
             if (values.conferido) {
@@ -332,6 +344,7 @@ export const ReceitaForm = () => {
         if (value) {
             let tipo_receita = tabelas.tipos_receita.find(item => item.id == value);
             if (tipo_receita.e_repasse === true) {
+                setExibirDeleteDespesa(false)
                 try {
                     let listaRepasses = await getRepasses();
                     setRepasses(listaRepasses);
@@ -341,6 +354,7 @@ export const ReceitaForm = () => {
                 }
                 
             } else {
+                setExibirDeleteDespesa(true)
                 setaRepasse({});
                 setreadOnlyAcaoAssociacaoReceita(false);
                 setreadOnlyContaAssociacaoReceita(false);
@@ -433,6 +447,9 @@ export const ReceitaForm = () => {
     }
 
     const retornaAcoes = (values) => {
+        if (tabelas.tipos_receita.length > 0 && values.tipo_receita && e_repasse(values)){
+            setExibirDeleteDespesa(false)
+        }
         if (tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 && values.tipo_receita && e_repasse(values) && Object.keys(repasse).length !== 0) {
             let acao_associacao = tabelas.acoes_associacao.find(item => item.uuid == repasse.acao_associacao.uuid);
             setreadOnlyAcaoAssociacaoReceita(true);
@@ -930,7 +947,7 @@ export const ReceitaForm = () => {
                                 >
                                     Voltar
                                 </button>
-                                {uuid ?
+                                {uuid  && exibirDeleteDespesa ?
                                     <button disabled={readOnlyBtnAcao || !visoesService.getPermissoes(['delete_receita'])} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null
                                 }
                                 <button
@@ -954,12 +971,22 @@ export const ReceitaForm = () => {
                                 />
                             </section>
                             <section>
+                                <ModalReceitaConferida
+                                    show={showReceitaRepasse}
+                                    handleClose={()=>setShowReceitaRepasse(false)}
+                                    onSalvarReceitaConferida={ () => {setShowReceitaRepasse(false); onSubmit(values)} }
+                                    titulo="Receita do tipo repasse"
+                                    texto="<p>Atenção. Esse crédito é do tipo repasse e após gravação só poderá ser apagado pela DRE. Confirma a gravação?</p>"
+                                />
+                            </section>
+                            <section>
                                 <ModalSelecionaRepasse
                                     show={showSelecionaRepasse}
                                     cancelar={() => {
                                         setShowSelecionaRepasse(false); 
                                         setFieldValue('tipo_receita', '');
                                         setFieldValue('valor', '0,00');
+                                        setExibirDeleteDespesa(true);
                                     }}
                                     repasses={repasses}
                                     trataRepasse={trataRepasse}

@@ -225,6 +225,51 @@ export const postSolicitacoesParaAcertos = async (prestacao_de_contas_uuid, payl
     return (await api.post(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/solicitacoes-de-acerto/`, payload, authHeader)).data
 };
 
+export const getDocumentosParaConferencia = async (prestacao_de_contas_uuid, analise_atual_uuid) => {
+    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/documentos/?analise_prestacao=${analise_atual_uuid}`, authHeader)).data
+};
+
+export const postDocumentosParaConferenciaMarcarComoCorreto = async (prestacao_de_contas_uuid, payload) => {
+    return (await api.post(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/documentos-corretos/`, payload, authHeader)).data
+};
+
+export const postDocumentosParaConferenciaMarcarNaoConferido = async (prestacao_de_contas_uuid, payload) => {
+    return (await api.post(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/documentos-nao-conferidos/`, payload, authHeader)).data
+};
+
+export const getTiposDeAcertosDocumentos = async (documento_uuid) => {
+    return (await api.get(`/api/tipos-acerto-documento/?tipos_documento_prestacao__uuid=${documento_uuid}`, authHeader)).data
+};
+
+export const getSolicitacaoDeAcertosDocumentos = async (prestacao_de_contas_uuid, analise_documento_uuid) => {
+    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/analises-de-documento/?analise_documento=${analise_documento_uuid}`, authHeader)).data
+};
+
+export const postSolicitacoesParaAcertosDocumentos = async (prestacao_de_contas_uuid, payload) => {
+    return (await api.post(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/solicitacoes-de-acerto-documento/`, payload, authHeader)).data
+};
+
+export const getLancamentosAjustes = async (analise_atual_uuid, conta_uuid, tipo_lancamento=null, tipo_acerto=null) => {
+    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/lancamentos-com-ajustes/?conta_associacao=${conta_uuid}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${tipo_acerto ? '&tipo_acerto='+tipo_acerto : ''}`, authHeader)).data
+};
+
+export const getDocumentosAjustes = async (analise_atual_uuid) => {
+    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/documentos-com-ajuste/`, authHeader)).data
+};
+
+export const getContasDaAssociacao = async (associacao_uuid) => {
+    return (await api.get(`/api/associacoes/${associacao_uuid}/contas/`, authHeader)).data
+};
+
+export const getAnalisesDePcDevolvidas = async (prestacao_de_contas_uuid) => {
+    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/devolucoes/`, authHeader)).data
+};
+
+
+
+
+
+
 
 
 

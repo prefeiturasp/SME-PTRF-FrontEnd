@@ -54,7 +54,7 @@ export const CadastroFormCapital = (propriedades) => {
                     >
                         <option key={0} value="">Selecione uma especificação</option>
                         {especificaoes_capital && especificaoes_capital.map((item) => (
-                            <option key={item.id} value={item.id}>{item.descricao}</option>
+                            <option className={!item.ativa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.descricao}</option>
                         ))}
                     </select>
                 </div>

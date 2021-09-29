@@ -11,7 +11,10 @@ import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacao
 import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
 import {TabsArquivosDeReferencia} from "./ArquivosDeReferencia/TabsArquivosDeReferencia";
 import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferencia/ArquivosDeReferenciaVisualizacaoDownload";
-import {TabsConferenciaDeLancamentos} from "./ConferenciaDeLancamentos/TabsConferenciaDeLancamentos";
+import ConferenciaDeLancamentos from "./ConferenciaDeLancamentos";
+import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
+import {BotaoSalvarRodape} from "./BotaoSalvarRodape";
+import ConferenciaDeDocumentos from "./ConferenciaDeDocumentos";
 
 
 export const GetComportamentoPorStatus = (
@@ -62,10 +65,7 @@ export const GetComportamentoPorStatus = (
         setShowVoltarParaAnalise,
         btnSalvarDisabled,
         setBtnSalvarDisabled,
-        carregaLancamentosParaConferencia,
-        setLancamentosParaConferencia,
-        lancamentosParaConferencia,
-        contaUuid,
+        carregaPrestacaoDeContas,
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
@@ -224,21 +224,33 @@ export const GetComportamentoPorStatus = (
                     <ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
                     />
-
-                    <TabsConferenciaDeLancamentos
+                    <ConferenciaDeLancamentos
                         infoAta={infoAta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         clickBtnEscolheConta={clickBtnEscolheConta}
-                        carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
                         prestacaoDeContas={prestacaoDeContas}
-                        setLancamentosParaConferencia={setLancamentosParaConferencia}
-                        lancamentosParaConferencia={lancamentosParaConferencia}
-                        contaUuid={contaUuid}
-
+                    />
+                    <ConferenciaDeDocumentos
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                    <DevolucaoParaAcertos
+                        prestacaoDeContas={prestacaoDeContas}
+                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        carregaPrestacaoDeContas={carregaPrestacaoDeContas}
+                        infoAta={infoAta}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
                     />
+                    <div className='d-flex flex-row-reverse bd-highlight'>
+                        <BotaoSalvarRodape
+                            exibeSalvar={true}
+                            textoBtn={'Salvar'}
+                            metodoSalvarAnalise={salvarAnalise}
+                            btnSalvarDisabled={btnSalvarDisabled}
+                        />
+                    </div>
+
                 </>
             )
         } else if (prestacaoDeContas.status === 'DEVOLVIDA') {

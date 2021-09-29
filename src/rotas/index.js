@@ -21,7 +21,7 @@ import {EsqueciMinhaSenhaPage} from "../paginas/Login/EsqueciMinhaSenha";
 import {RedefinirSenhaPage} from "../paginas/Login/RedefinirMinhaSenha";
 import {MeusDadosPage} from "../paginas/escolas/MeusDados";
 import {AssociacoesPage} from "../paginas/dres/Associacoes";
-import {ProcessosSeiPage} from "../paginas/dres/Associacoes/ProcessosSei";
+import { DetalhesDaAssociacaoDrePage } from "../paginas/dres/Associacoes/DetalhesDaAssociacao";
 import {CentralDeNotificacoesPage} from "../paginas/CentralDeNotificacoes";
 import {CentralDeDownloadsPage} from "../paginas/CentralDeDownloads";
 import {authService} from '../services/auth.service';
@@ -33,14 +33,9 @@ import {ConsultaDeSaldosBancarios} from "../componentes/sme/ConsultaDeSaldosBanc
 import {ConsultaDeSaldosBancariosDetalhesAssociacoes} from "../componentes/sme/ConsultaDeSaldosBancarios/ConsultaDeSaldosBancariosDetalhesAssociacoes";
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
-import {DadosDaUnidadeEducacionalPage} from "../paginas/dres/Associacoes/DadosDaUnidadeEducacional";
-import {DadosDaAssociacaoDrePage} from "../paginas/dres/Associacoes/DadosDaAssociacao";
-import {DadosDasContasDrePage} from "../paginas/dres/Associacoes/DadosDasContas";
-import {PaginaRegularidadeUnidadeEducacional} from "../paginas/dres/Associacoes/RegularidadeUnidadeEducacional"
 import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
 import {TecnicosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/TecnicosDaDiretoria";
 import {FaqDrePage} from "../paginas/dres/ApoioDiretoria/Faq";
-import {SituacaoFinanceiraUnidadeEducacionalPage} from "../paginas/dres/Associacoes/SituacaoFinanceiraUnidadeEducacional";
 import {AtribuicoesPage} from "../paginas/dres/Diretoria/Atribuicoes";
 import {DreDashboardPage} from "../paginas/dres/DreDashboard";
 import {ListaPrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/ListaPrestacaoDeContas";
@@ -64,6 +59,9 @@ import {TiposDeCusteio} from "../componentes/sme/Parametrizacoees/Despesas/Tipos
 import {Fornecedores} from "../componentes/sme/Parametrizacoees/Despesas/Fornecedores";
 import {AnaliseDre} from "../componentes/escolas/AnaliseDre";
 import {DetalharAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos";
+import DetalharAcertosDocumentos from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/DetalharAcertosDocumentos";
+import {ResumoDosAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ResumoDosAcertos";
+import ConsultaDetalhamentoAnaliseDaDre from "../componentes/escolas/AnaliseDre/ConsultaDetalhamentoAnaliseDaDre";
 
 const routesConfig = [
     {
@@ -170,26 +168,8 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/dre-dados-da-unidade-educacional/:origem?/:periodo_uuid?/:conta_uuid?",
-        component: DadosDaUnidadeEducacionalPage,
-        permissoes: ['access_associacao_dre', 'access_dados_unidade_dre'],
-    },
-    {
-        exact: true,
-        path: "/dre-dados-da-associacao",
-        component: DadosDaAssociacaoDrePage,
-        permissoes: ['access_associacao_dre'],
-    },
-    {
-        exact: true,
-        path: "/dre-dados-das-contas",
-        component: DadosDasContasDrePage,
-        permissoes: ['access_associacao_dre'],
-    },
-    {
-        exact: true,
-        path: "/dre-processos-sei",
-        component: ProcessosSeiPage,
+        path: "/dre-detalhes-associacao/:origem?/:periodo_uuid?/:conta_uuid?",
+        component: DetalhesDaAssociacaoDrePage,
         permissoes: ['access_associacao_dre'],
     },
     {
@@ -197,18 +177,6 @@ const routesConfig = [
         path: "/dre-dados-da-diretoria",
         component: DadosDaDiretoriaDrePage,
         permissoes: ['access_dados_diretoria'],
-    },
-    {
-        exact: true,
-        path: "/dre-regularidade-unidade-educacional/:origem?/:periodo_uuid?/:conta_uuid?",
-        component: PaginaRegularidadeUnidadeEducacional,
-        permissoes: ['access_associacao_dre', 'access_regularidade_dre'],
-    },
-    {
-        exact: true,
-        path: "/dre-situacao-financeira-unidade-educacional/:origem?/:periodo_uuid?/:conta_uuid?",
-        component: SituacaoFinanceiraUnidadeEducacionalPage,
-        permissoes: ['access_associacao_dre', 'access_situacao_financeira_dre'],
     },
     {
         exact: true,
@@ -268,6 +236,18 @@ const routesConfig = [
         exact: true,
         path: "/dre-detalhe-prestacao-de-contas-detalhar-acertos/:prestacao_conta_uuid",
         component: DetalharAcertos,
+        permissoes: ['access_acompanhamento_pcs_dre'],
+    },
+    {
+        exact: true,
+        path: "/dre-detalhe-prestacao-de-contas-detalhar-acertos-documentos/:prestacao_conta_uuid",
+        component: DetalharAcertosDocumentos,
+        permissoes: ['access_acompanhamento_pcs_dre'],
+    },
+    {
+        exact: true,
+        path: "/dre-detalhe-prestacao-de-contas-resumo-acertos/:prestacao_conta_uuid",
+        component: ResumoDosAcertos,
         permissoes: ['access_acompanhamento_pcs_dre'],
     },
 
@@ -405,6 +385,12 @@ const routesConfig = [
         exact: true,
         path: "/analise-dre",
         component: AnaliseDre,
+        permissoes: ['access_analise_dre'],
+    },
+    {
+        exact: true,
+        path: "/consulta-detalhamento-analise-da-dre/:prestacao_conta_uuid/",
+        component: ConsultaDetalhamentoAnaliseDaDre,
         permissoes: ['access_analise_dre'],
     },
     {
