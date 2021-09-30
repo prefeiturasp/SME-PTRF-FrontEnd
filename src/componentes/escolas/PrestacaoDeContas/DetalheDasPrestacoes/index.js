@@ -166,7 +166,7 @@ export const DetalheDasPrestacoes = () => {
                 saldo_extrato: observacao.saldo_extrato ? observacao.saldo_extrato : '',
             })
             setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
-            setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY"))
+            setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"))
             if (observacao.comprovante_extrato && observacao.data_extrato){
                 setExibeBtnDownload(true)
             }
@@ -200,7 +200,7 @@ export const DetalheDasPrestacoes = () => {
             "data_extrato": dataSaldoBancario.data_extrato ? moment(dataSaldoBancario.data_extrato, "YYYY-MM-DD").format("YYYY-MM-DD"): null,
             "saldo_extrato": dataSaldoBancario.saldo_extrato ? trataNumericos(dataSaldoBancario.saldo_extrato) : 0,
             "comprovante_extrato": selectedFile,
-            "data_atualizacao_comprovante_extrato": dataAtualizacaoComprovanteExtrato,
+            "data_atualizacao_comprovante_extrato": dataAtualizacaoComprovanteExtrato ? moment(dataAtualizacaoComprovanteExtrato, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"): null,
         }
 
         try {
@@ -407,7 +407,7 @@ export const DetalheDasPrestacoes = () => {
 
     const reiniciaUploadExtrato =()=>{
 
-        if(nomeComprovanteExtrato != ""){
+        if(nomeComprovanteExtrato !== ""){
             setBtnSalvarExtratoBancarioDisable(false);
             setCheckSalvarExtratoBancario(false);
             setClassBtnSalvarExtratoBancario("success");
