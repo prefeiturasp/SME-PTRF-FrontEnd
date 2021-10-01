@@ -8,6 +8,7 @@ import {TopoComBotoes} from "./TopoComBotoes";
 import {ModalErroDevolverParaAcerto} from "../DevolucaoParaAcertos/ModalErroDevolverParaAcerto";
 import TabsConferenciaAtualHistorico from "./TabsConferenciaAtualHistorico";
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
+import {ModalConfirmaDevolverParaAcerto} from "../DevolucaoParaAcertos/ModalConfirmaDevolverParaAcerto";
 
 export const ResumoDosAcertos = () => {
 
@@ -25,6 +26,7 @@ export const ResumoDosAcertos = () => {
     const [analiseAtualUuid, setAnaliseAtualUuid] = useState('')
     const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
     const [btnDevolverParaAcertoDisabled, setBtnDevolverParaAcertoDisabled] = useState(false)
+    const [showModalConfirmaDevolverParaAcerto, setShowModalConfirmaDevolverParaAcerto] = useState(false)
 
     // Necessario para quando voltar da aba Histórico para Conferencia atual
     const setAnaliseAtualUuidComPCAnaliseAtualUuid = useCallback(()=>{
@@ -96,6 +98,7 @@ export const ResumoDosAcertos = () => {
 
     const devolverParaAcertos = useCallback(async () => {
         setBtnDevolverParaAcertoDisabled(true)
+        setShowModalConfirmaDevolverParaAcerto(false)
         let analises = trataAnalisesDeContaDaPrestacao()
         let payload = {
             devolucao_tesouro: false,
@@ -127,7 +130,7 @@ export const ResumoDosAcertos = () => {
                 <div className="page-content-inner">
                     <TopoComBotoes
                         onClickBtnVoltar={onClickBtnVoltar}
-                        devolverParaAcertos={devolverParaAcertos}
+                        setShowModalConfirmaDevolverParaAcerto={setShowModalConfirmaDevolverParaAcerto}
                         dataLimiteDevolucao={dataLimiteDevolucao}
                         qtdeAjustesLancamentos={props.state.totalLancamentosAjustes}
                         qtdeAjustesDocumentos={props.state.totalDocumentosAjustes}
@@ -150,16 +153,28 @@ export const ResumoDosAcertos = () => {
 
                 </div>
                 <section>
-                    <section>
-                        <ModalErroDevolverParaAcerto
-                            show={showModalErroDevolverParaAcerto}
-                            handleClose={() => setShowModalErroDevolverParaAcerto(false)}
-                            titulo='Devolução para acerto não permitida'
-                            texto={textoErroDevolverParaAcerto}
-                            primeiroBotaoTexto="Fechar"
-                            primeiroBotaoCss="success"
-                        />
-                    </section>
+                    <ModalErroDevolverParaAcerto
+                        show={showModalErroDevolverParaAcerto}
+                        handleClose={() => setShowModalErroDevolverParaAcerto(false)}
+                        titulo='Devolução para acerto não permitida'
+                        texto={textoErroDevolverParaAcerto}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="success"
+                    />
+                </section>
+                <section>
+                    <ModalConfirmaDevolverParaAcerto
+                        show={showModalConfirmaDevolverParaAcerto}
+                        handleClose={() => setShowModalConfirmaDevolverParaAcerto(false)}
+                        onDevolverParaAcertoTrue={devolverParaAcertos}
+                        titulo="Mudança de Status"
+                        texto='<p>Ao notificar a Associação sobre as ”Devolução para Acertos" dessa prestação de contas, será reaberto o período para que a Associação possa realizar os ajustes pontuados até o prazo determinado.</p>
+                                            <p>A prestação será movida para o <strong>status de ”Devolução para Acertos”</strong> e ficará nesse status até a Associação realizar um novo envio. Deseja continuar?</p>'
+                        primeiroBotaoTexto="Cancelar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="success"
+                        segundoBotaoTexto="Confirmar"
+                    />
                 </section>
             </PaginasContainer>
         </>
