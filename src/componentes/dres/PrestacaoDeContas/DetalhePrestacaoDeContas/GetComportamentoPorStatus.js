@@ -253,7 +253,7 @@ export const GetComportamentoPorStatus = (
 
                 </>
             )
-        } else if (prestacaoDeContas.status === 'DEVOLVIDA') {
+        } else if (prestacaoDeContas.status === 'DEVOLVIDA' || prestacaoDeContas.status === 'DEVOLVIDA_RETORNADA') {
             return (
                 <>
                     <Cabecalho
