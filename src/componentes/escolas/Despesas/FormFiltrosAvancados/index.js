@@ -14,7 +14,8 @@ export const FormFiltrosAvancados = (props) => {
         fornecedor: "",
         data_inicio: "",
         data_fim: "",
-        conta_associacao: ""
+        conta_associacao: "",
+        vinculo_atividade: "",
     };
 
     const {btnMaisFiltros, onClickBtnMaisFiltros, iniciaLista, reusltadoSomaDosTotais, filtrosAvancados, setFiltrosAvancados, buscaDespesasFiltrosAvancados, setBuscaUtilizandoFiltroAvancado, setBuscaUtilizandoFiltroPalavra, forcarPrimeiraPagina, setBuscaUtilizandoFiltro, setLoading} = props;
@@ -41,7 +42,7 @@ export const FormFiltrosAvancados = (props) => {
         setLoading(true);
         let data_inicio = filtrosAvancados.data_inicio ? moment(new Date(filtrosAvancados.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
         let data_fim = filtrosAvancados.data_fim ? moment(new Date(filtrosAvancados.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        reusltadoSomaDosTotais(filtrosAvancados.filtrar_por_termo, filtrosAvancados.aplicacao_recurso, filtrosAvancados.acao_associacao, filtrosAvancados.despesa_status, filtrosAvancados.fornecedor, data_inicio, data_fim, filtrosAvancados.conta_associacao);
+        reusltadoSomaDosTotais(filtrosAvancados.filtrar_por_termo, filtrosAvancados.aplicacao_recurso, filtrosAvancados.acao_associacao, filtrosAvancados.despesa_status, filtrosAvancados.fornecedor, data_inicio, data_fim, filtrosAvancados.conta_associacao, filtrosAvancados.vinculo_atividade);
         
         buscaDespesasFiltrosAvancados();
         setBuscaUtilizandoFiltroAvancado(true);
@@ -81,7 +82,7 @@ export const FormFiltrosAvancados = (props) => {
                                 ))}
                             </select>
                         </div>
-                        <div className="form-group col-md-6">
+                        <div className="form-group col-md-4">
                             <label htmlFor="aplicacao_recurso">Filtrar por tipo de aplicação</label>
                             <select value={filtrosAvancados.aplicacao_recurso}
                                     onChange={(e) => handleChange(e.target.name, e.target.value)}
@@ -95,7 +96,7 @@ export const FormFiltrosAvancados = (props) => {
                                 ))}
                             </select>
                         </div>
-                        <div className="form-group col-md-6">
+                        <div className="form-group col-md-4">
                             <label htmlFor="despesa_status">Filtrar por status</label>
                             <select value={filtrosAvancados.despesa_status}
                                     onChange={(e) => handleChange(e.target.name, e.target.value)} name="despesa_status"
@@ -103,6 +104,20 @@ export const FormFiltrosAvancados = (props) => {
                                 <option key={0} value="">Selecione status</option>
                                 <option key="COMPLETO" value="COMPLETO">COMPLETO</option>
                                 <option key="INCOMPLETO" value="INCOMPLETO">RASCUNHO</option>
+                            </select>
+                        </div>
+                        <div className="form-group col-md-4">
+                            <label htmlFor="vinculo_atividade">Filtrar por vínculo a atividade</label>
+                            <select value={filtrosAvancados.vinculo_atividade}
+                                    onChange={(e) => handleChange(e.target.name, e.target.value)}
+                                    name="vinculo_atividade"
+                                    id="vinculo_atividade_form_filtros_avancados_despesas"
+                                    className="form-control"
+                            >
+                                <option key={0} value="">Selecione um vínculo</option>
+                                {despesasTabelas.tags && despesasTabelas.tags.map(item => (
+                                    <option key={item.uuid} value={item.uuid}>{item.nome}</option>
+                                ))}
                             </select>
                         </div>
 
