@@ -100,6 +100,10 @@ export const ListaPrestacaoDeContas = () => {
                 ...stateFiltros,
                 filtrar_por_status: status_prestacao
             });
+            if (status_prestacao === 'NAO_RECEBIDA'){
+                setSelectedCities2(['NAO_RECEBIDA', 'NAO_APRESENTADA']);
+            }
+
         }
     };
 
@@ -320,6 +324,9 @@ export const ListaPrestacaoDeContas = () => {
     };
 
     const handleSubmitFiltros = async () => {
+        console.log("handleSubmitFiltros SEM JOIN", selectedCities2)
+        let filtros_convertido_para_string = selectedCities2.join()
+        console.log("handleSubmitFiltros COM JOIN", filtros_convertido_para_string)
         setStatusPrestacao(stateFiltros.filtrar_por_status);
         await carregaPrestacoesDeContas();
     };
@@ -334,6 +341,8 @@ export const ListaPrestacaoDeContas = () => {
         await carregaPrestacoesDeContas();
         setLoading(false)
     };
+
+    const [selectedCities2, setSelectedCities2] = useState([]);
 
     return (
         <PaginasContainer>
@@ -377,6 +386,8 @@ export const ListaPrestacaoDeContas = () => {
                         toggleMaisFiltros={toggleMaisFiltros}
                         setToggleMaisFiltros={setToggleMaisFiltros}
                         tecnicosList={tecnicosList}
+                        selectedCities2={selectedCities2}
+                        setSelectedCities2={setSelectedCities2}
                     />
 
                     {prestacaoDeContas && prestacaoDeContas.length > 0 ? (
