@@ -273,6 +273,12 @@ export const ListaPrestacaoDeContas = () => {
                 texto_col_tabela: 'Devolvida para acerto',
                 texto_titulo: 'Prestações de contas pendentes de análise e recebimento',
             }
+        } else if (status_converter === 'DEVOLVIDA_RETORNADA') {
+            return {
+                texto_barra_de_status: 'retornadas após acertos',
+                texto_col_tabela: 'Retornada após acertos',
+                texto_titulo: 'Prestações de contas retornadas após acertos',
+            }
         } else if (status_converter === 'EM_ANALISE') {
             return {
                 texto_barra_de_status: 'em análise',
