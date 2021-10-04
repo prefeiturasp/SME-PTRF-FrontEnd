@@ -1,10 +1,40 @@
-import React from "react";
+import React, {useState} from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
+import { MultiSelect } from 'primereact/multiselect';
+import './multiselect.scss'
+import { Select } from 'antd';
 
-export const FormFiltros = ({tabelaAssociacoes, tabelaPrestacoes, stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, toggleMaisFiltros, setToggleMaisFiltros, tecnicosList}) => {
+
+export const FormFiltros = ({selectedCities2, setSelectedCities2, tabelaAssociacoes, tabelaPrestacoes, stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, toggleMaisFiltros, setToggleMaisFiltros, tecnicosList}) => {
+
+    const { Option } = Select;
+
+    function handleChange(value) {
+        console.log(`selected ${value}`);
+        setSelectedCities2([...value]);
+    }
+
     return (
         <>
             <form method="post">
+                <div className="row mt-3">
+                    <div className="col">
+                        <Select
+                            mode="multiple"
+                            allowClear
+                            style={{ width: '100%' }}
+                            placeholder="Please select"
+                            defaultValue={selectedCities2}
+                            onChange={handleChange}
+                        >
+                            <Option value='TODOS'>Todos</Option>
+                            {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.map(item => (
+                                <Option key={item.id} value={item.id}>{item.nome}</Option>
+                            ))}
+                        </Select>
+                    </div>
+                </div>
+
                 <div className="row mt-3">
                     <div className="col">
                         <label htmlFor="filtrar_por_termo">Filtrar por um termo</label>
