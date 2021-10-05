@@ -1,40 +1,16 @@
-import React, {useState} from "react";
+import React from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
-import { MultiSelect } from 'primereact/multiselect';
 import './multiselect.scss'
 import { Select } from 'antd';
 
 
-export const FormFiltros = ({selectedCities2, setSelectedCities2, tabelaAssociacoes, tabelaPrestacoes, stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, toggleMaisFiltros, setToggleMaisFiltros, tecnicosList}) => {
+export const FormFiltros = ({selectedStatusPc, handleChangeSelectStatusPc, tabelaAssociacoes, tabelaPrestacoes, stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, toggleMaisFiltros, setToggleMaisFiltros, tecnicosList}) => {
 
     const { Option } = Select;
-
-    function handleChange(value) {
-        console.log(`selected ${value}`);
-        setSelectedCities2([...value]);
-    }
 
     return (
         <>
             <form method="post">
-                <div className="row mt-3">
-                    <div className="col">
-                        <Select
-                            mode="multiple"
-                            allowClear
-                            style={{ width: '100%' }}
-                            placeholder="Please select"
-                            defaultValue={selectedCities2}
-                            onChange={handleChange}
-                        >
-                            <Option value='TODOS'>Todos</Option>
-                            {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.map(item => (
-                                <Option key={item.id} value={item.id}>{item.nome}</Option>
-                            ))}
-                        </Select>
-                    </div>
-                </div>
-
                 <div className="row mt-3">
                     <div className="col">
                         <label htmlFor="filtrar_por_termo">Filtrar por um termo</label>
@@ -66,18 +42,21 @@ export const FormFiltros = ({selectedCities2, setSelectedCities2, tabelaAssociac
 
                     <div className="col">
                         <label htmlFor="filtrar_por_status">Filtrar por status</label>
-                        <select
-                            value={stateFiltros.filtrar_por_status}
-                            onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
-                            name="filtrar_por_status"
-                            id="filtrar_por_status"
-                            className="form-control"
+
+                        <Select
+                            mode="multiple"
+                            allowClear
+                            style={{ width: '100%' }}
+                            placeholder="Selecione os status"
+                            value={selectedStatusPc}
+                            onChange={handleChangeSelectStatusPc}
+                            className='multiselect-filtrar-por-status'
                         >
-                            <option value='TODOS'>Todos</option>
+                            <Option value='TODOS'>Todos</Option>
                             {tabelaPrestacoes.status && tabelaPrestacoes.status.length > 0 && tabelaPrestacoes.status.map(item => (
-                                <option key={item.id} value={item.id}>{item.nome}</option>
+                                <Option key={item.id} value={item.id}>{item.nome}</Option>
                             ))}
-                        </select>
+                        </Select>
                     </div>
                 </div>
                 <div className={`collapse mt-3 ${toggleMaisFiltros ? 'show' : ''}`} id="">
@@ -131,7 +110,7 @@ export const FormFiltros = ({selectedCities2, setSelectedCities2, tabelaAssociac
                     >
                         {toggleMaisFiltros ? 'Menos filtros' : 'Mais Filtros'}
                     </button>
-                    <button onClick={() => limpaFiltros()} type="reset" className="btn btn btn-outline-success mt-2 mr-2">Limpar</button>
+                    <button onClick={()=>limpaFiltros()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Limpar</button>
                     <button
                         onClick={handleSubmitFiltros}
                         type="button"
