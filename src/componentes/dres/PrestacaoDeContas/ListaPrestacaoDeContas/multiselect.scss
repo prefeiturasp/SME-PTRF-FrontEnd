@@ -19,3 +19,7 @@
 .multiselect-demo .multiselect-custom .country-item-value img.flag {
   width: 17px;
 }
+
+.multiselect-filtrar-por-status .ant-select-selector .ant-select-selection-overflow{
+  min-height: calc(1.5em + .75rem + 2px);
+}
