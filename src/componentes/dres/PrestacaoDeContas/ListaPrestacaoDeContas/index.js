@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useParams, Link, Redirect} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {getPeriodos} from "../../../../services/dres/Dashboard.service";
@@ -18,6 +18,7 @@ import {faEye} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../utils/Loading";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
 import Img404 from "../../../../assets/img/img-404.svg";
+import {gerarUuid} from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 export const ListaPrestacaoDeContas = () => {
 
@@ -28,7 +29,6 @@ export const ListaPrestacaoDeContas = () => {
     const initialStateFiltros = {
         filtrar_por_termo: "",
         filtrar_por_tipo_de_unidade: "",
-        filtrar_por_status: "",
         filtrar_por_tecnico_atribuido: "",
         filtrar_por_data_inicio: "",
         filtrar_por_data_fim: "",
@@ -36,7 +36,7 @@ export const ListaPrestacaoDeContas = () => {
 
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
-    const [statusPrestacao, setStatusPrestacao] = useState("");
+    const [forcarLimpezaFiltros, setForcarLimpezaFiltros] = useState("");
     const [prestacaoDeContas, setPrestacaoDeContas] = useState(false);
     const [qtdeUnidadesDre, setQtdeUnidadesDre] = useState(false);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
@@ -47,43 +47,9 @@ export const ListaPrestacaoDeContas = () => {
     const [columns, setColumns] = useState([]);
     const [loading, setLoading] = useState(true);
     const [redirectPcNaoApresentada, setRedirectPcNaoApresentada] = useState(false);
+    const [selectedStatusPc, setSelectedStatusPc] = useState([]);
 
-
-    useEffect(() => {
-        carregaPeriodos();
-        carregaStatus();
-        carregaQtdeUnidadesDre();
-        carregaTabelaAssociacoes();
-        carregaTabelaPrestacaoDeContas();
-    }, []);
-
-    useEffect(() => {
-        populaColunas();
-    }, [statusPrestacao]);
-
-    useEffect(() => {
-        carregaPrestacoesDeContas();
-        return () => {
-            setPrestacaoDeContas(false); // Desmontando
-        };
-    }, [periodoEscolhido]);
-
-    useEffect(() => {
-        carregaPrestacoesDeContas();
-        return () => {
-            setPrestacaoDeContas(false); // Desmontando
-        };
-    }, [statusPrestacao]);
-
-    useEffect(() => {
-        carregaTecnicos();
-    }, []);
-
-    useEffect(() => {
-        setLoading(false);
-    }, []);
-
-    const carregaPeriodos = async () => {
+    const carregaPeriodos = useCallback(async () => {
         let periodos = await getPeriodos();
         setPeriodos(periodos);
         if (periodo_uuid) {
@@ -91,74 +57,116 @@ export const ListaPrestacaoDeContas = () => {
         } else if (periodos && periodos.length > 0) {
             setPeriodoEsolhido(periodos[0].uuid)
         }
-    };
+    }, [periodo_uuid]) ;
 
-    const carregaStatus = async () => {
+    useEffect(()=>{
+        carregaPeriodos()
+    }, [carregaPeriodos])
+
+    const carregaStatus = useCallback(() => {
         if (status_prestacao !== undefined) {
-            setStatusPrestacao(status_prestacao);
-            setStateFiltros({
-                ...stateFiltros,
-                filtrar_por_status: status_prestacao
-            });
             if (status_prestacao === 'NAO_RECEBIDA'){
-                setSelectedCities2(['NAO_RECEBIDA', 'NAO_APRESENTADA']);
+                setSelectedStatusPc(['NAO_RECEBIDA', 'NAO_APRESENTADA']);
+            }else if(status_prestacao === 'APROVADA'){
+                setSelectedStatusPc(['APROVADA', 'APROVADA_RESSALVA']);
+            }else {
+                setSelectedStatusPc([status_prestacao]);
             }
-
         }
-    };
+    }, [status_prestacao]) ;
+
+    useEffect(()=>{
+        carregaStatus();
+    }, [carregaStatus])
+
+    const carregaQtdeUnidadesDre = useCallback(async () => {
+        let qtde_unidades = await getQtdeUnidadesDre();
+        setQtdeUnidadesDre(qtde_unidades.qtd_unidades)
+    }, []);
+
+    useEffect(()=>{
+        carregaQtdeUnidadesDre();
+    }, [carregaQtdeUnidadesDre])
+
+    const carregaTabelaAssociacoes = useCallback(async () => {
+        let tabela_associacoes = await getTabelaAssociacoes();
+        setTabelaAssociacoes(tabela_associacoes);
+    }, []) ;
+
+    useEffect(() => {
+        carregaTabelaAssociacoes();
+    }, [carregaTabelaAssociacoes]);
+
+    const carregaTabelaPrestacaoDeContas = useCallback(async () => {
+        let tabela_prestacoes = await getTabelasPrestacoesDeContas();
+        setTabelaPrestacoes(tabela_prestacoes);
+    }, []) ;
+
+    useEffect(() => {
+        carregaTabelaPrestacaoDeContas();
+    }, [carregaTabelaPrestacaoDeContas]);
+
+    const populaColunas = useCallback(() => {
+        if (selectedStatusPc.length === 1){
+            if (selectedStatusPc.includes('EM_ANALISE') || selectedStatusPc.includes('REPROVADA')) {
+                setColumns(colunasEmAnalise)
+            } else if (selectedStatusPc.includes('APROVADA') || selectedStatusPc.includes('APROVADA_RESSALVA')) {
+                setColumns(colunasAprovada)
+            } else if (selectedStatusPc.includes('TODOS')) {
+                setColumns(colunasTodosOsStatus)
+            } else {
+                setColumns(colunasNaoRecebidas)
+            }
+        }else {
+            setColumns(colunasTodosOsStatus)
+        }
+    }, [selectedStatusPc]) ;
+
+    useEffect(() => {
+        populaColunas();
+    }, [populaColunas]);
+
+    const carregaTecnicos = useCallback(async () => {
+        let dre = localStorage.getItem(ASSOCIACAO_UUID);
+        let tecnicos = await getTecnicosDre(dre);
+        setTecnicosList(tecnicos);
+    }, []) ;
+
+    useEffect(() => {
+        carregaTecnicos();
+    }, [carregaTecnicos]);
+
+
+    useEffect(() => {
+        carregaPrestacoesDeContas();
+    }, [periodoEscolhido, forcarLimpezaFiltros]);
 
     const carregaPrestacoesDeContas = async () => {
 
         setLoading(true);
         if (periodoEscolhido) {
+
             let data_inicio = stateFiltros.filtrar_por_data_inicio ? moment(new Date(stateFiltros.filtrar_por_data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
             let data_fim = stateFiltros.filtrar_por_data_fim ? moment(new Date(stateFiltros.filtrar_por_data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : '';
             let prestacoes_de_contas;
+            let array_status_convertido = converteArrayStatusPcEmString()
 
-            if (stateFiltros.filtrar_por_status === 'NAO_RECEBIDA' || stateFiltros.filtrar_por_status === 'NAO_APRESENTADA') {
-                prestacoes_de_contas = await getPrestacoesDeContasNaoRecebidaNaoGerada(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade)
-            }else if (stateFiltros.filtrar_por_status === 'TODOS'){
+            if (selectedStatusPc.includes('TODOS') || selectedStatusPc.length <= 0){
                 prestacoes_de_contas = await getPrestacoesDeContasTodosOsStatus(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade)
-            }else {
-                prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, stateFiltros.filtrar_por_status, stateFiltros.filtrar_por_tecnico_atribuido, data_inicio, data_fim);
+
+            }else if ( (selectedStatusPc.length === 1 && selectedStatusPc.includes('NAO_APRESENTADA') ) || ( selectedStatusPc.length === 2 && selectedStatusPc.includes('NAO_APRESENTADA') && selectedStatusPc.includes('NAO_RECEBIDA') ) ) {
+                prestacoes_de_contas = await getPrestacoesDeContasNaoRecebidaNaoGerada(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade)
+
+            }else if (!selectedStatusPc.includes('NAO_APRESENTADA')) {
+                prestacoes_de_contas = await getPrestacoesDeContas(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade, array_status_convertido, stateFiltros.filtrar_por_tecnico_atribuido, data_inicio, data_fim);
+
+            }else{
+                prestacoes_de_contas = await getPrestacoesDeContasTodosOsStatus(periodoEscolhido, stateFiltros.filtrar_por_termo, stateFiltros.filtrar_por_tipo_de_unidade)
             }
 
             setPrestacaoDeContas(prestacoes_de_contas)
         }
         setLoading(false);
-    };
-
-    const carregaQtdeUnidadesDre = async () => {
-        let qtde_unidades = await getQtdeUnidadesDre();
-        setQtdeUnidadesDre(qtde_unidades.qtd_unidades)
-    };
-
-    const carregaTabelaAssociacoes = async () => {
-        let tabela_associacoes = await getTabelaAssociacoes();
-        setTabelaAssociacoes(tabela_associacoes);
-    };
-
-    const carregaTabelaPrestacaoDeContas = async () => {
-        let tabela_prestacoes = await getTabelasPrestacoesDeContas();
-        setTabelaPrestacoes(tabela_prestacoes);
-    };
-
-    const carregaTecnicos = async () => {
-        let dre = localStorage.getItem(ASSOCIACAO_UUID);
-        let tecnicos = await getTecnicosDre(dre);
-        setTecnicosList(tecnicos);
-    };
-
-    const populaColunas = async () => {
-        if (statusPrestacao === 'EM_ANALISE' || statusPrestacao === 'REPROVADA') {
-            setColumns(colunasEmAnalise)
-        } else if (statusPrestacao === 'APROVADA' || statusPrestacao === 'APROVADA_RESSALVA') {
-            setColumns(colunasAprovada)
-        } else if (statusPrestacao === 'TODOS') {
-            setColumns(colunasTodosOsStatus)
-        } else {
-            setColumns(colunasNaoRecebidas)
-        }
     };
 
     const statusTemplate = (rowData) => {
@@ -204,28 +212,26 @@ export const ListaPrestacaoDeContas = () => {
             periodo_uuid: rowData.periodo_uuid,
             status: rowData.status,
         };
-
         localStorage.setItem("prestacao_de_contas_nao_apresentada", JSON.stringify( obj_prestacao));
         setRedirectPcNaoApresentada(true)
     };
 
     const acoesTemplate = (rowData) => {
-
         return (
             <div>
                 {rowData.status !== 'NAO_APRESENTADA' ? (
-                    <Link
-                        to={{
-                            pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
-                        }}
-                        className="btn btn-link"
-                    >
-                        <FontAwesomeIcon
-                            style={{marginRight: "0", color: '#00585E'}}
-                            icon={faEye}
-                        />
-                    </Link>
-                ):
+                        <Link
+                            to={{
+                                pathname: `/dre-detalhe-prestacao-de-contas/${rowData['uuid']}`,
+                            }}
+                            className="btn btn-link"
+                        >
+                            <FontAwesomeIcon
+                                style={{marginRight: "0", color: '#00585E'}}
+                                icon={faEye}
+                            />
+                        </Link>
+                    ):
                     <button
                         onClick={()=>gravaPcNaoApresentada(rowData)}
                         className="btn btn-link"
@@ -241,14 +247,12 @@ export const ListaPrestacaoDeContas = () => {
     };
 
     const exibeLabelStatus = (status = null) => {
-
         let status_converter;
         if (status) {
             status_converter = status
         } else {
-            status_converter = statusPrestacao
+            status_converter = status_prestacao
         }
-
         if (status_converter === 'NAO_RECEBIDA') {
             return {
                 texto_barra_de_status: 'não recebidas',
@@ -330,10 +334,6 @@ export const ListaPrestacaoDeContas = () => {
     };
 
     const handleSubmitFiltros = async () => {
-        console.log("handleSubmitFiltros SEM JOIN", selectedCities2)
-        let filtros_convertido_para_string = selectedCities2.join()
-        console.log("handleSubmitFiltros COM JOIN", filtros_convertido_para_string)
-        setStatusPrestacao(stateFiltros.filtrar_por_status);
         await carregaPrestacoesDeContas();
     };
 
@@ -341,14 +341,18 @@ export const ListaPrestacaoDeContas = () => {
         setLoading(true);
         setStateFiltros({
             ...initialStateFiltros,
-            filtrar_por_status: stateFiltros.filtrar_por_status,
         });
-        setStatusPrestacao('');
-        await carregaPrestacoesDeContas();
+        setForcarLimpezaFiltros(gerarUuid());
         setLoading(false)
     };
 
-    const [selectedCities2, setSelectedCities2] = useState([]);
+    const handleChangeSelectStatusPc =  async (value) => {
+        setSelectedStatusPc([...value]);
+    }
+
+    const converteArrayStatusPcEmString = useCallback(()=>{
+        return selectedStatusPc.join()
+    }, [selectedStatusPc])
 
     return (
         <PaginasContainer>
@@ -363,11 +367,11 @@ export const ListaPrestacaoDeContas = () => {
                 ) :
                 <div className="page-content-inner">
                     {redirectPcNaoApresentada &&
-                        <Redirect
-                            to={{
-                                pathname: `/dre-detalhe-prestacao-de-contas-nao-apresentada`,
-                            }}
-                        />
+                    <Redirect
+                        to={{
+                            pathname: `/dre-detalhe-prestacao-de-contas-nao-apresentada`,
+                        }}
+                    />
                     }
                     <TopoSelectPeriodoBotaoVoltar
                         periodos={periodos}
@@ -377,10 +381,9 @@ export const ListaPrestacaoDeContas = () => {
                     <BarraDeStatus
                         qtdeUnidadesDre={qtdeUnidadesDre}
                         prestacaoDeContas={prestacaoDeContas}
-                        statusDasPrestacoes={exibeLabelStatus(statusPrestacao ? statusPrestacao : stateFiltros.filtrar_por_status).texto_barra_de_status}
                     />
 
-                    <p className='titulo-explicativo mt-4 mb-4'>{exibeLabelStatus(statusPrestacao ? statusPrestacao : stateFiltros.filtrar_por_status).texto_titulo}</p>
+                    <p className='titulo-explicativo mt-4 mb-4'>Prestações de contas</p>
 
                     <FormFiltros
                         stateFiltros={stateFiltros}
@@ -392,8 +395,9 @@ export const ListaPrestacaoDeContas = () => {
                         toggleMaisFiltros={toggleMaisFiltros}
                         setToggleMaisFiltros={setToggleMaisFiltros}
                         tecnicosList={tecnicosList}
-                        selectedCities2={selectedCities2}
-                        setSelectedCities2={setSelectedCities2}
+                        selectedStatusPc={selectedStatusPc}
+                        setSelectedStatusPc={setSelectedStatusPc}
+                        handleChangeSelectStatusPc={handleChangeSelectStatusPc}
                     />
 
                     {prestacaoDeContas && prestacaoDeContas.length > 0 ? (
