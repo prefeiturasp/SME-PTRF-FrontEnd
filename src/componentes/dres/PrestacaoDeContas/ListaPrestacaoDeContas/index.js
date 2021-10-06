@@ -69,6 +69,8 @@ export const ListaPrestacaoDeContas = () => {
                 setSelectedStatusPc(['NAO_RECEBIDA', 'NAO_APRESENTADA']);
             }else if(status_prestacao === 'APROVADA'){
                 setSelectedStatusPc(['APROVADA', 'APROVADA_RESSALVA']);
+            }else if(status_prestacao === 'DEVOLVIDA'){
+                setSelectedStatusPc(['DEVOLVIDA', 'DEVOLVIDA_RETORNADA', 'DEVOLVIDA_RECEBIDA']);
             }else {
                 setSelectedStatusPc([status_prestacao]);
             }
