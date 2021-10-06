@@ -148,10 +148,10 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                         </Fragment>
                     ))}
                     {exibeBtnIrParaPaginaDeAcertos &&
-                        redirecionaDetalheAcerto(data)
+                    redirecionaDetalheAcerto(data)
                     }
                     {exibeBtnIrParaPaginaDeReceitaOuDespesa &&
-                        redirecionaDetalheReceitaOuDespesa(data)
+                    redirecionaDetalheReceitaOuDespesa(data)
                     }
                 </>
             )
