@@ -19,6 +19,7 @@ import {addDetalharAcertos, limparDetalharAcertos} from "../../../store/reducers
 import TabelaAcertosDocumentos from "./TabelaAcertosDocumentos";
 import {FiltrosAcertosDeLancamentos} from "./FiltrosAcertosDeLancamentos";
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
+import {visoesService} from "../../../services/visoes.service";
 
 const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, analiseAtualUuid}) => {
 
@@ -134,6 +135,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, an
 
     const rowExpansionTemplateLancamentos = (data) => {
         if (data && data.analise_lancamento && data.analise_lancamento.solicitacoes_de_ajuste_da_analise && data.analise_lancamento.solicitacoes_de_ajuste_da_analise.length > 0) {
+            let visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
             return (
                 <>
                 {data.analise_lancamento.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
@@ -151,8 +153,13 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, an
                         </div>
                     </Fragment>
                 ))}
-                    <p className='text-right border-top pt-3'><button onClick={()=>redirecionaDetalhe(data)} className='btn btn-outline-success'><strong>Ir para página de acertos</strong></button></p>
-                </>
+                    { visao_selecionada === 'DRE' &&
+                        <p className='text-right border-top pt-3'>
+                            <button onClick={() => redirecionaDetalhe(data)} className='btn btn-outline-success'>
+                                <strong>Ir para página de acertos</strong></button>
+                        </p>
+                    }
+                        </>
             )
         }
     };
