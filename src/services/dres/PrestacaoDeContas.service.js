@@ -265,6 +265,16 @@ export const getAnalisesDePcDevolvidas = async (prestacao_de_contas_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/devolucoes/`, authHeader)).data
 };
 
+export const patchReceberAposAcertos = async (prestacao_conta_uuid, payload) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/receber-apos-acertos/`, payload, authHeader)).data
+};
+
+export const patchDesfazerReceberAposAcertos = async (prestacao_conta_uuid) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-recebimento-apos-acertos/`, {}, authHeader)).data
+};
+
+
+
 
 
 

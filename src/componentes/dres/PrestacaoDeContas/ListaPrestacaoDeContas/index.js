@@ -285,6 +285,12 @@ export const ListaPrestacaoDeContas = () => {
                 texto_col_tabela: 'Retornada após acertos',
                 texto_titulo: 'Prestações de contas retornadas após acertos',
             }
+        } else if (status_converter === 'DEVOLVIDA_RECEBIDA') {
+            return {
+                texto_barra_de_status: 'recebida após acertos',
+                texto_col_tabela: 'Recebida após acertos',
+                texto_titulo: 'Prestações de contas recebidas após acertos',
+            }
         } else if (status_converter === 'EM_ANALISE') {
             return {
                 texto_barra_de_status: 'em análise',
