@@ -20,7 +20,7 @@ export const TrilhaDeStatus = ({prestacaoDeContas}) => {
             return (
                 <TrilhaDeStatusEmAnalise/>
             )
-        }else if(status === 'DEVOLVIDA' ||  status ==='DEVOLVIDA_RETORNADA'){
+        }else if(status === 'DEVOLVIDA' ||  status ==='DEVOLVIDA_RETORNADA' ||  status ==='DEVOLVIDA_RECEBIDA'){
             return (
                 <TrilhaDeStatusDevolvidaParaAcertos/>
             )

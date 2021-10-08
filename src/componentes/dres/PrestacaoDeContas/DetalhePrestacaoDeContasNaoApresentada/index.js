@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
-import {Cabecalho} from "../DetalhePrestacaoDeContas/Cabecalho";
+import Cabecalho from "../DetalhePrestacaoDeContas/Cabecalho";
 import {BotoesAvancarRetroceder} from "../DetalhePrestacaoDeContas/BotoesAvancarRetroceder";
 import {TrilhaDeStatus} from "../DetalhePrestacaoDeContas/TrilhaDeStatus";
 import {
