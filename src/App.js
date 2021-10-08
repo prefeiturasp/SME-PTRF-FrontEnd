@@ -7,31 +7,35 @@ import 'primeicons/primeicons.css'
 import './assets/css/styles.scss'
 import {Cabecalho} from './componentes/Globais/Cabecalho'
 import {SidebarLeft} from './componentes/Globais/SidebarLeft'
+import {ToastContainer} from "react-toastify";
 
 export const App = () => {
     const pathName = useHistory().location.pathname;
     return (
-        <section role="main" id="main" className="row">
-            {pathName === '/login' ||
-            pathName === '/esqueci-minha-senha/' ||
-            pathName.match(/\/redefinir-senha\/[a-zA-Z0-9]/) ? (
-                <Rotas/>
-            ) :
-                pathName.match(/\/visualizacao-da-ata\/[a-zA-Z0-9]/) ||
-                pathName.match(/\/dre-relatorio-consolidado-apuracao\/[a-zA-Z0-9]/) ||
-                pathName.match(/\/dre-relatorio-consolidado-dados-das-ues\/[a-zA-Z0-9]/) ? (
+        <>
+            <ToastContainer/>
+            <section role="main" id="main" className="row">
+                {pathName === '/login' ||
+                pathName === '/esqueci-minha-senha/' ||
+                pathName.match(/\/redefinir-senha\/[a-zA-Z0-9]/) ? (
+                    <Rotas/>
+                ) :
+                    pathName.match(/\/visualizacao-da-ata\/[a-zA-Z0-9]/) ||
+                    pathName.match(/\/dre-relatorio-consolidado-apuracao\/[a-zA-Z0-9]/) ||
+                    pathName.match(/\/dre-relatorio-consolidado-dados-das-ues\/[a-zA-Z0-9]/) ? (
+                        <>
+                            <Cabecalho/>
+                            <Rotas/>
+                        </>
+                    ) :
                     <>
                         <Cabecalho/>
+                        <SidebarLeft/>
                         <Rotas/>
                     </>
-                ) :
-                <>
-                    <Cabecalho/>
-                    <SidebarLeft/>
-                    <Rotas/>
-                </>
-            }
-        </section>
+                }
+            </section>
+        </>
     )
 };
 
