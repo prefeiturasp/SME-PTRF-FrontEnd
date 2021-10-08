@@ -333,7 +333,6 @@ export const GetComportamentoPorStatus = (
         } else if (prestacaoDeContas.status === 'DEVOLVIDA_RETORNADA') {
             return (
                 <>
-                    <h1>Ollyver Status {prestacaoDeContas.status}</h1>
                     <Cabecalho
                         prestacaoDeContas={prestacaoDeContas}
                         exibeSalvar={false}
@@ -411,7 +410,6 @@ export const GetComportamentoPorStatus = (
         } else if (prestacaoDeContas.status === 'DEVOLVIDA_RECEBIDA') {
             return (
                 <>
-                    <h1>Ollyver Status {prestacaoDeContas.status}</h1>
                     <Cabecalho
                         prestacaoDeContas={prestacaoDeContas}
                         exibeSalvar={false}
