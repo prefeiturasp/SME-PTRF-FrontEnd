@@ -22,6 +22,8 @@ import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios"
 import {GetComportamentoPorStatus} from "./GetComportamentoPorStatus";
 import {ModalSalvarPrestacaoDeContasAnalise} from "../../../../utils/Modais";
 import Loading from "../../../../utils/Loading";
+import {toastCustom} from "../../../Globais/ToastCustom";
+
 
 require("ordinal-pt-br");
 
@@ -756,14 +758,25 @@ export const DetalhePrestacaoDeContas = () =>{
         let payload = {
             data_recebimento_apos_acertos: data_formatada,
         }
-        await patchReceberAposAcertos(prestacao_de_contas.uuid, payload)
+        try {
+            await patchReceberAposAcertos(prestacao_de_contas.uuid, payload)
+            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Recebida após acertos”.')
+        }catch (e) {
+            console.log("Erro ao Receber após acertos", e.response)
+        }
         await carregaPrestacaoDeContas();
         setLoading(false)
     }
 
+
     const desfazerReceberAposAcertos =async (prestacao_de_contas) => {
         setLoading(true)
-        await patchDesfazerReceberAposAcertos(prestacao_de_contas.uuid)
+        try {
+            await patchDesfazerReceberAposAcertos(prestacao_de_contas.uuid)
+            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Retornada após acertos”.')
+        }catch (e) {
+            console.log("Erro ao Desfazer Receber após acertos", e.response)
+        }
         await carregaPrestacaoDeContas();
         setLoading(false)
     }
