@@ -9,24 +9,9 @@ const authHeader = {
 };
 
 export const verificacaoRegularidade = async (associacao_uuid) => {
-    return api
-        .get(`/api/associacoes/${associacao_uuid}/verificacao-regularidade/`, authHeader)
-        .then(response => {
-            return response;
-        })
-        .catch(error => {
-            return error.response;
-        });
+    return (await api.get(`/api/associacoes/${associacao_uuid}/verificacao-regularidade/`, authHeader)).data
 };
 
-
-export const salvarItensRegularidade = async (associacao_uuid, itens) => {
-    return api
-        .post(`/api/associacoes/${associacao_uuid}/atualiza-itens-verificacao/`, itens, authHeader)
-        .then(response => {
-            return response
-        })
-        .catch(error => {
-            console.log(error.response);
-        })
-}
+export const salvarItensRegularidade = async (associacao_uuid, payload) => {
+    return (await api.post(`/api/associacoes/${associacao_uuid}/atualiza-itens-verificacao/`, payload, authHeader)).data
+};
