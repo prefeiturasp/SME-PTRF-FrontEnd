@@ -1,5 +1,6 @@
 import React, {memo} from "react";
 import DevolverParaAcertos from "./DevolverParaAcertos";
+import { RelatorioDosAcertos } from "./RelatorioDosAcertos";
 import ExibeAcertosEmLancamentosEDocumentosPorConta from "../../../../Globais/ExibeAcertosEmLancamentosEDocumentosPorConta";
 import {MsgImgCentralizada} from "../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../assets/img/img-404.svg";
@@ -33,6 +34,12 @@ const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLim
                             <ExibeAcertosEmLancamentosEDocumentosPorConta
                                 prestacaoDeContasUuid={prestacao_conta_uuid}
                                 analiseAtualUuid={analiseAtualUuid}
+                            />
+
+                            <RelatorioDosAcertos
+                                prestacaoDeContasUuid={prestacao_conta_uuid}
+                                analiseAtualUuid={analiseAtualUuid}
+                                podeGerarPrevia={true}
                             />
                         </>
                     }
