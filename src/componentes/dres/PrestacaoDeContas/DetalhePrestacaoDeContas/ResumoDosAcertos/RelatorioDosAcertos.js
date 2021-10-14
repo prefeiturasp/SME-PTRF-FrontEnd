@@ -18,6 +18,8 @@ export const RelatorioDosAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, po
     const [status, setStatus] = useState("")
     const [previaEmAndamento, setPreviaEmAndamento] = useState(false)
     const [contasAssociacao, setContasAssociacao] = useState([])
+    const [contaCheque, setContaCheque] = useState("");
+    const [contaCartao, setContaCartao] = useState("");
     const [disableBtnPrevia, setDisableBtnPrevia] = useState(true)
     const [disableBtnDownload, setDisableBtnDownload] = useState(true);
 
@@ -28,6 +30,21 @@ export const RelatorioDosAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, po
         if (prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.uuid){
             let contas = await getContasDaAssociacao(prestacaoDeContas.associacao.uuid);
             setContasAssociacao(contas);
+
+            let cheque = "";
+            let cartao = "";
+
+            for(let i=0; i<=contas.length-1; i++){
+                if(contas[i].tipo_conta.nome === "Cheque"){
+                    cheque = contas[i].uuid;
+                }
+                else if(contas[i].tipo_conta.nome === "Cartão"){
+                    cartao = contas[i].uuid;
+                }
+            }
+
+            setContaCheque(cheque);
+            setContaCartao(cartao);
 
             if (status === "CONCLUIDO" && previaEmAndamento === false){
                 setDisableBtnPrevia(false);
@@ -102,10 +119,7 @@ export const RelatorioDosAcertos = ({prestacaoDeContasUuid, analiseAtualUuid, po
         setDisableBtnPrevia(true);
         setDisableBtnDownload(true);
 
-        let conta_associacao_cheque_uuid = contasAssociacao[0].uuid
-        let conta_associacao_cartao_uuid = contasAssociacao[1].uuid
-
-        await gerarPreviaRelatorioAcertos(analiseAtualUuid, conta_associacao_cheque_uuid, conta_associacao_cartao_uuid);
+        await gerarPreviaRelatorioAcertos(analiseAtualUuid, contaCheque, contaCartao);
     }
 
     const downloadDocumentoPrevia = async () => {
