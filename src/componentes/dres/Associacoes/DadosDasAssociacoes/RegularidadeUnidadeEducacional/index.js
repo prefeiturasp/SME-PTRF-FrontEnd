@@ -193,7 +193,7 @@ export const RegularidadeUnidadeEducacional = ({dadosDaAssociacao}) => {
                                     }}
                                     icon={statusChecklist[obj.uuid] === 'Pendente' ? faExclamationTriangle : faCheckCircle}
                                 />
-                                <span style={{marginRight: "0", fontSize: '17px'}}>AQUI {statusChecklist[obj.uuid]}</span>
+                                <span style={{marginRight: "0", fontSize: '17px'}}>{statusChecklist[obj.uuid]}</span>
                             </div>
                             <div className="col-1" style={{paddingLeft: "0px"}}>
                                 <span style={{
