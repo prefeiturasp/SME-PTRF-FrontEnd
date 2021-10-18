@@ -108,6 +108,8 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
                             <ExibeAcertosEmLancamentosEDocumentosPorConta
                                 prestacaoDeContasUuid={prestacao_conta_uuid}
                                 analiseAtualUuid={analiseAtualUuid}
+                                exibeBtnIrParaPaginaDeAcertos={false}
+                                exibeBtnIrParaPaginaDeReceitaOuDespesa={true}
                             />
                         </>
                     ) :

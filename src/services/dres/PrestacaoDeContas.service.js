@@ -265,6 +265,44 @@ export const getAnalisesDePcDevolvidas = async (prestacao_de_contas_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/devolucoes/`, authHeader)).data
 };
 
+export const patchReceberAposAcertos = async (prestacao_conta_uuid, payload) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/receber-apos-acertos/`, payload, authHeader)).data
+};
+
+export const patchDesfazerReceberAposAcertos = async (prestacao_conta_uuid) => {
+    return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-recebimento-apos-acertos/`, {}, authHeader)).data
+};
+
+export const getRelatorioAcertosInfo = async(analise_atual_uuid) => {
+    return (await api.get(`/api/analises-prestacoes-contas/status-info/?analise_prestacao_uuid=${analise_atual_uuid}`, authHeader)).data
+};
+
+export const gerarPreviaRelatorioAcertos = async (analise_prestacao_uuid, conta_associacao_cheque_uuid, conta_associacao_cartao_uuid) => {
+    return (await api.get(`/api/analises-prestacoes-contas/previa/?analise_prestacao_uuid=${analise_prestacao_uuid}&conta_associacao_cheque_uuid=${conta_associacao_cheque_uuid}&conta_associacao_cartao_uuid=${conta_associacao_cartao_uuid}`, authHeader)).data
+};
+
+
+export const downloadDocumentoPreviaPdf = async (analise_atual_uuid) => {
+    return api
+            .get(`/api/analises-prestacoes-contas/download-documento-pdf/?analise_prestacao_uuid=${analise_atual_uuid}`, {
+                responseType: 'blob',
+                timeout: 30000,
+                headers: {
+                    'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
+                    'Content-Type': 'application/json',
+                }
+              })
+            .then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `relatorio_acertos.pdf`);
+                document.body.appendChild(link);
+                link.click();
+            }).catch(error => {
+                return error.response;
+            });
+};
 
 
 

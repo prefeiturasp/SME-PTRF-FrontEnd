@@ -43,6 +43,7 @@ export class ListaDeDespesas extends Component {
                 data_inicio: "",
                 data_fim: "",
                 conta_associacao: "",
+                vinculo_atividade: "",
             },
             buscaUtilizandoFiltroAvancado: false,
             buscaUtilizandoFiltroPalavra: false,
@@ -94,7 +95,7 @@ export class ListaDeDespesas extends Component {
         this.setState({forcarPrimeiraPagina: gerarUuid()})
         let data_inicio = this.state.filtrosAvancados.data_inicio ? moment(new Date(this.state.filtrosAvancados.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
         let data_fim = this.state.filtrosAvancados.data_fim ? moment(new Date(this.state.filtrosAvancados.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        let lista_retorno_api = await filtrosAvancadosDespesas(this.state.filtrosAvancados.filtrar_por_termo, this.state.filtrosAvancados.aplicacao_recurso, this.state.filtrosAvancados.acao_associacao, this.state.filtrosAvancados.despesa_status, this.state.filtrosAvancados.fornecedor, data_inicio, data_fim, this.state.filtrosAvancados.conta_associacao);
+        let lista_retorno_api = await filtrosAvancadosDespesas(this.state.filtrosAvancados.filtrar_por_termo, this.state.filtrosAvancados.aplicacao_recurso, this.state.filtrosAvancados.acao_associacao, this.state.filtrosAvancados.despesa_status, this.state.filtrosAvancados.fornecedor, data_inicio, data_fim, this.state.filtrosAvancados.conta_associacao, this.state.filtrosAvancados.vinculo_atividade);
         let results = lista_retorno_api.results
         this.setState({despesas: results})
         let numeroDePaginas = lista_retorno_api.count;
@@ -106,15 +107,15 @@ export class ListaDeDespesas extends Component {
         this.setState({paginacaoAtual: page})
         let data_inicio = this.state.filtrosAvancados.data_inicio ? moment(new Date(this.state.filtrosAvancados.data_inicio), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
         let data_fim = this.state.filtrosAvancados.data_fim ? moment(new Date(this.state.filtrosAvancados.data_fim), "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        let lista_retorno_api = await filtrosAvancadosDespesasPaginacao(this.state.filtrosAvancados.filtrar_por_termo, this.state.filtrosAvancados.aplicacao_recurso, this.state.filtrosAvancados.acao_associacao, this.state.filtrosAvancados.despesa_status, this.state.filtrosAvancados.fornecedor, data_inicio, data_fim, this.state.filtrosAvancados.conta_associacao, page);
+        let lista_retorno_api = await filtrosAvancadosDespesasPaginacao(this.state.filtrosAvancados.filtrar_por_termo, this.state.filtrosAvancados.aplicacao_recurso, this.state.filtrosAvancados.acao_associacao, this.state.filtrosAvancados.despesa_status, this.state.filtrosAvancados.fornecedor, data_inicio, data_fim, this.state.filtrosAvancados.conta_associacao, this.state.filtrosAvancados.vinculo_atividade, page);
         let results = lista_retorno_api.results
         this.setState({despesas: results})
         let numeroDePaginas = lista_retorno_api.count;
         this.setState({totalDePaginas: Math.ceil((numeroDePaginas)/this.state.divisorPaginas)})
     }
 
-    reusltadoSomaDosTotais = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "", fornecedor = "", data_inicio = "", data_fim = "", conta_associacao__uuid='') => {
-        const somaDosTotais = await getSomaDosTotais(palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid);
+    reusltadoSomaDosTotais = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "", fornecedor = "", data_inicio = "", data_fim = "", conta_associacao__uuid='', vinculo_atividade__uuid='') => {
+        const somaDosTotais = await getSomaDosTotais(palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid, vinculo_atividade__uuid);
         this.setState({somaDosTotais});
     };
 

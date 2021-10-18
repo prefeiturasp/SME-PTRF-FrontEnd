@@ -7,11 +7,13 @@ import {getConcluirAnalise, getLancamentosAjustes, getDocumentosAjustes} from ".
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../../../utils/Loading";
 import {ModalErroDevolverParaAcerto} from "./ModalErroDevolverParaAcerto";
+import {ModalConfirmaDevolverParaAcerto} from "./ModalConfirmaDevolverParaAcerto";
 
 const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas, infoAta}) => {
 
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalErroDevolverParaAcerto, setShowModalErroDevolverParaAcerto] = useState(false)
+    const [showModalConfirmaDevolverParaAcerto, setShowModalConfirmaDevolverParaAcerto] = useState(false)
     const [textoErroDevolverParaAcerto, setTextoErroDevolverParaAcerto] = useState('')
     const [lancamentosAjustes, setLancamentosAjustes] = useState([])
     const [documentosAjustes, setDocumentosAjustes] = useState([])
@@ -65,6 +67,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
 
     const devolverParaAcertos = useCallback(async () =>{
         setBtnDevolverParaAcertoDisabled(true)
+        setShowModalConfirmaDevolverParaAcerto(false)
         let analises = trataAnalisesDeContaDaPrestacao()
         let payload={
             devolucao_tesouro: false,
@@ -129,7 +132,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                                 <div>
                                     <button
                                         disabled={!dataLimiteDevolucao || btnDevolverParaAcertoDisabled}
-                                        onClick={devolverParaAcertos}
+                                        onClick={()=>setShowModalConfirmaDevolverParaAcerto(true)}
                                         className="btn btn-success"
                                     >
                                         Devolver para Associação
@@ -144,6 +147,20 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                                     texto={textoErroDevolverParaAcerto}
                                     primeiroBotaoTexto="Fechar"
                                     primeiroBotaoCss="success"
+                                />
+                            </section>
+                            <section>
+                                <ModalConfirmaDevolverParaAcerto
+                                    show={showModalConfirmaDevolverParaAcerto}
+                                    handleClose={() => setShowModalConfirmaDevolverParaAcerto(false)}
+                                    onDevolverParaAcertoTrue={devolverParaAcertos}
+                                    titulo="Mudança de Status"
+                                    texto='<p>Ao notificar a Associação sobre as ”Devolução para Acertos" dessa prestação de contas, será reaberto o período para que a Associação possa realizar os ajustes pontuados até o prazo determinado.</p>
+                                            <p>A prestação será movida para o <strong>status de ”Devolução para Acertos”</strong> e ficará nesse status até a Associação realizar um novo envio. Deseja continuar?</p>'
+                                    primeiroBotaoTexto="Cancelar"
+                                    primeiroBotaoCss="outline-success"
+                                    segundoBotaoCss="success"
+                                    segundoBotaoTexto="Confirmar"
                                 />
                             </section>
                         </>

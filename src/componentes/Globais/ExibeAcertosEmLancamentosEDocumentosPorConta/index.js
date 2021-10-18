@@ -3,12 +3,7 @@ import {useHistory} from "react-router-dom";
 import useValorTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
 import useDataTemplate from "../../../hooks/Globais/useDataTemplate";
 import useNumeroDocumentoTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
-import {
-    getContasDaAssociacao,
-    getDocumentosAjustes,
-    getLancamentosAjustes,
-    getTiposDeAcertoLancamentos
-} from "../../../services/dres/PrestacaoDeContas.service";
+import {getContasDaAssociacao, getDocumentosAjustes, getLancamentosAjustes, getTiposDeAcertoLancamentos} from "../../../services/dres/PrestacaoDeContas.service";
 import {TabelaAcertosLancamentos} from "./TabelaAcertosLancamentos";
 import TabsAcertosEmLancamentosPorConta from "./TabsAcertosEmLancamentosPorConta";
 import Loading from "../../../utils/Loading";
@@ -16,12 +11,14 @@ import Loading from "../../../utils/Loading";
 // Redux
 import {useDispatch} from "react-redux";
 import {addDetalharAcertos, limparDetalharAcertos} from "../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions"
+
 import TabelaAcertosDocumentos from "./TabelaAcertosDocumentos";
 import {FiltrosAcertosDeLancamentos} from "./FiltrosAcertosDeLancamentos";
-import {useCarregaPrestacaoDeContasPorUuid} from "../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
-import {visoesService} from "../../../services/visoes.service";
 
-const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, analiseAtualUuid}) => {
+// Hooks Personalizados
+import {useCarregaPrestacaoDeContasPorUuid} from "../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
+
+const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAcertos=true, exibeBtnIrParaPaginaDeReceitaOuDespesa=false, prestacaoDeContasUuid, analiseAtualUuid}) => {
 
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacaoDeContasUuid)
 
@@ -74,8 +71,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, an
     useEffect(()=>{
         carregaDadosDasContasDaAssociacao()
     }, [carregaDadosDasContasDaAssociacao, analiseAtualUuid])
-
-
 
     const carregaAcertosLancamentos = useCallback(async (conta_uuid, filtrar_por_lancamento=null, filtrar_por_tipo_de_ajuste=null) => {
         setContaUuid(conta_uuid)
@@ -135,31 +130,30 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, an
 
     const rowExpansionTemplateLancamentos = (data) => {
         if (data && data.analise_lancamento && data.analise_lancamento.solicitacoes_de_ajuste_da_analise && data.analise_lancamento.solicitacoes_de_ajuste_da_analise.length > 0) {
-            let visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
             return (
                 <>
-                {data.analise_lancamento.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
-                    <Fragment key={ajuste.id}>
-                        <div className='row'>
-                            <div className='col-12 px-4 py-2'>
-                                <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
-                                    <p className='mb-1'><strong>Item {index + 1}</strong></p>
+                    {data.analise_lancamento.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
+                        <Fragment key={ajuste.id}>
+                            <div className='row'>
+                                <div className='col-12 px-4 py-2'>
+                                    <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
+                                        <p className='mb-1'><strong>Item {index + 1}</strong></p>
+                                    </div>
+                                    <p className='mb-1'><strong>Tipo de acerto</strong></p>
+                                    <p>{ajuste.tipo_acerto.nome}</p>
+                                    <p className='mb-1'><strong>Detalhamento</strong></p>
+                                    <p className='mb-0'>{ajuste.detalhamento}</p>
                                 </div>
-                                <p className='mb-1'><strong>Tipo de acerto</strong></p>
-                                <p>{ajuste.tipo_acerto.nome}</p>
-                                <p className='mb-1'><strong>Detalhamento</strong></p>
-                                <p className='mb-0'>{ajuste.detalhamento}</p>
                             </div>
-                        </div>
-                    </Fragment>
-                ))}
-                    { visao_selecionada === 'DRE' &&
-                        <p className='text-right border-top pt-3'>
-                            <button onClick={() => redirecionaDetalhe(data)} className='btn btn-outline-success'>
-                                <strong>Ir para página de acertos</strong></button>
-                        </p>
+                        </Fragment>
+                    ))}
+                    {exibeBtnIrParaPaginaDeAcertos &&
+                    redirecionaDetalheAcerto(data)
                     }
-                        </>
+                    {exibeBtnIrParaPaginaDeReceitaOuDespesa &&
+                    redirecionaDetalheReceitaOuDespesa(data)
+                    }
+                </>
             )
         }
     };
@@ -168,7 +162,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, an
         if (data && data.solicitacoes_de_ajuste_da_analise && data.solicitacoes_de_ajuste_da_analise.length > 0) {
             return (
                 data.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
-
                     <div className='row p-2' style={{overflow: 'hidden'}} key={ajuste.id}>
                         <div className='col-12'>
                             <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
@@ -178,7 +171,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, an
                             <p className='mb-0'>{ajuste.tipo_acerto.nome}</p>
                         </div>
                     </div>
-
                 ))
             )
         }
@@ -190,39 +182,67 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, an
         history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos/${prestacaoDeContas.uuid}`)
     }
 
-    const redirecionaDetalhe = (lancamento) => {
-        addDispatchRedireciona(lancamento)
+    const redirecionaDetalheAcerto = (lancamento) => {
+        return(
+            <p className='text-right border-top pt-3'><button onClick={()=>addDispatchRedireciona(lancamento)} className='btn btn-outline-success'><strong>Ir para página de acertos</strong></button></p>
+        )
+    }
+
+    const redirecionaPaginaDespesaOuReceita = (data) => {
+        let url;
+        if (data && data.tipo_transacao === 'Gasto' && data.documento_mestre){
+            if (data.documento_mestre.receitas_saida_do_recurso) {
+                url = `/cadastro-de-despesa-recurso-proprio/${data.documento_mestre.receitas_saida_do_recurso}/${data.documento_mestre.uuid}`
+            } else {
+                url = '/edicao-de-despesa/' + data.documento_mestre.uuid;
+            }
+        }else if (data.tipo_transacao === 'Crédito' && data.documento_mestre){
+            url = `/edicao-de-receita/${data.documento_mestre.uuid}`
+        }
+        history.push(url)
+    };
+
+    const redirecionaDetalheReceitaOuDespesa = (data) =>{
+        let tipo_de_transacao;
+        if (data.tipo_transacao === 'Gasto'){
+            tipo_de_transacao = 'despesa'
+        }else if (data.tipo_transacao === 'Crédito'){
+            tipo_de_transacao = 'receita'
+        }
+        return(
+            <p className='text-right border-top pt-3'><button onClick={()=>redirecionaPaginaDespesaOuReceita(data)} className='btn btn-outline-success'><strong>Ir para {tipo_de_transacao}</strong></button></p>
+        )
     }
 
     return(
         <>
             <h5 className="mb-4 mt-4"><strong>Acertos nos lançamentos</strong></h5>
-                <>
-                    <TabsAcertosEmLancamentosPorConta
-                        contasAssociacao={contasAssociacao}
-                        carregaAcertosLancamentos={carregaAcertosLancamentos}
-                        setStateFiltros={setStateFiltros}
-                        initialStateFiltros={initialStateFiltros}
-                        analiseAtualUuid={analiseAtualUuid}
-                        toggleBtnEscolheConta={toggleBtnEscolheConta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
-                    >
-                        <FiltrosAcertosDeLancamentos
-                            stateFiltros={stateFiltros}
-                            listaTiposDeAcertoLancamentos={listaTiposDeAcertoLancamentos}
-                            handleChangeFiltros={handleChangeFiltros}
-                            handleSubmitFiltros={handleSubmitFiltros}
-                            limpaFiltros={limpaFiltros}
-                        />
-                        {loadingLancamentos ? (
-                                <Loading
-                                    corGrafico="black"
-                                    corFonte="dark"
-                                    marginTop="0"
-                                    marginBottom="0"
-                                />
-                            ) :
-                            <>
+            <>
+                <TabsAcertosEmLancamentosPorConta
+                    contasAssociacao={contasAssociacao}
+                    carregaAcertosLancamentos={carregaAcertosLancamentos}
+                    setStateFiltros={setStateFiltros}
+                    initialStateFiltros={initialStateFiltros}
+                    analiseAtualUuid={analiseAtualUuid}
+                    toggleBtnEscolheConta={toggleBtnEscolheConta}
+                    clickBtnEscolheConta={clickBtnEscolheConta}
+                >
+                    <FiltrosAcertosDeLancamentos
+                        stateFiltros={stateFiltros}
+                        listaTiposDeAcertoLancamentos={listaTiposDeAcertoLancamentos}
+                        handleChangeFiltros={handleChangeFiltros}
+                        handleSubmitFiltros={handleSubmitFiltros}
+                        limpaFiltros={limpaFiltros}
+                    />
+                    {loadingLancamentos ? (
+                            <Loading
+                                corGrafico="black"
+                                corFonte="dark"
+                                marginTop="0"
+                                marginBottom="0"
+                            />
+                        ) :
+                        <>
                             <TabelaAcertosLancamentos
                                 lancamentosAjustes={lancamentosAjustes}
                                 expandedRowsLancamentos={expandedRowsLancamentos}
@@ -232,34 +252,33 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({prestacaoDeContasUuid, an
                                 valor_template={valor_template}
                                 dataTemplate={dataTemplate}
                                 numeroDocumentoTemplate={numeroDocumentoTemplate}
-                                redirecionaDetalhe={redirecionaDetalhe}
                             />
-                            </>
-                        }
-                    </TabsAcertosEmLancamentosPorConta>
-
-                    <hr className="mt-4 mb-3"/>
-                    <h5 className="mb-4 mt-4"><strong>Acertos nos documentos</strong></h5>
-                    {loadingDocumentos ? (
-                            <Loading
-                                corGrafico="black"
-                                corFonte="dark"
-                                marginTop="0"
-                                marginBottom="0"
-                            />
-                        ) :
-                    lancamentosDocumentos && lancamentosDocumentos.length > 0 ? (
-                        <TabelaAcertosDocumentos
-                            lancamentosDocumentos={lancamentosDocumentos}
-                            rowsPerPageAcertosDocumentos={rowsPerPageAcertosDocumentos}
-                            expandedRowsDocumentos={expandedRowsDocumentos}
-                            setExpandedRowsDocumentos={setExpandedRowsDocumentos}
-                            rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
-                        />
-                    ):
-                        <p className='text-center fonte-18 mt-4'><strong>Não existem documentos para serem exibidos</strong></p>
+                        </>
                     }
-                </>
+                </TabsAcertosEmLancamentosPorConta>
+
+                <hr className="mt-4 mb-3"/>
+                <h5 className="mb-4 mt-4"><strong>Acertos nos documentos</strong></h5>
+                {loadingDocumentos ? (
+                        <Loading
+                            corGrafico="black"
+                            corFonte="dark"
+                            marginTop="0"
+                            marginBottom="0"
+                        />
+                    ) :
+                    lancamentosDocumentos && lancamentosDocumentos.length > 0 ? (
+                            <TabelaAcertosDocumentos
+                                lancamentosDocumentos={lancamentosDocumentos}
+                                rowsPerPageAcertosDocumentos={rowsPerPageAcertosDocumentos}
+                                expandedRowsDocumentos={expandedRowsDocumentos}
+                                setExpandedRowsDocumentos={setExpandedRowsDocumentos}
+                                rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
+                            />
+                        ):
+                        <p className='text-center fonte-18 mt-4'><strong>Não existem documentos para serem exibidos</strong></p>
+                }
+            </>
         </>
     )
 }

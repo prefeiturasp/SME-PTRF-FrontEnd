@@ -1,6 +1,7 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEye} from "@fortawesome/free-solid-svg-icons";
+import {faEye, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import ReactTooltip from "react-tooltip";
 
 export const DashboardCard = ({itensDashboard, handleClickVerPrestacaoes}) => {
     return (
@@ -14,7 +15,19 @@ export const DashboardCard = ({itensDashboard, handleClickVerPrestacaoes}) => {
                             </div>
                             <hr className="mt-0 mb-0 ml-3 mr-3"/>
                             <div className="card-body">
-                                <p className="card-text card-qtde-associacoes  mb-0 pb-3">{card.quantidade_prestacoes}</p>
+                                <div className="card-text card-qtde-associacoes  mb-0 pb-3 d-flex justify-content-between">
+                                    <span>{card.quantidade_prestacoes}</span>
+                                    {card.quantidade_retornadas >= 1 &&
+                                        <span data-tip={card.quantidade_retornadas > 1 ? '<p class="mb-0">Existem ' + card.quantidade_retornadas + ' prestações</p> <p class="mb-0">retornadas das U.Es</p>' : '<p class="mb-0">Existe ' + card.quantidade_retornadas + ' prestação</p><p class="mb-0"> retornada das U.Es</p>' } data-html={true}>
+                                            <FontAwesomeIcon
+                                                style={{fontSize: '18px', marginLeft: "3px", color: '#C65D00'}}
+                                                icon={faInfoCircle}
+                                            />
+                                            <ReactTooltip/>
+                                        </span>
+                                    }
+                                </div>
+
                                 <p className="text-center">
                                     <button
                                         onClick={() => handleClickVerPrestacaoes(card.status)}

@@ -1,5 +1,5 @@
 import React from "react";
-import {Cabecalho} from "./Cabecalho";
+import Cabecalho from "./Cabecalho";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
@@ -15,6 +15,7 @@ import ConferenciaDeLancamentos from "./ConferenciaDeLancamentos";
 import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
 import {BotaoSalvarRodape} from "./BotaoSalvarRodape";
 import ConferenciaDeDocumentos from "./ConferenciaDeDocumentos";
+import DevolutivaDaAssociacao from "./DevolutivaDaAssociacao";
 
 
 export const GetComportamentoPorStatus = (
@@ -66,6 +67,10 @@ export const GetComportamentoPorStatus = (
         btnSalvarDisabled,
         setBtnSalvarDisabled,
         carregaPrestacaoDeContas,
+        dataRecebimentoDevolutiva,
+        handleChangedataRecebimentoDevolutiva,
+        receberAposAcertos,
+        desfazerReceberAposAcertos,
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
@@ -295,6 +300,163 @@ export const GetComportamentoPorStatus = (
                         editavel={true}
                         retornaNumeroOrdinal={retornaNumeroOrdinal}
                     />
+                    <InformacoesPrestacaoDeContas
+                        handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
+                        informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
+                        editavel={false}
+                    />
+                    <TabsArquivosDeReferencia
+                        infoAta={infoAta}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        exibeAtaPorConta={exibeAtaPorConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        infoAtaPorConta={infoAtaPorConta}
+
+                        // Props AnalisesDeContaDaPrestacao
+                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
+                        getObjetoIndexAnalise={getObjetoIndexAnalise}
+                        editavel={false}
+
+                        // Props ResumoFinanceiroTabelaTotais
+                        valorTemplate={valorTemplate}
+
+                        // Props ResumoFinanceiroTabelaAcoes
+                        toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
+                        clickBtnTabelaAcoes={clickBtnTabelaAcoes}
+                    />
+                    <ComentariosDeAnalise
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                </>
+            )
+        } else if (prestacaoDeContas.status === 'DEVOLVIDA_RETORNADA') {
+            return (
+                <>
+                    <Cabecalho
+                        prestacaoDeContas={prestacaoDeContas}
+                        exibeSalvar={false}
+                    />
+                    <BotoesAvancarRetroceder
+                        prestacaoDeContas={prestacaoDeContas}
+                        esconderBotaoRetroceder={true}
+                        textoBtnAvancar={"Receber após acertos"}
+                        metodoAvancar={() => receberAposAcertos(prestacaoDeContas)}
+                        disabledBtnAvancar={!dataRecebimentoDevolutiva}
+                    />
+                    <TrilhaDeStatus
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                    <FormRecebimentoPelaDiretoria
+                        handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
+                        stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
+                        tabelaPrestacoes={tabelaPrestacoes}
+                        disabledNome={true}
+                        disabledData={true}
+                        disabledStatus={true}
+                        exibeMotivo={false}
+                    />
+                    <DevolucoesPrestacaoDeContas
+                        prestacaoDeContas={prestacaoDeContas}
+                        retornaNumeroOrdinal={retornaNumeroOrdinal}
+                        excluiUltimaCobranca={true}
+                    />
+                    <CobrancaDevolucoesPrestacaoDeContas
+                        listaDeCobrancasDevolucoes={listaDeCobrancasDevolucoes}
+                        dataCobrancaDevolucoes={dataCobrancaDevolucoes}
+                        handleChangeDataCobrancaDevolucoes={handleChangeDataCobrancaDevolucoes}
+                        addCobrancaDevolucoes={addCobrancaDevolucoes}
+                        deleteCobrancaDevolucoes={deleteCobrancaDevolucoes}
+                        editavel={true}
+                        retornaNumeroOrdinal={retornaNumeroOrdinal}
+                    />
+
+                    <DevolutivaDaAssociacao
+                        prestacaoDeContas={prestacaoDeContas}
+                        dataRecebimentoDevolutiva={dataRecebimentoDevolutiva}
+                        handleChangedataRecebimentoDevolutiva={handleChangedataRecebimentoDevolutiva}
+                    />
+
+                    <InformacoesPrestacaoDeContas
+                        handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
+                        informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
+                        editavel={false}
+                    />
+                    <TabsArquivosDeReferencia
+                        infoAta={infoAta}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        exibeAtaPorConta={exibeAtaPorConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        infoAtaPorConta={infoAtaPorConta}
+
+                        // Props AnalisesDeContaDaPrestacao
+                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
+                        getObjetoIndexAnalise={getObjetoIndexAnalise}
+                        editavel={false}
+
+                        // Props ResumoFinanceiroTabelaTotais
+                        valorTemplate={valorTemplate}
+
+                        // Props ResumoFinanceiroTabelaAcoes
+                        toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
+                        clickBtnTabelaAcoes={clickBtnTabelaAcoes}
+                    />
+                    <ComentariosDeAnalise
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                </>
+            )
+        } else if (prestacaoDeContas.status === 'DEVOLVIDA_RECEBIDA') {
+            return (
+                <>
+                    <Cabecalho
+                        prestacaoDeContas={prestacaoDeContas}
+                        exibeSalvar={false}
+                    />
+                    <BotoesAvancarRetroceder
+                        prestacaoDeContas={prestacaoDeContas}
+                        textoBtnAvancar={"Analisar"}
+                        textoBtnRetroceder={"Retornada após acerto"}
+                        metodoAvancar={analisarPrestacaoDeContas}
+                        metodoRetroceder={() => desfazerReceberAposAcertos(prestacaoDeContas)}
+                        disabledBtnAvancar={false}
+                        disabledBtnRetroceder={false}
+                    />
+                    <TrilhaDeStatus
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                    <FormRecebimentoPelaDiretoria
+                        handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
+                        stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
+                        tabelaPrestacoes={tabelaPrestacoes}
+                        disabledNome={true}
+                        disabledData={true}
+                        disabledStatus={true}
+                        exibeMotivo={false}
+                    />
+                    <DevolucoesPrestacaoDeContas
+                        prestacaoDeContas={prestacaoDeContas}
+                        retornaNumeroOrdinal={retornaNumeroOrdinal}
+                        excluiUltimaCobranca={true}
+                    />
+                    <CobrancaDevolucoesPrestacaoDeContas
+                        listaDeCobrancasDevolucoes={listaDeCobrancasDevolucoes}
+                        dataCobrancaDevolucoes={dataCobrancaDevolucoes}
+                        handleChangeDataCobrancaDevolucoes={handleChangeDataCobrancaDevolucoes}
+                        addCobrancaDevolucoes={addCobrancaDevolucoes}
+                        deleteCobrancaDevolucoes={deleteCobrancaDevolucoes}
+                        editavel={true}
+                        retornaNumeroOrdinal={retornaNumeroOrdinal}
+                    />
+
+                    <DevolutivaDaAssociacao
+                        prestacaoDeContas={prestacaoDeContas}
+                        dataRecebimentoDevolutiva={dataRecebimentoDevolutiva}
+                        handleChangedataRecebimentoDevolutiva={handleChangedataRecebimentoDevolutiva}
+                        editavel={false}
+                    />
+
                     <InformacoesPrestacaoDeContas
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}

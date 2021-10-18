@@ -2,10 +2,13 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useParams, Redirect, useLocation} from "react-router-dom";
 import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {
-    getDesfazerConclusaoAnalise, getMotivosAprovadoComRessalva,
-    getPrestacaoDeContasDetalhe
+    getDesfazerConclusaoAnalise,
+    getMotivosAprovadoComRessalva,
+    getPrestacaoDeContasDetalhe,
+    patchDesfazerReceberAposAcertos
 } from "../../../../services/dres/PrestacaoDeContas.service";
 import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
+import {patchReceberAposAcertos} from "../../../../services/dres/PrestacaoDeContas.service";
 import {getDespesa} from "../../../../services/escolas/Despesas.service";
 import moment from "moment";
 import {ModalReabrirPc} from "../ModalReabrirPC";
@@ -19,6 +22,8 @@ import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios"
 import {GetComportamentoPorStatus} from "./GetComportamentoPorStatus";
 import {ModalSalvarPrestacaoDeContasAnalise} from "../../../../utils/Modais";
 import Loading from "../../../../utils/Loading";
+import {toastCustom} from "../../../Globais/ToastCustom";
+
 
 require("ordinal-pt-br");
 
@@ -207,6 +212,10 @@ export const DetalhePrestacaoDeContas = () =>{
         if (prestacao_conta_uuid){
             let prestacao = await getPrestacaoDeContasDetalhe(prestacao_conta_uuid);
             setPrestacaoDeContas(prestacao);
+
+            // Devolutiva da Associacao
+            setDataRecebimentoDevolutiva(prestacao.data_recebimento_apos_acertos ? moment(prestacao.data_recebimento_apos_acertos) : '')
+
             setStateFormRecebimentoPelaDiretoria({
                 ...stateFormRecebimentoPelaDiretoria,
                 tecnico_atribuido: prestacao && prestacao.tecnico_responsavel && prestacao.tecnico_responsavel.nome ? prestacao.tecnico_responsavel.nome : '',
@@ -307,6 +316,7 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const receberPrestacaoDeContas = async ()=>{
+        setLoading(true)
         let dt_recebimento = stateFormRecebimentoPelaDiretoria.data_recebimento ? moment(new Date(stateFormRecebimentoPelaDiretoria.data_recebimento), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
         let payload = {
             data_recebimento: dt_recebimento,
@@ -314,6 +324,7 @@ export const DetalhePrestacaoDeContas = () =>{
         await getReceberPrestacaoDeContas(prestacaoDeContas.uuid, payload);
         await carregaPrestacaoDeContas();
         setRedirectListaPc(false);
+        setLoading(false)
     };
 
     const reabrirPrestacaoDeContas = async ()=>{
@@ -333,18 +344,24 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const desfazerRecebimento = async () =>{
+        setLoading(true)
         await getDesfazerRecebimento(prestacaoDeContas.uuid);
         await carregaPrestacaoDeContas();
+        setLoading(false)
     };
 
     const analisarPrestacaoDeContas = async () =>{
+        setLoading(true)
         await getAnalisarPrestacaoDeContas(prestacaoDeContas.uuid);
         await carregaPrestacaoDeContas();
+        setLoading(false)
     };
 
     const desfazerAnalise = async () =>{
+        setLoading(true)
         await getDesfazerAnalise(prestacaoDeContas.uuid);
         await carregaPrestacaoDeContas();
+        setLoading(false)
     };
 
     // Ata
@@ -728,6 +745,42 @@ export const DetalhePrestacaoDeContas = () =>{
         return errors;
     };
 
+    // Receber apos acertos
+    const [dataRecebimentoDevolutiva, setDataRecebimentoDevolutiva] = useState('')
+
+    const handleChangedataRecebimentoDevolutiva = (name, value) => {
+        setDataRecebimentoDevolutiva(value);
+    };
+
+    const receberAposAcertos = async (prestacao_de_contas) => {
+        setLoading(true)
+        let data_formatada = moment(new Date(dataRecebimentoDevolutiva)).format('YYYY-MM-DD')
+        let payload = {
+            data_recebimento_apos_acertos: data_formatada,
+        }
+        try {
+            await patchReceberAposAcertos(prestacao_de_contas.uuid, payload)
+            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Recebida após acertos”.')
+        }catch (e) {
+            console.log("Erro ao Receber após acertos", e.response)
+        }
+        await carregaPrestacaoDeContas();
+        setLoading(false)
+    }
+
+
+    const desfazerReceberAposAcertos =async (prestacao_de_contas) => {
+        setLoading(true)
+        try {
+            await patchDesfazerReceberAposAcertos(prestacao_de_contas.uuid)
+            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Retornada após acertos”.')
+        }catch (e) {
+            console.log("Erro ao Desfazer Receber após acertos", e.response)
+        }
+        await carregaPrestacaoDeContas();
+        setLoading(false)
+    }
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -798,6 +851,10 @@ export const DetalhePrestacaoDeContas = () =>{
                                     btnSalvarDisabled={btnSalvarDisabled}
                                     setBtnSalvarDisabled={setBtnSalvarDisabled}
                                     carregaPrestacaoDeContas={carregaPrestacaoDeContas}
+                                    dataRecebimentoDevolutiva={dataRecebimentoDevolutiva}
+                                    handleChangedataRecebimentoDevolutiva={handleChangedataRecebimentoDevolutiva}
+                                    receberAposAcertos={receberAposAcertos}
+                                    desfazerReceberAposAcertos={desfazerReceberAposAcertos}
                                 />
                         }
                     </>
