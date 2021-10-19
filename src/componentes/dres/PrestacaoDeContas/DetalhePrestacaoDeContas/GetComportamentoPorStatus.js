@@ -10,7 +10,6 @@ import {InformacoesDevolucaoAoTesouro} from "./InformacoesDevolucaoAoTesouro";
 import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
 import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
 import {TabsArquivosDeReferencia} from "./ArquivosDeReferencia/TabsArquivosDeReferencia";
-import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferencia/ArquivosDeReferenciaVisualizacaoDownload";
 import ConferenciaDeLancamentos from "./ConferenciaDeLancamentos";
 import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
 import {BotaoSalvarRodape} from "./BotaoSalvarRodape";
@@ -225,10 +224,11 @@ export const GetComportamentoPorStatus = (
                         // Props ResumoFinanceiroTabelaAcoes
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
-                    />
-                    <ArquivosDeReferenciaVisualizacaoDownload
+
+                        //ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
                     />
+
                     <ConferenciaDeLancamentos
                         infoAta={infoAta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
