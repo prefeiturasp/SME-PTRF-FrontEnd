@@ -277,8 +277,8 @@ export const getRelatorioAcertosInfo = async(analise_atual_uuid) => {
     return (await api.get(`/api/analises-prestacoes-contas/status-info/?analise_prestacao_uuid=${analise_atual_uuid}`, authHeader)).data
 };
 
-export const gerarPreviaRelatorioAcertos = async (analise_prestacao_uuid, conta_associacao_cheque_uuid, conta_associacao_cartao_uuid) => {
-    return (await api.get(`/api/analises-prestacoes-contas/previa/?analise_prestacao_uuid=${analise_prestacao_uuid}&conta_associacao_cheque_uuid=${conta_associacao_cheque_uuid}&conta_associacao_cartao_uuid=${conta_associacao_cartao_uuid}`, authHeader)).data
+export const gerarPreviaRelatorioAcertos = async (analise_prestacao_uuid) => {
+    return (await api.get(`/api/analises-prestacoes-contas/previa/?analise_prestacao_uuid=${analise_prestacao_uuid}`, authHeader)).data
 };
 
 

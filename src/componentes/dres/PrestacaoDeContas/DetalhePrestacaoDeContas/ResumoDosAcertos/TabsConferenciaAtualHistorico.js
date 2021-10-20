@@ -56,6 +56,12 @@ const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLim
                             prestacaoDeContasUuid={prestacao_conta_uuid}
                             analiseAtualUuid={analiseAtualUuid}
                         />
+
+                        <RelatorioDosAcertos
+                            prestacaoDeContasUuid={prestacao_conta_uuid}
+                            analiseAtualUuid={analiseAtualUuid}
+                            podeGerarPrevia={false}
+                        />
                     </>
 
                 </div>
