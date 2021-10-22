@@ -4,8 +4,9 @@ import {ResumoFinanceiroTabelaAcoes} from "../ResumoFinanceiroTabelaAcoes";
 import {AnalisesDeContaDaPrestacao} from "../AnalisesDeContaDaPrestacao";
 import {ResumoFinanceiroTabelaTotais} from "../ResumoFinanceiroTabelaTotais";
 import Loading from "../../../../../utils/Loading";
+import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferenciaVisualizacaoDownload";
 
-export const TabsArquivosDeReferencia = ({infoAta, toggleBtnEscolheConta, exibeAtaPorConta, clickBtnEscolheConta, infoAtaPorConta, ...rest}) => {
+export const TabsArquivosDeReferencia = ({prestacaoDeContas, infoAta, toggleBtnEscolheConta, exibeAtaPorConta, clickBtnEscolheConta, infoAtaPorConta, ...rest}) => {
 
     return (
         <>
@@ -58,6 +59,7 @@ export const TabsArquivosDeReferencia = ({infoAta, toggleBtnEscolheConta, exibeA
                                         infoAta={infoAtaPorConta}
                                         valorTemplate={rest.valorTemplate}
                                     />
+
                                 </TabsArquivosDeReferenciaAccordion>
 
                                 <TabsArquivosDeReferenciaAccordion
@@ -71,7 +73,13 @@ export const TabsArquivosDeReferencia = ({infoAta, toggleBtnEscolheConta, exibeA
                                         toggleBtnTabelaAcoes={rest.toggleBtnTabelaAcoes}
                                         clickBtnTabelaAcoes={rest.clickBtnTabelaAcoes}
                                     />
+
                                 </TabsArquivosDeReferenciaAccordion>
+
+                                <ArquivosDeReferenciaVisualizacaoDownload
+                                    prestacaoDeContas={prestacaoDeContas}
+                                    infoAta={infoAtaPorConta}
+                                />
                             </>
                         </div>
                     </div>

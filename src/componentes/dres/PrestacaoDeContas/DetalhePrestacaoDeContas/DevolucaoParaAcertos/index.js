@@ -3,13 +3,18 @@ import {Link} from "react-router-dom";
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 import './devolucao-para-acertos.scss'
 import moment from "moment";
-import {getConcluirAnalise, getLancamentosAjustes, getDocumentosAjustes} from "../../../../../services/dres/PrestacaoDeContas.service";
+import {
+    getConcluirAnalise,
+    getLancamentosAjustes,
+    getDocumentosAjustes,
+    getUltimaAnalisePc
+} from "../../../../../services/dres/PrestacaoDeContas.service";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../../../utils/Loading";
 import {ModalErroDevolverParaAcerto} from "./ModalErroDevolverParaAcerto";
 import {ModalConfirmaDevolverParaAcerto} from "./ModalConfirmaDevolverParaAcerto";
 
-const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas, infoAta}) => {
+const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas, infoAta, editavel=true}) => {
 
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalErroDevolverParaAcerto, setShowModalErroDevolverParaAcerto] = useState(false)
@@ -20,7 +25,6 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
     const [loading, setLoading] = useState(true)
     const [btnDevolverParaAcertoDisabled, setBtnDevolverParaAcertoDisabled] = useState(false)
 
-    // Quando a state de listaDeFornecedores sofrer alteração
     const totalLancamentosAjustes = useMemo(() => lancamentosAjustes.length, [lancamentosAjustes]);
     const totalDocumentosAjustes = useMemo(() => documentosAjustes.length, [documentosAjustes]);
 
@@ -29,9 +33,21 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
         let mounted = true;
 
         const verificaSeTemSolicitacaoAcertos = async () =>{
-            if (prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid && infoAta && infoAta.contas && infoAta.contas.length > 0){
-                let analise_atual_uuid = prestacaoDeContas.analise_atual.uuid
-                if (mounted) {
+            let analise_atual_uuid;
+            if (editavel) {
+                if (prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid && infoAta && infoAta.contas && infoAta.contas.length > 0) {
+                    analise_atual_uuid = prestacaoDeContas.analise_atual.uuid
+                }
+            }else {
+                if (prestacaoDeContas && prestacaoDeContas.uuid){
+                    let ultima_analise =  await getUltimaAnalisePc(prestacaoDeContas.uuid)
+                    if (ultima_analise && ultima_analise.uuid){
+                        analise_atual_uuid = ultima_analise.uuid
+                    }
+                }
+            }
+            if (mounted) {
+                if (infoAta && infoAta.contas && infoAta.contas.length > 0) {
                     return await infoAta.contas.map(async (conta) => {
                         let lancamentos_ajustes = await getLancamentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
                         setLancamentosAjustes(prevState => ([...prevState, ...lancamentos_ajustes]))
@@ -43,12 +59,11 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
         }
         verificaSeTemSolicitacaoAcertos()
         setLoading(false)
-
         return () =>{
             mounted = false;
         }
 
-    }, [infoAta, prestacaoDeContas])
+    }, [infoAta, prestacaoDeContas, editavel])
 
     const handleChangeDataLimiteDevolucao = useCallback((name, value) => {
         setDataLimiteDevolucao(value)
@@ -97,81 +112,82 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
         <>
             <hr className='mt-4 mb-3'/>
             <h4  id='devolucao_para_acerto' className='mb-4'>Devolução para acertos</h4>
-                {analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0 && !loading  ? (
-                        <>
-                            <p className='mt-4'>Caso deseje enviar todos esses apontamentos a Associação, determine o prazo e clique em "Devolver para a Associação".</p>
-                            <div className="d-flex mt-4">
-                                <div className="flex-grow-1">
-                                    <span className='mr-2'>Prazo para reenvio:</span>
-                                    <DatePickerField
-                                        value={dataLimiteDevolucao}
-                                        onChange={handleChangeDataLimiteDevolucao}
-                                        name='data_limite_devolucao'
-                                        type="date"
-                                        className="form-control datepicker-devolucao-para-acertos"
-                                        wrapperClassName="container-datepicker-devolucao-para-acertos"
-                                    />
-                                </div>
-                                <div>
-                                    <Link onClick={ (totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null : (event) => event.preventDefault() }
-                                          to={{
-                                              pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
-                                              state: {
-                                                  analisesDeContaDaPrestacao: analisesDeContaDaPrestacao,
-                                                  totalLancamentosAjustes: totalLancamentosAjustes,
-                                                  totalDocumentosAjustes: totalDocumentosAjustes,
-                                              }
-                                          }}
-                                          className="btn btn-outline-success mr-2"
-                                          disabled={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
-                                          readOnly={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
-                                    >
-                                        Ver resumo
-                                    </Link>
-                                </div>
-                                <div>
-                                    <button
-                                        disabled={!dataLimiteDevolucao || btnDevolverParaAcertoDisabled}
-                                        onClick={()=>setShowModalConfirmaDevolverParaAcerto(true)}
-                                        className="btn btn-success"
-                                    >
-                                        Devolver para Associação
-                                    </button>
-                                </div>
+            {analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0 && !loading  ? (
+                    <>
+                        <p className='mt-4'>Caso deseje enviar todos esses apontamentos a Associação, determine o prazo e clique em "Devolver para a Associação".</p>
+                        <div className="d-flex mt-4">
+                            <div className="flex-grow-1">
+                                <span className='mr-2'>Prazo para reenvio:</span>
+                                <DatePickerField
+                                    value={dataLimiteDevolucao}
+                                    onChange={handleChangeDataLimiteDevolucao}
+                                    name='data_limite_devolucao'
+                                    type="date"
+                                    className="form-control datepicker-devolucao-para-acertos"
+                                    wrapperClassName="container-datepicker-devolucao-para-acertos"
+                                    disabled={!editavel}
+                                />
                             </div>
-                            <section>
-                                <ModalErroDevolverParaAcerto
-                                    show={showModalErroDevolverParaAcerto}
-                                    handleClose={() => setShowModalErroDevolverParaAcerto(false)}
-                                    titulo='Devolução para acerto não permitida'
-                                    texto={textoErroDevolverParaAcerto}
-                                    primeiroBotaoTexto="Fechar"
-                                    primeiroBotaoCss="success"
-                                />
-                            </section>
-                            <section>
-                                <ModalConfirmaDevolverParaAcerto
-                                    show={showModalConfirmaDevolverParaAcerto}
-                                    handleClose={() => setShowModalConfirmaDevolverParaAcerto(false)}
-                                    onDevolverParaAcertoTrue={devolverParaAcertos}
-                                    titulo="Mudança de Status"
-                                    texto='<p>Ao notificar a Associação sobre as ”Devolução para Acertos" dessa prestação de contas, será reaberto o período para que a Associação possa realizar os ajustes pontuados até o prazo determinado.</p>
+                            <div>
+                                <Link onClick={ (totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null : (event) => event.preventDefault() }
+                                      to={{
+                                          pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
+                                          state: {
+                                              analisesDeContaDaPrestacao: analisesDeContaDaPrestacao,
+                                              editavel: editavel,
+                                              infoAta: infoAta,
+                                          }
+                                      }}
+                                      className="btn btn-outline-success mr-2"
+                                      disabled={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
+                                      readOnly={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
+                                >
+                                    Ver resumo
+                                </Link>
+                            </div>
+                            <div>
+                                <button
+                                    disabled={!dataLimiteDevolucao || btnDevolverParaAcertoDisabled || !editavel}
+                                    onClick={()=>setShowModalConfirmaDevolverParaAcerto(true)}
+                                    className="btn btn-success"
+                                >
+                                    Devolver para Associação
+                                </button>
+                            </div>
+                        </div>
+                        <section>
+                            <ModalErroDevolverParaAcerto
+                                show={showModalErroDevolverParaAcerto}
+                                handleClose={() => setShowModalErroDevolverParaAcerto(false)}
+                                titulo='Devolução para acerto não permitida'
+                                texto={textoErroDevolverParaAcerto}
+                                primeiroBotaoTexto="Fechar"
+                                primeiroBotaoCss="success"
+                            />
+                        </section>
+                        <section>
+                            <ModalConfirmaDevolverParaAcerto
+                                show={showModalConfirmaDevolverParaAcerto}
+                                handleClose={() => setShowModalConfirmaDevolverParaAcerto(false)}
+                                onDevolverParaAcertoTrue={devolverParaAcertos}
+                                titulo="Mudança de Status"
+                                texto='<p>Ao notificar a Associação sobre as ”Devolução para Acertos" dessa prestação de contas, será reaberto o período para que a Associação possa realizar os ajustes pontuados até o prazo determinado.</p>
                                             <p>A prestação será movida para o <strong>status de ”Devolução para Acertos”</strong> e ficará nesse status até a Associação realizar um novo envio. Deseja continuar?</p>'
-                                    primeiroBotaoTexto="Cancelar"
-                                    primeiroBotaoCss="outline-success"
-                                    segundoBotaoCss="success"
-                                    segundoBotaoTexto="Confirmar"
-                                />
-                            </section>
-                        </>
-                    ):
-                    <Loading
-                        corGrafico="black"
-                        corFonte="dark"
-                        marginTop="0"
-                        marginBottom="0"
-                    />
-                }
+                                primeiroBotaoTexto="Cancelar"
+                                primeiroBotaoCss="outline-success"
+                                segundoBotaoCss="success"
+                                segundoBotaoTexto="Confirmar"
+                            />
+                        </section>
+                    </>
+                ):
+                <Loading
+                    corGrafico="black"
+                    corFonte="dark"
+                    marginTop="0"
+                    marginBottom="0"
+                />
+            }
         </>
     )
 }

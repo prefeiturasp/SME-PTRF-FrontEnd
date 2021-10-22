@@ -276,7 +276,7 @@ export const ListaPrestacaoDeContas = () => {
         } else if (status_converter === 'DEVOLVIDA') {
             return {
                 texto_barra_de_status: 'devolvidas para acerto',
-                texto_col_tabela: 'Devolvida para acerto',
+                texto_col_tabela: 'Devolvida para acertos',
                 texto_titulo: 'Prestações de contas pendentes de análise e recebimento',
             }
         } else if (status_converter === 'DEVOLVIDA_RETORNADA') {
