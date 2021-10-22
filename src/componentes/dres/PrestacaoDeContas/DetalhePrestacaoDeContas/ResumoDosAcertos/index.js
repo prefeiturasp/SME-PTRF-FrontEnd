@@ -7,7 +7,7 @@ import {
     getUltimaAnalisePc, getLancamentosAjustes, getDocumentosAjustes
 } from "../../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
-import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
+import {gerarUuid, trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {ModalErroDevolverParaAcerto} from "../DevolucaoParaAcertos/ModalErroDevolverParaAcerto";
 import TabsConferenciaAtualHistorico from "./TabsConferenciaAtualHistorico";
@@ -36,10 +36,10 @@ export const ResumoDosAcertos = () => {
     const [loading, setLoading] = useState(true)
     const [totalLancamentosAjustes, setTotalLancamentosAjustes] = useState(undefined)
     const [totalDocumentosAjustes, setTotalDocumentosAjustes] = useState(undefined)
+    const [forcaVerificaSeExibeMsg, setForcaVerificaSeExibeMsg] = useState('')
 
     // Necessario para quando voltar da aba Histórico para Conferencia atual
     const setAnaliseAtualUuidComPCAnaliseAtualUuid = useCallback(async () => {
-
         let analise_atual_uuid = '';
         if (props.state.editavel) {
             if (prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid) {
@@ -55,9 +55,10 @@ export const ResumoDosAcertos = () => {
             }
         }
         setAnaliseAtualUuid(analise_atual_uuid)
-        // Necessario alterar os estados dos totatis para chamar novamente o método verificaSeExibeMsg setado com undefined
+        // Necessario alterar os estados dos totais para chamar novamente o método verificaSeExibeMsg setado com undefined
         setTotalLancamentosAjustes(undefined)
         setTotalDocumentosAjustes(undefined)
+        setForcaVerificaSeExibeMsg(gerarUuid())
     }, [prestacaoDeContas, props])
 
     useEffect(() => {
@@ -86,7 +87,7 @@ export const ResumoDosAcertos = () => {
             let ultimo_indice_array = analisesDePcDevolvidas.length - 1
             setAnaliseAtualUuid(analisesDePcDevolvidas[ultimo_indice_array].uuid)
         }
-        // Necessario alterar os estados dos totatis para chamar novamente o método verificaSeExibeMsg setado com ''
+        // Necessario alterar os estados dos totais para chamar novamente o método verificaSeExibeMsg setado com ''
         setTotalLancamentosAjustes('')
         setTotalDocumentosAjustes('')
     }, [analisesDePcDevolvidas])
@@ -106,7 +107,7 @@ export const ResumoDosAcertos = () => {
 
     useEffect(() => {
         verificaQtdeLancamentosDocumentosAjustes()
-    }, [verificaQtdeLancamentosDocumentosAjustes])
+    }, [verificaQtdeLancamentosDocumentosAjustes, forcaVerificaSeExibeMsg])
 
     const verificaSeExibeMsg = useCallback(() => {
         setLoading(true)
