@@ -18,7 +18,7 @@ import {FiltrosAcertosDeLancamentos} from "./FiltrosAcertosDeLancamentos";
 // Hooks Personalizados
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 
-const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAcertos=true, exibeBtnIrParaPaginaDeReceitaOuDespesa=false, prestacaoDeContasUuid, analiseAtualUuid}) => {
+const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAcertos=true, exibeBtnIrParaPaginaDeReceitaOuDespesa=false, prestacaoDeContasUuid, analiseAtualUuid, editavel}) => {
 
     const prestacaoDeContas = useCarregaPrestacaoDeContasPorUuid(prestacaoDeContasUuid)
 
@@ -148,10 +148,10 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                         </Fragment>
                     ))}
                     {exibeBtnIrParaPaginaDeAcertos &&
-                    redirecionaDetalheAcerto(data)
+                        redirecionaDetalheAcerto(data)
                     }
                     {exibeBtnIrParaPaginaDeReceitaOuDespesa &&
-                    redirecionaDetalheReceitaOuDespesa(data)
+                        redirecionaDetalheReceitaOuDespesa(data)
                     }
                 </>
             )
@@ -183,9 +183,12 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     }
 
     const redirecionaDetalheAcerto = (lancamento) => {
-        return(
-            <p className='text-right border-top pt-3'><button onClick={()=>addDispatchRedireciona(lancamento)} className='btn btn-outline-success'><strong>Ir para página de acertos</strong></button></p>
-        )
+        if (editavel){
+            return(
+                <p className='text-right border-top pt-3'><button onClick={()=>addDispatchRedireciona(lancamento)} className='btn btn-outline-success'><strong>Ir para página de acertos</strong></button></p>
+            )
+        }
+
     }
 
     const redirecionaPaginaDespesaOuReceita = (data) => {
@@ -203,15 +206,17 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     };
 
     const redirecionaDetalheReceitaOuDespesa = (data) =>{
-        let tipo_de_transacao;
-        if (data.tipo_transacao === 'Gasto'){
-            tipo_de_transacao = 'despesa'
-        }else if (data.tipo_transacao === 'Crédito'){
-            tipo_de_transacao = 'receita'
+        if (editavel){
+            let tipo_de_transacao;
+            if (data.tipo_transacao === 'Gasto'){
+                tipo_de_transacao = 'despesa'
+            }else if (data.tipo_transacao === 'Crédito'){
+                tipo_de_transacao = 'receita'
+            }
+            return(
+                <p className='text-right border-top pt-3'><button onClick={()=>redirecionaPaginaDespesaOuReceita(data)} className='btn btn-outline-success'><strong>Ir para {tipo_de_transacao}</strong></button></p>
+            )
         }
-        return(
-            <p className='text-right border-top pt-3'><button onClick={()=>redirecionaPaginaDespesaOuReceita(data)} className='btn btn-outline-success'><strong>Ir para {tipo_de_transacao}</strong></button></p>
-        )
     }
 
     return(

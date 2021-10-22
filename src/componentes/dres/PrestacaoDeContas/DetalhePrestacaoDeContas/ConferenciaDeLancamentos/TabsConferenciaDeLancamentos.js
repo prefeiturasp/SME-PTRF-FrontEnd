@@ -2,7 +2,7 @@ import React, {Fragment} from "react";
 import TabelaConferenciaDeLancamentos from "./TabelaConferenciaDeLancamentos";
 import Loading from "../../../../../utils/Loading";
 
-export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscolheConta, carregaLancamentosParaConferencia, prestacaoDeContas, setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, loadingLancamentosParaConferencia}) => {
+export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscolheConta, carregaLancamentosParaConferencia, prestacaoDeContas, setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, loadingLancamentosParaConferencia, editavel}) => {
 
     return (
         <>
@@ -50,6 +50,7 @@ export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, cl
                                 contaUuid={contaUuid}
                                 carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
                                 prestacaoDeContas={prestacaoDeContas}
+                                editavel={editavel}
                             />
                         </div>
                     </div>

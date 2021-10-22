@@ -6,15 +6,36 @@ import {MsgImgCentralizada} from "../../../../Globais/Mensagens/MsgImgCentraliza
 import Img404 from "../../../../../assets/img/img-404.svg";
 import CardsDevolucoesParaAcertoDaDre from "../../../../Globais/CardsDevolucoesParaAcertoDaDre";
 
-const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLimiteDevolucao, prestacao_conta_uuid, analiseAtualUuid, exibeMsg, textoMsg, totalAnalisesDePcDevolvidas, setAnaliseAtualUuidComPCAnaliseAtualUuid, setPrimeiraAnalisePcDevolvida, setAnaliseAtualUuid}) =>{
+const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLimiteDevolucao, prestacao_conta_uuid, analiseAtualUuid, exibeMsg, textoMsg, totalAnalisesDePcDevolvidas, setAnaliseAtualUuidComPCAnaliseAtualUuid, setPrimeiraAnalisePcDevolvida, setAnaliseAtualUuid, editavel}) =>{
 
     return(
         <>
             <nav>
                 <div className="nav nav-tabs mb-3 tabs-resumo-dos-acertos" id="nav-tab-conferencia-de-lancamentos" role="tablist">
-                    <a onClick={setAnaliseAtualUuidComPCAnaliseAtualUuid} className="nav-link btn-escolhe-acao active" id="nav-conferencia-atual-tab" data-toggle="tab" href="#nav-conferencia-atual" role="tab" aria-controls="nav-conferencia-atual" aria-selected="true">Conferência atual</a>
+                    <a
+                        onClick={setAnaliseAtualUuidComPCAnaliseAtualUuid}
+                        className="nav-link btn-escolhe-acao active"
+                        id="nav-conferencia-atual-tab" data-toggle="tab"
+                        href="#nav-conferencia-atual"
+                        role="tab"
+                        aria-controls="nav-conferencia-atual"
+                        aria-selected="true"
+                    >
+                        Conferência atual
+                    </a>
                     {totalAnalisesDePcDevolvidas > 0 &&
-                        <a onClick={setPrimeiraAnalisePcDevolvida} className="nav-link btn-escolhe-acao" id="nav-historico-tab" data-toggle="tab" href="#nav-historico" role="tab" aria-controls="nav-historico" aria-selected="false">Histórico</a>
+                        <a
+                            onClick={setPrimeiraAnalisePcDevolvida}
+                            className="nav-link btn-escolhe-acao"
+                            id="nav-historico-tab"
+                            data-toggle="tab"
+                            href="#nav-historico"
+                            role="tab"
+                            aria-controls="nav-historico"
+                            aria-selected="false"
+                        >
+                            Histórico
+                        </a>
                     }
                 </div>
             </nav>
@@ -30,10 +51,12 @@ const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLim
                             <DevolverParaAcertos
                                 dataLimiteDevolucao={dataLimiteDevolucao}
                                 handleChangeDataLimiteDevolucao={handleChangeDataLimiteDevolucao}
+                                editavel={editavel}
                             />
                             <ExibeAcertosEmLancamentosEDocumentosPorConta
                                 prestacaoDeContasUuid={prestacao_conta_uuid}
                                 analiseAtualUuid={analiseAtualUuid}
+                                editavel={editavel}
                             />
 
                             <RelatorioDosAcertos
@@ -55,6 +78,7 @@ const TabsConferenciaAtualHistorico = ({dataLimiteDevolucao, handleChangeDataLim
                         <ExibeAcertosEmLancamentosEDocumentosPorConta
                             prestacaoDeContasUuid={prestacao_conta_uuid}
                             analiseAtualUuid={analiseAtualUuid}
+                            editavel={editavel}
                         />
 
                         <RelatorioDosAcertos

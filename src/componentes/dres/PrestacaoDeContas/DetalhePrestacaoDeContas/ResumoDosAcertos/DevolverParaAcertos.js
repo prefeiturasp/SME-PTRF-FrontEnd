@@ -1,7 +1,7 @@
 import React, {memo} from "react";
 import {DatePickerField} from "../../../../Globais/DatePickerField";
 
-const DevolverParaAcertos = ({dataLimiteDevolucao, handleChangeDataLimiteDevolucao}) =>{
+const DevolverParaAcertos = ({dataLimiteDevolucao, handleChangeDataLimiteDevolucao, editavel}) =>{
 
     return(
         <div className='mt-4'>
@@ -13,6 +13,7 @@ const DevolverParaAcertos = ({dataLimiteDevolucao, handleChangeDataLimiteDevoluc
                 type="date"
                 className="form-control datepicker-devolucao-para-acertos"
                 wrapperClassName="container-datepicker-devolucao-para-acertos"
+                disabled={!editavel}
             />
         </div>
     )
