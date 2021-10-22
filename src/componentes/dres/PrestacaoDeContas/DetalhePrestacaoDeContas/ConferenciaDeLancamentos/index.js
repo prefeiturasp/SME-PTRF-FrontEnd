@@ -1,8 +1,8 @@
 import React, {useEffect, useState, memo} from "react";
-import {getLancamentosParaConferencia} from "../../../../../services/dres/PrestacaoDeContas.service";
+import {getLancamentosParaConferencia, getUltimaAnalisePc} from "../../../../../services/dres/PrestacaoDeContas.service";
 import {TabsConferenciaDeLancamentos} from "./TabsConferenciaDeLancamentos";
 
-const ConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscolheConta, prestacaoDeContas}) =>{
+const ConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscolheConta, prestacaoDeContas, editavel=true}) =>{
     const [lancamentosParaConferencia, setLancamentosParaConferencia] = useState([])
     const [loadingLancamentosParaConferencia, setLoadingLancamentosParaConferencia] = useState(true)
     const [contaUuid, setContaUuid] = useState('')
@@ -17,21 +17,34 @@ const ConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscol
     const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid, filtrar_por_acao=null, filtrar_por_lancamento=null) =>{
         setContaUuid(conta_uuid)
         setLoadingLancamentosParaConferencia(true)
-        if (prestacao_de_contas && prestacao_de_contas.uuid && prestacao_de_contas.analise_atual && prestacao_de_contas.analise_atual.uuid && conta_uuid){
-            let lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento)
 
-            // Adicionando a propriedade selecionando todos os itens
-            if (lancamentos && lancamentos.length > 0){
-                let unis = lancamentos.map((lancamento)=>{
-                    return {
-                        ...lancamento,
-                        selecionado: false
-                    }
-                })
-                setLancamentosParaConferencia(unis)
-            }else {
-                setLancamentosParaConferencia([])
+        let lancamentos;
+
+        if (editavel){
+            if (prestacao_de_contas && prestacao_de_contas.uuid && prestacao_de_contas.analise_atual && prestacao_de_contas.analise_atual.uuid && conta_uuid){
+                lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento)
             }
+        }else {
+            if (prestacao_de_contas && prestacao_de_contas.uuid){
+                let ultima_analise =  await getUltimaAnalisePc(prestacao_de_contas.uuid)
+
+                if (ultima_analise && ultima_analise.uuid){
+                    lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, ultima_analise.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento)
+                }
+            }
+        }
+
+        // Adicionando a propriedade selecionando todos os itens
+        if (lancamentos && lancamentos.length > 0){
+            let unis = lancamentos.map((lancamento)=>{
+                return {
+                    ...lancamento,
+                    selecionado: false
+                }
+            })
+            setLancamentosParaConferencia(unis)
+        }else {
+            setLancamentosParaConferencia([])
         }
         setLoadingLancamentosParaConferencia(false)
     }
@@ -51,6 +64,7 @@ const ConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscol
                 lancamentosParaConferencia={lancamentosParaConferencia}
                 loadingLancamentosParaConferencia={loadingLancamentosParaConferencia}
                 contaUuid={contaUuid}
+                editavel={editavel}
             />
         </>
 

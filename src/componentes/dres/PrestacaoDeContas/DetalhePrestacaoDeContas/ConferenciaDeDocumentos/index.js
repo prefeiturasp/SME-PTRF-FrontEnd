@@ -1,9 +1,12 @@
 import React, {memo, useCallback, useEffect, useState} from "react";
-import {getDocumentosParaConferencia} from "../../../../../services/dres/PrestacaoDeContas.service";
+import {
+    getDocumentosParaConferencia,
+    getUltimaAnalisePc
+} from "../../../../../services/dres/PrestacaoDeContas.service";
 import TabelaConferenciaDeDocumentos from "./TabelaConferenciaDeDocumentos";
 import {gerarUuid} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 
-const ConferenciaDeDocumentos = ({prestacaoDeContas}) =>{
+const ConferenciaDeDocumentos = ({prestacaoDeContas, editavel=true}) =>{
 
     const rowsPerPage =10
 
@@ -12,25 +15,39 @@ const ConferenciaDeDocumentos = ({prestacaoDeContas}) =>{
 
     const carregaListaDeDocumentosParaConferencia = useCallback(async () =>{
         setLoadingDocumentosParaConferencia(true)
-        if (prestacaoDeContas && prestacaoDeContas.uuid && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid) {
-            let docs = await getDocumentosParaConferencia(prestacaoDeContas.uuid, prestacaoDeContas.analise_atual.uuid)
 
-            // Adicionando a propriedade selecionando todos os itens
-            if (docs && docs.length > 0){
-                let unis = docs.map((lancamento)=>{
-                    return {
-                        ...lancamento,
-                        selecionado: false,
-                        uuid_documento: gerarUuid()
-                    }
-                })
-                setListaDeDocumentosParaConferencia(unis)
-            }else {
-                setListaDeDocumentosParaConferencia([])
+        let docs;
+
+        if (editavel){
+            if (prestacaoDeContas && prestacaoDeContas.uuid && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid) {
+                docs = await getDocumentosParaConferencia(prestacaoDeContas.uuid, prestacaoDeContas.analise_atual.uuid)
+            }
+        }else {
+            if (prestacaoDeContas && prestacaoDeContas.uuid){
+                let ultima_analise =  await getUltimaAnalisePc(prestacaoDeContas.uuid)
+
+                if (ultima_analise && ultima_analise.uuid){
+                    docs =  await getDocumentosParaConferencia(prestacaoDeContas.uuid, ultima_analise.uuid)
+                }
             }
         }
+
+        // Adicionando a propriedade selecionando todos os itens
+        if (docs && docs.length > 0){
+            let unis = docs.map((lancamento)=>{
+                return {
+                    ...lancamento,
+                    selecionado: false,
+                    uuid_documento: gerarUuid()
+                }
+            })
+            setListaDeDocumentosParaConferencia(unis)
+        }else {
+            setListaDeDocumentosParaConferencia([])
+        }
+
         setLoadingDocumentosParaConferencia(false)
-    }, [prestacaoDeContas])
+    }, [prestacaoDeContas, editavel])
 
     useEffect(()=>{
         carregaListaDeDocumentosParaConferencia()
@@ -47,6 +64,7 @@ const ConferenciaDeDocumentos = ({prestacaoDeContas}) =>{
                 rowsPerPage={rowsPerPage}
                 prestacaoDeContas={prestacaoDeContas}
                 loadingDocumentosParaConferencia={loadingDocumentosParaConferencia}
+                editavel={editavel}
             />
         </>
     )

@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useMemo, useState} from "react";
+import React, {memo, useMemo, useState} from "react";
 import {useHistory} from "react-router-dom";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
@@ -17,7 +17,7 @@ import Loading from "../../../../../utils/Loading";
 import {useDispatch} from "react-redux";
 import {addDetalharAcertosDocumentos, limparDetalharAcertosDocumentos} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/DetalharAcertosDocumentos/actions";
 
-const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia, setListaDeDocumentosParaConferencia, listaDeDocumentosParaConferencia, rowsPerPage, prestacaoDeContas, loadingDocumentosParaConferencia}) =>{
+const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia, setListaDeDocumentosParaConferencia, listaDeDocumentosParaConferencia, rowsPerPage, prestacaoDeContas, loadingDocumentosParaConferencia, editavel}) =>{
 
     const history = useHistory();
 
@@ -34,14 +34,16 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
 
     const addDispatchRedireciona = (documento) => {
-        dispatch(limparDetalharAcertosDocumentos())
-        dispatch(addDetalharAcertosDocumentos(documento))
-        history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos-documentos/${prestacaoDeContas.uuid}`)
+        if (editavel){
+            dispatch(limparDetalharAcertosDocumentos())
+            dispatch(addDetalharAcertosDocumentos(documento))
+            history.push(`/dre-detalhe-prestacao-de-contas-detalhar-acertos-documentos/${prestacaoDeContas.uuid}`)
+        }
     }
 
     const acoesTemplate = (rowData) => {
         return (
-            <button onClick={()=>addDispatchRedireciona(rowData)} className="btn btn-link fonte-14" type="button">
+            <button disabled={!editavel} onClick={()=>addDispatchRedireciona(rowData)} className="btn btn-link fonte-14" type="button">
                 <FontAwesomeIcon
                     style={{fontSize: '18px', marginRight: "5px", color: "#00585E"}}
                     icon={faEdit}
@@ -59,6 +61,7 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
     const selecionarHeader = () => {
         return (
             <div className="align-middle text-center">
+                {editavel &&
                 <Dropdown>
                     <Dropdown.Toggle id="dropdown-basic">
                         <input
@@ -68,6 +71,7 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
                             onChange={(e) => e}
                             name="checkHeaderDocumentos"
                             id="checkHeaderDocumentos"
+                            disabled={!editavel}
                         />
                     </Dropdown.Toggle>
 
@@ -77,6 +81,7 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
                         <Dropdown.Item onClick={(e) => desmarcarTodos(e)}>Desmarcar todos</Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
+                }
             </div>
         )
     }
@@ -91,6 +96,7 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
                     onChange={(e) => tratarSelecionado(e, rowData.uuid_documento, rowData)}
                     name="checkAtribuidoDocumento"
                     id="checkAtribuidoDocumento"
+                    disabled={!editavel}
                 />
             </div>
         )
@@ -185,23 +191,25 @@ const TabelaConferenciaDeDocumentos = ({carregaListaDeDocumentosParaConferencia,
     }
 
     const tratarSelecionado = (e, lancamentosParaConferenciaUuid, rowData) => {
-        let verifica_se_pode_ser_checkado = verificaSePodeSerCheckado(e, rowData)
-        if (verifica_se_pode_ser_checkado) {
+        if (editavel) {
+            let verifica_se_pode_ser_checkado = verificaSePodeSerCheckado(e, rowData)
+            if (verifica_se_pode_ser_checkado) {
 
-            let cont = quantidadeSelecionada;
-            if (e.target.checked) {
-                cont = cont + 1
-            } else {
-                cont = cont - 1
+                let cont = quantidadeSelecionada;
+                if (e.target.checked) {
+                    cont = cont + 1
+                } else {
+                    cont = cont - 1
+                }
+                setQuantidadeSelecionada(cont);
+                let result = listaDeDocumentosParaConferencia.reduce((acc, o) => {
+                    let obj = lancamentosParaConferenciaUuid === o.uuid_documento ? Object.assign(o, {selecionado: e.target.checked}) : o;
+                    acc.push(obj);
+                    return acc;
+                }, []);
+                setListaDeDocumentosParaConferencia(result);
+                setExibicaoBotoesMarcarComo(rowData)
             }
-            setQuantidadeSelecionada(cont);
-            let result = listaDeDocumentosParaConferencia.reduce((acc, o) => {
-                let obj = lancamentosParaConferenciaUuid === o.uuid_documento ? Object.assign(o, {selecionado: e.target.checked}) : o;
-                acc.push(obj);
-                return acc;
-            }, []);
-            setListaDeDocumentosParaConferencia(result);
-            setExibicaoBotoesMarcarComo(rowData)
         }
     }
 

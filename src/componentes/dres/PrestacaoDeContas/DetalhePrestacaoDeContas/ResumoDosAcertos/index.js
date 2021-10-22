@@ -1,7 +1,11 @@
 import React, {useCallback, useEffect, useState, useMemo} from "react";
 import {useParams, useLocation, useHistory} from "react-router-dom";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {getConcluirAnalise, getAnalisesDePcDevolvidas} from "../../../../../services/dres/PrestacaoDeContas.service";
+import {
+    getConcluirAnalise,
+    getAnalisesDePcDevolvidas,
+    getUltimaAnalisePc, getLancamentosAjustes, getDocumentosAjustes
+} from "../../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import {TopoComBotoes} from "./TopoComBotoes";
@@ -9,6 +13,8 @@ import {ModalErroDevolverParaAcerto} from "../DevolucaoParaAcertos/ModalErroDevo
 import TabsConferenciaAtualHistorico from "./TabsConferenciaAtualHistorico";
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 import {ModalConfirmaDevolverParaAcerto} from "../DevolucaoParaAcertos/ModalConfirmaDevolverParaAcerto";
+import Loading from "../../../../../utils/Loading";
+import {isNaN} from "formik";
 
 export const ResumoDosAcertos = () => {
 
@@ -27,19 +33,41 @@ export const ResumoDosAcertos = () => {
     const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
     const [btnDevolverParaAcertoDisabled, setBtnDevolverParaAcertoDisabled] = useState(false)
     const [showModalConfirmaDevolverParaAcerto, setShowModalConfirmaDevolverParaAcerto] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [totalLancamentosAjustes, setTotalLancamentosAjustes] = useState(undefined)
+    const [totalDocumentosAjustes, setTotalDocumentosAjustes] = useState(undefined)
 
     // Necessario para quando voltar da aba Histórico para Conferencia atual
-    const setAnaliseAtualUuidComPCAnaliseAtualUuid = useCallback(()=>{
-        setAnaliseAtualUuid(prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid ? prestacaoDeContas.analise_atual.uuid : '')
-    }, [prestacaoDeContas])
+    const setAnaliseAtualUuidComPCAnaliseAtualUuid = useCallback(async () => {
 
-    useEffect(()=>{
+        let analise_atual_uuid = '';
+        if (props.state.editavel) {
+            if (prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid) {
+                analise_atual_uuid = prestacaoDeContas.analise_atual.uuid
+            }
+        } else {
+            if (prestacaoDeContas && prestacaoDeContas.uuid) {
+                let ultima_analise = await getUltimaAnalisePc(prestacaoDeContas.uuid)
+
+                if (ultima_analise && ultima_analise.uuid) {
+                    analise_atual_uuid = ultima_analise.uuid
+                }
+            }
+        }
+        setAnaliseAtualUuid(analise_atual_uuid)
+        // Necessario alterar os estados dos totatis para chamar novamente o método verificaSeExibeMsg setado com undefined
+        setTotalLancamentosAjustes(undefined)
+        setTotalDocumentosAjustes(undefined)
+    }, [prestacaoDeContas, props])
+
+    useEffect(() => {
         setAnaliseAtualUuidComPCAnaliseAtualUuid()
     }, [setAnaliseAtualUuidComPCAnaliseAtualUuid])
 
     // Necessario para exibir ou não o botão Histórico da Tabs
     const totalAnalisesDePcDevolvidas = useMemo(() => analisesDePcDevolvidas.length, [analisesDePcDevolvidas]);
-    useEffect(()=>{
+
+    useEffect(() => {
         let mounted = true;
         const carregaAnalisesDePcDevolvidas = async () => {
             if (mounted) {
@@ -48,34 +76,54 @@ export const ResumoDosAcertos = () => {
             }
         }
         carregaAnalisesDePcDevolvidas()
-        return () =>{
+        return () => {
             mounted = false;
         }
     }, [prestacao_conta_uuid])
 
     const setPrimeiraAnalisePcDevolvida = useCallback(() => {
-        if (analisesDePcDevolvidas && analisesDePcDevolvidas.length > 0){
+        if (analisesDePcDevolvidas && analisesDePcDevolvidas.length > 0) {
             let ultimo_indice_array = analisesDePcDevolvidas.length - 1
             setAnaliseAtualUuid(analisesDePcDevolvidas[ultimo_indice_array].uuid)
         }
+        // Necessario alterar os estados dos totatis para chamar novamente o método verificaSeExibeMsg setado com ''
+        setTotalLancamentosAjustes('')
+        setTotalDocumentosAjustes('')
     }, [analisesDePcDevolvidas])
 
-    const verificaSeExibeMsg = useCallback(()=>{
-        const totLancAjus = props.state.totalLancamentosAjustes
-        const totDocumAjus = props.state.totalDocumentosAjustes
-        if (totLancAjus <= 0 && totDocumAjus <= 0){
+    const verificaQtdeLancamentosDocumentosAjustes = useCallback(async () => {
+        setLoading(true)
+        if (props.state.infoAta && props.state.infoAta.contas && props.state.infoAta.contas.length > 0 && analiseAtualUuid) {
+            props.state.infoAta.contas.map(async (conta) => {
+                let lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid)
+                setTotalLancamentosAjustes(lanc => isNaN(lanc) ? 0 + lancamentos_ajustes.length : lanc + lancamentos_ajustes.length)
+                let documentos_ajustes = await getDocumentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid)
+                setTotalDocumentosAjustes(documentos_ajustes.length)
+            })
+        }
+        setLoading(false)
+    }, [analiseAtualUuid, props.state.infoAta])
+
+    useEffect(() => {
+        verificaQtdeLancamentosDocumentosAjustes()
+    }, [verificaQtdeLancamentosDocumentosAjustes])
+
+    const verificaSeExibeMsg = useCallback(() => {
+        setLoading(true)
+        if (totalLancamentosAjustes !== undefined && totalLancamentosAjustes <= 0 && totalDocumentosAjustes !== undefined && totalDocumentosAjustes <= 0) {
             setExibeMsg(true)
-            if (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0 ){
+            if (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) {
                 setTextoMsg('Não existem novas solicitações salvas desde o retorno da Associação. Consulte acima as solicitações anteriores')
-            }else {
+            } else {
                 setTextoMsg('Não existem solicitações para acerto salvas desde o envio da PC da Associação')
             }
-        }else {
+        } else {
             setExibeMsg(false)
         }
-    }, [props, prestacaoDeContas])
+        setLoading(false)
+    }, [prestacaoDeContas, totalLancamentosAjustes, totalDocumentosAjustes])
 
-    useEffect(()=>{
+    useEffect(() => {
         verificaSeExibeMsg()
     }, [verificaSeExibeMsg])
 
@@ -135,22 +183,31 @@ export const ResumoDosAcertos = () => {
                         qtdeAjustesLancamentos={props.state.totalLancamentosAjustes}
                         qtdeAjustesDocumentos={props.state.totalDocumentosAjustes}
                         btnDevolverParaAcertoDisabled={btnDevolverParaAcertoDisabled}
+                        editavel={props.state.editavel}
                     />
-                    {analiseAtualUuid &&
-                        <TabsConferenciaAtualHistorico
-                            dataLimiteDevolucao={dataLimiteDevolucao} // Para Devolver para acertos
-                            handleChangeDataLimiteDevolucao={handleChangeDataLimiteDevolucao} // Para Devolver para acertos
-                            prestacao_conta_uuid={prestacao_conta_uuid} // Para ExibeAcertosEmLancamentosEDocumentosPorConta e CardsDevolucoesParaAcertoDaDre
-                            analiseAtualUuid={analiseAtualUuid} // Para ExibeAcertosEmLancamentosEDocumentosPorConta
-                            setAnaliseAtualUuid={setAnaliseAtualUuid} // Para CardsDevolucoesParaAcertoDaDre
-                            exibeMsg={exibeMsg} // Para TabsConferenciaAtualHistorico
-                            textoMsg={textoMsg} // Para TabsConferenciaAtualHistorico
-                            totalAnalisesDePcDevolvidas={totalAnalisesDePcDevolvidas} // Para TabsConferenciaAtualHistorico
-                            setAnaliseAtualUuidComPCAnaliseAtualUuid={setAnaliseAtualUuidComPCAnaliseAtualUuid} // Para TabsConferenciaAtualHistorico
-                            setPrimeiraAnalisePcDevolvida={setPrimeiraAnalisePcDevolvida} // Para TabsConferenciaAtualHistorico
-                        />
-                    }
 
+                    {analiseAtualUuid && !loading ? (
+                            <TabsConferenciaAtualHistorico
+                                dataLimiteDevolucao={dataLimiteDevolucao} // Para Devolver para acertos
+                                handleChangeDataLimiteDevolucao={handleChangeDataLimiteDevolucao} // Para Devolver para acertos
+                                prestacao_conta_uuid={prestacao_conta_uuid} // Para ExibeAcertosEmLancamentosEDocumentosPorConta e CardsDevolucoesParaAcertoDaDre
+                                analiseAtualUuid={analiseAtualUuid} // Para ExibeAcertosEmLancamentosEDocumentosPorConta
+                                setAnaliseAtualUuid={setAnaliseAtualUuid} // Para CardsDevolucoesParaAcertoDaDre
+                                exibeMsg={exibeMsg} // Para TabsConferenciaAtualHistorico
+                                textoMsg={textoMsg} // Para TabsConferenciaAtualHistorico
+                                totalAnalisesDePcDevolvidas={totalAnalisesDePcDevolvidas} // Para TabsConferenciaAtualHistorico
+                                setAnaliseAtualUuidComPCAnaliseAtualUuid={setAnaliseAtualUuidComPCAnaliseAtualUuid} // Para TabsConferenciaAtualHistorico
+                                setPrimeiraAnalisePcDevolvida={setPrimeiraAnalisePcDevolvida} // Para TabsConferenciaAtualHistorico
+                                editavel={props.state.editavel}
+                            />
+                        ) :
+                            <Loading
+                                corGrafico="black"
+                                corFonte="dark"
+                                marginTop="0"
+                                marginBottom="0"
+                            />
+                    }
                 </div>
                 <section>
                     <ModalErroDevolverParaAcerto

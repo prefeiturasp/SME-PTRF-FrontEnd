@@ -2,7 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 
-export const TopoComBotoes = ({onClickBtnVoltar, setShowModalConfirmaDevolverParaAcerto, dataLimiteDevolucao, qtdeAjustesLancamentos, qtdeAjustesDocumentos, btnDevolverParaAcertoDisabled}) => {
+export const TopoComBotoes = ({onClickBtnVoltar, setShowModalConfirmaDevolverParaAcerto, dataLimiteDevolucao, qtdeAjustesLancamentos, qtdeAjustesDocumentos, btnDevolverParaAcertoDisabled, editavel}) => {
     return(
         <div className="d-flex bd-highlight align-items-center">
             <div className="py-2 flex-grow-1 bd-highlight">
@@ -18,7 +18,7 @@ export const TopoComBotoes = ({onClickBtnVoltar, setShowModalConfirmaDevolverPar
                 </button>
                 <button className="btn btn-outline-success mr-2">Imprimir relatório</button>
                 <button
-                    disabled={!dataLimiteDevolucao || (qtdeAjustesLancamentos <= 0 && qtdeAjustesDocumentos <= 0) || btnDevolverParaAcertoDisabled}
+                    disabled={!dataLimiteDevolucao || (qtdeAjustesLancamentos <= 0 && qtdeAjustesDocumentos <= 0) || btnDevolverParaAcertoDisabled || !editavel}
                     onClick={()=>setShowModalConfirmaDevolverParaAcerto(true)}
                     className="btn btn-secondary"
                 >
