@@ -72,12 +72,43 @@ export const ModalConcluirAnalise = (props) => {
                     {props.stateConcluirAnalise.status === 'REPROVADA' &&
                         <div className="col-12 mt-2">
                             <label htmlFor="motivos_reprovacao">Motivos:</label>
-                            <textarea
-                                name='motivos_reprovacao'
-                                value={props.stateConcluirAnalise.motivos_reprovacao}
-                                onChange={(e) => props.handleChangeConcluirAnalise(e.target.name, e.target.value)}
+                            <select
+                                name="motivos"
+                                multiple={true}
+                                onChange={
+                                    (e)=>{
+                                        props.handleChangeSelectMultipleMotivosReprovacao(e);
+                                    }
+                                }
+                                value={props.selectMotivosReprovacao}
                                 className="form-control"
-                            />
+                            >
+                                {props.motivosReprovacao && props.motivosReprovacao.length > 0 && props.motivosReprovacao.map((motivo)=>(
+                                    <option key={motivo.uuid} value={motivo.uuid}>{motivo.motivo}</option>
+                                ))}
+                            </select>
+
+                            <div className="form-check mt-3 pl-0">
+                                <input
+                                    name="check_box_outros_motivos"
+                                    id="check_box_outros_motivos"
+                                    type="checkbox"
+                                    checked={props.checkBoxOutrosMotivosReprovacao}
+                                    onChange={(e)=>props.handleChangeCheckBoxOutrosMotivosReprovacao(e)}
+                                />
+                                <label className="form-check-label ml-2" htmlFor="check_box_outros_motivos">
+                                    Outros motivos
+                                </label>
+                            </div>
+                            {props.checkBoxOutrosMotivosReprovacao &&
+                                <textarea
+                                    name='outros_motivos_reprovacao'
+                                    value={props.txtOutrosMotivosReprovacao}
+                                    onChange={(e) => props.handleChangeTxtOutrosMotivosReprovacao(e)}
+                                    className="form-control"
+                                />
+                            }
+
                         </div>
                     }
 
@@ -88,7 +119,7 @@ export const ModalConcluirAnalise = (props) => {
                                 onClick={props.onConcluirAnalise}
                                 type="button"
                                 className="btn btn-success mt-2"
-                                disabled={!props.stateConcluirAnalise.status || (props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' && props.motivos.length <= 0 && !props.txtOutrosMotivos) || (props.stateConcluirAnalise.status === 'DEVOLVIDA')}
+                                disabled={!props.stateConcluirAnalise.status || (props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' && props.motivos.length <= 0 && !props.txtOutrosMotivos) || (props.stateConcluirAnalise.status === 'REPROVADA' && props.selectMotivosReprovacao.length <= 0 && !props.txtOutrosMotivosReprovacao)}
                             >
                                 Confirmar
                             </button>
