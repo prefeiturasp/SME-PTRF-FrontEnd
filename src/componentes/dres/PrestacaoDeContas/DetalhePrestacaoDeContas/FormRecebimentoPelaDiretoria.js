@@ -1,7 +1,7 @@
 import React from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 
-export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria, handleChangeFormRecebimentoPelaDiretoria, disabledNome, disabledData, disabledStatus, tabelaPrestacoes, prestacaoDeContas, exibeMotivo}) =>{
+export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria, handleChangeFormRecebimentoPelaDiretoria, disabledNome, disabledData, disabledStatus, tabelaPrestacoes, prestacaoDeContas, exibeMotivo, motivo='motivos_aprovacao_ressalva', outros_motivos='outros_motivos_aprovacao_ressalva'}) =>{
     return(
         <>
             <h4>Recebimento pela Diretoria</h4>
@@ -43,15 +43,15 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
                             ))}
                         </select>
                     </div>
-                    {exibeMotivo && prestacaoDeContas && (prestacaoDeContas.motivos_aprovacao_ressalva || prestacaoDeContas.outros_motivos_aprovacao_ressalva)  &&
+                    {exibeMotivo && prestacaoDeContas && ( (prestacaoDeContas[motivo] && prestacaoDeContas[motivo].length > 0) || prestacaoDeContas[outros_motivos])  &&
                         <div className='col-12 mt-3'>
                             <label htmlFor="motivo">Motivos:</label>
                             <div className='border container-exibe-motivos p-2'>
-                                {prestacaoDeContas.motivos_aprovacao_ressalva && prestacaoDeContas.motivos_aprovacao_ressalva.length > 0 && prestacaoDeContas.motivos_aprovacao_ressalva.map((motivo)=>(
+                                {prestacaoDeContas[motivo] && prestacaoDeContas[motivo].length > 0 && prestacaoDeContas[motivo].map((motivo)=>(
                                     <p key={motivo.uuid}>{motivo.motivo}</p>
                                 ))}
-                                {prestacaoDeContas.outros_motivos_aprovacao_ressalva &&
-                                    <p>{prestacaoDeContas.outros_motivos_aprovacao_ressalva}</p>
+                                {prestacaoDeContas[outros_motivos] &&
+                                    <p>{prestacaoDeContas[outros_motivos]}</p>
                                 }
                             </div>
                         </div>

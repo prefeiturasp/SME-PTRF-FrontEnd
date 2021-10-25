@@ -669,7 +669,9 @@ export const GetComportamentoPorStatus = (
                         disabledData={true}
                         disabledStatus={true}
                         prestacaoDeContas={prestacaoDeContas}
-                        exibeMotivo={false}
+                        exibeMotivo={true}
+                        motivo={'motivos_reprovacao'}
+                        outros_motivos={'outros_motivos_reprovacao'}
                     />
                     <DevolucoesPrestacaoDeContas
                         prestacaoDeContas={prestacaoDeContas}
