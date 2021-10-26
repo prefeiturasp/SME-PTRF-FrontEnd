@@ -133,6 +133,10 @@ export const getMotivosAprovadoComRessalva = async () => {
     return (await api.get(`/api/motivos-aprovacao-ressalva/`, authHeader)).data
 };
 
+export const getMotivosReprovacao = async () => {
+    return (await api.get(`/api/motivos-reprovacao/`, authHeader)).data
+};
+
 export const getVisualizarArquivoDeReferencia = async (nome_do_arquivo, uuid, tipo) => {
 
     let url;
