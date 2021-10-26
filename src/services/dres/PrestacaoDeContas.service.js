@@ -289,6 +289,9 @@ export const gerarPreviaRelatorioAcertos = async (analise_prestacao_uuid) => {
     return (await api.get(`/api/analises-prestacoes-contas/previa/?analise_prestacao_uuid=${analise_prestacao_uuid}`, authHeader)).data
 };
 
+export const getAnalisePrestacaoConta = async (analise_prestacao_uuid) => {
+    return (await api.get(`/api/analises-prestacoes-contas/${analise_prestacao_uuid}`, authHeader)).data
+};
 
 export const downloadDocumentoPreviaPdf = async (analise_atual_uuid) => {
     return api
