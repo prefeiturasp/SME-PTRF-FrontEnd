@@ -12,10 +12,8 @@ export const PaginasContainer = ({children}) => {
     const notificacaoContext = useContext(NotificacaoContext);
 
     const onVerAcertos = () => {
-        let periodoReferencia = localStorage.getItem("NOTIFICAR_DEVOLUCAO_REFERENCIA")
         notificacaoContext.setExibeMensagemFixaTemDevolucao(false)
-        notificaDevolucaoPCService.marcaNotificacaoComoLida()
-        notificaDevolucaoPCService.redirectVerAcertos(periodoReferencia, history)
+        notificaDevolucaoPCService.marcaNotificacaoComoLidaERedirecianaParaVerAcertos(history)
     };
 
     return (
