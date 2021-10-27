@@ -53,11 +53,12 @@ export const Cabecalho = () => {
             obj.unidade_tipo,
             obj.unidade_nome,
             obj.notificar_devolucao_referencia,
+            obj.notificar_devolucao_pc_uuid,
             obj.notificacao_uuid,
         );
     };
 
-    const retornaVisaoConvertida = (visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_referencia, notificacao_uuid) =>{
+    const retornaVisaoConvertida = (visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_referencia, notificar_devolucao_pc_uuid, notificacao_uuid) =>{
         let visao_convertida = visoesService.converteNomeVisao(visao);
         let obj;
         if (visao === "DRE" || visao === "SME"){
@@ -69,6 +70,7 @@ export const Cabecalho = () => {
                 unidade_tipo:unidade_tipo,
                 unidade_nome:unidade_nome,
                 notificar_devolucao_referencia:null,
+                notificar_devolucao_pc_uuid:null,
                 notificacao_uuid:null,
             })
         }else {
@@ -80,6 +82,7 @@ export const Cabecalho = () => {
                 unidade_tipo:unidade_tipo,
                 unidade_nome:unidade_nome,
                 notificar_devolucao_referencia:notificar_devolucao_referencia,
+                notificar_devolucao_pc_uuid:notificar_devolucao_pc_uuid,
                 notificacao_uuid:notificacao_uuid,
             })
         }
@@ -125,10 +128,8 @@ export const Cabecalho = () => {
     };
 
     const onVerAcertos = () => {
-        let periodoReferencia = localStorage.getItem("NOTIFICAR_DEVOLUCAO_REFERENCIA")
         notificacaoContext.setExibeModalTemDevolucao(false)
-        notificaDevolucaoPCService.marcaNotificacaoComoLida()
-        notificaDevolucaoPCService.redirectVerAcertos(periodoReferencia, history)
+        notificaDevolucaoPCService.marcaNotificacaoComoLidaERedirecianaParaVerAcertos(history)
     };
 
     return (
@@ -159,6 +160,7 @@ export const Cabecalho = () => {
                                                         dados_usuario_logado.unidade_selecionada.tipo_unidade,
                                                         dados_usuario_logado.unidade_selecionada.nome,
                                                         dados_usuario_logado.unidade_selecionada.notificar_devolucao_referencia,
+                                                        dados_usuario_logado.unidade_selecionada.notificar_devolucao_pc_uuid,
                                                         dados_usuario_logado.unidade_selecionada.notificacao_uuid,
                                                     )}
                                                 onChange={(e)=>onChangeVisao(e)}
@@ -176,6 +178,7 @@ export const Cabecalho = () => {
                                                                 unidade.tipo_unidade,
                                                                 unidade.nome,
                                                                 unidade.notificar_devolucao_referencia,
+                                                                unidade.notificar_devolucao_pc_uuid,
                                                                 unidade.notificacao_uuid,
                                                             )}
                                                     >
