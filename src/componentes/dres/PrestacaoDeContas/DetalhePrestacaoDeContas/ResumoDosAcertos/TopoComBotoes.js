@@ -16,7 +16,6 @@ export const TopoComBotoes = ({onClickBtnVoltar, setShowModalConfirmaDevolverPar
                     />
                     Voltar
                 </button>
-                <button className="btn btn-outline-success mr-2">Imprimir relatório</button>
                 <button
                     disabled={!dataLimiteDevolucao || (qtdeAjustesLancamentos <= 0 && qtdeAjustesDocumentos <= 0) || btnDevolverParaAcertoDisabled || !editavel}
                     onClick={()=>setShowModalConfirmaDevolverParaAcerto(true)}
