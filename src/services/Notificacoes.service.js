@@ -28,7 +28,7 @@ export const getNotificacoesLidasNaoLidasPaginacao = async (lidas, page) =>{
     return (await api.get(`/api/notificacoes/?lido=${lidas}&page=${page}`, authHeader)).data
 };
 
-export const getNotificacaoMarcarDesmarcarLida = async (payload) =>{
+export const setNotificacaoMarcarDesmarcarLida = async (payload) =>{
     return (await api.put(`/api/notificacoes/marcar-lido/`,payload, authHeader)).data
 };
 
@@ -43,3 +43,4 @@ export const getNotificacoesFiltros = async (tipo=null, remetente=null, categori
 export const getNotificacoesFiltrosPaginacao = async (tipo=null, remetente=null, categoria=null, lido=null, data_inicio=null, data_fim=null, page) =>{
     return (await api.get(`/api/notificacoes/?${tipo ? 'tipo=' + tipo : ""}${remetente ? '&remetente='+remetente: ""}${categoria ? '&categoria='+categoria : ""}${lido ? '&lido='+lido : ""}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&page=${page}`, authHeader)).data
 };
+

@@ -114,8 +114,8 @@ export class ListaDeDespesas extends Component {
         this.setState({totalDePaginas: Math.ceil((numeroDePaginas)/this.state.divisorPaginas)})
     }
 
-    reusltadoSomaDosTotais = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "", fornecedor = "", data_inicio = "", data_fim = "", conta_associacao__uuid='', vinculo_atividade__uuid='') => {
-        const somaDosTotais = await getSomaDosTotais(palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid, vinculo_atividade__uuid);
+    reusltadoSomaDosTotais = async (palavra = "", aplicacao_recurso = "", acao_associacao__uuid = "", despesa__status = "", fornecedor = "", data_inicio = "", data_fim = "", conta_associacao__uuid='', tag__uuid='') => {
+        const somaDosTotais = await getSomaDosTotais(palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status, fornecedor, data_inicio, data_fim, conta_associacao__uuid, tag__uuid);
         this.setState({somaDosTotais});
     };
 

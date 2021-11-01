@@ -4,6 +4,7 @@ import {PaginasContainer} from "../../../../paginas/PaginasContainer";
 import {
     getDesfazerConclusaoAnalise,
     getMotivosAprovadoComRessalva,
+    getMotivosReprovacao,
     getPrestacaoDeContasDetalhe,
     patchDesfazerReceberAposAcertos
 } from "../../../../services/dres/PrestacaoDeContas.service";
@@ -140,6 +141,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [tiposDevolucao, setTiposDevolucao] = useState([]);
     const [camposObrigatorios, setCamposObrigatorios] = useState(false);
     const [motivosAprovadoComRessalva, setMotivosAprovadoComRessalva] = useState([]);
+    const [motivosReprovacao, setMotivosReprovacao] = useState([]);
     const [showErroPrestacaoDeContasPosterior, setshowErroPrestacaoDeContasPosterior] = useState(false);
     const [tituloErroPrestacaoDeContasPosterior, setTituloErroPrestacaoDeContasPosterior] = useState('');
     const [textoErroPrestacaoDeContasPosterior, setTextoErroPrestacaoDeContasPosterior] = useState('');
@@ -184,6 +186,14 @@ export const DetalhePrestacaoDeContas = () =>{
             setMotivosAprovadoComRessalva(resp);
         };
         carregaMotivosAprovadoComRessalva();
+    }, []);
+
+    useEffect(() => {
+        const carregaMotivosReprovacao = async () => {
+            const resp = await getMotivosReprovacao();
+            setMotivosReprovacao(resp);
+        };
+        carregaMotivosReprovacao();
     }, []);
 
     const getAnalisePrestacao = async ()=>{
@@ -473,10 +483,20 @@ export const DetalhePrestacaoDeContas = () =>{
     const [checkBoxOutrosMotivos, setCheckBoxOutrosMotivos] = useState(false);
     const [txtOutrosMotivos, setTxtOutrosMotivos] = useState('');
 
+    const [selectMotivosReprovacao, setSelectMotivosReprovacao] = useState([]);
+    const [checkBoxOutrosMotivosReprovacao, setCheckBoxOutrosMotivosReprovacao] = useState(false);
+    const [txtOutrosMotivosReprovacao, setTxtOutrosMotivosReprovacao] = useState('');
+
     const handleChangeSelectMultipleMotivos = (e) => {
         let target = e.target;
         let value = Array.from(target.selectedOptions, option => option.value);
         setMotivos(value);
+    };
+
+    const handleChangeSelectMultipleMotivosReprovacao = (e) => {
+        let target = e.target;
+        let value = Array.from(target.selectedOptions, option => option.value);
+        setSelectMotivosReprovacao(value);
     };
 
     const handleChangeCheckBoxOutrosMotivos = (event) =>{
@@ -486,8 +506,19 @@ export const DetalhePrestacaoDeContas = () =>{
         }
     };
 
+    const handleChangeCheckBoxOutrosMotivosReprovacao = (event) =>{
+        setCheckBoxOutrosMotivosReprovacao(event.target.checked);
+        if (!event.target.checked){
+            setCheckBoxOutrosMotivosReprovacao('');
+        }
+    };
+
     const handleChangeTxtOutrosMotivos = (event) =>{
         setTxtOutrosMotivos(event.target.value)
+    };
+
+    const handleChangeTxtOutrosMotivosReprovacao = (event) =>{
+        setTxtOutrosMotivosReprovacao(event.target.value)
     };
 
     // Fim Ata
@@ -635,7 +666,8 @@ export const DetalhePrestacaoDeContas = () =>{
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
-                motivos_reprovacao: stateConcluirAnalise.motivos_reprovacao,
+                motivos_reprovacao: selectMotivosReprovacao,
+                outros_motivos_reprovacao: txtOutrosMotivosReprovacao,
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }
@@ -928,6 +960,14 @@ export const DetalhePrestacaoDeContas = () =>{
                         checkBoxOutrosMotivos={checkBoxOutrosMotivos}
                         handleChangeCheckBoxOutrosMotivos={handleChangeCheckBoxOutrosMotivos}
                         handleChangeTxtOutrosMotivos={handleChangeTxtOutrosMotivos}
+
+                        motivosReprovacao={motivosReprovacao}
+                        txtOutrosMotivosReprovacao={txtOutrosMotivosReprovacao}
+                        selectMotivosReprovacao={selectMotivosReprovacao}
+                        handleChangeSelectMultipleMotivosReprovacao={handleChangeSelectMultipleMotivosReprovacao}
+                        checkBoxOutrosMotivosReprovacao={checkBoxOutrosMotivosReprovacao}
+                        handleChangeCheckBoxOutrosMotivosReprovacao={handleChangeCheckBoxOutrosMotivosReprovacao}
+                        handleChangeTxtOutrosMotivosReprovacao={handleChangeTxtOutrosMotivosReprovacao}
                     />
                 </section>
                 <section>

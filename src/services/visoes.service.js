@@ -1,4 +1,3 @@
-
 import {
     USUARIO_LOGIN,
     ASSOCIACAO_UUID,
@@ -42,9 +41,22 @@ const getDadosDoUsuarioLogado = () => {
     return dados_usuario_logado ? eval('dados_usuario_logado.usuario_' + getUsuarioLogin()) : null
 };
 
+const setDadosDoUsuarioLogado = (dados_usuario_logado) => {
+    let dados_usuario_logado_atual = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
+
+    let dados_usuario_logado_update = {
+        ...dados_usuario_logado_atual,
+        [`usuario_${getUsuarioLogin()}`]: {
+            ...dados_usuario_logado,
+        }
+    };
+    localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(dados_usuario_logado_update));
+};
+
+
 const setDadosPrimeiroAcesso = async (resp) =>{
 
-    let visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome;
+    let visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_referencia, notificar_devolucao_pc_uuid, notificacao_uuid;
     let usuario_logado = getDadosDoUsuarioLogado();
 
     if (usuario_logado && usuario_logado.associacao_selecionada.uuid){
@@ -52,6 +64,19 @@ const setDadosPrimeiroAcesso = async (resp) =>{
         uuid_unidade = usuario_logado.unidade_selecionada.uuid;
         uuid_associacao = usuario_logado.associacao_selecionada.uuid;
         nome_associacao = usuario_logado.associacao_selecionada.nome;
+
+        // Atualiza as variáveis de informação sobre devolução de PC com as informações da lista de unidades.
+        let unidade_update = resp.unidades.find(unidade => unidade.uuid === uuid_unidade);
+        if (unidade_update) {
+            notificar_devolucao_referencia = unidade_update.notificar_devolucao_referencia;
+            notificar_devolucao_pc_uuid = unidade_update.notificar_devolucao_pc_uuid;
+            notificacao_uuid = unidade_update.notificacao_uuid;
+        } else {
+            notificar_devolucao_referencia = usuario_logado.unidade_selecionada.notificar_devolucao_referencia;
+            notificar_devolucao_pc_uuid = usuario_logado.unidade_selecionada.notificar_devolucao_pc_uuid;
+            notificacao_uuid = usuario_logado.unidade_selecionada.notificacao_uuid;
+        }
+
     }else {
         if (resp.visoes.find(visao=> visao === 'SME') && resp.unidades.find(unidade => unidade.tipo_unidade === "SME")){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "SME");
@@ -59,18 +84,27 @@ const setDadosPrimeiroAcesso = async (resp) =>{
             uuid_unidade = unidade.uuid;
             uuid_associacao = unidade.uuid;
             nome_associacao = unidade.nome;
+            notificar_devolucao_referencia = null;
+            notificar_devolucao_pc_uuid = null;
+            notificacao_uuid = null;
         }else if (resp.visoes.find(visao=> visao === 'DRE') && resp.unidades.find(unidade => unidade.tipo_unidade === "DRE")){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade === "DRE");
             visao="DRE";
             uuid_unidade = unidade.uuid;
             uuid_associacao = unidade.uuid;
             nome_associacao = unidade.nome;
+            notificar_devolucao_referencia = null;
+            notificar_devolucao_pc_uuid = null;
+            notificacao_uuid = null;
         }else if (resp.visoes.find(visao=> visao === 'UE')){
             let unidade = resp.unidades.find(unidade => unidade.tipo_unidade !== "DRE");
             visao="UE";
             uuid_unidade = unidade.uuid;
             uuid_associacao = unidade.associacao.uuid;
             nome_associacao = unidade.associacao.nome;
+            notificar_devolucao_referencia = unidade.notificar_devolucao_referencia;
+            notificar_devolucao_pc_uuid = unidade.notificar_devolucao_pc_uuid;
+            notificacao_uuid = unidade.notificacao_uuid;
         }
     }
 
@@ -102,7 +136,7 @@ const setDadosPrimeiroAcesso = async (resp) =>{
             unidade_tipo = unidade.tipo_unidade;
         }
     }
-    alternaVisoes(visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome)
+    alternaVisoes(visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_referencia, notificar_devolucao_pc_uuid, notificacao_uuid)
 };
 
 const getPermissoes = (permissao) =>{
@@ -144,6 +178,10 @@ const setDadosUsuariosLogados = async (resp) => {
                 uuid: usuario_logado ? usuario_logado.unidade_selecionada.uuid : "",
                 tipo_unidade: usuario_logado ? usuario_logado.unidade_selecionada.tipo_unidade : "",
                 nome: usuario_logado ? usuario_logado.unidade_selecionada.nome : "",
+                notificar_devolucao_referencia: usuario_logado ? usuario_logado.unidade_selecionada.notificar_devolucao_referencia : "",
+                notificar_devolucao_pc_uuid: usuario_logado ? usuario_logado.unidade_selecionada.notificar_devolucao_pc_uuid : "",
+                notificacao_uuid: usuario_logado ? usuario_logado.unidade_selecionada.notificacao_uuid : "",
+
             },
 
             associacao_selecionada: {
@@ -165,7 +203,7 @@ const converteNomeVisao = (visao) => {
     }
 };
 
-const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome) => {
+const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_referencia, notificar_devolucao_pc_uuid, notificacao_uuid) => {
 
     let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
     let dados_usuario_logado = getDadosDoUsuarioLogado();
@@ -178,11 +216,13 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
                 visao_selecionada: {
                     nome: converteNomeVisao(visao)
                 },
-
                 unidade_selecionada: {
                     uuid: uuid_unidade,
                     tipo_unidade:unidade_tipo,
                     nome:unidade_nome,
+                    notificar_devolucao_referencia:notificar_devolucao_referencia,
+                    notificar_devolucao_pc_uuid:notificar_devolucao_pc_uuid,
+                    notificacao_uuid: notificacao_uuid,
                 },
 
                 associacao_selecionada: {
@@ -204,6 +244,9 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
         localStorage.removeItem('uuidPrestacaoConta');
         localStorage.removeItem('uuidAta');
         localStorage.removeItem('prestacao_de_contas_nao_apresentada');
+
+        localStorage.setItem("NOTIFICAR_DEVOLUCAO_REFERENCIA", notificar_devolucao_referencia)
+
         redirectVisao(visao)
     }
 };
@@ -244,6 +287,7 @@ export const visoesService = {
     converteNomeVisao,
     alternaVisoes,
     getDadosDoUsuarioLogado,
+    setDadosDoUsuarioLogado,
     redirectVisao,
     getItemUsuarioLogado,
 };

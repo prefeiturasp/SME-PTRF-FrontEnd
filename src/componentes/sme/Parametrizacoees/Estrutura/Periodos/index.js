@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
-import {getTodosPeriodos, getFiltrosPeriodos, getDatasAtendemRegras, getPeriodoPorUuid, postCriarPeriodo, patchUpdatePeriodo, deletePeriodo} from "../../../../../services/sme/Parametrizacoes.service";
+import {getTodosPeriodos, getPeriodoPorReferencia, getDatasAtendemRegras, getPeriodoPorUuid, postCriarPeriodo, patchUpdatePeriodo, deletePeriodo} from "../../../../../services/sme/Parametrizacoes.service";
 import TabelaPeriodos from "./TabelaPeriodos";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -46,7 +46,7 @@ export const Periodos = () =>{
 
     const handleSubmitFiltros = async () => {
         setLoading(true);
-        let periodos_filtrados = await getFiltrosPeriodos(stateFiltros.filtrar_por_referencia);
+        let periodos_filtrados = await getPeriodoPorReferencia(stateFiltros.filtrar_por_referencia);
         setListaDePeriodos(periodos_filtrados);
         setLoading(false);
     };

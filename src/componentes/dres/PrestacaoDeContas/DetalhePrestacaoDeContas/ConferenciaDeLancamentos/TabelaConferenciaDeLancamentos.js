@@ -22,7 +22,7 @@ import {useDispatch} from "react-redux";
 import {addDetalharAcertos, limparDetalharAcertos} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 
 
-const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, carregaLancamentosParaConferencia,prestacaoDeContas}) => {
+const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, carregaLancamentosParaConferencia,prestacaoDeContas, editavel}) => {
 
     const rowsPerPage = 10;
     const history = useHistory();
@@ -134,6 +134,7 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                     onChange={(e) => tratarSelecionado(e, rowData.documento_mestre.uuid, rowData)}
                     name="checkAtribuido"
                     id="checkAtribuido"
+                    disabled={!editavel}
                 />
             </div>
         )
@@ -142,25 +143,29 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
     const selecionarHeader = () => {
         return (
             <div className="align-middle text-center">
-                <Dropdown>
-                    <Dropdown.Toggle id="dropdown-basic">
-                        <input
-                            checked={false}
-                            type="checkbox"
-                            value=""
-                            onChange={(e) => e}
-                            name="checkHeader"
-                            id="checkHeader"
-                        />
-                    </Dropdown.Toggle>
+                {editavel &&
+                    <Dropdown>
+                        <Dropdown.Toggle id="dropdown-basic">
+                            <input
+                                checked={false}
+                                type="checkbox"
+                                value=""
+                                onChange={(e) => e}
+                                name="checkHeader"
+                                id="checkHeader"
+                                disabled={!editavel}
+                            />
+                        </Dropdown.Toggle>
 
-                    <Dropdown.Menu>
-                        {/*<Dropdown.Item onClick={(e) => selecionarTodos(e)}>Selecionar todos</Dropdown.Item>*/}
-                        <Dropdown.Item onClick={(e) => selecionarPorStatus(e, "CORRETO")}>Selecionar todos corretos</Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => selecionarPorStatus(e, null)}>Selecionar todos não conferidos</Dropdown.Item>
-                        <Dropdown.Item onClick={(e) => desmarcarTodos(e)}>Desmarcar todos</Dropdown.Item>
-                    </Dropdown.Menu>
-                </Dropdown>
+                        <Dropdown.Menu>
+                            {/*<Dropdown.Item onClick={(e) => selecionarTodos(e)}>Selecionar todos</Dropdown.Item>*/}
+                            <Dropdown.Item onClick={(e) => selecionarPorStatus(e, "CORRETO")}>Selecionar todos corretos</Dropdown.Item>
+                            <Dropdown.Item onClick={(e) => selecionarPorStatus(e, null)}>Selecionar todos não conferidos</Dropdown.Item>
+                            <Dropdown.Item onClick={(e) => desmarcarTodos(e)}>Desmarcar todos</Dropdown.Item>
+                        </Dropdown.Menu>
+
+                    </Dropdown>
+                }
             </div>
         )
     }
@@ -300,24 +305,27 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
     }
 
     const tratarSelecionado = (e, lancamentosParaConferenciaUuid, rowData) => {
-        let verifica_se_pode_ser_checkado = verificaSePodeSerCheckado(e, rowData)
-        if (verifica_se_pode_ser_checkado) {
+        if (editavel){
+            let verifica_se_pode_ser_checkado = verificaSePodeSerCheckado(e, rowData)
+            if (verifica_se_pode_ser_checkado) {
 
-            let cont = quantidadeSelecionada;
-            if (e.target.checked) {
-                cont = cont + 1
-            } else {
-                cont = cont - 1
+                let cont = quantidadeSelecionada;
+                if (e.target.checked) {
+                    cont = cont + 1
+                } else {
+                    cont = cont - 1
+                }
+                setQuantidadeSelecionada(cont);
+                let result = lancamentosParaConferencia.reduce((acc, o) => {
+                    let obj = lancamentosParaConferenciaUuid === o.documento_mestre.uuid ? Object.assign(o, {selecionado: e.target.checked}) : o;
+                    acc.push(obj);
+                    return acc;
+                }, []);
+                setLancamentosParaConferencia(result);
+                setExibicaoBotoesMarcarComo(rowData)
             }
-            setQuantidadeSelecionada(cont);
-            let result = lancamentosParaConferencia.reduce((acc, o) => {
-                let obj = lancamentosParaConferenciaUuid === o.documento_mestre.uuid ? Object.assign(o, {selecionado: e.target.checked}) : o;
-                acc.push(obj);
-                return acc;
-            }, []);
-            setLancamentosParaConferencia(result);
-            setExibicaoBotoesMarcarComo(rowData)
         }
+
     }
 
     const marcarComoCorreto = async () => {
@@ -417,7 +425,10 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
     }
 
     const redirecionaDetalhe = (lancamento) => {
-        addDispatchRedireciona(lancamento)
+        if (editavel){
+            addDispatchRedireciona(lancamento)
+        }
+
     }
 
     return (
@@ -447,7 +458,11 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                 onRowClick={e => redirecionaDetalhe(e.data)}
                 stripedRows
             >
-                <Column header={selecionarHeader()} body={selecionarTemplate}/>
+                <Column
+                    header={selecionarHeader()}
+                    body={selecionarTemplate}
+                    style={{borderRight: 'none', width: '75px'}}
+                />
                 <Column
                     field='data'
                     header='Data'

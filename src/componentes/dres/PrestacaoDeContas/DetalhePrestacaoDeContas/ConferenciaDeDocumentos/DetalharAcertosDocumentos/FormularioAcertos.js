@@ -74,6 +74,20 @@ const FormularioAcertos = ({solicitacoes_acerto, tiposDeAcertoDocumentos, onSubm
                                                                 <p className='mt-1 mb-0'><span className="text-danger">{errors && errors.solicitacoes_acerto && errors.solicitacoes_acerto[index] && errors.solicitacoes_acerto[index].tipo_acerto ? errors.solicitacoes_acerto[index].tipo_acerto : ''}</span></p>
                                                             </div>
 
+                                                            <div className="col-12 mt-3">
+                                                                <label htmlFor={`form-control[${index}]`}>Detalhamento do acerto (opcional)</label>
+                                                                <textarea
+                                                                    value={acerto.detalhamento}
+                                                                    name={`solicitacoes_acerto[${index}].detalhamento`}
+                                                                    id={`detalhamento[${index}]`}
+                                                                    className="form-control"
+                                                                    onChange={(e) => {
+                                                                        props.handleChange(e);
+                                                                    }}
+                                                                    placeholder={'Utilize esse campo para detalhar o motivo'}
+                                                                />
+                                                            </div>
+
                                                         </div>
                                                     </div> /*div key*/
                                                 )
@@ -86,6 +100,7 @@ const FormularioAcertos = ({solicitacoes_acerto, tiposDeAcertoDocumentos, onSubm
                                                     onClick={() => {
                                                         push({
                                                             tipo_acerto: '',
+                                                            detalhamento: '',
                                                         });
                                                     }}
                                                 >

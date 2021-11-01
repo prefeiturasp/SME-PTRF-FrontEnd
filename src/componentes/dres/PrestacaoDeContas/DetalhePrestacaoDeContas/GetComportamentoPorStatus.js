@@ -10,7 +10,6 @@ import {InformacoesDevolucaoAoTesouro} from "./InformacoesDevolucaoAoTesouro";
 import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
 import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
 import {TabsArquivosDeReferencia} from "./ArquivosDeReferencia/TabsArquivosDeReferencia";
-import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferencia/ArquivosDeReferenciaVisualizacaoDownload";
 import ConferenciaDeLancamentos from "./ConferenciaDeLancamentos";
 import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
 import {BotaoSalvarRodape} from "./BotaoSalvarRodape";
@@ -225,24 +224,28 @@ export const GetComportamentoPorStatus = (
                         // Props ResumoFinanceiroTabelaAcoes
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
-                    />
-                    <ArquivosDeReferenciaVisualizacaoDownload
+
+                        //ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
                     />
+
                     <ConferenciaDeLancamentos
                         infoAta={infoAta}
                         toggleBtnEscolheConta={toggleBtnEscolheConta}
                         clickBtnEscolheConta={clickBtnEscolheConta}
                         prestacaoDeContas={prestacaoDeContas}
+                        editavel={true}
                     />
                     <ConferenciaDeDocumentos
                         prestacaoDeContas={prestacaoDeContas}
+                        editavel={true}
                     />
                     <DevolucaoParaAcertos
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
+                        editavel={true}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -324,6 +327,27 @@ export const GetComportamentoPorStatus = (
                         // Props ResumoFinanceiroTabelaAcoes
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
+
+                        //ArquivosDeReferenciaVisualizacaoDownload
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                    <ConferenciaDeLancamentos
+                        infoAta={infoAta}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        prestacaoDeContas={prestacaoDeContas}
+                        editavel={false}
+                    />
+                    <ConferenciaDeDocumentos
+                        prestacaoDeContas={prestacaoDeContas}
+                        editavel={false}
+                    />
+                    <DevolucaoParaAcertos
+                        prestacaoDeContas={prestacaoDeContas}
+                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        carregaPrestacaoDeContas={carregaPrestacaoDeContas}
+                        infoAta={infoAta}
+                        editavel={false}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -401,6 +425,27 @@ export const GetComportamentoPorStatus = (
                         // Props ResumoFinanceiroTabelaAcoes
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
+
+                        //ArquivosDeReferenciaVisualizacaoDownload
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                    <ConferenciaDeLancamentos
+                        infoAta={infoAta}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        prestacaoDeContas={prestacaoDeContas}
+                        editavel={false}
+                    />
+                    <ConferenciaDeDocumentos
+                        prestacaoDeContas={prestacaoDeContas}
+                        editavel={false}
+                    />
+                    <DevolucaoParaAcertos
+                        prestacaoDeContas={prestacaoDeContas}
+                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        carregaPrestacaoDeContas={carregaPrestacaoDeContas}
+                        infoAta={infoAta}
+                        editavel={false}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -481,6 +526,27 @@ export const GetComportamentoPorStatus = (
                         // Props ResumoFinanceiroTabelaAcoes
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
+
+                        //ArquivosDeReferenciaVisualizacaoDownload
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                    <ConferenciaDeLancamentos
+                        infoAta={infoAta}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        prestacaoDeContas={prestacaoDeContas}
+                        editavel={false}
+                    />
+                    <ConferenciaDeDocumentos
+                        prestacaoDeContas={prestacaoDeContas}
+                        editavel={false}
+                    />
+                    <DevolucaoParaAcertos
+                        prestacaoDeContas={prestacaoDeContas}
+                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        carregaPrestacaoDeContas={carregaPrestacaoDeContas}
+                        infoAta={infoAta}
+                        editavel={false}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -547,6 +613,27 @@ export const GetComportamentoPorStatus = (
                         // Props ResumoFinanceiroTabelaAcoes
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
+
+                        //ArquivosDeReferenciaVisualizacaoDownload
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                    <ConferenciaDeLancamentos
+                        infoAta={infoAta}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        prestacaoDeContas={prestacaoDeContas}
+                        editavel={false}
+                    />
+                    <ConferenciaDeDocumentos
+                        prestacaoDeContas={prestacaoDeContas}
+                        editavel={false}
+                    />
+                    <DevolucaoParaAcertos
+                        prestacaoDeContas={prestacaoDeContas}
+                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        carregaPrestacaoDeContas={carregaPrestacaoDeContas}
+                        infoAta={infoAta}
+                        editavel={false}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -582,7 +669,9 @@ export const GetComportamentoPorStatus = (
                         disabledData={true}
                         disabledStatus={true}
                         prestacaoDeContas={prestacaoDeContas}
-                        exibeMotivo={false}
+                        exibeMotivo={true}
+                        motivo={'motivos_reprovacao'}
+                        outros_motivos={'outros_motivos_reprovacao'}
                     />
                     <DevolucoesPrestacaoDeContas
                         prestacaoDeContas={prestacaoDeContas}
@@ -613,6 +702,27 @@ export const GetComportamentoPorStatus = (
                         // Props ResumoFinanceiroTabelaAcoes
                         toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                         clickBtnTabelaAcoes={clickBtnTabelaAcoes}
+
+                        //ArquivosDeReferenciaVisualizacaoDownload
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
+                    <ConferenciaDeLancamentos
+                        infoAta={infoAta}
+                        toggleBtnEscolheConta={toggleBtnEscolheConta}
+                        clickBtnEscolheConta={clickBtnEscolheConta}
+                        prestacaoDeContas={prestacaoDeContas}
+                        editavel={false}
+                    />
+                    <ConferenciaDeDocumentos
+                        prestacaoDeContas={prestacaoDeContas}
+                        editavel={false}
+                    />
+                    <DevolucaoParaAcertos
+                        prestacaoDeContas={prestacaoDeContas}
+                        analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        carregaPrestacaoDeContas={carregaPrestacaoDeContas}
+                        infoAta={infoAta}
+                        editavel={false}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}

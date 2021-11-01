@@ -2,15 +2,15 @@ import React, {useContext, useEffect, useState} from "react";
 import {useHistory } from "react-router-dom";
 import "./cabecalho.scss"
 import LogoPtrf from "../../../assets/img/logo-ptrf-verde.png"
-import IconeSair from "../../../assets/img/sair.svg"
-import IconeMenuMeuPerfil from "../../../assets/img/icone-menu-meu-perfil.png"
 import { authService, USUARIO_LOGIN } from '../../../services/auth.service';
 import {visoesService} from "../../../services/visoes.service";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import {CentralDeDownloadContext} from "../../../context/CentralDeDownloads"
 import {ModalConfirmaLogout} from "./ModalConfirmaLogout";
+import {ModalNotificaDevolucao} from "./ModalNotificaDevolucao";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBell, faChevronDown, faTrash, faUser, faFileDownload} from "@fortawesome/free-solid-svg-icons";
+import {notificaDevolucaoPCService} from "../../../services/NotificacaDevolucaoPC.service";
 
 export const Cabecalho = () => {
 
@@ -52,10 +52,13 @@ export const Cabecalho = () => {
             obj.nome_associacao,
             obj.unidade_tipo,
             obj.unidade_nome,
+            obj.notificar_devolucao_referencia,
+            obj.notificar_devolucao_pc_uuid,
+            obj.notificacao_uuid,
         );
     };
 
-    const retornaVisaoConvertida = (visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome) =>{
+    const retornaVisaoConvertida = (visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome, notificar_devolucao_referencia, notificar_devolucao_pc_uuid, notificacao_uuid) =>{
         let visao_convertida = visoesService.converteNomeVisao(visao);
         let obj;
         if (visao === "DRE" || visao === "SME"){
@@ -66,6 +69,9 @@ export const Cabecalho = () => {
                 nome_associacao:nome_associacao,
                 unidade_tipo:unidade_tipo,
                 unidade_nome:unidade_nome,
+                notificar_devolucao_referencia:null,
+                notificar_devolucao_pc_uuid:null,
+                notificacao_uuid:null,
             })
         }else {
             obj = JSON.stringify({
@@ -75,6 +81,9 @@ export const Cabecalho = () => {
                 nome_associacao:nome_associacao,
                 unidade_tipo:unidade_tipo,
                 unidade_nome:unidade_nome,
+                notificar_devolucao_referencia:notificar_devolucao_referencia,
+                notificar_devolucao_pc_uuid:notificar_devolucao_pc_uuid,
+                notificacao_uuid:notificacao_uuid,
             })
         }
         return obj
@@ -113,6 +122,16 @@ export const Cabecalho = () => {
         window.location.assign('/central-de-notificacoes')
     };
 
+    const onVerAcertosDepois = async () => {
+        notificacaoContext.setExibeModalTemDevolucao(false)
+        notificacaoContext.setExibeMensagemFixaTemDevolucao(true)
+    };
+
+    const onVerAcertos = () => {
+        notificacaoContext.setExibeModalTemDevolucao(false)
+        notificaDevolucaoPCService.marcaNotificacaoComoLidaERedirecianaParaVerAcertos(history)
+    };
+
     return (
         <>
             {authService.isLoggedIn() &&
@@ -139,7 +158,10 @@ export const Cabecalho = () => {
                                                         dados_usuario_logado.associacao_selecionada.uuid,
                                                         dados_usuario_logado.associacao_selecionada.nome,
                                                         dados_usuario_logado.unidade_selecionada.tipo_unidade,
-                                                        dados_usuario_logado.unidade_selecionada.nome
+                                                        dados_usuario_logado.unidade_selecionada.nome,
+                                                        dados_usuario_logado.unidade_selecionada.notificar_devolucao_referencia,
+                                                        dados_usuario_logado.unidade_selecionada.notificar_devolucao_pc_uuid,
+                                                        dados_usuario_logado.unidade_selecionada.notificacao_uuid,
                                                     )}
                                                 onChange={(e)=>onChangeVisao(e)}
                                                 className="form-control"
@@ -155,6 +177,9 @@ export const Cabecalho = () => {
                                                                 unidade.tipo_unidade === "DRE" || unidade.tipo_unidade === "SME" ? unidade.nome : unidade.associacao.nome,
                                                                 unidade.tipo_unidade,
                                                                 unidade.nome,
+                                                                unidade.notificar_devolucao_referencia,
+                                                                unidade.notificar_devolucao_pc_uuid,
+                                                                unidade.notificacao_uuid,
                                                             )}
                                                     >
                                                         {unidade.tipo_unidade} - {unidade.nome}
@@ -242,6 +267,16 @@ export const Cabecalho = () => {
                             texto="<p>Deseja ver as notificações ou sair do sistema</p>"
                         />
                     </section>
+                    <section>
+                        <ModalNotificaDevolucao
+                            show={notificacaoContext.exibeModalTemDevolucao}
+                            handleClose={onHandleClose}
+                            onVerAcertos={onVerAcertos}
+                            onVerAcertosDepois={onVerAcertosDepois}
+                            titulo="Atenção"
+                            texto={`<p>A prestação de contas ${dados_usuario_logado.unidade_selecionada.notificar_devolucao_referencia} foi devolvida para acertos pela DRE.</p>`}
+                        />
+                    </section>
                 </>
 
             }
@@ -249,4 +284,3 @@ export const Cabecalho = () => {
         </>
     );
 };
-

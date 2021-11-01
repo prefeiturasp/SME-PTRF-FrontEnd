@@ -133,6 +133,10 @@ export const getMotivosAprovadoComRessalva = async () => {
     return (await api.get(`/api/motivos-aprovacao-ressalva/`, authHeader)).data
 };
 
+export const getMotivosReprovacao = async () => {
+    return (await api.get(`/api/motivos-reprovacao/`, authHeader)).data
+};
+
 export const getVisualizarArquivoDeReferencia = async (nome_do_arquivo, uuid, tipo) => {
 
     let url;
@@ -203,6 +207,10 @@ export const getDownloadArquivoDeReferencia = async (nome_do_arquivo, uuid, tipo
 
 export const getLancamentosParaConferencia = async (prestacao_de_contas_uuid, analise_atual_uuid, conta_uuid, acao_associacao_uuid=null, tipo_lancamento=null) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/lancamentos/?analise_prestacao=${analise_atual_uuid}&conta_associacao=${conta_uuid}${acao_associacao_uuid ? '&acao_associacao='+acao_associacao_uuid : ''}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}`, authHeader)).data
+};
+
+export const getUltimaAnalisePc = async (prestacao_de_contas_uuid) => {
+    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/ultima-analise-pc`, authHeader)).data
 };
 
 export const postLancamentosParaConferenciaMarcarComoCorreto = async (prestacao_de_contas_uuid, payload) => {
@@ -277,10 +285,13 @@ export const getRelatorioAcertosInfo = async(analise_atual_uuid) => {
     return (await api.get(`/api/analises-prestacoes-contas/status-info/?analise_prestacao_uuid=${analise_atual_uuid}`, authHeader)).data
 };
 
-export const gerarPreviaRelatorioAcertos = async (analise_prestacao_uuid, conta_associacao_cheque_uuid, conta_associacao_cartao_uuid) => {
-    return (await api.get(`/api/analises-prestacoes-contas/previa/?analise_prestacao_uuid=${analise_prestacao_uuid}&conta_associacao_cheque_uuid=${conta_associacao_cheque_uuid}&conta_associacao_cartao_uuid=${conta_associacao_cartao_uuid}`, authHeader)).data
+export const gerarPreviaRelatorioAcertos = async (analise_prestacao_uuid) => {
+    return (await api.get(`/api/analises-prestacoes-contas/previa/?analise_prestacao_uuid=${analise_prestacao_uuid}`, authHeader)).data
 };
 
+export const getAnalisePrestacaoConta = async (analise_prestacao_uuid) => {
+    return (await api.get(`/api/analises-prestacoes-contas/${analise_prestacao_uuid}`, authHeader)).data
+};
 
 export const downloadDocumentoPreviaPdf = async (analise_atual_uuid) => {
     return api

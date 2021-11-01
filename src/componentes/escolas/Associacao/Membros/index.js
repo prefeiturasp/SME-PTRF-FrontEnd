@@ -506,7 +506,7 @@ export const MembrosDaAssociacao = () => {
                     'representacao': stateFormEditarMembro.representacao ? stateFormEditarMembro.representacao : "",
                     'codigo_identificacao': stateFormEditarMembro.codigo_identificacao ? stateFormEditarMembro.codigo_identificacao : "",
                     'email': stateFormEditarMembro.email ? stateFormEditarMembro.email : "",
-                    'cpf': stateFormEditarMembro.cpf ? stateFormEditarMembro.cpf : "",
+                    'cpf': "",
                     'usuario': usuario,
                     'telefone': stateFormEditarMembro.telefone ? stateFormEditarMembro.telefone : "",
                     'cep': stateFormEditarMembro.cep ? stateFormEditarMembro.cep : "",

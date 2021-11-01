@@ -3,7 +3,7 @@ import "./central-de-notificacoes.scss"
 import {BotoesCategoriasNotificacoes} from "./BotoesCategoriasNotificacoes";
 import {CardNotificacoes} from "./CardNotificacoes";
 import {FormFiltrosNotificacoes} from "./FormFiltrosNotificacoes";
-import {getNotificacoes, getNotificacoesLidasNaoLidas, getNotificacaoMarcarDesmarcarLida, getNotificacoesTabela, getNotificacoesFiltros, getNotificacoesPaginacao, getNotificacoesLidasNaoLidasPaginacao, getNotificacoesFiltrosPaginacao} from "../../../services/Notificacoes.service";
+import {getNotificacoes, getNotificacoesLidasNaoLidas, setNotificacaoMarcarDesmarcarLida, getNotificacoesTabela, getNotificacoesFiltros, getNotificacoesPaginacao, getNotificacoesLidasNaoLidasPaginacao, getNotificacoesFiltrosPaginacao} from "../../../services/Notificacoes.service";
 import Loading from "../../../utils/Loading";
 import {NotificacaoContext} from "../../../context/Notificacoes";
 import moment from "moment";
@@ -133,7 +133,7 @@ export const CentralDeNotificacoes = () => {
             "uuid": uuid,
             "lido": checado
         };
-        await getNotificacaoMarcarDesmarcarLida(payload);
+        await setNotificacaoMarcarDesmarcarLida(payload);
         await trazerNotificacoes();
     };
 

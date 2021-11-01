@@ -45,6 +45,7 @@ const DetalharAcertosDocumentos = () =>{
                 acertos.solicitacoes_de_ajuste_da_analise.map((acerto) =>
                     _acertos.push({
                         tipo_acerto: acerto.tipo_acerto.uuid,
+                        detalhamento: acerto.detalhamento,
                     })
                 )
             }
@@ -65,6 +66,7 @@ const DetalharAcertosDocumentos = () =>{
         if (!formRef.current.errors.solicitacoes_acerto && formRef.current.values && formRef.current.values.solicitacoes_acerto) {
 
             let {solicitacoes_acerto} = formRef.current.values
+
             let tipo_documento = documentos && documentos[0] && documentos[0].tipo_documento_prestacao_conta && documentos[0].tipo_documento_prestacao_conta.uuid ? documentos[0].tipo_documento_prestacao_conta.uuid : null
             let conta_associacao = documentos && documentos[0] && documentos[0].tipo_documento_prestacao_conta && documentos[0].tipo_documento_prestacao_conta.conta_associacao ? documentos[0].tipo_documento_prestacao_conta.conta_associacao : null
 
