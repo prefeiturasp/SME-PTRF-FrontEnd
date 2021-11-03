@@ -183,10 +183,11 @@ export default class DemonstrativoFinanceiroPorConta extends Component {
                 label: 'Baixar em .PDF',
                 command: () => {this.downloadDocumentoFinal("PDF")}
             },
-            {
-                label: 'Baixar em .XLSX',
-                command: () => {this.downloadDocumentoFinal("XLSX")}
-            }
+            // TODO Remover Excel
+            // {
+            //     label: 'Baixar em .XLSX',
+            //     command: () => {this.downloadDocumentoFinal("XLSX")}
+            // }
         ];
         return (
             <div className="relacao-bens-container mt-5">
@@ -200,17 +201,20 @@ export default class DemonstrativoFinanceiroPorConta extends Component {
 
                         {status === 'CONCLUIDO' && documentoPrevio &&
                         <>
-                            <button
-                                className='btn-editar-membro'
-                                type='button'
-                                onClick={() => {this.downloadDocumentoPrevia("XLSX")}}
-                            >
-                                <FontAwesomeIcon
-                                    style={{fontSize: '18px',}}
-                                    icon={faDownload}
-                                />
-                                &nbsp;XLSX
-                            </button>
+
+                            {/* TODO Remover Excel*/}
+                            {/*<button*/}
+                            {/*    className='btn-editar-membro'*/}
+                            {/*    type='button'*/}
+                            {/*    onClick={() => {this.downloadDocumentoPrevia("XLSX")}}*/}
+                            {/*>*/}
+                            {/*    <FontAwesomeIcon*/}
+                            {/*        style={{fontSize: '18px',}}*/}
+                            {/*        icon={faDownload}*/}
+                            {/*    />*/}
+                            {/*    &nbsp;XLSX*/}
+                            {/*</button>*/}
+
                             <button className='btn-editar-membro'
                                     type='button'
                                     onClick={() => {this.downloadDocumentoPrevia("PDF")}}
@@ -236,7 +240,8 @@ export default class DemonstrativoFinanceiroPorConta extends Component {
                                 label="documento final"
                                 onClick={
                                     () => {
-                                        this.downloadDocumentoFinal("XLSX");
+                                        // TODO Remover Excel
+                                        // this.downloadDocumentoFinal("XLSX");
                                         this.downloadDocumentoFinal("PDF");
                                     }
                                 }
