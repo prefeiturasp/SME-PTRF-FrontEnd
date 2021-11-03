@@ -311,7 +311,7 @@ export const CadastroForm = ({verbo_http}) => {
             errors.data_documento = "Data do documento não pode ser maior que a data de hoje"
         }
         if (data_digitada_transacao > hoje){
-            errors.data_transacao = "Data da transação não pode ser maior que a data de hoje"
+            errors.data_transacao = "Data do pagamento não pode ser maior que a data de hoje"
         }
 
 
@@ -570,7 +570,7 @@ export const CadastroForm = ({verbo_http}) => {
                                         </div>
 
                                         <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="data_transacao">Data da transação</label>
+                                            <label htmlFor="data_transacao">Data do pagamento</label>
                                             <DatePickerField
                                                 name="data_transacao"
                                                 id="data_transacao"
