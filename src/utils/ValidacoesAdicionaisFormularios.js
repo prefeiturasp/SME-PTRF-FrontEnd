@@ -167,7 +167,7 @@ export const YupSignupSchemaCadastroDespesaSaida = yup.object().shape({
   data_documento: yup.string().required("Data do documento é obrigatório.").nullable(),
   tipo_transacao: yup.string().required("Tipo da transação é obrigatório.").nullable(),
 
-  data_transacao: yup.string().required("Data da transação é obrigatório.").nullable(),
+  data_transacao: yup.string().required("Data do pagamento é obrigatório.").nullable(),
   documento_transacao: yup.string().nullable(),
 
   valor_total: yup.string().required("Valor do crédito é obrigatório.")

@@ -188,7 +188,7 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
                         {data.documento_mestre.tipo_transacao && data.documento_mestre.tipo_transacao.nome ? data.documento_mestre.tipo_transacao.nome : ''}
                     </div>
                     <div className='col border-left'>
-                        <p className='mb-0 font-weight-bold'>Data de transação:</p>
+                        <p className='mb-0 font-weight-bold'>Data do pagamento:</p>
                         {data.documento_mestre.data_transacao ? dataTemplate(null, null, data.documento_mestre.data_transacao) : ''}
                     </div>
                     {data.documento_mestre.tipo_transacao && data.documento_mestre.tipo_transacao.nome && data.documento_mestre.tipo_transacao.nome === 'Cheque' ? (
