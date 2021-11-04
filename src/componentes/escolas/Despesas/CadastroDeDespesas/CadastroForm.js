@@ -545,7 +545,7 @@ export const CadastroForm = ({verbo_http}) => {
                                         </div>
 
                                         <div className="col-12 col-md-6 mt-4">
-                                            <label htmlFor="tipo_transacao">Tipo de transação</label>
+                                            <label htmlFor="tipo_transacao">Forma de pagamento</label>
                                             <select
                                                 value={
                                                     props.values.tipo_transacao !== null ? (
