@@ -1,9 +1,9 @@
 import React, {Fragment} from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faAngleDown, faAngleUp, faEdit, faTrash} from '@fortawesome/free-solid-svg-icons'
+import {faAngleDown, faAngleUp, faEdit, faTimesCircle} from '@fortawesome/free-solid-svg-icons'
+import {Link} from "react-router-dom";
 
-export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, onShowEditarMembro, cargos, converteNomeRepresentacao, retornaDadosAdicionaisTabela, onDeleteMembro}) => {
-
+export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, cargos, converteNomeRepresentacao, retornaDadosAdicionaisTabela, onDeleteMembro, verificaSeExibeToolTip=null, visoesService}) => {
     return(
         <>
             <p><strong>{titulo}</strong></p>
@@ -29,26 +29,40 @@ export const TabelaMembros = ({titulo, clickIconeToogle, toggleIcon, onShowEdita
                                                 icon={clickIconeToogle[index] ? faAngleUp : faAngleDown}
                                             />
                                         </a>
-                                        <span>{item.cargo}</span>
+                                        <span>{item.cargo} {verificaSeExibeToolTip && verificaSeExibeToolTip(item.id, item)}</span>
                                     </div>
                                 </td>
                                 <td><span>{item.infos && item.infos.nome ? item.infos.nome : ""}</span></td>
                                 <td><span>{item.infos && item.infos.representacao ? converteNomeRepresentacao(item.infos.representacao) : ""}</span></td>
                                 <td>
                                     <div className="d-flex justify-content-center">
-                                        <button className="btn-editar-membro" onClick={() => onShowEditarMembro(item)}>
+                                        <Link
+                                            to={{pathname: `/cadastro-de-membros-da-associacao/${item && item.infos && item.infos.uuid ? item.infos.uuid : ''}`,
+                                                state: {
+                                                   ...item,
+                                                }
+                                            }}
+                                            className="btn-editar-membro"
+                                        >
                                             <FontAwesomeIcon
                                                 style={{fontSize: '20px', marginRight: "0"}}
                                                 icon={faEdit}
                                             />
-                                        </button>
-                                        <button className="btn-editar-membro"
-                                                onClick={() => onDeleteMembro(item)}>
-                                            <FontAwesomeIcon
-                                                style={{fontSize: '20px', marginRight: "0", color: "red"}}
-                                                icon={faTrash}
-                                            />
-                                        </button>
+                                        </Link>
+
+                                        {visoesService.getPermissoes(['change_associacao']) &&
+                                            <button
+                                                disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                className="btn-editar-membro"
+                                                onClick={() => onDeleteMembro(item)}
+                                            >
+                                                <FontAwesomeIcon
+                                                    style={{fontSize: '20px', marginRight: "0", color: "#b41d00"}}
+                                                    icon={faTimesCircle}
+                                                />
+                                            </button>
+                                        }
+
                                     </div>
 
                                 </td>
