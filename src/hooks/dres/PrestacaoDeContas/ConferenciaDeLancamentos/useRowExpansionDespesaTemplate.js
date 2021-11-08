@@ -27,11 +27,11 @@ const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{
                         <p className='mb-2'>{data && data.documento_mestre && data.documento_mestre.tipo_documento && data.documento_mestre.tipo_documento.nome ? data.documento_mestre.tipo_documento.nome : ''}</p>
                     </div>
                     <div className='col border-top border-bottom border-right'>
-                        <p className='mt-2 mb-0'><strong>Tipo de transação</strong></p>
+                        <p className='mt-2 mb-0'><strong>Forma de pagamento</strong></p>
                         <p className='mb-2'>{data && data.documento_mestre && data.documento_mestre.tipo_transacao && data.documento_mestre.tipo_transacao.nome ? data.documento_mestre.tipo_transacao.nome : ''}</p>
                     </div>
                     <div className='col border-top border-bottom border-right'>
-                        <p className='mt-2 mb-0'><strong>Data de transação</strong></p>
+                        <p className='mt-2 mb-0'><strong>Data do pagamento</strong></p>
                         <p className='mb-2'>{data && data.documento_mestre && data.documento_mestre.data_transacao ? dataTemplate(null, null, data.documento_mestre.data_transacao) : ''}</p>
                     </div>
                     <div className='col border-top border-bottom border-right'>

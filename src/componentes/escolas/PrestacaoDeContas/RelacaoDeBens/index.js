@@ -189,10 +189,11 @@ export default class RelacaoDeBens extends Component {
                 label: 'Baixar em .PDF',
                 command: () => {this.downloadDocumentoFinal("PDF")}
             },
-            {
-                label: 'Baixar em .XLSX',
-                command: () => {this.downloadDocumentoFinal("XLSX")}
-            }
+            // TODO Remover Excel
+            // {
+            //     label: 'Baixar em .XLSX',
+            //     command: () => {this.downloadDocumentoFinal("XLSX")}
+            // }
         ];
 
         return (
@@ -207,17 +208,18 @@ export default class RelacaoDeBens extends Component {
 
                         {status === 'CONCLUIDO' && documentoPrevio &&
                         <>
-                            <button
-                                className='btn-editar-membro'
-                                type='button'
-                                onClick={() => {this.downloadDocumentoPrevia("XLSX")}}
-                            >
-                                <FontAwesomeIcon
-                                    style={{fontSize: '18px',}}
-                                    icon={faDownload}
-                                />
-                                &nbsp;XLSX
-                            </button>
+                            {/* TODO Remover Excel*/}
+                            {/*<button*/}
+                            {/*    className='btn-editar-membro'*/}
+                            {/*    type='button'*/}
+                            {/*    onClick={() => {this.downloadDocumentoPrevia("XLSX")}}*/}
+                            {/*>*/}
+                            {/*    <FontAwesomeIcon*/}
+                            {/*        style={{fontSize: '18px',}}*/}
+                            {/*        icon={faDownload}*/}
+                            {/*    />*/}
+                            {/*    &nbsp;XLSX*/}
+                            {/*</button>*/}
                             <button className='btn-editar-membro'
                                     type='button'
                                     onClick={() => {this.downloadDocumentoPrevia("PDF")}}
@@ -244,7 +246,8 @@ export default class RelacaoDeBens extends Component {
                                 onClick={
                                     () => {
                                         this.downloadDocumentoFinal("PDF");
-                                        this.downloadDocumentoFinal("XLSX");
+                                        // TODO Remover Excel
+                                        // this.downloadDocumentoFinal("XLSX");
                                     }
                                 }
                                 model={formatos}
