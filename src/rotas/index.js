@@ -62,6 +62,7 @@ import {DetalharAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePres
 import DetalharAcertosDocumentos from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/DetalharAcertosDocumentos";
 import {ResumoDosAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ResumoDosAcertos";
 import ConsultaDetalhamentoAnaliseDaDre from "../componentes/escolas/AnaliseDre/ConsultaDetalhamentoAnaliseDaDre";
+import CadastroDeMembrosDaAssociacao from "../componentes/escolas/Associacao/Membros/CadastroDeMembrosDaAssociacao";
 
 const routesConfig = [
     {
@@ -128,6 +129,12 @@ const routesConfig = [
         exact: true,
         path: "/membros-da-associacao",
         component: MembrosDaAssociacaoPage,
+        permissoes: ['access_dados_associacao'],
+    },
+    {
+        exact: true,
+        path: "/cadastro-de-membros-da-associacao/:uuid_membro_associacao?",
+        component: CadastroDeMembrosDaAssociacao,
         permissoes: ['access_dados_associacao'],
     },
     {
