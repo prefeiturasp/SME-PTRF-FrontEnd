@@ -168,7 +168,9 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                                 <p className='mb-1'><strong>Item {index + 1}</strong></p>
                             </div>
                             <p className='mb-1'><strong>Tipo de acerto</strong></p>
-                            <p className='mb-0'>{ajuste.tipo_acerto.nome}</p>
+                            <p>{ajuste.tipo_acerto.nome}</p>
+                            <p className='mb-1'><strong>Detalhamento</strong></p>
+                            <p className='mb-0'>{ajuste.detalhamento}</p>
                         </div>
                     </div>
                 ))
