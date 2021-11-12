@@ -16,15 +16,20 @@ export const TabelaPresentes = ({titulo, listaPresentes}) => {
                 </thead>
 
                 <tbody>
-
-                    {listaPresentes && listaPresentes.length > 0 && listaPresentes.map((presente, index) => 
-                        <tr key={`tr-presente-${index}`}>
-                            <td><strong>{presente.nome}</strong> <br></br> {presente.cargo}</td>
-                            <td></td>
-                        </tr>
-                    )}
-                    
-                    
+                    {listaPresentes && listaPresentes.length > 0
+                        ?
+                            listaPresentes.map((presente, index) => 
+                                <tr key={`tr-presente-${index}`}>
+                                    <td><strong>{presente.nome}</strong> <br></br> {presente.cargo}</td>
+                                    <td></td>
+                                </tr>
+                            )
+                        :
+                            <tr>
+                                <td><strong></strong> <br></br></td>
+                                <td></td>
+                            </tr>
+                    }
                 </tbody>
             </table>
         </>

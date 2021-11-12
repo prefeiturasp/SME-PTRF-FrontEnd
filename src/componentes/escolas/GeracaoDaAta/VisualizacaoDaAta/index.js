@@ -535,7 +535,7 @@ export const VisualizacaoDaAta = () => {
             </div>
 
             <div className="col-12">
-                {dadosAta && Object.entries(dadosAta).length > 0 && possuiPresentes(listaPresentes.presentes_membros) &&
+                {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <div className="mt-4">
                         <TabelaPresentes
                             titulo="Presentes"
@@ -544,7 +544,7 @@ export const VisualizacaoDaAta = () => {
                     </div>
                 }
 
-                {dadosAta && Object.entries(dadosAta).length > 0 && possuiPresentes(listaPresentes.presentes_nao_membros) &&
+                {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <div className="mt-4">
                         <TabelaPresentes
                             titulo="Demais membros"
@@ -553,7 +553,7 @@ export const VisualizacaoDaAta = () => {
                     </div>
                 }
 
-                {dadosAta && Object.entries(dadosAta).length > 0 && possuiPresentes(listaPresentes.presentes_ata_conselho_fiscal) &&
+                {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <div className="mt-4">
                         <p style={{fontSize: '24px', color: '#42474A'}}><strong>Parecer do Conselho Fiscal</strong></p>
                         <p>{retornaDadosAtaFormatado("parecer_conselho")}</p>
