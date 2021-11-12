@@ -11,7 +11,9 @@ export const ModalReverDevolucoesAoTesouro = (props)=> {
           primeiroBotaoOnclick={()=>props.setShowModalDevolucoesAoTesouro(true)}
           primeiroBotaoTexto={props.primeiroBotaoTexto}
           primeiroBotaoCss={props.primeiroBotaoCss}
-          segundoBotaoOnclick={props.handleClose}
+          segundoBotaoOnclick={() => {
+            props.irParaEdicaoAta()
+          }}
           segundoBotaoCss={props.segundoBotaoCss}
           segundoBotaoTexto={props.segundoBotaoTexto}
       />
