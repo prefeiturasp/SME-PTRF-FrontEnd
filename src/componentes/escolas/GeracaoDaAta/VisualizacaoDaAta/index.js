@@ -5,10 +5,12 @@ import {TopoComBotoes} from "./TopoComBotoes";
 import {TextoDinamicoSuperior} from "./TextoDinamicoSuperior";
 import {TabelaDinamica} from "./TabelaDinamica";
 import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
+import { TabelaPresentes } from "./TabelaPresentes";
 import {TextoCopiado} from "../../../../utils/Modais";
 import {getInfoAta, getMembrosCargos} from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasAtas, atualizarInfoAta, getAtas} from "../../../../services/escolas/AtasAssociacao.service";
 import {getDespesasPorFiltros, getPrestacaoDeContasDetalhe, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
+import { getListaPresentesAgrupados } from "../../../../services/escolas/PresentesAta.service";
 import moment from "moment";
 import {exibeDataPT_BR, trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {getDespesa, getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
@@ -57,6 +59,7 @@ export const VisualizacaoDaAta = () => {
     const [membrosCargos, setMembrosCargos] = useState([])
     const [presidenteNaoMembro, setPresidenteNaoMembro] = useState('')
     const [secretarioNaoMembro, setSecretarioNaoMembro] = useState('')
+    const [listaPresentes, setListaPresentes] = useState([]);
 
     const exibeMembrosCargos = useCallback(async ()=>{
         let membros_cargos = await getMembrosCargos(uuid_associacao)
@@ -82,6 +85,15 @@ export const VisualizacaoDaAta = () => {
         tabelasAta();
     }, []);
 
+    useEffect(() => {
+        getListaPresentesAta();
+    }, []);
+
+
+    const getListaPresentesAta = async () => {
+        let lista_presentes = await getListaPresentesAgrupados(uuid_ata);
+        setListaPresentes(lista_presentes);
+    }
 
     const getDadosAta = async () => {
         let dados_ata = await getAtas(uuid_ata);
@@ -133,8 +145,18 @@ export const VisualizacaoDaAta = () => {
     };
 
     const handleClickEditarAta = () => {
-        setShowEditarAta(true);
+        if (dadosAta.tipo_ata === 'RETIFICACAO' && prestacaoDeContasDetalhe && prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao && prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao.length > 0) {
+            setShowReverDevolucoesAoTesouro(true);
+        }
+        else{
+            irParaEdicaoAta();
+        }
     };
+
+    const irParaEdicaoAta = () => {
+        let path = `/edicao-da-ata/${uuid_ata}/`;
+        window.location.assign(path)
+    }
 
     const handleChangeEditarAta = (name, value) => {
         setStateFormEditarAta({
@@ -455,6 +477,15 @@ export const VisualizacaoDaAta = () => {
     };
     // FIM InformacoesDvolucaoAoTesrouro
 
+    const possuiPresentes = (lista_presentes) => {
+        if(lista_presentes){
+            if(lista_presentes.length > 0){
+                return true
+            }
+        }
+        return false;
+    };
+
     return (
         <div className="col-12 container-visualizacao-da-ata mb-5">
             <div className="col-12 mt-4">
@@ -502,7 +533,41 @@ export const VisualizacaoDaAta = () => {
                     />
                 }
             </div>
-            <section>
+
+            <div className="col-12">
+                {dadosAta && Object.entries(dadosAta).length > 0 &&
+                    <div className="mt-4">
+                        <TabelaPresentes
+                            titulo="Presentes"
+                            listaPresentes={listaPresentes.presentes_membros}
+                        ></TabelaPresentes>
+                    </div>
+                }
+
+                {dadosAta && Object.entries(dadosAta).length > 0 &&
+                    <div className="mt-4">
+                        <TabelaPresentes
+                            titulo="Demais membros"
+                            listaPresentes={listaPresentes.presentes_nao_membros}
+                        ></TabelaPresentes>
+                    </div>
+                }
+
+                {dadosAta && Object.entries(dadosAta).length > 0 &&
+                    <div className="mt-4">
+                        <p style={{fontSize: '24px', color: '#42474A'}}><strong>Parecer do Conselho Fiscal</strong></p>
+                        <p>{retornaDadosAtaFormatado("parecer_conselho")}</p>
+                        <p className="mt-5">{retornaDadosAtaFormatado("data_reuniao_texto_inferior")}</p>
+                        <TabelaPresentes
+                            titulo="Presentes"
+                            listaPresentes={listaPresentes.presentes_ata_conselho_fiscal}
+                        ></TabelaPresentes>
+                    </div>
+                }
+            </div>
+
+            {/* remover modal de edição da ata apos verificar se esta tudo ocorrendo como deveria */}
+            {/* <section>
                 <ModalEditarAta
                     dadosAta={dadosAta}
                     show={showEditarAta}
@@ -517,7 +582,7 @@ export const VisualizacaoDaAta = () => {
                     handleChangeEditarAtaSecretario={handleChangeEditarAtaSecretario}
                     handleChangeEditarAtaSecretarioNaoMembro={handleChangeEditarAtaSecretarioNaoMembro}
                 />
-            </section>
+            </section> */}
             <section>
                 <ModalDevolucaoAoTesouro
                     show={showModalDevolucoesAoTesouro}
@@ -547,6 +612,7 @@ export const VisualizacaoDaAta = () => {
                     primeiroBotaoCss="outline-success"
                     segundoBotaoCss="success"
                     segundoBotaoTexto="Sim, ja está tudo certo"
+                    irParaEdicaoAta={irParaEdicaoAta}
                 />
             </section>
             <section>

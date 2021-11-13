@@ -14,6 +14,7 @@ import {DadosDaAssociacaoPage} from "../paginas/escolas/Associacao";
 import {PrestacaoDeContasPage} from "../paginas/escolas/PrestacaoDeContas";
 import {DetalhedasPrestacoesPage} from "../paginas/escolas/DetalheDasPrestacoes";
 import {VisualizacaoDaAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta";
+import {EdicaoAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/EdicaoAta";
 import {MembrosDaAssociacaoPage} from "../paginas/escolas/MembrosDaAssociacao";
 import {ValoresReprogramadosPage} from "../paginas/escolas/ValoresReprogramados";
 import {DadosDasContasPage} from "../paginas/escolas/DadosDasContasAssociacao";
@@ -159,6 +160,12 @@ const routesConfig = [
         exact: true,
         path: "/visualizacao-da-ata/:uuid_ata",
         component: VisualizacaoDaAta,
+        permissoes: ['access_prestacao_contas'],
+    },
+    {
+        exact: true,
+        path: "/edicao-da-ata/:uuid_ata",
+        component: EdicaoAta,
         permissoes: ['access_prestacao_contas'],
     },
     {
