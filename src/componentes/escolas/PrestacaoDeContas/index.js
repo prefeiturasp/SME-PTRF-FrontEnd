@@ -16,7 +16,7 @@ import {GeracaoAtaRetificadora} from "../GeracaoAtaRetificadora";
 import {exibeDateTimePT_BR_Ata} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {visoesService} from "../../../services/visoes.service";
 
-export const PrestacaoDeContas = () => {
+export const PrestacaoDeContas = ({setStatusPC}) => {
 
     const [periodoPrestacaoDeConta, setPeriodoPrestacaoDeConta] = useState(false);
     const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
@@ -105,12 +105,15 @@ export const PrestacaoDeContas = () => {
             let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), data_inicial);
             setUuidPrestacaoConta(status.prestacao_conta);
             setStatusPrestacaoDeConta(status)
+            setStatusPC(status)
         }else {
             if (localStorage.getItem('statusPrestacaoDeConta')) {
                 const status_prestacao_de_contas = JSON.parse(localStorage.getItem('statusPrestacaoDeConta'));
                 setStatusPrestacaoDeConta(status_prestacao_de_contas)
+                setStatusPC(status_prestacao_de_contas)
             } else {
                 setStatusPrestacaoDeConta({})
+                setStatusPC({})
             }
         }
     };
@@ -154,6 +157,7 @@ export const PrestacaoDeContas = () => {
             let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), valor.data_inicial);
             setUuidPrestacaoConta(status.prestacao_conta);
             setStatusPrestacaoDeConta(status);
+            setStatusPC(status)
         }
         setLoading(false);
     };
@@ -191,6 +195,7 @@ export const PrestacaoDeContas = () => {
         setUuidPrestacaoConta(status_concluir_periodo.uuid);
         let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
         setStatusPrestacaoDeConta(status);
+        setStatusPC(status)
         await carregaPeriodos();
         await setConfBoxPrestacaoDeContasPorPeriodo();
     };
