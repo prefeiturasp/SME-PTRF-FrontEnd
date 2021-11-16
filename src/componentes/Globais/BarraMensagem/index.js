@@ -1,13 +1,16 @@
 import React from "react";
 import "./barraMensagem.scss"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
 
-export const BarraDeMensagem = ({mensagem, textoBotao, handleClickBotao, icone}) => {
+
+const BarraMensagemCustom = (mensagem, textoBotao, handleClickBotao, mostraBotao, tipo, icone) => {
+    
     return (
         <>
-            <div className="col-12 mt-3 barra-mensagem d-flex">
-                <div className='col-auto'>
-                    <FontAwesomeIcon className='icone-alert-barra-mensagem'
+            <div className={`col-12 mt-3 barra-mensagem d-flex`}>
+                <div className='col-auto align-self-center'>
+                    <FontAwesomeIcon className={`icone-alert-barra-mensagem ${tipo}`}
                         icon={icone}
                     />
                 </div>
@@ -15,13 +18,35 @@ export const BarraDeMensagem = ({mensagem, textoBotao, handleClickBotao, icone})
                     <p className="mb-0">{mensagem}</p>
                 </div>
                 <div className="bd-highlight">
-                    <button
-                        onClick={() => handleClickBotao()}
-                        className="btn btn-outline-success btn-barra-mensagem">
-                        {textoBotao}
-                    </button>
+                    { mostraBotao
+                        ?
+                            <button
+                                onClick={() => handleClickBotao()}
+                                className="btn btn-outline-success btn-barra-mensagem">
+                                {textoBotao}
+                            </button>
+                        :
+                            null
+                    }      
                 </div>
             </div>
+
+            
         </>
     )
-};
+
+}
+
+const BarraMensagemSucessAzul = (mensagem, textoBotao=null, handleClickBotao=null, mostraBotao=false, tipo='sucess-azul', icone=faExclamationCircle) =>{
+    return BarraMensagemCustom(mensagem, textoBotao, handleClickBotao, mostraBotao, tipo, icone)
+}
+
+const BarraMensagemSucessLaranja = (mensagem, textoBotao, handleClickBotao, mostraBotao, tipo='sucess-laranja', icone=faExclamationCircle) =>{
+    return BarraMensagemCustom(mensagem, textoBotao, handleClickBotao, mostraBotao, tipo, icone)
+}
+
+export const barraMensagemCustom = {
+    BarraMensagemSucessAzul,
+    BarraMensagemSucessLaranja
+}
+

@@ -208,4 +208,8 @@ export const getMembrosCargos = async (associacao_uuid) => {
     return (await api.get(`/api/membros-associacao/membros-cargos/?associacao_uuid=${associacao_uuid}`,authHeader)).data
 };
 
+// Presidente ausente
+export const getStatusPresidente = async (associacao_uuid) => {
+  return (await api.get(`/api/associacoes/${associacao_uuid}/status-presidente/`,authHeader)).data
+};
 
