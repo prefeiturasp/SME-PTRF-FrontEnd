@@ -167,7 +167,7 @@ export const YupSignupSchemaCadastroDespesaSaida = yup.object().shape({
   data_documento: yup.string().required("Data do documento é obrigatório.").nullable(),
   tipo_transacao: yup.string().required("Tipo da transação é obrigatório.").nullable(),
 
-  data_transacao: yup.string().required("Data da transação é obrigatório.").nullable(),
+  data_transacao: yup.string().required("Data do pagamento é obrigatório.").nullable(),
   documento_transacao: yup.string().nullable(),
 
   valor_total: yup.string().required("Valor do crédito é obrigatório.")
@@ -745,3 +745,23 @@ export const comparaObjetos = (objetoA, objetoB) =>{
   //simplesmente nego esse valor para retornar que os objetos são iguais (ou não).
   return !saoDiferentes;
 }
+
+export const valida_cpf_exportado = ( valor ) => {
+
+  valor = valor.toString();
+
+  valor = valor.replace(/[^0-9]/g, '');
+
+  let digitos = valor.substr(0, 9);
+
+  let novo_cpf = calc_digitos_posicoes( digitos );
+
+  novo_cpf = calc_digitos_posicoes( novo_cpf, 11 );
+
+  if ( novo_cpf === valor ) {
+    return true;
+  } else {
+    return false;
+  }
+
+} // valida_cpf

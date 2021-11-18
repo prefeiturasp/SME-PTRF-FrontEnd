@@ -14,6 +14,7 @@ import {DadosDaAssociacaoPage} from "../paginas/escolas/Associacao";
 import {PrestacaoDeContasPage} from "../paginas/escolas/PrestacaoDeContas";
 import {DetalhedasPrestacoesPage} from "../paginas/escolas/DetalheDasPrestacoes";
 import {VisualizacaoDaAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta";
+import {EdicaoAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/EdicaoAta";
 import {MembrosDaAssociacaoPage} from "../paginas/escolas/MembrosDaAssociacao";
 import {ValoresReprogramadosPage} from "../paginas/escolas/ValoresReprogramados";
 import {DadosDasContasPage} from "../paginas/escolas/DadosDasContasAssociacao";
@@ -62,6 +63,7 @@ import {DetalharAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePres
 import DetalharAcertosDocumentos from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeDocumentos/DetalharAcertosDocumentos";
 import {ResumoDosAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ResumoDosAcertos";
 import ConsultaDetalhamentoAnaliseDaDre from "../componentes/escolas/AnaliseDre/ConsultaDetalhamentoAnaliseDaDre";
+import CadastroDeMembrosDaAssociacao from "../componentes/escolas/Associacao/Membros/CadastroDeMembrosDaAssociacao";
 
 const routesConfig = [
     {
@@ -132,6 +134,12 @@ const routesConfig = [
     },
     {
         exact: true,
+        path: "/cadastro-de-membros-da-associacao/:uuid_membro_associacao?",
+        component: CadastroDeMembrosDaAssociacao,
+        permissoes: ['access_dados_associacao'],
+    },
+    {
+        exact: true,
         path: "/dados-das-contas-da-associacao",
         component: DadosDasContasPage,
         permissoes: ['access_dados_associacao'],
@@ -152,6 +160,12 @@ const routesConfig = [
         exact: true,
         path: "/visualizacao-da-ata/:uuid_ata",
         component: VisualizacaoDaAta,
+        permissoes: ['access_prestacao_contas'],
+    },
+    {
+        exact: true,
+        path: "/edicao-da-ata/:uuid_ata",
+        component: EdicaoAta,
         permissoes: ['access_prestacao_contas'],
     },
     {

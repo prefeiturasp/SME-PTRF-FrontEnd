@@ -423,7 +423,7 @@ export const CadastroSaidaForm = () => {
                                         </div>
 
                                         <div className="col-12 col-md-6 mt-4">
-                                            <label htmlFor="tipo_transacao">Tipo de transação</label>
+                                            <label htmlFor="tipo_transacao">Forma de pagamento</label>
                                             <select
                                                 value={
                                                     props.values.tipo_transacao !== null ? (
@@ -451,7 +451,7 @@ export const CadastroSaidaForm = () => {
                                         </div>
 
                                         <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="data_transacao">Data da transação</label>
+                                            <label htmlFor="data_transacao">Data do pagamento</label>
                                             <DatePickerField
                                                 name="data_transacao"
                                                 id="data_transacao"

@@ -29,6 +29,7 @@ export const getMembrosAssociacao = async () => {
     return (await api.get(`/api/membros-associacao/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
 
+
 export const criarMembroAssociacao = async (payload) => {
     return (await api.post(`api/membros-associacao/`, payload, authHeader))
 };
@@ -44,6 +45,18 @@ export const deleteMembroAssociacao = async (uuid_membro) => {
     }).catch(error => {
         return error.response;
     });
+};
+
+export const getStatusPresidenteAssociacao = async () => {
+    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/status-presidente`, authHeader)).data
+};
+
+export const patchStatusPresidenteAssociacao = async (associacao_uuid, payload) => {
+    return (await api.patch(`/api/associacoes/${associacao_uuid}/update-status-presidente/`, payload, authHeader)).data
+};
+
+export const getCargosDaDiretoriaExecutiva = async () => {
+    return (await api.get(`/api/membros-associacao/cargos-diretoria-executiva/`, authHeader)).data
 };
 
 

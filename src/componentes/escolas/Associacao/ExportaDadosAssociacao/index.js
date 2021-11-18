@@ -31,7 +31,7 @@ export const ExportaDadosDaAsssociacao = () => {
                         marginBottom="0"
                     />
                 ) :
-                <div className="d-flex  justify-content-end pb-3 mt-3">
+                <div className="d-flex  justify-content-end pb-3">
                     <button
                         disabled={!visoesService.getPermissoes(['change_associacao'])}
                         onClick={exportarDados}
