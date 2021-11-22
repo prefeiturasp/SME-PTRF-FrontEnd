@@ -73,6 +73,7 @@ export const VisualizacaoDaAta = () => {
     useEffect(() => {
         const infoAta = async () => {
             let info_ata = await getInfoAta();
+            console.log("XXXXXX INFO ATA", info_ata)
             setInfoAta(info_ata);
             await getDadosAta()
         };
@@ -267,7 +268,12 @@ export const VisualizacaoDaAta = () => {
             let dia_por_extenso = numero.porExtenso(moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD"));
             let mes_por_extenso = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("MMMM");
             let ano_por_extenso = numero.porExtenso(moment(new Date(data), "DD/MM/YYYY").add(1, 'days').year());
-            let data_por_extenso = dia_por_extenso + " dias do mês de " + mes_por_extenso + " de " + ano_por_extenso;
+            let data_por_extenso
+            if (dia_por_extenso === 'um'){
+                data_por_extenso = "No primeiro dia do mês de " + mes_por_extenso + " de " + ano_por_extenso;
+            }else {
+                data_por_extenso = "Aos " + dia_por_extenso + " dias do mês de " + mes_por_extenso + " de " + ano_por_extenso;
+            }
             return data_por_extenso;
         }
     };
@@ -540,7 +546,8 @@ export const VisualizacaoDaAta = () => {
                         <TabelaPresentes
                             titulo="Presentes"
                             listaPresentes={listaPresentes.presentes_membros}
-                        ></TabelaPresentes>
+                        >
+                        </TabelaPresentes>
                     </div>
                 }
 
@@ -549,7 +556,8 @@ export const VisualizacaoDaAta = () => {
                         <TabelaPresentes
                             titulo="Demais membros"
                             listaPresentes={listaPresentes.presentes_nao_membros}
-                        ></TabelaPresentes>
+                        >
+                        </TabelaPresentes>
                     </div>
                 }
 
@@ -561,7 +569,8 @@ export const VisualizacaoDaAta = () => {
                         <TabelaPresentes
                             titulo="Presentes"
                             listaPresentes={listaPresentes.presentes_ata_conselho_fiscal}
-                        ></TabelaPresentes>
+                        >
+                        </TabelaPresentes>
                     </div>
                 }
             </div>
