@@ -171,7 +171,8 @@ export const EdicaoAta = () => {
                                 uuid_ata={uuid_ata}
                                 listaPresentes={listaPresentes}
                                 setDisableBtnSalvar={setDisableBtnSalvar}
-                            ></FormularioEditaAta>
+                            >
+                            </FormularioEditaAta>
                         </div>
                     : 
                         null
