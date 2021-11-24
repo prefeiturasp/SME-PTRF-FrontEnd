@@ -58,7 +58,7 @@ export const TabelaDinamica = ({infoAta, dadosAta, valorTemplate, retornaDadosAt
                                     <td>{valorTemplate(info.despesas_conciliadas)}</td>
                                 </tr>
                                 <tr>
-                                    <td>Despesas não demonstradas no período (Pagamentos a compensar)</td>
+                                    <td>Despesas não demonstradas no período</td>
                                     <td>{valorTemplate(info.despesas_nao_conciliadas_custeio)}</td>
                                     <td>{valorTemplate(info.despesas_nao_conciliadas_capital)}</td>
                                     <td className="td-livre-aplicacao-ausente">-</td>
@@ -72,7 +72,7 @@ export const TabelaDinamica = ({infoAta, dadosAta, valorTemplate, retornaDadosAt
                                     <td>{valorTemplate(info.saldo_atual_total)}</td>
                                 </tr>
                                 <tr>
-                                    <td>Despesas não demonstradas de períodos anteriores (Pagamentos a compensar)</td>
+                                    <td>Despesas não demonstradas de períodos anteriores</td>
                                     <td>{valorTemplate(info.despesas_nao_conciliadas_anteriores_custeio)}</td>
                                     <td>{valorTemplate(info.despesas_nao_conciliadas_anteriores_capital)}</td>
                                     <td className="td-livre-aplicacao-ausente">-</td>
