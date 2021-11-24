@@ -18,12 +18,13 @@ export const LoginForm = ({redefinicaoDeSenha}) => {
 
     const onSubmit = async (values) => {
         let msg = await authService.login(values.login, values.senha);
-
+        console.log('MSG: ', msg)
         if(msg && msg.detail){
             if (msg.detail === 'Senha inválida!'){
                 setMsgSenha('Senha incorreta')
             }else {
-                setMsgUsuario('Número de usuário inválido')
+                setMsgUsuario(msg.detail)
+                // setMsgUsuario('Número de usuário inválido')
             }
         }
     };
