@@ -48,7 +48,7 @@ export const TabelaTotais = ({infoAta, valorTemplate}) => {
                         <td>{valorTemplate(infoAta.totais.despesas_conciliadas)}</td>
                     </tr>
                     <tr>
-                        <td>Despesas não demonstradas no período (Pagamentos a compensar)</td>
+                        <td>Despesas não demonstradas no período</td>
                         <td>{valorTemplate(infoAta.totais.despesas_nao_conciliadas_custeio)}</td>
                         <td>{valorTemplate(infoAta.totais.despesas_nao_conciliadas_capital)}</td>
                         <td className="td-livre-aplicacao-ausente">-</td>
@@ -62,7 +62,7 @@ export const TabelaTotais = ({infoAta, valorTemplate}) => {
                         <td>{valorTemplate(infoAta.totais.saldo_atual_total)}</td>
                     </tr>
                     <tr>
-                        <td>Despesas não demonstradas de períodos anteriores (Pagamentos a compensar)</td>
+                        <td>Despesas não demonstradas de períodos anteriores</td>
                         <td>{valorTemplate(infoAta.totais.despesas_nao_conciliadas_anteriores_custeio)}</td>
                         <td>{valorTemplate(infoAta.totais.despesas_nao_conciliadas_anteriores_capital)}</td>
                         <td className="td-livre-aplicacao-ausente">-</td>
