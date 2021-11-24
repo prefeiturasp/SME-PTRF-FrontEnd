@@ -10,7 +10,6 @@ export const PresidenteAusente = ({statusPC}) => {
     let uuid_associacao = localStorage.getItem(ASSOCIACAO_UUID);
 
     useEffect(() => {
-        console.log("eu vou mudar", statusPC);
     }, [statusPC]);
 
     useEffect(() => {
@@ -22,8 +21,6 @@ export const PresidenteAusente = ({statusPC}) => {
         let dados = await getStatusPresidente(uuid_associacao);
         setStatusPresidente(dados)
     };
-
-    
 
     const exibeBarraMensagem = () => {
         if(statusPC && statusPC.prestacao_contas_status && !statusPC.prestacao_contas_status.documentos_gerados){

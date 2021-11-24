@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import "../geracao-da-ata.scss"
 import {TopoComBotoes} from "./TopoComBotoes";
@@ -7,18 +7,16 @@ import {TabelaDinamica} from "./TabelaDinamica";
 import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
 import { TabelaPresentes } from "./TabelaPresentes";
 import {TextoCopiado} from "../../../../utils/Modais";
-import {getInfoAta, getMembrosCargos} from "../../../../services/escolas/PrestacaoDeContas.service";
-import {getTabelasAtas, atualizarInfoAta, getAtas} from "../../../../services/escolas/AtasAssociacao.service";
+import {getInfoAta} from "../../../../services/escolas/PrestacaoDeContas.service";
+import {getTabelasAtas, getAtas} from "../../../../services/escolas/AtasAssociacao.service";
 import {getDespesasPorFiltros, getPrestacaoDeContasDetalhe, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
 import { getListaPresentesAgrupados } from "../../../../services/escolas/PresentesAta.service";
 import moment from "moment";
 import {exibeDataPT_BR, trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {getDespesa, getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
-import {ModalEditarAta} from "../ModalEditarAta";
 import {ModalDevolucaoAoTesouro} from "../ModalDevolucaoAoTesouro";
 import {ModalReverDevolucoesAoTesouro} from "../ModalReverDevolucoesAoTesouro";
 import {getSalvarDevoulucoesAoTesouro} from "../../../../services/dres/PrestacaoDeContas.service";
-import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 
 moment.updateLocale('pt', {
     months: [
@@ -32,9 +30,7 @@ const numero = require('numero-por-extenso');
 export const VisualizacaoDaAta = () => {
 
     let {uuid_ata} = useParams();
-    let uuid_associacao = localStorage.getItem(ASSOCIACAO_UUID);
 
-    const [showEditarAta, setShowEditarAta] = useState(false);
     const [showModalDevolucoesAoTesouro, setShowModalDevolucoesAoTesouro] = useState(false);
     const [showTextoCopiado, setShowTextoCopiado] = useState(false);
     const [showReverDevolucoesAoTesouro, setShowReverDevolucoesAoTesouro] = useState(false);
@@ -56,19 +52,8 @@ export const VisualizacaoDaAta = () => {
     const [tabelas, setTabelas] = useState({});
     const [dadosAta, setDadosAta] = useState({});
     const [prestacaoDeContasDetalhe, setPrestacaoDeContasDetalhe] = useState({});
-    const [membrosCargos, setMembrosCargos] = useState([])
-    const [presidenteNaoMembro, setPresidenteNaoMembro] = useState('')
-    const [secretarioNaoMembro, setSecretarioNaoMembro] = useState('')
     const [listaPresentes, setListaPresentes] = useState([]);
 
-    const exibeMembrosCargos = useCallback(async ()=>{
-        let membros_cargos = await getMembrosCargos(uuid_associacao)
-        setMembrosCargos(membros_cargos)
-    }, [uuid_associacao])
-
-    useEffect(()=>{
-        exibeMembrosCargos()
-    }, [exibeMembrosCargos])
 
     useEffect(() => {
         const infoAta = async () => {
@@ -138,7 +123,6 @@ export const VisualizacaoDaAta = () => {
     };
 
     const onHandleClose = () => {
-        setShowEditarAta(false);
         setShowTextoCopiado(false);
         setShowModalDevolucoesAoTesouro(false);
         setShowReverDevolucoesAoTesouro(false);
@@ -157,41 +141,6 @@ export const VisualizacaoDaAta = () => {
         let path = `/edicao-da-ata/${uuid_ata}/`;
         window.location.assign(path)
     }
-
-    const handleChangeEditarAta = (name, value) => {
-        setStateFormEditarAta({
-            ...stateFormEditarAta,
-            [name]: value
-        });
-    };
-
-    const handleChangeEditarAtaPresidente = (e) => {
-        let data_objeto = JSON.parse(e.target.options[e.target.selectedIndex].getAttribute('data-objeto'));
-        if (data_objeto && data_objeto.cargo_associacao_value){
-            setStateFormEditarAta(prev => ({...prev, cargo_presidente_reuniao: data_objeto.cargo_associacao_value}));
-        }else {
-            setStateFormEditarAta(prev => ({...prev, presidente_reuniao: ''}));
-        }
-    };
-
-    const handleChangeEditarAtaPresidenteNaoMembro = (value) => {
-        setPresidenteNaoMembro(value)
-        setStateFormEditarAta(prev => ({...prev, presidente_reuniao: ''}));
-    };
-
-    const handleChangeEditarAtaSecretario = (e) => {
-        let data_objeto = JSON.parse(e.target.options[e.target.selectedIndex].getAttribute('data-objeto'));
-        if (data_objeto && data_objeto.cargo_associacao_value){
-            setStateFormEditarAta(prev => ({...prev, cargo_secretaria_reuniao: data_objeto.cargo_associacao_value}));
-        }else {
-            setStateFormEditarAta(prev => ({...prev, secretario_reuniao: ''}));
-        }
-    };
-
-    const handleChangeEditarAtaSecretarioNaoMembro = (value) => {
-        setSecretarioNaoMembro(value)
-        setStateFormEditarAta(prev => ({...prev, secretario_reuniao: ''}));
-    };
 
     const handleClickFecharAta = () => {
         window.location.assign("/prestacao-de-contas")
@@ -219,38 +168,6 @@ export const VisualizacaoDaAta = () => {
         }
     };
 
-    const serviceSubmitAta = async () => {
-        if (dadosAta.tipo_ata === 'RETIFICACAO' && prestacaoDeContasDetalhe && prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao && prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao.length > 0) {
-            setShowReverDevolucoesAoTesouro(true);
-        }
-        setShowEditarAta(false);
-        await onSubmitEditarAta()
-    };
-
-    const onSubmitEditarAta = async () => {
-        let data_da_reuniao = stateFormEditarAta.data_reuniao ? moment(stateFormEditarAta.data_reuniao).format("YYYY-MM-DD") : null;
-        const payload = {
-            "tipo_reuniao": stateFormEditarAta.tipo_reuniao,
-            "convocacao": stateFormEditarAta.convocacao,
-            "data_reuniao": data_da_reuniao,
-            "local_reuniao": stateFormEditarAta.local_reuniao,
-            "presidente_reuniao": !stateFormEditarAta.presidente_reuniao ?  presidenteNaoMembro : stateFormEditarAta.presidente_reuniao,
-            "cargo_presidente_reuniao": stateFormEditarAta.cargo_presidente_reuniao,
-            "secretario_reuniao": !stateFormEditarAta.secretario_reuniao ? secretarioNaoMembro : stateFormEditarAta.secretario_reuniao,
-            "cargo_secretaria_reuniao": stateFormEditarAta.cargo_secretaria_reuniao,
-            "parecer_conselho": stateFormEditarAta.parecer_conselho,
-            "comentarios": stateFormEditarAta.comentarios,
-            "retificacoes": stateFormEditarAta.retificacoes,
-        };
-        try {
-            await atualizarInfoAta(uuid_ata, payload);
-            getDadosAta();
-            setShowEditarAta(false);
-        } catch (e) {
-            console.log("Erro ao atualizar a Ata ", e)
-        }
-    };
-
     const valorTemplate = (valor) => {
         let valor_formatado = Number(valor).toLocaleString('pt-BR', {
             style: 'currency',
@@ -267,7 +184,12 @@ export const VisualizacaoDaAta = () => {
             let dia_por_extenso = numero.porExtenso(moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("DD"));
             let mes_por_extenso = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("MMMM");
             let ano_por_extenso = numero.porExtenso(moment(new Date(data), "DD/MM/YYYY").add(1, 'days').year());
-            let data_por_extenso = dia_por_extenso + " dias do mês de " + mes_por_extenso + " de " + ano_por_extenso;
+            let data_por_extenso
+            if (dia_por_extenso === 'um'){
+                data_por_extenso = "No primeiro dia do mês de " + mes_por_extenso + " de " + ano_por_extenso;
+            }else {
+                data_por_extenso = "Aos " + dia_por_extenso + " dias do mês de " + mes_por_extenso + " de " + ano_por_extenso;
+            }
             return data_por_extenso;
         }
     };
@@ -477,15 +399,6 @@ export const VisualizacaoDaAta = () => {
     };
     // FIM InformacoesDvolucaoAoTesrouro
 
-    const possuiPresentes = (lista_presentes) => {
-        if(lista_presentes){
-            if(lista_presentes.length > 0){
-                return true
-            }
-        }
-        return false;
-    };
-
     return (
         <div className="col-12 container-visualizacao-da-ata mb-5">
             <div className="col-12 mt-4">
@@ -540,7 +453,7 @@ export const VisualizacaoDaAta = () => {
                         <TabelaPresentes
                             titulo="Presentes"
                             listaPresentes={listaPresentes.presentes_membros}
-                        ></TabelaPresentes>
+                        />
                     </div>
                 }
 
@@ -549,7 +462,7 @@ export const VisualizacaoDaAta = () => {
                         <TabelaPresentes
                             titulo="Demais membros"
                             listaPresentes={listaPresentes.presentes_nao_membros}
-                        ></TabelaPresentes>
+                       />
                     </div>
                 }
 
@@ -561,28 +474,10 @@ export const VisualizacaoDaAta = () => {
                         <TabelaPresentes
                             titulo="Presentes"
                             listaPresentes={listaPresentes.presentes_ata_conselho_fiscal}
-                        ></TabelaPresentes>
+                       />
                     </div>
                 }
             </div>
-
-            {/* remover modal de edição da ata apos verificar se esta tudo ocorrendo como deveria */}
-            {/* <section>
-                <ModalEditarAta
-                    dadosAta={dadosAta}
-                    show={showEditarAta}
-                    handleClose={onHandleClose}
-                    onSubmitEditarAta={serviceSubmitAta}
-                    onChange={handleChangeEditarAta}
-                    stateFormEditarAta={stateFormEditarAta}
-                    tabelas={tabelas}
-                    membrosCargos={membrosCargos}
-                    handleChangeEditarAtaPresidente={handleChangeEditarAtaPresidente}
-                    handleChangeEditarAtaPresidenteNaoMembro={handleChangeEditarAtaPresidenteNaoMembro}
-                    handleChangeEditarAtaSecretario={handleChangeEditarAtaSecretario}
-                    handleChangeEditarAtaSecretarioNaoMembro={handleChangeEditarAtaSecretarioNaoMembro}
-                />
-            </section> */}
             <section>
                 <ModalDevolucaoAoTesouro
                     show={showModalDevolucoesAoTesouro}
