@@ -37,6 +37,17 @@ export const ResumoDosAcertos = () => {
     const [totalLancamentosAjustes, setTotalLancamentosAjustes] = useState(undefined)
     const [totalDocumentosAjustes, setTotalDocumentosAjustes] = useState(undefined)
     const [forcaVerificaSeExibeMsg, setForcaVerificaSeExibeMsg] = useState('')
+    const [pcEmAnalise, setPcEmAnalise] = useState(false)
+
+    const verificaPcEmAnalise = () => {
+        if(prestacaoDeContas && prestacaoDeContas.status === "EM_ANALISE"){
+            setPcEmAnalise(true);
+        }
+        else{
+            setPcEmAnalise(false)
+            setPrimeiraAnalisePcDevolvida()
+        }
+    }
 
     // Necessario para quando voltar da aba Histórico para Conferencia atual
     const setAnaliseAtualUuidComPCAnaliseAtualUuid = useCallback(async () => {
@@ -64,6 +75,10 @@ export const ResumoDosAcertos = () => {
     useEffect(() => {
         setAnaliseAtualUuidComPCAnaliseAtualUuid()
     }, [setAnaliseAtualUuidComPCAnaliseAtualUuid])
+
+    useEffect(() => {
+        verificaPcEmAnalise()
+    }, [prestacaoDeContas])
 
     // Necessario para exibir ou não o botão Histórico da Tabs
     const totalAnalisesDePcDevolvidas = useMemo(() => analisesDePcDevolvidas.length, [analisesDePcDevolvidas]);
@@ -200,6 +215,7 @@ export const ResumoDosAcertos = () => {
                                 setAnaliseAtualUuidComPCAnaliseAtualUuid={setAnaliseAtualUuidComPCAnaliseAtualUuid} // Para TabsConferenciaAtualHistorico
                                 setPrimeiraAnalisePcDevolvida={setPrimeiraAnalisePcDevolvida} // Para TabsConferenciaAtualHistorico
                                 editavel={props.state.editavel}
+                                pcEmAnalise={pcEmAnalise}
                             />
                         ) :
                             <Loading
