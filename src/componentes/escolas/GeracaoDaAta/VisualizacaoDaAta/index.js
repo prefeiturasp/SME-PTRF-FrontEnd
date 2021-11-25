@@ -458,6 +458,9 @@ export const VisualizacaoDaAta = () => {
                 }
 
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
+                listaPresentes &&
+                listaPresentes.presentes_nao_membros &&
+                listaPresentes.presentes_nao_membros.length > 0 &&
                     <div className="mt-4">
                         <TabelaPresentes
                             titulo="Demais membros"

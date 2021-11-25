@@ -10,7 +10,7 @@ export const TopoComBotoes = ({dadosAta, prestacaoDeContasDetalhe, handleClickEd
             </div>
 
             <div className='col-12 col-md-7 text-right'>
-                { prestacaoDeContasDetalhe && prestacaoDeContasDetalhe.status && prestacaoDeContasDetalhe.status === 'DEVOLVIDA' && dadosAta && dadosAta.uuid && dadosAta.tipo_ata === 'RETIFICACAO' ?
+                { prestacaoDeContasDetalhe && prestacaoDeContasDetalhe.status && (prestacaoDeContasDetalhe.status === 'DEVOLVIDA' || prestacaoDeContasDetalhe.status === 'DEVOLVIDA_RETORNADA') && dadosAta && dadosAta.uuid && dadosAta.tipo_ata === 'RETIFICACAO' ?
                     <>
                         {podeEditarAta &&
                             <button onClick={()=>setShowModalDevolucoesAoTesouro(true)} type="button" className="btn btn-success mr-2 mt-2"> <strong>Devoluções ao Tesouro</strong></button>
