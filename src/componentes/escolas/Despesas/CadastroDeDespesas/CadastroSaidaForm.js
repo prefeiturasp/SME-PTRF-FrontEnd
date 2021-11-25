@@ -28,6 +28,7 @@ import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {ModalValorReceitaDespesaDiferente} from "./ModalValorReceitaDespesaDiferente";
 import {ModalDeletarDespesa} from "./ModalDeletarDespesa";
 import {visoesService} from "../../../../services/visoes.service";
+import { apenasNumero } from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 
 export const CadastroSaidaForm = () => {
@@ -289,6 +290,14 @@ export const CadastroSaidaForm = () => {
         }
     }, [uuid_despesa, aux])
 
+    const onHandleChangeNumeroDocumento = (e, setFieldValue) => {
+        let valor = e.target.value;
+
+        if(apenasNumero(valor)){
+           setFieldValue('numero_documento', valor)
+        }
+    }
+
     return (
         <>
             {loading ?
@@ -406,7 +415,9 @@ export const CadastroSaidaForm = () => {
                                             <label htmlFor="numero_documento">Número do documento</label>
                                             <input
                                                 value={props.values.numero_documento}
-                                                onChange={props.handleChange}
+                                                onChange={(e) => {
+                                                    onHandleChangeNumeroDocumento(e, setFieldValue);
+                                                }}
                                                 onBlur={() => {
                                                     setFormErrors(validacoesPersonalizadas(values));
                                                 }}
