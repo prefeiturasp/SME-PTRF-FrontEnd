@@ -71,6 +71,32 @@ export const SidebarLeft = () => {
         return getPathnameExcecoes(array_pathname[1]) ? getPathnameExcecoes(array_pathname[1]) : array_pathname[1]
     }
 
+    const validaPermissao = (url) => {
+        let possui_permissao_sub_item = false
+
+        if(url.subItens){
+            for(let subItem=0; subItem<=url.subItens.length-1; subItem++){
+                if(visoesService.getPermissoes(url.subItens[subItem].permissoes)){
+                    possui_permissao_sub_item = true;
+                }
+            }
+            if(visoesService.getPermissoes(url.permissoes) && possui_permissao_sub_item ){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            if(visoesService.getPermissoes(url.permissoes)){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+    }
+
     return (
         <>
             <SideNav
@@ -93,7 +119,7 @@ export const SidebarLeft = () => {
                 <SideNav.Nav defaultSelected={getPathname()}>
                     {urls && urls.lista_de_urls.length > 0 && urls.lista_de_urls.map((url, index) => {
                             return (
-                                visoesService.getPermissoes(url.permissoes) ? (
+                                validaPermissao(url) ? (
                                     <NavItem
                                         key={index}
                                         navitemClassName={`d-flex align-items-end ${url.subItens && url.subItens.length > 0 ? "sub-menu" : ""}`}
