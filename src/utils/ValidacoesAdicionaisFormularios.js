@@ -765,3 +765,13 @@ export const valida_cpf_exportado = ( valor ) => {
   }
 
 } // valida_cpf
+
+export const apenasNumero = (valor) => {
+	const re = /^[0-9\b]+$/;
+	
+	if (valor === '' || re.test(valor)) {
+		return true;
+		
+	}
+	return false;
+}

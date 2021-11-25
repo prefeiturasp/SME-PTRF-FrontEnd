@@ -47,6 +47,7 @@ import {ModalDespesaIncompleta} from "./ModalDespesaIncompleta";
 import {ModalErroDeletarCadastroDespesa} from "./ModalErroDeletarCadastroDespesa";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
+import { apenasNumero } from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -405,6 +406,14 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
+     const onHandleChangeNumeroDocumento = (e, setFieldValue) => {
+         let valor = e.target.value;
+
+         if(apenasNumero(valor)){
+            setFieldValue('numero_documento', valor)
+         }
+     }
+
     return (
         <>
             {loading ?
@@ -529,7 +538,9 @@ export const CadastroForm = ({verbo_http}) => {
                                             <label htmlFor="numero_documento">Número do documento</label>
                                             <input
                                                 value={props.values.numero_documento}
-                                                onChange={props.handleChange}
+                                                onChange={(e) => {
+                                                    onHandleChangeNumeroDocumento(e, setFieldValue);
+                                                }}
                                                 onBlur={props.handleBlur}
                                                 name="numero_documento"
                                                 id="numero_documento" type="text"
