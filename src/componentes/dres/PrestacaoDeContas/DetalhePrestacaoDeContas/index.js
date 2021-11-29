@@ -739,7 +739,6 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const buscaDespesaPorFiltros = async (index) =>{
-
         let valores, cpf, tipo_documento, numero_documento;
 
         if (formRef.current) {
@@ -749,6 +748,7 @@ export const DetalhePrestacaoDeContas = () =>{
             numero_documento = valores.busca_por_numero_documento ? valores.busca_por_numero_documento : '';
 
             let despesas_por_filtros = await getDespesasPorFiltros(prestacaoDeContas.associacao.uuid, cpf, tipo_documento, numero_documento);
+            despesas_por_filtros = despesas_por_filtros.results
             setDespesas({
                 ...despesas,
                 [`devolucao_${index}`]: [...despesas_por_filtros]

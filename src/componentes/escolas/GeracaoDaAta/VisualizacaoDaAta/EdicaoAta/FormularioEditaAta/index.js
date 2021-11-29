@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, {useState, useEffect } from "react";
 import { DatePickerField } from "../../../../../Globais/DatePickerField";
 import { visoesService } from "../../../../../../services/visoes.service";
 import {FieldArray, Formik} from "formik";
@@ -7,9 +7,6 @@ import {faTimesCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import { getMembroPorIdentificador } from "../../../../../../services/escolas/PresentesAta.service";
 import { YupSignupSchemaListaPresentes } from "./YupSignupSchemaEditarAta";
 import { valida_cpf_exportado } from "../../../../../../utils/ValidacoesAdicionaisFormularios";
-
-
-
 
 export const FormularioEditaAta = ({
                                         listaPresentesPadrao, 
@@ -207,7 +204,7 @@ export const FormularioEditaAta = ({
     return (
 
         <div>
-            {dadosForm && dadosForm.listaPresentesPadrao && dadosForm.listaPresentesPadrao.length > 0 && dadosForm.stateFormEditarAta
+            {dadosForm && dadosForm.stateFormEditarAta
                 ?
                     <Formik
                         initialValues={dadosForm}
