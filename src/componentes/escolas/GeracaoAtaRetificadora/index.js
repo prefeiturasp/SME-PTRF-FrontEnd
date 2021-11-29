@@ -4,11 +4,12 @@ import {exibeDateTimePT_BR_Ata} from "../../../utils/ValidacoesAdicionaisFormula
 import {BoxAtaRetificadora} from "./BoxAtaRetificadora";
 import "../GeracaoDaAta/geracao-da-ata.scss"
 
-export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeConta}) => {
+export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeConta, }) => {
     const [dadosAtaRetificadora, setDadosAtaRetificadora] = useState(false);
     const [corBoxAtaRetificadora, setCorBoxAtaRetificadora] = useState("");
     const [textoBoxAtaRetificadora, setTextoBoxAtaRetificadora] = useState("");
     const [dataBoxAtaRetificadora, setDataBoxAtaRetificadora] = useState("");
+    const [gerarAtaRetificadora, setGerarAtaRetificadora] = useState(false);
 
     useEffect(() => {
         carregagaDadosAtaRetificadora();
@@ -23,10 +24,12 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
             if (dados.alterado_em === null){
                 setCorBoxAtaRetificadora("vermelho");
                 setDataBoxAtaRetificadora("Ata não preenchida");
+                setGerarAtaRetificadora(false)
             }
             else {
                 setCorBoxAtaRetificadora("verde");
                 setDataBoxAtaRetificadora("Último preenchimento em "+exibeDateTimePT_BR_Ata(dados.alterado_em));
+                setGerarAtaRetificadora(true)
             }
         } catch (e) {
             if (statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA") {
@@ -51,6 +54,9 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
                     textoBoxAtaRetificadora={textoBoxAtaRetificadora}
                     dataBoxAtaRetificadora={dataBoxAtaRetificadora}
                     onClickVisualizarAta={onClickVisualizarAta}
+                    uuidPrestacaoConta={uuidPrestacaoConta}
+                    uuidAtaRetificacao={dadosAtaRetificadora ? dadosAtaRetificadora.uuid : ""}
+                    gerarAtaRetificadora={gerarAtaRetificadora}
                 />
             }
 
