@@ -325,6 +325,7 @@ export const VisualizacaoDaAta = () => {
             numero_documento = valores.busca_por_numero_documento ? valores.busca_por_numero_documento : '';
 
             let despesas_por_filtros = await getDespesasPorFiltros(prestacaoDeContasDetalhe.associacao.uuid, cpf, tipo_documento, numero_documento);
+            despesas_por_filtros = despesas_por_filtros.results
             setDespesas({
                 ...despesas,
                 [`devolucao_${index}`]: [...despesas_por_filtros]
