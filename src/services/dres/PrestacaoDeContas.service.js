@@ -315,10 +315,17 @@ export const downloadDocumentoPreviaPdf = async (analise_atual_uuid) => {
             });
 };
 
+export const getAnaliseValorReprogramadoPorAcao = async (analise_prestacao_uuid, conta_associacao_uuid, acao_associacao_uuid) => {
+    return (await api.get(`/api/analises-valores-reprogramados/valores-reprogramados-acao/?analise_prestacao_conta=${analise_prestacao_uuid}&conta_associacao=${conta_associacao_uuid}&acao_associacao=${acao_associacao_uuid}`, authHeader)).data
+};
 
+export const patchAnaliseValorReprogramadoPorAcao = async (uuid_analise_de_valor_reprogramado, payload) => {
+    return (await api.patch(`/api/analises-valores-reprogramados/${uuid_analise_de_valor_reprogramado}/`, payload, authHeader)).data
+};
 
-
-
+export const postAnaliseValorReprogramadoPorAcao = async (payload) => {
+    return (await api.post(`/api/analises-valores-reprogramados/salvar-valores-reprogramados-acao/`, payload, authHeader)).data
+};
 
 
 
