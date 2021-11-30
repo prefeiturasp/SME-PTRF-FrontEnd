@@ -118,9 +118,9 @@ export const VerificaSaldoReprogramadoInicial = ({conta_associacao_uuid, acao_as
             else{
                 payload =   {
                     valor_saldo_reprogramado_correto: values.valor_saldo_reprogramado_correto,
-                    novo_saldo_reprogramado_custeio: values.novo_saldo_reprogramado_custeio ? trataNumericos(values.novo_saldo_reprogramado_custeio) : null,
-                    novo_saldo_reprogramado_capital: values.novo_saldo_reprogramado_capital ? trataNumericos(values.novo_saldo_reprogramado_capital) : null,
-                    novo_saldo_reprogramado_livre: values.novo_saldo_reprogramado_livre ? trataNumericos(values.novo_saldo_reprogramado_livre) : null
+                    novo_saldo_reprogramado_custeio: trataNumericos(values.novo_saldo_reprogramado_custeio),
+                    novo_saldo_reprogramado_capital: trataNumericos(values.novo_saldo_reprogramado_capital),
+                    novo_saldo_reprogramado_livre: trataNumericos(values.novo_saldo_reprogramado_livre)
                 }
             }
             
@@ -151,9 +151,9 @@ export const VerificaSaldoReprogramadoInicial = ({conta_associacao_uuid, acao_as
                     conta_associacao: values.conta_associacao,
                     acao_associacao: values.acao_associacao,
                     valor_saldo_reprogramado_correto: values.valor_saldo_reprogramado_correto,
-                    novo_saldo_reprogramado_custeio: values.novo_saldo_reprogramado_custeio ? trataNumericos(values.novo_saldo_reprogramado_custeio) : null,
-                    novo_saldo_reprogramado_capital: values.novo_saldo_reprogramado_capital ? trataNumericos(values.novo_saldo_reprogramado_capital) : null,
-                    novo_saldo_reprogramado_livre: values.novo_saldo_reprogramado_livre ? trataNumericos(values.novo_saldo_reprogramado_livre) : null
+                    novo_saldo_reprogramado_custeio: trataNumericos(values.novo_saldo_reprogramado_custeio),
+                    novo_saldo_reprogramado_capital: trataNumericos(values.novo_saldo_reprogramado_capital),
+                    novo_saldo_reprogramado_livre: trataNumericos(values.novo_saldo_reprogramado_livre)
                 }
             }
 
