@@ -27,7 +27,7 @@ export const FormularioEditaAta = ({
 
     useEffect(() => {
         getDados();
-    }, [stateFormEditarAta, listaPresentes]);
+    }, [stateFormEditarAta, listaPresentes, listaPresentesPadrao]);
 
     const getDados = () => {
 
