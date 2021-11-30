@@ -1,13 +1,17 @@
 import React from "react";
 import "../../geracao-da-ata.scss"
-import { TopoComBotoes } from "./TopoComBotoes";
-import { FormularioEditaAta } from "./FormularioEditaAta";
+import {TopoComBotoes} from "./TopoComBotoes";
+import {FormularioEditaAta} from "./FormularioEditaAta";
 import {useParams} from "react-router-dom";
 import {useEffect, useState, useCallback, useRef} from "react";
-import { getMembrosCargos } from "../../../../../services/escolas/PrestacaoDeContas.service";
-import { getListaPresentesPadrao, postEdicaoAta, getListaPresentes } from "../../../../../services/escolas/PresentesAta.service";
-import { getTabelasAtas, getAtas } from "../../../../../services/escolas/AtasAssociacao.service";
-import { ASSOCIACAO_UUID } from "../../../../../services/auth.service";
+import {getMembrosCargos} from "../../../../../services/escolas/PrestacaoDeContas.service";
+import {
+    getListaPresentesPadrao,
+    postEdicaoAta,
+    getListaPresentes
+} from "../../../../../services/escolas/PresentesAta.service";
+import {getTabelasAtas, getAtas} from "../../../../../services/escolas/AtasAssociacao.service";
+import {ASSOCIACAO_UUID} from "../../../../../services/auth.service";
 import moment from "moment";
 import {toastCustom} from "../../../../Globais/ToastCustom"
 
@@ -43,19 +47,19 @@ export const EdicaoAta = () => {
     const [membrosCargos, setMembrosCargos] = useState([])
     const [disableBtnSalvar, setDisableBtnSalvar] = useState(false)
     const [dadosAta, setDadosAta] = useState({});
-    
+
 
     useEffect(() => {
         getListaPresentesAta();
         getListaPresentesPadraoAta();
     }, []);
 
-    const exibeMembrosCargos = useCallback(async ()=>{
+    const exibeMembrosCargos = useCallback(async () => {
         let membros_cargos = await getMembrosCargos(uuid_associacao)
         setMembrosCargos(membros_cargos)
     }, [uuid_associacao])
 
-    useEffect(()=>{
+    useEffect(() => {
         exibeMembrosCargos()
     }, [exibeMembrosCargos])
 
@@ -81,7 +85,7 @@ export const EdicaoAta = () => {
             cargo_secretaria_reuniao: dados_ata.cargo_secretaria_reuniao,
             retificacoes: dados_ata.retificacoes,
         });
-        setDadosAta(dados_ata); 
+        setDadosAta(dados_ata);
     };
 
     const tabelasAta = async () => {
@@ -94,8 +98,8 @@ export const EdicaoAta = () => {
         setListaPresentesPadrao(lista_presentes_padrao);
     }
 
-    const getListaPresentesAta = async() => {
-        let lista_presentes= await getListaPresentes(uuid_ata);
+    const getListaPresentesAta = async () => {
+        let lista_presentes = await getListaPresentes(uuid_ata);
         setListaPresentes(lista_presentes);
     }
 
@@ -126,24 +130,11 @@ export const EdicaoAta = () => {
         try {
             await postEdicaoAta(uuid_ata, payload)
             let tipo_ata = dadosAta.tipo_ata === 'RETIFICACAO' ? 'retificação' : 'apresentação'
-            toastCustom.ToastCustomSuccess('Ata salva com sucesso', `As edições da ata de ${tipo_ata} foram salvas com sucesso.`) 
+            toastCustom.ToastCustomSuccess('Ata salva com sucesso', `As edições da ata de ${tipo_ata} foram salvas com sucesso.`)
         } catch (e) {
             console.log("Erro ao fazer edição da Ata ", e.response)
         }
     }
-
-    const verificaListaPresente = () => {
-        if(listaPresentes && listaPresentes.length > 0){
-            return true;
-        }
-
-        if(listaPresentesPadrao && listaPresentesPadrao.length > 0){
-            return true;
-        }
-
-        return false;
-    }
-
     return (
         <>
             <div className="col-12 container-visualizacao-da-ata mb-5">
@@ -158,25 +149,22 @@ export const EdicaoAta = () => {
                     }
                 </div>
 
-                {verificaListaPresente()
-                    ? 
-                        <div className="col-12">
-                            <FormularioEditaAta
-                                listaPresentesPadrao={listaPresentesPadrao}
-                                stateFormEditarAta={stateFormEditarAta}
-                                tabelas={tabelas}
-                                membrosCargos={membrosCargos}
-                                formRef={formRef}
-                                onSubmitFormEdicaoAta={onSubmitFormEdicaoAta}
-                                uuid_ata={uuid_ata}
-                                listaPresentes={listaPresentes}
-                                setDisableBtnSalvar={setDisableBtnSalvar}
-                            >
-                            </FormularioEditaAta>
-                        </div>
-                    : 
-                        null
-                }
+
+                <div className="col-12">
+                    <FormularioEditaAta
+                        listaPresentesPadrao={listaPresentesPadrao}
+                        stateFormEditarAta={stateFormEditarAta}
+                        tabelas={tabelas}
+                        membrosCargos={membrosCargos}
+                        formRef={formRef}
+                        onSubmitFormEdicaoAta={onSubmitFormEdicaoAta}
+                        uuid_ata={uuid_ata}
+                        listaPresentes={listaPresentes}
+                        setDisableBtnSalvar={setDisableBtnSalvar}
+                    >
+                    </FormularioEditaAta>
+                </div>
+
             </div>
         </>
     )
