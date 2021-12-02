@@ -4,16 +4,19 @@ import {exibeDataPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
 import SelectAnalisesDePcDevolvidas from "./SelectAnalisesDePcDevolvidas";
 import CardsInfoDevolucaoSelecionada from "./CardsInfoDevolucaoSelecionada";
 import './cards-devolucoes-para-acerto-dre.scss'
+import Loading from "../../../utils/Loading";
 
 const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=false, setAnaliseAtualUuid}) =>{
     const [analisesDePcDevolvidas, setAnalisesDePcDevolvidas] = useState([])
     const [uuidAnalisePcDevolvida, setUuidAnalisePcDevolvida] = useState({})
     const [objetoConteudoCard, setObjetoConteudoCard] = useState({})
+    const [loading, setLoading] = useState(true)
 
     useEffect(()=>{
         let mounted = true;
         const carregaAnalisesDePcDevolvidas = async () => {
             if (mounted) {
+                setLoading(true);
                 let analises_pc_devolvidas = await getAnalisesDePcDevolvidas(prestacao_conta_uuid)
 
                 if (analises_pc_devolvidas && analises_pc_devolvidas.length > 0) {
@@ -27,9 +30,10 @@ const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=
                     let analises_pc_devolvidas_montada_reverse = unis.reverse()
                     setAnalisesDePcDevolvidas(analises_pc_devolvidas_montada_reverse)
                     setObjetoConteudoCard(analises_pc_devolvidas_montada_reverse[0])
-
+                    setLoading(false)
                 }else {
                     setAnalisesDePcDevolvidas(analises_pc_devolvidas)
+                    setLoading(false)
                 }
             }
         }
@@ -94,14 +98,24 @@ const CardsDevolucoesParaAcertoDaDre = ({prestacao_conta_uuid, analiseAtualUuid=
 
     return(
         <>
-            <SelectAnalisesDePcDevolvidas
-                uuidAnalisePcDevolvida={uuidAnalisePcDevolvida}
-                handleChangeSelectAnalisesDePcDevolvidas={handleChangeSelectAnalisesDePcDevolvidas}
-                analisesDePcDevolvidas={analisesDePcDevolvidas}
-            />
-            {objetoConteudoCard &&
-                <CardsInfoDevolucaoSelecionada
-                    objetoConteudoCard={objetoConteudoCard}
+            {objetoConteudoCard && !loading ? (
+                <>
+                    <SelectAnalisesDePcDevolvidas
+                        uuidAnalisePcDevolvida={uuidAnalisePcDevolvida}
+                        handleChangeSelectAnalisesDePcDevolvidas={handleChangeSelectAnalisesDePcDevolvidas}
+                        analisesDePcDevolvidas={analisesDePcDevolvidas}
+                    />
+
+                    <CardsInfoDevolucaoSelecionada
+                        objetoConteudoCard={objetoConteudoCard}
+                    />
+                </>
+            ):
+                <Loading
+                    corGrafico="black"
+                    corFonte="dark"
+                    marginTop="0"
+                    marginBottom="0"
                 />
             }
         </>

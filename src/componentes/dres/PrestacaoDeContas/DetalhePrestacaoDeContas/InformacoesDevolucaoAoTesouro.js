@@ -7,9 +7,11 @@ import MaskedInput from "react-text-mask";
 import {visoesService} from "../../../../services/visoes.service";
 import {ModalConfirmaRemocaoDevolucaoAoTesouro} from "../ModalConfirmaRemocaoDevolucaoAoTesouro";
 
-export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeContas, initialValues, despesas, buscaDespesaPorFiltros, valorTemplate, despesasTabelas, tiposDevolucao, validateFormDevolucaoAoTesouro, setBtnSalvarDisabled}) =>{
-    
+export const InformacoesDevolucaoAoTesouro = ({formRef, informacoesPrestacaoDeContas, initialValues, despesas, buscaDespesaPorFiltros, valorTemplate, despesasTabelas, tiposDevolucao, validateFormDevolucaoAoTesouro}) =>{
+
+
     const [showConfirmaRemocao, setShowConfirmaRemocao] = useState({abrir:false, indice:0});
+    const [btnSalvarDisabled, setBtnSalvarDisabled] = useState(true);
 
     const onChangeLiberaBtnSalvar = () => {
         setBtnSalvarDisabled(false);

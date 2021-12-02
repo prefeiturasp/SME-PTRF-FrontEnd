@@ -339,3 +339,20 @@
   padding: 0;
   margin: 0;
 }
+
+.texto-alerta {
+  color: #D06D12;
+}
+
+.texto-realize-ajuste {
+  color: #2B7D83
+}
+
+.tabela-novos-valores-reprogramados{
+  max-width: 100%;
+  color: #000 !important;
+
+  .tr-titulo-valores {
+    background-color: #F3F3F3;
+  }
+}
