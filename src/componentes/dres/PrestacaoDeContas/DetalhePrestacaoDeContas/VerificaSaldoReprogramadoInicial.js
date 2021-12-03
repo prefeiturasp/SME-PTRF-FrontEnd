@@ -170,12 +170,14 @@ export const VerificaSaldoReprogramadoInicial = ({conta_associacao_uuid, acao_as
     const handleOnClickConfirmarSuperior = (values) => {
         setDisableBtnConfirmarSuperior(true);
         setOnClickBtnConfirmarSuperior(true);
+        setOnClickBtnConfirmarInferior(false);
         onSubmitForm(values);
     }
 
     const handleOnClickConfirmarInferior = (values) => {
         setDisableBtnConfirmarInferior(true);
         setOnClickBtnConfirmarInferior(true);
+        setOnClickBtnConfirmarSuperior(false);
         onSubmitForm(values);
     }
 
