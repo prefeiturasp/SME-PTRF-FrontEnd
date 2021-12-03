@@ -257,6 +257,14 @@ export const postSolicitacoesParaAcertosDocumentos = async (prestacao_de_contas_
     return (await api.post(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/solicitacoes-de-acerto-documento/`, payload, authHeader)).data
 };
 
+export const getTemReajustes = async (analise_atual_uuid) => {
+    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/verifica-reajustes/`, authHeader)).data
+};
+
+export const getSaldosIniciasAjustes = async (analise_atual_uuid, conta_uuid) => {
+    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/saldos-iniciais-com-ajustes/?conta_associacao=${conta_uuid}`, authHeader)).data
+};
+
 export const getLancamentosAjustes = async (analise_atual_uuid, conta_uuid, tipo_lancamento=null, tipo_acerto=null) => {
     return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/lancamentos-com-ajustes/?conta_associacao=${conta_uuid}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${tipo_acerto ? '&tipo_acerto='+tipo_acerto : ''}`, authHeader)).data
 };
