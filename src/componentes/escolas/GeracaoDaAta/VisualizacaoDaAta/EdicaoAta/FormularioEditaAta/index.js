@@ -293,6 +293,7 @@ export const FormularioEditaAta = ({
                                                     className="form-control"
                                                     disabled={!podeEditarAta}
                                                 >
+                                                    <option value=''>Selecione o presidente da reunião</option>
                                                     {membrosCargos && membrosCargos.length > 0 && membrosCargos.map((membro) =>
                                                         <option data-objeto={JSON.stringify({...membro})} key={membro.nome}
                                                                 value={membro.nome}>{membro.nome}</option>
@@ -323,6 +324,7 @@ export const FormularioEditaAta = ({
                                                     className="form-control"
                                                     disabled={!podeEditarAta}
                                                 >
+                                                    <option value=''>Selecione o secretário da reunião</option>
                                                     {membrosCargos && membrosCargos.length > 0 && membrosCargos.map((membro) =>
                                                         <option data-objeto={JSON.stringify({...membro})} key={membro.nome} value={membro.nome}>{membro.nome}</option>
                                                     )}
