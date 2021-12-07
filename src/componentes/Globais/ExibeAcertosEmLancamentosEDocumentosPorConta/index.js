@@ -3,10 +3,13 @@ import {useHistory} from "react-router-dom";
 import useValorTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
 import useDataTemplate from "../../../hooks/Globais/useDataTemplate";
 import useNumeroDocumentoTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
-import {getContasDaAssociacao, getDocumentosAjustes, getLancamentosAjustes, getTiposDeAcertoLancamentos} from "../../../services/dres/PrestacaoDeContas.service";
+import {getContasDaAssociacao, getSaldosIniciasAjustes, getDocumentosAjustes, getLancamentosAjustes, getTiposDeAcertoLancamentos, getTemReajustes} from "../../../services/dres/PrestacaoDeContas.service";
 import {TabelaAcertosLancamentos} from "./TabelaAcertosLancamentos";
 import TabsAcertosEmLancamentosPorConta from "./TabsAcertosEmLancamentosPorConta";
 import Loading from "../../../utils/Loading";
+
+import TabsAjustesEmValoresReprogramados from "./TabsAjustesEmValoresReprogramados"
+import TabelaAcertosEmValoresReprogramados from "./TabelaAcertosEmValoresReprogramados";
 
 // Redux
 import {useDispatch} from "react-redux";
@@ -41,9 +44,12 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         filtrar_por_tipo_de_ajuste: '',
     }
 
+    const [exibeAcertosNosSaldos, setExibeAcertosNosSaldos] = useState(false);
+    const [saldosIniciasAjustes, setSaldosIniciaisAjustes] = useState([]);
     const [lancamentosAjustes, setLancamentosAjustes] = useState([])
     const [lancamentosDocumentos, setLancamentosDocumentos] = useState([])
     const [contasAssociacao, setContasAssociacao] = useState([])
+    const [loadingSaldosIniciais, setLoadingSaldosIniciais] = useState(true)
     const [loadingLancamentos, setLoadingLancamentos] = useState(true)
     const [loadingDocumentos, setLoadingDocumentos] = useState(true)
     const [expandedRowsLancamentos, setExpandedRowsLancamentos] = useState(null);
@@ -52,11 +58,20 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     const [contaUuid, setContaUuid] = useState('')
     const [listaTiposDeAcertoLancamentos, setListaTiposDeAcertoLancamentos] = useState([])
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0:true});
+    const [clickBtnEscolheContaValoresReprogramados, setClickBtnEscolheContaValoresReprogramados] = useState({0:true});
 
     const toggleBtnEscolheConta = (id) => {
         if (id !== Object.keys(clickBtnEscolheConta)[0]){
             setClickBtnEscolheConta({
                 [id]: !clickBtnEscolheConta[id]
+            });
+        }
+    };
+
+    const toggleBtnEscolheContaValoresReprogramados = (id) => {
+        if (id !== Object.keys(clickBtnEscolheContaValoresReprogramados)[0]){
+            setClickBtnEscolheContaValoresReprogramados({
+                [id]: !clickBtnEscolheContaValoresReprogramados[id]
             });
         }
     };
@@ -71,6 +86,34 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     useEffect(()=>{
         carregaDadosDasContasDaAssociacao()
     }, [carregaDadosDasContasDaAssociacao, analiseAtualUuid])
+
+
+    const consultaReajustes = useCallback(async () => {
+        /* 
+            Essa função é necessária para verificar se a algum ajuste nessa analise, independente da conta,
+            o retorno da API irá determinar se o bloco "Acertos nos saldos iniciais reprogramados"
+            deve ser exibido
+        */
+
+        setExibeAcertosNosSaldos(false);
+        let tem_reajustes = await getTemReajustes(analiseAtualUuid);
+        
+        if(tem_reajustes && tem_reajustes.length > 0){
+            setExibeAcertosNosSaldos(true);
+        }
+        else{
+            setExibeAcertosNosSaldos(false);
+        }
+
+    }, [analiseAtualUuid])
+
+    const carregarAjustesValoresReprogramados = useCallback(async (conta_uuid) => {
+        setContaUuid(conta_uuid);
+        setLoadingSaldosIniciais(true);
+        let saldos_iniciais_ajustes = await getSaldosIniciasAjustes(analiseAtualUuid, conta_uuid);
+        setSaldosIniciaisAjustes(saldos_iniciais_ajustes)
+        setLoadingSaldosIniciais(false);
+    }, [analiseAtualUuid])
 
     const carregaAcertosLancamentos = useCallback(async (conta_uuid, filtrar_por_lancamento=null, filtrar_por_tipo_de_ajuste=null) => {
         setContaUuid(conta_uuid)
@@ -88,11 +131,14 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
 
     useEffect(() => {
         if (contasAssociacao && contasAssociacao.length > 0){
+            consultaReajustes();
+            carregarAjustesValoresReprogramados(contasAssociacao[0].uuid);
             carregaAcertosLancamentos(contasAssociacao[0].uuid)
             carregaAcertosDocumentos(contasAssociacao[0].uuid)
             setClickBtnEscolheConta({0: true})
+            setClickBtnEscolheContaValoresReprogramados({0: true})
         }
-    }, [contasAssociacao, carregaAcertosLancamentos, carregaAcertosDocumentos])
+    }, [contasAssociacao, consultaReajustes, carregarAjustesValoresReprogramados, carregaAcertosLancamentos, carregaAcertosDocumentos])
 
     useEffect(() => {
 
@@ -223,6 +269,35 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
 
     return(
         <>
+            { exibeAcertosNosSaldos &&
+                <>
+                    <h5 className="mb-4 mt-4"><strong>Acertos nos saldos iniciais reprogramados</strong></h5>
+                    <TabsAjustesEmValoresReprogramados
+                        contasAssociacao={contasAssociacao}
+                        carregarAjustesValoresReprogramados={carregarAjustesValoresReprogramados}
+                        toggleBtnEscolheContaValoresReprogramados={toggleBtnEscolheContaValoresReprogramados}
+                        clickBtnEscolheContaValoresReprogramados={clickBtnEscolheContaValoresReprogramados}
+                    >
+                        {loadingSaldosIniciais ? (
+                                <Loading
+                                    corGrafico="black"
+                                    corFonte="dark"
+                                    marginTop="0"
+                                    marginBottom="0"
+                                />
+                            ) :
+                            <>
+                                <TabelaAcertosEmValoresReprogramados
+                                    saldosIniciasAjustes={saldosIniciasAjustes}
+                                />
+                            </>
+                        }
+    
+                    </TabsAjustesEmValoresReprogramados>
+                    <hr className="mt-4 mb-3"/>
+                </>
+            }
+
             <h5 className="mb-4 mt-4"><strong>Acertos nos lançamentos</strong></h5>
             <>
                 <TabsAcertosEmLancamentosPorConta
