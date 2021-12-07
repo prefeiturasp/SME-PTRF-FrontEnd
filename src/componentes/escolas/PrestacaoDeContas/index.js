@@ -1,4 +1,4 @@
-import React, {useEffect, useState, Fragment} from "react";
+import React, {useEffect, useState, Fragment, useCallback} from "react";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
 import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/escolas/Associacao.service"
 import {getStatusPeriodoPorData, getConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta} from "../../../services/escolas/PrestacaoDeContas.service";
@@ -252,6 +252,14 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const podeGerarPrevias = [['gerar_previas_prestacao_contas']].some(visoesService.getPermissoes)
     const podeBaixarDocumentos = [['baixar_documentos_prestacao_contas']].some(visoesService.getPermissoes)
 
+    const exibeBoxAtaRetificadora = useCallback(() => {
+        return statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.periodo_bloqueado
+    }, [statusPrestacaoDeConta])
+
+    useEffect(()=>{
+        exibeBoxAtaRetificadora()
+    }, [exibeBoxAtaRetificadora])
+
     return (
         <>
             {loading ? (
@@ -341,7 +349,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                         />
                                         }
 
-                                        {localStorage.getItem('uuidPrestacaoConta') && statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao &&
+                                        {localStorage.getItem('uuidPrestacaoConta') && exibeBoxAtaRetificadora() &&
                                         <GeracaoAtaRetificadora
                                             uuidPrestacaoConta={localStorage.getItem('uuidPrestacaoConta')}
                                             statusPrestacaoDeConta={statusPrestacaoDeConta}
