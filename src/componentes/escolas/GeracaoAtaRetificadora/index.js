@@ -32,7 +32,8 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
                 setGerarAtaRetificadora(true)
             }
         } catch (e) {
-            if (statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA") {
+            debugger
+            if (statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA" || statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA_RETORNADA") {
                 let dados = await getIniciarAtaRetificadora(uuidPrestacaoConta);
                 setDadosAtaRetificadora(dados)
                 setCorBoxAtaRetificadora("vermelho");
@@ -43,7 +44,6 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
     };
 
     const onClickVisualizarAta = () =>{
-        console.log('onClickVisualizarAta ', dataBoxAtaRetificadora)
         window.location.assign(`/visualizacao-da-ata/${dadosAtaRetificadora.uuid}`)
     };
     return (
