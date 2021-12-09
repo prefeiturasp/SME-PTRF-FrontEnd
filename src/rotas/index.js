@@ -36,6 +36,7 @@ import {ConsultaDeSaldosBancariosDetalhesAssociacoes} from "../componentes/sme/C
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
 import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
 import {TecnicosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/TecnicosDaDiretoria";
+import {ComissoesDrePage} from "../paginas/dres/Diretoria/Comissoes";
 import {FaqDrePage} from "../paginas/dres/ApoioDiretoria/Faq";
 import {AtribuicoesPage} from "../paginas/dres/Diretoria/Atribuicoes";
 import {DreDashboardPage} from "../paginas/dres/DreDashboard";
@@ -197,6 +198,12 @@ const routesConfig = [
         path: "/dre-tecnicos-da-diretoria",
         component: TecnicosDaDiretoriaDrePage,
         permissoes: ['access_tecnicos_da_diretoria'],
+    },
+    {
+        exact: true,
+        path: "/dre-comissoes",
+        component: ComissoesDrePage,
+        permissoes: ['access_comissoes_dre'], 
     },
     {
         exact: true,
