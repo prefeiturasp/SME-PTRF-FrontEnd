@@ -18,10 +18,10 @@ export const getComissoes = async () => {
 
 export const getMembrosComissaoFiltro = async (dreUuid, comissaoUuid, nomeOuRf) => {
     if(comissaoUuid){
-        return (await api.get(`api/membros-comissoes/?dre_uuid=${dreUuid}&comissao_uuid=${comissaoUuid}&nome_ou_rf=${nomeOuRf}`, authHeader)).data
+        return (await api.get(`api/membros-comissoes/?dre__uuid=${dreUuid}&comissao_uuid=${comissaoUuid}&nome_ou_rf=${nomeOuRf}`, authHeader)).data
     }
     else{
-        return (await api.get(`api/membros-comissoes/?dre_uuid=${dreUuid}&nome_ou_rf=${nomeOuRf}`, authHeader)).data
+        return (await api.get(`api/membros-comissoes/?dre__uuid=${dreUuid}&nome_ou_rf=${nomeOuRf}`, authHeader)).data
     }
 };
 
