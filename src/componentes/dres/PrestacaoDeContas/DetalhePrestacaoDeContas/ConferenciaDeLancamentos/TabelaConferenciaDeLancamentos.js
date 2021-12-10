@@ -142,10 +142,10 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
 
     const selecionarHeader = () => {
         return (
-            <div className="align-middle text-center">
+            <div className="align-middle">
                 {editavel &&
                     <Dropdown>
-                        <Dropdown.Toggle id="dropdown-basic">
+                        <Dropdown.Toggle id="dropdown-basic" className="p-0">
                             <input
                                 checked={false}
                                 type="checkbox"
@@ -457,17 +457,19 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                 selectionMode="single"
                 onRowClick={e => redirecionaDetalhe(e.data)}
                 stripedRows
+                autoLayout={true}
             >
                 <Column
                     header={selecionarHeader()}
                     body={selecionarTemplate}
-                    style={{borderRight: 'none', width: '75px'}}
+                    style={{borderRight: 'none', width: '50px'}}
                 />
                 <Column
                     field='data'
                     header='Data'
                     body={dataTemplate}
                     className="align-middle text-left borda-coluna"
+                    style={{width: '110px'}}
                 />
                 <Column field='tipo_transacao' header='Tipo de lançamento'
                         className="align-middle text-left borda-coluna"/>
@@ -477,7 +479,7 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                     body={numeroDocumentoTemplate}
                     className="align-middle text-left borda-coluna"
                 />
-                <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna"/>
+                <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna" style={{width: '190px'}}/>
                 <Column
                     field='valor_transacao_total'
                     header='Valor (R$)'
@@ -489,7 +491,7 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                     header='Conferido'
                     body={conferidoTemplate}
                     className="align-middle text-left borda-coluna"
-                    style={{borderRight: 'none'}}
+                    style={{borderRight: 'none', width: '90px'}}
                 />
                 <Column expander style={{width: '3em', borderLeft: 'none'}}/>
             </DataTable>

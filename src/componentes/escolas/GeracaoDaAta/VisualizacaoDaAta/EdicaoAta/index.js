@@ -56,6 +56,10 @@ export const EdicaoAta = () => {
 
     const exibeMembrosCargos = useCallback(async () => {
         let membros_cargos = await getMembrosCargos(uuid_associacao)
+
+        if (membros_cargos && membros_cargos.length > 0){
+            membros_cargos.sort((a, b) => (a.nome > b.nome && 1) || -1)
+        }
         setMembrosCargos(membros_cargos)
     }, [uuid_associacao])
 

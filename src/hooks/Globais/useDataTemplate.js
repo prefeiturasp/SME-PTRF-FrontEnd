@@ -6,7 +6,7 @@ const useDataTemplate = () =>{
     const retornaDataFormatada = (rowData = '', column = '', data_passada = null) =>{
         if (rowData && column) {
             return (
-                <div className='p-2'>
+                <div className='p-1'>
                     {rowData[column.field] ? moment(rowData[column.field]).format('DD/MM/YYYY') : '-'}
                 </div>
             )
