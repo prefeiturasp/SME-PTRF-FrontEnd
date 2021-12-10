@@ -27,7 +27,7 @@ export const ExecucaoFinanceira =({statusRelatorio, textoBtnRelatorio, gerarPrev
                                             {statusRelatorio.status_arquivo ? statusRelatorio.status_arquivo : ''} {emProcessamento ? <img src={Spinner} style={{height: "22px"}}/> : ''}
                                         </span>
 
-                                        {statusRelatorio.status_geracao == "GERADO_TOTAL" && statusRelatorio.versao === "PREVIA" ?
+                                        {statusRelatorio.versao === "PREVIA" ?
                                             <button className='btn-editar-membro'
                                                 type='button'
                                                 
