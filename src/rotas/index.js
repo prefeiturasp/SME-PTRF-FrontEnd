@@ -32,6 +32,7 @@ import {GestaoDePerfisPage} from "../paginas/GestaoDePerfis";
 import {GestaoDePerfisForm} from "../componentes/Globais/GestaoDePerfis/GestaoDePerfisForm";
 import {ConsultaDeSaldosBancarios} from "../componentes/sme/ConsultaDeSaldosBancarios";
 import {ConsultaDeSaldosBancariosDetalhesAssociacoes} from "../componentes/sme/ConsultaDeSaldosBancarios/ConsultaDeSaldosBancariosDetalhesAssociacoes";
+import {RegularidadeAssociacoesPage} from "../paginas/dres/RegularidadeAssociacoes";
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
 import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
@@ -412,6 +413,12 @@ const routesConfig = [
         path: "/",
         component: RedirectLoginVisaoUe,
         permissoes: ['view_default'],
+    },
+        {
+        exact: true,
+        path: "/regularidade-associacoes",
+        component: RegularidadeAssociacoesPage,
+        permissoes: ['access_regularidade_dre'],
     },
 
 ];
