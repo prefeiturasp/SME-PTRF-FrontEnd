@@ -1,9 +1,31 @@
 import React from "react";
 
-export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChangeFiltrosAssociacao, handleSubmitFiltrosAssociacao, limpaFiltros}) =>{
+export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChangeFiltrosAssociacao, handleSubmitFiltrosAssociacao, limpaFiltros, anosAnaliseRegularidade}) =>{
+    const listaStatusRegularidade = [
+        {id: 'PENDENTE', nome: 'Pendente'},
+        {id: 'REGULAR', nome: 'Regular'}
+    ]
+
     return(
         <>
             <form onSubmit={handleSubmitFiltrosAssociacao}>
+                <div className="row">
+                    <div className="col-md-6">
+                        <label htmlFor="ano">Selecione o ano</label>
+                        <select
+                            value={stateFiltros.ano}
+                            onChange={(e) => handleChangeFiltrosAssociacao(e.target.name, e.target.value)}
+                            name="ano"
+                            id="ano"
+                            className="form-control"
+                        >
+                            {anosAnaliseRegularidade && anosAnaliseRegularidade.length > 0 && anosAnaliseRegularidade.map(item => (
+                                <option key={item.ano} value={item.ano}>{item.ano}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+                <hr />
                 <div className="row">
                     <div className="col-12 col-md-6">
                         <label htmlFor="unidade_escolar_ou_associacao">Filtrar por Unidade Escolar ou Associação</label>
@@ -18,7 +40,22 @@ export const FiltrosAssociacoes = ({tabelaAssociacoes, stateFiltros, handleChang
                     </div>
                     <div className="col-12 col-md-6">
                         <div className="row">
-                            <div className="col-md-12">
+                            <div className="col-md-6">
+                                <label htmlFor="regularidade">Filtrar por regularidade</label>
+                                <select
+                                    value={stateFiltros.regularidade}
+                                    onChange={(e) => handleChangeFiltrosAssociacao(e.target.name, e.target.value)}
+                                    name="regularidade"
+                                    id="regularidade"
+                                    className="form-control"
+                                >
+                                    <option value="">Selecione um status</option>
+                                    {listaStatusRegularidade && listaStatusRegularidade.length > 0 && listaStatusRegularidade.map(item => (
+                                        <option key={item.id} value={item.id}>{item.nome}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="col-md-6">
                                 <label htmlFor="tipo_de_unidade">Filtrar por tipo de unidade</label>
                                 <select
                                     value={stateFiltros.tipo_de_unidade}
