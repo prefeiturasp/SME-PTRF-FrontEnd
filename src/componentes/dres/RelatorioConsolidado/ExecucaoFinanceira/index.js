@@ -12,6 +12,15 @@ export const ExecucaoFinanceira =({statusRelatorio, textoBtnRelatorio, gerarPrev
     if (statusRelatorio.status_geracao === 'EM_PROCESSAMENTO') {
         classeMensagem = "documento-processando"
     }
+
+    const relatorioGerado = (status) => {
+        if(status === "GERADO_PARCIAL" || status === "GERADO_TOTAL"){
+            return true;
+        }
+
+        return false;
+    }
+
     return(
         <>
             {statusRelatorio &&
@@ -27,7 +36,7 @@ export const ExecucaoFinanceira =({statusRelatorio, textoBtnRelatorio, gerarPrev
                                             {statusRelatorio.status_arquivo ? statusRelatorio.status_arquivo : ''} {emProcessamento ? <img src={Spinner} style={{height: "22px"}}/> : ''}
                                         </span>
 
-                                        {statusRelatorio.versao === "PREVIA" ?
+                                        {relatorioGerado(statusRelatorio.status_geracao) &&  statusRelatorio.versao === "PREVIA" ?
                                             <button className='btn-editar-membro'
                                                 type='button'
                                                 
