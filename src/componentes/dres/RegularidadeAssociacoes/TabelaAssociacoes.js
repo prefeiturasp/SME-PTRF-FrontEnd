@@ -2,7 +2,7 @@ import React from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 
-export const TabelaAssociacoes = ({associacoes, rowsPerPage, unidadeEscolarTemplate, acoesTemplate}) =>{
+export const TabelaAssociacoes = ({associacoes, rowsPerPage, unidadeEscolarTemplate, statusRegularidadeTemplate, acoesTemplate, exibeAcaoDetalhe}) =>{
   return(
       <DataTable
           value={associacoes}
@@ -13,17 +13,25 @@ export const TabelaAssociacoes = ({associacoes, rowsPerPage, unidadeEscolarTempl
           autoLayout={true}
           selectionMode="single"
       >
-          <Column field="unidade.codigo_eol" header="Código Eol" />
+          <Column field="associacao.unidade.codigo_eol" header="Código Eol" />
           <Column
-              field="unidade.nome_com_tipo"
+              field="associacao.unidade.nome_com_tipo"
               header="Unidade escolar"
               body={unidadeEscolarTemplate}
           />
           <Column
-              field="uuid"
-              header="Ações"
-              body={acoesTemplate}
+              field="status_regularidade"
+              header="Regularidade"
+              body={statusRegularidadeTemplate}
           />
+          {exibeAcaoDetalhe &&
+              <Column
+                  field="associacao.uuid"
+                  header="Ações"
+                  body={acoesTemplate}
+              />
+          }
+
       </DataTable>
   );
 };
