@@ -1,3 +1,6 @@
+### 1.24.4 - 09/12/2021 - Hotfix
+* (54736) - Correção condição para exibir botão de download da prévia do relatório consolidado
+
 ### 1.24.3 - 09/12/2021 - Hotfix
 * (54736) - Correção condição para exibir botão de download da prévia do relatório consolidado
 
