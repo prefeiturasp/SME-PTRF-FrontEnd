@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getFiqueDeOlhoRelatoriosConsolidados, getConsultarStatus, getTiposConta, getDownloadRelatorio, postGerarPreviaRelatorio} from "../../../services/dres/RelatorioConsolidado.service";
+import {getFiqueDeOlhoRelatoriosConsolidados, getConsultarStatus, getTiposConta, getDownloadRelatorio, postGerarPreviaRelatorio, postGerarLauda} from "../../../services/dres/RelatorioConsolidado.service";
 import {getItensDashboard, getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
@@ -11,7 +11,7 @@ import {BarraDeStatus} from "./BarraDeStatus";
 import {ExecucaoFinanceira} from "./ExecucaoFinanceira";
 import './relatorio-consolidado.scss'
 import Loading from "../../../utils/Loading";
-import { ModalMsgGeracaoRelatorio } from "./ModalMsgGeracaoRelatorio";
+import { ModalMsgGeracaoRelatorio, ModalMsgGeracaoLauda } from "./ModalMsgGeracaoRelatorio";
 
 export const RelatorioConsolidado = () => {
 
@@ -27,7 +27,9 @@ export const RelatorioConsolidado = () => {
     const [totalEmAnalise, setTotalEmAnalise] = useState(0);
     const [loading, setLoading] = useState(false);
     const [showModalMsgGeracaoRelatorio, setShowModalMsgGeracaoRelatorio] = useState(false);
+    const [showModalMsgGeracaoLauda, setShowModalMsgGeracaoLauda] = useState(false);
     const [msgGeracaoRelatorio, setMsgGeracaoRelatorio] = useState('');
+    const [msgGeracaoLauda, setMsgGeracaoLauda] = useState('');
 
     useEffect(() => {
         if (statusRelatorio && statusRelatorio.status_geracao && statusRelatorio.status_geracao === "EM_PROCESSAMENTO") {
@@ -192,6 +194,27 @@ export const RelatorioConsolidado = () => {
 
     }
 
+    const gerarLauda = async () => {
+        let parcial = totalEmAnalise > 0;
+        const payload = {
+            dre_uuid: dre_uuid,
+            periodo_uuid: periodoEscolhido,
+            tipo_conta_uuid: contaEscolhida,
+            parcial: parcial
+        };
+
+        try{
+            await postGerarLauda(payload);
+            console.log('Solicitação de lauda enviada com sucesso.');
+            setMsgGeracaoLauda('A lauda está sendo gerada e será enviada para a central de downloads.')
+            setShowModalMsgGeracaoLauda(true);
+        }catch(e){
+            setMsgGeracaoLauda('Erro ao gerar lauda.')
+            setShowModalMsgGeracaoLauda(true);
+            console.log('Erro ao gerar lauda ', e.response.data);
+        }
+    }
+
     const downloadRelatorio = async () =>{
         await getDownloadRelatorio(dre_uuid, periodoEscolhido, contaEscolhida, statusRelatorio.versao);
     };
@@ -202,6 +225,10 @@ export const RelatorioConsolidado = () => {
 
     const onHandleClose = () => {
         setShowModalMsgGeracaoRelatorio(false);
+    };
+
+    const onHandleCloseModalMsgLauda = () => {
+        setShowModalMsgGeracaoLauda(false);
     };
 
     return (
@@ -237,6 +264,7 @@ export const RelatorioConsolidado = () => {
                             contaEscolhida={contaEscolhida}
                             handleChangeContas={handleChangeContas}
                             onClickVerRelatorio={onClickVerRelatorio}
+                            gerarLauda={gerarLauda}
                         />
                         }
                         {periodoEscolhido && itensDashboard ? (
@@ -267,6 +295,15 @@ export const RelatorioConsolidado = () => {
                                 handleClose={onHandleClose}
                                 titulo='Geração do relatório'
                                 texto={msgGeracaoRelatorio}
+                            />
+                        </section>
+
+                        <section>
+                            <ModalMsgGeracaoLauda
+                                show={showModalMsgGeracaoLauda}
+                                handleClose={onHandleCloseModalMsgLauda}
+                                titulo='Geração da lauda'
+                                texto={msgGeracaoLauda}
                             />
                         </section>
 

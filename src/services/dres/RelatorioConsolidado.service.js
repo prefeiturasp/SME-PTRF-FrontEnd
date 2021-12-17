@@ -81,6 +81,10 @@ export const postGerarPreviaRelatorio = async (payload) => {
     return (await api.post(`/api/relatorios-consolidados-dre/previa/`, payload, authHeader)).data
 };
 
+export const postGerarLauda = async (payload) => {
+    return (await api.post(`/api/relatorios-consolidados-dre/gerar-lauda/`, payload, authHeader)).data
+};
+
 export const getDownloadRelatorio = async (dre_uuid, periodo_uuid, conta_uuid, versao) => {
     return api
     .get(`/api/relatorios-consolidados-dre/download/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}`, {

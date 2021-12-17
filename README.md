@@ -4,7 +4,7 @@ Front da aplicação _SIG.Escola_ da Secretaria de Educação da cidade de São 
 
 License: MIT
 
-Versão: 1.24.4
+Versão: 1.24.5
 
 ## Release Notes
 
