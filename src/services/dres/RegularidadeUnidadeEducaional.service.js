@@ -8,8 +8,11 @@ const authHeader = {
     }
 };
 
-export const verificacaoRegularidade = async (associacao_uuid) => {
-    return (await api.get(`/api/associacoes/${associacao_uuid}/verificacao-regularidade/`, authHeader)).data
+export const verificacaoRegularidade = async (associacao_uuid, ano) => {
+    if (!ano){
+        ano = new Date().getFullYear()
+    }
+    return (await api.get(`/api/associacoes/${associacao_uuid}/verificacao-regularidade/?ano=${ano}`, authHeader)).data
 };
 
 export const salvarItensRegularidade = async (associacao_uuid, payload) => {
