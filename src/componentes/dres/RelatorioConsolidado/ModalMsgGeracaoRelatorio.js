@@ -14,3 +14,17 @@ export const ModalMsgGeracaoRelatorio = (props) =>{
         />
     )
 };
+
+export const ModalMsgGeracaoLauda = (props) =>{
+    return (
+        <ModalBootstrap
+            show={props.show}
+            onHide={props.handleClose}
+            titulo={props.titulo}
+            bodyText={props.texto}
+            primeiroBotaoOnclick={props.handleClose}
+            primeiroBotaoTexto="Fechar"
+            primeiroBotaoCss="success"
+        />
+    )
+};
