@@ -13,6 +13,11 @@ export const getAssociacao = async () => {
     return (await api.get(`api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
 
+export const getAssociacaoByUUID = async (associacaoUUID) => {
+    return (await api.get(`api/associacoes/${associacaoUUID}`, authHeader)).data
+};
+
+
 export const alterarAssociacao = async (payload) => {
     return api.put(`api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/`, payload, authHeader).then(response => {
         return response;

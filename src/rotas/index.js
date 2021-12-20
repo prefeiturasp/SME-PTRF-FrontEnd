@@ -33,6 +33,7 @@ import {GestaoDePerfisForm} from "../componentes/Globais/GestaoDePerfis/GestaoDe
 import {ConsultaDeSaldosBancarios} from "../componentes/sme/ConsultaDeSaldosBancarios";
 import {ConsultaDeSaldosBancariosDetalhesAssociacoes} from "../componentes/sme/ConsultaDeSaldosBancarios/ConsultaDeSaldosBancariosDetalhesAssociacoes";
 import {RegularidadeAssociacoesPage} from "../paginas/dres/RegularidadeAssociacoes";
+import {AnalisesRegularidadeAssociacaoPage} from "../paginas/dres/RegularidadeAssociacoes/AnalisesRegularidadeDaAssociacao";
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
 import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
@@ -66,6 +67,7 @@ import DetalharAcertosDocumentos from "../componentes/dres/PrestacaoDeContas/Det
 import {ResumoDosAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ResumoDosAcertos";
 import ConsultaDetalhamentoAnaliseDaDre from "../componentes/escolas/AnaliseDre/ConsultaDetalhamentoAnaliseDaDre";
 import CadastroDeMembrosDaAssociacao from "../componentes/escolas/Associacao/Membros/CadastroDeMembrosDaAssociacao";
+import {AnalisesRegularidadePage} from "../componentes/dres/RegularidadeAssociacoes/AnalisesRegularidade";
 
 const routesConfig = [
     {
@@ -425,6 +427,12 @@ const routesConfig = [
         exact: true,
         path: "/regularidade-associacoes",
         component: RegularidadeAssociacoesPage,
+        permissoes: ['access_regularidade_dre'],
+    },
+        {
+        exact: true,
+        path: "/analises-regularidade-associacao/:associacao_uuid/",
+        component: AnalisesRegularidadeAssociacaoPage,
         permissoes: ['access_regularidade_dre'],
     },
 
