@@ -13,8 +13,9 @@ import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormulari
 import Loading from "../../../../../utils/Loading";
 import {ModalErroDevolverParaAcerto} from "./ModalErroDevolverParaAcerto";
 import {ModalConfirmaDevolverParaAcerto} from "./ModalConfirmaDevolverParaAcerto";
+import { toastCustom } from "../../../../Globais/ToastCustom";
 
-const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas, infoAta, editavel=true}) => {
+const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas, infoAta, editavel=true, setLoadingAcompanhamentoPC}) => {
 
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalErroDevolverParaAcerto, setShowModalErroDevolverParaAcerto] = useState(false)
@@ -81,6 +82,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
     }, [analisesDeContaDaPrestacao])
 
     const devolverParaAcertos = useCallback(async () =>{
+        setLoadingAcompanhamentoPC(true);
         setBtnDevolverParaAcertoDisabled(true)
         setShowModalConfirmaDevolverParaAcerto(false)
         let analises = trataAnalisesDeContaDaPrestacao()
@@ -95,6 +97,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
             await getConcluirAnalise(prestacaoDeContas.uuid, payload);
             console.log("Devolução para acertos concluída com sucesso!")
             await carregaPrestacaoDeContas();
+            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Devolvida para acertos”.')
         }catch (e){
             console.log("Erro ao Devolver para Acerto ", e.response)
             if (e.response.data.mensagem){
@@ -104,7 +107,9 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
             }
             setShowModalErroDevolverParaAcerto(true)
             setBtnDevolverParaAcertoDisabled(false)
+            setLoadingAcompanhamentoPC(false);
         }
+        setLoadingAcompanhamentoPC(false);
 
     }, [dataLimiteDevolucao, carregaPrestacaoDeContas, prestacaoDeContas, trataAnalisesDeContaDaPrestacao])
 

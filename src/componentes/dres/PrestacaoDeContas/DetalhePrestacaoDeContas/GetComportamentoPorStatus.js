@@ -70,6 +70,7 @@ export const GetComportamentoPorStatus = (
         handleChangedataRecebimentoDevolutiva,
         receberAposAcertos,
         desfazerReceberAposAcertos,
+        setLoading
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
@@ -246,6 +247,7 @@ export const GetComportamentoPorStatus = (
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={true}
+                        setLoadingAcompanhamentoPC={setLoading}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
