@@ -253,6 +253,18 @@ export const FormularioEditaAta = ({
                                             </div>
 
                                             <div className="col">
+                                                <label htmlFor="stateFormEditarAta.hora_reuniao">Hora</label>
+                                                <input
+                                                    value={values.stateFormEditarAta.hora_reuniao}
+                                                    onChange={props.handleChange}
+                                                    name="stateFormEditarAta.hora_reuniao"
+                                                    className="form-control"
+                                                    disabled={!podeEditarAta}
+                                                    type="time"
+                                                />
+                                            </div>
+
+                                            <div className="col">
                                                 <label htmlFor="stateFormEditarAta.local_reuniao">Local da reunião</label>
                                                 <input
                                                     value={values.stateFormEditarAta.local_reuniao}

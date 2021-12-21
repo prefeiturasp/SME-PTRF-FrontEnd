@@ -42,6 +42,7 @@ export const EdicaoAta = () => {
         cargo_presidente_reuniao: "",
         cargo_secretaria_reuniao: "",
         retificacoes: "",
+        hora_reuniao: ""
     });
     const [tabelas, setTabelas] = useState({});
     const [membrosCargos, setMembrosCargos] = useState([])
@@ -88,6 +89,7 @@ export const EdicaoAta = () => {
             cargo_presidente_reuniao: dados_ata.cargo_presidente_reuniao,
             cargo_secretaria_reuniao: dados_ata.cargo_secretaria_reuniao,
             retificacoes: dados_ata.retificacoes,
+            hora_reuniao: dados_ata.hora_reuniao,
         });
         setDadosAta(dados_ata);
     };
@@ -116,6 +118,8 @@ export const EdicaoAta = () => {
         let dadosForm = formRef.current.values
 
         let data_da_reuniao = dadosForm.stateFormEditarAta.data_reuniao ? moment(dadosForm.stateFormEditarAta.data_reuniao).format("YYYY-MM-DD") : null;
+        let hora_reuniao = dadosForm.stateFormEditarAta.hora_reuniao ? moment(dadosForm.stateFormEditarAta.hora_reuniao, 'HHmm').format('HH:mm') : "00:00" 
+        
         let payload = {
             cargo_presidente_reuniao: dadosForm.stateFormEditarAta.cargo_presidente_reuniao,
             cargo_secretaria_reuniao: dadosForm.stateFormEditarAta.cargo_secretaria_reuniao,
@@ -128,7 +132,8 @@ export const EdicaoAta = () => {
             retificacoes: dadosForm.stateFormEditarAta.retificacoes,
             secretario_reuniao: dadosForm.stateFormEditarAta.secretario_reuniao,
             tipo_reuniao: dadosForm.stateFormEditarAta.tipo_reuniao,
-            presentes_na_ata: dadosForm.listaPresentesPadrao
+            presentes_na_ata: dadosForm.listaPresentesPadrao,
+            hora_reuniao: hora_reuniao
         }
 
         try {
