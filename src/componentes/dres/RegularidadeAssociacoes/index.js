@@ -1,6 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {Redirect} from "react-router-dom";
-import {getTabelaAssociacoes, getRegularidadeAssociacoesAno, filtrosRegularidadeAssociacoes, getAssociacao, getContasAssociacao, getAnosAnaliseRegularidade} from "../../../services/dres/Associacoes.service";
+import {
+    getTabelaAssociacoes,
+    getRegularidadeAssociacoesAno,
+    filtrosRegularidadeAssociacoes,
+    getAnosAnaliseRegularidade
+} from "../../../services/dres/Associacoes.service";
 import "./associacoes.scss"
 import {TabelaAssociacoes} from "./TabelaAssociacoes";
 import {FiltrosAssociacoes} from "./FiltrosAssociacoes";
@@ -8,7 +13,6 @@ import Loading from "../../../utils/Loading";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
-import {DADOS_DA_ASSOCIACAO} from "../../../services/auth.service";
 import {visoesService} from "../../../services/visoes.service";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEye} from "@fortawesome/free-solid-svg-icons";
@@ -65,25 +69,6 @@ export const RegularidadeAssociacoes = () =>{
         setLoading(false)
     };
 
-    const buscaAssociacao = async (uuid_associacao, url_redirect)=>{
-        setLoading(true);
-        try {
-            let associacao = await getAssociacao(uuid_associacao);
-            let contas = await getContasAssociacao(uuid_associacao);
-
-            let dados_da_associacao = {
-                dados_da_associacao:{
-                    ...associacao,
-                    contas
-                }
-            };
-            localStorage.setItem(DADOS_DA_ASSOCIACAO, JSON.stringify(dados_da_associacao ));
-            setRrlRedirect(url_redirect)
-        }catch (e) {
-            console.log("Erro ao buscar associacoes ", e)
-        }
-        setLoading(false);
-    };
 
     const unidadeEscolarTemplate = (rowData) =>{
         return (
@@ -112,7 +97,7 @@ export const RegularidadeAssociacoes = () =>{
                 <>
 
                     <button
-                        onClick={()=>buscaAssociacao(rowData.uuid, "/dre-detalhes-associacao")}
+                        onClick={()=>setRrlRedirect(`/analises-regularidade-associacao/${rowData.associacao.uuid}/`)}
                         className="btn btn-link"
                         disabled={
                             visoesService.getPermissoes(['access_regularidade_dre'])? false : true

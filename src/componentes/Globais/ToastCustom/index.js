@@ -34,6 +34,11 @@ const ToastCustomSuccess = (titulo, texto, tipo='success', posicao='top-right', 
     ToastCustom(titulo, texto, tipo, posicao, autoClose)
 }
 
+const ToastCustomError = (titulo, texto, tipo='error', posicao='top-right', autoClose=true) =>{
+    ToastCustom(titulo, texto, tipo, posicao, autoClose)
+}
+
+
 const ToastCustomGrandeSuccess = (titulo, texto, tipo='success', posicao='top-right', autoClose=true) => {
 
     let box = document.querySelector('.page-content-inner');
@@ -48,4 +53,5 @@ const ToastCustomGrandeSuccess = (titulo, texto, tipo='success', posicao='top-ri
 export const toastCustom = {
     ToastCustomSuccess,
     ToastCustomGrandeSuccess,
+    ToastCustomError,
 }
