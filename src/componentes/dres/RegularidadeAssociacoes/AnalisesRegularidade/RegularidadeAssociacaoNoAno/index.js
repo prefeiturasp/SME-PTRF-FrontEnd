@@ -8,7 +8,7 @@ import MotivoNaoRegularidade from "./MotivoNaoRegularidade";
 import {ModalConfirmaApagarMotivoNaoRegularidade,} from "./ModalConfirmarApagarMotivoNaoRegularidade";
 import {toastCustom} from "../../../../Globais/ToastCustom";
 
-export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
+export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano, apenasLeitura=false}) => {
 
     const [dadosRegularidade, setDadosRegularidade] = useState({});
     const [checklists, setChecklists] = useState({});
@@ -41,7 +41,7 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
     const buscaDadosRegularidade = useCallback(async () => {
         if (associacaoUuid) {
             try {
-                let dados = await verificacaoRegularidade(associacaoUuid)
+                let dados = await verificacaoRegularidade(associacaoUuid, ano)
                 console.log('Dados Regularidade ====>', dados)
                 setDadosRegularidade(dados);
                 setCampoMotivoNaoRegularidade(dados.motivo_nao_regularidade)
@@ -69,7 +69,7 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
             }
         }
 
-    }, [associacaoUuid]) ;
+    }, [associacaoUuid, ano]) ;
 
     useEffect(() => {
             buscaDadosRegularidade();
@@ -185,7 +185,7 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
 
 
     const montaListaVerificacao = (listaVerificacao) => {
-        const podeSalvar = [['change_regularidade']].some(visoesService.getPermissoes)
+        const podeSalvar = ([['change_regularidade']].some(visoesService.getPermissoes) && !apenasLeitura)
 
         return (
             listaVerificacao.map((obj, index) => (
@@ -276,7 +276,7 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
         setExpandir(expand);
     }
 
-    const podeSalvar = true
+    const podeSalvar = ([['change_regularidade']].some(visoesService.getPermissoes) && !apenasLeitura)
     const obj = {}
     return (
         <>
@@ -301,6 +301,7 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
                     }
                 }
             >
+                { podeSalvar &&
                 <Button
                     variant="success"
                     className="btn btn-sucess"
@@ -308,6 +309,8 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
                 >
                     Salvar
                 </Button>
+                }
+
                 <ModalConfirmaApagarMotivoNaoRegularidade
                     show={showModalConfirmaApagarMotivoNaoRegularidade}
                     handleClose={() => setShowModalConfirmaApagarMotivoNaoRegularidade(false)}
