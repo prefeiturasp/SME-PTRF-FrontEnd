@@ -1,11 +1,21 @@
-import React, {memo} from "react";
+import React, {memo, useEffect, useState} from "react";
 import {RegularidadeAssociacaoNoAno} from "./RegularidadeAssociacaoNoAno";
-
+import {SelecaoAnoAnaliseRegularidade} from "../SelecaoAnoAnaliseRegularidade"
 export const TabsAnaliseAnoVigenteHistorico = ({
                                            associacaoUuid,
                                        }) => {
 
     const anoVigente = new Date().getFullYear()
+    const [anoHistoricoSelected, setAnoHistoricoSelected] = useState(null);
+
+    const handleChangeAnoSelected = (anoSelected) => {
+        setAnoHistoricoSelected(anoSelected)
+    };
+
+    useEffect(() => {
+        console.log('Ano selecionado:', anoHistoricoSelected);
+    }, [anoHistoricoSelected]);
+
 
     return(
         <>
@@ -52,7 +62,12 @@ export const TabsAnaliseAnoVigenteHistorico = ({
                     <RegularidadeAssociacaoNoAno associacaoUuid={associacaoUuid} ano={anoVigente}/>
                 </div>
                 <div className={`tab-pane fade`} id="nav-historico" role="tabpanel" aria-labelledby="nav-historico-tab">
-                    <h1>Teste aba histórico</h1>
+                    <SelecaoAnoAnaliseRegularidade handleChangeAnoSelected={handleChangeAnoSelected}/>
+                    <RegularidadeAssociacaoNoAno
+                        associacaoUuid={associacaoUuid}
+                        ano={anoHistoricoSelected}
+                        apenasLeitura={true}
+                    />
                 </div>
             </div>
         </>
