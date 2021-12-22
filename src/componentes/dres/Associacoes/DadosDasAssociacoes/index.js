@@ -7,7 +7,6 @@ import {InfosUnidadeEducacional} from "./DadosDaUnidadeEducacional/InfosUnidadeE
 import { InfosContas } from "./DadosDasContas/InfosContas";
 import { ProcessoSeiRegularidade } from "./ProcessosSei/ProcessoSeiRegularidade";
 import { ProcessosSeiPrestacaoDeContas } from "./ProcessosSei/ProcessosSeiPrestacaoDeContas";
-import { RegularidadeUnidadeEducacional } from "./RegularidadeUnidadeEducacional";
 import { SituacaoFinanceiraUnidadeEducacional } from "./SituacaoFinanceiraUnidadeEducacional";
 import {visoesService} from "../../../../services/visoes.service"
 import "../associacoes.scss"
@@ -17,7 +16,6 @@ export const DetalhesDaAssociacao = () => {
         dados_unidade: true,
         dados_associacao: false,
         processos_sei: false,
-        regularidade: false,
         situacao_financeira: false
     });
 
@@ -25,7 +23,6 @@ export const DetalhesDaAssociacao = () => {
         dados_unidade: true,
         dados_associacao: false,
         processos_sei: false,
-        regularidade: false,
         situacao_financeira: false
     });
     let dadosDaAssociacao = JSON.parse(localStorage.getItem(DADOS_DA_ASSOCIACAO));
@@ -48,11 +45,6 @@ export const DetalhesDaAssociacao = () => {
             permissao: visoesService.getPermissoes(['access_processo_sei'])
         },
         {
-            id: "regularidade",
-            nome: "Regularidade",
-            permissao: visoesService.getPermissoes(["access_regularidade_dre"])
-        },
-        {
             id: "situacao_financeira",
             nome: "Situação Financeira",
             permissao: visoesService.getPermissoes(["access_situacao_financeira_dre"])
@@ -72,12 +64,8 @@ export const DetalhesDaAssociacao = () => {
             id: tabs[2].id,
             permissao: visoesService.getPermissoes(['access_processo_sei'])
         },
-        regularidade : {
-            id: tabs[3].id,
-            permissao: visoesService.getPermissoes(["access_regularidade_dre"])
-        },
         situacao_financeira : {
-            id: tabs[4].id,
+            id: tabs[3].id,
             permissao: visoesService.getPermissoes(["access_situacao_financeira_dre"])
         },
     }
@@ -93,7 +81,6 @@ export const DetalhesDaAssociacao = () => {
             dados_unidade: false,
             dados_associacao: false,
             processos_sei: false,
-            regularidade: false,
             situacao_financeira: false
         }
 
@@ -101,7 +88,6 @@ export const DetalhesDaAssociacao = () => {
             dados_unidade: false,
             dados_associacao: false,
             processos_sei: false,
-            regularidade: false,
             situacao_financeira: false
         }
 
@@ -135,7 +121,6 @@ export const DetalhesDaAssociacao = () => {
                 dados_unidade: false,
                 dados_associacao: false,
                 processos_sei: false,
-                regularidade: true,
                 situacao_financeira: false
             }
 
@@ -143,7 +128,6 @@ export const DetalhesDaAssociacao = () => {
                 dados_unidade: false,
                 dados_associacao: false,
                 processos_sei: false,
-                regularidade: true,
                 situacao_financeira: false
             }
 
@@ -257,24 +241,6 @@ export const DetalhesDaAssociacao = () => {
                                                 dadosDaAssociacao={dadosDaAssociacao}
                                             />
                                             <ProcessosSeiPrestacaoDeContas
-                                                dadosDaAssociacao={dadosDaAssociacao}
-                                            />
-                                        </div>
-                                    </div>
-                                :
-                                    null
-                            }
-
-                            {conteudo_tab.regularidade.permissao 
-                                ?
-                                    <div
-                                        className={`tab-pane fade show ${activeTab.regularidade ? "active" : ""}`}
-                                        id={`nav-${conteudo_tab.regularidade.id}`}
-                                        role="tabpanel"
-                                        aria-labelledby={`nav-${conteudo_tab.regularidade.id}-tab`}
-                                    >
-                                        <div className="page-content-inner">
-                                            <RegularidadeUnidadeEducacional
                                                 dadosDaAssociacao={dadosDaAssociacao}
                                             />
                                         </div>
