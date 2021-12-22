@@ -12,11 +12,6 @@ export const TabsAnaliseAnoVigenteHistorico = ({
         setAnoHistoricoSelected(anoSelected)
     };
 
-    useEffect(() => {
-        console.log('Ano selecionado:', anoHistoricoSelected);
-    }, [anoHistoricoSelected]);
-
-
     return(
         <>
             <div className="row">

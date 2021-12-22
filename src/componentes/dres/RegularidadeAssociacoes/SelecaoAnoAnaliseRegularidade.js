@@ -14,10 +14,9 @@ export const SelecaoAnoAnaliseRegularidade = ({handleChangeAnoSelected}) =>{
     const buscaAnosAnaliseRegularidade = async () => {
         let anosAnaliseRegularidade = await getAnosAnaliseRegularidade();
         anosAnaliseRegularidade = anosAnaliseRegularidade.filter(obj => obj.ano !== anoVigente)
-        console.log('Anos ===>', anosAnaliseRegularidade)
         setAnosAnaliseRegularidade(anosAnaliseRegularidade);
         if (anosAnaliseRegularidade && anosAnaliseRegularidade.length > 0 && !anoSelected) {
-            setAnoSelected(anosAnaliseRegularidade[0].ano)
+            selecionaAno(anosAnaliseRegularidade[0].ano)
         }
     };
 

@@ -42,7 +42,6 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano, apenasLeitura=
         if (associacaoUuid) {
             try {
                 let dados = await verificacaoRegularidade(associacaoUuid, ano)
-                console.log('Dados Regularidade ====>', dados)
                 setDadosRegularidade(dados);
                 setCampoMotivoNaoRegularidade(dados.motivo_nao_regularidade)
                 let dicionarioItensListaVerificacao = {}
@@ -59,7 +58,6 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano, apenasLeitura=
                         })
                     })
                 })
-                console.log('Checklists ====>', dicionarioItensListaVerificacao)
                 setChecklists(dicionarioItensListaVerificacao);
                 setDicionarioDeItens(dicionarioItens);
                 setArrayStatus(Object.values(status))
@@ -120,7 +118,6 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano, apenasLeitura=
         })
         itensGrupo[lista_verificacao.uuid] = itens
 
-        console.log("Atu checklists:", itensGrupo)
         setChecklists(itensGrupo);
 
         var d = {...dicionarioDeItens}
@@ -142,7 +139,6 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano, apenasLeitura=
         let itens = []
         for (let lista in checklists) {
             for (let item_lista in checklists[lista]){
-                console.log("Item lista:", item_lista)
                 itens.push({uuid: checklists[lista][item_lista].uuid, regular: checklists[lista][item_lista].regular})
             }
         }
