@@ -8,7 +8,7 @@ import MotivoNaoRegularidade from "./MotivoNaoRegularidade";
 import {ModalConfirmaApagarMotivoNaoRegularidade,} from "./ModalConfirmarApagarMotivoNaoRegularidade";
 import {toastCustom} from "../../../../Globais/ToastCustom";
 
-export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
+export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano, apenasLeitura=false}) => {
 
     const [dadosRegularidade, setDadosRegularidade] = useState({});
     const [checklists, setChecklists] = useState({});
@@ -41,8 +41,7 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
     const buscaDadosRegularidade = useCallback(async () => {
         if (associacaoUuid) {
             try {
-                let dados = await verificacaoRegularidade(associacaoUuid)
-                console.log('Dados Regularidade ====>', dados)
+                let dados = await verificacaoRegularidade(associacaoUuid, ano)
                 setDadosRegularidade(dados);
                 setCampoMotivoNaoRegularidade(dados.motivo_nao_regularidade)
                 let dicionarioItensListaVerificacao = {}
@@ -59,7 +58,6 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
                         })
                     })
                 })
-                console.log('Checklists ====>', dicionarioItensListaVerificacao)
                 setChecklists(dicionarioItensListaVerificacao);
                 setDicionarioDeItens(dicionarioItens);
                 setArrayStatus(Object.values(status))
@@ -69,7 +67,7 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
             }
         }
 
-    }, [associacaoUuid]) ;
+    }, [associacaoUuid, ano]) ;
 
     useEffect(() => {
             buscaDadosRegularidade();
@@ -120,7 +118,6 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
         })
         itensGrupo[lista_verificacao.uuid] = itens
 
-        console.log("Atu checklists:", itensGrupo)
         setChecklists(itensGrupo);
 
         var d = {...dicionarioDeItens}
@@ -142,7 +139,6 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
         let itens = []
         for (let lista in checklists) {
             for (let item_lista in checklists[lista]){
-                console.log("Item lista:", item_lista)
                 itens.push({uuid: checklists[lista][item_lista].uuid, regular: checklists[lista][item_lista].regular})
             }
         }
@@ -185,7 +181,7 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
 
 
     const montaListaVerificacao = (listaVerificacao) => {
-        const podeSalvar = [['change_regularidade']].some(visoesService.getPermissoes)
+        const podeSalvar = ([['change_regularidade']].some(visoesService.getPermissoes) && !apenasLeitura)
 
         return (
             listaVerificacao.map((obj, index) => (
@@ -276,7 +272,7 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
         setExpandir(expand);
     }
 
-    const podeSalvar = true
+    const podeSalvar = ([['change_regularidade']].some(visoesService.getPermissoes) && !apenasLeitura)
     const obj = {}
     return (
         <>
@@ -301,6 +297,7 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
                     }
                 }
             >
+                { podeSalvar &&
                 <Button
                     variant="success"
                     className="btn btn-sucess"
@@ -308,6 +305,8 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano}) => {
                 >
                     Salvar
                 </Button>
+                }
+
                 <ModalConfirmaApagarMotivoNaoRegularidade
                     show={showModalConfirmaApagarMotivoNaoRegularidade}
                     handleClose={() => setShowModalConfirmaApagarMotivoNaoRegularidade(false)}
