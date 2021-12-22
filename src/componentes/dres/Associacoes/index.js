@@ -19,7 +19,6 @@ export const Associacoes = () =>{
 
     const initialStateFiltros = {
         unidade_escolar_ou_associacao: "",
-        regularidade: "",
         tipo_de_unidade: "",
     };
 
@@ -90,7 +89,6 @@ export const Associacoes = () =>{
                         className="btn btn-link"
                         disabled={
                             visoesService.getPermissoes(["access_dados_unidade_dre"])       || 
-                            visoesService.getPermissoes(["access_regularidade_dre"])        || 
                             visoesService.getPermissoes(["access_situacao_financeira_dre"]) ||
                             visoesService.getPermissoes(['access_processo_sei'])? false : true
                         }
@@ -124,7 +122,7 @@ export const Associacoes = () =>{
         setLoading(true);
         setBuscaUtilizandoFiltros(true);
         event.preventDefault();
-        let resultado_filtros = await filtrosAssociacoes(stateFiltros.unidade_escolar_ou_associacao, stateFiltros.regularidade, stateFiltros.tipo_de_unidade);
+        let resultado_filtros = await filtrosAssociacoes(stateFiltros.unidade_escolar_ou_associacao, stateFiltros.tipo_de_unidade);
         setAssociacoes(resultado_filtros);
         setLoading(false)
     };
