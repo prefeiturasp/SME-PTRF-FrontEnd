@@ -23,7 +23,7 @@ export const AnalisesRegularidadeAssociacao = () => {
 
     return (
         <>
-            <NomeAssociacaoBotaoVoltar nomeAssociacao={`${associacao.nome}`}/>
+            <NomeAssociacaoBotaoVoltar nomeAssociacao={associacao ? associacao.nome : ""}/>
             <div className="page-content-inner">
                 <TabsAnaliseAnoVigenteHistorico associacaoUuid={associacao.uuid}/>
             </div>
