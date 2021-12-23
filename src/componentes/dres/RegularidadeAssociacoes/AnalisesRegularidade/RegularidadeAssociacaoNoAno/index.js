@@ -286,6 +286,7 @@ export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano, apenasLeitura=
                 exibeCampoMotivoNaoRegularidade={exibeCampoMotivoNaoRegularidade}
                 campoMotivoNaoRegularidade={campoMotivoNaoRegularidade}
                 setCampoMotivoNaoRegularidade={setCampoMotivoNaoRegularidade}
+                podeEditar={podeSalvar}
             />
 
             <div
