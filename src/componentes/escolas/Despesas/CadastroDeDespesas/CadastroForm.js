@@ -33,6 +33,7 @@ import {
     SaldoInsuficiente,
     SaldoInsuficienteConta,
     ChecarDespesaExistente,
+    TipoAplicacaoRecursoNaoAceito
 } from "../../../../utils/Modais"
 import {ModalDespesaConferida} from "./ModalDespesaJaConferida";
 import "./cadastro-de-despesas.scss"
@@ -79,6 +80,8 @@ export const CadastroForm = ({verbo_http}) => {
     const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
     const [numeroDocumentoReadOnly, setNumeroDocumentoReadOnly] = useState(false);
     const [showDespesaConferida, setShowDespesaConferida] = useState(false);
+    const [mensagensAceitaCusteioCapital, setMensagensAceitaCusteioCapital] = useState([]);
+    const [showMensagemAceitaCusteioCapital, setShowMensagemAceitaCusteioCapital] = useState(false);
 
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
 
@@ -185,6 +188,63 @@ export const CadastroForm = ({verbo_http}) => {
         return cpf_cnpj === "00.000.000/0000-00";
     }
 
+    const acaoNaoAceitaTipoRecurso = (values) => {
+        let mensagens = []
+        values.rateios.map((rateio, indexRateio) => {
+            let index = indexRateio + 1;
+            let uuid_acao = null;
+            
+            if(rateio.acao_associacao && rateio.acao_associacao.uuid){
+                uuid_acao = rateio.acao_associacao.uuid;
+            }
+            else if(rateio.acao_associacao){
+                uuid_acao = rateio.acao_associacao;
+            }
+
+            if(uuid_acao){
+                let id_categoria_receita_lower = rateio.aplicacao_recurso.toLowerCase();
+                let aceita_selecionado  = eval('despesasTabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_' + id_categoria_receita_lower);
+                let aceita_capital = eval('despesasTabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_capital');
+                let aceita_custeio = eval('despesasTabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_custeio');
+                
+                if(!aceita_selecionado && !aceita_capital && !aceita_custeio){
+                    let mensagem = `A ação selecionada não aceita despesas de nenhum tipo(capital ou custeio). Você deseja confirmar o cadastro da despesa de ${id_categoria_receita_lower} nesta ação ?`
+                    let objeto = {
+                        mensagem: mensagem,
+                        despesa: index
+                    }
+                    mensagens.push(objeto);
+                }
+                else if(!aceita_selecionado && aceita_capital){
+                    let mensagem = `A ação selecionada aceita apenas despesas de capital. Você deseja confirmar o cadastro da despesa de ${id_categoria_receita_lower} nesta ação ?`
+                    let objeto = {
+                        mensagem: mensagem,
+                        despesa: index
+                    }
+                    mensagens.push(objeto);
+                }
+                else if(!aceita_selecionado && aceita_custeio){
+                    let mensagem = `A ação selecionada aceita apenas despesas de custeio. Você deseja confirmar o cadastro da despesa de ${id_categoria_receita_lower} nesta ação ?`
+                    let objeto = {
+                        mensagem: mensagem,
+                        despesa: index
+                    }
+                    mensagens.push(objeto);
+                }
+            }
+        });
+        setMensagensAceitaCusteioCapital(mensagens)
+        return mensagens;
+    }
+
+    const onShowMensagemNaoAceitaTipoRecurso = (values) => {
+        let acoes = acaoNaoAceitaTipoRecurso(values);
+
+        if(acoes.length > 0){
+            setShowMensagemAceitaCusteioCapital(true);
+        }
+    }
+
     const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
         values.despesa_incompleta = document.getElementsByClassName("despesa_incompleta").length
 
@@ -209,8 +269,10 @@ export const CadastroForm = ({verbo_http}) => {
             let erros_personalizados = await validacoesPersonalizadas(values, setFieldValue)
 
             if (values.despesa_incompleta > 0 && enviarFormulario && Object.keys(erros_personalizados).length === 0) {
-                setShowModalDespesaIncompleta(true)
-
+                let acoes = acaoNaoAceitaTipoRecurso(values);
+                if(acoes.length === 0){
+                    setShowModalDespesaIncompleta(true)
+                }
             }else if (values.data_transacao) {
                 let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
 
@@ -234,16 +296,26 @@ export const CadastroForm = ({verbo_http}) => {
                         if (despesa_cadastrada.despesa_ja_lancada) {
                             setShowDespesaCadastrada(true)
                         } else {
-                            onSubmit(values, setFieldValue);
+                            let acoes = acaoNaoAceitaTipoRecurso(values);
+                            if(acoes.length === 0){
+                                onSubmit(values, setFieldValue);
+                            }
                         }
                     } catch (e) {
                         console.log("Erro ao buscar despesa cadastrada ", e);
                     }
                 } else {
-                    onSubmit(values, setFieldValue);
+                    
+                    let acoes = acaoNaoAceitaTipoRecurso(values);
+                    if(acoes.length === 0){
+                        onSubmit(values, setFieldValue);
+                    }
                 }
             } else {
-                onSubmit(values, setFieldValue)
+                let acoes = acaoNaoAceitaTipoRecurso(values);
+                if(acoes.length === 0){
+                    onSubmit(values, setFieldValue);
+                }
             }
         }
     };
@@ -905,7 +977,10 @@ export const CadastroForm = ({verbo_http}) => {
                                         <button
                                             disabled={!props.values.cpf_cnpj_fornecedor || btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             type="button"
-                                            onClick={() => onShowSaldoInsuficiente(values, errors, setFieldValue, {resetForm})}
+                                            onClick={() => {
+                                                onShowMensagemNaoAceitaTipoRecurso(values);
+                                                onShowSaldoInsuficiente(values, errors, setFieldValue, {resetForm})
+                                            }}
                                             className="btn btn-success mt-2">Salvar
                                         </button>
                                     </div>
@@ -956,6 +1031,14 @@ export const CadastroForm = ({verbo_http}) => {
                                             onSalvarDespesaIncompleta={() => onSubmit(values, setFieldValue)}
                                             titulo="Cadastro da despesa"
                                             texto="<p>O cadastro desta despesa está incompleto. Você deseja finalizá-lo agora?</p>"
+                                        />
+                                    </section>
+                                    <section>
+                                        <TipoAplicacaoRecursoNaoAceito
+                                            mensagensAceitaCusteioCapital={mensagensAceitaCusteioCapital}
+                                            show={showMensagemAceitaCusteioCapital}
+                                            onSalvarTipoRecursoNaoAceito={() => onSubmit(values, setFieldValue)}
+                                            handleClose={() => setShowMensagemAceitaCusteioCapital(false)}
                                         />
                                     </section>
                                 </form>

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { Fragment } from "react";
 import {
     ModalBootstrap,
     ModalBootstrapReverConciliacao,
     ModalBootstrapSaldoInsuficiente,
+    ModalBootstrapTipoRecursoNaoAceito,
     ModalBootstrapSaldoInsuficienteDaconta,
     ModalBootstrapFormMembros,
     ModalBootstrapFormMeusDadosSenha,
@@ -271,6 +272,49 @@ export const SaldoInsuficiente = (propriedades) => {
             primeiroBotaoTexto="OK"
             segundoBotaoOnclick={propriedades.handleClose}
             segundoBotaoTexto="Fechar"
+        />
+    )
+};
+
+export const TipoAplicacaoRecursoNaoAceito = (propriedades) => {
+    
+    const listaRecursosNaoAceito = () => {
+        return (
+            <>
+                {propriedades.mensagensAceitaCusteioCapital && propriedades.mensagensAceitaCusteioCapital.length > 0 && propriedades.mensagensAceitaCusteioCapital.map((item, index) =>
+                    <Fragment key={index}>
+                        <div key={`titulo-${index}`} className="row">
+                            <div className="col-12">
+                                <strong>Despesa {item.despesa}</strong>
+                            </div>
+                        </div>
+
+                        <div key={`mensagem-${index}`} className="row mt-2">
+                            <div className="col-12">
+                                {item.mensagem}
+                            </div>
+                        </div>
+
+                        <hr></hr>
+                    </Fragment>
+                )}
+            </>
+        )
+    }
+
+    
+    return (
+        <ModalBootstrapTipoRecursoNaoAceito
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Tipo de aplicação não aceito pela ação"
+            bodyText={listaRecursosNaoAceito()}
+            primeiroBotaoOnclick={propriedades.onSalvarTipoRecursoNaoAceito}
+            primeiroBotaoTexto="Sim"
+            primeiroBotaoCss="success"
+            segundoBotaoOnclick={propriedades.handleClose}
+            segundoBotaoTexto="Não"
+            segundoBotaoCss="outline-success"
         />
     )
 };
