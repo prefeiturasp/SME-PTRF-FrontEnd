@@ -15,6 +15,7 @@ import {useCarregaPrestacaoDeContasPorUuid} from "../../../../../hooks/dres/Pres
 import {ModalConfirmaDevolverParaAcerto} from "../DevolucaoParaAcertos/ModalConfirmaDevolverParaAcerto";
 import Loading from "../../../../../utils/Loading";
 import {isNaN} from "formik";
+import { toastCustom } from "../../../../Globais/ToastCustom";
 
 export const ResumoDosAcertos = () => {
 
@@ -161,6 +162,7 @@ export const ResumoDosAcertos = () => {
     }, [props.state.analisesDeContaDaPrestacao])
 
     const devolverParaAcertos = useCallback(async () => {
+        setLoading(true);
         setBtnDevolverParaAcertoDisabled(true)
         setShowModalConfirmaDevolverParaAcerto(false)
         let analises = trataAnalisesDeContaDaPrestacao()
@@ -174,6 +176,8 @@ export const ResumoDosAcertos = () => {
         try {
             await getConcluirAnalise(prestacao_conta_uuid, payload);
             console.log("Devolução para acertos concluída com sucesso!")
+            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Devolvida para acertos”.')
+            setLoading(false);
             onClickBtnVoltar();
         } catch (e) {
             console.log("Erro ao Devolver para Acerto ", e.response)
@@ -184,7 +188,9 @@ export const ResumoDosAcertos = () => {
             }
             setShowModalErroDevolverParaAcerto(true)
             setBtnDevolverParaAcertoDisabled(false)
+            setLoading(false);
         }
+        setLoading(false);
     }, [dataLimiteDevolucao, trataAnalisesDeContaDaPrestacao, prestacao_conta_uuid, onClickBtnVoltar])
 
     return (

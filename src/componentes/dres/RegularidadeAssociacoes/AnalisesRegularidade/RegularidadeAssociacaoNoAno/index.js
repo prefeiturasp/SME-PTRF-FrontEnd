@@ -3,19 +3,18 @@ import {Accordion, Card, Button, Form} from 'react-bootstrap';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronUp, faChevronDown, faExclamationTriangle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import {verificacaoRegularidade, salvarItensRegularidade} from "../../../../../services/dres/RegularidadeUnidadeEducaional.service";
-import {ModalConfirmaSalvar} from "../../../../../utils/Modais";
 import {visoesService} from "../../../../../services/visoes.service";
 import MotivoNaoRegularidade from "./MotivoNaoRegularidade";
 import {ModalConfirmaApagarMotivoNaoRegularidade,} from "./ModalConfirmarApagarMotivoNaoRegularidade";
+import {toastCustom} from "../../../../Globais/ToastCustom";
 
-export const RegularidadeUnidadeEducacional = ({dadosDaAssociacao}) => {
+export const RegularidadeAssociacaoNoAno = ({associacaoUuid, ano, apenasLeitura=false}) => {
 
     const [dadosRegularidade, setDadosRegularidade] = useState({});
     const [checklists, setChecklists] = useState({});
     const [statusChecklist, setStatusChecklists] = useState({});
     const [dicionarioDeItens, setDicionarioDeItens] = useState({});
     const [expandir, setExpandir] = useState({});
-    const [showSalvar, setShowSalvar] = useState(false);
     const [showModalConfirmaApagarMotivoNaoRegularidade, setShowModalConfirmaApagarMotivoNaoRegularidade] = useState(false);
     const [arrayStatus, setArrayStatus] = useState([]);
     const [exibeCampoMotivoNaoRegularidade, setExibeCampoMotivoNaoRegularidade] = useState(false);
@@ -40,33 +39,35 @@ export const RegularidadeUnidadeEducacional = ({dadosDaAssociacao}) => {
 
 
     const buscaDadosRegularidade = useCallback(async () => {
-        try {
-            let dados = await verificacaoRegularidade(dadosDaAssociacao.dados_da_associacao.uuid)
-            setDadosRegularidade(dados);
-            setCampoMotivoNaoRegularidade(dados.motivo_nao_regularidade)
-            let dicionarioItensListaVerificacao = {}
-            let dicionarioItens = {}
-            let status = {}
-            let expande = {}
-            dados.verificacao_regularidade.grupos_verificacao.map(grupo => {
-                grupo.listas_verificacao.map(itemLista => {
-                    dicionarioItensListaVerificacao[itemLista.uuid] = itemLista.itens_verificacao
-                    status[itemLista.uuid] = itemLista.status_lista_verificacao
-                    expande[itemLista.uuid] = false
-                    itemLista.itens_verificacao.map(item => {
-                        dicionarioItens[item.uuid] = item
+        if (associacaoUuid) {
+            try {
+                let dados = await verificacaoRegularidade(associacaoUuid, ano)
+                setDadosRegularidade(dados);
+                setCampoMotivoNaoRegularidade(dados.motivo_nao_regularidade)
+                let dicionarioItensListaVerificacao = {}
+                let dicionarioItens = {}
+                let status = {}
+                let expande = {}
+                dados.verificacao_regularidade.grupos_verificacao.map(grupo => {
+                    grupo.listas_verificacao.map(itemLista => {
+                        dicionarioItensListaVerificacao[itemLista.uuid] = itemLista.itens_verificacao
+                        status[itemLista.uuid] = itemLista.status_lista_verificacao
+                        expande[itemLista.uuid] = false
+                        itemLista.itens_verificacao.map(item => {
+                            dicionarioItens[item.uuid] = item
+                        })
                     })
                 })
-            })
-            setChecklists(dicionarioItensListaVerificacao);
-            setDicionarioDeItens(dicionarioItens);
-            setArrayStatus(Object.values(status))
-            setStatusChecklists(status);
-        }catch (e) {
-            console.log('Erro ao buscar verificacao regularidade ', e.response)
+                setChecklists(dicionarioItensListaVerificacao);
+                setDicionarioDeItens(dicionarioItens);
+                setArrayStatus(Object.values(status))
+                setStatusChecklists(status);
+            } catch (e) {
+                console.log('Erro ao buscar verificacao regularidade ', e.response)
+            }
         }
 
-    }, [dadosDaAssociacao]) ;
+    }, [associacaoUuid, ano]) ;
 
     useEffect(() => {
             buscaDadosRegularidade();
@@ -134,23 +135,30 @@ export const RegularidadeUnidadeEducacional = ({dadosDaAssociacao}) => {
 
     const salvarItemVerificacao = useCallback(async (lista_verificacao) => {
         setShowModalConfirmaApagarMotivoNaoRegularidade(false)
-        var itens = checklists[lista_verificacao.uuid].map(item => {
-            return {uuid: item.uuid, regular: item.regular}
-        })
+
+        let itens = []
+        for (let lista in checklists) {
+            for (let item_lista in checklists[lista]){
+                itens.push({uuid: checklists[lista][item_lista].uuid, regular: checklists[lista][item_lista].regular})
+            }
+        }
         const payload = {
             itens: itens,
-            motivo_nao_regularidade: campoMotivoNaoRegularidade
+            motivo_nao_regularidade: campoMotivoNaoRegularidade,
+            ano: ano
         }
         try {
-            await salvarItensRegularidade(dadosDaAssociacao.dados_da_associacao.uuid, payload)
+            await salvarItensRegularidade(associacaoUuid, payload)
             console.log("OK, Salvo com sucesso");
-            setShowSalvar(true);
+            toastCustom.ToastCustomSuccess('Análise de regularidade salva com sucesso.', `O novo status de regularidade da associação foi salvo com sucesso.`)
             await buscaDadosRegularidade()
         }catch (e) {
             console.log("Erro ao salvar item verificação ", e.response);
+            toastCustom.ToastCustomError('Erro ao salvar análise de regularidade.', `Houve algum problema ao tentar salvar a análise de regularidade da associação.`)
         }
 
-    }, [dadosDaAssociacao, checklists, campoMotivoNaoRegularidade, buscaDadosRegularidade])
+
+    }, [associacaoUuid, checklists, campoMotivoNaoRegularidade, buscaDadosRegularidade])
 
     const onClickCancelModalApagarCampoRegularidade = async () =>{
         setShowModalConfirmaApagarMotivoNaoRegularidade(false)
@@ -161,7 +169,7 @@ export const RegularidadeUnidadeEducacional = ({dadosDaAssociacao}) => {
         await salvarItemVerificacao(objSalvarItemVerificacao)
     }
 
-    const checaSeExibeModalApagarCampoRegularidade = useCallback(async (obj)=>{
+    const salvaAnaliseRegularidade = useCallback(async (obj)=>{
         setObjSalvarItemVerificacao(obj)
         if (!checaSeExibeMotivoNaoRegularidade() && campoMotivoNaoRegularidade){
             setShowModalConfirmaApagarMotivoNaoRegularidade(true)
@@ -173,7 +181,7 @@ export const RegularidadeUnidadeEducacional = ({dadosDaAssociacao}) => {
 
 
     const montaListaVerificacao = (listaVerificacao) => {
-        const podeSalvar = [['change_regularidade']].some(visoesService.getPermissoes)
+        const podeSalvar = ([['change_regularidade']].some(visoesService.getPermissoes) && !apenasLeitura)
 
         return (
             listaVerificacao.map((obj, index) => (
@@ -223,35 +231,6 @@ export const RegularidadeUnidadeEducacional = ({dadosDaAssociacao}) => {
                                                 disabled={!podeSalvar}
                                             />
                                         </div>
-                                        <div
-                                            className="col-2"
-                                            style={
-                                                {visibility: podeSalvar ? "visible" : "hidden"}
-                                            }
-                                        >
-                                            <Button
-                                                variant="success"
-                                                className="btn btn-sucess"
-                                                onClick={e => checaSeExibeModalApagarCampoRegularidade(obj)}
-                                            >
-                                                Salvar
-                                            </Button>
-                                            <ModalConfirmaApagarMotivoNaoRegularidade
-                                                show={showModalConfirmaApagarMotivoNaoRegularidade}
-                                                handleClose={() => setShowModalConfirmaApagarMotivoNaoRegularidade(false)}
-                                                titulo="Tornar Regular"
-                                                texto='Ao tornar "Regular" a Associação, o campo "Motivo de não regularidade da Associação" será apagado. Você confirma a regularidade da Associação?'
-                                                primeiroBotaoTexto='Cancelar'
-                                                primeiroBotaoCss="outline-success"
-                                                primeiroBotaoOnclick={onClickCancelModalApagarCampoRegularidade}
-                                                segundoBotaoOnclick={() => {
-                                                    setObjSalvarItemVerificacao(obj)
-                                                    onClickSalvarSalvarItemVerificacaoTrue()
-                                                }}
-                                                segundoBotaoCss='success'
-                                                segundoBotaoTexto='Confirmar'
-                                            />
-                                        </div>
                                     </div>
 
                                     {montaItens(obj, podeSalvar)}
@@ -261,6 +240,7 @@ export const RegularidadeUnidadeEducacional = ({dadosDaAssociacao}) => {
                     </Accordion.Collapse>
                 </Card>
             ))
+
         )
     }
 
@@ -292,17 +272,10 @@ export const RegularidadeUnidadeEducacional = ({dadosDaAssociacao}) => {
         setExpandir(expand);
     }
 
+    const podeSalvar = ([['change_regularidade']].some(visoesService.getPermissoes) && !apenasLeitura)
+    const obj = {}
     return (
         <>
-            <div className="row">
-                <div className="d-flex bd-highlight">
-                    <div className="flex-grow-1 bd-highlight">
-                        <p className="mb-1 ml-2 titulo-explicativo-dre-detalhes">Regularidade da associação</p>
-                    </div>
-
-                </div>
-            </div>
-
             {dadosRegularidade !== {} && dadosRegularidade.verificacao_regularidade !== undefined ? (
                 dadosRegularidade.verificacao_regularidade.grupos_verificacao.map((grupo, index) => (
                     montaGrupo(grupo, index)
@@ -313,14 +286,44 @@ export const RegularidadeUnidadeEducacional = ({dadosDaAssociacao}) => {
                 exibeCampoMotivoNaoRegularidade={exibeCampoMotivoNaoRegularidade}
                 campoMotivoNaoRegularidade={campoMotivoNaoRegularidade}
                 setCampoMotivoNaoRegularidade={setCampoMotivoNaoRegularidade}
+                podeEditar={podeSalvar}
             />
-            <ModalConfirmaSalvar
-                show={showSalvar}
-                handleClose={() => setShowSalvar(false)}
-                titulo="Itens salvos!"
-                texto="Os dados foram salvos com sucesso."
-                primeiroBotaoCss="success"
-            />
+
+            <div
+                className="d-flex  justify-content-end pb-3"
+                style={
+                    {
+                        visibility: podeSalvar ? "visible" : "hidden",
+                        marginTop: "20px",
+                    }
+                }
+            >
+                { podeSalvar &&
+                <Button
+                    variant="success"
+                    className="btn btn-sucess"
+                    onClick={e => salvaAnaliseRegularidade(obj)}
+                >
+                    Salvar
+                </Button>
+                }
+
+                <ModalConfirmaApagarMotivoNaoRegularidade
+                    show={showModalConfirmaApagarMotivoNaoRegularidade}
+                    handleClose={() => setShowModalConfirmaApagarMotivoNaoRegularidade(false)}
+                    titulo="Tornar Regular"
+                    texto='Ao tornar "Regular" a Associação, o campo "Motivo de não regularidade da Associação" será apagado. Você confirma a regularidade da Associação?'
+                    primeiroBotaoTexto='Cancelar'
+                    primeiroBotaoCss="outline-success"
+                    primeiroBotaoOnclick={onClickCancelModalApagarCampoRegularidade}
+                    segundoBotaoOnclick={() => {
+                        setObjSalvarItemVerificacao(obj)
+                        onClickSalvarSalvarItemVerificacaoTrue()
+                    }}
+                    segundoBotaoCss='success'
+                    segundoBotaoTexto='Confirmar'
+                />
+            </div>
         </>
     );
 };

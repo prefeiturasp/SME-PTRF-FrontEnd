@@ -333,15 +333,19 @@ export const DetalhePrestacaoDeContas = () =>{
         };
         await getReceberPrestacaoDeContas(prestacaoDeContas.uuid, payload);
         await carregaPrestacaoDeContas();
+        toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Recebida”.')
         setRedirectListaPc(false);
         setLoading(false)
     };
 
     const reabrirPrestacaoDeContas = async ()=>{
+        setLoading(true);
         try {
             await getReabrirPrestacaoDeContas(prestacaoDeContas.uuid);
+            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi reaberta.')
             setTextoErroPrestacaoDeContasPosterior('')
             setTituloErroPrestacaoDeContasPosterior('')
+            setLoading(false);
             setRedirectListaPc(true)
         }catch (e){
             console.log("reabrirPrestacaoDeContas ", e.response)
@@ -350,6 +354,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 setTextoErroPrestacaoDeContasPosterior(e.response.data.mensagem)
                 setshowErroPrestacaoDeContasPosterior(true)
             }
+            setLoading(false);
         }
     };
 
@@ -357,6 +362,7 @@ export const DetalhePrestacaoDeContas = () =>{
         setLoading(true)
         await getDesfazerRecebimento(prestacaoDeContas.uuid);
         await carregaPrestacaoDeContas();
+        toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Não recebida”.')
         setLoading(false)
     };
 
@@ -364,6 +370,7 @@ export const DetalhePrestacaoDeContas = () =>{
         setLoading(true)
         await getAnalisarPrestacaoDeContas(prestacaoDeContas.uuid);
         await carregaPrestacaoDeContas();
+        toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Em análise”.')
         setLoading(false)
     };
 
@@ -371,6 +378,7 @@ export const DetalhePrestacaoDeContas = () =>{
         setLoading(true)
         await getDesfazerAnalise(prestacaoDeContas.uuid);
         await carregaPrestacaoDeContas();
+        toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Recebida”.')
         setLoading(false)
     };
 
@@ -621,6 +629,7 @@ export const DetalhePrestacaoDeContas = () =>{
     };
 
     const onConcluirAnalise = async () => {
+        setLoading(true);
         setShowConcluirAnalise(false);
         let devolucao_ao_tesouro_tratado;
         if (formRef.current) {
@@ -681,6 +690,7 @@ export const DetalhePrestacaoDeContas = () =>{
                     setTextoErroPrestacaoDeContasPosterior('')
                     setTituloErroPrestacaoDeContasPosterior('')
                     await carregaPrestacaoDeContas();
+                    toastCustom.ToastCustomSuccess('Status alterado com sucesso', `A prestação de conta foi alterada para “${formataStatus(stateConcluirAnalise.status)}”.`)
                 }catch (e){
                     console.log("onConcluirAnalise ", e.response)
                     if (e.response && e.response.data && e.response.data.mensagem){
@@ -698,6 +708,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 setTextoErroPrestacaoDeContasPosterior('')
                 setTituloErroPrestacaoDeContasPosterior('')
                 await carregaPrestacaoDeContas();
+                toastCustom.ToastCustomSuccess('Status alterado com sucesso', `A prestação de conta foi alterada para “${formataStatus(stateConcluirAnalise.status)}”.`)
             }catch (e){
                 console.log("onConcluirAnalise ", e.response)
                 if (e.response && e.response.data && e.response.data.mensagem){
@@ -707,12 +718,16 @@ export const DetalhePrestacaoDeContas = () =>{
                 }
             }
         }
+        setLoading(false);
     };
 
     const onVoltarParaAnalise = async () => {
+        setLoading(true);
         setShowVoltarParaAnalise(false);
         await getDesfazerConclusaoAnalise(prestacaoDeContas.uuid);
         await carregaPrestacaoDeContas();
+        toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Em análise”.')
+        setLoading(false);
     };
 
     const retornaNumeroOrdinal = (index) =>{
@@ -813,6 +828,20 @@ export const DetalhePrestacaoDeContas = () =>{
         setLoading(false)
     }
 
+    const formataStatus = (status) => {
+        if(status === "APROVADA"){
+            return "Aprovada"
+        }
+        else if(status === "APROVADA_RESSALVA"){
+            return "Aprovada com ressalvas"
+        }
+        else if(status === "REPROVADA"){
+            return "Reprovada"
+        }
+
+        return ""
+    }
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -887,6 +916,7 @@ export const DetalhePrestacaoDeContas = () =>{
                                     handleChangedataRecebimentoDevolutiva={handleChangedataRecebimentoDevolutiva}
                                     receberAposAcertos={receberAposAcertos}
                                     desfazerReceberAposAcertos={desfazerReceberAposAcertos}
+                                    setLoading={setLoading}
                                 />
                         }
                     </>

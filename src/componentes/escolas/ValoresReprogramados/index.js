@@ -172,6 +172,42 @@ export const ValoresReprogramados = () => {
         }
     };
 
+    const retornaClassificacaoReceita = (uuid_acao) => {
+        if(tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 && uuid_acao){
+            return tabelas.categorias_receita.map((item, index) => {
+                return (
+                    <option
+                        style={{display: getDisplayOptionClassificacaoReceita(item.id, uuid_acao)}}
+                        key={item.id}
+                        value={item.id}
+                    >
+                        {item.nome}
+                    </option>
+                );
+            })
+        }
+    };
+
+    const getDisplayOptionClassificacaoReceita = (id_categoria_receita, uuid_acao) => {
+        let uuid = null;
+        if(uuid_acao && uuid_acao.acao){
+            uuid = uuid_acao.uuid;
+        }
+        else{
+            uuid = uuid_acao;
+        }
+        
+        let id_categoria_receita_lower = id_categoria_receita.toLowerCase();
+        let aceitaClassificacao  = eval('tabelas.acoes_associacao.find(element => element.uuid === uuid).acao.aceita_' + id_categoria_receita_lower);
+
+        if(aceitaClassificacao){
+            return "block"
+        }
+        else{
+            return "none"
+        }
+    };
+
     return (
         <>
             {loading ? (
@@ -299,10 +335,7 @@ export const ValoresReprogramados = () => {
                                                                     className="form-control"
                                                                 >
                                                                     <option value="">Escolha o tipo de aplicação</option>
-                                                                    {tabelas.categorias_receita !== undefined && tabelas.categorias_receita.length > 0 ? (tabelas.categorias_receita.map((item, key) => (
-                                                                        <option key={key}
-                                                                                value={item.id}>{item.nome}</option>
-                                                                    ))) : null}
+                                                                    {retornaClassificacaoReceita(saldo.acao_associacao)}
                                                                 </select>
                                                                 {props.touched.aplicacao && props.errors.aplicacao &&
                                                                 <span

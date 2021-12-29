@@ -93,6 +93,8 @@ export const ReceitaForm = () => {
 
     const [exibirDeleteDespesa, setExibirDeleteDespesa] = useState(true);
 
+    const [classificacoesAceitas, setClassificacoesAceitas] = useState([])
+
     const carregaTabelas = useCallback(async ()=>{
         let tabelas_receitas = await getTabelasReceitaReceita()
         setTabelas(tabelas_receitas)
@@ -364,13 +366,47 @@ export const ReceitaForm = () => {
     };
 
     const getClassificacaoReceita = (id_tipo_receita, setFieldValue) => {
+        let lista = [];
         let qtdeAceitaClassificacao = [];
         if (id_tipo_receita) {
             tabelas.categorias_receita.map((item, index) => {
                 let id_categoria_receita_lower = item.id.toLowerCase();
                 let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_' + id_categoria_receita_lower);
+                
                 qtdeAceitaClassificacao.push(aceitaClassificacao);
                 if (aceitaClassificacao) {
+                    lista.push(id_categoria_receita_lower)
+                    setFieldValue("categoria_receita", item.id);
+                    setreadOnlyClassificacaoReceita(true);
+                }
+            });
+
+            let resultado = qtdeAceitaClassificacao.filter((value) => {
+                return value === true;
+            }).length;
+
+            if (resultado > 1) {
+                setFieldValue("categoria_receita", "");
+                setreadOnlyClassificacaoReceita(false);
+            }
+
+            setClassificacoesAceitas(lista);
+        }
+    }
+
+    const getClasificacaoAcao = (uuid_acao, setFieldValue) => {
+        let lista = classificacoesAceitas
+        let qtdeAceitaClassificacao = [];
+        
+
+        if(uuid_acao){
+            setFieldValue("categoria_receita", "");
+            tabelas.categorias_receita.map((item, index) => {
+                let id_categoria_receita_lower = item.id.toLowerCase();
+                let aceita  = eval('tabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_' + id_categoria_receita_lower);
+                
+                if(lista.includes(id_categoria_receita_lower) && aceita){
+                    qtdeAceitaClassificacao.push(aceita);
                     setFieldValue("categoria_receita", item.id);
                     setreadOnlyClassificacaoReceita(true);
                 }
@@ -385,7 +421,7 @@ export const ReceitaForm = () => {
                 setreadOnlyClassificacaoReceita(false);
             }
         }
-    };
+    }
 
     const setaDetalhesTipoReceita = (id_tipo_receita) => {
         if (id_tipo_receita) {
@@ -413,15 +449,18 @@ export const ReceitaForm = () => {
         }
     }
 
-    const getDisplayOptionClassificacaoReceita = (id_categoria_receita, id_tipo_receita) => {
+    const getDisplayOptionClassificacaoReceita = (id_categoria_receita, uuid_acao) => {
 
         let id_categoria_receita_lower = id_categoria_receita.toLowerCase();
-        let aceitaClassificacao = eval('tabelas.tipos_receita.find(element => element.id === Number(id_tipo_receita)).aceita_' + id_categoria_receita_lower);
+        let aceitaClassificacao  = eval('tabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_' + id_categoria_receita_lower);
 
-        if (!aceitaClassificacao) {
-            return "none"
-        } else {
+        
+        if(classificacoesAceitas.includes(id_categoria_receita_lower) && aceitaClassificacao){
+            
             return "block"
+        }
+        else{
+            return "none"
         }
     };
 
@@ -479,11 +518,10 @@ export const ReceitaForm = () => {
 
                 // Quando a flag e_repasse for true eu checo também se o valor da classificacao_receita é !== "0.00"
                 if (tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)).e_repasse) {
-
-                    if (tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita)) && eval('repasse.valor_' + id_categoria_receita_lower) !== "0.00") {
+                    if (tabelas.acoes_associacao && tabelas.acoes_associacao.find(element => element.uuid === values.acao_associacao) && eval('repasse.valor_' + id_categoria_receita_lower) !== "0.00") {
                         return (
                             <option
-                                style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
+                                style={{display: getDisplayOptionClassificacaoReceita(item.id, values.acao_associacao)}}
                                 key={item.id}
                                 value={item.id}
                             >
@@ -493,11 +531,10 @@ export const ReceitaForm = () => {
                     }
 
                 }else{
-                    if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))){
-
+                    if ( tabelas.tipos_receita && tabelas.tipos_receita.find(element => element.id === Number(values.tipo_receita))){ 
                         return (
                             <option
-                                style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
+                                style={{display: getDisplayOptionClassificacaoReceita(item.id, values.acao_associacao)}}
                                 key={item.id}
                                 value={item.id}
                             >
@@ -508,11 +545,11 @@ export const ReceitaForm = () => {
                 }
             })
         }else{
-            if (tabelas.categorias_receita && tabelas.categorias_receita.length > 0 && values.tipo_receita){
+            if (tabelas.categorias_receita && tabelas.categorias_receita.length > 0 && values.acao_associacao){
                 return tabelas.categorias_receita.map((item)=>{
                     return (
                         <option
-                            style={{display: getDisplayOptionClassificacaoReceita(item.id, values.tipo_receita)}}
+                            style={{display: getDisplayOptionClassificacaoReceita(item.id, values.acao_associacao)}}
                             key={item.id}
                             value={item.id}
                         >
@@ -638,12 +675,12 @@ export const ReceitaForm = () => {
         setFieldValue('acao_associacao', repasse_row.acao_associacao.uuid);
         setFieldValue('conta_associacao', repasse_row.conta_associacao.uuid);
         setFieldValue('valor', valor);
-        setFieldValue('categoria_receita', retornaIdClassificacao(nome_classificacao))
+        setFieldValue('categoria_receita', retornaIdClassificacao(nome_classificacao, repasse_row.acao_associacao.uuid))
         setReadOnlyValor(true);
         setShowSelecionaRepasse(false);
     }
 
-    const retornaIdClassificacao = (classificacao_nome)=>{
+    const retornaIdClassificacao = (classificacao_nome, uuid_acao)=>{
         let id_classificacao = ""
         if (classificacao_nome === 'valor_custeio'){
             id_classificacao = "CUSTEIO"
@@ -652,7 +689,19 @@ export const ReceitaForm = () => {
         }else {
             id_classificacao = "LIVRE"
         }
-        return id_classificacao
+
+
+        let id_categoria_receita_lower = id_classificacao.toLowerCase();
+        let aceita  = eval('tabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_' + id_categoria_receita_lower);
+
+        if (classificacoesAceitas.includes(id_categoria_receita_lower) && aceita) {
+            return id_classificacao
+        }
+        else{
+            return ""
+        }
+        
+        
     }
 
     const atualizaValorRepasse = (value, setFieldValue) => {
@@ -849,6 +898,7 @@ export const ReceitaForm = () => {
                                         onChange={(e) => {
                                             props.handleChange(e);
                                             showBotaoCadastrarSaida(e.target.value, props.values);
+                                            getClasificacaoAcao(e.target.value, setFieldValue);
                                         }
                                         }
                                         onBlur={props.handleBlur}
