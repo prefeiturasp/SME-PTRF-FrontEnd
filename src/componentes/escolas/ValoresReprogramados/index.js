@@ -189,8 +189,16 @@ export const ValoresReprogramados = () => {
     };
 
     const getDisplayOptionClassificacaoReceita = (id_categoria_receita, uuid_acao) => {
+        let uuid = null;
+        if(uuid_acao && uuid_acao.acao){
+            uuid = uuid_acao.uuid;
+        }
+        else{
+            uuid = uuid_acao;
+        }
+        
         let id_categoria_receita_lower = id_categoria_receita.toLowerCase();
-        let aceitaClassificacao  = eval('tabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_' + id_categoria_receita_lower);
+        let aceitaClassificacao  = eval('tabelas.acoes_associacao.find(element => element.uuid === uuid).acao.aceita_' + id_categoria_receita_lower);
 
         if(aceitaClassificacao){
             return "block"
