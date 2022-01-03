@@ -457,13 +457,10 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                 selectionMode="single"
                 onRowClick={e => redirecionaDetalhe(e.data)}
                 stripedRows
-                /* autoLayout={true} */
-                
             >
                 <Column
                     header={selecionarHeader()}
                     body={selecionarTemplate}
-                    /* style={{borderRight: 'none', width: '50px'}} */
                     style={{borderRight: 'none', width: '5%'}}
                 />
                 <Column
@@ -471,26 +468,23 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                     header='Data'
                     body={dataTemplate}
                     className="align-middle text-left borda-coluna"
-                    /* style={{width: '110px'}} */
                     style={{width: '10%'}} 
                 />
                 <Column field='tipo_transacao' header='Tipo de lançamento'
-                        className="align-middle text-left borda-coluna" /* style={{width: '160px'}} */ style={{width: '17%'}}/>
+                        className="align-middle text-left borda-coluna" style={{width: '17%'}}/>
                 <Column
                     field='numero_documento'
                     header='N.º do documento'
                     body={numeroDocumentoTemplate}
                     className="align-middle text-left borda-coluna"
-                    /* style={{width: '150px'}} */
                     style={{width: '17%'}}
                 />
-                <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna" /* style={{width: '200px'}} */ style={{width: '24%'}} />
+                <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna" style={{width: '24%'}} />
                 <Column
                     field='valor_transacao_total'
                     header='Valor (R$)'
                     body={valor_template}
                     className="align-middle text-left borda-coluna"
-                    /* style={{width: '100px'}} */
                     style={{width: '10%'}}
                 />
                 <Column
@@ -498,10 +492,9 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                     header='Conferido'
                     body={conferidoTemplate}
                     className="align-middle text-left borda-coluna"
-                    /* style={{borderRight: 'none', width: '90px'}} */
                     style={{borderRight: 'none', width: '10%'}}
                 />
-                <Column expander /* style={{width: '3em', borderLeft: 'none'}} */ style={{width: '5%', borderLeft: 'none'}}/>
+                <Column expander style={{width: '5%', borderLeft: 'none'}}/>
             </DataTable>
             }
             <section>
