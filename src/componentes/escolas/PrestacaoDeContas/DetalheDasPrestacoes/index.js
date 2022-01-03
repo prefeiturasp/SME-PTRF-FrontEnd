@@ -167,6 +167,7 @@ export const DetalheDasPrestacoes = () => {
             })
             setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
             setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"))
+            setDataAtualizacaoComprovanteExtratoView(moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY HH:mm:ss"))
             if (observacao.comprovante_extrato && observacao.data_extrato){
                 setExibeBtnDownload(true)
             }
@@ -207,6 +208,7 @@ export const DetalheDasPrestacoes = () => {
             await pathExtratoBancarioPrestacaoDeConta(payload);
             setShowSalvar(true);
             setDataAtualizacaoComprovanteExtrato('')
+            setDataAtualizacaoComprovanteExtratoView('')
             setSelectedFile(null)
             setMsgErroExtensaoArquivo('')
             await carregaObservacoes();
@@ -368,6 +370,7 @@ export const DetalheDasPrestacoes = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [nomeComprovanteExtrato, setNomeComprovanteExtrato] = useState('');
     const [dataAtualizacaoComprovanteExtrato, setDataAtualizacaoComprovanteExtrato] = useState('');
+    const [dataAtualizacaoComprovanteExtratoView, setDataAtualizacaoComprovanteExtratoView] = useState('');
     const [exibeBtnDownload, setExibeBtnDownload] = useState(false);
     const [msgErroExtensaoArquivo, setMsgErroExtensaoArquivo] = useState('');
 
@@ -398,6 +401,7 @@ export const DetalheDasPrestacoes = () => {
             setSelectedFile(event.file);
             setNomeComprovanteExtrato(event.file.name)
             setDataAtualizacaoComprovanteExtrato(moment().format("YYYY-MM-DD HH:mm:ss"))
+            setDataAtualizacaoComprovanteExtratoView(moment().format("DD/MM/YYYY HH:mm:ss"))
             setExibeBtnDownload(false)
             setMsgErroExtensaoArquivo('')
         }else {
@@ -415,6 +419,7 @@ export const DetalheDasPrestacoes = () => {
 
         setSelectedFile(null)
         setDataAtualizacaoComprovanteExtrato('')
+        setDataAtualizacaoComprovanteExtratoView('')
         setExibeBtnDownload(false)
         setNomeComprovanteExtrato('')
     }
@@ -497,7 +502,7 @@ export const DetalheDasPrestacoes = () => {
                                 handleChangaDataSaldo={handleChangaDataSaldo}
                                 periodoFechado={periodoFechado}
                                 nomeComprovanteExtrato={nomeComprovanteExtrato}
-                                dataAtualizacaoComprovanteExtrato={dataAtualizacaoComprovanteExtrato}
+                                dataAtualizacaoComprovanteExtrato={dataAtualizacaoComprovanteExtratoView}
                                 exibeBtnDownload={exibeBtnDownload}
                                 msgErroExtensaoArquivo={msgErroExtensaoArquivo}
                                 changeUploadExtrato={changeUploadExtrato}
