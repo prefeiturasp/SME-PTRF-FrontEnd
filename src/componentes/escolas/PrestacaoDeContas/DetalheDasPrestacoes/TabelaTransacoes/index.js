@@ -157,7 +157,7 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
 
     const conferidoRateioTemplate = (rateio) => {
         return (
-            <div>
+            <div style={{marginTop: "1.3rem"}}>
                 <input
                     checked={rateio.conferido}
                     type="checkbox"
@@ -171,74 +171,108 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
         )
     };
 
-    const despesaTemplate = (data) => {
+    const tagDataTemplate = (rateio) => {
         return (
             <>
-                <div className='row'>
-                    <div className='col'>
-                        <p className='mb-0 font-weight-bold'>CNPJ:</p>
+                {rateio.tag
+                    ?
+                        <span className="badge badge-primary p-1" style={{backgroundColor: '#086397'}}>{rateio.tag.nome}</span>
+                    :
+                        <span>-</span>
+                }
+            </>
+        )
+    }
+
+    const despesaTemplate = (data) => {
+        return (
+            <div className="border pb-2">
+                <div className="row pl-3 pr-3">
+                    <div className='col border-bottom p-2'>
+                        <p className='mb-0 font-weight-bold'>CNPJ</p>
                         {data.documento_mestre.cpf_cnpj_fornecedor}
                     </div>
-                    <div className='col border-left'>
-                        <p className='mb-0 font-weight-bold'>Tipo de documento:</p>
+
+                    <div className='col border-left border-bottom p-2'>
+                        <p className='mb-0 font-weight-bold'>Tipo de documento</p>
                         {data.documento_mestre.tipo_documento && data.documento_mestre.tipo_documento.nome ? data.documento_mestre.tipo_documento.nome : ''}
                     </div>
-                    <div className='col border-left'>
-                        <p className='mb-0 font-weight-bold'>Forma de pagamento:</p>
+
+                    <div className='col border-left border-bottom p-2'>
+                        <p className='mb-0 font-weight-bold'>Forma de pagamento</p>
                         {data.documento_mestre.tipo_transacao && data.documento_mestre.tipo_transacao.nome ? data.documento_mestre.tipo_transacao.nome : ''}
                     </div>
-                    <div className='col border-left'>
-                        <p className='mb-0 font-weight-bold'>Data do pagamento:</p>
+
+                    <div className='col border-left border-bottom p-2'>
+                        <p className='mb-0 font-weight-bold'>Data do pagamento</p>
                         {data.documento_mestre.data_transacao ? dataTemplate(null, null, data.documento_mestre.data_transacao) : ''}
                     </div>
+
                     {data.documento_mestre.tipo_transacao && data.documento_mestre.tipo_transacao.nome && data.documento_mestre.tipo_transacao.nome === 'Cheque' ? (
-                        <div className='col border-left'>
-                            <p className='mb-0 font-weight-bold'>Número do cheque:</p>
+                        <div className='col border-left border-bottom p-2'>
+                            <p className='mb-0 font-weight-bold'>Número do cheque</p>
                             {data.documento_mestre.documento_transacao}
                         </div>
                     ):
-                        <div className='col border-left'>
-                            <p className='mb-0 font-weight-bold'>Número do documento:</p>
+                        <div className='col border-left border-bottom p-2'>
+                            <p className='mb-0 font-weight-bold'>Número do documento</p>
                             {data.documento_mestre.documento_transacao}
                         </div>
                     }
                 </div>
 
                 {data.rateios && data.rateios.length > 0 && data.rateios.map((rateio, index) => (
-                    <div key={index} className='row mt-2 mb-2'>
-                        <div className='col-12 mb-2'>
-                            <p className='font-weight-bold mb-1 pb-2 border-bottom titulo-row-expanded'>Despesa {index + 1}</p>
+                    <div key={index} className="border-bottom pb-2">
+                        <div key={`${index}-info`} className='row mt-2 mb-2'>
+                            <div className='col-12 mb-2 pl-4 pr-4'>
+                                <p className='font-weight-bold mb-1 pb-2 border-bottom-row-expanded titulo-row-expanded'>Despesa {index + 1}</p>
+                            </div>
                         </div>
 
-                        <div className='col'>
-                            <p className='mb-0 font-weight-bold'>Tipo de despesa:</p>
-                            {rateio.tipo_custeio && rateio.tipo_custeio.nome ? rateio.tipo_custeio.nome : ''}
+                        <div className="row pl-4 pr-4" key={`${index}-info-rateio-top`}>
+                            <div className='col-lg-2 border pb-2'>
+                                <p className='mb-0 font-weight-bold mt-2'>Tipo de despesa</p>
+                                {rateio.tipo_custeio && rateio.tipo_custeio.nome ? rateio.tipo_custeio.nome : ''}
+                            </div>
+
+                            <div className='col-lg-5 border pb-2'>
+                                <p className='mb-0 font-weight-bold mt-2'>Especificação</p>
+                                {rateio.especificacao_material_servico && rateio.especificacao_material_servico.descricao ? rateio.especificacao_material_servico.descricao : ''}
+                            </div>
+
+                            <div className='col-lg-3 border pb-2'>
+                                <p className='mb-0 font-weight-bold mt-2'>Tipo de aplicação</p>
+                                {rateio.aplicacao_recurso ? tabelasDespesa.tipos_aplicacao_recurso.find(element => element.id === rateio.aplicacao_recurso).nome : ''}
+                            </div>
+
+                            <div className='col-lg-2 border align-middle text-center pb-2'>
+                                <p className='mb-0 font-weight-bold mt-2'>Demonstrado</p>
+                            </div>
                         </div>
-                        <div className='col border-left'>
-                            <p className='mb-0 font-weight-bold'>Especificação:</p>
-                            {rateio.especificacao_material_servico && rateio.especificacao_material_servico.descricao ? rateio.especificacao_material_servico.descricao : ''}
-                        </div>
-                        <div className='col border-left'>
-                            <p className='mb-0 font-weight-bold'>Tipo de aplicação:</p>
-                            {rateio.aplicacao_recurso ? tabelasDespesa.tipos_aplicacao_recurso.find(element => element.id === rateio.aplicacao_recurso).nome : ''}
-                        </div>
-                        <div className='col border-left'>
-                            <p className='mb-0 font-weight-bold'>Ação:</p>
-                            {rateio.acao_associacao && rateio.acao_associacao.nome ? rateio.acao_associacao.nome : ''}
-                        </div>
-                        <div className='col border-left'>
-                            <p className='mb-0 font-weight-bold'>Valor:</p>
-                            {rateio.valor_rateio ? valorTemplate(null, null, rateio.valor_rateio) : 0}
-                        </div>
-                        <div className='col border-left align-middle text-center'>
-                            <p className='mb-0 font-weight-bold'>Demonstrado:</p>
-                            {conferidoRateioTemplate(rateio)}
+
+                        <div className="row pl-4 pr-4" key={`${index}-info-rateio-bottom`}>
+                            <div className='col-lg-2 border pb-2'>
+                                <p className='mb-0 font-weight-bold mt-2'>Ação</p>
+                                {rateio.acao_associacao && rateio.acao_associacao.nome ? rateio.acao_associacao.nome : ''}
+                            </div>
+
+                            <div className='col-lg-5 border pb-2'>
+                                <p className='mb-0 font-weight-bold mt-2'>Valor</p>
+                                {rateio.valor_rateio ? valorTemplate(null, null, rateio.valor_rateio) : 0}
+                            </div>
+
+                            <div className='col-lg-3 border pb-2'>
+                                <p className='mb-0 font-weight-bold mt-2'>Vínculo a atividade</p>
+                                {tagDataTemplate(rateio)}
+                            </div>
+
+                            <div className='col-lg-2 border align-middle text-center pb-2'>
+                                {conferidoRateioTemplate(rateio)}
+                            </div>
                         </div>
                     </div>
                 ))}
-
-            </>
-
+            </div>
         )
     };
 
@@ -287,7 +321,7 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
                             body={dataTemplate}
                         />
                         <Column field="tipo_transacao" header="Tipo de lançamento"/>
-                        <Column className='quebra-palavra' field="numero_documento" header="N.º do documento"/>
+                        <Column className='quebra-palavra' field="numero_documento" header="N.º do documento" style={{width: '160px'}}/>
                         <Column field="descricao" header="Descrição"/>
                         <Column
                             field="valor_transacao_na_conta"
