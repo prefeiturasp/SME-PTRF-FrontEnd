@@ -98,6 +98,15 @@ export const DadosDaDiretoria = () => {
     const onShowModalSalvar = () => {
         setShowModalDiretoriaSalvar(true);
     };
+
+    const valuesVazio = (values) => {
+        if(!values.dre_cnpj && !values.dre_diretor_regional_rf && !values.dre_diretor_regional_nome && !values.dre_designacao_portaria && !values.dre_designacao_ano){
+            return true
+        }
+        
+        return false;
+    }
+
     return (
         <>
             {loading ? (
@@ -225,7 +234,7 @@ export const DadosDaDiretoria = () => {
                                                 <button
                                                     type="submit"
                                                     className="btn btn-success mt-2 ml-2"
-                                                    disabled={!visoesService.getPermissoes(['change_dados_diretoria'])}
+                                                    disabled={!visoesService.getPermissoes(['change_dados_diretoria']) || valuesVazio(props.values)}
                                                 >
                                                     Salvar
                                                 </button>
