@@ -10,8 +10,8 @@ import {
     getStatusPeriodoPorData,
     getTransacoes,
     getTransacoesFiltros,
-    patchConciliarTransacao,
-    patchDesconciliarTransacao,
+    patchConciliarDespesa,
+    patchDesconciliarDespesa,
     getDownloadExtratoBancario,
     pathSalvarJustificativaPrestacaoDeConta,
     pathExtratoBancarioPrestacaoDeConta
@@ -265,7 +265,6 @@ export const DetalheDasPrestacoes = () => {
     const [transacoesNaoConciliadas, setTransacoesNaoConciliadas] = useState([]);
     const [checkboxTransacoes, setCheckboxTransacoes] = useState(false);
     const [tabelasDespesa, setTabelasDespesa] = useState([]);
-    const [tabelasReceita, setTabelasReceita] = useState([]);
 
     const carregaTransacoes = useCallback(async ()=>{
         setLoading(true)
@@ -290,16 +289,6 @@ export const DetalheDasPrestacoes = () => {
         carregaTabelasDespesa();
     }, []);
 
-    useEffect(() => {
-        const carregaTabelasReceita = async () => {
-            getTabelasReceita().then(response => {
-                setTabelasReceita(response.data);
-            }).catch(error => {
-                console.log(error);
-            });
-        };
-        carregaTabelasReceita()
-    }, []);
 
     const handleChangeCheckboxTransacoes = useCallback(async (event, transacao_ou_rateio_uuid, documento_mestre=null, tipo_transacao) => {
 
@@ -308,21 +297,13 @@ export const DetalheDasPrestacoes = () => {
             if (!documento_mestre){
                 await conciliar(transacao_ou_rateio_uuid);
             }else {
-                if (tipo_transacao==='Crédito'){
-                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'CREDITO')
-                }else {
-                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'GASTO')
-                }
+                await patchConciliarDespesa(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid)
             }
         } else if (!event.target.checked) {
             if (!documento_mestre){
                 await desconciliar(transacao_ou_rateio_uuid)
             }else {
-                if (tipo_transacao==='Crédito'){
-                    await patchDesconciliarTransacao(periodoConta.conta, transacao_ou_rateio_uuid, 'CREDITO')
-                }else {
-                    await patchDesconciliarTransacao(periodoConta.conta, transacao_ou_rateio_uuid, 'GASTO')
-                }
+                await patchDesconciliarDespesa(periodoConta.conta, transacao_ou_rateio_uuid)
             }
         }
         await carregaTransacoes()
@@ -343,14 +324,14 @@ export const DetalheDasPrestacoes = () => {
     const handleSubmitFiltros = useCallback(async (conciliado) => {
         if (conciliado=== 'CONCILIADO'){
             try {
-                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO, stateFiltros.filtrar_por_lancamento_CONCILIADO);
+                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO);
                 setTransacoesConciliadas(transacoes)
             }catch (e) {
                 console.log("Erro ao filtrar conciliados")
             }
         }else {
             try {
-                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'False', stateFiltros.filtrar_por_acao_NAO_CONCILIADO, stateFiltros.filtrar_por_lancamento_NAO_CONCILIADO);
+                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'False', stateFiltros.filtrar_por_acao_NAO_CONCILIADO);
                 setTransacoesNaoConciliadas(transacoes);
             }catch (e) {
                 console.log("Erro ao filtrar não conciliados")
@@ -518,7 +499,7 @@ export const DetalheDasPrestacoes = () => {
                                 erroDataSaldo={erroDataSaldo}
                             />
 
-                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Lançamentos pendentes de conciliação</p>
+                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Gastos pendentes de conciliação</p>
                             <FiltrosTransacoes
                                 conciliado='NAO_CONCILIADO'
                                 stateFiltros={stateFiltros}
@@ -534,13 +515,12 @@ export const DetalheDasPrestacoes = () => {
                                     periodoFechado={periodoFechado}
                                     handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
                                     tabelasDespesa={tabelasDespesa}
-                                    tabelasReceita={tabelasReceita}
                                 />
                             ):
-                                <p className="mt-2"><strong>Não existem lançamentos não conciliados...</strong></p>
+                                <p className="mt-2"><strong>Não existem gastos não conciliados...</strong></p>
                             }
 
-                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-5 mb-3">Lançamentos conciliados</p>
+                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-5 mb-3">Gastos conciliados</p>
                             <FiltrosTransacoes
                                 conciliado='CONCILIADO'
                                 stateFiltros={stateFiltros}
@@ -557,10 +537,9 @@ export const DetalheDasPrestacoes = () => {
                                     periodoFechado={periodoFechado}
                                     handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
                                     tabelasDespesa={tabelasDespesa}
-                                    tabelasReceita={tabelasReceita}
                                 />
                             ):
-                                <p className="mt-2"><strong>Não existem lançamentos conciliados...</strong></p>
+                                <p className="mt-2"><strong>Não existem gastos conciliados...</strong></p>
                             }
                             <Justificativa
                                 textareaJustificativa={textareaJustificativa}

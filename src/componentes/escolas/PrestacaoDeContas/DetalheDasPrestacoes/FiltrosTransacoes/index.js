@@ -5,7 +5,7 @@ export const FiltrosTransacoes = ({conciliado, stateFiltros, tabelasDespesa, han
         <>
             <form>
                 <div className="form-row align-items-center">
-                    <div className="form-group col">
+                    <div className="form-group col-5">
                         <label htmlFor="filtrar_por_acao">Filtrar por ação</label>
                         <select
                             value={stateFiltros.filtrar_por_acao}
@@ -18,20 +18,6 @@ export const FiltrosTransacoes = ({conciliado, stateFiltros, tabelasDespesa, han
                             {tabelasDespesa && tabelasDespesa.acoes_associacao && tabelasDespesa.acoes_associacao.length > 0 && tabelasDespesa.acoes_associacao.map(item => (
                                 <option key={item.uuid} value={item.uuid}>{item.nome}</option>
                             ))}
-                        </select>
-                    </div>
-                    <div className="form-group col">
-                        <label htmlFor="filtrar_por_lancamento">Filtrar por tipo de lançamento</label>
-                        <select
-                            value={stateFiltros.filtrar_por_lancamento}
-                            onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
-                            name={`filtrar_por_lancamento_${conciliado}`}
-                            id={`filtrar_por_lancamento_${conciliado}`}
-                            className="form-control"
-                        >
-                            <option value=''>Selecione o tipo de lançamento</option>
-                            <option value='CREDITOS'>Créditos</option>
-                            <option value='GASTOS'>Gastos</option>
                         </select>
                     </div>
 
