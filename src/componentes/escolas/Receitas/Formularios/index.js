@@ -78,7 +78,6 @@ export const ReceitaForm = () => {
 
     const [idxTipoDespesa, setIdxTipoDespesa] = useState(0);
 
-    const [showReceitaConferida, setShowReceitaConferida] = useState(false);
     const [showReceitaRepasse, setShowReceitaRepasse] = useState(false);
 
     const [repasses, setRepasses] = useState([]);
@@ -183,14 +182,6 @@ export const ReceitaForm = () => {
         if (!exibirDeleteDespesa) {
             e.preventDefault();
             setShowReceitaRepasse(true)
-        }
-
-        // Validando se receita é conferida
-        if (Object.entries(errors).length === 0 ) {
-            if (values.conferido) {
-                e.preventDefault();
-                setShowReceitaConferida(true)
-            }
         }
     };
 
@@ -1011,15 +1002,6 @@ export const ReceitaForm = () => {
 
                             </div>
                             {/*Fim Botões*/}
-                            <section>
-                                <ModalReceitaConferida
-                                    show={showReceitaConferida}
-                                    handleClose={()=>setShowReceitaConferida(false)}
-                                    onSalvarReceitaConferida={ () => onSubmit(values) }
-                                    titulo="Receita já demonstrada"
-                                    texto="<p>Atenção. Esse crédito já foi demonstrado, caso a alteração seja gravada ele voltará a ser não demonstrado. Confirma a gravação?</p>"
-                                />
-                            </section>
                             <section>
                                 <ModalReceitaConferida
                                     show={showReceitaRepasse}
