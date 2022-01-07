@@ -370,10 +370,10 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                             handleClose={onHandleClose}
                             onSalvarTrue={onSalvarTrue}
                             titulo="Concluir Prestação de Contas"
-                            texto="<p>Ao concluir a Prestação de Contas, o período será <strong>bloqueado</strong>
-                            para cadastro ou edição de qualquer lançamento de crédito ou despesa.
-                            Se quiser conferir as informações cadastradas, sem bloqueio do sistema neste período, por favor, gere um documento prévio.
-                            <strong>Você confirma a conclusão dessa Prestação de Contas?</strong></p>"
+                            texto="<p>Ao concluir a Prestação de Contas, o sistema <strong>bloqueará</strong> 
+                            o cadastro e a edição de qualquer crédito ou despesa nesse período.
+                            Para conferir as informações cadastradas, sem bloqueio do sistema nesse período, gere um documento prévio.
+                            Você confirma a conclusão dessa Prestação de Contas?</p>"
                         />
                     </section>
                 </>

@@ -83,7 +83,7 @@ export const ReceitaForm = () => {
     const [repasses, setRepasses] = useState([]);
     const [showSelecionaRepasse, setShowSelecionaRepasse] = useState(false);
 
-    const [msgDeletarReceita, setmsgDeletarReceita] = useState('<p>Tem certeza que deseja excluir este crédito? A ação não poderá ser desfeita.</p>')
+    const [msgDeletarReceita, setmsgDeletarReceita] = useState('<p>Tem certeza que deseja excluir este crédito? A ação não poderá ser refeita.</p>')
     const [msgAvisoTipoReceita, setMsgAvisoTipoReceita] = useState('');
 
     const [exibeModalSalvoComSucesso, setExibeModalSalvoComSucesso] = useState(true)
