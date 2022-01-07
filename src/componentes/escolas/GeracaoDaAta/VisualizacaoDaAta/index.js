@@ -400,6 +400,12 @@ export const VisualizacaoDaAta = () => {
     };
     // FIM InformacoesDvolucaoAoTesrouro
 
+    const temDevolucaoAoTesouro = (
+        prestacaoDeContasDetalhe &&
+        prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao &&
+        prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao.length > 0
+    )
+
     return (
         <div className="col-12 container-visualizacao-da-ata mb-5">
             <div className="col-12 mt-4">
@@ -411,6 +417,7 @@ export const VisualizacaoDaAta = () => {
                         handleClickFecharAta={handleClickFecharAta}
                         handleClickCopiarAta={handleClickCopiarAta}
                         setShowModalDevolucoesAoTesouro={setShowModalDevolucoesAoTesouro}
+                        exibeBotaoDevolucaoTesouro={temDevolucaoAoTesouro}
                     />
                 }
             </div>
