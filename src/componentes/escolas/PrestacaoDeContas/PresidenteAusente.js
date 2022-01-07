@@ -6,7 +6,7 @@ import { barraMensagemCustom } from "../../Globais/BarraMensagem";
 
 export const PresidenteAusente = ({statusPC}) => {
     const [statusPresidente, setStatusPresidente] = useState("");
-    let mensagem = `O presidente da Diretoria Executiva consta como ausente. Os documentos serão gerados com os campos de assinatura habilitados para o ${statusPresidente.cargo_substituto_presidente_ausente_value}. Caso o presidente esteja presente, altere o status de ocupação do cargo na tela dos membros da Associação.`
+    let mensagem = `O presidente da Diretoria Executiva consta como ausente. O Demonstrativo Financeiro e a Relação de Bens serão gerados com os campos de assinatura habilitados para o ${statusPresidente.cargo_substituto_presidente_ausente_value} da Diretoria Executiva. Caso o presidente esteja presente, altere o status de ocupação do cargo na tela dos membros da Associação.`
     let uuid_associacao = localStorage.getItem(ASSOCIACAO_UUID);
 
 

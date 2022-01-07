@@ -48,17 +48,18 @@ export const getIniciarPrestacaoDeContas = async (conta_uuid, periodo_uuid) => {
 
 // Detalhe Prestação de Contas
 // *** Novas implementações História 34038 - Sprint 16 ***
+// *** Créditos não serão mais exibidos, nem conciliados/desconciliados História 52339 - Sprint - 34***
 export const getTransacoes = async (periodo_uuid, conta_uuid, conferido) => {
-  return (await api.get(`/api/conciliacoes/transacoes/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&conferido=${conferido}`, authHeader)).data
+  return (await api.get(`/api/conciliacoes/transacoes-despesa/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&conferido=${conferido}`, authHeader)).data
 };
-export const getTransacoesFiltros = async (periodo_uuid, conta_uuid, conferido, acao_associacao_uuid, tipo_lancamento) => {
-  return (await api.get(`/api/conciliacoes/transacoes/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&conferido=${conferido}${acao_associacao_uuid ? '&acao_associacao='+acao_associacao_uuid : ''}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}`, authHeader)).data
+export const getTransacoesFiltros = async (periodo_uuid, conta_uuid, conferido, acao_associacao_uuid) => {
+  return (await api.get(`/api/conciliacoes/transacoes-despesa/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&conferido=${conferido}${acao_associacao_uuid ? '&acao_associacao='+acao_associacao_uuid : ''}`, authHeader)).data
 };
-export const patchConciliarTransacao = async (periodo_uuid, conta_uuid, transacao_uuid, tipo_transacao) => {
-  return (await api.patch(`/api/conciliacoes/conciliar-transacao/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&transacao=${transacao_uuid}&tipo=${tipo_transacao}`, {}, authHeader)).data
+export const patchConciliarDespesa = async (periodo_uuid, conta_uuid, transacao_uuid) => {
+  return (await api.patch(`/api/conciliacoes/conciliar-despesa/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&transacao=${transacao_uuid}`, {}, authHeader)).data
 };
-export const patchDesconciliarTransacao = async (conta_uuid, transacao_uuid, tipo_transacao) => {
-  return (await api.patch(`/api/conciliacoes/desconciliar-transacao/?conta_associacao=${conta_uuid}&transacao=${transacao_uuid}&tipo=${tipo_transacao}`, {}, authHeader)).data
+export const patchDesconciliarDespesa = async (conta_uuid, transacao_uuid) => {
+  return (await api.patch(`/api/conciliacoes/desconciliar-despesa/?conta_associacao=${conta_uuid}&transacao=${transacao_uuid}`, {}, authHeader)).data
 };
 export const getConciliar = async (rateio_uuid, periodo_uuid) => {
   return (await api.patch(`/api/rateios-despesas/${rateio_uuid}/conciliar/?periodo=${periodo_uuid}`, {}, authHeader)).data

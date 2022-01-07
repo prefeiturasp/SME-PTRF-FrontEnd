@@ -199,7 +199,7 @@ const DataSaldoBancario = ({
                         className={`btn btn-${classBtnSalvarExtratoBancario} mt-2`}
                         onClick={handleOnClick}
                         >
-                            <strong>Salvar Extrato</strong>
+                            <strong>Salvar saldo</strong>
                     </button>
                 </div>
             }

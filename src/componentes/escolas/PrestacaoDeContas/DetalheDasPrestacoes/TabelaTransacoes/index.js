@@ -9,7 +9,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons'
 import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
 
-const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxTransacoes, periodoFechado, tabelasDespesa, tabelasReceita}) => {
+const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxTransacoes, periodoFechado, tabelasDespesa}) => {
 
     let history = useHistory();
     const rowsPerPage = 10;
@@ -128,15 +128,9 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
     };
 
     const rowExpansionTemplate = (data) => {
-        if (data.tipo_transacao === 'Crédito') {
-            return (
-                receitaTemplate(data)
-            )
-        } else {
-            return (
-                despesaTemplate(data)
-            )
-        }
+        return (
+            despesaTemplate(data)
+        )
     };
 
     const conferidoTemplate = (rowData) => {
@@ -276,26 +270,6 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
         )
     };
 
-    const receitaTemplate = (data) => {
-        return (
-            <>
-                <div className='row'>
-                    <div className='col'>
-                        <p className='mb-0 font-weight-bold'>Detalhamento do crédito:</p>
-                        {data.documento_mestre && data.documento_mestre.detalhamento ? data.documento_mestre.detalhamento : ''}
-                    </div>
-                    <div className='col border-left'>
-                        <p className='mb-0 font-weight-bold'>Classificação do crédito:</p>
-                        {data.documento_mestre && data.documento_mestre.categoria_receita ? tabelasReceita.categorias_receita.find(elemnt => elemnt.id === data.documento_mestre.categoria_receita).nome : ''}
-                    </div>
-                    <div className='col border-left'>
-                        <p className='mb-0 font-weight-bold'>Ação:</p>
-                        {data.documento_mestre && data.documento_mestre.acao_associacao && data.documento_mestre.acao_associacao.nome ? data.documento_mestre.acao_associacao.nome : ''}
-                    </div>
-                </div>
-            </>
-        )
-    };
 
     return (
         <div className="row mt-4">

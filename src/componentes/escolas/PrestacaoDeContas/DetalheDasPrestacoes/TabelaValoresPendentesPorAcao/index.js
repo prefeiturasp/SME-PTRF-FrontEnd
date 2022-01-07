@@ -25,8 +25,8 @@ const TabelaValoresPendentesPorAcao = ({valoresPendentes, valorTemplate}) =>{
                 <tr>
                     <th scope="row">Créditos</th>
                     <td>{valorTemplate(valoresPendentes.receitas_total)}</td>
-                    <td>{valorTemplate(valoresPendentes.receitas_conciliadas)}</td>
-                    <td>{valorTemplate(valoresPendentes.receitas_nao_conciliadas)}</td>
+                    <td className='coluna-cinza-escuro'>{valorTemplate(valoresPendentes.receitas_conciliadas)}</td>
+                    <td className='coluna-cinza-escuro'></td>
                 </tr>
                 <tr>
                     <th scope="row">Despesas</th>
