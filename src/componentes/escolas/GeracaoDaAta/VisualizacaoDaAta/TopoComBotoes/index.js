@@ -1,7 +1,7 @@
 import React from "react";
 import {visoesService} from "../../../../../services/visoes.service";
 
-export const TopoComBotoes = ({dadosAta, prestacaoDeContasDetalhe, handleClickEditarAta, handleClickFecharAta, handleClickCopiarAta, setShowModalDevolucoesAoTesouro}) =>{
+export const TopoComBotoes = ({dadosAta, prestacaoDeContasDetalhe, handleClickEditarAta, handleClickFecharAta, handleClickCopiarAta, setShowModalDevolucoesAoTesouro, exibeBotaoDevolucaoTesouro}) =>{
     const podeEditarAta = [['change_ata_prestacao_contas']].some(visoesService.getPermissoes)
     return(
         <div className="row">
@@ -12,7 +12,7 @@ export const TopoComBotoes = ({dadosAta, prestacaoDeContasDetalhe, handleClickEd
             <div className='col-12 col-md-7 text-right'>
                 { prestacaoDeContasDetalhe && prestacaoDeContasDetalhe.status && (prestacaoDeContasDetalhe.status === 'DEVOLVIDA' || prestacaoDeContasDetalhe.status === 'DEVOLVIDA_RETORNADA') && dadosAta && dadosAta.uuid && dadosAta.tipo_ata === 'RETIFICACAO' ?
                     <>
-                        {podeEditarAta &&
+                        {podeEditarAta && exibeBotaoDevolucaoTesouro &&
                             <button onClick={()=>setShowModalDevolucoesAoTesouro(true)} type="button" className="btn btn-success mr-2 mt-2"> <strong>Devoluções ao Tesouro</strong></button>
                         }
 

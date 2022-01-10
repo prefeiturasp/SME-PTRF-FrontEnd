@@ -1,5 +1,5 @@
 import React from "react";
-import {InformacoesDevolucaoAoTesouro} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/InformacoesDevolucaoAoTesouro";
+import {InformacoesDevolucaoAoTesouro} from "./VisualizacaoDaAta/DevolucoesAoTesouro/InformacoesDevolucaoAoTesouro";
 import {ModalBootstrapDevolucaoAoTesouroAta} from "../../Globais/ModalBootstrap";
 
 export const ModalDevolucaoAoTesouro = ({show, handleClose, onSubmitModalDevolucoesAoTesouro, informacoesPrestacaoDeContas, initialValues, formRef, despesas, buscaDespesaPorFiltros, buscaDespesa, valorTemplate, despesasTabelas, tiposDevolucao, validateFormDevolucaoAoTesouro, camposObrigatorios}) => {
