@@ -336,7 +336,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                         handleClose={onHandleClose}
                         notificarComentarios={notificarComentarios}
                         titulo="Notificar comentários"
-                        texto="<p>Deseja enviar os comentários selecionados como notificações para o presidente e vice-presidente da associação?</p>"
+                        texto="<p>Deseja enviar os comentários selecionados como notificações para a associação?</p>"
                         primeiroBotaoTexto="Sim"
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="success"
