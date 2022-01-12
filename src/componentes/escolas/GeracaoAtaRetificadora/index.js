@@ -32,7 +32,6 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
                 setGerarAtaRetificadora(true)
             }
         } catch (e) {
-            debugger
             if (statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA" || statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA_RETORNADA") {
                 let dados = await getIniciarAtaRetificadora(uuidPrestacaoConta);
                 setDadosAtaRetificadora(dados)
