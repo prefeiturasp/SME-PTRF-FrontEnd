@@ -1,8 +1,14 @@
 import React, {Fragment} from "react";
 import TabelaConferenciaDeLancamentos from "./TabelaConferenciaDeLancamentos";
 import Loading from "../../../../../utils/Loading";
+import {mantemEstadoAcompanhamentoDePc as meapcservice} from "../../../../../services/mantemEstadoAcompanhamentoDePc.service";
 
-export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscolheConta, carregaLancamentosParaConferencia, prestacaoDeContas, setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, loadingLancamentosParaConferencia, editavel}) => {
+export const TabsConferenciaDeLancamentos = ({contasAssociacao, toggleBtnEscolheConta, clickBtnEscolheConta, carregaLancamentosParaConferencia, prestacaoDeContas, setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, loadingLancamentosParaConferencia, editavel}) => {
+
+    // Manter o estado do Acompanhamento de PC
+    let dados_acompanhamento_de_pc_usuario_logado = meapcservice.getAcompanhamentoDePcUsuarioLogado()
+    let filtrar_por_acao = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_acao
+    let filtrar_por_lancamento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_lancamento
 
     return (
         <>
@@ -17,22 +23,22 @@ export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, cl
                 <>
                     <nav>
                         <div className="nav nav-tabs mb-3 menu-interno-dre-prestacao-de-contas" id="nav-tab-conferencia-de-lancamentos" role="tablist">
-                            {infoAta && infoAta.contas && infoAta.contas.length > 0 && infoAta.contas.map((conta, index) =>
-                                <Fragment key={`key_${conta.conta_associacao.uuid}`}>
+                            {contasAssociacao.map((conta, index) =>
+                                <Fragment key={`key_${conta.uuid}`}>
                                     <a
                                         onClick={() => {
-                                            toggleBtnEscolheConta(`key_${index}`);
-                                            carregaLancamentosParaConferencia(prestacaoDeContas, conta.conta_associacao.uuid)
+                                            toggleBtnEscolheConta(conta.uuid);
+                                            carregaLancamentosParaConferencia(prestacaoDeContas, conta.uuid, filtrar_por_acao, filtrar_por_lancamento)
                                         }}
-                                        className={`nav-link btn-escolhe-acao ${clickBtnEscolheConta[`key_${index}`] ? "btn-escolhe-acao-active" : ""}`}
-                                        id={`nav-conferencia-de-lancamentos-${conta.conta_associacao.uuid}-tab`}
+                                        className={`nav-link btn-escolhe-acao ${clickBtnEscolheConta === conta.uuid ? "btn-escolhe-acao-active" : ""}`}
+                                        id={`nav-conferencia-de-lancamentos-${conta.uuid}-tab`}
                                         data-toggle="tab"
-                                        href={`#nav-conferencia-de-lancamentos-${conta.conta_associacao.uuid}`}
+                                        href={`#nav-conferencia-de-lancamentos-${conta.uuid}`}
                                         role="tab"
-                                        aria-controls={`nav-conferencia-de-lancamentos-${conta.conta_associacao.uuid}`}
+                                        aria-controls={`nav-conferencia-de-lancamentos-${conta.uuid}`}
                                         aria-selected="true"
                                     >
-                                        Conta {conta.conta_associacao.nome}
+                                        Conta {conta.tipo_conta.nome}
                                     </a>
                                 </Fragment>
                             )}
@@ -56,7 +62,6 @@ export const TabsConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, cl
                     </div>
                 </>
             }
-
         </>
     )
 }

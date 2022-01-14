@@ -231,9 +231,6 @@ export const GetComportamentoPorStatus = (
                     />
 
                     <ConferenciaDeLancamentos
-                        infoAta={infoAta}
-                        toggleBtnEscolheConta={toggleBtnEscolheConta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={true}
                     />
@@ -334,9 +331,6 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                     />
                     <ConferenciaDeLancamentos
-                        infoAta={infoAta}
-                        toggleBtnEscolheConta={toggleBtnEscolheConta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
                     />
@@ -432,9 +426,6 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                     />
                     <ConferenciaDeLancamentos
-                        infoAta={infoAta}
-                        toggleBtnEscolheConta={toggleBtnEscolheConta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
                     />
@@ -533,9 +524,6 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                     />
                     <ConferenciaDeLancamentos
-                        infoAta={infoAta}
-                        toggleBtnEscolheConta={toggleBtnEscolheConta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
                     />
@@ -620,9 +608,6 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                     />
                     <ConferenciaDeLancamentos
-                        infoAta={infoAta}
-                        toggleBtnEscolheConta={toggleBtnEscolheConta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
                     />
@@ -709,9 +694,6 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                     />
                     <ConferenciaDeLancamentos
-                        infoAta={infoAta}
-                        toggleBtnEscolheConta={toggleBtnEscolheConta}
-                        clickBtnEscolheConta={clickBtnEscolheConta}
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={false}
                     />

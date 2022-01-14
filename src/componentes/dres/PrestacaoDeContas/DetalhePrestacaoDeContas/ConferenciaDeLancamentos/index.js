@@ -1,20 +1,86 @@
-import React, {useEffect, useState, memo} from "react";
-import {getLancamentosParaConferencia, getUltimaAnalisePc} from "../../../../../services/dres/PrestacaoDeContas.service";
+import React, {useEffect, useState, memo, useCallback} from "react";
+import {getLancamentosParaConferencia, getUltimaAnalisePc, getContasDaAssociacao} from "../../../../../services/dres/PrestacaoDeContas.service";
 import {TabsConferenciaDeLancamentos} from "./TabsConferenciaDeLancamentos";
+import {visoesService} from "../../../../../services/visoes.service";
+import {mantemEstadoAcompanhamentoDePc as meapcservice} from "../../../../../services/mantemEstadoAcompanhamentoDePc.service";
 
-const ConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscolheConta, prestacaoDeContas, editavel=true}) =>{
+const ConferenciaDeLancamentos = ({prestacaoDeContas, editavel=true}) =>{
     const [lancamentosParaConferencia, setLancamentosParaConferencia] = useState([])
     const [loadingLancamentosParaConferencia, setLoadingLancamentosParaConferencia] = useState(true)
     const [contaUuid, setContaUuid] = useState('')
+    const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState('');
+    const [contasAssociacao, setContasAssociacao] = useState([])
+
+    // Manter o estado do Acompanhamento de PC
+    let dados_acompanhamento_de_pc_usuario_logado = meapcservice.getAcompanhamentoDePcUsuarioLogado()
+
+    const verificaSeExcluiObjetoAcompanhamentoPcUsuarioLogado = useCallback(()=>{
+        if (dados_acompanhamento_de_pc_usuario_logado.prestacao_de_conta_uuid !== prestacaoDeContas.uuid){
+            meapcservice.limpaAcompanhamentoDePcUsuarioLogado(visoesService.getUsuarioLogin())
+        }
+    }, [prestacaoDeContas, dados_acompanhamento_de_pc_usuario_logado])
 
     useEffect(()=>{
-        if (infoAta && infoAta.contas && infoAta.contas.length > 0){
-            carregaLancamentosParaConferencia(prestacaoDeContas, infoAta.contas[0].conta_associacao.uuid)
+        verificaSeExcluiObjetoAcompanhamentoPcUsuarioLogado()
+    }, [verificaSeExcluiObjetoAcompanhamentoPcUsuarioLogado])
+
+    useEffect(()=>{
+        if (prestacaoDeContas && prestacaoDeContas.associacao && prestacaoDeContas.associacao.uuid){
+            try {
+                const buscaContasDaAssociacao = async ()=>{
+                    let contas = await getContasDaAssociacao(prestacaoDeContas.associacao.uuid)
+                    setContasAssociacao(contas)
+                }
+                buscaContasDaAssociacao()
+            }catch (e) {
+                console.log("Erro ao buscar contas pela associacao.uuid em ConferenciaDeLancamentos")
+            }
         }
-    }, [prestacaoDeContas, infoAta])
+    }, [prestacaoDeContas])
 
+    const preCarregaLancamentosEToggle = useCallback(() =>{
 
-    const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid, filtrar_por_acao=null, filtrar_por_lancamento=null) =>{
+        let dados_acompanhamento_de_pc_usuario_logado = meapcservice.getAcompanhamentoDePcUsuarioLogado()
+
+        let filtrar_por_acao = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_acao
+        let filtrar_por_lancamento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_lancamento
+        let paginacao_atual = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.paginacao_atual
+
+        if (dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.conta_uuid){
+            carregaLancamentosParaConferencia(prestacaoDeContas, dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.conta_uuid, filtrar_por_acao, filtrar_por_lancamento, paginacao_atual)
+            toggleBtnEscolheConta(dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.conta_uuid)
+        }else if (contasAssociacao.length > 0){
+            carregaLancamentosParaConferencia(prestacaoDeContas, contasAssociacao[0].uuid)
+            toggleBtnEscolheConta(contasAssociacao[0].uuid)
+        }
+
+    }, [prestacaoDeContas, contasAssociacao])
+
+    useEffect(()=>{
+        preCarregaLancamentosEToggle()
+    }, [preCarregaLancamentosEToggle])
+
+    const toggleBtnEscolheConta = (conta_uuid) => {
+        setClickBtnEscolheConta(conta_uuid);
+    };
+
+    const salvaObjetoAcompanhamentoDePcPorUsuarioLocalStorage = (prestacao_de_contas, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, paginacao_atual) =>{
+        let objetoAcompanhamentoDePcPorUsuario = {
+            prestacao_de_conta_uuid: prestacaoDeContas.uuid,
+            conferencia_de_lancamentos: {
+                conta_uuid:  conta_uuid,
+                filtrar_por_acao: filtrar_por_acao,
+                filtrar_por_lancamento: filtrar_por_lancamento,
+                paginacao_atual: paginacao_atual,
+            },
+        }
+        meapcservice.setAcompanhamentoDePcPorUsuario(visoesService.getUsuarioLogin(), objetoAcompanhamentoDePcPorUsuario)
+    }
+
+    const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid, filtrar_por_acao=null, filtrar_por_lancamento=null, paginacao_atual) =>{
+
+        salvaObjetoAcompanhamentoDePcPorUsuarioLocalStorage(prestacao_de_contas, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, paginacao_atual)
+
         setContaUuid(conta_uuid)
         setLoadingLancamentosParaConferencia(true)
 
@@ -54,20 +120,21 @@ const ConferenciaDeLancamentos = ({infoAta, toggleBtnEscolheConta, clickBtnEscol
             <hr id='conferencia_de_lancamentos' className='mt-4 mb-3'/>
             <h4 className='mb-4'>Conferência de lançamentos</h4>
 
-            <TabsConferenciaDeLancamentos
-                infoAta={infoAta}
-                toggleBtnEscolheConta={toggleBtnEscolheConta}
-                clickBtnEscolheConta={clickBtnEscolheConta}
-                carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
-                prestacaoDeContas={prestacaoDeContas}
-                setLancamentosParaConferencia={setLancamentosParaConferencia}
-                lancamentosParaConferencia={lancamentosParaConferencia}
-                loadingLancamentosParaConferencia={loadingLancamentosParaConferencia}
-                contaUuid={contaUuid}
-                editavel={editavel}
-            />
+            {contasAssociacao && contasAssociacao.length > 0 &&
+                <TabsConferenciaDeLancamentos
+                    contasAssociacao={contasAssociacao}
+                    toggleBtnEscolheConta={toggleBtnEscolheConta}
+                    clickBtnEscolheConta={clickBtnEscolheConta}
+                    carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
+                    prestacaoDeContas={prestacaoDeContas}
+                    setLancamentosParaConferencia={setLancamentosParaConferencia}
+                    lancamentosParaConferencia={lancamentosParaConferencia}
+                    loadingLancamentosParaConferencia={loadingLancamentosParaConferencia}
+                    contaUuid={contaUuid}
+                    editavel={editavel}
+                />
+            }
         </>
-
     )
 }
 export default memo(ConferenciaDeLancamentos)
