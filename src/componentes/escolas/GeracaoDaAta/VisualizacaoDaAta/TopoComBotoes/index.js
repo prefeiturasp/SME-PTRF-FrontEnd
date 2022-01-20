@@ -38,12 +38,6 @@ export const TopoComBotoes = ({dadosAta, prestacaoDeContasDetalhe, handleClickEd
                     )
                 }
 
-                {/*Para as atas de apresentação (Não retificação)*/}
-                {/*Se não tem Prestação de Conta trata-se de uma prévia e não exibe o selecionar e copiar*/}
-                {dadosAta && dadosAta.tipo_ata !== 'RETIFICACAO' && dadosAta.prestacao_conta &&
-                <button onClick={handleClickCopiarAta} type="button" className="btn btn-outline-success mr-2 mt-2"><strong>Selecionar e copiar</strong></button>
-                }
-
                 <button onClick={handleClickFecharAta} type="button" className="btn btn-outline-success mt-2"><strong>Fechar</strong></button>
             </div>
         </div>
