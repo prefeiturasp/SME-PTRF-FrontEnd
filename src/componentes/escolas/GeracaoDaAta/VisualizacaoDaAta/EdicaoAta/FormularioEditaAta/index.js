@@ -200,7 +200,6 @@ export const FormularioEditaAta = ({
             return "Cargo (opcional)"
         }
     }
-    
     return (
 
         <div>
@@ -498,6 +497,30 @@ export const FormularioEditaAta = ({
                                         >
                                             
                                         </FieldArray>
+
+                                        {/*So exibe o campo retificações em atas de retificação*/}
+                                        { stateFormEditarAta && stateFormEditarAta.tipo_ata === 'RETIFICACAO' &&
+                                            <div>
+                                                <p className="titulo mt-4"><strong>Retificações</strong></p>
+                                                <div className="form-row">
+                                                    <div className="col-12">
+                                                        <label htmlFor="stateFormEditarAta.retificacoes"
+                                                               className="mb-0">Utilize
+                                                            esse campo para registrar as retificações da Prestação
+                                                            de Contas.</label>
+                                                        <textarea
+                                                            rows="3"
+                                                            placeholder="Escreva seu texto aqui"
+                                                            value={values.stateFormEditarAta.retificacoes}
+                                                            onChange={props.handleChange}
+                                                            name="stateFormEditarAta.retificacoes"
+                                                            className="form-control mt-2"
+                                                            disabled={!podeEditarAta}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
 
                                         <p className="titulo mt-4"><strong>Manifestações, Comentários e Justificativas</strong></p>
                                         <div className="form-row">

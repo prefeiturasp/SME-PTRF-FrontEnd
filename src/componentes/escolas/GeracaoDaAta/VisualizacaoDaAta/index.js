@@ -451,8 +451,14 @@ export const VisualizacaoDaAta = () => {
 
                 {dadosAta && Object.entries(dadosAta).length > 0 && dadosAta.tipo_ata === 'RETIFICACAO' &&
                     <>
-                        <p className='mt-3'><strong>Retificações:</strong></p>
-                        <p>{stateFormEditarAta.retificacoes}</p>
+                        {/*So exibe as retificações se houver*/}
+                        { stateFormEditarAta && stateFormEditarAta.retificacoes &&
+                            <div>
+                                <p className='mt-3'><strong>Retificações:</strong></p>
+                                <p>{stateFormEditarAta.retificacoes}</p>
+                            </div>
+                        }
+
                         {exibeDevolucoesAoTesouro()}
                     </>
                 }
