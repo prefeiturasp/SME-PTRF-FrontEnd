@@ -7,9 +7,9 @@ import {TabelaDinamica} from "./TabelaDinamica";
 import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
 import { TabelaPresentes } from "./TabelaPresentes";
 import {TextoCopiado} from "../../../../utils/Modais";
-import {getInfoAta} from "../../../../services/escolas/PrestacaoDeContas.service";
+import {getInfoAta, getPreviaInfoAta} from "../../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasAtas, getAtas} from "../../../../services/escolas/AtasAssociacao.service";
-import {getDespesasPorFiltros, getPrestacaoDeContasDetalhe, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getDespesasPorFiltros, getPrestacaoDeContasDetalhe, getTiposDevolucao, getPreviaPrestacaoDeContasDetalhe} from "../../../../services/dres/PrestacaoDeContas.service";
 import { getListaPresentesAgrupados } from "../../../../services/escolas/PresentesAta.service";
 import moment from "moment";
 import {exibeDataPT_BR, trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
@@ -17,6 +17,7 @@ import {getDespesa, getDespesasTabelas} from "../../../../services/escolas/Despe
 import {ModalDevolucaoAoTesouro} from "../ModalDevolucaoAoTesouro";
 import {ModalReverDevolucoesAoTesouro} from "../ModalReverDevolucoesAoTesouro";
 import {getSalvarDevoulucoesAoTesouro} from "../../../../services/dres/PrestacaoDeContas.service";
+import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 
 moment.updateLocale('pt', {
     months: [
@@ -54,10 +55,20 @@ export const VisualizacaoDaAta = () => {
     const [prestacaoDeContasDetalhe, setPrestacaoDeContasDetalhe] = useState({});
     const [listaPresentes, setListaPresentes] = useState([]);
 
+    const periodo_prestacao_de_contas = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta'));
+    const periodoUuid = periodo_prestacao_de_contas ? periodo_prestacao_de_contas.periodo_uuid : ""
+    const prestacaoContaUuid = localStorage.getItem("uuidPrestacaoConta")
+    const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
     useEffect(() => {
         const infoAta = async () => {
-            let info_ata = await getInfoAta();
+            let info_ata = null
+            if (prestacaoContaUuid) {
+                info_ata = await getInfoAta();
+            }
+            else if (periodoUuid){
+                info_ata = await getPreviaInfoAta(associacaoUuid, periodoUuid);
+            }
             setInfoAta(info_ata);
             await getDadosAta()
         };
@@ -82,7 +93,14 @@ export const VisualizacaoDaAta = () => {
 
     const getDadosAta = async () => {
         let dados_ata = await getAtas(uuid_ata);
-        let prestacao = await getPrestacaoDeContasDetalhe(dados_ata.prestacao_conta);
+
+        let prestacao = null
+        if (dados_ata.prestacao_conta) {
+            prestacao = await getPrestacaoDeContasDetalhe(dados_ata.prestacao_conta);
+        } else if(periodoUuid){
+            prestacao = await getPreviaPrestacaoDeContasDetalhe(periodoUuid);
+        }
+
         setPrestacaoDeContasDetalhe(prestacao);
         let data_da_reuniao = dados_ata.data_reuniao ? dados_ata.data_reuniao : "";
         setStateFormEditarAta({
@@ -427,6 +445,7 @@ export const VisualizacaoDaAta = () => {
                     <TextoDinamicoSuperior
                         dadosAta={dadosAta}
                         retornaDadosAtaFormatado={retornaDadosAtaFormatado}
+                        prestacaoDeContasDetalhe={prestacaoDeContasDetalhe}
                     />
                 }
 
