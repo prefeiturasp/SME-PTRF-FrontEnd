@@ -12,6 +12,7 @@ export const BoxAtaRetificadora = ({
                                        uuidPrestacaoConta,
                                        uuidAtaRetificacao,
                                        gerarAtaRetificadora,
+                                       statusPc
 }) => {
     const [dadosAtaRetificadora, setDadosAtaRetificadora] = useState({});
 
@@ -74,15 +75,17 @@ export const BoxAtaRetificadora = ({
                             </p>
                         </div>
                         <div className="col-12 col-md-4 align-self-center">
-                            <button onClick={()=>onClickVisualizarAta()}  type="button" className="btn btn-success float-right">Visualizar ata</button>
-                            <button
-                                onClick={()=>gerar_ata_pdf()}
-                                type="button"
-                                className="btn btn-outline-success float-right mr-2"
-                                disabled={!uuidAtaRetificacao || !gerarAtaRetificadora}
-                            >
-                                gerar ata
-                            </button>
+                            <button onClick={()=>onClickVisualizarAta()}  type="button" className="btn btn-success float-right">{statusPc !== 'DEVOLVIDA' ? "Visualizar ata" : "Visualizar prévia da ata"}</button>
+                            { statusPc !== 'DEVOLVIDA' &&
+                                <button
+                                    onClick={() => gerar_ata_pdf()}
+                                    type="button"
+                                    className="btn btn-outline-success float-right mr-2"
+                                    disabled={!uuidAtaRetificacao || !gerarAtaRetificadora}
+                                >
+                                    gerar ata
+                                </button>
+                            }
                         </div>
                     </div>
                 </div>

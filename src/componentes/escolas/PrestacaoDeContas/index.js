@@ -1,7 +1,7 @@
 import React, {useEffect, useState, Fragment, useCallback} from "react";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
-import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/escolas/Associacao.service"
-import {getStatusPeriodoPorData, getConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta} from "../../../services/escolas/PrestacaoDeContas.service";
+import {getPeriodosDePrestacaoDeContasDaAssociacao, getDataPreenchimentoPreviaAta} from "../../../services/escolas/Associacao.service"
+import {getStatusPeriodoPorData, getConcluirPeriodo, getDataPreenchimentoAta, getIniciarAta, getIniciarPreviaAta} from "../../../services/escolas/PrestacaoDeContas.service";
 import {getTabelasReceita} from "../../../services/escolas/Receitas.service";
 import {BarraDeStatusPrestacaoDeContas} from "./BarraDeStatusPrestacaoDeContas";
 import DemonstrativoFinanceiroPorConta from "./DemonstrativoFinanceiroPorConta";
@@ -11,7 +11,7 @@ import Img404 from "../../../assets/img/img-404.svg";
 import Loading from "../../../utils/Loading";
 import {ModalConcluirPeriodo} from "./ModalConcluirPeriodo";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
-import {BoxPrestacaoDeContasPorPeriodo} from "../GeracaoDaAta/BoxPrestacaoDeContasPorPeriodo";
+import {GeracaoAtaApresentacao} from "../GeracaoDaAta/GeracaoAtaApresentacao";
 import {GeracaoAtaRetificadora} from "../GeracaoAtaRetificadora";
 import {exibeDateTimePT_BR_Ata} from "../../../utils/ValidacoesAdicionaisFormularios";
 import {visoesService} from "../../../services/visoes.service";
@@ -27,11 +27,13 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true});
     const [loading, setLoading] = useState(true);
     const [show, setShow] = useState(false);
-    const [corBoxPrestacaoDeContasPorPeriodo, setCorBoxPrestacaoDeContasPorPeriodo] = useState("");
-    const [textoBoxPrestacaoDeContasPorPeriodo, setTextoBoxPrestacaoDeContasPorPeriodo] = useState("");
-    const [dataBoxPrestacaoDeContasPorPeriodo, setDataBoxPrestacaoDeContasPorPeriodo] = useState("");
+    const [corBoxAtaApresentacao, setcorBoxAtaApresentacao] = useState("");
+    const [textoBoxAtaApresentacao, settextoBoxAtaApresentacao] = useState("");
+    const [dataBoxAtaApresentacao, setdataBoxAtaApresentacao] = useState("");
     const [uuidAtaApresentacao, setUuidAtaApresentacao] = useState("");
     const [gerarAta, setGerarAta] = useState(false);
+
+    const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
     useEffect(() => {
         if (statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'EM_PROCESSAMENTO'){
@@ -51,7 +53,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         getUuidPrestacaoDeConta();
         getContaPrestacaoDeConta();
         getPrimeiraContaPrestacaoDeConta();
-        setConfBoxPrestacaoDeContasPorPeriodo()
+        setConfBoxAtaApresentacao()
     }, []);
 
     useEffect(() => {
@@ -68,7 +70,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
 
     useEffect(() => {
         localStorage.setItem('uuidPrestacaoConta', uuidPrestacaoConta);
-        setConfBoxPrestacaoDeContasPorPeriodo();
+        setConfBoxAtaApresentacao();
     }, [uuidPrestacaoConta]);
 
     useEffect(() => {
@@ -158,6 +160,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
             setUuidPrestacaoConta(status.prestacao_conta);
             setStatusPrestacaoDeConta(status);
             setStatusPC(status)
+            await setConfBoxAtaApresentacao()
         }
         setLoading(false);
     };
@@ -197,10 +200,11 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
         setStatusPrestacaoDeConta(status);
         setStatusPC(status)
         await carregaPeriodos();
-        await setConfBoxPrestacaoDeContasPorPeriodo();
+        await setConfBoxAtaApresentacao();
     };
 
-    const setConfBoxPrestacaoDeContasPorPeriodo = async ()=>{
+    const setConfBoxAtaApresentacao = async ()=>{
+        console.log('============> setConfBoxAtaApresentacao')
         let uuid_prestacao_de_contas = localStorage.getItem('uuidPrestacaoConta');
         let data_preenchimento;
 
@@ -209,15 +213,15 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                 data_preenchimento = await getDataPreenchimentoAta(uuid_prestacao_de_contas);
                 localStorage.setItem("uuidAta", data_preenchimento.uuid);
                 setUuidAtaApresentacao(data_preenchimento.uuid)
-                setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
+                settextoBoxAtaApresentacao(data_preenchimento.nome);
                 if (data_preenchimento.alterado_em === null){
-                    setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
-                    setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
+                    setcorBoxAtaApresentacao("vermelho");
+                    setdataBoxAtaApresentacao("Ata não preenchida");
                     setGerarAta(false)
                 }
                 else {
-                    setCorBoxPrestacaoDeContasPorPeriodo("verde");
-                    setDataBoxPrestacaoDeContasPorPeriodo("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
+                    setcorBoxAtaApresentacao("verde");
+                    setdataBoxAtaApresentacao("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
                     setGerarAta(true)
                 }
 
@@ -225,13 +229,46 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                 data_preenchimento = await getIniciarAta(uuid_prestacao_de_contas);
                 localStorage.setItem("uuidAta", data_preenchimento.uuid);
                 setUuidAtaApresentacao(data_preenchimento.uuid)
-                setCorBoxPrestacaoDeContasPorPeriodo("vermelho");
-                setTextoBoxPrestacaoDeContasPorPeriodo(data_preenchimento.nome);
-                setDataBoxPrestacaoDeContasPorPeriodo("Ata não preenchida");
+                setcorBoxAtaApresentacao("vermelho");
+                settextoBoxAtaApresentacao(data_preenchimento.nome);
+                setdataBoxAtaApresentacao("Ata não preenchida");
                 setGerarAta(false)
             }
         }
-        setLoading(false);
+
+        if (!uuid_prestacao_de_contas && localStorage.getItem('periodoPrestacaoDeConta')) {
+            const periodo_prestacao_de_contas = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta'));
+            if (periodo_prestacao_de_contas.periodo_uuid) {
+                try {
+                    data_preenchimento = await getDataPreenchimentoPreviaAta(periodo_prestacao_de_contas.periodo_uuid);
+                    localStorage.setItem("uuidAta", data_preenchimento.uuid);
+                    setUuidAtaApresentacao(data_preenchimento.uuid)
+                    settextoBoxAtaApresentacao(data_preenchimento.nome);
+                    if (data_preenchimento.alterado_em === null) {
+                        setcorBoxAtaApresentacao("vermelho");
+                        setdataBoxAtaApresentacao("Ata não preenchida");
+                        setGerarAta(false)
+                    } else {
+                        setcorBoxAtaApresentacao("verde");
+                        setdataBoxAtaApresentacao("Último preenchimento em " + exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
+                        setGerarAta(true)
+                    }
+
+                } catch (e) {
+                    data_preenchimento = await getIniciarPreviaAta(associacaoUuid, periodo_prestacao_de_contas.periodo_uuid);
+                    localStorage.setItem("uuidAta", data_preenchimento.uuid);
+                    setUuidAtaApresentacao(data_preenchimento.uuid)
+                    setcorBoxAtaApresentacao("vermelho");
+                    settextoBoxAtaApresentacao(data_preenchimento.nome);
+                    setdataBoxAtaApresentacao("Ata não preenchida");
+                    setGerarAta(false)
+                }
+
+
+            }
+            setLoading(false);
+        }
+
     };
 
     const onClickVisualizarAta = async (uuid_ata) =>{
@@ -253,7 +290,10 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const podeBaixarDocumentos = [['baixar_documentos_prestacao_contas']].some(visoesService.getPermissoes)
 
     const exibeBoxAtaRetificadora = useCallback(() => {
-        return statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.periodo_bloqueado
+        console.log('statusPrestacaoDeConta', statusPrestacaoDeConta)
+        return statusPrestacaoDeConta &&
+            statusPrestacaoDeConta.prestacao_contas_status &&
+            (statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'DEVOLVIDA' || statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'DEVOLVIDA_RETORNADA' )
     }, [statusPrestacaoDeConta])
 
     useEffect(()=>{
@@ -336,18 +376,17 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                             podeGerarPrevias={podeGerarPrevias}
                                             podeBaixarDocumentos={podeBaixarDocumentos}
                                         />
-                                        {localStorage.getItem('uuidPrestacaoConta') &&
-                                        <BoxPrestacaoDeContasPorPeriodo
+                                        {/*{localStorage.getItem('uuidPrestacaoConta') &&*/}
+                                        <GeracaoAtaApresentacao
                                             onClickVisualizarAta={()=>onClickVisualizarAta(uuidAtaApresentacao)}
                                             setLoading={setLoading}
-                                            corBoxPrestacaoDeContasPorPeriodo={corBoxPrestacaoDeContasPorPeriodo}
-                                            textoBoxPrestacaoDeContasPorPeriodo={textoBoxPrestacaoDeContasPorPeriodo}
-                                            dataBoxPrestacaoDeContasPorPeriodo={dataBoxPrestacaoDeContasPorPeriodo}
+                                            corBoxAtaApresentacao={corBoxAtaApresentacao}
+                                            textoBoxAtaApresentacao={textoBoxAtaApresentacao}
+                                            dataBoxAtaApresentacao={dataBoxAtaApresentacao}
                                             uuidAtaApresentacao={uuidAtaApresentacao}
                                             uuidPrestacaoConta={uuidPrestacaoConta}
                                             gerarAta={gerarAta}
                                         />
-                                        }
 
                                         {localStorage.getItem('uuidPrestacaoConta') && exibeBoxAtaRetificadora() &&
                                         <GeracaoAtaRetificadora

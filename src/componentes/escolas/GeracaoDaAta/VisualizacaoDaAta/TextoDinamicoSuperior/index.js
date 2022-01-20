@@ -1,9 +1,26 @@
 import React from "react";
 
-export const TextoDinamicoSuperior = ({dadosAta, retornaDadosAtaFormatado}) => {
+export const TextoDinamicoSuperior = ({dadosAta, retornaDadosAtaFormatado, prestacaoDeContasDetalhe}) => {
     let primeiro_paragrafo = `ATA DA REUNIÃO ${retornaDadosAtaFormatado("tipo_reuniao")} DA Associação ${dadosAta.associacao.nome ? dadosAta.associacao.nome : "___"} DO(A) Unidade Educacional ${dadosAta.associacao.unidade.nome ? dadosAta.associacao.unidade.nome : "___"}`.toUpperCase();
+    const textoAlertaPrevia = 'Atenção! Essa é apenas uma prévia da ata. As informações aqui exibidas podem mudar até a conclusão da prestação de contas. A ata final só poderá ser criada após a conclusão do período.'
     return(
         <>
+            {/*Para as atas de apresentação (Não retificação)*/}
+            {/*Se não tem Prestação de Conta trata-se de uma prévia e exibe o texto de alertar*/}
+            {dadosAta && dadosAta.tipo_ata !== 'RETIFICACAO' && !dadosAta.prestacao_conta &&
+            <p>
+                <strong>{textoAlertaPrevia}</strong>
+            </p>
+            }
+
+            {/*Para as atas de retificação*/}
+            {/*Se o status da PC é DEVOLVIDA trata-se de uma prévia e não exibe o selecionar e copiar*/}
+            {dadosAta && dadosAta.tipo_ata === 'RETIFICACAO' && prestacaoDeContasDetalhe && prestacaoDeContasDetalhe.status && prestacaoDeContasDetalhe.status === 'DEVOLVIDA' &&
+            <p>
+                <strong>{textoAlertaPrevia}</strong>
+            </p>
+            }
+
             <p>
                 {primeiro_paragrafo}
             </p>
