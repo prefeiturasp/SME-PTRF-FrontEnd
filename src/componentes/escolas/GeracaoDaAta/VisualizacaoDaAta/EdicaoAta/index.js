@@ -90,6 +90,7 @@ export const EdicaoAta = () => {
             cargo_secretaria_reuniao: dados_ata.cargo_secretaria_reuniao,
             retificacoes: dados_ata.retificacoes,
             hora_reuniao: dados_ata.hora_reuniao,
+            tipo_ata: dados_ata.tipo_ata
         });
         setDadosAta(dados_ata);
     };
