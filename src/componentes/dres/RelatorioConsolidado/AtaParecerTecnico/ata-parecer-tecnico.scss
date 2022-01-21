@@ -1,0 +1,146 @@
+.container-titulo-ata-parecer-tecnico {
+    border: 1px solid #DADADA;
+    background-color: #F3F3F3;
+}
+  
+.container-corpo-ata-parecer-tecnico {
+    border: 1px solid #DADADA;
+}
+
+.titulo-ata-parecer-tecnico {
+    color: #2B7D83;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.documento-pendente-ata-parecer-tecnico {
+    color: #B40C02;
+}
+
+.ata-nao-preenchida{
+    color: #B40C02;
+}
+
+.ata-preenchida {
+    color: green;
+}
+
+
+.container-visualizacao-da-ata-parecer-tecnico{
+    margin-top: 69px;
+    color: #000 !important;
+
+    .titulo-visualizacao-da-ata-parecer-tecnico{
+        font-size: 24px;
+        font-weight: bold;
+        color: #42474A;
+    }
+
+    .subtitulo-visualizacao-da-ata-parecer-tecnico{
+        color: #2B7D83;
+        font-size: 16px;;
+    }
+}
+
+.titulo-texto-dinamico-superior {
+    font-size: 22px;
+    font-weight: bold;
+    color:#42474A
+}
+
+.texto-dinamico-superior {
+    color: #42474A;
+    font-size: 16px;
+}
+
+.tabela-status-pc tbody:nth-child(odd) {
+    background-color: #F3F3F3;
+}
+
+.tabela-status-pc th{
+    background-color: #F5F6F8;
+}
+
+.titulo-tabelas {
+    font-size: 16px;
+    color: #42474A;
+}
+
+.titulo-tabelas-aprovadas {
+    color: #297805
+}
+
+.titulo-tabelas-reprovadas {
+    color: #b40c02
+}
+
+.titulo-tabelas-conta {
+    border-bottom-color: #A4A4A4;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    color: #2B7D83;
+    font-size: 18px;
+}
+
+.lista-vazia {
+    color: #42474A;
+    font-size: 16px;
+    font-style: italic;
+}
+
+.titulo-motivos {
+    color: #42474A;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.titulo-assinaturas {
+    color: #42474A;
+    font-size: 16px;
+}
+
+.box-assinaturas {
+    border: 1px solid #A4A4A4;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #42474A;
+}
+
+.linha-assinatura {
+    border-top: 1px solid #A4A4A4 !important;
+}
+
+.titulo-edicao-ata {
+    color: #42474A;
+    font-size: 18px;
+}
+
+.titulo-edicao-ata-presentes {
+    color: #2B7D83;
+    font-size: 16px;
+}
+
+.div-form-edicao-ata-parecer-tecnico {
+    color: #42474A;
+}
+
+.btn-remover-presente {
+    color: #B40C02;
+}
+
+.btn-remover-presente:hover {
+    color: #B40C02;
+}
+
+.titulo-comentarios {
+    font-size: 14px;
+}
+
+.titulo-comentarios-opcional {
+    color: #a4a4a4
+}
+
+.classe-status {
+    color:#297805;
+    font-weight: bold;
+}

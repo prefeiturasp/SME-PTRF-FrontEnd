@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getFiqueDeOlhoRelatoriosConsolidados, getConsultarStatus, getTiposConta, getDownloadRelatorio, postGerarPreviaRelatorio, postGerarLauda} from "../../../services/dres/RelatorioConsolidado.service";
+import {getFiqueDeOlhoRelatoriosConsolidados, getConsultarStatus, getTiposConta, getDownloadRelatorio, postGerarPreviaRelatorio, postGerarLauda, getStatusAta} from "../../../services/dres/RelatorioConsolidado.service";
 import {getItensDashboard, getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {SelectConta} from "./SelectConta";
@@ -9,6 +9,7 @@ import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {visoesService} from "../../../services/visoes.service";
 import {BarraDeStatus} from "./BarraDeStatus";
 import {ExecucaoFinanceira} from "./ExecucaoFinanceira";
+import { AtaParecerTecnico } from "./AtaParecerTecnico";
 import './relatorio-consolidado.scss'
 import Loading from "../../../utils/Loading";
 import { ModalMsgGeracaoRelatorio, ModalMsgGeracaoLauda } from "./ModalMsgGeracaoRelatorio";
@@ -30,6 +31,7 @@ export const RelatorioConsolidado = () => {
     const [showModalMsgGeracaoLauda, setShowModalMsgGeracaoLauda] = useState(false);
     const [msgGeracaoRelatorio, setMsgGeracaoRelatorio] = useState('');
     const [msgGeracaoLauda, setMsgGeracaoLauda] = useState('');
+    const [ataParecerTecnico, setAtaParecerTecnico] = useState({});
 
     useEffect(() => {
         if (statusRelatorio && statusRelatorio.status_geracao && statusRelatorio.status_geracao === "EM_PROCESSAMENTO") {
@@ -64,6 +66,10 @@ export const RelatorioConsolidado = () => {
     useEffect(() => {
         retornaQtdeEmAnalise();
     }, [itensDashboard]);
+
+    useEffect(() => {
+        consultarStatusAta();
+    }, [periodoEscolhido]);
 
     const carregaPeriodos = async () => {
         let periodos = await getPeriodos();
@@ -151,8 +157,19 @@ export const RelatorioConsolidado = () => {
         }
     };
 
+    const consultarStatusAta = async() => {
+        if(dre_uuid && periodoEscolhido){
+            let ata = await getStatusAta(dre_uuid, periodoEscolhido);
+            setAtaParecerTecnico(ata)
+        }
+    }
+
     const onClickVerRelatorio = () =>{
         window.location.assign(`/dre-relatorio-consolidado-apuracao/${periodoEscolhido}/${contaEscolhida}/`)
+    };
+
+    const onClickVerAta = (uuid_ata) =>{
+        window.location.assign(`/visualizacao-da-ata-parecer-tecnico/${uuid_ata}/`)
     };
 
     const textoBtnRelatorio = () =>{
@@ -280,6 +297,14 @@ export const RelatorioConsolidado = () => {
                                         gerarPrevia={gerarPrevia}
                                         downloadPreviaRelatorio={downloadPreviaRelatorio}
                                     />
+                                    
+                                    {statusRelatorio.versao === "FINAL" && ataParecerTecnico &&
+                                        <AtaParecerTecnico
+                                            statusRelatorio={statusRelatorio}
+                                            ataParecerTecnico={ataParecerTecnico}
+                                            onClickVerAta={onClickVerAta}
+                                        />
+                                    }
                                 </>
 
                             ) :
