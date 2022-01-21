@@ -3,9 +3,27 @@ import './ata-parecer-tecnico.scss';
 import { exibeDateTimePT_BR_Ata } from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 
-export const AtaParecerTecnico = ({ataParecerTecnico, onClickVerAta}) => {
-    let classeMensagem = ataParecerTecnico.alterado_em === null ? "ata-nao-preenchida" : "ata-preenchida";
-    let mensagem = ataParecerTecnico.alterado_em === null ? "Ata não preenchida" : "Último preenchimento em " + exibeDateTimePT_BR_Ata(ataParecerTecnico.alterado_em);
+export const AtaParecerTecnico = ({ataParecerTecnico, onClickVerAta, disablebtnVisualizarAta}) => {
+    const mensagem = (ata) => {
+        if(ata.uuid === undefined){
+            return "Documento pendente de geração";        
+        }
+        else if(ata.uuid && ata.alterado_em){
+            return "Último preenchimento em " + exibeDateTimePT_BR_Ata(ata.alterado_em);
+        }
+        else if(ata.uuid && ata.alterado_em === null){
+            return "Ata não preenchida";
+        }
+    }
+
+    const classeMensagem = (ata) => {
+        if(ata.uuid === undefined || ata.alterado_em === null){
+            return "ata-nao-preenchida"       
+        }
+        else if(ata.uuid && ata.alterado_em){
+            return "ata-preenchida"
+        }
+    }
 
     return (
         <>
@@ -21,6 +39,7 @@ export const AtaParecerTecnico = ({ataParecerTecnico, onClickVerAta}) => {
                                 onClick={() => onClickVerAta(ataParecerTecnico.uuid)}
                                 type="button"
                                 className="btn btn-success"
+                                disabled={disablebtnVisualizarAta}
                             >
                                 Visualizar ata
                             </button>
@@ -30,9 +49,9 @@ export const AtaParecerTecnico = ({ataParecerTecnico, onClickVerAta}) => {
                     <div className="row container-corpo-ata-parecer-tecnico ml-0 mr-0">
                         <div className="col-12 pt-2 pl-2 pr-2 pb-0">
                             <p className='fonte-14 mb-1'><strong>Ata de apresentação de Parecer Técnico Conclusivo</strong></p>
-                            <p className={`fonte-12 mb-2 ${classeMensagem}`}>
+                            <p className={`fonte-12 mb-2 ${classeMensagem(ataParecerTecnico)}`}>
                                 <span>
-                                    {mensagem}
+                                    {mensagem(ataParecerTecnico)}
                                 </span>
                             </p>
                         </div>

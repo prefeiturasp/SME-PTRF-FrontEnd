@@ -32,6 +32,7 @@ export const RelatorioConsolidado = () => {
     const [msgGeracaoRelatorio, setMsgGeracaoRelatorio] = useState('');
     const [msgGeracaoLauda, setMsgGeracaoLauda] = useState('');
     const [ataParecerTecnico, setAtaParecerTecnico] = useState({});
+    const [disablebtnVisualizarAta, setDisablebtnVisualizarAta] = useState(true);
 
     useEffect(() => {
         if (statusRelatorio && statusRelatorio.status_geracao && statusRelatorio.status_geracao === "EM_PROCESSAMENTO") {
@@ -69,7 +70,7 @@ export const RelatorioConsolidado = () => {
 
     useEffect(() => {
         consultarStatusAta();
-    }, [periodoEscolhido]);
+    }, [periodoEscolhido, statusRelatorio]);
 
     const carregaPeriodos = async () => {
         let periodos = await getPeriodos();
@@ -158,9 +159,18 @@ export const RelatorioConsolidado = () => {
     };
 
     const consultarStatusAta = async() => {
-        if(dre_uuid && periodoEscolhido){
-            let ata = await getStatusAta(dre_uuid, periodoEscolhido);
-            setAtaParecerTecnico(ata)
+        if(dre_uuid && periodoEscolhido && statusRelatorio.versao === "FINAL"){
+            try{
+                let ata = await getStatusAta(dre_uuid, periodoEscolhido);
+                setAtaParecerTecnico(ata)
+                setDisablebtnVisualizarAta(false);
+            }
+            catch{
+                console.log("Ata não encontrada")
+                setDisablebtnVisualizarAta(true);
+            }
+
+            
         }
     }
 
@@ -298,11 +308,12 @@ export const RelatorioConsolidado = () => {
                                         downloadPreviaRelatorio={downloadPreviaRelatorio}
                                     />
                                     
-                                    {statusRelatorio.versao === "FINAL" && ataParecerTecnico &&
+                                    {statusRelatorio.versao === "FINAL" && statusRelatorio.status_geracao === "GERADO_TOTAL" && ataParecerTecnico &&
                                         <AtaParecerTecnico
                                             statusRelatorio={statusRelatorio}
                                             ataParecerTecnico={ataParecerTecnico}
                                             onClickVerAta={onClickVerAta}
+                                            disablebtnVisualizarAta={disablebtnVisualizarAta}
                                         />
                                     }
                                 </>
