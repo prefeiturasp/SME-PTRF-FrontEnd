@@ -140,7 +140,8 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                                 name="stateFormEditarAta.numero_ata"
                                                 className="form-control"
                                                 disabled={!podeEditarAta}
-                                                type="text"
+                                                type="number"
+                                                min="1"
                                             />
                                         </div>
 
