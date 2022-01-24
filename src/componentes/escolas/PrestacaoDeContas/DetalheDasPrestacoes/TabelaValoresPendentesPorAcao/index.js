@@ -2,7 +2,6 @@ import React, {memo} from "react";
 import "./styles.css";
 
 const TabelaValoresPendentesPorAcao = ({valoresPendentes, valorTemplate}) =>{
-
     return(
         <>
             <p className="detalhe-das-prestacoes-titulo-lancamentos">Quadro resumo</p>
@@ -19,8 +18,8 @@ const TabelaValoresPendentesPorAcao = ({valoresPendentes, valorTemplate}) =>{
                 <tr>
                     <th scope="row">Saldo reprogramado anterior</th>
                     <td>{valorTemplate(valoresPendentes.saldo_anterior)}</td>
-                    <td className='coluna-cinza-escuro'>{valorTemplate(valoresPendentes.saldo_anterior)}</td>
-                    <td className='coluna-cinza-escuro'> </td>
+                    <td className='coluna-cinza-escuro'>{valorTemplate(valoresPendentes.saldo_anterior_conciliado)}</td>
+                    <td className='coluna-cinza-escuro'>{valorTemplate(valoresPendentes.saldo_anterior_nao_conciliado)}</td>
                 </tr>
                 <tr>
                     <th scope="row">Créditos</th>
