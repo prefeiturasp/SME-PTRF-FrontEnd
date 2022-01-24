@@ -68,6 +68,8 @@ import {ResumoDosAcertos} from "../componentes/dres/PrestacaoDeContas/DetalhePre
 import ConsultaDetalhamentoAnaliseDaDre from "../componentes/escolas/AnaliseDre/ConsultaDetalhamentoAnaliseDaDre";
 import CadastroDeMembrosDaAssociacao from "../componentes/escolas/Associacao/Membros/CadastroDeMembrosDaAssociacao";
 import {AnalisesRegularidadePage} from "../componentes/dres/RegularidadeAssociacoes/AnalisesRegularidade";
+import { VisualizacaoDaAtaParecerTecnico } from "../componentes/dres/RelatorioConsolidado/AtaParecerTecnico/VisualizacaoAtaParecerTecnico";
+import { EdicaoAtaParecerTecnico } from "../componentes/dres/RelatorioConsolidado/AtaParecerTecnico/VisualizacaoAtaParecerTecnico/EdicaoAta";
 
 const routesConfig = [
     {
@@ -302,7 +304,18 @@ const routesConfig = [
         component: RelatorioConsolidadoPage,
         permissoes: ['access_relatorio_consolidado_dre'],
     },
-
+    {
+        exact: true,
+        path: "/visualizacao-da-ata-parecer-tecnico/:uuid_ata",
+        component: VisualizacaoDaAtaParecerTecnico,
+        permissoes: ['access_relatorio_consolidado_dre'],
+    },
+    {
+        exact: true,
+        path: "/edicao-da-ata-parecer-tecnico/:uuid_ata",
+        component: EdicaoAtaParecerTecnico,
+        permissoes: ['access_relatorio_consolidado_dre'],
+    },
     {
         exact: true,
         path: "/dre-relatorio-consolidado-apuracao/:periodo_uuid/:conta_uuid/",
