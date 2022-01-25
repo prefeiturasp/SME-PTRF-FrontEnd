@@ -33,6 +33,7 @@ export const RelatorioConsolidado = () => {
     const [msgGeracaoLauda, setMsgGeracaoLauda] = useState('');
     const [ataParecerTecnico, setAtaParecerTecnico] = useState({});
     const [disablebtnVisualizarAta, setDisablebtnVisualizarAta] = useState(true);
+    const [disablebtnGerarLauda, setDisablebtnGerarLauda] = useState(true);
 
     useEffect(() => {
         if (statusRelatorio && statusRelatorio.status_geracao && statusRelatorio.status_geracao === "EM_PROCESSAMENTO") {
@@ -164,10 +165,12 @@ export const RelatorioConsolidado = () => {
                 let ata = await getStatusAta(dre_uuid, periodoEscolhido);
                 setAtaParecerTecnico(ata)
                 setDisablebtnVisualizarAta(false);
+                setDisablebtnGerarLauda(false);
             }
             catch{
                 console.log("Ata não encontrada")
                 setDisablebtnVisualizarAta(true);
+                setDisablebtnGerarLauda(true);
             }
 
             
@@ -292,6 +295,7 @@ export const RelatorioConsolidado = () => {
                             handleChangeContas={handleChangeContas}
                             onClickVerRelatorio={onClickVerRelatorio}
                             gerarLauda={gerarLauda}
+                            disablebtnGerarLauda={disablebtnGerarLauda}
                         />
                         }
                         {periodoEscolhido && itensDashboard ? (
