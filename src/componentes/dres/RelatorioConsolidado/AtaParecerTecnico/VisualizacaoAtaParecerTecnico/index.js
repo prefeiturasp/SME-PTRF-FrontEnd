@@ -64,6 +64,43 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         }
     };
 
+    const horaPorExtenso = (hora_reuniao) => {
+        let hora = hora_reuniao.split(":")[0];
+        let minuto = hora_reuniao.split(":")[1];
+        let texto_hora = "";
+        let texto_minuto = "";
+        let hora_extenso = "";
+
+        // Corrigindo os plurais de hora e minuto
+        if (hora === "01" || hora === "00"){
+            texto_hora = "hora"
+        }
+        else{
+            texto_hora = "horas"
+        }
+
+        if (minuto === "01" || minuto === "00"){
+            texto_minuto = "minuto"
+        }
+        else{
+            texto_minuto = "minutos"
+        }
+        
+
+        // Corrigindo o genero de hora
+        let hora_genero = numero.porExtenso(hora).replace("um", "uma").replace("dois", "duas")
+
+        if(numero.porExtenso(minuto) === "zero"){
+            hora_extenso = `${hora_genero} ${texto_hora}`
+        }
+        else{
+            hora_extenso = `${hora_genero} ${texto_hora} e ${numero.porExtenso(minuto)} ${texto_minuto}`;
+        }
+
+        return hora_extenso;
+        
+    }
+
     const retornaDadosAtaFormatado = (campo) => {
         if (campo === "periodo.data_inicio_realizacao_despesas") {
             return dadosAta.periodo.data_inicio_realizacao_despesas ? moment(new Date(
@@ -76,10 +113,22 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         else if (campo === "data_reuniao") {
             return dataPorExtenso(dadosAta.data_reuniao);
         }
-        else if (campo === "numero_ata"){
+        else if (campo === "numero_ata") {
             let numero_ata = dadosAta.numero_ata ? dadosAta.numero_ata : "";
             let ano = dadosAta.data_reuniao ? moment(new Date(dadosAta.data_reuniao), "YYYY-MM-DD").format("YYYY") : ""
             return numero_ata && ano ? `${numero_ata}/${ano}` : ""
+        }
+        else if(campo === "numero_portaria") {
+            let numero_ata = dadosAta.numero_portaria ? dadosAta.numero_portaria : "";
+            let ano = dadosAta.data_portaria ? moment(new Date(dadosAta.data_portaria), "YYYY-MM-DD").format("YYYY") : ""
+            return numero_ata && ano ? `${numero_ata}/${ano}` : ""
+        }
+        else if(campo === "data_portaria") {
+            return dadosAta.data_portaria ? moment(new Date(
+                dadosAta.data_portaria), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY") : "";
+        }
+        else if(campo === "hora_reuniao"){
+            return horaPorExtenso(dadosAta.hora_reuniao);
         }
     };
 

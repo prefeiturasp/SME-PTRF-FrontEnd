@@ -86,7 +86,7 @@ export const TabelaAprovadas = ({infoContas, valorTemplate, status, exibirUltimo
                                         <td>Custeio</td>
                                         <td>{valorTemplate(info.valores.saldo_reprogramado_periodo_anterior_custeio)}</td>
                                         <td>{valorTemplate(info.valores.repasses_no_periodo_custeio)}</td>
-                                        <td>{valorTemplate(info.valores.repasses_no_periodo_custeio)}</td>
+                                        <td>{valorTemplate(info.valores.receitas_rendimento_no_periodo_custeio)}</td>
                                         <td>{valorTemplate(info.valores.demais_creditos_no_periodo_custeio)}</td>
                                         <td>{valorTemplate(info.valores.despesas_no_periodo_custeio)}</td>
                                         <td>{valorTemplate(info.valores.saldo_reprogramado_proximo_periodo_custeio)}</td>
@@ -98,7 +98,7 @@ export const TabelaAprovadas = ({infoContas, valorTemplate, status, exibirUltimo
                                         <td>Capital</td>
                                         <td>{valorTemplate(info.valores.saldo_reprogramado_periodo_anterior_capital)}</td>
                                         <td>{valorTemplate(info.valores.repasses_no_periodo_capital)}</td>
-                                        <td>{valorTemplate(info.valores.repasses_no_periodo_capital)}</td>
+                                        <td>{valorTemplate(info.valores.receitas_rendimento_no_periodo_capital)}</td>
                                         <td>{valorTemplate(info.valores.demais_creditos_no_periodo_capital)}</td>
                                         <td>{valorTemplate(info.valores.despesas_no_periodo_capital)}</td>
                                         <td>{valorTemplate(info.valores.saldo_reprogramado_proximo_periodo_capital)}</td>
@@ -109,7 +109,7 @@ export const TabelaAprovadas = ({infoContas, valorTemplate, status, exibirUltimo
                                         <td>RLA</td>
                                         <td>{valorTemplate(info.valores.saldo_reprogramado_periodo_anterior_livre)}</td>
                                         <td>{valorTemplate(info.valores.repasses_no_periodo_livre)}</td>
-                                        <td>{valorTemplate(info.valores.repasses_no_periodo_livre)}</td>
+                                        <td>{valorTemplate(info.valores.receitas_rendimento_no_periodo_livre)}</td>
                                         <td>{valorTemplate(info.valores.demais_creditos_no_periodo_livre)}</td>
                                         <td>-</td>
                                         <td>{valorTemplate(info.valores.saldo_reprogramado_proximo_periodo_livre)}</td>

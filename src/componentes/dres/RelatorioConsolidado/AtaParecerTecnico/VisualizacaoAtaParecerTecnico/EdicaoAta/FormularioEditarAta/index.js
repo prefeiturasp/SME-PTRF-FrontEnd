@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import { consultarRF } from "../../../../../../../services/escolas/Associacao.service";
 import {visoesService} from "../../../../../../../services/visoes.service"
+import {apenasNumero} from "../../../../../../../utils/ValidacoesAdicionaisFormularios";
 
 
 export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateFormEditarAta, uuid_ata, formRef, onSubmitFormEdicaoAta, setDisableBtnSalvar}) => {
@@ -106,6 +107,29 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
         return false;
     }
 
+    const onHandleChangeNumeroPortaria = (e, setFieldValue) => {
+        let valor = e.target.value;
+
+        if(apenasNumero(valor)){
+           setFieldValue('stateFormEditarAta.numero_portaria', valor)
+        }
+    }
+
+    const onHandleChangeNumeroAta = (e, setFieldValue) => {
+        let valor = e.target.value;
+
+        if(apenasNumero(valor)){
+           setFieldValue('stateFormEditarAta.numero_ata', valor)
+        }
+    }
+
+    const onHandleChangeNumeroRf = (e, setFieldValue, index) => {
+        let valor = e.target.value;
+
+        if(apenasNumero(valor)){
+            setFieldValue(`listaPresentes[${index}].rf`, valor);
+        }
+    }
 
     return (
         
@@ -136,17 +160,19 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                             <label htmlFor="stateFormEditarAta.numero_ata">Número da Ata</label>
                                             <input
                                                 value={values.stateFormEditarAta.numero_ata}
-                                                onChange={props.handleChange}
+                                                onChange={(e) => {
+                                                    onHandleChangeNumeroAta(e, setFieldValue);
+                                                }}
                                                 name="stateFormEditarAta.numero_ata"
+                                                id="stateFormEditarAta.numero_ata"
                                                 className="form-control"
                                                 disabled={!podeEditarAta}
-                                                type="number"
-                                                min="1"
+                                                type="text"
                                             />
                                         </div>
 
                                         <div className="col">
-                                            <label htmlFor="stateFormEditarAta.data_reuniao">Data</label>
+                                            <label htmlFor="stateFormEditarAta.data_reuniao">Data da reunião</label>
                                             <DatePickerField
                                                 name="stateFormEditarAta.data_reuniao"
                                                 value={values.stateFormEditarAta.data_reuniao}
@@ -169,7 +195,32 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
 
                                     </div>
 
-                                    <div className="form-row">
+                                    <div className="form-row mt-2">
+                                        <div className="col">
+                                            <label htmlFor="stateFormEditarAta.numero_portaria">Número da portaria</label>
+                                            <input
+                                                value={values.stateFormEditarAta.numero_portaria}
+                                                onChange={(e) => {
+                                                    onHandleChangeNumeroPortaria(e, setFieldValue);
+                                                }}
+                                                name="stateFormEditarAta.numero_portaria"
+                                                id="stateFormEditarAta.numero_portaria"
+                                                className="form-control"
+                                                disabled={!podeEditarAta}
+                                                type="text"
+                                            />
+                                        </div>
+
+                                        <div className="col">
+                                            <label htmlFor="stateFormEditarAta.data_portaria">Data da portaria</label>
+                                            <DatePickerField
+                                                name="stateFormEditarAta.data_portaria"
+                                                value={values.stateFormEditarAta.data_portaria}
+                                                onChange={setFieldValue}
+                                                disabled={!podeEditarAta}
+                                            />
+                                        </div>
+
                                         <div className="col">
                                             <label htmlFor="stateFormEditarAta.local_reuniao">Local da reunião</label>
                                             <input
@@ -199,7 +250,7 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                                                         className="form-control"
                                                                         value={presente.rf}
                                                                         onChange={(e) => {
-                                                                            props.handleChange(e);
+                                                                            onHandleChangeNumeroRf(e, setFieldValue, index);
                                                                             handleChangeRf(e, setFieldValue, index, values.listaPresentes)
                                                                         }}
                                                                         disabled={!presente.editavel}
