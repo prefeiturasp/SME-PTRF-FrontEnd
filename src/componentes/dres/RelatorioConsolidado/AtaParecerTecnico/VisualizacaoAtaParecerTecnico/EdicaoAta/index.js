@@ -26,6 +26,8 @@ export const EdicaoAtaParecerTecnico = () => {
         hora_reuniao: "",
         local_reuniao: "",
         comentarios: "",
+        numero_portaria: "",
+        data_portaria: ""
     });
     const [disableBtnSalvar, setDisableBtnSalvar] = useState(false)
     const [dadosAta, setDadosAta] = useState({});
@@ -34,12 +36,15 @@ export const EdicaoAtaParecerTecnico = () => {
     const getDadosAta = async () => {
         let dados_ata = await getAtaParecerTecnico(uuid_ata);
         let data_da_reuniao = dados_ata.data_reuniao ? dados_ata.data_reuniao : "";
+        let data_da_portaria = dados_ata.data_portaria ? dados_ata.data_portaria : "";
         setStateFormEditarAta({
             numero_ata: dados_ata.numero_ata,
             data_reuniao: data_da_reuniao,
             hora_reuniao: dados_ata.hora_reuniao,
             local_reuniao: dados_ata.local_reuniao,
             comentarios: dados_ata.comentarios,
+            numero_portaria: dados_ata.numero_portaria,
+            data_portaria: data_da_portaria
         });
         setDadosAta(dados_ata);
         setListaPresentes(dados_ata.presentes_na_ata)
@@ -59,6 +64,8 @@ export const EdicaoAtaParecerTecnico = () => {
         let data_da_reuniao = dadosForm.stateFormEditarAta.data_reuniao ? moment(dadosForm.stateFormEditarAta.data_reuniao).format("YYYY-MM-DD") : null;
         let hora_reuniao = dadosForm.stateFormEditarAta.hora_reuniao ? moment(dadosForm.stateFormEditarAta.hora_reuniao, 'HHmm').format('HH:mm') : "00:00" 
 
+        let data_da_portaria = dadosForm.stateFormEditarAta.data_portaria ? moment(dadosForm.stateFormEditarAta.data_portaria).format("YYYY-MM-DD") : null;
+
         let payload = {
             numero_ata : dadosForm.stateFormEditarAta.numero_ata,
             data_reuniao: data_da_reuniao,
@@ -66,6 +73,8 @@ export const EdicaoAtaParecerTecnico = () => {
             local_reuniao: dadosForm.stateFormEditarAta.local_reuniao,
             presentes_na_ata: dadosForm.listaPresentes,
             comentarios: dadosForm.stateFormEditarAta.comentarios,
+            numero_portaria: dadosForm.stateFormEditarAta.numero_portaria,
+            data_portaria: data_da_portaria
         }
 
         try {
