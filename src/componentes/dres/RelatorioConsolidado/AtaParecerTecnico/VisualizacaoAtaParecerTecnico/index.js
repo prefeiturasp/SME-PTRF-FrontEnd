@@ -119,16 +119,35 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
             return numero_ata && ano ? `${numero_ata}/${ano}` : ""
         }
         else if(campo === "numero_portaria") {
-            let numero_ata = dadosAta.numero_portaria ? dadosAta.numero_portaria : "";
+            let numero_portaria = dadosAta.numero_portaria ? dadosAta.numero_portaria : "";
             let ano = dadosAta.data_portaria ? moment(new Date(dadosAta.data_portaria), "YYYY-MM-DD").format("YYYY") : ""
-            return numero_ata && ano ? `${numero_ata}/${ano}` : ""
+            if(numero_portaria && ano){
+                return `${numero_portaria}/${ano}`;
+            }
+            else{
+                return "_______"
+            } 
         }
         else if(campo === "data_portaria") {
-            return dadosAta.data_portaria ? moment(new Date(
-                dadosAta.data_portaria), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY") : "";
+            if(dadosAta.data_portaria){
+                return moment(new Date(
+                    dadosAta.data_portaria), "YYYY-MM-DD").add(1, 'days').format("DD/MM/YYYY");
+            }
+            else{
+                return "__________";
+            }
         }
         else if(campo === "hora_reuniao"){
             return horaPorExtenso(dadosAta.hora_reuniao);
+        }
+        else if(campo === "nome_dre"){
+            let nome_dre = dadosAta.dre.nome.toUpperCase();
+            if(nome_dre.indexOf("DIRETORIA REGIONAL DE EDUCACAO") !== -1){
+                nome_dre = nome_dre.replace("DIRETORIA REGIONAL DE EDUCACAO", "")
+                nome_dre = nome_dre.trim();
+            }
+            
+            return nome_dre;
         }
     };
 
