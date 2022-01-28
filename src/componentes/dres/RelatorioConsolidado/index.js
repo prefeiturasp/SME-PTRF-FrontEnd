@@ -13,6 +13,8 @@ import { AtaParecerTecnico } from "./AtaParecerTecnico";
 import './relatorio-consolidado.scss'
 import Loading from "../../../utils/Loading";
 import { ModalMsgGeracaoRelatorio, ModalMsgGeracaoLauda } from "./ModalMsgGeracaoRelatorio";
+import { getDownloadAtaParecerTecnico, getGerarAta } from "../../../services/dres/AtasParecerTecnico.service";
+import {toastCustom} from "../../Globais/ToastCustom";
 
 export const RelatorioConsolidado = () => {
 
@@ -33,12 +35,23 @@ export const RelatorioConsolidado = () => {
     const [msgGeracaoLauda, setMsgGeracaoLauda] = useState('');
     const [ataParecerTecnico, setAtaParecerTecnico] = useState({});
     const [disablebtnVisualizarAta, setDisablebtnVisualizarAta] = useState(true);
+    const [disablebtnGerarAta, setDisablebtnGerarAta] = useState(true);
     const [disablebtnGerarLauda, setDisablebtnGerarLauda] = useState(true);
 
     useEffect(() => {
         if (statusRelatorio && statusRelatorio.status_geracao && statusRelatorio.status_geracao === "EM_PROCESSAMENTO") {
             const timer = setInterval(() => {
                 consultarStatus();
+            }, 5000);
+            // clearing interval
+            return () => clearInterval(timer);
+        }
+    });
+
+    useEffect(() => {
+        if (ataParecerTecnico && ataParecerTecnico.status_geracao_pdf && ataParecerTecnico.status_geracao_pdf === "EM_PROCESSAMENTO") {
+            const timer = setInterval(() => {
+                consultarStatusAta();
             }, 5000);
             // clearing interval
             return () => clearInterval(timer);
@@ -165,11 +178,14 @@ export const RelatorioConsolidado = () => {
                 let ata = await getStatusAta(dre_uuid, periodoEscolhido);
                 setAtaParecerTecnico(ata)
                 setDisablebtnVisualizarAta(false);
+                setDisablebtnGerarAta(false);
                 setDisablebtnGerarLauda(false);
             }
             catch{
+                setAtaParecerTecnico({})
                 console.log("Ata não encontrada")
                 setDisablebtnVisualizarAta(true);
+                setDisablebtnGerarAta(true);
                 setDisablebtnGerarLauda(true);
             }
 
@@ -253,6 +269,10 @@ export const RelatorioConsolidado = () => {
         await getDownloadRelatorio(dre_uuid, periodoEscolhido, contaEscolhida, statusRelatorio.versao);
     };
 
+    const downloadAtaParecerTecnico = async () =>{
+        await getDownloadAtaParecerTecnico(ataParecerTecnico.uuid);
+    };
+
     const onHandleClose = () => {
         setShowModalMsgGeracaoRelatorio(false);
     };
@@ -260,6 +280,22 @@ export const RelatorioConsolidado = () => {
     const onHandleCloseModalMsgLauda = () => {
         setShowModalMsgGeracaoLauda(false);
     };
+
+    const handleClickGerarAta = async () => {
+        try {
+            await getGerarAta(ataParecerTecnico.uuid, dre_uuid, periodoEscolhido);
+            let mensagem_parte_1 = "Quando a geração for concluída um botão para download ficará"
+            let mensagem_parte_2 = "disponível na área da Ata."
+            toastCustom.ToastCustomInfo('Ata sendo gerada', <span>{mensagem_parte_1} <br/> {mensagem_parte_2}</span>)
+            setAtaParecerTecnico({
+                ...ataParecerTecnico,
+                status_geracao_pdf: "EM_PROCESSAMENTO"
+            })
+        }
+        catch (e) {
+            console.log('Erro ao gerar ata ', e.response.data);
+        }
+    }
 
     return (
         <>
@@ -318,6 +354,9 @@ export const RelatorioConsolidado = () => {
                                             ataParecerTecnico={ataParecerTecnico}
                                             onClickVerAta={onClickVerAta}
                                             disablebtnVisualizarAta={disablebtnVisualizarAta}
+                                            downloadAtaParecerTecnico={downloadAtaParecerTecnico}
+                                            handleClickGerarAta={handleClickGerarAta}
+                                            disablebtnGerarAta={disablebtnGerarAta}
                                         />
                                     }
                                 </>

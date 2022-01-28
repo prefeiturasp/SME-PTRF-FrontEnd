@@ -95,7 +95,6 @@ export const RelatorioConsolidadoApuracao = () => {
         if (dre_uuid && periodo_uuid && conta_uuid) {
             let status = await getConsultarStatus(dre_uuid, periodo_uuid, conta_uuid);
             setStatusRelatorio(status);
-            console.log('Status:', status)
         }
     };
 

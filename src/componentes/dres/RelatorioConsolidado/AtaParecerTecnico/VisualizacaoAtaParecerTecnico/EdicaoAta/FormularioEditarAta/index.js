@@ -159,7 +159,7 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                         <div className="col">
                                             <label htmlFor="stateFormEditarAta.numero_ata">Número da Ata</label>
                                             <input
-                                                value={values.stateFormEditarAta.numero_ata}
+                                                value={values.stateFormEditarAta.numero_ata ? values.stateFormEditarAta.numero_ata : ''}
                                                 onChange={(e) => {
                                                     onHandleChangeNumeroAta(e, setFieldValue);
                                                 }}
@@ -175,7 +175,7 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                             <label htmlFor="stateFormEditarAta.data_reuniao">Data da reunião</label>
                                             <DatePickerField
                                                 name="stateFormEditarAta.data_reuniao"
-                                                value={values.stateFormEditarAta.data_reuniao}
+                                                value={values.stateFormEditarAta.data_reuniao ? values.stateFormEditarAta.data_reuniao : ''}
                                                 onChange={setFieldValue}
                                                 disabled={!podeEditarAta}
                                             />
@@ -184,7 +184,7 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                         <div className="col">
                                             <label htmlFor="stateFormEditarAta.hora_reuniao">Horário</label>
                                             <input
-                                                value={values.stateFormEditarAta.hora_reuniao}
+                                                value={values.stateFormEditarAta.hora_reuniao ? values.stateFormEditarAta.hora_reuniao : ''}
                                                 onChange={props.handleChange}
                                                 name="stateFormEditarAta.hora_reuniao"
                                                 className="form-control"
@@ -199,7 +199,7 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                         <div className="col">
                                             <label htmlFor="stateFormEditarAta.numero_portaria">Número da portaria</label>
                                             <input
-                                                value={values.stateFormEditarAta.numero_portaria}
+                                                value={values.stateFormEditarAta.numero_portaria ? values.stateFormEditarAta.numero_portaria : ''}
                                                 onChange={(e) => {
                                                     onHandleChangeNumeroPortaria(e, setFieldValue);
                                                 }}
@@ -215,7 +215,7 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                             <label htmlFor="stateFormEditarAta.data_portaria">Data da portaria</label>
                                             <DatePickerField
                                                 name="stateFormEditarAta.data_portaria"
-                                                value={values.stateFormEditarAta.data_portaria}
+                                                value={values.stateFormEditarAta.data_portaria ? values.stateFormEditarAta.data_portaria : ''}
                                                 onChange={setFieldValue}
                                                 disabled={!podeEditarAta}
                                             />
@@ -224,7 +224,7 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                         <div className="col">
                                             <label htmlFor="stateFormEditarAta.local_reuniao">Local da reunião</label>
                                             <input
-                                                value={values.stateFormEditarAta.local_reuniao}
+                                                value={values.stateFormEditarAta.local_reuniao ? values.stateFormEditarAta.local_reuniao : ''}
                                                 onChange={props.handleChange}
                                                 name="stateFormEditarAta.local_reuniao"
                                                 className="form-control"
@@ -248,7 +248,7 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                                                         name={`listaPresentes[${index}].rf`}
                                                                         id={`listaPresentes.rf_[${index}]`}
                                                                         className="form-control"
-                                                                        value={presente.rf}
+                                                                        value={presente.rf ? presente.rf : ''}
                                                                         onChange={(e) => {
                                                                             onHandleChangeNumeroRf(e, setFieldValue, index);
                                                                             handleChangeRf(e, setFieldValue, index, values.listaPresentes)
@@ -264,7 +264,7 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                                                         name={`listaPresentes[${index}].nome`}
                                                                         id={`listaPresentes.nome_[${index}]`}
                                                                         className="form-control"
-                                                                        value={presente.nome}
+                                                                        value={presente.nome ? presente.nome : ''}
                                                                         onChange={(e) => {
                                                                             props.handleChange(e);
                                                                         }}
@@ -347,7 +347,7 @@ export const FormularioEditaAta = ({listaPresentesPadrao, listaPresentes, stateF
                                             <textarea
                                                 rows="3"
                                                 placeholder="Escreva seu texto aqui"
-                                                value={values.stateFormEditarAta.comentarios}
+                                                value={values.stateFormEditarAta.comentarios ? values.stateFormEditarAta.comentarios : ''}
                                                 onChange={props.handleChange}
                                                 name="stateFormEditarAta.comentarios"
                                                 className="form-control mt-2"
