@@ -50,8 +50,13 @@ const ToastCustomGrandeSuccess = (titulo, texto, tipo='success', posicao='top-ri
     ToastCustom(titulo, texto, tipo, posicao, autoClose)
 }
 
+const ToastCustomInfo = (titulo, texto, tipo='info', posicao='top-right', autoClose=true) =>{
+    ToastCustom(titulo, texto, tipo, posicao, autoClose)
+}
+
 export const toastCustom = {
     ToastCustomSuccess,
     ToastCustomGrandeSuccess,
     ToastCustomError,
+    ToastCustomInfo,
 }
