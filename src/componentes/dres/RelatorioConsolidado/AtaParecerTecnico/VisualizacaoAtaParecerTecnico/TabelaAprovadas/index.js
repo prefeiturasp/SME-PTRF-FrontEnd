@@ -5,12 +5,12 @@ export const TabelaAprovadas = ({infoContas, valorTemplate, status, exibirUltimo
     const listaVazia = (status_pc) => {
         if(status_pc === "aprovadas"){
             return (
-                <p className="lista-vazia">Nenhuma associação aprovada.</p>
+                <p className="lista-vazia">Nenhuma prestação de contas aprovada.</p>
             )
         }
         else if(status_pc === "aprovadas_ressalva"){
             return (
-                <p className="lista-vazia">Nenhuma associação aprovada com ressalva.</p>
+                <p className="lista-vazia">Nenhuma prestação de contas aprovada com ressalva.</p>
             )
         }
 
@@ -20,7 +20,7 @@ export const TabelaAprovadas = ({infoContas, valorTemplate, status, exibirUltimo
     const listaVaziaReprovadas = (status_pc) => {
         if(status_pc === "reprovadas"){
             return (
-                <p className="lista-vazia">Nenhuma associação rejeitada.</p>
+                <p className="lista-vazia">Nenhuma prestação de contas rejeitada.</p>
             )
         }
         return null;
@@ -64,17 +64,17 @@ export const TabelaAprovadas = ({infoContas, valorTemplate, status, exibirUltimo
                         <table key={`table-${index}`} className="table table-bordered tabela-status-pc">
                             <thead>
                                 <tr>
-                                    <th scope="col" style={{width: '2%'}}>&nbsp;</th>
-                                    <th scope="col" style={{width: '25%'}}>Unidade educacional</th>
-                                    <th scope="col">Tipo de recurso</th>
-                                    <th scope="col">Reprogramado</th>
-                                    <th scope="col">Repasse</th>
-                                    <th scope="col">Rendimentos</th>
-                                    <th scope="col">Demais créditos</th>
-                                    <th scope="col">Despesas</th>
-                                    <th scope="col">Saldo</th>
-                                    <th scope="col">Devolução ao tesouro</th>
-                                    <th scope="col">Situação da Prest. de Contas</th>
+                                    <th scope="col" style={{width: '3%'}}>&nbsp;</th>
+                                    <th scope="col" style={{width: '19%'}}>Unidade educacional</th>
+                                    <th scope="col" style={{width: '5%'}}>Tipo de recurso</th>
+                                    <th scope="col" style={{width: '9%'}}>Reprogramado</th>
+                                    <th scope="col" style={{width: '9%'}}>Repasse</th>
+                                    <th scope="col" style={{width: '9%'}}>Rendimentos</th>
+                                    <th scope="col" style={{width: '9%'}}>Demais créditos</th>
+                                    <th scope="col" style={{width: '9%'}}>Despesas</th>
+                                    <th scope="col" style={{width: '9%'}}>Saldo</th>
+                                    <th scope="col" style={{width: '9%'}}>Devolução ao tesouro</th>
+                                    <th scope="col" style={{width: '10%'}}>Situação da Prest. de Contas</th>
                                 </tr>
                             </thead>
 
