@@ -179,7 +179,14 @@ export const RelatorioConsolidado = () => {
                 setAtaParecerTecnico(ata)
                 setDisablebtnVisualizarAta(false);
                 setDisablebtnGerarAta(false);
-                setDisablebtnGerarLauda(false);
+
+                if(ata.alterado_em && statusRelatorio.status_geracao !== "EM_PROCESSAMENTO"){
+                    setDisablebtnGerarLauda(false);
+                }
+                else{
+                    setDisablebtnGerarLauda(true);
+                }
+                
             }
             catch{
                 setAtaParecerTecnico({})
