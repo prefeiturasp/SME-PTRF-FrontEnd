@@ -283,8 +283,6 @@ export const VisualizacaoDaAta = () => {
         } else {
             return (
                 <>
-                    <p><strong>Devoluções ao tesouro</strong></p>
-                    <p>...</p>
                 </>
             )
         }
