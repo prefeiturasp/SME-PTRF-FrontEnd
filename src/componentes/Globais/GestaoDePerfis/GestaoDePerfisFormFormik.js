@@ -53,6 +53,7 @@ export const GestaoDePerfisFormFormik = (
         serviceTemUnidadeUE,
         pesquisaVisao,
         pesquisaPermissaoExibicaoVisao,
+        evitaDuplicacao,
     }) => {
 
     return (
@@ -253,12 +254,12 @@ export const GestaoDePerfisFormFormik = (
                                                         type="checkbox"
                                                         name="visoes"
                                                         id={visao.nome}
-                                                        value={visao.id}
+                                                        value={visao.nome}
                                                         onChange={(e) => {
                                                             handleChangeVisao(e, setFieldValue, values)
                                                             getEstadoInicialVisoesChecked()
                                                         }}
-                                                        checked={props.values.visoes.includes(parseInt(visao.id))}
+                                                        checked={props.values.visoes.includes(visao.nome)}
                                                         disabled={!visao.editavel || initPerfisForm.visao === "UE"}
                                                     />
                                                     <label className="form-check-label" htmlFor={visao.nome}>{visao.nome}</label>
@@ -275,8 +276,9 @@ export const GestaoDePerfisFormFormik = (
                                     <label htmlFor="groups">Grupos</label>
                                     <div className="card">
                                         <div className="card-body p-2">
-                                            {grupos && grupos.length > 0 && grupos.map((grupo, index_grupos) => (
-                                                <div className="form-group form-check mb-0" key={index_grupos}>
+                                            {grupos && grupos.length > 0 &&
+                                                evitaDuplicacao(grupos).map((grupo, index_grupos) => (
+                                                    <div className="form-group form-check mb-0" key={index_grupos}>
                                                         {pesquisaPermissaoExibicaoVisao(grupo.visao) &&
                                                             <>
                                                                 <input
@@ -294,7 +296,7 @@ export const GestaoDePerfisFormFormik = (
                                                                 <label className="form-check-label" htmlFor={grupo.nome}>{grupo.nome}</label>
                                                             </>
                                                         }
-                                                </div>
+                                                 </div>
                                             ))}
                                         </div>
                                     </div>
