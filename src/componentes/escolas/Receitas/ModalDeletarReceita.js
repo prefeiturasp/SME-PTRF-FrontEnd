@@ -6,12 +6,14 @@ export const ModalDeletarReceita = (props) =>{
         <ModalBootstrap
             show={props.show}
             onHide={props.handleClose}
-            titulo="Deseja excluir este Crédito?"
+            titulo="Exclusão de Crédito"
             bodyText={props.texto}
             primeiroBotaoOnclick={props.onDeletarTrue}
-            primeiroBotaoTexto="OK"
+            primeiroBotaoTexto="Excluir"
+            primeiroBotaoCss="success"
             segundoBotaoOnclick={props.handleClose}
-            segundoBotaoTexto="Fechar"
+            segundoBotaoTexto="Cancelar"
+            segundoBotaoCss="danger"
         />
     )
 };

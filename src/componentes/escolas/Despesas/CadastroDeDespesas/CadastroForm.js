@@ -237,11 +237,13 @@ export const CadastroForm = ({verbo_http}) => {
         return mensagens;
     }
 
-    const onShowMensagemNaoAceitaTipoRecurso = (values) => {
-        let acoes = acaoNaoAceitaTipoRecurso(values);
+    const onShowMensagemNaoAceitaTipoRecurso = (values, erros) => {
+        if (Object.entries(erros).length === 0) {
+            let acoes = acaoNaoAceitaTipoRecurso(values);
 
-        if(acoes.length > 0){
-            setShowMensagemAceitaCusteioCapital(true);
+            if(acoes.length > 0){
+                setShowMensagemAceitaCusteioCapital(true);
+            }
         }
     }
 
@@ -978,7 +980,7 @@ export const CadastroForm = ({verbo_http}) => {
                                             disabled={!props.values.cpf_cnpj_fornecedor || btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             type="button"
                                             onClick={() => {
-                                                onShowMensagemNaoAceitaTipoRecurso(values);
+                                                onShowMensagemNaoAceitaTipoRecurso(values, errors);
                                                 onShowSaldoInsuficiente(values, errors, setFieldValue, {resetForm})
                                             }}
                                             className="btn btn-success mt-2">Salvar

@@ -46,6 +46,10 @@ export const YupSignupSchemaDreDadosDiretoria = yup.object().shape({
         if (value){
           return valida_cnpj(value)
         }
+        else{
+          // O campo CNPJ não é mais obrigatório
+          return true;
+        }
       }),
 });
 

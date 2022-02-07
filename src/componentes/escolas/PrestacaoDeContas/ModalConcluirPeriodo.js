@@ -8,12 +8,12 @@ export const ModalConcluirPeriodo = (props) =>{
             onHide={props.handleClose}
             titulo={props.titulo}
             bodyText={props.texto}
-            primeiroBotaoOnclick={props.handleClose}
-            primeiroBotaoTexto="Cancelar"
-            primeiroBotaoCss="danger"
-            segundoBotaoOnclick={props.onSalvarTrue}
-            segundoBotaoCss="success"
-            segundoBotaoTexto="Confirmo"
+            primeiroBotaoOnclick={props.onSalvarTrue}
+            primeiroBotaoTexto="Confirmar"
+            primeiroBotaoCss="success"
+            segundoBotaoOnclick={props.handleClose}
+            segundoBotaoCss="danger"
+            segundoBotaoTexto="Cancelar"
         />
     )
 };

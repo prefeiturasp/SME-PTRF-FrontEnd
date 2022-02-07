@@ -141,3 +141,6 @@ export const getUsuarioPeloUsername = async (username) => {
     return (await api.get(`/api/usuarios/?username=${username}`, authHeader)).data
 };
 
+export const getDataPreenchimentoPreviaAta = async (uuidPeriodo) => {
+    return (await api.get(`/api/associacoes/${localStorage.getItem(ASSOCIACAO_UUID)}/previa-ata/?periodo_uuid=${uuidPeriodo}`, authHeader)).data
+};

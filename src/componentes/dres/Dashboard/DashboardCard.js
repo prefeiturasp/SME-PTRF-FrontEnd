@@ -26,6 +26,15 @@ export const DashboardCard = ({itensDashboard, handleClickVerPrestacaoes}) => {
                                             <ReactTooltip/>
                                         </span>
                                     }
+                                    {card.quantidade_nao_recebida >= 1 &&
+                                        <span data-tip={card.quantidade_nao_recebida > 1 ? '<p class="mb-0">'+ card.quantidade_nao_recebida + ' novas prestações não recebidas</p>' : '<p class="mb-0">' + card.quantidade_nao_recebida + ' nova prestação não recebida</p>' } data-html={true}>
+                                            <FontAwesomeIcon
+                                                style={{fontSize: '18px', marginLeft: "3px", color: '#C65D00'}}
+                                                icon={faInfoCircle}
+                                            />
+                                            <ReactTooltip/>
+                                        </span>
+                                    }
                                 </div>
 
                                 <p className="text-center">

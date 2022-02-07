@@ -33,6 +33,11 @@ export const getPrestacaoDeContasDetalhe = async (prestacao_conta_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_conta_uuid}/`, authHeader)).data
 };
 
+export const getPreviaPrestacaoDeContasDetalhe = async (periodo_uuid) => {
+    return (await api.get(`/api/prestacoes-contas/previa/?associacao=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo=${periodo_uuid}`, authHeader)).data
+};
+
+
 export const getReceberPrestacaoDeContas = async (prestacao_conta_uuid, payload) => {
     return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/receber/`, payload, authHeader)).data
 };

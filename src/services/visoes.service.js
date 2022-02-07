@@ -8,6 +8,7 @@ import {
 } from "./auth.service";
 import {redirect} from "../utils/redirect";
 import moment from "moment";
+import {ACOMPANHAMENTO_DE_PC} from "./mantemEstadoAcompanhamentoDePc.service";
 
 export const DADOS_USUARIO_LOGADO = "DADOS_USUARIO_LOGADO";
 export const DATA_HORA_USUARIO_LOGADO = "DATA_HORA_USUARIO_LOGADO";
@@ -20,6 +21,7 @@ const forcarNovoLogin = ()=>{
         if (diferenca >= 1440){ // Equivale a 24 horas
             localStorage.setItem(DATA_HORA_USUARIO_LOGADO, data_hora_atual);
             localStorage.removeItem('DADOS_USUARIO_LOGADO');
+            localStorage.removeItem(ACOMPANHAMENTO_DE_PC);
             localStorage.setItem(DATA_LOGIN, moment(new Date(), "YYYY-MM-DD").format("YYYY-MM-DD"));
             authService.logout();
         }else if (diferenca >= 600 && diferenca <= 1339){ // Equivale a 10 horas e menos que 24 horas
@@ -290,5 +292,6 @@ export const visoesService = {
     setDadosDoUsuarioLogado,
     redirectVisao,
     getItemUsuarioLogado,
+    getUsuarioLogin,
 };
 

@@ -15,7 +15,8 @@ const DataSaldoBancario = ({
     nomeComprovanteExtrato, exibeBtnDownload, msgErroExtensaoArquivo,
     changeUploadExtrato, reiniciaUploadExtrato, downloadComprovanteExtrato, salvarExtratoBancario,
     btnSalvarExtratoBancarioDisable, setBtnSalvarExtratoBancarioDisable, classBtnSalvarExtratoBancario,
-    setClassBtnSalvarExtratoBancario, checkSalvarExtratoBancario, setCheckSalvarExtratoBancario, erroDataSaldo
+    setClassBtnSalvarExtratoBancario, checkSalvarExtratoBancario, setCheckSalvarExtratoBancario, erroDataSaldo,
+    dataAtualizacaoComprovanteExtrato
 }) => {
 
     const handleOnClick = () => {
@@ -111,6 +112,11 @@ const DataSaldoBancario = ({
                                                                     icon={faPaperclip}/>
                                                                 </span>{nomeComprovanteExtrato}
                                                             </p>
+                                                            { exibeBtnDownload &&
+                                                                <p>
+                                                                    <span>Atualizado em: {dataAtualizacaoComprovanteExtrato}</span>
+                                                                </p>
+                                                            }
                                                         </div>
 
                                                         <div className="col-lg-4 mt-2 text-right">
@@ -193,7 +199,7 @@ const DataSaldoBancario = ({
                         className={`btn btn-${classBtnSalvarExtratoBancario} mt-2`}
                         onClick={handleOnClick}
                         >
-                            <strong>Salvar Extrato</strong>
+                            <strong>Salvar saldo</strong>
                     </button>
                 </div>
             }

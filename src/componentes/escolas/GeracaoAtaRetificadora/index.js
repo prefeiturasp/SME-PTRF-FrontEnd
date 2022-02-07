@@ -11,6 +11,8 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
     const [dataBoxAtaRetificadora, setDataBoxAtaRetificadora] = useState("");
     const [gerarAtaRetificadora, setGerarAtaRetificadora] = useState(false);
 
+    const statusPC = statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status ? statusPrestacaoDeConta.prestacao_contas_status.status_prestacao : ''
+
     useEffect(() => {
         carregagaDadosAtaRetificadora();
     }, []);
@@ -32,13 +34,20 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
                 setGerarAtaRetificadora(true)
             }
         } catch (e) {
-            debugger
             if (statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA" || statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === "DEVOLVIDA_RETORNADA") {
                 let dados = await getIniciarAtaRetificadora(uuidPrestacaoConta);
-                setDadosAtaRetificadora(dados)
-                setCorBoxAtaRetificadora("vermelho");
+                setDadosAtaRetificadora(dados);
                 setTextoBoxAtaRetificadora(dados.nome);
-                setDataBoxAtaRetificadora("Ata não preenchida");
+                if (dados.alterado_em === null){
+                    setCorBoxAtaRetificadora("vermelho");
+                    setDataBoxAtaRetificadora("Ata não preenchida");
+                    setGerarAtaRetificadora(false)
+                }
+                else {
+                    setCorBoxAtaRetificadora("verde");
+                    setDataBoxAtaRetificadora("Último preenchimento em "+exibeDateTimePT_BR_Ata(dados.alterado_em));
+                    setGerarAtaRetificadora(true)
+                }
             }
         }
     };
@@ -57,6 +66,7 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
                     uuidPrestacaoConta={uuidPrestacaoConta}
                     uuidAtaRetificacao={dadosAtaRetificadora ? dadosAtaRetificadora.uuid : ""}
                     gerarAtaRetificadora={gerarAtaRetificadora}
+                    statusPc={statusPC}
                 />
             }
 

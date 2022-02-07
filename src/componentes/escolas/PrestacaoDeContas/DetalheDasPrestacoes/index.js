@@ -10,8 +10,8 @@ import {
     getStatusPeriodoPorData,
     getTransacoes,
     getTransacoesFiltros,
-    patchConciliarTransacao,
-    patchDesconciliarTransacao,
+    patchConciliarDespesa,
+    patchDesconciliarDespesa,
     getDownloadExtratoBancario,
     pathSalvarJustificativaPrestacaoDeConta,
     pathExtratoBancarioPrestacaoDeConta
@@ -167,6 +167,7 @@ export const DetalheDasPrestacoes = () => {
             })
             setNomeComprovanteExtrato(observacao.comprovante_extrato ? observacao.comprovante_extrato : '')
             setDataAtualizacaoComprovanteExtrato(moment(observacao.data_atualizacao_comprovante_extrato).format("YYYY-MM-DD HH:mm:ss"))
+            setDataAtualizacaoComprovanteExtratoView(moment(observacao.data_atualizacao_comprovante_extrato).format("DD/MM/YYYY HH:mm:ss"))
             if (observacao.comprovante_extrato && observacao.data_extrato){
                 setExibeBtnDownload(true)
             }
@@ -207,6 +208,7 @@ export const DetalheDasPrestacoes = () => {
             await pathExtratoBancarioPrestacaoDeConta(payload);
             setShowSalvar(true);
             setDataAtualizacaoComprovanteExtrato('')
+            setDataAtualizacaoComprovanteExtratoView('')
             setSelectedFile(null)
             setMsgErroExtensaoArquivo('')
             await carregaObservacoes();
@@ -263,7 +265,6 @@ export const DetalheDasPrestacoes = () => {
     const [transacoesNaoConciliadas, setTransacoesNaoConciliadas] = useState([]);
     const [checkboxTransacoes, setCheckboxTransacoes] = useState(false);
     const [tabelasDespesa, setTabelasDespesa] = useState([]);
-    const [tabelasReceita, setTabelasReceita] = useState([]);
 
     const carregaTransacoes = useCallback(async ()=>{
         setLoading(true)
@@ -288,16 +289,6 @@ export const DetalheDasPrestacoes = () => {
         carregaTabelasDespesa();
     }, []);
 
-    useEffect(() => {
-        const carregaTabelasReceita = async () => {
-            getTabelasReceita().then(response => {
-                setTabelasReceita(response.data);
-            }).catch(error => {
-                console.log(error);
-            });
-        };
-        carregaTabelasReceita()
-    }, []);
 
     const handleChangeCheckboxTransacoes = useCallback(async (event, transacao_ou_rateio_uuid, documento_mestre=null, tipo_transacao) => {
 
@@ -306,21 +297,13 @@ export const DetalheDasPrestacoes = () => {
             if (!documento_mestre){
                 await conciliar(transacao_ou_rateio_uuid);
             }else {
-                if (tipo_transacao==='Crédito'){
-                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'CREDITO')
-                }else {
-                    await patchConciliarTransacao(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid, 'GASTO')
-                }
+                await patchConciliarDespesa(periodoConta.periodo, periodoConta.conta, transacao_ou_rateio_uuid)
             }
         } else if (!event.target.checked) {
             if (!documento_mestre){
                 await desconciliar(transacao_ou_rateio_uuid)
             }else {
-                if (tipo_transacao==='Crédito'){
-                    await patchDesconciliarTransacao(periodoConta.conta, transacao_ou_rateio_uuid, 'CREDITO')
-                }else {
-                    await patchDesconciliarTransacao(periodoConta.conta, transacao_ou_rateio_uuid, 'GASTO')
-                }
+                await patchDesconciliarDespesa(periodoConta.conta, transacao_ou_rateio_uuid)
             }
         }
         await carregaTransacoes()
@@ -341,14 +324,14 @@ export const DetalheDasPrestacoes = () => {
     const handleSubmitFiltros = useCallback(async (conciliado) => {
         if (conciliado=== 'CONCILIADO'){
             try {
-                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO, stateFiltros.filtrar_por_lancamento_CONCILIADO);
+                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO);
                 setTransacoesConciliadas(transacoes)
             }catch (e) {
                 console.log("Erro ao filtrar conciliados")
             }
         }else {
             try {
-                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'False', stateFiltros.filtrar_por_acao_NAO_CONCILIADO, stateFiltros.filtrar_por_lancamento_NAO_CONCILIADO);
+                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'False', stateFiltros.filtrar_por_acao_NAO_CONCILIADO);
                 setTransacoesNaoConciliadas(transacoes);
             }catch (e) {
                 console.log("Erro ao filtrar não conciliados")
@@ -368,6 +351,7 @@ export const DetalheDasPrestacoes = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [nomeComprovanteExtrato, setNomeComprovanteExtrato] = useState('');
     const [dataAtualizacaoComprovanteExtrato, setDataAtualizacaoComprovanteExtrato] = useState('');
+    const [dataAtualizacaoComprovanteExtratoView, setDataAtualizacaoComprovanteExtratoView] = useState('');
     const [exibeBtnDownload, setExibeBtnDownload] = useState(false);
     const [msgErroExtensaoArquivo, setMsgErroExtensaoArquivo] = useState('');
 
@@ -398,6 +382,7 @@ export const DetalheDasPrestacoes = () => {
             setSelectedFile(event.file);
             setNomeComprovanteExtrato(event.file.name)
             setDataAtualizacaoComprovanteExtrato(moment().format("YYYY-MM-DD HH:mm:ss"))
+            setDataAtualizacaoComprovanteExtratoView(moment().format("DD/MM/YYYY HH:mm:ss"))
             setExibeBtnDownload(false)
             setMsgErroExtensaoArquivo('')
         }else {
@@ -415,6 +400,7 @@ export const DetalheDasPrestacoes = () => {
 
         setSelectedFile(null)
         setDataAtualizacaoComprovanteExtrato('')
+        setDataAtualizacaoComprovanteExtratoView('')
         setExibeBtnDownload(false)
         setNomeComprovanteExtrato('')
     }
@@ -497,7 +483,7 @@ export const DetalheDasPrestacoes = () => {
                                 handleChangaDataSaldo={handleChangaDataSaldo}
                                 periodoFechado={periodoFechado}
                                 nomeComprovanteExtrato={nomeComprovanteExtrato}
-                                dataAtualizacaoComprovanteExtrato={dataAtualizacaoComprovanteExtrato}
+                                dataAtualizacaoComprovanteExtrato={dataAtualizacaoComprovanteExtratoView}
                                 exibeBtnDownload={exibeBtnDownload}
                                 msgErroExtensaoArquivo={msgErroExtensaoArquivo}
                                 changeUploadExtrato={changeUploadExtrato}
@@ -513,7 +499,7 @@ export const DetalheDasPrestacoes = () => {
                                 erroDataSaldo={erroDataSaldo}
                             />
 
-                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Lançamentos pendentes de conciliação</p>
+                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-3 mb-3">Gastos pendentes de conciliação</p>
                             <FiltrosTransacoes
                                 conciliado='NAO_CONCILIADO'
                                 stateFiltros={stateFiltros}
@@ -529,13 +515,12 @@ export const DetalheDasPrestacoes = () => {
                                     periodoFechado={periodoFechado}
                                     handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
                                     tabelasDespesa={tabelasDespesa}
-                                    tabelasReceita={tabelasReceita}
                                 />
                             ):
-                                <p className="mt-2"><strong>Não existem lançamentos não conciliados...</strong></p>
+                                <p className="mt-2"><strong>Não existem gastos não conciliados...</strong></p>
                             }
 
-                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-5 mb-3">Lançamentos conciliados</p>
+                            <p className="detalhe-das-prestacoes-titulo-lancamentos mt-5 mb-3">Gastos conciliados</p>
                             <FiltrosTransacoes
                                 conciliado='CONCILIADO'
                                 stateFiltros={stateFiltros}
@@ -552,10 +537,9 @@ export const DetalheDasPrestacoes = () => {
                                     periodoFechado={periodoFechado}
                                     handleChangeCheckboxTransacoes={handleChangeCheckboxTransacoes}
                                     tabelasDespesa={tabelasDespesa}
-                                    tabelasReceita={tabelasReceita}
                                 />
                             ):
-                                <p className="mt-2"><strong>Não existem lançamentos conciliados...</strong></p>
+                                <p className="mt-2"><strong>Não existem gastos conciliados...</strong></p>
                             }
                             <Justificativa
                                 textareaJustificativa={textareaJustificativa}

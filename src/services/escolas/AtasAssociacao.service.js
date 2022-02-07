@@ -20,6 +20,10 @@ export const getAtas = async (uuid_ata) => {
     return (await api.get(`api/atas-associacao/${uuid_ata}/`, authHeader)).data
 }
 
+export const getPreviaAta = async (uuid_associacao, uuid_periodo) => {
+    return (await api.get(`api/previas-atas-associacao/${uuid_associacao}/`, authHeader)).data
+}
+
 export const getGerarAtaPdf = async (prestacao_conta_uuid, ata_uuid) => {
     return (await api.get(`api/atas-associacao/gerar-arquivo-ata/?prestacao-de-conta-uuid=${prestacao_conta_uuid}&ata-uuid=${ata_uuid}`, authHeader)).data
 }

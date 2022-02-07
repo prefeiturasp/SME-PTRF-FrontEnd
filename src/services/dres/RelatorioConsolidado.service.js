@@ -30,7 +30,7 @@ export const getDevolucoesContaPtrf = async (dre_uuid, periodo_uuid, conta_uuid)
 };
 
 export const getJustificativa = async (dre_uuid, periodo_uuid, conta_uuid) => {
-    return (await api.get(`/api/justificativas-relatorios-consolidados-dre/?dre=${dre_uuid}&periodo=${periodo_uuid}&tipo_conta=${conta_uuid}`, authHeader)).data
+    return (await api.get(`/api/justificativas-relatorios-consolidados-dre/?dre__uuid=${dre_uuid}&periodo__uuid=${periodo_uuid}&tipo_conta__uuid=${conta_uuid}`, authHeader)).data
 };
 
 export const postJustificativa = async (payload) => {
@@ -112,5 +112,6 @@ export const getListaAssociacoesNaoRegularizadas = async (dre_uuid) => {
     return (await api.get(`/api/associacoes/?unidade__dre__uuid=${dre_uuid}&status_regularidade=PENDENTE`, authHeader)).data
 };
 
-
-
+export const getStatusAta = async (dre_uuid, periodo_uuid) => {
+    return (await api.get(`/api/ata-parecer-tecnico/status-ata/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
+}

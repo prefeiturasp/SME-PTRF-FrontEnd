@@ -8,6 +8,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import {ModalCheckNaoPermitidoConfererenciaDeLancamentos} from "./ModalCheckNaoPermitidoConfererenciaDeLancamentos";
 import {FiltrosConferenciaDeLancamentos} from "./FiltrosConferenciaDeLancamentos";
 import {postLancamentosParaConferenciaMarcarComoCorreto, postLancamentosParaConferenciaMarcarNaoConferido} from "../../../../../services/dres/PrestacaoDeContas.service";
+import {mantemEstadoAcompanhamentoDePc as meapcservice} from "../../../../../services/mantemEstadoAcompanhamentoDePc.service";
 
 // Hooks Personalizados
 import useValorTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
@@ -17,12 +18,13 @@ import useConferidoTemplate from "../../../../../hooks/dres/PrestacaoDeContas/Co
 import useRowExpansionDespesaTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionDespesaTemplate";
 import useRowExpansionReceitaTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionReceitaTemplate";
 import useNumeroDocumentoTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
+
 // Redux
 import {useDispatch} from "react-redux";
 import {addDetalharAcertos, limparDetalharAcertos} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
+import {visoesService} from "../../../../../services/visoes.service";
 
-
-const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, carregaLancamentosParaConferencia,prestacaoDeContas, editavel}) => {
+const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, carregaLancamentosParaConferencia, prestacaoDeContas, editavel}) => {
 
     const rowsPerPage = 10;
     const history = useHistory();
@@ -45,6 +47,13 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
     // Redux
     const dispatch = useDispatch()
 
+    // Manter o estado do Acompanhamento de PC
+    let dados_acompanhamento_de_pc_usuario_logado = meapcservice.getAcompanhamentoDePcUsuarioLogado()
+    let conta_uuid = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.conta_uuid
+    let filtrar_por_acao = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_acao
+    let filtrar_por_lancamento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_lancamento
+    let paginacao_atual = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.paginacao_atual
+
     useEffect(() => {
         desmarcarTodos()
     }, [contaUuid])
@@ -66,19 +75,6 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
             )
         }
     };
-
-    const selecionarTodos = (event) => {
-        event.preventDefault();
-        setExibirBtnMarcarComoCorreto(true)
-        setExibirBtnMarcarComoNaoConferido(true)
-        let result = lancamentosParaConferencia.reduce((acc, o) => {
-            let obj = Object.assign(o, {selecionado: true});
-            acc.push(obj);
-            return acc;
-        }, []);
-        setLancamentosParaConferencia(result);
-        setQuantidadeSelecionada(lancamentosParaConferencia.length);
-    }
 
     const selecionarPorStatus = (event, status = null) => {
         event.preventDefault();
@@ -158,7 +154,6 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                         </Dropdown.Toggle>
 
                         <Dropdown.Menu>
-                            {/*<Dropdown.Item onClick={(e) => selecionarTodos(e)}>Selecionar todos</Dropdown.Item>*/}
                             <Dropdown.Item onClick={(e) => selecionarPorStatus(e, "CORRETO")}>Selecionar todos corretos</Dropdown.Item>
                             <Dropdown.Item onClick={(e) => selecionarPorStatus(e, null)}>Selecionar todos não conferidos</Dropdown.Item>
                             <Dropdown.Item onClick={(e) => desmarcarTodos(e)}>Desmarcar todos</Dropdown.Item>
@@ -325,7 +320,6 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                 setExibicaoBotoesMarcarComo(rowData)
             }
         }
-
     }
 
     const marcarComoCorreto = async () => {
@@ -349,7 +343,7 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                 await postLancamentosParaConferenciaMarcarComoCorreto(prestacaoDeContas.uuid, payload)
                 console.log("Marcados como correto com sucesso!")
                 desmarcarTodos()
-                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid)
+                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual)
             } catch (e) {
                 console.log("Erro ao marcar como correto ", e.response)
             }
@@ -378,7 +372,7 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                 await postLancamentosParaConferenciaMarcarNaoConferido(prestacaoDeContas.uuid, payload)
                 console.log("Marcados como não conferido com sucesso!")
                 desmarcarTodos()
-                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid)
+                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual)
             } catch (e) {
                 console.log("Erro ao marcar como não conferido ", e.response)
             }
@@ -388,30 +382,6 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
     const getLancamentosSelecionados = () => {
         return lancamentosParaConferencia.filter((lancamento) => lancamento.selecionado)
     }
-
-    // Filtros Lancamentos
-    const initialStateFiltros = {
-        filtrar_por_acao: '',
-        filtrar_por_lancamento: '',
-    }
-    const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
-
-    const handleChangeFiltros = (name, value) => {
-        setStateFiltros({
-            ...stateFiltros,
-            [name]: value
-        });
-    };
-
-    const handleSubmitFiltros = async () => {
-        desmarcarTodos()
-        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento)
-    };
-
-    const limpaFiltros = async () => {
-        setStateFiltros(initialStateFiltros);
-        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid);
-    };
 
     const addDispatchRedireciona = (lancamentos) => {
         dispatch(limparDetalharAcertos())
@@ -428,7 +398,56 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
         if (editavel){
             addDispatchRedireciona(lancamento)
         }
+    }
 
+    // Para salvar a página atual e usar em mantemEstadoAcompanhamentoDePc
+    // Filtros Lancamentos
+    const initialStateFiltros = {
+        filtrar_por_acao: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_acao ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_acao : "",
+        filtrar_por_lancamento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_lancamento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_lancamento : "",
+    }
+    const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
+
+    const handleChangeFiltros = (name, value) => {
+        setStateFiltros({
+            ...stateFiltros,
+            [name]: value
+        });
+    };
+
+    const handleSubmitFiltros = async () => {
+        desmarcarTodos()
+        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual)
+    };
+
+    const limpaFiltros = async () => {
+        setStateFiltros(initialStateFiltros);
+        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, null, null, 0);
+    };
+
+    // Paginação
+    const [primeiroRegistroASerExibido, setPrimeiroRegistroASerExibido] = useState(dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.paginacao_atual ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.paginacao_atual : 0);
+
+    const salvaObjetoAcompanhamentoDePcPorUsuarioLocalStorage = (event) =>{
+
+        // Para calcuar a pagina atual
+        // primeiroRegistroASerExibido = event.rows * event.page
+        let objetoAcompanhamentoDePcPorUsuario = {
+            prestacao_de_conta_uuid: prestacaoDeContas.uuid,
+            conferencia_de_lancamentos: {
+                conta_uuid:  conta_uuid,
+                filtrar_por_acao: filtrar_por_acao,
+                filtrar_por_lancamento: filtrar_por_lancamento,
+                paginacao_atual: event.rows * event.page,
+            },
+        }
+        meapcservice.setAcompanhamentoDePcPorUsuario(visoesService.getUsuarioLogin(), objetoAcompanhamentoDePcPorUsuario)
+    }
+
+    const onPaginationClick = (event) =>{
+        console.log("onPaginationClick ", event)
+        setPrimeiroRegistroASerExibido(event.first);
+        salvaObjetoAcompanhamentoDePcPorUsuarioLocalStorage(event)
     }
 
     return (
@@ -457,43 +476,48 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                 selectionMode="single"
                 onRowClick={e => redirecionaDetalhe(e.data)}
                 stripedRows
-                autoLayout={true}
+
+                // Usado para salvar no localStorage a página atual após os calculos ** ver função onPaginationClick
+                first={primeiroRegistroASerExibido}
+                onPage={onPaginationClick}
             >
                 <Column
                     header={selecionarHeader()}
                     body={selecionarTemplate}
-                    style={{borderRight: 'none', width: '50px'}}
+                    style={{borderRight: 'none', width: '5%'}}
                 />
                 <Column
                     field='data'
                     header='Data'
                     body={dataTemplate}
                     className="align-middle text-left borda-coluna"
-                    style={{width: '110px'}}
+                    style={{width: '10%'}} 
                 />
                 <Column field='tipo_transacao' header='Tipo de lançamento'
-                        className="align-middle text-left borda-coluna"/>
+                        className="align-middle text-left borda-coluna" style={{width: '17%'}}/>
                 <Column
                     field='numero_documento'
                     header='N.º do documento'
                     body={numeroDocumentoTemplate}
                     className="align-middle text-left borda-coluna"
+                    style={{width: '17%'}}
                 />
-                <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna" style={{width: '190px'}}/>
+                <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna" style={{width: '24%'}} />
                 <Column
                     field='valor_transacao_total'
                     header='Valor (R$)'
                     body={valor_template}
                     className="align-middle text-left borda-coluna"
+                    style={{width: '10%'}}
                 />
                 <Column
                     field='analise_lancamento'
                     header='Conferido'
                     body={conferidoTemplate}
                     className="align-middle text-left borda-coluna"
-                    style={{borderRight: 'none', width: '90px'}}
+                    style={{borderRight: 'none', width: '10%'}}
                 />
-                <Column expander style={{width: '3em', borderLeft: 'none'}}/>
+                <Column expander style={{width: '5%', borderLeft: 'none'}}/>
             </DataTable>
             }
             <section>
