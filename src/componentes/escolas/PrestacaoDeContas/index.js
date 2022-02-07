@@ -204,7 +204,6 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     };
 
     const setConfBoxAtaApresentacao = async ()=>{
-        console.log('============> setConfBoxAtaApresentacao')
         let uuid_prestacao_de_contas = localStorage.getItem('uuidPrestacaoConta');
         let data_preenchimento;
 
@@ -290,7 +289,6 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const podeBaixarDocumentos = [['baixar_documentos_prestacao_contas']].some(visoesService.getPermissoes)
 
     const exibeBoxAtaRetificadora = useCallback(() => {
-        console.log('statusPrestacaoDeConta', statusPrestacaoDeConta)
         return statusPrestacaoDeConta &&
             statusPrestacaoDeConta.prestacao_contas_status &&
             (statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'DEVOLVIDA' || statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'DEVOLVIDA_RETORNADA' )
