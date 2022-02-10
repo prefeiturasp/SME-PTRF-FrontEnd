@@ -101,6 +101,7 @@ export const GetComportamentoPorStatus = (
                         disabledData={false}
                         disabledStatus={true}
                         exibeMotivo={false}
+                        exibeRecomendacoes={false}
                     />
                     <CobrancaPrestacaoDeContas
                         listaDeCobrancas={listaDeCobrancas}
@@ -140,6 +141,7 @@ export const GetComportamentoPorStatus = (
                         disabledData={true}
                         disabledStatus={true}
                         exibeMotivo={false}
+                        exibeRecomendacoes={false}
                     />
                     <CobrancaPrestacaoDeContas
                         listaDeCobrancas={listaDeCobrancas}
@@ -182,6 +184,7 @@ export const GetComportamentoPorStatus = (
                         disabledData={true}
                         disabledStatus={true}
                         exibeMotivo={false}
+                        exibeRecomendacoes={false}
                     />
                     <DevolucoesPrestacaoDeContas
                         prestacaoDeContas={prestacaoDeContas}
@@ -287,6 +290,7 @@ export const GetComportamentoPorStatus = (
                         disabledData={true}
                         disabledStatus={true}
                         exibeMotivo={false}
+                        exibeRecomendacoes={false}
                     />
                     <DevolucoesPrestacaoDeContas
                         prestacaoDeContas={prestacaoDeContas}
@@ -375,6 +379,7 @@ export const GetComportamentoPorStatus = (
                         disabledData={true}
                         disabledStatus={true}
                         exibeMotivo={false}
+                        exibeRecomendacoes={false}
                     />
                     <DevolucoesPrestacaoDeContas
                         prestacaoDeContas={prestacaoDeContas}
@@ -472,6 +477,7 @@ export const GetComportamentoPorStatus = (
                         disabledData={true}
                         disabledStatus={true}
                         exibeMotivo={false}
+                        exibeRecomendacoes={false}
                     />
                     <DevolucoesPrestacaoDeContas
                         prestacaoDeContas={prestacaoDeContas}
@@ -573,6 +579,7 @@ export const GetComportamentoPorStatus = (
                         disabledStatus={true}
                         prestacaoDeContas={prestacaoDeContas}
                         exibeMotivo={true}
+                        exibeRecomendacoes={true}
                     />
                     <DevolucoesPrestacaoDeContas
                         prestacaoDeContas={prestacaoDeContas}
@@ -659,6 +666,7 @@ export const GetComportamentoPorStatus = (
                         exibeMotivo={true}
                         motivo={'motivos_reprovacao'}
                         outros_motivos={'outros_motivos_reprovacao'}
+                        exibeRecomendacoes={false}
                     />
                     <DevolucoesPrestacaoDeContas
                         prestacaoDeContas={prestacaoDeContas}

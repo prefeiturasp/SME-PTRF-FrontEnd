@@ -141,6 +141,7 @@ export const DetalhePrestacaoDeContasNaoApresentada = () =>{
                                     disabledData={true}
                                     disabledStatus={true}
                                     exibeMotivo={false}
+                                    exibeRecomendacoes={false}
                                 />
                                 <CobrancaPrestacaoDeContas
                                     listaDeCobrancas={listaDeCobrancas}
