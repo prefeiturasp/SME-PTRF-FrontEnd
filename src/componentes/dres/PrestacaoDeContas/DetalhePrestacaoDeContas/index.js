@@ -679,11 +679,12 @@ export const DetalhePrestacaoDeContas = () =>{
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }else if (stateConcluirAnalise.status === 'REPROVADA'){
+            let uuid_motivos = recupera_uuid_motivos(selectMotivosReprovacao)
             payload={
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
-                motivos_reprovacao: selectMotivosReprovacao,
+                motivos_reprovacao: uuid_motivos,
                 outros_motivos_reprovacao: txtOutrosMotivosReprovacao,
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
@@ -1015,6 +1016,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         motivosReprovacao={motivosReprovacao}
                         txtOutrosMotivosReprovacao={txtOutrosMotivosReprovacao}
                         selectMotivosReprovacao={selectMotivosReprovacao}
+                        setSelectMotivosReprovacao={setSelectMotivosReprovacao}
                         handleChangeSelectMultipleMotivosReprovacao={handleChangeSelectMultipleMotivosReprovacao}
                         checkBoxOutrosMotivosReprovacao={checkBoxOutrosMotivosReprovacao}
                         handleChangeCheckBoxOutrosMotivosReprovacao={handleChangeCheckBoxOutrosMotivosReprovacao}

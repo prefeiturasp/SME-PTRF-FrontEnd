@@ -101,22 +101,29 @@ export const ModalConcluirAnalise = (props) => {
                     }
                     {props.stateConcluirAnalise.status === 'REPROVADA' &&
                         <div className="col-12 mt-2">
-                            <label htmlFor="motivos_reprovacao">Motivos:</label>
-                            <select
-                                name="motivos"
-                                multiple={true}
-                                onChange={
-                                    (e)=>{
-                                        props.handleChangeSelectMultipleMotivosReprovacao(e);
-                                    }
-                                }
-                                value={props.selectMotivosReprovacao}
-                                className="form-control"
-                            >
-                                {props.motivosReprovacao && props.motivosReprovacao.length > 0 && props.motivosReprovacao.map((motivo)=>(
-                                    <option key={motivo.uuid} value={motivo.uuid}>{motivo.motivo}</option>
+                            <label htmlFor="ressalvas">Motivo(s)</label>
+                            <br/>
+                            <div className="multiselect-demo">
+                                <div className="">
+                                    <MultiSelect
+                                        value={props.selectMotivosReprovacao}
+                                        options={props.motivosReprovacao} 
+                                        onChange={(e) => {
+                                            props.setSelectMotivosReprovacao(e.value);
+                                        }}
+                                        optionLabel="motivo" 
+                                        placeholder="Selecione o(s) motivo(s)" 
+                                        maxSelectedLabels={0}
+                                        selectedItemsLabel={selectedItemsLabel(props.selectMotivosReprovacao)}
+                                    />
+                                </div>
+                            </div>
+                            
+                            <div className="mt-2 ml-2">
+                                {props.selectMotivosReprovacao && props.selectMotivosReprovacao.length > 0 && props.selectMotivosReprovacao.map((motivo, index) => (
+                                    <strong key={motivo.uuid}><p className="lista-motivos mb-0">{index+1}. {motivo.motivo}</p></strong>
                                 ))}
-                            </select>
+                            </div>
 
                             <div className="form-check mt-3 pl-0">
                                 <input
