@@ -92,21 +92,29 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
             data_limite_ue: moment(dataLimiteDevolucao).format("YYYY-MM-DD"),
             devolucoes_ao_tesouro_da_prestacao:[]
         }
-        try {
-            await getConcluirAnalise(prestacaoDeContas.uuid, payload);
-            setLoadingAcompanhamentoPC(true);
-            console.log("Devolução para acertos concluída com sucesso!")
-            await carregaPrestacaoDeContas();
-            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Devolvida para acertos”.')
-        }catch (e){
-            console.log("Erro ao Devolver para Acerto ", e.response)
-            if (e.response.data.mensagem){
-                setTextoErroDevolverParaAcerto(e.response.data.mensagem)
-            }else {
-                setTextoErroDevolverParaAcerto('Erro ao devolver para acerto!')
-            }
-            setShowModalErroDevolverParaAcerto(true)
+
+        if(prestacaoDeContas.pode_reabrir === false){
+            setShowModalErroDevolverParaAcerto(true);
+            setTextoErroDevolverParaAcerto("Essa prestação de contas não pode ser devolvida, ou reaberta porque há prestação de contas dessa associação de um período posterior. Se necessário, reabra ou devolva primeiro a prestação de contas mais recente.")
             setBtnDevolverParaAcertoDisabled(false)
+        }
+        else{
+            try {
+                setLoadingAcompanhamentoPC(true);
+                await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+                console.log("Devolução para acertos concluída com sucesso!")
+                await carregaPrestacaoDeContas();
+                setLoadingAcompanhamentoPC(false);
+                toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Devolvida para acertos”.')
+            }catch (e){
+                setLoadingAcompanhamentoPC(false);
+                console.log("Erro ao Devolver para Acerto ", e.response)
+                if (e.response.data.mensagem){
+                    setTextoErroDevolverParaAcerto(e.response.data.mensagem)
+                }else {
+                    setTextoErroDevolverParaAcerto('Erro ao devolver para acerto!')
+                }
+            }
         }
 
     }, [dataLimiteDevolucao, carregaPrestacaoDeContas, prestacaoDeContas, trataAnalisesDeContaDaPrestacao])

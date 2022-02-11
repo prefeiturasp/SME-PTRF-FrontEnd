@@ -162,7 +162,6 @@ export const ResumoDosAcertos = () => {
     }, [props.state.analisesDeContaDaPrestacao])
 
     const devolverParaAcertos = useCallback(async () => {
-        setLoading(true);
         setBtnDevolverParaAcertoDisabled(true)
         setShowModalConfirmaDevolverParaAcerto(false)
         let analises = trataAnalisesDeContaDaPrestacao()
@@ -173,24 +172,31 @@ export const ResumoDosAcertos = () => {
             data_limite_ue: moment(dataLimiteDevolucao).format("YYYY-MM-DD"),
             devolucoes_ao_tesouro_da_prestacao: []
         }
-        try {
-            await getConcluirAnalise(prestacao_conta_uuid, payload);
-            console.log("Devolução para acertos concluída com sucesso!")
-            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Devolvida para acertos”.')
-            setLoading(false);
-            onClickBtnVoltar();
-        } catch (e) {
-            console.log("Erro ao Devolver para Acerto ", e.response)
-            if (e.response.data.mensagem) {
-                setTextoErroDevolverParaAcerto(e.response.data.mensagem)
-            } else {
-                setTextoErroDevolverParaAcerto('Erro ao devolver para acerto!')
-            }
-            setShowModalErroDevolverParaAcerto(true)
+
+        if(prestacaoDeContas.pode_reabrir === false){
+            setShowModalErroDevolverParaAcerto(true);
+            setTextoErroDevolverParaAcerto("Essa prestação de contas não pode ser devolvida, ou reaberta porque há prestação de contas dessa associação de um período posterior. Se necessário, reabra ou devolva primeiro a prestação de contas mais recente.")
             setBtnDevolverParaAcertoDisabled(false)
+        }
+        else{
+            try {
+                setLoading(true);
+                await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+                console.log("Devolução para acertos concluída com sucesso!")
+                toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Devolvida para acertos”.')
+                setLoading(false);
+                onClickBtnVoltar();
+            }catch (e){
+                console.log("Erro ao Devolver para Acerto ", e.response)
+                if (e.response.data.mensagem) {
+                    setTextoErroDevolverParaAcerto(e.response.data.mensagem)
+                } else {
+                    setTextoErroDevolverParaAcerto('Erro ao devolver para acerto!')
+                }
+                setLoading(false);
+            }
             setLoading(false);
         }
-        setLoading(false);
     }, [dataLimiteDevolucao, trataAnalisesDeContaDaPrestacao, prestacao_conta_uuid, onClickBtnVoltar])
 
     return (
