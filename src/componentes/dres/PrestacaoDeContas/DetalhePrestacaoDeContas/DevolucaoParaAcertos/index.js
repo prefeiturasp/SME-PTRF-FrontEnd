@@ -94,7 +94,8 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
             devolucoes_ao_tesouro_da_prestacao:[]
         }
         try {
-            await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+            await getConcluirAnalise(prestacaoDeContas.uuid, payload, setLoadingAcompanhamentoPC);
+            setLoadingAcompanhamentoPC(true);
             console.log("Devolução para acertos concluída com sucesso!")
             await carregaPrestacaoDeContas();
             toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Devolvida para acertos”.')
@@ -107,9 +108,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
             }
             setShowModalErroDevolverParaAcerto(true)
             setBtnDevolverParaAcertoDisabled(false)
-            setLoadingAcompanhamentoPC(false);
         }
-        setLoadingAcompanhamentoPC(false);
 
     }, [dataLimiteDevolucao, carregaPrestacaoDeContas, prestacaoDeContas, trataAnalisesDeContaDaPrestacao])
 
