@@ -360,3 +360,46 @@
 .text-saldo-reprogramado {
   color: #2B7D83 !important
 }
+
+.lista-motivos {
+  color: #2b7d83 !important;
+  font-weight: bold;
+}
+
+
+/* MultiSelectDemo.css */
+
+.multiselect-demo .p-multiselect {
+  width: 100%;
+  min-width: 15rem !important;
+  background: #ffffff;
+  border: 1px solid #ced4da;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  border-radius: 6px;
+  padding: 0.01rem 0.75rem !important;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.p-multiselect-representative-option {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.p-multiselect-representative-option img {
+  vertical-align: middle;
+  width: 24px;
+}
+
+.p-multiselect-representative-option span {
+  margin-top: .125rem;
+}
+
+.multiselect-demo .p-multiselect .p-multiselect-item label{
+  margin-bottom: 0px;
+}
+
+.p-multiselect-label {
+  margin-bottom: 0px;
+}

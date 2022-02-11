@@ -1,7 +1,21 @@
 import React from "react";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 
-export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria, handleChangeFormRecebimentoPelaDiretoria, disabledNome, disabledData, disabledStatus, tabelaPrestacoes, prestacaoDeContas, exibeMotivo, motivo='motivos_aprovacao_ressalva', outros_motivos='outros_motivos_aprovacao_ressalva'}) =>{
+export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria, handleChangeFormRecebimentoPelaDiretoria, disabledNome, disabledData, disabledStatus, tabelaPrestacoes, prestacaoDeContas, exibeMotivo, exibeRecomendacoes, motivo='motivos_aprovacao_ressalva', outros_motivos='outros_motivos_aprovacao_ressalva', recomendacoes='recomendacoes'}) =>{
+    const juntaMotivos = (motivos, outros_motivos) => {
+        let lista = [];
+
+        for(let motivo=0; motivo<=motivos.length-1; motivo++){
+            lista.push(motivos[motivo].motivo)
+        }
+
+        if(outros_motivos){
+            lista.push(outros_motivos)
+        }
+        
+        return lista;
+    }
+    
     return(
         <>
             <h4>Recebimento pela Diretoria</h4>
@@ -45,17 +59,21 @@ export const FormRecebimentoPelaDiretoria = ({stateFormRecebimentoPelaDiretoria,
                     </div>
                     {exibeMotivo && prestacaoDeContas && ( (prestacaoDeContas[motivo] && prestacaoDeContas[motivo].length > 0) || prestacaoDeContas[outros_motivos])  &&
                         <div className='col-12 mt-3'>
-                            <label htmlFor="motivo">Motivos:</label>
-                            <div className='border container-exibe-motivos p-2'>
-                                {prestacaoDeContas[motivo] && prestacaoDeContas[motivo].length > 0 && prestacaoDeContas[motivo].map((motivo)=>(
-                                    <p key={motivo.uuid}>{motivo.motivo}</p>
-                                ))}
-                                {prestacaoDeContas[outros_motivos] &&
-                                    <p>{prestacaoDeContas[outros_motivos]}</p>
-                                }
-                            </div>
-                        </div>
+                            <strong><label>Motivo(s)</label></strong>
+ 
+                            {juntaMotivos(prestacaoDeContas[motivo], prestacaoDeContas[outros_motivos]).map((motivo, index) => (
+                                <strong key={index}><p className="lista-motivos mb-0" key={index}>{index+1}. {motivo}</p></strong>
+                            ))}
+                        </div>   
                     }
+
+                    {exibeRecomendacoes && prestacaoDeContas && prestacaoDeContas[recomendacoes] &&
+                        <div className='col-12 mt-3'>
+                            <strong><label>Recomendações</label></strong>
+
+                            <p>{prestacaoDeContas[recomendacoes]}</p>
+                        </div>  
+                    } 
                 </div>
             </form>
         </>
