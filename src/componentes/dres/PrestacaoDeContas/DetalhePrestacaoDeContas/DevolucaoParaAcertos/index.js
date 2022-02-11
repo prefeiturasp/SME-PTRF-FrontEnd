@@ -82,7 +82,6 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
     }, [analisesDeContaDaPrestacao])
 
     const devolverParaAcertos = useCallback(async () =>{
-        setLoadingAcompanhamentoPC(true);
         setBtnDevolverParaAcertoDisabled(true)
         setShowModalConfirmaDevolverParaAcerto(false)
         let analises = trataAnalisesDeContaDaPrestacao()
@@ -94,7 +93,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
             devolucoes_ao_tesouro_da_prestacao:[]
         }
         try {
-            await getConcluirAnalise(prestacaoDeContas.uuid, payload, setLoadingAcompanhamentoPC);
+            await getConcluirAnalise(prestacaoDeContas.uuid, payload);
             setLoadingAcompanhamentoPC(true);
             console.log("Devolução para acertos concluída com sucesso!")
             await carregaPrestacaoDeContas();
