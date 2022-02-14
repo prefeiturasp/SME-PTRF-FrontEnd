@@ -18,6 +18,10 @@ import {ModalDevolucaoAoTesouro} from "../ModalDevolucaoAoTesouro";
 import {ModalReverDevolucoesAoTesouro} from "../ModalReverDevolucoesAoTesouro";
 import {getSalvarDevoulucoesAoTesouro} from "../../../../services/dres/PrestacaoDeContas.service";
 import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
+import TabelaRepassesPendentes from "./TabelaRepassesPendentes";
+
+// Hooks Personalizados
+import {useCarregaRepassesPendentesPorPeriodoAteAgora} from "../../../../hooks/Globais/useCarregaRepassesPendentesPorPeriodoAteAgora";
 
 moment.updateLocale('pt', {
     months: [
@@ -59,6 +63,10 @@ export const VisualizacaoDaAta = () => {
     const periodoUuid = periodo_prestacao_de_contas ? periodo_prestacao_de_contas.periodo_uuid : ""
     const prestacaoContaUuid = localStorage.getItem("uuidPrestacaoConta")
     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
+
+    // Hooks Personalizados
+    const repassesPendentes = useCarregaRepassesPendentesPorPeriodoAteAgora(associacaoUuid, periodoUuid)
+
 
     useEffect(() => {
         const infoAta = async () => {
@@ -468,6 +476,22 @@ export const VisualizacaoDaAta = () => {
                         valorTemplate={valorTemplate}
                         retornaDadosAtaFormatado={retornaDadosAtaFormatado}
                     />
+                }
+                {repassesPendentes && repassesPendentes.length > 0 &&
+                    <>
+                        <p className='titulo-tabela-acoes mt-3'>Valores repassados pendentes de crédito</p>
+                        <TabelaRepassesPendentes
+                            repassesPendentes={repassesPendentes}
+                        />
+
+                        <div className='col p-2 border border-top-0 d-flex align-items-center'>
+                            <p className='mb-0'>
+                                <strong>Justificativa:</strong><br/>
+                                {dadosAta.justificativa_repasses_pendentes}
+                            </p>
+                        </div>
+
+                    </>
                 }
                 <br/>
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
