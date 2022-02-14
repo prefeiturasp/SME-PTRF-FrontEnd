@@ -100,18 +100,18 @@ const GetUrls = () =>{
 
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
 
-    if (dados_usuario_logado.visao_selecionada.nome === 'SME'){
+    if (dados_usuario_logado && dados_usuario_logado.visao_selecionada && dados_usuario_logado.visao_selecionada.nome && dados_usuario_logado.visao_selecionada.nome === 'SME'){
         return UrlsMenuSME
-    }else if(dados_usuario_logado.visao_selecionada.nome === 'DRE'){
+    }else if(dados_usuario_logado && dados_usuario_logado.visao_selecionada && dados_usuario_logado.visao_selecionada.nome && dados_usuario_logado.visao_selecionada.nome === 'DRE'){
         return UrlsMenuDres
-    }else if (dados_usuario_logado.visao_selecionada.nome === 'UE'){
+    }else if (dados_usuario_logado && dados_usuario_logado.visao_selecionada && dados_usuario_logado.visao_selecionada.nome && dados_usuario_logado.visao_selecionada.nome === 'UE'){
         return UrlsMenuEscolas
     }else {
-        if ( dados_usuario_logado.visoes.find(visao=> visao.tipo === 'SME')){
+        if (dados_usuario_logado && dados_usuario_logado.visoes && dados_usuario_logado.visoes.find(visao=> visao.tipo === 'SME')){
             return UrlsMenuSME
-        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'DRE')){
+        }else if (dados_usuario_logado && dados_usuario_logado.visoes && dados_usuario_logado.visoes.find(visao=> visao.tipo === 'DRE')){
             return UrlsMenuDres
-        }else if (dados_usuario_logado.visoes.find(visao=> visao.tipo === 'UE')){
+        }else if (dados_usuario_logado && dados_usuario_logado.visoes && dados_usuario_logado.visoes.find(visao=> visao.tipo === 'UE')){
             return UrlsMenuEscolas
         }else {
             return UrlsMenuEscolas

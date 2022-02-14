@@ -50,3 +50,7 @@ export const getDownloadAtaPdf = async (ata_uuid) => {
         });
 };
 
+export const getRepassesPendentes = async (associacao_uuid, periodo_uuid) => {
+    return (await api.get(`/api/associacoes/${associacao_uuid}/repasses-pendentes-por-periodo/?periodo_uuid=${periodo_uuid}`, authHeader)).data
+}
+

@@ -15,6 +15,9 @@ import {ASSOCIACAO_UUID} from "../../../../../services/auth.service";
 import moment from "moment";
 import {toastCustom} from "../../../../Globais/ToastCustom"
 
+// Hooks Personalizados
+import {useCarregaRepassesPendentesPorPeriodoAteAgora} from "../../../../../hooks/Globais/useCarregaRepassesPendentesPorPeriodoAteAgora";
+
 moment.updateLocale('pt', {
     months: [
         "janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho",
@@ -27,6 +30,11 @@ export const EdicaoAta = () => {
     const formRef = useRef();
     let {uuid_ata} = useParams();
     let uuid_associacao = localStorage.getItem(ASSOCIACAO_UUID);
+    const periodo_prestacao_de_contas = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta'));
+    const periodoUuid = periodo_prestacao_de_contas ? periodo_prestacao_de_contas.periodo_uuid : ""
+
+    // Hooks Personalizados
+    const repassesPendentes = useCarregaRepassesPendentesPorPeriodoAteAgora(uuid_associacao, periodoUuid)
 
     const [listaPresentesPadrao, setListaPresentesPadrao] = useState([]);
     const [listaPresentes, setListaPresentes] = useState([]);
@@ -42,12 +50,14 @@ export const EdicaoAta = () => {
         cargo_presidente_reuniao: "",
         cargo_secretaria_reuniao: "",
         retificacoes: "",
-        hora_reuniao: ""
+        hora_reuniao: "",
+        justificativa_repasses_pendentes: "",
     });
     const [tabelas, setTabelas] = useState({});
     const [membrosCargos, setMembrosCargos] = useState([])
     const [disableBtnSalvar, setDisableBtnSalvar] = useState(false)
     const [dadosAta, setDadosAta] = useState({});
+    const [erros, setErros] = useState({});
 
 
     useEffect(() => {
@@ -90,7 +100,8 @@ export const EdicaoAta = () => {
             cargo_secretaria_reuniao: dados_ata.cargo_secretaria_reuniao,
             retificacoes: dados_ata.retificacoes,
             hora_reuniao: dados_ata.hora_reuniao,
-            tipo_ata: dados_ata.tipo_ata
+            tipo_ata: dados_ata.tipo_ata,
+            justificativa_repasses_pendentes: dados_ata.justificativa_repasses_pendentes
         });
         setDadosAta(dados_ata);
     };
@@ -115,12 +126,32 @@ export const EdicaoAta = () => {
         window.location.assign(path)
     };
 
+    const temErros = (dadosForm) => {
+        let erros;
+        let justificativas = dadosForm.stateFormEditarAta.justificativa_repasses_pendentes.trim()
+        if (repassesPendentes && repassesPendentes.length > 0 && !justificativas){
+            erros = {
+                justificativa_repasses_pendentes : "Campo obrigatório"
+            }
+        }else {
+            erros = {}
+        }
+        setErros(erros)
+        return erros;
+    };
+
     const onSubmitFormEdicaoAta = async () => {
+
         let dadosForm = formRef.current.values
 
+        let retorno_erros = temErros(dadosForm)
+
+        if (Object.entries(retorno_erros).length > 0){
+            return
+        }
         let data_da_reuniao = dadosForm.stateFormEditarAta.data_reuniao ? moment(dadosForm.stateFormEditarAta.data_reuniao).format("YYYY-MM-DD") : null;
-        let hora_reuniao = dadosForm.stateFormEditarAta.hora_reuniao ? moment(dadosForm.stateFormEditarAta.hora_reuniao, 'HHmm').format('HH:mm') : "00:00" 
-        
+        let hora_reuniao = dadosForm.stateFormEditarAta.hora_reuniao ? moment(dadosForm.stateFormEditarAta.hora_reuniao, 'HHmm').format('HH:mm') : "00:00"
+
         let payload = {
             cargo_presidente_reuniao: dadosForm.stateFormEditarAta.cargo_presidente_reuniao,
             cargo_secretaria_reuniao: dadosForm.stateFormEditarAta.cargo_secretaria_reuniao,
@@ -134,7 +165,8 @@ export const EdicaoAta = () => {
             secretario_reuniao: dadosForm.stateFormEditarAta.secretario_reuniao,
             tipo_reuniao: dadosForm.stateFormEditarAta.tipo_reuniao,
             presentes_na_ata: dadosForm.listaPresentesPadrao,
-            hora_reuniao: hora_reuniao
+            hora_reuniao: hora_reuniao,
+            justificativa_repasses_pendentes: dadosForm.stateFormEditarAta.justificativa_repasses_pendentes,
         }
 
         try {
@@ -171,6 +203,8 @@ export const EdicaoAta = () => {
                         uuid_ata={uuid_ata}
                         listaPresentes={listaPresentes}
                         setDisableBtnSalvar={setDisableBtnSalvar}
+                        repassesPendentes={repassesPendentes}
+                        erros={erros}
                     >
                     </FormularioEditaAta>
                 </div>
