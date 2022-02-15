@@ -4,7 +4,7 @@ import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import {
     getConcluirAnalise,
     getAnalisesDePcDevolvidas,
-    getUltimaAnalisePc, getLancamentosAjustes, getDocumentosAjustes
+    getUltimaAnalisePc, getLancamentosAjustes, getDocumentosAjustes, getSaldosIniciasAjustes
 } from "../../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {gerarUuid, trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
@@ -35,6 +35,7 @@ export const ResumoDosAcertos = () => {
     const [btnDevolverParaAcertoDisabled, setBtnDevolverParaAcertoDisabled] = useState(false)
     const [showModalConfirmaDevolverParaAcerto, setShowModalConfirmaDevolverParaAcerto] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [totalValoresReprogramadosAjustes, setTotalValoresReprogramadosAjustes] = useState(undefined)
     const [totalLancamentosAjustes, setTotalLancamentosAjustes] = useState(undefined)
     const [totalDocumentosAjustes, setTotalDocumentosAjustes] = useState(undefined)
     const [forcaVerificaSeExibeMsg, setForcaVerificaSeExibeMsg] = useState('')
@@ -68,6 +69,7 @@ export const ResumoDosAcertos = () => {
         }
         setAnaliseAtualUuid(analise_atual_uuid)
         // Necessario alterar os estados dos totais para chamar novamente o método verificaSeExibeMsg setado com undefined
+        setTotalValoresReprogramadosAjustes(undefined)
         setTotalLancamentosAjustes(undefined)
         setTotalDocumentosAjustes(undefined)
         setForcaVerificaSeExibeMsg(gerarUuid())
@@ -104,6 +106,7 @@ export const ResumoDosAcertos = () => {
             setAnaliseAtualUuid(analisesDePcDevolvidas[ultimo_indice_array].uuid)
         }
         // Necessario alterar os estados dos totais para chamar novamente o método verificaSeExibeMsg setado com ''
+        setTotalValoresReprogramadosAjustes('')
         setTotalLancamentosAjustes('')
         setTotalDocumentosAjustes('')
     }, [analisesDePcDevolvidas])
@@ -112,6 +115,8 @@ export const ResumoDosAcertos = () => {
         setLoading(true)
         if (props.state.infoAta && props.state.infoAta.contas && props.state.infoAta.contas.length > 0 && analiseAtualUuid) {
             props.state.infoAta.contas.map(async (conta) => {
+                let valores_reprogramados_ajustes = await getSaldosIniciasAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
+                setTotalValoresReprogramadosAjustes(valores_reprogramados_ajustes.length)
                 let lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid)
                 setTotalLancamentosAjustes(lanc => isNaN(lanc) ? 0 + lancamentos_ajustes.length : lanc + lancamentos_ajustes.length)
                 let documentos_ajustes = await getDocumentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid)
@@ -127,7 +132,7 @@ export const ResumoDosAcertos = () => {
 
     const verificaSeExibeMsg = useCallback(() => {
         setLoading(true)
-        if (totalLancamentosAjustes !== undefined && totalLancamentosAjustes <= 0 && totalDocumentosAjustes !== undefined && totalDocumentosAjustes <= 0) {
+        if (totalLancamentosAjustes !== undefined && totalLancamentosAjustes <= 0 && totalDocumentosAjustes !== undefined && totalDocumentosAjustes <= 0 && totalValoresReprogramadosAjustes !== undefined && totalValoresReprogramadosAjustes <= 0) {
             setExibeMsg(true)
             if (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) {
                 setTextoMsg('Não existem novas solicitações salvas desde o retorno da Associação. Consulte acima as solicitações anteriores')
@@ -138,7 +143,7 @@ export const ResumoDosAcertos = () => {
             setExibeMsg(false)
         }
         setLoading(false)
-    }, [prestacaoDeContas, totalLancamentosAjustes, totalDocumentosAjustes])
+    }, [prestacaoDeContas, totalLancamentosAjustes, totalDocumentosAjustes, totalValoresReprogramadosAjustes])
 
     useEffect(() => {
         verificaSeExibeMsg()
@@ -162,7 +167,6 @@ export const ResumoDosAcertos = () => {
     }, [props.state.analisesDeContaDaPrestacao])
 
     const devolverParaAcertos = useCallback(async () => {
-        setLoading(true);
         setBtnDevolverParaAcertoDisabled(true)
         setShowModalConfirmaDevolverParaAcerto(false)
         let analises = trataAnalisesDeContaDaPrestacao()
@@ -173,24 +177,31 @@ export const ResumoDosAcertos = () => {
             data_limite_ue: moment(dataLimiteDevolucao).format("YYYY-MM-DD"),
             devolucoes_ao_tesouro_da_prestacao: []
         }
-        try {
-            await getConcluirAnalise(prestacao_conta_uuid, payload);
-            console.log("Devolução para acertos concluída com sucesso!")
-            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Devolvida para acertos”.')
-            setLoading(false);
-            onClickBtnVoltar();
-        } catch (e) {
-            console.log("Erro ao Devolver para Acerto ", e.response)
-            if (e.response.data.mensagem) {
-                setTextoErroDevolverParaAcerto(e.response.data.mensagem)
-            } else {
-                setTextoErroDevolverParaAcerto('Erro ao devolver para acerto!')
-            }
-            setShowModalErroDevolverParaAcerto(true)
+
+        if(prestacaoDeContas.pode_reabrir === false){
+            setShowModalErroDevolverParaAcerto(true);
+            setTextoErroDevolverParaAcerto("Essa prestação de contas não pode ser devolvida, ou reaberta porque há prestação de contas dessa associação de um período posterior. Se necessário, reabra ou devolva primeiro a prestação de contas mais recente.")
             setBtnDevolverParaAcertoDisabled(false)
+        }
+        else{
+            try {
+                setLoading(true);
+                await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+                console.log("Devolução para acertos concluída com sucesso!")
+                toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Devolvida para acertos”.')
+                setLoading(false);
+                onClickBtnVoltar();
+            }catch (e){
+                console.log("Erro ao Devolver para Acerto ", e.response)
+                if (e.response.data.mensagem) {
+                    setTextoErroDevolverParaAcerto(e.response.data.mensagem)
+                } else {
+                    setTextoErroDevolverParaAcerto('Erro ao devolver para acerto!')
+                }
+                setLoading(false);
+            }
             setLoading(false);
         }
-        setLoading(false);
     }, [dataLimiteDevolucao, trataAnalisesDeContaDaPrestacao, prestacao_conta_uuid, onClickBtnVoltar])
 
     return (
