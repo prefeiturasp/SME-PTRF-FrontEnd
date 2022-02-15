@@ -81,7 +81,6 @@ const ModalFormPeriodos = ({show, stateFormModal, handleClose, handleSubmitModal
                                                 onChange={setFieldValue}
                                                 disabled={!props.values.editavel}
                                             />
-                                            {props.touched.data_fim_realizacao_despesas && props.errors.data_fim_realizacao_despesas && <span className="span_erro text-danger mt-1"> {props.errors.data_fim_realizacao_despesas} </span>}
                                         </div>
                                     </div>
                                 </div>
