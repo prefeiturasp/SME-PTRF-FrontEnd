@@ -168,11 +168,10 @@ export const Periodos = () =>{
         let _referencia = values.referencia;
         let _data_prevista_repasse = values.data_prevista_repasse ? moment(values.data_prevista_repasse).format("YYYY-MM-DD") : null;
         let _data_inicio_realizacao_despesas = values.data_inicio_realizacao_despesas ? moment(values.data_inicio_realizacao_despesas).format("YYYY-MM-DD") : null;
-        let _data_fim_realizacao_despesas = values.data_fim_realizacao_despesas ? moment(values.data_fim_realizacao_despesas).format("YYYY-MM-DD") : null;
+        let _data_fim_realizacao_despesas = values.data_fim_realizacao_despesas ? moment(values.data_fim_realizacao_despesas).format("YYYY-MM-DD") : '';
         let _data_inicio_prestacao_contas = values.data_inicio_prestacao_contas ? moment(values.data_inicio_prestacao_contas).format("YYYY-MM-DD") : null;
         let _data_fim_prestacao_contas = values.data_fim_prestacao_contas ? moment(values.data_fim_prestacao_contas).format("YYYY-MM-DD") : null;
         let _periodo_anterior_uuid = values.periodo_anterior ? values.periodo_anterior : '';
-
         let datas_atendem = await getDatasAtendemRegras(_data_inicio_realizacao_despesas, _data_fim_realizacao_despesas, _periodo_anterior_uuid, _periodo_uuid);
 
         if (!datas_atendem.valido){
@@ -185,7 +184,7 @@ export const Periodos = () =>{
                 referencia: _referencia,
                 data_prevista_repasse: _data_prevista_repasse,
                 data_inicio_realizacao_despesas: _data_inicio_realizacao_despesas,
-                data_fim_realizacao_despesas: _data_fim_realizacao_despesas,
+                data_fim_realizacao_despesas: _data_fim_realizacao_despesas ? _data_fim_realizacao_despesas : null,
                 data_inicio_prestacao_contas: _data_inicio_prestacao_contas,
                 data_fim_prestacao_contas: _data_fim_prestacao_contas,
                 periodo_anterior: _periodo_anterior_uuid,
