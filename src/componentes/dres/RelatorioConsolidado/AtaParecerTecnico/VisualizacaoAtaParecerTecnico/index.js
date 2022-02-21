@@ -174,12 +174,17 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
     };
 
     const valorTemplate = (valor) => {
-        let valor_formatado = Number(valor).toLocaleString('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-        });
-        valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
-        return valor_formatado
+        if(parseInt(valor) === 0){
+            return "-"
+        }
+        else{
+            let valor_formatado = Number(valor).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
+            return valor_formatado
+        }
     };
 
     const statusTemplate = (status) => {
