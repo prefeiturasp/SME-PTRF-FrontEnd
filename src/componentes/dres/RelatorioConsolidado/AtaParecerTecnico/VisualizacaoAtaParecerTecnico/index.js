@@ -174,7 +174,7 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
     };
 
     const valorTemplate = (valor) => {
-        if(parseInt(valor) === 0){
+        if(parseInt(valor) === 0 || valor === ""){
             return "-"
         }
         else{
