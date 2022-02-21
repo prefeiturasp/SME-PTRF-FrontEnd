@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from "react";
 import {Formik} from "formik";
-import { getUltimaAnalisePc, getAnaliseValorReprogramadoPorAcao, patchAnaliseValorReprogramadoPorAcao, postAnaliseValorReprogramadoPorAcao } from "../../../../services/dres/PrestacaoDeContas.service";
+import { getUltimaAnalisePc, getAnaliseValorReprogramadoPorAcao, patchAnaliseValorReprogramadoPorAcao, postAnaliseValorReprogramadoPorAcao, getSaldosIniciasAjustes } from "../../../../services/dres/PrestacaoDeContas.service";
 import CurrencyInput from "react-currency-input";
 import { trataNumericos } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheck} from "@fortawesome/free-solid-svg-icons";
 
-export const VerificaSaldoReprogramadoInicial = ({conta_associacao_uuid, acao_associacao_uuid, prestacaoDeContas}) => {
+export const VerificaSaldoReprogramadoInicial = ({setValoresReprogramadosAjustes, conta_associacao_uuid, acao_associacao_uuid, prestacaoDeContas}) => {
 
     const [dadosUuid, setDadosUuid] = useState({});
     const [initialState, setInitialState] = useState({
@@ -127,6 +127,8 @@ export const VerificaSaldoReprogramadoInicial = ({conta_associacao_uuid, acao_as
             try {
                 await patchAnaliseValorReprogramadoPorAcao(values.uuid, payload);
                 recebeAnaliseValorReprogramado();
+                let valores_reprogramados_ajustes = await getSaldosIniciasAjustes(dadosUuid.uuid_analise, dadosUuid.uuid_conta_associacao);
+                setValoresReprogramadosAjustes([...valores_reprogramados_ajustes])
                 console.log("Edição realizada com sucesso!")
             } catch (e) {
                 console.log("Erro ao fazer edição", e.response)
@@ -160,6 +162,8 @@ export const VerificaSaldoReprogramadoInicial = ({conta_associacao_uuid, acao_as
             try {
                 await postAnaliseValorReprogramadoPorAcao(payload);
                 recebeAnaliseValorReprogramado();
+                let valores_reprogramados_ajustes = await getSaldosIniciasAjustes(dadosUuid.uuid_analise, dadosUuid.uuid_conta_associacao);
+                setValoresReprogramadosAjustes([...valores_reprogramados_ajustes])
                 console.log("Criação realizada com sucesso!")
             } catch (e) {
                 console.log("Erro ao fazer criação", e.response)

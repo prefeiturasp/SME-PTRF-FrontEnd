@@ -92,7 +92,7 @@ export const ModalConcluirAnalise = (props) => {
                                         value={props.txtRecomendacoes}
                                         onChange={(e) => props.handleChangeTxtRecomendacoes(e)}
                                         className="form-control"
-                                        placeholder="informe as recomendações"
+                                        placeholder="Informe as recomendações (campo obrigatório)"
                                         rows="3"
                                     />
                                 </>

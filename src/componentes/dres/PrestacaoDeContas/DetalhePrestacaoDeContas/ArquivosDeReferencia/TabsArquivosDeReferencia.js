@@ -8,7 +8,7 @@ import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferenciaVisu
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 
-export const TabsArquivosDeReferencia = ({prestacaoDeContas, infoAta, toggleBtnEscolheConta, exibeAtaPorConta, clickBtnEscolheConta, infoAtaPorConta, ...rest}) => {
+export const TabsArquivosDeReferencia = ({valoresReprogramadosAjustes, setValoresReprogramadosAjustes, prestacaoDeContas, infoAta, toggleBtnEscolheConta, exibeAtaPorConta, clickBtnEscolheConta, infoAtaPorConta, ...rest}) => {
 
     return (
         <>
@@ -90,6 +90,8 @@ export const TabsArquivosDeReferencia = ({prestacaoDeContas, infoAta, toggleBtnE
                                 >
 
                                     <ResumoFinanceiroTabelaAcoes
+                                        setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
+                                        valoresReprogramadosAjustes={valoresReprogramadosAjustes}
                                         infoAta={infoAtaPorConta}
                                         valorTemplate={rest.valorTemplate}
                                         toggleBtnTabelaAcoes={rest.toggleBtnTabelaAcoes}

@@ -16,13 +16,12 @@ import {ModalErroDevolverParaAcerto} from "./ModalErroDevolverParaAcerto";
 import {ModalConfirmaDevolverParaAcerto} from "./ModalConfirmaDevolverParaAcerto";
 import { toastCustom } from "../../../../Globais/ToastCustom";
 
-const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas, infoAta, editavel=true, setLoadingAcompanhamentoPC}) => {
+const DevolucaoParaAcertos = ({setValoresReprogramadosAjustes, valoresReprogramadosAjustes, prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas, infoAta, editavel=true, setLoadingAcompanhamentoPC}) => {
 
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalErroDevolverParaAcerto, setShowModalErroDevolverParaAcerto] = useState(false)
     const [showModalConfirmaDevolverParaAcerto, setShowModalConfirmaDevolverParaAcerto] = useState(false)
     const [textoErroDevolverParaAcerto, setTextoErroDevolverParaAcerto] = useState('')
-    const [valoresReprogramadosAjustes, setValoresReprogramadosAjustes] = useState([])
     const [lancamentosAjustes, setLancamentosAjustes] = useState([])
     const [documentosAjustes, setDocumentosAjustes] = useState([])
     const [loading, setLoading] = useState(true)
