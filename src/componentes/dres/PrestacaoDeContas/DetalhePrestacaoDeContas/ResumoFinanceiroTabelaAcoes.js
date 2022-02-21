@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronUp, faChevronDown} from "@fortawesome/free-solid-svg-icons";
 import { VerificaSaldoReprogramadoInicial } from "./VerificaSaldoReprogramadoInicial";
 
-export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTabelaAcoes, clickBtnTabelaAcoes, prestacaoDeContas}) => {
+export const ResumoFinanceiroTabelaAcoes = ({valoresReprogramadosAjustes, setValoresReprogramadosAjustes, infoAta, valorTemplate, toggleBtnTabelaAcoes, clickBtnTabelaAcoes, prestacaoDeContas}) => {
     return (
         <>
             {infoAta && infoAta.acoes && infoAta.acoes.length > 0 &&
@@ -121,6 +121,8 @@ export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTa
                                     {prestacaoDeContas && prestacaoDeContas.permite_analise_valores_reprogramados && prestacaoDeContas.permite_analise_valores_reprogramados.permite_analise
                                         ?
                                             <VerificaSaldoReprogramadoInicial
+                                                setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
+                                                valoresReprogramadosAjustes={valoresReprogramadosAjustes}
                                                 conta_associacao_uuid={infoAta.conta_associacao.uuid}
                                                 acao_associacao_uuid={info.acao_associacao_uuid}
                                                 prestacaoDeContas={prestacaoDeContas}
