@@ -31,10 +31,19 @@ const CardsInfoDevolucaoSelecionada = ({objetoConteudoCard}) => {
                     <div className="card-body card-info-devolucao-para-acerto-dre pb-1">
                         <h5 className="card-title"><img src={IconeDevolucaoPrazoReenvio} alt="" className="img-fluid"/></h5>
                         <p className="card-text fonte-16 mb-0"><strong>Prazo para reenvio:</strong> </p>
-                        <p className="card-text texto-info pb-0">{objetoConteudoCard.devolucao_prestacao_conta && objetoConteudoCard.devolucao_prestacao_conta.data ? dataTemplate(null, null, objetoConteudoCard.devolucao_prestacao_conta.data_limite_ue) : ''}</p>
+                        <p className="card-text texto-info pb-0">{objetoConteudoCard.devolucao_prestacao_conta && objetoConteudoCard.devolucao_prestacao_conta.data_limite_ue ? dataTemplate(null, null, objetoConteudoCard.devolucao_prestacao_conta.data_limite_ue) : ''}</p>
                     </div>
                 </div>
 
+                {objetoConteudoCard.devolucao_prestacao_conta && objetoConteudoCard.devolucao_prestacao_conta.data_retorno_ue &&
+                    <div className="card">
+                        <div className="card-body card-info-devolucao-para-acerto-dre pb-1">
+                            <h5 className="card-title"><img src={IconeDevolucaoData} alt="" className="img-fluid"/></h5>
+                            <p className="card-text fonte-16 mb-0"><strong>Data de devolução da UE:</strong> </p>
+                            <p className="card-text texto-info pb-0">{dataTemplate(null, null, objetoConteudoCard.devolucao_prestacao_conta.data_retorno_ue)}</p>
+                        </div>
+                    </div>
+                }
             </div>
         </>
     )

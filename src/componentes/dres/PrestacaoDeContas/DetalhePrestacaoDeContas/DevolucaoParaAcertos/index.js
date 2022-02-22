@@ -7,7 +7,8 @@ import {
     getConcluirAnalise,
     getLancamentosAjustes,
     getDocumentosAjustes,
-    getUltimaAnalisePc
+    getUltimaAnalisePc,
+    getSaldosIniciasAjustes
 } from "../../../../../services/dres/PrestacaoDeContas.service";
 import {trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../../../utils/Loading";
@@ -15,7 +16,7 @@ import {ModalErroDevolverParaAcerto} from "./ModalErroDevolverParaAcerto";
 import {ModalConfirmaDevolverParaAcerto} from "./ModalConfirmaDevolverParaAcerto";
 import { toastCustom } from "../../../../Globais/ToastCustom";
 
-const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas, infoAta, editavel=true, setLoadingAcompanhamentoPC}) => {
+const DevolucaoParaAcertos = ({setValoresReprogramadosAjustes, valoresReprogramadosAjustes, prestacaoDeContas, analisesDeContaDaPrestacao, carregaPrestacaoDeContas, infoAta, editavel=true, setLoadingAcompanhamentoPC}) => {
 
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
     const [showModalErroDevolverParaAcerto, setShowModalErroDevolverParaAcerto] = useState(false)
@@ -26,6 +27,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
     const [loading, setLoading] = useState(true)
     const [btnDevolverParaAcertoDisabled, setBtnDevolverParaAcertoDisabled] = useState(false)
 
+    const totalValoresReprogramadosAjustes = useMemo(() => valoresReprogramadosAjustes.length, [valoresReprogramadosAjustes]);
     const totalLancamentosAjustes = useMemo(() => lancamentosAjustes.length, [lancamentosAjustes]);
     const totalDocumentosAjustes = useMemo(() => documentosAjustes.length, [documentosAjustes]);
 
@@ -50,6 +52,8 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
             if (mounted) {
                 if (infoAta && infoAta.contas && infoAta.contas.length > 0) {
                     return await infoAta.contas.map(async (conta) => {
+                        let valores_reprogramados_ajustes = await getSaldosIniciasAjustes(analise_atual_uuid, conta.conta_associacao.uuid);
+                        setValoresReprogramadosAjustes([...valores_reprogramados_ajustes])
                         let lancamentos_ajustes = await getLancamentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
                         setLancamentosAjustes(prevState => ([...prevState, ...lancamentos_ajustes]))
                         let documentos_ajustes = await getDocumentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
@@ -82,7 +86,6 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
     }, [analisesDeContaDaPrestacao])
 
     const devolverParaAcertos = useCallback(async () =>{
-        setLoadingAcompanhamentoPC(true);
         setBtnDevolverParaAcertoDisabled(true)
         setShowModalConfirmaDevolverParaAcerto(false)
         let analises = trataAnalisesDeContaDaPrestacao()
@@ -93,23 +96,30 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
             data_limite_ue: moment(dataLimiteDevolucao).format("YYYY-MM-DD"),
             devolucoes_ao_tesouro_da_prestacao:[]
         }
-        try {
-            await getConcluirAnalise(prestacaoDeContas.uuid, payload);
-            console.log("Devolução para acertos concluída com sucesso!")
-            await carregaPrestacaoDeContas();
-            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Devolvida para acertos”.')
-        }catch (e){
-            console.log("Erro ao Devolver para Acerto ", e.response)
-            if (e.response.data.mensagem){
-                setTextoErroDevolverParaAcerto(e.response.data.mensagem)
-            }else {
-                setTextoErroDevolverParaAcerto('Erro ao devolver para acerto!')
-            }
-            setShowModalErroDevolverParaAcerto(true)
+
+        if(prestacaoDeContas.pode_reabrir === false){
+            setShowModalErroDevolverParaAcerto(true);
+            setTextoErroDevolverParaAcerto("Essa prestação de contas não pode ser devolvida, ou reaberta porque há prestação de contas dessa associação de um período posterior. Se necessário, reabra ou devolva primeiro a prestação de contas mais recente.")
             setBtnDevolverParaAcertoDisabled(false)
-            setLoadingAcompanhamentoPC(false);
         }
-        setLoadingAcompanhamentoPC(false);
+        else{
+            try {
+                setLoadingAcompanhamentoPC(true);
+                await getConcluirAnalise(prestacaoDeContas.uuid, payload);
+                console.log("Devolução para acertos concluída com sucesso!")
+                await carregaPrestacaoDeContas();
+                setLoadingAcompanhamentoPC(false);
+                toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Devolvida para acertos”.')
+            }catch (e){
+                setLoadingAcompanhamentoPC(false);
+                console.log("Erro ao Devolver para Acerto ", e.response)
+                if (e.response.data.mensagem){
+                    setTextoErroDevolverParaAcerto(e.response.data.mensagem)
+                }else {
+                    setTextoErroDevolverParaAcerto('Erro ao devolver para acerto!')
+                }
+            }
+        }
 
     }, [dataLimiteDevolucao, carregaPrestacaoDeContas, prestacaoDeContas, trataAnalisesDeContaDaPrestacao])
 
@@ -134,7 +144,7 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                                 />
                             </div>
                             <div>
-                                <Link onClick={ (totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null : (event) => event.preventDefault() }
+                                <Link onClick={ (totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalValoresReprogramadosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) ? null : (event) => event.preventDefault() }
                                       to={{
                                           pathname: `/dre-detalhe-prestacao-de-contas-resumo-acertos/${prestacaoDeContas.uuid}`,
                                           state: {
@@ -144,8 +154,8 @@ const DevolucaoParaAcertos = ({prestacaoDeContas, analisesDeContaDaPrestacao, ca
                                           }
                                       }}
                                       className="btn btn-outline-success mr-2"
-                                      disabled={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
-                                      readOnly={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
+                                      disabled={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalValoresReprogramadosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
+                                      readOnly={ !((totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalValoresReprogramadosAjustes > 0) || (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0)) }
                                 >
                                     Ver resumo
                                 </Link>

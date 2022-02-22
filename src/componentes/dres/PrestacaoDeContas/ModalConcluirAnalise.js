@@ -1,7 +1,17 @@
 import React from "react";
 import {ModalBootstrapFormConcluirAnalise} from "../../Globais/ModalBootstrap";
+import { MultiSelect } from 'primereact/multiselect';
 
 export const ModalConcluirAnalise = (props) => {
+    const selectedItemsLabel = (motivos) => {
+        if(motivos.length === 1){
+            return "1 selecionado"
+        }
+        else{
+            return `${motivos.length} selecionados`
+        }
+    }
+
     const bodyTextarea = () => {
         return (
             <form>
@@ -25,22 +35,29 @@ export const ModalConcluirAnalise = (props) => {
                     {props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' &&
                     <>
                         <div className="col-12 mt-2">
-                            <label htmlFor="resalvas">Motivo:</label>
-                            <select
-                                name="motivos"
-                                multiple={true}
-                                onChange={
-                                    (e)=>{
-                                        props.handleChangeSelectMultipleMotivos(e);
-                                    }
-                                }
-                                value={props.motivos}
-                                className="form-control"
-                            >
-                                {props.motivosAprovadoComRessalva && props.motivosAprovadoComRessalva.length > 0 && props.motivosAprovadoComRessalva.map((motivo)=>(
-                                    <option key={motivo.uuid} value={motivo.uuid}>{motivo.motivo}</option>
+                            <label htmlFor="resalvas">Motivo(s)</label>
+                            <br/>
+                            <div className="multiselect-demo">
+                                <div className="">
+                                    <MultiSelect
+                                        value={props.motivos}
+                                        options={props.motivosAprovadoComRessalva} 
+                                        onChange={(e) => {
+                                            props.setMotivos(e.value);
+                                        }}
+                                        optionLabel="motivo" 
+                                        placeholder="Selecione o(s) motivo(s)" 
+                                        maxSelectedLabels={0}
+                                        selectedItemsLabel={selectedItemsLabel(props.motivos)}
+                                    />
+                                </div>
+                            </div>
+                            
+                            <div className="mt-2 ml-2">
+                                {props.motivos && props.motivos.map((motivo, index) => (
+                                    <strong key={motivo.uuid}><p className="lista-motivos mb-0">{index+1}. {motivo.motivo}</p></strong>
                                 ))}
-                            </select>
+                            </div>    
 
                             <div className="form-check mt-3 pl-0">
                                 <input
@@ -66,27 +83,47 @@ export const ModalConcluirAnalise = (props) => {
                                     />
                                 </>
                             }
+
+                                <>
+                                    <br/>
+                                    <label htmlFor="recomendacoes">Recomendações:</label>
+                                    <textarea
+                                        name='recomendacoes'
+                                        value={props.txtRecomendacoes}
+                                        onChange={(e) => props.handleChangeTxtRecomendacoes(e)}
+                                        className="form-control"
+                                        placeholder="Informe as recomendações (campo obrigatório)"
+                                        rows="3"
+                                    />
+                                </>
                         </div>
                         </>
                     }
                     {props.stateConcluirAnalise.status === 'REPROVADA' &&
                         <div className="col-12 mt-2">
-                            <label htmlFor="motivos_reprovacao">Motivos:</label>
-                            <select
-                                name="motivos"
-                                multiple={true}
-                                onChange={
-                                    (e)=>{
-                                        props.handleChangeSelectMultipleMotivosReprovacao(e);
-                                    }
-                                }
-                                value={props.selectMotivosReprovacao}
-                                className="form-control"
-                            >
-                                {props.motivosReprovacao && props.motivosReprovacao.length > 0 && props.motivosReprovacao.map((motivo)=>(
-                                    <option key={motivo.uuid} value={motivo.uuid}>{motivo.motivo}</option>
+                            <label htmlFor="ressalvas">Motivo(s)</label>
+                            <br/>
+                            <div className="multiselect-demo">
+                                <div className="">
+                                    <MultiSelect
+                                        value={props.selectMotivosReprovacao}
+                                        options={props.motivosReprovacao} 
+                                        onChange={(e) => {
+                                            props.setSelectMotivosReprovacao(e.value);
+                                        }}
+                                        optionLabel="motivo" 
+                                        placeholder="Selecione o(s) motivo(s)" 
+                                        maxSelectedLabels={0}
+                                        selectedItemsLabel={selectedItemsLabel(props.selectMotivosReprovacao)}
+                                    />
+                                </div>
+                            </div>
+                            
+                            <div className="mt-2 ml-2">
+                                {props.selectMotivosReprovacao && props.selectMotivosReprovacao.length > 0 && props.selectMotivosReprovacao.map((motivo, index) => (
+                                    <strong key={motivo.uuid}><p className="lista-motivos mb-0">{index+1}. {motivo.motivo}</p></strong>
                                 ))}
-                            </select>
+                            </div>
 
                             <div className="form-check mt-3 pl-0">
                                 <input
@@ -119,7 +156,7 @@ export const ModalConcluirAnalise = (props) => {
                                 onClick={props.onConcluirAnalise}
                                 type="button"
                                 className="btn btn-success mt-2"
-                                disabled={!props.stateConcluirAnalise.status || (props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' && props.motivos.length <= 0 && !props.txtOutrosMotivos) || (props.stateConcluirAnalise.status === 'REPROVADA' && props.selectMotivosReprovacao.length <= 0 && !props.txtOutrosMotivosReprovacao)}
+                                disabled={!props.stateConcluirAnalise.status || (props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' && props.motivos.length <= 0 && !props.txtOutrosMotivos) || (props.stateConcluirAnalise.status === 'APROVADA_RESSALVA' && !props.txtRecomendacoes) || (props.stateConcluirAnalise.status === 'REPROVADA' && props.selectMotivosReprovacao.length <= 0 && !props.txtOutrosMotivosReprovacao)}
                             >
                                 Confirmar
                             </button>

@@ -148,6 +148,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [btnSalvarDisabled, setBtnSalvarDisabled] = useState(true);
     const [showModalSalvarAnalise, setShowModalSalvarAnalise] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [valoresReprogramadosAjustes, setValoresReprogramadosAjustes] = useState([])
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -495,6 +496,8 @@ export const DetalhePrestacaoDeContas = () =>{
     const [checkBoxOutrosMotivosReprovacao, setCheckBoxOutrosMotivosReprovacao] = useState(false);
     const [txtOutrosMotivosReprovacao, setTxtOutrosMotivosReprovacao] = useState('');
 
+    const [txtRecomendacoes, setTxtRecomendacoes] = useState('');
+
     const handleChangeSelectMultipleMotivos = (e) => {
         let target = e.target;
         let value = Array.from(target.selectedOptions, option => option.value);
@@ -527,6 +530,10 @@ export const DetalhePrestacaoDeContas = () =>{
 
     const handleChangeTxtOutrosMotivosReprovacao = (event) =>{
         setTxtOutrosMotivosReprovacao(event.target.value)
+    };
+
+    const handleChangeTxtRecomendacoes = (event) =>{
+        setTxtRecomendacoes(event.target.value)
     };
 
     // Fim Ata
@@ -662,20 +669,23 @@ export const DetalhePrestacaoDeContas = () =>{
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }else if (stateConcluirAnalise.status === 'APROVADA_RESSALVA'){
+            let uuid_motivos = recupera_uuid_motivos(motivos)
             payload={
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
-                motivos_aprovacao_ressalva: motivos,
+                motivos_aprovacao_ressalva: uuid_motivos,
                 outros_motivos_aprovacao_ressalva: txtOutrosMotivos,
+                recomendacoes: txtRecomendacoes,
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
         }else if (stateConcluirAnalise.status === 'REPROVADA'){
+            let uuid_motivos = recupera_uuid_motivos(selectMotivosReprovacao)
             payload={
                 devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim',
                 analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
                 resultado_analise: stateConcluirAnalise.status,
-                motivos_reprovacao: selectMotivosReprovacao,
+                motivos_reprovacao: uuid_motivos,
                 outros_motivos_reprovacao: txtOutrosMotivosReprovacao,
                 devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
             }
@@ -842,6 +852,17 @@ export const DetalhePrestacaoDeContas = () =>{
         return ""
     }
 
+    const recupera_uuid_motivos = (lista_motivos) => {
+        let lista_uuid = [];
+
+        for(let motivo=0; motivo<=lista_motivos.length-1; motivo++){
+            let uuid = lista_motivos[motivo].uuid;
+            lista_uuid.push(uuid)
+        }
+
+        return lista_uuid;
+    }
+
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento das Prestações de Contas</h1>
@@ -865,6 +886,8 @@ export const DetalhePrestacaoDeContas = () =>{
 
                             prestacaoDeContas && prestacaoDeContas.status &&
                                 <GetComportamentoPorStatus
+                                    valoresReprogramadosAjustes={valoresReprogramadosAjustes}
+                                    setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
                                     prestacaoDeContas={prestacaoDeContas}
                                     receberPrestacaoDeContas={receberPrestacaoDeContas}
                                     setShowReabrirPc={setShowReabrirPc}
@@ -985,15 +1008,18 @@ export const DetalhePrestacaoDeContas = () =>{
                         motivosAprovadoComRessalva={motivosAprovadoComRessalva}
                         handleChangeConcluirAnalise={handleChangeConcluirAnalise}
                         motivos={motivos}
+                        setMotivos={setMotivos}
                         txtOutrosMotivos={txtOutrosMotivos}
                         handleChangeSelectMultipleMotivos={handleChangeSelectMultipleMotivos}
                         checkBoxOutrosMotivos={checkBoxOutrosMotivos}
                         handleChangeCheckBoxOutrosMotivos={handleChangeCheckBoxOutrosMotivos}
                         handleChangeTxtOutrosMotivos={handleChangeTxtOutrosMotivos}
-
+                        handleChangeTxtRecomendacoes={handleChangeTxtRecomendacoes}
+                        txtRecomendacoes={txtRecomendacoes}
                         motivosReprovacao={motivosReprovacao}
                         txtOutrosMotivosReprovacao={txtOutrosMotivosReprovacao}
                         selectMotivosReprovacao={selectMotivosReprovacao}
+                        setSelectMotivosReprovacao={setSelectMotivosReprovacao}
                         handleChangeSelectMultipleMotivosReprovacao={handleChangeSelectMultipleMotivosReprovacao}
                         checkBoxOutrosMotivosReprovacao={checkBoxOutrosMotivosReprovacao}
                         handleChangeCheckBoxOutrosMotivosReprovacao={handleChangeCheckBoxOutrosMotivosReprovacao}

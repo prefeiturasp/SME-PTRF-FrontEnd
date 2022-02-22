@@ -54,20 +54,27 @@ export const GestaoDePerfisForm = () =>{
 
 
     const exibeGrupos =  useCallback(async (visao_selecionada_parametro='')=>{
-
-        let get_visoes = await getVisoes()
         let grupos
-
-        setGrupos([])
+        let lista = [];
 
         if (visao_selecionada_parametro instanceof Array && visao_selecionada_parametro.length > 0){
+            if(visao_selecionada_parametro.includes("SME")){
+                grupos = await getGrupos("SME");
+                lista.push(...grupos);
+            }
 
-            visao_selecionada_parametro && visao_selecionada_parametro.length > 0 && visao_selecionada_parametro.map(async (visao_id)=>{
-                let nome = get_visoes.filter(element => parseInt(element.id) === parseInt(visao_id))
-                grupos = await getGrupos(nome[0].nome);
-                setGrupos(prevState => [...prevState, ...grupos]);
-            })
-        }else {
+            if(visao_selecionada_parametro.includes("DRE")){
+                grupos = await getGrupos("DRE");
+                lista.push(...grupos);
+            }
+
+            if(visao_selecionada_parametro.includes("UE")){
+                grupos = await getGrupos("UE");
+                lista.push(...grupos);
+            }
+            setGrupos(lista)
+        }
+        else{
             grupos = await getGrupos(visao_selecionada);
             setGrupos(grupos);
         }
@@ -235,7 +242,7 @@ export const GestaoDePerfisForm = () =>{
             let ids_visoes = [];
             if (dados_usuario.visoes && dados_usuario.visoes.length > 0){
                 dados_usuario.visoes.map((visao)=>
-                    ids_visoes.push(visao.id)
+                    ids_visoes.push(visao.nome)
                 );
             }
 
@@ -528,6 +535,8 @@ export const GestaoDePerfisForm = () =>{
                     unidade: codigoEolUnidade,
                 };
             } else {
+                let ids_visoes = recuperaIdsVisoes(values.visoes)
+
                 payload = {
                     e_servidor: values.e_servidor,
                     username: values.username,
@@ -535,7 +544,7 @@ export const GestaoDePerfisForm = () =>{
                     email: values.email ? values.email : "",
                     groups: grupos_concatenados_sem_repeticao,
                     unidade: null,
-                    visoes: values.visoes,
+                    visoes: ids_visoes,
                 };
             }
 
@@ -685,11 +694,11 @@ export const GestaoDePerfisForm = () =>{
         let _visoes
         const { checked, value } = e.target;
         if (checked) {
-            setFieldValue("visoes", [...values.visoes, parseInt(value)]);
-            _visoes = [...values.visoes, parseInt(value)]
+            setFieldValue("visoes", [...values.visoes, value]);
+            _visoes = [...values.visoes, value]
         } else {
-            setFieldValue("visoes", values.visoes.filter((v) => v !== parseInt(value)));
-            _visoes = values.visoes.filter((v) => v !== parseInt(value))
+            setFieldValue("visoes", values.visoes.filter((v) => v !== value));
+            _visoes = values.visoes.filter((v) => v !== value)
         }
         exibeGrupos(_visoes)
     };
@@ -759,12 +768,22 @@ export const GestaoDePerfisForm = () =>{
         }
     }, [visoes])
 
-    const pesquisaPermissaoExibicaoVisao = useCallback((nome_visao)=>{
+    const pesquisaPermissaoExibicaoVisao = useCallback((visao)=>{
         let ret = exibePermissaoExibicaoVisoes()
         let editavel
         if (ret){
-            editavel = ret.filter((element => element.nome === nome_visao))
-            editavel = editavel[0].editavel
+            if(visao.includes("SME")){
+                editavel = ret.filter((element => element.nome === "SME"))
+                editavel = editavel[0].editavel
+            }
+            if(visao.includes("DRE")){
+                editavel = ret.filter((element => element.nome === "DRE"))
+                editavel = editavel[0].editavel
+            }
+            if(visao.includes("UE")){
+                editavel = ret.filter((element => element.nome === "UE"))
+                editavel = editavel[0].editavel
+            }
         }
         return editavel
     }, [exibePermissaoExibicaoVisoes])
@@ -775,7 +794,7 @@ export const GestaoDePerfisForm = () =>{
 
             let _visoes = []
 
-            _visoes.push(visao.id)
+            _visoes.push(visao.nome)
 
             setStatePerfisForm({
                 ...statePerfisForm,
@@ -787,6 +806,51 @@ export const GestaoDePerfisForm = () =>{
     useEffect(() => {
         setaVisaoUE()
     }, [visoes])
+
+
+    const recuperaIdsVisoes = (visoesSelecionadas) => {
+        let lista_ids = []
+        
+        for(let visao=0; visao<=visoesSelecionadas.length-1; visao++){
+            let id = parseInt(visoes.find(element => element.nome === visoesSelecionadas[visao]).id)
+            lista_ids.push(id)
+        }
+
+        return lista_ids;
+    }
+
+    const evitaDuplicacao = (grupos) => {
+        let lista = [];
+
+        for(let i=0; i<= grupos.length-1; i++){
+            let id = grupos[i].id
+            let index = lista.findIndex(val => val.id === id);
+
+            if(index < 0){
+                let objeto = {
+                    id: id,
+                    visao: [grupos[i].visao],
+                    descricao: grupos[i].descricao,
+                    nome: grupos[i].nome
+                }
+
+                lista.push(objeto);
+            }
+            else{
+                let novas_visoes = []
+                
+                let visao_que_ja_esta_na_lista = lista[index].visao
+                novas_visoes.push(...visao_que_ja_esta_na_lista)
+
+                let visao_que_nao_esta_na_lista = grupos[i].visao
+                novas_visoes.push(visao_que_nao_esta_na_lista)
+                
+                lista[index].visao = novas_visoes
+            }
+        }
+
+        return lista
+    }
 
     return (
         <PaginasContainer>
@@ -847,6 +911,7 @@ export const GestaoDePerfisForm = () =>{
                             pesquisaVisao={pesquisaVisao}
                             pesquisaPermissaoExibicaoVisao={pesquisaPermissaoExibicaoVisao}
                             exibeGrupos={exibeGrupos}
+                            evitaDuplicacao={evitaDuplicacao}
                         />
                     </div>
                 </>
