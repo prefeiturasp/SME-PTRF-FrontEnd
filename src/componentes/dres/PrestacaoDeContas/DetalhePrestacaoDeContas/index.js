@@ -148,6 +148,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [btnSalvarDisabled, setBtnSalvarDisabled] = useState(true);
     const [showModalSalvarAnalise, setShowModalSalvarAnalise] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [valoresReprogramadosAjustes, setValoresReprogramadosAjustes] = useState([])
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -885,6 +886,8 @@ export const DetalhePrestacaoDeContas = () =>{
 
                             prestacaoDeContas && prestacaoDeContas.status &&
                                 <GetComportamentoPorStatus
+                                    valoresReprogramadosAjustes={valoresReprogramadosAjustes}
+                                    setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
                                     prestacaoDeContas={prestacaoDeContas}
                                     receberPrestacaoDeContas={receberPrestacaoDeContas}
                                     setShowReabrirPc={setShowReabrirPc}
