@@ -830,9 +830,9 @@ export const DetalhePrestacaoDeContas = () =>{
         setLoading(true)
         try {
             await patchDesfazerReceberAposAcertos(prestacao_de_contas.uuid)
-            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Retornada após acertos”.')
+            toastCustom.ToastCustomSuccess('Status alterado com sucesso', 'A prestação de conta foi alterada para “Apresentada após acertos”.')
         }catch (e) {
-            console.log("Erro ao Desfazer Receber após acertos", e.response)
+            console.log("Erro ao Desfazer Apresentada após acertos", e.response)
         }
         await carregaPrestacaoDeContas();
         setLoading(false)

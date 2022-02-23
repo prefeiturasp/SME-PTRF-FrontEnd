@@ -474,7 +474,7 @@ export const GetComportamentoPorStatus = (
                     <BotoesAvancarRetroceder
                         prestacaoDeContas={prestacaoDeContas}
                         textoBtnAvancar={"Analisar"}
-                        textoBtnRetroceder={"Retornada após acerto"}
+                        textoBtnRetroceder={"Apresentada após acertos"}
                         metodoAvancar={analisarPrestacaoDeContas}
                         metodoRetroceder={() => desfazerReceberAposAcertos(prestacaoDeContas)}
                         disabledBtnAvancar={false}
