@@ -17,7 +17,7 @@ import {
     getDespesaCadastrada, deleteDespesa
 } from "../../../../services/escolas/Despesas.service";
 import {DatePickerField} from "../../../Globais/DatePickerField";
-import {useParams} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
 import {CadastroFormCapital} from "./CadastroFormCapital";
 import {DespesaContext} from "../../../../context/Despesa";
@@ -822,6 +822,24 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     <p className='mb-0'><strong>Despesa {index + 1}</strong></p>
                                                                 </div>
                                                                 <div className="bd-highlight">
+
+                                                                    {rateio && rateio.uuid &&
+                                                                        <Link
+                                                                        to={
+                                                                            {
+                                                                                pathname: `/cadastro-de-credito/`,
+                                                                                state: {
+                                                                                uuid_rateio: rateio.uuid,
+                                                                            }
+                                                                        }}
+                                                                            className="btn btn-outline-success mr-2"
+                                                                        >
+                                                                            Cadastrar Estorno
+                                                                        </Link>
+                                                                        }
+
+
+
                                                                     {index >= 1 && values.rateios.length > 1 && (
                                                                         <div className="d-flex  justify-content-start">
                                                                             <button
