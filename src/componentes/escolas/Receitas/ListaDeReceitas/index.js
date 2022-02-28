@@ -186,17 +186,22 @@ export const ListaDeReceitas = () => {
                                         field='tipo_receita.nome'
                                         header='Tipo'
                                         body={tipoReceitaTemplate}
+                                        className='py-3'
                                     />
-                                    <Column field='conta_associacao.nome' header='Conta'/>
-                                    <Column field='acao_associacao.nome' header='Ação'/>
+                                    <Column className='py-3' field='conta_associacao.nome' header='Conta'/>
+                                    <Column className='py-3' field='acao_associacao.nome' header='Ação'/>
                                     <Column
                                         field='data'
                                         header='Data'
-                                        body={dataTemplate}/>
+                                        body={dataTemplate}
+                                        className='py-3'
+                                    />
                                     <Column
                                         field='valor'
                                         header='Valor'
-                                        body={valorTemplate}/>
+                                        body={valorTemplate}
+                                        className='py-3'
+                                    />
                                 </DataTable>
                             </>
                         )
