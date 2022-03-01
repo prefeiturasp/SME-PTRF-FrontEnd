@@ -46,7 +46,7 @@ const ReferenciaDaDespesaEstorno = ({uuid, rateioEstorno, despesa}) => {
 
     const valorTotalTemplate = () => {
 
-        return parseFloat(rateioEstorno.valor_total) ? parseFloat(rateioEstorno.valor_total).toLocaleString('pt-BR', {
+        return parseFloat(rateioEstorno.valor_rateio) ? parseFloat(rateioEstorno.valor_rateio).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
@@ -75,8 +75,8 @@ const ReferenciaDaDespesaEstorno = ({uuid, rateioEstorno, despesa}) => {
                         <tr>
                             <td className='align-middle'>{numeroDocumentoStatusTemplate()}</td>
                             <td className='align-middle'>{especificacaoDataTemplate()}</td>
-                            <td className='align-middle'>{rateioEstorno.aplicacao_recurso}</td>
-                            <td className='align-middle'>{rateioEstorno.acao_associacao.nome}</td>
+                            <td className='align-middle'>{rateioEstorno && rateioEstorno.aplicacao_recurso ? rateioEstorno.aplicacao_recurso : ""}</td>
+                            <td className='align-middle'>{rateioEstorno && rateioEstorno.acao_associacao && rateioEstorno.acao_associacao.acao && rateioEstorno.acao_associacao.acao.nome ?  rateioEstorno.acao_associacao.acao.nome : ""}</td>
                             <td className='align-middle'>{tagRateioTemplate()}</td>
                             <td className='align-middle'>{valorTotalTemplate()}</td>
                         </tr>

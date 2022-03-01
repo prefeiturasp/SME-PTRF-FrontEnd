@@ -146,17 +146,31 @@ export class ListaDeDespesas extends Component {
         return (
             <div>
                 <span>
-                {rateio.especificacao_material_servico
-                    ? rateio.especificacao_material_servico.descricao
-                    : ''}
+                    {rateio.especificacao_material_servico
+                        ? rateio.especificacao_material_servico.descricao
+                        : ''
+                    }
                 </span>
-                        <br/>
-                        <span>
-                Data:{' '}
-                            {despesa.data_documento
-                                ? moment(despesa.data_documento).format('DD/MM/YYYY')
-                                : ''}
+                <br/>
+                <span>
+                    Data:{' '}
+                    {despesa.data_documento
+                        ? moment(despesa.data_documento).format('DD/MM/YYYY')
+                        : ''
+                    }
                 </span>
+
+                {rateio.estorno && rateio.estorno.uuid &&
+                    <>
+                        <span data-html={true} data-tip='Existe um estorno <br/> vinculado a essa despesa'>
+                            <FontAwesomeIcon
+                                style={{marginLeft: "3px", color: '#086397'}}
+                                icon={faExclamationCircle}
+                            />
+                        </span>
+                        <ReactTooltip html={true}/>
+                    </>
+                }
             </div>
         )
     }

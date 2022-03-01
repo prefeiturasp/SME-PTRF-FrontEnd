@@ -51,7 +51,7 @@ export const DeletarModal = (propriedades) => {
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Deseja excluir esta Despesa?"
-            bodyText="<p>Tem certeza que deseja excluir esta despesa? A ação não poderá ser desfeita.</p>"
+            bodyText={propriedades.texto}
             primeiroBotaoOnclick={propriedades.onDeletarTrue}
             primeiroBotaoTexto="OK"
             segundoBotaoOnclick={propriedades.handleClose}
