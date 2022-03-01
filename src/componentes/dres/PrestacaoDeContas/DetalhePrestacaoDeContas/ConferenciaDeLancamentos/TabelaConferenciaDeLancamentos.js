@@ -3,28 +3,48 @@ import {useHistory} from "react-router-dom";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle, faListUl} from "@fortawesome/free-solid-svg-icons";
+import {faCheckCircle, faInfoCircle, faListUl} from "@fortawesome/free-solid-svg-icons";
 import Dropdown from "react-bootstrap/Dropdown";
 import {ModalCheckNaoPermitidoConfererenciaDeLancamentos} from "./ModalCheckNaoPermitidoConfererenciaDeLancamentos";
 import {FiltrosConferenciaDeLancamentos} from "./FiltrosConferenciaDeLancamentos";
-import {postLancamentosParaConferenciaMarcarComoCorreto, postLancamentosParaConferenciaMarcarNaoConferido} from "../../../../../services/dres/PrestacaoDeContas.service";
-import {mantemEstadoAcompanhamentoDePc as meapcservice} from "../../../../../services/mantemEstadoAcompanhamentoDePc.service";
+import {
+    postLancamentosParaConferenciaMarcarComoCorreto,
+    postLancamentosParaConferenciaMarcarNaoConferido
+} from "../../../../../services/dres/PrestacaoDeContas.service";
+import {
+    mantemEstadoAcompanhamentoDePc as meapcservice
+} from "../../../../../services/mantemEstadoAcompanhamentoDePc.service";
+import ReactTooltip from "react-tooltip";
 
 // Hooks Personalizados
 import useValorTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
 import {useCarregaTabelaDespesa} from "../../../../../hooks/Globais/useCarregaTabelaDespesa";
 import useDataTemplate from "../../../../../hooks/Globais/useDataTemplate";
-import useConferidoTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useConferidoTemplate";
-import useRowExpansionDespesaTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionDespesaTemplate";
-import useRowExpansionReceitaTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionReceitaTemplate";
-import useNumeroDocumentoTemplate from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
+import useConferidoTemplate
+    from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useConferidoTemplate";
+import useRowExpansionDespesaTemplate
+    from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionDespesaTemplate";
+import useRowExpansionReceitaTemplate
+    from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionReceitaTemplate";
+import useNumeroDocumentoTemplate
+    from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
 
 // Redux
 import {useDispatch} from "react-redux";
-import {addDetalharAcertos, limparDetalharAcertos} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
+import {
+    addDetalharAcertos,
+    limparDetalharAcertos
+} from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 import {visoesService} from "../../../../../services/visoes.service";
 
-const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, carregaLancamentosParaConferencia, prestacaoDeContas, editavel}) => {
+const TabelaConferenciaDeLancamentos = ({
+                                            setLancamentosParaConferencia,
+                                            lancamentosParaConferencia,
+                                            contaUuid,
+                                            carregaLancamentosParaConferencia,
+                                            prestacaoDeContas,
+                                            editavel
+                                        }) => {
 
     const rowsPerPage = 10;
     const history = useHistory();
@@ -154,8 +174,10 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                         </Dropdown.Toggle>
 
                         <Dropdown.Menu>
-                            <Dropdown.Item onClick={(e) => selecionarPorStatus(e, "CORRETO")}>Selecionar todos corretos</Dropdown.Item>
-                            <Dropdown.Item onClick={(e) => selecionarPorStatus(e, null)}>Selecionar todos não conferidos</Dropdown.Item>
+                            <Dropdown.Item onClick={(e) => selecionarPorStatus(e, "CORRETO")}>Selecionar todos
+                                corretos</Dropdown.Item>
+                            <Dropdown.Item onClick={(e) => selecionarPorStatus(e, null)}>Selecionar todos não
+                                conferidos</Dropdown.Item>
                             <Dropdown.Item onClick={(e) => desmarcarTodos(e)}>Desmarcar todos</Dropdown.Item>
                         </Dropdown.Menu>
 
@@ -183,36 +205,36 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                                         <strong>Cancelar</strong>
                                     </button>
                                     {exibirBtnMarcarComoCorreto &&
-                                    <>
-                                        <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                        <button
-                                            className="float-right btn btn-link btn-montagem-selecionar"
-                                            onClick={() => marcarComoCorreto()}
-                                            style={{textDecoration: "underline", cursor: "pointer"}}
-                                        >
-                                            <FontAwesomeIcon
-                                                style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                                icon={faCheckCircle}
-                                            />
-                                            <strong>Marcar como Correto</strong>
-                                        </button>
-                                    </>
+                                        <>
+                                            <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                            <button
+                                                className="float-right btn btn-link btn-montagem-selecionar"
+                                                onClick={() => marcarComoCorreto()}
+                                                style={{textDecoration: "underline", cursor: "pointer"}}
+                                            >
+                                                <FontAwesomeIcon
+                                                    style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                                    icon={faCheckCircle}
+                                                />
+                                                <strong>Marcar como Correto</strong>
+                                            </button>
+                                        </>
                                     }
                                     {exibirBtnMarcarComoNaoConferido &&
-                                    <>
-                                        <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                        <button
-                                            className="float-right btn btn-link btn-montagem-selecionar"
-                                            onClick={() => marcarComoNaoConferido()}
-                                            style={{textDecoration: "underline", cursor: "pointer"}}
-                                        >
-                                            <FontAwesomeIcon
-                                                style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                                icon={faCheckCircle}
-                                            />
-                                            <strong>Marcar como Não conferido</strong>
-                                        </button>
-                                    </>
+                                        <>
+                                            <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                            <button
+                                                className="float-right btn btn-link btn-montagem-selecionar"
+                                                onClick={() => marcarComoNaoConferido()}
+                                                style={{textDecoration: "underline", cursor: "pointer"}}
+                                            >
+                                                <FontAwesomeIcon
+                                                    style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                                    icon={faCheckCircle}
+                                                />
+                                                <strong>Marcar como Não conferido</strong>
+                                            </button>
+                                        </>
                                     }
                                     <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                                     <button
@@ -300,7 +322,7 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
     }
 
     const tratarSelecionado = (e, lancamentosParaConferenciaUuid, rowData) => {
-        if (editavel){
+        if (editavel) {
             let verifica_se_pode_ser_checkado = verificaSePodeSerCheckado(e, rowData)
             if (verifica_se_pode_ser_checkado) {
 
@@ -395,7 +417,7 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
     }
 
     const redirecionaDetalhe = (lancamento) => {
-        if (editavel){
+        if (editavel) {
             addDispatchRedireciona(lancamento)
         }
     }
@@ -428,14 +450,14 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
     // Paginação
     const [primeiroRegistroASerExibido, setPrimeiroRegistroASerExibido] = useState(dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.paginacao_atual ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.paginacao_atual : 0);
 
-    const salvaObjetoAcompanhamentoDePcPorUsuarioLocalStorage = (event) =>{
+    const salvaObjetoAcompanhamentoDePcPorUsuarioLocalStorage = (event) => {
 
         // Para calcuar a pagina atual
         // primeiroRegistroASerExibido = event.rows * event.page
         let objetoAcompanhamentoDePcPorUsuario = {
             prestacao_de_conta_uuid: prestacaoDeContas.uuid,
             conferencia_de_lancamentos: {
-                conta_uuid:  conta_uuid,
+                conta_uuid: conta_uuid,
                 filtrar_por_acao: filtrar_por_acao,
                 filtrar_por_lancamento: filtrar_por_lancamento,
                 paginacao_atual: event.rows * event.page,
@@ -444,10 +466,60 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
         meapcservice.setAcompanhamentoDePcPorUsuario(visoesService.getUsuarioLogin(), objetoAcompanhamentoDePcPorUsuario)
     }
 
-    const onPaginationClick = (event) =>{
-        console.log("onPaginationClick ", event)
+    const onPaginationClick = (event) => {
         setPrimeiroRegistroASerExibido(event.first);
         salvaObjetoAcompanhamentoDePcPorUsuarioLocalStorage(event)
+    }
+
+    const retornaToolTipCredito = (rowData) =>{
+        if (rowData.documento_mestre && rowData.documento_mestre.rateio_estornado && rowData.documento_mestre.rateio_estornado.uuid){
+            let data_rateio = dataTemplate(null, null, rowData.documento_mestre.rateio_estornado.data_documento)
+            let texto_tooltip = `Esse estorno está vinculado <br/> à despesa do dia ${data_rateio}.`
+            return(
+                <>
+                    <div data-tip={texto_tooltip} data-html={true}>
+                        <span>{rowData.tipo_transacao}</span>
+                        <FontAwesomeIcon
+                            style={{fontSize: '18px', marginLeft: "4px", color: '#2A6397'}}
+                            icon={faInfoCircle}
+                        />
+                        <ReactTooltip/>
+                    </div>
+                </>
+            )
+        }else {
+            return rowData.tipo_transacao
+        }
+    }
+
+    const retornaToolTipGasto = (rowData) => {
+
+        if (rowData && rowData.rateios && rowData.rateios.length > 0){
+            if (rowData.rateios.some(e => e && e.estorno && e.estorno.uuid)) {
+                let texto_tooltip = `Esse gasto possui estornos.`
+                return(
+                    <>
+                        <div data-tip={texto_tooltip} data-html={true}>
+                            <span>{rowData.tipo_transacao}</span>
+                            <FontAwesomeIcon
+                                style={{fontSize: '18px', marginLeft: "4px", color: '#2A6397'}}
+                                icon={faInfoCircle}
+                            />
+                            <ReactTooltip/>
+                        </div>
+                    </>
+                )
+            }
+        }
+        return <span>{rowData.tipo_transacao}</span>
+    }
+
+    const tipoTransacaoTemplate = (rowData) =>{
+        if (rowData && rowData.tipo_transacao && rowData.tipo_transacao === 'Crédito'){
+            return retornaToolTipCredito(rowData)
+        }else if(rowData && rowData.tipo_transacao && rowData.tipo_transacao === 'Gasto'){
+            return retornaToolTipGasto(rowData)
+        }
     }
 
     return (
@@ -464,61 +536,66 @@ const TabelaConferenciaDeLancamentos = ({setLancamentosParaConferencia, lancamen
                 mensagemQuantidadeExibida()
             }
             {lancamentosParaConferencia && lancamentosParaConferencia.length > 0 &&
-            <DataTable
-                value={lancamentosParaConferencia}
-                expandedRows={expandedRows}
-                onRowToggle={(e) => setExpandedRows(e.data)}
-                rowExpansionTemplate={rowExpansionTemplate}
-                paginator={lancamentosParaConferencia.length > rowsPerPage}
-                rows={rowsPerPage}
-                paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                rowClassName={rowClassName}
-                selectionMode="single"
-                onRowClick={e => redirecionaDetalhe(e.data)}
-                stripedRows
+                <DataTable
+                    value={lancamentosParaConferencia}
+                    expandedRows={expandedRows}
+                    onRowToggle={(e) => setExpandedRows(e.data)}
+                    rowExpansionTemplate={rowExpansionTemplate}
+                    paginator={lancamentosParaConferencia.length > rowsPerPage}
+                    rows={rowsPerPage}
+                    paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                    rowClassName={rowClassName}
+                    selectionMode="single"
+                    onRowClick={e => redirecionaDetalhe(e.data)}
+                    stripedRows
 
-                // Usado para salvar no localStorage a página atual após os calculos ** ver função onPaginationClick
-                first={primeiroRegistroASerExibido}
-                onPage={onPaginationClick}
-            >
-                <Column
-                    header={selecionarHeader()}
-                    body={selecionarTemplate}
-                    style={{borderRight: 'none', width: '5%'}}
-                />
-                <Column
-                    field='data'
-                    header='Data'
-                    body={dataTemplate}
-                    className="align-middle text-left borda-coluna"
-                    style={{width: '10%'}} 
-                />
-                <Column field='tipo_transacao' header='Tipo de lançamento'
-                        className="align-middle text-left borda-coluna" style={{width: '17%'}}/>
-                <Column
-                    field='numero_documento'
-                    header='N.º do documento'
-                    body={numeroDocumentoTemplate}
-                    className="align-middle text-left borda-coluna"
-                    style={{width: '17%'}}
-                />
-                <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna" style={{width: '24%'}} />
-                <Column
-                    field='valor_transacao_total'
-                    header='Valor (R$)'
-                    body={valor_template}
-                    className="align-middle text-left borda-coluna"
-                    style={{width: '10%'}}
-                />
-                <Column
-                    field='analise_lancamento'
-                    header='Conferido'
-                    body={conferidoTemplate}
-                    className="align-middle text-left borda-coluna"
-                    style={{borderRight: 'none', width: '10%'}}
-                />
-                <Column expander style={{width: '5%', borderLeft: 'none'}}/>
-            </DataTable>
+                    // Usado para salvar no localStorage a página atual após os calculos ** ver função onPaginationClick
+                    first={primeiroRegistroASerExibido}
+                    onPage={onPaginationClick}
+                >
+                    <Column
+                        header={selecionarHeader()}
+                        body={selecionarTemplate}
+                        style={{borderRight: 'none', width: '5%'}}
+                    />
+                    <Column
+                        field='data'
+                        header='Data'
+                        body={dataTemplate}
+                        className="align-middle text-left borda-coluna"
+                        style={{width: '10%'}}
+                    />
+                    <Column
+                        field='tipo_transacao'
+                        header='Tipo de lançamento'
+                        className="align-middle text-left borda-coluna" style={{width: '17%'}}
+                        body={tipoTransacaoTemplate}
+                    />
+                    <Column
+                        field='numero_documento'
+                        header='N.º do documento'
+                        body={numeroDocumentoTemplate}
+                        className="align-middle text-left borda-coluna"
+                        style={{width: '17%'}}
+                    />
+                    <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna"
+                            style={{width: '24%'}}/>
+                    <Column
+                        field='valor_transacao_total'
+                        header='Valor (R$)'
+                        body={valor_template}
+                        className="align-middle text-left borda-coluna"
+                        style={{width: '10%'}}
+                    />
+                    <Column
+                        field='analise_lancamento'
+                        header='Conferido'
+                        body={conferidoTemplate}
+                        className="align-middle text-left borda-coluna"
+                        style={{borderRight: 'none', width: '10%'}}
+                    />
+                    <Column expander style={{width: '5%', borderLeft: 'none'}}/>
+                </DataTable>
             }
             <section>
                 <ModalCheckNaoPermitidoConfererenciaDeLancamentos
