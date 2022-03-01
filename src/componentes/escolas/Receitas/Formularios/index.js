@@ -123,6 +123,7 @@ export const ReceitaForm = () => {
     const consultaSeEstorno = useCallback( async () =>{
         if (parametros && parametros.state && parametros.state.uuid_rateio){
             let rateio = await carregaRateioPorUuid(parametros.state.uuid_rateio)
+            await periodoFechado(rateio.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
             try {
                 const init_rateio = {
                     tipo_receita: idTipoReceitaEstorno,
@@ -295,6 +296,7 @@ export const ReceitaForm = () => {
         }
         values.valor = round(trataNumericos(values.valor), 2);
         values.data = moment(values.data).format("YYYY-MM-DD");
+        values.conferido = true;
         const payload = {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID),
