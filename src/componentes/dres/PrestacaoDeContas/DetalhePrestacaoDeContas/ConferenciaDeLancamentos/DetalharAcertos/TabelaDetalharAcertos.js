@@ -8,6 +8,9 @@ import useRowExpansionReceitaTemplate from "../../../../../../hooks/dres/Prestac
 import useNumeroDocumentoTemplate from "../../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import ReactTooltip from "react-tooltip";
 
 export const TabelaDetalharAcertos = ({lancamemtosParaAcertos, prestacaoDeContas, rowClassName}) =>{
 
@@ -34,6 +37,57 @@ export const TabelaDetalharAcertos = ({lancamemtosParaAcertos, prestacaoDeContas
         }
     };
 
+    const retornaToolTipCredito = (rowData) =>{
+        if (rowData.documento_mestre && rowData.documento_mestre.rateio_estornado && rowData.documento_mestre.rateio_estornado.uuid){
+            let data_rateio = dataTemplate(null, null, rowData.documento_mestre.rateio_estornado.data_documento)
+            let texto_tooltip = `Esse estorno está vinculado <br/> à despesa do dia ${data_rateio}.`
+            return(
+                <>
+                    <div data-tip={texto_tooltip} data-html={true}>
+                        <span>{rowData.tipo_transacao}</span>
+                        <FontAwesomeIcon
+                            style={{fontSize: '18px', marginLeft: "4px", color: '#2A6397'}}
+                            icon={faInfoCircle}
+                        />
+                        <ReactTooltip/>
+                    </div>
+                </>
+            )
+        }else {
+            return rowData.tipo_transacao
+        }
+    }
+
+    const retornaToolTipGasto = (rowData) => {
+
+        if (rowData && rowData.rateios && rowData.rateios.length > 0){
+            if (rowData.rateios.some(e => e && e.estorno && e.estorno.uuid)) {
+                let texto_tooltip = `Esse gasto possui estornos.`
+                return(
+                    <>
+                        <div data-tip={texto_tooltip} data-html={true}>
+                            <span>{rowData.tipo_transacao}</span>
+                            <FontAwesomeIcon
+                                style={{fontSize: '18px', marginLeft: "4px", color: '#2A6397'}}
+                                icon={faInfoCircle}
+                            />
+                            <ReactTooltip/>
+                        </div>
+                    </>
+                )
+            }
+        }
+        return <span>{rowData.tipo_transacao}</span>
+    }
+
+    const tipoTransacaoTemplate = (rowData) =>{
+        if (rowData && rowData.tipo_transacao && rowData.tipo_transacao === 'Crédito'){
+            return retornaToolTipCredito(rowData)
+        }else if(rowData && rowData.tipo_transacao && rowData.tipo_transacao === 'Gasto'){
+            return retornaToolTipGasto(rowData)
+        }
+    }
+
     return(
         <DataTable
             value={lancamemtosParaAcertos}
@@ -53,8 +107,12 @@ export const TabelaDetalharAcertos = ({lancamemtosParaAcertos, prestacaoDeContas
                 body={dataTemplate}
                 className="align-middle text-left borda-coluna"
             />
-            <Column field='tipo_transacao' header='Tipo de lançamento'
-                    className="align-middle text-left borda-coluna"/>
+            <Column
+                field='tipo_transacao'
+                header='Tipo de lançamento'
+                className="align-middle text-left borda-coluna"
+                body={tipoTransacaoTemplate}
+            />
             <Column
                 field='numero_documento'
                 header='N.º do documento'

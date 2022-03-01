@@ -4,6 +4,9 @@ import useDataTemplate from "../../../Globais/useDataTemplate";
 import useTagRateioTemplate from "./useTagRateioTemplate";
 import {useCarregaTabelaDespesa} from "../../../Globais/useCarregaTabelaDespesa";
 import useConferidoRateioTemplate from "./useConferidoRateioTemplate";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import ReactTooltip from "react-tooltip";
 
 
 const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{
@@ -13,6 +16,22 @@ const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{
     const tagRateioTemplate = useTagRateioTemplate()
     const tabelaDespesa = useCarregaTabelaDespesa(prestacaoDeContas)
     const conferidoRateioTemplate = useConferidoRateioTemplate()
+
+    const retornaToolTipRateio = (rateio) =>{
+        if (rateio && rateio.estorno && rateio.estorno.uuid){
+            let data_estorno = dataTemplate(null, null, rateio.estorno.data)
+            let texto_tooltip = `O estorno do dia ${data_estorno} <br/> esta vinculado a essa despesa.`
+            return (
+                <span className='font-weight-normal' data-tip={texto_tooltip} data-html={true}>
+                    <FontAwesomeIcon
+                        style={{fontSize: '18px', marginLeft: "4px", color: '#2A6397'}}
+                        icon={faInfoCircle}
+                    />
+                    <ReactTooltip/>
+                </span>
+            )
+        }
+    }
 
     return (data) => {
         return (
@@ -43,7 +62,9 @@ const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{
                     <div key={index} className='row border-bottom border-right border-left pb-3'>
 
                         <div className='col-12 mb-2'>
-                            <p className='font-weight-bold mb-2 mt-2 pb-2 titulo-row-expanded-conferencia-de-lancamentos'>Despesa {index + 1}</p>
+                            <div className='font-weight-bold mb-2 mt-2 pb-2 titulo-row-expanded-conferencia-de-lancamentos'>Despesa {index + 1}
+                                {(retornaToolTipRateio(rateio))}
+                            </div>
                         </div>
 
                         <div className='col-12'>
