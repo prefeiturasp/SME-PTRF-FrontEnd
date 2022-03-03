@@ -861,7 +861,7 @@ export const CadastroForm = ({verbo_http}) => {
                                                                                     }
                                                                                     className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
                                                                                 >
-                                                                                    Estornar despesa
+                                                                                    Cadastrar estorno
                                                                                 </Link>    
                                                                         )}
 
