@@ -12,7 +12,7 @@ const Msg = (titulo, texto) => {
     )
 }
 
-const ToastCustom = (titulo, texto, tipo, posicao, autoClose) => {
+const ToastCustom = (titulo, texto, tipo, posicao, autoClose, onClose) => {
     return (
         toast[tipo](
             Msg(titulo, texto),
@@ -25,13 +25,14 @@ const ToastCustom = (titulo, texto, tipo, posicao, autoClose) => {
                 draggable: true,
                 progress: undefined,
                 theme:"dark",
-                className: 'toast-custom-margin-top'
+                className: 'toast-custom-margin-top',
+                onClose: onClose
             })
     )
 }
 
-const ToastCustomSuccess = (titulo, texto, tipo='success', posicao='top-right', autoClose=true) =>{
-    ToastCustom(titulo, texto, tipo, posicao, autoClose)
+const ToastCustomSuccess = (titulo, texto, tipo='success', posicao='top-right', autoClose=true, onClose=null) =>{
+    ToastCustom(titulo, texto, tipo, posicao, autoClose, onClose)
 }
 
 const ToastCustomError = (titulo, texto, tipo='error', posicao='top-right', autoClose=true) =>{

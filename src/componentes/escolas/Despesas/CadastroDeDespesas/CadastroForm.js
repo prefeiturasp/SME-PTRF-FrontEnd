@@ -17,7 +17,7 @@ import {
     getDespesaCadastrada, deleteDespesa
 } from "../../../../services/escolas/Despesas.service";
 import {DatePickerField} from "../../../Globais/DatePickerField";
-import {useParams} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import {CadastroFormCusteio} from "./CadastroFormCusteio";
 import {CadastroFormCapital} from "./CadastroFormCapital";
 import {DespesaContext} from "../../../../context/Despesa";
@@ -46,6 +46,7 @@ import moment from "moment";
 import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
 import {ModalDespesaIncompleta} from "./ModalDespesaIncompleta";
 import {ModalErroDeletarCadastroDespesa} from "./ModalErroDeletarCadastroDespesa";
+import {ModalDeletarRateioComEstorno} from "./ModalDeletarRateioComEstorno";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import { apenasNumero } from "../../../../utils/ValidacoesAdicionaisFormularios";
@@ -61,6 +62,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [show, setShow] = useState(false);
     const [showAvisoCapital, setShowAvisoCapital] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
+    const [textoModalDelete, setShowTextoModalDelete] = useState('')
     const [showSaldoInsuficiente, setShowSaldoInsuficiente] = useState(false);
     const [showSaldoInsuficienteConta, setShowSaldoInsuficienteConta] = useState(false);
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
@@ -82,6 +84,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [showDespesaConferida, setShowDespesaConferida] = useState(false);
     const [mensagensAceitaCusteioCapital, setMensagensAceitaCusteioCapital] = useState([]);
     const [showMensagemAceitaCusteioCapital, setShowMensagemAceitaCusteioCapital] = useState(false);
+    const [showDeletarRateioComEstorno, setShowDeletarRateioComEstorno] = useState(false);
 
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
 
@@ -186,6 +189,15 @@ export const CadastroForm = ({verbo_http}) => {
 
     const eh_despesa_sem_comprovacao_fiscal = (cpf_cnpj) => {
         return cpf_cnpj === "00.000.000/0000-00";
+    }
+
+    const removeRateio = (remove, index, rateio) => {
+        if(rateio && rateio.estorno && rateio.estorno.uuid){
+            setShowDeletarRateioComEstorno(true);
+        }
+        else{
+            remove(index)
+        }
     }
 
     const acaoNaoAceitaTipoRecurso = (values) => {
@@ -822,12 +834,42 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     <p className='mb-0'><strong>Despesa {index + 1}</strong></p>
                                                                 </div>
                                                                 <div className="bd-highlight">
-                                                                    {index >= 1 && values.rateios.length > 1 && (
-                                                                        <div className="d-flex  justify-content-start">
+                                                                    <div className="d-flex justify-content-start">
+                                                                        {rateio && rateio.uuid && (
+                                                                            rateio.estorno && rateio.estorno.uuid
+                                                                            ?
+                                                                                <Link
+                                                                                    to={
+                                                                                        {
+                                                                                            pathname: `/edicao-de-receita/${rateio.estorno.uuid}`,
+                                                                                            
+                                                                                        }
+                                                                                    }
+                                                                                    className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
+                                                                                >
+                                                                                    Acessar estorno
+                                                                                </Link>
+                                                                            :
+                                                                                <Link
+                                                                                    to={
+                                                                                        {
+                                                                                            pathname: `/cadastro-de-credito/`,
+                                                                                            state: {
+                                                                                                uuid_rateio: rateio.uuid,
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                    className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
+                                                                                >
+                                                                                    Cadastrar estorno
+                                                                                </Link>    
+                                                                        )}
+
+                                                                        {index >= 1 && values.rateios.length > 1 && (
                                                                             <button
                                                                                 type="button"
                                                                                 className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
-                                                                                onClick={() => remove(index)}
+                                                                                onClick={() => removeRateio(remove, index, rateio)}
                                                                                 disabled={!visoesService.getPermissoes(['delete_despesa'])}
                                                                             >
                                                                                 <FontAwesomeIcon
@@ -836,10 +878,9 @@ export const CadastroForm = ({verbo_http}) => {
                                                                                 />
                                                                                 Remover Despesa
                                                                             </button>
-                                                                        </div>
-                                                                    )}
+                                                                        )}
+                                                                    </div>
                                                                 </div>
-
                                                             </div>
                                                             <div className="form-row">
 
@@ -920,6 +961,21 @@ export const CadastroForm = ({verbo_http}) => {
                                                                     />
                                                                 </div>
                                                             </div>
+
+                                                            <section>
+                                                                <ModalDeletarRateioComEstorno
+                                                                    show={showDeletarRateioComEstorno}
+                                                                    handleClose={() => setShowDeletarRateioComEstorno(false)}
+                                                                    titulo="Remover Despesa"
+                                                                    texto="A exclusão desse rateio resultará na exclusão do crédito de estorno vinculado. Confirma?"
+                                                                    onDeletarRateio={() => {
+                                                                            remove(index)
+                                                                            setShowDeletarRateioComEstorno(false)
+                                                                        }
+                                                                    }
+                                                                />
+                                                            </section>
+
                                                         </div> /*div key*/
                                                     )
                                                 })}
@@ -971,7 +1027,7 @@ export const CadastroForm = ({verbo_http}) => {
                                         {despesaContext.idDespesa
                                             ? <button
                                                 disabled={readOnlyBtnAcao || !visoesService.getPermissoes(["delete_despesa"])}
-                                                type="reset" onClick={() => aux.onShowDeleteModal(setShowDelete)}
+                                                type="reset" onClick={() => aux.onShowDeleteModal(setShowDelete, setShowTextoModalDelete, values)}
                                                 className="btn btn btn-danger mt-2 mr-2"
                                             >Deletar
                                             </button>
@@ -1068,6 +1124,7 @@ export const CadastroForm = ({verbo_http}) => {
                     show={showDelete}
                     handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
                     onDeletarTrue={() => onDeletarTrue(setShowDelete, setLoading, despesaContext, origem)}
+                    texto={textoModalDelete}
                 />
                 : null
             }

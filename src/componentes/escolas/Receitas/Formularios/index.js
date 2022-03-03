@@ -1,8 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
 import HTTP_STATUS from "http-status-codes";
-import {Formik} from 'formik';
-import {DatePickerField} from '../../../Globais/DatePickerField'
-import CurrencyInput from 'react-currency-input';
 import {
     criarReceita,
     atualizaReceita,
@@ -11,27 +8,29 @@ import {
     getTabelasReceitaReceita,
     getRepasses
 } from '../../../../services/escolas/Receitas.service';
+import {getRateioPorUuid} from "../../../../services/escolas/RateiosDespesas.service";
 import {deleteDespesa, getDespesa} from "../../../../services/escolas/Despesas.service";
-import {round, trataNumericos, periodoFechado, comparaObjetos} from "../../../../utils/ValidacoesAdicionaisFormularios";
-import {ReceitaSchema} from '../Schemas';
+import {round, trataNumericos, periodoFechado} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import moment from "moment";
-import {useParams} from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
 import {ASSOCIACAO_UUID} from '../../../../services/auth.service';
 import {PeriodoFechado, ErroGeral, SalvarReceita, AvisoTipoReceita} from "../../../../utils/Modais";
 import {ModalDeletarReceita} from "../ModalDeletarReceita";
 import {CancelarModalReceitas} from "../CancelarModalReceitas";
-import {ModalReceitaConferida} from "../ModalReceitaJaConferida";
-import {ModalSelecionaRepasse} from "../ModalSelecionaRepasse";
-import {visoesService} from "../../../../services/visoes.service";
 import "../receitas.scss"
+import {ReceitaFormFormik} from "./ReceitaFormFormik";
+import ReferenciaDaDespesaEstorno from "../ReferenciaDaDespesaEstorno";
+import {PaginasContainer} from "../../../../paginas/PaginasContainer";
+import {toastCustom} from "../../../Globais/ToastCustom";
 
 
 export const ReceitaForm = () => {
 
     let {origem} = useParams();
     let {uuid} = useParams();
-    const [loading, setLoading] = useState(true);
+    const parametros = useLocation();
 
+    const [loading, setLoading] = useState(true);
     const [redirectTo, setRedirectTo] = useState('');
     const [uuid_receita, setUuidReceita] = useState(null);
 
@@ -52,7 +51,9 @@ export const ReceitaForm = () => {
         valor: "",
         referencia_devolucao: "",
         saida_do_recurso: "",
+        rateio_estornado: "",
     };
+
 
     const [tabelas, setTabelas] = useState(tabelaInicial);
     const [show, setShow] = useState(false);
@@ -71,39 +72,106 @@ export const ReceitaForm = () => {
     const [readOnlyAcaoAssociacaoReceita, setreadOnlyAcaoAssociacaoReceita] = useState(false);
     const [readOnlyContaAssociacaoReceita, setreadOnlyContaAssociacaoReceita] = useState(false);
     const [readOnlyTipoReceita, setreadOnlyTipoReceita] = useState(false);
-
     const [readOnlyBtnAcao, setReadOnlyBtnAcao] = useState(false);
     const [readOnlyCampos, setReadOnlyCampos] = useState(false);
     const [repasse, setRepasse] = useState({});
-
     const [idxTipoDespesa, setIdxTipoDespesa] = useState(0);
-
     const [showReceitaRepasse, setShowReceitaRepasse] = useState(false);
-
     const [repasses, setRepasses] = useState([]);
     const [showSelecionaRepasse, setShowSelecionaRepasse] = useState(false);
-
     const [msgDeletarReceita, setmsgDeletarReceita] = useState('<p>Tem certeza que deseja excluir este crédito? A ação não poderá ser refeita.</p>')
     const [msgAvisoTipoReceita, setMsgAvisoTipoReceita] = useState('');
-
     const [exibeModalSalvoComSucesso, setExibeModalSalvoComSucesso] = useState(true)
-
     const [uuid_despesa, setUuidDespesa] = useState('')
-
     const [exibirDeleteDespesa, setExibirDeleteDespesa] = useState(true);
-
     const [classificacoesAceitas, setClassificacoesAceitas] = useState([])
+
+    // ************* Modo Estorno
+    const [readOnlyEstorno, setReadOnlyEstorno] = useState(false);
+    const [rateioEstorno, setRateioEstorno] = useState({});
+    const [tituloPagina, setTituloPagina] = useState('')
+    const [despesa, setDespesa] = useState({})
+    const [idTipoReceitaEstorno, setIdTipoReceitaEstorno] = useState("")
 
     const carregaTabelas = useCallback(async ()=>{
         let tabelas_receitas = await getTabelasReceitaReceita()
         setTabelas(tabelas_receitas)
     }, [])
 
-
-
     useEffect(()=>{
         carregaTabelas()
     }, [carregaTabelas]);
+
+
+    const getTipoReceitaEstorno = useCallback(()=>{
+        if (tabelas && tabelas.tipos_receita && tabelas.tipos_receita.length > 0){
+            let tipo_de_receita = tabelas.tipos_receita.filter(element => element.e_estorno)
+            let id_tipo_receita_estono = tipo_de_receita && tipo_de_receita[0] && tipo_de_receita[0].id ? tipo_de_receita[0].id : ""
+            setIdTipoReceitaEstorno(id_tipo_receita_estono)
+        }
+    }, [tabelas])
+
+    useEffect(()=>{
+        getTipoReceitaEstorno()
+    }, [getTipoReceitaEstorno])
+
+
+    const carregaRateioPorUuid = async (uuid_rateio) => {
+        return await getRateioPorUuid(uuid_rateio)
+    }
+
+    const consultaSeEstorno = useCallback( async () =>{
+        if (parametros && parametros.state && parametros.state.uuid_rateio){
+            let rateio = await carregaRateioPorUuid(parametros.state.uuid_rateio)
+            await periodoFechado(rateio.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+            try {
+                const init_rateio = {
+                    tipo_receita: idTipoReceitaEstorno,
+                    detalhe_tipo_receita: rateio.detalhe_tipo_receita,
+                    detalhe_outros: rateio.detalhe_outros,
+                    categoria_receita: rateio.aplicacao_recurso,
+                    conferido: rateio.conferido,
+                    acao_associacao: rateio.acao_associacao.uuid,
+                    conta_associacao: rateio.conta_associacao.uuid,
+                    referencia_devolucao: rateio.referencia_devolucao,
+                    data: "",
+                    valor: rateio.valor_total ? Number(rateio.valor_total).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    }) : "",
+                    rateio_estornado: rateio && rateio.uuid ? rateio.uuid : null
+                };
+
+                setInitialValue(init_rateio)
+                setReadOnlyEstorno(true)
+                setRateioEstorno(rateio)
+                setTituloPagina('Cadastro de Estorno')
+            }catch (e) {
+                console.log("Erro ao atribuir rateio ", e)
+            }
+
+        }else {
+            setTituloPagina('Cadastro de Crédito')
+        }
+    }, [parametros, idTipoReceitaEstorno])
+
+    useEffect(()=>{
+        consultaSeEstorno()
+    }, [consultaSeEstorno])
+
+
+    const carregaDespesaPorUuid = useCallback(async () => {
+        if (rateioEstorno && rateioEstorno.despesa) {
+            let despesa = await getDespesa(rateioEstorno.despesa)
+            setDespesa(despesa)
+        }
+    }, [rateioEstorno])
+
+    useEffect(() => {
+        carregaDespesaPorUuid()
+    }, [carregaDespesaPorUuid])
+
+    // ************* Fim Modo Estorno
 
     const showBotaoCadastrarSaida = useCallback((uuid_acao_associacao, values) => {
         if (tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 && uuid_acao_associacao && values && values.tipo_receita) {
@@ -121,6 +189,7 @@ export const ReceitaForm = () => {
 
     const buscaReceita = useCallback(async ()=>{
         if (uuid) {
+
             getReceita(uuid).then(async response => {
                 const resp = response.data;
 
@@ -128,6 +197,15 @@ export const ReceitaForm = () => {
                     setShowEditarSaida(true)
                     setShowCadastrarSaida(false)
                     setUuidDespesa(resp.saida_do_recurso.uuid)
+                }
+
+                // Verificar se existe um rateio atrelado a receita
+                if (resp && resp.rateio_estornado && resp.rateio_estornado.uuid){
+                    setTituloPagina('Edição do Estorno')
+                    setRateioEstorno(resp.rateio_estornado)
+                    setreadOnlyTipoReceita(true)
+                }else {
+                    setTituloPagina('Edição do Crédito')
                 }
 
                 const init = {
@@ -144,6 +222,7 @@ export const ReceitaForm = () => {
                         style: 'currency',
                         currency: 'BRL'
                     }) : "",
+                    rateio_estornado: resp.rateio_estornado && resp.rateio_estornado.uuid ? resp.rateio_estornado.uuid : null
                 };
                 setObjetoParaComparacao(init);
                 setInitialValue(init);
@@ -185,7 +264,28 @@ export const ReceitaForm = () => {
         }
     };
 
+    const exibeMsgSalvoComSucesso = (payload) =>{
+
+        let msg_salva_com_sucesso
+
+        if (payload.tipo_receita === idTipoReceitaEstorno){
+            msg_salva_com_sucesso = {
+                titulo: "Estorno salvo com sucesso",
+                mensagem: "O estorno referente a despesa selecionada foi salvo com sucesso."
+            }
+        }else {
+            msg_salva_com_sucesso = {
+                titulo: "Salvar cadastro de crédito.",
+                mensagem: "Crédito salvo com sucesso."
+            }
+        }
+
+        toastCustom.ToastCustomSuccess(msg_salva_com_sucesso.titulo, msg_salva_com_sucesso.mensagem, 'success', 'top-right', true, getPath)
+
+    }
+
     const onSubmit = async (values) => {
+
         // Validando e ou removendo e_devolucao
         if (!verificaSeDevolucao(values.tipo_receita)){
             delete values.referencia_devolucao
@@ -196,6 +296,7 @@ export const ReceitaForm = () => {
         }
         values.valor = round(trataNumericos(values.valor), 2);
         values.data = moment(values.data).format("YYYY-MM-DD");
+        values.conferido = true;
         const payload = {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID),
@@ -211,7 +312,7 @@ export const ReceitaForm = () => {
         if (uuid) {
             await atualizar(uuid, payload).then(response => {
                 if (exibeModalSalvoComSucesso){
-                    setShowSalvarReceita(true);
+                    exibeMsgSalvoComSucesso(payload)
                 }else {
                     getPath()
                 }
@@ -219,8 +320,9 @@ export const ReceitaForm = () => {
         } else {
             cadastrar(payload).then(response => {
                 if (exibeModalSalvoComSucesso){
-                    setShowSalvarReceita(true);
+                    //setShowSalvarReceita(true);
                     setUuidReceita(response);
+                    exibeMsgSalvoComSucesso(payload)
                 }else {
                     setUuidReceita(response);
                     getPath(response)
@@ -285,6 +387,8 @@ export const ReceitaForm = () => {
 
         if (receita && receita.saida_do_recurso && receita.saida_do_recurso.uuid){
             setmsgDeletarReceita('<p>Ao excluir este crédito você excluirá também a saída do recurso vinculada. Tem certeza que deseja excluir ambos? A ação não poderá ser desfeita.</p>')
+        }else if (initialValue.tipo_receita === idTipoReceitaEstorno){
+            setmsgDeletarReceita('<p>Tem certeza que deseja excluir esse estorno? Essa ação irá desfazer o estorno da despesa relacionada.</p>')
         }
         setShowDelete(true);
     };
@@ -443,11 +547,12 @@ export const ReceitaForm = () => {
     const getDisplayOptionClassificacaoReceita = (id_categoria_receita, uuid_acao) => {
 
         let id_categoria_receita_lower = id_categoria_receita.toLowerCase();
+
         let aceitaClassificacao  = eval('tabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_' + id_categoria_receita_lower);
 
-        
+
         if(classificacoesAceitas.includes(id_categoria_receita_lower) && aceitaClassificacao){
-            
+
             return "block"
         }
         else{
@@ -691,8 +796,6 @@ export const ReceitaForm = () => {
         else{
             return ""
         }
-        
-        
     }
 
     const atualizaValorRepasse = (value, setFieldValue) => {
@@ -706,365 +809,106 @@ export const ReceitaForm = () => {
         }
     }
 
+
+
     return (
         <>
-            <Formik
-                initialValues={initialValue}
-                validationSchema={ReceitaSchema}
-                enableReinitialize={true}
-                validateOnBlur={true}
-                onSubmit={onSubmit}
-                validate={validateFormReceitas}
-            >
-                {props => {
-                    const {
-                        values,
-                        errors,
-                        setFieldValue,
-                    } = props;
-                    return (
-                        <form method="POST" id="receitaForm" onSubmit={props.handleSubmit}>
-                            <div className="form-row">
-                                {/*Tipo de Receita */}
-                                <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="tipo_receita">Tipo do crédito</label>
-                                    <select
-                                        id="tipo_receita"
-                                        name="tipo_receita"
-                                        disabled={readOnlyCampos || readOnlyTipoReceita || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
-                                        value={props.values.tipo_receita}
-                                        onChange={(e) => {
-                                            props.handleChange(e);
-                                            consultaRepasses(e.target.value);
-                                            getClassificacaoReceita(e.target.value, setFieldValue);
-                                            setaDetalhesTipoReceita(e.target.value);
-                                            getAvisoTipoReceita(e.target.value);
-                                            if (e.target.value !== "" && !tabelas.tipos_receita.find(element => element.id === Number(e.target.value)).e_recursos_proprios) {
-                                                setShowCadastrarSaida(false);
-                                            } else if (e.target.value !== "" && tabelas.tipos_receita.find(element => element.id === Number(e.target.value)).e_recursos_proprios) {
-                                                let acao = tabelas.acoes_associacao.find(item => item.uuid == props.values.acao_associacao)
-                                                if (acao && acao.e_recursos_proprios) {
-                                                    setShowCadastrarSaida(true);
-                                                } 
-                                            }
-                                        }
-                                        }
-                                        onBlur={props.handleBlur}
-                                        className="form-control"
-                                    >
-                                        {receita.tipo_receita
-                                            ? null
-                                            : <option value="">Selecione o tipo</option>}
-                                        {tabelas.tipos_receita !== undefined && tabelas.tipos_receita.length > 0 ? (tabelas.tipos_receita.map(item => (
-                                            <option key={item.id} value={item.id}>{item.nome}</option>
-                                        ))) : null}
-                                    </select>
-                                    {props.touched.tipo_receita && props.errors.tipo_receita &&
-                                    <span
-                                        className="span_erro text-danger mt-1"> {props.errors.tipo_receita}</span>}
-                                </div>
-                                {/*Fim Tipo de Receita */}
+            <PaginasContainer>
+                <h1 className="titulo-itens-painel mt-5">{tituloPagina}</h1>
+                <div className="page-content-inner ">
+                    <h2 className="subtitulo-itens-painel">Dados do documento</h2>
+                    <ReferenciaDaDespesaEstorno
+                        uuid={uuid}
+                        rateioEstorno={rateioEstorno}
+                        despesa={despesa}
+                    />
+                    <ReceitaFormFormik
+                        initialValue={initialValue}
+                        onSubmit={onSubmit}
+                        validateFormReceitas={validateFormReceitas}
+                        readOnlyCampos={readOnlyCampos}
+                        readOnlyTipoReceita={readOnlyTipoReceita}
+                        consultaRepasses={consultaRepasses}
+                        getClassificacaoReceita={getClassificacaoReceita}
+                        setaDetalhesTipoReceita={setaDetalhesTipoReceita}
+                        getAvisoTipoReceita={getAvisoTipoReceita}
+                        setShowCadastrarSaida={setShowCadastrarSaida}
+                        tabelas={tabelas}
+                        receita={receita}
+                        verificaSeExibeDetalhamento={verificaSeExibeDetalhamento}
+                        temOpcoesDetalhesTipoReceita={temOpcoesDetalhesTipoReceita}
+                        getOpcoesDetalhesTipoReceita={getOpcoesDetalhesTipoReceita}
+                        verificaSeDevolucao={verificaSeDevolucao}
+                        readOnlyValor={readOnlyValor}
+                        readOnlyContaAssociacaoReceita={readOnlyContaAssociacaoReceita}
+                        retornaTiposDeContas={retornaTiposDeContas}
+                        readOnlyAcaoAssociacaoReceita={readOnlyAcaoAssociacaoReceita}
+                        showBotaoCadastrarSaida={showBotaoCadastrarSaida}
+                        getClasificacaoAcao={getClasificacaoAcao}
+                        retornaAcoes={retornaAcoes}
+                        atualizaValorRepasse={atualizaValorRepasse}
+                        readOnlyClassificacaoReceita={readOnlyClassificacaoReceita}
+                        retornaClassificacaoReceita={retornaClassificacaoReceita}
+                        showEditarSaida={showEditarSaida}
+                        setExibeModalSalvoComSucesso={setExibeModalSalvoComSucesso}
+                        setRedirectTo={setRedirectTo}
+                        showCadastrarSaida={showCadastrarSaida}
+                        objetoParaComparacao={objetoParaComparacao}
+                        onCancelarTrue={onCancelarTrue}
+                        onShowModal={onShowModal}
+                        uuid={uuid}
+                        exibirDeleteDespesa={exibirDeleteDespesa}
+                        readOnlyBtnAcao={readOnlyBtnAcao}
+                        onShowDeleteModal={onShowDeleteModal}
+                        servicoDeVerificacoes={servicoDeVerificacoes}
+                        showReceitaRepasse={showReceitaRepasse}
+                        setShowReceitaRepasse={setShowReceitaRepasse}
+                        showSelecionaRepasse={showSelecionaRepasse}
+                        setShowSelecionaRepasse={setShowSelecionaRepasse}
+                        setExibirDeleteDespesa={setExibirDeleteDespesa}
+                        repasses={repasses}
+                        trataRepasse={trataRepasse}
+                        readOnlyEstorno={readOnlyEstorno}
+                        despesa={despesa}
+                        idTipoReceitaEstorno={idTipoReceitaEstorno}
 
-                                {/*Detalhamento do Crédito */}
-                                {verificaSeExibeDetalhamento(props.values.tipo_receita) && 
-                                    <div className="col-12 col-md-6 mt-4">
-                                        <label htmlFor="detalhe_tipo_receita">Detalhamento do crédito</label>
-                                        {temOpcoesDetalhesTipoReceita(props.values) ?
-                                            <>
-                                                <select
-                                                    id="detalhe_tipo_receita"
-                                                    name="detalhe_tipo_receita"
-                                                    disabled={readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
-                                                    value={props.values.detalhe_tipo_receita ? props.values.detalhe_tipo_receita.id : ""}
-                                                    onChange={(e) => {
-                                                        props.handleChange(e);
-                                                    }
-                                                    }
-                                                    onBlur={props.handleBlur}
-                                                    className="form-control"
-                                                >
-                                                    {receita.detalhe_tipo_receita
-                                                        ? null
-                                                        : <option value="">Selecione o detalhamento</option>}
-                                                    {getOpcoesDetalhesTipoReceita(props.values)}
-
-                                                </select>
-                                                {props.touched.detalhe_tipo_receita && props.errors.detalhe_tipo_receita && <span className="span_erro text-danger mt-1"> {props.errors.detalhe_tipo_receita}</span>}
-                                            </>
-                                                :
-                                            <>
-                                                <input
-                                                    value={props.values.detalhe_outros}
-                                                    onChange={(e) => {
-                                                        props.handleChange(e);
-                                                    }
-                                                    }
-                                                    onBlur={props.handleBlur}
-                                                    name="detalhe_outros" id="detalhe_outros" type="text"
-                                                    className="form-control"
-                                                    placeholder="Digite o detalhamento"
-                                                    disabled={readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
-                                                />
-                                                {props.touched.detalhe_outros && props.errors.detalhe_outros && <span className="span_erro text-danger mt-1"> {props.errors.detalhe_outros}</span>}
-                                            </>
-                                        }
-                                    </div>
-                                }
-                                {/*Fim Detalhamento do Crédito */}
-
-                                {/*Periodo Devolução */}
-                                {verificaSeDevolucao(props.values.tipo_receita) &&
-                                    <div className="col-12 col-md-6 mt-4">
-                                        <label htmlFor="referencia_devolucao">Período de referência da devolução</label>
-                                        <select
-                                            id="referencia_devolucao"
-                                            name="referencia_devolucao"
-                                            value={props.values.referencia_devolucao  && props.values.referencia_devolucao.uuid ? props.values.referencia_devolucao.uuid : props.values.referencia_devolucao ? props.values.referencia_devolucao : ""}
-                                            onChange={props.handleChange}
-                                            onBlur={props.handleBlur}
-                                            className="form-control"
-                                            disabled={readOnlyValor || readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
-                                        >
-                                            {receita.referencia_devolucao
-                                                ? null
-                                                : <option value="">Selecione um período</option>}
-                                            {tabelas.periodos !== undefined && tabelas.periodos.length > 0 ? (tabelas.periodos.map((item, key) => (
-                                                <option key={key} value={item.uuid}>{item.referencia_por_extenso}</option>
-                                            ))) : null}
-                                        </select>
-                                        {props.touched.referencia_devolucao && props.errors.referencia_devolucao && <span className="span_erro text-danger mt-1"> {props.errors.referencia_devolucao}</span>}
-                                    </div>
-                                }
-                                {/*Periodo Devolução */}
-
-                                {/*Data da Receita */}
-                                <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="data">Data do crédito</label>
-                                    <DatePickerField
-                                        name="data"
-                                        id="data"
-                                        value={values.data}
-                                        onChange={setFieldValue}
-                                        onBlur={props.handleBlur}
-                                        disabled={![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
-                                        maxDate={new Date()}
-                                    />
-                                    {props.touched.data && props.errors.data &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.data}</span>}
-                                </div>
-                                {/*Fim Data da Receita */}
-
-                                {/*Tipo de Conta */}
-                                <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="conta_associacao">Tipo de conta</label>
-                                    <select
-                                        id="conta_associacao"
-                                        name="conta_associacao"
-                                        value={props.values.conta_associacao}
-                                        onChange={props.handleChange}
-                                        onBlur={props.handleBlur}
-                                        className="form-control"
-                                        disabled={readOnlyValor || readOnlyCampos || readOnlyContaAssociacaoReceita || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
-                                    >
-                                        {receita.conta_associacao
-                                            ? null
-                                            : <option key="" value="">Escolha uma conta</option>}
-
-                                        {retornaTiposDeContas(props.values)}
-                                    </select>
-                                    {props.touched.conta_associacao && props.errors.conta_associacao &&
-                                    <span
-                                        className="span_erro text-danger mt-1"> {props.errors.conta_associacao}</span>}
-                                </div>
-                                {/*Fim Tipo de Conta */}
-
-                                {/*Ação*/}
-                                <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="acao_associacao">Ação</label>
-                                    <select
-                                        disabled={readOnlyCampos || readOnlyAcaoAssociacaoReceita || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
-                                        id="acao_associacao"
-                                        name="acao_associacao"
-                                        value={props.values.acao_associacao}
-                                        onChange={(e) => {
-                                            props.handleChange(e);
-                                            showBotaoCadastrarSaida(e.target.value, props.values);
-                                            getClasificacaoAcao(e.target.value, setFieldValue);
-                                        }
-                                        }
-                                        onBlur={props.handleBlur}
-                                        className="form-control"
-                                    >
-                                        {receita.acao_associacao
-                                            ? null
-                                            : <option key={0} value="">Escolha uma ação</option>}
-                                        {retornaAcoes(props.values)}
-                                    </select>
-                                    {props.touched.acao_associacao && props.errors.acao_associacao &&
-                                    <span
-                                        className="span_erro text-danger mt-1"> {props.errors.acao_associacao}</span>}
-                                </div>
-                                {/*Fim Ação*/}
-
-                                {/*Classificação do Crédito*/}
-                                <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="categoria_receita">Classificação do crédito</label>
-                                    <select
-                                        id="categoria_receita"
-                                        name="categoria_receita"
-                                        value={props.values.categoria_receita}
-                                        onChange={ (e) => {
-                                            props.handleChange(e);
-                                            atualizaValorRepasse(e.target.value, setFieldValue);
-                                            }
-                                        }
-                                        onBlur={props.handleBlur}
-                                        className="form-control"
-                                        disabled={readOnlyClassificacaoReceita || readOnlyCampos || readOnlyValor || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
-
-                                    >
-                                        {receita.categorias_receita ? null :
-                                            <option key={0} value="">Escolha a classificação</option>}
-
-                                        {retornaClassificacaoReceita(props.values, setFieldValue)}
-                                    </select>
-
-                                    {props.touched.categoria_receita && props.errors.categoria_receita && <span className="span_erro text-danger mt-1"> {props.errors.categoria_receita}</span>}
-                                </div>
-                                {/*Fim Classificação do Crédito*/}
-
-                                {/*Valor Total do Crédito */}
-                                <div className="col-12 col-md-6 mt-4">
-                                    <label htmlFor="valor">Valor total do crédito</label>
-                                    <CurrencyInput
-                                        disabled={readOnlyCampos || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
-                                        allowNegative={false}
-                                        prefix='R$'
-                                        decimalSeparator=","
-                                        thousandSeparator="."
-                                        value={props.values.valor}
-                                        name="valor"
-                                        id="valor"
-                                        className="form-control"
-                                        onChangeEvent={props.handleChange}
-                                        readOnly={readOnlyValor}
-                                    />
-                                    {props.touched.valor && props.errors.valor &&
-                                    <span className="span_erro text-danger mt-1"> {props.errors.valor}</span>}
-                                </div>
-                                {/*Fim Valor Total do Crédito */}
-                            </div>
-
-                            {/*Botões*/}
-                            <div className="d-flex justify-content-end pb-3" style={{marginTop: '60px'}}>
-                                {showEditarSaida &&
-                                    <button
-                                        type="submit"
-                                        onClick={() => {
-                                            setExibeModalSalvoComSucesso(false)
-                                            setRedirectTo('/cadastro-de-despesa-recurso-proprio')
-                                        }}
-                                        className="btn btn btn-outline-success mt-2 mr-2"
-                                    >
-                                        Editar saída
-                                    </button>
-                                }
-                                {showCadastrarSaida && !showEditarSaida ?
-                                    <button
-                                        type="submit"
-                                        onClick={() => {
-                                            setExibeModalSalvoComSucesso(false)
-                                            setRedirectTo('/cadastro-de-despesa-recurso-proprio')
-                                        }}
-                                        className="btn btn btn-outline-success mt-2 mr-2"
-                                    >
-                                        Cadastrar saída
-                                    </button> : null
-                                }
-                                <button
-                                    type="reset"
-                                    onClick={comparaObjetos(values,objetoParaComparacao) ? onCancelarTrue : onShowModal}
-                                    className="btn btn btn-outline-success mt-2 mr-2"
-                                >
-                                    Voltar
-                                </button>
-                                {uuid  && exibirDeleteDespesa ?
-                                    <button disabled={readOnlyBtnAcao || !visoesService.getPermissoes(['delete_receita'])} type="reset" onClick={onShowDeleteModal} className="btn btn btn-danger mt-2 mr-2">Deletar</button> : null
-                                }
-                                <button
-                                    onClick={(e)=>servicoDeVerificacoes(e, values, errors)}
-                                    disabled={readOnlyBtnAcao || ![['add_receita'], ['change_receita']].some(visoesService.getPermissoes)}
-                                    type="submit"
-                                    className="btn btn-success mt-2"
-                                >
-                                    Salvar
-                                </button>
-
-                            </div>
-                            {/*Fim Botões*/}
-                            <section>
-                                <ModalReceitaConferida
-                                    show={showReceitaRepasse}
-                                    handleClose={()=>setShowReceitaRepasse(false)}
-                                    onSalvarReceitaConferida={ () => {setShowReceitaRepasse(false); onSubmit(values)} }
-                                    titulo="Receita do tipo repasse"
-                                    texto="<p>Atenção. Esse crédito é do tipo repasse e após gravação só poderá ser apagado pela DRE. Confirma a gravação?</p>"
-                                />
-                            </section>
-                            <section>
-                                <ModalSelecionaRepasse
-                                    show={showSelecionaRepasse}
-                                    cancelar={() => {
-                                        setShowSelecionaRepasse(false); 
-                                        setFieldValue('tipo_receita', '');
-                                        setFieldValue('valor', '0,00');
-                                        setExibirDeleteDespesa(true);
-                                    }}
-                                    repasses={repasses}
-                                    trataRepasse={trataRepasse}
-                                    setFieldValue={setFieldValue}
-                                    titulo="Selecione o repasse"
-                                    bodyText="<p>Atenção. Esse crédito já foi demonstrado, caso a alteração seja gravada ele voltará a ser não demonstrado. Confirma a gravação?</p>"
-                                />
-                            </section>
-                        </form>
-                    );
-                }}
-            </Formik>
-            <section>
-                <CancelarModalReceitas
-                    show={show}
-                    handleClose={onHandleClose}
-                    onCancelarTrue={onCancelarTrue}
-                    uuid={uuid}
-                />
-            </section>
-            {uuid
-                ?
-                <ModalDeletarReceita
-                    show={showDelete}
-                    handleClose={onHandleClose}
-                    onDeletarTrue={onDeletarTrue}
-                    texto={msgDeletarReceita}
-                />
-                : null
-            }
-            <section>
-                <PeriodoFechado show={showPeriodoFechado} handleClose={onHandleClose}/>
-            </section>
-            <section>
-                <ErroGeral show={showErroGeral} handleClose={onHandleClose}/>
-            </section>
-            <section>
-                <AvisoTipoReceita 
-                    show={showAvisoTipoReceita} 
-                    handleClose={onHandleClose}
-                    texto={msgAvisoTipoReceita}
-                />
-            </section>
-            <section>
-                <SalvarReceita show={showSalvarReceita} handleClose={fecharSalvarCredito}/>
-            </section>
+                    />
+                    <section>
+                        <CancelarModalReceitas
+                            show={show}
+                            handleClose={onHandleClose}
+                            onCancelarTrue={onCancelarTrue}
+                            uuid={uuid}
+                        />
+                    </section>
+                    {uuid
+                        ?
+                        <ModalDeletarReceita
+                            show={showDelete}
+                            handleClose={onHandleClose}
+                            onDeletarTrue={onDeletarTrue}
+                            texto={msgDeletarReceita}
+                        />
+                        : null
+                    }
+                    <section>
+                        <PeriodoFechado show={showPeriodoFechado} handleClose={onHandleClose}/>
+                    </section>
+                    <section>
+                        <ErroGeral show={showErroGeral} handleClose={onHandleClose}/>
+                    </section>
+                    <section>
+                        <AvisoTipoReceita
+                            show={showAvisoTipoReceita}
+                            handleClose={onHandleClose}
+                            texto={msgAvisoTipoReceita}
+                        />
+                    </section>
+                    <section>
+                        <SalvarReceita show={showSalvarReceita} handleClose={fecharSalvarCredito}/>
+                    </section>
+                </div>
+            </PaginasContainer>
         </>
     );
 };

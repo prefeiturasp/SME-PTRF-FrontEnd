@@ -9,7 +9,11 @@ const authHeader = {
     }
 };
 
-export const getListaRateiosDespesas = async uuid => {
+export const getRateioPorUuid = async (uuid_rateio) => {
+    return (await api.get( `api/rateios-despesas/${uuid_rateio}`, authHeader)).data
+}
+
+;export const getListaRateiosDespesas = async uuid => {
     return (await api.get( `api/rateios-despesas/?associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
 
