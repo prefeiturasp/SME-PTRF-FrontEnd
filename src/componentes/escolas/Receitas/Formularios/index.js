@@ -134,7 +134,7 @@ export const ReceitaForm = () => {
                     acao_associacao: rateio.acao_associacao.uuid,
                     conta_associacao: rateio.conta_associacao.uuid,
                     referencia_devolucao: rateio.referencia_devolucao,
-                    data: rateio.data_transacao,
+                    data: "",
                     valor: rateio.valor_total ? Number(rateio.valor_total).toLocaleString('pt-BR', {
                         style: 'currency',
                         currency: 'BRL'
