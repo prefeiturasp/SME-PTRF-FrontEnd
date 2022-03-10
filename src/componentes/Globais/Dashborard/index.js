@@ -11,6 +11,7 @@ import {BarraDeStatusPeriodoAssociacao} from "./BarraDeStatusPeriodoAssociacao";
 import "./dashboard.scss"
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import {visoesService} from "../../../services/visoes.service";
+import {getPeriodosDePrestacaoDeContasDaAssociacao} from "../../../services/escolas/Associacao.service";
 
 export const Dashboard = () => {
     let uuid_associacao;
@@ -39,7 +40,8 @@ export const Dashboard = () => {
     }, [uuid_associacao]);
 
     const buscaPeriodos = useCallback(async () => {
-        let periodos = await getPeriodosAteAgoraForaImplantacaoDaAssociacao(uuid_associacao);
+        // let periodos = await getPeriodosAteAgoraForaImplantacaoDaAssociacao(uuid_associacao);
+        let periodos = await getPeriodosDePrestacaoDeContasDaAssociacao();
         setSelectPeriodo(periodos[0].uuid)
         setPeriodosAssociacao(periodos);
     }, []);
