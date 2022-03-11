@@ -1,3 +1,6 @@
+### 1.28.1 - 11/03/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 37
+* (58962) - Resumo de recursos: O campo "Saldo reprogramado", em períodos abertos, está replicando o valor do saldo atual. 
+
 ### 1.24.5 - 17/12/2021 - Hotfix
 * (55121) - Inclui botão para gerar arquivo csv do relatório consolidado
 
