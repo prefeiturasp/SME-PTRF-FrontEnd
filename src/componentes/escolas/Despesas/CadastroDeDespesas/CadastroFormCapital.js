@@ -21,7 +21,8 @@ export const CadastroFormCapital = (propriedades) => {
         disabled,
         errors,
         exibeMsgErroValorRecursos,
-        exibeMsgErroValorOriginal
+        exibeMsgErroValorOriginal,
+        eh_despesa_com_comprovacao_fiscal,
     } = propriedades;
 
     const handleChangeData = (quantidade, valor, setFieldValue) => {
@@ -49,8 +50,12 @@ export const CadastroFormCapital = (propriedades) => {
                         onChange={formikProps.handleChange}
                         name={`rateios[${index}].especificacao_material_servico`}
                         id={`especificacao_material_servico_${index}`}
-                        className={`${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} ${!rateio.especificacao_material_servico && 'despesa_incompleta'} form-control`}
-                        disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                        className={
+                            !eh_despesa_com_comprovacao_fiscal(formikProps.values)
+                            ? "form-control"
+                            : `${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} ${!rateio.especificacao_material_servico && 'despesa_incompleta'} form-control`
+                        }
+                        disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(formikProps.values)}
                     >
                         <option key={0} value="">Selecione uma especificação</option>
                         {especificaoes_capital && especificaoes_capital.map((item) => (
