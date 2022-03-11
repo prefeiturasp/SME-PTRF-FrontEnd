@@ -5,7 +5,7 @@ import {
     cpfMaskContitional,
     calculaValorRecursoAcoes,
     periodoFechado,
-    comparaObjetos, valida_cpf_cnpj_permitindo_cnpj_zerado
+    comparaObjetos, valida_cpf_cnpj_permitindo_cnpj_zerado, valida_cpf_cnpj
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import MaskedInput from 'react-text-mask'
 import {
@@ -50,6 +50,7 @@ import {ModalDeletarRateioComEstorno} from "./ModalDeletarRateioComEstorno";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import { apenasNumero } from "../../../../utils/ValidacoesAdicionaisFormularios";
+import { CadastroFormFormik } from "./CadastroFormFormik";
 
 export const CadastroForm = ({verbo_http}) => {
 
@@ -141,8 +142,26 @@ export const CadastroForm = ({verbo_http}) => {
     const validacoesPersonalizadas = useCallback(async (values, setFieldValue) => {
 
         let erros = {};
-        let cpf_cnpj_valido = !(!values.cpf_cnpj_fornecedor || values.cpf_cnpj_fornecedor.trim() === "" || !valida_cpf_cnpj_permitindo_cnpj_zerado(values.cpf_cnpj_fornecedor));
+        let cpf_cnpj_valido;
 
+        if(values.cpf_cnpj_fornecedor){
+            cpf_cnpj_valido = !(!values.cpf_cnpj_fornecedor || values.cpf_cnpj_fornecedor.trim() === "" || !valida_cpf_cnpj(values.cpf_cnpj_fornecedor));
+        }
+        else{
+            cpf_cnpj_valido = true;
+        }
+
+        if(!eh_despesa_reconhecida(values) && !values.numero_boletim_de_ocorrencia){
+            erros = {
+                numero_boletim_de_ocorrencia: "Digite um número de boletim de ocorrência"
+            }
+            setEnviarFormulario(false)
+            setBtnSubmitDisable(true)
+        }
+        else{
+            setEnviarFormulario(true)
+            setBtnSubmitDisable(false)
+        }
         
         if (!cpf_cnpj_valido) {
             erros = {
@@ -500,6 +519,45 @@ export const CadastroForm = ({verbo_http}) => {
          }
      }
 
+     const onHandleChangeNumeroBoletimOcorrencia = (e, setFieldValue) => {
+        let valor = e.target.value;
+
+        if(apenasNumero(valor)){
+           setFieldValue('numero_boletim_de_ocorrencia', valor)
+        }
+    }
+
+     const eh_despesa_com_comprovacao_fiscal = (values) => {
+        if(!values.eh_despesa_sem_comprovacao_fiscal || values.eh_despesa_sem_comprovacao_fiscal === undefined){
+            return true
+        }
+        else{
+            return false;
+        }
+     }
+
+
+     const eh_despesa_reconhecida = (values) => {
+        if(values.eh_despesa_reconhecida_pela_associacao || values.eh_despesa_reconhecida_pela_associacao === undefined){
+            return true;
+        }
+        else{
+            return false;
+        }
+     }
+
+     const limpa_campos_sem_comprovacao_fiscal = (values, setFieldValue) => {
+        setFieldValue("cpf_cnpj_fornecedor", "")
+        setFieldValue("tipo_documento", null)
+        setFieldValue("data_documento", "")
+        setFieldValue("numero_documento", "")
+
+        for(let rateio=0; rateio<=values.rateios.length-1; rateio++){
+            setFieldValue(`rateios[${rateio}].tipo_custeio`, "")
+            setFieldValue(`rateios[${rateio}].especificacao_material_servico`, "")
+        }
+     }
+
     return (
         <>
             {loading ?
@@ -510,600 +568,66 @@ export const CadastroForm = ({verbo_http}) => {
                     marginBottom="0"
                 />
                 :
-                <Formik
-                    initialValues={initialValues()}
-                    validateOnBlur={true}
-                    onSubmit={onSubmit}
-                    enableReinitialize={true}
-                    validate={validateFormDespesas}
-                >
-                    {props => {
-                        const {
-                            values,
-                            setFieldValue,
-                            resetForm,
-                            errors,
-                        } = props;
-
-                        return (
-                            <>
-                                {props.values.status === 'COMPLETO' ? null :
-                                    props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
-                                    <div className="col-12 barra-status-erros pt-1 pb-1">
-                                        <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {props.values.qtde_erros_form_despesa} campos não preechidos, você pode completá-los agora ou terminar depois.</p>
-                                    </div>
-                                }
-                                <form onSubmit={props.handleSubmit}>
-                                    <div className="form-row">
-                                        <div className="col-12 col-md-6 mt-4">
-                                            <label htmlFor="cpf_cnpj_fornecedor">CNPJ ou CPF do fornecedor</label>
-                                            <MaskedInput
-                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                                mask={(valor) => cpfMaskContitional(valor)}
-                                                value={props.values.cpf_cnpj_fornecedor}
-                                                onChange={(e) => {
-                                                    props.handleChange(e);
-                                                }}
-                                                onBlur={async () => {
-                                                    setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
-                                                }}
-                                                onClick={() => {
-                                                    setFormErrors({cpf_cnpj_fornecedor: ""})
-                                                }}
-                                                name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
-                                                className={`${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.cpf_cnpj_fornecedor && 'despesa_incompleta'} form-control`}
-                                                placeholder="Digite o número do CNPJ ou CPF (apenas algarismos)"
-                                            />
-                                            {/* Validações personalizadas */}
-                                            {formErrors.cpf_cnpj_fornecedor && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.cpf_cnpj_fornecedor}</span>
-                                            </p>}
-                                        </div>
-                                        <div className="col-12 col-md-6  mt-4">
-                                            <label htmlFor="nome_fornecedor">Razão social do fornecedor</label>
-                                            <input
-                                                readOnly={eh_despesa_sem_comprovacao_fiscal(props.values.cpf_cnpj_fornecedor)}
-                                                value={props.values.nome_fornecedor}
-                                                onChange={props.handleChange}
-                                                onBlur={props.handleBlur}
-                                                name="nome_fornecedor" id="nome_fornecedor" type="text"
-                                                className={`${!props.values.nome_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.nome_fornecedor && 'despesa_incompleta'} form-control`}
-                                                placeholder="Digite o nome"
-                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="form-row">
-                                        <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="tipo_documento">Tipo de documento</label>
-                                            <select
-                                                value={
-                                                    props.values.tipo_documento !== null ? (
-                                                        props.values.tipo_documento === "object" ? props.values.tipo_documento.id : props.values.tipo_documento.id
-                                                    ) : ""
-                                                }
-                                                onChange={props.handleChange}
-                                                onBlur={props.handleBlur}
-                                                name='tipo_documento'
-                                                id='tipo_documento'
-                                                className={
-                                                    eh_despesa_sem_comprovacao_fiscal(props.values.cpf_cnpj_fornecedor) 
-                                                    ? "form-control"
-                                                    : `${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.tipo_documento && "despesa_incompleta"} form-control`
-                                                }
-                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                            >
-                                                <option key={0} value="">Selecione o tipo</option>
-                                                {despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.map(item =>
-                                                    <option key={item.id} value={item.id}>{item.nome}</option>
-                                                )
-                                                }
-                                            </select>
-                                        </div>
-
-                                        <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="data_documento">Data do documento</label>
-                                            <DatePickerField
-                                                name="data_documento"
-                                                id="data_documento"
-                                                value={values.data_documento != null ? values.data_documento : ""}
-                                                onChange={setFieldValue}
-                                                className={
-                                                    eh_despesa_sem_comprovacao_fiscal(props.values.cpf_cnpj_fornecedor) 
-                                                    ? "form-control"
-                                                    : `${!props.values.data_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.data_documento && "despesa_incompleta"} form-control`
-                                                }
-                                                about={despesaContext.verboHttp}
-                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                                maxDate={new Date()}
-                                            />
-                                            {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
-                                        </div>
-
-                                        <div className="col-12 col-md-6 mt-4">
-                                            <label htmlFor="numero_documento">Número do documento</label>
-                                            <input
-                                                value={props.values.numero_documento}
-                                                onChange={(e) => {
-                                                    onHandleChangeNumeroDocumento(e, setFieldValue);
-                                                }}
-                                                onBlur={props.handleBlur}
-                                                name="numero_documento"
-                                                id="numero_documento" type="text"
-                                                className={
-                                                    eh_despesa_sem_comprovacao_fiscal(props.values.cpf_cnpj_fornecedor) 
-                                                    ? "form-control"
-                                                    : `${!numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!numeroDocumentoReadOnly && !props.values.numero_documento && "despesa_incompleta"} form-control`
-                                                }
-                                                placeholder={numeroDocumentoReadOnly ? "" : "Digite o número"}
-                                                disabled={readOnlyCampos || numeroDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                            />
-                                            {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
-                                        </div>
-
-                                        <div className="col-12 col-md-6 mt-4">
-                                            <label htmlFor="tipo_transacao">Forma de pagamento</label>
-                                            <select
-                                                value={
-                                                    props.values.tipo_transacao !== null ? (
-                                                        props.values.tipo_transacao === "object" ? props.values.tipo_transacao.id : props.values.tipo_transacao.id
-                                                    ) : ""
-                                                }
-                                                onChange={(e) => {
-                                                    props.handleChange(e);
-                                                    aux.exibeDocumentoTransacao(e.target.value, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas)
-                                                }}
-                                                onBlur={props.handleBlur}
-                                                name='tipo_transacao'
-                                                id='tipo_transacao'
-                                                className={`${!props.values.tipo_transacao && despesaContext.verboHttp === "PUT" && "is_invalid "} ${ !props.values.tipo_transacao && "despesa_incompleta"} form-control`}
-                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                            >
-                                                <option key={0} value="">Selecione o tipo</option>
-                                                {despesasTabelas.tipos_transacao && despesasTabelas.tipos_transacao.map(item => (
-                                                    <option key={item.id} value={item.id}>{item.nome}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="data_transacao">Data do pagamento</label>
-                                            <DatePickerField
-                                                name="data_transacao"
-                                                id="data_transacao"
-                                                value={values.data_transacao != null ? values.data_transacao : ""}
-                                                onChange={setFieldValue}
-                                                onCalendarClose={async () => {
-                                                    setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
-                                                }}
-                                                about={despesaContext.verboHttp}
-                                                className={`${ !values.data_transacao && verbo_http === "PUT" ? 'is_invalid' : ""} ${ !values.data_transacao && "despesa_incompleta"} form-control`}
-                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                                maxDate={new Date()}
-                                            />
-                                            {props.errors.data_transacao &&
-                                            <span
-                                                className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
-                                        </div>
-
-                                        <div className="col-12 col-md-3 mt-4">
-                                            <div className={cssEscondeDocumentoTransacao}>
-                                                <label htmlFor="documento_transacao">Número do {labelDocumentoTransacao}</label>
-                                                <input
-                                                    value={props.values.documento_transacao}
-                                                    onChange={props.handleChange}
-                                                    onBlur={props.handleBlur}
-                                                    name="documento_transacao"
-                                                    id="documento_transacao"
-                                                    type="text"
-                                                    className="form-control"
-                                                    placeholder="Digite o número do documento"
-                                                    disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                                />
-                                                {props.errors.documento_transacao && <span
-                                                    className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="form-row">
-                                        <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="valor_original_form_principal">Valor total do documento</label>
-                                            <CurrencyInput
-                                                allowNegative={false}
-                                                prefix='R$'
-                                                decimalSeparator=","
-                                                thousandSeparator="."
-                                                value={props.values.valor_original}
-                                                name="valor_original"
-                                                id="valor_original_form_principal"
-                                                className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} ${ trataNumericos(props.values.valor_total) === 0 && "despesa_incompleta"} form-control`}
-                                                selectAllOnFocus={true}
-                                                onChangeEvent={(e) => {
-                                                    props.handleChange(e);
-                                                    aux.setValorRealizado(setFieldValue, e.target.value);
-                                                }}
-                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                            />
-                                            {props.errors.valor_original && exibeMsgErroValorOriginal &&
-                                            <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
-                                        </div>
-
-                                        <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="valor_total" className="label-valor-realizado">Valor
-                                                realizado</label>
-                                            <CurrencyInput
-                                                allowNegative={false}
-                                                prefix='R$'
-                                                decimalSeparator=","
-                                                thousandSeparator="."
-                                                value={values.valor_total}
-                                                name="valor_total"
-                                                id="valor_total"
-                                                className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control ${trataNumericos(props.values.valor_total) === 0 && "despesa_incompleta"} ${trataNumericos(props.values.valor_total) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
-                                                selectAllOnFocus={true}
-                                                onChangeEvent={(e) => {
-                                                    props.handleChange(e);
-                                                }}
-                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                            />
-                                            {props.errors.valor_total &&
-                                            <span
-                                                className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
-                                        </div>
-
-                                        <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="valor_recursos_proprios">Valor do recurso próprio</label>
-                                            <CurrencyInput
-                                                allowNegative={false}
-                                                prefix='R$'
-                                                decimalSeparator=","
-                                                thousandSeparator="."
-                                                value={values.valor_recursos_proprios}
-                                                name="valor_recursos_proprios"
-                                                id="valor_recursos_proprios"
-                                                className="form-control"
-                                                selectAllOnFocus={true}
-                                                onChangeEvent={(e) => {
-                                                    props.handleChange(e);
-                                                }}
-                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                            />
-                                            {props.errors.valor_recursos_proprios && <span
-                                                className="span_erro text-danger mt-1"> {props.errors.valor_recursos_proprios}</span>}
-                                        </div>
-
-                                        <div className="col-12 col-md-3 mt-4">
-                                            <label htmlFor="valor_recusos_acoes">Valor do PTRF</label>
-                                            <Field name="valor_recusos_acoes">
-                                                {({field, form, meta}) => (
-                                                    <CurrencyInput
-                                                        allowNegative={false}
-                                                        prefix='R$'
-                                                        decimalSeparator=","
-                                                        thousandSeparator="."
-                                                        value={calculaValorRecursoAcoes(values)}
-                                                        id="valor_recusos_acoes"
-                                                        name="valor_recusos_acoes"
-                                                        className="form-control"
-                                                        onChangeEvent={props.handleChange}
-                                                        readOnly={true}
-                                                        disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                                    />
-                                                )}
-                                            </Field>
-                                            {errors.valor_recusos_acoes && exibeMsgErroValorRecursos &&
-                                            <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
-                                        </div>
-                                    </div>
-
-                                    <hr/>
-                                    <h2 className="subtitulo-itens-painel">Dados do gasto</h2>
-                                    <p>Esse gasto se encaixa em mais de um tipo de despesa ou ação do programa?</p>
-                                    <div className="form-row">
-                                        <div className="col-12 col-md-3 ">
-                                            <select
-                                                value={props.values.mais_de_um_tipo_despesa}
-                                                onChange={(e) => {
-                                                    props.handleChange(e);
-                                                    aux.setaValoresCusteioCapital(e.target.value, values, setFieldValue);
-                                                    aux.setValoresRateiosOriginal(e.target.value, values, setFieldValue);
-                                                }}
-                                                name='mais_de_um_tipo_despesa'
-                                                id='mais_de_um_tipo_despesa'
-                                                className={`${!props.values.mais_de_um_tipo_despesa && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!values.mais_de_um_tipo_despesa && "despesa_incompleta"} form-control`}
-                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                            >
-                                                <option value="">Selecione</option>
-                                                <option value="nao">Não</option>
-                                                <option value="sim">Sim</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <FieldArray
-                                        name="rateios"
-                                        render={({remove, push}) => (
-                                            <>
-                                                {values.rateios.length > 0 && values.rateios.map((rateio, index) => {
-                                                    return (
-                                                        <div key={index}>
-
-                                                            <div className="d-flex bd-highlight border-bottom mt-4 align-items-center">
-                                                                <div className="flex-grow-1 bd-highlight">
-                                                                    <p className='mb-0'><strong>Despesa {index + 1}</strong></p>
-                                                                </div>
-                                                                <div className="bd-highlight">
-                                                                    <div className="d-flex justify-content-start">
-                                                                        {rateio && rateio.uuid && (
-                                                                            rateio.estorno && rateio.estorno.uuid
-                                                                            ?
-                                                                                <Link
-                                                                                    to={
-                                                                                        {
-                                                                                            pathname: `/edicao-de-receita/${rateio.estorno.uuid}`,
-                                                                                            
-                                                                                        }
-                                                                                    }
-                                                                                    className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
-                                                                                >
-                                                                                    Acessar estorno
-                                                                                </Link>
-                                                                            :
-                                                                                <Link
-                                                                                    to={
-                                                                                        {
-                                                                                            pathname: `/cadastro-de-credito/`,
-                                                                                            state: {
-                                                                                                uuid_rateio: rateio.uuid,
-                                                                                            }
-                                                                                        }
-                                                                                    }
-                                                                                    className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
-                                                                                >
-                                                                                    Cadastrar estorno
-                                                                                </Link>    
-                                                                        )}
-
-                                                                        {index >= 1 && values.rateios.length > 1 && (
-                                                                            <button
-                                                                                type="button"
-                                                                                className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
-                                                                                onClick={() => removeRateio(remove, index, rateio)}
-                                                                                disabled={!visoesService.getPermissoes(['delete_despesa'])}
-                                                                            >
-                                                                                <FontAwesomeIcon
-                                                                                    style={{fontSize: '17px', marginRight: "4px", color: "#B40C02"}}
-                                                                                    icon={faTimesCircle}
-                                                                                />
-                                                                                Remover Despesa
-                                                                            </button>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="form-row">
-
-                                                                <div className="col-12 col-md-6 mt-4">
-
-                                                                    <label htmlFor={`aplicacao_recurso_${index}`}>Tipo de aplicação do recurso</label>
-                                                                    <select
-                                                                        value={rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ""}
-                                                                        onChange={(e) => {
-                                                                            props.handleChange(e);
-                                                                            aux.handleAvisoCapital(e.target.value, setShowAvisoCapital);
-                                                                            aux.setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
-                                                                            aux.setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
-
-                                                                        }}
-                                                                        name={`rateios[${index}].aplicacao_recurso`}
-                                                                        id={`aplicacao_recurso_${index}`}
-                                                                        className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                                                        disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                                                    >
-                                                                        <option key={0} value="">Escolha uma opção
-                                                                        </option>
-                                                                        {despesasTabelas.tipos_aplicacao_recurso && despesasTabelas.tipos_aplicacao_recurso.map(item => (
-                                                                            <option key={item.id}
-                                                                                    value={item.id}>{item.nome}</option>
-                                                                        ))}
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-                                                            {rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CUSTEIO' ? (
-                                                                    <CadastroFormCusteio
-                                                                        formikProps={props}
-                                                                        rateio={rateio}
-                                                                        rateios={values.rateios}
-                                                                        index={index}
-                                                                        despesasTabelas={despesasTabelas}
-                                                                        especificacoes_custeio={especificacoes_custeio}
-                                                                        verboHttp={despesaContext.verboHttp}
-                                                                        disabled={readOnlyCampos}
-                                                                        errors={errors}
-                                                                        exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
-                                                                        exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
-                                                                        eh_despesa_sem_comprovacao_fiscal={eh_despesa_sem_comprovacao_fiscal}
-                                                                        cpf_cnpj={props.values.cpf_cnpj_fornecedor}
-                                                                    />
-                                                                ) :
-                                                                rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
-                                                                    <CadastroFormCapital
-                                                                        formikProps={props}
-                                                                        rateio={rateio}
-                                                                        rateios={values.rateios}
-                                                                        index={index}
-                                                                        despesasTabelas={despesasTabelas}
-                                                                        especificaoes_capital={especificaoes_capital}
-                                                                        verboHttp={despesaContext.verboHttp}
-                                                                        disabled={readOnlyCampos}
-                                                                        errors={errors}
-                                                                        exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
-                                                                        exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
-                                                                    />
-                                                                ) : null}
-
-
-                                                            <div className="row">
-                                                                <div className="col-12">
-
-                                                                    <Tags
-                                                                        formikProps={props}
-                                                                        rateio={rateio}
-                                                                        rateios={values.rateios}
-                                                                        index={index}
-                                                                        verboHttp={despesaContext.verboHttp}
-                                                                        disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                                                        errors={errors}
-                                                                        setFieldValue={setFieldValue}
-                                                                        despesasTabelas={despesasTabelas}
-                                                                    />
-                                                                </div>
-                                                            </div>
-
-                                                            <section>
-                                                                <ModalDeletarRateioComEstorno
-                                                                    show={showDeletarRateioComEstorno}
-                                                                    handleClose={() => setShowDeletarRateioComEstorno(false)}
-                                                                    titulo="Remover Despesa"
-                                                                    texto="A exclusão desse rateio resultará na exclusão do crédito de estorno vinculado. Confirma?"
-                                                                    onDeletarRateio={() => {
-                                                                            remove(index)
-                                                                            setShowDeletarRateioComEstorno(false)
-                                                                        }
-                                                                    }
-                                                                />
-                                                            </section>
-
-                                                        </div> /*div key*/
-                                                    )
-                                                })}
-
-                                                {props.values.mais_de_um_tipo_despesa === "sim" &&
-                                                <div className="d-flex  justify-content-start mt-3 mb-3">
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn btn-outline-success mt-2 mr-2"
-                                                        disabled={![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                                        onChange={(e) => {
-                                                            props.handleChange(e);
-                                                            aux.handleAvisoCapital(e.target.value, setShowAvisoCapital);
-                                                            aux.setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
-                                                            aux.setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
-                                                        }}
-                                                        onClick={() => {
-                                                            push(
-                                                                {
-                                                                    associacao: localStorage.getItem(ASSOCIACAO_UUID),
-                                                                    escolha_tags: "",
-                                                                    tag: "",
-                                                                    conta_associacao: "",
-                                                                    acao_associacao: "",
-                                                                    aplicacao_recurso: "",
-                                                                    tipo_custeio: "",
-                                                                    especificacao_material_servico: "",
-                                                                    valor_rateio: "",
-                                                                    quantidade_itens_capital: "",
-                                                                    valor_item_capital: "",
-                                                                    valor_original: "",
-                                                                    numero_processo_incorporacao_capital: ""
-                                                                }
-                                                            );
-                                                        }}
-                                                    >
-                                                        + Adicionar despesa parcial
-                                                    </button>
-                                                </div>
-                                                }
-                                            </>
-                                        )}
-                                    />
-                                    <div className="d-flex  justify-content-end pb-3 mt-3">
-                                        <button type="reset"
-                                                onClick={houveAlteracoes(values) ? onShowModal : onCancelarTrue}
-                                                className="btn btn btn-outline-success mt-2 mr-2">Voltar
-                                        </button>
-                                        {despesaContext.idDespesa
-                                            ? <button
-                                                disabled={readOnlyBtnAcao || !visoesService.getPermissoes(["delete_despesa"])}
-                                                type="reset" onClick={() => aux.onShowDeleteModal(setShowDelete, setShowTextoModalDelete, values)}
-                                                className="btn btn btn-danger mt-2 mr-2"
-                                            >Deletar
-                                            </button>
-                                            : null}
-                                        <button
-                                            disabled={!props.values.cpf_cnpj_fornecedor || btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                            type="button"
-                                            onClick={() => {
-                                                onShowMensagemNaoAceitaTipoRecurso(values, errors);
-                                                onShowSaldoInsuficiente(values, errors, setFieldValue, {resetForm})
-                                            }}
-                                            className="btn btn-success mt-2">Salvar
-                                        </button>
-                                    </div>
-                                    <div className="d-flex justify-content-end">
-                                        <p>{errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span
-                                            className="span_erro text-danger mt-1"> {errors.valor_recusos_acoes}</span>}</p>
-                                    </div>
-                                    <div className="d-flex justify-content-end">
-                                        <p>{errors.valor_original && exibeMsgErroValorOriginal && <span
-                                            className="span_erro text-danger mt-1"> {errors.valor_original}</span>}</p>
-                                    </div>
-
-                                    <section>
-                                        <SaldoInsuficiente
-                                            saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
-                                            show={showSaldoInsuficiente}
-                                            handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
-                                            onSaldoInsuficienteTrue={() => onSubmit(values, setFieldValue)}
-                                        />
-                                    </section>
-                                    <section>
-                                        <SaldoInsuficienteConta
-                                            saldosInsuficientesDaConta={saldosInsuficientesDaConta}
-                                            show={showSaldoInsuficienteConta}
-                                            handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
-                                            onSaldoInsuficienteContaTrue={() => onSubmit(values, setFieldValue)}
-                                        />
-                                    </section>
-                                    <section>
-                                        <ChecarDespesaExistente
-                                            show={showDespesaCadastrada}
-                                            handleClose={() => setShowDespesaCadastrada(false)}
-                                            onSalvarDespesaCadastradaTrue={() => onSubmit(values, setFieldValue)}/>
-                                    </section>
-                                    <section>
-                                        <ModalDespesaConferida
-                                            show={showDespesaConferida}
-                                            handleClose={() => setShowDespesaConferida(false)}
-                                            onSalvarDespesaConferida={() => onSubmit(values, setFieldValue)}
-                                            titulo="Despesa já demonstrada"
-                                            texto="<p>Atenção. Essa despesa já foi demonstrada, caso a alteração seja gravada ela voltará a ser não demonstrada. Confirma a gravação?</p>"
-                                        />
-                                    </section>
-                                    <section>
-                                        <ModalDespesaIncompleta
-                                            show={showModalDespesaIncompleta}
-                                            handleClose={() => setShowModalDespesaIncompleta(false)}
-                                            onSalvarDespesaIncompleta={() => onSubmit(values, setFieldValue)}
-                                            titulo="Cadastro da despesa"
-                                            texto="<p>O cadastro desta despesa está incompleto. Você deseja finalizá-lo agora?</p>"
-                                        />
-                                    </section>
-                                    <section>
-                                        <TipoAplicacaoRecursoNaoAceito
-                                            mensagensAceitaCusteioCapital={mensagensAceitaCusteioCapital}
-                                            show={showMensagemAceitaCusteioCapital}
-                                            onSalvarTipoRecursoNaoAceito={() => onSubmit(values, setFieldValue)}
-                                            handleClose={() => setShowMensagemAceitaCusteioCapital(false)}
-                                        />
-                                    </section>
-                                </form>
-                            </>
-                        ); /*Return metodo principal*/
-                    }}
-                </Formik>
+                <>
+                    <CadastroFormFormik
+                        initialValues={initialValues}
+                        onSubmit={onSubmit}
+                        validateFormDespesas={validateFormDespesas}
+                        despesaContext={despesaContext}
+                        readOnlyCampos={readOnlyCampos}
+                        setFormErrors={setFormErrors}
+                        validacoesPersonalizadas={validacoesPersonalizadas}
+                        formErrors={formErrors}
+                        eh_despesa_sem_comprovacao_fiscal={eh_despesa_sem_comprovacao_fiscal}
+                        despesasTabelas={despesasTabelas}
+                        onHandleChangeNumeroDocumento={onHandleChangeNumeroDocumento}
+                        numeroDocumentoReadOnly={numeroDocumentoReadOnly}
+                        aux={aux}
+                        setCssEscondeDocumentoTransacao={setCssEscondeDocumentoTransacao}
+                        setLabelDocumentoTransacao={setLabelDocumentoTransacao}
+                        verbo_http={verbo_http}
+                        cssEscondeDocumentoTransacao={cssEscondeDocumentoTransacao}
+                        labelDocumentoTransacao={labelDocumentoTransacao}
+                        exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
+                        exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
+                        removeRateio={removeRateio}
+                        setShowAvisoCapital={setShowAvisoCapital}
+                        especificacoes_custeio={especificacoes_custeio}
+                        especificaoes_capital={especificaoes_capital}
+                        showDeletarRateioComEstorno={showDeletarRateioComEstorno}
+                        setShowDeletarRateioComEstorno={setShowDeletarRateioComEstorno}
+                        houveAlteracoes={houveAlteracoes}
+                        onShowModal={onShowModal}
+                        onCancelarTrue={onCancelarTrue}
+                        readOnlyBtnAcao={readOnlyBtnAcao}
+                        setShowDelete={setShowDelete}
+                        setShowTextoModalDelete={setShowTextoModalDelete}
+                        btnSubmitDisable={btnSubmitDisable}
+                        onShowMensagemNaoAceitaTipoRecurso={onShowMensagemNaoAceitaTipoRecurso}
+                        onShowSaldoInsuficiente={onShowSaldoInsuficiente}
+                        saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
+                        showSaldoInsuficiente={showSaldoInsuficiente}
+                        setShow={setShow}
+                        setShowSaldoInsuficiente={setShowSaldoInsuficiente}
+                        setShowPeriodoFechado={setShowPeriodoFechado}
+                        setShowSaldoInsuficienteConta={setShowSaldoInsuficienteConta}
+                        saldosInsuficientesDaConta={saldosInsuficientesDaConta}
+                        showSaldoInsuficienteConta={showSaldoInsuficienteConta}
+                        showDespesaCadastrada={showDespesaCadastrada}
+                        setShowDespesaCadastrada={setShowDespesaCadastrada}
+                        showDespesaConferida={showDespesaConferida}
+                        setShowDespesaConferida={setShowDespesaConferida}
+                        showModalDespesaIncompleta={showModalDespesaIncompleta}
+                        setShowModalDespesaIncompleta={setShowModalDespesaIncompleta}
+                        mensagensAceitaCusteioCapital={mensagensAceitaCusteioCapital}
+                        showMensagemAceitaCusteioCapital={showMensagemAceitaCusteioCapital}
+                        setShowMensagemAceitaCusteioCapital={setShowMensagemAceitaCusteioCapital}
+                        eh_despesa_com_comprovacao_fiscal={eh_despesa_com_comprovacao_fiscal}
+                        eh_despesa_reconhecida={eh_despesa_reconhecida}
+                        limpa_campos_sem_comprovacao_fiscal={limpa_campos_sem_comprovacao_fiscal}
+                        onHandleChangeNumeroBoletimOcorrencia={onHandleChangeNumeroBoletimOcorrencia}
+                    />
+            </>
             }
             <section>
                 <CancelarModal
