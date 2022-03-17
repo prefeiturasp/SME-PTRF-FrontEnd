@@ -162,13 +162,7 @@ const getErroValorOriginalRateios = (values) =>{
 
 const getErroValorRealizadoRateios = (values) =>{
     let var_valor_recursos_acoes;
-
-    if(values.retem_imposto){
-        var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios) - trataNumericos(values.despesa_imposto.rateios[0].valor_original);
-    }
-    else{
-        var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
-    }
+    var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
 
     let var_valor_total_dos_rateios = 0;
     let var_valor_total_dos_rateios_capital = 0;

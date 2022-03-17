@@ -31,7 +31,6 @@ export const CadastroFormDespesaImposto = ({
 	
 	
     const setaValorRealizado = (setFieldValue, valor_original, valor_imposto) => {
-		console.log(trataNumericos(valor_original), trataNumericos(valor_imposto))
 		let resultado = trataNumericos(valor_original) - trataNumericos(valor_imposto);
 		setFieldValue("valor_total", resultado)
 	}
@@ -303,8 +302,7 @@ export const CadastroFormDespesaImposto = ({
 								onChangeEvent={(e) => {
 									formikProps.handleChange(e);
 									setValorRateioRealizadoImposto(formikProps.setFieldValue, e.target.value)
-									/* formikProps.setFieldValue("valor_total", formikProps.values.valor_original - e.target.value) */
-									/* setaValorRealizado(formikProps.setFieldValue, formikProps.values.valor_original, e.target.value) */
+									 setaValorRealizado(formikProps.setFieldValue, formikProps.values.valor_original, e.target.value)
 								}}
 								disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							/>
