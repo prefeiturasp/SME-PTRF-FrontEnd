@@ -36,5 +36,4 @@ export const TrilhaDeStatus = ({retornaQtdeStatus, retornaQtdeStatusTotal}) => {
                 </div>
             </div>
         </>
-    )
-};
+    )};
