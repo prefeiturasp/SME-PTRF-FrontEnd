@@ -20,17 +20,21 @@ export const CadastroFormDespesaImposto = ({
 												setLabelDocumentoTransacaoImposto,
 												setFormErrors,
 												validacoesPersonalizadas,
-												readOnlyCampos,
 												formErrors,
 												despesaContext,
 												acoes_custeio,
 												setValorRateioRealizadoImposto,
-												setValorDescontadoImposto,
 												readOnlyCamposImposto,
-												setShowPeriodoFechado
+												mostraModalExcluirImposto
 											}) => {
     
-	/* console.log(despesasTabelas) */
+	
+	
+    const setaValorRealizado = (setFieldValue, valor_original, valor_imposto) => {
+		console.log(trataNumericos(valor_original), trataNumericos(valor_imposto))
+		let resultado = trataNumericos(valor_original) - trataNumericos(valor_imposto);
+		setFieldValue("valor_total", resultado)
+	}
 	return(
 		<>
         <div className="container-retencao-imposto mt-2">
@@ -63,6 +67,7 @@ export const CadastroFormDespesaImposto = ({
                             onChange={(e) => {
                                 formikProps.handleChange(e);
                                 formikProps.setFieldValue("retem_imposto", false)
+								mostraModalExcluirImposto();
                             }}
                             onBlur={formikProps.handleBlur}
                             className={`form-check-input`}
@@ -80,19 +85,11 @@ export const CadastroFormDespesaImposto = ({
 		
             {eh_despesa_com_retencao_imposto(formikProps.values) &&
 				<div className="form-retencao-imposto">
-					{/* {console.log(formikProps.values)} */}
 					<p><strong>Dados do imposto retido</strong></p>
 					<div className="form-row">
 						<div className="col-12 col-md-4 mt-1">
 							<label htmlFor="despesa_imposto.tipo_documento">Tipo de documento</label>
-							{/* {console.log(formikProps.values)} */}
 							<select
-								/* value={
-									formikProps.values.despesa_imposto.tipo_documento !== null ? (
-										formikProps.values.despesa_imposto.tipo_documento === "object" ? formikProps.values.despesa_imposto.tipo_documento.id : formikProps.values.despesa_imposto.tipo_documento
-									) : ""
-								} */
-
 								value={
 									formikProps.values.despesa_imposto && formikProps.values.despesa_imposto.tipo_documento !== null ? (
 										formikProps.values.despesa_imposto.tipo_documento === "object" ? formikProps.values.despesa_imposto.tipo_documento.id : formikProps.values.despesa_imposto.tipo_documento
@@ -102,11 +99,6 @@ export const CadastroFormDespesaImposto = ({
 								onBlur={formikProps.handleBlur}
 								name='despesa_imposto.tipo_documento'
 								id='despesa_imposto.tipo_documento'
-								/* className={
-									!eh_despesa_com_comprovacao_fiscal(props.values) 
-									? "form-control"
-									: `${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.tipo_documento && "despesa_incompleta"} form-control`
-								} */
 								className="form-control"
 								disabled={readOnlyCamposImposto || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
@@ -120,7 +112,6 @@ export const CadastroFormDespesaImposto = ({
 						<div className="col-12 col-md-4 mt-1">
 							<label htmlFor="despesa_imposto.numero_documento">Número do documento</label>
 							<input
-								/* value={formikProps.values.despesa_imposto.numero_documento} */
 								value={
 									formikProps.values.despesa_imposto && formikProps.values.despesa_imposto.numero_documento !== null ? (
 										formikProps.values.despesa_imposto.numero_documento
@@ -133,35 +124,16 @@ export const CadastroFormDespesaImposto = ({
 								name="despesa_imposto.numero_documento"
 								id="despesa_imposto.numero_documento" type="text"
 								className="form-control"
-								/* className={
-									!eh_despesa_com_comprovacao_fiscal(props.values)
-									? "form-control"
-									: `${!numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!numeroDocumentoReadOnly && !props.values.numero_documento && "despesa_incompleta"} form-control`
-								} */
 								placeholder={numeroDocumentoImpostoReadOnly ? "" : "Digite o número"}
 								disabled={readOnlyCamposImposto || numeroDocumentoImpostoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-								/* disabled={numeroDocumentoImpostoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)} */
 							/>
-							{/* {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>} */}
 						</div>
 
 						<div className="col-12 col-md-4 mt-1">
 							
 							<label htmlFor={`despesa_imposto.rateios[0].tipo_custeio`}>Tipo de despesa</label>
 							<select
-								/* value={preenche_tipo_despesa_custeio().id} */
-								/* value={
-									rateio.tipo_custeio !== null ? (
-										typeof rateio.tipo_custeio === "object" ? rateio.tipo_custeio.id : rateio.tipo_custeio
-									) : ""
-								} */
-								/* value={
-									formikProps.values.despesa_imposto && formikProps.values.despesa_imposto.rateios[0].tipo_custeio !== null ? (
-										typeof formikProps.values.despesa_imposto.rateios[0].tipo_custeio === "object" ? formikProps.values.despesa_imposto.rateios[0].tipo_custeio.id : formikProps.values.despesa_imposto.rateios[0].tipo_custeio
-									) : ""
-								} */
 								value={preenche_tipo_despesa_custeio().id}
-								/* onChange={formikProps.handleChange} */
 								onChange={(e) => {
 									formikProps.handleChange(e);
 								}}
@@ -171,11 +143,6 @@ export const CadastroFormDespesaImposto = ({
 								className={"form-control retira-dropdown-select"}
 								readOnly={true}
 								disabled={true}
-								/* className={
-									!eh_despesa_com_comprovacao_fiscal(formikProps.values)
-									? "form-control"
-									: `${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} ${!rateio.especificacao_material_servico && "despesa_incompleta"} form-control`
-								} */
 							>
 								<option key={preenche_tipo_despesa_custeio().id} value={preenche_tipo_despesa_custeio().id}>{preenche_tipo_despesa_custeio().nome}</option>
 							</select>
@@ -195,11 +162,6 @@ export const CadastroFormDespesaImposto = ({
 								name={"despesa_imposto.rateios[0].especificacao_material_servico"}
 								id={"despesa_imposto.rateios[0].especificacao_material_servico"}
 								className={"form-control"}
-								/* className={
-									!eh_despesa_com_comprovacao_fiscal(formikProps.values)
-									? "form-control"
-									: `${!rateio.especificacao_material_servico && verboHttp === "PUT" && "is_invalid "} ${!rateio.especificacao_material_servico && "despesa_incompleta"} form-control`
-								} */
 								disabled={readOnlyCamposImposto || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
 								<option key={0} value="">Selecione uma especificação</option>
@@ -221,11 +183,6 @@ export const CadastroFormDespesaImposto = ({
 						<div className="col-md-6 mt-4">
 							<label htmlFor="despesa_imposto.tipo_transacao">Forma de pagamento</label>
 							<select
-								/* value={
-									props.values.tipo_transacao !== null ? (
-										props.values.tipo_transacao === "object" ? props.values.tipo_transacao.id : props.values.tipo_transacao.id
-									) : ""
-								} */
 								value={
 									formikProps.values.despesa_imposto.tipo_transacao !== null ? (
 										formikProps.values.despesa_imposto.tipo_transacao === "object" ? formikProps.values.despesa_imposto.tipo_transacao.id : formikProps.values.despesa_imposto.tipo_transacao
@@ -235,12 +192,10 @@ export const CadastroFormDespesaImposto = ({
 									formikProps.handleChange(e);
 									aux.exibeDocumentoTransacao(e.target.value, setCssEscondeDocumentoTransacaoImposto, setLabelDocumentoTransacaoImposto, despesasTabelas)
 								}}
-								/* onChange={formikProps.handleChange} */
 								onBlur={formikProps.handleBlur}
 								name='despesa_imposto.tipo_transacao'
 								id='despesa_imposto.tipo_transacao'
 								className="form-control"
-								/* className={`${!props.values.tipo_transacao && despesaContext.verboHttp === "PUT" && "is_invalid "} ${ !props.values.tipo_transacao && "despesa_incompleta"} form-control`} */
 								disabled={readOnlyCamposImposto || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
 								<option key={0} value="">Selecione o tipo</option>
@@ -265,7 +220,6 @@ export const CadastroFormDespesaImposto = ({
 								}}
 								about={despesaContext.verboHttp}
 								className="form-control"
-								/* className={`${ !values.data_transacao && verbo_http === "PUT" ? 'is_invalid' : ""} ${ !values.data_transacao && "despesa_incompleta"} form-control`} */
 								disabled={readOnlyCamposImposto || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 								maxDate={new Date()}
 							/>
@@ -286,8 +240,6 @@ export const CadastroFormDespesaImposto = ({
 									placeholder="Digite o número do documento"
 									disabled={readOnlyCamposImposto || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 								/>
-								{/* {props.errors.documento_transacao && <span
-									className="span_erro text-danger mt-1"> {props.errors.documento_transacao}</span>} */}
 							</div>
 						</div>
 
@@ -307,7 +259,6 @@ export const CadastroFormDespesaImposto = ({
 								name='despesa_imposto.rateios[0].acao_associacao'
 								id='despesa_imposto.rateios[0].acao_associacao'
 								className="form-control"
-								/* className={`${!rateio.acao_associacao && verboHttp === "PUT" && "is_invalid "} ${!rateio.acao_associacao && 'despesa_incompleta'} form-control`} */
 								disabled={readOnlyCamposImposto || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
 								<option value="">Selecione uma ação</option>
@@ -320,11 +271,6 @@ export const CadastroFormDespesaImposto = ({
 						<div className="col-12 col-md-3 mt-4">
 							<label htmlFor="despesa_imposto.rateios[0].conta_associacao">Tipo de conta utilizada</label>
 							<select
-								/* value={
-									rateio.conta_associacao !== null ? (
-										typeof rateio.conta_associacao === "object" ? rateio.conta_associacao.uuid : rateio.conta_associacao
-									) : ""
-								} */
 								value={
 									formikProps.values.despesa_imposto.rateios[0].conta_associacao !== null ? (
 										typeof formikProps.values.despesa_imposto.rateios[0].conta_associacao === "object" ? formikProps.values.despesa_imposto.rateios[0].conta_associacao.uuid : formikProps.values.despesa_imposto.rateios[0].conta_associacao
@@ -334,7 +280,6 @@ export const CadastroFormDespesaImposto = ({
 								name='despesa_imposto.rateios[0].conta_associacao'
 								id='despesa_imposto.rateios[0].conta_associacao'
 								className="form-control"
-								/* className={`${!rateio.conta_associacao && verboHttp === "PUT" && "is_invalid "} ${!rateio.conta_associacao && 'despesa_incompleta'} form-control`} */
 								disabled={readOnlyCamposImposto || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							>
 								<option key={0} value="">Selecione uma conta</option>
@@ -358,10 +303,11 @@ export const CadastroFormDespesaImposto = ({
 								onChangeEvent={(e) => {
 									formikProps.handleChange(e);
 									setValorRateioRealizadoImposto(formikProps.setFieldValue, e.target.value)
+									/* formikProps.setFieldValue("valor_total", formikProps.values.valor_original - e.target.value) */
+									/* setaValorRealizado(formikProps.setFieldValue, formikProps.values.valor_original, e.target.value) */
 								}}
 								disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							/>
-							{/* {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>} */}
 						</div>
 
 						<div className="col-12 col-md-3 mt-4">
@@ -374,41 +320,15 @@ export const CadastroFormDespesaImposto = ({
 								value={formikProps.values.despesa_imposto.rateios[0].valor_rateio}
 								name="despesa_imposto.rateios[0].valor_rateio"
 								id="despesa_imposto.rateios[0].valor_rateio"
-								/* className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} ${trataNumericos(rateio.valor_rateio) === 0 && 'despesa_incompleta'} form-control ${trataNumericos(rateio.valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`} */
 								className={`${ trataNumericos(formikProps.values.despesa_imposto.rateios[0].valor_rateio) === 0 && despesaContext.verboHttp === "PUT" ? "is_invalid" : ""} form-control ${trataNumericos(formikProps.values.despesa_imposto.rateios[0].valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
 								onChangeEvent={formikProps.handleChange}
 								disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							/>
-							{/* {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>} */}
 						</div>
 
 					</div>
 
-					<div className="form-row">
-						<div className="col-md-6 mt-4">
-							<label htmlFor="despesa_imposto.valor_total">Valor descontado o imposto</label>
-							<CurrencyInput
-								allowNegative={false}
-								prefix='R$'
-								decimalSeparator=","
-								thousandSeparator="."
-								/* value={rateio.valor_rateio} */
-								value={setValorDescontadoImposto(formikProps.values)}
-								name="despesa_imposto.valor_total"
-								id="despesa_imposto.valor_total"
-								className={`form-control`}
-								/* className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} ${trataNumericos(rateio.valor_rateio) === 0 && 'despesa_incompleta'} form-control ${trataNumericos(rateio.valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`} */
-								onChangeEvent={formikProps.handleChange}
-								disabled={true}
-								/* disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)} */
-							/>
-							{/* {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>} */}
-						</div>
-					</div>
-				</div>
-
-
-				
+				</div>	
             }
 		</div>
         </>

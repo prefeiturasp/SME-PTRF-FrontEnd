@@ -1,13 +1,9 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
-import {Formik, FieldArray, Field} from "formik";
 import {
     validaPayloadDespesas,
-    cpfMaskContitional,
-    calculaValorRecursoAcoes,
     periodoFechado,
-    comparaObjetos, valida_cpf_cnpj_permitindo_cnpj_zerado, valida_cpf_cnpj
+    comparaObjetos, valida_cpf_cnpj
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
-import MaskedInput from 'react-text-mask'
 import {
     getDespesasTabelas,
     criarDespesa,
@@ -16,41 +12,24 @@ import {
     getEspecificacoesCusteio,
     getDespesaCadastrada, deleteDespesa
 } from "../../../../services/escolas/Despesas.service";
-import {DatePickerField} from "../../../Globais/DatePickerField";
-import {Link, useParams} from 'react-router-dom';
-import {CadastroFormCusteio} from "./CadastroFormCusteio";
-import {CadastroFormCapital} from "./CadastroFormCapital";
+import {useParams} from 'react-router-dom';
 import {DespesaContext} from "../../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
-import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
-import CurrencyInput from "react-currency-input";
 import {
     AvisoCapitalModal,
     CancelarModal,
     DeletarModal,
     ErroGeral,
     PeriodoFechado,
-    PeriodoFechadoImposto,
-    SaldoInsuficiente,
-    SaldoInsuficienteConta,
-    ChecarDespesaExistente,
-    TipoAplicacaoRecursoNaoAceito
+    PeriodoFechadoImposto
 } from "../../../../utils/Modais"
-import {ModalDespesaConferida} from "./ModalDespesaJaConferida";
 import "./cadastro-de-despesas.scss"
-import {trataNumericos, round} from "../../../../utils/ValidacoesAdicionaisFormularios";
+import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../../utils/Loading";
-import {Tags} from "../Tags";
 import {metodosAuxiliares} from "../metodosAuxiliares";
-import {visoesService} from "../../../../services/visoes.service";
 import moment from "moment";
 import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
-import {ModalDespesaIncompleta} from "./ModalDespesaIncompleta";
 import {ModalErroDeletarCadastroDespesa} from "./ModalErroDeletarCadastroDespesa";
-import {ModalDeletarRateioComEstorno} from "./ModalDeletarRateioComEstorno";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
-import { apenasNumero } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import { CadastroFormFormik } from "./CadastroFormFormik";
 
 export const CadastroForm = ({verbo_http}) => {
@@ -94,6 +73,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [cssEscondeDocumentoTransacaoImposto, setCssEscondeDocumentoTransacaoImposto] = useState('escondeItem');
     const [labelDocumentoTransacaoImposto, setLabelDocumentoTransacaoImposto] = useState('');
     const [readOnlyCamposImposto, setReadOnlyCamposImposto] = useState(false);
+    const [showExcluirImposto, setShowExcluirImposto] = useState(false);
 
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
 
@@ -104,7 +84,9 @@ export const CadastroForm = ({verbo_http}) => {
         }
         if (despesaContext.initialValues.data_transacao && verbo_http === "PUT") {
             periodoFechado(despesaContext.initialValues.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
-            periodoFechado(despesaContext.initialValues.despesa_imposto.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechadoImposto, setReadOnlyCamposImposto, onShowErroGeral);
+            if (despesaContext && despesaContext.initialValues && despesaContext.initialValues.despesa_imposto && despesaContext.initialValues.despesa_imposto.data_transacao){
+                periodoFechado(despesaContext.initialValues.despesa_imposto.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechadoImposto, setReadOnlyCamposImposto, onShowErroGeral);
+            }
         }
         if (verbo_http === "PUT") {
             setObjetoParaComparacao(despesaContext.initialValues)
@@ -203,9 +185,7 @@ export const CadastroForm = ({verbo_http}) => {
                         setEnviarFormulario(false)
                     }
 
-                    /* setEnviarFormulario(false) */
                     setReadOnlyBtnAcao(true);
-                    console.log("entrei aqui")
                     setShowPeriodoFechado(true);
                     setReadOnlyCampos(true);
                 } else {
@@ -431,7 +411,6 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const onSubmit = async (values, setFieldValue) => {
-        console.log(values)
         // Inclusão de validações personalizadas para reduzir o numero de requisições a API Campo: cpf_cnpj_fornecedor
         // Agora o campo cpf_cnpj_fornecedor, é validado no onBlur e quando o form tenta ser submetido
         // A chamada a api /api/fornecedores/?uuid=&cpf_cnpj=${cpf_cnpj}, só é realizada quando um cpf for válido
@@ -479,7 +458,6 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const validateFormDespesas = async (values) => {
-        /* rever */
         values.despesa_imposto.rateios[0].tipo_custeio = preenche_tipo_despesa_custeio().id.toString()
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
@@ -503,22 +481,18 @@ export const CadastroForm = ({verbo_http}) => {
         // Validando se tipo de documento aceita apenas numéricos e se exibe campo Número do Documento
         if (values.tipo_documento) {
             let exibe_campo_numero_documento;
-            /* let so_numeros; */
             let documento;
             let documento_imposto;
             // verificando se despesasTabelas já está preenchido
             if (despesasTabelas && despesasTabelas.tipos_documento) {
                 if (values.tipo_documento.id) {
-                    /* so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id)); */
                     documento = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
                 } else {
-                    /* so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento)); */
                     documento = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
                 }
             }
 
             // Verificando se exibe campo Número do Documento
-            /* exibe_campo_numero_documento = so_numeros; */
             exibe_campo_numero_documento = documento;
             
             if (exibe_campo_numero_documento && !exibe_campo_numero_documento.numero_documento_digitado) {
@@ -540,20 +514,16 @@ export const CadastroForm = ({verbo_http}) => {
             }
             else{
                 setShowRetencaoImposto(false);
+                values.retem_imposto = false;
             }
 
             if (despesasTabelas && despesasTabelas.tipos_documento) {
                 if (values.despesa_imposto && values.despesa_imposto.tipo_documento && values.despesa_imposto.tipo_documento.id) {
-                    console.log( values.despesa_imposto.tipo_documento.id)
                     documento_imposto = despesasTabelas.tipos_documento.find(element => element.id === Number(values.despesa_imposto.tipo_documento.id));
                 }
                 else if(values.despesa_imposto && values.despesa_imposto.tipo_documento){
                     documento_imposto = despesasTabelas.tipos_documento.find(element => element.id === Number(values.despesa_imposto.tipo_documento));
-                }
-                    /* } else {
-                    
-                    documento_imposto = despesasTabelas.tipos_documento.find(element => element.id === Number(values.despesa_imposto.tipo_documento));
-                } */
+                }      
             }
             
             
@@ -709,18 +679,15 @@ export const CadastroForm = ({verbo_http}) => {
         setFieldValue("despesa_imposto.rateios[0].valor_rateio", trataNumericos(valor))
     };
 
-    const setValorDescontadoImposto = (values) => {
-        
+    const mostraModalExcluirImposto = () => {
+        if(verbo_http === "PUT"){
+            setShowExcluirImposto(true);
+        }
+    }
 
-        let valor_ptrf = calculaValorRecursoAcoes(values);
-        let valor_realizado_imposto = trataNumericos(values.despesa_imposto.rateios[0].valor_rateio);
-        let valor_descontado_imposto = round(valor_ptrf - valor_realizado_imposto, 2);
-
-        /* console.log("valor ptrf", valor_ptrf);
-        console.log("valor imposto", valor_realizado_imposto)
-        console.log("valor descontado o imposto", valor_descontado_imposto) */
-
-        return valor_descontado_imposto;
+    const cancelarExclusaoImposto = (setFieldValue) => {
+        setFieldValue("retem_imposto", true);
+        setShowExcluirImposto(false);
     }
 
     return (
@@ -801,8 +768,11 @@ export const CadastroForm = ({verbo_http}) => {
                         labelDocumentoTransacaoImposto={labelDocumentoTransacaoImposto}
                         acoes_custeio={acoes_custeio}
                         setValorRateioRealizadoImposto={setValorRateioRealizadoImposto}
-                        setValorDescontadoImposto={setValorDescontadoImposto}
                         readOnlyCamposImposto={readOnlyCamposImposto}
+                        setShowExcluirImposto={setShowExcluirImposto}
+                        showExcluirImposto={showExcluirImposto}
+                        cancelarExclusaoImposto={cancelarExclusaoImposto}
+                        mostraModalExcluirImposto={mostraModalExcluirImposto}
                     />
             </>
             }
