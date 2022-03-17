@@ -23,7 +23,8 @@ import {
     SaldoInsuficiente,
     SaldoInsuficienteConta,
     ChecarDespesaExistente,
-    TipoAplicacaoRecursoNaoAceito
+    TipoAplicacaoRecursoNaoAceito,
+    ExcluirImposto
 } from "../../../../utils/Modais"
 import { ModalDespesaConferida } from "./ModalDespesaJaConferida";
 import { ModalDespesaIncompleta } from "./ModalDespesaIncompleta";
@@ -95,8 +96,11 @@ export const CadastroFormFormik = ({
                                         labelDocumentoTransacaoImposto,
                                         acoes_custeio,
                                         setValorRateioRealizadoImposto,
-                                        setValorDescontadoImposto,
-                                        readOnlyCamposImposto
+                                        readOnlyCamposImposto,
+                                        setShowExcluirImposto,
+                                        showExcluirImposto,
+                                        cancelarExclusaoImposto,
+                                        mostraModalExcluirImposto
                                     }) => {   
     return(
         <>
@@ -382,7 +386,7 @@ export const CadastroFormFormik = ({
                                     </div>
 
                                     <div className="col-12 col-md-3 mt-4">
-                                        <label htmlFor="valor_recusos_acoes">Valor do PTRF</label>
+                                        <label htmlFor="valor_recusos_acoes"> {eh_despesa_com_retencao_imposto(props.values) ? 'Valor descontado do imposto' : 'Valor do PTRF'} </label>
                                         <Field name="valor_recusos_acoes">
                                             {({field, form, meta}) => (
                                                 <CurrencyInput
@@ -438,7 +442,6 @@ export const CadastroFormFormik = ({
 
                                 {showRetencaoImposto &&
                                     <div className="form-row mt-4">
-                                    {/* {console.log(props.values)} */}
                                         <div className="col-12">
                                             <CadastroFormDespesaImposto
                                                 formikProps={props}
@@ -456,22 +459,17 @@ export const CadastroFormFormik = ({
                                                 setLabelDocumentoTransacaoImposto={setLabelDocumentoTransacaoImposto}
                                                 setFormErrors={setFormErrors}
                                                 validacoesPersonalizadas={validacoesPersonalizadas}
-                                                readOnlyCampos={readOnlyCampos}
                                                 readOnlyCamposImposto={readOnlyCamposImposto}
                                                 formErrors={formErrors}
                                                 despesaContext={despesaContext}
                                                 acoes_custeio={acoes_custeio}
                                                 setValorRateioRealizadoImposto={setValorRateioRealizadoImposto}
-                                                setValorDescontadoImposto={setValorDescontadoImposto}
-                                                setShowPeriodoFechado={setShowPeriodoFechado}
+                                                mostraModalExcluirImposto={mostraModalExcluirImposto}
                                             />
-
-
                                         </div>
                                     </div>
                                 }
                                 
-
                                 <hr/>
                                 <h2 className="subtitulo-itens-painel">Dados do gasto</h2>
                                 <p>Esse gasto se encaixa em mais de um tipo de despesa ou ação do programa?</p>
@@ -778,6 +776,13 @@ export const CadastroFormFormik = ({
                                         show={showMensagemAceitaCusteioCapital}
                                         onSalvarTipoRecursoNaoAceito={() => onSubmit(values, setFieldValue)}
                                         handleClose={() => setShowMensagemAceitaCusteioCapital(false)}
+                                    />
+                                </section>
+                                <section>
+                                    <ExcluirImposto
+                                        show={showExcluirImposto}
+                                        cancelarExclusaoImposto={() => cancelarExclusaoImposto(setFieldValue)}
+                                        handleClose={() => setShowExcluirImposto(false)}
                                     />
                                 </section>
                             </form>

@@ -276,6 +276,9 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
   }
 
 
+  values.despesa_imposto.valor_total = trataNumericos(values.despesa_imposto.rateios[0].valor_rateio);
+  values.despesa_imposto.valor_original = trataNumericos(values.despesa_imposto.rateios[0].valor_original);
+
   values.despesa_imposto.rateios[0].quantidade_itens_capital = convertToNumber(values.despesa_imposto.rateios[0].quantidade_itens_capital)
   values.despesa_imposto.rateios[0].valor_item_capital = trataNumericos(values.despesa_imposto.rateios[0].valor_item_capital)
   values.despesa_imposto.rateios[0].valor_rateio = round(trataNumericos(values.despesa_imposto.rateios[0].valor_rateio),2)
@@ -413,17 +416,34 @@ export const calculaValorRateio = (valor1, valor2) => {
   return valor_total;
 };
 export const calculaValorRecursoAcoes = (values) => {
-  let valor_totalTratado = trataNumericos(values.valor_total);
-  let valor_recursos_propriosTratado = trataNumericos(values.valor_recursos_proprios);
-  return round(valor_totalTratado - valor_recursos_propriosTratado, 2);
+  if(values.retem_imposto){
+    let valor_totalTratado = trataNumericos(values.valor_total);
+    let valor_recursos_propriosTratado = trataNumericos(values.valor_recursos_proprios);
+    let valor_realizado_impostoTratado = trataNumericos(values.despesa_imposto.rateios[0].valor_original)
+    return round(valor_totalTratado - valor_recursos_propriosTratado - valor_realizado_impostoTratado, 2);
+  }
+  else{
+    let valor_totalTratado = trataNumericos(values.valor_total);
+    let valor_recursos_propriosTratado = trataNumericos(values.valor_recursos_proprios);
+    return round(valor_totalTratado - valor_recursos_propriosTratado, 2);
+  }
 };
 
 export const calculaValorOriginal = (values) => {
 
-  let valor_total_ratado = trataNumericos(values.valor_original);
-  let valor_recursos_proprios_tratado = trataNumericos(values.valor_recursos_proprios);
-  let valor_total = round(valor_total_ratado - valor_recursos_proprios_tratado, 2);
-  return valor_total;
+  if(values.retem_imposto){
+    let valor_total_ratado = trataNumericos(values.valor_original);
+    let valor_recursos_proprios_tratado = trataNumericos(values.valor_recursos_proprios);
+    let valor_realizado_impostoTratado = trataNumericos(values.despesa_imposto.rateios[0].valor_original)
+    let valor_total = round(valor_total_ratado - valor_recursos_proprios_tratado - valor_realizado_impostoTratado, 2);
+    return valor_total;
+  }
+  else{
+    let valor_total_ratado = trataNumericos(values.valor_original);
+    let valor_recursos_proprios_tratado = trataNumericos(values.valor_recursos_proprios);
+    let valor_total = round(valor_total_ratado - valor_recursos_proprios_tratado, 2);
+    return valor_total;
+  }
 };
 
 export const cpfMaskContitional = (value) => {
