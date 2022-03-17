@@ -132,14 +132,10 @@ export class ListaDeDespesas extends Component {
             eh_imposto = true;
             let numero_documento = despesa.despesa_geradora_do_imposto.numero_documento
             let data_documento = despesa.despesa_geradora_do_imposto.data_documento ? moment(despesa.despesa_geradora_do_imposto.data_documento).format('DD/MM/YYYY') : ""
-            
-            let valor_totalTratado = parseFloat(despesa.despesa_geradora_do_imposto.valor_total);
-            let valor_recursos_propriosTratado = parseFloat(despesa.despesa_geradora_do_imposto.valor_recursos_proprios);
-            let valor_realizado_impostoTratado = parseFloat(despesa.valor_total)
-            let valor = valor_totalTratado - valor_recursos_propriosTratado - valor_realizado_impostoTratado;
 
-            let valor_total = parseFloat(valor) 
-            ? parseFloat(valor).toLocaleString('pt-BR', {
+            let valor_total_despesa_geradora_do_imposto = despesa.despesa_geradora_do_imposto.valor_total
+
+            let valor_total = parseFloat(valor_total_despesa_geradora_do_imposto) ? parseFloat(valor_total_despesa_geradora_do_imposto).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
