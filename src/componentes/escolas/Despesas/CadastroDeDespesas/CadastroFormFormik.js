@@ -14,6 +14,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import { CadastroFormCusteio } from "./CadastroFormCusteio";
 import { CadastroFormCapital } from "./CadastroFormCapital";
+import { CadastroFormDespesaImposto } from "./CadastroFormDespesaImposto";
 import { Tags } from "../Tags";
 import { ComprovacaoFiscal } from "../ComprovacaoFiscal";
 import { ModalDeletarRateioComEstorno } from "./ModalDeletarRateioComEstorno";
@@ -39,7 +40,6 @@ export const CadastroFormFormik = ({
                                         formErrors,
                                         eh_despesa_sem_comprovacao_fiscal,
                                         despesasTabelas,
-                                        onHandleChangeNumeroDocumento,
                                         numeroDocumentoReadOnly,
                                         aux,
                                         setCssEscondeDocumentoTransacao,
@@ -84,8 +84,20 @@ export const CadastroFormFormik = ({
                                         eh_despesa_com_comprovacao_fiscal,
                                         eh_despesa_reconhecida,
                                         limpa_campos_sem_comprovacao_fiscal,
-                                        onHandleChangeNumeroBoletimOcorrencia
-                                    }) => {
+                                        showRetencaoImposto,
+                                        eh_despesa_com_retencao_imposto,
+                                        tipos_documento_com_recolhimento_imposto,
+                                        numeroDocumentoImpostoReadOnly,
+                                        preenche_tipo_despesa_custeio,
+                                        setCssEscondeDocumentoTransacaoImposto,
+                                        setLabelDocumentoTransacaoImposto,
+                                        cssEscondeDocumentoTransacaoImposto,
+                                        labelDocumentoTransacaoImposto,
+                                        acoes_custeio,
+                                        setValorRateioRealizadoImposto,
+                                        setValorDescontadoImposto,
+                                        readOnlyCamposImposto
+                                    }) => {   
     return(
         <>
             <Formik
@@ -171,7 +183,6 @@ export const CadastroFormFormik = ({
 
                                 <div className="form-row">
                                     <div className="col-12 col-md-3 mt-4">
-                                        {console.log(props.values)}
                                         <label htmlFor="tipo_documento">Tipo de documento</label>
                                         <select
                                             value={
@@ -222,7 +233,7 @@ export const CadastroFormFormik = ({
                                         <input
                                             value={props.values.numero_documento}
                                             onChange={(e) => {
-                                                onHandleChangeNumeroDocumento(e, setFieldValue);
+                                                aux.onHandleChangeApenasNumero(e, setFieldValue, "numero_documento");
                                             }}
                                             onBlur={props.handleBlur}
                                             name="numero_documento"
@@ -271,7 +282,7 @@ export const CadastroFormFormik = ({
                                             value={values.data_transacao != null ? values.data_transacao : ""}
                                             onChange={setFieldValue}
                                             onCalendarClose={async () => {
-                                                setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
+                                                setFormErrors(await validacoesPersonalizadas(values, setFieldValue, "despesa_principal"));
                                             }}
                                             about={despesaContext.verboHttp}
                                             className={`${ !values.data_transacao && verbo_http === "PUT" ? 'is_invalid' : ""} ${ !values.data_transacao && "despesa_incompleta"} form-control`}
@@ -402,7 +413,7 @@ export const CadastroFormFormik = ({
                                             <input
                                                 value={props.values.numero_boletim_de_ocorrencia ? props.values.numero_boletim_de_ocorrencia : ""}
                                                 onChange={(e) => {
-                                                    onHandleChangeNumeroBoletimOcorrencia(e, setFieldValue);
+                                                    aux.onHandleChangeApenasNumero(e, setFieldValue, "numero_boletim_de_ocorrencia");
                                                 }}
                                                 onBlur={async () => {
                                                     setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
@@ -424,6 +435,42 @@ export const CadastroFormFormik = ({
                                         </div>
                                     </div>
                                 }
+
+                                {showRetencaoImposto &&
+                                    <div className="form-row mt-4">
+                                    {/* {console.log(props.values)} */}
+                                        <div className="col-12">
+                                            <CadastroFormDespesaImposto
+                                                formikProps={props}
+                                                eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
+                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                tipos_documento_com_recolhimento_imposto={tipos_documento_com_recolhimento_imposto}
+                                                numeroDocumentoImpostoReadOnly={numeroDocumentoImpostoReadOnly}
+                                                aux={aux}
+                                                preenche_tipo_despesa_custeio={preenche_tipo_despesa_custeio}
+                                                especificacoes_custeio={especificacoes_custeio}
+                                                despesasTabelas={despesasTabelas}
+                                                cssEscondeDocumentoTransacaoImposto={cssEscondeDocumentoTransacaoImposto}
+                                                labelDocumentoTransacaoImposto={labelDocumentoTransacaoImposto}
+                                                setCssEscondeDocumentoTransacaoImposto={setCssEscondeDocumentoTransacaoImposto}
+                                                setLabelDocumentoTransacaoImposto={setLabelDocumentoTransacaoImposto}
+                                                setFormErrors={setFormErrors}
+                                                validacoesPersonalizadas={validacoesPersonalizadas}
+                                                readOnlyCampos={readOnlyCampos}
+                                                readOnlyCamposImposto={readOnlyCamposImposto}
+                                                formErrors={formErrors}
+                                                despesaContext={despesaContext}
+                                                acoes_custeio={acoes_custeio}
+                                                setValorRateioRealizadoImposto={setValorRateioRealizadoImposto}
+                                                setValorDescontadoImposto={setValorDescontadoImposto}
+                                                setShowPeriodoFechado={setShowPeriodoFechado}
+                                            />
+
+
+                                        </div>
+                                    </div>
+                                }
+                                
 
                                 <hr/>
                                 <h2 className="subtitulo-itens-painel">Dados do gasto</h2>
