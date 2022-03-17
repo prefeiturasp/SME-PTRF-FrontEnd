@@ -183,9 +183,7 @@ export const CadastroFormDespesaImposto = ({
 							<label htmlFor="despesa_imposto.tipo_transacao">Forma de pagamento</label>
 							<select
 								value={
-									formikProps.values.despesa_imposto.tipo_transacao !== null ? (
-										formikProps.values.despesa_imposto.tipo_transacao === "object" ? formikProps.values.despesa_imposto.tipo_transacao.id : formikProps.values.despesa_imposto.tipo_transacao
-									) : ""
+									formikProps.values.despesa_imposto.tipo_transacao !== null ? (formikProps.values.despesa_imposto.tipo_transacao === "object" ? formikProps.values.despesa_imposto.tipo_transacao.id : formikProps.values.despesa_imposto.tipo_transacao) : ""
 								}
 								onChange={(e) => {
 									formikProps.handleChange(e);
@@ -229,7 +227,7 @@ export const CadastroFormDespesaImposto = ({
 							<div className={cssEscondeDocumentoTransacaoImposto}>
 								<label htmlFor="despesa_imposto.documento_transacao">Número do {labelDocumentoTransacaoImposto}</label>
 								<input
-									value={formikProps.values.despesa_imposto_documento_transacao}
+									value={formikProps.values.despesa_imposto.documento_transacao}
 									onChange={formikProps.handleChange}
 									onBlur={formikProps.handleBlur}
 									name="despesa_imposto.documento_transacao"
