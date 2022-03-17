@@ -16,13 +16,14 @@ const onCancelarTrue = (setShow, setLoading, origem) => {
     getPath(origem);
 };
 
-const onHandleClose = (setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta) => {
+const onHandleClose = (setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto) => {
     setShow(false);
     setShowDelete(false);
     setShowAvisoCapital(false);
     setShowSaldoInsuficiente(false);
     setShowPeriodoFechado(false);
     setShowSaldoInsuficienteConta(false);
+    setShowPeriodoFechadoImposto(false);
 };
 
 const onShowAvisoCapitalModal = (setShowAvisoCapital) => {
@@ -37,20 +38,27 @@ const handleAvisoCapital = (value, setShowAvisoCapital) => {
 
 const onShowDeleteModal = (setShowDelete, setShowTextoModalDelete, values) => {
     let possui_estorno = false;
+    let possui_imposto = values.retem_imposto;
 
     for(let rateio=0; rateio<=values.rateios.length-1; rateio++){
         if(values.rateios[rateio].estorno && values.rateios[rateio].estorno.uuid){
             possui_estorno = true;
         }
     }
-    
-    if(possui_estorno){
+
+    if(possui_estorno && possui_imposto){
+        setShowTextoModalDelete("<p>A exclusão dessa despesa resultará na exclusão do crédito de estorno vinculado e do imposto vinculado. Confirma?</p>");
+    }
+    else if(possui_estorno){
         setShowTextoModalDelete("<p>A exclusão dessa despesa resultará na exclusão do crédito de estorno vinculado. Confirma?</p>");
+    }
+    else if(possui_imposto){
+        setShowTextoModalDelete("<p>Excluir essa despesa excluirá também a despesa referente ao imposto retido. Confirma exclusão?</p>");
     }
     else{
         setShowTextoModalDelete("<p>Tem certeza que deseja excluir esta despesa? A ação não poderá ser desfeita.</p>");
     }
-
+    
     setShowDelete(true);
 };
 
@@ -153,7 +161,9 @@ const getErroValorOriginalRateios = (values) =>{
 };
 
 const getErroValorRealizadoRateios = (values) =>{
-    let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
+    let var_valor_recursos_acoes;
+    var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
+
     let var_valor_total_dos_rateios = 0;
     let var_valor_total_dos_rateios_capital = 0;
     let var_valor_total_dos_rateios_custeio = 0;
@@ -165,6 +175,23 @@ const getErroValorRealizadoRateios = (values) =>{
 
     return round(var_valor_recursos_acoes, 2) - round(var_valor_total_dos_rateios, 2);
 };
+
+export const apenasNumero = (valor) => {
+	const re = /^[0-9\b]+$/;
+	
+	if (valor === '' || re.test(valor)) {
+		return true;
+		
+	}
+	return false;
+}
+
+const onHandleChangeApenasNumero = (e, setFieldValue, campo) => {
+    let valor = e.target.value;
+    if(apenasNumero(valor)){
+        setFieldValue(campo, valor)
+     }
+}
 
 
 export const metodosAuxiliares = {
@@ -185,4 +212,5 @@ export const metodosAuxiliares = {
     setValoresRateiosOriginal,
     getErroValorOriginalRateios,
     getErroValorRealizadoRateios,
+    onHandleChangeApenasNumero
 };

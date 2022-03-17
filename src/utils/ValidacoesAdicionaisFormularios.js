@@ -269,6 +269,21 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
     values.data_transacao = null
   }
 
+  if (values.despesa_imposto.data_transacao !== "" && values.despesa_imposto.data_transacao !== null){
+    values.despesa_imposto.data_transacao  = moment(values.despesa_imposto.data_transacao).format("YYYY-MM-DD");
+  }else {
+    values.despesa_imposto.data_transacao = null
+  }
+
+
+  values.despesa_imposto.valor_total = trataNumericos(values.despesa_imposto.rateios[0].valor_rateio);
+  values.despesa_imposto.valor_original = trataNumericos(values.despesa_imposto.rateios[0].valor_original);
+
+  values.despesa_imposto.rateios[0].quantidade_itens_capital = convertToNumber(values.despesa_imposto.rateios[0].quantidade_itens_capital)
+  values.despesa_imposto.rateios[0].valor_item_capital = trataNumericos(values.despesa_imposto.rateios[0].valor_item_capital)
+  values.despesa_imposto.rateios[0].valor_rateio = round(trataNumericos(values.despesa_imposto.rateios[0].valor_rateio),2)
+  values.despesa_imposto.rateios[0].valor_original = round(trataNumericos(values.despesa_imposto.rateios[0].valor_original),2)
+
   values.rateios.map((rateio) => {
 
     if (typeof rateio.especificacao_material_servico === "object" && rateio.especificacao_material_servico !== null){
@@ -407,7 +422,6 @@ export const calculaValorRecursoAcoes = (values) => {
 };
 
 export const calculaValorOriginal = (values) => {
-
   let valor_total_ratado = trataNumericos(values.valor_original);
   let valor_recursos_proprios_tratado = trataNumericos(values.valor_recursos_proprios);
   let valor_total = round(valor_total_ratado - valor_recursos_proprios_tratado, 2);

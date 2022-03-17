@@ -1,13 +1,9 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
-import {Formik, FieldArray, Field} from "formik";
 import {
     validaPayloadDespesas,
-    cpfMaskContitional,
-    calculaValorRecursoAcoes,
     periodoFechado,
-    comparaObjetos, valida_cpf_cnpj_permitindo_cnpj_zerado, valida_cpf_cnpj
+    comparaObjetos, valida_cpf_cnpj
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
-import MaskedInput from 'react-text-mask'
 import {
     getDespesasTabelas,
     criarDespesa,
@@ -16,40 +12,24 @@ import {
     getEspecificacoesCusteio,
     getDespesaCadastrada, deleteDespesa
 } from "../../../../services/escolas/Despesas.service";
-import {DatePickerField} from "../../../Globais/DatePickerField";
-import {Link, useParams} from 'react-router-dom';
-import {CadastroFormCusteio} from "./CadastroFormCusteio";
-import {CadastroFormCapital} from "./CadastroFormCapital";
+import {useParams} from 'react-router-dom';
 import {DespesaContext} from "../../../../context/Despesa";
 import HTTP_STATUS from "http-status-codes";
-import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
-import CurrencyInput from "react-currency-input";
 import {
     AvisoCapitalModal,
     CancelarModal,
     DeletarModal,
     ErroGeral,
     PeriodoFechado,
-    SaldoInsuficiente,
-    SaldoInsuficienteConta,
-    ChecarDespesaExistente,
-    TipoAplicacaoRecursoNaoAceito
+    PeriodoFechadoImposto
 } from "../../../../utils/Modais"
-import {ModalDespesaConferida} from "./ModalDespesaJaConferida";
 import "./cadastro-de-despesas.scss"
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import Loading from "../../../../utils/Loading";
-import {Tags} from "../Tags";
 import {metodosAuxiliares} from "../metodosAuxiliares";
-import {visoesService} from "../../../../services/visoes.service";
 import moment from "moment";
 import {getPeriodoFechado} from "../../../../services/escolas/Associacao.service";
-import {ModalDespesaIncompleta} from "./ModalDespesaIncompleta";
 import {ModalErroDeletarCadastroDespesa} from "./ModalErroDeletarCadastroDespesa";
-import {ModalDeletarRateioComEstorno} from "./ModalDeletarRateioComEstorno";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
-import { apenasNumero } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import { CadastroFormFormik } from "./CadastroFormFormik";
 
 export const CadastroForm = ({verbo_http}) => {
@@ -67,6 +47,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [showSaldoInsuficiente, setShowSaldoInsuficiente] = useState(false);
     const [showSaldoInsuficienteConta, setShowSaldoInsuficienteConta] = useState(false);
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
+    const [showPeriodoFechadoImposto, setShowPeriodoFechadoImposto] = useState(false);
     const [showErroGeral, setShowErroGeral] = useState(false);
     const [showDespesaCadastrada, setShowDespesaCadastrada] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
@@ -87,14 +68,25 @@ export const CadastroForm = ({verbo_http}) => {
     const [showMensagemAceitaCusteioCapital, setShowMensagemAceitaCusteioCapital] = useState(false);
     const [showDeletarRateioComEstorno, setShowDeletarRateioComEstorno] = useState(false);
 
+    const [showRetencaoImposto, setShowRetencaoImposto] = useState(false);
+    const [numeroDocumentoImpostoReadOnly, setNumeroDocumentoImpostoReadOnly] = useState(false);
+    const [cssEscondeDocumentoTransacaoImposto, setCssEscondeDocumentoTransacaoImposto] = useState('escondeItem');
+    const [labelDocumentoTransacaoImposto, setLabelDocumentoTransacaoImposto] = useState('');
+    const [readOnlyCamposImposto, setReadOnlyCamposImposto] = useState(false);
+    const [showExcluirImposto, setShowExcluirImposto] = useState(false);
+
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
 
     useEffect(() => {
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT") {
             aux.exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas);
+            aux.exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id, setCssEscondeDocumentoTransacaoImposto, setLabelDocumentoTransacaoImposto, despesasTabelas);
         }
         if (despesaContext.initialValues.data_transacao && verbo_http === "PUT") {
             periodoFechado(despesaContext.initialValues.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
+            if (despesaContext && despesaContext.initialValues && despesaContext.initialValues.despesa_imposto && despesaContext.initialValues.despesa_imposto.data_transacao){
+                periodoFechado(despesaContext.initialValues.despesa_imposto.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechadoImposto, setReadOnlyCamposImposto, onShowErroGeral);
+            }
         }
         if (verbo_http === "PUT") {
             setObjetoParaComparacao(despesaContext.initialValues)
@@ -139,7 +131,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [enviarFormulario, setEnviarFormulario] = useState(true);
     const [showModalDespesaIncompleta, setShowModalDespesaIncompleta] = useState(false);
 
-    const validacoesPersonalizadas = useCallback(async (values, setFieldValue) => {
+    const validacoesPersonalizadas = useCallback(async (values, setFieldValue, origem=null) => {
 
         let erros = {};
         let cpf_cnpj_valido;
@@ -176,7 +168,7 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
         // Verifica período fechado para a receita
-        if (values.data_transacao) {
+        if (values.data_transacao && origem==="despesa_principal") {
             let data = moment(values.data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
             try {
                 let periodo_fechado = await getPeriodoFechado(data);
@@ -185,7 +177,14 @@ export const CadastroForm = ({verbo_http}) => {
                     erros = {
                         data_transacao: "Período Fechado"
                     }
-                    setEnviarFormulario(false)
+
+                    if(values.retem_imposto){
+                        setEnviarFormulario(true)
+                    }
+                    else{
+                        setEnviarFormulario(false)
+                    }
+
                     setReadOnlyBtnAcao(true);
                     setShowPeriodoFechado(true);
                     setReadOnlyCampos(true);
@@ -201,6 +200,64 @@ export const CadastroForm = ({verbo_http}) => {
                 setReadOnlyCampos(true);
                 onShowErroGeral();
                 console.log("Erro ao buscar perído ", e)
+            }
+        }
+
+        /* validacoes imposto */
+        if(values.despesa_imposto && values.despesa_imposto.data_transacao){
+            if(values.data_transacao){
+                let data_despesa_principal = moment(values.data_transacao, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                let data_despesa_imposto = moment(values.despesa_imposto.data_transacao, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                
+                let diff = moment(data_despesa_imposto,"YYYY-MM-DD HH:mm:ss").diff(moment(data_despesa_principal,"YYYY-MM-DD HH:mm:ss"));
+                let dias = moment.duration(diff).asDays();
+
+                if(dias < 0){
+                    erros = {
+                        despesa_imposto_data_transacao: "Data do imposto menor que data da despesa"
+                    }
+                    setEnviarFormulario(false)
+                    setBtnSubmitDisable(true)
+                }
+                // logica periodo fechado
+                else{
+                    setEnviarFormulario(true)
+                    setBtnSubmitDisable(false)
+
+                    try{
+                        let data = moment(values.despesa_imposto.data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
+                        let periodo_fechado = await getPeriodoFechado(data);
+                        if (!periodo_fechado.aceita_alteracoes) {
+                            erros = {
+                                despesa_imposto_data_transacao: null
+                            }
+                            setEnviarFormulario(false)
+                            setReadOnlyBtnAcao(true);
+                            setShowPeriodoFechadoImposto(true);
+                            setReadOnlyCamposImposto(true);
+                        } else {
+                            setEnviarFormulario(true)
+                            setReadOnlyBtnAcao(false);
+                            setShowPeriodoFechadoImposto(false);
+                            setReadOnlyCamposImposto(false);
+                        }
+                    }
+                    catch (e) {
+                        setReadOnlyBtnAcao(true);
+                        setShowPeriodoFechadoImposto(true);
+                        setReadOnlyCamposImposto(true);
+                        onShowErroGeral();
+                        console.log("Erro ao buscar perído ", e)
+                    }
+                }
+                
+            }
+            else{
+                erros = {
+                    despesa_imposto_data_transacao: "Data do imposto sem data de despesa"
+                }
+                setEnviarFormulario(false)
+                setBtnSubmitDisable(true)
             }
         }
         return erros;
@@ -354,7 +411,6 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const onSubmit = async (values, setFieldValue) => {
-
         // Inclusão de validações personalizadas para reduzir o numero de requisições a API Campo: cpf_cnpj_fornecedor
         // Agora o campo cpf_cnpj_fornecedor, é validado no onBlur e quando o form tenta ser submetido
         // A chamada a api /api/fornecedores/?uuid=&cpf_cnpj=${cpf_cnpj}, só é realizada quando um cpf for válido
@@ -402,7 +458,7 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const validateFormDespesas = async (values) => {
-
+        values.despesa_imposto.rateios[0].tipo_custeio = preenche_tipo_despesa_custeio().id.toString()
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
         const errors = {};
@@ -425,18 +481,20 @@ export const CadastroForm = ({verbo_http}) => {
         // Validando se tipo de documento aceita apenas numéricos e se exibe campo Número do Documento
         if (values.tipo_documento) {
             let exibe_campo_numero_documento;
-            let so_numeros;
+            let documento;
+            let documento_imposto;
             // verificando se despesasTabelas já está preenchido
             if (despesasTabelas && despesasTabelas.tipos_documento) {
                 if (values.tipo_documento.id) {
-                    so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
+                    documento = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento.id));
                 } else {
-                    so_numeros = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
+                    documento = despesasTabelas.tipos_documento.find(element => element.id === Number(values.tipo_documento));
                 }
             }
 
             // Verificando se exibe campo Número do Documento
-            exibe_campo_numero_documento = so_numeros;
+            exibe_campo_numero_documento = documento;
+            
             if (exibe_campo_numero_documento && !exibe_campo_numero_documento.numero_documento_digitado) {
                 values.numero_documento = "";
                 setNumeroDocumentoReadOnly(true)
@@ -444,10 +502,38 @@ export const CadastroForm = ({verbo_http}) => {
                 setNumeroDocumentoReadOnly(false)
             }
 
-            if (so_numeros && so_numeros.apenas_digitos && values.numero_documento) {
+            if (documento && documento.apenas_digitos && values.numero_documento) {
                 if (isNaN(values.numero_documento)) {
                     errors.numero_documento = "Este campo deve conter apenas algarismos numéricos."
                 }
+            }
+
+            /* validacoes imposto */
+            if(documento && documento.pode_reter_imposto){
+                setShowRetencaoImposto(true);
+            }
+            else{
+                setShowRetencaoImposto(false);
+                values.retem_imposto = false;
+            }
+
+            if (despesasTabelas && despesasTabelas.tipos_documento) {
+                if (values.despesa_imposto && values.despesa_imposto.tipo_documento && values.despesa_imposto.tipo_documento.id) {
+                    documento_imposto = despesasTabelas.tipos_documento.find(element => element.id === Number(values.despesa_imposto.tipo_documento.id));
+                }
+                else if(values.despesa_imposto && values.despesa_imposto.tipo_documento){
+                    documento_imposto = despesasTabelas.tipos_documento.find(element => element.id === Number(values.despesa_imposto.tipo_documento));
+                }      
+            }
+            
+            
+            // Verificando se exibe campo Número do Documento imposto
+            if(documento_imposto && !documento_imposto.numero_documento_digitado){
+                values.despesa_imposto.numero_documento = "";
+                setNumeroDocumentoImpostoReadOnly(true);
+            }
+            else{
+                setNumeroDocumentoImpostoReadOnly(false);
             }
         }
 
@@ -511,42 +597,26 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
-     const onHandleChangeNumeroDocumento = (e, setFieldValue) => {
-         let valor = e.target.value;
-
-         if(apenasNumero(valor)){
-            setFieldValue('numero_documento', valor)
-         }
-     }
-
-     const onHandleChangeNumeroBoletimOcorrencia = (e, setFieldValue) => {
-        let valor = e.target.value;
-
-        if(apenasNumero(valor)){
-           setFieldValue('numero_boletim_de_ocorrencia', valor)
-        }
-    }
-
-     const eh_despesa_com_comprovacao_fiscal = (values) => {
+    const eh_despesa_com_comprovacao_fiscal = (values) => {
         if(!values.eh_despesa_sem_comprovacao_fiscal || values.eh_despesa_sem_comprovacao_fiscal === undefined){
             return true
         }
         else{
             return false;
         }
-     }
+    }
 
 
-     const eh_despesa_reconhecida = (values) => {
+    const eh_despesa_reconhecida = (values) => {
         if(values.eh_despesa_reconhecida_pela_associacao || values.eh_despesa_reconhecida_pela_associacao === undefined){
             return true;
         }
         else{
             return false;
         }
-     }
+    }
 
-     const limpa_campos_sem_comprovacao_fiscal = (values, setFieldValue) => {
+    const limpa_campos_sem_comprovacao_fiscal = (values, setFieldValue) => {
         setFieldValue("cpf_cnpj_fornecedor", "")
         setFieldValue("tipo_documento", null)
         setFieldValue("data_documento", "")
@@ -556,7 +626,69 @@ export const CadastroForm = ({verbo_http}) => {
             setFieldValue(`rateios[${rateio}].tipo_custeio`, "")
             setFieldValue(`rateios[${rateio}].especificacao_material_servico`, "")
         }
-     }
+    }
+
+    const eh_despesa_com_retencao_imposto = (values) => {
+        if(!values.retem_imposto || values.retem_imposto === undefined){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    const tipos_documento_com_recolhimento_imposto = () => {
+        let tipos_documento = [];
+
+        if(despesasTabelas && despesasTabelas.tipos_documento){
+            for(let documento=0; documento<=despesasTabelas.tipos_documento.length-1; documento++){
+                let tipo_documento = despesasTabelas.tipos_documento[documento];
+                if(tipo_documento.eh_documento_de_retencao_de_imposto){
+                    tipos_documento.push(tipo_documento)
+                }
+            }
+        }
+    
+        return tipos_documento;
+    }
+
+    const preenche_tipo_despesa_custeio = () => {
+        let tributo_tarifas;
+        if(despesasTabelas && despesasTabelas.tipos_custeio){
+            tributo_tarifas = despesasTabelas.tipos_custeio.find(element => element.eh_tributos_e_tarifas === true);
+        }        
+        
+        return tributo_tarifas ? tributo_tarifas : ""
+    }
+
+    const acoes_custeio = () => {
+        let acoes = [];
+
+        if(despesasTabelas && despesasTabelas.acoes_associacao){
+            for(let acao=0; acao<=despesasTabelas.acoes_associacao.length-1; acao++){
+                let objeto_acao = despesasTabelas.acoes_associacao[acao];
+                if(!objeto_acao.e_recursos_proprios && objeto_acao.acao.aceita_custeio){   
+                    acoes.push(objeto_acao)
+                }
+            }
+        }
+        return acoes;
+    }
+
+    const setValorRateioRealizadoImposto = (setFieldValue, valor) =>{
+        setFieldValue("despesa_imposto.rateios[0].valor_rateio", trataNumericos(valor))
+    };
+
+    const mostraModalExcluirImposto = () => {
+        if(verbo_http === "PUT"){
+            setShowExcluirImposto(true);
+        }
+    }
+
+    const cancelarExclusaoImposto = (setFieldValue) => {
+        setFieldValue("retem_imposto", true);
+        setShowExcluirImposto(false);
+    }
 
     return (
         <>
@@ -580,7 +712,6 @@ export const CadastroForm = ({verbo_http}) => {
                         formErrors={formErrors}
                         eh_despesa_sem_comprovacao_fiscal={eh_despesa_sem_comprovacao_fiscal}
                         despesasTabelas={despesasTabelas}
-                        onHandleChangeNumeroDocumento={onHandleChangeNumeroDocumento}
                         numeroDocumentoReadOnly={numeroDocumentoReadOnly}
                         aux={aux}
                         setCssEscondeDocumentoTransacao={setCssEscondeDocumentoTransacao}
@@ -610,6 +741,7 @@ export const CadastroForm = ({verbo_http}) => {
                         setShow={setShow}
                         setShowSaldoInsuficiente={setShowSaldoInsuficiente}
                         setShowPeriodoFechado={setShowPeriodoFechado}
+                        setShowPeriodoFechadoImposto={setShowPeriodoFechadoImposto}
                         setShowSaldoInsuficienteConta={setShowSaldoInsuficienteConta}
                         saldosInsuficientesDaConta={saldosInsuficientesDaConta}
                         showSaldoInsuficienteConta={showSaldoInsuficienteConta}
@@ -625,28 +757,43 @@ export const CadastroForm = ({verbo_http}) => {
                         eh_despesa_com_comprovacao_fiscal={eh_despesa_com_comprovacao_fiscal}
                         eh_despesa_reconhecida={eh_despesa_reconhecida}
                         limpa_campos_sem_comprovacao_fiscal={limpa_campos_sem_comprovacao_fiscal}
-                        onHandleChangeNumeroBoletimOcorrencia={onHandleChangeNumeroBoletimOcorrencia}
+                        showRetencaoImposto={showRetencaoImposto}
+                        eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
+                        tipos_documento_com_recolhimento_imposto={tipos_documento_com_recolhimento_imposto}
+                        numeroDocumentoImpostoReadOnly={numeroDocumentoImpostoReadOnly}
+                        preenche_tipo_despesa_custeio={preenche_tipo_despesa_custeio}
+                        setCssEscondeDocumentoTransacaoImposto={setCssEscondeDocumentoTransacaoImposto}
+                        setLabelDocumentoTransacaoImposto={setLabelDocumentoTransacaoImposto}
+                        cssEscondeDocumentoTransacaoImposto={cssEscondeDocumentoTransacaoImposto}
+                        labelDocumentoTransacaoImposto={labelDocumentoTransacaoImposto}
+                        acoes_custeio={acoes_custeio}
+                        setValorRateioRealizadoImposto={setValorRateioRealizadoImposto}
+                        readOnlyCamposImposto={readOnlyCamposImposto}
+                        setShowExcluirImposto={setShowExcluirImposto}
+                        showExcluirImposto={showExcluirImposto}
+                        cancelarExclusaoImposto={cancelarExclusaoImposto}
+                        mostraModalExcluirImposto={mostraModalExcluirImposto}
                     />
             </>
             }
             <section>
                 <CancelarModal
                     show={show}
-                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
                     onCancelarTrue={() => aux.onCancelarTrue(setShow, setLoading, origem)}
                 />
             </section>
             <section>
                 <AvisoCapitalModal
                     show={showAvisoCapital}
-                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
                 />
             </section>
             {despesaContext.idDespesa
                 ?
                 <DeletarModal
                     show={showDelete}
-                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
                     onDeletarTrue={() => onDeletarTrue(setShowDelete, setLoading, despesaContext, origem)}
                     texto={textoModalDelete}
                 />
@@ -655,13 +802,19 @@ export const CadastroForm = ({verbo_http}) => {
             <section>
                 <PeriodoFechado
                     show={showPeriodoFechado}
-                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
+                />
+            </section>
+            <section>
+                <PeriodoFechadoImposto
+                    show={showPeriodoFechadoImposto}
+                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
                 />
             </section>
             <section>
                 <ErroGeral
                     show={showErroGeral}
-                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
                 />
             </section>
             <section>

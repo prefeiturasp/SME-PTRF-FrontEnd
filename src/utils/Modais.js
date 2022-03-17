@@ -398,6 +398,40 @@ export const PeriodoFechado = (propriedades) => {
     )
 };
 
+export const PeriodoFechadoImposto = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Período Fechado"
+            bodyText="Este período está fechado. Para inclusão ou edição de lançamentos (créditos ou despesas) é necessário reabrir o processo de prestação de contas. Se for esse o caso, por favor, entre em contato com sua Diretoria Regional de Educação - DRE."
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Fechar"
+            primeiroBotaoCss="success"
+            // segundoBotaoOnclick={() => {window.location.assign("/prestacao-de-contas")}}
+            // segundoBotaoTexto="Sim"
+            // segundoBotaoCss="success"
+        />
+    )
+};
+
+export const ExcluirImposto = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Excluir imposto"
+            bodyText="Salvar essa despesa, com o seletor de retenção de impostos em 'Não' apagará a despesa referente ao imposto retido. Confirma alteração?"
+            primeiroBotaoOnclick={propriedades.cancelarExclusaoImposto}
+            primeiroBotaoTexto="Cancelar"
+            primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={propriedades.handleClose}
+            segundoBotaoTexto="Confirmar"
+            segundoBotaoCss="success"
+        />
+    )
+};
+
 export const TextoCopiado = ({show, handleClose}) => {
     return (
         <ModalBootstrap

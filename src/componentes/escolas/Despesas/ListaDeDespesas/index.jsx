@@ -125,6 +125,24 @@ export class ListaDeDespesas extends Component {
     }
 
     numeroDocumentoStatusTemplate(despesa){ 
+        let eh_imposto = false;
+        let info_despesa = ""
+
+        if(despesa && despesa.despesa_geradora_do_imposto && despesa.despesa_geradora_do_imposto.id){
+            eh_imposto = true;
+            let numero_documento = despesa.despesa_geradora_do_imposto.numero_documento
+            let data_documento = despesa.despesa_geradora_do_imposto.data_documento ? moment(despesa.despesa_geradora_do_imposto.data_documento).format('DD/MM/YYYY') : ""
+
+            let valor_total_despesa_geradora_do_imposto = despesa.despesa_geradora_do_imposto.valor_total
+
+            let valor_total = parseFloat(valor_total_despesa_geradora_do_imposto) ? parseFloat(valor_total_despesa_geradora_do_imposto).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            })
+            : '';
+            info_despesa = `${numero_documento} ${data_documento} ${valor_total}`
+        }
+
         const statusColor =
             despesa.status === 'COMPLETO'
                 ? 'ptrf-despesa-status-ativo'
@@ -136,8 +154,19 @@ export class ListaDeDespesas extends Component {
         return (
             <>    
                 <span>{despesa.numero_documento}</span>
+                {eh_imposto &&
+                <>
+                    <span data-html={true} data-tip={`Retenção de impostos do gasto <br/> ${info_despesa}.`}>
+                    <FontAwesomeIcon
+                        style={{marginLeft: "3px", color: '#086397'}}
+                        icon={faExclamationCircle}
+                    />
+                    </span>
+                    <ReactTooltip html={true}/>
+                </>
+                }
                 <br/>
-                <span className={statusColor}>{statusText}</span>
+                <span className={statusColor}>{statusText}</span> 
             </>
         )
     }
@@ -239,7 +268,13 @@ export class ListaDeDespesas extends Component {
         if (despesa.receitas_saida_do_recurso) {
             url = `/cadastro-de-despesa-recurso-proprio/${despesa.receitas_saida_do_recurso}/${despesa.uuid}`
         } else {
-            url = '/edicao-de-despesa/' + despesa.uuid;
+
+            if(despesa && despesa.despesa_geradora_do_imposto && despesa.despesa_geradora_do_imposto.uuid){
+                url = '/edicao-de-despesa/' + despesa.despesa_geradora_do_imposto.uuid;
+            }
+            else{
+                url = '/edicao-de-despesa/' + despesa.uuid;
+            }
         }
         redirect(url)
     };
