@@ -16,13 +16,14 @@ const onCancelarTrue = (setShow, setLoading, origem) => {
     getPath(origem);
 };
 
-const onHandleClose = (setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta) => {
+const onHandleClose = (setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto) => {
     setShow(false);
     setShowDelete(false);
     setShowAvisoCapital(false);
     setShowSaldoInsuficiente(false);
     setShowPeriodoFechado(false);
     setShowSaldoInsuficienteConta(false);
+    setShowPeriodoFechadoImposto(false);
 };
 
 const onShowAvisoCapitalModal = (setShowAvisoCapital) => {
@@ -166,6 +167,23 @@ const getErroValorRealizadoRateios = (values) =>{
     return round(var_valor_recursos_acoes, 2) - round(var_valor_total_dos_rateios, 2);
 };
 
+export const apenasNumero = (valor) => {
+	const re = /^[0-9\b]+$/;
+	
+	if (valor === '' || re.test(valor)) {
+		return true;
+		
+	}
+	return false;
+}
+
+const onHandleChangeApenasNumero = (e, setFieldValue, campo) => {
+    let valor = e.target.value;
+    if(apenasNumero(valor)){
+        setFieldValue(campo, valor)
+     }
+}
+
 
 export const metodosAuxiliares = {
     onShowModal,
@@ -185,4 +203,5 @@ export const metodosAuxiliares = {
     setValoresRateiosOriginal,
     getErroValorOriginalRateios,
     getErroValorRealizadoRateios,
+    onHandleChangeApenasNumero
 };

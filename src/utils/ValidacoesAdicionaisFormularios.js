@@ -269,6 +269,18 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
     values.data_transacao = null
   }
 
+  if (values.despesa_imposto.data_transacao !== "" && values.despesa_imposto.data_transacao !== null){
+    values.despesa_imposto.data_transacao  = moment(values.despesa_imposto.data_transacao).format("YYYY-MM-DD");
+  }else {
+    values.despesa_imposto.data_transacao = null
+  }
+
+
+  values.despesa_imposto.rateios[0].quantidade_itens_capital = convertToNumber(values.despesa_imposto.rateios[0].quantidade_itens_capital)
+  values.despesa_imposto.rateios[0].valor_item_capital = trataNumericos(values.despesa_imposto.rateios[0].valor_item_capital)
+  values.despesa_imposto.rateios[0].valor_rateio = round(trataNumericos(values.despesa_imposto.rateios[0].valor_rateio),2)
+  values.despesa_imposto.rateios[0].valor_original = round(trataNumericos(values.despesa_imposto.rateios[0].valor_original),2)
+
   values.rateios.map((rateio) => {
 
     if (typeof rateio.especificacao_material_servico === "object" && rateio.especificacao_material_servico !== null){
