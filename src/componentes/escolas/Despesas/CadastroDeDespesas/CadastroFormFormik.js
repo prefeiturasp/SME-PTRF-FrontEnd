@@ -1,24 +1,24 @@
 import React from "react";
 import {Formik, FieldArray, Field} from "formik";
 import MaskedInput from 'react-text-mask'
-import { visoesService } from "../../../../services/visoes.service";
+import {visoesService} from "../../../../services/visoes.service";
 import {
     cpfMaskContitional,
     trataNumericos,
     calculaValorRecursoAcoes,
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
-import { DatePickerField } from "../../../Globais/DatePickerField";
+import {DatePickerField} from "../../../Globais/DatePickerField";
 import CurrencyInput from "react-currency-input";
 import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
-import { CadastroFormCusteio } from "./CadastroFormCusteio";
-import { CadastroFormCapital } from "./CadastroFormCapital";
-import { CadastroFormDespesaImposto } from "./CadastroFormDespesaImposto";
-import { Tags } from "../Tags";
-import { ComprovacaoFiscal } from "../ComprovacaoFiscal";
-import { ModalDeletarRateioComEstorno } from "./ModalDeletarRateioComEstorno";
-import { ASSOCIACAO_UUID } from "../../../../services/auth.service";
+import {CadastroFormCusteio} from "./CadastroFormCusteio";
+import {CadastroFormCapital} from "./CadastroFormCapital";
+import {CadastroFormDespesaImposto} from "./CadastroFormDespesaImposto";
+import {Tags} from "../Tags";
+import {ComprovacaoFiscal} from "../ComprovacaoFiscal";
+import {ModalDeletarRateioComEstorno} from "./ModalDeletarRateioComEstorno";
+import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import {
     SaldoInsuficiente,
     SaldoInsuficienteConta,
@@ -26,83 +26,95 @@ import {
     TipoAplicacaoRecursoNaoAceito,
     ExcluirImposto
 } from "../../../../utils/Modais"
-import { ModalDespesaConferida } from "./ModalDespesaJaConferida";
-import { ModalDespesaIncompleta } from "./ModalDespesaIncompleta";
+import {ModalDespesaConferida} from "./ModalDespesaJaConferida";
+import {ModalDespesaIncompleta} from "./ModalDespesaIncompleta";
+import ModalMotivosPagamentoAntecipado from "./ModalMotivosPagamentoAntecipado";
+import ExibeMotivosPagamentoAntecipadoNoForm from "./ExibeMotivosPagamentoAntecipadoNoForm";
 
 
 export const CadastroFormFormik = ({
-                                        initialValues,
-                                        onSubmit,
-                                        validateFormDespesas,
-                                        despesaContext,
-                                        readOnlyCampos,
-                                        setFormErrors,
-                                        validacoesPersonalizadas,
-                                        formErrors,
-                                        eh_despesa_sem_comprovacao_fiscal,
-                                        despesasTabelas,
-                                        numeroDocumentoReadOnly,
-                                        aux,
-                                        setCssEscondeDocumentoTransacao,
-                                        setLabelDocumentoTransacao,
-                                        verbo_http,
-                                        cssEscondeDocumentoTransacao,
-                                        labelDocumentoTransacao,
-                                        exibeMsgErroValorOriginal,
-                                        exibeMsgErroValorRecursos,
-                                        removeRateio,
-                                        setShowAvisoCapital,
-                                        especificacoes_custeio,
-                                        especificaoes_capital,
-                                        showDeletarRateioComEstorno,
-                                        setShowDeletarRateioComEstorno,
-                                        houveAlteracoes,
-                                        onShowModal,
-                                        onCancelarTrue,
-                                        readOnlyBtnAcao,
-                                        setShowDelete,
-                                        setShowTextoModalDelete,
-                                        btnSubmitDisable,
-                                        onShowMensagemNaoAceitaTipoRecurso,
-                                        onShowSaldoInsuficiente,
-                                        saldosInsuficientesDaAcao,
-                                        showSaldoInsuficiente,
-                                        setShow,
-                                        setShowSaldoInsuficiente,
-                                        setShowPeriodoFechado,
-                                        setShowSaldoInsuficienteConta,
-                                        saldosInsuficientesDaConta,
-                                        showSaldoInsuficienteConta,
-                                        showDespesaCadastrada,
-                                        setShowDespesaCadastrada,
-                                        showDespesaConferida,
-                                        setShowDespesaConferida,
-                                        showModalDespesaIncompleta,
-                                        setShowModalDespesaIncompleta,
-                                        mensagensAceitaCusteioCapital,
-                                        showMensagemAceitaCusteioCapital,
-                                        setShowMensagemAceitaCusteioCapital,
-                                        eh_despesa_com_comprovacao_fiscal,
-                                        eh_despesa_reconhecida,
-                                        limpa_campos_sem_comprovacao_fiscal,
-                                        showRetencaoImposto,
-                                        eh_despesa_com_retencao_imposto,
-                                        tipos_documento_com_recolhimento_imposto,
-                                        numeroDocumentoImpostoReadOnly,
-                                        preenche_tipo_despesa_custeio,
-                                        setCssEscondeDocumentoTransacaoImposto,
-                                        setLabelDocumentoTransacaoImposto,
-                                        cssEscondeDocumentoTransacaoImposto,
-                                        labelDocumentoTransacaoImposto,
-                                        acoes_custeio,
-                                        setValorRateioRealizadoImposto,
-                                        readOnlyCamposImposto,
-                                        setShowExcluirImposto,
-                                        showExcluirImposto,
-                                        cancelarExclusaoImposto,
-                                        mostraModalExcluirImposto
-                                    }) => {   
-    return(
+                                       initialValues,
+                                       onSubmit,
+                                       validateFormDespesas,
+                                       despesaContext,
+                                       readOnlyCampos,
+                                       setFormErrors,
+                                       validacoesPersonalizadas,
+                                       formErrors,
+                                       eh_despesa_sem_comprovacao_fiscal,
+                                       despesasTabelas,
+                                       numeroDocumentoReadOnly,
+                                       aux,
+                                       setCssEscondeDocumentoTransacao,
+                                       setLabelDocumentoTransacao,
+                                       verbo_http,
+                                       cssEscondeDocumentoTransacao,
+                                       labelDocumentoTransacao,
+                                       exibeMsgErroValorOriginal,
+                                       exibeMsgErroValorRecursos,
+                                       removeRateio,
+                                       setShowAvisoCapital,
+                                       especificacoes_custeio,
+                                       especificaoes_capital,
+                                       showDeletarRateioComEstorno,
+                                       setShowDeletarRateioComEstorno,
+                                       houveAlteracoes,
+                                       onShowModal,
+                                       onCancelarTrue,
+                                       readOnlyBtnAcao,
+                                       setShowDelete,
+                                       setShowTextoModalDelete,
+                                       btnSubmitDisable,
+                                       onShowMensagemNaoAceitaTipoRecurso,
+                                       onShowSaldoInsuficiente,
+                                       saldosInsuficientesDaAcao,
+                                       showSaldoInsuficiente,
+                                       setShow,
+                                       setShowSaldoInsuficiente,
+                                       setShowPeriodoFechado,
+                                       setShowSaldoInsuficienteConta,
+                                       saldosInsuficientesDaConta,
+                                       showSaldoInsuficienteConta,
+                                       showDespesaCadastrada,
+                                       setShowDespesaCadastrada,
+                                       showDespesaConferida,
+                                       setShowDespesaConferida,
+                                       showModalDespesaIncompleta,
+                                       setShowModalDespesaIncompleta,
+                                       mensagensAceitaCusteioCapital,
+                                       showMensagemAceitaCusteioCapital,
+                                       setShowMensagemAceitaCusteioCapital,
+                                       eh_despesa_com_comprovacao_fiscal,
+                                       eh_despesa_reconhecida,
+                                       limpa_campos_sem_comprovacao_fiscal,
+                                       showRetencaoImposto,
+                                       eh_despesa_com_retencao_imposto,
+                                       tipos_documento_com_recolhimento_imposto,
+                                       numeroDocumentoImpostoReadOnly,
+                                       preenche_tipo_despesa_custeio,
+                                       setCssEscondeDocumentoTransacaoImposto,
+                                       setLabelDocumentoTransacaoImposto,
+                                       cssEscondeDocumentoTransacaoImposto,
+                                       labelDocumentoTransacaoImposto,
+                                       acoes_custeio,
+                                       setValorRateioRealizadoImposto,
+                                       readOnlyCamposImposto,
+                                       setShowExcluirImposto,
+                                       showExcluirImposto,
+                                       cancelarExclusaoImposto,
+                                       mostraModalExcluirImposto,
+                                       validaMotivosPagamentoAntecipado,
+                                       showModalMotivoPagamentoAntecipado,
+                                       listaDemotivosPagamentoAntecipado,
+                                       setShowModalMotivoPagamentoAntecipado,
+                                       selectMotivosPagamentoAntecipado,
+                                       setSelectMotivosPagamentoAntecipado,
+                                       checkBoxOutrosMotivosPagamentoAntecipado,
+                                       txtOutrosMotivosPagamentoAntecipado,
+                                       handleChangeCheckBoxOutrosMotivosPagamentoAntecipado,
+                                       handleChangeTxtOutrosMotivosPagamentoAntecipado,
+                                   }) => {
+    return (
         <>
             <Formik
                 initialValues={initialValues()}
@@ -124,7 +136,9 @@ export const CadastroFormFormik = ({
                             {props.values.status === 'COMPLETO' ? null :
                                 props.values.qtde_erros_form_despesa > 0 && despesaContext.verboHttp === "PUT" &&
                                 <div className="col-12 barra-status-erros pt-1 pb-1">
-                                    <p className="titulo-status pt-1 pb-1 mb-0">O cadastro possui {props.values.qtde_erros_form_despesa} campos não preenchidos, você pode completá-los agora ou terminar depois.</p>
+                                    <p className="titulo-status pt-1 pb-1 mb-0">O cadastro
+                                        possui {props.values.qtde_erros_form_despesa} campos não preenchidos, você pode
+                                        completá-los agora ou terminar depois.</p>
                                 </div>
                             }
                             <form onSubmit={props.handleSubmit}>
@@ -158,13 +172,14 @@ export const CadastroFormFormik = ({
                                             name="cpf_cnpj_fornecedor" id="cpf_cnpj_fornecedor" type="text"
                                             className={
                                                 !eh_despesa_com_comprovacao_fiscal(props.values)
-                                                ? "form-control"
-                                                : `${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.cpf_cnpj_fornecedor && 'despesa_incompleta'} form-control`
+                                                    ? "form-control"
+                                                    : `${!props.values.cpf_cnpj_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.cpf_cnpj_fornecedor && 'despesa_incompleta'} form-control`
                                             }
                                             placeholder="Digite o número do CNPJ ou CPF (apenas algarismos)"
                                         />
                                         {/* Validações personalizadas */}
-                                        {formErrors.cpf_cnpj_fornecedor && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.cpf_cnpj_fornecedor}</span>
+                                        {formErrors.cpf_cnpj_fornecedor && <p className='mb-0'><span
+                                            className="span_erro text-danger mt-1">{formErrors.cpf_cnpj_fornecedor}</span>
                                         </p>}
                                     </div>
                                     <div className="col-12 col-md-6  mt-4">
@@ -176,8 +191,8 @@ export const CadastroFormFormik = ({
                                             name="nome_fornecedor" id="nome_fornecedor" type="text"
                                             className={
                                                 !eh_despesa_com_comprovacao_fiscal(props.values)
-                                                ? "form-control"
-                                                :   `${!props.values.nome_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.nome_fornecedor && 'despesa_incompleta'} form-control`
+                                                    ? "form-control"
+                                                    : `${!props.values.nome_fornecedor && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.nome_fornecedor && 'despesa_incompleta'} form-control`
                                             }
                                             placeholder="Digite o nome"
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values)}
@@ -199,9 +214,9 @@ export const CadastroFormFormik = ({
                                             name='tipo_documento'
                                             id='tipo_documento'
                                             className={
-                                                !eh_despesa_com_comprovacao_fiscal(props.values) 
-                                                ? "form-control"
-                                                : `${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.tipo_documento && "despesa_incompleta"} form-control`
+                                                !eh_despesa_com_comprovacao_fiscal(props.values)
+                                                    ? "form-control"
+                                                    : `${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.tipo_documento && "despesa_incompleta"} form-control`
                                             }
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values)}
                                         >
@@ -221,15 +236,16 @@ export const CadastroFormFormik = ({
                                             value={values.data_documento !== null ? values.data_documento : ""}
                                             onChange={setFieldValue}
                                             className={
-                                                !eh_despesa_com_comprovacao_fiscal(props.values)  
-                                                ? "form-control"
-                                                : `${!props.values.data_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.data_documento && "despesa_incompleta"} form-control`
+                                                !eh_despesa_com_comprovacao_fiscal(props.values)
+                                                    ? "form-control"
+                                                    : `${!props.values.data_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.data_documento && "despesa_incompleta"} form-control`
                                             }
                                             about={despesaContext.verboHttp}
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values)}
                                             maxDate={new Date()}
                                         />
-                                        {props.errors.data_documento && <span className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
+                                        {props.errors.data_documento && <span
+                                            className="span_erro text-danger mt-1"> {props.errors.data_documento}</span>}
                                     </div>
 
                                     <div className="col-12 col-md-6 mt-4">
@@ -244,13 +260,14 @@ export const CadastroFormFormik = ({
                                             id="numero_documento" type="text"
                                             className={
                                                 !eh_despesa_com_comprovacao_fiscal(props.values)
-                                                ? "form-control"
-                                                : `${!numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!numeroDocumentoReadOnly && !props.values.numero_documento && "despesa_incompleta"} form-control`
+                                                    ? "form-control"
+                                                    : `${!numeroDocumentoReadOnly && !props.values.numero_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!numeroDocumentoReadOnly && !props.values.numero_documento && "despesa_incompleta"} form-control`
                                             }
                                             placeholder={numeroDocumentoReadOnly ? "" : "Digite o número"}
                                             disabled={readOnlyCampos || numeroDocumentoReadOnly || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values)}
                                         />
-                                        {props.errors.numero_documento && <span className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
+                                        {props.errors.numero_documento && <span
+                                            className="span_erro text-danger mt-1"> {props.errors.numero_documento}</span>}
                                     </div>
 
                                     <div className="col-12 col-md-6 mt-4">
@@ -268,7 +285,7 @@ export const CadastroFormFormik = ({
                                             onBlur={props.handleBlur}
                                             name='tipo_transacao'
                                             id='tipo_transacao'
-                                            className={`${!props.values.tipo_transacao && despesaContext.verboHttp === "PUT" && "is_invalid "} ${ !props.values.tipo_transacao && "despesa_incompleta"} form-control`}
+                                            className={`${!props.values.tipo_transacao && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.tipo_transacao && "despesa_incompleta"} form-control`}
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                         >
                                             <option key={0} value="">Selecione o tipo</option>
@@ -289,18 +306,19 @@ export const CadastroFormFormik = ({
                                                 setFormErrors(await validacoesPersonalizadas(values, setFieldValue, "despesa_principal"));
                                             }}
                                             about={despesaContext.verboHttp}
-                                            className={`${ !values.data_transacao && verbo_http === "PUT" ? 'is_invalid' : ""} ${ !values.data_transacao && "despesa_incompleta"} form-control`}
+                                            className={`${!values.data_transacao && verbo_http === "PUT" ? 'is_invalid' : ""} ${!values.data_transacao && "despesa_incompleta"} form-control`}
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             maxDate={new Date()}
                                         />
                                         {props.errors.data_transacao &&
-                                        <span
-                                            className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
+                                            <span
+                                                className="span_erro text-danger mt-1"> {props.errors.data_transacao}</span>}
                                     </div>
 
                                     <div className="col-12 col-md-3 mt-4">
                                         <div className={cssEscondeDocumentoTransacao}>
-                                            <label htmlFor="documento_transacao">Número do {labelDocumentoTransacao}</label>
+                                            <label htmlFor="documento_transacao">Número
+                                                do {labelDocumentoTransacao}</label>
                                             <input
                                                 value={props.values.documento_transacao}
                                                 onChange={props.handleChange}
@@ -329,7 +347,7 @@ export const CadastroFormFormik = ({
                                             value={props.values.valor_original}
                                             name="valor_original"
                                             id="valor_original_form_principal"
-                                            className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} ${ trataNumericos(props.values.valor_total) === 0 && "despesa_incompleta"} form-control`}
+                                            className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} ${trataNumericos(props.values.valor_total) === 0 && "despesa_incompleta"} form-control`}
                                             selectAllOnFocus={true}
                                             onChangeEvent={(e) => {
                                                 props.handleChange(e);
@@ -338,7 +356,7 @@ export const CadastroFormFormik = ({
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                         />
                                         {props.errors.valor_original && exibeMsgErroValorOriginal &&
-                                        <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
+                                            <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
                                     </div>
 
                                     <div className="col-12 col-md-3 mt-4">
@@ -360,8 +378,8 @@ export const CadastroFormFormik = ({
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                         />
                                         {props.errors.valor_total &&
-                                        <span
-                                            className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
+                                            <span
+                                                className="span_erro text-danger mt-1"> {props.errors.valor_total}</span>}
                                     </div>
 
                                     <div className="col-12 col-md-3 mt-4">
@@ -386,7 +404,8 @@ export const CadastroFormFormik = ({
                                     </div>
 
                                     <div className="col-12 col-md-3 mt-4">
-                                        <label htmlFor="valor_recusos_acoes"> {eh_despesa_com_retencao_imposto(props.values) ? 'Valor descontado do imposto' : 'Valor do PTRF'} </label>
+                                        <label
+                                            htmlFor="valor_recusos_acoes"> {eh_despesa_com_retencao_imposto(props.values) ? 'Valor descontado do imposto' : 'Valor do PTRF'} </label>
                                         <Field name="valor_recusos_acoes">
                                             {({field, form, meta}) => (
                                                 <CurrencyInput
@@ -405,15 +424,16 @@ export const CadastroFormFormik = ({
                                             )}
                                         </Field>
                                         {errors.valor_recusos_acoes && exibeMsgErroValorRecursos &&
-                                        <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
+                                            <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}
                                     </div>
                                 </div>
 
                                 {!eh_despesa_com_comprovacao_fiscal(props.values) && !eh_despesa_reconhecida(props.values) &&
                                     <div className="form-row">
                                         <div className="col-md-3 mt-4">
-                                            <label htmlFor="numero_boletim_ocorrencia">Número do Boletim de Ocorrência</label>
-                                            
+                                            <label htmlFor="numero_boletim_ocorrencia">Número do Boletim de
+                                                Ocorrência</label>
+
                                             <input
                                                 value={props.values.numero_boletim_de_ocorrencia ? props.values.numero_boletim_de_ocorrencia : ""}
                                                 onChange={(e) => {
@@ -429,13 +449,15 @@ export const CadastroFormFormik = ({
                                                 id="numero_boletim_de_ocorrencia" type="text"
                                                 className={
                                                     eh_despesa_reconhecida(props.values)
-                                                    ? "form-control"
-                                                    : `${!props.values.numero_boletim_de_ocorrencia && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.numero_boletim_de_ocorrencia && "despesa_incompleta"} form-control`
+                                                        ? "form-control"
+                                                        : `${!props.values.numero_boletim_de_ocorrencia && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.numero_boletim_de_ocorrencia && "despesa_incompleta"} form-control`
                                                 }
                                                 placeholder={"Digite o número"}
                                                 disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                             />
-                                            {formErrors.numero_boletim_de_ocorrencia && <p className='mb-0'><span className="span_erro text-danger mt-1">{formErrors.numero_boletim_de_ocorrencia}</span></p>}
+                                            {formErrors.numero_boletim_de_ocorrencia && <p className='mb-0'><span
+                                                className="span_erro text-danger mt-1">{formErrors.numero_boletim_de_ocorrencia}</span>
+                                            </p>}
                                         </div>
                                     </div>
                                 }
@@ -469,7 +491,7 @@ export const CadastroFormFormik = ({
                                         </div>
                                     </div>
                                 }
-                                
+
                                 <hr/>
                                 <h2 className="subtitulo-itens-painel">Dados do gasto</h2>
                                 <p>Esse gasto se encaixa em mais de um tipo de despesa ou ação do programa?</p>
@@ -502,27 +524,29 @@ export const CadastroFormFormik = ({
                                                 return (
                                                     <div key={index}>
 
-                                                        <div className="d-flex bd-highlight border-bottom mt-4 align-items-center">
+                                                        <div
+                                                            className="d-flex bd-highlight border-bottom mt-4 align-items-center">
                                                             <div className="flex-grow-1 bd-highlight">
-                                                                <p className='mb-0'><strong>Despesa {index + 1}</strong></p>
+                                                                <p className='mb-0'><strong>Despesa {index + 1}</strong>
+                                                                </p>
                                                             </div>
                                                             <div className="bd-highlight">
                                                                 <div className="d-flex justify-content-start">
                                                                     {rateio && rateio.uuid && (
                                                                         rateio.estorno && rateio.estorno.uuid
-                                                                        ?
+                                                                            ?
                                                                             <Link
                                                                                 to={
                                                                                     {
                                                                                         pathname: `/edicao-de-receita/${rateio.estorno.uuid}`,
-                                                                                        
+
                                                                                     }
                                                                                 }
                                                                                 className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
                                                                             >
                                                                                 Acessar estorno
                                                                             </Link>
-                                                                        :
+                                                                            :
                                                                             <Link
                                                                                 to={
                                                                                     {
@@ -535,7 +559,7 @@ export const CadastroFormFormik = ({
                                                                                 className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
                                                                             >
                                                                                 Cadastrar estorno
-                                                                            </Link>    
+                                                                            </Link>
                                                                     )}
 
                                                                     {index >= 1 && values.rateios.length > 1 && (
@@ -546,7 +570,11 @@ export const CadastroFormFormik = ({
                                                                             disabled={!visoesService.getPermissoes(['delete_despesa'])}
                                                                         >
                                                                             <FontAwesomeIcon
-                                                                                style={{fontSize: '17px', marginRight: "4px", color: "#B40C02"}}
+                                                                                style={{
+                                                                                    fontSize: '17px',
+                                                                                    marginRight: "4px",
+                                                                                    color: "#B40C02"
+                                                                                }}
                                                                                 icon={faTimesCircle}
                                                                             />
                                                                             Remover Despesa
@@ -559,7 +587,8 @@ export const CadastroFormFormik = ({
 
                                                             <div className="col-12 col-md-6 mt-4">
 
-                                                                <label htmlFor={`aplicacao_recurso_${index}`}>Tipo de aplicação do recurso</label>
+                                                                <label htmlFor={`aplicacao_recurso_${index}`}>Tipo de
+                                                                    aplicação do recurso</label>
                                                                 <select
                                                                     value={rateio.aplicacao_recurso ? rateio.aplicacao_recurso : ""}
                                                                     onChange={(e) => {
@@ -617,7 +646,8 @@ export const CadastroFormFormik = ({
                                                                     exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
                                                                     eh_despesa_com_comprovacao_fiscal={eh_despesa_com_comprovacao_fiscal}
                                                                 />
-                                                            ) : null}
+                                                            ) : null
+                                                        }
 
 
                                                         <div className="row">
@@ -637,6 +667,10 @@ export const CadastroFormFormik = ({
                                                             </div>
                                                         </div>
 
+                                                        <ExibeMotivosPagamentoAntecipadoNoForm
+                                                            values={values}
+                                                        />
+
                                                         <section>
                                                             <ModalDeletarRateioComEstorno
                                                                 show={showDeletarRateioComEstorno}
@@ -644,10 +678,9 @@ export const CadastroFormFormik = ({
                                                                 titulo="Remover Despesa"
                                                                 texto="A exclusão desse rateio resultará na exclusão do crédito de estorno vinculado. Confirma?"
                                                                 onDeletarRateio={() => {
-                                                                        remove(index)
-                                                                        setShowDeletarRateioComEstorno(false)
-                                                                    }
-                                                                }
+                                                                    remove(index)
+                                                                    setShowDeletarRateioComEstorno(false)
+                                                                }}
                                                             />
                                                         </section>
 
@@ -656,40 +689,40 @@ export const CadastroFormFormik = ({
                                             })}
 
                                             {props.values.mais_de_um_tipo_despesa === "sim" &&
-                                            <div className="d-flex  justify-content-start mt-3 mb-3">
-                                                <button
-                                                    type="button"
-                                                    className="btn btn btn-outline-success mt-2 mr-2"
-                                                    disabled={![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                                    onChange={(e) => {
-                                                        props.handleChange(e);
-                                                        aux.handleAvisoCapital(e.target.value, setShowAvisoCapital);
-                                                        aux.setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
-                                                        aux.setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
-                                                    }}
-                                                    onClick={() => {
-                                                        push(
-                                                            {
-                                                                associacao: localStorage.getItem(ASSOCIACAO_UUID),
-                                                                escolha_tags: "",
-                                                                tag: "",
-                                                                conta_associacao: "",
-                                                                acao_associacao: "",
-                                                                aplicacao_recurso: "",
-                                                                tipo_custeio: "",
-                                                                especificacao_material_servico: "",
-                                                                valor_rateio: "",
-                                                                quantidade_itens_capital: "",
-                                                                valor_item_capital: "",
-                                                                valor_original: "",
-                                                                numero_processo_incorporacao_capital: ""
-                                                            }
-                                                        );
-                                                    }}
-                                                >
-                                                    + Adicionar despesa parcial
-                                                </button>
-                                            </div>
+                                                <div className="d-flex  justify-content-start mt-3 mb-3">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn btn-outline-success mt-2 mr-2"
+                                                        disabled={![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                        onChange={(e) => {
+                                                            props.handleChange(e);
+                                                            aux.handleAvisoCapital(e.target.value, setShowAvisoCapital);
+                                                            aux.setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+                                                            aux.setValoresRateiosOriginal(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+                                                        }}
+                                                        onClick={() => {
+                                                            push(
+                                                                {
+                                                                    associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                                                                    escolha_tags: "",
+                                                                    tag: "",
+                                                                    conta_associacao: "",
+                                                                    acao_associacao: "",
+                                                                    aplicacao_recurso: "",
+                                                                    tipo_custeio: "",
+                                                                    especificacao_material_servico: "",
+                                                                    valor_rateio: "",
+                                                                    quantidade_itens_capital: "",
+                                                                    valor_item_capital: "",
+                                                                    valor_original: "",
+                                                                    numero_processo_incorporacao_capital: ""
+                                                                }
+                                                            );
+                                                        }}
+                                                    >
+                                                        + Adicionar despesa parcial
+                                                    </button>
+                                                </div>
                                             }
                                         </>
                                     )}
@@ -702,23 +735,27 @@ export const CadastroFormFormik = ({
                                     {despesaContext.idDespesa
                                         ? <button
                                             disabled={readOnlyBtnAcao || !visoesService.getPermissoes(["delete_despesa"])}
-                                            type="reset" onClick={() => aux.onShowDeleteModal(setShowDelete, setShowTextoModalDelete, values)}
+                                            type="reset"
+                                            onClick={() => aux.onShowDeleteModal(setShowDelete, setShowTextoModalDelete, values)}
                                             className="btn btn btn-danger mt-2 mr-2"
                                         >Deletar
                                         </button>
                                         : null}
                                     <button
                                         disabled={
-                                            eh_despesa_reconhecida(props.values) 
-                                            ? btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)
-                                            : !props.values.numero_boletim_de_ocorrencia || btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)
+                                            eh_despesa_reconhecida(props.values)
+                                                ? btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)
+                                                : !props.values.numero_boletim_de_ocorrencia || btnSubmitDisable || readOnlyBtnAcao || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)
                                         }
                                         type="button"
-                                        onClick={() => {
-                                            onShowMensagemNaoAceitaTipoRecurso(values, errors);
-                                            onShowSaldoInsuficiente(values, errors, setFieldValue, {resetForm})
+                                        onClick={async (e) => {
+                                            let deve_preencher_motivos = await validaMotivosPagamentoAntecipado(e, values, errors)
+                                            !deve_preencher_motivos && onShowMensagemNaoAceitaTipoRecurso(values, errors);
+                                            !deve_preencher_motivos && onShowSaldoInsuficiente(values, errors, setFieldValue, {resetForm})
                                         }}
-                                        className="btn btn-success mt-2">Salvar
+                                        className="btn btn-success mt-2"
+                                    >
+                                        Salvar
                                     </button>
                                 </div>
                                 <div className="d-flex justify-content-end">
@@ -729,6 +766,22 @@ export const CadastroFormFormik = ({
                                     <p>{errors.valor_original && exibeMsgErroValorOriginal && <span
                                         className="span_erro text-danger mt-1"> {errors.valor_original}</span>}</p>
                                 </div>
+                                <section>
+                                    <ModalMotivosPagamentoAntecipado
+                                        show={showModalMotivoPagamentoAntecipado}
+                                        handleClose={() => setShowModalMotivoPagamentoAntecipado(false)}
+                                        listaDemotivosPagamentoAntecipado={listaDemotivosPagamentoAntecipado}
+                                        selectMotivosPagamentoAntecipado={selectMotivosPagamentoAntecipado}
+                                        setSelectMotivosPagamentoAntecipado={setSelectMotivosPagamentoAntecipado}
+                                        checkBoxOutrosMotivosPagamentoAntecipado={checkBoxOutrosMotivosPagamentoAntecipado}
+                                        txtOutrosMotivosPagamentoAntecipado={txtOutrosMotivosPagamentoAntecipado}
+                                        handleChangeCheckBoxOutrosMotivosPagamentoAntecipado={handleChangeCheckBoxOutrosMotivosPagamentoAntecipado}
+                                        handleChangeTxtOutrosMotivosPagamentoAntecipado={handleChangeTxtOutrosMotivosPagamentoAntecipado}
+                                        onSubmit={onSubmit}
+                                        setFieldValue={setFieldValue}
+                                        values={values}
+                                    />
+                                </section>
 
                                 <section>
                                     <SaldoInsuficiente

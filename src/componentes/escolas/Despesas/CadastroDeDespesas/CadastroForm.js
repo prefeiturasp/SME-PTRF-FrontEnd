@@ -10,7 +10,8 @@ import {
     alterarDespesa,
     getEspecificacoesCapital,
     getEspecificacoesCusteio,
-    getDespesaCadastrada, deleteDespesa
+    getDespesaCadastrada, deleteDespesa,
+    getMotivosPagamentoAntecipado
 } from "../../../../services/escolas/Despesas.service";
 import {useParams} from 'react-router-dom';
 import {DespesaContext} from "../../../../context/Despesa";
@@ -410,6 +411,7 @@ export const CadastroForm = ({verbo_http}) => {
         }
     };
 
+
     const onSubmit = async (values, setFieldValue) => {
         // Inclusão de validações personalizadas para reduzir o numero de requisições a API Campo: cpf_cnpj_fornecedor
         // Agora o campo cpf_cnpj_fornecedor, é validado no onBlur e quando o form tenta ser submetido
@@ -425,6 +427,9 @@ export const CadastroForm = ({verbo_http}) => {
             setShowSaldoInsuficiente(false);
 
             validaPayloadDespesas(values, despesasTabelas);
+
+            values.motivos_pagamento_antecipado = montaPayloadMotivosPagamentoAntecipado()
+            values.outros_motivos_pagamento_antecipado = txtOutrosMotivosPagamentoAntecipado.trim() && checkBoxOutrosMotivosPagamentoAntecipado ? txtOutrosMotivosPagamentoAntecipado : ""
 
             if (despesaContext.verboHttp === "POST") {
                 try {
@@ -464,7 +469,6 @@ export const CadastroForm = ({verbo_http}) => {
         const errors = {};
 
         // Validando se datas são maiores que data de hoje
-
         let hoje = moment(new Date());
         let data_digitada_documento = moment(values.data_documento);
         let data_digitada_transacao = moment(values.data_transacao);
@@ -475,8 +479,6 @@ export const CadastroForm = ({verbo_http}) => {
         if (data_digitada_transacao > hoje){
             errors.data_transacao = "Data do pagamento não pode ser maior que a data de hoje"
         }
-
-
 
         // Validando se tipo de documento aceita apenas numéricos e se exibe campo Número do Documento
         if (values.tipo_documento) {
@@ -690,6 +692,64 @@ export const CadastroForm = ({verbo_http}) => {
         setShowExcluirImposto(false);
     }
 
+
+
+    const [showModalMotivoPagamentoAntecipado, setShowModalMotivoPagamentoAntecipado] = useState(false);
+    const [listaDemotivosPagamentoAntecipado, setListaDemotivosPagamentoAntecipado] = useState([]);
+    const [selectMotivosPagamentoAntecipado, setSelectMotivosPagamentoAntecipado] = useState([]);
+    const [checkBoxOutrosMotivosPagamentoAntecipado, setCheckBoxOutrosMotivosPagamentoAntecipado] = useState(false);
+    const [txtOutrosMotivosPagamentoAntecipado, setTxtOutrosMotivosPagamentoAntecipado] = useState('');
+
+    useEffect(()=>{
+        setCheckBoxOutrosMotivosPagamentoAntecipado(!!despesaContext.initialValues.outros_motivos_pagamento_antecipado.trim())
+    }, [despesaContext.initialValues.outros_motivos_pagamento_antecipado])
+
+
+
+    const validaMotivosPagamentoAntecipado = async (e, values, erros) =>{
+
+        if (Object.entries(erros).length === 0) {
+            let data_transacao = values.data_transacao
+            let data_documento = values.data_documento
+
+            if (data_transacao && data_documento) {
+                if (data_transacao < data_documento) {
+                    let motivos = await getMotivosPagamentoAntecipado()
+                    setListaDemotivosPagamentoAntecipado(motivos)
+                    setShowModalMotivoPagamentoAntecipado(true)
+                    setSelectMotivosPagamentoAntecipado(despesaContext.initialValues.motivos_pagamento_antecipado)
+                    setTxtOutrosMotivosPagamentoAntecipado(despesaContext.initialValues.outros_motivos_pagamento_antecipado)
+                    // let estadoCheckBoxOutrosMotivos = !!despesaContext.initialValues.outros_motivos_pagamento_antecipado.trim();
+                    // setCheckBoxOutrosMotivosPagamentoAntecipado(estadoCheckBoxOutrosMotivos)
+                    return true
+                }
+                return false
+            }
+        }
+    }
+
+    const handleChangeCheckBoxOutrosMotivosPagamentoAntecipado = (event) =>{
+        setCheckBoxOutrosMotivosPagamentoAntecipado(event.target.checked);
+        if (!event.target.checked){
+            setCheckBoxOutrosMotivosPagamentoAntecipado(false);
+            setTxtOutrosMotivosPagamentoAntecipado("")
+        }
+    };
+
+    const handleChangeTxtOutrosMotivosPagamentoAntecipado = (event) =>{
+        setTxtOutrosMotivosPagamentoAntecipado(event.target.value)
+    };
+
+    const montaPayloadMotivosPagamentoAntecipado = () =>{
+        let motivos = [];
+        if (selectMotivosPagamentoAntecipado && selectMotivosPagamentoAntecipado.length > 0){
+            selectMotivosPagamentoAntecipado.map((motivo)=>
+                motivos.push(motivo.id)
+            )
+        }
+        return motivos
+    }
+
     return (
         <>
             {loading ?
@@ -773,6 +833,16 @@ export const CadastroForm = ({verbo_http}) => {
                         showExcluirImposto={showExcluirImposto}
                         cancelarExclusaoImposto={cancelarExclusaoImposto}
                         mostraModalExcluirImposto={mostraModalExcluirImposto}
+                        validaMotivosPagamentoAntecipado={validaMotivosPagamentoAntecipado}
+                        showModalMotivoPagamentoAntecipado={showModalMotivoPagamentoAntecipado}
+                        listaDemotivosPagamentoAntecipado={listaDemotivosPagamentoAntecipado}
+                        setShowModalMotivoPagamentoAntecipado={setShowModalMotivoPagamentoAntecipado}
+                        selectMotivosPagamentoAntecipado={selectMotivosPagamentoAntecipado}
+                        setSelectMotivosPagamentoAntecipado={setSelectMotivosPagamentoAntecipado}
+                        checkBoxOutrosMotivosPagamentoAntecipado={checkBoxOutrosMotivosPagamentoAntecipado}
+                        txtOutrosMotivosPagamentoAntecipado={txtOutrosMotivosPagamentoAntecipado}
+                        handleChangeCheckBoxOutrosMotivosPagamentoAntecipado={handleChangeCheckBoxOutrosMotivosPagamentoAntecipado}
+                        handleChangeTxtOutrosMotivosPagamentoAntecipado={handleChangeTxtOutrosMotivosPagamentoAntecipado}
                     />
             </>
             }
