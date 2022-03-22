@@ -98,11 +98,13 @@ export const EdicaoDeDespesa = ()=>{
                                 valor_rateio: ""
                             }],
                     },
+
+
                     mais_de_um_tipo_despesa : resp.rateios.length > 1 ? "sim" : "nao",
                     data_documento: resp.data_documento ?  moment(resp.data_documento, "YYYY-MM-DD"): null,
                     data_transacao: resp.data_transacao ?  moment(resp.data_transacao, "YYYY-MM-DD"): null,
-                    motivos_pagamento_antecipado: [],
-                    outros_motivos_pagamento_antecipado:"",
+                    motivos_pagamento_antecipado: resp.motivos_pagamento_antecipado,
+                    outros_motivos_pagamento_antecipado: resp.outros_motivos_pagamento_antecipado,
 
                     valor_total: resp.valor_total ? Number(resp.valor_total).toLocaleString('pt-BR', {
                         style: 'currency',
