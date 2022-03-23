@@ -89,3 +89,7 @@ export const patchAtrelarSaidoDoRecurso = async (receita_uuid, despesa_uuid) => 
     return (await api.patch(`api/receitas/${receita_uuid}/atrelar-saida-recurso/?despesa_uuid=${despesa_uuid}`, {}, authHeader)).data
 };
 
+export const getMotivosPagamentoAntecipado = async () => {
+    return (await api.get(`api/motivos-pagamento-antecipado/`, authHeader)).data
+};
+

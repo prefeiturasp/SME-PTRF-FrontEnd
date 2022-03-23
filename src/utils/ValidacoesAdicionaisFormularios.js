@@ -251,7 +251,7 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
       values.tipo_transacao = null
     }
   }
-  values.valor_total = trataNumericos(values.valor_total);
+  values.valor_total = round(trataNumericos(values.valor_total),2);
   values.valor_original = trataNumericos(values.valor_original);
 
   values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
