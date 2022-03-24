@@ -154,6 +154,9 @@ export class ListaDeDespesas extends Component {
         return (
             <>    
                 <span>{despesa.numero_documento}</span>
+                
+                <br/>
+                <span className={statusColor}>{statusText}</span>
                 {eh_imposto &&
                 <>
                     <span data-html={true} data-tip={`Retenção de impostos do gasto <br/> ${info_despesa}.`}>
@@ -164,9 +167,7 @@ export class ListaDeDespesas extends Component {
                     </span>
                     <ReactTooltip html={true}/>
                 </>
-                }
-                <br/>
-                <span className={statusColor}>{statusText}</span> 
+                } 
             </>
         )
     }

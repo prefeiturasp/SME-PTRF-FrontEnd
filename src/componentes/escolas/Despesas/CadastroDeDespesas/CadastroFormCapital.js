@@ -23,6 +23,7 @@ export const CadastroFormCapital = (propriedades) => {
         exibeMsgErroValorRecursos,
         exibeMsgErroValorOriginal,
         eh_despesa_com_comprovacao_fiscal,
+        eh_despesa_com_retencao_imposto,
     } = propriedades;
 
     const handleChangeData = (quantidade, valor, setFieldValue) => {
@@ -162,7 +163,7 @@ export const CadastroFormCapital = (propriedades) => {
                 </div>
 
                 <div className="col-12 col-md-6 mt-4">
-                    <label htmlFor={`valor_original_form_capital_${index}`}>Valor total do capital</label>
+                    <label htmlFor={`valor_original_form_capital_${index}`}>{eh_despesa_com_retencao_imposto(formikProps.values) ? 'Valor líquido total do capital' : 'Valor total do capital'}</label>
                     <CurrencyInput
                         allowNegative={false}
                         prefix='R$'
@@ -180,7 +181,7 @@ export const CadastroFormCapital = (propriedades) => {
                 </div>
 
                 <div className="col-12 col-md-6 mt-4">
-                    <label htmlFor={`valor_rateio_${index}`} className="label-valor-realizado">Valor realizado</label>
+                    <label htmlFor={`valor_rateio_${index}`} className="label-valor-realizado">{eh_despesa_com_retencao_imposto(formikProps.values) ? 'Valor líquido realizado' : 'Valor realizado'}</label>
                     <CurrencyInput
                         allowNegative={false}
                         prefix='R$'

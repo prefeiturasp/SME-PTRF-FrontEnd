@@ -28,12 +28,6 @@ export const CadastroFormDespesaImposto = ({
 												mostraModalExcluirImposto
 											}) => {
     
-	
-	
-    const setaValorRealizado = (setFieldValue, valor_original, valor_imposto) => {
-		let resultado = trataNumericos(valor_original) - trataNumericos(valor_imposto);
-		setFieldValue("valor_total", resultado)
-	}
 	return(
 		<>
         <div className="container-retencao-imposto mt-2">
@@ -300,8 +294,8 @@ export const CadastroFormDespesaImposto = ({
 								onChangeEvent={(e) => {
 									formikProps.handleChange(e);
 									setValorRateioRealizadoImposto(formikProps.setFieldValue, e.target.value)
-									 setaValorRealizado(formikProps.setFieldValue, formikProps.values.valor_original, e.target.value)
 								}}
+								onBlur={formikProps.handleBlur}
 								disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							/>
 						</div>
@@ -318,6 +312,7 @@ export const CadastroFormDespesaImposto = ({
 								id="despesa_imposto.rateios[0].valor_rateio"
 								className={`${ trataNumericos(formikProps.values.despesa_imposto.rateios[0].valor_rateio) === 0 && despesaContext.verboHttp === "PUT" ? "is_invalid" : ""} form-control ${trataNumericos(formikProps.values.despesa_imposto.rateios[0].valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
 								onChangeEvent={formikProps.handleChange}
+								onBlur={formikProps.handleBlur}
 								disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 							/>
 						</div>

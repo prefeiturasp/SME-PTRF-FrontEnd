@@ -6,7 +6,7 @@ import {visoesService} from "../../../../services/visoes.service";
 
 export const CadastroFormCusteio = (propriedades) => {
 
-    const {formikProps, rateio, rateios, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal, eh_despesa_sem_comprovacao_fiscal, cpf_cnpj, eh_despesa_com_comprovacao_fiscal} = propriedades
+    const {formikProps, rateio, rateios, index, despesasTabelas,  especificacoes_custeio, verboHttp, disabled, errors, exibeMsgErroValorRecursos, exibeMsgErroValorOriginal, eh_despesa_com_comprovacao_fiscal, eh_despesa_com_retencao_imposto} = propriedades
 
     const setValorRateioRealizado=(setFieldValue, index, valor)=>{
         setFieldValue(`rateios[${index}].valor_rateio`, trataNumericos(valor))
@@ -117,7 +117,7 @@ export const CadastroFormCusteio = (propriedades) => {
                 </div>
 
                 <div className="col-12 col-md-3 mt-4">
-                    <label htmlFor="valor_original_form_custeio">Valor</label>
+                    <label htmlFor="valor_original_form_custeio">{eh_despesa_com_retencao_imposto(formikProps.values) ? 'Valor líquido' : 'Valor'}</label>
                     <CurrencyInput
                         allowNegative={false}
                         prefix='R$'
@@ -131,12 +131,13 @@ export const CadastroFormCusteio = (propriedades) => {
                             formikProps.handleChange(e);
                             setValorRateioRealizado(formikProps.setFieldValue, index, e.target.value)
                         }}
+                        onBlur={formikProps.handleBlur}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     />
                     {errors.valor_original && exibeMsgErroValorOriginal && <span className="span_erro text-danger mt-1"> A soma dos valores originais do rateio não está correspondendo ao valor total original utilizado com recursos do Programa.</span>}
                 </div>
                 <div className="col-12 col-md-3 mt-4">
-                    <label htmlFor="valor_rateio" className="label-valor-realizado">Valor realizado</label>
+                    <label htmlFor="valor_rateio">{eh_despesa_com_retencao_imposto(formikProps.values) ? 'Valor líquido realizado' : 'Valor realizado'}</label>
                     <CurrencyInput
                         allowNegative={false}
                         prefix='R$'
@@ -147,6 +148,7 @@ export const CadastroFormCusteio = (propriedades) => {
                         id="valor_rateio"
                         className={`${ trataNumericos(rateio.valor_rateio) === 0 && verboHttp === "PUT" ? "is_invalid" : ""} ${trataNumericos(rateio.valor_rateio) === 0 && 'despesa_incompleta'} form-control ${trataNumericos(rateio.valor_rateio) === 0 ? " input-valor-realizado-vazio" : " input-valor-realizado-preenchido"}`}
                         onChangeEvent={formikProps.handleChange}
+                        onBlur={formikProps.handleBlur}
                         disabled={disabled || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                     />
                     {errors.valor_recusos_acoes && exibeMsgErroValorRecursos && <span className="span_erro text-danger mt-1"> A soma dos valores do rateio não está correspondendo ao valor total utilizado com recursos do Programa.</span>}

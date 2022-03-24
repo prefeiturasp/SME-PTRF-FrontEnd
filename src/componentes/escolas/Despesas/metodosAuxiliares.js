@@ -154,7 +154,13 @@ const getErroValorOriginalRateios = (values) =>{
         }
     });
 
-    valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original;
+    if(values.retem_imposto && values.despesa_imposto && values.despesa_imposto.rateios.length > 0){
+        let valor_imposto_tratado = trataNumericos(values.despesa_imposto.rateios[0].valor_original);
+        valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original + valor_imposto_tratado;
+    }
+    else{
+        valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original;
+    }
 
     return round(valor_ptfr_original, 2) - round(valor_total_dos_rateios_original, 2)
 
@@ -162,7 +168,14 @@ const getErroValorOriginalRateios = (values) =>{
 
 const getErroValorRealizadoRateios = (values) =>{
     let var_valor_recursos_acoes;
-    var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
+
+    if(values.retem_imposto && values.despesa_imposto && values.despesa_imposto.rateios.length > 0){
+        let valor_imposto_tratado = values.despesa_imposto.rateios[0].valor_rateio;
+        var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios) - trataNumericos(valor_imposto_tratado);
+    }
+    else{
+        var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
+    }
 
     let var_valor_total_dos_rateios = 0;
     let var_valor_total_dos_rateios_capital = 0;
