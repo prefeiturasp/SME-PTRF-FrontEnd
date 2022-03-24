@@ -41,7 +41,6 @@ export const CadastroFormFormik = ({
                                        setFormErrors,
                                        validacoesPersonalizadas,
                                        formErrors,
-                                       eh_despesa_sem_comprovacao_fiscal,
                                        despesasTabelas,
                                        numeroDocumentoReadOnly,
                                        aux,
@@ -404,8 +403,7 @@ export const CadastroFormFormik = ({
                                     </div>
 
                                     <div className="col-12 col-md-3 mt-4">
-                                        <label
-                                            htmlFor="valor_recusos_acoes"> {eh_despesa_com_retencao_imposto(props.values) ? 'Valor descontado do imposto' : 'Valor do PTRF'} </label>
+                                        <label htmlFor="valor_recusos_acoes">Valor do PTRF</label>
                                         <Field name="valor_recusos_acoes">
                                             {({field, form, meta}) => (
                                                 <CurrencyInput
@@ -626,9 +624,9 @@ export const CadastroFormFormik = ({
                                                                     errors={errors}
                                                                     exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
                                                                     exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
-                                                                    eh_despesa_sem_comprovacao_fiscal={eh_despesa_sem_comprovacao_fiscal}
                                                                     cpf_cnpj={props.values.cpf_cnpj_fornecedor}
                                                                     eh_despesa_com_comprovacao_fiscal={eh_despesa_com_comprovacao_fiscal}
+                                                                    eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
                                                                 />
                                                             ) :
                                                             rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -645,6 +643,7 @@ export const CadastroFormFormik = ({
                                                                     exibeMsgErroValorRecursos={exibeMsgErroValorRecursos}
                                                                     exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
                                                                     eh_despesa_com_comprovacao_fiscal={eh_despesa_com_comprovacao_fiscal}
+                                                                    eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
                                                                 />
                                                             ) : null
                                                         }
