@@ -309,15 +309,14 @@ export const ReceitaForm = () => {
     }, [tabelas, initialValue.tipo_receita]);
 
     const servicoDeVerificacoes = (e, values, errors) =>{
-
         // Valida se despesa é do tipo Repasse
         if (!exibirDeleteDespesa) {
             e.preventDefault();
             setShowReceitaRepasse(true)
         }
 
-        if (values.tipo_receita === idTipoReceitaEstorno && Object.keys(errors).length === 0){
-            //e.preventDefault()
+        if (values.tipo_receita === idTipoReceitaEstorno && Object.keys(errors).length === 0 && values.data){
+            e.preventDefault()
             setShowModalMotivoEstorno(true)
         }
 
@@ -345,57 +344,53 @@ export const ReceitaForm = () => {
 
     const onSubmit = async (values, errors) => {
 
-        if (Object.keys(errors).length === 0){
-
-            // Validando e ou removendo e_devolucao
-            if (!verificaSeDevolucao(values.tipo_receita)){
-                delete values.referencia_devolucao
-            }else if (uuid){
-                if (values.referencia_devolucao && values.referencia_devolucao.uuid){
-                    values.referencia_devolucao = values.referencia_devolucao.uuid
-                }
+        // Validando e ou removendo e_devolucao
+        if (!verificaSeDevolucao(values.tipo_receita)){
+            delete values.referencia_devolucao
+        }else if (uuid){
+            if (values.referencia_devolucao && values.referencia_devolucao.uuid){
+                values.referencia_devolucao = values.referencia_devolucao.uuid
             }
-            values.valor = round(trataNumericos(values.valor), 2);
-            values.data = moment(values.data).format("YYYY-MM-DD");
-            values.conferido = true;
-            values.motivos_estorno = montaPayloadMotivosEstorno()
-            values.outros_motivos_estorno = txtOutrosMotivosEstorno.trim() && checkBoxOutrosMotivosEstorno ? txtOutrosMotivosEstorno : ""
+        }
+        values.valor = round(trataNumericos(values.valor), 2);
+        values.data = moment(values.data).format("YYYY-MM-DD");
+        values.conferido = true;
+        values.motivos_estorno = montaPayloadMotivosEstorno()
+        values.outros_motivos_estorno = txtOutrosMotivosEstorno.trim() && checkBoxOutrosMotivosEstorno ? txtOutrosMotivosEstorno : ""
 
-            const payload = {
-                ...values,
-                associacao: localStorage.getItem(ASSOCIACAO_UUID),
-                detalhe_tipo_receita: values.detalhe_tipo_receita && values.detalhe_tipo_receita.id !== undefined ? values.detalhe_tipo_receita.id : values.detalhe_tipo_receita,
-            };
+        const payload = {
+            ...values,
+            associacao: localStorage.getItem(ASSOCIACAO_UUID),
+            detalhe_tipo_receita: values.detalhe_tipo_receita && values.detalhe_tipo_receita.id !== undefined ? values.detalhe_tipo_receita.id : values.detalhe_tipo_receita,
+        };
 
-            if (Object.keys(repasse).length !== 0) {
-                payload['repasse'] = repasse.uuid;
-            }
-
-            setLoading(true);
-
-            if (uuid) {
-                await atualizar(uuid, payload).then(response => {
-                    if (exibeModalSalvoComSucesso){
-                        exibeMsgSalvoComSucesso(payload)
-                    }else {
-                        getPath()
-                    }
-                });
-            } else {
-                cadastrar(payload).then(response => {
-                    if (exibeModalSalvoComSucesso){
-                        //setShowSalvarReceita(true);
-                        setUuidReceita(response);
-                        exibeMsgSalvoComSucesso(payload)
-                    }else {
-                        setUuidReceita(response);
-                        getPath(response)
-                    }
-                });
-            }
-            setLoading(false);
+        if (Object.keys(repasse).length !== 0) {
+            payload['repasse'] = repasse.uuid;
         }
 
+        setLoading(true);
+
+        if (uuid) {
+            await atualizar(uuid, payload).then(response => {
+                if (exibeModalSalvoComSucesso){
+                    exibeMsgSalvoComSucesso(payload)
+                }else {
+                    getPath()
+                }
+            });
+        } else {
+            cadastrar(payload).then(response => {
+                if (exibeModalSalvoComSucesso){
+                    //setShowSalvarReceita(true);
+                    setUuidReceita(response);
+                    exibeMsgSalvoComSucesso(payload)
+                }else {
+                    setUuidReceita(response);
+                    getPath(response)
+                }
+            });
+        }
+        setLoading(false);
 
     };
 
