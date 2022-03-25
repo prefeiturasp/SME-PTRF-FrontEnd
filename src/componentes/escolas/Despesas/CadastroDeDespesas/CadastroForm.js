@@ -715,8 +715,6 @@ export const CadastroForm = ({verbo_http}) => {
                     setShowModalMotivoPagamentoAntecipado(true)
                     setSelectMotivosPagamentoAntecipado(despesaContext.initialValues.motivos_pagamento_antecipado)
                     setTxtOutrosMotivosPagamentoAntecipado(despesaContext.initialValues.outros_motivos_pagamento_antecipado)
-                    // let estadoCheckBoxOutrosMotivos = !!despesaContext.initialValues.outros_motivos_pagamento_antecipado.trim();
-                    // setCheckBoxOutrosMotivosPagamentoAntecipado(estadoCheckBoxOutrosMotivos)
                     return true
                 }
                 return false
