@@ -89,3 +89,7 @@ export const getRepasses = async () => {
 export const getPeriodoFechadoReceita = async (palavra, aplicacao_recurso, acao_associacao__uuid, despesa__status) => {
     return (await api.get(`api/rateios-despesas/totais/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&acao_associacao__uuid=${acao_associacao__uuid}&despesa__status=${despesa__status}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
+
+export const getListaMotivosEstorno = async () => {
+    return (await api.get(`/api/motivos-estorno/`, authHeader)).data
+};
