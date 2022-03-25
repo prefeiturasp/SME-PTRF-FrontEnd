@@ -746,6 +746,24 @@ export const CadastroForm = ({verbo_http}) => {
         return motivos
     }
 
+    const bloqueiaLinkCadastrarEstorno = (rateio) => {
+        let bloqueia_link = true;
+
+        if(rateio.conta_associacao && rateio.acao_associacao && rateio.aplicacao_recurso && trataNumericos(rateio.valor_rateio) !== 0){
+            bloqueia_link = false;
+        }
+
+        return bloqueia_link;
+    }
+
+    const bloqueiaRateioEstornado = (rateio) => {
+        if(rateio.estorno && rateio.estorno.uuid){
+            return true;
+        }
+
+        return false;
+    }
+
     return (
         <>
             {loading ?
@@ -838,6 +856,8 @@ export const CadastroForm = ({verbo_http}) => {
                         txtOutrosMotivosPagamentoAntecipado={txtOutrosMotivosPagamentoAntecipado}
                         handleChangeCheckBoxOutrosMotivosPagamentoAntecipado={handleChangeCheckBoxOutrosMotivosPagamentoAntecipado}
                         handleChangeTxtOutrosMotivosPagamentoAntecipado={handleChangeTxtOutrosMotivosPagamentoAntecipado}
+                        bloqueiaLinkCadastrarEstorno={bloqueiaLinkCadastrarEstorno}
+                        bloqueiaRateioEstornado={bloqueiaRateioEstornado}
                     />
             </>
             }
