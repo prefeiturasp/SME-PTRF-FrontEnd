@@ -112,6 +112,8 @@ export const CadastroFormFormik = ({
                                        txtOutrosMotivosPagamentoAntecipado,
                                        handleChangeCheckBoxOutrosMotivosPagamentoAntecipado,
                                        handleChangeTxtOutrosMotivosPagamentoAntecipado,
+                                       bloqueiaLinkCadastrarEstorno,
+                                       bloqueiaRateioEstornado
                                    }) => {
     return (
         <>
@@ -554,7 +556,8 @@ export const CadastroFormFormik = ({
                                                                                         }
                                                                                     }
                                                                                 }
-                                                                                className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
+                                                                                className={`btn btn-link btn-remover-despesa mr-2 d-flex align-items-center ${bloqueiaLinkCadastrarEstorno(rateio) ? 'desabilita-link-estorno' : ''}`} 
+                                                                                disabled={bloqueiaLinkCadastrarEstorno(rateio)}
                                                                             >
                                                                                 Cadastrar estorno
                                                                             </Link>
@@ -582,6 +585,13 @@ export const CadastroFormFormik = ({
                                                             </div>
                                                         </div>
                                                         <div className="form-row">
+                                                            {rateio && rateio.uuid && rateio.estorno && rateio.estorno.uuid &&
+                                                                <div className="col-12 ">
+                                                                    <p className="mb-0 mt-3 texto-rateio-estornado-bloqueado">
+                                                                        Esta seção da despesa encontra-se bloqueada para edição. Para editar seus campos, deve-se primeiro deletar o estorno cadastrado.
+                                                                    </p>
+                                                                </div>
+                                                            }
 
                                                             <div className="col-12 col-md-6 mt-4">
 
@@ -599,7 +609,7 @@ export const CadastroFormFormik = ({
                                                                     name={`rateios[${index}].aplicacao_recurso`}
                                                                     id={`aplicacao_recurso_${index}`}
                                                                     className={`${!rateio.aplicacao_recurso && despesaContext.verboHttp === "PUT" && "is_invalid "} form-control`}
-                                                                    disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                                    disabled={readOnlyCampos || bloqueiaRateioEstornado(rateio) || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                                                 >
                                                                     <option key={0} value="">Escolha uma opção
                                                                     </option>
@@ -627,6 +637,7 @@ export const CadastroFormFormik = ({
                                                                     cpf_cnpj={props.values.cpf_cnpj_fornecedor}
                                                                     eh_despesa_com_comprovacao_fiscal={eh_despesa_com_comprovacao_fiscal}
                                                                     eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
+                                                                    bloqueiaRateioEstornado={bloqueiaRateioEstornado}
                                                                 />
                                                             ) :
                                                             rateio.aplicacao_recurso && rateio.aplicacao_recurso === 'CAPITAL' ? (
@@ -644,6 +655,7 @@ export const CadastroFormFormik = ({
                                                                     exibeMsgErroValorOriginal={exibeMsgErroValorOriginal}
                                                                     eh_despesa_com_comprovacao_fiscal={eh_despesa_com_comprovacao_fiscal}
                                                                     eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
+                                                                    bloqueiaRateioEstornado={bloqueiaRateioEstornado}
                                                                 />
                                                             ) : null
                                                         }
@@ -662,6 +674,7 @@ export const CadastroFormFormik = ({
                                                                     errors={errors}
                                                                     setFieldValue={setFieldValue}
                                                                     despesasTabelas={despesasTabelas}
+                                                                    bloqueiaRateioEstornado={bloqueiaRateioEstornado}
                                                                 />
                                                             </div>
                                                         </div>
