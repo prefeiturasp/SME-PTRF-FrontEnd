@@ -113,7 +113,8 @@ export const CadastroFormFormik = ({
                                        handleChangeCheckBoxOutrosMotivosPagamentoAntecipado,
                                        handleChangeTxtOutrosMotivosPagamentoAntecipado,
                                        bloqueiaLinkCadastrarEstorno,
-                                       bloqueiaRateioEstornado
+                                       bloqueiaRateioEstornado,
+                                       setShowPeriodoFechadoImposto,
                                    }) => {
     return (
         <>
@@ -799,7 +800,7 @@ export const CadastroFormFormik = ({
                                     <SaldoInsuficiente
                                         saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
                                         show={showSaldoInsuficiente}
-                                        handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                                        handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
                                         onSaldoInsuficienteTrue={() => onSubmit(values, setFieldValue)}
                                     />
                                 </section>
@@ -807,7 +808,7 @@ export const CadastroFormFormik = ({
                                     <SaldoInsuficienteConta
                                         saldosInsuficientesDaConta={saldosInsuficientesDaConta}
                                         show={showSaldoInsuficienteConta}
-                                        handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta)}
+                                        handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
                                         onSaldoInsuficienteContaTrue={() => onSubmit(values, setFieldValue)}
                                     />
                                 </section>
