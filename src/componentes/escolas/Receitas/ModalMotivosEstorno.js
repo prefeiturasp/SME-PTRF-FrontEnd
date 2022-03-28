@@ -34,7 +34,7 @@ const ModalMotivosEstorno = ({
             <form>
                 <div className='row'>
                     <div className="col-12 mt-2">
-                        <p>Título Motivos Estorno</p>
+                        <p>Motivos para a existência do estorno</p>
                         <label htmlFor="ressalvas">Motivo(s)</label>
                         <br/>
                         <div className="multiselect-demo">
@@ -110,7 +110,7 @@ const ModalMotivosEstorno = ({
     return (
         <ModalFormBodyText
             show={show}
-            titulo="Motivos de Estorno"
+            titulo="Motivos Estorno"
             onHide={handleClose}
             bodyText={bodyTextarea()}
         />
