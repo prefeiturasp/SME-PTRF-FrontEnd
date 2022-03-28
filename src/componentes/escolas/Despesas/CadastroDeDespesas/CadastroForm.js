@@ -264,10 +264,6 @@ export const CadastroForm = ({verbo_http}) => {
         return erros;
     }, [aux])
 
-    const eh_despesa_sem_comprovacao_fiscal = (cpf_cnpj) => {
-        return cpf_cnpj === "00.000.000/0000-00";
-    }
-
     const removeRateio = (remove, index, rateio) => {
         if(rateio && rateio.estorno && rateio.estorno.uuid){
             setShowDeletarRateioComEstorno(true);
@@ -719,8 +715,6 @@ export const CadastroForm = ({verbo_http}) => {
                     setShowModalMotivoPagamentoAntecipado(true)
                     setSelectMotivosPagamentoAntecipado(despesaContext.initialValues.motivos_pagamento_antecipado)
                     setTxtOutrosMotivosPagamentoAntecipado(despesaContext.initialValues.outros_motivos_pagamento_antecipado)
-                    // let estadoCheckBoxOutrosMotivos = !!despesaContext.initialValues.outros_motivos_pagamento_antecipado.trim();
-                    // setCheckBoxOutrosMotivosPagamentoAntecipado(estadoCheckBoxOutrosMotivos)
                     return true
                 }
                 return false
@@ -750,6 +744,24 @@ export const CadastroForm = ({verbo_http}) => {
         return motivos
     }
 
+    const bloqueiaLinkCadastrarEstorno = (rateio) => {
+        let bloqueia_link = true;
+
+        if(rateio.conta_associacao && rateio.acao_associacao && rateio.aplicacao_recurso && trataNumericos(rateio.valor_rateio) !== 0){
+            bloqueia_link = false;
+        }
+
+        return bloqueia_link;
+    }
+
+    const bloqueiaRateioEstornado = (rateio) => {
+        if(rateio.estorno && rateio.estorno.uuid){
+            return true;
+        }
+
+        return false;
+    }
+
     return (
         <>
             {loading ?
@@ -770,7 +782,6 @@ export const CadastroForm = ({verbo_http}) => {
                         setFormErrors={setFormErrors}
                         validacoesPersonalizadas={validacoesPersonalizadas}
                         formErrors={formErrors}
-                        eh_despesa_sem_comprovacao_fiscal={eh_despesa_sem_comprovacao_fiscal}
                         despesasTabelas={despesasTabelas}
                         numeroDocumentoReadOnly={numeroDocumentoReadOnly}
                         aux={aux}
@@ -843,6 +854,8 @@ export const CadastroForm = ({verbo_http}) => {
                         txtOutrosMotivosPagamentoAntecipado={txtOutrosMotivosPagamentoAntecipado}
                         handleChangeCheckBoxOutrosMotivosPagamentoAntecipado={handleChangeCheckBoxOutrosMotivosPagamentoAntecipado}
                         handleChangeTxtOutrosMotivosPagamentoAntecipado={handleChangeTxtOutrosMotivosPagamentoAntecipado}
+                        bloqueiaLinkCadastrarEstorno={bloqueiaLinkCadastrarEstorno}
+                        bloqueiaRateioEstornado={bloqueiaRateioEstornado}
                     />
             </>
             }

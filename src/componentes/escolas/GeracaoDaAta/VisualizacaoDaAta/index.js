@@ -1,16 +1,25 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import "../geracao-da-ata.scss"
 import {TopoComBotoes} from "./TopoComBotoes";
 import {TextoDinamicoSuperior} from "./TextoDinamicoSuperior";
 import {TabelaDinamica} from "./TabelaDinamica";
 import {TextoDinamicoInferior} from "./TextoDinamicoInferior";
-import { TabelaPresentes } from "./TabelaPresentes";
+import {TabelaPresentes} from "./TabelaPresentes";
 import {TextoCopiado} from "../../../../utils/Modais";
 import {getInfoAta, getPreviaInfoAta} from "../../../../services/escolas/PrestacaoDeContas.service";
-import {getTabelasAtas, getAtas} from "../../../../services/escolas/AtasAssociacao.service";
-import {getDespesasPorFiltros, getPrestacaoDeContasDetalhe, getTiposDevolucao, getPreviaPrestacaoDeContasDetalhe} from "../../../../services/dres/PrestacaoDeContas.service";
-import { getListaPresentesAgrupados } from "../../../../services/escolas/PresentesAta.service";
+import {
+    getTabelasAtas,
+    getAtas,
+    getDespesasComPagamentoAntecipado
+} from "../../../../services/escolas/AtasAssociacao.service";
+import {
+    getDespesasPorFiltros,
+    getPrestacaoDeContasDetalhe,
+    getTiposDevolucao,
+    getPreviaPrestacaoDeContasDetalhe
+} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getListaPresentesAgrupados} from "../../../../services/escolas/PresentesAta.service";
 import moment from "moment";
 import {exibeDataPT_BR, trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {getDespesa, getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
@@ -21,7 +30,10 @@ import {ASSOCIACAO_UUID} from "../../../../services/auth.service";
 import TabelaRepassesPendentes from "./TabelaRepassesPendentes";
 
 // Hooks Personalizados
-import {useCarregaRepassesPendentesPorPeriodoAteAgora} from "../../../../hooks/Globais/useCarregaRepassesPendentesPorPeriodoAteAgora";
+import {
+    useCarregaRepassesPendentesPorPeriodoAteAgora
+} from "../../../../hooks/Globais/useCarregaRepassesPendentesPorPeriodoAteAgora";
+import TabelaDespesasComPagamentoAntecipado from "./TabelaDespesasComPagamentoAntecipado";
 
 moment.updateLocale('pt', {
     months: [
@@ -58,6 +70,7 @@ export const VisualizacaoDaAta = () => {
     const [dadosAta, setDadosAta] = useState({});
     const [prestacaoDeContasDetalhe, setPrestacaoDeContasDetalhe] = useState({});
     const [listaPresentes, setListaPresentes] = useState([]);
+    const [despesasComPagamentoAntecipadoNoPeriodo, setDespesasComPagamentoAntecipadoNoPeriodo] = useState([]);
 
     const periodo_prestacao_de_contas = JSON.parse(localStorage.getItem('periodoPrestacaoDeConta'));
     const periodoUuid = periodo_prestacao_de_contas ? periodo_prestacao_de_contas.periodo_uuid : ""
@@ -68,13 +81,24 @@ export const VisualizacaoDaAta = () => {
     const repassesPendentes = useCarregaRepassesPendentesPorPeriodoAteAgora(associacaoUuid, periodoUuid)
 
 
+    const carregaDespesasComPagamentoAntecipadoNoPeriodo = useCallback(async () => {
+        if (uuid_ata) {
+            let despesas = await getDespesasComPagamentoAntecipado(uuid_ata)
+            setDespesasComPagamentoAntecipadoNoPeriodo(despesas)
+        }
+    }, [uuid_ata])
+
+    useEffect(() => {
+        carregaDespesasComPagamentoAntecipadoNoPeriodo()
+    }, [carregaDespesasComPagamentoAntecipadoNoPeriodo])
+
+
     useEffect(() => {
         const infoAta = async () => {
             let info_ata = null
             if (prestacaoContaUuid) {
                 info_ata = await getInfoAta();
-            }
-            else if (periodoUuid){
+            } else if (periodoUuid) {
                 info_ata = await getPreviaInfoAta(associacaoUuid, periodoUuid);
             }
             setInfoAta(info_ata);
@@ -105,7 +129,7 @@ export const VisualizacaoDaAta = () => {
         let prestacao = null
         if (dados_ata.prestacao_conta) {
             prestacao = await getPrestacaoDeContasDetalhe(dados_ata.prestacao_conta);
-        } else if(periodoUuid){
+        } else if (periodoUuid) {
             prestacao = await getPreviaPrestacaoDeContasDetalhe(periodoUuid);
         }
 
@@ -157,8 +181,7 @@ export const VisualizacaoDaAta = () => {
     const handleClickEditarAta = () => {
         if (dadosAta.tipo_ata === 'RETIFICACAO' && prestacaoDeContasDetalhe && prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao && prestacaoDeContasDetalhe.devolucoes_ao_tesouro_da_prestacao.length > 0) {
             setShowReverDevolucoesAoTesouro(true);
-        }
-        else{
+        } else {
             irParaEdicaoAta();
         }
     };
@@ -211,9 +234,9 @@ export const VisualizacaoDaAta = () => {
             let mes_por_extenso = moment(new Date(data), "YYYY-MM-DD").add(1, 'days').format("MMMM");
             let ano_por_extenso = numero.porExtenso(moment(new Date(data), "DD/MM/YYYY").add(1, 'days').year());
             let data_por_extenso
-            if (dia_por_extenso === 'um'){
+            if (dia_por_extenso === 'um') {
                 data_por_extenso = "No primeiro dia do mês de " + mes_por_extenso + " de " + ano_por_extenso;
-            }else {
+            } else {
                 data_por_extenso = "Aos " + dia_por_extenso + " dias do mês de " + mes_por_extenso + " de " + ano_por_extenso;
             }
             return data_por_extenso;
@@ -367,7 +390,7 @@ export const VisualizacaoDaAta = () => {
     const validateFormDevolucaoAoTesouro = async (values) => {
         const errors = {};
 
-        if (values.devolucoes_ao_tesouro_da_prestacao.length > 0){
+        if (values.devolucoes_ao_tesouro_da_prestacao.length > 0) {
             values.devolucoes_ao_tesouro_da_prestacao.map((devolucao) => {
                 if (!devolucao.data || !devolucao.despesa || devolucao.devolucao_total === '' /*|| !devolucao.motivo*/ || !devolucao.tipo || !devolucao.valor) {
                     setCamposObrigatorios(true);
@@ -376,7 +399,7 @@ export const VisualizacaoDaAta = () => {
                     setCamposObrigatorios(false)
                 }
             });
-        }else {
+        } else {
             setCamposObrigatorios(false)
         }
         return errors;
@@ -396,7 +419,7 @@ export const VisualizacaoDaAta = () => {
                     devolucao.valor = devolucao.valor ? trataNumericos(devolucao.valor) : '';
                     devolucao.devolucao_total = devolucao.devolucao_total === 'true' ? true : false;
                 })
-            }else{
+            } else {
                 devolucao_ao_tesouro_tratado = [];
                 setInitialFormDevolucaoAoTesouro(initialDevolucaoAoTesouro);
                 setDespesas([])
@@ -458,7 +481,7 @@ export const VisualizacaoDaAta = () => {
                 {dadosAta && Object.entries(dadosAta).length > 0 && dadosAta.tipo_ata === 'RETIFICACAO' &&
                     <>
                         {/*So exibe as retificações se houver*/}
-                        { stateFormEditarAta && stateFormEditarAta.retificacoes &&
+                        {stateFormEditarAta && stateFormEditarAta.retificacoes &&
                             <div>
                                 <p className='mt-3'><strong>Retificações:</strong></p>
                                 <p>{stateFormEditarAta.retificacoes}</p>
@@ -493,6 +516,14 @@ export const VisualizacaoDaAta = () => {
 
                     </>
                 }
+                {despesasComPagamentoAntecipadoNoPeriodo && despesasComPagamentoAntecipadoNoPeriodo.length > 0 &&
+                    <>
+                        <p className='titulo-tabela-acoes mt-5'>Justificativas de pagamento com data anterior à data do documento fiscal</p>
+                        <TabelaDespesasComPagamentoAntecipado
+                            despesasComPagamentoAntecipadoNoPeriodo={despesasComPagamentoAntecipadoNoPeriodo}
+                        />
+                    </>
+                }
                 <br/>
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <TextoDinamicoInferior
@@ -513,14 +544,14 @@ export const VisualizacaoDaAta = () => {
                 }
 
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
-                listaPresentes &&
-                listaPresentes.presentes_nao_membros &&
-                listaPresentes.presentes_nao_membros.length > 0 &&
+                    listaPresentes &&
+                    listaPresentes.presentes_nao_membros &&
+                    listaPresentes.presentes_nao_membros.length > 0 &&
                     <div className="mt-4">
                         <TabelaPresentes
                             titulo="Demais membros"
                             listaPresentes={listaPresentes.presentes_nao_membros}
-                       />
+                        />
                     </div>
                 }
 
@@ -532,7 +563,7 @@ export const VisualizacaoDaAta = () => {
                         <TabelaPresentes
                             titulo="Presentes"
                             listaPresentes={listaPresentes.presentes_ata_conselho_fiscal}
-                       />
+                        />
                     </div>
                 }
             </div>

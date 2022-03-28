@@ -77,3 +77,12 @@ input[data-state="invalid"] {
   text-indent: 1px;
   text-overflow: '';
 }
+
+.desabilita-link-estorno {
+  pointer-events: none;
+}
+
+.texto-rateio-estornado-bloqueado {
+  color: #B40C02;
+  font-weight: bold;
+}

@@ -6,7 +6,8 @@ import {
     deletarReceita,
     getReceita,
     getTabelasReceitaReceita,
-    getRepasses
+    getRepasses,
+    getListaMotivosEstorno
 } from '../../../../services/escolas/Receitas.service';
 import {getRateioPorUuid} from "../../../../services/escolas/RateiosDespesas.service";
 import {deleteDespesa, getDespesa} from "../../../../services/escolas/Despesas.service";
@@ -52,6 +53,8 @@ export const ReceitaForm = () => {
         referencia_devolucao: "",
         saida_do_recurso: "",
         rateio_estornado: "",
+        motivos_estorno: [],
+        outros_motivos_estorno: "",
     };
 
 
@@ -139,7 +142,9 @@ export const ReceitaForm = () => {
                         style: 'currency',
                         currency: 'BRL'
                     }) : "",
-                    rateio_estornado: rateio && rateio.uuid ? rateio.uuid : null
+                    rateio_estornado: rateio && rateio.uuid ? rateio.uuid : null,
+                    motivos_estorno: [],
+                    outros_motivos_estorno: "",
                 };
 
                 setInitialValue(init_rateio)
@@ -172,6 +177,49 @@ export const ReceitaForm = () => {
     }, [carregaDespesaPorUuid])
 
     // ************* Fim Modo Estorno
+
+    // ************* Motivos Estorno
+    const [showModalMotivoEstorno, setShowModalMotivoEstorno] = useState(false);
+    const [listaMotivosEstorno, setListaMotivosEstorno] = useState([])
+    const [selectMotivosEstorno, setSelectMotivosEstorno] = useState([]);
+    const [checkBoxOutrosMotivosEstorno, setCheckBoxOutrosMotivosEstorno] = useState(false);
+    const [txtOutrosMotivosEstorno, setTxtOutrosMotivosEstorno] = useState('');
+
+    useEffect(()=>{
+        setCheckBoxOutrosMotivosEstorno(!!initialValue.outros_motivos_estorno.trim())
+    }, [initialValue.outros_motivos_estorno])
+
+    const carregaListaMotivosEstorno = useCallback(async ()=>{
+        let motivos = await getListaMotivosEstorno()
+        setListaMotivosEstorno(motivos)
+    }, [])
+
+    useEffect(()=>{
+        carregaListaMotivosEstorno()
+    }, [carregaListaMotivosEstorno])
+
+    const handleChangeCheckBoxOutrosMotivosEstorno = (event) =>{
+        setCheckBoxOutrosMotivosEstorno(event.target.checked);
+        if (!event.target.checked){
+            setCheckBoxOutrosMotivosEstorno(false);
+            setTxtOutrosMotivosEstorno("")
+        }
+    };
+
+    const handleChangeTxtOutrosMotivosEstorno = (event) =>{
+        setTxtOutrosMotivosEstorno(event.target.value)
+    };
+
+    const montaPayloadMotivosEstorno = () =>{
+        let motivos = [];
+        if (selectMotivosEstorno && selectMotivosEstorno.length > 0){
+            selectMotivosEstorno.map((motivo)=>
+                motivos.push(motivo.id)
+            )
+        }
+        return motivos
+    }
+    // ************* FIM Motivos Estorno
 
     const showBotaoCadastrarSaida = useCallback((uuid_acao_associacao, values) => {
         if (tabelas.acoes_associacao !== undefined && tabelas.acoes_associacao.length > 0 && uuid_acao_associacao && values && values.tipo_receita) {
@@ -222,11 +270,16 @@ export const ReceitaForm = () => {
                         style: 'currency',
                         currency: 'BRL'
                     }) : "",
-                    rateio_estornado: resp.rateio_estornado && resp.rateio_estornado.uuid ? resp.rateio_estornado.uuid : null
+                    rateio_estornado: resp.rateio_estornado && resp.rateio_estornado.uuid ? resp.rateio_estornado.uuid : null,
+                    motivos_estorno: resp.motivos_estorno,
+                    outros_motivos_estorno: resp.outros_motivos_estorno,
                 };
                 setObjetoParaComparacao(init);
                 setInitialValue(init);
                 setReceita(resp);
+                setSelectMotivosEstorno(resp.motivos_estorno)
+                setCheckBoxOutrosMotivosEstorno(resp.outros_motivos_estorno)
+                setTxtOutrosMotivosEstorno(resp.outros_motivos_estorno)
                 if (resp && resp.acao_associacao && resp.acao_associacao.uuid){
                     setUuidReceita(uuid)
                     showBotaoCadastrarSaida(resp.acao_associacao.uuid, init)
@@ -256,12 +309,17 @@ export const ReceitaForm = () => {
     }, [tabelas, initialValue.tipo_receita]);
 
     const servicoDeVerificacoes = (e, values, errors) =>{
-
         // Valida se despesa é do tipo Repasse
         if (!exibirDeleteDespesa) {
             e.preventDefault();
             setShowReceitaRepasse(true)
         }
+
+        if (values.tipo_receita === idTipoReceitaEstorno && Object.keys(errors).length === 0 && values.data){
+            e.preventDefault()
+            setShowModalMotivoEstorno(true)
+        }
+
     };
 
     const exibeMsgSalvoComSucesso = (payload) =>{
@@ -284,7 +342,7 @@ export const ReceitaForm = () => {
 
     }
 
-    const onSubmit = async (values) => {
+    const onSubmit = async (values, errors) => {
 
         // Validando e ou removendo e_devolucao
         if (!verificaSeDevolucao(values.tipo_receita)){
@@ -297,6 +355,9 @@ export const ReceitaForm = () => {
         values.valor = round(trataNumericos(values.valor), 2);
         values.data = moment(values.data).format("YYYY-MM-DD");
         values.conferido = true;
+        values.motivos_estorno = montaPayloadMotivosEstorno()
+        values.outros_motivos_estorno = txtOutrosMotivosEstorno.trim() && checkBoxOutrosMotivosEstorno ? txtOutrosMotivosEstorno : ""
+
         const payload = {
             ...values,
             associacao: localStorage.getItem(ASSOCIACAO_UUID),
@@ -330,6 +391,7 @@ export const ReceitaForm = () => {
             });
         }
         setLoading(false);
+
     };
 
     const cadastrar = async (payload) => {
@@ -871,7 +933,15 @@ export const ReceitaForm = () => {
                         readOnlyEstorno={readOnlyEstorno}
                         despesa={despesa}
                         idTipoReceitaEstorno={idTipoReceitaEstorno}
-
+                        showModalMotivoEstorno={showModalMotivoEstorno}
+                        setShowModalMotivoEstorno={setShowModalMotivoEstorno}
+                        listaMotivosEstorno={listaMotivosEstorno}
+                        selectMotivosEstorno={selectMotivosEstorno}
+                        setSelectMotivosEstorno={setSelectMotivosEstorno}
+                        checkBoxOutrosMotivosEstorno={checkBoxOutrosMotivosEstorno}
+                        txtOutrosMotivosEstorno={txtOutrosMotivosEstorno}
+                        handleChangeCheckBoxOutrosMotivosEstorno={handleChangeCheckBoxOutrosMotivosEstorno}
+                        handleChangeTxtOutrosMotivosEstorno={handleChangeTxtOutrosMotivosEstorno}
                     />
                     <section>
                         <CancelarModalReceitas
