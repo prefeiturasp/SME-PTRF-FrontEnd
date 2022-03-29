@@ -116,6 +116,12 @@ export const CadastroFormFormik = ({
                                        bloqueiaRateioEstornado,
                                        setShowPeriodoFechadoImposto,
                                    }) => {
+
+    // Corrigi Cálculo validação dos valores
+    const setaValorRealizado = (values, valor) =>{
+        values.valor_total = valor
+    }
+
     return (
         <>
             <Formik
@@ -352,8 +358,9 @@ export const CadastroFormFormik = ({
                                             className={`${trataNumericos(props.values.valor_total) === 0 && despesaContext.verboHttp === "PUT" && "is_invalid "} ${trataNumericos(props.values.valor_total) === 0 && "despesa_incompleta"} form-control`}
                                             selectAllOnFocus={true}
                                             onChangeEvent={(e) => {
+                                                setaValorRealizado(props.values, e.target.value)
                                                 props.handleChange(e);
-                                                aux.setValorRealizado(setFieldValue, e.target.value);
+                                                //aux.setValorRealizado(setFieldValue, e.target.value);
                                             }}
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                         />
