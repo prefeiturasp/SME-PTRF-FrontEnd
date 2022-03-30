@@ -103,6 +103,12 @@ export const PainelParametrizacoes = () => {
             url: 'parametro-tipos-receita',
             icone: IconeTiposReceita,
             permissoes: ['access_painel_parametrizacoes'],
+        },
+        {
+            parametro: 'Motivos de Estorno',
+            url: 'parametro-motivos-estorno',
+            icone: IconeTiposConta,
+            permissoes: ['access_painel_parametrizacoes'],
         }
     ];
 
