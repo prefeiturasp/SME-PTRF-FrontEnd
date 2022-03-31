@@ -270,3 +270,24 @@ export const patchAlterarFornecedor = async (fornecedores_id, payload) => {
 export const deleteFornecedor = async (fornecedores_id) => {
     return (await api.delete(`/api/fornecedores/${fornecedores_id}/`, authHeader))
 };
+
+// Motivos estorno
+export const getMotivosEstorno = async () => {
+    return (await api.get(`/api/motivos-estorno/`, authHeader)).data
+};
+
+export const getFiltrosMotivosEstorno = async (motivo) => {
+    return (await api.get(`/api/motivos-estorno/?motivo=${motivo}`, authHeader)).data
+};
+
+export const postCreateMotivoEstorno = async (payload) => {
+    return (await api.post(`/api/motivos-estorno/`, payload, authHeader)).data
+};
+
+export const patchAlterarMotivoEstorno = async (motivo_uuid, payload) => {
+    return (await api.patch(`/api/motivos-estorno/${motivo_uuid}/`, payload, authHeader)).data
+};
+
+export const deleteMotivoEstorno = async (motivo_uuid) => {
+    return (await api.delete(`/api/motivos-estorno/${motivo_uuid}/`, authHeader))
+};
