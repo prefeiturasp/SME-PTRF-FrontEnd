@@ -516,14 +516,15 @@ export const VisualizacaoDaAta = () => {
 
                     </>
                 }
-                {despesasComPagamentoAntecipadoNoPeriodo && despesasComPagamentoAntecipadoNoPeriodo.length > 0 &&
+                {/* Comentando bloco de pagamento antecipados, caso o bloco realmente for excluido, remover o state "despesasComPagamentoAntecipadoNoPeriodo" */}
+                {/* {despesasComPagamentoAntecipadoNoPeriodo && despesasComPagamentoAntecipadoNoPeriodo.length > 0 &&
                     <>
                         <p className='titulo-tabela-acoes mt-5'>Justificativas de pagamento com data anterior à data do documento fiscal</p>
                         <TabelaDespesasComPagamentoAntecipado
                             despesasComPagamentoAntecipadoNoPeriodo={despesasComPagamentoAntecipadoNoPeriodo}
                         />
                     </>
-                }
+                } */}
                 <br/>
                 {dadosAta && Object.entries(dadosAta).length > 0 &&
                     <TextoDinamicoInferior
