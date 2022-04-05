@@ -225,13 +225,8 @@ export const CadastroFormFormik = ({
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values)}
                                         >
                                             <option value="">Selecione o tipo</option>
-                                            {props.values.uuid ? (
-                                                despesasTabelas && despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.length > 0 && despesasTabelas.tipos_documento.map(item =>
-                                                    <option disabled={!item.documento_comprobatorio_de_despesa} key={item.id} value={item.id}>{item.nome}</option>
-                                                )
-                                            ):
-                                                despesasTabelas && despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.length > 0 && despesasTabelas.tipos_documento.filter(element => element.documento_comprobatorio_de_despesa).map(item =>
-                                                <option key={item.id} value={item.id}>{item.nome}</option>
+                                            {despesasTabelas && despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.length > 0 && despesasTabelas.tipos_documento.map(item =>
+                                                <option className={!item.documento_comprobatorio_de_despesa ? 'esconde-especificacao-material-servico' : ''} key={item.id} value={item.id}>{item.nome}</option>
                                             )}
                                         </select>
                                     </div>
