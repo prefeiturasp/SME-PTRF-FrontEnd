@@ -221,18 +221,18 @@ export const CadastroFormFormik = ({
                                             onBlur={props.handleBlur}
                                             name='tipo_documento'
                                             id='tipo_documento'
-                                            className={
-                                                !eh_despesa_com_comprovacao_fiscal(props.values)
-                                                    ? "form-control"
-                                                    : `${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.tipo_documento && "despesa_incompleta"} form-control`
-                                            }
+                                            className={!eh_despesa_com_comprovacao_fiscal(props.values) ? "form-control" : `${!props.values.tipo_documento && despesaContext.verboHttp === "PUT" && "is_invalid "} ${!props.values.tipo_documento && "despesa_incompleta"} form-control`}
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || !eh_despesa_com_comprovacao_fiscal(props.values)}
                                         >
-                                            <option key={0} value="">Selecione o tipo</option>
-                                            {despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.map(item =>
+                                            <option value="">Selecione o tipo</option>
+                                            {props.values.uuid ? (
+                                                despesasTabelas && despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.length > 0 && despesasTabelas.tipos_documento.map(item =>
+                                                    <option disabled={!item.documento_comprobatorio_de_despesa} key={item.id} value={item.id}>{item.nome}</option>
+                                                )
+                                            ):
+                                                despesasTabelas && despesasTabelas.tipos_documento && despesasTabelas.tipos_documento.length > 0 && despesasTabelas.tipos_documento.filter(element => element.documento_comprobatorio_de_despesa).map(item =>
                                                 <option key={item.id} value={item.id}>{item.nome}</option>
-                                            )
-                                            }
+                                            )}
                                         </select>
                                     </div>
 
@@ -564,7 +564,7 @@ export const CadastroFormFormik = ({
                                                                                         }
                                                                                     }
                                                                                 }
-                                                                                className={`btn btn-link btn-remover-despesa mr-2 d-flex align-items-center ${bloqueiaLinkCadastrarEstorno(rateio) ? 'desabilita-link-estorno' : ''}`} 
+                                                                                className={`btn btn-link btn-remover-despesa mr-2 d-flex align-items-center ${bloqueiaLinkCadastrarEstorno(rateio) ? 'desabilita-link-estorno' : ''}`}
                                                                                 disabled={bloqueiaLinkCadastrarEstorno(rateio)}
                                                                             >
                                                                                 Cadastrar estorno
