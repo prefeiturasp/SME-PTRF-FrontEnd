@@ -5,16 +5,13 @@ import {
     ModalBootstrapSaldoInsuficiente,
     ModalBootstrapTipoRecursoNaoAceito,
     ModalBootstrapSaldoInsuficienteDaconta,
-    ModalBootstrapFormMembros,
     ModalBootstrapFormMeusDadosSenha,
     ModalBootstrapFormMeusDadosEmail
 } from "../componentes/Globais/ModalBootstrap";
 import {FormAlterarSenha} from "../componentes/Globais/EdicaoDeSenha/FormAlterarSenha";
 import {TextoValidacaoSenha} from "../componentes/Globais/MedidorForcaSenha/textoValidacaoSenha";
 import {FormAlterarEmail} from "../componentes/Globais/FormAlterarEmail";
-import {Formik} from 'formik';
-import {YupSignupSchemaMembros} from "./ValidacoesAdicionaisFormularios";
-import {visoesService} from "../services/visoes.service";
+
 
 export const AvisoCapitalModal = (propriedades) => {
     return (
@@ -294,8 +291,7 @@ export const TipoAplicacaoRecursoNaoAceito = (propriedades) => {
                                 {item.mensagem}
                             </div>
                         </div>
-
-                        <hr></hr>
+                        <hr/>
                     </Fragment>
                 )}
             </>

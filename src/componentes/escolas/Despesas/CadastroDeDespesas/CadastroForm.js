@@ -45,12 +45,9 @@ export const CadastroForm = ({verbo_http}) => {
     const [showAvisoCapital, setShowAvisoCapital] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
     const [textoModalDelete, setShowTextoModalDelete] = useState('')
-    const [showSaldoInsuficiente, setShowSaldoInsuficiente] = useState(false);
-    const [showSaldoInsuficienteConta, setShowSaldoInsuficienteConta] = useState(false);
     const [showPeriodoFechado, setShowPeriodoFechado] = useState(false);
     const [showPeriodoFechadoImposto, setShowPeriodoFechadoImposto] = useState(false);
     const [showErroGeral, setShowErroGeral] = useState(false);
-    const [showDespesaCadastrada, setShowDespesaCadastrada] = useState(false);
     const [especificaoes_capital, set_especificaoes_capital] = useState("");
     const [especificacoes_custeio, set_especificacoes_custeio] = useState([]);
     const [btnSubmitDisable, setBtnSubmitDisable] = useState(false);
@@ -64,9 +61,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [exibeMsgErroValorRecursos, setExibeMsgErroValorRecursos] = useState(false);
     const [exibeMsgErroValorOriginal, setExibeMsgErroValorOriginal] = useState(false);
     const [numeroDocumentoReadOnly, setNumeroDocumentoReadOnly] = useState(false);
-    const [showDespesaConferida, setShowDespesaConferida] = useState(false);
     const [mensagensAceitaCusteioCapital, setMensagensAceitaCusteioCapital] = useState([]);
-    const [showMensagemAceitaCusteioCapital, setShowMensagemAceitaCusteioCapital] = useState(false);
     const [showDeletarRateioComEstorno, setShowDeletarRateioComEstorno] = useState(false);
 
     const [showRetencaoImposto, setShowRetencaoImposto] = useState(false);
@@ -130,7 +125,6 @@ export const CadastroForm = ({verbo_http}) => {
     // Validações adicionais
     const [formErrors, setFormErrors] = useState({});
     const [enviarFormulario, setEnviarFormulario] = useState(true);
-    const [showModalDespesaIncompleta, setShowModalDespesaIncompleta] = useState(false);
 
     const validacoesPersonalizadas = useCallback(async (values, setFieldValue, origem=null) => {
 
@@ -293,7 +287,7 @@ export const CadastroForm = ({verbo_http}) => {
                 let aceita_custeio = eval('despesasTabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_custeio');
                 
                 if(!aceita_selecionado && !aceita_capital && !aceita_custeio){
-                    let mensagem = `A ação selecionada não aceita despesas de nenhum tipo(capital ou custeio). Você deseja confirmar o cadastro da despesa de ${id_categoria_receita_lower} nesta ação ?`
+                    let mensagem = `A ação selecionada não aceita despesas de nenhum tipo (capital ou custeio). Você deseja confirmar o cadastro da despesa de ${id_categoria_receita_lower} nesta ação?`
                     let objeto = {
                         mensagem: mensagem,
                         despesa: index
@@ -301,7 +295,7 @@ export const CadastroForm = ({verbo_http}) => {
                     mensagens.push(objeto);
                 }
                 else if(!aceita_selecionado && aceita_capital){
-                    let mensagem = `A ação selecionada aceita apenas despesas de capital. Você deseja confirmar o cadastro da despesa de ${id_categoria_receita_lower} nesta ação ?`
+                    let mensagem = `A ação selecionada aceita apenas despesas de capital. Você deseja confirmar o cadastro da despesa de ${id_categoria_receita_lower} nesta ação?`
                     let objeto = {
                         mensagem: mensagem,
                         despesa: index
@@ -309,7 +303,7 @@ export const CadastroForm = ({verbo_http}) => {
                     mensagens.push(objeto);
                 }
                 else if(!aceita_selecionado && aceita_custeio){
-                    let mensagem = `A ação selecionada aceita apenas despesas de custeio. Você deseja confirmar o cadastro da despesa de ${id_categoria_receita_lower} nesta ação ?`
+                    let mensagem = `A ação selecionada aceita apenas despesas de custeio. Você deseja confirmar o cadastro da despesa de ${id_categoria_receita_lower} nesta ação?`
                     let objeto = {
                         mensagem: mensagem,
                         despesa: index
@@ -322,90 +316,6 @@ export const CadastroForm = ({verbo_http}) => {
         return mensagens;
     }
 
-    const onShowMensagemNaoAceitaTipoRecurso = (values, erros) => {
-        if (Object.entries(erros).length === 0) {
-            let acoes = acaoNaoAceitaTipoRecurso(values);
-
-            if(acoes.length > 0){
-                setShowMensagemAceitaCusteioCapital(true);
-            }
-        }
-    }
-
-    const onShowSaldoInsuficiente = async (values, errors, setFieldValue) => {
-        values.despesa_incompleta = document.getElementsByClassName("despesa_incompleta").length
-
-        if (errors && errors.valor_recusos_acoes) {
-            setExibeMsgErroValorRecursos(true)
-        } else {
-            setExibeMsgErroValorRecursos(false)
-        }
-
-        if (errors && errors.valor_original) {
-            setExibeMsgErroValorOriginal(true)
-        } else {
-            setExibeMsgErroValorOriginal(false)
-        }
-
-        validaPayloadDespesas(values);
-
-
-        if (Object.entries(errors).length === 0) {
-
-            setFormErrors(await validacoesPersonalizadas(values, setFieldValue));
-            let erros_personalizados = await validacoesPersonalizadas(values, setFieldValue)
-
-            if (values.despesa_incompleta > 0 && enviarFormulario && Object.keys(erros_personalizados).length === 0) {
-                let acoes = acaoNaoAceitaTipoRecurso(values);
-                if(acoes.length === 0){
-                    setShowModalDespesaIncompleta(true)
-                }
-            }else if (values.data_transacao) {
-                let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
-
-                if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente" ||
-                    retorno_saldo.situacao_do_saldo === "lancamento_anterior_implantacao") {
-                    setSaldosInsuficientesDaConta(retorno_saldo);
-                    setShowSaldoInsuficienteConta(true)
-
-                } else if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
-                    setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes);
-                    setShowSaldoInsuficiente(true);
-
-                    // Checando se despesa já foi conferida
-                } else if (values.rateios.find(element => element.conferido)) {
-                    setShowDespesaConferida(true)
-
-                    // Checando se despesa já foi cadastrada
-                } else if (values.tipo_documento && values.numero_documento) {
-                    try {
-                        let despesa_cadastrada = await getDespesaCadastrada(values.tipo_documento, values.numero_documento, values.cpf_cnpj_fornecedor, despesaContext.idDespesa);
-                        if (despesa_cadastrada.despesa_ja_lancada) {
-                            setShowDespesaCadastrada(true)
-                        } else {
-                            let acoes = acaoNaoAceitaTipoRecurso(values);
-                            if(acoes.length === 0){
-                                onSubmit(values, setFieldValue);
-                            }
-                        }
-                    } catch (e) {
-                        console.log("Erro ao buscar despesa cadastrada ", e);
-                    }
-                } else {
-                    
-                    let acoes = acaoNaoAceitaTipoRecurso(values);
-                    if(acoes.length === 0){
-                        onSubmit(values, setFieldValue);
-                    }
-                }
-            } else {
-                let acoes = acaoNaoAceitaTipoRecurso(values);
-                if(acoes.length === 0){
-                    onSubmit(values, setFieldValue);
-                }
-            }
-        }
-    };
 
 
     const onSubmit = async (values, setFieldValue) => {
@@ -420,7 +330,6 @@ export const CadastroForm = ({verbo_http}) => {
             setLoading(true);
 
             setBtnSubmitDisable(true);
-            setShowSaldoInsuficiente(false);
 
             validaPayloadDespesas(values, despesasTabelas);
 
@@ -688,9 +597,6 @@ export const CadastroForm = ({verbo_http}) => {
         setShowExcluirImposto(false);
     }
 
-
-
-    const [showModalMotivoPagamentoAntecipado, setShowModalMotivoPagamentoAntecipado] = useState(false);
     const [listaDemotivosPagamentoAntecipado, setListaDemotivosPagamentoAntecipado] = useState([]);
     const [selectMotivosPagamentoAntecipado, setSelectMotivosPagamentoAntecipado] = useState([]);
     const [checkBoxOutrosMotivosPagamentoAntecipado, setCheckBoxOutrosMotivosPagamentoAntecipado] = useState(false);
@@ -700,27 +606,6 @@ export const CadastroForm = ({verbo_http}) => {
         setCheckBoxOutrosMotivosPagamentoAntecipado(!!despesaContext.initialValues.outros_motivos_pagamento_antecipado.trim())
     }, [despesaContext.initialValues.outros_motivos_pagamento_antecipado])
 
-
-
-    const validaMotivosPagamentoAntecipado = async (e, values, erros) =>{
-
-        if (Object.entries(erros).length === 0) {
-            let data_transacao = values.data_transacao
-            let data_documento = values.data_documento
-
-            if (data_transacao && data_documento) {
-                if (data_transacao < data_documento) {
-                    let motivos = await getMotivosPagamentoAntecipado()
-                    setListaDemotivosPagamentoAntecipado(motivos)
-                    setShowModalMotivoPagamentoAntecipado(true)
-                    setSelectMotivosPagamentoAntecipado(despesaContext.initialValues.motivos_pagamento_antecipado)
-                    setTxtOutrosMotivosPagamentoAntecipado(despesaContext.initialValues.outros_motivos_pagamento_antecipado)
-                    return true
-                }
-                return false
-            }
-        }
-    }
 
     const handleChangeCheckBoxOutrosMotivosPagamentoAntecipado = (event) =>{
         setCheckBoxOutrosMotivosPagamentoAntecipado(event.target.checked);
@@ -760,6 +645,146 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
         return false;
+    }
+
+    const [modalState, setModalState] = useState("saldo-insuficiente-conta" | "acao-nao-aceita-tipo-de-aplicacao" | "saldo-insuficiente-acao" | "despesa-ja-demonstrada" | "despesa-ja-cadastrada" | "pagamento-antecipado" | "despesa-imcompleta" | "close" )
+
+    const verificaSaldoInsuficienteConta = async (values, errors, setFieldValue) =>{
+        validaPayloadDespesas(values);
+        if (values.data_transacao) {
+            let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
+            if (retorno_saldo.situacao_do_saldo === "saldo_conta_insuficiente" || retorno_saldo.situacao_do_saldo === "lancamento_anterior_implantacao") {
+                setSaldosInsuficientesDaConta(retorno_saldo);
+                setModalState('saldo-insuficiente-conta')
+            }else{
+                await serviceSubmitModais(values, setFieldValue, errors, 'saldo_insuficiente_conta_validado')
+            }
+        }else {
+            await serviceSubmitModais(values, setFieldValue, errors, 'saldo_insuficiente_conta_validado')
+        }
+    }
+
+    const verificaSeAcaoAceitaTipoDeRecurso = async (values, errors, setFieldValue) => {
+        let acoes = acaoNaoAceitaTipoRecurso(values);
+        if(acoes.length > 0){
+            setModalState('acao-nao-aceita-tipo-de-aplicacao');
+        }else {
+            await serviceSubmitModais(values, setFieldValue, errors, 'acao_nao_aceita_tipo_de_aplicacao_validado')
+        }
+    }
+
+    const verificaSaldoInsuficienteAcao = async (values, errors, setFieldValue) =>{
+        validaPayloadDespesas(values);
+        if (values.data_transacao) {
+            let retorno_saldo = await aux.verificarSaldo(values, despesaContext);
+            if (retorno_saldo.situacao_do_saldo === "saldo_insuficiente") {
+                setSaldosInsuficientesDaAcao(retorno_saldo.saldos_insuficientes);
+                setModalState('saldo-insuficiente-acao');
+            }else{
+                await serviceSubmitModais(values, setFieldValue, errors, 'saldo_insuficiente_acao_validado')
+            }
+        }else {
+            await serviceSubmitModais(values, setFieldValue, errors, 'saldo_insuficiente_acao_validado')
+        }
+    }
+
+    const verificaSeDespesaJaDemonstrada = async (values, errors, setFieldValue) =>{
+        validaPayloadDespesas(values);
+        if (values.rateios.find(element => element.conferido)) {
+            setModalState("despesa-ja-demonstrada")
+        }else{
+            await serviceSubmitModais(values, setFieldValue, errors, 'despesa_ja_demonstrada_validado')
+        }
+    }
+
+    const verificaSeDespesaJaCadastrada = async (values, errors, setFieldValue) =>{
+        validaPayloadDespesas(values);
+        if (values.tipo_documento && values.numero_documento && !values.uuid) {
+            let despesa_cadastrada = await getDespesaCadastrada(values.tipo_documento, values.numero_documento, values.cpf_cnpj_fornecedor, despesaContext.idDespesa);
+            if (despesa_cadastrada.despesa_ja_lancada) {
+                setModalState("despesa-ja-cadastrada")
+            }else {
+                await serviceSubmitModais(values, setFieldValue, errors, 'despesa_ja_cadastrada_validado')
+            }
+        }else{
+            await serviceSubmitModais(values, setFieldValue, errors, 'despesa_ja_cadastrada_validado')
+        }
+    }
+
+    const validaMotivosPagamentoAntecipado = async (values, errors, setFieldValue) =>{
+        validaPayloadDespesas(values);
+        let data_transacao = values.data_transacao
+        let data_documento = values.data_documento
+        if (data_transacao && data_documento) {
+            if (data_transacao < data_documento) {
+                let motivos = await getMotivosPagamentoAntecipado()
+                setListaDemotivosPagamentoAntecipado(motivos)
+                setSelectMotivosPagamentoAntecipado(despesaContext.initialValues.motivos_pagamento_antecipado)
+                setTxtOutrosMotivosPagamentoAntecipado(despesaContext.initialValues.outros_motivos_pagamento_antecipado)
+                setModalState('pagamento-antecipado')
+            }else {
+                await serviceSubmitModais(values, setFieldValue, errors, 'pagamento_antecipado_validado')
+            }
+        }else{
+            await serviceSubmitModais(values, setFieldValue, errors, 'pagamento_antecipado_validado')
+        }
+    }
+
+    const verificaSeDespesaIncompleta = async (values, errors, setFieldValue) =>{
+        values.despesa_incompleta = document.getElementsByClassName("despesa_incompleta").length
+        validaPayloadDespesas(values);
+        if (values.despesa_incompleta > 0 ) {
+            setModalState('despesa-imcompleta')
+        }else {
+            await serviceSubmitModais(values, setFieldValue, errors, 'despesa_incompleta_validado')
+        }
+    }
+
+    const serviceIniciaEncadeamentoDosModais = async (values, errors, setFieldValue) =>{
+
+        if (errors && errors.valor_recusos_acoes) {
+            setExibeMsgErroValorRecursos(true)
+        } else {
+            setExibeMsgErroValorRecursos(false)
+        }
+
+        if (errors && errors.valor_original) {
+            setExibeMsgErroValorOriginal(true)
+        } else {
+            setExibeMsgErroValorOriginal(false)
+        }
+
+        validaPayloadDespesas(values);
+
+        if (Object.entries(errors).length === 0) {
+            await verificaSaldoInsuficienteConta(values, errors, setFieldValue)
+        }
+    }
+
+    const serviceSubmitModais = async (values, setFieldValue, errors, msg) =>{
+
+        if (msg === 'saldo_insuficiente_conta_validado'){
+            await verificaSeAcaoAceitaTipoDeRecurso(values, errors, setFieldValue)
+
+        }else if(msg === 'acao_nao_aceita_tipo_de_aplicacao_validado'){
+            await verificaSaldoInsuficienteAcao(values, errors, setFieldValue)
+
+        }else if(msg === 'saldo_insuficiente_acao_validado'){
+            await verificaSeDespesaJaDemonstrada(values, errors, setFieldValue)
+
+        }else if(msg === 'despesa_ja_demonstrada_validado'){
+            await verificaSeDespesaJaCadastrada(values, errors, setFieldValue)
+
+        }else if(msg === 'despesa_ja_cadastrada_validado'){
+            await validaMotivosPagamentoAntecipado(values, errors, setFieldValue)
+
+        }else if(msg === 'pagamento_antecipado_validado'){
+            await verificaSeDespesaIncompleta(values, errors, setFieldValue)
+
+        }else if(msg === 'despesa_incompleta_validado'){
+            setModalState('close')
+            await onSubmit(values, setFieldValue);
+        }
     }
 
     return (
@@ -805,26 +830,10 @@ export const CadastroForm = ({verbo_http}) => {
                         setShowDelete={setShowDelete}
                         setShowTextoModalDelete={setShowTextoModalDelete}
                         btnSubmitDisable={btnSubmitDisable}
-                        onShowMensagemNaoAceitaTipoRecurso={onShowMensagemNaoAceitaTipoRecurso}
-                        onShowSaldoInsuficiente={onShowSaldoInsuficiente}
                         saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
-                        showSaldoInsuficiente={showSaldoInsuficiente}
                         setShow={setShow}
-                        setShowSaldoInsuficiente={setShowSaldoInsuficiente}
-                        setShowPeriodoFechado={setShowPeriodoFechado}
-                        setShowPeriodoFechadoImposto={setShowPeriodoFechadoImposto}
-                        setShowSaldoInsuficienteConta={setShowSaldoInsuficienteConta}
                         saldosInsuficientesDaConta={saldosInsuficientesDaConta}
-                        showSaldoInsuficienteConta={showSaldoInsuficienteConta}
-                        showDespesaCadastrada={showDespesaCadastrada}
-                        setShowDespesaCadastrada={setShowDespesaCadastrada}
-                        showDespesaConferida={showDespesaConferida}
-                        setShowDespesaConferida={setShowDespesaConferida}
-                        showModalDespesaIncompleta={showModalDespesaIncompleta}
-                        setShowModalDespesaIncompleta={setShowModalDespesaIncompleta}
                         mensagensAceitaCusteioCapital={mensagensAceitaCusteioCapital}
-                        showMensagemAceitaCusteioCapital={showMensagemAceitaCusteioCapital}
-                        setShowMensagemAceitaCusteioCapital={setShowMensagemAceitaCusteioCapital}
                         eh_despesa_com_comprovacao_fiscal={eh_despesa_com_comprovacao_fiscal}
                         eh_despesa_reconhecida={eh_despesa_reconhecida}
                         limpa_campos_sem_comprovacao_fiscal={limpa_campos_sem_comprovacao_fiscal}
@@ -845,9 +854,7 @@ export const CadastroForm = ({verbo_http}) => {
                         cancelarExclusaoImposto={cancelarExclusaoImposto}
                         mostraModalExcluirImposto={mostraModalExcluirImposto}
                         validaMotivosPagamentoAntecipado={validaMotivosPagamentoAntecipado}
-                        showModalMotivoPagamentoAntecipado={showModalMotivoPagamentoAntecipado}
                         listaDemotivosPagamentoAntecipado={listaDemotivosPagamentoAntecipado}
-                        setShowModalMotivoPagamentoAntecipado={setShowModalMotivoPagamentoAntecipado}
                         selectMotivosPagamentoAntecipado={selectMotivosPagamentoAntecipado}
                         setSelectMotivosPagamentoAntecipado={setSelectMotivosPagamentoAntecipado}
                         checkBoxOutrosMotivosPagamentoAntecipado={checkBoxOutrosMotivosPagamentoAntecipado}
@@ -856,27 +863,31 @@ export const CadastroForm = ({verbo_http}) => {
                         handleChangeTxtOutrosMotivosPagamentoAntecipado={handleChangeTxtOutrosMotivosPagamentoAntecipado}
                         bloqueiaLinkCadastrarEstorno={bloqueiaLinkCadastrarEstorno}
                         bloqueiaRateioEstornado={bloqueiaRateioEstornado}
+                        modalState={modalState}
+                        setModalState={setModalState}
+                        serviceIniciaEncadeamentoDosModais={serviceIniciaEncadeamentoDosModais}
+                        serviceSubmitModais={serviceSubmitModais}
                     />
             </>
             }
             <section>
                 <CancelarModal
                     show={show}
-                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
+                    handleClose={() => setShow(false)}
                     onCancelarTrue={() => aux.onCancelarTrue(setShow, setLoading, origem)}
                 />
             </section>
             <section>
                 <AvisoCapitalModal
                     show={showAvisoCapital}
-                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
+                    handleClose={() => setShowAvisoCapital(false)}
                 />
             </section>
             {despesaContext.idDespesa
                 ?
                 <DeletarModal
                     show={showDelete}
-                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
+                    handleClose={()=>setShowDelete(false)}
                     onDeletarTrue={() => onDeletarTrue(setShowDelete, setLoading, despesaContext, origem)}
                     texto={textoModalDelete}
                 />
@@ -885,19 +896,19 @@ export const CadastroForm = ({verbo_http}) => {
             <section>
                 <PeriodoFechado
                     show={showPeriodoFechado}
-                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
+                    handleClose={()=>setShowPeriodoFechado(false)}
                 />
             </section>
             <section>
                 <PeriodoFechadoImposto
                     show={showPeriodoFechadoImposto}
-                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
+                    handleClose={()=>setShowPeriodoFechadoImposto(false)}
                 />
             </section>
             <section>
                 <ErroGeral
                     show={showErroGeral}
-                    handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
+                    handleClose={()=>setShowErroGeral(false)}
                 />
             </section>
             <section>
