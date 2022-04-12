@@ -64,25 +64,9 @@ export const CadastroFormFormik = ({
                                        setShowDelete,
                                        setShowTextoModalDelete,
                                        btnSubmitDisable,
-                                       onShowMensagemNaoAceitaTipoRecurso,
-                                       onShowSaldoInsuficiente,
                                        saldosInsuficientesDaAcao,
-                                       showSaldoInsuficiente,
-                                       setShow,
-                                       setShowSaldoInsuficiente,
-                                       setShowPeriodoFechado,
-                                       setShowSaldoInsuficienteConta,
                                        saldosInsuficientesDaConta,
-                                       showSaldoInsuficienteConta,
-                                       showDespesaCadastrada,
-                                       setShowDespesaCadastrada,
-                                       showDespesaConferida,
-                                       setShowDespesaConferida,
-                                       showModalDespesaIncompleta,
-                                       setShowModalDespesaIncompleta,
                                        mensagensAceitaCusteioCapital,
-                                       showMensagemAceitaCusteioCapital,
-                                       setShowMensagemAceitaCusteioCapital,
                                        eh_despesa_com_comprovacao_fiscal,
                                        eh_despesa_reconhecida,
                                        limpa_campos_sem_comprovacao_fiscal,
@@ -102,10 +86,7 @@ export const CadastroFormFormik = ({
                                        showExcluirImposto,
                                        cancelarExclusaoImposto,
                                        mostraModalExcluirImposto,
-                                       validaMotivosPagamentoAntecipado,
-                                       showModalMotivoPagamentoAntecipado,
                                        listaDemotivosPagamentoAntecipado,
-                                       setShowModalMotivoPagamentoAntecipado,
                                        selectMotivosPagamentoAntecipado,
                                        setSelectMotivosPagamentoAntecipado,
                                        checkBoxOutrosMotivosPagamentoAntecipado,
@@ -114,7 +95,10 @@ export const CadastroFormFormik = ({
                                        handleChangeTxtOutrosMotivosPagamentoAntecipado,
                                        bloqueiaLinkCadastrarEstorno,
                                        bloqueiaRateioEstornado,
-                                       setShowPeriodoFechadoImposto,
+                                       modalState,
+                                       setModalState,
+                                       serviceIniciaEncadeamentoDosModais,
+                                       serviceSubmitModais,
                                    }) => {
 
     // Corrigi Cálculo validação dos valores
@@ -355,7 +339,6 @@ export const CadastroFormFormik = ({
                                             onChangeEvent={(e) => {
                                                 setaValorRealizado(props.values, e.target.value)
                                                 props.handleChange(e);
-                                                //aux.setValorRealizado(setFieldValue, e.target.value);
                                             }}
                                             disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
                                         />
@@ -764,9 +747,7 @@ export const CadastroFormFormik = ({
                                         }
                                         type="button"
                                         onClick={async (e) => {
-                                            let deve_preencher_motivos = await validaMotivosPagamentoAntecipado(e, values, errors)
-                                            !deve_preencher_motivos && onShowMensagemNaoAceitaTipoRecurso(values, errors);
-                                            !deve_preencher_motivos && onShowSaldoInsuficiente(values, errors, setFieldValue, {resetForm})
+                                            serviceIniciaEncadeamentoDosModais(values, errors, setFieldValue, {resetForm})
                                         }}
                                         className="btn btn-success mt-2"
                                     >
@@ -781,10 +762,66 @@ export const CadastroFormFormik = ({
                                     <p>{errors.valor_original && exibeMsgErroValorOriginal && <span
                                         className="span_erro text-danger mt-1"> {errors.valor_original}</span>}</p>
                                 </div>
+
+                                <section>
+                                    <SaldoInsuficienteConta
+                                        saldosInsuficientesDaConta={saldosInsuficientesDaConta}
+                                        show={modalState === 'saldo-insuficiente-conta'}
+                                        handleClose={()=>setModalState("close")}
+                                        onSaldoInsuficienteContaTrue={() => {
+                                            serviceSubmitModais(values, setFieldValue, errors, 'saldo_insuficiente_conta_validado')
+                                        }}
+                                    />
+                                </section>
+
+                                <section>
+                                    <TipoAplicacaoRecursoNaoAceito
+                                        mensagensAceitaCusteioCapital={mensagensAceitaCusteioCapital}
+                                        show={modalState === 'acao-nao-aceita-tipo-de-aplicacao'}
+                                        onSalvarTipoRecursoNaoAceito={() => {
+                                            serviceSubmitModais(values, setFieldValue, errors, 'acao_nao_aceita_tipo_de_aplicacao_validado')
+                                        }}
+                                        handleClose={()=>setModalState("close")}
+                                    />
+                                </section>
+
+                                <section>
+                                    <SaldoInsuficiente
+                                        saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
+                                        show={modalState === 'saldo-insuficiente-acao'}
+                                        handleClose={()=>setModalState("close")}
+                                        onSaldoInsuficienteTrue={() => {
+                                            serviceSubmitModais(values, setFieldValue, errors, 'saldo_insuficiente_acao_validado')
+                                        }}
+                                    />
+                                </section>
+
+                                <section>
+                                    <ModalDespesaConferida
+                                        show={modalState === 'despesa-ja-demonstrada'}
+                                        handleClose={()=>setModalState("close")}
+                                        onSalvarDespesaConferida={() => {
+                                            serviceSubmitModais(values, setFieldValue, errors, 'despesa_ja_demonstrada_validado')
+                                        }}
+                                        titulo="Despesa já demonstrada"
+                                        texto="<p>Atenção. Essa despesa já foi demonstrada, caso a alteração seja gravada ela voltará a ser não demonstrada. Confirma a gravação?</p>"
+                                    />
+                                </section>
+
+                                <section>
+                                    <ChecarDespesaExistente
+                                        show={modalState === 'despesa-ja-cadastrada'}
+                                        handleClose={()=>setModalState("close")}
+                                        onSalvarDespesaCadastradaTrue={() => {
+                                            serviceSubmitModais(values, setFieldValue, errors, 'despesa_ja_cadastrada_validado')
+                                        }}
+                                    />
+                                </section>
+
                                 <section>
                                     <ModalMotivosPagamentoAntecipado
-                                        show={showModalMotivoPagamentoAntecipado}
-                                        handleClose={() => setShowModalMotivoPagamentoAntecipado(false)}
+                                        show={modalState === 'pagamento-antecipado'}
+                                        handleClose={()=>setModalState("close")}
                                         listaDemotivosPagamentoAntecipado={listaDemotivosPagamentoAntecipado}
                                         selectMotivosPagamentoAntecipado={selectMotivosPagamentoAntecipado}
                                         setSelectMotivosPagamentoAntecipado={setSelectMotivosPagamentoAntecipado}
@@ -792,60 +829,24 @@ export const CadastroFormFormik = ({
                                         txtOutrosMotivosPagamentoAntecipado={txtOutrosMotivosPagamentoAntecipado}
                                         handleChangeCheckBoxOutrosMotivosPagamentoAntecipado={handleChangeCheckBoxOutrosMotivosPagamentoAntecipado}
                                         handleChangeTxtOutrosMotivosPagamentoAntecipado={handleChangeTxtOutrosMotivosPagamentoAntecipado}
-                                        onSubmit={onSubmit}
-                                        setFieldValue={setFieldValue}
-                                        values={values}
+                                        onSalvarMotivosAntecipadosTrue={() => {
+                                            serviceSubmitModais(values, setFieldValue, errors, 'pagamento_antecipado_validado')
+                                        }}
                                     />
                                 </section>
 
                                 <section>
-                                    <SaldoInsuficiente
-                                        saldosInsuficientesDaAcao={saldosInsuficientesDaAcao}
-                                        show={showSaldoInsuficiente}
-                                        handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
-                                        onSaldoInsuficienteTrue={() => onSubmit(values, setFieldValue)}
-                                    />
-                                </section>
-                                <section>
-                                    <SaldoInsuficienteConta
-                                        saldosInsuficientesDaConta={saldosInsuficientesDaConta}
-                                        show={showSaldoInsuficienteConta}
-                                        handleClose={() => aux.onHandleClose(setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto)}
-                                        onSaldoInsuficienteContaTrue={() => onSubmit(values, setFieldValue)}
-                                    />
-                                </section>
-                                <section>
-                                    <ChecarDespesaExistente
-                                        show={showDespesaCadastrada}
-                                        handleClose={() => setShowDespesaCadastrada(false)}
-                                        onSalvarDespesaCadastradaTrue={() => onSubmit(values, setFieldValue)}/>
-                                </section>
-                                <section>
-                                    <ModalDespesaConferida
-                                        show={showDespesaConferida}
-                                        handleClose={() => setShowDespesaConferida(false)}
-                                        onSalvarDespesaConferida={() => onSubmit(values, setFieldValue)}
-                                        titulo="Despesa já demonstrada"
-                                        texto="<p>Atenção. Essa despesa já foi demonstrada, caso a alteração seja gravada ela voltará a ser não demonstrada. Confirma a gravação?</p>"
-                                    />
-                                </section>
-                                <section>
                                     <ModalDespesaIncompleta
-                                        show={showModalDespesaIncompleta}
-                                        handleClose={() => setShowModalDespesaIncompleta(false)}
-                                        onSalvarDespesaIncompleta={() => onSubmit(values, setFieldValue)}
+                                        show={modalState === 'despesa-imcompleta'}
+                                        handleClose={()=>setModalState("close")}
+                                        onSalvarDespesaIncompleta={() => {
+                                            serviceSubmitModais(values, setFieldValue, errors, 'despesa_incompleta_validado')
+                                        }}
                                         titulo="Cadastro da despesa"
                                         texto="<p>O cadastro desta despesa está incompleto. Você deseja finalizá-lo agora?</p>"
                                     />
                                 </section>
-                                <section>
-                                    <TipoAplicacaoRecursoNaoAceito
-                                        mensagensAceitaCusteioCapital={mensagensAceitaCusteioCapital}
-                                        show={showMensagemAceitaCusteioCapital}
-                                        onSalvarTipoRecursoNaoAceito={() => onSubmit(values, setFieldValue)}
-                                        handleClose={() => setShowMensagemAceitaCusteioCapital(false)}
-                                    />
-                                </section>
+
                                 <section>
                                     <ExcluirImposto
                                         show={showExcluirImposto}

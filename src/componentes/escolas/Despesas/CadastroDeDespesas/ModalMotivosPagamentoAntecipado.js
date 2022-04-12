@@ -12,9 +12,7 @@ const ModalMotivosPagamentoAntecipado = ({
                                                     txtOutrosMotivosPagamentoAntecipado,
                                                     handleChangeCheckBoxOutrosMotivosPagamentoAntecipado,
                                                     handleChangeTxtOutrosMotivosPagamentoAntecipado,
-                                                    onSubmit,
-                                                    setFieldValue,
-                                                    values
+                                                    onSalvarMotivosAntecipadosTrue,
                                                 }) => {
 
     const selectedItemsLabel = (motivos) => {
@@ -87,7 +85,7 @@ const ModalMotivosPagamentoAntecipado = ({
                                     className="btn btn btn-outline-success mt-2 mr-2">Cancelar
                             </button>
                             <button
-                                onClick={() => onSubmit(values, setFieldValue)}
+                                onClick={onSalvarMotivosAntecipadosTrue}
                                 type="button"
                                 className="btn btn-success mt-2"
                                 disabled={selectMotivosPagamentoAntecipado.length <= 0 && !txtOutrosMotivosPagamentoAntecipado.trim()}
