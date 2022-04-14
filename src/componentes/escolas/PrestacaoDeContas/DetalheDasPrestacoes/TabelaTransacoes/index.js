@@ -7,9 +7,18 @@ import IconeNaoDemonstrado from "../../../../../assets/img/icone-nao-demonstrado
 import ReactTooltip from "react-tooltip";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons'
+import bookmarkRegular from "../../../../../assets/img/bookmark-regular.svg"
+import bookmarkSolid from "../../../../../assets/img/bookmark-solid.svg"
+
 import {RedirectModalTabelaLancamentos} from "../../../../../utils/Modais";
 
-const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxTransacoes, periodoFechado, tabelasDespesa}) => {
+const TabelaTransacoes = ({
+                              transacoes,
+                              checkboxTransacoes,
+                              handleChangeCheckboxTransacoes,
+                              periodoFechado,
+                              tabelasDespesa
+                          }) => {
 
     let history = useHistory();
     const rowsPerPage = 10;
@@ -36,9 +45,9 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
     const redirecionaDetalhe = value => {
         setUuid(value.documento_mestre.uuid);
         let url;
-        if (value.tipo_transacao === 'Crédito'){
+        if (value.tipo_transacao === 'Crédito') {
             url = '/edicao-de-receita/'
-        }else{
+        } else {
             url = '/edicao-de-despesa/'
         }
         setUrlRedirect(url)
@@ -98,12 +107,12 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
         });
         valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
 
-        if (rowData && rowData.valor_transacao_na_conta !== rowData.valor_transacao_total){
+        if (rowData && rowData.valor_transacao_na_conta !== rowData.valor_transacao_total) {
             let texto_exibir = `<div><strong>Valor total de despesa:</strong> ${Number(rowData.valor_transacao_total).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })}</div>`;
-            rowData.valores_por_conta.map((item)=>(
+            rowData.valores_por_conta.map((item) => (
                 texto_exibir += `<div><strong>Conta ${item.conta_associacao__tipo_conta__nome}:</strong> ${Number(item.valor_rateio__sum).toLocaleString('pt-BR', {
                     style: 'currency',
                     currency: 'BRL'
@@ -116,13 +125,13 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
                         {valor_formatado}
                     </span>
                     <FontAwesomeIcon
-                        style={{fontSize: '18px', marginLeft: "3px", color:'#C65D00'}}
+                        style={{fontSize: '18px', marginLeft: "3px", color: '#C65D00'}}
                         icon={faInfoCircle}
                     />
                     <ReactTooltip/>
                 </div>
             )
-        }else {
+        } else {
             return valor_formatado
         }
     };
@@ -170,9 +179,10 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
             <>
                 {rateio.tag
                     ?
-                        <span className="badge badge-primary p-1" style={{backgroundColor: '#086397'}}>{rateio.tag.nome}</span>
+                    <span className="badge badge-primary p-1"
+                          style={{backgroundColor: '#086397'}}>{rateio.tag.nome}</span>
                     :
-                        <span>-</span>
+                    <span>-</span>
                 }
             </>
         )
@@ -203,11 +213,11 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
                     </div>
 
                     {data.documento_mestre.tipo_transacao && data.documento_mestre.tipo_transacao.nome && data.documento_mestre.tipo_transacao.nome === 'Cheque' ? (
-                        <div className='col border-left border-bottom p-2'>
-                            <p className='mb-0 font-weight-bold'>Número do cheque</p>
-                            {data.documento_mestre.documento_transacao}
-                        </div>
-                    ):
+                            <div className='col border-left border-bottom p-2'>
+                                <p className='mb-0 font-weight-bold'>Número do cheque</p>
+                                {data.documento_mestre.documento_transacao}
+                            </div>
+                        ) :
                         <div className='col border-left border-bottom p-2'>
                             <p className='mb-0 font-weight-bold'>Número do documento</p>
                             {data.documento_mestre.documento_transacao}
@@ -270,6 +280,67 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
         )
     };
 
+    const tipoLancamentoTemplateDespesaGeradoraDoImposto = (rowData) => {
+        let numero_documento = rowData.despesa_geradora_do_imposto.numero_documento ? "de número " + rowData.despesa_geradora_do_imposto.numero_documento + ", " : ''
+        let data_transacao = rowData.despesa_geradora_do_imposto.data_transacao ? "paga em " + moment(rowData.despesa_geradora_do_imposto.data_transacao).format('DD/MM/YYYY') : 'pagamento ainda não realizado';
+        let texto_exibir = `Esse imposto está relacionado à despesa</br> ${numero_documento} ${data_transacao}`
+        return (
+            <div className='d-flex justify-content-between' data-tip={texto_exibir} data-html={true}>
+                <span>{rowData.tipo_transacao}</span>
+                <img src={bookmarkSolid} alt='' style={{width: '12px'}}/>
+                <ReactTooltip/>
+            </div>
+        )
+    }
+
+    const tipoLancamentoTemplateDespesasImpostos = (rowData) => {
+        let qtde_impostos = rowData.despesas_impostos.length
+
+        if (qtde_impostos === 1) {
+            let valor_imposto = rowData.despesas_impostos[0].valor_total ? valorTemplate(null, null, rowData.despesas_impostos[0].valor_total) + ", " : "0,00 , "
+            let data_transacao = rowData.despesas_impostos[0].data_transacao ? "pago em " + moment(rowData.despesas_impostos[0].data_transacao).format('DD/MM/YYYY') : 'pagamento ainda não realizado';
+            let texto_exibir = `Essa despesa teve retenção de imposto: R$${valor_imposto}</br> ${data_transacao}`
+            return (
+                <div className='d-flex justify-content-between' data-tip={texto_exibir} data-html={true}>
+                    <span>{rowData.tipo_transacao}</span>
+                    <img src={bookmarkRegular} alt='' style={{width: '12px'}}/>
+                    <ReactTooltip/>
+                </div>
+            )
+        } else {
+            let texto_exibir = "Essa despesa teve retenções de impostos:</br>";
+
+            rowData.despesas_impostos.map((imposto) => (
+                texto_exibir += `<p class="mb-0">
+                                    R$${imposto.valor_total ? valorTemplate(null, null, imposto.valor_total) + ", " : "0,00 , "}
+                                    ${imposto.data_transacao ? "pago em " + moment(imposto.data_transacao).format('DD/MM/YYYY') : 'pagamento ainda não realizado'}
+                                </p>`
+
+            ))
+
+            return (
+                <div className='d-flex justify-content-between' data-tip={texto_exibir} data-html={true}>
+                    <span>{rowData.tipo_transacao}</span>
+                    <img src={bookmarkRegular} alt='' style={{width: '12px'}}/>
+                    <ReactTooltip/>
+                </div>
+            )
+
+
+        }
+    }
+
+    const tipoLancamentoTemplate = (rowData) => {
+        if (rowData.despesa_geradora_do_imposto && rowData.despesa_geradora_do_imposto.uuid) {
+            return tipoLancamentoTemplateDespesaGeradoraDoImposto(rowData)
+        } else if (rowData.despesas_impostos && rowData.despesas_impostos.length > 0) {
+            return tipoLancamentoTemplateDespesasImpostos(rowData)
+        }else{
+            return(
+                <span>{rowData.tipo_transacao}</span>
+            )
+        }
+    }
 
     return (
         <div className="row mt-4">
@@ -294,8 +365,13 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
                             style={{borderLeft: 'none'}}
                             body={dataTemplate}
                         />
-                        <Column field="tipo_transacao" header="Tipo de lançamento"/>
-                        <Column className='quebra-palavra' field="numero_documento" header="N.º do documento" style={{width: '160px'}}/>
+                        <Column
+                            field="tipo_transacao"
+                            header="Tipo de lançamento"
+                            body={tipoLancamentoTemplate}
+                        />
+                        <Column className='quebra-palavra' field="numero_documento" header="N.º do documento"
+                                style={{width: '160px'}}/>
                         <Column field="descricao" header="Descrição"/>
                         <Column
                             field="valor_transacao_na_conta"
@@ -312,7 +388,8 @@ const TabelaTransacoes = ({transacoes, checkboxTransacoes, handleChangeCheckboxT
                 </div>
             </div>
             <section>
-                <RedirectModalTabelaLancamentos show={showModal} handleClose={onHandleClose} onCancelarTrue={onCancelarTrue}/>
+                <RedirectModalTabelaLancamentos show={showModal} handleClose={onHandleClose}
+                                                onCancelarTrue={onCancelarTrue}/>
             </section>
         </div>
     )
