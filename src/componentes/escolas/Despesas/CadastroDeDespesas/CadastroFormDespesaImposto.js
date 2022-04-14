@@ -203,7 +203,7 @@ export const CadastroFormDespesaImposto = ({
 								className="form-control"
 								disabled={readOnlyCamposImposto[index] || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
 								maxDate={new Date()}
-								minDate={formikProps.values.data_transacao}
+								minDate={new Date(formikProps.values.data_transacao)}
 							/>
 							{formErrorsImposto[index] && formErrorsImposto[index].despesa_imposto_data_transacao && <span className="span_erro text-danger mt-1"> {formErrorsImposto[index].despesa_imposto_data_transacao}</span>}
 						</div>
