@@ -2,7 +2,8 @@ import React, {useCallback, useContext, useEffect, useState} from "react";
 import {
     validaPayloadDespesas,
     periodoFechado,
-    comparaObjetos, valida_cpf_cnpj
+    comparaObjetos, valida_cpf_cnpj,
+    periodoFechadoImposto
 } from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {
     getDespesasTabelas,
@@ -65,23 +66,23 @@ export const CadastroForm = ({verbo_http}) => {
     const [showDeletarRateioComEstorno, setShowDeletarRateioComEstorno] = useState(false);
 
     const [showRetencaoImposto, setShowRetencaoImposto] = useState(false);
-    const [numeroDocumentoImpostoReadOnly, setNumeroDocumentoImpostoReadOnly] = useState(false);
-    const [cssEscondeDocumentoTransacaoImposto, setCssEscondeDocumentoTransacaoImposto] = useState('escondeItem');
-    const [labelDocumentoTransacaoImposto, setLabelDocumentoTransacaoImposto] = useState('');
-    const [readOnlyCamposImposto, setReadOnlyCamposImposto] = useState(false);
+    const [cssEscondeDocumentoTransacaoImposto, setCssEscondeDocumentoTransacaoImposto] = useState([]);
+    const [labelDocumentoTransacaoImposto, setLabelDocumentoTransacaoImposto] = useState([]);
+    const [readOnlyCamposImposto, setReadOnlyCamposImposto] = useState([]);
     const [showExcluirImposto, setShowExcluirImposto] = useState(false);
-
+    const [formErrorsImposto, setFormErrorsImposto] = useState([])
+    const [disableBtnAdicionarImposto, setDisableBtnAdicionarImposto] = useState(false);
     const [objetoParaComparacao, setObjetoParaComparacao] = useState({});
 
     useEffect(() => {
         if (despesaContext.initialValues.tipo_transacao && verbo_http === "PUT") {
             aux.exibeDocumentoTransacao(despesaContext.initialValues.tipo_transacao.id, setCssEscondeDocumentoTransacao, setLabelDocumentoTransacao, despesasTabelas);
-            aux.exibeDocumentoTransacao(despesaContext.initialValues.despesa_imposto.tipo_transacao, setCssEscondeDocumentoTransacaoImposto, setLabelDocumentoTransacaoImposto, despesasTabelas);
+            aux.exibeDocumentoTransacaoImpostoUseEffect(despesaContext.initialValues.despesas_impostos, setLabelDocumentoTransacaoImposto, labelDocumentoTransacaoImposto, setCssEscondeDocumentoTransacaoImposto, cssEscondeDocumentoTransacaoImposto, despesasTabelas);
         }
         if (despesaContext.initialValues.data_transacao && verbo_http === "PUT") {
             periodoFechado(despesaContext.initialValues.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral);
-            if (despesaContext && despesaContext.initialValues && despesaContext.initialValues.despesa_imposto && despesaContext.initialValues.despesa_imposto.data_transacao){
-                periodoFechado(despesaContext.initialValues.despesa_imposto.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechadoImposto, setReadOnlyCamposImposto, onShowErroGeral);
+            if (despesaContext && despesaContext.initialValues && despesaContext.initialValues.despesas_impostos){
+                periodoFechadoImposto(despesaContext.initialValues.despesas_impostos, setReadOnlyBtnAcao, setShowPeriodoFechadoImposto, setReadOnlyCamposImposto, setDisableBtnAdicionarImposto, onShowErroGeral)
             }
         }
         if (verbo_http === "PUT") {
@@ -126,7 +127,7 @@ export const CadastroForm = ({verbo_http}) => {
     const [formErrors, setFormErrors] = useState({});
     const [enviarFormulario, setEnviarFormulario] = useState(true);
 
-    const validacoesPersonalizadas = useCallback(async (values, setFieldValue, origem=null) => {
+    const validacoesPersonalizadas = useCallback(async (values, setFieldValue, origem=null, index=null) => {
 
         let erros = {};
         let cpf_cnpj_valido;
@@ -199,10 +200,10 @@ export const CadastroForm = ({verbo_http}) => {
         }
 
         /* validacoes imposto */
-        if(values.despesa_imposto && values.despesa_imposto.data_transacao){
+        if(origem === "despesa_imposto" && values.despesas_impostos && values.despesas_impostos[index].data_transacao){
             if(values.data_transacao){
                 let data_despesa_principal = moment(values.data_transacao, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
-                let data_despesa_imposto = moment(values.despesa_imposto.data_transacao, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                let data_despesa_imposto = moment(values.despesas_impostos[index].data_transacao, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
                 
                 let diff = moment(data_despesa_imposto,"YYYY-MM-DD HH:mm:ss").diff(moment(data_despesa_principal,"YYYY-MM-DD HH:mm:ss"));
                 let dias = moment.duration(diff).asDays();
@@ -220,7 +221,7 @@ export const CadastroForm = ({verbo_http}) => {
                     setBtnSubmitDisable(false)
 
                     try{
-                        let data = moment(values.despesa_imposto.data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
+                        let data = moment(values.despesas_impostos[index].data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
                         let periodo_fechado = await getPeriodoFechado(data);
                         if (!periodo_fechado.aceita_alteracoes) {
                             erros = {
@@ -229,18 +230,21 @@ export const CadastroForm = ({verbo_http}) => {
                             setEnviarFormulario(false)
                             setReadOnlyBtnAcao(true);
                             setShowPeriodoFechadoImposto(true);
-                            setReadOnlyCamposImposto(true);
+                            setDisableBtnAdicionarImposto(true);
+                            setReadOnlyCamposImposto(prevState => ({...prevState, [index]: true}));
                         } else {
                             setEnviarFormulario(true)
                             setReadOnlyBtnAcao(false);
                             setShowPeriodoFechadoImposto(false);
-                            setReadOnlyCamposImposto(false);
+                            setDisableBtnAdicionarImposto(false);
+                            setReadOnlyCamposImposto(prevState => ({...prevState, [index]: false}));
                         }
                     }
                     catch (e) {
                         setReadOnlyBtnAcao(true);
                         setShowPeriodoFechadoImposto(true);
-                        setReadOnlyCamposImposto(true);
+                        setDisableBtnAdicionarImposto(true);
+                        setReadOnlyCamposImposto(prevState => ({...prevState, [index]: true}));
                         onShowErroGeral();
                         console.log("Erro ao buscar perído ", e)
                     }
@@ -257,6 +261,24 @@ export const CadastroForm = ({verbo_http}) => {
         }
         return erros;
     }, [aux])
+
+    const liberaBtnSalvar = (values) => {
+        values.despesas_impostos.map((despesa_imposto) => {
+            if(values.data_transacao && despesa_imposto.data_transacao){
+                let data_despesa_principal = moment(values.data_transacao, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                let data_despesa_imposto = moment(despesa_imposto.data_transacao, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                
+                let diff = moment(data_despesa_imposto,"YYYY-MM-DD HH:mm:ss").diff(moment(data_despesa_principal,"YYYY-MM-DD HH:mm:ss"));
+                let dias = moment.duration(diff).asDays();
+
+                if(dias < 0){
+                    setEnviarFormulario(false)
+                    setBtnSubmitDisable(true)
+                }
+                
+            }
+        })
+    }
 
     const removeRateio = (remove, index, rateio) => {
         if(rateio && rateio.estorno && rateio.estorno.uuid){
@@ -326,7 +348,6 @@ export const CadastroForm = ({verbo_http}) => {
         let erros_personalizados = await validacoesPersonalizadas(values, setFieldValue)
 
         if (enviarFormulario && Object.keys(erros_personalizados).length === 0) {
-
             setLoading(true);
 
             setBtnSubmitDisable(true);
@@ -368,7 +389,6 @@ export const CadastroForm = ({verbo_http}) => {
     };
 
     const validateFormDespesas = async (values) => {
-        values.despesa_imposto.rateios[0].tipo_custeio = preenche_tipo_despesa_custeio().id.toString()
         values.qtde_erros_form_despesa = document.getElementsByClassName("is_invalid").length;
 
         const errors = {};
@@ -389,7 +409,6 @@ export const CadastroForm = ({verbo_http}) => {
         if (values.tipo_documento) {
             let exibe_campo_numero_documento;
             let documento;
-            let documento_imposto;
             // verificando se despesasTabelas já está preenchido
             if (despesasTabelas && despesasTabelas.tipos_documento) {
                 if (values.tipo_documento.id) {
@@ -422,25 +441,6 @@ export const CadastroForm = ({verbo_http}) => {
             else{
                 setShowRetencaoImposto(false);
                 values.retem_imposto = false;
-            }
-
-            if (despesasTabelas && despesasTabelas.tipos_documento) {
-                if (values.despesa_imposto && values.despesa_imposto.tipo_documento && values.despesa_imposto.tipo_documento.id) {
-                    documento_imposto = despesasTabelas.tipos_documento.find(element => element.id === Number(values.despesa_imposto.tipo_documento.id));
-                }
-                else if(values.despesa_imposto && values.despesa_imposto.tipo_documento){
-                    documento_imposto = despesasTabelas.tipos_documento.find(element => element.id === Number(values.despesa_imposto.tipo_documento));
-                }      
-            }
-            
-            
-            // Verificando se exibe campo Número do Documento imposto
-            if(documento_imposto && !documento_imposto.numero_documento_digitado){
-                values.despesa_imposto.numero_documento = "";
-                setNumeroDocumentoImpostoReadOnly(true);
-            }
-            else{
-                setNumeroDocumentoImpostoReadOnly(false);
             }
         }
 
@@ -559,10 +559,11 @@ export const CadastroForm = ({verbo_http}) => {
         return tipos_documento;
     }
 
-    const preenche_tipo_despesa_custeio = () => {
+    const preenche_tipo_despesa_custeio = (values, index) => {
         let tributo_tarifas;
         if(despesasTabelas && despesasTabelas.tipos_custeio){
             tributo_tarifas = despesasTabelas.tipos_custeio.find(element => element.eh_tributos_e_tarifas === true);
+            values.despesas_impostos[index].rateios[0].tipo_custeio = tributo_tarifas.id.toString();
         }        
         
         return tributo_tarifas ? tributo_tarifas : ""
@@ -582,8 +583,8 @@ export const CadastroForm = ({verbo_http}) => {
         return acoes;
     }
 
-    const setValorRateioRealizadoImposto = (setFieldValue, valor) =>{
-        setFieldValue("despesa_imposto.rateios[0].valor_rateio", trataNumericos(valor))
+    const setValorRateioRealizadoImposto = (setFieldValue, valor, index) =>{
+        setFieldValue(`despesas_impostos[${index}].rateios[0].valor_rateio`, trataNumericos(valor))
     };
 
     const mostraModalExcluirImposto = () => {
@@ -787,6 +788,44 @@ export const CadastroForm = ({verbo_http}) => {
         }
     }
 
+    const numeroDocumentoImpostoReadOnly = (tipo_documento, index, values) => {
+        let documento_imposto;
+        if(despesasTabelas && despesasTabelas.tipos_documento){
+            if(tipo_documento && tipo_documento.id){
+                documento_imposto = despesasTabelas.tipos_documento.find(element => element.id === Number(tipo_documento.id));
+            }
+            else if(tipo_documento){
+                documento_imposto = despesasTabelas.tipos_documento.find(element => element.id === Number(tipo_documento));
+            }
+        }
+
+        if(documento_imposto && !documento_imposto.numero_documento_digitado){
+            values.despesas_impostos[index].numero_documento = ""
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    const onCalendarCloseDataPagamento = async (values, setFieldValue) => {
+        for(let despesa_imposto = 0; despesa_imposto <= values.despesas_impostos.length -1; despesa_imposto ++){
+                                                    
+            let erro = await validacoesPersonalizadas(values, setFieldValue, "despesa_imposto", despesa_imposto)
+            
+            setFormErrorsImposto(prevState => ({...prevState, [despesa_imposto] : erro}))
+        }
+    }
+
+    const onCalendarCloseDataPagamentoImposto = async(values, setFieldValue, index) => {
+        let erro = await validacoesPersonalizadas(values, setFieldValue, "despesa_imposto", index)
+        setFormErrorsImposto({
+            ...formErrorsImposto,
+            [index]: erro
+        })
+        liberaBtnSalvar(values);
+    }
+
     return (
         <>
             {loading ?
@@ -867,6 +906,10 @@ export const CadastroForm = ({verbo_http}) => {
                         setModalState={setModalState}
                         serviceIniciaEncadeamentoDosModais={serviceIniciaEncadeamentoDosModais}
                         serviceSubmitModais={serviceSubmitModais}
+                        formErrorsImposto={formErrorsImposto}
+                        disableBtnAdicionarImposto={disableBtnAdicionarImposto}
+                        onCalendarCloseDataPagamento={onCalendarCloseDataPagamento}
+                        onCalendarCloseDataPagamentoImposto={onCalendarCloseDataPagamentoImposto}
                     />
             </>
             }

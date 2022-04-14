@@ -30,6 +30,7 @@ import {ModalDespesaConferida} from "./ModalDespesaJaConferida";
 import {ModalDespesaIncompleta} from "./ModalDespesaIncompleta";
 import ModalMotivosPagamentoAntecipado from "./ModalMotivosPagamentoAntecipado";
 import ExibeMotivosPagamentoAntecipadoNoForm from "./ExibeMotivosPagamentoAntecipadoNoForm";
+import { RetemImposto } from "../RetemImposto";
 
 
 export const CadastroFormFormik = ({
@@ -99,6 +100,10 @@ export const CadastroFormFormik = ({
                                        setModalState,
                                        serviceIniciaEncadeamentoDosModais,
                                        serviceSubmitModais,
+                                       formErrorsImposto,
+                                       disableBtnAdicionarImposto,
+                                       onCalendarCloseDataPagamento,
+                                       onCalendarCloseDataPagamentoImposto
                                    }) => {
 
     // Corrigi Cálculo validação dos valores
@@ -291,6 +296,7 @@ export const CadastroFormFormik = ({
                                             onChange={setFieldValue}
                                             onCalendarClose={async () => {
                                                 setFormErrors(await validacoesPersonalizadas(values, setFieldValue, "despesa_principal"));
+                                                onCalendarCloseDataPagamento(values, setFieldValue);
                                             }}
                                             about={despesaContext.verboHttp}
                                             className={`${!values.data_transacao && verbo_http === "PUT" ? 'is_invalid' : ""} ${!values.data_transacao && "despesa_incompleta"} form-control`}
@@ -449,31 +455,100 @@ export const CadastroFormFormik = ({
                                 }
 
                                 {showRetencaoImposto &&
-                                    <div className="form-row mt-4">
-                                        <div className="col-12">
-                                            <CadastroFormDespesaImposto
-                                                formikProps={props}
-                                                eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
-                                                disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
-                                                tipos_documento_com_recolhimento_imposto={tipos_documento_com_recolhimento_imposto}
-                                                numeroDocumentoImpostoReadOnly={numeroDocumentoImpostoReadOnly}
-                                                aux={aux}
-                                                preenche_tipo_despesa_custeio={preenche_tipo_despesa_custeio}
-                                                especificacoes_custeio={especificacoes_custeio}
-                                                despesasTabelas={despesasTabelas}
-                                                cssEscondeDocumentoTransacaoImposto={cssEscondeDocumentoTransacaoImposto}
-                                                labelDocumentoTransacaoImposto={labelDocumentoTransacaoImposto}
-                                                setCssEscondeDocumentoTransacaoImposto={setCssEscondeDocumentoTransacaoImposto}
-                                                setLabelDocumentoTransacaoImposto={setLabelDocumentoTransacaoImposto}
-                                                setFormErrors={setFormErrors}
-                                                validacoesPersonalizadas={validacoesPersonalizadas}
-                                                readOnlyCamposImposto={readOnlyCamposImposto}
-                                                formErrors={formErrors}
-                                                despesaContext={despesaContext}
-                                                acoes_custeio={acoes_custeio}
-                                                setValorRateioRealizadoImposto={setValorRateioRealizadoImposto}
-                                                mostraModalExcluirImposto={mostraModalExcluirImposto}
-                                            />
+                                    <div className="container-retencao-imposto mt-2">
+                                        <div className="form-row mt-4">
+                                            <div className="col-12">
+                                                <RetemImposto
+                                                    formikProps={props}
+                                                    eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
+                                                    disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                    mostraModalExcluirImposto={mostraModalExcluirImposto}
+                                                />
+                                                
+                                                <FieldArray
+                                                    name="despesas_impostos"
+                                                    render={({remove, push}) => (
+                                                        <>
+                                                            {values.despesas_impostos.length > 0 && values.despesas_impostos.map((despesa_imposto, index) => {
+                                                                return (
+                                                                    <div key={index}>
+                                                                        <CadastroFormDespesaImposto
+                                                                            formikProps={props}
+                                                                            eh_despesa_com_retencao_imposto={eh_despesa_com_retencao_imposto}
+                                                                            disabled={readOnlyCampos || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                                            tipos_documento_com_recolhimento_imposto={tipos_documento_com_recolhimento_imposto}
+                                                                            numeroDocumentoImpostoReadOnly={numeroDocumentoImpostoReadOnly}
+                                                                            aux={aux}
+                                                                            preenche_tipo_despesa_custeio={preenche_tipo_despesa_custeio}
+                                                                            especificacoes_custeio={especificacoes_custeio}
+                                                                            despesasTabelas={despesasTabelas}
+                                                                            cssEscondeDocumentoTransacaoImposto={cssEscondeDocumentoTransacaoImposto}
+                                                                            labelDocumentoTransacaoImposto={labelDocumentoTransacaoImposto}
+                                                                            setCssEscondeDocumentoTransacaoImposto={setCssEscondeDocumentoTransacaoImposto}
+                                                                            setLabelDocumentoTransacaoImposto={setLabelDocumentoTransacaoImposto}
+                                                                            readOnlyCamposImposto={readOnlyCamposImposto}
+                                                                            despesaContext={despesaContext}
+                                                                            acoes_custeio={acoes_custeio}
+                                                                            setValorRateioRealizadoImposto={setValorRateioRealizadoImposto}
+                                                                            index={index}
+                                                                            despesa_imposto={despesa_imposto}
+                                                                            remove={remove}
+                                                                            formErrorsImposto={formErrorsImposto}
+                                                                            onCalendarCloseDataPagamentoImposto={onCalendarCloseDataPagamentoImposto}
+                                                                        />
+                                                                    </div>
+                                                                )
+                                                            })}
+
+                                                            {eh_despesa_com_retencao_imposto(values) &&
+                                                                <div className="d-flex  justify-content-start mt-3 mb-3">
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn btn-outline-success mt-2 mr-2"
+                                                                        disabled={disableBtnAdicionarImposto || ![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                                        onChange={(e) => {
+                                                                            props.handleChange(e);
+                                                                        }}
+                                                                        onClick={() => {
+                                                                            push(
+                                                                                {
+                                                                                    associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                                                                                    tipo_documento: "",
+                                                                                    numero_documento: "",
+                                                                                    tipo_transacao: "",
+                                                                                    documento_transacao: "",
+                                                                                    data_transacao: "",
+                                                                                    despesas_impostos: [],
+                                                                                    motivos_pagamento_antecipado: [],
+                                                                                    rateios: [
+                                                                                        {
+                                                                                            tipo_custeio: "",
+                                                                                            especificacao_material_servico: "",
+                                                                                            acao_associacao: "",
+                                                                                            aplicacao_recurso: "CUSTEIO",
+                                                                                            associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                                                                                            conta_associacao: "",
+                                                                                            escolha_tags:"",
+                                                                                            tag: "",
+                                                                                            numero_processo_incorporacao_capital: "",
+                                                                                            quantidade_itens_capital: 0,
+                                                                                            valor_item_capital: 0,
+                                                                                            valor_original: "",
+                                                                                            valor_rateio: ""
+                                                                                        }
+                                                                                    ]
+                                                                                }
+                                                                            )
+                                                                        }}
+                                                                    >
+                                                                        + Adicionar imposto
+                                                                    </button>
+                                                                </div>
+                                                            }
+                                                        </>
+                                                    )}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 }
