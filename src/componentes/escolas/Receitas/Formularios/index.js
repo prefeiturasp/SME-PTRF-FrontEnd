@@ -124,9 +124,11 @@ export const ReceitaForm = () => {
     }
 
     const consultaSeEstorno = useCallback( async () =>{
+
         if (parametros && parametros.state && parametros.state.uuid_rateio){
             let rateio = await carregaRateioPorUuid(parametros.state.uuid_rateio)
-            await periodoFechado(rateio.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
+
+            // await periodoFechado(rateio.data_transacao, setReadOnlyBtnAcao, setShowPeriodoFechado, setReadOnlyCampos, onShowErroGeral)
             try {
                 const init_rateio = {
                     tipo_receita: idTipoReceitaEstorno,
