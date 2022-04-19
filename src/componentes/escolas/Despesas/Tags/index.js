@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import "./tags.scss"
 
-export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasTabelas}) => {
+export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasTabelas, bloqueiaRateioEstornado}) => {
 
     const [escolhaTags, setEscolhaTags] = useState({});
 
@@ -31,7 +31,7 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
                             type="radio"
                             id={`tag_sim_${index}`}
                             value="sim"
-                            disabled={disabled}
+                            disabled={disabled || bloqueiaRateioEstornado(rateio)}
                             checked={escolhaTags}
                         />
                         <label className="form-check-label" htmlFor={`tag_sim_${index}`}>Sim</label>
@@ -48,7 +48,7 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
                             type="radio"
                             id={`tag_nao_${index}`}
                             value="nao"
-                            disabled={disabled}
+                            disabled={disabled || bloqueiaRateioEstornado(rateio)}
                             checked={!escolhaTags}
                         />
                         <label className="form-check-label" htmlFor={`tag_nao_${index}`}>Não</label>
@@ -67,7 +67,7 @@ export const Tags = ({formikProps, index, rateio, verboHttp, disabled, despesasT
                             name={`rateios[${index}].tag`}
                             id='tag'
                             className={`form-control`}
-                            disabled={disabled}
+                            disabled={disabled || bloqueiaRateioEstornado(rateio)}
                         >
                             <option value="">Selecione uma atividade</option>
                             {despesasTabelas.tags && despesasTabelas.tags.map(item => (

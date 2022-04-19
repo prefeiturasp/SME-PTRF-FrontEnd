@@ -45,18 +45,26 @@ const ReferenciaDaDespesaEstorno = ({uuid, rateioEstorno, despesa}) => {
     }
 
     const valorTotalTemplate = () => {
-
-        return parseFloat(rateioEstorno.valor_rateio) ? parseFloat(rateioEstorno.valor_rateio).toLocaleString('pt-BR', {
+        if (uuid) {
+            return parseFloat(rateioEstorno.valor_rateio) ? parseFloat(rateioEstorno.valor_rateio).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
             :
             '';
+        } else {
+            return parseFloat(rateioEstorno.valor_total) ? parseFloat(rateioEstorno.valor_total).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            })
+            :
+            '';
+        }
     }
 
     return (
         <>
-            {uuid && despesa && despesa.uuid &&
+            {despesa && despesa.uuid &&
                 <>
                     <p><strong>Referência da Despesa</strong></p>
 

@@ -52,8 +52,8 @@ export const getIniciarPrestacaoDeContas = async (conta_uuid, periodo_uuid) => {
 export const getTransacoes = async (periodo_uuid, conta_uuid, conferido) => {
   return (await api.get(`/api/conciliacoes/transacoes-despesa/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&conferido=${conferido}`, authHeader)).data
 };
-export const getTransacoesFiltros = async (periodo_uuid, conta_uuid, conferido, acao_associacao_uuid) => {
-  return (await api.get(`/api/conciliacoes/transacoes-despesa/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&conferido=${conferido}${acao_associacao_uuid ? '&acao_associacao='+acao_associacao_uuid : ''}`, authHeader)).data
+export const getTransacoesFiltros = async (periodo_uuid, conta_uuid, conferido, acao_associacao_uuid, ordenar_por_imposto) => {
+  return (await api.get(`/api/conciliacoes/transacoes-despesa/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&conferido=${conferido}${acao_associacao_uuid ? '&acao_associacao='+acao_associacao_uuid : ''}${ordenar_por_imposto ? '&ordenar_por_imposto='+ordenar_por_imposto : ''}`, authHeader)).data
 };
 export const patchConciliarDespesa = async (periodo_uuid, conta_uuid, transacao_uuid) => {
   return (await api.patch(`/api/conciliacoes/conciliar-despesa/?periodo=${periodo_uuid}&conta_associacao=${conta_uuid}&transacao=${transacao_uuid}`, {}, authHeader)).data

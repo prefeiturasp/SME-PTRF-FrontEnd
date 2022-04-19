@@ -70,6 +70,7 @@ import CadastroDeMembrosDaAssociacao from "../componentes/escolas/Associacao/Mem
 import {AnalisesRegularidadePage} from "../componentes/dres/RegularidadeAssociacoes/AnalisesRegularidade";
 import { VisualizacaoDaAtaParecerTecnico } from "../componentes/dres/RelatorioConsolidado/AtaParecerTecnico/VisualizacaoAtaParecerTecnico";
 import { EdicaoAtaParecerTecnico } from "../componentes/dres/RelatorioConsolidado/AtaParecerTecnico/VisualizacaoAtaParecerTecnico/EdicaoAta";
+import { ParametrizacoesMotivosDeEstorno } from "../componentes/sme/Parametrizacoees/Receitas/ParametrizacoesMotivosEstorno";
 
 const routesConfig = [
     {
@@ -404,6 +405,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-Fornecedores",
         component: Fornecedores,
+        permissoes: ['access_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-motivos-estorno",
+        component: ParametrizacoesMotivosDeEstorno,
         permissoes: ['access_painel_parametrizacoes'],
     },
     {

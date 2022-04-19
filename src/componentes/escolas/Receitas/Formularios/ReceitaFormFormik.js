@@ -8,6 +8,7 @@ import {ModalReceitaConferida} from "../ModalReceitaJaConferida";
 import {ModalSelecionaRepasse} from "../ModalSelecionaRepasse";
 import {Formik} from "formik";
 import {Link} from "react-router-dom";
+import ModalMotivosEstorno from "../ModalMotivosEstorno";
 
 export const ReceitaFormFormik = ({
                                       initialValue,
@@ -57,7 +58,16 @@ export const ReceitaFormFormik = ({
                                       trataRepasse,
                                       readOnlyEstorno,
                                       despesa,
-                                      idTipoReceitaEstorno
+                                      idTipoReceitaEstorno,
+                                      showModalMotivoEstorno,
+                                      setShowModalMotivoEstorno,
+                                      listaMotivosEstorno,
+                                      selectMotivosEstorno,
+                                      setSelectMotivosEstorno,
+                                      checkBoxOutrosMotivosEstorno,
+                                      txtOutrosMotivosEstorno,
+                                      handleChangeCheckBoxOutrosMotivosEstorno,
+                                      handleChangeTxtOutrosMotivosEstorno,
                                   }) => {
 
     return (
@@ -384,12 +394,30 @@ export const ReceitaFormFormik = ({
                             </div>
                             {/*Fim Botões*/}
                             <section>
+                                <ModalMotivosEstorno
+                                    show={showModalMotivoEstorno}
+                                    handleClose={()=>setShowModalMotivoEstorno(false)}
+                                    listaMotivosEstorno={listaMotivosEstorno}
+                                    selectMotivosEstorno={selectMotivosEstorno}
+                                    setSelectMotivosEstorno={setSelectMotivosEstorno}
+                                    checkBoxOutrosMotivosEstorno={checkBoxOutrosMotivosEstorno}
+                                    txtOutrosMotivosEstorno={txtOutrosMotivosEstorno}
+                                    handleChangeCheckBoxOutrosMotivosEstorno={handleChangeCheckBoxOutrosMotivosEstorno}
+                                    handleChangeTxtOutrosMotivosEstorno={handleChangeTxtOutrosMotivosEstorno}
+                                    onSubmit={onSubmit}
+                                    setFieldValue={setFieldValue}
+                                    values={values}
+                                    setShowModalMotivoEstorno={setShowModalMotivoEstorno}
+                                    errors={errors}
+                                />
+                            </section>
+                            <section>
                                 <ModalReceitaConferida
                                     show={showReceitaRepasse}
                                     handleClose={() => setShowReceitaRepasse(false)}
                                     onSalvarReceitaConferida={() => {
                                         setShowReceitaRepasse(false);
-                                        onSubmit(values)
+                                        onSubmit(values, errors)
                                     }}
                                     titulo="Receita do tipo repasse"
                                     texto="<p>Atenção. Esse crédito é do tipo repasse e após gravação só poderá ser apagado pela DRE. Confirma a gravação?</p>"

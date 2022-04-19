@@ -313,6 +313,7 @@ export const DetalheDasPrestacoes = () => {
 
     // Filtros Transacoes
     const [stateFiltros, setStateFiltros] = useState({});
+    const [stateCheckBoxOrdenarPorImposto, setStateCheckBoxOrdenarPorImposto] = useState({});
 
     const handleChangeFiltros = useCallback((name, value) => {
         setStateFiltros({
@@ -321,23 +322,31 @@ export const DetalheDasPrestacoes = () => {
         });
     }, [stateFiltros]);
 
+    const handleChangeCheckBoxOrdenarPorImposto = (checked, name) =>{
+        setStateCheckBoxOrdenarPorImposto(
+            {
+                ...stateCheckBoxOrdenarPorImposto,
+                [name]: checked
+            });
+    }
+
     const handleSubmitFiltros = useCallback(async (conciliado) => {
         if (conciliado=== 'CONCILIADO'){
             try {
-                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO);
+                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'True', stateFiltros.filtrar_por_acao_CONCILIADO, stateCheckBoxOrdenarPorImposto.checkOerdenarPorImposto_CONCILIADO);
                 setTransacoesConciliadas(transacoes)
             }catch (e) {
                 console.log("Erro ao filtrar conciliados")
             }
         }else {
             try {
-                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'False', stateFiltros.filtrar_por_acao_NAO_CONCILIADO);
+                let transacoes = await getTransacoesFiltros(periodoConta.periodo, periodoConta.conta, 'False', stateFiltros.filtrar_por_acao_NAO_CONCILIADO, stateCheckBoxOrdenarPorImposto.checkOerdenarPorImposto_NAO_CONCILIADO);
                 setTransacoesNaoConciliadas(transacoes);
             }catch (e) {
                 console.log("Erro ao filtrar não conciliados")
             }
         }
-    }, [periodoConta, stateFiltros]);
+    }, [periodoConta, stateFiltros, stateCheckBoxOrdenarPorImposto]);
 
     const limpaFiltros = async () => {
         setLoading(true);
@@ -507,6 +516,8 @@ export const DetalheDasPrestacoes = () => {
                                 handleChangeFiltros={handleChangeFiltros}
                                 handleSubmitFiltros={handleSubmitFiltros}
                                 limpaFiltros={limpaFiltros}
+                                handleChangeCheckBoxOrdenarPorImposto={handleChangeCheckBoxOrdenarPorImposto}
+                                stateCheckBoxOrdenarPorImposto={stateCheckBoxOrdenarPorImposto}
                             />
                             {transacoesNaoConciliadas && transacoesNaoConciliadas.length > 0 ?(
                                 <TabelaTransacoes
@@ -528,6 +539,8 @@ export const DetalheDasPrestacoes = () => {
                                 handleChangeFiltros={handleChangeFiltros}
                                 handleSubmitFiltros={handleSubmitFiltros}
                                 limpaFiltros={limpaFiltros}
+                                handleChangeCheckBoxOrdenarPorImposto={handleChangeCheckBoxOrdenarPorImposto}
+                                stateCheckBoxOrdenarPorImposto={stateCheckBoxOrdenarPorImposto}
                             />
 
                             {transacoesConciliadas && transacoesConciliadas.length > 0 ?(
