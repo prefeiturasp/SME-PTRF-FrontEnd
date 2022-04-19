@@ -1,9 +1,9 @@
-name: CI/CD
+name: Pre-Prod CI/CD
  
 on:
 
   push:
-    branches: [ master, homolog, homolog-r2 ]
+    branches: [ pre-prod ]
     paths-ignore:
     - ".github/workflows/**"  
   
@@ -25,6 +25,7 @@ jobs:
     
       - name: Build the Docker image    
         run: | 
+             docker login ${{ secrets.REGISTRY_HOST }}
              docker build . --tag ${{ secrets.REGISTRY_HOST }}/${GITHUB_REF##*/}/ptrf-frontend
              docker push ${{ secrets.REGISTRY_HOST }}/${GITHUB_REF##*/}/ptrf-frontend
              
@@ -57,93 +58,22 @@ jobs:
             🚀🚀🚀
             To aprove: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
              
-  deploy-hom:
+  deploy-pre-prod:
   
     runs-on: self-hosted
     needs: [ build ]
-    if: ${{ github.ref != 'refs/heads/master' }}
-    
-    environment:
-      name: release
-    steps:
-      - name: Redeploy Hom
-        if: ${{ github.ref == 'refs/heads/homolog' }}
-        uses: luizhpriotto/action_images@kubectl-v2.0
-        env: 
-          RANCHER_URL: ${{ secrets.RANCHER_URL }}
-          RANCHER_TOKEN: ${{ secrets.RANCHER_TOKEN }}
-          NAMESPACE: sme-ptrf
-          WORKLOAD: ptrf-frontend
-          
-      - name: Redeploy Hom2
-        if: ${{ github.ref == 'refs/heads/homolog-r2' }}
-        uses: luizhpriotto/action_images@kubectl-v2.0
-        env: 
-          RANCHER_URL: ${{ secrets.RANCHER_URL }}
-          RANCHER_TOKEN: ${{ secrets.RANCHER_TOKEN }}
-          NAMESPACE: sme-ptrf-hom2
-          WORKLOAD: ptrf-frontend
-          
-      - name: send failure message
-        if: ${{ failure() }}
-        uses: appleboy/telegram-action@master
-        with:
-          to: -571051431
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            💥 Failed in ${{ github.ref_name	}}!
-            ${{ github.actor }} created commit:
-            Commit message: ${{ github.event.commits[0].message }}            
-            Repository: ${{ github.repository }}            
-            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
-            Actions: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            
-      - name: send success message
-        if: ${{ success() }}
-        uses: appleboy/telegram-action@master
-        with:
-          to: -571051431
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            🚀 Success in ${{ github.ref_name	}}!
-            ${{ github.actor }} created commit:
-            Commit message: ${{ github.event.commits[0].message }}            
-            Repository: ${{ github.repository }}            
-            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
-            Actions: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            
-  deploy-prod:
-  
-    runs-on: self-hosted
-    needs: [ build ]
-    if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.ref == 'refs/heads/pre-prod' }}
     environment:
       name: production
     steps:
-  
-      - name: Redeploy Prod
-        uses: luizhpriotto/action_images@kubectl-v2.0
-        env: 
-          RANCHER_URL: ${{ secrets.RANCHER_URL }}
-          RANCHER_TOKEN: ${{ secrets.RANCHER_TOKEN }}
-          NAMESPACE: sme-ptrf
-          WORKLOAD: ptrf-frontend
 
-      - name: Redeploy Treinamento
+      - name: Redeploy Pre Prod
         uses: luizhpriotto/action_images@kubectl-v2.0
         env: 
           RANCHER_URL: ${{ secrets.RANCHER_URL }}
           RANCHER_TOKEN: ${{ secrets.RANCHER_TOKEN }}
-          NAMESPACE: sigescola-treinamento
-          WORKLOAD: treinamento-frontend
-
-      - name: Redeploy Treinamento 2
-        uses: luizhpriotto/action_images@kubectl-v2.0
-        env: 
-          RANCHER_URL: ${{ secrets.RANCHER_URL }}
-          RANCHER_TOKEN: ${{ secrets.RANCHER_TOKEN }}
-          NAMESPACE: sigescola-treinamento2
-          WORKLOAD: treinamento-frontend
+          NAMESPACE: sme-sigescola-pre
+          WORKLOAD: sigescolapre-frontend
 
       - name: send failure message
         if: ${{ failure() }}

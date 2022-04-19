@@ -1,3 +1,6 @@
+### 1.29.1 - 19/04/2021 - Hotfix em pre-produção - Ajustes em pre-produção da release 1.29.
+* (62617) - Corrige mensagem de período fechado em inclusão de estorno
+
 ### 1.28.1 - 11/03/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 37
 * (58962) - Resumo de recursos: O campo "Saldo reprogramado", em períodos abertos, está replicando o valor do saldo atual. 
 
