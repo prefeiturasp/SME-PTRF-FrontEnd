@@ -345,6 +345,7 @@ export const ReceitaForm = () => {
     }
 
     const onSubmit = async (values, errors) => {
+        setReadOnlyBtnAcao(true)
 
         // Validando e ou removendo e_devolucao
         if (!verificaSeDevolucao(values.tipo_receita)){
