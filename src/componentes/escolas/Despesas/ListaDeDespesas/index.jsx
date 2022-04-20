@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {Row, Col} from 'reactstrap'
 import {getSomaDosTotais} from '../../../../services/escolas/RateiosDespesas.service'
-import {getListaDespesas, getListaDespesasPaginacao, filtrosAvancadosDespesas, filtroPorPalavraDespesas, filtroPorPalavraDespesasPaginacao, filtrosAvancadosDespesasPaginacao} from '../../../../services/escolas/Despesas.service'
+import {getListaDespesas, getListaDespesasPaginacao, filtrosAvancadosDespesas, filtroPorPalavraDespesas, filtroPorPalavraDespesasPaginacao, filtrosAvancadosDespesasPaginacao, getListaDespesasOrdenadaPorImposto, getListaDespesasOrdenadaPorImpostoPaginacao} from '../../../../services/escolas/Despesas.service'
 import {redirect} from '../../../../utils/redirect.js'
 import '../../../../paginas/escolas/404/pagina-404.scss'
 import {Route} from 'react-router-dom'
@@ -20,6 +20,8 @@ import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons'
 import ReactTooltip from "react-tooltip";
 import {Paginacao} from "./Paginacao";
 import { gerarUuid } from '../../../../utils/ValidacoesAdicionaisFormularios';
+import bookmarkSolid from "../../../../assets/img/bookmark-solid.svg";
+import bookmarkRegular from "../../../../assets/img/bookmark-regular.svg";
 
 
 export class ListaDeDespesas extends Component {
@@ -47,8 +49,10 @@ export class ListaDeDespesas extends Component {
             },
             buscaUtilizandoFiltroAvancado: false,
             buscaUtilizandoFiltroPalavra: false,
+            buscaUtilizandoOrdenacaoPorImposto: false,
             divisorPaginas: 10,
-            forcarPrimeiraPagina: ''
+            forcarPrimeiraPagina: '',
+            ordenar_por_imposto: false
         }
     }
 
@@ -122,54 +126,6 @@ export class ListaDeDespesas extends Component {
     componentDidMount() {
         this.buscaDespesas();
         this.reusltadoSomaDosTotais();
-    }
-
-    numeroDocumentoStatusTemplate(despesa){ 
-        let eh_imposto = false;
-        let info_despesa = ""
-
-        if(despesa && despesa.despesa_geradora_do_imposto && despesa.despesa_geradora_do_imposto.id){
-            eh_imposto = true;
-            let numero_documento = despesa.despesa_geradora_do_imposto.numero_documento
-            let data_documento = despesa.despesa_geradora_do_imposto.data_documento ? moment(despesa.despesa_geradora_do_imposto.data_documento).format('DD/MM/YYYY') : ""
-
-            let valor_total_despesa_geradora_do_imposto = despesa.despesa_geradora_do_imposto.valor_total
-
-            let valor_total = parseFloat(valor_total_despesa_geradora_do_imposto) ? parseFloat(valor_total_despesa_geradora_do_imposto).toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            })
-            : '';
-            info_despesa = `${numero_documento} ${data_documento} ${valor_total}`
-        }
-
-        const statusColor =
-            despesa.status === 'COMPLETO'
-                ? 'ptrf-despesa-status-ativo'
-                : 'ptrf-despesa-status-inativo';
-        const statusText =
-            despesa.status === 'COMPLETO'
-                ? 'Status: COMPLETO'
-                : 'Status: RASCUNHO';
-        return (
-            <>    
-                <span>{despesa.numero_documento}</span>
-                
-                <br/>
-                <span className={statusColor}>{statusText}</span>
-                {eh_imposto &&
-                <>
-                    <span data-html={true} data-tip={`Retenção de impostos do gasto <br/> ${info_despesa}.`}>
-                    <FontAwesomeIcon
-                        style={{marginLeft: "3px", color: '#086397'}}
-                        icon={faExclamationCircle}
-                    />
-                    </span>
-                    <ReactTooltip html={true}/>
-                </>
-                } 
-            </>
-        )
     }
 
     especificacaoDataTemplate(despesa, rateio) {
@@ -285,6 +241,128 @@ export class ListaDeDespesas extends Component {
         this.setState({btnMaisFiltros: !this.state.btnMaisFiltros})
     };
 
+    retornaStatusColor = (despesa)=>{
+        return  despesa.status === 'COMPLETO' ? 'ptrf-despesa-status-ativo' : 'ptrf-despesa-status-inativo';
+    }
+
+    retornaStatusText = (despesa) => {
+    return despesa.status === 'COMPLETO' ? 'Status: COMPLETO' : 'Status: RASCUNHO';
+    }
+
+
+    valorTemplate = (valor) => {
+        let valor_formatado = Number(valor).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+        valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
+        return valor_formatado
+    };
+
+    tipoLancamentoTemplateDespesaGeradoraDoImposto = (rowData) => {
+        let numero_documento = rowData.despesa_geradora_do_imposto.numero_documento ? "de número " + rowData.despesa_geradora_do_imposto.numero_documento + ", " : ''
+        let data_transacao = rowData.despesa_geradora_do_imposto.data_transacao ? "paga em " + moment(rowData.despesa_geradora_do_imposto.data_transacao).format('DD/MM/YYYY') : 'pagamento ainda não realizado';
+        let texto_exibir = `Esse imposto está relacionado à despesa</br> ${numero_documento} ${data_transacao}`
+        return(
+            <>
+                <span>{rowData.numero_documento}</span>
+                <br/>
+                <span className={this.retornaStatusColor(rowData)}>{this.retornaStatusText(rowData)}</span>
+                <div className='d-flex justify-content-between' data-tip={texto_exibir} data-html={true}>
+                    <img src={bookmarkSolid} alt='' style={{width: '12px'}}/>
+                    <ReactTooltip/>
+                </div>
+            </>
+        )
+    }
+
+    tipoLancamentoTemplateDespesasImpostos = (rowData) => {
+        let qtde_impostos = rowData.despesas_impostos.length
+
+        if (qtde_impostos === 1) {
+            let valor_imposto = rowData.despesas_impostos[0].valor_total ? this.valorTemplate(rowData.despesas_impostos[0].valor_total) + ", " : "0,00 , "
+            let data_transacao = rowData.despesas_impostos[0].data_transacao ? "pago em " + moment(rowData.despesas_impostos[0].data_transacao).format('DD/MM/YYYY') : 'pagamento ainda não realizado';
+            let texto_exibir = `Essa despesa teve retenção de imposto: R$${valor_imposto}</br> ${data_transacao}`
+            return (
+
+                <>
+                    <span>{rowData.numero_documento}</span>
+                    <br/>
+                    <span className={this.retornaStatusColor(rowData)}>{this.retornaStatusText(rowData)}</span>
+                    <div className='d-flex justify-content-between' data-tip={texto_exibir} data-html={true}>
+                        <img src={bookmarkRegular} alt='' style={{width: '12px'}}/>
+                        <ReactTooltip/>
+                    </div>
+                </>
+            )
+        } else {
+            let texto_exibir = "Essa despesa teve retenções de impostos:</br>";
+
+            rowData.despesas_impostos.map((imposto) => (
+                texto_exibir += `<p class="mb-0">
+                                    R$${imposto.valor_total ? this.valorTemplate(imposto.valor_total) + ", " : "0,00 , "}
+                                    ${imposto.data_transacao ? "pago em " + moment(imposto.data_transacao).format('DD/MM/YYYY') : 'pagamento ainda não realizado'}
+                                </p>`
+
+            ))
+
+            return (
+                <>
+                    <span>{rowData.numero_documento}</span>
+                    <br/>
+                    <span className={this.retornaStatusColor(rowData)}>{this.retornaStatusText(rowData)}</span>
+                    <div className='d-flex justify-content-between' data-tip={texto_exibir} data-html={true}>
+                        <img src={bookmarkRegular} alt='' style={{width: '12px'}}/>
+                        <ReactTooltip/>
+                    </div>
+                </>
+            )
+        }
+    }
+
+    tipoLancamentoTemplate = (rowData) => {
+
+        if (rowData.despesa_geradora_do_imposto && rowData.despesa_geradora_do_imposto.uuid) {
+            return this.tipoLancamentoTemplateDespesaGeradoraDoImposto(rowData)
+        } else if (rowData.despesas_impostos && rowData.despesas_impostos.length > 0) {
+            return this.tipoLancamentoTemplateDespesasImpostos(rowData)
+        }else{
+            return(
+                <>
+                    <span>{rowData.numero_documento}</span>
+                    <br/>
+                    <span className={this.retornaStatusColor(rowData)}>{this.retornaStatusText(rowData)}</span>
+                </>
+            )
+        }
+    }
+
+    buscaDespesasOrdenadaPorImposto = async (ordenar_por_imposto) => {
+        this.setState({forcarPrimeiraPagina: gerarUuid()})
+        const despesas = await getListaDespesasOrdenadaPorImposto(ordenar_por_imposto);
+        this.setState({buscaUtilizandoOrdenacaoPorImposto: true})
+        const results = despesas.results
+        let numeroDePaginas = despesas.count;
+        this.setState({despesas: results})
+        this.setState({totalDePaginas: Math.ceil((numeroDePaginas)/this.state.divisorPaginas)})
+        this.setState({loading: false})
+
+    };
+
+    buscaDespesasOrdenadaPorImpostoPaginacao = async (page) => {
+        this.setState({paginacaoAtual: page})
+        let despesas = await getListaDespesasOrdenadaPorImpostoPaginacao(this.state.ordenar_por_imposto, page);
+        let results = despesas.results
+        this.setState({despesas: results})
+        let numeroDePaginas = despesas.count;
+        this.setState({totalDePaginas: Math.ceil((numeroDePaginas)/this.state.divisorPaginas)})
+    }
+
+    handleChangeCheckBoxOrdenarPorImposto = (checked) =>{
+        this.setState({ordenar_por_imposto: checked})
+        this.buscaDespesasOrdenadaPorImposto(checked)
+    }
+
     render() {
         const {despesas, somaDosTotais} = this.state;
 
@@ -362,6 +440,17 @@ export class ListaDeDespesas extends Component {
                                             somaDosTotais={somaDosTotais}
                                         />
 
+                                        <div className="form-group form-check">
+                                            <input
+                                                onChange={(e)=>this.handleChangeCheckBoxOrdenarPorImposto(e.target.checked)}
+                                                name={`checkOerdenarPorImposto`}
+                                                id={`checkOerdenarPorImposto`}
+                                                type="checkbox"
+                                                className="form-check-input"
+                                            />
+                                            <label className="form-check-label" htmlFor={`checkOerdenarPorImposto`}>Ordenar com imposto vinculados às despesas</label>
+                                        </div>
+
                                         <table id="tabela-lista-despesas" className="table table-bordered">
                                             <thead>
                                                 <tr>
@@ -376,7 +465,9 @@ export class ListaDeDespesas extends Component {
                                             {this.state.despesas.map((despesa, index) => 
                                                 <tbody key={`tbody-despesa-${index}`} onClick={e => this.redirecionaDetalhe(despesa)}>
                                                     <tr key={`tr-despesa-${index}`}>
-                                                        <td key={`td-despesa-numero_documento-${index}`} rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1: 2}>{this.numeroDocumentoStatusTemplate(despesa)}</td>
+                                                        <td key={`td-despesa-numero_documento-${index}`} rowSpan={despesa.rateios.length > 0 ? despesa.rateios.length + 1: 2}>
+                                                            {this.tipoLancamentoTemplate(despesa)}
+                                                        </td>
                                                     </tr>
 
                                                     {despesa.rateios.length > 0
@@ -414,9 +505,11 @@ export class ListaDeDespesas extends Component {
                                                 buscaDespesasPaginacao={this.buscaDespesasPaginacao}
                                                 buscaDespesasFiltrosPorPalavraPaginacao={this.buscaDespesasFiltrosPorPalavraPaginacao}
                                                 buscaDespesasFiltrosAvancadosPaginacao={this.buscaDespesasFiltrosAvancadosPaginacao}
+                                                buscaDespesasOrdenadaPorImpostoPaginacao={this.buscaDespesasOrdenadaPorImpostoPaginacao}
                                                 buscaUtilizandoFiltroPalavra={this.state.buscaUtilizandoFiltroPalavra}
                                                 buscaUtilizandoFiltroAvancado={this.state.buscaUtilizandoFiltroAvancado}
                                                 buscaUtilizandoFiltro={this.state.buscaUtilizandoFiltro}
+                                                buscaUtilizandoOrdenacaoPorImposto={this.state.buscaUtilizandoOrdenacaoPorImposto}
                                                 forcarPrimeiraPagina={this.state.forcarPrimeiraPagina}
                                             />
                                         
