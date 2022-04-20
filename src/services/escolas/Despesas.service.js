@@ -33,8 +33,16 @@ export const getListaDespesas = async uuid => {
     return (await api.get( `api/despesas/?associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader)).data
 };
 
+export const getListaDespesasOrdenadaPorImposto = async (ordenar_por_imposto) => {
+    return (await api.get( `api/despesas/ordenar-por-imposto/?associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&ordenar_por_imposto=${ordenar_por_imposto}`, authHeader)).data
+};
+
 export const getListaDespesasPaginacao = async (page) => {
     return (await api.get( `api/despesas/?associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&page=${page}`, authHeader)).data
+};
+
+export const getListaDespesasOrdenadaPorImpostoPaginacao = async (ordenar_por_imposto, page) => {
+    return (await api.get( `api/despesas/ordenar-por-imposto/?associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&ordenar_por_imposto=${ordenar_por_imposto}&page=${page}`, authHeader)).data
 };
 
 export const filtroPorPalavraDespesas = async (palavra) => {
