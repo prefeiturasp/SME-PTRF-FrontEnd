@@ -39,6 +39,35 @@ export const DespesaContextProvider = ({children}) => {
         valor_total_dos_rateios:0,
         valor_original:"",
         valor_original_total:"",
+        retem_imposto: false,
+        motivos_pagamento_antecipado: [],
+        outros_motivos_pagamento_antecipado:"",
+        despesas_impostos: [
+            {
+                associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                tipo_documento: "",
+                numero_documento: "",
+                tipo_transacao: "",
+                documento_transacao: "",
+                data_transacao: "",
+                rateios: [
+                    {
+                        tipo_custeio: "",
+                        especificacao_material_servico: "",
+                        acao_associacao: "",
+                        aplicacao_recurso: "CUSTEIO",
+                        associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                        conta_associacao: "",
+                        escolha_tags:"",
+                        numero_processo_incorporacao_capital: "",
+                        quantidade_itens_capital: 0,
+                        valor_item_capital: 0,
+                        valor_original: "",
+                        valor_rateio: "",           
+                    }
+                ]
+            }
+        ],
         // Fim Auxiliares
         rateios: [
             {
@@ -77,6 +106,35 @@ export const DespesaContextProvider = ({children}) => {
         valor_total_dos_rateios:0,
         valor_original:"",
         valor_original_total:"",
+        retem_imposto: false,
+        motivos_pagamento_antecipado: [],
+        outros_motivos_pagamento_antecipado:"",
+        despesas_impostos: [
+            {
+                associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                tipo_documento: "",
+                numero_documento: "",
+                tipo_transacao: "",
+                documento_transacao: "",
+                data_transacao: "",
+                rateios: [
+                    {
+                        tipo_custeio: "",
+                        especificacao_material_servico: "",
+                        acao_associacao: "",
+                        aplicacao_recurso: "CUSTEIO",
+                        associacao: localStorage.getItem(ASSOCIACAO_UUID),
+                        conta_associacao: "",
+                        escolha_tags:"",
+                        numero_processo_incorporacao_capital: "",
+                        quantidade_itens_capital: 0,
+                        valor_item_capital: 0,
+                        valor_original: "",
+                        valor_rateio: "",           
+                    }
+                ]
+            }
+        ],
         // Fim Auxiliares
         rateios: [
             {

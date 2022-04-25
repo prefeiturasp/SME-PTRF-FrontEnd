@@ -213,6 +213,38 @@ export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFec
   }
 }
 
+export const periodoFechadoImposto = async (despesas_impostos, setReadOnlyBtnAcao, setShowPeriodoFechadoImposto, setReadOnlyCamposImposto, setDisableBtnAdicionarImposto, onShowErroGeral) =>{  
+  for(let despesa_imposto = 0; despesa_imposto <= despesas_impostos.length-1; despesa_imposto++){
+    if(despesas_impostos[despesa_imposto].data_transacao){
+      let data = moment(despesas_impostos[despesa_imposto].data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
+
+      try{
+        let periodo_fechado = await getPeriodoFechado(data);
+        if (!periodo_fechado.aceita_alteracoes){
+          setReadOnlyBtnAcao(true);
+          setShowPeriodoFechadoImposto(true);
+          setReadOnlyCamposImposto(prevState => ({...prevState, [despesa_imposto]: true}));
+          setDisableBtnAdicionarImposto(true);
+        }
+        else{
+          setReadOnlyBtnAcao(false);
+          setShowPeriodoFechadoImposto(false);
+          setReadOnlyCamposImposto(prevState => ({...prevState, [despesa_imposto]: false}));
+          setDisableBtnAdicionarImposto(false);
+        }
+      }
+      catch (e){
+        setReadOnlyBtnAcao(true);
+        setShowPeriodoFechadoImposto(true);
+        setReadOnlyCamposImposto(prevState => ({...prevState, [despesa_imposto]: true}));
+        setDisableBtnAdicionarImposto(true);
+        onShowErroGeral();
+        console.log("Erro ao buscar perído ", e)
+      }
+    }
+  }
+}
+
 export const validaPayloadDespesas = (values, despesasTabelas=null) => {
 
   let exibe_documento_transacao
@@ -251,7 +283,7 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
       values.tipo_transacao = null
     }
   }
-  values.valor_total = trataNumericos(values.valor_total);
+  values.valor_total = round(trataNumericos(values.valor_total),2);
   values.valor_original = trataNumericos(values.valor_original);
 
   values.valor_recursos_proprios = trataNumericos(values.valor_recursos_proprios);
@@ -268,6 +300,29 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
   }else {
     values.data_transacao = null
   }
+
+  // validacoes da despesa imposto
+  values.despesas_impostos.map((despesa_imposto) => {
+    if(despesa_imposto.data_transacao !== "" && despesa_imposto.data_transacao !== null){
+      despesa_imposto.data_transacao = moment(despesa_imposto.data_transacao).format("YYYY-MM-DD");
+    }
+    else{
+      despesa_imposto.data_transacao = null;
+    }
+
+    if(despesa_imposto.rateios.length >= 0){
+        despesa_imposto.rateios.map((rateio) => {
+            // o valor total e original da despesa imposto, devem ser o mesmo que o dos rateios
+            despesa_imposto.valor_total = trataNumericos(rateio.valor_rateio);
+            despesa_imposto.valor_original = trataNumericos(rateio.valor_original);
+
+            rateio.quantidade_itens_capital = convertToNumber(rateio.quantidade_itens_capital);
+            rateio.valor_item_capital = trataNumericos(rateio.valor_item_capital);
+            rateio.valor_rateio = round(trataNumericos(rateio.valor_rateio), 2);
+            rateio.valor_original = round(trataNumericos(rateio.valor_original), 2);
+        });
+    }
+  });
 
   values.rateios.map((rateio) => {
 
@@ -407,7 +462,6 @@ export const calculaValorRecursoAcoes = (values) => {
 };
 
 export const calculaValorOriginal = (values) => {
-
   let valor_total_ratado = trataNumericos(values.valor_original);
   let valor_recursos_proprios_tratado = trataNumericos(values.valor_recursos_proprios);
   let valor_total = round(valor_total_ratado - valor_recursos_proprios_tratado, 2);

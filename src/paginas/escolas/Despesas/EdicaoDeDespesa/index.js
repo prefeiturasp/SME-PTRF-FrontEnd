@@ -52,11 +52,48 @@ export const EdicaoDeDespesa = ()=>{
                     }) : ""
                 });
 
+                if(resp && resp.despesas_impostos && resp.despesas_impostos.length > 0){
+                    let despesas_impostos_tratados = resp.despesas_impostos.map((despesa_imposto) => {
+                        despesa_imposto.associacao = localStorage.getItem(ASSOCIACAO_UUID);
+                        despesa_imposto.tipo_documento = despesa_imposto.tipo_documento ? despesa_imposto.tipo_documento : "";
+                        despesa_imposto.numero_documento = despesa_imposto.numero_documento ? despesa_imposto.numero_documento : "";
+                        despesa_imposto.tipo_transacao = despesa_imposto.tipo_transacao ? despesa_imposto.tipo_transacao : "";
+                        despesa_imposto.documento_transacao = despesa_imposto.documento_transacao ? despesa_imposto.documento_transacao : "";
+                        despesa_imposto.data_transacao = despesa_imposto.data_transacao ? moment(despesa_imposto.data_transacao, "YYYY-MM-DD"): null;
+
+                        if(despesa_imposto.rateios && despesa_imposto.rateios.length > 0){
+                            despesa_imposto.rateios.map((rateio) => {
+                                rateio.uuid = rateio.uuid ? rateio.uuid : null;
+                                rateio.tipo_custeio = rateio.tipo_custeio ? rateio.tipo_custeio : "";
+                                rateio.especificacao_material_servico = rateio.especificacao_material_servico ? rateio.especificacao_material_servico : "";
+                                rateio.acao_associacao = rateio.acao_associacao ? rateio.acao_associacao : "";
+                                rateio.aplicacao_recurso = "CUSTEIO";
+                                rateio.associacao = localStorage.getItem(ASSOCIACAO_UUID);
+                                rateio.conta_associacao = rateio.conta_associacao ? rateio.conta_associacao : "";
+                                rateio.escolha_tags = "";
+                                rateio.numero_processo_incorporacao_capital = rateio.numero_processo_incorporacao_capital ? rateio.numero_processo_incorporacao_capital : "";
+                                rateio.quantidade_itens_capital = 0;
+                                rateio.valor_item_capital = 0;
+                                rateio.valor_original = rateio.valor_original ? Number(rateio.valor_original).toLocaleString('pt-BR', {
+                                    style: 'currency',
+                                    currency: 'BRL'
+                                }) : "";
+                                rateio.valor_rateio = rateio.valor_rateio ? Number(rateio.valor_rateio).toLocaleString('pt-BR', {
+                                    style: 'currency',
+                                    currency: 'BRL'
+                                }) : "";
+                            })
+                        }
+                    })
+                }
+                
                 const init = {
                     ...resp,
                     mais_de_um_tipo_despesa : resp.rateios.length > 1 ? "sim" : "nao",
                     data_documento: resp.data_documento ?  moment(resp.data_documento, "YYYY-MM-DD"): null,
                     data_transacao: resp.data_transacao ?  moment(resp.data_transacao, "YYYY-MM-DD"): null,
+                    motivos_pagamento_antecipado: resp.motivos_pagamento_antecipado,
+                    outros_motivos_pagamento_antecipado: resp.outros_motivos_pagamento_antecipado,
 
                     valor_total: resp.valor_total ? Number(resp.valor_total).toLocaleString('pt-BR', {
                         style: 'currency',
