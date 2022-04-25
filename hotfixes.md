@@ -1,4 +1,7 @@
-### 1.29.1 - 19/04/2021 - Hotfix em pre-produção - Ajustes em pre-produção da release 1.29.
+### 1.29.2 - 20/04/2022 - Hotfix em pre-produção - Ajustes em pre-produção da release 1.29.
+* (62983) - Estorno: ao salvar o cadastro o botão "Salvar" permanece habilitado
+
+### 1.29.1 - 19/04/2022 - Hotfix em pre-produção - Ajustes em pre-produção da release 1.29.
 * (62617) - Corrige mensagem de período fechado em inclusão de estorno
 
 ### 1.28.1 - 11/03/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 37
