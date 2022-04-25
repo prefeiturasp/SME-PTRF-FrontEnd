@@ -87,3 +87,80 @@
 .tr-titulo-presentes{
   background-color: #EAEAEA;
 }
+
+
+.btn-remover-presente {
+  color: #B40C02;
+  margin-top: 2.5rem !important;
+  font-size: 12px;
+  line-height: 22px;
+}
+
+.btn-remover-presente:hover {
+  color: #B40C02;
+}
+
+.btn-cancelar-edicao {
+  color: #B40C02;
+  margin-top: 2.5rem !important;
+  font-size: 12px;
+  line-height: 22px;
+}
+
+.btn-cancelar-edicao:hover {
+  color: #B40C02;
+}
+
+.btn-editar-presente {
+  color: #00585E;
+  font-size: 12px;
+  line-height: 22px;
+}
+
+.btn-editar-presente:hover {
+  color: #00585E;
+}
+
+.btn-confirmar-edicao-presente {
+  color: #00585E;
+  font-size: 12px;
+  line-height: 22px;
+}
+
+.btn-confirmar-edicao-presente:hover {
+  color: #00585E;
+}
+
+.btn-editar-presente:hover {
+  color: #00585E;
+}
+
+.adicao-presente {
+  background-color: #F3F3F3;
+}
+
+.btn-confirmar{
+  font-size: 12px;
+  line-height: 22px;
+  color: #00585E;
+}
+
+.btn-confirmar:hover {
+  color: #00585E !important;
+  background-color: #F3F3F3 !important;
+}
+
+.link-btn-ata, .link-btn-ata:focus{
+  background-color: transparent;
+  outline: 0;
+  border: none !important;
+  text-decoration: none;
+}
+
+.link-btn-ata-disabled, .link-btn-ata-disabled:focus, .link-btn-ata-disabled:hover, .link-btn-ata-disabled img svg path{
+  color: #7D7D7D !important;
+}
+
+.link-btn-ata:hover{
+  cursor: pointer;
+}
