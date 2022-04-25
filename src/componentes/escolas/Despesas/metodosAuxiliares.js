@@ -16,13 +16,14 @@ const onCancelarTrue = (setShow, setLoading, origem) => {
     getPath(origem);
 };
 
-const onHandleClose = (setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta) => {
+const onHandleClose = (setShow, setShowDelete, setShowAvisoCapital, setShowSaldoInsuficiente, setShowPeriodoFechado, setShowSaldoInsuficienteConta, setShowPeriodoFechadoImposto) => {
     setShow(false);
     setShowDelete(false);
     setShowAvisoCapital(false);
     setShowSaldoInsuficiente(false);
     setShowPeriodoFechado(false);
     setShowSaldoInsuficienteConta(false);
+    setShowPeriodoFechadoImposto(false);
 };
 
 const onShowAvisoCapitalModal = (setShowAvisoCapital) => {
@@ -37,20 +38,27 @@ const handleAvisoCapital = (value, setShowAvisoCapital) => {
 
 const onShowDeleteModal = (setShowDelete, setShowTextoModalDelete, values) => {
     let possui_estorno = false;
+    let possui_imposto = values.retem_imposto;
 
     for(let rateio=0; rateio<=values.rateios.length-1; rateio++){
         if(values.rateios[rateio].estorno && values.rateios[rateio].estorno.uuid){
             possui_estorno = true;
         }
     }
-    
-    if(possui_estorno){
+
+    if(possui_estorno && possui_imposto){
+        setShowTextoModalDelete("<p>A exclusão dessa despesa resultará na exclusão do crédito de estorno vinculado e do imposto vinculado. Confirma?</p>");
+    }
+    else if(possui_estorno){
         setShowTextoModalDelete("<p>A exclusão dessa despesa resultará na exclusão do crédito de estorno vinculado. Confirma?</p>");
+    }
+    else if(possui_imposto){
+        setShowTextoModalDelete("<p>Excluir essa despesa excluirá também a despesa referente ao imposto retido. Confirma exclusão?</p>");
     }
     else{
         setShowTextoModalDelete("<p>Tem certeza que deseja excluir esta despesa? A ação não poderá ser desfeita.</p>");
     }
-
+    
     setShowDelete(true);
 };
 
@@ -110,6 +118,53 @@ const exibeDocumentoTransacao = (valor, setCssEscondeDocumentoTransacao, setLabe
     }
 };
 
+const exibeDocumentoTransacaoImposto = (valor, setLabelDocumentoTransacao, labelDocumentoTransacaoImposto, setCssEscondeDocumentoTransacaoImposto, cssEscondeDocumentoTransacaoImposto, despesasTabelas, index) => {
+    if(valor && despesasTabelas && despesasTabelas.tipos_transacao){
+        let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(valor));
+        if (exibe_documento_transacao.tem_documento){
+            setCssEscondeDocumentoTransacaoImposto({
+                ...cssEscondeDocumentoTransacaoImposto,
+                [index]: ""
+            })
+            setLabelDocumentoTransacao({
+                ...labelDocumentoTransacaoImposto,
+                [index]: exibe_documento_transacao.nome
+            })
+        }
+        else{
+            setCssEscondeDocumentoTransacaoImposto({
+                ...cssEscondeDocumentoTransacaoImposto,
+                [index]: "escondeItem"
+            })
+        }
+    }
+    else{
+        setCssEscondeDocumentoTransacaoImposto({
+            ...cssEscondeDocumentoTransacaoImposto,
+            [index]: "escondeItem"
+        })
+    }
+}
+
+const exibeDocumentoTransacaoImpostoUseEffect = (despesas_impostos, setLabelDocumentoTransacao, labelDocumentoTransacaoImposto, setCssEscondeDocumentoTransacaoImposto, cssEscondeDocumentoTransacaoImposto, despesasTabelas) => {
+    despesas_impostos.map((despesa_imposto, index_imposto) => {
+        if(despesa_imposto.tipo_transacao && despesasTabelas && despesasTabelas.tipos_transacao){
+            let exibe_documento_transacao =  despesasTabelas.tipos_transacao.find(element => element.id === Number(despesa_imposto.tipo_transacao));
+            if(exibe_documento_transacao.tem_documento){
+                setCssEscondeDocumentoTransacaoImposto(prevState => ([...prevState, ""]))
+                setLabelDocumentoTransacao(prevState => ([...prevState, exibe_documento_transacao.nome]))
+            }
+            else{
+                setCssEscondeDocumentoTransacaoImposto(prevState => ([...prevState, {[index_imposto]: "escondeItem"}]))
+            }
+        }
+        else{
+            setCssEscondeDocumentoTransacaoImposto(prevState => ([...prevState, {[index_imposto]: "escondeItem"}]))
+        }  
+    });
+
+    
+}
 
 const setValorRealizado = (setFieldValue, valor) =>{
     setFieldValue("valor_total", trataNumericos(valor))
@@ -146,14 +201,47 @@ const getErroValorOriginalRateios = (values) =>{
         }
     });
 
-    valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original;
+    if(values.retem_imposto && values.despesas_impostos && values.despesas_impostos.length > 0){
+        let valor_imposto = 0;
+
+        values.despesas_impostos.map((despesa_imposto) => {
+            if(despesa_imposto.rateios.length > 0){
+                despesa_imposto.rateios.map((rateio) => {
+                    valor_imposto = valor_imposto + trataNumericos(rateio.valor_rateio);
+                });
+            }
+        });
+
+        valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original + valor_imposto;
+    }
+    else{
+        valor_total_dos_rateios_original = valor_total_dos_rateios_capital_original + valor_total_dos_rateios_custeio_original;
+    }
 
     return round(valor_ptfr_original, 2) - round(valor_total_dos_rateios_original, 2)
 
 };
 
 const getErroValorRealizadoRateios = (values) =>{
-    let var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
+    let var_valor_recursos_acoes;
+
+    if(values.retem_imposto && values.despesas_impostos && values.despesas_impostos.length > 0){
+        let valor_imposto = 0;
+
+        values.despesas_impostos.map((despesa_imposto) => {
+            if(despesa_imposto.rateios.length > 0){
+                despesa_imposto.rateios.map((rateio) => {
+                    valor_imposto = valor_imposto + trataNumericos(rateio.valor_rateio);
+                });
+            }
+        });
+
+        var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios) - trataNumericos(valor_imposto);
+    }
+    else{
+        var_valor_recursos_acoes = trataNumericos(values.valor_total) - trataNumericos(values.valor_recursos_proprios);
+    }
+
     let var_valor_total_dos_rateios = 0;
     let var_valor_total_dos_rateios_capital = 0;
     let var_valor_total_dos_rateios_custeio = 0;
@@ -165,6 +253,23 @@ const getErroValorRealizadoRateios = (values) =>{
 
     return round(var_valor_recursos_acoes, 2) - round(var_valor_total_dos_rateios, 2);
 };
+
+export const apenasNumero = (valor) => {
+	const re = /^[0-9\b]+$/;
+	
+	if (valor === '' || re.test(valor)) {
+		return true;
+		
+	}
+	return false;
+}
+
+const onHandleChangeApenasNumero = (e, setFieldValue, campo) => {
+    let valor = e.target.value;
+    if(apenasNumero(valor)){
+        setFieldValue(campo, valor)
+     }
+}
 
 
 export const metodosAuxiliares = {
@@ -185,4 +290,7 @@ export const metodosAuxiliares = {
     setValoresRateiosOriginal,
     getErroValorOriginalRateios,
     getErroValorRealizadoRateios,
+    onHandleChangeApenasNumero,
+    exibeDocumentoTransacaoImposto,
+    exibeDocumentoTransacaoImpostoUseEffect
 };

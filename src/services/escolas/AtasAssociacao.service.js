@@ -54,3 +54,7 @@ export const getRepassesPendentes = async (associacao_uuid, periodo_uuid) => {
     return (await api.get(`/api/associacoes/${associacao_uuid}/repasses-pendentes-por-periodo/?periodo_uuid=${periodo_uuid}`, authHeader)).data
 }
 
+export const getDespesasComPagamentoAntecipado = async (ata_uuid) => {
+    return (await api.get(`/api/atas-associacao/ata-despesas-com-pagamento-antecipado/?ata-uuid=${ata_uuid}`, authHeader)).data
+}
+
