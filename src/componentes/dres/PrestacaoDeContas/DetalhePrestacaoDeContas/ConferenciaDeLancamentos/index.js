@@ -77,7 +77,7 @@ const ConferenciaDeLancamentos = ({prestacaoDeContas, editavel=true}) =>{
         meapcservice.setAcompanhamentoDePcPorUsuario(visoesService.getUsuarioLogin(), objetoAcompanhamentoDePcPorUsuario)
     }
 
-    const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid, filtrar_por_acao=null, filtrar_por_lancamento=null, paginacao_atual) =>{
+    const carregaLancamentosParaConferencia = async (prestacao_de_contas, conta_uuid, filtrar_por_acao=null, filtrar_por_lancamento=null, paginacao_atual, ordenar_por_imposto=null) =>{
 
         salvaObjetoAcompanhamentoDePcPorUsuarioLocalStorage(prestacao_de_contas, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, paginacao_atual)
 
@@ -88,14 +88,14 @@ const ConferenciaDeLancamentos = ({prestacaoDeContas, editavel=true}) =>{
 
         if (editavel){
             if (prestacao_de_contas && prestacao_de_contas.uuid && prestacao_de_contas.analise_atual && prestacao_de_contas.analise_atual.uuid && conta_uuid){
-                lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento)
+                lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, ordenar_por_imposto)
             }
         }else {
             if (prestacao_de_contas && prestacao_de_contas.uuid){
                 let ultima_analise =  await getUltimaAnalisePc(prestacao_de_contas.uuid)
 
                 if (ultima_analise && ultima_analise.uuid){
-                    lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, ultima_analise.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento)
+                    lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, ultima_analise.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, ordenar_por_imposto)
                 }
             }
         }
@@ -115,6 +115,13 @@ const ConferenciaDeLancamentos = ({prestacaoDeContas, editavel=true}) =>{
         setLoadingLancamentosParaConferencia(false)
     }
 
+    const [stateCheckBoxOrdenarPorImposto, setStateCheckBoxOrdenarPorImposto] = useState(false);
+
+    const handleChangeCheckBoxOrdenarPorImposto = (checked) =>{
+        setStateCheckBoxOrdenarPorImposto(checked)
+        carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, null, null, null, checked)
+    }
+
     return(
         <>
             <hr id='conferencia_de_lancamentos' className='mt-4 mb-3'/>
@@ -132,6 +139,9 @@ const ConferenciaDeLancamentos = ({prestacaoDeContas, editavel=true}) =>{
                     loadingLancamentosParaConferencia={loadingLancamentosParaConferencia}
                     contaUuid={contaUuid}
                     editavel={editavel}
+                    handleChangeCheckBoxOrdenarPorImposto={handleChangeCheckBoxOrdenarPorImposto}
+                    stateCheckBoxOrdenarPorImposto={stateCheckBoxOrdenarPorImposto}
+                    setStateCheckBoxOrdenarPorImposto={setStateCheckBoxOrdenarPorImposto}
                 />
             }
         </>

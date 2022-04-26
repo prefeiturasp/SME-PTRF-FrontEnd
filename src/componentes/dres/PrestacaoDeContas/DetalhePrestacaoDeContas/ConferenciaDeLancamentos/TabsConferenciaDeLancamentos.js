@@ -3,7 +3,7 @@ import TabelaConferenciaDeLancamentos from "./TabelaConferenciaDeLancamentos";
 import Loading from "../../../../../utils/Loading";
 import {mantemEstadoAcompanhamentoDePc as meapcservice} from "../../../../../services/mantemEstadoAcompanhamentoDePc.service";
 
-export const TabsConferenciaDeLancamentos = ({contasAssociacao, toggleBtnEscolheConta, clickBtnEscolheConta, carregaLancamentosParaConferencia, prestacaoDeContas, setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, loadingLancamentosParaConferencia, editavel}) => {
+export const TabsConferenciaDeLancamentos = ({contasAssociacao, toggleBtnEscolheConta, clickBtnEscolheConta, carregaLancamentosParaConferencia, prestacaoDeContas, setLancamentosParaConferencia, lancamentosParaConferencia, contaUuid, loadingLancamentosParaConferencia, editavel, handleChangeCheckBoxOrdenarPorImposto, stateCheckBoxOrdenarPorImposto, setStateCheckBoxOrdenarPorImposto}) => {
 
     // Manter o estado do Acompanhamento de PC
     let dados_acompanhamento_de_pc_usuario_logado = meapcservice.getAcompanhamentoDePcUsuarioLogado()
@@ -28,7 +28,8 @@ export const TabsConferenciaDeLancamentos = ({contasAssociacao, toggleBtnEscolhe
                                     <a
                                         onClick={() => {
                                             toggleBtnEscolheConta(conta.uuid);
-                                            carregaLancamentosParaConferencia(prestacaoDeContas, conta.uuid, filtrar_por_acao, filtrar_por_lancamento)
+                                            setStateCheckBoxOrdenarPorImposto(false)
+                                            carregaLancamentosParaConferencia(prestacaoDeContas, conta.uuid, filtrar_por_acao, filtrar_por_lancamento, false)
                                         }}
                                         className={`nav-link btn-escolhe-acao ${clickBtnEscolheConta === conta.uuid ? "btn-escolhe-acao-active" : ""}`}
                                         id={`nav-conferencia-de-lancamentos-${conta.uuid}-tab`}
@@ -57,6 +58,8 @@ export const TabsConferenciaDeLancamentos = ({contasAssociacao, toggleBtnEscolhe
                                 carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
                                 prestacaoDeContas={prestacaoDeContas}
                                 editavel={editavel}
+                                handleChangeCheckBoxOrdenarPorImposto={handleChangeCheckBoxOrdenarPorImposto}
+                                stateCheckBoxOrdenarPorImposto={stateCheckBoxOrdenarPorImposto}
                             />
                         </div>
                     </div>
