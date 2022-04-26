@@ -36,6 +36,9 @@ import {
     limparDetalharAcertos
 } from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 import {visoesService} from "../../../../../services/visoes.service";
+import moment from "moment";
+import bookmarkSolid from "../../../../../assets/img/bookmark-solid.svg";
+import bookmarkRegular from "../../../../../assets/img/bookmark-regular.svg";
 
 const TabelaConferenciaDeLancamentos = ({
                                             setLancamentosParaConferencia,
@@ -43,7 +46,9 @@ const TabelaConferenciaDeLancamentos = ({
                                             contaUuid,
                                             carregaLancamentosParaConferencia,
                                             prestacaoDeContas,
-                                            editavel
+                                            editavel,
+                                            handleChangeCheckBoxOrdenarPorImposto,
+                                            stateCheckBoxOrdenarPorImposto,
                                         }) => {
 
     const rowsPerPage = 10;
@@ -471,11 +476,11 @@ const TabelaConferenciaDeLancamentos = ({
         salvaObjetoAcompanhamentoDePcPorUsuarioLocalStorage(event)
     }
 
-    const retornaToolTipCredito = (rowData) =>{
-        if (rowData.documento_mestre && rowData.documento_mestre.rateio_estornado && rowData.documento_mestre.rateio_estornado.uuid){
+    const retornaToolTipCredito = (rowData) => {
+        if (rowData.documento_mestre && rowData.documento_mestre.rateio_estornado && rowData.documento_mestre.rateio_estornado.uuid) {
             let data_rateio = dataTemplate(null, null, rowData.documento_mestre.rateio_estornado.data_documento)
             let texto_tooltip = `Esse estorno está vinculado <br/> à despesa do dia ${data_rateio}.`
-            return(
+            return (
                 <>
                     <div data-tip={texto_tooltip} data-html={true}>
                         <span>{rowData.tipo_transacao}</span>
@@ -487,17 +492,17 @@ const TabelaConferenciaDeLancamentos = ({
                     </div>
                 </>
             )
-        }else {
+        } else {
             return rowData.tipo_transacao
         }
     }
 
     const retornaToolTipGasto = (rowData) => {
 
-        if (rowData && rowData.rateios && rowData.rateios.length > 0){
+        if (rowData && rowData.rateios && rowData.rateios.length > 0) {
             if (rowData.rateios.some(e => e && e.estorno && e.estorno.uuid)) {
                 let texto_tooltip = `Esse gasto possui estornos.`
-                return(
+                return (
                     <>
                         <div data-tip={texto_tooltip} data-html={true}>
                             <span>{rowData.tipo_transacao}</span>
@@ -514,11 +519,107 @@ const TabelaConferenciaDeLancamentos = ({
         return <span>{rowData.tipo_transacao}</span>
     }
 
-    const tipoTransacaoTemplate = (rowData) =>{
-        if (rowData && rowData.tipo_transacao && rowData.tipo_transacao === 'Crédito'){
+    const montaTemplateToolTip = (rowData, texto_exibir, tipo_de_despesa) =>{
+        if (rowData && rowData.rateios && rowData.rateios.length > 0) {
+            if (rowData.rateios.some(e => e && e.estorno && e.estorno.uuid)) {
+                let texto_tooltip = `Esse gasto possui estornos.`
+                return (
+                    <>
+                        <div className='d-flex justify-content-between'>
+                                <span data-tip={texto_tooltip} data-html={true}>{rowData.tipo_transacao}
+                                    <FontAwesomeIcon
+                                        style={{fontSize: '18px', marginLeft: "4px", color: '#2A6397'}}
+                                        icon={faInfoCircle}
+                                    />
+                                </span>
+                            <ReactTooltip/>
+
+                            <img
+                                data-tip={texto_exibir}
+                                data-html={true}
+                                src={tipo_de_despesa === 'despesa_impostos' ? bookmarkRegular : bookmarkSolid}
+                                alt='' style={{width: '12px'}}
+                            />
+                            <ReactTooltip/>
+                        </div>
+                    </>
+                )
+            } else {
+                return (
+                    <div className='d-flex justify-content-between' data-tip={texto_exibir} data-html={true}>
+                        <span>{rowData.tipo_transacao}</span>
+                        <img
+                            src={tipo_de_despesa === 'despesa_impostos' ? bookmarkRegular : bookmarkSolid}
+                            alt=''
+                            style={{width: '12px'}}
+                        />
+                        <ReactTooltip/>
+                    </div>
+                )
+            }
+        } else {
+            return (
+                <div className='d-flex justify-content-between' data-tip={texto_exibir} data-html={true}>
+                    <img
+                        src={tipo_de_despesa === 'despesa_impostos' ? bookmarkRegular : bookmarkSolid}
+                        alt=''
+                        style={{width: '12px'}}
+                    />
+                    <ReactTooltip/>
+                </div>
+            )
+        }
+    }
+
+    const tipoLancamentoTemplateDespesaGeradoraDoImposto = (rowData) => {
+        let numero_documento = rowData.despesa_geradora_do_imposto.numero_documento ? "de número " + rowData.despesa_geradora_do_imposto.numero_documento + ", " : ''
+        let data_transacao = rowData.despesa_geradora_do_imposto.data_transacao ? "paga em " + moment(rowData.despesa_geradora_do_imposto.data_transacao).format('DD/MM/YYYY') : 'pagamento ainda não realizado';
+        let texto_exibir = `Esse imposto está relacionado à despesa</br> ${numero_documento} ${data_transacao}`
+
+        return montaTemplateToolTip(rowData, texto_exibir, 'despesa_geradora_do_imposto')
+    }
+
+    const tipoLancamentoTemplateDespesasImpostos = (rowData) => {
+        let qtde_impostos = rowData.despesas_impostos.length
+
+        if (qtde_impostos === 1) {
+            let valor_imposto = rowData.despesas_impostos[0].valor_total ? valor_template(null, null, rowData.despesas_impostos[0].valor_total) + ", " : "0,00 , "
+            let data_transacao = rowData.despesas_impostos[0].data_transacao ? "pago em " + moment(rowData.despesas_impostos[0].data_transacao).format('DD/MM/YYYY') : 'pagamento ainda não realizado';
+            let texto_exibir = `Essa despesa teve retenção de imposto: R$${valor_imposto}</br> ${data_transacao}`
+
+            return montaTemplateToolTip(rowData, texto_exibir, 'despesa_impostos')
+
+        } else {
+            let texto_exibir = "Essa despesa teve retenções de impostos:</br>";
+
+            rowData.despesas_impostos.map((imposto) => (
+                texto_exibir += `<p class="mb-0">
+                                    R$${imposto.valor_total ? valor_template(null, null, imposto.valor_total) + ", " : "0,00 , "}
+                                    ${imposto.data_transacao ? "pago em " + moment(imposto.data_transacao).format('DD/MM/YYYY') : 'pagamento ainda não realizado'}
+                                </p>`
+
+            ))
+            return montaTemplateToolTip(rowData, texto_exibir, 'despesa_impostos')
+        }
+    }
+
+    const tipoLancamentoDespesaTemplate = (rowData) => {
+        if (rowData.despesa_geradora_do_imposto && rowData.despesa_geradora_do_imposto.uuid) {
+            return tipoLancamentoTemplateDespesaGeradoraDoImposto(rowData)
+        } else if (rowData.despesas_impostos && rowData.despesas_impostos.length > 0) {
+            return tipoLancamentoTemplateDespesasImpostos(rowData)
+        } else {
+            return (
+                retornaToolTipGasto(rowData)
+            )
+        }
+    }
+
+    const tipoTransacaoTemplate = (rowData) => {
+        if (rowData && rowData.tipo_transacao && rowData.tipo_transacao === 'Crédito') {
             return retornaToolTipCredito(rowData)
-        }else if(rowData && rowData.tipo_transacao && rowData.tipo_transacao === 'Gasto'){
-            return retornaToolTipGasto(rowData)
+        } else if (rowData && rowData.tipo_transacao && rowData.tipo_transacao === 'Gasto') {
+            return tipoLancamentoDespesaTemplate(rowData)
         }
     }
 
@@ -536,66 +637,79 @@ const TabelaConferenciaDeLancamentos = ({
                 mensagemQuantidadeExibida()
             }
             {lancamentosParaConferencia && lancamentosParaConferencia.length > 0 &&
-                <DataTable
-                    value={lancamentosParaConferencia}
-                    expandedRows={expandedRows}
-                    onRowToggle={(e) => setExpandedRows(e.data)}
-                    rowExpansionTemplate={rowExpansionTemplate}
-                    paginator={lancamentosParaConferencia.length > rowsPerPage}
-                    rows={rowsPerPage}
-                    paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                    rowClassName={rowClassName}
-                    selectionMode="single"
-                    onRowClick={e => redirecionaDetalhe(e.data)}
-                    stripedRows
+                <>
+                    <div className="form-group form-check">
+                        <input
+                            onChange={(e)=>handleChangeCheckBoxOrdenarPorImposto(e.target.checked)}
+                            checked={stateCheckBoxOrdenarPorImposto}
+                            name={`checkOerdenarPorImposto`}
+                            id={`checkOerdenarPorImposto`}
+                            type="checkbox"
+                            className="form-check-input"
+                        />
+                        <label className="form-check-label" htmlFor={`checkOerdenarPorImposto`}>Ordenar com imposto vinculados às despesas</label>
+                    </div>
+                    <DataTable
+                        value={lancamentosParaConferencia}
+                        expandedRows={expandedRows}
+                        onRowToggle={(e) => setExpandedRows(e.data)}
+                        rowExpansionTemplate={rowExpansionTemplate}
+                        paginator={lancamentosParaConferencia.length > rowsPerPage}
+                        rows={rowsPerPage}
+                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                        rowClassName={rowClassName}
+                        selectionMode="single"
+                        onRowClick={e => redirecionaDetalhe(e.data)}
+                        stripedRows
 
-                    // Usado para salvar no localStorage a página atual após os calculos ** ver função onPaginationClick
-                    first={primeiroRegistroASerExibido}
-                    onPage={onPaginationClick}
-                >
-                    <Column
-                        header={selecionarHeader()}
-                        body={selecionarTemplate}
-                        style={{borderRight: 'none', width: '5%'}}
-                    />
-                    <Column
-                        field='data'
-                        header='Data'
-                        body={dataTemplate}
-                        className="align-middle text-left borda-coluna"
-                        style={{width: '10%'}}
-                    />
-                    <Column
-                        field='tipo_transacao'
-                        header='Tipo de lançamento'
-                        className="align-middle text-left borda-coluna" style={{width: '17%'}}
-                        body={tipoTransacaoTemplate}
-                    />
-                    <Column
-                        field='numero_documento'
-                        header='N.º do documento'
-                        body={numeroDocumentoTemplate}
-                        className="align-middle text-left borda-coluna"
-                        style={{width: '17%'}}
-                    />
-                    <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna"
-                            style={{width: '24%'}}/>
-                    <Column
-                        field='valor_transacao_total'
-                        header='Valor (R$)'
-                        body={valor_template}
-                        className="align-middle text-left borda-coluna"
-                        style={{width: '10%'}}
-                    />
-                    <Column
-                        field='analise_lancamento'
-                        header='Conferido'
-                        body={conferidoTemplate}
-                        className="align-middle text-left borda-coluna"
-                        style={{borderRight: 'none', width: '10%'}}
-                    />
-                    <Column expander style={{width: '5%', borderLeft: 'none'}}/>
-                </DataTable>
+                        // Usado para salvar no localStorage a página atual após os calculos ** ver função onPaginationClick
+                        first={primeiroRegistroASerExibido}
+                        onPage={onPaginationClick}
+                    >
+                        <Column
+                            header={selecionarHeader()}
+                            body={selecionarTemplate}
+                            style={{borderRight: 'none', width: '5%'}}
+                        />
+                        <Column
+                            field='data'
+                            header='Data'
+                            body={dataTemplate}
+                            className="align-middle text-left borda-coluna"
+                            style={{width: '10%'}}
+                        />
+                        <Column
+                            field='tipo_transacao'
+                            header='Tipo de lançamento'
+                            className="align-middle text-left borda-coluna" style={{width: '17%'}}
+                            body={tipoTransacaoTemplate}
+                        />
+                        <Column
+                            field='numero_documento'
+                            header='N.º do documento'
+                            body={numeroDocumentoTemplate}
+                            className="align-middle text-left borda-coluna"
+                            style={{width: '17%'}}
+                        />
+                        <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna"
+                                style={{width: '24%'}}/>
+                        <Column
+                            field='valor_transacao_total'
+                            header='Valor (R$)'
+                            body={valor_template}
+                            className="align-middle text-left borda-coluna"
+                            style={{width: '10%'}}
+                        />
+                        <Column
+                            field='analise_lancamento'
+                            header='Conferido'
+                            body={conferidoTemplate}
+                            className="align-middle text-left borda-coluna"
+                            style={{borderRight: 'none', width: '10%'}}
+                        />
+                        <Column expander style={{width: '5%', borderLeft: 'none'}}/>
+                    </DataTable>
+                </>
             }
             <section>
                 <ModalCheckNaoPermitidoConfererenciaDeLancamentos
