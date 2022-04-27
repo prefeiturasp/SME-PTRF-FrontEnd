@@ -60,6 +60,7 @@ export const TabsConferenciaDeLancamentos = ({contasAssociacao, toggleBtnEscolhe
                                 editavel={editavel}
                                 handleChangeCheckBoxOrdenarPorImposto={handleChangeCheckBoxOrdenarPorImposto}
                                 stateCheckBoxOrdenarPorImposto={stateCheckBoxOrdenarPorImposto}
+                                setStateCheckBoxOrdenarPorImposto={setStateCheckBoxOrdenarPorImposto}
                             />
                         </div>
                     </div>
