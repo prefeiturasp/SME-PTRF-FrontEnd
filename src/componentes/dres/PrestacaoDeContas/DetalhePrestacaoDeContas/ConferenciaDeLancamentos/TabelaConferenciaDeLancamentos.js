@@ -49,6 +49,7 @@ const TabelaConferenciaDeLancamentos = ({
                                             editavel,
                                             handleChangeCheckBoxOrdenarPorImposto,
                                             stateCheckBoxOrdenarPorImposto,
+                                            setStateCheckBoxOrdenarPorImposto,
                                         }) => {
 
     const rowsPerPage = 10;
@@ -214,7 +215,10 @@ const TabelaConferenciaDeLancamentos = ({
                                             <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                                             <button
                                                 className="float-right btn btn-link btn-montagem-selecionar"
-                                                onClick={() => marcarComoCorreto()}
+                                                onClick={() => {
+                                                    setStateCheckBoxOrdenarPorImposto(false)
+                                                    marcarComoCorreto()
+                                                }}
                                                 style={{textDecoration: "underline", cursor: "pointer"}}
                                             >
                                                 <FontAwesomeIcon
@@ -230,21 +234,27 @@ const TabelaConferenciaDeLancamentos = ({
                                             <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                                             <button
                                                 className="float-right btn btn-link btn-montagem-selecionar"
-                                                onClick={() => marcarComoNaoConferido()}
+                                                onClick={() => {
+                                                    setStateCheckBoxOrdenarPorImposto(false)
+                                                    marcarComoNaoConferido()
+                                                }}
                                                 style={{textDecoration: "underline", cursor: "pointer"}}
                                             >
                                                 <FontAwesomeIcon
                                                     style={{color: "white", fontSize: '15px', marginRight: "3px"}}
                                                     icon={faCheckCircle}
                                                 />
-                                                <strong>Marcar como Não conferido</strong>
+                                                <strong>Marcar como não conferido</strong>
                                             </button>
                                         </>
                                     }
                                     <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                                     <button
                                         className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={() => detalharAcertos()}
+                                        onClick={() => {
+                                            setStateCheckBoxOrdenarPorImposto(false)
+                                            detalharAcertos()
+                                        }}
                                         style={{textDecoration: "underline", cursor: "pointer"}}
                                     >
                                         <FontAwesomeIcon
@@ -560,6 +570,7 @@ const TabelaConferenciaDeLancamentos = ({
         } else {
             return (
                 <div className='d-flex justify-content-between' data-tip={texto_exibir} data-html={true}>
+                    <span>{rowData.tipo_transacao}</span>
                     <img
                         src={tipo_de_despesa === 'despesa_impostos' ? bookmarkRegular : bookmarkSolid}
                         alt=''
@@ -632,23 +643,27 @@ const TabelaConferenciaDeLancamentos = ({
                 handleSubmitFiltros={handleSubmitFiltros}
                 limpaFiltros={limpaFiltros}
             />
+
+            {lancamentosParaConferencia && lancamentosParaConferencia.length > 0 &&
+                <div className="form-group form-check">
+                    <input
+                        onChange={(e)=>handleChangeCheckBoxOrdenarPorImposto(e.target.checked)}
+                        checked={stateCheckBoxOrdenarPorImposto}
+                        name={`checkOerdenarPorImposto`}
+                        id={`checkOerdenarPorImposto`}
+                        type="checkbox"
+                        className="form-check-input"
+                    />
+                    <label className="form-check-label" htmlFor={`checkOerdenarPorImposto`}>Ordenar com imposto vinculados às despesas</label>
+                </div>
+            }
+
             {quantidadeSelecionada > 0 ?
                 montagemSelecionar() :
                 mensagemQuantidadeExibida()
             }
             {lancamentosParaConferencia && lancamentosParaConferencia.length > 0 &&
                 <>
-                    <div className="form-group form-check">
-                        <input
-                            onChange={(e)=>handleChangeCheckBoxOrdenarPorImposto(e.target.checked)}
-                            checked={stateCheckBoxOrdenarPorImposto}
-                            name={`checkOerdenarPorImposto`}
-                            id={`checkOerdenarPorImposto`}
-                            type="checkbox"
-                            className="form-check-input"
-                        />
-                        <label className="form-check-label" htmlFor={`checkOerdenarPorImposto`}>Ordenar com imposto vinculados às despesas</label>
-                    </div>
                     <DataTable
                         value={lancamentosParaConferencia}
                         expandedRows={expandedRows}

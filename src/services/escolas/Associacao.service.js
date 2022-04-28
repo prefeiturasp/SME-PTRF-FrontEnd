@@ -69,6 +69,10 @@ export const consultarRF = async (rf) => {
     return (await api.get(`/api/membros-associacao/codigo-identificacao/?rf=${rf}&associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader))
 };
 
+export const consultarListaCargos = async (rf) => {
+    return (await api.get(`/api/membros-associacao/lista-cargos/?rf=${rf}`, authHeader))
+};
+
 export const consultarCodEol = async (cod_eol) => {
     return (await api.get(`/api/membros-associacao/codigo-identificacao/?codigo-eol=${cod_eol}&associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader))
 };

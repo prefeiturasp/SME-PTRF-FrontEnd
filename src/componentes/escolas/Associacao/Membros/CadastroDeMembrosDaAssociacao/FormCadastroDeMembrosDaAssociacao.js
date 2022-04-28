@@ -4,7 +4,7 @@ import MaskedInput from "react-text-mask";
 import {Formik} from "formik";
 import { Switch } from 'antd';
 
-export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, validateFormMembros, handleChangeEditarMembro, onSubmitEditarMembro, visoesService, ePresidente, formRef, telefoneMaskContitional, switchStatusPresidente, handleChangeSwitchStatusPresidente, cargosDaDiretoriaExecutiva, responsavelPelasAtribuicoes, handleChangeResponsavelPelaAtribuicao}) =>{
+export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, validateFormMembros, handleChangeEditarMembro, onSubmitEditarMembro, visoesService, ePresidente, formRef, telefoneMaskContitional, switchStatusPresidente, handleChangeSwitchStatusPresidente, cargosDaDiretoriaExecutiva, responsavelPelasAtribuicoes, handleChangeResponsavelPelaAtribuicao, possuiMaisDeUmCargoEducacao}) =>{
 
     return(
         <>
@@ -79,6 +79,7 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                             }}
                                             name="codigo_identificacao"
                                             className="form-control"
+                                            onBlur={(e) => {props.handleBlur(e)}}
                                         />
                                         {props.errors.codigo_identificacao && <span className="span_erro text-danger mt-1"> {props.errors.codigo_identificacao}</span>}
                                     </div>
@@ -120,26 +121,59 @@ export const FormCadastroDeMembrosDaAssociacao = ({stateFormEditarMembro, valida
                                     </div>
                                 </div>
 
-                                <div className={(ePresidente(stateFormEditarMembro) ? "col": "col") + (props.values.representacao !== 'SERVIDOR' ? " escondeItem" : "")}>
-                                    <div className="form-group">
-                                        <label htmlFor="cargo_educacao">Cargo na educação</label>
-                                        <input
-                                            readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
-                                            disabled={!visoesService.getPermissoes(['change_associacao'])}
-                                            type="text"
-                                            value={props.values.cargo_educacao ? props.values.cargo_educacao : ""}
-                                            onChange={(e) => {
-                                                props.handleChange(e);
-                                                handleChangeEditarMembro(e.target.name, e.target.value);
-                                            }}
-                                            name="cargo_educacao"
-                                            className="form-control"
-                                        />
-                                        {(props.values.cargo_educacao === undefined || props.values.cargo_educacao === "") && props.errors.cargo_educacao &&
-                                        <span className="span_erro text-danger mt-1"> {props.errors.cargo_educacao}</span>}
-                                    </div>
-                                </div>
-
+                                {possuiMaisDeUmCargoEducacao(props.values.lista_cargos)
+                                
+                                    ?
+                                        <div className={(ePresidente(stateFormEditarMembro) ? "col": "col") + (props.values.representacao !== 'SERVIDOR' ? " escondeItem" : "")}>
+                                            <div className="form-group">
+                                                <label htmlFor="cargo_educacao">Cargo na educação</label>
+                                                <select
+                                                    disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                    value={props.values.cargo_educacao ? props.values.cargo_educacao : ""}
+                                                    onChange={(e) => {
+                                                        props.handleChange(e);
+                                                        handleChangeEditarMembro(e.target.name, e.target.value);
+                                                    }}
+                                                    name="cargo_educacao"
+                                                    className="form-control"
+                                                    onBlur={(e) => {props.handleBlur(e)}}
+                                                >
+                                                    <option key={0} value="">Escolha o Cargo</option>
+                                                    {props.values.lista_cargos && props.values.lista_cargos.map((item, index) => {
+                                                        return(
+                                                            <option key={index+1} value={item}>{item}</option>
+                                                        )
+                                                        
+                                                    })}
+                                                    
+                                                </select>
+                                                {(props.values.cargo_educacao === undefined || props.values.cargo_educacao === "") && props.errors.cargo_educacao &&
+                                                <span className="span_erro text-danger mt-1"> {props.errors.cargo_educacao}</span>}
+                                            </div>
+                                        </div>
+                                    :
+                                
+                                        <div className={(ePresidente(stateFormEditarMembro) ? "col": "col") + (props.values.representacao !== 'SERVIDOR' ? " escondeItem" : "")}>
+                                            <div className="form-group">
+                                                <label htmlFor="cargo_educacao">Cargo na educação</label>
+                                                <input
+                                                    readOnly={props.values.representacao !== 'PAI_RESPONSAVEL'}
+                                                    disabled={!visoesService.getPermissoes(['change_associacao'])}
+                                                    type="text"
+                                                    value={props.values.cargo_educacao ? props.values.cargo_educacao : ""}
+                                                    onChange={(e) => {
+                                                        props.handleChange(e);
+                                                        handleChangeEditarMembro(e.target.name, e.target.value);
+                                                    }}
+                                                    onBlur={(e) => {props.handleBlur(e)}}
+                                                    name="cargo_educacao"
+                                                    className="form-control"
+                                                />
+                                                {(props.values.cargo_educacao === undefined || props.values.cargo_educacao === "") && props.errors.cargo_educacao &&
+                                                <span className="span_erro text-danger mt-1"> {props.errors.cargo_educacao}</span>}
+                                            </div>
+                                        </div> 
+                                }
                             </div>
 
                             <div className="row">
