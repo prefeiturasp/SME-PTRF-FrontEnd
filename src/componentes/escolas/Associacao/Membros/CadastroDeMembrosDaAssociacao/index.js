@@ -8,7 +8,7 @@ import {FormCadastroDeMembrosDaAssociacao} from "./FormCadastroDeMembrosDaAssoci
 import {
     consultarCodEol,
     consultarCpfResponsavel,
-    consultarRF, criarMembroAssociacao, editarMembroAssociacao, getStatusPresidenteAssociacao,
+    consultarRF, consultarListaCargos, criarMembroAssociacao, editarMembroAssociacao, getStatusPresidenteAssociacao,
     getUsuarioPeloUsername,
     getCargosDaDiretoriaExecutiva,
     patchStatusPresidenteAssociacao,
@@ -75,6 +75,7 @@ const CadastroDeMembrosDaAssociacao = () => {
                 cargo_associacao: infoMembroSelecionado.cargo_exibe_form ? infoMembroSelecionado.cargo_exibe_form : "",
                 cargo_educacao: infoMembroSelecionado.infos.cargo_educacao ? infoMembroSelecionado.infos.cargo_educacao : "",
                 representacao: infoMembroSelecionado.infos.representacao ? infoMembroSelecionado.infos.representacao : "",
+                lista_cargos: infoMembroSelecionado.infos.representacao === "SERVIDOR" ? await listaDeCargosInit(infoMembroSelecionado.infos.codigo_identificacao) : [],
                 codigo_identificacao: infoMembroSelecionado.infos.codigo_identificacao ? infoMembroSelecionado.infos.codigo_identificacao : "",
                 email: infoMembroSelecionado.infos.email ? infoMembroSelecionado.infos.email : "",
                 cpf: infoMembroSelecionado.infos.cpf ? infoMembroSelecionado.infos.cpf : "",
@@ -188,6 +189,30 @@ const CadastroDeMembrosDaAssociacao = () => {
         history.push(path);
     };
 
+    const listaDeCargos = (dados) => {
+        let cargos = [];
+        for(let cargo = 0; cargo <= dados.length-1; cargo ++){
+            cargos.push(dados[cargo].cargo)
+        }
+
+        return cargos;
+    }
+
+    const listaDeCargosInit = async (rf) => {
+        let servidor = await consultarListaCargos(rf.trim());
+        let cargos = listaDeCargos(servidor.data);
+
+        return cargos;
+    }
+
+    const possuiMaisDeUmCargoEducacao = (lista) => {
+        if(lista && lista.length <= 1){
+            return false;
+        }
+
+        return true;
+    }
+
     const cod_identificacao_rf = useMemo(() => stateFormEditarMembro.codigo_identificacao, [stateFormEditarMembro.codigo_identificacao]);
     const cod_identificacao_eol = useMemo(() => stateFormEditarMembro.codigo_identificacao, [stateFormEditarMembro.codigo_identificacao]);
     const cod_identificacao_cpf = useMemo(() => stateFormEditarMembro.cpf, [stateFormEditarMembro.cpf]);
@@ -197,6 +222,7 @@ const CadastroDeMembrosDaAssociacao = () => {
         if (values.representacao === "SERVIDOR") {
             try {
                 if (cod_identificacao_rf !== values.codigo_identificacao.trim()) {
+                    values.cargo_educacao = "";
                     let rf = await consultarRF(values.codigo_identificacao.trim());
                     let usuario_existente = await getUsuarioPeloUsername(values.codigo_identificacao.trim());
                     if (rf.status === 200 || rf.status === 201) {
@@ -205,7 +231,8 @@ const CadastroDeMembrosDaAssociacao = () => {
                             nome: rf.data[0].nm_pessoa,
                             codigo_identificacao: values.codigo_identificacao,
                             cargo_associacao: values.cargo_associacao,
-                            cargo_educacao: rf.data[0].cargo,
+                            cargo_educacao: listaDeCargos(rf.data).length <= 1 ? rf.data[0].cargo : "",
+                            lista_cargos: listaDeCargos(rf.data),
                             representacao: values.representacao,
                             email: values.email,
                             cpf: values.cpf,
@@ -218,7 +245,12 @@ const CadastroDeMembrosDaAssociacao = () => {
                         setStateFormEditarMembro(init);
                     }
                 }
-                setBtnSalvarReadOnly(false);
+                if(values.cargo_educacao === ""){
+                    setBtnSalvarReadOnly(true);
+                }
+                else{
+                    setBtnSalvarReadOnly(false);
+                }
             } catch (e) {
                 setBtnSalvarReadOnly(true);
                 let data = e.response.data;
@@ -360,6 +392,17 @@ const CadastroDeMembrosDaAssociacao = () => {
             }
             formRef.current.setErrors({...erros})
             return
+        }
+
+        if (values.representacao === "SERVIDOR") {
+            if(!values.cargo_educacao.trim()){
+                erros = {
+                    ...erros,
+                    cargo_educacao: 'É obrigatório e não pode ultrapassar 45 caracteres'
+                }
+                formRef.current.setErrors({...erros})
+                return
+            }
         }
 
         if (!switchStatusPresidente && !responsavelPelasAtribuicoes){
@@ -514,6 +557,7 @@ const CadastroDeMembrosDaAssociacao = () => {
                             responsavelPelasAtribuicoes={responsavelPelasAtribuicoes}
                             handleChangeResponsavelPelaAtribuicao={handleChangeResponsavelPelaAtribuicao}
                             cargosDaDiretoriaExecutiva={cargosDaDiretoriaExecutiva}
+                            possuiMaisDeUmCargoEducacao={possuiMaisDeUmCargoEducacao}
                         />
                     </>
                 }
