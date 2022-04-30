@@ -1,3 +1,6 @@
+### 1.29.3 - 20/04/2022 - Hotfix
+* (63355) - Cadastro de despesa não salva lançamento em ação configurada como "livre aplicação"
+
 ### 1.29.2 - 20/04/2022 - Hotfix em pre-produção - Ajustes em pre-produção da release 1.29.
 * (62983) - Estorno: ao salvar o cadastro o botão "Salvar" permanece habilitado
 
