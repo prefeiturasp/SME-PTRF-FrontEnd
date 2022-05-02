@@ -304,11 +304,17 @@ export const CadastroForm = ({verbo_http}) => {
 
             if(uuid_acao){
                 let id_categoria_receita_lower = rateio.aplicacao_recurso.toLowerCase();
+
+                // Verificação criada caso seja acrescentada outra ação além de CAPITAL OU CUSTEIO
                 let aceita_selecionado  = eval('despesasTabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_' + id_categoria_receita_lower);
+
                 let aceita_capital = eval('despesasTabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_capital');
                 let aceita_custeio = eval('despesasTabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_custeio');
-                
-                if(!aceita_selecionado && !aceita_capital && !aceita_custeio){
+
+                // Caso aceite livre automaticamente aceita qualquer ação CAPITAL, CUSTEIO ou qualquer outra que seja criada
+                let aceita_livre = eval('despesasTabelas.acoes_associacao.find(element => element.uuid === uuid_acao).acao.aceita_livre');
+
+                if(!aceita_livre && !aceita_selecionado && !aceita_capital && !aceita_custeio){
                     let mensagem = `A ação selecionada não aceita despesas de nenhum tipo (capital ou custeio). Você deseja confirmar o cadastro da despesa de ${id_categoria_receita_lower} nesta ação?`
                     let objeto = {
                         mensagem: mensagem,
@@ -316,7 +322,7 @@ export const CadastroForm = ({verbo_http}) => {
                     }
                     mensagens.push(objeto);
                 }
-                else if(!aceita_selecionado && aceita_capital){
+                else if(!aceita_livre && !aceita_selecionado && aceita_capital){
                     let mensagem = `A ação selecionada aceita apenas despesas de capital. Você deseja confirmar o cadastro da despesa de ${id_categoria_receita_lower} nesta ação?`
                     let objeto = {
                         mensagem: mensagem,
@@ -324,7 +330,7 @@ export const CadastroForm = ({verbo_http}) => {
                     }
                     mensagens.push(objeto);
                 }
-                else if(!aceita_selecionado && aceita_custeio){
+                else if(!aceita_livre && !aceita_selecionado && aceita_custeio){
                     let mensagem = `A ação selecionada aceita apenas despesas de custeio. Você deseja confirmar o cadastro da despesa de ${id_categoria_receita_lower} nesta ação?`
                     let objeto = {
                         mensagem: mensagem,
