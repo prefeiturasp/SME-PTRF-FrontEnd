@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import UltimatePagination from 'react-ultimate-pagination-bootstrap-4'
 
-export const Paginacao = ({paginacaoPaginasTotal, buscaDespesasPaginacao, buscaDespesasFiltrosPorPalavraPaginacao, buscaDespesasFiltrosAvancadosPaginacao, buscaUtilizandoFiltro, buscaUtilizandoFiltroPalavra, buscaUtilizandoFiltroAvancado, forcarPrimeiraPagina }) => {
+export const Paginacao = ({paginacaoPaginasTotal, buscaDespesasPaginacao, buscaDespesasFiltrosPorPalavraPaginacao, buscaDespesasFiltrosAvancadosPaginacao, buscaUtilizandoFiltro, buscaUtilizandoFiltroPalavra, buscaUtilizandoFiltroAvancado, forcarPrimeiraPagina, buscaUtilizandoOrdenacaoPorImposto, buscaDespesasOrdenadaPorImpostoPaginacao }) => {
     const [page, setPage] = useState(1);
 
     useEffect(()=>{
@@ -16,6 +16,9 @@ export const Paginacao = ({paginacaoPaginasTotal, buscaDespesasPaginacao, buscaD
         }
         else if(buscaUtilizandoFiltroPalavra){
             buscaDespesasFiltrosPorPalavraPaginacao(page);
+        }
+        else if(buscaUtilizandoOrdenacaoPorImposto){
+            buscaDespesasOrdenadaPorImpostoPaginacao(page);
         }
         else{
             buscaDespesasPaginacao(page);
