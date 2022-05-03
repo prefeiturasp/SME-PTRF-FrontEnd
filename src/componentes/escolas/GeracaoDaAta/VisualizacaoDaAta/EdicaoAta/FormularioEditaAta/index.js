@@ -3,7 +3,7 @@ import {DatePickerField} from "../../../../../Globais/DatePickerField";
 import {visoesService} from "../../../../../../services/visoes.service";
 import {FieldArray, Formik} from "formik";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTimesCircle, faCheckCircle} from "@fortawesome/free-solid-svg-icons";
+import {faTimesCircle, faCheckCircle, faEdit} from "@fortawesome/free-solid-svg-icons";
 import {getMembroPorIdentificador} from "../../../../../../services/escolas/PresentesAta.service";
 import {YupSignupSchemaAta} from "./YupSignupSchemaAta";
 import {valida_cpf_exportado} from "../../../../../../utils/ValidacoesAdicionaisFormularios";
@@ -25,8 +25,15 @@ export const FormularioEditaAta = ({
 
     const podeEditarAta = [['change_ata_prestacao_contas']].some(visoesService.getPermissoes)
     const [dadosForm, setDadosForm] = useState({});
-    const [disableBtnAdicionarPresente, setDisableBtnAdicionarPresente] = useState(false)
+    const [disableBtnAdicionarPresente, setDisableBtnAdicionarPresente] = useState(false);
+    const [disableBtnEditarPresente, setDisableBtnEditarPresente] = useState(false);
+    const [disableBtnApagarPresente, setDisableBtnApagarPresente] = useState(false);
+    const [disableBtnConfirmarEdicao, setDisableConfirmarEdicao] = useState(false);
+    const [disableBtnCancelarEdicao, setDisableCancelarEdicao] = useState(false);
     const [formErrors, setFormErrors] = useState({});
+    const [ehAdicaoPresente, setEhAdicaoPresente] = useState(false);
+    const [ehEdicaoPresente, setEhEdicaoPresente] = useState([]);
+    const [linhaEditada, setLinhaEditada] = useState({})
 
     useEffect(() => {
         getDados();
@@ -55,6 +62,178 @@ export const FormularioEditaAta = ({
         setFieldValue("stateFormEditarAta.cargo_secretaria_reuniao", cargo)
     };
 
+    const onClickCancelarAdicao = (remove, lista) => {
+        if(lista.length > 0){
+            let index = lista.length - 1;    
+            setEhAdicaoPresente(false);
+            setDisableBtnAdicionarPresente(false);
+            setDisableBtnSalvar(false);
+            setDisableBtnApagarPresente(false);
+            setDisableBtnEditarPresente(false);
+            remove(index)
+        }
+    }
+
+    const onClickEditar = (index, values, membro, presente) => {
+        setLinhaEditada(presente);
+        
+        // bloqueando botoes de apagar e editar das demais linhas
+        // bloqueando botões de adicionar presente e salvar alterações durante edição
+        setDisableBtnEditarPresente(true);
+        setDisableBtnAdicionarPresente(true);
+        setDisableBtnApagarPresente(true);
+        setDisableBtnSalvar(true);
+
+        // iniciando modo edição do index
+        setEhEdicaoPresente(prevState => ({...prevState, [index]: true}))
+
+        let identificador = values.listaPresentesPadrao[index].identificacao;
+
+        if(membro){
+            // Na edição, em caso de participante membro da associação, apenas o identificador pode ser alterado. 
+            // O nome e o cargo devem ser trazidos do cadastro de membros da Associação
+            document.getElementById(`listaPresentesPadrao.nome_[${index}]`).disabled = true;
+            document.getElementById(`listaPresentesPadrao.cargo_[${index}]`).disabled = true;
+            document.getElementById(`listaPresentesPadrao.identificacao_[${index}]`).disabled = false;
+        }
+        else{
+            // Quando não for membro da associação
+            if (identificador.length === 7 && isNumber(identificador)){
+                // identificador é de servidor = editar somente identificador
+                document.getElementById(`listaPresentesPadrao.nome_[${index}]`).disabled = true;
+                document.getElementById(`listaPresentesPadrao.cargo_[${index}]`).disabled = true;
+                document.getElementById(`listaPresentesPadrao.identificacao_[${index}]`).disabled = false;
+            }
+            else{
+                // Não é servidor, todos os campos editaveis
+                document.getElementById(`listaPresentesPadrao.nome_[${index}]`).disabled = false;
+                document.getElementById(`listaPresentesPadrao.cargo_[${index}]`).disabled = false;
+                document.getElementById(`listaPresentesPadrao.identificacao_[${index}]`).disabled = false;
+            }
+        }
+        
+    }
+
+    const onClickConfirmar = (index, values, setFieldValue) => {
+        if(ehEdicaoPresente[index]){
+            let presentes = values.listaPresentesPadrao
+            let nome = presentes[index].nome
+            let podeCadastrar = true;
+
+            for (let i = 0; i <= presentes.length - 1; i++) {
+                if (i !== index) {
+                    if (nome === presentes[i].nome) {
+                        podeCadastrar = false;
+                        break;
+                    }
+                }
+            }
+
+
+            if(podeCadastrar) {
+                setFieldValue(`listaPresentesPadrao[${index}].editavel`, false);
+
+                // liberando botoes de apagar e editar das demais linhas
+                // liberando botões de adicionar presente e salvar alterações após edição
+                setDisableBtnEditarPresente(false);
+                setDisableBtnAdicionarPresente(false);
+                setDisableBtnApagarPresente(false);
+                setDisableBtnSalvar(false);
+
+                // retirando o index do modo edição
+                setEhEdicaoPresente(prevState => ({...prevState, [index]: false}))
+                document.getElementById(`listaPresentesPadrao.nome_[${index}]`).disabled = true;
+                document.getElementById(`listaPresentesPadrao.cargo_[${index}]`).disabled = true;
+                document.getElementById(`listaPresentesPadrao.identificacao_[${index}]`).disabled = true;
+
+                erros = {
+                    ...erros,
+                    [index]: null
+                }
+                setFormErrors(erros);
+
+                setFieldValue(`listaPresentesPadrao[${index}].adicao`, false)
+                setEhAdicaoPresente(false);
+            }
+            else{
+                setFieldValue(`listaPresentesPadrao[${index}].editavel`, true)
+                erros = {
+                    ...erros,
+                    [index]: "Esta pessoa já está na lista de presentes"
+                }
+                setFormErrors(erros);
+            }
+        }
+        else{
+            let presentes = values.listaPresentesPadrao
+            let nome = presentes[index].nome
+            let podeCadastrar = true;
+
+            for (let i = 0; i <= presentes.length - 1; i++) {
+                if (i !== index) {
+                    if (nome === presentes[i].nome) {
+                        podeCadastrar = false;
+                        break;
+                    }
+                }
+            }
+
+            if (podeCadastrar) {
+                setFieldValue(`listaPresentesPadrao[${index}].editavel`, false);
+
+                // liberando botoes de apagar e editar das demais linhas
+                // liberando botões de adicionar presente e salvar alterações após edição
+                setDisableBtnEditarPresente(false);
+                setDisableBtnAdicionarPresente(false);
+                setDisableBtnApagarPresente(false);
+                setDisableBtnSalvar(false);
+
+                erros = {
+                    ...erros,
+                    [index]: null
+                }
+                setFormErrors(erros);
+                setFieldValue(`listaPresentesPadrao[${index}].adicao`, false)
+                setEhAdicaoPresente(false);
+            } else {
+                setFieldValue(`listaPresentesPadrao[${index}].editavel`, true)
+                setDisableBtnSalvar(true);
+                erros = {
+                    ...erros,
+                    [index]: "Esta pessoa já está na lista de presentes"
+                }
+                setFormErrors(erros);
+            }
+        }
+    }
+
+    const onClickCancelarEdicao = (index, setFieldValue) => {
+        setFieldValue(`listaPresentesPadrao[${index}].editavel`, false)
+        setFieldValue(`listaPresentesPadrao[${index}].identificacao`, linhaEditada.identificacao ? linhaEditada.identificacao : '')
+        setFieldValue(`listaPresentesPadrao[${index}].nome`, linhaEditada.nome ? linhaEditada.nome : '')
+        setFieldValue(`listaPresentesPadrao[${index}].cargo`, linhaEditada.cargo ? linhaEditada.cargo : '')
+        setFieldValue(`listaPresentesPadrao[${index}].membro`, linhaEditada.membro ? linhaEditada.membro : false)
+
+
+        // retirando o index do modo edição
+        setEhEdicaoPresente(prevState => ({...prevState, [index]: false}))
+        document.getElementById(`listaPresentesPadrao.nome_[${index}]`).disabled = true;
+        document.getElementById(`listaPresentesPadrao.cargo_[${index}]`).disabled = true;
+        document.getElementById(`listaPresentesPadrao.identificacao_[${index}]`).disabled = true;
+
+        erros = {
+            ...erros,
+            [index]: null
+        }
+        setFormErrors(erros);
+
+
+        setDisableBtnEditarPresente(false);
+        setDisableBtnAdicionarPresente(false);
+        setDisableBtnApagarPresente(false);
+        setDisableBtnSalvar(false);
+    }
+
     const onClickRemoverAdicionar = async (remove, index, editavel, values, setFieldValue) => {
         let erros = {};
 
@@ -81,6 +260,9 @@ export const FormularioEditaAta = ({
                     [index]: null
                 }
                 setFormErrors(erros);
+                setFieldValue(`listaPresentesPadrao[${index}].adicao`, false)
+                setEhAdicaoPresente(false);
+
             } else {
                 setFieldValue(`listaPresentesPadrao[${index}].editavel`, true)
                 setDisableBtnSalvar(true);
@@ -114,12 +296,12 @@ export const FormularioEditaAta = ({
             let membro = await getMembroPorIdentificador(uuid_ata, identificador)
 
             if (membro.mensagem === "membro-encontrado") {
-                setFieldValue(`listaPresentesPadrao[${index}].nome`, membro.nome)
-                setFieldValue(`listaPresentesPadrao[${index}].cargo`, membro.cargo)
+                setFieldValue(`listaPresentesPadrao[${index}].nome`, membro.nome ? membro.nome : '')
+                setFieldValue(`listaPresentesPadrao[${index}].cargo`, membro.cargo ? membro.cargo : '')
                 setFieldValue(`listaPresentesPadrao[${index}].membro`, true)
             } else {
-                setFieldValue(`listaPresentesPadrao[${index}].nome`, membro.nome)
-                setFieldValue(`listaPresentesPadrao[${index}].cargo`, membro.cargo)
+                setFieldValue(`listaPresentesPadrao[${index}].nome`, membro.nome ? membro.nome : '')
+                setFieldValue(`listaPresentesPadrao[${index}].cargo`, membro.cargo ? membro.cargo : '')
                 setFieldValue(`listaPresentesPadrao[${index}].membro`, false)
             }
 
@@ -129,12 +311,12 @@ export const FormularioEditaAta = ({
             let membro = await getMembroPorIdentificador(uuid_ata, identificador)
 
             if (membro.mensagem === "membro-encontrado") {
-                setFieldValue(`listaPresentesPadrao[${index}].nome`, membro.nome)
-                setFieldValue(`listaPresentesPadrao[${index}].cargo`, membro.cargo)
+                setFieldValue(`listaPresentesPadrao[${index}].nome`, membro.nome ? membro.nome : '')
+                setFieldValue(`listaPresentesPadrao[${index}].cargo`, membro.cargo ? membro.cargo : '')
                 setFieldValue(`listaPresentesPadrao[${index}].membro`, true)
             } else {
-                setFieldValue(`listaPresentesPadrao[${index}].nome`, membro.nome)
-                setFieldValue(`listaPresentesPadrao[${index}].cargo`, membro.cargo)
+                setFieldValue(`listaPresentesPadrao[${index}].nome`, membro.nome ? membro.nome : '')
+                setFieldValue(`listaPresentesPadrao[${index}].cargo`, membro.cargo ? membro.cargo : '')
                 setFieldValue(`listaPresentesPadrao[${index}].membro`, false)
             }
 
@@ -144,12 +326,12 @@ export const FormularioEditaAta = ({
             let membro = await getMembroPorIdentificador(uuid_ata, identificador)
 
             if (membro.mensagem === "membro-encontrado") {
-                setFieldValue(`listaPresentesPadrao[${index}].nome`, membro.nome)
-                setFieldValue(`listaPresentesPadrao[${index}].cargo`, membro.cargo)
+                setFieldValue(`listaPresentesPadrao[${index}].nome`, membro.nome ? membro.nome : '')
+                setFieldValue(`listaPresentesPadrao[${index}].cargo`, membro.cargo ? membro.cargo : '')
                 setFieldValue(`listaPresentesPadrao[${index}].membro`, true)
             } else {
-                setFieldValue(`listaPresentesPadrao[${index}].nome`, membro.nome)
-                setFieldValue(`listaPresentesPadrao[${index}].cargo`, membro.cargo)
+                setFieldValue(`listaPresentesPadrao[${index}].nome`, membro.nome ? membro.nome : '')
+                setFieldValue(`listaPresentesPadrao[${index}].cargo`, membro.cargo ? membro.cargo : '')
                 setFieldValue(`listaPresentesPadrao[${index}].membro`, false)
             }
 
@@ -189,6 +371,7 @@ export const FormularioEditaAta = ({
             return "Cargo (opcional)"
         }
     }
+
     return (
 
         <div>
@@ -404,7 +587,7 @@ export const FormularioEditaAta = ({
                                                 {values.listaPresentesPadrao && values.listaPresentesPadrao.length > 0 && values.listaPresentesPadrao.map((membro, index) => {
                                                     return (
                                                         <div key={index}>
-                                                            <div className="form-row">
+                                                            <div className={`form-row ${membro.adicao ? 'adicao-presente' : ''}`}>
                                                                 <div className="col-3">
                                                                     <label
                                                                         htmlFor={`listaPresentesPadrao.identificacao_[${index}]`}
@@ -456,7 +639,7 @@ export const FormularioEditaAta = ({
                                                                         name={`listaPresentesPadrao[${index}].cargo`}
                                                                         id={`listaPresentesPadrao.cargo_[${index}]`}
                                                                         className="form-control"
-                                                                        value={membro.cargo}
+                                                                        value={membro.cargo ? membro.cargo : ''}
                                                                         onChange={(e) => {
                                                                             props.handleChange(e);
                                                                         }}
@@ -465,65 +648,175 @@ export const FormularioEditaAta = ({
                                                                 </div>
 
                                                                 <div className="col-1">
-                                                                    <button
-                                                                        id={`listaPresentesPadrao.btn_[${index}]`}
-                                                                        type="button"
-                                                                        className="btn btn-link mt-5"
-                                                                        disabled={errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : ''}
-                                                                        onClick={() => {
-                                                                            onClickRemoverAdicionar(remove, index, membro.editavel, values, setFieldValue)
-                                                                        }}
-                                                                    >
-                                                                        {membro.editavel
-                                                                            ?
-                                                                            <FontAwesomeIcon
-                                                                                style={{
-                                                                                    fontSize: '17px',
-                                                                                    marginRight: "4px",
-                                                                                    color: "#008000"
-                                                                                }}
-                                                                                icon={faCheckCircle}
-                                                                            />
-                                                                            :
-                                                                            <FontAwesomeIcon
-                                                                                style={{
-                                                                                    fontSize: '17px',
-                                                                                    marginRight: "4px",
-                                                                                    color: "#B40C02"
-                                                                                }}
-                                                                                icon={faTimesCircle}
-                                                                            />
-                                                                        }
+                                                                    {ehAdicaoPresente && membro.editavel &&
+                                                                        <button
+                                                                            id={`listaPresentesPadrao.btn_[${index}]`}
+                                                                            type="button"
+                                                                            className={`btn btn-outline-success btn-confirmar mt-5`}
+                                                                            
+                                                                            disabled={errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : ''}
+                                                                            onClick={() => {
+                                                                                
+                                                                                onClickConfirmar(index, values, setFieldValue);
+                                                                            }}
+                                                                        >
+                                                                            <strong>
+                                                                                <FontAwesomeIcon
+                                                                                    style={{
+                                                                                        fontSize: '12px',
+                                                                                        marginRight: "4px",
+                                                                                        color: "#00585E"
+                                                                                    }}
+                                                                                    icon={faCheckCircle}
+                                                                                />
+                                                                                Confirmar
+                                                                            </strong>
+                                                                        </button>
+                                                                    }
 
-                                                                    </button>
+                                                                    {(ehEdicaoPresente[index] === undefined || ehEdicaoPresente[index] === false) && membro.editavel === false &&
+                                                                        <>
+                                                                            <button
+                                                                                id={`listaPresentesPadrao.btn_[${index}]`}
+                                                                                type="button"
+                                                                                className="link-btn-ata btn-remover-presente pb-0 mb-0"
+                                                                                disabled={(errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : '') || disableBtnApagarPresente}
+                                                                                onClick={() => {
+                                                                                    onClickRemoverAdicionar(remove, index, membro.editavel, values, setFieldValue)
+                                                                                }}
+                                                                            >
+                                                                                <strong>
+                                                                                    <FontAwesomeIcon
+                                                                                        style={{
+                                                                                            fontSize: '12px',
+                                                                                            marginRight: "4px",
+                                                                                            color: "#B40C02"
+                                                                                        }}
+                                                                                        icon={faTimesCircle}
+                                                                                    />
+                                                                                    Remover
+                                                                                </strong>
+                                                                            </button>
+                                                                            <br/>
+                                                                            <button
+                                                                                id={`listaPresentesPadrao.btn_[${index}]`}
+                                                                                type="button"
+                                                                                className="link-btn-ata btn-editar-presente mt-0 pt-0"
+                                                                                disabled={(errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : '') || disableBtnEditarPresente}
+                                                                                onClick={() => {
+                                                                                    
+                                                                                    onClickEditar(index, values, membro.membro, membro)
+                                                                                }}
+                                                                            >
+                                                                                <strong>
+                                                                                    <FontAwesomeIcon
+                                                                                        style={{
+                                                                                            fontSize: '12px',
+                                                                                            marginRight: "4px",
+                                                                                            color: "#00585E"
+                                                                                        }}
+                                                                                        icon={faEdit}
+                                                                                    />
+                                                                                    Editar
+                                                                                </strong>
+                                                                            </button>
+                                                                        </>
+                                                                    }
+
+                                                                    {ehEdicaoPresente[index] &&
+                                                                        <>
+                                                                            <button
+                                                                                id={`listaPresentesPadrao.btn_[${index}]`}
+                                                                                type="button"
+                                                                                className="link-btn-ata btn-cancelar-edicao pb-0 mb-0"
+                                                                                disabled={disableBtnCancelarEdicao}
+                                                                                onClick={() => {
+                                                                                    onClickCancelarEdicao(index, setFieldValue)
+                                                                                }}
+                                                                            >
+                                                                                <strong>
+                                                                                    <FontAwesomeIcon
+                                                                                        style={{
+                                                                                            fontSize: '12px',
+                                                                                            marginRight: "4px",
+                                                                                            color: "#B40C02"
+                                                                                        }}
+                                                                                        icon={faTimesCircle}
+                                                                                    />
+                                                                                    Cancelar
+                                                                                </strong>
+                                                                            </button>
+                                                                            <br/>
+                                                                            <button
+                                                                                id={`listaPresentesPadrao.btn_[${index}]`}
+                                                                                type="button"
+                                                                                className="link-btn-ata btn-confirmar-edicao-presente mt-0 pt-0"
+                                                                                disabled={(errors && errors.listaPresentesPadrao && errors.listaPresentesPadrao[index] && errors.listaPresentesPadrao[index].nome ? errors.listaPresentesPadrao[index].nome : '') || disableBtnConfirmarEdicao}
+                                                                                onClick={() => {
+                                                                                    onClickConfirmar(index, values, setFieldValue);
+                                                                                }}
+                                                                            >
+                                                                                <strong>
+                                                                                    <FontAwesomeIcon
+                                                                                        style={{
+                                                                                            fontSize: '12px',
+                                                                                            marginRight: "4px",
+                                                                                            color: "#00585E"
+                                                                                        }}
+                                                                                        icon={faCheckCircle}
+                                                                                    />
+                                                                                    Confirmar
+                                                                                </strong>
+                                                                            </button>
+                                                                        </>
+                                                                    }
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     )
                                                 })}
 
-                                                <div className="d-flex  justify-content-start mt-3 mb-3">
-                                                    <button
-                                                        disabled={disableBtnAdicionarPresente}
-                                                        type="button"
-                                                        className="btn btn btn-outline-success mt-2 mr-2"
-                                                        onClick={() => {
-                                                            setDisableBtnAdicionarPresente(true)
-                                                            setDisableBtnSalvar(true)
-                                                            push({
-                                                                ata: uuid_ata,
-                                                                cargo: '',
-                                                                identificacao: '',
-                                                                editavel: true,
-                                                                nome: '',
-                                                                membro: false
-                                                            });
-                                                        }}
-                                                    >
-                                                        + Adicionar presente
-                                                    </button>
-                                                </div>
+                                                <div className={`form-row ${ehAdicaoPresente ? 'adicao-presente' : ''}`}>
+                                                    <div className="col-12">
+                                                        <div className={`d-flex  justify-content-start mt-3 mb-3`}>
+                                                            <button
+                                                                disabled={disableBtnAdicionarPresente}
+                                                                type="button"
+                                                                className="btn btn-outline-success mt-1 mr-2"
+                                                                onClick={() => {
+                                                                    setDisableBtnAdicionarPresente(true)
+                                                                    setDisableBtnSalvar(true)
+                                                                    setEhAdicaoPresente(true)
+                                                                    setDisableBtnApagarPresente(true);
+                                                                    setDisableBtnEditarPresente(true);
+                                                                    push({
+                                                                        ata: uuid_ata,
+                                                                        cargo: '',
+                                                                        identificacao: '',
+                                                                        editavel: true,
+                                                                        nome: '',
+                                                                        membro: false,
+                                                                        adicao: true
+                                                                    });
+                                                                }}
+                                                            >
+                                                                + Adicionar presente
+                                                            </button>
 
+                                                            {ehAdicaoPresente &&
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn btn-outline-success mt-1 mr-2"
+                                                                    onClick={() => {
+                                                                        onClickCancelarAdicao(remove, values.listaPresentesPadrao)
+                                                                    }}
+                                                                >
+                                                                    Cancelar
+                                                                </button>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </>
                                         )}
                                     >
