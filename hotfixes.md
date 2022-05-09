@@ -1,3 +1,6 @@
+### 1.30.1 - 09/05/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 41
+* (63574) -  Ata de retificação: Duplicação de devolução ao tesouro
+
 ### 1.29.3 - 20/04/2022 - Hotfix
 * (63355) - Cadastro de despesa não salva lançamento em ação configurada como "livre aplicação"
 
