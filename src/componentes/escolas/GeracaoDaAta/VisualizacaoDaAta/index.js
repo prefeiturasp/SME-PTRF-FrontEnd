@@ -166,6 +166,7 @@ export const VisualizacaoDaAta = () => {
                     valor: devolucao.valor ? valorTemplate(devolucao.valor) : '',
                     motivo: devolucao.motivo,
                     visao_criacao: devolucao.visao_criacao,
+                    uuid: devolucao.uuid,
                 })
             });
             setInitialFormDevolucaoAoTesouro({devolucoes_ao_tesouro_da_prestacao})
