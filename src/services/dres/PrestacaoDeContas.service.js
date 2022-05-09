@@ -340,5 +340,12 @@ export const postAnaliseValorReprogramadoPorAcao = async (payload) => {
     return (await api.post(`/api/analises-valores-reprogramados/salvar-valores-reprogramados-acao/`, payload, authHeader)).data
 };
 
+export const postAnaliseAjustesSaldoPorConta = async (payload) => {
+    return (await api.post(`/api/analises-conta-prestacao-conta/salvar-ajustes-saldo-conta/`, payload, authHeader)).data
+};
 
+
+export const deleteAnaliseAjustesSaldoPorConta = async (analise_uuid) => {
+    return (await api.delete(`/api/analises-conta-prestacao-conta/${analise_uuid}/`, authHeader))
+};
 
