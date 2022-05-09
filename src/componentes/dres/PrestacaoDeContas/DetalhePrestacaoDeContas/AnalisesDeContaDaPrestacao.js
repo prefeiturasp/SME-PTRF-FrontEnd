@@ -17,12 +17,13 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
         let info = prestacaoDeContas.informacoes_conciliacao_ue.find(element => element.conta_uuid === infoAta.conta_associacao.uuid);
 
         let dados = {
-            saldo_extrato: info.saldo_extrato,
-            saldo_extrato_formatado: Number(info.saldo_extrato).toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }),
-            data_extrato: info.data_extrato ? moment(info.data_extrato).format('DD/MM/YYYY') : '-'
+            saldo_extrato: '-',
+            data_extrato: '-'
+        }
+
+        if (info){
+            dados.saldo_extrato = info.saldo_extrato ? info.saldo_extrato : '-';
+            dados.data_extrato = info.data_extrato ? moment(info.data_extrato).format('DD/MM/YYYY') : '-'
         }
 
         return dados;
@@ -38,15 +39,19 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
     }
 
     const calculaDiferencaUe = () => {
-        let diferenca = infoAta.totais.saldo_atual_total - trataNumericos(informacoes_conciliacao_ue().saldo_extrato)
-        let formatado = formataValor(diferenca);
-        return formatado;
+        if(informacoes_conciliacao_ue().saldo_extrato !== '-'){
+            let diferenca = infoAta.totais.saldo_atual_total - trataNumericos(informacoes_conciliacao_ue().saldo_extrato)
+            let formatado = formataValor(diferenca);
+            return formatado;
+        }
+        else{
+            return formataValor(infoAta.totais.saldo_atual_total)
+        }
     }
 
     const calculaDiferencaDre = () => {
         if(index > -1){
             if(trataNumericos(analisesDeContaDaPrestacao[index].saldo_extrato) || trataNumericos(analisesDeContaDaPrestacao[index].saldo_extrato) === 0){
-                console.log("entrei")
                 let diferenca = infoAta.totais.saldo_atual_total - trataNumericos(analisesDeContaDaPrestacao[index].saldo_extrato);
                 let formatado = formataValor(diferenca);
                 return formatado;
@@ -140,7 +145,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                         <strong>Saldo</strong>
                                     </span>
                                     <p className="dados-extrato-bancario mt-3">
-                                        {formataValor(informacoes_conciliacao_ue().saldo_extrato)}
+                                        {informacoes_conciliacao_ue().saldo_extrato !== '-' ?  formataValor(informacoes_conciliacao_ue().saldo_extrato): '-'}
                                     </p>
                                 </div>
 
