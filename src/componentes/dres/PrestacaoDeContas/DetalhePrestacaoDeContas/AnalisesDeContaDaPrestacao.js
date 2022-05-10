@@ -118,7 +118,6 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
     
     return (
         <>
-            {analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0 &&
             <>
                 <form method="post">
                     <div className="row">
@@ -180,8 +179,8 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
 
                                 </div>
                             </div>
-                            
-                            {(adicaoAjusteSaldo || (index > -1 && analisesDeContaDaPrestacao[index].uuid)) &&
+
+                            {(adicaoAjusteSaldo || (index >-1 && analisesDeContaDaPrestacao[index] && analisesDeContaDaPrestacao[index].uuid)) &&
                                 <div id="correcao_extrato_bancario">
                                     <div className="row container-extrato-bancario ml-0 mr-0">
                                         <div className="col-12 mt-4">
@@ -197,7 +196,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                             <DatePickerField
                                                 disabled={!editavel || !adicaoAjusteSaldo}
                                                 value={index > -1 && analisesDeContaDaPrestacao[index].data_extrato ? analisesDeContaDaPrestacao[index].data_extrato : ''}
-                                                onChange={handleChangeAnalisesDeContaDaPrestacao}
+                                                onChange={(name, value) => handleChangeAnalisesDeContaDaPrestacao(name, value)}
                                                 name='data_extrato'
                                                 type="date"
                                                 className="form-control"
@@ -208,7 +207,6 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                             {formErrosAjusteSaldo[index] && formErrosAjusteSaldo[index].data && <span className="span_erro text-danger mt-1"> {formErrosAjusteSaldo[index].data}</span>}
                                             
                                         </div>
-
                                         <div className="col-4 mt-2 mb-4">
                                             <label htmlFor="saldo_extrato"><strong>Saldo corrigido</strong></label>
                                             <CurrencyInput
@@ -217,7 +215,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
-                                                value={index > -1 && analisesDeContaDaPrestacao[index].saldo_extrato ? analisesDeContaDaPrestacao[index].saldo_extrato : null}
+                                                value={index > -1 && analisesDeContaDaPrestacao[index].saldo_extrato ? trataNumericos(analisesDeContaDaPrestacao[index].saldo_extrato) : null}
                                                 id="saldo_extrato"
                                                 name="saldo_extrato"
                                                 className="form-control"
@@ -356,7 +354,6 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                     </div>
                 </form>
             </>
-            }
         </>
     )
 };

@@ -82,7 +82,8 @@ export const GetComportamentoPorStatus = (
         handleOnKeyDownAjusteSaldo,
         onClickSalvarAcertoSaldo,
         ajusteSaldoSalvoComSucesso,
-        onClickDeletarAcertoSaldo
+        onClickDeletarAcertoSaldo,
+        setAnalisesDeContaDaPrestacao
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
@@ -274,6 +275,7 @@ export const GetComportamentoPorStatus = (
                         infoAta={infoAta}
                         editavel={true}
                         setLoadingAcompanhamentoPC={setLoading}
+                        setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -388,6 +390,7 @@ export const GetComportamentoPorStatus = (
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
+                        setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -498,6 +501,7 @@ export const GetComportamentoPorStatus = (
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
+                        setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -611,6 +615,7 @@ export const GetComportamentoPorStatus = (
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
+                        setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -710,6 +715,7 @@ export const GetComportamentoPorStatus = (
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
+                        setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -811,6 +817,7 @@ export const GetComportamentoPorStatus = (
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
+                        setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
