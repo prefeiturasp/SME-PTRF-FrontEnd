@@ -72,7 +72,17 @@ export const GetComportamentoPorStatus = (
         handleChangedataRecebimentoDevolutiva,
         receberAposAcertos,
         desfazerReceberAposAcertos,
-        setLoading
+        setLoading,
+        adicaoAjusteSaldo,
+        setAdicaoAjusteSaldo,
+        onClickAdicionarAcertoSaldo,
+        onClickDescartarAcerto,
+        formErrosAjusteSaldo,
+        validaAjustesSaldo,
+        handleOnKeyDownAjusteSaldo,
+        onClickSalvarAcertoSaldo,
+        ajusteSaldoSalvoComSucesso,
+        onClickDeletarAcertoSaldo
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
@@ -235,6 +245,16 @@ export const GetComportamentoPorStatus = (
 
                         //ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
+                        adicaoAjusteSaldo={adicaoAjusteSaldo}
+                        setAdicaoAjusteSaldo={setAdicaoAjusteSaldo}
+                        onClickAdicionarAcertoSaldo={onClickAdicionarAcertoSaldo}
+                        onClickDescartarAcerto={onClickDescartarAcerto}
+                        formErrosAjusteSaldo={formErrosAjusteSaldo}
+                        validaAjustesSaldo={validaAjustesSaldo}
+                        handleOnKeyDownAjusteSaldo={handleOnKeyDownAjusteSaldo}
+                        onClickSalvarAcertoSaldo={onClickSalvarAcertoSaldo}
+                        ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
+                        onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                     />
 
                     <ConferenciaDeLancamentos
@@ -341,6 +361,16 @@ export const GetComportamentoPorStatus = (
 
                         //ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
+                        adicaoAjusteSaldo={adicaoAjusteSaldo}
+                        setAdicaoAjusteSaldo={setAdicaoAjusteSaldo}
+                        onClickAdicionarAcertoSaldo={onClickAdicionarAcertoSaldo}
+                        onClickDescartarAcerto={onClickDescartarAcerto}
+                        formErrosAjusteSaldo={formErrosAjusteSaldo}
+                        validaAjustesSaldo={validaAjustesSaldo}
+                        handleOnKeyDownAjusteSaldo={handleOnKeyDownAjusteSaldo}
+                        onClickSalvarAcertoSaldo={onClickSalvarAcertoSaldo}
+                        ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
+                        onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                     />
                     <ConferenciaDeLancamentos
                         prestacaoDeContas={prestacaoDeContas}
@@ -441,6 +471,16 @@ export const GetComportamentoPorStatus = (
 
                         //ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
+                        adicaoAjusteSaldo={adicaoAjusteSaldo}
+                        setAdicaoAjusteSaldo={setAdicaoAjusteSaldo}
+                        onClickAdicionarAcertoSaldo={onClickAdicionarAcertoSaldo}
+                        onClickDescartarAcerto={onClickDescartarAcerto}
+                        formErrosAjusteSaldo={formErrosAjusteSaldo}
+                        validaAjustesSaldo={validaAjustesSaldo}
+                        handleOnKeyDownAjusteSaldo={handleOnKeyDownAjusteSaldo}
+                        onClickSalvarAcertoSaldo={onClickSalvarAcertoSaldo}
+                        ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
+                        onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                     />
                     <ConferenciaDeLancamentos
                         prestacaoDeContas={prestacaoDeContas}
@@ -544,6 +584,16 @@ export const GetComportamentoPorStatus = (
 
                         //ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
+                        adicaoAjusteSaldo={adicaoAjusteSaldo}
+                        setAdicaoAjusteSaldo={setAdicaoAjusteSaldo}
+                        onClickAdicionarAcertoSaldo={onClickAdicionarAcertoSaldo}
+                        onClickDescartarAcerto={onClickDescartarAcerto}
+                        formErrosAjusteSaldo={formErrosAjusteSaldo}
+                        validaAjustesSaldo={validaAjustesSaldo}
+                        handleOnKeyDownAjusteSaldo={handleOnKeyDownAjusteSaldo}
+                        onClickSalvarAcertoSaldo={onClickSalvarAcertoSaldo}
+                        ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
+                        onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                     />
                     <ConferenciaDeLancamentos
                         prestacaoDeContas={prestacaoDeContas}
@@ -633,6 +683,16 @@ export const GetComportamentoPorStatus = (
 
                         //ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
+                        adicaoAjusteSaldo={adicaoAjusteSaldo}
+                        setAdicaoAjusteSaldo={setAdicaoAjusteSaldo}
+                        onClickAdicionarAcertoSaldo={onClickAdicionarAcertoSaldo}
+                        onClickDescartarAcerto={onClickDescartarAcerto}
+                        formErrosAjusteSaldo={formErrosAjusteSaldo}
+                        validaAjustesSaldo={validaAjustesSaldo}
+                        handleOnKeyDownAjusteSaldo={handleOnKeyDownAjusteSaldo}
+                        onClickSalvarAcertoSaldo={onClickSalvarAcertoSaldo}
+                        ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
+                        onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                     />
                     <ConferenciaDeLancamentos
                         prestacaoDeContas={prestacaoDeContas}
@@ -724,6 +784,16 @@ export const GetComportamentoPorStatus = (
 
                         //ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
+                        adicaoAjusteSaldo={adicaoAjusteSaldo}
+                        setAdicaoAjusteSaldo={setAdicaoAjusteSaldo}
+                        onClickAdicionarAcertoSaldo={onClickAdicionarAcertoSaldo}
+                        onClickDescartarAcerto={onClickDescartarAcerto}
+                        formErrosAjusteSaldo={formErrosAjusteSaldo}
+                        validaAjustesSaldo={validaAjustesSaldo}
+                        handleOnKeyDownAjusteSaldo={handleOnKeyDownAjusteSaldo}
+                        onClickSalvarAcertoSaldo={onClickSalvarAcertoSaldo}
+                        ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
+                        onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                     />
                     <ConferenciaDeLancamentos
                         prestacaoDeContas={prestacaoDeContas}

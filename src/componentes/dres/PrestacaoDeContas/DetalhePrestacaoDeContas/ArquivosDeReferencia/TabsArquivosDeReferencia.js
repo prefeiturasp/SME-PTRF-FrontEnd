@@ -8,7 +8,7 @@ import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferenciaVisu
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 
-export const TabsArquivosDeReferencia = ({valoresReprogramadosAjustes, setValoresReprogramadosAjustes, prestacaoDeContas, infoAta, toggleBtnEscolheConta, exibeAtaPorConta, clickBtnEscolheConta, infoAtaPorConta, ...rest}) => {
+export const TabsArquivosDeReferencia = ({valoresReprogramadosAjustes, setValoresReprogramadosAjustes, prestacaoDeContas, infoAta, toggleBtnEscolheConta, exibeAtaPorConta, clickBtnEscolheConta, infoAtaPorConta, adicaoAjusteSaldo, setAdicaoAjusteSaldo, onClickAdicionarAcertoSaldo, onClickDescartarAcerto, formErrosAjusteSaldo, validaAjustesSaldo, handleOnKeyDownAjusteSaldo, onClickSalvarAcertoSaldo, ajusteSaldoSalvoComSucesso, onClickDeletarAcertoSaldo, ...rest}) => {
 
     return (
         <>
@@ -76,6 +76,17 @@ export const TabsArquivosDeReferencia = ({valoresReprogramadosAjustes, setValore
                                         handleChangeAnalisesDeContaDaPrestacao={rest.handleChangeAnalisesDeContaDaPrestacao}
                                         getObjetoIndexAnalise={rest.getObjetoIndexAnalise}
                                         editavel={rest.editavel}
+                                        prestacaoDeContas={prestacaoDeContas}
+                                        adicaoAjusteSaldo={adicaoAjusteSaldo}
+                                        setAdicaoAjusteSaldo={setAdicaoAjusteSaldo}
+                                        onClickAdicionarAcertoSaldo={onClickAdicionarAcertoSaldo}
+                                        onClickDescartarAcerto={onClickDescartarAcerto}
+                                        formErrosAjusteSaldo={formErrosAjusteSaldo}
+                                        validaAjustesSaldo={validaAjustesSaldo}
+                                        handleOnKeyDownAjusteSaldo={handleOnKeyDownAjusteSaldo}
+                                        onClickSalvarAcertoSaldo={onClickSalvarAcertoSaldo}
+                                        ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
+                                        onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                                     />
                                     <ResumoFinanceiroTabelaTotais
                                         infoAta={infoAtaPorConta}
