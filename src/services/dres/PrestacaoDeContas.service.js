@@ -349,6 +349,6 @@ export const deleteAnaliseAjustesSaldoPorConta = async (analise_uuid) => {
     return (await api.delete(`/api/analises-conta-prestacao-conta/${analise_uuid}/`, authHeader))
 };
 
-export const getAnaliseAjustesSaldoPorConta = async (conta_associacao_uuid, prestacao_conta_uuid) => {
-    return (await api.get(`/api/analises-conta-prestacao-conta/get-ajustes-saldo-conta/?conta_associacao=${conta_associacao_uuid}&prestacao_conta=${prestacao_conta_uuid}`, authHeader)).data
+export const getAnaliseAjustesSaldoPorConta = async (conta_associacao_uuid, prestacao_conta_uuid, analise_prestacao_uuid) => {
+    return (await api.get(`/api/analises-conta-prestacao-conta/get-ajustes-saldo-conta/?conta_associacao=${conta_associacao_uuid}&prestacao_conta=${prestacao_conta_uuid}&analise_prestacao_conta=${analise_prestacao_uuid}`, authHeader)).data
 };

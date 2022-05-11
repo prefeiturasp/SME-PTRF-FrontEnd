@@ -441,8 +441,8 @@ export const DetalhePrestacaoDeContas = () =>{
 
     }
 
-    const carregaAnalisesAjustePC = async (conta, prestacao_conta) => {
-        let analise = await getAnaliseAjustesSaldoPorConta(conta, prestacao_conta);
+    const carregaAnalisesAjustePC = async (conta, prestacao_conta, analise_atual) => {
+        let analise = await getAnaliseAjustesSaldoPorConta(conta, prestacao_conta, analise_atual);
         analise = analise[0]
         
         let arrayAnalise = analisesDeContaDaPrestacao;
@@ -503,7 +503,7 @@ export const DetalhePrestacaoDeContas = () =>{
             
             console.log("Criação realizada com sucesso!")
 
-            carregaAnalisesAjustePC(conta.uuid, prestacaoDeContas.uuid);
+            carregaAnalisesAjustePC(conta.uuid, prestacaoDeContas.uuid, uuid_analise);
         } catch (e) {
             console.log("Erro ao fazer criação", e.response)
             setAjusteSaldoSalvoComSucesso(prevState => ({
@@ -637,7 +637,17 @@ export const DetalhePrestacaoDeContas = () =>{
         setAdicaoAjusteSaldo(false);
         
         if(analisesDeContaDaPrestacao.length === 0){
-            let analise_teste = await getAnaliseAjustesSaldoPorConta(info_ata_por_conta.conta_associacao.uuid, prestacaoDeContas.uuid);
+            let uuid_analise;
+
+            if(prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid){
+                uuid_analise = prestacaoDeContas.analise_atual.uuid
+            }
+            else{
+                let ultima_analise =  await getUltimaAnalisePc(prestacaoDeContas.uuid)
+                uuid_analise = ultima_analise.uuid
+            }
+
+            let analise_teste = await getAnaliseAjustesSaldoPorConta(info_ata_por_conta.conta_associacao.uuid, prestacaoDeContas.uuid, uuid_analise);
             analise_teste = analise_teste[0]
 
 
