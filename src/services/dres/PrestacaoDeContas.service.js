@@ -270,6 +270,11 @@ export const getSaldosIniciasAjustes = async (analise_atual_uuid, conta_uuid) =>
     return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/saldos-iniciais-com-ajustes/?conta_associacao=${conta_uuid}`, authHeader)).data
 };
 
+export const getExtratosBancariosAjustes = async (analise_atual_uuid, conta_uuid) => {
+    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/ajustes-extratos-bancarios/?conta_associacao=${conta_uuid}`, authHeader)).data
+};
+
+
 export const getLancamentosAjustes = async (analise_atual_uuid, conta_uuid, tipo_lancamento=null, tipo_acerto=null) => {
     return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/lancamentos-com-ajustes/?conta_associacao=${conta_uuid}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${tipo_acerto ? '&tipo_acerto='+tipo_acerto : ''}`, authHeader)).data
 };
@@ -349,3 +354,6 @@ export const deleteAnaliseAjustesSaldoPorConta = async (analise_uuid) => {
     return (await api.delete(`/api/analises-conta-prestacao-conta/${analise_uuid}/`, authHeader))
 };
 
+export const getAnaliseAjustesSaldoPorConta = async (conta_associacao_uuid, prestacao_conta_uuid, analise_prestacao_uuid) => {
+    return (await api.get(`/api/analises-conta-prestacao-conta/get-ajustes-saldo-conta/?conta_associacao=${conta_associacao_uuid}&prestacao_conta=${prestacao_conta_uuid}&analise_prestacao_conta=${analise_prestacao_uuid}`, authHeader)).data
+};
