@@ -262,7 +262,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                                     </span>
                                                 </div>
 
-                                                {index > -1 && !adicaoAjusteSaldo &&
+                                                {index > -1 && !adicaoAjusteSaldo && editavel &&
                                                     <div className="bd-highlight mt-3">
                                                         <span onClick={() => {
                                                             onClickDeletarAcertoSaldo()
@@ -289,7 +289,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
 
                                             <div className="d-flex bd-highlight">
                                                 <div className="flex-grow-1 bd-highlight">
-                                                    {ajusteSaldoSalvoComSucesso[index] &&
+                                                    {ajusteSaldoSalvoComSucesso[index] && editavel &&
                                                         <span className="mr-2 salvo-com-sucesso">
                                                             <FontAwesomeIcon
                                                                 style={{

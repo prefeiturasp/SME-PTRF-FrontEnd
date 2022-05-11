@@ -70,7 +70,7 @@ const DevolucaoParaAcertos = ({setValoresReprogramadosAjustes, valoresReprograma
             if (mounted) {
                 if (infoAta && infoAta.contas && infoAta.contas.length > 0) {
                     return await infoAta.contas.map(async (conta) => {
-                        let analise_prestacao_contas_ajustes = await getAnaliseAjustesSaldoPorConta(conta.conta_associacao.uuid, prestacaoDeContas.uuid);
+                        let analise_prestacao_contas_ajustes = await getAnaliseAjustesSaldoPorConta(conta.conta_associacao.uuid, prestacaoDeContas.uuid, analise_atual_uuid);
                         setAnalisesDeContaDaPrestacao([...analise_prestacao_contas_ajustes])
                         let valores_reprogramados_ajustes = await getSaldosIniciasAjustes(analise_atual_uuid, conta.conta_associacao.uuid);
                         setValoresReprogramadosAjustes([...valores_reprogramados_ajustes])
