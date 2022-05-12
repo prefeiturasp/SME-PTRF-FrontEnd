@@ -274,6 +274,11 @@ export const getExtratosBancariosAjustes = async (analise_atual_uuid, conta_uuid
     return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/ajustes-extratos-bancarios/?conta_associacao=${conta_uuid}`, authHeader)).data
 };
 
+export const getTemAjustesExtratos = async (analise_atual_uuid) => {
+    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/verifica-ajustes-extratos/`, authHeader)).data
+};
+
+
 
 export const getLancamentosAjustes = async (analise_atual_uuid, conta_uuid, tipo_lancamento=null, tipo_acerto=null) => {
     return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/lancamentos-com-ajustes/?conta_associacao=${conta_uuid}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${tipo_acerto ? '&tipo_acerto='+tipo_acerto : ''}`, authHeader)).data
