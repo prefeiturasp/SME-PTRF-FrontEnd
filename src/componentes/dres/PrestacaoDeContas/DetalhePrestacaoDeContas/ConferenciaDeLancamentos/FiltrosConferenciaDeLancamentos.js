@@ -8,7 +8,7 @@ export const FiltrosConferenciaDeLancamentos = ({stateFiltros, tabelasDespesa, h
             <form>
                 <div className="form-row align-items-center">
                     <div className="form-group col-md-4">
-                        <label htmlFor="data_inicio">Filtrar por período</label>
+                        <label htmlFor="data_inicio">Filtrar por intervalo de datas</label>
                         <div className="row align-items-center">
                             <div className="col-12 col-md-5 pr-0">
                                 <DatePickerField
