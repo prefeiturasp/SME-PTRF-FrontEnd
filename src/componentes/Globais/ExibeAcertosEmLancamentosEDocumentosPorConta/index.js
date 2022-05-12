@@ -3,7 +3,7 @@ import {useHistory} from "react-router-dom";
 import useValorTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
 import useDataTemplate from "../../../hooks/Globais/useDataTemplate";
 import useNumeroDocumentoTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
-import {getContasDaAssociacao, getSaldosIniciasAjustes, getDocumentosAjustes, getLancamentosAjustes, getTiposDeAcertoLancamentos, getTemReajustes, getExtratosBancariosAjustes} from "../../../services/dres/PrestacaoDeContas.service";
+import {getContasDaAssociacao, getSaldosIniciasAjustes, getDocumentosAjustes, getLancamentosAjustes, getTiposDeAcertoLancamentos, getTemReajustes, getExtratosBancariosAjustes, getTemAjustesExtratos} from "../../../services/dres/PrestacaoDeContas.service";
 import {TabelaAcertosLancamentos} from "./TabelaAcertosLancamentos";
 import TabsAcertosEmLancamentosPorConta from "./TabsAcertosEmLancamentosPorConta";
 import Loading from "../../../utils/Loading";
@@ -121,6 +121,25 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
 
     }, [analiseAtualUuid])
 
+    const consultaSeTemAjustesExtratos = useCallback(async () => {
+        /*
+            Essa função é necessária para verificar se a algum ajuste de extrato nessa analise, independente da conta,
+            o retorno da API irá determinar se o bloco "Acertos nas informações de extratos bancários"
+            deve ser exibido
+        */
+
+        setExibeAcertosNosExtratos(false);
+        let tem_ajustes_extratos = await getTemAjustesExtratos(analiseAtualUuid);
+
+        if(tem_ajustes_extratos && tem_ajustes_extratos.length > 0){
+            setExibeAcertosNosExtratos(true);
+        }
+        else{
+            setExibeAcertosNosExtratos(false);
+        }
+
+    }, [analiseAtualUuid])
+
     const carregarAjustesValoresReprogramados = useCallback(async (conta_uuid) => {
         setContaUuid(conta_uuid);
         setLoadingSaldosIniciais(true);
@@ -153,7 +172,10 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
 
     useEffect(() => {
         if (contasAssociacao && contasAssociacao.length > 0){
+            // TODO Rever o método consultaReajustes. Repete a consulta à API feita por carregarAjustesValoresReprogramados
             consultaReajustes();
+            // TODO Rever os métodos consultaSeTemAjustesExtratos. Repete a consulta da API feira por carregarAjustesExtratosBancarios
+            consultaSeTemAjustesExtratos();
             carregarAjustesValoresReprogramados(contasAssociacao[0].uuid);
             carregarAjustesExtratosBancarios(contasAssociacao[0].uuid);
             carregaAcertosLancamentos(contasAssociacao[0].uuid)
