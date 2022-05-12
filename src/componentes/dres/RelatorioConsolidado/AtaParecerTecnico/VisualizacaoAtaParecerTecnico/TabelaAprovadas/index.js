@@ -131,11 +131,24 @@ export const TabelaAprovadas = ({infoContas, valorTemplate, status, exibirUltimo
                     <p className="titulo-motivos">Motivos:</p>
                     <table className="table table-bordered tabela-status-pc">
                         <thead>
-                            <tr>
-                                <th scope="col" style={{width: '2%'}}>&nbsp;</th>
-                                <th scope="col" style={{width: '35%'}}>Unidade educacional</th>
-                                <th scope="col">Motivos</th>
-                            </tr>
+                        {status === 'aprovadas_ressalva' 
+                            ? 
+                                <tr>
+                                    <th scope="col" style={{width: '2%'}}>&nbsp;</th>
+                                    <th scope="col" style={{width: '35%'}}>Unidade educacional</th>
+                                    <th scope="col" style={{width: '25%'}}>Motivos</th>
+                                    
+                                    <th scope="col" style={{width: '25%'}}>Recomendações</th>
+                                </tr>
+                            :
+                                <tr>
+                                    <th scope="col" style={{width: '2%'}}>&nbsp;</th>
+                                    <th scope="col" style={{width: '35%'}}>Unidade educacional</th>
+                                    <th scope="col" style={{width: '50%'}}>Motivos</th>
+                                    
+                                    
+                                </tr>
+                        }
                         </thead>
 
                         {infoContas.motivos.map((info, index) => 
@@ -150,6 +163,9 @@ export const TabelaAprovadas = ({infoContas, valorTemplate, status, exibirUltimo
                                         )}
                                     </td>
 
+                                    {status === 'aprovadas_ressalva' &&
+                                        <td>{info.recomendacoes}</td>
+                                    }
                                     
                                 </tr>
                             </tbody>
