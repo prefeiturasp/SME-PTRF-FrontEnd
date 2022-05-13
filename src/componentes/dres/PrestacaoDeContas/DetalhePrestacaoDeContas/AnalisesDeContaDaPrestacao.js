@@ -215,7 +215,7 @@ export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao,
                                                 prefix='R$'
                                                 decimalSeparator=","
                                                 thousandSeparator="."
-                                                value={index > -1 && analisesDeContaDaPrestacao[index].saldo_extrato ? trataNumericos(analisesDeContaDaPrestacao[index].saldo_extrato) : null}
+                                                value={index > -1 && analisesDeContaDaPrestacao[index].saldo_extrato !== null ? trataNumericos(analisesDeContaDaPrestacao[index].saldo_extrato) : null}
                                                 id="saldo_extrato"
                                                 name="saldo_extrato"
                                                 className="form-control"
