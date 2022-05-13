@@ -216,7 +216,7 @@ export const DetalhePrestacaoDeContas = () =>{
                             uuid: conta.uuid,
                             conta_associacao: conta.conta_associacao.uuid,
                             data_extrato: conta.data_extrato,
-                            saldo_extrato: conta.saldo_extrato ? valorTemplate(conta.saldo_extrato) : null,
+                            saldo_extrato: conta.saldo_extrato !== null ? valorTemplate(conta.saldo_extrato) : "",
                         })
                     });
                 setAnalisesDeContaDaPrestacao(arrayAnalises);
@@ -454,7 +454,7 @@ export const DetalhePrestacaoDeContas = () =>{
             uuid: analise.uuid,
             conta_associacao: analise.conta_associacao.uuid,
             data_extrato: analise.data_extrato,
-            saldo_extrato: analise.saldo_extrato ? valorTemplate(analise.saldo_extrato) : null
+            saldo_extrato: analise.saldo_extrato !== null ? valorTemplate(analise.saldo_extrato) : null
         })
 
         setAnalisesDeContaDaPrestacao(()=>[
@@ -658,7 +658,7 @@ export const DetalhePrestacaoDeContas = () =>{
                         uuid: analise_teste.uuid,
                         conta_associacao: analise_teste.conta_associacao.uuid,
                         data_extrato: analise_teste.data_extrato,
-                        saldo_extrato: analise_teste.saldo_extrato ? valorTemplate(analise_teste.saldo_extrato) : null
+                        saldo_extrato: analise_teste.saldo_extrato !== null ? valorTemplate(analise_teste.saldo_extrato) : null
                     }
                 ])
             }
