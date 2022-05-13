@@ -216,7 +216,7 @@ export const DetalhePrestacaoDeContas = () =>{
                             uuid: conta.uuid,
                             conta_associacao: conta.conta_associacao.uuid,
                             data_extrato: conta.data_extrato,
-                            saldo_extrato: conta.saldo_extrato !== null ? valorTemplate(conta.saldo_extrato) : "",
+                            saldo_extrato: conta.saldo_extrato !== null ? valorTemplate(conta.saldo_extrato) : null,
                         })
                     });
                 setAnalisesDeContaDaPrestacao(arrayAnalises);
