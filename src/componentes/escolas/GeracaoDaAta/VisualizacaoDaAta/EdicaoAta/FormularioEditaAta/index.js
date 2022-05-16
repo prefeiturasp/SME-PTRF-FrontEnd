@@ -564,7 +564,7 @@ export const FormularioEditaAta = ({
                                             </div>
                                             <div className='row'>
                                                 <div className="col">
-                                                    <label htmlFor="stateFormEditarAta.cargo_secretaria_reuniao" className="mt-3">Justificativa <span className='text-danger'><i>(obrigatório)</i></span></label>
+                                                    <label htmlFor="stateFormEditarAta.cargo_secretaria_reuniao" className="mt-3">Justificativa</label>
                                                     <textarea
                                                         value={values.stateFormEditarAta.justificativa_repasses_pendentes}
                                                         onChange={props.handleChange}

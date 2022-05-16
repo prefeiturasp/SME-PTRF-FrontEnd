@@ -72,7 +72,18 @@ export const GetComportamentoPorStatus = (
         handleChangedataRecebimentoDevolutiva,
         receberAposAcertos,
         desfazerReceberAposAcertos,
-        setLoading
+        setLoading,
+        adicaoAjusteSaldo,
+        setAdicaoAjusteSaldo,
+        onClickAdicionarAcertoSaldo,
+        onClickDescartarAcerto,
+        formErrosAjusteSaldo,
+        validaAjustesSaldo,
+        handleOnKeyDownAjusteSaldo,
+        onClickSalvarAcertoSaldo,
+        ajusteSaldoSalvoComSucesso,
+        onClickDeletarAcertoSaldo,
+        setAnalisesDeContaDaPrestacao
     }) => {
 
     if (prestacaoDeContas && prestacaoDeContas.status) {
@@ -235,6 +246,16 @@ export const GetComportamentoPorStatus = (
 
                         //ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
+                        adicaoAjusteSaldo={adicaoAjusteSaldo}
+                        setAdicaoAjusteSaldo={setAdicaoAjusteSaldo}
+                        onClickAdicionarAcertoSaldo={onClickAdicionarAcertoSaldo}
+                        onClickDescartarAcerto={onClickDescartarAcerto}
+                        formErrosAjusteSaldo={formErrosAjusteSaldo}
+                        validaAjustesSaldo={validaAjustesSaldo}
+                        handleOnKeyDownAjusteSaldo={handleOnKeyDownAjusteSaldo}
+                        onClickSalvarAcertoSaldo={onClickSalvarAcertoSaldo}
+                        ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
+                        onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                     />
 
                     <ConferenciaDeLancamentos
@@ -254,6 +275,7 @@ export const GetComportamentoPorStatus = (
                         infoAta={infoAta}
                         editavel={true}
                         setLoadingAcompanhamentoPC={setLoading}
+                        setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -341,6 +363,16 @@ export const GetComportamentoPorStatus = (
 
                         //ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
+                        adicaoAjusteSaldo={adicaoAjusteSaldo}
+                        setAdicaoAjusteSaldo={setAdicaoAjusteSaldo}
+                        onClickAdicionarAcertoSaldo={onClickAdicionarAcertoSaldo}
+                        onClickDescartarAcerto={onClickDescartarAcerto}
+                        formErrosAjusteSaldo={formErrosAjusteSaldo}
+                        validaAjustesSaldo={validaAjustesSaldo}
+                        handleOnKeyDownAjusteSaldo={handleOnKeyDownAjusteSaldo}
+                        onClickSalvarAcertoSaldo={onClickSalvarAcertoSaldo}
+                        ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
+                        onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                     />
                     <ConferenciaDeLancamentos
                         prestacaoDeContas={prestacaoDeContas}
@@ -358,6 +390,7 @@ export const GetComportamentoPorStatus = (
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
+                        setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -441,6 +474,16 @@ export const GetComportamentoPorStatus = (
 
                         //ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
+                        adicaoAjusteSaldo={adicaoAjusteSaldo}
+                        setAdicaoAjusteSaldo={setAdicaoAjusteSaldo}
+                        onClickAdicionarAcertoSaldo={onClickAdicionarAcertoSaldo}
+                        onClickDescartarAcerto={onClickDescartarAcerto}
+                        formErrosAjusteSaldo={formErrosAjusteSaldo}
+                        validaAjustesSaldo={validaAjustesSaldo}
+                        handleOnKeyDownAjusteSaldo={handleOnKeyDownAjusteSaldo}
+                        onClickSalvarAcertoSaldo={onClickSalvarAcertoSaldo}
+                        ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
+                        onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                     />
                     <ConferenciaDeLancamentos
                         prestacaoDeContas={prestacaoDeContas}
@@ -458,6 +501,7 @@ export const GetComportamentoPorStatus = (
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
+                        setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -544,6 +588,16 @@ export const GetComportamentoPorStatus = (
 
                         //ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
+                        adicaoAjusteSaldo={adicaoAjusteSaldo}
+                        setAdicaoAjusteSaldo={setAdicaoAjusteSaldo}
+                        onClickAdicionarAcertoSaldo={onClickAdicionarAcertoSaldo}
+                        onClickDescartarAcerto={onClickDescartarAcerto}
+                        formErrosAjusteSaldo={formErrosAjusteSaldo}
+                        validaAjustesSaldo={validaAjustesSaldo}
+                        handleOnKeyDownAjusteSaldo={handleOnKeyDownAjusteSaldo}
+                        onClickSalvarAcertoSaldo={onClickSalvarAcertoSaldo}
+                        ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
+                        onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                     />
                     <ConferenciaDeLancamentos
                         prestacaoDeContas={prestacaoDeContas}
@@ -561,6 +615,7 @@ export const GetComportamentoPorStatus = (
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
+                        setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -633,6 +688,16 @@ export const GetComportamentoPorStatus = (
 
                         //ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
+                        adicaoAjusteSaldo={adicaoAjusteSaldo}
+                        setAdicaoAjusteSaldo={setAdicaoAjusteSaldo}
+                        onClickAdicionarAcertoSaldo={onClickAdicionarAcertoSaldo}
+                        onClickDescartarAcerto={onClickDescartarAcerto}
+                        formErrosAjusteSaldo={formErrosAjusteSaldo}
+                        validaAjustesSaldo={validaAjustesSaldo}
+                        handleOnKeyDownAjusteSaldo={handleOnKeyDownAjusteSaldo}
+                        onClickSalvarAcertoSaldo={onClickSalvarAcertoSaldo}
+                        ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
+                        onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                     />
                     <ConferenciaDeLancamentos
                         prestacaoDeContas={prestacaoDeContas}
@@ -650,6 +715,7 @@ export const GetComportamentoPorStatus = (
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
+                        setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
@@ -724,6 +790,16 @@ export const GetComportamentoPorStatus = (
 
                         //ArquivosDeReferenciaVisualizacaoDownload
                         prestacaoDeContas={prestacaoDeContas}
+                        adicaoAjusteSaldo={adicaoAjusteSaldo}
+                        setAdicaoAjusteSaldo={setAdicaoAjusteSaldo}
+                        onClickAdicionarAcertoSaldo={onClickAdicionarAcertoSaldo}
+                        onClickDescartarAcerto={onClickDescartarAcerto}
+                        formErrosAjusteSaldo={formErrosAjusteSaldo}
+                        validaAjustesSaldo={validaAjustesSaldo}
+                        handleOnKeyDownAjusteSaldo={handleOnKeyDownAjusteSaldo}
+                        onClickSalvarAcertoSaldo={onClickSalvarAcertoSaldo}
+                        ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
+                        onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
                     />
                     <ConferenciaDeLancamentos
                         prestacaoDeContas={prestacaoDeContas}
@@ -741,6 +817,7 @@ export const GetComportamentoPorStatus = (
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
+                        setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                     />
                     <ComentariosDeAnalise
                         prestacaoDeContas={prestacaoDeContas}
