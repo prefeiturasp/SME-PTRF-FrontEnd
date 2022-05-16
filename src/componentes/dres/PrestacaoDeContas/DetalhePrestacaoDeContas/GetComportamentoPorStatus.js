@@ -4,7 +4,6 @@ import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
 import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
-import {DevolucoesPrestacaoDeContas} from "./DevolucoesPrestacaoDeContas";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
 import {InformacoesDevolucaoAoTesouro} from "./InformacoesDevolucaoAoTesouro";
 import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
@@ -199,11 +198,6 @@ export const GetComportamentoPorStatus = (
                         exibeMotivo={false}
                         exibeRecomendacoes={false}
                     />
-                    <DevolucoesPrestacaoDeContas
-                        prestacaoDeContas={prestacaoDeContas}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                        excluiUltimaCobranca={false}
-                    />
                     <InformacoesPrestacaoDeContas
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
@@ -320,11 +314,6 @@ export const GetComportamentoPorStatus = (
                         exibeMotivo={false}
                         exibeRecomendacoes={false}
                     />
-                    <DevolucoesPrestacaoDeContas
-                        prestacaoDeContas={prestacaoDeContas}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                        excluiUltimaCobranca={true}
-                    />
                     <CobrancaDevolucoesPrestacaoDeContas
                         listaDeCobrancasDevolucoes={listaDeCobrancasDevolucoes}
                         dataCobrancaDevolucoes={dataCobrancaDevolucoes}
@@ -423,11 +412,6 @@ export const GetComportamentoPorStatus = (
                         disabledStatus={true}
                         exibeMotivo={false}
                         exibeRecomendacoes={false}
-                    />
-                    <DevolucoesPrestacaoDeContas
-                        prestacaoDeContas={prestacaoDeContas}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                        excluiUltimaCobranca={true}
                     />
                     <CobrancaDevolucoesPrestacaoDeContas
                         listaDeCobrancasDevolucoes={listaDeCobrancasDevolucoes}
@@ -536,11 +520,6 @@ export const GetComportamentoPorStatus = (
                         disabledStatus={true}
                         exibeMotivo={false}
                         exibeRecomendacoes={false}
-                    />
-                    <DevolucoesPrestacaoDeContas
-                        prestacaoDeContas={prestacaoDeContas}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                        excluiUltimaCobranca={true}
                     />
                     <CobrancaDevolucoesPrestacaoDeContas
                         listaDeCobrancasDevolucoes={listaDeCobrancasDevolucoes}
@@ -654,11 +633,6 @@ export const GetComportamentoPorStatus = (
                         exibeMotivo={true}
                         exibeRecomendacoes={true}
                     />
-                    <DevolucoesPrestacaoDeContas
-                        prestacaoDeContas={prestacaoDeContas}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                        excluiUltimaCobranca={false}
-                    />
                     <InformacoesPrestacaoDeContas
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
@@ -755,11 +729,6 @@ export const GetComportamentoPorStatus = (
                         motivo={'motivos_reprovacao'}
                         outros_motivos={'outros_motivos_reprovacao'}
                         exibeRecomendacoes={false}
-                    />
-                    <DevolucoesPrestacaoDeContas
-                        prestacaoDeContas={prestacaoDeContas}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                        excluiUltimaCobranca={false}
                     />
                     <InformacoesPrestacaoDeContas
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
