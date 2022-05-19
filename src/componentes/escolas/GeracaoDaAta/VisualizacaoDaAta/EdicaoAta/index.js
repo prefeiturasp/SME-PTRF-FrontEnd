@@ -127,15 +127,7 @@ export const EdicaoAta = () => {
     };
 
     const temErros = (dadosForm) => {
-        let erros;
-        let justificativas = dadosForm.stateFormEditarAta.justificativa_repasses_pendentes.trim()
-        if (repassesPendentes && repassesPendentes.length > 0 && !justificativas){
-            erros = {
-                justificativa_repasses_pendentes : "Campo obrigatório"
-            }
-        }else {
-            erros = {}
-        }
+        let erros = {};
         setErros(erros)
         return erros;
     };

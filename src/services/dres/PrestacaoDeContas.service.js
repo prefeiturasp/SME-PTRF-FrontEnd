@@ -210,8 +210,8 @@ export const getDownloadArquivoDeReferencia = async (nome_do_arquivo, uuid, tipo
     )
 };
 
-export const getLancamentosParaConferencia = async (prestacao_de_contas_uuid, analise_atual_uuid, conta_uuid, acao_associacao_uuid=null, tipo_lancamento=null, ordenar_por_imposto=null) => {
-    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/lancamentos/?analise_prestacao=${analise_atual_uuid}&conta_associacao=${conta_uuid}${acao_associacao_uuid ? '&acao_associacao='+acao_associacao_uuid : ''}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${ordenar_por_imposto ? '&ordenar_por_imposto='+ordenar_por_imposto : ''}`, authHeader)).data
+export const getLancamentosParaConferencia = async (prestacao_de_contas_uuid, analise_atual_uuid, conta_uuid, acao_associacao_uuid=null, tipo_lancamento=null, ordenar_por_imposto=null, filtrar_por_data_inicio=null, filtrar_por_data_fim=null, filtrar_por_numero_de_documento=null, filtrar_por_tipo_de_documento=null, filtrar_por_tipo_de_pagamento=null) => {
+    return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/lancamentos/?analise_prestacao=${analise_atual_uuid}&conta_associacao=${conta_uuid}${acao_associacao_uuid ? '&acao_associacao='+acao_associacao_uuid : ''}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${ordenar_por_imposto ? '&ordenar_por_imposto='+ordenar_por_imposto : ''}${filtrar_por_data_inicio ? '&filtrar_por_data_inicio='+filtrar_por_data_inicio : ''}${filtrar_por_data_fim ? '&filtrar_por_data_fim='+filtrar_por_data_fim : ''}${filtrar_por_numero_de_documento ? '&filtrar_por_numero_de_documento='+filtrar_por_numero_de_documento : ''}${filtrar_por_tipo_de_documento ? '&filtrar_por_tipo_de_documento='+filtrar_por_tipo_de_documento : ''}${filtrar_por_tipo_de_pagamento ? '&filtrar_por_tipo_de_pagamento='+filtrar_por_tipo_de_pagamento : ''}`, authHeader)).data
 };
 
 export const getUltimaAnalisePc = async (prestacao_de_contas_uuid) => {
@@ -269,6 +269,16 @@ export const getTemReajustes = async (analise_atual_uuid) => {
 export const getSaldosIniciasAjustes = async (analise_atual_uuid, conta_uuid) => {
     return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/saldos-iniciais-com-ajustes/?conta_associacao=${conta_uuid}`, authHeader)).data
 };
+
+export const getExtratosBancariosAjustes = async (analise_atual_uuid, conta_uuid) => {
+    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/ajustes-extratos-bancarios/?conta_associacao=${conta_uuid}`, authHeader)).data
+};
+
+export const getTemAjustesExtratos = async (analise_atual_uuid) => {
+    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/verifica-ajustes-extratos/`, authHeader)).data
+};
+
+
 
 export const getLancamentosAjustes = async (analise_atual_uuid, conta_uuid, tipo_lancamento=null, tipo_acerto=null) => {
     return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/lancamentos-com-ajustes/?conta_associacao=${conta_uuid}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${tipo_acerto ? '&tipo_acerto='+tipo_acerto : ''}`, authHeader)).data
@@ -340,5 +350,15 @@ export const postAnaliseValorReprogramadoPorAcao = async (payload) => {
     return (await api.post(`/api/analises-valores-reprogramados/salvar-valores-reprogramados-acao/`, payload, authHeader)).data
 };
 
+export const postAnaliseAjustesSaldoPorConta = async (payload) => {
+    return (await api.post(`/api/analises-conta-prestacao-conta/salvar-ajustes-saldo-conta/`, payload, authHeader)).data
+};
 
 
+export const deleteAnaliseAjustesSaldoPorConta = async (analise_uuid) => {
+    return (await api.delete(`/api/analises-conta-prestacao-conta/${analise_uuid}/`, authHeader))
+};
+
+export const getAnaliseAjustesSaldoPorConta = async (conta_associacao_uuid, prestacao_conta_uuid, analise_prestacao_uuid) => {
+    return (await api.get(`/api/analises-conta-prestacao-conta/get-ajustes-saldo-conta/?conta_associacao=${conta_associacao_uuid}&prestacao_conta=${prestacao_conta_uuid}&analise_prestacao_conta=${analise_prestacao_uuid}`, authHeader)).data
+};

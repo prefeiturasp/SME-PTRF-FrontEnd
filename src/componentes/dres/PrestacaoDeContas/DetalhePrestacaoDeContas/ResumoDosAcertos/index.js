@@ -4,7 +4,11 @@ import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import {
     getConcluirAnalise,
     getAnalisesDePcDevolvidas,
-    getUltimaAnalisePc, getLancamentosAjustes, getDocumentosAjustes, getSaldosIniciasAjustes
+    getUltimaAnalisePc,
+    getLancamentosAjustes,
+    getDocumentosAjustes,
+    getSaldosIniciasAjustes,
+    getExtratosBancariosAjustes
 } from "../../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {gerarUuid, trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
@@ -36,6 +40,7 @@ export const ResumoDosAcertos = () => {
     const [showModalConfirmaDevolverParaAcerto, setShowModalConfirmaDevolverParaAcerto] = useState(false)
     const [loading, setLoading] = useState(true)
     const [totalValoresReprogramadosAjustes, setTotalValoresReprogramadosAjustes] = useState(undefined)
+    const [totalExtratosAjustes, setTotalExtratosAjustes] = useState(undefined)
     const [totalLancamentosAjustes, setTotalLancamentosAjustes] = useState(undefined)
     const [totalDocumentosAjustes, setTotalDocumentosAjustes] = useState(undefined)
     const [forcaVerificaSeExibeMsg, setForcaVerificaSeExibeMsg] = useState('')
@@ -70,6 +75,7 @@ export const ResumoDosAcertos = () => {
         setAnaliseAtualUuid(analise_atual_uuid)
         // Necessario alterar os estados dos totais para chamar novamente o método verificaSeExibeMsg setado com undefined
         setTotalValoresReprogramadosAjustes(undefined)
+        setTotalExtratosAjustes(undefined)
         setTotalLancamentosAjustes(undefined)
         setTotalDocumentosAjustes(undefined)
         setForcaVerificaSeExibeMsg(gerarUuid())
@@ -107,6 +113,7 @@ export const ResumoDosAcertos = () => {
         }
         // Necessario alterar os estados dos totais para chamar novamente o método verificaSeExibeMsg setado com ''
         setTotalValoresReprogramadosAjustes('')
+        setTotalExtratosAjustes('')
         setTotalLancamentosAjustes('')
         setTotalDocumentosAjustes('')
     }, [analisesDePcDevolvidas])
@@ -117,6 +124,10 @@ export const ResumoDosAcertos = () => {
             props.state.infoAta.contas.map(async (conta) => {
                 let valores_reprogramados_ajustes = await getSaldosIniciasAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
                 setTotalValoresReprogramadosAjustes(valores_reprogramados_ajustes.length)
+
+                let extratos_ajustes = await getExtratosBancariosAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
+                setTotalExtratosAjustes(extratos_ajustes.length)
+
                 let lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid)
                 setTotalLancamentosAjustes(lanc => isNaN(lanc) ? 0 + lancamentos_ajustes.length : lanc + lancamentos_ajustes.length)
                 let documentos_ajustes = await getDocumentosAjustes(analiseAtualUuid, conta.conta_associacao.uuid)
@@ -132,7 +143,7 @@ export const ResumoDosAcertos = () => {
 
     const verificaSeExibeMsg = useCallback(() => {
         setLoading(true)
-        if (totalLancamentosAjustes !== undefined && totalLancamentosAjustes <= 0 && totalDocumentosAjustes !== undefined && totalDocumentosAjustes <= 0 && totalValoresReprogramadosAjustes !== undefined && totalValoresReprogramadosAjustes <= 0) {
+        if (totalLancamentosAjustes !== undefined && totalLancamentosAjustes <= 0 && totalDocumentosAjustes !== undefined && totalDocumentosAjustes <= 0 && totalValoresReprogramadosAjustes !== undefined && totalValoresReprogramadosAjustes <= 0 && totalExtratosAjustes !== undefined && totalExtratosAjustes <= 0) {
             setExibeMsg(true)
             if (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0) {
                 setTextoMsg('Não existem novas solicitações salvas desde o retorno da Associação. Consulte acima as solicitações anteriores')
@@ -143,7 +154,7 @@ export const ResumoDosAcertos = () => {
             setExibeMsg(false)
         }
         setLoading(false)
-    }, [prestacaoDeContas, totalLancamentosAjustes, totalDocumentosAjustes, totalValoresReprogramadosAjustes])
+    }, [prestacaoDeContas, totalLancamentosAjustes, totalDocumentosAjustes, totalValoresReprogramadosAjustes, totalExtratosAjustes])
 
     useEffect(() => {
         verificaSeExibeMsg()
