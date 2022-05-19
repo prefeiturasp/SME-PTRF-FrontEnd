@@ -12,7 +12,7 @@ import {
     deleteAnaliseAjustesSaldoPorConta,
     getAnaliseAjustesSaldoPorConta
 } from "../../../../services/dres/PrestacaoDeContas.service";
-import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
+import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
 import {patchReceberAposAcertos} from "../../../../services/dres/PrestacaoDeContas.service";
 import {getDespesa} from "../../../../services/escolas/Despesas.service";
 import moment from "moment";
@@ -76,20 +76,6 @@ export const DetalhePrestacaoDeContas = () =>{
         status: "",
     };
 
-    const initialListaCobranca = {
-        uuid: "",
-        prestacao_conta: '',
-        data:'',
-        tipo: '',
-    };
-
-    const initialListaCobrancaDevolucoes = {
-        uuid: "",
-        prestacao_conta: '',
-        data:'',
-        tipo: '',
-    };
-
     const initialInformacoesPrestacaoDeContas = {
         processo_sei: "",
         ultima_analise: '',
@@ -129,10 +115,6 @@ export const DetalhePrestacaoDeContas = () =>{
     const [showConcluirAnalise, setShowConcluirAnalise] = useState(false);
     const [showVoltarParaAnalise, setShowVoltarParaAnalise] = useState(false);
     const [redirectListaPc, setRedirectListaPc] = useState(false);
-    const [listaDeCobrancas, setListaDeCobrancas] = useState(initialListaCobranca);
-    const [listaDeCobrancasDevolucoes, setListaDeCobrancasDevolucoes] = useState(initialListaCobrancaDevolucoes);
-    const [dataCobranca, setDataCobranca] = useState('');
-    const [dataCobrancaDevolucoes, setDataCobrancaDevolucoes] = useState('');
     const [informacoesPrestacaoDeContas, setInformacoesPrestacaoDeContas] = useState(initialInformacoesPrestacaoDeContas);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true, key_0: true});
     const [infoAta, setInfoAta] = useState({});
@@ -165,9 +147,7 @@ export const DetalhePrestacaoDeContas = () =>{
     }, []);
 
     useEffect(()=>{
-        carregaListaDeCobrancas();
         carregaInfoAta();
-        carregaListaDeCobrancasDevolucoes();
     }, [prestacaoDeContas]);
 
     useEffect(()=>{
@@ -277,63 +257,6 @@ export const DetalhePrestacaoDeContas = () =>{
     const carregaTabelaPrestacaoDeContas = async () => {
         let tabela_prestacoes = await getTabelasPrestacoesDeContas();
         setTabelaPrestacoes(tabela_prestacoes);
-    };
-
-    const carregaListaDeCobrancas = async () =>{
-        if (prestacaoDeContas && prestacaoDeContas.uuid){
-            let lista = await getListaDeCobrancas(prestacaoDeContas.uuid);
-            setListaDeCobrancas(lista)
-        }
-    };
-
-    const carregaListaDeCobrancasDevolucoes = async () =>{
-        if (prestacaoDeContas && prestacaoDeContas.uuid && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0){
-            let ultimo_item = prestacaoDeContas.devolucoes_da_prestacao.slice(-1);
-            let lista = await getListaDeCobrancasDevolucoes(prestacaoDeContas.uuid, ultimo_item[0].uuid);
-            setListaDeCobrancasDevolucoes(lista);
-        }
-    };
-
-    const addCobranca = async () =>{
-        let data_cobranca = dataCobranca ? moment(new Date(dataCobranca), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
-        if (data_cobranca){
-            let payload = {
-                prestacao_conta: prestacaoDeContas.uuid,
-                data: data_cobranca,
-                tipo: 'RECEBIMENTO'
-            };
-            await getAddCobranca(payload);
-            await carregaListaDeCobrancas();
-            setDataCobranca('')
-        }
-    };
-
-    const addCobrancaDevolucoes = async () =>{
-        let data_cobranca = dataCobrancaDevolucoes ? moment(new Date(dataCobrancaDevolucoes), "YYYY-MM-DD").format("YYYY-MM-DD") : "";
-        if (data_cobranca){
-            let payload = {
-                prestacao_conta: prestacaoDeContas.uuid,
-                data: data_cobranca,
-                tipo: 'DEVOLUCAO'
-            };
-            await getAddCobrancaDevolucoes(payload);
-            await carregaListaDeCobrancasDevolucoes();
-            setDataCobrancaDevolucoes('')
-        }
-    };
-
-    const deleteCobranca = async (cobranca_uuid) =>{
-        await getDeletarCobranca(cobranca_uuid);
-        if (cobranca_uuid){
-            await carregaListaDeCobrancas()
-        }
-    };
-
-    const deleteCobrancaDevolucoes = async (cobranca_uuid) =>{
-        await getDeletarCobranca(cobranca_uuid);
-        if (cobranca_uuid){
-            await carregaListaDeCobrancasDevolucoes()
-        }
     };
 
     const receberPrestacaoDeContas = async ()=>{
@@ -764,14 +687,6 @@ export const DetalhePrestacaoDeContas = () =>{
 
     // Fim Ata
 
-    const handleChangeDataCobranca = (name, value) =>{
-        setDataCobranca(value);
-    };
-
-    const handleChangeDataCobrancaDevolucoes = (name, value) =>{
-        setDataCobrancaDevolucoes(value);
-    };
-
     const handleChangeFormRecebimentoPelaDiretoria = (name, value) => {
         setStateFormRecebimentoPelaDiretoria({
             ...stateFormRecebimentoPelaDiretoria,
@@ -978,29 +893,6 @@ export const DetalhePrestacaoDeContas = () =>{
         setLoading(false);
     };
 
-    const retornaNumeroOrdinal = (index) =>{
-        let _index = index + 1;
-        if (_index === 10){
-            return 'Décima'
-        }else if(_index === 20){
-            return 'Vigésima'
-        }else if(_index === 30){
-            return 'Trigésima'
-        }else if(_index === 40){
-            return 'Quadragésima'
-        }else{
-            let oridinal = _index.toOrdinal({ genero: "a"});
-            let array = oridinal.split(' ');
-            let primeira_palavra = array[0];
-            let modificada = primeira_palavra.substring(0, primeira_palavra.length - 1) + 'a';
-            if (array[1] === undefined){
-                return modificada.charAt(0).toUpperCase() + modificada.slice(1)
-            }else {
-                return modificada.charAt(0).toUpperCase() + modificada.slice(1) + " " + array[1]
-            }
-        }
-    };
-
     const buscaDespesaPorFiltros = async (index) =>{
         let valores, cpf, tipo_documento, numero_documento;
 
@@ -1017,7 +909,6 @@ export const DetalhePrestacaoDeContas = () =>{
                 [`devolucao_${index}`]: [...despesas_por_filtros]
             });
         }
-
     };
 
     const buscaDespesa = async (despesa_uuid, index) =>{
@@ -1132,12 +1023,6 @@ export const DetalhePrestacaoDeContas = () =>{
                                     stateFormRecebimentoPelaDiretoria={stateFormRecebimentoPelaDiretoria}
                                     handleChangeFormRecebimentoPelaDiretoria={handleChangeFormRecebimentoPelaDiretoria}
                                     tabelaPrestacoes={tabelaPrestacoes}
-                                    listaDeCobrancas={listaDeCobrancas}
-                                    dataCobranca={dataCobranca}
-                                    handleChangeDataCobranca={handleChangeDataCobranca}
-                                    addCobranca={addCobranca}
-                                    deleteCobranca={deleteCobranca}
-                                    retornaNumeroOrdinal={retornaNumeroOrdinal}
                                     analisarPrestacaoDeContas={analisarPrestacaoDeContas}
                                     setShowNaoRecebida={setShowNaoRecebida}
                                     salvarAnalise={salvarAnalise}
@@ -1164,11 +1049,6 @@ export const DetalhePrestacaoDeContas = () =>{
                                     getObjetoIndexAnalise={getObjetoIndexAnalise}
                                     toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                                     clickBtnTabelaAcoes={clickBtnTabelaAcoes}
-                                    listaDeCobrancasDevolucoes={listaDeCobrancasDevolucoes}
-                                    dataCobrancaDevolucoes={dataCobrancaDevolucoes}
-                                    handleChangeDataCobrancaDevolucoes={handleChangeDataCobrancaDevolucoes}
-                                    addCobrancaDevolucoes={addCobrancaDevolucoes}
-                                    deleteCobrancaDevolucoes={deleteCobrancaDevolucoes}
                                     setShowVoltarParaAnalise={setShowVoltarParaAnalise}
                                     btnSalvarDisabled={btnSalvarDisabled}
                                     setBtnSalvarDisabled={setBtnSalvarDisabled}

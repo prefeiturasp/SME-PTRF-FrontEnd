@@ -3,11 +3,9 @@ import Cabecalho from "./Cabecalho";
 import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
-import {CobrancaPrestacaoDeContas} from "./CobrancaPrestacaoDeContas";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
 import {InformacoesDevolucaoAoTesouro} from "./InformacoesDevolucaoAoTesouro";
-import {CobrancaDevolucoesPrestacaoDeContas} from "./CobrancaDevolucoesPrestacaoDeContas";
-import {ComentariosDeAnalise} from "./ComentariosDeAnalise";
+import ComentariosDeAnalise from "./ComentariosDeAnalise";
 import {TabsArquivosDeReferencia} from "./ArquivosDeReferencia/TabsArquivosDeReferencia";
 import ConferenciaDeLancamentos from "./ConferenciaDeLancamentos";
 import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
@@ -26,12 +24,6 @@ export const GetComportamentoPorStatus = (
         stateFormRecebimentoPelaDiretoria,
         handleChangeFormRecebimentoPelaDiretoria,
         tabelaPrestacoes,
-        listaDeCobrancas,
-        dataCobranca,
-        handleChangeDataCobranca,
-        addCobranca,
-        deleteCobranca,
-        retornaNumeroOrdinal,
         analisarPrestacaoDeContas,
         setShowNaoRecebida,
         salvarAnalise,
@@ -58,11 +50,6 @@ export const GetComportamentoPorStatus = (
         getObjetoIndexAnalise,
         toggleBtnTabelaAcoes,
         clickBtnTabelaAcoes,
-        listaDeCobrancasDevolucoes,
-        dataCobrancaDevolucoes,
-        handleChangeDataCobrancaDevolucoes,
-        addCobrancaDevolucoes,
-        deleteCobrancaDevolucoes,
         setShowVoltarParaAnalise,
         btnSalvarDisabled,
         setBtnSalvarDisabled,
@@ -115,15 +102,6 @@ export const GetComportamentoPorStatus = (
                         exibeMotivo={false}
                         exibeRecomendacoes={false}
                     />
-                    <CobrancaPrestacaoDeContas
-                        listaDeCobrancas={listaDeCobrancas}
-                        dataCobranca={dataCobranca}
-                        handleChangeDataCobranca={handleChangeDataCobranca}
-                        addCobranca={addCobranca}
-                        deleteCobranca={deleteCobranca}
-                        editavel={true}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                    />
                 </>
             )
         } else if (prestacaoDeContas.status === 'RECEBIDA') {
@@ -154,15 +132,6 @@ export const GetComportamentoPorStatus = (
                         disabledStatus={true}
                         exibeMotivo={false}
                         exibeRecomendacoes={false}
-                    />
-                    <CobrancaPrestacaoDeContas
-                        listaDeCobrancas={listaDeCobrancas}
-                        dataCobranca={dataCobranca}
-                        handleChangeDataCobranca={handleChangeDataCobranca}
-                        addCobranca={addCobranca}
-                        deleteCobranca={deleteCobranca}
-                        editavel={false}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
                     />
                 </>
             )
@@ -314,15 +283,6 @@ export const GetComportamentoPorStatus = (
                         exibeMotivo={false}
                         exibeRecomendacoes={false}
                     />
-                    <CobrancaDevolucoesPrestacaoDeContas
-                        listaDeCobrancasDevolucoes={listaDeCobrancasDevolucoes}
-                        dataCobrancaDevolucoes={dataCobrancaDevolucoes}
-                        handleChangeDataCobrancaDevolucoes={handleChangeDataCobrancaDevolucoes}
-                        addCobrancaDevolucoes={addCobrancaDevolucoes}
-                        deleteCobrancaDevolucoes={deleteCobrancaDevolucoes}
-                        editavel={true}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                    />
                     <InformacoesPrestacaoDeContas
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
@@ -413,16 +373,6 @@ export const GetComportamentoPorStatus = (
                         exibeMotivo={false}
                         exibeRecomendacoes={false}
                     />
-                    <CobrancaDevolucoesPrestacaoDeContas
-                        listaDeCobrancasDevolucoes={listaDeCobrancasDevolucoes}
-                        dataCobrancaDevolucoes={dataCobrancaDevolucoes}
-                        handleChangeDataCobrancaDevolucoes={handleChangeDataCobrancaDevolucoes}
-                        addCobrancaDevolucoes={addCobrancaDevolucoes}
-                        deleteCobrancaDevolucoes={deleteCobrancaDevolucoes}
-                        editavel={true}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                    />
-
                     <DevolutivaDaAssociacao
                         prestacaoDeContas={prestacaoDeContas}
                         dataRecebimentoDevolutiva={dataRecebimentoDevolutiva}
@@ -521,23 +471,12 @@ export const GetComportamentoPorStatus = (
                         exibeMotivo={false}
                         exibeRecomendacoes={false}
                     />
-                    <CobrancaDevolucoesPrestacaoDeContas
-                        listaDeCobrancasDevolucoes={listaDeCobrancasDevolucoes}
-                        dataCobrancaDevolucoes={dataCobrancaDevolucoes}
-                        handleChangeDataCobrancaDevolucoes={handleChangeDataCobrancaDevolucoes}
-                        addCobrancaDevolucoes={addCobrancaDevolucoes}
-                        deleteCobrancaDevolucoes={deleteCobrancaDevolucoes}
-                        editavel={true}
-                        retornaNumeroOrdinal={retornaNumeroOrdinal}
-                    />
-
                     <DevolutivaDaAssociacao
                         prestacaoDeContas={prestacaoDeContas}
                         dataRecebimentoDevolutiva={dataRecebimentoDevolutiva}
                         handleChangedataRecebimentoDevolutiva={handleChangedataRecebimentoDevolutiva}
                         editavel={false}
                     />
-
                     <InformacoesPrestacaoDeContas
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
