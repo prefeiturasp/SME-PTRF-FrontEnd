@@ -28,6 +28,11 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
                 setDataBoxAtaRetificadora("Ata não preenchida");
                 setGerarAtaRetificadora(false)
             }
+            else if (!dados.completa) {
+                setCorBoxAtaRetificadora("vermelho");
+                setDataBoxAtaRetificadora("Ata incompleta");
+                setGerarAtaRetificadora(false)
+            }
             else {
                 setCorBoxAtaRetificadora("verde");
                 setDataBoxAtaRetificadora("Último preenchimento em "+exibeDateTimePT_BR_Ata(dados.alterado_em));
@@ -41,6 +46,11 @@ export const GeracaoAtaRetificadora = ({uuidPrestacaoConta, statusPrestacaoDeCon
                 if (dados.alterado_em === null){
                     setCorBoxAtaRetificadora("vermelho");
                     setDataBoxAtaRetificadora("Ata não preenchida");
+                    setGerarAtaRetificadora(false)
+                }
+                else if (!dados.completa) {
+                    setCorBoxAtaRetificadora("vermelho");
+                    setDataBoxAtaRetificadora("Ata incompleta");
                     setGerarAtaRetificadora(false)
                 }
                 else {

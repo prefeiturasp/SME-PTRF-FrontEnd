@@ -218,6 +218,10 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                     setdataBoxAtaApresentacao("Ata não preenchida");
                     setGerarAta(false)
                 }
+                else if (!data_preenchimento.completa) {
+                    setcorBoxAtaApresentacao("vermelho");
+                    setdataBoxAtaApresentacao("Ata incompleta");
+                    setGerarAta(false)                }
                 else {
                     setcorBoxAtaApresentacao("verde");
                     setdataBoxAtaApresentacao("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));

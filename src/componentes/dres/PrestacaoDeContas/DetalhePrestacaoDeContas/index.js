@@ -6,7 +6,11 @@ import {
     getMotivosAprovadoComRessalva,
     getMotivosReprovacao,
     getPrestacaoDeContasDetalhe,
-    patchDesfazerReceberAposAcertos
+    patchDesfazerReceberAposAcertos,
+    getUltimaAnalisePc,
+    postAnaliseAjustesSaldoPorConta,
+    deleteAnaliseAjustesSaldoPorConta,
+    getAnaliseAjustesSaldoPorConta
 } from "../../../../services/dres/PrestacaoDeContas.service";
 import {getTabelasPrestacoesDeContas, getReceberPrestacaoDeContas, getReabrirPrestacaoDeContas, getListaDeCobrancas, getAddCobranca, getDeletarCobranca, getDesfazerRecebimento, getAnalisarPrestacaoDeContas, getDesfazerAnalise, getSalvarAnalise, getInfoAta, getConcluirAnalise, getListaDeCobrancasDevolucoes, getAddCobrancaDevolucoes, getDespesasPorFiltros, getTiposDevolucao} from "../../../../services/dres/PrestacaoDeContas.service";
 import {patchReceberAposAcertos} from "../../../../services/dres/PrestacaoDeContas.service";
@@ -18,6 +22,7 @@ import {ModalNaoRecebida} from "../ModalNaoRecebida";
 import {ModalRecebida} from "../ModalRecebida";
 import {ModalConcluirAnalise} from "../ModalConcluirAnalise";
 import {ModalVoltarParaAnalise} from "../ModalVoltarParaAnalise";
+import { ModalDeleteAjusteSaldoPC } from "../ModalDeleteAjusteSaldoPC";
 import {getDespesasTabelas} from "../../../../services/escolas/Despesas.service";
 import {trataNumericos} from "../../../../utils/ValidacoesAdicionaisFormularios";
 import {GetComportamentoPorStatus} from "./GetComportamentoPorStatus";
@@ -149,6 +154,10 @@ export const DetalhePrestacaoDeContas = () =>{
     const [showModalSalvarAnalise, setShowModalSalvarAnalise] = useState(false);
     const [loading, setLoading] = useState(true);
     const [valoresReprogramadosAjustes, setValoresReprogramadosAjustes] = useState([])
+    const [adicaoAjusteSaldo, setAdicaoAjusteSaldo] = useState(false);
+    const [formErrosAjusteSaldo, setFormErrosAjusteSaldo] = useState([])
+    const [ajusteSaldoSalvoComSucesso, setAjusteSaldoSalvoComSucesso] = useState([]);
+    const [showDeleteAjusteSaldoPC, setShowDeleteAjusteSaldoPC] = useState(false);
 
     useEffect(()=>{
         carregaPrestacaoDeContas();
@@ -204,9 +213,10 @@ export const DetalhePrestacaoDeContas = () =>{
                 let arrayAnalises = [];
                 prestacao.analises_de_conta_da_prestacao.map((conta)=>{
                         arrayAnalises.push({
+                            uuid: conta.uuid,
                             conta_associacao: conta.conta_associacao.uuid,
                             data_extrato: conta.data_extrato,
-                            saldo_extrato: valorTemplate(conta.saldo_extrato),
+                            saldo_extrato: conta.saldo_extrato !== null ? valorTemplate(conta.saldo_extrato) : null,
                         })
                     });
                 setAnalisesDeContaDaPrestacao(arrayAnalises);
@@ -410,38 +420,250 @@ export const DetalhePrestacaoDeContas = () =>{
 
             let get_analise = await getAnalisePrestacao();
 
-            if (!get_analise){
-                setAnalisesDeContaDaPrestacao(analise=>[
-                    ...analise,
-                    {
-                        conta_associacao: conta.conta_associacao.uuid,
-                        data_extrato: '',
-                        saldo_extrato:'',
-                    }
-                ])
-            }
         }
     };
+
+    const onClickAdicionarAcertoSaldo = (conta) => {
+        setAdicaoAjusteSaldo(true);
+        let lista = analisesDeContaDaPrestacao;
+
+        let existe_na_lista = lista.find(element => element.conta_associacao === conta.uuid)
+
+        if(!existe_na_lista){
+            lista.push({
+                conta_associacao: conta.uuid,
+                data_extrato: '',
+                saldo_extrato: null,
+            })
+
+            setAnalisesDeContaDaPrestacao(lista)
+        }
+
+    }
+
+    const carregaAnalisesAjustePC = async (conta, prestacao_conta, analise_atual) => {
+        let analise = await getAnaliseAjustesSaldoPorConta(conta, prestacao_conta, analise_atual);
+        analise = analise[0]
+        
+        let arrayAnalise = analisesDeContaDaPrestacao;
+        
+        let analise_index = getObjetoIndexAnalise().analise_index;
+        arrayAnalise.splice(analise_index);
+
+        arrayAnalise.push({
+            uuid: analise.uuid,
+            conta_associacao: analise.conta_associacao.uuid,
+            data_extrato: analise.data_extrato,
+            saldo_extrato: analise.saldo_extrato !== null ? valorTemplate(analise.saldo_extrato) : null
+        })
+
+        setAnalisesDeContaDaPrestacao(()=>[
+            ...arrayAnalise
+        ])  
+    }
+
+    const onClickSalvarAcertoSaldo = async (conta, analise_de_conta, index) => {
+        let uuid_analise;
+        let data_extrato = null;
+        let saldo_extato = null;
+
+        if(prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid){
+            uuid_analise = prestacaoDeContas.analise_atual.uuid
+        }
+        else{
+            let ultima_analise =  await getUltimaAnalisePc(prestacaoDeContas.uuid)
+            uuid_analise = ultima_analise.uuid
+        }
+
+        if(analise_de_conta){
+            if(analise_de_conta.data_extrato){
+                data_extrato = moment(analise_de_conta.data_extrato).format("YYYY-MM-DD") 
+            }
+
+            if(analise_de_conta.saldo_extrato){
+                saldo_extato = trataNumericos(analise_de_conta.saldo_extrato)
+            }
+        }
+
+        let payload = {
+            analise_prestacao_conta: uuid_analise,
+            conta_associacao: conta.uuid,
+            prestacao_conta: prestacaoDeContas.uuid,
+            data_extrato: data_extrato,
+            saldo_extrato: saldo_extato
+        }
+
+        try {
+            await postAnaliseAjustesSaldoPorConta(payload);
+            setAdicaoAjusteSaldo(false);
+            setAjusteSaldoSalvoComSucesso(prevState => ({
+                ...prevState,
+                [index]: true
+            }))
+            
+            console.log("Criação realizada com sucesso!")
+
+            carregaAnalisesAjustePC(conta.uuid, prestacaoDeContas.uuid, uuid_analise);
+        } catch (e) {
+            console.log("Erro ao fazer criação", e.response)
+            setAjusteSaldoSalvoComSucesso(prevState => ({
+                ...prevState,
+                [index]: false
+            }))
+        }
+    }
+
+    const onClickDeletarAcertoSaldo = () => {
+        setShowDeleteAjusteSaldoPC(true);
+    }
+
+    const onClickDescartarAcerto = () => {
+        let arrayAnalise = analisesDeContaDaPrestacao;
+        let analise_index = getObjetoIndexAnalise().analise_index;
+        arrayAnalise.splice(analise_index);
+        setAnalisesDeContaDaPrestacao(()=>[
+            ...arrayAnalise
+        ])
+        setAdicaoAjusteSaldo(false);
+        
+        let erros = {
+            data: null,
+            saldo: null
+        }
+
+        setFormErrosAjusteSaldo(prevState => ({
+            ...prevState,
+            [analise_index]: erros
+        }))
+    }
+
+
+    const validaAjustesSaldo = (info_ue, index, info_dre, origem) => {
+        let erros = formErrosAjusteSaldo[index] ? formErrosAjusteSaldo[index] : {data: null, saldo: null}
+
+        if(origem === "data"){
+            if(info_ue && info_ue.data_extrato && (index > -1 && info_dre && info_dre.data_extrato)){
+                let data_ue = moment(info_ue.data_extrato, "DD-MM-YYYY HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                let data_dre = moment(info_dre.data_extrato, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+        
+                let diff = moment(data_ue, "YYYY-MM-DD HH:mm:ss").diff(moment(data_dre, "YYYY-MM-DD HH:mm:ss"))
+                let dias = moment.duration(diff).asDays();
+        
+                if(dias === 0){
+                    erros.data = "Mesma data que UE";
+    
+                    setFormErrosAjusteSaldo(prevState => ({
+                        ...prevState,
+                        [index]: erros
+                    }))
+                }
+                else{
+                    erros.data = null;
+                    
+                    setFormErrosAjusteSaldo(prevState => ({
+                        ...prevState,
+                        [index]: erros
+                    }))
+                }
+            }
+            else if(info_dre && info_dre.data_extrato === null){
+                erros.data = null;
+    
+                setFormErrosAjusteSaldo(prevState => ({
+                    ...prevState,
+                    [index]: erros
+                }))
+            }
+        }
+        else if(origem === "saldo"){
+            if(info_ue && info_ue.saldo_extrato && (index > -1 && info_dre && info_dre.saldo_extrato)){
+                let saldo_ue = trataNumericos(info_ue.saldo_extrato);
+                let saldo_dre = trataNumericos(info_dre.saldo_extrato);
+    
+                if(saldo_ue === saldo_dre){
+                    erros.saldo = "Mesmo saldo que UE";
+    
+                    setFormErrosAjusteSaldo(prevState => ({
+                        ...prevState,
+                        [index]: erros
+                    }))
+                }
+                else{
+                    erros.saldo = null;
+        
+                    setFormErrosAjusteSaldo(prevState => ({
+                        ...prevState,
+                        [index]: erros
+                    }))
+                }
+    
+            }
+            else if(info_dre && info_dre.saldo_extrato === null){
+                erros.saldo = null;
+    
+                setFormErrosAjusteSaldo(prevState => ({
+                    ...prevState,
+                    [index]: erros
+                }))
+            }
+        }
+    }
+
+    const handleOnKeyDownAjusteSaldo = (e, saldo) => {
+        /* Função necessária para que o usuário consiga apagar a máscara do input */
+
+        if(saldo){
+            let backspace = 8
+            let teclaPressionada = e.keyCode
+    
+            let arrayAnalise = analisesDeContaDaPrestacao;
+            let analise_index = getObjetoIndexAnalise().analise_index;
+    
+            if(teclaPressionada === backspace){
+                if(saldo === 0 || saldo === "R$0,00"){
+                    arrayAnalise[analise_index]['saldo_extrato'] = null;
+                    setAnalisesDeContaDaPrestacao(()=>[
+                        ...arrayAnalise
+                    ])
+                }
+            }
+        }
+        
+    }
 
     const exibeAtaPorConta = async (conta) =>{
         let info_ata_por_conta = infoAta.contas.find(element => element.conta_associacao.nome === conta);
         setInfoAtaPorConta(info_ata_por_conta);
+        setAdicaoAjusteSaldo(false);
+        
+        if(analisesDeContaDaPrestacao.length === 0){
+            let uuid_analise;
 
-        let analise = analisesDeContaDaPrestacao.find(element => element.conta_associacao === info_ata_por_conta.conta_associacao.uuid);
+            if(prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid){
+                uuid_analise = prestacaoDeContas.analise_atual.uuid
+            }
+            else{
+                let ultima_analise =  await getUltimaAnalisePc(prestacaoDeContas.uuid)
+                uuid_analise = ultima_analise.uuid
+            }
 
-        let get_analise = await getAnalisePrestacao();
+            let analise_teste = await getAnaliseAjustesSaldoPorConta(info_ata_por_conta.conta_associacao.uuid, prestacaoDeContas.uuid, uuid_analise);
+            analise_teste = analise_teste[0]
 
-        if (analise === undefined && !get_analise){
-            setAnalisesDeContaDaPrestacao(analise=>[
-                ...analise,
-                {
-                    conta_associacao: info_ata_por_conta.conta_associacao.uuid,
-                    data_extrato: '',
-                    saldo_extrato:'',
-                }
-            ])
-        }else {
-            setAnalisesDeContaDaPrestacao(analisesDeContaDaPrestacao)
+
+            if(analise_teste){
+                setAnalisesDeContaDaPrestacao(analise=>[
+                    ...analise,
+                    {
+                        uuid: analise_teste.uuid,
+                        conta_associacao: analise_teste.conta_associacao.uuid,
+                        data_extrato: analise_teste.data_extrato,
+                        saldo_extrato: analise_teste.saldo_extrato !== null ? valorTemplate(analise_teste.saldo_extrato) : null
+                    }
+                ])
+            }
+
+            
         }
 
     };
@@ -454,6 +676,7 @@ export const DetalhePrestacaoDeContas = () =>{
         valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
         return valor_formatado
     };
+
 
     const getObjetoIndexAnalise = () =>{
         if (analisesDeContaDaPrestacao && analisesDeContaDaPrestacao.length > 0){
@@ -473,8 +696,11 @@ export const DetalhePrestacaoDeContas = () =>{
         let arrayAnalise = analisesDeContaDaPrestacao;
         let analise_index = getObjetoIndexAnalise().analise_index;
 
-        arrayAnalise[analise_index].conta_associacao = infoAtaPorConta.conta_associacao.uuid;
-        arrayAnalise[analise_index][name] = value;
+        if(analise_index > -1) {
+            arrayAnalise[analise_index].conta_associacao = infoAtaPorConta.conta_associacao.uuid;
+            arrayAnalise[analise_index][name] = value;
+        }
+        
 
         setAnalisesDeContaDaPrestacao(()=>[
             ...arrayAnalise
@@ -567,7 +793,8 @@ export const DetalhePrestacaoDeContas = () =>{
         setShowRecebida(false);
         setShowConcluirAnalise(false);
         setShowVoltarParaAnalise(false);
-        setshowErroPrestacaoDeContasPosterior(false)
+        setshowErroPrestacaoDeContasPosterior(false);
+        setShowDeleteAjusteSaldoPC(false);
     };
 
     const onCloseModalSalvarAnalise = () => {
@@ -589,6 +816,22 @@ export const DetalhePrestacaoDeContas = () =>{
         await desfazerAnalise();
     };
 
+    const onDeletarAjustePcTrue = async () => {
+        setShowDeleteAjusteSaldoPC(false);
+
+        let arrayAnalise = analisesDeContaDaPrestacao;
+        let analise = arrayAnalise.find(element => element.conta_associacao === infoAtaPorConta.conta_associacao.uuid)
+        
+        let analise_index = getObjetoIndexAnalise().analise_index;
+        arrayAnalise.splice(analise_index);
+        setAnalisesDeContaDaPrestacao(()=>[
+            ...arrayAnalise
+        ])
+        setAdicaoAjusteSaldo(false)
+
+        deleteAnaliseAjustesSaldoPorConta(analise.uuid);
+    }
+
     const salvarAnalise = async () =>{
         let devolucao_ao_tesouro_tratado;
         if (formRef.current && informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Sim') {
@@ -607,13 +850,8 @@ export const DetalhePrestacaoDeContas = () =>{
             devolucao_ao_tesouro_tratado=[];
         }
 
-        analisesDeContaDaPrestacao.map((analise)=>{
-            analise.data_extrato = analise.data_extrato ?  moment(analise.data_extrato).format("YYYY-MM-DD") : null;
-            analise.saldo_extrato = analise.saldo_extrato ? trataNumericos(analise.saldo_extrato) : 0;
-        });
         const payload = {
             devolucao_tesouro: informacoesPrestacaoDeContas.devolucao_ao_tesouro !== 'Não',
-            analises_de_conta_da_prestacao: analisesDeContaDaPrestacao,
             devolucoes_ao_tesouro_da_prestacao:devolucao_ao_tesouro_tratado
         };
 
@@ -940,6 +1178,17 @@ export const DetalhePrestacaoDeContas = () =>{
                                     receberAposAcertos={receberAposAcertos}
                                     desfazerReceberAposAcertos={desfazerReceberAposAcertos}
                                     setLoading={setLoading}
+                                    adicaoAjusteSaldo={adicaoAjusteSaldo}
+                                    setAdicaoAjusteSaldo={setAdicaoAjusteSaldo}
+                                    onClickAdicionarAcertoSaldo={onClickAdicionarAcertoSaldo}
+                                    onClickDescartarAcerto={onClickDescartarAcerto}
+                                    formErrosAjusteSaldo={formErrosAjusteSaldo}
+                                    validaAjustesSaldo={validaAjustesSaldo}
+                                    handleOnKeyDownAjusteSaldo={handleOnKeyDownAjusteSaldo}
+                                    onClickSalvarAcertoSaldo={onClickSalvarAcertoSaldo}
+                                    ajusteSaldoSalvoComSucesso={ajusteSaldoSalvoComSucesso}
+                                    onClickDeletarAcertoSaldo={onClickDeletarAcertoSaldo}
+                                    setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                                 />
                         }
                     </>
@@ -1043,6 +1292,19 @@ export const DetalhePrestacaoDeContas = () =>{
                     <ModalSalvarPrestacaoDeContasAnalise
                         show={showModalSalvarAnalise}
                         handleClose={onCloseModalSalvarAnalise}
+                    />
+                </section>
+                <section>
+                    <ModalDeleteAjusteSaldoPC
+                        show={showDeleteAjusteSaldoPC}
+                        handleClose={onHandleClose}
+                        onDeletarAjustePcTrue={onDeletarAjustePcTrue}
+                        titulo="Excluir correção do saldo"
+                        texto="Deseja confirmar a exclusão do saldo corrigido?"
+                        primeiroBotaoTexto="Voltar"
+                        primeiroBotaoCss="outline-success"
+                        segundoBotaoCss="success"
+                        segundoBotaoTexto="Confirmar exclusão"
                     />
                 </section>
                 {redirectListaPc &&

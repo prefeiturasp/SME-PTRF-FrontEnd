@@ -80,7 +80,14 @@ const TabelaConferenciaDeLancamentos = ({
     let filtrar_por_lancamento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_lancamento
     let paginacao_atual = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.paginacao_atual
 
-    useEffect(() => {
+    let filtrar_por_data_inicio = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_inicio
+    let filtrar_por_data_fim = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_fim
+    let filtrar_por_numero_de_documento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento
+    let filtrar_por_tipo_de_documento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento
+    let filtrar_por_tipo_de_pagamento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento
+
+
+        useEffect(() => {
         desmarcarTodos()
     }, [contaUuid])
 
@@ -380,7 +387,7 @@ const TabelaConferenciaDeLancamentos = ({
                 await postLancamentosParaConferenciaMarcarComoCorreto(prestacaoDeContas.uuid, payload)
                 console.log("Marcados como correto com sucesso!")
                 desmarcarTodos()
-                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual)
+                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual, false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
             } catch (e) {
                 console.log("Erro ao marcar como correto ", e.response)
             }
@@ -409,7 +416,7 @@ const TabelaConferenciaDeLancamentos = ({
                 await postLancamentosParaConferenciaMarcarNaoConferido(prestacaoDeContas.uuid, payload)
                 console.log("Marcados como não conferido com sucesso!")
                 desmarcarTodos()
-                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual)
+                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual, false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
             } catch (e) {
                 console.log("Erro ao marcar como não conferido ", e.response)
             }
@@ -442,6 +449,13 @@ const TabelaConferenciaDeLancamentos = ({
     const initialStateFiltros = {
         filtrar_por_acao: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_acao ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_acao : "",
         filtrar_por_lancamento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_lancamento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_lancamento : "",
+
+
+        filtrar_por_data_inicio: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_inicio ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_inicio : "",
+        filtrar_por_data_fim: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_fim ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_fim : "",
+        filtrar_por_numero_de_documento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento : "",
+        filtrar_por_tipo_de_documento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento : "",
+        filtrar_por_tipo_de_pagamento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento : "",
     }
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
 
@@ -454,7 +468,11 @@ const TabelaConferenciaDeLancamentos = ({
 
     const handleSubmitFiltros = async () => {
         desmarcarTodos()
-        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual)
+
+        let data_inicio = stateFiltros.filtrar_por_data_inicio ? moment(stateFiltros.filtrar_por_data_inicio, "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+        let data_fim = stateFiltros.filtrar_por_data_fim ? moment(stateFiltros.filtrar_por_data_fim, "YYYY-MM-DD").format("YYYY-MM-DD") : null;
+
+        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual,  false, data_inicio, data_fim, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
     };
 
     const limpaFiltros = async () => {
@@ -474,7 +492,12 @@ const TabelaConferenciaDeLancamentos = ({
             conferencia_de_lancamentos: {
                 conta_uuid: conta_uuid,
                 filtrar_por_acao: filtrar_por_acao,
+                filtrar_por_data_inicio: filtrar_por_data_inicio,
+                filtrar_por_data_fim: filtrar_por_data_fim,
                 filtrar_por_lancamento: filtrar_por_lancamento,
+                filtrar_por_numero_de_documento: filtrar_por_numero_de_documento,
+                filtrar_por_tipo_de_documento: filtrar_por_tipo_de_documento,
+                filtrar_por_tipo_de_pagamento: filtrar_por_tipo_de_pagamento,
                 paginacao_atual: event.rows * event.page,
             },
         }
@@ -488,7 +511,7 @@ const TabelaConferenciaDeLancamentos = ({
 
     const retornaToolTipCredito = (rowData) => {
         if (rowData.documento_mestre && rowData.documento_mestre.rateio_estornado && rowData.documento_mestre.rateio_estornado.uuid) {
-            let data_rateio = dataTemplate(null, null, rowData.documento_mestre.rateio_estornado.data_documento)
+            let data_rateio = dataTemplate(null, null, rowData.documento_mestre.rateio_estornado.data_transacao)
             let texto_tooltip = `Esse estorno está vinculado <br/> à despesa do dia ${data_rateio}.`
             return (
                 <>

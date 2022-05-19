@@ -403,3 +403,62 @@
 .p-multiselect-label {
   margin-bottom: 0px;
 }
+
+.container-titulo-extrato-bancario {
+  border: 1px solid #2B7D83;
+  background-color: #2B7D83;
+  padding: 10px;
+}
+
+.titulo-extrato-bancario {
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.container-extrato-bancario {
+  border: 1px solid #F3F3F3;
+  background-color: #F3F3F3;
+  color: #42474A;
+  font-size: 14px;
+}
+
+.dados-extrato-bancario {
+  color: #000000;
+  font-size: 16px;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  border-bottom-color: #A4A4A4;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+.dados-extrato-bancario-correcao {
+  color: #000000;
+  font-size: 16px;
+  padding-left: 10px;
+  padding-bottom: 5px;
+  border-bottom-color: #A4A4A4;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+.tem-diferenca {
+  color: #B40C02;
+  font-weight: bold;
+}
+
+.container-botoes-extrato-bancario {
+  background-color: #E7E7E7;
+}
+
+.titulo-acerto-saldo {
+  color: #2B7D83;
+  font-size: 18px;
+}
+
+.salvo-com-sucesso {
+  color: #297805;
+  font-size: 14px;
+  font-weight: bold;
+}

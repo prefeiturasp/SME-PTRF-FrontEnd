@@ -3,7 +3,7 @@ import {useHistory} from "react-router-dom";
 import useValorTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
 import useDataTemplate from "../../../hooks/Globais/useDataTemplate";
 import useNumeroDocumentoTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
-import {getContasDaAssociacao, getSaldosIniciasAjustes, getDocumentosAjustes, getLancamentosAjustes, getTiposDeAcertoLancamentos, getTemReajustes} from "../../../services/dres/PrestacaoDeContas.service";
+import {getContasDaAssociacao, getSaldosIniciasAjustes, getDocumentosAjustes, getLancamentosAjustes, getTiposDeAcertoLancamentos, getTemReajustes, getExtratosBancariosAjustes, getTemAjustesExtratos} from "../../../services/dres/PrestacaoDeContas.service";
 import {TabelaAcertosLancamentos} from "./TabelaAcertosLancamentos";
 import TabsAcertosEmLancamentosPorConta from "./TabsAcertosEmLancamentosPorConta";
 import Loading from "../../../utils/Loading";
@@ -20,6 +20,8 @@ import {FiltrosAcertosDeLancamentos} from "./FiltrosAcertosDeLancamentos";
 
 // Hooks Personalizados
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
+import TabsAjustesEmExtratosBancarios from "./TabsAjustesEmExtratosBancarios";
+import TabelaAcertosEmExtratosBancarios from "./TabelaAcertosEmExtratosBancarios";
 
 const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAcertos=true, exibeBtnIrParaPaginaDeReceitaOuDespesa=false, prestacaoDeContasUuid, analiseAtualUuid, editavel}) => {
 
@@ -45,11 +47,14 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     }
 
     const [exibeAcertosNosSaldos, setExibeAcertosNosSaldos] = useState(false);
+    const [exibeAcertosNosExtratos, setExibeAcertosNosExtratos] = useState(true);
     const [saldosIniciasAjustes, setSaldosIniciaisAjustes] = useState([]);
+    const [extratosBancariosAjustes, setExtratosBancariosAjustes] = useState(null);
     const [lancamentosAjustes, setLancamentosAjustes] = useState([])
     const [lancamentosDocumentos, setLancamentosDocumentos] = useState([])
     const [contasAssociacao, setContasAssociacao] = useState([])
     const [loadingSaldosIniciais, setLoadingSaldosIniciais] = useState(true)
+    const [loadingExtratosBancarios, setLoadingExtratosBancarios] = useState(true)
     const [loadingLancamentos, setLoadingLancamentos] = useState(true)
     const [loadingDocumentos, setLoadingDocumentos] = useState(true)
     const [expandedRowsLancamentos, setExpandedRowsLancamentos] = useState(null);
@@ -59,6 +64,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     const [listaTiposDeAcertoLancamentos, setListaTiposDeAcertoLancamentos] = useState([])
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0:true});
     const [clickBtnEscolheContaValoresReprogramados, setClickBtnEscolheContaValoresReprogramados] = useState({0:true});
+    const [clickBtnEscolheContaExtratosBancarios, setClickBtnEscolheContaExtratosBancarios] = useState({0:true});
 
     const toggleBtnEscolheConta = (id) => {
         if (id !== Object.keys(clickBtnEscolheConta)[0]){
@@ -72,6 +78,14 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         if (id !== Object.keys(clickBtnEscolheContaValoresReprogramados)[0]){
             setClickBtnEscolheContaValoresReprogramados({
                 [id]: !clickBtnEscolheContaValoresReprogramados[id]
+            });
+        }
+    };
+
+    const toggleBtnEscolheContaExtratosBancarios = (id) => {
+        if (id !== Object.keys(clickBtnEscolheContaExtratosBancarios)[0]){
+            setClickBtnEscolheContaExtratosBancarios({
+                [id]: !clickBtnEscolheContaExtratosBancarios[id]
             });
         }
     };
@@ -107,12 +121,39 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
 
     }, [analiseAtualUuid])
 
+    const consultaSeTemAjustesExtratos = useCallback(async () => {
+        /*
+            Essa função é necessária para verificar se a algum ajuste de extrato nessa analise, independente da conta,
+            o retorno da API irá determinar se o bloco "Acertos nas informações de extratos bancários"
+            deve ser exibido
+        */
+
+        setExibeAcertosNosExtratos(false);
+        let tem_ajustes_extratos = await getTemAjustesExtratos(analiseAtualUuid);
+
+        if(tem_ajustes_extratos && tem_ajustes_extratos.length > 0){
+            setExibeAcertosNosExtratos(true);
+        }
+        else{
+            setExibeAcertosNosExtratos(false);
+        }
+
+    }, [analiseAtualUuid])
+
     const carregarAjustesValoresReprogramados = useCallback(async (conta_uuid) => {
         setContaUuid(conta_uuid);
         setLoadingSaldosIniciais(true);
         let saldos_iniciais_ajustes = await getSaldosIniciasAjustes(analiseAtualUuid, conta_uuid);
         setSaldosIniciaisAjustes(saldos_iniciais_ajustes)
         setLoadingSaldosIniciais(false);
+    }, [analiseAtualUuid])
+
+    const carregarAjustesExtratosBancarios = useCallback(async (conta_uuid) => {
+        setContaUuid(conta_uuid);
+        setLoadingExtratosBancarios(true);
+        let extratos_bancarios_ajustes = await getExtratosBancariosAjustes(analiseAtualUuid, conta_uuid);
+        setExtratosBancariosAjustes(extratos_bancarios_ajustes)
+        setLoadingExtratosBancarios(false);
     }, [analiseAtualUuid])
 
     const carregaAcertosLancamentos = useCallback(async (conta_uuid, filtrar_por_lancamento=null, filtrar_por_tipo_de_ajuste=null) => {
@@ -131,14 +172,18 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
 
     useEffect(() => {
         if (contasAssociacao && contasAssociacao.length > 0){
+            // TODO Rever o método consultaReajustes. Repete a consulta à API feita por carregarAjustesValoresReprogramados
             consultaReajustes();
+            // TODO Rever os métodos consultaSeTemAjustesExtratos. Repete a consulta da API feira por carregarAjustesExtratosBancarios
+            consultaSeTemAjustesExtratos();
             carregarAjustesValoresReprogramados(contasAssociacao[0].uuid);
+            carregarAjustesExtratosBancarios(contasAssociacao[0].uuid);
             carregaAcertosLancamentos(contasAssociacao[0].uuid)
             carregaAcertosDocumentos(contasAssociacao[0].uuid)
             setClickBtnEscolheConta({0: true})
             setClickBtnEscolheContaValoresReprogramados({0: true})
         }
-    }, [contasAssociacao, consultaReajustes, carregarAjustesValoresReprogramados, carregaAcertosLancamentos, carregaAcertosDocumentos])
+    }, [contasAssociacao, consultaReajustes, carregarAjustesValoresReprogramados, carregaAcertosLancamentos, carregaAcertosDocumentos, carregarAjustesExtratosBancarios])
 
     useEffect(() => {
 
@@ -297,6 +342,39 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                     <hr className="mt-4 mb-3"/>
                 </>
             }
+
+            {/*INICIO*/}
+
+            { exibeAcertosNosExtratos &&
+                <>
+                    <h5 className="mb-4 mt-4"><strong>Acertos nas informações de extratos bancários</strong></h5>
+                    <TabsAjustesEmExtratosBancarios
+                        contasAssociacao={contasAssociacao}
+                        carregarAjustesExtratosBancarios={carregarAjustesExtratosBancarios}
+                        toggleBtnEscolheContaExtratoBancario={toggleBtnEscolheContaExtratosBancarios}
+                        clickBtnEscolheContaExtratoBancario={clickBtnEscolheContaExtratosBancarios}
+                    >
+                        {loadingSaldosIniciais ? (
+                                <Loading
+                                    corGrafico="black"
+                                    corFonte="dark"
+                                    marginTop="0"
+                                    marginBottom="0"
+                                />
+                            ) :
+                            <>
+                                <TabelaAcertosEmExtratosBancarios
+                                    extratosBancariosAjustes={extratosBancariosAjustes}
+                                />
+                            </>
+                        }
+
+                    </TabsAjustesEmExtratosBancarios>
+                    <hr className="mt-4 mb-3"/>
+                </>
+            }
+
+            {/*FIM*/}
 
             <h5 className="mb-4 mt-4"><strong>Acertos nos lançamentos</strong></h5>
             <>
