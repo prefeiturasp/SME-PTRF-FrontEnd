@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import moment from "moment";
 
 moment.updateLocale('pt', {
@@ -17,30 +17,42 @@ export const Assinaturas = ({presentes_na_ata}) => {
             </p>
 
             <p className="mt-5 mb-5 titulo-assinaturas">
-                <strong>São Paulo, {moment().format('DD [de] MMMM [de] YYYY')},</strong>
+                <strong>São Paulo, {moment().format('DD [de] MMMM [de] YYYY')}.</strong>
             </p>
+
+
+            <div className="titulo-tabelas-conta mb-3">
+                <p className='mb-1 font-weight-bold'>
+                    <strong>Presentes</strong>
+                </p>
+            </div>
 
             {presentes_na_ata && presentes_na_ata.length > 0
             ?
-                presentes_na_ata.map((presente, index) =>
-                    <div key={index} className="row mt-3">
-                        <div className="col-12">
-                            <div className="row box-assinaturas ml-0 mr-0">
-                                <div className="col-7 p-2 align-self-center">
-                                    <p className="mb-0 ml-2"><strong>Nome: </strong>{presente.nome}</p>
-                                    <p className="mb-0 ml-2"><strong>Cargo: </strong>{presente.cargo}</p>
-                                    <p className="mb-0 ml-2"><strong>RF: </strong>{presente.rf}</p>
-                                </div>
+                <Fragment>
+                    <table key={`table-0`} className="table table-bordered tabela-status-pc">
+                        <thead>
+                            <tr>
+                                <th scope="col" style={{width: '40%'}}>Nome</th>
+                                <th scope="col" style={{width: '40%'}}>Cargo</th>
+                                <th scope="col" style={{width: '20%'}}>RF</th>
+                            </tr>
+                        </thead>
 
-                                <div className="col-5 p-2 align-self-center text-center">
-                                    <hr className="mb-1 linha-assinatura mr-2"/>
-                                    <p className="mt-0 mr-2"><strong>Assinatura</strong></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )
-                
+
+                        {presentes_na_ata.map((presente, index) => 
+                            <tbody key={`tbody-${index}`}>
+                                <tr>
+                                    <td>{presente.nome}</td>
+                                    <td>{presente.cargo}</td>
+                                    <td>{presente.rf}</td>
+                                </tr>
+                            </tbody>
+
+                        )}
+
+                    </table>
+                </Fragment>    
             :
                 null
             }
