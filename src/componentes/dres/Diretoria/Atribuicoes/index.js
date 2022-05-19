@@ -380,18 +380,6 @@ export const Atribuicoes = () => {
                                     <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                                     <button
                                         className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={visoesService.getPermissoes(['change_atribuicao_por_ue']) ? (e) => modalAtribuir() : null}
-                                        style={{textDecoration:"underline", cursor:"pointer"}}
-                                    >
-                                        <FontAwesomeIcon
-                                            style={{color: "white", fontSize: '15px', marginRight: "2px"}}
-                                            icon={faSignInAlt}
-                                        />
-                                        <strong>Atribuir a um técnico</strong>
-                                    </button>
-                                    <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                    <button
-                                        className="float-right btn btn-link btn-montagem-selecionar"
                                         onClick={visoesService.getPermissoes(['change_atribuicao_por_ue']) ? () => modalConfirmarRetirada() : null}
                                         style={{textDecoration:"underline", cursor:"pointer"}}
                                     >
@@ -401,9 +389,20 @@ export const Atribuicoes = () => {
                                         />
                                         <strong>Retirar Atribuições</strong>
                                     </button>
+                                    <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                    <button
+                                        className="float-right btn btn-link btn-montagem-selecionar"
+                                        onClick={visoesService.getPermissoes(['change_atribuicao_por_ue']) ? (e) => modalAtribuir() : null}
+                                        style={{textDecoration:"underline", cursor:"pointer"}}
+                                    >
+                                        <FontAwesomeIcon
+                                            style={{color: "white", fontSize: '15px', marginRight: "2px"}}
+                                            icon={faSignInAlt}
+                                        />
+                                        <strong>Atribuir a um técnico</strong>
+                                    </button>
                                 </div>
-                                
-                            </div> 
+                            </div>
                         </div>
                     </div>
                 </div>

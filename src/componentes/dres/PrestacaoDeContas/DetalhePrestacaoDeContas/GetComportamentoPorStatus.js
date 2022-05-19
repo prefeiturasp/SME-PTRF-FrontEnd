@@ -102,6 +102,9 @@ export const GetComportamentoPorStatus = (
                         exibeMotivo={false}
                         exibeRecomendacoes={false}
                     />
+                    <ComentariosDeAnalise
+                        prestacaoDeContas={prestacaoDeContas}
+                    />
                 </>
             )
         } else if (prestacaoDeContas.status === 'RECEBIDA') {
@@ -132,6 +135,9 @@ export const GetComportamentoPorStatus = (
                         disabledStatus={true}
                         exibeMotivo={false}
                         exibeRecomendacoes={false}
+                    />
+                    <ComentariosDeAnalise
+                        prestacaoDeContas={prestacaoDeContas}
                     />
                 </>
             )

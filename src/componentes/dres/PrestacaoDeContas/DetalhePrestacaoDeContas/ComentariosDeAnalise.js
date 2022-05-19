@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useState} from "react";
+import React, {memo, useCallback, useEffect, useState} from "react";
 import {getComentariosDeAnalise, criarComentarioDeAnalise, editarComentarioDeAnalise, deleteComentarioDeAnalise, getReordenarComentarios, postNotificarComentarios} from "../../../../services/dres/PrestacaoDeContas.service";
 import {FieldArray, Formik} from "formik";
 import {ModalEditarDeletarComentario} from "../ModalEditarDeletarComentario";
@@ -17,7 +17,9 @@ const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         uuid: '',
     };
 
+    // Comentários que NÃO foram notificados ainda e que podem ser alterados ou excluídos
     const [comentarios, setComentarios] = useState(initialComentarios);
+    // Comentários que JÁ foram notificados e que NÃO podem ser alterados ou excluídos
     const [comentariosNotificados, setComentariosNotificados] = useState([]);
     const [toggleExibeBtnAddComentario, setToggleExibeBtnAddComentario] = useState(true);
     const [showModalComentario, setShowModalComentario] = useState(false);
@@ -27,16 +29,21 @@ const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     const [disabledBtnAddComentario, setDisabledBtnAddComentario] = useState(true);
     const [comentarioChecked, setComentarioChecked] = useState([]); // notificar comentários
 
+    const carregaComentarios = useCallback(async () => {
+        let comentarios = await getComentariosDeAnalise(prestacaoDeContas.uuid);
+
+        // Comentários que NÃO foram notificados ainda e que podem ser alterados ou excluídos
+        setComentarios(comentarios.comentarios_nao_notificados);
+
+        // Comentários que JÁ foram notificados e que NÃO podem ser alterados ou excluídos
+        setComentariosNotificados(comentarios.comentarios_notificados)
+    }, [prestacaoDeContas]);
+
+
     useEffect(() => {
         carregaComentarios();
-    }, []);
+    }, [carregaComentarios]);
 
-    const carregaComentarios = async () => {
-        let comentarios = await getComentariosDeAnalise(prestacaoDeContas.uuid);
-        console.log("XXXXXXXXXXX Comentarios ", comentarios)
-        setComentarios(comentarios.comentarios_nao_notificados);
-        setComentariosNotificados(comentarios.comentarios_notificados)
-    };
 
     const onSubmit = async (values) => {
         const payload = {
