@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {memo, useEffect, useState} from "react";
 import {getComentariosDeAnalise, criarComentarioDeAnalise, editarComentarioDeAnalise, deleteComentarioDeAnalise, getReordenarComentarios, postNotificarComentarios} from "../../../../services/dres/PrestacaoDeContas.service";
 import {FieldArray, Formik} from "formik";
 import {ModalEditarDeletarComentario} from "../ModalEditarDeletarComentario";
@@ -6,8 +6,9 @@ import {ModalDeleteComentario} from "../ModalDeleteComentario";
 import {ModalNotificarComentarios} from "../ModalNotificarComentarios";
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
 import arrayMove from 'array-move';
+import ComentariosDeAnaliseNotificados from "./ComentariosDeAnaliseNotificados";
 
-export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
+const ComentariosDeAnalise = ({prestacaoDeContas}) => {
 
     const initialComentarios = {
         prestacao_conta: '',
@@ -17,6 +18,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
     };
 
     const [comentarios, setComentarios] = useState(initialComentarios);
+    const [comentariosNotificados, setComentariosNotificados] = useState([]);
     const [toggleExibeBtnAddComentario, setToggleExibeBtnAddComentario] = useState(true);
     const [showModalComentario, setShowModalComentario] = useState(false);
     const [showModalDeleteComentario, setShowModalDeleteComentario] = useState(false);
@@ -31,7 +33,9 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
 
     const carregaComentarios = async () => {
         let comentarios = await getComentariosDeAnalise(prestacaoDeContas.uuid);
-        setComentarios(comentarios);
+        console.log("XXXXXXXXXXX Comentarios ", comentarios)
+        setComentarios(comentarios.comentarios_nao_notificados);
+        setComentariosNotificados(comentarios.comentarios_notificados)
     };
 
     const onSubmit = async (values) => {
@@ -156,6 +160,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         }
         setShowModalNotificarComentarios(false);
         setComentarioChecked([])
+        await carregaComentarios()
     };
 
     const SortableItem = SortableElement(({comentario}) =>
@@ -193,7 +198,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         <>
             <hr className='mt-4 mb-3'/>
             <h4 className='mb-2'>Comentários</h4>
-            <p>Crie os comentários e arraste as caixas para cima ou para baixo para reorganizar.</p>
+            <p>Crie os comentários e arraste as caixas para cima ou para baixo para reorganizar. Notifique a Associação caso queira, selecionando os comentários no checkbox.</p>
             <>
                 <Formik
                     initialValues={comentarios}
@@ -219,7 +224,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                                     <div key={index}>
                                                         <div className="form-row container-campos-dinamicos">
 
-                                                            <div className="col mt-4">
+                                                            <div className="col mt-4 mb-4">
                                                                 <input
                                                                     value={comentario.comentario}
                                                                     name={`comentarios[${index}].comentario`}
@@ -256,6 +261,10 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                                 )
                                             })}
 
+                                            <ComentariosDeAnaliseNotificados
+                                                comentariosNotificados={comentariosNotificados}
+                                            />
+
                                             <div className="d-flex  justify-content-start mt-3 mb-3">
 
                                                 {toggleExibeBtnAddComentario ? (
@@ -268,8 +277,7 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
                                                                 }
                                                             );
                                                                 setToggleExibeBtnAddComentario(!toggleExibeBtnAddComentario)
-                                                            }
-                                                            }
+                                                            }}
                                                         >
                                                             + Adicionar novo comentário
                                                         </button>
@@ -347,3 +355,5 @@ export const ComentariosDeAnalise = ({prestacaoDeContas}) => {
         </>
     )
 };
+
+export default memo(ComentariosDeAnalise)
