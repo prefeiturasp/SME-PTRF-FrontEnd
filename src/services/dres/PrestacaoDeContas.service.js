@@ -46,22 +46,6 @@ export const getReabrirPrestacaoDeContas = async (prestacao_conta_uuid) => {
     return (await api.delete(`/api/prestacoes-contas/${prestacao_conta_uuid}/reabrir/`, authHeader))
 };
 
-export const getListaDeCobrancas = async (prestacao_conta_uuid) => {
-    return (await api.get(`/api/cobrancas-prestacoes-contas/?prestacao_conta__uuid=${prestacao_conta_uuid}&tipo=RECEBIMENTO`, authHeader)).data
-};
-
-export const getListaDeCobrancasPcNaoApresentada = async (associacao_uuid, periodo_uuid) => {
-    return (await api.get(`/api/cobrancas-prestacoes-contas/?associacao__uuid=${associacao_uuid}&periodo__uuid=${periodo_uuid}&tipo=RECEBIMENTO`, authHeader)).data
-};
-
-export const getAddCobranca = async (payload) => {
-    return (await api.post(`/api/cobrancas-prestacoes-contas/`, payload, authHeader)).data
-};
-
-export const getDeletarCobranca = async (cobranca_prestacao_recebimento_uuid) => {
-    return (await api.delete(`/api/cobrancas-prestacoes-contas/${cobranca_prestacao_recebimento_uuid}/`, authHeader))
-};
-
 export const getDesfazerRecebimento = async (prestacao_conta_uuid) => {
     return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-recebimento/`, {}, authHeader)).data
 };
@@ -86,14 +70,6 @@ export const getConcluirAnalise = async (prestacao_conta_uuid, payload) => {
     return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/concluir-analise/`, payload, authHeader)).data
 };
 
-export const getListaDeCobrancasDevolucoes = async (prestacao_conta_uuid, devolucao_uuid) => {
-    return (await api.get(`/api/cobrancas-prestacoes-contas/?prestacao_conta__uuid=${prestacao_conta_uuid}&tipo=DEVOLUCAO&devolucao_prestacao__uuid=${devolucao_uuid}`, authHeader)).data
-};
-
-export const getAddCobrancaDevolucoes = async (payload) => {
-    return (await api.post(`/api/cobrancas-prestacoes-contas/`, payload, authHeader)).data
-};
-
 export const getDesfazerConclusaoAnalise = async (prestacao_conta_uuid) => {
     return (await api.patch(`/api/prestacoes-contas/${prestacao_conta_uuid}/desfazer-conclusao-analise/`, {}, authHeader)).data
 };
@@ -107,7 +83,8 @@ export const getTiposDevolucao = async () => {
 };
 
 export const getComentariosDeAnalise = async (prestacao_uuid) => {
-    return (await api.get(`/api/comentarios-de-analises/?prestacao_conta__uuid=${prestacao_uuid}`, authHeader)).data
+    // return (await api.get(`/api/comentarios-de-analises/?prestacao_conta__uuid=${prestacao_uuid}`, authHeader)).data
+    return (await api.get(`/api/comentarios-de-analises/comentarios/?prestacao_conta__uuid=${prestacao_uuid}`, authHeader)).data
 };
 
 export const criarComentarioDeAnalise = async (payload) => {
