@@ -405,7 +405,7 @@ const routesConfig = [
         exact: true,
         path: "/parametro-Fornecedores",
         component: Fornecedores,
-        permissoes: ['access_painel_parametrizacoes'],
+        permissoes: ['access_fornecedores'],
     },
     {
         exact: true,
