@@ -93,7 +93,7 @@ export const PainelParametrizacoes = () => {
             parametro: 'Fornecedores',
             url: 'parametro-fornecedores',
             icone: IconeFornecedores,
-            permissoes: ['access_fornecedores'],
+            permissoes: ['access_painel_parametrizacoes'],
         }
     ];
 
