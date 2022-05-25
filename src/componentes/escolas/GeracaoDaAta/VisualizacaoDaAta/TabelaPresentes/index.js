@@ -3,10 +3,9 @@ import React from "react";
 export const TabelaPresentes = ({titulo, listaPresentes}) => {
     return (
         <>
-            <p className='titulo-tabela-acoes mt-3'>
-                {titulo}
-            </p>
-
+            {titulo &&
+                <p className='titulo-tabela-acoes mt-3'>{titulo}</p>
+            }
             <table className="table table-bordered tabela-acoes">
                 <thead>
                     <tr className="tr-titulo-presentes">
