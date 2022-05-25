@@ -1,3 +1,6 @@
+### 1.31.1 - 25/05/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 42
+* (64110) - O acesso e edição não está funcionando para a funcionalidade DRE Cadastro de Fornecedores
+
 ### 1.30.1 - 09/05/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 41
 * (63574) -  Ata de retificação: Duplicação de devolução ao tesouro
 
