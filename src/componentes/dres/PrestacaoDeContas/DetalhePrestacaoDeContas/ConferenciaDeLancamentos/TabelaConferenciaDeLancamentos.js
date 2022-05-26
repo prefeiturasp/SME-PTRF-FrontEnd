@@ -710,9 +710,9 @@ const TabelaConferenciaDeLancamentos = ({
                             style={{borderRight: 'none', width: '5%'}}
                         />
                         <Column
-                            field='data'
+                            field='documento_mestre.data_documento'
                             header='Data'
-                            body={dataTemplate}
+                            body={(e)=>dataTemplate(null, null, e.documento_mestre.data_documento)}
                             className="align-middle text-left borda-coluna"
                             style={{width: '10%'}}
                         />
