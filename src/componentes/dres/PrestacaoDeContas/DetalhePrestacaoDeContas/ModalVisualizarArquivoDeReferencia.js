@@ -1,20 +1,20 @@
-import React, {memo, useCallback, useEffect} from "react";
+import React, {memo, useEffect} from "react";
 import {ModalFormBodyTextCloseButtonCabecalho} from "../../../Globais/ModalBootstrap";
 import {getVisualizarArquivoDeReferencia} from "../../../../services/dres/PrestacaoDeContas.service";
 
 const ModalVisualizarArquivoDeReferencia = ({show, handleClose, uuidArquivoReferencia, nomeArquivoReferencia, tipoArquivoReferencia}) => {
 
-    const exibeArquivoDeReferencia = useCallback(async () =>{
+    const exibeArquivoDeReferencia = async () =>{
         try {
             await getVisualizarArquivoDeReferencia(nomeArquivoReferencia, uuidArquivoReferencia, tipoArquivoReferencia);
         }catch (e) {
             console.log("Erro ao visualizar o comprovante do extrato ", e.response);
         }
-    }, [nomeArquivoReferencia, uuidArquivoReferencia, tipoArquivoReferencia]);
+    }
 
     useEffect(()=>{
         exibeArquivoDeReferencia()
-    }, [exibeArquivoDeReferencia])
+    })
 
     const bodyTextarea = () => {
         return (
