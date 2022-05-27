@@ -1,3 +1,7 @@
+### 1.31.2 - 27/05/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 42
+* (65220) - O campo de data na conciliação bancária e no Acompanhamento de PC está exibindo a data da transação e não do documento
+* (64886) - Não visualização e não realização do download dos extratos bancários
+
 ### 1.31.1 - 25/05/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 42
 * (64110) - O acesso e edição não está funcionando para a funcionalidade DRE Cadastro de Fornecedores
 

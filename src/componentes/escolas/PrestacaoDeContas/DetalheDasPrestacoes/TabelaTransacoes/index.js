@@ -70,7 +70,7 @@ const TabelaTransacoes = ({
         if (data) {
             data_para_verificar = data
         } else {
-            data_para_verificar = rowData[column.field]
+            data_para_verificar = rowData.documento_mestre.data_documento
         }
         if (rowData && rowData.notificar_dias_nao_conferido && rowData.notificar_dias_nao_conferido > 0) {
             return (
