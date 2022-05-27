@@ -11,10 +11,9 @@ import moment from "moment";
 export const AnalisesDeContaDaPrestacao = ({infoAta, analisesDeContaDaPrestacao, handleChangeAnalisesDeContaDaPrestacao, getObjetoIndexAnalise, editavel, prestacaoDeContas, adicaoAjusteSaldo, setAdicaoAjusteSaldo, onClickAdicionarAcertoSaldo, onClickDescartarAcerto, formErrosAjusteSaldo, validaAjustesSaldo, handleOnKeyDownAjusteSaldo, onClickSalvarAcertoSaldo, ajusteSaldoSalvoComSucesso, onClickDeletarAcertoSaldo}) => {
     let index = getObjetoIndexAnalise().analise_index;
     const tooltip_1 = 'A diferença entre o saldo bancário e o saldo reprogramado <br/> pode ocorrer em virtude de cheques não compensados, <br/> despesas/créditos não lançados ou lançados com erro ou <br/> estornos ainda não realizados.'
-    
 
     const informacoes_conciliacao_ue = () => {
-        let info = prestacaoDeContas.informacoes_conciliacao_ue.find(element => element.conta_uuid === infoAta.conta_associacao.uuid);
+        let info = prestacaoDeContas.informacoes_conciliacao_ue.find(element => element.periodo_uuid === prestacaoDeContas.periodo_uuid);
 
         let dados = {
             saldo_extrato: '-',
