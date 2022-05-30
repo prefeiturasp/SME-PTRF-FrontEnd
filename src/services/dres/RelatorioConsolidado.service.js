@@ -97,7 +97,7 @@ export const getDownloadRelatorio = async (dre_uuid, periodo_uuid, conta_uuid, v
     })
     .then((response) => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
-        const filename = (versao === "FINAL") ? 'relatorio_dre.xlsx' : 'previa_relatorio_dre.xlsx'
+        const filename = (versao === "FINAL") ? 'relatorio_dre.pdf' : 'previa_relatorio_dre.pdf'
         const link = document.createElement('a');
         link.href = url;
         link.setAttribute('download', filename);
