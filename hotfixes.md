@@ -1,3 +1,13 @@
+### 1.31.3 - 30/05/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 42
+* (65643) -  O saldo das PCs 2022.1 e 2021.3 da DRE Ipiranga exibe os dados da PC 2021.2
+
+### 1.31.2 - 27/05/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 42
+* (65220) - O campo de data na conciliação bancária e no Acompanhamento de PC está exibindo a data da transação e não do documento
+* (64886) - Não visualização e não realização do download dos extratos bancários
+
+### 1.31.1 - 25/05/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 42
+* (64110) - O acesso e edição não está funcionando para a funcionalidade DRE Cadastro de Fornecedores
+
 ### 1.30.1 - 09/05/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 41
 * (63574) -  Ata de retificação: Duplicação de devolução ao tesouro
 
