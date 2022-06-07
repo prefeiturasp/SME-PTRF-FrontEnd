@@ -30,11 +30,12 @@ export const TabelaAprovadas = ({infoContas, status, exibirUltimoItem}) => {
     }
 
     const divideLista = (conta) => {
+        let divisao = Math.ceil(conta.info.length / 3)
         let novo_array = [];
-        let corte = 8;
+        let corte = divisao;
         let contador = 0;
 
-        for (var i = 0; i < conta.info.length; i = i + corte) {
+        for (let i = 0; i < conta.info.length; i = i + corte) {
             let array_cortada = conta.info.slice(i, i + corte);
 
             for(let x=0; x<=array_cortada.length-1; x++){
@@ -109,7 +110,7 @@ export const TabelaAprovadas = ({infoContas, status, exibirUltimoItem}) => {
                                     </div>
                                 )}
                             </div>
-
+                            
                         </Fragment>
                     )       
                 :
