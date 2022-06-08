@@ -173,31 +173,6 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         }
     };
 
-    const valorTemplate = (valor) => {
-        if(parseInt(valor) === 0 || valor === ""){
-            return "-"
-        }
-        else{
-            let valor_formatado = Number(valor).toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            });
-            valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
-            return valor_formatado
-        }
-    };
-
-    const statusTemplate = (status) => {
-        if(status === "APROVADA"){
-            return "Aprovada"
-        }
-        else if(status === "APROVADA_RESSALVA"){
-            return "Aprovada com ressalvas"
-        }
-
-        return ""
-    }
-
     const handleClickFecharAtaParecerTecnico = () => {
         window.location.assign("/dre-relatorio-consolidado")
     };
@@ -275,30 +250,24 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
                     {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.aprovadas &&
                         <TabelaAprovadas
                             infoContas={infoContas.aprovadas}
-                            valorTemplate={valorTemplate}
                             status="aprovadas"
                             exibirUltimoItem={false}
-                            statusTemplate={statusTemplate}
                         />
                     }
 
                     {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.aprovadas_ressalva &&
                         <TabelaAprovadas
                             infoContas={infoContas.aprovadas_ressalva}
-                            valorTemplate={valorTemplate}
                             status="aprovadas_ressalva"
                             exibirUltimoItem={false}
-                            statusTemplate={statusTemplate}
                         />
                     }
 
                     {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.reprovadas &&
                         <TabelaAprovadas
                             infoContas={infoContas.reprovadas}
-                            valorTemplate={valorTemplate}
                             status="reprovadas"
                             exibirUltimoItem={true}
-                            statusTemplate={statusTemplate}
                         />
                     }
 
