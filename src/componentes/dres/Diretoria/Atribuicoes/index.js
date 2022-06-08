@@ -18,7 +18,7 @@ import {Column} from "primereact/column";
 import {MsgImgCentralizada} from  "../../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../../Globais/Mensagens/MsgImgLadoDireito";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSignInAlt} from "@fortawesome/free-solid-svg-icons";
+import {faSignInAlt, faSignOutAlt} from "@fortawesome/free-solid-svg-icons";
 import {
     ModalAtribuir, 
     ModalConfirmarRetiradaAtribuicoes,
@@ -318,7 +318,6 @@ export const Atribuicoes = () => {
               <Dropdown.Menu>
                 <Dropdown.Item  onClick={(e) => selecionarTodos(e)}>Selecionar todos</Dropdown.Item>
                 <Dropdown.Item onClick={(e) => desmarcarTodos(e)}>Desmarcar todos</Dropdown.Item>
-                <Dropdown.Item onClick={(e) => modalConfirmarRetirada(e)}>Retirar Atribuições</Dropdown.Item>
                 <Dropdown.Item onClick={(e) => selecionarApenasUesNaoSemAtribuicao(e)}>Selecionar apenas UEs sem atribuição</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
@@ -372,12 +371,27 @@ export const Atribuicoes = () => {
                         <div className="col-7">
                             <div className="row">
                                 <div className="col-12">
-                                    <a className="float-right" onClick={visoesService.getPermissoes(['change_atribuicao_por_ue']) ? (e) => desmarcarTodos(e) : null} style={{textDecoration:"underline", cursor:"pointer"}}>
+                                    <button
+                                        className="float-right btn btn-link btn-montagem-selecionar"
+                                        onClick={visoesService.getPermissoes(['change_atribuicao_por_ue']) ? (e) => desmarcarTodos(e) : null} style={{textDecoration:"underline", cursor:"pointer"}}
+                                    >
                                         <strong>Cancelar</strong>
-                                    </a>
+                                    </button>
                                     <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                    <a
-                                        className="float-right"
+                                    <button
+                                        className="float-right btn btn-link btn-montagem-selecionar"
+                                        onClick={visoesService.getPermissoes(['change_atribuicao_por_ue']) ? () => modalConfirmarRetirada() : null}
+                                        style={{textDecoration:"underline", cursor:"pointer"}}
+                                    >
+                                        <FontAwesomeIcon
+                                            style={{color: "white", fontSize: '15px', marginRight: "2px"}}
+                                            icon={faSignOutAlt}
+                                        />
+                                        <strong>Retirar Atribuições</strong>
+                                    </button>
+                                    <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                    <button
+                                        className="float-right btn btn-link btn-montagem-selecionar"
                                         onClick={visoesService.getPermissoes(['change_atribuicao_por_ue']) ? (e) => modalAtribuir() : null}
                                         style={{textDecoration:"underline", cursor:"pointer"}}
                                     >
@@ -386,10 +400,9 @@ export const Atribuicoes = () => {
                                             icon={faSignInAlt}
                                         />
                                         <strong>Atribuir a um técnico</strong>
-                                    </a>
+                                    </button>
                                 </div>
-                                
-                            </div> 
+                            </div>
                         </div>
                     </div>
                 </div>

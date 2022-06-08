@@ -1,16 +1,38 @@
-import React, {memo} from "react";
+import React, {memo, useCallback, useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
+import {getPeriodos} from "../../../../services/sme/DashboardSme.service";
+import {exibeDataPT_BR} from "../../../../utils/ValidacoesAdicionaisFormularios";
 
 const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalvarDisabled}) => {
+
+    const [periodoTexto, setPeriodoTexto] = useState('')
+
+    const carregaPeriodo = useCallback(async ()=>{
+        if (prestacaoDeContas && prestacaoDeContas.periodo_uuid){
+            let periodo_uuid = prestacaoDeContas.periodo_uuid
+            let periodos = await getPeriodos(periodo_uuid)
+            let periodo_atual = periodos.find(p => p.uuid === prestacaoDeContas.periodo_uuid)
+            let periodo_texto = `${periodo_atual.referencia} - ${periodo_atual.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo_atual.data_inicio_realizacao_despesas) : "-"} até ${periodo_atual.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo_atual.data_fim_realizacao_despesas) : "-"}`
+            setPeriodoTexto(periodo_texto)
+        }
+    }, [prestacaoDeContas])
+
+    useEffect(()=>{
+        carregaPeriodo()
+    }, [carregaPeriodo])
+
     return (
         <>
             {Object.entries(prestacaoDeContas).length > 0 &&
             <>
-                <div className="d-flex bd-highlight mt-3 mb-3 container-cabecalho">
+                <div className="d-flex bd-highlight mt-3 mb-0 container-cabecalho">
                     <div className="flex-grow-1 bd-highlight">
-                        <p className='titulo-explicativo'>{prestacaoDeContas.associacao.nome}</p>
+                        <p className='titulo-explicativo mb-0'>{prestacaoDeContas.associacao.nome}</p>
+                        {periodoTexto &&
+                            <p className='fonte-16'><strong>Período: {periodoTexto}</strong></p>
+                        }
                     </div>
                     <div className="p-2 bd-highlight">
                         <Link
