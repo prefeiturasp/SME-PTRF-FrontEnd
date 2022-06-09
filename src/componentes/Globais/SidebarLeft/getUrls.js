@@ -12,6 +12,7 @@ import IconeGestaoDePerfis from "../../../assets/img/icone-menu-gestao-de-perfis
 import IconeMenuParametrizacoes from "../../../assets/img/icone-menu-parametrizacoes.svg"
 import IconeMenuSaldosBancarios from "../../../assets/img/icone-menu-sme-saldos-bancarios.svg"
 import IconeMenuFornecedores from "../../../assets/img/icone-menu-fornecedores.svg"
+import IconeMenuSuporteUnidades from "../../../assets/img/icone-menu-suporte-unidades.svg"
 
 const getDadosUsuario = () =>{
     let usuario = localStorage.getItem(USUARIO_NOME);
@@ -75,6 +76,7 @@ const UrlsMenuDres ={
             ]
         },
         {label: "Fornecedores", url: "parametro-fornecedores", dataFor:"parametro_fornecedores", icone:IconeMenuFornecedores, permissoes: ['access_fornecedores'],},
+        {label: "Suporte às Unidades", url: "suporte-unidades-dre", dataFor:"suporte_unidades_dre", icone:IconeMenuSuporteUnidades, permissoes: ['access_suporte_unidades_dre'],},
         {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_dre'],},
     ]
 };
