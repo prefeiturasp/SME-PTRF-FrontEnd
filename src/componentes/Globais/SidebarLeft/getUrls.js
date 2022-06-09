@@ -92,10 +92,10 @@ const UrlsMenuSME ={
         {label: "Parametrizações", url: "painel-parametrizacoes", dataFor:"sme_painel_parametrizacoes", icone:IconeMenuParametrizacoes, permissoes: ['access_painel_parametrizacoes'],},
         {label: "Acompanhamento de PCs", url: "acompanhamento-pcs-sme", dataFor:"acompanhamento_pcs_sme", icone:IconeAcompanhamento, permissoes: ['access_acompanhamento_pc_sme'],},
         {label: "Consulta de saldos bancários", url: "consulta-de-saldos-bancarios", dataFor:"consulta_de_saldos_bancarios", icone:IconeMenuSaldosBancarios, permissoes: ['access_consulta_saldo_bancario'],},
+        {label: "Suporte às Unidades", url: "suporte-unidades-sme", dataFor:"suporte_unidades_sme", icone:IconeMenuSuporteUnidades, permissoes: ['access_suporte_unidades_sme'],},
         {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_sme'],},
     ]
 };
-
 
 
 const GetUrls = () =>{
