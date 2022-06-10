@@ -35,8 +35,12 @@
   color: #00585e;
 }
 
-.container-box-consultar-dados{
+.container-box-consultar-dados, .container-publicar-cabecalho{
   background-color: #F3F3F3;
+}
+
+.container-publicar-cabecalho{
+  border-color: #DADADA;
 }
 
 .tabela-execucao-financeira, .tabela-devolucoes, .tabela-execucao-fisica{
