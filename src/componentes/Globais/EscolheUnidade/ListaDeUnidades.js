@@ -43,7 +43,12 @@ export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnida
             paginatorTemplate="PrevPageLink PageLinks NextPageLink"
             autoLayout={true}
         >
-            <Column field="codigo_eol" header="Código Eol"/>
+            <Column
+                field="codigo_eol"
+                header="Código Eol"
+                className="text-center"
+                style={{width: '15%'}}
+            />
             <Column
                 field="nome_com_tipo"
                 header="Unidade escolar"
@@ -53,6 +58,8 @@ export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnida
                 field="uuid"
                 header="Ação"
                 body={acoesTemplate}
+                className="text-center"
+                style={{width: '20%'}}
             />
         </DataTable>
     );
