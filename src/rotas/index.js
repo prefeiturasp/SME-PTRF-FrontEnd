@@ -45,7 +45,7 @@ import {DreDashboardPage} from "../paginas/dres/DreDashboard";
 import {ListaPrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/ListaPrestacaoDeContas";
 import {DetalhePrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas";
 import {DetalhePrestacaoDeContasNaoApresentada} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContasNaoApresentada";
-import {RelatorioConsolidadoPage} from "../paginas/dres/RelatorioConsolidado";
+import RelatorioConsolidado from "../componentes/dres/RelatorioConsolidado";
 import {RelatorioConsolidadoApuracao} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoApuracao";
 import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoDadosDasUes";
 import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
@@ -302,7 +302,7 @@ const routesConfig = [
     {
         exact: true,
         path: "/dre-relatorio-consolidado",
-        component: RelatorioConsolidadoPage,
+        component: RelatorioConsolidado,
         permissoes: ['access_relatorio_consolidado_dre'],
     },
     {
