@@ -34,6 +34,8 @@ import {ConsultaDeSaldosBancarios} from "../componentes/sme/ConsultaDeSaldosBanc
 import {ConsultaDeSaldosBancariosDetalhesAssociacoes} from "../componentes/sme/ConsultaDeSaldosBancarios/ConsultaDeSaldosBancariosDetalhesAssociacoes";
 import {RegularidadeAssociacoesPage} from "../paginas/dres/RegularidadeAssociacoes";
 import {AnalisesRegularidadeAssociacaoPage} from "../paginas/dres/RegularidadeAssociacoes/AnalisesRegularidadeDaAssociacao";
+import {SuporteAsUnidadesDre} from "../paginas/dres/SuporteAsUnidades"
+import {SuporteAsUnidadesSme} from "../paginas/SME/SuporteAsUnidades"
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
 import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
@@ -277,7 +279,12 @@ const routesConfig = [
         component: ResumoDosAcertos,
         permissoes: ['access_acompanhamento_pcs_dre'],
     },
-
+    {
+        exact: true,
+        path: "/suporte-unidades-dre",
+        component: SuporteAsUnidadesDre,
+        permissoes: ['access_suporte_unidades_dre'],
+    },
     {
         exact: true,
         path: "/sem-permissao-de-acesso",
@@ -454,6 +461,12 @@ const routesConfig = [
         path: "/analises-regularidade-associacao/:associacao_uuid/",
         component: AnalisesRegularidadeAssociacaoPage,
         permissoes: ['access_regularidade_dre'],
+    },
+    {
+        exact: true,
+        path: "/suporte-unidades-sme",
+        component: SuporteAsUnidadesSme,
+        permissoes: ['access_suporte_unidades_sme'],
     },
 
 ];
