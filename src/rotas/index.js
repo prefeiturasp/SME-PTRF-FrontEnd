@@ -35,6 +35,8 @@ import {ConsultaDeSaldosBancariosDetalhesAssociacoes} from "../componentes/sme/C
 import {RegularidadeAssociacoesPage} from "../paginas/dres/RegularidadeAssociacoes";
 import { ValoresReprogramadosDrePage } from "../paginas/dres/ValoresReprogramadosDre";
 import {AnalisesRegularidadeAssociacaoPage} from "../paginas/dres/RegularidadeAssociacoes/AnalisesRegularidadeDaAssociacao";
+import {SuporteAsUnidadesDre} from "../paginas/dres/SuporteAsUnidades"
+import {SuporteAsUnidadesSme} from "../paginas/SME/SuporteAsUnidades"
 // Faz o redirect de acordo com a Visao Selecionada
 import {RedirectLoginVisaoUe} from "../utils/RedirectLoginVisaoUe";
 import {DadosDaDiretoriaDrePage} from "../paginas/dres/Diretoria/DadosDaDiretoria";
@@ -46,7 +48,7 @@ import {DreDashboardPage} from "../paginas/dres/DreDashboard";
 import {ListaPrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/ListaPrestacaoDeContas";
 import {DetalhePrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas";
 import {DetalhePrestacaoDeContasNaoApresentada} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContasNaoApresentada";
-import {RelatorioConsolidadoPage} from "../paginas/dres/RelatorioConsolidado";
+import RelatorioConsolidado from "../componentes/dres/RelatorioConsolidado";
 import {RelatorioConsolidadoApuracao} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoApuracao";
 import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoDadosDasUes";
 import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
@@ -285,7 +287,12 @@ const routesConfig = [
         component: ResumoDosAcertos,
         permissoes: ['access_acompanhamento_pcs_dre'],
     },
-
+    {
+        exact: true,
+        path: "/suporte-unidades-dre",
+        component: SuporteAsUnidadesDre,
+        permissoes: ['access_suporte_unidades_dre'],
+    },
     {
         exact: true,
         path: "/sem-permissao-de-acesso",
@@ -310,7 +317,7 @@ const routesConfig = [
     {
         exact: true,
         path: "/dre-relatorio-consolidado",
-        component: RelatorioConsolidadoPage,
+        component: RelatorioConsolidado,
         permissoes: ['access_relatorio_consolidado_dre'],
     },
     {
@@ -462,6 +469,12 @@ const routesConfig = [
         path: "/analises-regularidade-associacao/:associacao_uuid/",
         component: AnalisesRegularidadeAssociacaoPage,
         permissoes: ['access_regularidade_dre'],
+    },
+    {
+        exact: true,
+        path: "/suporte-unidades-sme",
+        component: SuporteAsUnidadesSme,
+        permissoes: ['access_suporte_unidades_sme'],
     },
 
 ];
