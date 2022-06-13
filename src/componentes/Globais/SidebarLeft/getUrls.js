@@ -12,6 +12,7 @@ import IconeGestaoDePerfis from "../../../assets/img/icone-menu-gestao-de-perfis
 import IconeMenuParametrizacoes from "../../../assets/img/icone-menu-parametrizacoes.svg"
 import IconeMenuSaldosBancarios from "../../../assets/img/icone-menu-sme-saldos-bancarios.svg"
 import IconeMenuFornecedores from "../../../assets/img/icone-menu-fornecedores.svg"
+import IconeMenuValoresReprogramados from "../../../assets/img/icone-menu-valores-reprogramados.svg"
 import IconeMenuSuporteUnidades from "../../../assets/img/icone-menu-suporte-unidades.svg"
 
 const getDadosUsuario = () =>{
@@ -64,6 +65,7 @@ const UrlsMenuDres ={
     },
     lista_de_urls:[
         {label: "Associações", url: "dre-associacoes", dataFor:"dre_associacoes", icone:IconeMenuGastosDaEscola, permissoes: ['access_associacao_dre'],},
+        {label: "Valores reprogramados", url: "dre-valores-reprogramados", dataFor: "dre-valores-reprogramados", icone: IconeMenuValoresReprogramados, permissoes: ['access_valores_reprogramados_dre']},
         {label: "Regularidade", url: "regularidade-associacoes", dataFor:"regularidade_associacoes", icone:IconeMenuGastosDaEscola, permissoes: ['access_regularidade_dre'],},
         {label: "Acompanhamento de PC", url: "dre-dashboard", dataFor:"dre_dashboard", icone:IconeAcompanhamento, permissoes: ['access_dados_diretoria'],},
         {label: "Relatório consolidado", url: "dre-relatorio-consolidado", dataFor:"dre_relatorio_consolidado", icone:IconeRelatorio, permissoes: ['access_relatorio_consolidado_dre']},

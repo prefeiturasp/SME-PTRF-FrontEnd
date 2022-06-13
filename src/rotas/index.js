@@ -33,6 +33,7 @@ import {GestaoDePerfisForm} from "../componentes/Globais/GestaoDePerfis/GestaoDe
 import {ConsultaDeSaldosBancarios} from "../componentes/sme/ConsultaDeSaldosBancarios";
 import {ConsultaDeSaldosBancariosDetalhesAssociacoes} from "../componentes/sme/ConsultaDeSaldosBancarios/ConsultaDeSaldosBancariosDetalhesAssociacoes";
 import {RegularidadeAssociacoesPage} from "../paginas/dres/RegularidadeAssociacoes";
+import { ValoresReprogramadosDrePage } from "../paginas/dres/ValoresReprogramadosDre";
 import {AnalisesRegularidadeAssociacaoPage} from "../paginas/dres/RegularidadeAssociacoes/AnalisesRegularidadeDaAssociacao";
 import {SuporteAsUnidadesDre} from "../paginas/dres/SuporteAsUnidades"
 import {SuporteAsUnidadesSme} from "../paginas/SME/SuporteAsUnidades"
@@ -189,6 +190,13 @@ const routesConfig = [
         component: AssociacoesPage,
         permissoes: ['access_associacao_dre'],
     },
+    {
+        exact: true,
+        path: "/dre-valores-reprogramados",
+        component: ValoresReprogramadosDrePage,
+        permissoes: ['access_valores_reprogramados_dre'],
+    },
+
     {
         exact: true,
         path: "/dre-detalhes-associacao/:origem?/:periodo_uuid?/:conta_uuid?",
