@@ -1,11 +1,16 @@
 import React, {memo, useCallback, useEffect, useState} from "react";
-import {getDocumentosConsolidadoDre, getDownloadRelatorio} from "../../../services/dres/RelatorioConsolidado.service";
+import {
+    getDocumentosConsolidadoDre,
+    getDownloadRelatorio,
+    getTiposConta
+} from "../../../services/dres/RelatorioConsolidado.service";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 
 const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, statusConsolidadoDre, periodoEscolhido}) => {
 
     const [relatoriosFisicoFinanceiros, setRelatoriosFisicoFinanceiros] = useState([]);
+    const [contas, setContas] = useState(false);
 
     const retornaRelatoriosFisicoFinanceiros = useCallback(async () => {
         if (consolidadoDre && consolidadoDre.uuid) {
@@ -23,6 +28,24 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, statusConsolid
     useEffect(() => {
         retornaRelatoriosFisicoFinanceiros()
     }, [retornaRelatoriosFisicoFinanceiros])
+
+    useEffect(()=>{
+        let mounted = true
+        const carregaContas = async () => {
+            try {
+                let tipo_contas = await getTiposConta();
+                if (mounted){
+                    setContas(tipo_contas);
+                }
+            }catch (e) {
+                console.log("Erro ao trazer os tipos de contas ", e);
+            }
+        };
+        carregaContas()
+        return () =>{
+            mounted = false
+        }
+    }, [])
 
     const retornaClasseMensagem = (texto) => {
         let classeMensagem = "documento-gerado";
@@ -71,10 +94,21 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, statusConsolid
                     )}
                 </>
                 ) :
-                <div className="col-12 pl-2">
-                    <p className='fonte-14 mt-3 mb-3 pl-0'><strong>Documentos não gerados</strong></p>
-                </div>
-            }
+                contas && contas.length > 0 && contas.map((conta) =>
+                        <div className='row px-2' key={conta.uuid}>
+                            <div className="col-12 col-md-8">
+                                <div className='mt-2 mb-3' >
+                                    <p className='fonte-14 mb-1'><strong>Demonstrativo da Execução Físico-Financeira - {conta && conta.nome ? "Conta " + conta.nome : ""}</strong></p>
+                                    <p className={`fonte-12 mb-0 ${retornaClasseMensagem(statusConsolidadoDre.status_geracao)}`}>
+                                        <span>Documento pendente de geração</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="col-12 col-md-4 align-self-center text-right">
+                                <button onClick={()=> onClickPreencherRelatorio(conta.uuid)} type="button" className="btn btn-outline-success btn-sm">Preencher relatório</button>
+                            </div>
+                        </div>
+                    )}
         </div>
     )
 }
