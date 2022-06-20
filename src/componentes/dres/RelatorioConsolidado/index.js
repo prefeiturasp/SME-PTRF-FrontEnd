@@ -171,18 +171,6 @@ const RelatorioConsolidado = () => {
             <h1 className="titulo-itens-painel mt-5">Relatório consolidado</h1>
 
             <>
-                {loading ? (
-                        <div className="mt-5">
-                            <Loading
-                                corGrafico="black"
-                                corFonte="dark"
-                                marginTop="0"
-                                marginBottom="0"
-                            />
-                            <p className='text-center'>Os documentos estão sendo gerados. Enquanto isso, você pode realizar outras atividades no sistema.</p>
-                        </div>
-                    ) :
-                    <>
                         <div className="col-12 container-texto-introdutorio mb-4 mt-3">
                             <div dangerouslySetInnerHTML={{__html: fiqueDeOlho}}/>
                         </div>
@@ -203,28 +191,45 @@ const RelatorioConsolidado = () => {
                                             retornaQtdeStatus={retornaQtdeStatus}
                                             retornaQtdeStatusTotal={retornaQtdeStatusTotal}
                                         />
-                                        <PublicarDocumentos
-                                            publicarConsolidadoDre={publicarConsolidadoDre}
-                                        />
-                                        <DemonstrativoDaExecucaoFisicoFinanceira
-                                            consolidadoDre={consolidadoDre}
-                                            statusConsolidadoDre={statusConsolidadoDre}
-                                            periodoEscolhido={periodoEscolhido}
-                                        />
-                                        {statusConsolidadoDre && statusConsolidadoDre.status_geracao === "GERADOS_TOTAIS" &&
-                                            <AtaParecerTecnico
-                                                dre_uuid={dre_uuid}
-                                                periodoEscolhido={periodoEscolhido}
-                                                statusConsolidadoDre={statusConsolidadoDre}
-                                                statusProcessamentoConsolidadoDre={statusProcessamentoConsolidadoDre}
-                                                setDisablebtnGerarLauda={setDisablebtnGerarLauda}
-                                            />
-                                        }
-                                        <Lauda
-                                            consolidadoDre={consolidadoDre}
-                                            periodoEscolhido={periodoEscolhido}
-                                            disablebtnGerarLauda={disablebtnGerarLauda}
-                                        />
+                                        <>
+                                        {loading ? (
+                                                <div className="mt-5">
+                                                    <Loading
+                                                        corGrafico="black"
+                                                        corFonte="dark"
+                                                        marginTop="0"
+                                                        marginBottom="0"
+                                                    />
+                                                    <p className='text-center'>Os documentos estão sendo gerados. Enquanto isso, você pode realizar outras atividades no sistema.</p>
+                                                </div>
+                                            ) :
+                                                <>
+                                                    <PublicarDocumentos
+                                                        publicarConsolidadoDre={publicarConsolidadoDre}
+                                                    />
+                                                    <DemonstrativoDaExecucaoFisicoFinanceira
+                                                        consolidadoDre={consolidadoDre}
+                                                        statusConsolidadoDre={statusConsolidadoDre}
+                                                        periodoEscolhido={periodoEscolhido}
+                                                    />
+                                                    {statusConsolidadoDre && statusConsolidadoDre.status_geracao === "GERADOS_TOTAIS" &&
+                                                        <AtaParecerTecnico
+                                                            dre_uuid={dre_uuid}
+                                                            periodoEscolhido={periodoEscolhido}
+                                                            statusConsolidadoDre={statusConsolidadoDre}
+                                                            statusProcessamentoConsolidadoDre={statusProcessamentoConsolidadoDre}
+                                                            setDisablebtnGerarLauda={setDisablebtnGerarLauda}
+                                                        />
+                                                    }
+                                                    <Lauda
+                                                        consolidadoDre={consolidadoDre}
+                                                        periodoEscolhido={periodoEscolhido}
+                                                        disablebtnGerarLauda={disablebtnGerarLauda}
+                                                    />
+                                                </>
+                                            }
+                                        </>
+
                                     </>
                                 ) :
                                 <MsgImgCentralizada
@@ -234,8 +239,7 @@ const RelatorioConsolidado = () => {
                             }
                         </div>
                     </>
-                }
-            </>
+
         </PaginasContainer>
     )
 }
