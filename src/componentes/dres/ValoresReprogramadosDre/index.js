@@ -69,8 +69,8 @@ export const ValoresReprogramadosDre = () =>{
     const buscaListaDeValoresReprogramados = async () => {
         try{
             if(dadosDiretoria && dadosDiretoria.uuid){
-                let valoresReprogramados = await getListaValoresReprogramados(dadosDiretoria.uuid, statusPadrao);
-                setListaDeValoresReprogramados(valoresReprogramados);
+                let listaValoresReprogramados = await getListaValoresReprogramados(dadosDiretoria.uuid, statusPadrao);
+                setListaDeValoresReprogramados(listaValoresReprogramados.valores_reprogramados);
             }
         }catch (e){
             console.log("Erro ao buscar valores reprogramados ", e);
@@ -114,7 +114,7 @@ export const ValoresReprogramadosDre = () =>{
             dadosDiretoria.uuid, stateFiltros.filtro_search, 
             stateFiltros.filtro_tipo_unidade, stateFiltros.filtro_status
         );
-        setListaDeValoresReprogramados(resultado_filtros);
+        setListaDeValoresReprogramados(resultado_filtros.valores_reprogramados);
         setLoading(false);
     };
 
@@ -127,23 +127,34 @@ export const ValoresReprogramadosDre = () =>{
 
     // Templates tabela
     const valorTemplateCheque = (rowData) => {
-        const valorFormatado = rowData['total_conta_cheque']
-            ? Number(rowData['total_conta_cheque']).toLocaleString('pt-BR', {
+        if(rowData['total_conta_um'] !== "-"){
+            let valorFormatado = rowData['total_conta_um']
+            ? Number(rowData['total_conta_um']).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
             : '-';
-        return (<span>{valorFormatado}</span>)
+            return (<span>{valorFormatado}</span>)
+        }
+        else{
+            return (<span>-</span>)
+        }
     };
 
     const valorTemplateCartao = (rowData) => {
-        const valorFormatado = rowData['total_conta_cartao']
-            ? Number(rowData['total_conta_cartao']).toLocaleString('pt-BR', {
+        if(rowData['total_conta_dois'] !== "-"){
+            let valorFormatado = rowData['total_conta_dois']
+            ? Number(rowData['total_conta_dois']).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             })
             : '-';
-        return (<span>{valorFormatado}</span>)
+
+            return (<span>{valorFormatado}</span>)
+        }
+        else{
+            return (<span>-</span>)
+        }
     };
 
     const statusTemplate = (rowData) => {
