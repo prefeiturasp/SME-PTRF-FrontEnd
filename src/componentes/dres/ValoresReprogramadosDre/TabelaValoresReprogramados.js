@@ -26,13 +26,13 @@ export const TabelaValoresReprogramados = ({
             />
             <Column field="periodo.referencia" header="Período" style={{width: '8%'}}/>
             <Column 
-                field="total_conta_cheque" 
+                field="total_conta_um" 
                 header="Saldo Cheque" 
                 body={valorTemplateCheque} 
                 style={{width: '14%'}}
             />
             <Column 
-                field="total_conta_cartao" 
+                field="total_conta_dois" 
                 header="Saldo Cartão" 
                 body={valorTemplateCartao} 
                 style={{width: '14%'}}
