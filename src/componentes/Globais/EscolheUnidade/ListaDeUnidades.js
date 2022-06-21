@@ -4,7 +4,7 @@ import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey} from "@fortawesome/free-solid-svg-icons";
 
-export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnidade}) => {
+export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnidade, textoAcaoEscolher}) => {
 
     const unidadeEscolarTemplate = (rowData) => {
         return (
@@ -14,19 +14,28 @@ export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnida
         )
     };
 
+    const handleAcaoEscolher = (rowData) => {
+        const unidadeSelecionada = {
+            uuid: rowData.uuid,
+            nome: rowData.nome,
+            codigo_eol: rowData.codigo_eol
+        }
+        acaoAoEscolherUnidade(unidadeSelecionada)
+    };
+
     const acoesTemplate = (rowData) =>{
         return (
                 <>
 
                     <button
-                        onClick={()=>acaoAoEscolherUnidade(rowData.uuid)}
+                        onClick={()=>handleAcaoEscolher(rowData)}
                         className="btn btn-link link-green"
                     >
                         <FontAwesomeIcon
                             style={{fontSize: '15px', marginRight: "0"}}
                             icon={faKey}
                         />
-                        <span> Viabilizar acesso</span>
+                        <span> {textoAcaoEscolher} </span>
 
                     </button>
 
