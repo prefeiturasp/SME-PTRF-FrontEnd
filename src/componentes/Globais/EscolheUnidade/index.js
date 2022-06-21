@@ -38,7 +38,7 @@ export const EscolheUnidade = (props) =>{
     };
 
     const escolherUnidade = (uuidUnidade) => {
-        console.log('Unidade escolhida:', uuidUnidade)
+        props.onSelecionaUnidade(uuidUnidade)
     }
 
     const handleChangeFiltros = (name, value) => {
@@ -74,7 +74,7 @@ export const EscolheUnidade = (props) =>{
                     marginBottom="0"
                 />
             ) : listaUnidades && listaUnidades.length > 0 ? (<ListaDeUnidades listaUnidades={listaUnidades} rowsPerPage={10}
-                                 acaoAoEscolherUnidade={escolherUnidade}/>) : <span> </span>
+                                 acaoAoEscolherUnidade={escolherUnidade} textoAcaoEscolher={"Viabilizar acesso"}/>) : <span> </span>
             }
 
         </div>
