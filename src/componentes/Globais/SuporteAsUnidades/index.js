@@ -3,7 +3,7 @@ import {TextoExplicativo} from "./TextoExplicativoDaPagina"
 import {EscolheUnidade} from "../EscolheUnidade";
 import {visoesService} from "../../../services/visoes.service";
 import {ModalConfirmaInicioSuporte} from "./ModalConfirmaInicioSuporte";
-
+import {getUsuarioLogado, viabilizarAcessoSuporte} from "../../../services/auth.service"
 
 export const SuporteAsUnidades = (props) =>{
 
@@ -22,8 +22,9 @@ export const SuporteAsUnidades = (props) =>{
     }, []);
 
     const handleConfirmaSuporte = useCallback(() => {
+        viabilizarAcessoSuporte(getUsuarioLogado().login, {codigo_eol: unidadeSuporteSelecionada.codigo_eol})
         setShowModalConfirmaSuporte(false)
-    }, []);
+    }, [unidadeSuporteSelecionada]);
 
     const handleSelecaoUnidadeSuporte = useCallback((unidadeSelecionada) => {
         setUnidadeSuporteSelecionada(unidadeSelecionada)

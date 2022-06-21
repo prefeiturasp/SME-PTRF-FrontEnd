@@ -17,7 +17,8 @@ export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnida
     const handleAcaoEscolher = (rowData) => {
         const unidadeSelecionada = {
             uuid: rowData.uuid,
-            nome: rowData.nome
+            nome: rowData.nome,
+            codigo_eol: rowData.codigo_eol
         }
         acaoAoEscolherUnidade(unidadeSelecionada)
     };
