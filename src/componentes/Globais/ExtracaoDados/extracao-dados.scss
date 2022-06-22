@@ -17,7 +17,7 @@
         padding-top: 22px;
         border-top: 1px solid #CCC;
         &-datepicker {
-            width: 40%;
+            width: 35%;
         }
     }
     &-date {
@@ -83,4 +83,13 @@
         letter-spacing: 0em;
         
     }
+}
+
+.ant-picker-range-separator::before {
+    content: "até";
+    color: #CBC1C9;
+}
+
+.ant-picker-separator{
+    display:none;
 }

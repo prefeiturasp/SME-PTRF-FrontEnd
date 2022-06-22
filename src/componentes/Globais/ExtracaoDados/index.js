@@ -18,28 +18,12 @@ export const ExtracaoDados = () => {
             action: () => 
                 <CardButton onClick={handleExportaDados}> Exportar Dados </CardButton>
         },
-        {
-            titulo: 'Créditos das Unidades Educacionais no período',
-            descricao: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
-            molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum
-            numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium
-            optio, eaque rerum! Provident similique accusantium nemo autem. Veritatis
-            obcaecati tenetur iure eius earum ut molestias architecto voluptate aliquam
-            nihil, eveniet aliquid culpa officia aut! Impedit sit sunt quaerat, odit,
-            tenetur error, harum nesciunt ipsum debitis quas aliquid. Reprehenderit,
-            quia. Quo neque error repudiandae fuga? Ipsa laudantium molestias eos 
-            sapiente officiis modi at sunt excepturi expedita sint? Sed quibusdam
-            recusandae alias error harum maxime adipisci amet laborum. Perspiciatis 
-            minima nesciunt dolorem! Officiis iure rerum voluptates a cumque velit`,
-            tags: ['CSV', 'XLSX', 'TXT'],
-            action: () => <CardButton>  Exportar Dados </CardButton>
-        },
-        {
-            titulo: 'Créditos das Unidades Educacionais no período',
-            descricao: 'Arquivo com os créditos informados por todas as unidades educacionais no período. Arquivos: Principal e Motivos de estorno',
-            tags: ['CSV'],
-            action: () => <CardButton > Exportar Dados </CardButton>
-        }
+        // { Para a criação de um novo card e feita a inserção de dados via objeto
+        //     titulo: '',
+        //     descricao: '',
+        //     tags: [''],
+        //     action: () => <CardButton > Exportar Dados </CardButton>
+        // }
     ]
 
     async function handleExportaDados() {
