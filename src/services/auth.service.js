@@ -157,3 +157,15 @@ export const authService = {
     isLoggedIn,
     esqueciMinhaSenha,
 };
+
+
+export const getUsuarioLogado = () => {
+    return {
+        login: localStorage.getItem(USUARIO_LOGIN),
+        nome: localStorage.getItem(USUARIO_NOME)
+    }
+}
+
+export const viabilizarAcessoSuporte = async (usuario, payload) => {
+    return (await api.post(`api/usuarios/${usuario}/viabilizar-acesso-suporte/`, payload, authHeaderAuthorization))
+};

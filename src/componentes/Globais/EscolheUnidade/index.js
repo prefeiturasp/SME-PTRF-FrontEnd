@@ -37,16 +37,9 @@ export const EscolheUnidade = (props) =>{
         }
     };
 
-    const escolherUnidade = (uuidUnidade) => {
-        console.log('Unidade escolhida:', uuidUnidade)
+    const escolherUnidade = (unidadeSelecionada) => {
+        props.onSelecionaUnidade(unidadeSelecionada)
     }
-
-    const handleChangeFiltros = (name, value) => {
-        setStateFiltros({
-            ...stateFiltros,
-            [name]: value
-        });
-    };
 
     const handleSubmitFiltros = (event, filtros)=>{
         event.preventDefault();
@@ -74,7 +67,7 @@ export const EscolheUnidade = (props) =>{
                     marginBottom="0"
                 />
             ) : listaUnidades && listaUnidades.length > 0 ? (<ListaDeUnidades listaUnidades={listaUnidades} rowsPerPage={10}
-                                 acaoAoEscolherUnidade={escolherUnidade}/>) : <span> </span>
+                                 acaoAoEscolherUnidade={escolherUnidade} textoAcaoEscolher={"Viabilizar acesso"}/>) : <span> </span>
             }
 
         </div>
