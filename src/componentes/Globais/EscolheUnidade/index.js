@@ -37,16 +37,9 @@ export const EscolheUnidade = (props) =>{
         }
     };
 
-    const escolherUnidade = (uuidUnidade) => {
-        props.onSelecionaUnidade(uuidUnidade)
+    const escolherUnidade = (unidadeSelecionada) => {
+        props.onSelecionaUnidade(unidadeSelecionada)
     }
-
-    const handleChangeFiltros = (name, value) => {
-        setStateFiltros({
-            ...stateFiltros,
-            [name]: value
-        });
-    };
 
     const handleSubmitFiltros = (event, filtros)=>{
         event.preventDefault();
