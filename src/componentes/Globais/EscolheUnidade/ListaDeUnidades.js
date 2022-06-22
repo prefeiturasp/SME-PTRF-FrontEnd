@@ -19,7 +19,10 @@ export const ListaDeUnidades = ({listaUnidades, rowsPerPage, acaoAoEscolherUnida
             uuid: rowData.uuid,
             nome: rowData.nome,
             codigo_eol: rowData.codigo_eol,
-            tipo_unidade: rowData.tipo_unidade
+            tipo_unidade: rowData.tipo_unidade,
+            associacao_nome: rowData.associacao_nome,
+            associacao_uuid: rowData.associacao_uuid,
+            visao: rowData.visao
         }
         acaoAoEscolherUnidade(unidadeSelecionada)
     };
