@@ -4,6 +4,7 @@ import {EscolheUnidade} from "../EscolheUnidade";
 import {visoesService} from "../../../services/visoes.service";
 import {ModalConfirmaInicioSuporte} from "./ModalConfirmaInicioSuporte";
 import {getUsuarioLogado, viabilizarAcessoSuporte, authService} from "../../../services/auth.service"
+import {setarUnidadeProximoLoginAcessoSuporte} from "../../../services/visoes.service"
 
 export const SuporteAsUnidades = (props) =>{
 
@@ -23,6 +24,14 @@ export const SuporteAsUnidades = (props) =>{
 
     const handleConfirmaSuporte = useCallback(() => {
         viabilizarAcessoSuporte(getUsuarioLogado().login, {codigo_eol: unidadeSuporteSelecionada.codigo_eol})
+        setarUnidadeProximoLoginAcessoSuporte(
+            unidadeSuporteSelecionada.visao,
+            unidadeSuporteSelecionada.uuid,
+            unidadeSuporteSelecionada.associacao_uuid,
+            unidadeSuporteSelecionada.associacao_nome,
+            unidadeSuporteSelecionada.tipo_unidade,
+            unidadeSuporteSelecionada.nome
+        )
         authService.logout()
         setShowModalConfirmaSuporte(false)
     }, [unidadeSuporteSelecionada]);

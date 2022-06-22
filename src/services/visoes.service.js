@@ -253,6 +253,39 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
     }
 };
 
+
+export const setarUnidadeProximoLoginAcessoSuporte = (visao, uuid_unidade, uuid_associacao, nome_associacao, unidade_tipo, unidade_nome) => {
+    let todos_os_dados_usuario_logado = localStorage.getItem(DADOS_USUARIO_LOGADO) ? JSON.parse(localStorage.getItem(DADOS_USUARIO_LOGADO)) : null;
+    let dados_usuario_logado = getDadosDoUsuarioLogado();
+
+    if (dados_usuario_logado) {
+        let novos_dados_usuario_logado = {
+            ...todos_os_dados_usuario_logado,
+            [`usuario_${getUsuarioLogin()}`]: {
+                ...dados_usuario_logado,
+                visao_selecionada: {
+                    nome: converteNomeVisao(visao)
+                },
+                unidade_selecionada: {
+                    uuid: uuid_unidade,
+                    tipo_unidade:unidade_tipo,
+                    nome:unidade_nome,
+                    notificar_devolucao_referencia:null,
+                    notificar_devolucao_pc_uuid:null,
+                    notificacao_uuid: null,
+                },
+
+                associacao_selecionada: {
+                    uuid: unidade_tipo === "DRE" ? uuid_unidade: uuid_associacao,
+                    nome: unidade_tipo === "DRE" ? unidade_nome: nome_associacao,
+                },
+            }
+        };
+        localStorage.setItem(DADOS_USUARIO_LOGADO, JSON.stringify(novos_dados_usuario_logado));
+    }
+};
+
+
 const redirectVisao = (visao = null) => {
     let dados_usuario_logado = visoesService.getDadosDoUsuarioLogado();
     if (visao === 'SME') {
@@ -294,4 +327,3 @@ export const visoesService = {
     getItemUsuarioLogado,
     getUsuarioLogin,
 };
-
