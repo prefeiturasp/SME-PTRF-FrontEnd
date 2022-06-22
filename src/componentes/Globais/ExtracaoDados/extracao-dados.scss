@@ -1,5 +1,6 @@
 .extracao {
     &-title {
+        margin-top: 15px;
         color: #2B7D83;
         font-weight: 700;
         font-size: 20px;
@@ -8,15 +9,78 @@
             padding-top: 18px;
             font-weight: 700;
             font-size: 16px;
-            line-height: 32px;
+            line-height: 28px;
             margin-bottom: 0px;
         }
     }
     &-filter {
+        padding-top: 22px;
+        border-top: 1px solid #CCC;
+        &-datepicker {
+            width: 40%;
+        }
+    }
+    &-date {
+        display: block;
+        margin-top: 15px;
+        &-msg{
+            color: #2B7D83;
+            font-weight: 700;
+        }
+    }
+    
+}
+
+.extracao-card {
+    margin-top: 8px;
+    padding: 16px;
+    border: 1.5px solid #CCC;
+    border-radius: 3px;
+    display: flex;
+    color: #42474A;
+    &-container{
+        width: 70%;
+        height: 100%;
+    }
+    &-title {
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 22px;
+    }
+    &-description {
+        font-size: 14px;
+        line-height: 22px;
+    }
+    &-tags {
+        display: flex;
+    }
+    &-tag {
+        background-color: #086397;
+        display: block;
+        color: #FFF;
+        padding: 4px 8px;
+        border-radius: 4px;
+        margin-right: 8px;
+        font-weight: 700;
+    }
+    &-action {
+        flex: 1;
+        margin-right: 15px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding-top: 24px;
-        border-top: 1px solid #CCC;
+        justify-content: flex-end;
+    }
+    &-button {
+        color: #00585E;
+        padding: 8px;
+        border: 2px solid #00585E;
+        border-radius: 3px;
+        outline: none;
+        background-color: inherit;
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 22px;
+        letter-spacing: 0em;
+        
     }
 }
