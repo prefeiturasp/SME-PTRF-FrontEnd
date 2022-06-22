@@ -12,7 +12,7 @@ export const ExtracaoCard = ({titulo, descricao, tags, action}) => {
                 </div>
             </div>
             <div className="extracao-card-action">
-                 { action('') }
+                 { action() }
             </div>
         </section>
     )

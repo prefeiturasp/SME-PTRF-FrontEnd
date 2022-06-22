@@ -15,16 +15,13 @@ export const ExtracaoDados = () => {
     // ajustar a data para ser unica, ajustar o cards para um arquivo separado, handleExportaDados generico com url
     // pegar e enviar para uma pasta, git stash, ir para git development git pull e jogar os arquivos
 
-    async function handleExportaDados(finalPath) {
-        console.log('teste')
-        if (finalPath === 'creditos'){
-            try {
-                await getExportaCreditos(dataInicial, dataFinal)
-                toastCustom.ToastCustomSuccess('Geração solicitada com sucesso.', 'A geração foi solicitada. Em breve você receberá um aviso na central de downloads com o resultado.')
-            }
-            catch (err) {
-                console.log(`erro ao exportar dados de creditos ${err}`)
-            }
+    async function handleExportaDados(endpoint) {
+        try {
+            await getExportaCreditos(endpoint, dataInicial, dataFinal)
+            toastCustom.ToastCustomSuccess('Geração solicitada com sucesso.', 'A geração foi solicitada. Em breve você receberá um aviso na central de downloads com o resultado.')
+        }
+        catch (err) {
+            console.log(`erro ao exportar dados de creditos ${err}`)
         }
     }
 
@@ -33,17 +30,18 @@ export const ExtracaoDados = () => {
       <h6 className="extracao-title">Dados disponíveis para extração</h6>
       <p className="extracao-title-filter">Filtrar por data</p>
       <div className="extracao-filter">
-            <Space direction='vertical' style={{width: '100%'}}>
+            <Space className='extracao-space' direction='vertical'>
                 <span>Selecione o período de criação (vazio para todos)</span>
                 <DatePicker.RangePicker
                     format={'DD/MM/YYYY'}
+                    allowEmpty={[false, true]}
                     className='extracao-filter-datepicker'
                     placeholder={['data inicial', 'data final']}
                     name="data_range"
                     id="data_range"
-                    onChange={(dates) => {
-                        setDataInicial(moment(dates[0]).format('YYYY-MM-DD'))
-                        setDataFinal(moment(dates[1]).format('YYYY-MM-DD'))
+                    onCalendarChange={(dates) => {
+                        setDataInicial(dates?.[0] ? dates[0].format('YYYY-MM-DD'): '')
+                        setDataFinal(dates?.[1] ? dates[1].format('YYYY-MM-DD'): '')
                     }}
                 />
                 {
@@ -59,8 +57,7 @@ export const ExtracaoDados = () => {
                     descricao={descricao}
                     tags={tags}
                     action={
-                        () => <CardButton onClick={handleExportaDados(endpoint)}> Exportar Dados </CardButton>
-                        // () => <CardButton onClick={handleExportaDados(endpoint)}> Exportar Dados </CardButton>
+                        () => <CardButton onClick={() => handleExportaDados(endpoint)}> Exportar Dados </CardButton>
                     }
                 />
             ) )}

@@ -8,9 +8,9 @@ const authHeader = {
     }
 };
 
-export const getExportaCreditos = async (dataInicio, dataFinal) => {
+export const getExportaCreditos = async (url, dataInicio, dataFinal) => {
     return (await api.get(
-        `/api/exportacoes-dados/creditos/?data_inicio=${dataInicio}&data_final=${dataFinal}`,
+        `${url}?data_inicio=${dataInicio}&data_final=${dataFinal}`,
         authHeader
     )).data
 };
