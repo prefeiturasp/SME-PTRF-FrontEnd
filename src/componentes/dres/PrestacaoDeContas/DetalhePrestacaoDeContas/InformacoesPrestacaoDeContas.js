@@ -30,21 +30,6 @@ export const InformacoesPrestacaoDeContas = ({handleChangeFormInformacoesPrestac
                             placeholderText=''
                         />
                     </div>
-                    <div className="col">
-                        <label htmlFor="devolucao_ao_tesouro">Devolução ao tesouro</label>
-                        <select
-                            value={informacoesPrestacaoDeContas.devolucao_ao_tesouro === 'Não' ? 'Não' : 'Sim'}
-                            onChange={(e) => handleChangeFormInformacoesPrestacaoDeContas(e.target.name, e.target.value)}
-                            name="devolucao_ao_tesouro"
-                            id="devolucao_ao_tesouro"
-                            className="form-control"
-                            disabled={!editavel}
-                        >
-                            <option value='Não'>Não</option>
-                            <option value='Sim'>Sim</option>
-
-                        </select>
-                    </div>
                 </div>
             </form>
         </>
