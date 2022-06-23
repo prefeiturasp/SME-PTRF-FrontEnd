@@ -14,6 +14,7 @@ import IconeMenuSaldosBancarios from "../../../assets/img/icone-menu-sme-saldos-
 import IconeMenuFornecedores from "../../../assets/img/icone-menu-fornecedores.svg"
 import IconeMenuValoresReprogramados from "../../../assets/img/icone-menu-valores-reprogramados.svg"
 import IconeMenuSuporteUnidades from "../../../assets/img/icone-menu-suporte-unidades.svg"
+import IconeMenuExtracaoDados from '../../../assets/img/icone-dados-da-diretoria.svg'
 
 const getDadosUsuario = () =>{
     let usuario = localStorage.getItem(USUARIO_NOME);
@@ -95,6 +96,7 @@ const UrlsMenuSME ={
         {label: "Acompanhamento de PCs", url: "acompanhamento-pcs-sme", dataFor:"acompanhamento_pcs_sme", icone:IconeAcompanhamento, permissoes: ['access_acompanhamento_pc_sme'],},
         {label: "Consulta de saldos bancários", url: "consulta-de-saldos-bancarios", dataFor:"consulta_de_saldos_bancarios", icone:IconeMenuSaldosBancarios, permissoes: ['access_consulta_saldo_bancario'],},
         {label: "Suporte às Unidades", url: "suporte-unidades-sme", dataFor:"suporte_unidades_sme", icone:IconeMenuSuporteUnidades, permissoes: ['access_suporte_unidades_sme'],},
+        {label: "Extração de dados", url: "extracoes-dados", dataFor:"extracao_de_dados", icone:IconeMenuExtracaoDados, permissoes: ['access_extracao_de_dados_sme'],},
         {label: "Gestão de perfis", url: "gestao-de-perfis", dataFor:"gestao_de_perfis", icone:IconeGestaoDePerfis, permissoes: ['access_gestao_perfis_sme'],},
     ]
 };

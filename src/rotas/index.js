@@ -74,6 +74,7 @@ import {AnalisesRegularidadePage} from "../componentes/dres/RegularidadeAssociac
 import { VisualizacaoDaAtaParecerTecnico } from "../componentes/dres/RelatorioConsolidado/AtaParecerTecnico/VisualizacaoAtaParecerTecnico";
 import { EdicaoAtaParecerTecnico } from "../componentes/dres/RelatorioConsolidado/AtaParecerTecnico/VisualizacaoAtaParecerTecnico/EdicaoAta";
 import { ParametrizacoesMotivosDeEstorno } from "../componentes/sme/Parametrizacoees/Receitas/ParametrizacoesMotivosEstorno";
+import {ExtracaoDadosPage} from '../paginas/SME/ExtracaoDados'
 
 const routesConfig = [
     {
@@ -305,6 +306,12 @@ const routesConfig = [
         path: "/gestao-de-perfis",
         component: GestaoDePerfisPage,
         permissoes: ['access_gestao_perfis_ue', 'access_gestao_perfis_dre', 'access_gestao_perfis_sme'],
+    },
+    {
+        exact: true,
+        path: "/extracoes-dados",
+        component: ExtracaoDadosPage,
+        permissoes: ['access_extracao_de_dados_sme'],
     },
 
     {
