@@ -4,16 +4,14 @@ import {ExtracaoCard} from "./ExtracaoCard"
 import {CardButton} from "./CardButton"
 import {getExportaCreditos} from "../../../services/sme/ExtracaoDados.service"
 import {toastCustom} from "../../Globais/ToastCustom";
-import moment from "moment";
 import {cards} from "./Cards"
+import locale from 'antd/es/date-picker/locale/pt_BR';
+import moment from "moment";
 import './extracao-dados.scss'
 
 export const ExtracaoDados = () => {
     const [dataInicial, setDataInicial] = useState('')
     const [dataFinal, setDataFinal] = useState('')
-
-    // ajustar a data para ser unica, ajustar o cards para um arquivo separado, handleExportaDados generico com url
-    // pegar e enviar para uma pasta, git stash, ir para git development git pull e jogar os arquivos
 
     async function handleExportaDados(endpoint) {
         try {
@@ -33,8 +31,9 @@ export const ExtracaoDados = () => {
             <Space className='extracao-space' direction='vertical'>
                 <span>Selecione o período de criação (vazio para todos)</span>
                 <DatePicker.RangePicker
+                    locale={locale}
                     format={'DD/MM/YYYY'}
-                    allowEmpty={[false, true]}
+                    allowEmpty={[true, true]}
                     className='extracao-filter-datepicker'
                     placeholder={['data inicial', 'data final']}
                     name="data_range"
