@@ -33,6 +33,10 @@ export const ExtracaoDados = () => {
                 <DatePicker.RangePicker
                     locale={locale}
                     format={'DD/MM/YYYY'}
+                    disabledDate={(date) => (
+                        (date).startOf('day').toDate().valueOf() >
+                        moment().startOf('day').toDate().valueOf()
+                    )}
                     allowEmpty={[true, true]}
                     className='extracao-filter-datepicker'
                     placeholder={['data inicial', 'data final']}
