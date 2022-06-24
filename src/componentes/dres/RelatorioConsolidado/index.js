@@ -5,8 +5,9 @@ import {
     getStatusConsolidadoDre,
     postPublicarConsolidadoDre,
     getConsolidadoDre,
+    getTrilhaStatus
 } from "../../../services/dres/RelatorioConsolidado.service";
-import {getItensDashboard, getPeriodos} from "../../../services/dres/Dashboard.service";
+import {getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import {BarraDeStatus} from "./BarraDeStatus";
@@ -36,7 +37,7 @@ const RelatorioConsolidado = () => {
     // Lauda
     const [disablebtnGerarLauda, setDisablebtnGerarLauda] = useState(true);
 
-    const [itensDashboard, setItensDashboard] = useState(false);
+    const [trilhaStatus, setTrilhaStatus] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const carregaPeriodos = useCallback(async () => {
@@ -99,7 +100,8 @@ const RelatorioConsolidado = () => {
             // clearing interval
             return () => clearInterval(timer);
         } else {
-            setLoading(false)
+            buscaTrilhaStatus();
+            setLoading(false);
         }
     }, [statusProcessamentoConsolidadoDre, retornaStatusConsolidadoDre]);
 
@@ -116,24 +118,25 @@ const RelatorioConsolidado = () => {
         buscaFiqueDeOlho()
     }, [buscaFiqueDeOlho])
 
-    const carregaItensDashboard = useCallback(async () => {
-        if (periodoEscolhido) {
-            let itens = await getItensDashboard(periodoEscolhido);
-            setItensDashboard(itens)
+    const buscaTrilhaStatus = useCallback(async () => {
+        if (dre_uuid && periodoEscolhido) {
+            let trilha_status = await getTrilhaStatus(dre_uuid, periodoEscolhido)
+            setTrilhaStatus(trilha_status)
         }
-    }, [periodoEscolhido]);
+    }, [dre_uuid, periodoEscolhido])
 
     useEffect(() => {
-        carregaItensDashboard()
-    }, [carregaItensDashboard])
+        buscaTrilhaStatus()
+    }, [buscaTrilhaStatus])
 
     const handleChangePeriodos = async (uuid_periodo) => {
         setPeriodoEsolhido(uuid_periodo)
     };
 
-    const retornaQtdeStatus = (status) => {
-        let item = itensDashboard.cards.find(element => element.status === status);
+    const formataNumero = (status) => {
+        let item = trilhaStatus.cards.find(element => element.status === status);
         let qtde_itens = item.quantidade_prestacoes;
+        
         if (qtde_itens <= 9) {
             return '0' + qtde_itens;
         } else {
@@ -141,16 +144,37 @@ const RelatorioConsolidado = () => {
         }
     };
 
-    const retornaQtdeStatusTotal = () => {
-        if (itensDashboard) {
-            let total = itensDashboard.cards.filter(elemtent => elemtent.status === 'APROVADA' || elemtent.status === 'REPROVADA').reduce((total, valor) => total + valor.quantidade_prestacoes, 0);
-            if (total <= 9) {
-                return '0' + total;
-            } else {
-                return total.toString();
-            }
+    const retornaClasseCirculoTrilhaStatus = (status) => {
+        let qtde_formatado = formataNumero(status);
+
+        if(qtde_formatado && qtde_formatado.length < 3){
+            return "circulo-relatorio-consolidado-dois-digitos"
+        }
+        else{
+            return "circulo-relatorio-consolidado-tres-digitos"
         }
     };
+
+    const retornaCorCirculoTrilhaStatus = (estilo) => {
+        if(estilo === 2){
+            return "circulo-relatorio-consolidado-simples-vermelho"
+        }
+        
+        return "circulo-relatorio-consolidado-simples"
+        
+    };
+
+    const eh_circulo_duplo = (estilo) => {
+        if(estilo === 1){
+            return true;
+        }
+
+        return false;
+    }
+
+    const filtraStatus = () => {
+        return trilhaStatus.cards.filter((item) => item.status !== "APROVADA" && item.status !== "REPROVADA")
+    }
 
     const publicarConsolidadoDre = async () => {
         let payload = {
@@ -185,11 +209,15 @@ const RelatorioConsolidado = () => {
                                 periodoEscolhido={periodoEscolhido}
                                 handleChangePeriodos={handleChangePeriodos}
                             />
-                            {periodoEscolhido && dre_uuid && itensDashboard ? (
+                            {periodoEscolhido && dre_uuid && trilhaStatus ? (
                                     <>
                                         <TrilhaDeStatus
-                                            retornaQtdeStatus={retornaQtdeStatus}
-                                            retornaQtdeStatusTotal={retornaQtdeStatusTotal}
+                                            trilhaStatus={trilhaStatus}
+                                            filtraStatus={filtraStatus}
+                                            retornaClasseCirculoTrilhaStatus={retornaClasseCirculoTrilhaStatus}
+                                            formataNumero={formataNumero}
+                                            retornaCorCirculoTrilhaStatus={retornaCorCirculoTrilhaStatus}
+                                            eh_circulo_duplo={eh_circulo_duplo}
                                         />
                                         <>
                                         {loading ? (
