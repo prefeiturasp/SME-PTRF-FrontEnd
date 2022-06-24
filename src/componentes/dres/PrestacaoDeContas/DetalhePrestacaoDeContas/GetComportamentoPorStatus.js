@@ -4,7 +4,6 @@ import {BotoesAvancarRetroceder} from "./BotoesAvancarRetroceder";
 import {TrilhaDeStatus} from "./TrilhaDeStatus";
 import {FormRecebimentoPelaDiretoria} from "./FormRecebimentoPelaDiretoria";
 import {InformacoesPrestacaoDeContas} from "./InformacoesPrestacaoDeContas";
-import {InformacoesDevolucaoAoTesouro} from "./InformacoesDevolucaoAoTesouro";
 import ComentariosDeAnalise from "./ComentariosDeAnalise";
 import {TabsArquivosDeReferencia} from "./ArquivosDeReferencia/TabsArquivosDeReferencia";
 import ConferenciaDeLancamentos from "./ConferenciaDeLancamentos";
@@ -31,15 +30,7 @@ export const GetComportamentoPorStatus = (
         setShowRecebida,
         handleChangeFormInformacoesPrestacaoDeContas,
         informacoesPrestacaoDeContas,
-        initialFormDevolucaoAoTesouro,
-        formRef,
-        despesas,
-        buscaDespesaPorFiltros,
-        buscaDespesa,
         valorTemplate,
-        despesasTabelas,
-        tiposDevolucao,
-        validateFormDevolucaoAoTesouro,
         infoAta,
         clickBtnEscolheConta,
         toggleBtnEscolheConta,
@@ -52,7 +43,6 @@ export const GetComportamentoPorStatus = (
         clickBtnTabelaAcoes,
         setShowVoltarParaAnalise,
         btnSalvarDisabled,
-        setBtnSalvarDisabled,
         carregaPrestacaoDeContas,
         dataRecebimentoDevolutiva,
         handleChangedataRecebimentoDevolutiva,
@@ -177,19 +167,6 @@ export const GetComportamentoPorStatus = (
                         handleChangeFormInformacoesPrestacaoDeContas={handleChangeFormInformacoesPrestacaoDeContas}
                         informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
                         editavel={true}
-                    />
-                    <InformacoesDevolucaoAoTesouro
-                        informacoesPrestacaoDeContas={informacoesPrestacaoDeContas}
-                        initialValues={initialFormDevolucaoAoTesouro}
-                        formRef={formRef}
-                        despesas={despesas}
-                        buscaDespesaPorFiltros={buscaDespesaPorFiltros}
-                        buscaDespesa={buscaDespesa}
-                        valorTemplate={valorTemplate}
-                        despesasTabelas={despesasTabelas}
-                        tiposDevolucao={tiposDevolucao}
-                        validateFormDevolucaoAoTesouro={validateFormDevolucaoAoTesouro}
-                        setBtnSalvarDisabled={setBtnSalvarDisabled}
                     />
                     <TabsArquivosDeReferencia
                         setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
