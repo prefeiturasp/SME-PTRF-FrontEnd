@@ -7,7 +7,6 @@ import {faDownload} from '@fortawesome/free-solid-svg-icons'
 
 export const GeracaoAtaApresentacao = (
     {
-        gerarAta,
         uuidAtaApresentacao,
         uuidPrestacaoConta,
         corBoxAtaApresentacao,
@@ -89,7 +88,6 @@ export const GeracaoAtaApresentacao = (
                                 onClick={() => gerar_ata_pdf()}
                                 type="button"
                                 className="btn btn-outline-success float-right mr-2"
-                                disabled={!uuidAtaApresentacao || !gerarAta}
                             >
                                 gerar ata
                             </button>
