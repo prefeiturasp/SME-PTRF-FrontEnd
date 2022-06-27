@@ -33,6 +33,10 @@ export const ExtracaoDados = () => {
                 <DatePicker.RangePicker
                     locale={locale}
                     format={'DD/MM/YYYY'}
+                    disabledDate={(date) => (
+                        (date).startOf('day').toDate().valueOf() >
+                        moment().startOf('day').toDate().valueOf()
+                    )}
                     allowEmpty={[true, true]}
                     className='extracao-filter-datepicker'
                     placeholder={['data inicial', 'data final']}
@@ -45,8 +49,8 @@ export const ExtracaoDados = () => {
                 />
                 {
                 dataInicial && dataFinal ?
-                    <span className='extracao-date'>Exibindo dados de <b className='extracao-date-msg'>{moment(dataInicial).format('DD/MM/YYYY')}</b>,
-                    á <b className='extracao-date-msg'>{moment(dataFinal).format('DD/MM/YYYY')}</b>.</span> : <span className='extracao-date'></span>
+                    <span className='extracao-date'>Exibindo dados de <b className='extracao-date-msg'>{moment(dataInicial).format('DD/MM/YYYY')}</b>&nbsp;à&nbsp; 
+                    <b className='extracao-date-msg'>{moment(dataFinal).format('DD/MM/YYYY')}</b>.</span> : <span className='extracao-date'></span>
                 }
             </Space>    
             { cards.map(( {titulo, descricao, tags, endpoint}, index ) => (
