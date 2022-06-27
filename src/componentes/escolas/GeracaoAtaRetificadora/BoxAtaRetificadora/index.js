@@ -11,7 +11,6 @@ export const BoxAtaRetificadora = ({
                                        onClickVisualizarAta,
                                        uuidPrestacaoConta,
                                        uuidAtaRetificacao,
-                                       gerarAtaRetificadora,
                                        statusPc
 }) => {
     const [dadosAtaRetificadora, setDadosAtaRetificadora] = useState({});
@@ -81,7 +80,6 @@ export const BoxAtaRetificadora = ({
                                     onClick={() => gerar_ata_pdf()}
                                     type="button"
                                     className="btn btn-outline-success float-right mr-2"
-                                    disabled={!uuidAtaRetificacao || !gerarAtaRetificadora}
                                 >
                                     gerar ata
                                 </button>
