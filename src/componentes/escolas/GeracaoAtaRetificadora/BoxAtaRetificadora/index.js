@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {getAtas, getDownloadAtaPdf, getGerarAtaPdf} from "../../../../services/escolas/AtasAssociacao.service";
+import {ModalNaoPodeGerarAta} from "../../GeracaoDaAta/ModalNaoPodeGerarAta";
 import Spinner from "../../../../assets/img/spinner.gif";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
@@ -14,18 +15,20 @@ export const BoxAtaRetificadora = ({
                                        statusPc
 }) => {
     const [dadosAtaRetificadora, setDadosAtaRetificadora] = useState({});
+    const [showNaoPodeGerarAta, setShowNaoPodeGerarAta] = useState(false);
+    const [textoModalAta, setTextoModalAta] = useState('<p>Você não pode gerar o PDF de uma ata incompleta.</p>');
 
     useEffect(() => {
         if (uuidAtaRetificacao && dadosAtaRetificadora && dadosAtaRetificadora.status_geracao_pdf && dadosAtaRetificadora.status_geracao_pdf === 'EM_PROCESSAMENTO'){
             const timer = setInterval(() => {
-                get_dados_ata();
+                getDadosAta();
             }, 5000);
             // clearing interval
             return () => clearInterval(timer);
         }
     });
 
-    const get_dados_ata = useCallback(async ()=>{
+    const getDadosAta = useCallback(async ()=>{
         if (uuidAtaRetificacao){
             let dados_ata = await getAtas(uuidAtaRetificacao);
             setDadosAtaRetificadora(dados_ata)
@@ -33,12 +36,19 @@ export const BoxAtaRetificadora = ({
     }, [uuidAtaRetificacao])
 
     useEffect(()=>{
-        get_dados_ata()
-    }, [get_dados_ata])
+        getDadosAta()
+    }, [getDadosAta])
 
-    const gerar_ata_pdf = async () => {
-        await getGerarAtaPdf(uuidPrestacaoConta, uuidAtaRetificacao)
-        get_dados_ata()
+    const gerarAtaPDF = async () => {
+        try {
+            await getGerarAtaPdf(uuidPrestacaoConta, uuidAtaRetificacao)
+            getDadosAta()
+        }
+        catch (e) {
+            const camposInvalidos = e.response.data.campos_invalidos.join(', ');
+            setTextoModalAta(`<p>Você não pode gerar o PDF de uma ata incompleta. Para completa-la preencha os campos ${camposInvalidos}.</p>`)
+            setShowNaoPodeGerarAta(true)
+        }
     }
 
     const download_ata_pdf = async () => {
@@ -73,11 +83,22 @@ export const BoxAtaRetificadora = ({
 
                             </p>
                         </div>
+                        <section>
+                        <ModalNaoPodeGerarAta 
+                            show={showNaoPodeGerarAta}
+                            handleClose={() => { setShowNaoPodeGerarAta(false) }}
+                            setShowNaoPodeGerarAta={setShowNaoPodeGerarAta}
+                            titulo="Campo em ata incompletos"
+                            texto={textoModalAta}
+                            primeiroBotaoTexto="Fechar"
+                            primeiroBotaoCss="outline-success"
+                        />
+                        </section>
                         <div className="col-12 col-md-4 align-self-center">
                             <button onClick={()=>onClickVisualizarAta()}  type="button" className="btn btn-success float-right">{statusPc !== 'DEVOLVIDA' ? "Visualizar ata" : "Visualizar prévia da ata"}</button>
                             { statusPc !== 'DEVOLVIDA' &&
                                 <button
-                                    onClick={() => gerar_ata_pdf()}
+                                    onClick={() => gerarAtaPDF()}
                                     type="button"
                                     className="btn btn-outline-success float-right mr-2"
                                 >
