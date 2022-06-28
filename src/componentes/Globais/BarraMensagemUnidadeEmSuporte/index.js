@@ -35,10 +35,16 @@ export const BarraMensagemUnidadeEmSuporte = () => {
     }, []);
     const handleConfirmaEncerramentoSuporte = useCallback(() => {
         encerrarAcessoSuporte(dadosUsuarioLogado.usuario_logado.login, dadosUsuarioLogado.unidade_selecionada.uuid)
-        setUnidadeEstaEmSuporte(false)
-        setShowModalConfirmaEncerramentoSuporte(false)
-        localStorage.removeItem('DADOS_USUARIO_LOGADO');
-        authService.logout()
+            .then((result) => {
+                setUnidadeEstaEmSuporte(false)
+                setShowModalConfirmaEncerramentoSuporte(false)
+                localStorage.removeItem('DADOS_USUARIO_LOGADO');
+                authService.logout()
+            })
+            .catch((erro) => {
+                console.error('Erro ao encerrar acesso de suporte.', erro)
+            })
+
     }, []);
 
     return (

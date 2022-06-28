@@ -24,16 +24,22 @@ export const SuporteAsUnidades = (props) =>{
 
     const handleConfirmaSuporte = useCallback(() => {
         viabilizarAcessoSuporte(getUsuarioLogado().login, {codigo_eol: unidadeSuporteSelecionada.codigo_eol})
-        setarUnidadeProximoLoginAcessoSuporte(
-            unidadeSuporteSelecionada.visao,
-            unidadeSuporteSelecionada.uuid,
-            unidadeSuporteSelecionada.associacao_uuid,
-            unidadeSuporteSelecionada.associacao_nome,
-            unidadeSuporteSelecionada.tipo_unidade,
-            unidadeSuporteSelecionada.nome
-        )
-        authService.logout()
-        setShowModalConfirmaSuporte(false)
+            .then((result) => {
+                setarUnidadeProximoLoginAcessoSuporte(
+                    unidadeSuporteSelecionada.visao,
+                    unidadeSuporteSelecionada.uuid,
+                    unidadeSuporteSelecionada.associacao_uuid,
+                    unidadeSuporteSelecionada.associacao_nome,
+                    unidadeSuporteSelecionada.tipo_unidade,
+                    unidadeSuporteSelecionada.nome
+                )
+                authService.logout()
+                setShowModalConfirmaSuporte(false)
+            })
+            .catch((erro) => {
+                console.error('Erro ao viabilizar acesso de suporte.', erro)
+            })
+
     }, [unidadeSuporteSelecionada]);
 
     const handleSelecaoUnidadeSuporte = useCallback((unidadeSelecionada) => {
