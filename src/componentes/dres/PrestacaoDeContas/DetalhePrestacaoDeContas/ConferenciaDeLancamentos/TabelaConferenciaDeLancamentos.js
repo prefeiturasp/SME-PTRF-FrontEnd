@@ -511,7 +511,7 @@ const TabelaConferenciaDeLancamentos = ({
 
     const retornaToolTipCredito = (rowData) => {
         if (rowData.documento_mestre && rowData.documento_mestre.rateio_estornado && rowData.documento_mestre.rateio_estornado.uuid) {
-            let data_rateio = dataTemplate(null, null, rowData.documento_mestre.rateio_estornado.data_transacao)
+            let data_rateio = dataTemplate(null, null, rowData.documento_mestre.rateio_estornado.data_documento)
             let texto_tooltip = `Esse estorno está vinculado <br/> à despesa do dia ${data_rateio}.`
             return (
                 <>
@@ -710,9 +710,9 @@ const TabelaConferenciaDeLancamentos = ({
                             style={{borderRight: 'none', width: '5%'}}
                         />
                         <Column
-                            field='documento_mestre.data_documento'
+                            field='data'
                             header='Data'
-                            body={(e)=>dataTemplate(null, null, e.documento_mestre.data_documento)}
+                            body={dataTemplate}
                             className="align-middle text-left borda-coluna"
                             style={{width: '10%'}}
                         />
