@@ -2,19 +2,22 @@ import React, {useCallback, useEffect, useState} from "react";
 import { barraMensagemCustom } from "../BarraMensagem";
 import {visoesService} from "../../../services/visoes.service"
 import {ModalConfirmaEncerramentoSuporte} from "./ModalConfirmaEncerramentoSuporte";
+import {encerrarAcessoSuporte,authService} from "../../../services/auth.service";
 
 export const BarraMensagemUnidadeEmSuporte = () => {
-    const mensagemSuporte = "Você está acessando essa unidade em modo de suporte. Use o botão para encerrar o suporte quando concluir."
+    const mensagemSuporte = "Você está acessando essa unidade em MODO SUPORTE. Use o botão encerrar quando concluir o suporte."
     const [unidadeEstaEmSuporte, setUnidadeEstaEmSuporte] = useState(false)
 
-    const verificaSeUnidadeEstaEmSuporte = () => {
-        const dadosUsuarioLogado = visoesService.getDadosDoUsuarioLogado()
+    const dadosUsuarioLogado = visoesService.getDadosDoUsuarioLogado()
 
+    const verificaSeUnidadeEstaEmSuporte = () => {
         if (dadosUsuarioLogado) {
             const unidadeSelecionada = dadosUsuarioLogado.unidades.find(obj => {
                 return obj.uuid === dadosUsuarioLogado.unidade_selecionada.uuid
             })
-            setUnidadeEstaEmSuporte(unidadeSelecionada.acesso_de_suporte)
+            if (unidadeSelecionada && unidadeSelecionada.acesso_de_suporte){
+                setUnidadeEstaEmSuporte(unidadeSelecionada.acesso_de_suporte)
+            }
         }
     }
 
@@ -31,18 +34,11 @@ export const BarraMensagemUnidadeEmSuporte = () => {
         setShowModalConfirmaEncerramentoSuporte(false)
     }, []);
     const handleConfirmaEncerramentoSuporte = useCallback(() => {
-        // viabilizarAcessoSuporte(getUsuarioLogado().login, {codigo_eol: unidadeSuporteSelecionada.codigo_eol})
-        // setarUnidadeProximoLoginAcessoSuporte(
-        //     unidadeSuporteSelecionada.visao,
-        //     unidadeSuporteSelecionada.uuid,
-        //     unidadeSuporteSelecionada.associacao_uuid,
-        //     unidadeSuporteSelecionada.associacao_nome,
-        //     unidadeSuporteSelecionada.tipo_unidade,
-        //     unidadeSuporteSelecionada.nome
-        // )
-        // authService.logout()
+        encerrarAcessoSuporte(dadosUsuarioLogado.usuario_logado.login, dadosUsuarioLogado.unidade_selecionada.uuid)
         setUnidadeEstaEmSuporte(false)
         setShowModalConfirmaEncerramentoSuporte(false)
+        localStorage.removeItem('DADOS_USUARIO_LOGADO');
+        authService.logout()
     }, []);
 
     return (

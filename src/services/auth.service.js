@@ -169,3 +169,10 @@ export const getUsuarioLogado = () => {
 export const viabilizarAcessoSuporte = async (usuario, payload) => {
     return (await api.post(`api/usuarios/${usuario}/viabilizar-acesso-suporte/`, payload, authHeaderAuthorization))
 };
+
+export const encerrarAcessoSuporte = async (usuario, unidade_suporte_uuid) => {
+    const payload = {
+        unidade_suporte_uuid: unidade_suporte_uuid
+    }
+    return (await api.post(`api/usuarios/${usuario}/encerrar-acesso-suporte/`, payload, authHeaderAuthorization))
+};
