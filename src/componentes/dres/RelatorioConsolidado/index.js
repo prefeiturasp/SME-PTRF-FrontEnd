@@ -5,7 +5,8 @@ import {
     getStatusConsolidadoDre,
     postPublicarConsolidadoDre,
     getConsolidadoDre,
-    getTrilhaStatus
+    getTrilhaStatus,
+    getStatusAta
 } from "../../../services/dres/RelatorioConsolidado.service";
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
@@ -20,6 +21,7 @@ import PublicarDocumentos from "./PublicarDocumentos";
 import DemonstrativoDaExecucaoFisicoFinanceira from "./DemonstrativoDaExecucaoFisicoFinanceira";
 import {AtaParecerTecnico} from "./AtaParecerTecnico";
 import Lauda from "./Lauda";
+import { ModalAtaNaoPreenchida } from "../../../utils/Modais";
 
 const RelatorioConsolidado = () => {
 
@@ -33,6 +35,11 @@ const RelatorioConsolidado = () => {
     const [statusProcessamentoConsolidadoDre, setStatusProcessamentoConsolidadoDre] = useState('');
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
+
+    // Ata
+    const [ataParecerTecnico, setAtaParecerTecnico] = useState(false);
+    const [showAtaNaoPreenchida, setShowAtaNaoPreenchida] = useState(false);
+
 
     // Lauda
     const [disablebtnGerarLauda, setDisablebtnGerarLauda] = useState(true);
@@ -75,6 +82,26 @@ const RelatorioConsolidado = () => {
         carregaConsolidadoDre()
     }, [carregaConsolidadoDre])
 
+    const carregaAtaParecerTecnico = useCallback(async () => {
+        if (dre_uuid && periodoEscolhido){
+            try {
+                let ata = await getStatusAta(dre_uuid, periodoEscolhido);
+                if(ata && ata.uuid){
+                    setAtaParecerTecnico(ata);
+                }
+                else{
+                    setAtaParecerTecnico(false);
+                }
+            }catch (e) {
+                console.log("Erro ao buscar Ata parecer tecnico ", e)
+            }
+        }
+    }, [dre_uuid, periodoEscolhido])
+
+    useEffect(() => {
+        carregaAtaParecerTecnico()
+    }, [carregaAtaParecerTecnico])
+
     const retornaStatusConsolidadoDre = useCallback(async () => {
         if (dre_uuid && periodoEscolhido) {
             try {
@@ -101,6 +128,7 @@ const RelatorioConsolidado = () => {
             return () => clearInterval(timer);
         } else {
             buscaTrilhaStatus();
+            carregaAtaParecerTecnico();
             setLoading(false);
         }
     }, [statusProcessamentoConsolidadoDre, retornaStatusConsolidadoDre]);
@@ -182,9 +210,14 @@ const RelatorioConsolidado = () => {
             periodo_uuid: periodoEscolhido
         }
         try {
-            let publicar = await postPublicarConsolidadoDre(payload)
-            setStatusProcessamentoConsolidadoDre(publicar.status)
-            setConsolidadoDre(publicar)
+            if(ataParecerTecnico.uuid && ataParecerTecnico.alterado_em === null){
+                setShowAtaNaoPreenchida(true);
+            }
+            else{
+                let publicar = await postPublicarConsolidadoDre(payload);
+                setStatusProcessamentoConsolidadoDre(publicar.status);
+                setConsolidadoDre(publicar);
+            }
         }catch (e) {
             console.log("Erro ao publicar Consolidado Dre ", e)
         }
@@ -240,15 +273,11 @@ const RelatorioConsolidado = () => {
                                                         statusConsolidadoDre={statusConsolidadoDre}
                                                         periodoEscolhido={periodoEscolhido}
                                                     />
-                                                    {statusConsolidadoDre && statusConsolidadoDre.status_geracao === "GERADOS_TOTAIS" &&
-                                                        <AtaParecerTecnico
-                                                            dre_uuid={dre_uuid}
-                                                            periodoEscolhido={periodoEscolhido}
-                                                            statusConsolidadoDre={statusConsolidadoDre}
-                                                            statusProcessamentoConsolidadoDre={statusProcessamentoConsolidadoDre}
-                                                            setDisablebtnGerarLauda={setDisablebtnGerarLauda}
-                                                        />
-                                                    }
+                                                    
+                                                    <AtaParecerTecnico
+                                                        ataParecerTecnico={ataParecerTecnico}
+                                                    />
+                                                    
                                                     <Lauda
                                                         consolidadoDre={consolidadoDre}
                                                         periodoEscolhido={periodoEscolhido}
@@ -267,6 +296,13 @@ const RelatorioConsolidado = () => {
                             }
                         </div>
                     </>
+
+                    <section>
+                        <ModalAtaNaoPreenchida
+                            show={showAtaNaoPreenchida}
+                            handleClose={()=>setShowAtaNaoPreenchida(false)}
+                        />
+                    </section>
 
         </PaginasContainer>
     )

@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TextoDinamicoSuperior = ({dadosAta, retornaDadosAtaFormatado}) => {
+export const TextoDinamicoSuperior = ({retornaDadosAtaFormatado}) => {
     
     return(
         <>

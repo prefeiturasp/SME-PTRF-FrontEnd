@@ -596,3 +596,17 @@ export const ModalConfirmarExportacao = (propriedades) => {
         />
     )
 };
+
+export const ModalAtaNaoPreenchida = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Ata não preenchida"
+            bodyText="Para fazer a publicação você precisa preencher as informações da ata."
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Fechar"
+            primeiroBotaoCss="success"
+        />
+    )
+};
