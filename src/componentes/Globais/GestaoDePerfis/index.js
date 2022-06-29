@@ -3,7 +3,7 @@ import "./gestao-de-perfis.scss"
 import {AccordionInfo} from "./AccordionInfo";
 import {FormFiltros} from "./FormFiltros";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faKey, faPlus} from "@fortawesome/free-solid-svg-icons";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import {getGrupos, getUsuarios, getUsuariosFiltros} from "../../../services/GestaoDePerfis.service";
@@ -12,6 +12,7 @@ import {Link} from "react-router-dom";
 import {UrlsMenuInterno} from "./UrlsMenuInterno";
 import {MenuInterno} from "../MenuInterno";
 import Loading from "../../../utils/Loading";
+import ReactTooltip from "react-tooltip";
 
 export const GestaoDePerfis = () => {
 
@@ -89,11 +90,49 @@ export const GestaoDePerfis = () => {
         if (rowData['unidades'] && rowData['unidades'].length > 0){
             return(
                 rowData['unidades'].map((unidade, index)=>(
-                    <p key={index} className='mb-0'>{unidade.tipo_unidade} {unidade.nome} </p>
+                    <div>
+                        <p key={index} className='mb-0'>
+                        {unidade.acesso_de_suporte &&
+                        <>
+                            <span data-html={true} data-tip='Acesso de suporte'>
+                                <FontAwesomeIcon
+                                    style={{marginLeft: "3px", marginRight: "3px", color: '#086397'}}
+                                    icon={faKey}
+                                />
+                            </span>
+                            <ReactTooltip html={true}/>
+                        </>
+                        }
+                        {unidade.tipo_unidade} {unidade.nome} </p>
+                    </div>
+
                 ))
             )
         }
     };
+
+    const nomeUsuarioComIconeDeAcessoSuporteTemplate = (rowData) => {
+        console.log('Rowdata:', rowData)
+        const unidadeLogada = rowData["unidades"].find(obj => {
+                return obj.uuid === unidade_selecionada
+            })
+        return (
+            <div>
+                {unidadeLogada.acesso_de_suporte &&
+                <>
+                    <span data-html={true} data-tip='Acesso de suporte'>
+                        <FontAwesomeIcon
+                            style={{marginLeft: "3px", marginRight: "3px", color: '#086397'}}
+                            icon={faKey}
+                        />
+                    </span>
+                    <ReactTooltip html={true}/>
+                </>
+                }
+                {rowData["name"]}
+            </div>
+        )
+    }
 
     const tipoUsuarioTemplate = (rowData) =>{
         return rowData['e_servidor'] ? "Servidor" : "Não Servidor"
@@ -164,7 +203,15 @@ export const GestaoDePerfis = () => {
                 usuarios && Object.entries(usuarios).length > 0 &&
                 <div className="card">
                     <DataTable value={usuarios} className='tabela-lista-perfis'>
-                        <Column field="name" header="Nome completo"/>
+
+                        {(visao_selecionada === "DRE" || visao_selecionada === "SME") &&
+                            <Column field="name" header="Nome completo"/>
+                        }
+
+                        {(visao_selecionada === "UE") &&
+                         <Column field="name" header="Nome completo" body={nomeUsuarioComIconeDeAcessoSuporteTemplate}/>
+                        }
+
                         <Column field="username" header="Id. de usuário"/>
                         {(visao_selecionada === "DRE" || visao_selecionada === "SME") &&
                             <Column
