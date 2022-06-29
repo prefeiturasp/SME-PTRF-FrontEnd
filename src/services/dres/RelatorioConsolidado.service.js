@@ -29,7 +29,7 @@ export const postPublicarConsolidadoDre = async (payload) => {
 
 export const getDownloadRelatorio = async (relatorio_uuid, versao) => {
     return api
-        .get(`/api/consolidados-dre/${relatorio_uuid}/download/`, {
+        .get(`/api/consolidados-dre/${relatorio_uuid}/download-relatorio-consolidado`, {
             responseType: 'blob',
             timeout: 30000,
             headers: {
