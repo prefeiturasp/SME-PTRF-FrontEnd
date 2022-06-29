@@ -1,3 +1,7 @@
+### 1.32.1 - 29/06/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 44
+* (67882) -  Acompanhamento de PC: A data de documento exibe a data de pagamento
+* (65722) -  Acompanhamento de PC: A data do documento do tipo crédito não é exibida
+
 ### 1.31.3 - 30/05/2022 - Hotfix - Soluções de bugs urgentes durante a sprint 42
 * (65643) -  O saldo das PCs 2022.1 e 2021.3 da DRE Ipiranga exibe os dados da PC 2021.2
 
