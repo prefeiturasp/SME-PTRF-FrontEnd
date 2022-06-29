@@ -4,10 +4,9 @@ import { TopoComBotoes } from "./TopoComBotoes";
 import { TextoDinamicoSuperior } from "./TextoDinamicoSuperior";
 import { TabelaAprovadas } from "./TabelaAprovadas";
 import { Assinaturas } from "./Assinaturas";
-import {getAtaParecerTecnico, getInfoContas, getGerarAta, getStatusAta, getDownloadAtaParecerTecnico} from "../../../../../services/dres/AtasParecerTecnico.service";
+import {getAtaParecerTecnico, getInfoContas, getDownloadAtaParecerTecnico} from "../../../../../services/dres/AtasParecerTecnico.service";
 import moment from "moment";
 import Loading from "../../../../../utils/Loading"
-import {toastCustom} from "../../../../Globais/ToastCustom";
 
 moment.updateLocale('pt', {
     months: [
@@ -24,17 +23,6 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
     const [dadosAta, setDadosAta] = useState({});
     const [infoContas, setInfoContas] = useState([])
     const [loading, setLoading] = useState(true);
-    const [statusAta, setStatusAta] = useState(false);
-
-    useEffect(() => {
-        if (statusAta && statusAta.status_geracao_pdf && statusAta.status_geracao_pdf === "EM_PROCESSAMENTO") {
-            const timer = setInterval(() => {
-                consultarStatus();
-            }, 5000);
-            // clearing interval
-            return () => clearInterval(timer);
-        }
-    }, [statusAta]);
 
     useEffect(() => {
         getDadosAta();
@@ -43,10 +31,6 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
     useEffect(() => {
         consultaInfoContas();
     }, [dadosAta]);
-
-    useEffect(() => {
-        consultarStatus();
-    },[dadosAta]);
 
     const getDadosAta = async () => {
         let dados_ata = await getAtaParecerTecnico(uuid_ata);
@@ -61,13 +45,6 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         }
         
     }
-
-    const consultarStatus = async () => {
-        if (dadosAta && dadosAta.uuid && dadosAta.dre.uuid && dadosAta.periodo.uuid) {
-            let status = await getStatusAta(dadosAta.dre.uuid, dadosAta.periodo.uuid);
-            setStatusAta(status);
-        }
-    };
 
     const dataPorExtenso = (data) => {
         if (!data) {
@@ -182,31 +159,6 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         window.location.assign(path)
     }
 
-    const handleClickGerarAta = async () => {
-        try {
-            await getGerarAta(dadosAta.uuid, dadosAta.dre.uuid, dadosAta.periodo.uuid);
-            let mensagem_parte_1 = "Quando a geração for concluída um botão para download ficará"
-            let mensagem_parte_2 = "disponível na área da Ata na página anterior de Relatórios."
-            toastCustom.ToastCustomInfo('Ata sendo gerada', <span>{mensagem_parte_1} <br/> {mensagem_parte_2}</span>)
-            setStatusAta({
-                ...statusAta,
-                status_geracao_pdf: "EM_PROCESSAMENTO"
-            })
-        }
-        catch (e) {
-            console.log('Erro ao gerar ata ', e.response.data);
-        }
-    }
-
-    const textoBtnGerar = () =>{
-        if (statusAta.status_geracao_pdf === 'EM_PROCESSAMENTO'){
-            return 'Ata sendo gerada...'
-        } else{
-            return 'Gerar Ata'
-        }
-    };
-
-
     const downloadAtaParecerTecnico = async () =>{
         await getDownloadAtaParecerTecnico(dadosAta.uuid);
     };
@@ -232,8 +184,6 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
                             retornaDadosAtaFormatado={retornaDadosAtaFormatado}
                             handleClickFecharAtaParecerTecnico={handleClickFecharAtaParecerTecnico}
                             handleClickEditarAta={handleClickEditarAta}
-                            handleClickGerarAta={handleClickGerarAta}
-                            textoBtnGerar={textoBtnGerar}
                             downloadAtaParecerTecnico={downloadAtaParecerTecnico}
                         />
                     }
@@ -242,7 +192,6 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
                 <div className="col-12">
                     {dadosAta && Object.entries(dadosAta).length > 0 &&
                         <TextoDinamicoSuperior
-                            dadosAta={dadosAta}
                             retornaDadosAtaFormatado={retornaDadosAtaFormatado}
                         />
                     }
