@@ -48,8 +48,11 @@ export const GeracaoAtaApresentacao = (
             await getDadosAta()
         }
         catch (e) {
-            const camposInvalidos = e.response.data.campos_invalidos.join(', ');
-            setTextoModalAta(`<p>Você não pode gerar o PDF de uma ata incompleta. Para completa-la preencha os campos ${camposInvalidos}.</p>`)
+            let mensagem = ''
+            e.response.data.campos_invalidos.map((element) => {
+                mensagem += typeof(element) === 'object' ? ` ${element['msg_presente']}` : ` ${element} ,`
+            })
+            setTextoModalAta(`<p>Você não pode gerar o PDF de uma ata incompleta. Para completa-la ${mensagem}</p>`)
             setShowNaoPodeGerarAta(true)
         }
     }
