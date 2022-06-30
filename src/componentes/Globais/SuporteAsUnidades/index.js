@@ -56,7 +56,7 @@ export const SuporteAsUnidades = (props) =>{
         <div>
             <TextoExplicativo visao={visao}/>
             <div className="page-content-inner pt-0">
-                <EscolheUnidade dre_uuid={dreUuid} onSelecionaUnidade={handleSelecaoUnidadeSuporte}/>
+                <EscolheUnidade dre_uuid={dreUuid} onSelecionaUnidade={handleSelecaoUnidadeSuporte} visao={visao}/>
                 <section>
                     <ModalConfirmaInicioSuporte
                         show={showModalConfirmaSuporte}
