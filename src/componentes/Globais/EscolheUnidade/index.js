@@ -51,7 +51,7 @@ export const EscolheUnidade = (props) =>{
     };
 
     return(
-        <div>
+        <div style={{paddingTop: "15px"}}>
             <FiltroDeUnidades
                 stateFiltros={stateFiltros}
                 handleSubmitFiltros={handleSubmitFiltros}
