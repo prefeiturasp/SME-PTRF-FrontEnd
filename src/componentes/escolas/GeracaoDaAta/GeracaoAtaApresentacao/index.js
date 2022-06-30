@@ -50,7 +50,6 @@ export const GeracaoAtaApresentacao = (
         catch (e) {
             let mensagem = ''
             let camposInvalidos = e.response.data.campos_invalidos
-            console.log(camposInvalidos.length)
             camposInvalidos.map((element) => {
                 mensagem += typeof(element) === 'object' ? ` ${element['msg_presente']}` : ` ${element}, `
             })

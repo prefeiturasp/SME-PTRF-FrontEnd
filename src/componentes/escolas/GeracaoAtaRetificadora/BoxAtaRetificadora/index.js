@@ -45,8 +45,12 @@ export const BoxAtaRetificadora = ({
             getDadosAta()
         }
         catch (e) {
-            const camposInvalidos = e.response.data.campos_invalidos.join(', ');
-            setTextoModalAta(`<p>Você não pode gerar o PDF de uma ata incompleta. Para completa-la preencha os campos ${camposInvalidos}.</p>`)
+            let mensagem = ''
+            let camposInvalidos = e.response.data.campos_invalidos
+            camposInvalidos.map((element) => {
+                mensagem += typeof(element) === 'object' ? ` ${element['msg_presente']}` : ` ${element}, `
+            })
+            setTextoModalAta(`<p>Você não pode gerar o PDF de uma ata incompleta. Para completa-la ${camposInvalidos[0]['msg_presente'] ? mensagem :  `preencha os campo(s) ${mensagem}`}.</p>`.replace(/,(?=[^,]*$)/, '')) // Regex remove espaço em branco e virgula no final. ⮕ (/,(?=[^,]*$)/,) ''
             setShowNaoPodeGerarAta(true)
         }
     }
