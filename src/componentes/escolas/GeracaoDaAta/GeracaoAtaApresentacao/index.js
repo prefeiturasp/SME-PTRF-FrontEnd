@@ -49,10 +49,12 @@ export const GeracaoAtaApresentacao = (
         }
         catch (e) {
             let mensagem = ''
-            e.response.data.campos_invalidos.map((element) => {
-                mensagem += typeof(element) === 'object' ? ` ${element['msg_presente']}` : ` ${element} ,`
+            let camposInvalidos = e.response.data.campos_invalidos
+            console.log(camposInvalidos.length)
+            camposInvalidos.map((element) => {
+                mensagem += typeof(element) === 'object' ? ` ${element['msg_presente']}` : ` ${element}, `
             })
-            setTextoModalAta(`<p>Você não pode gerar o PDF de uma ata incompleta. Para completa-la ${mensagem}</p>`)
+            setTextoModalAta(`<p>Você não pode gerar o PDF de uma ata incompleta. Para completa-la ${camposInvalidos[0]['msg_presente'] ? mensagem :  `preencha os campo(s) ${mensagem}`}.</p>`.replace(/,(?=[^,]*$)/, '')) // Regex remove espaço em branco e virgula no final. ⮕ (/,(?=[^,]*$)/,) ''
             setShowNaoPodeGerarAta(true)
         }
     }
