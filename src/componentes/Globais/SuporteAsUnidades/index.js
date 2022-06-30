@@ -55,15 +55,17 @@ export const SuporteAsUnidades = (props) =>{
     return(
         <div>
             <TextoExplicativo visao={visao}/>
-            <EscolheUnidade dre_uuid={dreUuid} onSelecionaUnidade={handleSelecaoUnidadeSuporte}/>
-            <section>
-                <ModalConfirmaInicioSuporte
-                    show={showModalConfirmaSuporte}
-                    handleNaoConfirmaSuporte={handleNaoConfirmaSuporte}
-                    handleConfirmaSuporte={handleConfirmaSuporte}
-                    texto={textoConfirmacaoSuporte}
-                />
-            </section>
+            <div className="page-content-inner pt-0">
+                <EscolheUnidade dre_uuid={dreUuid} onSelecionaUnidade={handleSelecaoUnidadeSuporte} visao={visao}/>
+                <section>
+                    <ModalConfirmaInicioSuporte
+                        show={showModalConfirmaSuporte}
+                        handleNaoConfirmaSuporte={handleNaoConfirmaSuporte}
+                        handleConfirmaSuporte={handleConfirmaSuporte}
+                        texto={textoConfirmacaoSuporte}
+                    />
+                </section>
+            </div>
         </div>
 
     )
