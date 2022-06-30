@@ -5,10 +5,8 @@ import {SuporteAsUnidades} from "../../../componentes/Globais/SuporteAsUnidades"
 export const SuporteAsUnidadesSme = () =>{
     return (
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Suporte às unidades da SME</h1>
-            <div className="page-content-inner">
-                <SuporteAsUnidades visao={"SME"}/>
-            </div>
+            <h1 className="titulo-itens-painel mt-5 mb-4">Suporte às unidades</h1>
+            <SuporteAsUnidades visao={"SME"}/>
         </PaginasContainer>
     )
 };
