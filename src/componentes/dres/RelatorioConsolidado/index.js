@@ -40,10 +40,6 @@ const RelatorioConsolidado = () => {
     const [ataParecerTecnico, setAtaParecerTecnico] = useState(false);
     const [showAtaNaoPreenchida, setShowAtaNaoPreenchida] = useState(false);
 
-
-    // Lauda
-    const [disablebtnGerarLauda, setDisablebtnGerarLauda] = useState(true);
-
     const [trilhaStatus, setTrilhaStatus] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -277,12 +273,12 @@ const RelatorioConsolidado = () => {
                                                     <AtaParecerTecnico
                                                         ataParecerTecnico={ataParecerTecnico}
                                                     />
-                                                    
-                                                    <Lauda
-                                                        consolidadoDre={consolidadoDre}
-                                                        periodoEscolhido={periodoEscolhido}
-                                                        disablebtnGerarLauda={disablebtnGerarLauda}
-                                                    />
+
+                                                    {consolidadoDre && consolidadoDre.uuid &&
+                                                        <Lauda
+                                                            consolidadoDre={consolidadoDre}
+                                                        />
+                                                    }
                                                 </>
                                             }
                                         </>
