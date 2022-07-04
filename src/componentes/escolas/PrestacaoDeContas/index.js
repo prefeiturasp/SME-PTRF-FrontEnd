@@ -31,7 +31,6 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const [textoBoxAtaApresentacao, settextoBoxAtaApresentacao] = useState("");
     const [dataBoxAtaApresentacao, setdataBoxAtaApresentacao] = useState("");
     const [uuidAtaApresentacao, setUuidAtaApresentacao] = useState("");
-    const [gerarAta, setGerarAta] = useState(false);
 
     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
@@ -216,16 +215,14 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                 if (data_preenchimento.alterado_em === null){
                     setcorBoxAtaApresentacao("vermelho");
                     setdataBoxAtaApresentacao("Ata não preenchida");
-                    setGerarAta(false)
                 }
                 else if (!data_preenchimento.completa) {
                     setcorBoxAtaApresentacao("vermelho");
                     setdataBoxAtaApresentacao("Ata incompleta");
-                    setGerarAta(false)                }
+                }
                 else {
                     setcorBoxAtaApresentacao("verde");
-                    setdataBoxAtaApresentacao("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
-                    setGerarAta(true)
+                    setdataBoxAtaApresentacao("Último preenchimento em "+exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));   
                 }
 
             }catch (e) {
@@ -235,7 +232,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                 setcorBoxAtaApresentacao("vermelho");
                 settextoBoxAtaApresentacao(data_preenchimento.nome);
                 setdataBoxAtaApresentacao("Ata não preenchida");
-                setGerarAta(false)
+
             }
         }
 
@@ -250,11 +247,9 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                     if (data_preenchimento.alterado_em === null) {
                         setcorBoxAtaApresentacao("vermelho");
                         setdataBoxAtaApresentacao("Ata não preenchida");
-                        setGerarAta(false)
                     } else {
                         setcorBoxAtaApresentacao("verde");
                         setdataBoxAtaApresentacao("Último preenchimento em " + exibeDateTimePT_BR_Ata(data_preenchimento.alterado_em));
-                        setGerarAta(true)
                     }
 
                 } catch (e) {
@@ -264,9 +259,7 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                     setcorBoxAtaApresentacao("vermelho");
                     settextoBoxAtaApresentacao(data_preenchimento.nome);
                     setdataBoxAtaApresentacao("Ata não preenchida");
-                    setGerarAta(false)
                 }
-
 
             }
             setLoading(false);
@@ -387,7 +380,6 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
                                             dataBoxAtaApresentacao={dataBoxAtaApresentacao}
                                             uuidAtaApresentacao={uuidAtaApresentacao}
                                             uuidPrestacaoConta={uuidPrestacaoConta}
-                                            gerarAta={gerarAta}
                                         />
 
                                         {localStorage.getItem('uuidPrestacaoConta') && exibeBoxAtaRetificadora() &&

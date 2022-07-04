@@ -1,7 +1,7 @@
 import React from "react";
 import { visoesService } from "../../../../../../services/visoes.service";
 
-export const TopoComBotoes = ({dadosAta, retornaDadosAtaFormatado, handleClickFecharAtaParecerTecnico, handleClickEditarAta, handleClickGerarAta, textoBtnGerar, downloadAtaParecerTecnico}) =>{
+export const TopoComBotoes = ({dadosAta, retornaDadosAtaFormatado, handleClickFecharAtaParecerTecnico, handleClickEditarAta, downloadAtaParecerTecnico}) =>{
     const podeEditarAta = [['change_ata_parecer_tecnico']].some(visoesService.getPermissoes)
 
     return(
@@ -16,20 +16,9 @@ export const TopoComBotoes = ({dadosAta, retornaDadosAtaFormatado, handleClickFe
             </div>
 
             <div className='col-12 col-md-7 align-self-center text-right'>
-                <button onClick={handleClickEditarAta} type="button" disabled={!podeEditarAta || textoBtnGerar() === 'Ata sendo gerada...'} className="btn btn-success mr-2 mt-2"><strong>Editar ata</strong></button>
-                
-                {dadosAta && dadosAta.alterado_em &&
-                    <button 
-                        onClick={handleClickGerarAta} 
-                        type="button" 
-                        disabled={textoBtnGerar() === 'Ata sendo gerada...'} 
-                        className="btn btn-outline-success mr-2 mt-2"
-                    >
-                        <strong>{textoBtnGerar()}</strong>
-                    </button>
-                }
+                <button onClick={handleClickEditarAta} type="button" disabled={!podeEditarAta} className="btn btn-success mr-2 mt-2"><strong>Editar ata</strong></button>
 
-                {dadosAta && dadosAta.arquivo_pdf && textoBtnGerar() !== 'Ata sendo gerada...' &&
+                {dadosAta && dadosAta.arquivo_pdf &&
                     <button 
                         onClick={downloadAtaParecerTecnico} 
                         type="button" 
