@@ -165,8 +165,6 @@ const RelatorioConsolidado = () => {
             } catch (e) {
                 console.log("Erro ao buscar documentos da ata ", e)
             }
-        } else {
-            setAtaParecerTecnico(false)
         }
     }, [consolidadoDre])
 
