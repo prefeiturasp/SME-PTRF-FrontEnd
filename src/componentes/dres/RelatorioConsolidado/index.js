@@ -22,6 +22,9 @@ import DemonstrativoDaExecucaoFisicoFinanceira from "./DemonstrativoDaExecucaoFi
 import {AtaParecerTecnico} from "./AtaParecerTecnico";
 import Lauda from "./Lauda";
 import { ModalAtaNaoPreenchida } from "../../../utils/Modais";
+import {
+    getDocumentosConsolidadoDre,
+} from "../../../services/dres/RelatorioConsolidado.service";
 
 const RelatorioConsolidado = () => {
 
@@ -114,6 +117,17 @@ const RelatorioConsolidado = () => {
         retornaStatusConsolidadoDre()
     }, [retornaStatusConsolidadoDre])
 
+    const buscaTrilhaStatus = useCallback(async () => {
+        if (dre_uuid && periodoEscolhido) {
+            let trilha_status = await getTrilhaStatus(dre_uuid, periodoEscolhido)
+            setTrilhaStatus(trilha_status)
+        }
+    }, [dre_uuid, periodoEscolhido])
+
+    useEffect(() => {
+        buscaTrilhaStatus()
+    }, [buscaTrilhaStatus])
+
     useEffect(() => {
         if (statusProcessamentoConsolidadoDre && statusProcessamentoConsolidadoDre === "EM_PROCESSAMENTO") {
             setLoading(true)
@@ -124,10 +138,9 @@ const RelatorioConsolidado = () => {
             return () => clearInterval(timer);
         } else {
             buscaTrilhaStatus();
-            carregaAtaParecerTecnico();
             setLoading(false);
         }
-    }, [statusProcessamentoConsolidadoDre, retornaStatusConsolidadoDre]);
+    }, [statusProcessamentoConsolidadoDre, retornaStatusConsolidadoDre, buscaTrilhaStatus]);
 
     const buscaFiqueDeOlho = useCallback(async () => {
         try {
@@ -142,16 +155,26 @@ const RelatorioConsolidado = () => {
         buscaFiqueDeOlho()
     }, [buscaFiqueDeOlho])
 
-    const buscaTrilhaStatus = useCallback(async () => {
-        if (dre_uuid && periodoEscolhido) {
-            let trilha_status = await getTrilhaStatus(dre_uuid, periodoEscolhido)
-            setTrilhaStatus(trilha_status)
+    const retornaDocumentosAta = useCallback(async () => {
+        if (consolidadoDre && consolidadoDre.uuid) {
+            try {
+                let documentos = await getDocumentosConsolidadoDre(consolidadoDre.uuid)
+                if(documentos.atas_de_parecer_tecnico_do_consolidado_dre.length > 0){
+                    setAtaParecerTecnico(documentos.atas_de_parecer_tecnico_do_consolidado_dre[0])
+                }
+            } catch (e) {
+                console.log("Erro ao buscar documentos da ata ", e)
+            }
+        } else {
+            setAtaParecerTecnico(false)
         }
-    }, [dre_uuid, periodoEscolhido])
+    }, [consolidadoDre])
 
     useEffect(() => {
-        buscaTrilhaStatus()
-    }, [buscaTrilhaStatus])
+        if(statusProcessamentoConsolidadoDre && statusProcessamentoConsolidadoDre !== "EM_PROCESSAMENTO" ){
+            retornaDocumentosAta();
+        }
+    }, [statusProcessamentoConsolidadoDre, retornaDocumentosAta])
 
     const handleChangePeriodos = async (uuid_periodo) => {
         setPeriodoEsolhido(uuid_periodo)
