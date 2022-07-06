@@ -216,6 +216,20 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         await getDownloadAtaParecerTecnico(dadosAta.uuid);
     };
 
+    const publicado = () => {
+        if(!consolidadoDre){
+            return false;
+        }
+        else if(consolidadoDre && consolidadoDre.versao === "PREVIA"){
+            return false;
+        }
+        else if(consolidadoDre && consolidadoDre.versao === "FINAL"){
+            return true;
+        }
+
+        return false;
+    }
+
     return (
         <div className="col-12 container-visualizacao-da-ata-parecer-tecnico mb-5">
             {loading ? (
@@ -239,6 +253,7 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
                             handleClickEditarAta={handleClickEditarAta}
                             downloadAtaParecerTecnico={downloadAtaParecerTecnico}
                             retornaTituloCabecalhoAta={retornaTituloCabecalhoAta}
+                            publicado={publicado}
                         />
                     }
                 </div>

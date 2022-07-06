@@ -7,7 +7,8 @@ export const TopoComBotoes = ({
     handleClickFecharAtaParecerTecnico, 
     handleClickEditarAta, 
     downloadAtaParecerTecnico,
-    retornaTituloCabecalhoAta
+    retornaTituloCabecalhoAta,
+    publicado
 }) =>{
     const podeEditarAta = [['change_ata_parecer_tecnico']].some(visoesService.getPermissoes)
 
@@ -23,8 +24,12 @@ export const TopoComBotoes = ({
             </div>
 
             <div className='col-12 col-md-7 align-self-center text-right'>
-                <button onClick={handleClickEditarAta} type="button" disabled={!podeEditarAta} className="btn btn-success mr-2 mt-2"><strong>Editar ata</strong></button>
-
+                {!publicado() &&
+                    <button onClick={handleClickEditarAta} type="button" disabled={!podeEditarAta} className="btn btn-success mr-2 mt-2">
+                        <strong>Editar ata</strong>
+                    </button>
+                }
+                
                 {dadosAta && dadosAta.arquivo_pdf &&
                     <button 
                         onClick={downloadAtaParecerTecnico} 
