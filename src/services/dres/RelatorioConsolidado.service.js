@@ -27,6 +27,10 @@ export const postPublicarConsolidadoDre = async (payload) => {
     return (await api.post(`/api/consolidados-dre/publicar/`, payload, authHeader)).data
 };
 
+export const postGerarPreviaConsolidadoDre = async (payload) => {
+    return (await api.post(`/api/consolidados-dre/gerar-previa/`, payload, authHeader)).data
+};
+
 export const getDownloadRelatorio = async (relatorio_uuid, versao) => {
     return api
         .get(`/api/consolidados-dre/${relatorio_uuid}/download-relatorio-consolidado`, {

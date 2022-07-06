@@ -6,7 +6,8 @@ import {
     postPublicarConsolidadoDre,
     getConsolidadoDre,
     getTrilhaStatus,
-    getStatusAta
+    getStatusAta,
+    postGerarPreviaConsolidadoDre
 } from "../../../services/dres/RelatorioConsolidado.service";
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
@@ -25,6 +26,7 @@ import { ModalAtaNaoPreenchida } from "../../../utils/Modais";
 import {
     getDocumentosConsolidadoDre,
 } from "../../../services/dres/RelatorioConsolidado.service";
+import PreviaDocumentos from "./PreviaDocumento";
 
 const RelatorioConsolidado = () => {
 
@@ -221,6 +223,17 @@ const RelatorioConsolidado = () => {
         return trilhaStatus.cards.filter((item) => item.status !== "APROVADA" && item.status !== "REPROVADA")
     }
 
+    const podeGerarPrevia = () => {
+        if(!consolidadoDre){
+            return true;
+        }
+        else if(consolidadoDre && consolidadoDre.versao !== "FINAL"){
+            return true;
+        }
+
+        return false;
+    }
+
     const publicarConsolidadoDre = async () => {
         let payload = {
             dre_uuid: dre_uuid,
@@ -238,6 +251,21 @@ const RelatorioConsolidado = () => {
         }catch (e) {
             console.log("Erro ao publicar Consolidado Dre ", e)
         }
+    }
+
+    const gerarPreviaConsolidadoDre = async () =>{
+        let payload = {
+            dre_uuid: dre_uuid,
+            periodo_uuid: periodoEscolhido
+        }
+
+        try {
+            let previa = await postGerarPreviaConsolidadoDre(payload);
+            setStatusProcessamentoConsolidadoDre(previa.status);
+            setConsolidadoDre(previa);
+        }catch (e) {
+            console.log("Erro ao publicar Prévia Consolidado Dre ", e)
+        } 
     }
 
     return (
@@ -284,7 +312,13 @@ const RelatorioConsolidado = () => {
                                                 <>
                                                     <PublicarDocumentos
                                                         publicarConsolidadoDre={publicarConsolidadoDre}
-                                                    />
+                                                        podeGerarPrevia={podeGerarPrevia}
+                                                    >
+                                                        <PreviaDocumentos
+                                                            gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
+                                                        />
+                                                    </PublicarDocumentos>
+
                                                     <DemonstrativoDaExecucaoFisicoFinanceira
                                                         consolidadoDre={consolidadoDre}
                                                         statusConsolidadoDre={statusConsolidadoDre}
