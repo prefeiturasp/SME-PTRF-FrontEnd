@@ -387,7 +387,7 @@ const TabelaConferenciaDeLancamentos = ({
                 await postLancamentosParaConferenciaMarcarComoCorreto(prestacaoDeContas.uuid, payload)
                 console.log("Marcados como correto com sucesso!")
                 desmarcarTodos()
-                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual, false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
+                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual, false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_nome_fornecedor, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
             } catch (e) {
                 console.log("Erro ao marcar como correto ", e.response)
             }
@@ -416,7 +416,7 @@ const TabelaConferenciaDeLancamentos = ({
                 await postLancamentosParaConferenciaMarcarNaoConferido(prestacaoDeContas.uuid, payload)
                 console.log("Marcados como não conferido com sucesso!")
                 desmarcarTodos()
-                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual, false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
+                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual, false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_nome_fornecedor, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
             } catch (e) {
                 console.log("Erro ao marcar como não conferido ", e.response)
             }
@@ -450,9 +450,9 @@ const TabelaConferenciaDeLancamentos = ({
         filtrar_por_acao: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_acao ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_acao : "",
         filtrar_por_lancamento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_lancamento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_lancamento : "",
 
-
         filtrar_por_data_inicio: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_inicio ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_inicio : "",
         filtrar_por_data_fim: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_fim ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_fim : "",
+        filtrar_por_nome_fornecedor: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_nome_fornecedor ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_nome_fornecedor : "",
         filtrar_por_numero_de_documento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento : "",
         filtrar_por_tipo_de_documento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento : "",
         filtrar_por_tipo_de_pagamento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento : "",
@@ -471,8 +471,7 @@ const TabelaConferenciaDeLancamentos = ({
 
         let data_inicio = stateFiltros.filtrar_por_data_inicio ? moment(stateFiltros.filtrar_por_data_inicio, "YYYY-MM-DD").format("YYYY-MM-DD") : null;
         let data_fim = stateFiltros.filtrar_por_data_fim ? moment(stateFiltros.filtrar_por_data_fim, "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-
-        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual,  false, data_inicio, data_fim, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
+        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual,  false, data_inicio, data_fim, stateFiltros.filtrar_por_nome_fornecedor, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
     };
 
     const limpaFiltros = async () => {
