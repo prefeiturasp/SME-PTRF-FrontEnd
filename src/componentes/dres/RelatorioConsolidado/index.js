@@ -22,7 +22,7 @@ import PublicarDocumentos from "./PublicarDocumentos";
 import DemonstrativoDaExecucaoFisicoFinanceira from "./DemonstrativoDaExecucaoFisicoFinanceira";
 import {AtaParecerTecnico} from "./AtaParecerTecnico";
 import Lauda from "./Lauda";
-import { ModalAtaNaoPreenchida } from "../../../utils/Modais";
+import { ModalAtaNaoPreenchida, ModalPublicarRelatorioConsolidado } from "../../../utils/Modais";
 import {
     getDocumentosConsolidadoDre,
 } from "../../../services/dres/RelatorioConsolidado.service";
@@ -40,6 +40,7 @@ const RelatorioConsolidado = () => {
     const [statusProcessamentoConsolidadoDre, setStatusProcessamentoConsolidadoDre] = useState('');
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
+    const [showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado] = useState(false);
 
     // Ata
     const [ataParecerTecnico, setAtaParecerTecnico] = useState(false);
@@ -247,6 +248,7 @@ const RelatorioConsolidado = () => {
                 let publicar = await postPublicarConsolidadoDre(payload);
                 setStatusProcessamentoConsolidadoDre(publicar.status);
                 setConsolidadoDre(publicar);
+                setShowPublicarRelatorioConsolidado(false);
             }
         }catch (e) {
             console.log("Erro ao publicar Consolidado Dre ", e)
@@ -266,6 +268,20 @@ const RelatorioConsolidado = () => {
         }catch (e) {
             console.log("Erro ao publicar Prévia Consolidado Dre ", e)
         } 
+    }
+
+    const publicado = () => {
+        if(!consolidadoDre){
+            return false;
+        }
+        else if(consolidadoDre && consolidadoDre.versao === "PREVIA"){
+            return false;
+        }
+        else if(consolidadoDre && consolidadoDre.versao === "FINAL"){
+            return true;
+        }
+
+        return false;
     }
 
     return (
@@ -311,8 +327,9 @@ const RelatorioConsolidado = () => {
                                             ) :
                                                 <>
                                                     <PublicarDocumentos
-                                                        publicarConsolidadoDre={publicarConsolidadoDre}
                                                         podeGerarPrevia={podeGerarPrevia}
+                                                        publicado={publicado}
+                                                        setShowPublicarRelatorioConsolidado={setShowPublicarRelatorioConsolidado}
                                                     >
                                                         <PreviaDocumentos
                                                             gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
@@ -323,10 +340,12 @@ const RelatorioConsolidado = () => {
                                                         consolidadoDre={consolidadoDre}
                                                         statusConsolidadoDre={statusConsolidadoDre}
                                                         periodoEscolhido={periodoEscolhido}
+                                                        publicado={publicado}
                                                     />
                                                     
                                                     <AtaParecerTecnico
                                                         ataParecerTecnico={ataParecerTecnico}
+                                                        publicado={publicado}
                                                     />
 
                                                     {consolidadoDre && consolidadoDre.uuid &&
@@ -352,6 +371,14 @@ const RelatorioConsolidado = () => {
                         <ModalAtaNaoPreenchida
                             show={showAtaNaoPreenchida}
                             handleClose={()=>setShowAtaNaoPreenchida(false)}
+                        />
+                    </section>
+
+                    <section>
+                        <ModalPublicarRelatorioConsolidado
+                            show={showPublicarRelatorioConsolidado}
+                            handleClose={()=>setShowPublicarRelatorioConsolidado(false)}
+                            publicarConsolidadoDre={publicarConsolidadoDre}
                         />
                     </section>
 

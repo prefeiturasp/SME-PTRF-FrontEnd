@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TopoComBotoes = ({periodoNome, contaNome, onClickGerarRelatorio, textoBtnRelatorio}) =>{
+export const TopoComBotoes = ({periodoNome, contaNome}) =>{
     return(
         <>
             <div className="d-flex bd-highlight mb-3">

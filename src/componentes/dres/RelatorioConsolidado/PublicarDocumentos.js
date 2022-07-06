@@ -1,6 +1,6 @@
 import React, {memo} from "react";
 
-const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children}) => {
+const PublicarDocumentos = ({podeGerarPrevia, publicado, setShowPublicarRelatorioConsolidado, children}) => {
     return(
         <div className="d-flex bd-highlight align-items-center container-publicar-cabecalho text-dark rounded-top border font-weight-bold">
             <div className="p-2 flex-grow-1 bd-highlight fonte-16">Relatórios</div>
@@ -11,9 +11,11 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children})
                 </div>
             }
 
-            <div className="p-2 bd-highlight">
-                <button onClick={() => publicarConsolidadoDre()} className="btn btn btn btn-success">Publicar</button>
-            </div>
+            {!publicado() &&
+                <div className="p-2 bd-highlight">
+                    <button onClick={() => setShowPublicarRelatorioConsolidado(true)} className="btn btn-success">Publicar</button>
+                </div>
+            }
         </div>
     )
 }

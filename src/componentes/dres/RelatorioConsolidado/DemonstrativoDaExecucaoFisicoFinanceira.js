@@ -7,7 +7,7 @@ import {
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
 
-const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, statusConsolidadoDre, periodoEscolhido}) => {
+const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, statusConsolidadoDre, periodoEscolhido, publicado}) => {
 
     const [relatoriosFisicoFinanceiros, setRelatoriosFisicoFinanceiros] = useState([]);
     const [contas, setContas] = useState(false);
@@ -66,6 +66,15 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, statusConsolid
         window.location.assign(`/dre-relatorio-consolidado-apuracao/${periodoEscolhido}/${contaEscolhida}/`)
     };
 
+    const textoBtnRelatorio = () => {
+        if(publicado()){
+            return "Consultar relatório";
+        }
+        else{
+            return "Preencher relatório";
+        }
+    }
+
     return (
         <div className="border">
             {relatoriosFisicoFinanceiros && relatoriosFisicoFinanceiros.length > 0 ? (
@@ -88,7 +97,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, statusConsolid
                                 </div>
                             </div>
                             <div className="col-12 col-md-4 align-self-center text-right">
-                                <button onClick={()=> onClickPreencherRelatorio(relatorio.tipo_conta.uuid)} type="button" className="btn btn-outline-success btn-sm">Preencher relatório</button>
+                                <button onClick={()=> onClickPreencherRelatorio(relatorio.tipo_conta.uuid)} type="button" className="btn btn-outline-success btn-sm">{textoBtnRelatorio()}</button>
                             </div>
                         </div>
                     )}
@@ -105,7 +114,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, statusConsolid
                                 </div>
                             </div>
                             <div className="col-12 col-md-4 align-self-center text-right">
-                                <button onClick={()=> onClickPreencherRelatorio(conta.uuid)} type="button" className="btn btn-outline-success btn-sm">Preencher relatório</button>
+                                <button onClick={()=> onClickPreencherRelatorio(conta.uuid)} type="button" className="btn btn-outline-success btn-sm">{textoBtnRelatorio()}</button>
                             </div>
                         </div>
                     )}
