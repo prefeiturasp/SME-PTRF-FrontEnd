@@ -82,6 +82,7 @@ const TabelaConferenciaDeLancamentos = ({
 
     let filtrar_por_data_inicio = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_inicio
     let filtrar_por_data_fim = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_fim
+    let filtrar_por_nome_fornecedor = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_nome_fornecedor
     let filtrar_por_numero_de_documento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento
     let filtrar_por_tipo_de_documento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento
     let filtrar_por_tipo_de_pagamento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento
@@ -466,12 +467,17 @@ const TabelaConferenciaDeLancamentos = ({
         });
     };
 
+    const handleClearDate = () => {
+        setStateFiltros({
+            ...stateFiltros,
+            filtrar_por_data_inicio: "",
+            filtrar_por_data_fim: ""
+        });
+    }
+
     const handleSubmitFiltros = async () => {
         desmarcarTodos()
-
-        let data_inicio = stateFiltros.filtrar_por_data_inicio ? moment(stateFiltros.filtrar_por_data_inicio, "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        let data_fim = stateFiltros.filtrar_por_data_fim ? moment(stateFiltros.filtrar_por_data_fim, "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual,  false, data_inicio, data_fim, stateFiltros.filtrar_por_nome_fornecedor, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
+        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual,  false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_nome_fornecedor, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
     };
 
     const limpaFiltros = async () => {
@@ -494,6 +500,7 @@ const TabelaConferenciaDeLancamentos = ({
                 filtrar_por_data_inicio: filtrar_por_data_inicio,
                 filtrar_por_data_fim: filtrar_por_data_fim,
                 filtrar_por_lancamento: filtrar_por_lancamento,
+                filtrar_por_nome_fornecedor: filtrar_por_nome_fornecedor,
                 filtrar_por_numero_de_documento: filtrar_por_numero_de_documento,
                 filtrar_por_tipo_de_documento: filtrar_por_tipo_de_documento,
                 filtrar_por_tipo_de_pagamento: filtrar_por_tipo_de_pagamento,
@@ -662,6 +669,7 @@ const TabelaConferenciaDeLancamentos = ({
                 stateFiltros={stateFiltros}
                 tabelasDespesa={tabelaDespesa}
                 handleChangeFiltros={handleChangeFiltros}
+                handleClearDate={handleClearDate}
                 handleSubmitFiltros={handleSubmitFiltros}
                 limpaFiltros={limpaFiltros}
             />
