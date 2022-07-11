@@ -730,6 +730,8 @@ const TabelaConferenciaDeLancamentos = ({
                         />
                         <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna"
                                 style={{width: '24%'}}/>
+                        <Column field='informacao' header='Informações' className="align-middle text-left borda-coluna"
+                                style={{width: '10%'}}/>
                         <Column
                             field='valor_transacao_total'
                             header='Valor (R$)'
