@@ -5,8 +5,11 @@ import moment from "moment";
 import './../../../../sme/ExtracaoDados/extracao-dados.scss'
 
 
-export const FiltrosConferenciaDeLancamentos = ({stateFiltros, tabelasDespesa, handleChangeFiltros, handleSubmitFiltros, limpaFiltros})=>{
-
+export const FiltrosConferenciaDeLancamentos = ({stateFiltros, tabelasDespesa, handleClearDate, handleChangeFiltros, handleSubmitFiltros, limpaFiltros})=>{
+    const formatDate = (date) => {
+        const  dataFormatada = date.replaceAll('-', '/')
+        return moment(new Date(dataFormatada))
+    } 
     return(
         <>
             <form>
@@ -99,7 +102,7 @@ export const FiltrosConferenciaDeLancamentos = ({stateFiltros, tabelasDespesa, h
                     </div>
                     <div className="form-group col-md-6">
                     <Space className='extracao-space' direction='vertical'>
-                    <span>Filtrar por período</span>
+                    <span>Filtrar por período de pagamento</span>
                     <DatePicker.RangePicker
                         locale={locale}
                         format={'DD/MM/YYYY'}
@@ -111,22 +114,19 @@ export const FiltrosConferenciaDeLancamentos = ({stateFiltros, tabelasDespesa, h
                         className='form-control pr-3 w-50'
                         placeholder={['data inicial', 'data final']}
                         id="data_range"
-                        defaultValue={[
-                            stateFiltros.filtrar_por_data_inicio ? moment(stateFiltros.filtrar_por_data_inicio) : '',
-                            stateFiltros.filtrar_por_data_fim ? moment(stateFiltros.filtrar_por_data_fim): ''
-                        ]}
-                        
                         onCalendarChange={(date) => {
-                            if(!date){
-                                handleChangeFiltros("filtrar_por_data_inicio", '');
-                                handleChangeFiltros("filtrar_por_data_fim", '');
+                            if (!date){
+                                handleClearDate()
                             }
                             else {
                                 date[0] && handleChangeFiltros("filtrar_por_data_inicio", date[0].format('YYYY-MM-DD'));
                                 date[1] && handleChangeFiltros("filtrar_por_data_fim", date[1].format('YYYY-MM-DD'));
                             }
-                        }
-                    }
+                        }}
+                        defaultValue={[
+                            stateFiltros.filtrar_por_data_inicio ? formatDate(stateFiltros.filtrar_por_data_inicio) : '',
+                            stateFiltros.filtrar_por_data_fim ? formatDate(stateFiltros.filtrar_por_data_fim) : ''
+                        ]}
                     />
                     </Space>
                     </div>
