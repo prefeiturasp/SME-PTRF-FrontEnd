@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import {useParams} from "react-router-dom";
 import { TopoComBotoes } from "./TopoComBotoes";
 import { TextoDinamicoSuperior } from "./TextoDinamicoSuperior";
@@ -7,6 +7,7 @@ import { Assinaturas } from "./Assinaturas";
 import {getAtaParecerTecnico, getInfoContas, getDownloadAtaParecerTecnico} from "../../../../../services/dres/AtasParecerTecnico.service";
 import moment from "moment";
 import Loading from "../../../../../utils/Loading"
+import {getConsolidadoDre} from "../../../../../services/dres/RelatorioConsolidado.service"
 
 moment.updateLocale('pt', {
     months: [
@@ -23,6 +24,9 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
     const [dadosAta, setDadosAta] = useState({});
     const [infoContas, setInfoContas] = useState([])
     const [loading, setLoading] = useState(true);
+
+    // Consolidado DRE
+    const [consolidadoDre, setConsolidadoDre] = useState(false);
 
     useEffect(() => {
         getDadosAta();
@@ -45,6 +49,28 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         }
         
     }
+
+    const carregaConsolidadoDre = useCallback(async () => {
+        if (dadosAta && dadosAta.dre &&  dadosAta.periodo){
+            if(dadosAta.dre.uuid && dadosAta.periodo.uuid){
+                try {
+                    let consolidado_dre = await getConsolidadoDre(dadosAta.dre.uuid, dadosAta.periodo.uuid)
+                    if (consolidado_dre && consolidado_dre.length > 0){
+                        console.log("conssolidado", consolidado_dre)
+                        setConsolidadoDre(consolidado_dre[0])
+                    }else {
+                        setConsolidadoDre(false)
+                    }
+                }catch (e) {
+                    console.log("Erro ao buscar Consolidado Dre ", e)
+                }
+            }   
+        }
+    }, [dadosAta])
+
+    useEffect(() => {
+        carregaConsolidadoDre()
+    }, [carregaConsolidadoDre])
 
     const dataPorExtenso = (data) => {
         if (!data) {
@@ -150,6 +176,33 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         }
     };
 
+    const retornaTituloCabecalhoAta = () => {
+        if(ehPrevia()){
+            return "Visualização da prévia da ata"
+        }
+
+        return "Visualização da ata"
+    }
+
+    const retornaTituloCorpoAta = () => {
+        if(ehPrevia()){
+            return "PRÉVIA DA ATA DE PARECER TÉCNICO CONCLUSIVO"
+        }
+
+        return "ATA DE PARECER TÉCNICO CONCLUSIVO"
+    }
+
+    const ehPrevia = () => {
+        if(!consolidadoDre){
+            return true;
+        }
+        else if(consolidadoDre && consolidadoDre.versao === "PREVIA"){
+            return true;
+        }
+
+        return false;
+    }
+
     const handleClickFecharAtaParecerTecnico = () => {
         window.location.assign("/dre-relatorio-consolidado")
     };
@@ -162,6 +215,20 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
     const downloadAtaParecerTecnico = async () =>{
         await getDownloadAtaParecerTecnico(dadosAta.uuid);
     };
+
+    const publicado = () => {
+        if(!consolidadoDre){
+            return false;
+        }
+        else if(consolidadoDre && consolidadoDre.versao === "PREVIA"){
+            return false;
+        }
+        else if(consolidadoDre && consolidadoDre.versao === "FINAL"){
+            return true;
+        }
+
+        return false;
+    }
 
     return (
         <div className="col-12 container-visualizacao-da-ata-parecer-tecnico mb-5">
@@ -185,6 +252,8 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
                             handleClickFecharAtaParecerTecnico={handleClickFecharAtaParecerTecnico}
                             handleClickEditarAta={handleClickEditarAta}
                             downloadAtaParecerTecnico={downloadAtaParecerTecnico}
+                            retornaTituloCabecalhoAta={retornaTituloCabecalhoAta}
+                            publicado={publicado}
                         />
                     }
                 </div>
@@ -193,6 +262,8 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
                     {dadosAta && Object.entries(dadosAta).length > 0 &&
                         <TextoDinamicoSuperior
                             retornaDadosAtaFormatado={retornaDadosAtaFormatado}
+                            retornaTituloCorpoAta={retornaTituloCorpoAta}
+                            ehPrevia={ehPrevia}
                         />
                     }
 

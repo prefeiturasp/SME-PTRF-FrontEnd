@@ -6,7 +6,8 @@ import {
     postPublicarConsolidadoDre,
     getConsolidadoDre,
     getTrilhaStatus,
-    getStatusAta
+    getStatusAta,
+    postGerarPreviaConsolidadoDre
 } from "../../../services/dres/RelatorioConsolidado.service";
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
@@ -21,7 +22,11 @@ import PublicarDocumentos from "./PublicarDocumentos";
 import DemonstrativoDaExecucaoFisicoFinanceira from "./DemonstrativoDaExecucaoFisicoFinanceira";
 import {AtaParecerTecnico} from "./AtaParecerTecnico";
 import Lauda from "./Lauda";
-import { ModalAtaNaoPreenchida } from "../../../utils/Modais";
+import { ModalAtaNaoPreenchida, ModalPublicarRelatorioConsolidado } from "../../../utils/Modais";
+import {
+    getDocumentosConsolidadoDre,
+} from "../../../services/dres/RelatorioConsolidado.service";
+import PreviaDocumentos from "./PreviaDocumento";
 
 const RelatorioConsolidado = () => {
 
@@ -35,14 +40,11 @@ const RelatorioConsolidado = () => {
     const [statusProcessamentoConsolidadoDre, setStatusProcessamentoConsolidadoDre] = useState('');
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
+    const [showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado] = useState(false);
 
     // Ata
     const [ataParecerTecnico, setAtaParecerTecnico] = useState(false);
     const [showAtaNaoPreenchida, setShowAtaNaoPreenchida] = useState(false);
-
-
-    // Lauda
-    const [disablebtnGerarLauda, setDisablebtnGerarLauda] = useState(true);
 
     const [trilhaStatus, setTrilhaStatus] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -118,6 +120,17 @@ const RelatorioConsolidado = () => {
         retornaStatusConsolidadoDre()
     }, [retornaStatusConsolidadoDre])
 
+    const buscaTrilhaStatus = useCallback(async () => {
+        if (dre_uuid && periodoEscolhido) {
+            let trilha_status = await getTrilhaStatus(dre_uuid, periodoEscolhido)
+            setTrilhaStatus(trilha_status)
+        }
+    }, [dre_uuid, periodoEscolhido])
+
+    useEffect(() => {
+        buscaTrilhaStatus()
+    }, [buscaTrilhaStatus])
+
     useEffect(() => {
         if (statusProcessamentoConsolidadoDre && statusProcessamentoConsolidadoDre === "EM_PROCESSAMENTO") {
             setLoading(true)
@@ -128,10 +141,9 @@ const RelatorioConsolidado = () => {
             return () => clearInterval(timer);
         } else {
             buscaTrilhaStatus();
-            carregaAtaParecerTecnico();
             setLoading(false);
         }
-    }, [statusProcessamentoConsolidadoDre, retornaStatusConsolidadoDre]);
+    }, [statusProcessamentoConsolidadoDre, retornaStatusConsolidadoDre, buscaTrilhaStatus]);
 
     const buscaFiqueDeOlho = useCallback(async () => {
         try {
@@ -146,16 +158,24 @@ const RelatorioConsolidado = () => {
         buscaFiqueDeOlho()
     }, [buscaFiqueDeOlho])
 
-    const buscaTrilhaStatus = useCallback(async () => {
-        if (dre_uuid && periodoEscolhido) {
-            let trilha_status = await getTrilhaStatus(dre_uuid, periodoEscolhido)
-            setTrilhaStatus(trilha_status)
+    const retornaDocumentosAta = useCallback(async () => {
+        if (consolidadoDre && consolidadoDre.uuid) {
+            try {
+                let documentos = await getDocumentosConsolidadoDre(consolidadoDre.uuid)
+                if(documentos.atas_de_parecer_tecnico_do_consolidado_dre.length > 0){
+                    setAtaParecerTecnico(documentos.atas_de_parecer_tecnico_do_consolidado_dre[0])
+                }
+            } catch (e) {
+                console.log("Erro ao buscar documentos da ata ", e)
+            }
         }
-    }, [dre_uuid, periodoEscolhido])
+    }, [consolidadoDre])
 
     useEffect(() => {
-        buscaTrilhaStatus()
-    }, [buscaTrilhaStatus])
+        if(statusProcessamentoConsolidadoDre && statusProcessamentoConsolidadoDre !== "EM_PROCESSAMENTO" ){
+            retornaDocumentosAta();
+        }
+    }, [statusProcessamentoConsolidadoDre, retornaDocumentosAta])
 
     const handleChangePeriodos = async (uuid_periodo) => {
         setPeriodoEsolhido(uuid_periodo)
@@ -204,6 +224,17 @@ const RelatorioConsolidado = () => {
         return trilhaStatus.cards.filter((item) => item.status !== "APROVADA" && item.status !== "REPROVADA")
     }
 
+    const podeGerarPrevia = () => {
+        if(!consolidadoDre){
+            return true;
+        }
+        else if(consolidadoDre && consolidadoDre.versao !== "FINAL"){
+            return true;
+        }
+
+        return false;
+    }
+
     const publicarConsolidadoDre = async () => {
         let payload = {
             dre_uuid: dre_uuid,
@@ -217,10 +248,40 @@ const RelatorioConsolidado = () => {
                 let publicar = await postPublicarConsolidadoDre(payload);
                 setStatusProcessamentoConsolidadoDre(publicar.status);
                 setConsolidadoDre(publicar);
+                setShowPublicarRelatorioConsolidado(false);
             }
         }catch (e) {
             console.log("Erro ao publicar Consolidado Dre ", e)
         }
+    }
+
+    const gerarPreviaConsolidadoDre = async () =>{
+        let payload = {
+            dre_uuid: dre_uuid,
+            periodo_uuid: periodoEscolhido
+        }
+
+        try {
+            let previa = await postGerarPreviaConsolidadoDre(payload);
+            setStatusProcessamentoConsolidadoDre(previa.status);
+            setConsolidadoDre(previa);
+        }catch (e) {
+            console.log("Erro ao publicar Prévia Consolidado Dre ", e)
+        } 
+    }
+
+    const publicado = () => {
+        if(!consolidadoDre){
+            return false;
+        }
+        else if(consolidadoDre && consolidadoDre.versao === "PREVIA"){
+            return false;
+        }
+        else if(consolidadoDre && consolidadoDre.versao === "FINAL"){
+            return true;
+        }
+
+        return false;
     }
 
     return (
@@ -266,23 +327,32 @@ const RelatorioConsolidado = () => {
                                             ) :
                                                 <>
                                                     <PublicarDocumentos
-                                                        publicarConsolidadoDre={publicarConsolidadoDre}
-                                                    />
+                                                        podeGerarPrevia={podeGerarPrevia}
+                                                        publicado={publicado}
+                                                        setShowPublicarRelatorioConsolidado={setShowPublicarRelatorioConsolidado}
+                                                    >
+                                                        <PreviaDocumentos
+                                                            gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
+                                                        />
+                                                    </PublicarDocumentos>
+
                                                     <DemonstrativoDaExecucaoFisicoFinanceira
                                                         consolidadoDre={consolidadoDre}
                                                         statusConsolidadoDre={statusConsolidadoDre}
                                                         periodoEscolhido={periodoEscolhido}
+                                                        publicado={publicado}
                                                     />
                                                     
                                                     <AtaParecerTecnico
                                                         ataParecerTecnico={ataParecerTecnico}
+                                                        publicado={publicado}
                                                     />
-                                                    
-                                                    <Lauda
-                                                        consolidadoDre={consolidadoDre}
-                                                        periodoEscolhido={periodoEscolhido}
-                                                        disablebtnGerarLauda={disablebtnGerarLauda}
-                                                    />
+
+                                                    {consolidadoDre && consolidadoDre.uuid &&
+                                                        <Lauda
+                                                            consolidadoDre={consolidadoDre}
+                                                        />
+                                                    }
                                                 </>
                                             }
                                         </>
@@ -301,6 +371,14 @@ const RelatorioConsolidado = () => {
                         <ModalAtaNaoPreenchida
                             show={showAtaNaoPreenchida}
                             handleClose={()=>setShowAtaNaoPreenchida(false)}
+                        />
+                    </section>
+
+                    <section>
+                        <ModalPublicarRelatorioConsolidado
+                            show={showPublicarRelatorioConsolidado}
+                            handleClose={()=>setShowPublicarRelatorioConsolidado(false)}
+                            publicarConsolidadoDre={publicarConsolidadoDre}
                         />
                     </section>
 

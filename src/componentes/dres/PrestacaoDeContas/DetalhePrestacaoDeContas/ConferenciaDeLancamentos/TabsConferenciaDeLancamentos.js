@@ -12,6 +12,7 @@ export const TabsConferenciaDeLancamentos = ({contasAssociacao, toggleBtnEscolhe
 
     let filtrar_por_data_inicio = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_inicio
     let filtrar_por_data_fim = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_fim
+    let filtrar_por_nome_fornecedor = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_nome_fornecedor
     let filtrar_por_numero_de_documento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento
     let filtrar_por_tipo_de_documento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento
     let filtrar_por_tipo_de_pagamento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento
@@ -35,7 +36,7 @@ export const TabsConferenciaDeLancamentos = ({contasAssociacao, toggleBtnEscolhe
                                         onClick={() => {
                                             toggleBtnEscolheConta(conta.uuid);
                                             setStateCheckBoxOrdenarPorImposto(false)
-                                            carregaLancamentosParaConferencia(prestacaoDeContas, conta.uuid, filtrar_por_acao, filtrar_por_lancamento, 0, false, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento)
+                                            carregaLancamentosParaConferencia(prestacaoDeContas, conta.uuid, filtrar_por_acao, filtrar_por_lancamento, 0, false, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento)
 
                                         }}
                                         className={`nav-link btn-escolhe-acao ${clickBtnEscolheConta === conta.uuid ? "btn-escolhe-acao-active" : ""}`}

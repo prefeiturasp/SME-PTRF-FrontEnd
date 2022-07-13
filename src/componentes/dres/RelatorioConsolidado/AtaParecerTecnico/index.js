@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faDownload} from '@fortawesome/free-solid-svg-icons'
 import {getDownloadAtaParecerTecnico} from "../../../../services/dres/AtasParecerTecnico.service";
 
-export const AtaParecerTecnico = ({ataParecerTecnico}) => {
+export const AtaParecerTecnico = ({ataParecerTecnico, publicado}) => {
     const onClickVerAta = (uuid_ata) =>{
         window.location.assign(`/visualizacao-da-ata-parecer-tecnico/${uuid_ata}/`)
     };
@@ -32,6 +32,15 @@ export const AtaParecerTecnico = ({ataParecerTecnico}) => {
         }
         else if(ata.uuid && ata.alterado_em){
             return "ata-preenchida"
+        }
+    }
+
+    const textoBtnAta = () => {
+        if(publicado()){
+            return "Consultar ata";
+        }
+        else{
+            return "Preencher ata"
         }
     }
 
@@ -62,7 +71,7 @@ export const AtaParecerTecnico = ({ataParecerTecnico}) => {
                             type="button"
                             className="btn btn-outline-success btn-sm"
                         >
-                            Preencher ata
+                            {textoBtnAta()}
                         </button>
                     </div>
                 </div>
