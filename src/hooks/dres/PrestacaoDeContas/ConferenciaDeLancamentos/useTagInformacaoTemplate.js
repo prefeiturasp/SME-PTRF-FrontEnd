@@ -11,12 +11,21 @@ const types = {
 
 function useTagInformacaoTemplate (){
 
+    function retornaTagInformacaoToolTip (informacao){
+        if(typeof(informacao) === 'string'){
+            return `<p style="max-width: 200px;">${informacao}</p>`
+    }  else {
+        return informacao.reduce((acc, info) => (acc + `${info}<br/>`), '<p>') + '</p>'
+        }
+    }
+
     function retornaTagInformacaoTemplate (rowData) {
         return (
             <div className='p-2 text-wrap-conferencia-de-lancamentos'>
                 {rowData.informacoes ? rowData['informacoes']?.map((tag, index) => {
+                    const toolTip = retornaTagInformacaoToolTip(tag.tag_hint)
                     return (
-                        <div data-tip={tag.tag_hint} data-html={true} className={`tag-informacoes ${types[tag.tag_id]}`} key={index}>
+                        <div data-tip={String(toolTip)} data-html={true} className={`tag-informacoes ${types[tag.tag_id]}`} key={index}>
                             <span>{tag.tag_nome}</span>
                         </div>
                     )

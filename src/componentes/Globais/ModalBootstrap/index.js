@@ -3,6 +3,7 @@ import Loading from "../../../utils/Loading";
 import {getTagInformacao} from "../../../services/escolas/Despesas.service";
 import {Button, Modal} from "react-bootstrap";
 import "./modal-bootstrap.scss"
+import { useCallback } from "react";
 
 export const ModalBootstrap = (propriedades) =>{
     return (
@@ -401,6 +402,18 @@ export const ModalBootstrapLegendaInformacao = (propriedades) => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
 
+    const handleTagInformacao = useCallback(async () => {
+        setLoading(true)
+        try {
+            const response = await getTagInformacao()
+            setData(response)
+        } 
+        catch (e) {
+            console.error('Erro ao carregar tag informação', e)
+        }
+        setLoading(false)
+
+    }, []) 
     const types = {
         1: 'tag-purple',
         2: 'tag-darkblue',
@@ -410,16 +423,9 @@ export const ModalBootstrapLegendaInformacao = (propriedades) => {
     }
 
     useEffect(() => {
-        getTagInformacao()
-            .then(
-                resp => {setData(resp)})
-            .catch(
-                (error) => console.error('error: ', error))
-            .finally(
-                () => setLoading(false)
-            )
-        
+        handleTagInformacao()
     }, [])
+
     return (
         <Fragment>
             <Modal centered size="lg" show={propriedades.show} onHide={propriedades.onHide}>
