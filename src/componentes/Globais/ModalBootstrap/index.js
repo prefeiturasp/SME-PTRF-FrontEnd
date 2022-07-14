@@ -422,9 +422,9 @@ export const ModalBootstrapLegendaInformacao = (propriedades) => {
     }, [])
     return (
         <Fragment>
-            <Modal centered show={propriedades.show} onHide={propriedades.onHide}>
+            <Modal centered size="lg" show={propriedades.show} onHide={propriedades.onHide}>
                 <Modal.Header>
-                        <Modal.Title>{propriedades.titulo}</Modal.Title>
+                        <Modal.Title style={{fontWeight: 'bold'}}>{propriedades.titulo}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                 {loading ? (
@@ -436,9 +436,9 @@ export const ModalBootstrapLegendaInformacao = (propriedades) => {
                     />
                 ): data?.length > 0 ? data.map((tag) => {
                     return (
-                        <div className="row" key={tag.id}>
+                        <div className="row ml-2 pb-4" key={tag.id}>
                             <span className={`tag-informacoes ${types[tag.id]}`}>{tag.nome}</span>
-                            <p>{tag.descricao}</p>
+                            <p className="pl-4 ml-2">{tag.descricao}</p>
                         </div>
                     )
                 }): <span>Nenhuma informação encontrada</span>}

@@ -16,7 +16,7 @@ function useTagInformacaoTemplate (){
             <div className='p-2 text-wrap-conferencia-de-lancamentos'>
                 {rowData.informacoes ? rowData['informacoes']?.map((tag, index) => {
                     return (
-                        <div className={`tag-informacoes ${types[tag.tag_id]}`} key={index}>
+                        <div data-tip={tag.tag_hint} data-html={true} className={`tag-informacoes ${types[tag.tag_id]}`} key={index}>
                             <span>{tag.tag_nome}</span>
                         </div>
                     )

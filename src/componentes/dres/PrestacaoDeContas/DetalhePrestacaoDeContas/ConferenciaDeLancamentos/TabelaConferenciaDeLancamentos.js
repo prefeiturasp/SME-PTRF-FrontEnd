@@ -647,9 +647,7 @@ const TabelaConferenciaDeLancamentos = ({
                         <Column expander style={{width: '5%', borderLeft: 'none'}}/>
                     </DataTable>
                 </>
-            }outline: none;
-            border: 0;
-            background: inherit;
+            }
             <section>
                 <ModalCheckNaoPermitidoConfererenciaDeLancamentos
                     show={showModalCheckNaoPermitido}
