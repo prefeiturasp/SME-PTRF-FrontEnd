@@ -399,21 +399,9 @@ export const ModalBootstrapConfirmarPublicacao = (propriedades) =>{
 };
 
 export const ModalBootstrapLegendaInformacao = (propriedades) => {
-    const [data, setData] = useState([])
+    const [listaTagInformacao, setListaTagInformacao] = useState([])
     const [loading, setLoading] = useState(true)
 
-    const handleTagInformacao = useCallback(async () => {
-        setLoading(true)
-        try {
-            const response = await getTagInformacao()
-            setData(response)
-        } 
-        catch (e) {
-            console.error('Erro ao carregar tag informação', e)
-        }
-        setLoading(false)
-
-    }, []) 
     const types = {
         1: 'tag-purple',
         2: 'tag-darkblue',
@@ -422,9 +410,22 @@ export const ModalBootstrapLegendaInformacao = (propriedades) => {
         5: 'tag-blank'
     }
 
+    const handleTagInformacao = useCallback(async () => {
+        setLoading(true)
+        try {
+            const response = await getTagInformacao()
+            setListaTagInformacao(response)
+        } 
+        catch (e) {
+            console.error('Erro ao carregar tag informação', e)
+        }
+        setLoading(false)
+
+    }, [])
+
     useEffect(() => {
         handleTagInformacao()
-    }, [])
+    }, [handleTagInformacao])
 
     return (
         <Fragment>
@@ -440,7 +441,7 @@ export const ModalBootstrapLegendaInformacao = (propriedades) => {
                         marginTop="0"
                         marginBottom="0"
                     />
-                ): data?.length > 0 ? data.map((tag) => {
+                ): listaTagInformacao?.length > 0 ? listaTagInformacao.map((tag) => {
                     return (
                         <div className="row ml-2 pb-4" key={tag.id}>
                             <span className={`tag-informacoes ${types[tag.id]}`}>{tag.nome}</span>
