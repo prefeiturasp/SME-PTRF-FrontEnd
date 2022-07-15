@@ -108,10 +108,7 @@ const TabelaTransacoes = ({
         valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
 
         if (rowData && rowData.valor_transacao_na_conta !== rowData.valor_transacao_total) {
-            let texto_exibir = `<div><strong>Valor total de despesa:</strong> ${Number(rowData.valor_transacao_total).toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            })}</div>`;
+            let texto_exibir = ''
             rowData.valores_por_conta.map((item) => (
                 texto_exibir += `<div><strong>Conta ${item.conta_associacao__tipo_conta__nome}:</strong> ${Number(item.valor_rateio__sum).toLocaleString('pt-BR', {
                     style: 'currency',

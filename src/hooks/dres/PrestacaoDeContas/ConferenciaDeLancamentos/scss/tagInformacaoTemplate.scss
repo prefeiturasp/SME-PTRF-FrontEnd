@@ -1,0 +1,34 @@
+.tag-informacoes {
+    display: flex;
+    flex: 1;
+    max-width: 130px;
+    justify-content: center;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.tag-purple {
+    background-color: #9C33AD;
+}
+
+.tag-darkblue {
+    background-color: #5C4EF8;
+}
+
+.tag-orange {
+    background-color: #F2890D
+}
+
+.tag-green {
+    background-color: #198459
+}
+
+.tag-blank{
+    border: 2px solid #198459;
+    color: #198459;
+    background: inherit;
+}
+

@@ -101,3 +101,7 @@ export const getMotivosPagamentoAntecipado = async () => {
     return (await api.get(`api/motivos-pagamento-antecipado/`, authHeader)).data
 };
 
+export const getTagInformacao = async () => {
+    return (await api.get(`api/despesas/tags-informacoes/`, authHeader)).data
+}
+
