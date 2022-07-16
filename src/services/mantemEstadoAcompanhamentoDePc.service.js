@@ -16,6 +16,7 @@ const limpaAcompanhamentoDePcUsuarioLogado = (usuario) =>{
                 paginacao_atual: '',
                 filtrar_por_data_inicio:'',
                 filtrar_por_data_fim: '',
+                filtrar_por_nome_fornecedor: '',
                 filtrar_por_numero_de_documento: '',
                 filtrar_por_tipo_de_documento: '',
                 filtrar_por_tipo_de_pagamento: '',
@@ -52,6 +53,7 @@ const setAcompanhamentoDePc = async () =>{
 
                filtrar_por_data_inicio: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_inicio ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_inicio : '',
                filtrar_por_data_fim: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_fim ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_fim : '',
+               filtrar_por_nome_fornecedor: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_nome_fornecedor ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_nome_fornecedor : '',
                filtrar_por_numero_de_documento: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento : '',
                filtrar_por_tipo_de_documento: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento : '',
                filtrar_por_tipo_de_pagamento: acompanhamento_de_pc_usuario_logado && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento ? acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento : '',

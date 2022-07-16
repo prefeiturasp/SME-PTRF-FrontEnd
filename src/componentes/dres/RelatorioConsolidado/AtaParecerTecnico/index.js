@@ -33,7 +33,7 @@ export const AtaParecerTecnico = ({consolidadoDre}) => {
 
     const mensagem = (ata) => {
         if(!ata || ata.uuid === undefined){
-            return "Documento pendente de geração";        
+            return "Documento pendente de geração";
         }
         else if(ata.uuid && ata.alterado_em){
             return "Último preenchimento em " + exibeDateTimePT_BR_Ata(ata.alterado_em);
@@ -45,7 +45,7 @@ export const AtaParecerTecnico = ({consolidadoDre}) => {
 
     const classeMensagem = (ata) => {
         if(!ata || ata.uuid === undefined || ata.alterado_em === null){
-            return "ata-nao-preenchida"       
+            return "ata-nao-preenchida"
         }
         else if(ata.uuid && ata.alterado_em){
             return "ata-preenchida"
@@ -82,7 +82,7 @@ export const AtaParecerTecnico = ({consolidadoDre}) => {
                                 >
                                     {consolidadoDre.ja_publicado ? "Consultar" : "Preencher"} ata
                                 </button>
-                        ):
+                            ):
                             <button
                                 onClick={() => criarAtaAtrelarAoConsolidado(consolidadoDre.dre_uuid, consolidadoDre.periodo_uuid, consolidadoDre.uuid ? consolidadoDre.uuid : null)}
                                 type="button"

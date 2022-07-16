@@ -28,6 +28,8 @@ import useRowExpansionReceitaTemplate
     from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useRowExpansionReceitaTemplate";
 import useNumeroDocumentoTemplate
     from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
+import useTagInformacaoTemplate 
+    from "../../../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useTagInformacaoTemplate";
 
 // Redux
 import {useDispatch} from "react-redux";
@@ -37,8 +39,7 @@ import {
 } from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 import {visoesService} from "../../../../../services/visoes.service";
 import moment from "moment";
-import bookmarkSolid from "../../../../../assets/img/bookmark-solid.svg";
-import bookmarkRegular from "../../../../../assets/img/bookmark-regular.svg";
+import {ModalBootstrapLegendaInformacao} from "../../../../../componentes/Globais/ModalBootstrap";
 
 const TabelaConferenciaDeLancamentos = ({
                                             setLancamentosParaConferencia,
@@ -60,6 +61,7 @@ const TabelaConferenciaDeLancamentos = ({
     const [exibirBtnMarcarComoCorreto, setExibirBtnMarcarComoCorreto] = useState(false)
     const [exibirBtnMarcarComoNaoConferido, setExibirBtnMarcarComoNaoConferido] = useState(false)
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
+    const [showModalLegendaInformacao, setShowModalLegendaInformacao] = useState(false)
 
     // Hooks Personalizados
     const valor_template = useValorTemplate()
@@ -69,6 +71,7 @@ const TabelaConferenciaDeLancamentos = ({
     const rowExpansionDespesaTemplate = useRowExpansionDespesaTemplate(prestacaoDeContas)
     const rowExpansionReceitaTemplate = useRowExpansionReceitaTemplate()
     const numeroDocumentoTemplate = useNumeroDocumentoTemplate()
+    const tagInformacao = useTagInformacaoTemplate()
 
     // Redux
     const dispatch = useDispatch()
@@ -82,6 +85,7 @@ const TabelaConferenciaDeLancamentos = ({
 
     let filtrar_por_data_inicio = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_inicio
     let filtrar_por_data_fim = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_fim
+    let filtrar_por_nome_fornecedor = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_nome_fornecedor
     let filtrar_por_numero_de_documento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento
     let filtrar_por_tipo_de_documento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento
     let filtrar_por_tipo_de_pagamento = dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento
@@ -284,12 +288,21 @@ const TabelaConferenciaDeLancamentos = ({
 
     const mensagemQuantidadeExibida = () => {
         return (
-            <div className="row">
-                <div className="col-12" style={{padding: "15px 0px", margin: "0px 15px", flex: "100%"}}>
+            <div className="d-flex justify-content-between align-middle">
+                <div>
                     Exibindo <span style={{
                     color: "#00585E",
                     fontWeight: "bold"
                 }}>{totalDelancamentosParaConferencia}</span> lançamentos
+                </div>
+                <div>
+                    <span>
+                    <FontAwesomeIcon
+                        style={{fontSize: '18px', marginRight: "8px", color: '#00585D'}}
+                        icon={faInfoCircle}
+                    />
+                        <button className='legendas-table text-md-start' onClick={() => setShowModalLegendaInformacao(true)} style={{color: '#00585D', outline: 'none', border: 0, background: 'inherit'}} >Legendas Informações</button>
+                    </span> 
                 </div>
             </div>
         )
@@ -387,7 +400,7 @@ const TabelaConferenciaDeLancamentos = ({
                 await postLancamentosParaConferenciaMarcarComoCorreto(prestacaoDeContas.uuid, payload)
                 console.log("Marcados como correto com sucesso!")
                 desmarcarTodos()
-                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual, false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
+                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual, false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_nome_fornecedor, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
             } catch (e) {
                 console.log("Erro ao marcar como correto ", e.response)
             }
@@ -416,7 +429,7 @@ const TabelaConferenciaDeLancamentos = ({
                 await postLancamentosParaConferenciaMarcarNaoConferido(prestacaoDeContas.uuid, payload)
                 console.log("Marcados como não conferido com sucesso!")
                 desmarcarTodos()
-                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual, false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
+                await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual, false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_nome_fornecedor, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
             } catch (e) {
                 console.log("Erro ao marcar como não conferido ", e.response)
             }
@@ -450,9 +463,9 @@ const TabelaConferenciaDeLancamentos = ({
         filtrar_por_acao: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_acao ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_acao : "",
         filtrar_por_lancamento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_lancamento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_lancamento : "",
 
-
         filtrar_por_data_inicio: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_inicio ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_inicio : "",
         filtrar_por_data_fim: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_fim ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_data_fim : "",
+        filtrar_por_nome_fornecedor: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_nome_fornecedor ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_nome_fornecedor : "",
         filtrar_por_numero_de_documento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_numero_de_documento : "",
         filtrar_por_tipo_de_documento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_documento : "",
         filtrar_por_tipo_de_pagamento: dados_acompanhamento_de_pc_usuario_logado && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos && dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento ? dados_acompanhamento_de_pc_usuario_logado.conferencia_de_lancamentos.filtrar_por_tipo_de_pagamento : "",
@@ -466,13 +479,17 @@ const TabelaConferenciaDeLancamentos = ({
         });
     };
 
+    const handleClearDate = () => {
+        setStateFiltros({
+            ...stateFiltros,
+            filtrar_por_data_inicio: "",
+            filtrar_por_data_fim: ""
+        });
+    }
+
     const handleSubmitFiltros = async () => {
         desmarcarTodos()
-
-        let data_inicio = stateFiltros.filtrar_por_data_inicio ? moment(stateFiltros.filtrar_por_data_inicio, "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-        let data_fim = stateFiltros.filtrar_por_data_fim ? moment(stateFiltros.filtrar_por_data_fim, "YYYY-MM-DD").format("YYYY-MM-DD") : null;
-
-        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual,  false, data_inicio, data_fim, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
+        await carregaLancamentosParaConferencia(prestacaoDeContas, contaUuid, stateFiltros.filtrar_por_acao, stateFiltros.filtrar_por_lancamento, paginacao_atual,  false, stateFiltros.filtrar_por_data_inicio, stateFiltros.filtrar_por_data_fim, stateFiltros.filtrar_por_nome_fornecedor, stateFiltros.filtrar_por_numero_de_documento, stateFiltros.filtrar_por_tipo_de_documento, stateFiltros.filtrar_por_tipo_de_pagamento)
     };
 
     const limpaFiltros = async () => {
@@ -495,6 +512,7 @@ const TabelaConferenciaDeLancamentos = ({
                 filtrar_por_data_inicio: filtrar_por_data_inicio,
                 filtrar_por_data_fim: filtrar_por_data_fim,
                 filtrar_por_lancamento: filtrar_por_lancamento,
+                filtrar_por_nome_fornecedor: filtrar_por_nome_fornecedor,
                 filtrar_por_numero_de_documento: filtrar_por_numero_de_documento,
                 filtrar_por_tipo_de_documento: filtrar_por_tipo_de_documento,
                 filtrar_por_tipo_de_pagamento: filtrar_por_tipo_de_pagamento,
@@ -530,130 +548,11 @@ const TabelaConferenciaDeLancamentos = ({
         }
     }
 
-    const retornaToolTipGasto = (rowData) => {
-
-        if (rowData && rowData.rateios && rowData.rateios.length > 0) {
-            if (rowData.rateios.some(e => e && e.estorno && e.estorno.uuid)) {
-                let texto_tooltip = `Esse gasto possui estornos.`
-                return (
-                    <>
-                        <div data-tip={texto_tooltip} data-html={true}>
-                            <span>{rowData.tipo_transacao}</span>
-                            <FontAwesomeIcon
-                                style={{fontSize: '18px', marginLeft: "4px", color: '#2A6397'}}
-                                icon={faInfoCircle}
-                            />
-                            <ReactTooltip/>
-                        </div>
-                    </>
-                )
-            }
-        }
-        return <span>{rowData.tipo_transacao}</span>
-    }
-
-    const montaTemplateToolTip = (rowData, texto_exibir, tipo_de_despesa) =>{
-        if (rowData && rowData.rateios && rowData.rateios.length > 0) {
-            if (rowData.rateios.some(e => e && e.estorno && e.estorno.uuid)) {
-                let texto_tooltip = `Esse gasto possui estornos.`
-                return (
-                    <>
-                        <div className='d-flex justify-content-between'>
-                                <span data-tip={texto_tooltip} data-html={true}>{rowData.tipo_transacao}
-                                    <FontAwesomeIcon
-                                        style={{fontSize: '18px', marginLeft: "4px", color: '#2A6397'}}
-                                        icon={faInfoCircle}
-                                    />
-                                </span>
-                            <ReactTooltip/>
-
-                            <img
-                                data-tip={texto_exibir}
-                                data-html={true}
-                                src={tipo_de_despesa === 'despesa_impostos' ? bookmarkRegular : bookmarkSolid}
-                                alt='' style={{width: '12px'}}
-                            />
-                            <ReactTooltip/>
-                        </div>
-                    </>
-                )
-            } else {
-                return (
-                    <div className='d-flex justify-content-between' data-tip={texto_exibir} data-html={true}>
-                        <span>{rowData.tipo_transacao}</span>
-                        <img
-                            src={tipo_de_despesa === 'despesa_impostos' ? bookmarkRegular : bookmarkSolid}
-                            alt=''
-                            style={{width: '12px'}}
-                        />
-                        <ReactTooltip/>
-                    </div>
-                )
-            }
-        } else {
-            return (
-                <div className='d-flex justify-content-between' data-tip={texto_exibir} data-html={true}>
-                    <span>{rowData.tipo_transacao}</span>
-                    <img
-                        src={tipo_de_despesa === 'despesa_impostos' ? bookmarkRegular : bookmarkSolid}
-                        alt=''
-                        style={{width: '12px'}}
-                    />
-                    <ReactTooltip/>
-                </div>
-            )
-        }
-    }
-
-    const tipoLancamentoTemplateDespesaGeradoraDoImposto = (rowData) => {
-        let numero_documento = rowData.despesa_geradora_do_imposto.numero_documento ? "de número " + rowData.despesa_geradora_do_imposto.numero_documento + ", " : ''
-        let data_transacao = rowData.despesa_geradora_do_imposto.data_transacao ? "paga em " + moment(rowData.despesa_geradora_do_imposto.data_transacao).format('DD/MM/YYYY') : 'pagamento ainda não realizado';
-        let texto_exibir = `Esse imposto está relacionado à despesa</br> ${numero_documento} ${data_transacao}`
-
-        return montaTemplateToolTip(rowData, texto_exibir, 'despesa_geradora_do_imposto')
-    }
-
-    const tipoLancamentoTemplateDespesasImpostos = (rowData) => {
-        let qtde_impostos = rowData.despesas_impostos.length
-
-        if (qtde_impostos === 1) {
-            let valor_imposto = rowData.despesas_impostos[0].valor_total ? valor_template(null, null, rowData.despesas_impostos[0].valor_total) + ", " : "0,00 , "
-            let data_transacao = rowData.despesas_impostos[0].data_transacao ? "pago em " + moment(rowData.despesas_impostos[0].data_transacao).format('DD/MM/YYYY') : 'pagamento ainda não realizado';
-            let texto_exibir = `Essa despesa teve retenção de imposto: R$${valor_imposto}</br> ${data_transacao}`
-
-            return montaTemplateToolTip(rowData, texto_exibir, 'despesa_impostos')
-
-        } else {
-            let texto_exibir = "Essa despesa teve retenções de impostos:</br>";
-
-            rowData.despesas_impostos.map((imposto) => (
-                texto_exibir += `<p class="mb-0">
-                                    R$${imposto.valor_total ? valor_template(null, null, imposto.valor_total) + ", " : "0,00 , "}
-                                    ${imposto.data_transacao ? "pago em " + moment(imposto.data_transacao).format('DD/MM/YYYY') : 'pagamento ainda não realizado'}
-                                </p>`
-
-            ))
-            return montaTemplateToolTip(rowData, texto_exibir, 'despesa_impostos')
-        }
-    }
-
-    const tipoLancamentoDespesaTemplate = (rowData) => {
-        if (rowData.despesa_geradora_do_imposto && rowData.despesa_geradora_do_imposto.uuid) {
-            return tipoLancamentoTemplateDespesaGeradoraDoImposto(rowData)
-        } else if (rowData.despesas_impostos && rowData.despesas_impostos.length > 0) {
-            return tipoLancamentoTemplateDespesasImpostos(rowData)
-        } else {
-            return (
-                retornaToolTipGasto(rowData)
-            )
-        }
-    }
-
     const tipoTransacaoTemplate = (rowData) => {
         if (rowData && rowData.tipo_transacao && rowData.tipo_transacao === 'Crédito') {
             return retornaToolTipCredito(rowData)
         } else if (rowData && rowData.tipo_transacao && rowData.tipo_transacao === 'Gasto') {
-            return tipoLancamentoDespesaTemplate(rowData)
+            return <span>{rowData.tipo_transacao}</span>
         }
     }
 
@@ -663,6 +562,7 @@ const TabelaConferenciaDeLancamentos = ({
                 stateFiltros={stateFiltros}
                 tabelasDespesa={tabelaDespesa}
                 handleChangeFiltros={handleChangeFiltros}
+                handleClearDate={handleClearDate}
                 handleSubmitFiltros={handleSubmitFiltros}
                 limpaFiltros={limpaFiltros}
             />
@@ -685,6 +585,7 @@ const TabelaConferenciaDeLancamentos = ({
                 montagemSelecionar() :
                 mensagemQuantidadeExibida()
             }
+
             {lancamentosParaConferencia && lancamentosParaConferencia.length > 0 &&
                 <>
                     <DataTable
@@ -731,6 +632,12 @@ const TabelaConferenciaDeLancamentos = ({
                         />
                         <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna"
                                 style={{width: '24%'}}/>
+                        <Column 
+                            field='informacao'
+                            header='Informações'
+                            className="align-middle text-left borda-coluna"
+                            body={tagInformacao}
+                            style={{width: '12%'}}/>
                         <Column
                             field='valor_transacao_total'
                             header='Valor (R$)'
@@ -759,6 +666,14 @@ const TabelaConferenciaDeLancamentos = ({
                     primeiroBotaoCss="success"
                 />
             </section>
+            <ModalBootstrapLegendaInformacao
+                show={showModalLegendaInformacao}
+                primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
+                titulo="Legenda Informações"
+                primeiroBotaoTexto="Fechar"
+                primeiroBotaoCss="outline-success"
+                texto='<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>'
+            />
         </>
     )
 }

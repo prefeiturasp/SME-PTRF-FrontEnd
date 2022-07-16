@@ -51,7 +51,7 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
             setInfoContas(info)
             setLoading(false);
         }
-        
+
     }
 
     const carregaConsolidadoDrePorUuidDaAtaDeParecerTecnico = useCallback(async () => {
@@ -114,7 +114,7 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         }
 
         return hora_extenso;
-        
+
     }
 
     const retornaDadosAtaFormatado = (campo) => {
@@ -142,7 +142,7 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
             }
             else{
                 return "_______"
-            } 
+            }
         }
         else if(campo === "data_portaria") {
             if(dadosAta.data_portaria){
@@ -162,7 +162,7 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
                 nome_dre = nome_dre.replace("DIRETORIA REGIONAL DE EDUCACAO", "")
                 nome_dre = nome_dre.trim();
             }
-            
+
             return nome_dre;
         }
     };
@@ -208,72 +208,72 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
     return (
         <div className="col-12 container-visualizacao-da-ata-parecer-tecnico mb-5">
             {loading ? (
-                <div className="mt-5">
-                    <Loading
-                        corGrafico="black"
-                        corFonte="dark"
-                        marginTop="0"
-                        marginBottom="0"
-                    />
-                </div>
-            ) :
-            
-            <>
-                <div className="col-12 mt-4">
-                    {dadosAta && Object.entries(dadosAta).length > 0 &&
-                        <TopoComBotoes
-                            dadosAta={dadosAta}
-                            retornaDadosAtaFormatado={retornaDadosAtaFormatado}
-                            handleClickFecharAtaParecerTecnico={handleClickFecharAtaParecerTecnico}
-                            handleClickEditarAta={handleClickEditarAta}
-                            downloadAtaParecerTecnico={downloadAtaParecerTecnico}
-                            retornaTituloCabecalhoAta={retornaTituloCabecalhoAta}
-                            jaPublicado={jaPublicado}
+                    <div className="mt-5">
+                        <Loading
+                            corGrafico="black"
+                            corFonte="dark"
+                            marginTop="0"
+                            marginBottom="0"
                         />
-                    }
-                </div>
+                    </div>
+                ) :
 
-                <div className="col-12">
-                    {dadosAta && Object.entries(dadosAta).length > 0 &&
-                        <TextoDinamicoSuperior
-                            retornaDadosAtaFormatado={retornaDadosAtaFormatado}
-                            retornaTituloCorpoAta={retornaTituloCorpoAta}
-                            ehPrevia={ehPrevia}
-                        />
-                    }
+                <>
+                    <div className="col-12 mt-4">
+                        {dadosAta && Object.entries(dadosAta).length > 0 &&
+                            <TopoComBotoes
+                                dadosAta={dadosAta}
+                                retornaDadosAtaFormatado={retornaDadosAtaFormatado}
+                                handleClickFecharAtaParecerTecnico={handleClickFecharAtaParecerTecnico}
+                                handleClickEditarAta={handleClickEditarAta}
+                                downloadAtaParecerTecnico={downloadAtaParecerTecnico}
+                                retornaTituloCabecalhoAta={retornaTituloCabecalhoAta}
+                                jaPublicado={jaPublicado}
+                            />
+                        }
+                    </div>
 
-                    {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.aprovadas &&
-                        <TabelaAprovadas
-                            infoContas={infoContas.aprovadas}
-                            status="aprovadas"
-                            exibirUltimoItem={false}
-                        />
-                    }
+                    <div className="col-12">
+                        {dadosAta && Object.entries(dadosAta).length > 0 &&
+                            <TextoDinamicoSuperior
+                                retornaDadosAtaFormatado={retornaDadosAtaFormatado}
+                                retornaTituloCorpoAta={retornaTituloCorpoAta}
+                                ehPrevia={ehPrevia}
+                            />
+                        }
 
-                    {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.aprovadas_ressalva &&
-                        <TabelaAprovadas
-                            infoContas={infoContas.aprovadas_ressalva}
-                            status="aprovadas_ressalva"
-                            exibirUltimoItem={false}
-                        />
-                    }
+                        {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.aprovadas &&
+                            <TabelaAprovadas
+                                infoContas={infoContas.aprovadas}
+                                status="aprovadas"
+                                exibirUltimoItem={false}
+                            />
+                        }
 
-                    {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.reprovadas &&
-                        <TabelaAprovadas
-                            infoContas={infoContas.reprovadas}
-                            status="reprovadas"
-                            exibirUltimoItem={true}
-                        />
-                    }
+                        {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.aprovadas_ressalva &&
+                            <TabelaAprovadas
+                                infoContas={infoContas.aprovadas_ressalva}
+                                status="aprovadas_ressalva"
+                                exibirUltimoItem={false}
+                            />
+                        }
 
-                    {dadosAta && Object.entries(dadosAta).length > 0 && dadosAta.presentes_na_ata &&
-                        <Assinaturas
-                            presentes_na_ata={dadosAta.presentes_na_ata}
-                        />
-                    }  
-                </div>
-            </>
-        }  
+                        {dadosAta && Object.entries(dadosAta).length > 0 && infoContas && infoContas.reprovadas &&
+                            <TabelaAprovadas
+                                infoContas={infoContas.reprovadas}
+                                status="reprovadas"
+                                exibirUltimoItem={true}
+                            />
+                        }
+
+                        {dadosAta && Object.entries(dadosAta).length > 0 && dadosAta.presentes_na_ata &&
+                            <Assinaturas
+                                presentes_na_ata={dadosAta.presentes_na_ata}
+                            />
+                        }
+                    </div>
+                </>
+            }
         </div>
     )
 }
