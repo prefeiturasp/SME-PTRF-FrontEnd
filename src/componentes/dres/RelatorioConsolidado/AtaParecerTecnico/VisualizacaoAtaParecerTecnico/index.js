@@ -7,7 +7,7 @@ import { Assinaturas } from "./Assinaturas";
 import {getAtaParecerTecnico, getInfoContas, getDownloadAtaParecerTecnico} from "../../../../../services/dres/AtasParecerTecnico.service";
 import moment from "moment";
 import Loading from "../../../../../utils/Loading"
-import {getConsolidadoDre} from "../../../../../services/dres/RelatorioConsolidado.service"
+import {getConsolidadoDrePorUuidAtaDeParecerTecnico} from "../../../../../services/dres/RelatorioConsolidado.service"
 
 moment.updateLocale('pt', {
     months: [
@@ -19,7 +19,11 @@ moment.updateLocale('pt', {
 const numero = require('numero-por-extenso');
 
 export const VisualizacaoDaAtaParecerTecnico = () => {
-    let {uuid_ata} = useParams();
+    let {uuid_ata, ja_publicado} = useParams();
+
+    // Para bloquear as edições quando for de um Consolidado DRE incremental publicacoes_anteriores
+    // eslint-disable-next-line no-eval
+    const jaPublicado = eval(ja_publicado)
 
     const [dadosAta, setDadosAta] = useState({});
     const [infoContas, setInfoContas] = useState([])
@@ -50,27 +54,16 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         
     }
 
-    const carregaConsolidadoDre = useCallback(async () => {
-        if (dadosAta && dadosAta.dre &&  dadosAta.periodo){
-            if(dadosAta.dre.uuid && dadosAta.periodo.uuid){
-                try {
-                    let consolidado_dre = await getConsolidadoDre(dadosAta.dre.uuid, dadosAta.periodo.uuid)
-                    if (consolidado_dre && consolidado_dre.length > 0){
-                        console.log("conssolidado", consolidado_dre)
-                        setConsolidadoDre(consolidado_dre[0])
-                    }else {
-                        setConsolidadoDre(false)
-                    }
-                }catch (e) {
-                    console.log("Erro ao buscar Consolidado Dre ", e)
-                }
-            }   
+    const carregaConsolidadoDrePorUuidDaAtaDeParecerTecnico = useCallback(async () => {
+        if (uuid_ata){
+            let consolidado_dre = await getConsolidadoDrePorUuidAtaDeParecerTecnico(uuid_ata)
+            setConsolidadoDre(consolidado_dre)
         }
-    }, [dadosAta])
+    }, [uuid_ata])
 
     useEffect(() => {
-        carregaConsolidadoDre()
-    }, [carregaConsolidadoDre])
+        carregaConsolidadoDrePorUuidDaAtaDeParecerTecnico()
+    }, [carregaConsolidadoDrePorUuidDaAtaDeParecerTecnico])
 
     const dataPorExtenso = (data) => {
         if (!data) {
@@ -110,8 +103,6 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         else{
             texto_minuto = "minutos"
         }
-        
-
         // Corrigindo o genero de hora
         let hora_genero = numero.porExtenso(hora).replace("um", "uma").replace("dois", "duas")
 
@@ -188,18 +179,16 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
         if(ehPrevia()){
             return "PRÉVIA DA ATA DE PARECER TÉCNICO CONCLUSIVO"
         }
-
         return "ATA DE PARECER TÉCNICO CONCLUSIVO"
     }
 
     const ehPrevia = () => {
-        if(!consolidadoDre){
+        if(!consolidadoDre.uuid){
             return true;
         }
-        else if(consolidadoDre && consolidadoDre.versao === "PREVIA"){
+        else if(consolidadoDre.uuid && consolidadoDre.versao === "PREVIA"){
             return true;
         }
-
         return false;
     }
 
@@ -239,6 +228,7 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
                             handleClickEditarAta={handleClickEditarAta}
                             downloadAtaParecerTecnico={downloadAtaParecerTecnico}
                             retornaTituloCabecalhoAta={retornaTituloCabecalhoAta}
+                            jaPublicado={jaPublicado}
                         />
                     }
                 </div>

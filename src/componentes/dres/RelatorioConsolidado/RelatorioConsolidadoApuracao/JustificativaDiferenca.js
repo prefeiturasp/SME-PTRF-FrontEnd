@@ -2,7 +2,7 @@ import React from "react";
 import {visoesService} from "../../../../services/visoes.service";
 
 
-export const JustificativaDiferenca = ({comparaValores, justificativaDiferenca, setJustificativaDiferenca, onChangeJustificativaDiferenca, onSubmitJustificativaDiferenca, btnSalvarJustificativaDisable, setBtnSalvarJustificativaDisable}) => {
+export const JustificativaDiferenca = ({comparaValores, justificativaDiferenca, setJustificativaDiferenca, onChangeJustificativaDiferenca, onSubmitJustificativaDiferenca, btnSalvarJustificativaDisable, setBtnSalvarJustificativaDisable, jaPublicado}) => {
     
     const onClickBtnLimpar = () => {
         setJustificativaDiferenca({
@@ -11,7 +11,7 @@ export const JustificativaDiferenca = ({comparaValores, justificativaDiferenca, 
         })
         setBtnSalvarJustificativaDisable(false);
     }
-    
+
     return(
         <>
             {comparaValores() &&
@@ -22,8 +22,30 @@ export const JustificativaDiferenca = ({comparaValores, justificativaDiferenca, 
                         </textarea>
                     </div>
                     <div className="d-flex  justify-content-end pb-3">
-                        <button onClick={onClickBtnLimpar} disabled={!visoesService.getPermissoes(['change_relatorio_consolidado_dre'])} type="reset" className="btn btn btn-outline-success mt-2">Limpar</button>
-                        <button onClick={onSubmitJustificativaDiferenca} disabled={btnSalvarJustificativaDisable | !justificativaDiferenca |  !visoesService.getPermissoes(['change_relatorio_consolidado_dre'])} type="submit" className="btn btn-success mt-2 ml-2">Salvar</button>
+                        <button
+                            onClick={onClickBtnLimpar}
+                            disabled={
+                                jaPublicado ||
+                                !visoesService.getPermissoes(['change_relatorio_consolidado_dre'])
+                        }
+                            type="reset"
+                            className="btn btn btn-outline-success mt-2"
+                        >
+                            Limpar
+                        </button>
+                        <button
+                            onClick={onSubmitJustificativaDiferenca}
+                            disabled={
+                                jaPublicado ||
+                                btnSalvarJustificativaDisable ||
+                                !justificativaDiferenca ||
+                                !visoesService.getPermissoes(['change_relatorio_consolidado_dre'])
+                        }
+                            type="submit"
+                            className="btn btn-success mt-2 ml-2"
+                        >
+                            Salvar
+                        </button>
                     </div>
                 </>
             }

@@ -7,9 +7,10 @@ export const TopoComBotoes = ({
     handleClickFecharAtaParecerTecnico, 
     handleClickEditarAta, 
     downloadAtaParecerTecnico,
-    retornaTituloCabecalhoAta
+    retornaTituloCabecalhoAta,
+    jaPublicado
 }) =>{
-    const podeEditarAta = [['change_ata_parecer_tecnico']].some(visoesService.getPermissoes)
+    const podeEditarAta = [['change_ata_parecer_tecnico']].some(visoesService.getPermissoes) && !jaPublicado
 
     return(
         <>
@@ -17,8 +18,7 @@ export const TopoComBotoes = ({
             <div className='col-12 col-md-5 mt-2 align-self-center'>
                 <p className='titulo-visualizacao-da-ata-parecer-tecnico mb-0'>{retornaTituloCabecalhoAta()}</p>
                 <span className="subtitulo-visualizacao-da-ata-parecer-tecnico">
-                    Período {dadosAta.periodo.referencia} - 
-                    {retornaDadosAtaFormatado('periodo.data_inicio_realizacao_despesas')} até {retornaDadosAtaFormatado('periodo.data_fim_realizacao_despesas')}
+                    Período {dadosAta.periodo.referencia} - {retornaDadosAtaFormatado('periodo.data_inicio_realizacao_despesas')} até {retornaDadosAtaFormatado('periodo.data_fim_realizacao_despesas')}
                 </span>
             </div>
 
