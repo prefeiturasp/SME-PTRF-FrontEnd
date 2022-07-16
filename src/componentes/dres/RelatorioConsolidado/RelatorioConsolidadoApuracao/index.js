@@ -28,7 +28,11 @@ import Loading from "../../../../utils/Loading";
 
 export const RelatorioConsolidadoApuracao = () => {
 
-    let {periodo_uuid, conta_uuid} = useParams();
+    let {periodo_uuid, conta_uuid, ja_publicado} = useParams();
+
+    // Para bloquear as edições quando for de um Consolidado DRE incremental publicacoes_anteriores
+    // eslint-disable-next-line no-eval
+    const jaPublicado = eval(ja_publicado)
 
     const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
 
@@ -54,7 +58,7 @@ export const RelatorioConsolidadoApuracao = () => {
     const [observacao, setObservacao] = useState(false);
     const [showModalObservacao, setShowModalObservacao] = useState(false);
     const [loading, setLoading] = useState(false);
-    
+
     // Consolidado DRE
     const [consolidadoDre, setConsolidadoDre] = useState(false);
 
@@ -309,6 +313,7 @@ export const RelatorioConsolidadoApuracao = () => {
                             <BoxConsultarDados
                                 periodo_uuid={periodo_uuid}
                                 conta_uuid={conta_uuid}
+                                jaPublicado={jaPublicado}
                             />
                             <TabelaExecucaoFinanceira
                                 execucaoFinanceira={execucaoFinanceira}
@@ -323,7 +328,7 @@ export const RelatorioConsolidadoApuracao = () => {
                                 onSubmitJustificativaDiferenca={onSubmitJustificativaDiferenca}
                                 btnSalvarJustificativaDisable={btnSalvarJustificativaDisable}
                                 setBtnSalvarJustificativaDisable={setBtnSalvarJustificativaDisable}
-                                publicado={publicado}
+                                jaPublicado={jaPublicado}
                             />
                             <TabelaDevolucoesContaPtrf
                                 devolucoesContaPtrf={devolucoesContaPtrf}

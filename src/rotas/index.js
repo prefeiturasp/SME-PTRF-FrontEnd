@@ -329,7 +329,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/visualizacao-da-ata-parecer-tecnico/:uuid_ata",
+        path: "/visualizacao-da-ata-parecer-tecnico/:uuid_ata/:ja_publicado?",
         component: VisualizacaoDaAtaParecerTecnico,
         permissoes: ['access_relatorio_consolidado_dre'],
     },
@@ -341,13 +341,13 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/dre-relatorio-consolidado-apuracao/:periodo_uuid/:conta_uuid/",
+        path: "/dre-relatorio-consolidado-apuracao/:periodo_uuid/:conta_uuid/:ja_publicado?",
         component: RelatorioConsolidadoApuracao,
         permissoes: ['access_relatorio_consolidado_dre'],
     },
     {
         exact: true,
-        path: "/dre-relatorio-consolidado-dados-das-ues/:periodo_uuid/:conta_uuid/",
+        path: "/dre-relatorio-consolidado-dados-das-ues/:periodo_uuid/:conta_uuid/:ja_publicado?",
         component: RelatorioConsolidadoDadosDasUes,
         permissoes: ['access_relatorio_consolidado_dre'],
     },
