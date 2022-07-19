@@ -33,6 +33,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
             setMsgErro(false)
         }catch (e) {
             console.log("Erro ao redefinir senha ", e);
+            setMsgErro(e.detail)
             setMsgErro(true)
         }
     };
