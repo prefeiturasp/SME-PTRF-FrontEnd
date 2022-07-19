@@ -30,10 +30,10 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
             let redefinir_senha = await redefinirMinhaSenha(payload);
             console.log("Senha Redefinida ", redefinir_senha)
             setSenhaRedefinida(true);
-            setMsgErro("")
+            setMsgErro(false)
         }catch (e) {
-            console.log("Erro ao redefinir senha ", e);
-            setMsgErro(e.detail)
+            console.log("Erro ao redefinir senha ==> ", e.response);
+            setMsgErro(e.response.data.detail)
         }
     };
 
