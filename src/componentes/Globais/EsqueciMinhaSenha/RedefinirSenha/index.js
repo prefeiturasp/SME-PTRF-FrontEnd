@@ -17,7 +17,6 @@ export const RedefinirSenha = () => {
                         redirectUrlSucesso={'/login'}
                         textoSucesso={'Senha redefinida com sucesso'}
                         cssAlertSucesso={'alert alert-success'}
-                        textoErro={'Erro ao redefinir a senha, tente novamente'}
                         cssAlertErro={'alert alert-danger'}
                     />
                 </div>

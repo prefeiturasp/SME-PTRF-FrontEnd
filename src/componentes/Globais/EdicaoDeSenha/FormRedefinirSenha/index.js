@@ -8,11 +8,11 @@ import {MedidorForcaSenha} from "../../MedidorForcaSenha";
 import {TextoValidacaoSenha} from "../../MedidorForcaSenha/textoValidacaoSenha";
 import {YupSignupSchemaRedefinirSenha} from "../../../../utils/ValidacoesAdicionaisFormularios";
 
-export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrlSucesso, textoSucesso, cssAlertSucesso, textoErro, cssAlertErro}) => {
+export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrlSucesso, textoSucesso, cssAlertSucesso, cssAlertErro}) => {
 
     let {uuid} = useParams();
 
-    const [msgErro, setMsgErro] = useState(false);
+    const [msgErro, setMsgErro] = useState("");
     const [senhaRedefinida, setSenhaRedefinida] = useState(false);
 
     const initialValues = {
@@ -30,11 +30,10 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
             let redefinir_senha = await redefinirMinhaSenha(payload);
             console.log("Senha Redefinida ", redefinir_senha)
             setSenhaRedefinida(true);
-            setMsgErro(false)
+            setMsgErro("")
         }catch (e) {
             console.log("Erro ao redefinir senha ", e);
             setMsgErro(e.detail)
-            setMsgErro(true)
         }
     };
 
@@ -108,7 +107,7 @@ export const FormRedefinirSenha = ({textoValidacaoDentroDoForm=null, redirectUrl
 
             {msgErro &&
             <div className={`alert ${cssAlertErro} lert-dismissible fade show text-center col-12`} role="alert">
-                {textoErro}
+                {msgErro}
                 <button type="button" className="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
