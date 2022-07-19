@@ -1,33 +1,10 @@
-import React, {memo, useCallback, useState, useEffect} from "react";
+import React, {memo} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
-import {
-    getDocumentosConsolidadoDre,
-} from "../../../services/dres/RelatorioConsolidado.service";
-
 import { getDownloadLauda } from "../../../services/dres/Laudas.service";
 import { formataNomeDRE } from "../../../utils/ValidacoesAdicionaisFormularios";
-import moment from "moment";
 
 const Lauda = ({consolidadoDre}) => {
-    const [laudas, setLaudas] = useState([]);
-
-    const retornaLauda = useCallback(async () => {
-        if (consolidadoDre && consolidadoDre.uuid) {
-            try {
-                let documentos = await getDocumentosConsolidadoDre(consolidadoDre.uuid)
-                setLaudas(documentos.laudas_do_consolidado_dre);
-            } catch (e) {
-                console.log("Erro ao buscar Laudas ", e)
-            }
-        } else {
-            setLaudas(false)
-        }
-    }, [consolidadoDre])
-
-    useEffect(() => {
-        retornaLauda()
-    }, [retornaLauda])
 
     const retornaClasseMensagem = (texto) => {
         let classeMensagem = "documento-gerado";
@@ -44,12 +21,12 @@ const Lauda = ({consolidadoDre}) => {
         let nome_dre = "";
         let tipo_conta = "";
 
-        if(consolidadoDre && consolidadoDre.dre && consolidadoDre.dre.nome){
-            nome_dre = formataNomeDRE(consolidadoDre.dre.nome).toLowerCase();
+        if(consolidadoDre && consolidadoDre.dre_nome ){
+            nome_dre = formataNomeDRE(consolidadoDre.dre_nome).toLowerCase();
         }
 
-        if(lauda && lauda.tipo_conta && lauda.tipo_conta.nome){
-            tipo_conta = lauda.tipo_conta.nome.toLowerCase();
+        if(lauda && lauda.tipo_conta && lauda.tipo_conta){
+            tipo_conta = lauda.tipo_conta.toLowerCase();
         }
 
         let filename = `Lauda_${nome_dre}_${tipo_conta}.docx.txt`;
@@ -57,30 +34,18 @@ const Lauda = ({consolidadoDre}) => {
         await getDownloadLauda(lauda.uuid, filename);
     };
 
-    const mensagem = (lauda) => {
-        if(lauda){
-            if(lauda.alterado_em){
-                let data = moment(lauda.alterado_em).format("DD/MM/YYYY HH:mm");
-                return `Documentos finais gerados dia ${data}`
-            }
-        }
-        else{
-            return "Documentos pendentes de geração";
-        }
-    }
-
     return(
         <div className="border">
-            {laudas && laudas.length > 0 &&
+            {consolidadoDre.laudas && consolidadoDre.laudas.length > 0 &&
                 <>
-                    {laudas.map((lauda) =>
+                    {consolidadoDre.laudas.map((lauda) =>
                         <div className='row px-2' key={lauda.uuid}>
                             <div className="col-12 col-md-8">
                                 <div className='mt-2 mb-3'>
-                                    <p className='fonte-14 mb-1'><strong>Lauda - {lauda.tipo_conta && lauda.tipo_conta.nome ? "Conta " + lauda.tipo_conta.nome : ""}</strong></p>
+                                    <p className='fonte-14 mb-1'><strong>Lauda - {lauda && lauda.tipo_conta ? "Conta " + lauda.tipo_conta : ""}</strong></p>
 
                                     <p className={`fonte-12 mb-0 ${retornaClasseMensagem(lauda.status)}`}>
-                                        <span>{mensagem(lauda)}</span>
+                                        <span>{lauda.status_geracao_arquivo}</span>
                                         <button className='btn-editar-membro' type='button'>
                                             <FontAwesomeIcon
                                                 onClick={() => downloadLauda(lauda)}
