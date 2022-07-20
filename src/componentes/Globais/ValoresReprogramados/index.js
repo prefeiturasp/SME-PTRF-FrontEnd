@@ -533,6 +533,24 @@ export const ValoresReprogramados = () => {
         return true;
     }
 
+    const rowSpan = (acao) => {
+        let total = 1
+
+        if(acao.capital){
+            total = total +1
+        }
+
+        if(acao.custeio){
+            total = total + 1
+        };
+
+        if(acao.livre){
+            total = total + 1
+        }
+
+        return total;
+    }
+
     return (
         <>
             <PaginasContainer>
@@ -572,6 +590,7 @@ export const ValoresReprogramados = () => {
                                 handleClickEstaCorreto={handleClickEstaCorreto}
                                 visao_selecionada={visao_selecionada}
                                 exibeAcao={exibeAcao}
+                                rowSpan={rowSpan}
                             />
                             <Botoes
                                 handleSalvarValoresReprogramados={handleSalvarValoresReprogramados}

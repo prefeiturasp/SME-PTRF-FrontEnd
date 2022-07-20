@@ -16,7 +16,8 @@ export const ValoresReprogramadosFormFormik = ({
     handleChangeStatusConferencia,
     handleClickEstaCorreto,
     visao_selecionada,
-    exibeAcao
+    exibeAcao,
+    rowSpan
 }) => {
     
     return (
@@ -76,7 +77,7 @@ export const ValoresReprogramadosFormFormik = ({
                                                                 <tbody key={index_acao}>
                                                                     {exibeAcao(acao) &&
                                                                         <tr>
-                                                                            <td className="titulo-acoes" rowSpan={4}>{acao.nome}</td>
+                                                                            <td className="titulo-acoes" rowSpan={rowSpan(acao)}>{acao.nome}</td>
                                                                         </tr>
                                                                     }
 
