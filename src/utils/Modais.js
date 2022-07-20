@@ -625,7 +625,7 @@ export const ModalPublicarRelatorioConsolidado = (propriedades) => {
                 </p>
 
                 <p className="mt-3">
-                    Caso queira conferir as informações cadastradas, antes de concluir, volte e gere um prévia dos documentos.
+                    Caso queira conferir as informações cadastradas, antes de concluir, volte e gere uma prévia dos documentos.
                 </p>
 
                 <p className="mt-3">Deseja concluir a publicação?</p>
@@ -645,6 +645,37 @@ export const ModalPublicarRelatorioConsolidado = (propriedades) => {
             primeiroBotaoCss="outline-success"
             segundoBotaoOnclick={propriedades.publicarConsolidadoDre}
             segundoBotaoTexto="Confirmar Publicação"
+            segundoBotaoCss="success"
+        />
+    )
+};
+
+export const ModalConclusaoValoresReprogramadosNaoPermitido = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Conclusão não permitida"
+            bodyText={propriedades.bodyText}
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Fechar"
+            primeiroBotaoCss="success"
+        />
+    )
+};
+
+export const ModalDescartarAlteracoesValoresReprogramados = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Alterações não salvas"
+            bodyText="Voltar sem salvar provocará a perda das alterações não salvas. Deseja mesmo descartar suas alterações?"
+            primeiroBotaoOnclick={propriedades.redirecionarUsuario}
+            primeiroBotaoTexto="Sim"
+            primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={propriedades.handleClose}
+            segundoBotaoTexto="Não"
             segundoBotaoCss="success"
         />
     )
