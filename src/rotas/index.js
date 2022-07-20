@@ -16,7 +16,7 @@ import {DetalhedasPrestacoesPage} from "../paginas/escolas/DetalheDasPrestacoes"
 import {VisualizacaoDaAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta";
 import {EdicaoAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/EdicaoAta";
 import {MembrosDaAssociacaoPage} from "../paginas/escolas/MembrosDaAssociacao";
-import {ValoresReprogramadosPage} from "../paginas/escolas/ValoresReprogramados";
+import { ValoresReprogramados } from "../componentes/Globais/ValoresReprogramados";
 import {DadosDasContasPage} from "../paginas/escolas/DadosDasContasAssociacao";
 import {EsqueciMinhaSenhaPage} from "../paginas/Login/EsqueciMinhaSenha";
 import {RedefinirSenhaPage} from "../paginas/Login/RedefinirMinhaSenha";
@@ -134,8 +134,8 @@ const routesConfig = [
     {
         exact: true,
         path: "/cadastro-de-valores-reprogramados",
-        component: ValoresReprogramadosPage,
-        permissoes: ['add_valores_reprogramados'],
+        component: ValoresReprogramados,
+        permissoes: ['access_valores_reprogramados_ue', 'access_valores_reprogramados_dre'],
     },
     {
         exact: true,
