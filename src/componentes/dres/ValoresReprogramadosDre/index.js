@@ -18,6 +18,7 @@ import Loading from "../../../utils/Loading";
 import Img404 from "../../../assets/img/img-404.svg";
 import {MsgImgCentralizada} from "../../Globais/Mensagens/MsgImgCentralizada";
 import {MsgImgLadoDireito} from "../../Globais/Mensagens/MsgImgLadoDireito";
+import {Link} from 'react-router-dom';
 
 
 export const ValoresReprogramadosDre = () =>{
@@ -180,12 +181,22 @@ export const ValoresReprogramadosDre = () =>{
     const acoesTemplate = (rowData) => {
         return (
             <div>
-                <button className="btn-editar-membro">
+                <Link
+                    to={
+                        {
+                            pathname: `/cadastro-de-valores-reprogramados/`,
+                            state: {
+                                uuid_associacao: rowData.associacao.uuid,
+                            }
+                        }
+                    }
+                    className="btn-editar-membro"
+                >
                     <FontAwesomeIcon
                         style={{fontSize: '20px', marginRight: "0", color: "#00585E"}}
                         icon={faEdit}
                     />
-                </button>
+                </Link>
             </div>
         )
     }
