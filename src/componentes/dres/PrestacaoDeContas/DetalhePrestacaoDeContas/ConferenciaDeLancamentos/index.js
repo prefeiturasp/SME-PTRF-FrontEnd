@@ -3,7 +3,6 @@ import {getLancamentosParaConferencia, getUltimaAnalisePc, getContasDaAssociacao
 import {TabsConferenciaDeLancamentos} from "./TabsConferenciaDeLancamentos";
 import {visoesService} from "../../../../../services/visoes.service";
 import {mantemEstadoAcompanhamentoDePc as meapcservice} from "../../../../../services/mantemEstadoAcompanhamentoDePc.service";
-import moment from "moment";
 
 const ConferenciaDeLancamentos = ({prestacaoDeContas, editavel=true}) =>{
     const [lancamentosParaConferencia, setLancamentosParaConferencia] = useState([])
