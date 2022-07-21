@@ -7,6 +7,7 @@ import useConferidoRateioTemplate from "./useConferidoRateioTemplate";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
+import './scss/rowExpansionTable.scss';
 
 
 const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{
@@ -62,7 +63,7 @@ const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{
                     <div key={index} className='row border-bottom border-right border-left pb-3'>
 
                         <div className='col-12 mb-2'>
-                            <div className='font-weight-bold mb-2 mt-2 pb-2 titulo-row-expanded-conferencia-de-lancamentos'>Despesa {index + 1}
+                            <div className='font-weight-bold mb-2 mt-2 pb-2 titulo-row-expanded-conferencia-de-lancamentos'>Despesas
                                 {(retornaToolTipRateio(rateio))}
                             </div>
                         </div>
@@ -102,7 +103,7 @@ const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{
                                         {rateio.valor_rateio ? valor_template(null, null, rateio.valor_rateio) : 0}
                                     </div>
                                     <div className='col border-left p-2'>
-                                        <p className='mb-0 font-weight-bold'>Vínculo a atividade</p>
+                                        <p className='mb-0 font-weight-bold' id="vinculo-atividade">Vínculo a atividade</p>
                                         {tagRateioTemplate(rateio)}
                                     </div>
                                     <div
