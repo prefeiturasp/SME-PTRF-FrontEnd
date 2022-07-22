@@ -2,7 +2,7 @@ import React from "react";
 import {Formik} from "formik";
 import CurrencyInput from "react-currency-input";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFile, faCheckCircle, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
+import {faCheckCircle, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 
 
 export const ValoresReprogramadosFormFormik = ({
@@ -50,23 +50,9 @@ export const ValoresReprogramadosFormFormik = ({
                                                     <table className="tabela-valores-reprogramados table table-bordered border-0 mb-0 mt-2">
                                                         <thead>
                                                             <tr className="">
-                                                                <th scope="col" style={{width: '20%'}} className="align-middle">Ação</th>
+                                                                <th scope="col" style={{width: '15%'}} className="align-middle">Ação</th>
                                                                 <th scope="col" style={{width: '20%'}} className="align-middle">Tipo de aplicação</th>
-                                                                <th scope="col" style={{width: '30%'}} className="align-middle">
-                                                                    <div className="row">
-                                                                        <div className="col-2 mt-2 pr-0">
-                                                                            <FontAwesomeIcon
-                                                                                style={{fontSize: '30px', marginRight: "5px", color: '#b8b8ba', opacity: "0.5"}}
-                                                                                icon={faFile}
-                                                                            />
-                                                                        </div>
-
-                                                                        <div className="col-9 pl-1">
-                                                                            <span>Preencha o valor reprogramado (Associação)</span>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </th>
+                                                                <th scope="col" style={{width: '35%'}} className="align-middle">Preencha o valor reprogramado (Associação)</th>
                                                                 <th scope="col" style={{width: '30%'}} className="align-middle">Conferência DRE</th>
                                                             </tr>
                                                         </thead>
@@ -82,7 +68,7 @@ export const ValoresReprogramadosFormFormik = ({
                                                                     }
 
                                                                     {acao.custeio &&
-                                                                        <tr>
+                                                                        <tr className="tr-valores-reprogramados">
                                                                             <td>Custeio</td>
                                                                             <td className="tabela-valores-reprogramados-td-ue">
                                                                                 <CurrencyInput
@@ -171,7 +157,7 @@ export const ValoresReprogramadosFormFormik = ({
                                                                     }
                                                                     
                                                                     {acao.capital &&
-                                                                        <tr>
+                                                                        <tr className="tr-valores-reprogramados">
                                                                             <td>Capital</td>
                                                                             <td className="tabela-valores-reprogramados-td-ue">
                                                                                 <CurrencyInput
@@ -260,7 +246,7 @@ export const ValoresReprogramadosFormFormik = ({
                                                                     }
                                                                     
                                                                     {acao.livre &&
-                                                                        <tr>
+                                                                        <tr className="tr-valores-reprogramados">
                                                                             <td>Livre aplicação</td>
                                                                             <td className="tabela-valores-reprogramados-td-ue">
                                                                                 <CurrencyInput
