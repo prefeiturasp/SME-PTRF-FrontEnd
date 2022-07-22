@@ -111,9 +111,9 @@ const TabelaTransacoes = ({
         let texto_exibir = rowData?.informacoes?.map(info => {
             if (info.tag_nome === 'Parcial'){
                 return info.tag_hint
-            }})
+            }}).filter((texto) => texto !== undefined).join(', ');
 
-            if (texto_exibir != ''){
+            if (!texto_exibir){
                 return (
                     <div data-tip={texto_exibir} data-html={true}>
                         <span>
