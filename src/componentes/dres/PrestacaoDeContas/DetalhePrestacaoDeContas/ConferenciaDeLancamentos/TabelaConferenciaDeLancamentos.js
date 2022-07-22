@@ -301,7 +301,7 @@ const TabelaConferenciaDeLancamentos = ({
                         style={{fontSize: '18px', marginRight: "8px", color: '#00585D'}}
                         icon={faInfoCircle}
                     />
-                        <button className='legendas-table text-md-start' onClick={() => setShowModalLegendaInformacao(true)} style={{color: '#00585D', outline: 'none', border: 0, background: 'inherit'}} >Legendas Informações</button>
+                        <button className='legendas-table text-md-start' onClick={() => setShowModalLegendaInformacao(true)} style={{color: '#00585D', outline: 'none', border: 0, background: 'inherit', padding: '4px'}} >Legenda Informação</button>
                     </span> 
                 </div>
             </div>
@@ -669,7 +669,7 @@ const TabelaConferenciaDeLancamentos = ({
             <ModalBootstrapLegendaInformacao
                 show={showModalLegendaInformacao}
                 primeiroBotaoOnclick={() => setShowModalLegendaInformacao(false)}
-                titulo="Legenda Informações"
+                titulo="Legenda Informação"
                 primeiroBotaoTexto="Fechar"
                 primeiroBotaoCss="outline-success"
                 texto='<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>'
