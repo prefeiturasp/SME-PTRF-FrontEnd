@@ -15,16 +15,29 @@ export const getConsolidadoDre = async (dre_uuid, periodo_uuid) => {
     return (await api.get(`/api/consolidados-dre/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
 };
 
+export const getConsolidadoDrePorUuidAtaDeParecerTecnico = async (ata_de_parecer_tecnico_uuid) => {
+    return (await api.get(`/api/consolidados-dre/consolidado-dre-por-ata-uuid/?ata=${ata_de_parecer_tecnico_uuid}`, authHeader)).data
+};
+
+
+export const getConsolidadosDreJaPublicadosProximaPublicacao = async (dre_uuid, periodo_uuid) => {
+    return (await api.get(`/api/consolidados-dre/publicados-e-proxima-publicacao/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
+};
+
 export const getStatusConsolidadoDre = async (dre_uuid, periodo_uuid) => {
     return (await api.get(`/api/consolidados-dre/status-consolidado-dre/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
 };
 
-export const getDocumentosConsolidadoDre = async (consolidado_dre_uuid) => {
-    return (await api.get(`/api/consolidados-dre/${consolidado_dre_uuid}/documentos/`, authHeader)).data
-};
-
 export const postPublicarConsolidadoDre = async (payload) => {
     return (await api.post(`/api/consolidados-dre/publicar/`, payload, authHeader)).data
+};
+
+export const postGerarPreviaConsolidadoDre = async (payload) => {
+    return (await api.post(`/api/consolidados-dre/gerar-previa/`, payload, authHeader)).data
+};
+
+export const postCriarAtaAtrelarAoConsolidadoDre = async (payload) => {
+    return (await api.post(`/api/consolidados-dre/criar-ata-e-atelar-ao-consolidado/`, payload, authHeader)).data
 };
 
 export const getDownloadRelatorio = async (relatorio_uuid, versao) => {

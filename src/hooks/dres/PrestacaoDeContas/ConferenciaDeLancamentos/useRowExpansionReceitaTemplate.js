@@ -1,5 +1,6 @@
 import React from "react";
 import {useCarregaTabelaReceita} from "../../../Globais/useCarregaTabelaReceita";
+import './scss/rowExpansionTable.scss';
 
 
 const useRowExpansionDespesaTemplate = (prestacaoDeContas) =>{

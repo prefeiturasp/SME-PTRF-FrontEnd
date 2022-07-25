@@ -16,7 +16,7 @@ import {DetalhedasPrestacoesPage} from "../paginas/escolas/DetalheDasPrestacoes"
 import {VisualizacaoDaAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta";
 import {EdicaoAta} from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/EdicaoAta";
 import {MembrosDaAssociacaoPage} from "../paginas/escolas/MembrosDaAssociacao";
-import {ValoresReprogramadosPage} from "../paginas/escolas/ValoresReprogramados";
+import { ValoresReprogramados } from "../componentes/Globais/ValoresReprogramados";
 import {DadosDasContasPage} from "../paginas/escolas/DadosDasContasAssociacao";
 import {EsqueciMinhaSenhaPage} from "../paginas/Login/EsqueciMinhaSenha";
 import {RedefinirSenhaPage} from "../paginas/Login/RedefinirMinhaSenha";
@@ -134,8 +134,8 @@ const routesConfig = [
     {
         exact: true,
         path: "/cadastro-de-valores-reprogramados",
-        component: ValoresReprogramadosPage,
-        permissoes: ['add_valores_reprogramados'],
+        component: ValoresReprogramados,
+        permissoes: ['access_valores_reprogramados_ue', 'access_valores_reprogramados_dre'],
     },
     {
         exact: true,
@@ -329,7 +329,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/visualizacao-da-ata-parecer-tecnico/:uuid_ata",
+        path: "/visualizacao-da-ata-parecer-tecnico/:uuid_ata/:ja_publicado?",
         component: VisualizacaoDaAtaParecerTecnico,
         permissoes: ['access_relatorio_consolidado_dre'],
     },
@@ -341,13 +341,13 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/dre-relatorio-consolidado-apuracao/:periodo_uuid/:conta_uuid/",
+        path: "/dre-relatorio-consolidado-apuracao/:periodo_uuid/:conta_uuid/:ja_publicado?",
         component: RelatorioConsolidadoApuracao,
         permissoes: ['access_relatorio_consolidado_dre'],
     },
     {
         exact: true,
-        path: "/dre-relatorio-consolidado-dados-das-ues/:periodo_uuid/:conta_uuid/",
+        path: "/dre-relatorio-consolidado-dados-das-ues/:periodo_uuid/:conta_uuid/:ja_publicado?",
         component: RelatorioConsolidadoDadosDasUes,
         permissoes: ['access_relatorio_consolidado_dre'],
     },

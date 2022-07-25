@@ -1,0 +1,100 @@
+.titulo-contas {
+    color: #00585E;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.titulo-acoes {
+    color: #00585E;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.tabela-valores-reprogramados th{
+    background-color: #F5F6F8;
+    color: #42474A;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.tabela-valores-reprogramados-td-ue {
+    font-size: 14px;
+}
+
+.tabela-valores-reprogramados-td-dre {
+    font-size: 12px;
+}
+
+.status-conferencia {
+    margin-top: 27px;
+}
+
+.tabela-valores-reprogramados .tbody-total {
+    background-color: #F5F6F8;
+
+    .total-titulo {
+        font-weight: 700;
+        font-size: 14px;
+        color: #00585D;
+    }
+
+    .total-subtitulo {
+        font-weight: 700;
+        font-size: 12px;
+        color: #00585D;
+    }
+
+    .total-valor {
+        font-weight: 700;
+        font-size: 14px;
+        color: #42474A;
+    }
+}
+
+.barra-status{
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.cor-1 {
+    background-color: #8c8c8c;
+}
+
+.cor-2 {
+    background-color: #D06D12;
+}
+
+.cor-3 {
+    background-color: #B53B0F;
+}
+
+.cor-4 {
+    background-color: #2B7D83;
+}
+
+.link-esta-correto, .link-esta-correto:focus{
+    color: #000000 !important;
+    background-color: transparent;
+    outline: 0;
+    border: none !important;
+    text-decoration: underline;
+    font-size: 14px;
+  }
+
+  .link-esta-correto:hover{
+    cursor: pointer;
+  }
+  
+  .link-esta-correto-disabled, .link-esta-correto-disabled:focus, .link-esta-correto-disabled:hover{
+    color: #7D7D7D !important;
+    background-color: transparent;
+    outline: 0;
+    border: none !important;
+    text-decoration: underline;
+    font-size: 14px;
+    pointer-events: none;
+    cursor: default;
+  }
+  
+ 

@@ -6,7 +6,8 @@ import {
     ModalBootstrapTipoRecursoNaoAceito,
     ModalBootstrapSaldoInsuficienteDaconta,
     ModalBootstrapFormMeusDadosSenha,
-    ModalBootstrapFormMeusDadosEmail
+    ModalBootstrapFormMeusDadosEmail,
+    ModalBootstrapConfirmarPublicacao
 } from "../componentes/Globais/ModalBootstrap";
 import {FormAlterarSenha} from "../componentes/Globais/EdicaoDeSenha/FormAlterarSenha";
 import {TextoValidacaoSenha} from "../componentes/Globais/MedidorForcaSenha/textoValidacaoSenha";
@@ -607,6 +608,75 @@ export const ModalAtaNaoPreenchida = (propriedades) => {
             primeiroBotaoOnclick={propriedades.handleClose}
             primeiroBotaoTexto="Fechar"
             primeiroBotaoCss="success"
+        />
+    )
+};
+
+export const ModalPublicarRelatorioConsolidado = (propriedades) => {
+    const bodyTextarea = () => {
+        return (
+            <>
+                <p>
+                    Ao confirmar a publicação, o sistema bloqueará as alterações dos relatórios e da ata.
+                </p>
+
+                <p className="mt-3">
+                    <strong>Essa operação, não poderá ser revertida.</strong>
+                </p>
+
+                <p className="mt-3">
+                    Caso queira conferir as informações cadastradas, antes de concluir, volte e gere uma prévia dos documentos.
+                </p>
+
+                <p className="mt-3">Deseja concluir a publicação?</p>
+            </>
+        )
+
+    };
+
+    return (
+        <ModalBootstrapConfirmarPublicacao
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Confirmar Publicação"
+            bodyText={bodyTextarea()}
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Cancelar"
+            primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={propriedades.publicarConsolidadoDre}
+            segundoBotaoTexto="Confirmar Publicação"
+            segundoBotaoCss="success"
+        />
+    )
+};
+
+export const ModalConclusaoValoresReprogramadosNaoPermitido = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Conclusão não permitida"
+            bodyText={propriedades.bodyText}
+            primeiroBotaoOnclick={propriedades.handleClose}
+            primeiroBotaoTexto="Fechar"
+            primeiroBotaoCss="success"
+        />
+    )
+};
+
+export const ModalDescartarAlteracoesValoresReprogramados = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Alterações não salvas"
+            bodyText="Voltar sem salvar provocará a perda das alterações não salvas. Deseja mesmo descartar suas alterações?"
+            primeiroBotaoOnclick={propriedades.redirecionarUsuario}
+            primeiroBotaoTexto="Sim"
+            primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={propriedades.handleClose}
+            segundoBotaoTexto="Não"
+            segundoBotaoCss="success"
         />
     )
 };

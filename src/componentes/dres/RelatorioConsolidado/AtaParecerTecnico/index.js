@@ -4,19 +4,36 @@ import { exibeDateTimePT_BR_Ata } from "../../../../utils/ValidacoesAdicionaisFo
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faDownload} from '@fortawesome/free-solid-svg-icons'
 import {getDownloadAtaParecerTecnico} from "../../../../services/dres/AtasParecerTecnico.service";
+import {postCriarAtaAtrelarAoConsolidadoDre} from "../../../../services/dres/RelatorioConsolidado.service";
 
-export const AtaParecerTecnico = ({ataParecerTecnico}) => {
+export const AtaParecerTecnico = ({consolidadoDre}) => {
+
     const onClickVerAta = (uuid_ata) =>{
-        window.location.assign(`/visualizacao-da-ata-parecer-tecnico/${uuid_ata}/`)
+        window.location.assign(`/visualizacao-da-ata-parecer-tecnico/${uuid_ata}/${consolidadoDre.ja_publicado}`)
     };
 
+
+    const criarAtaAtrelarAoConsolidado = async (dre_uuid, periodo_uuid, consolidado_uuid=null) =>{
+        let payload = {
+            dre: dre_uuid,
+            periodo: periodo_uuid,
+            consolidado: consolidado_uuid,
+        }
+        try {
+            let ata = await postCriarAtaAtrelarAoConsolidadoDre(payload)
+            onClickVerAta(ata.uuid)
+        }catch (e) {
+            console.log("Erro ao criar a Ata - criarAtaAtrelarAoConsolidado", e)
+        }
+    }
+
     const downloadAtaParecerTecnico = async () =>{
-        await getDownloadAtaParecerTecnico(ataParecerTecnico.uuid);
+        await getDownloadAtaParecerTecnico(consolidadoDre.ata_de_parecer_tecnico.uuid);
     };
 
     const mensagem = (ata) => {
-        if(ata.uuid === undefined){
-            return "Documento pendente de geração";        
+        if(!ata || ata.uuid === undefined){
+            return "Documento pendente de geração";
         }
         else if(ata.uuid && ata.alterado_em){
             return "Último preenchimento em " + exibeDateTimePT_BR_Ata(ata.alterado_em);
@@ -27,8 +44,8 @@ export const AtaParecerTecnico = ({ataParecerTecnico}) => {
     }
 
     const classeMensagem = (ata) => {
-        if(ata.uuid === undefined || ata.alterado_em === null){
-            return "ata-nao-preenchida"       
+        if(!ata || ata.uuid === undefined || ata.alterado_em === null){
+            return "ata-nao-preenchida"
         }
         else if(ata.uuid && ata.alterado_em){
             return "ata-preenchida"
@@ -42,9 +59,9 @@ export const AtaParecerTecnico = ({ataParecerTecnico}) => {
                     <div className="col-12 col-md-8">
                         <div className='mt-2 mb-3'>
                             <p className='fonte-14 mb-1'><strong>Ata de apresentação do Parecer Técnico Conclusivo</strong></p>
-                            <p className={`fonte-12 mb-2 ${classeMensagem(ataParecerTecnico)}`}>
-                                <span>{mensagem(ataParecerTecnico)}</span>
-                                {ataParecerTecnico.arquivo_pdf &&
+                            <p className={`fonte-12 mb-2 ${classeMensagem(consolidadoDre.ata_de_parecer_tecnico)}`}>
+                                <span>{mensagem(consolidadoDre.ata_de_parecer_tecnico)}</span>
+                                {consolidadoDre.ata_de_parecer_tecnico && consolidadoDre.ata_de_parecer_tecnico.arquivo_pdf &&
                                     <button className='btn-editar-membro' type='button'>
                                         <FontAwesomeIcon
                                             onClick={() => downloadAtaParecerTecnico()}
@@ -57,13 +74,25 @@ export const AtaParecerTecnico = ({ataParecerTecnico}) => {
                         </div>
                     </div>
                     <div className="col-12 col-md-4 align-self-center text-right">
-                        <button
-                            onClick={() => onClickVerAta(ataParecerTecnico.uuid)}
-                            type="button"
-                            className="btn btn-outline-success btn-sm"
-                        >
-                            Preencher ata
-                        </button>
+                        {consolidadoDre.ata_de_parecer_tecnico && consolidadoDre.ata_de_parecer_tecnico.uuid ? (
+                                <button
+                                    onClick={() => onClickVerAta(consolidadoDre.ata_de_parecer_tecnico.uuid)}
+                                    type="button"
+                                    className="btn btn-outline-success btn-sm"
+                                >
+                                    {consolidadoDre.ja_publicado ? "Consultar" : "Preencher"} ata
+                                </button>
+                            ):
+                            <button
+                                onClick={() => criarAtaAtrelarAoConsolidado(consolidadoDre.dre_uuid, consolidadoDre.periodo_uuid, consolidadoDre.uuid ? consolidadoDre.uuid : null)}
+                                type="button"
+                                className="btn btn-outline-success btn-sm"
+                            >
+                                Preencher ata
+                            </button>
+
+                        }
+
                     </div>
                 </div>
             </div>
