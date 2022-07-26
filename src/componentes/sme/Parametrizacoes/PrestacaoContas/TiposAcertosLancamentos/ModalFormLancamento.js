@@ -1,19 +1,26 @@
 import React from "react";
-import {ModalFormParametrizacoesAcoes} from "../../../../Globais/ModalBootstrap";
+import {ModalFormParametrizacoesAcertos} from "../../../../Globais/ModalBootstrap";
 
-export const ModalFormAcoes = (props) => {
+export const ModalFormLancamentos = (props) => {
+
+    const getNomeUrl = () => {
+        if(window.location.href.split("-").pop() === 'lancamentos'){
+            return 'lançamentos'
+        }
+        return 'documentos'
+    }
 
     const bodyTextarea = () => {
 
         return (
             <>
-                <form onSubmit={props.handleSubmitModalFormAcoes}>
+                <form onSubmit={props.handleSubmitModalFormLancamentos}>
 
 
-                    <div className='row mt-3'>
+                    <div className='row'>
 
-                        <div className='col'>
-                            <label htmlFor="nome">Nome da ação</label>
+                    <div className='col'>
+                            <label htmlFor="nome">Nome do tipo</label>
                             <input
                                 value={props.stateFormModal.nome}
                                 name='nome'
@@ -78,9 +85,9 @@ export const ModalFormAcoes = (props) => {
                         <div className="p-Y bd-highlight">
                             <button
                                 disabled={props.readOnly || !props.stateFormModal.nome}
-                                onClick={()=>props.handleSubmitModalFormAcoes(props.stateFormModal)}
+                                onClick={()=>props.handleSubmitModalFormLancamentos(props.stateFormModal)}
                                 type="button"
-                                className="btn btn btn-outline-success mt-2"
+                                className="btn btn btn-success mt-2"
                             >
                                 Salvar
                             </button>
@@ -92,9 +99,9 @@ export const ModalFormAcoes = (props) => {
     };
 
     return (
-        <ModalFormParametrizacoesAcoes
+        <ModalFormParametrizacoesAcertos
             show={props.show}
-             titulo={props.stateFormModal && props.stateFormModal.operacao === 'edit' ? 'Editar ação' : 'Adicionar ação'}
+            titulo={props.stateFormModal && props.stateFormModal.operacao === 'edit' ? 'Editar tipo de acerto - ' + getNomeUrl() : 'Adicionar tipo de acerto - ' + getNomeUrl()}
             onHide={props.handleClose}
             bodyText={bodyTextarea()}
             primeiroBotaoOnclick={props.handleClose}

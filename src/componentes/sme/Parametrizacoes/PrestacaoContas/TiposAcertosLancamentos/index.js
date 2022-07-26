@@ -2,12 +2,12 @@ import React, {useState, useEffect, useCallback, useMemo} from "react";
 import {PaginasContainer} from "../../../../../paginas/PaginasContainer";
 import {getListaDeAcoes} from "../../../../../services/sme/Parametrizacoes.service";
 import {Filtros} from "./Filtros";
-import {TabelaAcoes} from "../../Estrutura/Acoes/TabelaAcoes";
+import {TabelaLancamentos} from "../../PrestacaoContas/TiposAcertosLancamentos/TabelaLancamentos";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus, faEdit} from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import {Link} from "react-router-dom";
-import {ModalFormAcoes} from "../../Estrutura/Acoes/ModalFormAcoes";
+import {ModalFormLancamentos} from "../../PrestacaoContas/TiposAcertosLancamentos/ModalFormLancamento";
 import {ModalConfirmDeleteAcao} from "../../Estrutura/Acoes/ModalConfirmDeleteAcao";
 import {ModalInfoNaoPodeExcluir} from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
 import {ModalInfoNaoPodeGravar} from "../../Estrutura/Acoes/ModalInfoNaoPodeGravar";
@@ -25,7 +25,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () =>{
         operacao: 'create',
     };
 
-    const [todasAsAcoes, setTodasAsAcoes] = useState([]);
+    const [todosLancamentos, setTodosLancamentos] = useState([]);
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
     const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
     const [showModalForm, setShowModalForm] = useState(false);
@@ -40,7 +40,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () =>{
     const carregaTodosLancamentos = useCallback(async () => {
         setLoading(true);
         let todosLancamentos = await getListaDeAcoes();
-        setTodasAsAcoes(todosLancamentos);
+        setTodosLancamentos(todosLancamentos);
         setLoading(false);
     }, []);
 
@@ -48,7 +48,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () =>{
         carregaTodosLancamentos();
     }, [carregaTodosLancamentos]);
 
-    const totalDeAcoes = useMemo(() => todasAsAcoes.length, [todasAsAcoes]);
+    const totalDeAcoes = useMemo(() => todosLancamentos.length, [todosLancamentos]);
 
     const handleChangeFiltros = (name, value) => {
         setStateFiltros({
@@ -68,7 +68,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () =>{
 
     const rowsPerPage = 20;
 
-    const acoesTemplate = (rowData) => {
+    const lancamentosTemplate = (rowData) => {
         return (
             <div>
                 <button onClick={() => alert("Goku")} className="btn-editar-membro">
@@ -90,7 +90,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () =>{
         console.log("Adicionando")
     }
 
-    const handleSubmitModalFormAcoes = async () => {
+    const handleSubmitModalFormLancamentos = async () => {
         console.log("submit modal")
     }
 
@@ -161,19 +161,18 @@ export const ParametrizacoesTiposAcertosLancamentos = () =>{
                             limpaFiltros={limpaFiltros}
                         />
                         <p>Exibindo <span className='total-acoes'>{totalDeAcoes}</span> ações</p>
-                        <TabelaAcoes
-                            todasAsAcoes={todasAsAcoes}
+                        <TabelaLancamentos
+                            todosLancamentos={todosLancamentos}
                             rowsPerPage={rowsPerPage}
-                            acoesTemplate={acoesTemplate}
-                            conferirUnidadesTemplate={conferirUnidadesTemplate}
+                            lancamentosTemplate={lancamentosTemplate}
                         />
                     </>
                 }
                 <section>
-                    <ModalFormAcoes
+                    <ModalFormLancamentos
                         show={showModalForm}
                         handleClose={onHandleClose}
-                        handleSubmitModalFormAcoes={handleSubmitModalFormAcoes}
+                        handleSubmitModalFormLancamentos={handleSubmitModalFormLancamentos}
                         handleChangeFormModal={handleChangeFormModal}
                         stateFormModal={stateFormModal}
                         readOnly={readOnly}
