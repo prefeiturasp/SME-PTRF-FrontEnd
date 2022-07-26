@@ -536,7 +536,7 @@ export const GetComportamentoPorStatus = (
                         textoBtnAvancar={"Concluir análise"}
                         textoBtnRetroceder={"Voltar para análise"}
                         metodoAvancar={() => setShowConcluirAnalise(true)}
-                        metodoRetroceder={() => setShowVoltarParaAnalise(true)}
+                        metodoRetroceder={() => setShowVoltarParaAnalise()}
                         disabledBtnAvancar={true}
                         disabledBtnRetroceder={false}
                         esconderBotaoAvancar={true}
