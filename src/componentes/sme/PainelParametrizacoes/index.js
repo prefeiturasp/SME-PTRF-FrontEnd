@@ -120,12 +120,6 @@ export const PainelParametrizacoes = () => {
             icone: IconeTiposAcertos,
             permissoes: ['access_painel_parametrizacoes'],
         },
-        {
-            parametro: 'Tipos de Acertos Documentos',
-            url: 'parametro-tipos-acertos-documentos',
-            icone: IconeTiposAcertos,
-            permissoes: ['access_painel_parametrizacoes'],
-        },
     ];
 
     const itensParametrizacaoEdicaoDeTexto = [
