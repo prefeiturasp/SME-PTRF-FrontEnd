@@ -29,6 +29,7 @@ import {GetComportamentoPorStatus} from "./GetComportamentoPorStatus";
 import {ModalSalvarPrestacaoDeContasAnalise} from "../../../../utils/Modais";
 import Loading from "../../../../utils/Loading";
 import {toastCustom} from "../../../Globais/ToastCustom";
+import {ModalNaoPodeVoltarParaAnalise} from "../ModalNaoPodeVoltarParaAnalise";
 
 
 require("ordinal-pt-br");
@@ -114,6 +115,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [showRecebida, setShowRecebida] = useState(false);
     const [showConcluirAnalise, setShowConcluirAnalise] = useState(false);
     const [showVoltarParaAnalise, setShowVoltarParaAnalise] = useState(false);
+    const [showNaoPodeVoltarParaAnalise, setShowNaoPodeVoltarParaAnalise] = useState(false);
     const [redirectListaPc, setRedirectListaPc] = useState(false);
     const [informacoesPrestacaoDeContas, setInformacoesPrestacaoDeContas] = useState(initialInformacoesPrestacaoDeContas);
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState({0: true, key_0: true});
@@ -710,6 +712,7 @@ export const DetalhePrestacaoDeContas = () =>{
         setShowVoltarParaAnalise(false);
         setshowErroPrestacaoDeContasPosterior(false);
         setShowDeleteAjusteSaldoPC(false);
+        setShowNaoPodeVoltarParaAnalise(false);
     };
 
     const onCloseModalSalvarAnalise = () => {
@@ -884,6 +887,15 @@ export const DetalhePrestacaoDeContas = () =>{
         setLoading(false);
     };
 
+    const verificaSePodeVoltarParaAnalise = () => {
+        if (prestacaoDeContas.publicada) {
+            setShowNaoPodeVoltarParaAnalise(true)
+        }
+        else {
+            setShowVoltarParaAnalise(true)
+        }
+    }
+
     const onVoltarParaAnalise = async () => {
         setLoading(true);
         setShowVoltarParaAnalise(false);
@@ -1049,7 +1061,7 @@ export const DetalhePrestacaoDeContas = () =>{
                                     getObjetoIndexAnalise={getObjetoIndexAnalise}
                                     toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
                                     clickBtnTabelaAcoes={clickBtnTabelaAcoes}
-                                    setShowVoltarParaAnalise={setShowVoltarParaAnalise}
+                                    setShowVoltarParaAnalise={verificaSePodeVoltarParaAnalise}
                                     btnSalvarDisabled={btnSalvarDisabled}
                                     setBtnSalvarDisabled={setBtnSalvarDisabled}
                                     carregaPrestacaoDeContas={carregaPrestacaoDeContas}
@@ -1166,6 +1178,15 @@ export const DetalhePrestacaoDeContas = () =>{
                         primeiroBotaoCss="outline-success"
                         segundoBotaoCss="success"
                         segundoBotaoTexto="Confirmar"
+                    />
+                </section>
+                <section>
+                    <ModalNaoPodeVoltarParaAnalise
+                        show={showNaoPodeVoltarParaAnalise}
+                        handleClose={onHandleClose}
+                        texto={`<p>Não é possível voltar com essa PC para análise porque ela consta na versão final do relatório consolidado ${prestacaoDeContas.referencia_consolidado_dre}</p>`}
+                        primeiroBotaoTexto="Fechar"
+                        primeiroBotaoCss="success"
                     />
                 </section>
                 <section>
