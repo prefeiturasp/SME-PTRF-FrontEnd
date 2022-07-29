@@ -212,7 +212,7 @@ export const getAcoesFiltradas = async (nome='') => {
 };
 
 export const getLancamentosFiltrados = async (nome=null, categoria=null, ativo=null) => {
-    return (await api.get(`/api/tipos-acerto-documento/?nome=${nome}&categoria=${categoria}&ativo=${ativo}`, authHeader)).data
+    return (await api.get(`/api/tipos-acerto-lancamento/?nome=${nome}&categoria=${categoria}&ativo=${ativo}`, authHeader)).data
 }; 
 
 export const postAddAcao = async (payload) => {

@@ -72,7 +72,6 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
   );
 
   const handleChangeFiltros = (name, value) => {
-    console.log('name : ' + name, 'value : ' + value);
     setStateFiltros({
       ...stateFiltros,
       [name]: value,
@@ -132,8 +131,10 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
       categoria: stateFormModal.categoria,
       ativo: stateFormModal.ativo,
     };
+    console.log("eu passo aqui pelo menos?", stateFormModal.operacao)
 
     if (stateFormModal.operacao === "create") {
+      console.log("pq vc nao esta batendo no create?")
       try {
         await postAddLancamentos(payload);
         setShowModalForm(false);
