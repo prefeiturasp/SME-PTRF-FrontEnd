@@ -2,4 +2,12 @@ span.total-lancamentos{
     color: #00585e;
     font-weight: bold;
   }
-  
+
+.categoria-table-multiple-search {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.categoria-table-multiple-search .ant-select-selector {
+  height: 38px;
+}

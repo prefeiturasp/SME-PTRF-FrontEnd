@@ -5,6 +5,7 @@ import {
   getLancamentosFiltrados,
   postAddLancamentos,
   putAtualizarLancamento,
+  getTabelaCategoria,
 } from "../../../../../services/sme/Parametrizacoes.service";
 import { Filtros } from "./Filtros";
 import { TabelaLancamentos } from "../../PrestacaoContas/TiposAcertosLancamentos/TabelaLancamentos";
@@ -24,12 +25,15 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
     filtrar_por_categoria: "",
     filtrar_por_ativo: "",
   };
+
   const initialStateFormModal = {
     nome: "",
-    categoria: "",
+    categoria: [],
     uuid: "",
     id: "",
+    lancamento_modal: [],
   };
+
   const [todosLancamentos, setTodosLancamentos] = useState([]);
   const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
   const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
@@ -39,6 +43,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
   const [showModalDeleteAcao, setShowModalDeleteAcao] = useState(false);
   const [showModalInfoNaoPodeExcluir, setShowModalInfoNaoPodeExcluir] = useState(false);
   const [mensagemModalInfoNaoPodeExcluir, setMensagemModalInfoNaoPodeExcluir] = useState("");
+  const [categoriaTabela, setCategoriaTabela] = useState([]);
   const [loading, setLoading] = useState(true);
   const [readOnly, setReadOnly] = useState(false);
 
@@ -53,12 +58,21 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
     carregaTodosLancamentos();
   }, [carregaTodosLancamentos]);
 
+  useEffect(() => {
+    async function carregaTabelaCategoria() {
+        let resp = await getTabelaCategoria()
+        setCategoriaTabela(resp.categorias)
+    }
+    carregaTabelaCategoria();
+  }, []);
+
   const totalLancamentos = useMemo(
     () => todosLancamentos.length,
     [todosLancamentos]
   );
 
   const handleChangeFiltros = (name, value) => {
+    console.log('name : ' + name, 'value : ' + value);
     setStateFiltros({
       ...stateFiltros,
       [name]: value,
@@ -102,6 +116,15 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
     setStateFormModal(initialStateFormModal);
     setShowModalForm(false);
   };
+
+  const handleOnChangeMultipleSelectModal = async (value) => {
+      let name = "lancamento_modal"
+
+      setStateFormModal({
+          ...stateFormModal,
+          [name]: value
+      });
+  }
 
   const handleSubmitModalFormLancamentos = async (stateFormModal) => {
     const payload = {
@@ -227,6 +250,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
               </Link>
             </div>
             <Filtros
+              categoriaTabela={categoriaTabela}
               stateFiltros={stateFiltros}
               handleChangeFiltros={handleChangeFiltros}
               handleSubmitFiltros={handleSubmitFiltros}
@@ -249,9 +273,11 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
             show={showModalForm}
             handleClose={onHandleClose}
             handleSubmitModalFormLancamentos={handleSubmitModalFormLancamentos}
+            handleOnChangeMultipleSelectModal={handleOnChangeMultipleSelectModal}
             handleChangeFormModal={handleChangeFormModal}
             stateFormModal={stateFormModal}
             readOnly={readOnly}
+            categoriaTabela={categoriaTabela}
             serviceCrudLancamentos={serviceCrudLancamentos}
             primeiroBotaoTexto="Cancelar"
             primeiroBotaoCss="outline-success"

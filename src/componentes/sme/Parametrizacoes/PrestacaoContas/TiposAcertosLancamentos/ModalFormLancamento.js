@@ -1,18 +1,19 @@
 import React from "react";
+import { Select } from 'antd';
 import {ModalFormParametrizacoesAcertos} from "../../../../Globais/ModalBootstrap";
+import '../parametrizacoes-prestacao-contas.scss'
 
 export const ModalFormLancamentos = (props) => {
+    const { Option } = Select;
 
     const bodyTextarea = (operacao) => {
 
         return (
             <>
                 <form onSubmit={props.handleSubmitModalFormLancamentos}>
-
-
                     <div className='row'>
 
-                    <div className='col-12'>
+                    <div className='form-group col-md-10'>
                             <label htmlFor="nome">Nome do tipo</label>
                             <input
                                 value={props.stateFormModal.nome}
@@ -23,16 +24,22 @@ export const ModalFormLancamentos = (props) => {
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
                             />
                         </div>
-                    <div className='col-12'>
+                        <div className="form-group col-md-10">
                             <label htmlFor="categoria">Categoria</label>
-                            <input
-                                value={props.stateFormModal.categoria}
-                                name='categoria'
-                                id="categoria"
-                                type="text"
-                                className="form-control"
-                                onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
-                            />
+                            <Select
+                                mode="multiple"
+                                allowClear
+                                style={{ width: '100%' }}
+                                placeholder="Selecione as categorias"
+                                value={props.stateFormModal.lancamento_modal}
+                                onChange={props.handleOnChangeMultipleSelectModal}
+                                className='multiselect-filtrar-por-categoria'
+                            >
+                                {props.categoriaTabela && props.categoriaTabela.length > 0 && props.categoriaTabela.map(item => (
+                                    <Option key={item.id} value={item.id}>{item.nome}</Option>
+                                ))}
+                                <Option value='TODOS'>Todos</Option>
+                            </Select>
                         </div>
 
                         <div className='col-8'>
