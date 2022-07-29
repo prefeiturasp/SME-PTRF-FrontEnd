@@ -178,6 +178,15 @@ export const getListaDeAcoes = async () => {
     return (await api.get(`/api/acoes/`, authHeader)).data
 };
 
+export const getListaDeLancamentos = async () => {
+    return (await api.get(`/api/tipos-acerto-lancamento/`, authHeader)).data
+};
+
+export const getTabelaCategoria = async () => {
+    return (await api.get(`api/tipos-acerto-lancamento/tabelas/`, authHeader)).data
+};
+
+
 export const getFiltros = async (nome='', acao__uuid, status) => {
     return (await api.get(`/api/acoes-associacoes/?nome=${nome}${acao__uuid ? '&acao__uuid='+acao__uuid : ''}${status ? '&status='+status : ''}`, authHeader)).data
 };
@@ -190,16 +199,28 @@ export const putAtualizarAcaoAssociacao = async (acao_associacao_uuid, payload) 
     return (await api.put(`/api/acoes-associacoes/${acao_associacao_uuid}/`, payload, authHeader)).data
 };
 
+export const putAtualizarLancamento = async (acerto_lancamento_uuid, payload) => {
+    return (await api.put(`/api/tipos-acerto-lancamento/${acerto_lancamento_uuid}/`, payload, authHeader)).data
+};
+
 export const deleteAcaoAssociacao = async (acao_associacao_uuid) => {
-    return (await api.delete(`/api/acoes-associacoes/${acao_associacao_uuid}/`, authHeader))
+    return (await api.delete(`/api/tipos-acerto-lancamento/${acao_associacao_uuid}/`, authHeader))
 };
 
 export const getAcoesFiltradas = async (nome='') => {
     return (await api.get(`/api/acoes/?nome=${nome}`, authHeader)).data
 };
 
+export const getLancamentosFiltrados = async (nome=null, categoria=null, ativo=null) => {
+    return (await api.get(`/api/tipos-acerto-documento/?nome=${nome}&categoria=${categoria}&ativo=${ativo}`, authHeader)).data
+}; 
+
 export const postAddAcao = async (payload) => {
     return (await api.post(`/api/acoes/`, payload, authHeader)).data
+};
+
+export const postAddLancamentos = async (payload) => {
+    return (await api.post(`/api/tipos-acerto-lancamento/`, payload, authHeader)).data
 };
 
 export const putAtualizarAcao = async (acao_uuid, payload) => {

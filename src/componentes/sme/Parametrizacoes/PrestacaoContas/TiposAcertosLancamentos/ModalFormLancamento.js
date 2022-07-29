@@ -3,14 +3,7 @@ import {ModalFormParametrizacoesAcertos} from "../../../../Globais/ModalBootstra
 
 export const ModalFormLancamentos = (props) => {
 
-    const getNomeUrl = () => {
-        if(window.location.href.split("-").pop() === 'lancamentos'){
-            return 'lançamentos'
-        }
-        return 'documentos'
-    }
-
-    const bodyTextarea = () => {
+    const bodyTextarea = (operacao) => {
 
         return (
             <>
@@ -19,7 +12,7 @@ export const ModalFormLancamentos = (props) => {
 
                     <div className='row'>
 
-                    <div className='col'>
+                    <div className='col-12'>
                             <label htmlFor="nome">Nome do tipo</label>
                             <input
                                 value={props.stateFormModal.nome}
@@ -30,36 +23,46 @@ export const ModalFormLancamentos = (props) => {
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
                             />
                         </div>
-
-                        <div className='col'>
-                            <label htmlFor="posicao_nas_pesquisas">Posição nas pesquisas</label>
+                    <div className='col-12'>
+                            <label htmlFor="categoria">Categoria</label>
                             <input
-                                value={props.stateFormModal.posicao_nas_pesquisas}
-                                name='posicao_nas_pesquisas'
-                                id="posicao_nas_pesquisas"
+                                value={props.stateFormModal.categoria}
+                                name='categoria'
+                                id="categoria"
                                 type="text"
                                 className="form-control"
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
-                                maxLength={10}
                             />
                         </div>
 
-
-                        <div className='col' style={{top: 40, left: 20}}>
-                            <input
-                                checked={props.stateFormModal.e_recursos_proprios}
-                                type="checkbox"
-                                name="e_recursos_proprios"
-                                id="e_recursos_proprios"
-                                className="form-check-input"
-                                defaultChecked={false}
-                                onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.checked)}
-                            />
-                            <label className="form-check-label marcar-como-lida" htmlFor="e_recursos_proprios">recursos externos</label>
+                        <div className='col-8'>
+                            <div className="form-check form-check-inline">
+                                <p className='mt-3 mb-0 mr-4 pr-4 font-weight-normal'>Reabre lançamentos para edição?</p>
+                            </div>
+                            <div className="form-check form-check-inline">
+                                <input
+                                    name="reabertura-lancamentos"
+                                    className={`form-check-input`}
+                                    type="radio"
+                                    id="reabertura-lancamentos"
+                                    value={true}
+                                />
+                                <label className="form-check-label font-weight-bold" htmlFor="reabertura-lancamentos">Sim</label>
+                            </div>
+                            <div className="form-check form-check-inline">
+                                <input
+                                    name="reabertura-lancamentos"
+                                    className={`form-check-input`}
+                                    type="radio"
+                                    id="reabertura-lancamentos"
+                                    value={false}
+                                />
+                                <label className="form-check-label font-weight-bold" htmlFor="reabertura-lancamentos">Não</label>
+                            </div>
                         </div>
                     </div>
-
-                    <div className='row mt-3'>
+                    {operacao === 'edit' ? (
+                        <><div className='row mt-3'>   
                         <div className='col'>
                             <p>Uuid</p>
                             <p>{props.stateFormModal.uuid}</p>
@@ -69,12 +72,13 @@ export const ModalFormLancamentos = (props) => {
                             <p>{props.stateFormModal.id}</p>
                         </div>
                     </div>
+</>): null}
 
 
                     <div className="d-flex bd-highlight mt-2">
                         <div className="p-Y flex-grow-1 bd-highlight">
                             {props.stateFormModal && props.stateFormModal.operacao === 'edit' &&
-                            <button onClick={props.serviceCrudAcoes} type="button" className="btn btn btn-danger mt-2 mr-2">
+                            <button onClick={props.serviceCrudLancamentos} type="button" className="btn btn btn-danger mt-2 mr-2">
                                 Apagar
                             </button>
                             }
@@ -101,9 +105,9 @@ export const ModalFormLancamentos = (props) => {
     return (
         <ModalFormParametrizacoesAcertos
             show={props.show}
-            titulo={props.stateFormModal && props.stateFormModal.operacao === 'edit' ? 'Editar tipo de acerto - ' + getNomeUrl() : 'Adicionar tipo de acerto - ' + getNomeUrl()}
+            titulo={props.stateFormModal && props.stateFormModal.operacao === 'edit' ? 'Editar tipo de acerto - lançamentos ' : 'Adicionar tipo de acerto - lançamentos '}
             onHide={props.handleClose}
-            bodyText={bodyTextarea()}
+            bodyText={bodyTextarea(props.stateFormModal.operacao)}
             primeiroBotaoOnclick={props.handleClose}
         />
     )
