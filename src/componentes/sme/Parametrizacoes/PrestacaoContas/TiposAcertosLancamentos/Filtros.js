@@ -29,6 +29,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             value={stateFiltros.lancamento_modal}
                             onChange={(value) => handleChangeFiltros('filtrar_por_categoria', value)}
                             className="categoria-table-multiple-search"
+                            required
                         >
                             {categoriaTabela && categoriaTabela.length > 0 && categoriaTabela.map(item => (
                                 <Option key={item.id} value={item.id}>{item.nome}</Option>

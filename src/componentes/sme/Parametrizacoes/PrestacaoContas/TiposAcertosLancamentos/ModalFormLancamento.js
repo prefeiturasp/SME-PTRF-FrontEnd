@@ -21,23 +21,26 @@ export const ModalFormLancamentos = (props) => {
                                 id="nome"
                                 type="text"
                                 className="form-control"
+                                required={true}
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
                             />
                         </div>
                         <div className="form-group col-md-10">
                             <label htmlFor="categoria">Categoria</label>
-                                <Select
-                                    mode="select"
-                                    allowClear
-                                    style={{ width: '100%' }}
-                                    placeholder="Selecione a categoria"
-                                    value={props.stateFormModal.categoria}
-                                    onChange={props.handleOnChangeMultipleSelectModal}
+                                <select value={props.stateFormModal.categoria}
+                                        onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
+                                        placeholder="Selecione a categoria"
+                                        name="categoria"
+                                        id="categoria"
+                                        className="form-control"
+                                        required={true}
                                 >
+                                    <option value="">Selecione uma categoria</option>
                                     {props.categoriaTabela && props.categoriaTabela.length > 0 && props.categoriaTabela.map(item => (
-                                        <Option key={item.id} value={item.id}>{item.nome}</Option>
+                                        <option key={item.id} value={item.id}>{item.nome}</option>
                                     ))}
-                                </Select>
+                                </select>
+                                
                         </div>
 
                         <div className='col-8'>
@@ -97,7 +100,7 @@ export const ModalFormLancamentos = (props) => {
                         </div>
                         <div className="p-Y bd-highlight">
                             <button
-                                disabled={props.readOnly || !props.stateFormModal.nome}
+                                disabled={props.readOnly || !props.stateFormModal.nome || !props.stateFormModal.categoria}
                                 onClick={() => {props.handleSubmitModalFormLancamentos(props.stateFormModal)}}
                                 type="button"
                                 className="btn btn btn-success mt-2"

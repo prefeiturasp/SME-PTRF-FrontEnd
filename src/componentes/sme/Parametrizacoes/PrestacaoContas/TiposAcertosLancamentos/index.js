@@ -18,6 +18,8 @@ import { ModalFormLancamentos } from "../../PrestacaoContas/TiposAcertosLancamen
 import { ModalConfirmDeleteLancamento } from "../../PrestacaoContas/TiposAcertosLancamentos/ModalConfirmDeleteLancamento";
 import { ModalInfoNaoPodeExcluir } from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
 import { ModalInfoNaoPodeGravar } from "../../Estrutura/Acoes/ModalInfoNaoPodeGravar";
+import {MsgImgCentralizada} from "../../../../Globais/Mensagens/MsgImgCentralizada";
+import Img404 from "../../../../../assets/img/img-404.svg"
 import "../parametrizacoes-prestacao-contas.scss";
 
 export const ParametrizacoesTiposAcertosLancamentos = () => {
@@ -30,7 +32,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
 
   const initialStateFormModal = {
     nome: "",
-    categoria: [],
+    categoria: "",
     ativo: false,
     operacao: 'create',
   };
@@ -148,7 +150,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
           setShowModalInfoNaoPodeGravar(true);
         } else {
           setMensagemModalInfoNaoPodeGravar(
-            "Houve um erro ao tentar fazer essa atualização."
+            JSON.parse(e.request['responseText'])['detail']
           );
           setShowModalInfoNaoPodeGravar(true);
         }
@@ -162,7 +164,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
       } catch (e) {
         if (e.response.data && e.response.data.non_field_errors) {
           setMensagemModalInfoNaoPodeGravar(
-            "Houve um erro interno ao salvar o formulário"
+            e.response
           );
           setShowModalInfoNaoPodeGravar(true);
         } else {
@@ -264,6 +266,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
                     tipos de acertos de lançamentos
                   </p>
             </>
+            
         {loading ? (
           <div className="mt-5">
             <Loading
@@ -274,6 +277,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
             />
           </div>
         ) : (
+          todosLancamentos.length > 0 ? (
           <>
             <TabelaLancamentos
               todosLancamentos={todosLancamentos}
@@ -281,7 +285,13 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
               lancamentosTemplate={lancamentosTemplate}
             />
           </>
-        )}
+        ) : (
+        <MsgImgCentralizada
+            texto='Selecione um período e um tipo de conta para consultar os saldos bancários'
+            img={Img404}
+        />
+        )
+      )}
         <section>
           <ModalFormLancamentos
             show={showModalForm}
