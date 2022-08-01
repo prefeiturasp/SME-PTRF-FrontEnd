@@ -26,20 +26,18 @@ export const ModalFormLancamentos = (props) => {
                         </div>
                         <div className="form-group col-md-10">
                             <label htmlFor="categoria">Categoria</label>
-                            <Select
-                                mode="multiple"
-                                allowClear
-                                style={{ width: '100%' }}
-                                placeholder="Selecione as categorias"
-                                value={props.stateFormModal.lancamento_modal}
-                                onChange={props.handleOnChangeMultipleSelectModal}
-                                className='multiselect-filtrar-por-categoria'
-                            >
-                                {props.categoriaTabela && props.categoriaTabela.length > 0 && props.categoriaTabela.map(item => (
-                                    <Option key={item.id} value={item.id}>{item.nome}</Option>
-                                ))}
-                                <Option value='TODOS'>Todos</Option>
-                            </Select>
+                                <Select
+                                    mode="select"
+                                    allowClear
+                                    style={{ width: '100%' }}
+                                    placeholder="Selecione a categoria"
+                                    value={props.stateFormModal.categoria}
+                                    onChange={props.handleOnChangeMultipleSelectModal}
+                                >
+                                    {props.categoriaTabela && props.categoriaTabela.length > 0 && props.categoriaTabela.map(item => (
+                                        <Option key={item.id} value={item.id}>{item.nome}</Option>
+                                    ))}
+                                </Select>
                         </div>
 
                         <div className='col-8'>
@@ -48,21 +46,25 @@ export const ModalFormLancamentos = (props) => {
                             </div>
                             <div className="form-check form-check-inline">
                                 <input
-                                    name="reabertura-lancamentos"
+                                    name="ativo"
                                     className={`form-check-input`}
                                     type="radio"
                                     id="reabertura-lancamentos"
-                                    value={true}
+                                    value="True"
+                                    checked={props.stateFormModal.ativo}
+                                    onChange={() => props.handleChangeFormModal('ativo', true)}
                                 />
                                 <label className="form-check-label font-weight-bold" htmlFor="reabertura-lancamentos">Sim</label>
                             </div>
                             <div className="form-check form-check-inline">
                                 <input
-                                    name="reabertura-lancamentos"
+                                    name="ativo"
                                     className={`form-check-input`}
                                     type="radio"
                                     id="reabertura-lancamentos"
-                                    value={false}
+                                    value="False"
+                                    checked={!props.stateFormModal.ativo}
+                                    onChange={() => props.handleChangeFormModal('ativo', false)}
                                 />
                                 <label className="form-check-label font-weight-bold" htmlFor="reabertura-lancamentos">Não</label>
                             </div>
@@ -96,7 +98,7 @@ export const ModalFormLancamentos = (props) => {
                         <div className="p-Y bd-highlight">
                             <button
                                 disabled={props.readOnly || !props.stateFormModal.nome}
-                                onClick={()=>props.handleSubmitModalFormLancamentos(props.stateFormModal)}
+                                onClick={() => {props.handleSubmitModalFormLancamentos(props.stateFormModal)}}
                                 type="button"
                                 className="btn btn btn-success mt-2"
                             >

@@ -6,6 +6,7 @@ import {
   postAddLancamentos,
   putAtualizarLancamento,
   getTabelaCategoria,
+  deleteLancamento,
 } from "../../../../../services/sme/Parametrizacoes.service";
 import { Filtros } from "./Filtros";
 import { TabelaLancamentos } from "../../PrestacaoContas/TiposAcertosLancamentos/TabelaLancamentos";
@@ -14,12 +15,13 @@ import { faPlus, faEdit } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import { Link } from "react-router-dom";
 import { ModalFormLancamentos } from "../../PrestacaoContas/TiposAcertosLancamentos/ModalFormLancamento";
-import { ModalConfirmDeleteAcao } from "../../Estrutura/Acoes/ModalConfirmDeleteAcao";
+import { ModalConfirmDeleteLancamento } from "../../PrestacaoContas/TiposAcertosLancamentos/ModalConfirmDeleteLancamento";
 import { ModalInfoNaoPodeExcluir } from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
 import { ModalInfoNaoPodeGravar } from "../../Estrutura/Acoes/ModalInfoNaoPodeGravar";
 import "../parametrizacoes-prestacao-contas.scss";
 
 export const ParametrizacoesTiposAcertosLancamentos = () => {
+  
   const initialStateFiltros = {
     filtrar_por_nome: "",
     filtrar_por_categoria: "",
@@ -29,9 +31,8 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
   const initialStateFormModal = {
     nome: "",
     categoria: [],
-    uuid: "",
-    id: "",
-    lancamento_modal: [],
+    ativo: false,
+    operacao: 'create',
   };
 
   const [todosLancamentos, setTodosLancamentos] = useState([]);
@@ -40,7 +41,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
   const [showModalForm, setShowModalForm] = useState(false);
   const [showModalInfoNaoPodeGravar, setShowModalInfoNaoPodeGravar] = useState(false);
   const [mensagemModalInfoNaoPodeGravar, setMensagemModalInfoNaoPodeGravar] = useState("");
-  const [showModalDeleteAcao, setShowModalDeleteAcao] = useState(false);
+  const [showModalDeleteLancamento, setShowModalDeleteLancamento] = useState(false);
   const [showModalInfoNaoPodeExcluir, setShowModalInfoNaoPodeExcluir] = useState(false);
   const [mensagemModalInfoNaoPodeExcluir, setMensagemModalInfoNaoPodeExcluir] = useState("");
   const [categoriaTabela, setCategoriaTabela] = useState([]);
@@ -90,7 +91,9 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
   };
 
   const limpaFiltros = async () => {
+    setLoading(true);
     setStateFiltros(initialStateFiltros);
+    window.location.reload();
   };
 
   const rowsPerPage = 20;
@@ -117,7 +120,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
   };
 
   const handleOnChangeMultipleSelectModal = async (value) => {
-      let name = "lancamento_modal"
+      let name = "categoria"
 
       setStateFormModal({
           ...stateFormModal,
@@ -131,17 +134,13 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
       categoria: stateFormModal.categoria,
       ativo: stateFormModal.ativo,
     };
-    console.log("eu passo aqui pelo menos?", stateFormModal.operacao)
 
     if (stateFormModal.operacao === "create") {
-      console.log("pq vc nao esta batendo no create?")
       try {
         await postAddLancamentos(payload);
         setShowModalForm(false);
-        console.log("Ação criada com sucesso");
         await carregaTodosLancamentos();
       } catch (e) {
-        console.log("Erro ao criar Ação!!! ", e.response.data);
         if (e.response.data && e.response.data.non_field_errors) {
           setMensagemModalInfoNaoPodeGravar(
             "Ja existe uma ação com esse nome."
@@ -161,7 +160,6 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
         console.log("Ação alterada com sucesso", payload);
         await carregaTodosLancamentos();
       } catch (e) {
-        console.log("Erro ao alterar Ação!! ", e);
         if (e.response.data && e.response.data.non_field_errors) {
           setMensagemModalInfoNaoPodeGravar(
             "Ja existe uma ação com esse nome."
@@ -178,16 +176,30 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
   };
 
   const serviceCrudLancamentos = async () => {
-    console.log("service crud");
+    setShowModalDeleteLancamento(true)
   };
 
-  const handleCloseDeleteAcao = () => {
-    console.log("handle close delete acao");
+  const handleCloseDeleteLancamento = () => {
+    setShowModalInfoNaoPodeExcluir(false)
+    setShowModalDeleteLancamento(false)
   };
 
-  const onDeleteAcaoTrue = () => {
-    console.log("on delete acao true");
-  };
+  const onDeleteLancamentoTrue = async () => {
+    try {
+        setShowModalDeleteLancamento(false);
+        await deleteLancamento(stateFormModal.uuid);
+        setShowModalForm(false);
+        console.log('Lançamento excluído com sucesso');
+        await carregaTodosLancamentos();
+    } catch (e) {
+        if (e.response && e.response.data && e.response.data.mensagem){
+            setMensagemModalInfoNaoPodeExcluir(e.response.data.mensagem);
+            setShowModalInfoNaoPodeExcluir(true);
+            console.log(e.response.data.mensagem)
+        }
+        console.log('Erro ao excluir Ação!! ', e.response)
+    }
+};
 
   const handleCloseInfoNaoPodeGravar = () => {
     setShowModalInfoNaoPodeGravar(false);
@@ -195,8 +207,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
   };
 
   const handleCloseInfoNaoPodeExcluir = () => {
-    setShowModalInfoNaoPodeGravar(false);
-    setMensagemModalInfoNaoPodeGravar("");
+    setShowModalInfoNaoPodeExcluir(false)
   };
 
   const handleEditarLancamentos = (rowData) => {
@@ -223,6 +234,36 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
     <PaginasContainer>
       <h1 className="titulo-itens-painel mt-5">Tipo de Acertos Lançamentos</h1>
       <div className="page-content-inner">
+        <>
+          <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
+                  <Link
+                    to="#"
+                    onClick={() => {
+                      setStateFormModal(initialStateFormModal);
+                      setShowModalForm(true);
+                    }}
+                    className="btn btn-success ml-2"
+                  >
+                    <FontAwesomeIcon
+                      style={{ marginRight: "5px", color: "#fff" }}
+                      icon={faPlus}
+                    />
+                    Adicionar tipo de acerto nos lançamentos
+                  </Link>
+                </div>
+                <Filtros
+                  categoriaTabela={categoriaTabela}
+                  stateFiltros={stateFiltros}
+                  handleChangeFiltros={handleChangeFiltros}
+                  handleSubmitFiltros={handleSubmitFiltros}
+                  limpaFiltros={limpaFiltros}
+                  />
+                  <p>
+                    Exibindo{" "}
+                    <span className="total-lancamentos">{totalLancamentos}</span>{" "}
+                    tipos de acertos de lançamentos
+                  </p>
+            </>
         {loading ? (
           <div className="mt-5">
             <Loading
@@ -234,34 +275,6 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
           </div>
         ) : (
           <>
-            <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
-              <Link
-                to="#"
-                onClick={() => {
-                  setStateFormModal(initialStateFormModal);
-                  setShowModalForm(true);
-                }}
-                className="btn btn-success ml-2"
-              >
-                <FontAwesomeIcon
-                  style={{ marginRight: "5px", color: "#fff" }}
-                  icon={faPlus}
-                />
-                Adicionar tipo de acerto nos lançamentos
-              </Link>
-            </div>
-            <Filtros
-              categoriaTabela={categoriaTabela}
-              stateFiltros={stateFiltros}
-              handleChangeFiltros={handleChangeFiltros}
-              handleSubmitFiltros={handleSubmitFiltros}
-              limpaFiltros={limpaFiltros}
-            />
-            <p>
-              Exibindo{" "}
-              <span className="total-lancamentos">{totalLancamentos}</span>{" "}
-              tipos de acertos de lançamentos
-            </p>
             <TabelaLancamentos
               todosLancamentos={todosLancamentos}
               rowsPerPage={rowsPerPage}
@@ -285,10 +298,10 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
           />
         </section>
         <section>
-          <ModalConfirmDeleteAcao
-            show={showModalDeleteAcao}
-            handleClose={handleCloseDeleteAcao}
-            onDeleteAcaoTrue={onDeleteAcaoTrue}
+          <ModalConfirmDeleteLancamento
+            show={showModalDeleteLancamento}
+            handleClose={handleCloseDeleteLancamento}
+            onDeleteLancamentoTrue={onDeleteLancamentoTrue}
             titulo="Excluir Ação"
             texto="<p>Deseja realmente excluir esta ação?</p>"
             primeiroBotaoTexto="Cancelar"

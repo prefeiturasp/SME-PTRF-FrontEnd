@@ -200,7 +200,8 @@ export const putAtualizarAcaoAssociacao = async (acao_associacao_uuid, payload) 
 };
 
 export const putAtualizarLancamento = async (acerto_lancamento_uuid, payload) => {
-    return (await api.put(`/api/tipos-acerto-lancamento/${acerto_lancamento_uuid}/`, payload, authHeader)).data
+    console.log("Estou aqui hehehe", payload, + 'uuid: ' + acerto_lancamento_uuid)
+    return (await api.patch(`/api/tipos-acerto-lancamento/${acerto_lancamento_uuid}/`, payload, authHeader)).data
 };
 
 export const deleteAcaoAssociacao = async (acao_associacao_uuid) => {
@@ -229,6 +230,10 @@ export const putAtualizarAcao = async (acao_uuid, payload) => {
 
 export const deleteAcao = async (acao_uuid) => {
     return (await api.delete(`/api/acoes/${acao_uuid}/`, authHeader))
+};
+
+export const deleteLancamento = async (lancamento_uuid) => {
+    return (await api.delete(`/api/tipos-acerto-lancamento/${lancamento_uuid}/`, authHeader))
 };
 
 export const getUnidadesPorAcao = async (acao_uuid, nome="") => {

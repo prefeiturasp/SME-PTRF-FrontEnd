@@ -9,7 +9,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
             <form>
                 <div className="form-row">
                     <div className="form-group col-md-5">
-                        <label htmlFor="filtrar_por_lancamento">Filtrar por tipo de acerto</label>
+                        <label htmlFor="filtrar_por_nome">Filtrar por tipo de acerto</label>
                         <input
                             value={stateFiltros.filtrar_por_lancamento}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
@@ -27,7 +27,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             allowClear
                             placeholder="Selecione as categorias"
                             value={stateFiltros.lancamento_modal}
-                            onChange={handleChangeFiltros}
+                            onChange={(value) => handleChangeFiltros('filtrar_por_categoria', value)}
                             className="categoria-table-multiple-search"
                         >
                             {categoriaTabela && categoriaTabela.length > 0 && categoriaTabela.map(item => (
