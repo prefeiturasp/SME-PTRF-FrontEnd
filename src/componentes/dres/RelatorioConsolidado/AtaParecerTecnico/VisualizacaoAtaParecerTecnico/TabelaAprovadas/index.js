@@ -81,12 +81,6 @@ export const TabelaAprovadas = ({infoContas, status, exibirUltimoItem}) => {
 
                     infoContas.contas.map((conta, index) => 
                         <Fragment key={index}>
-                            <div className="titulo-tabelas-conta mb-3">
-                                <p className='mb-1 font-weight-bold'>
-                                    <strong>Conta {conta.nome}</strong>
-                                </p>
-                            </div>
-
                             <div className="row">
                                 {divideLista(conta).map((dados, index_dados) =>
                                     <div className="col-4" key={`div-${index_dados}`}>
@@ -123,12 +117,6 @@ export const TabelaAprovadas = ({infoContas, status, exibirUltimoItem}) => {
 
                     infoContas.contas.map((conta, index) => 
                         <Fragment key={index}>
-                            <div className="titulo-tabelas-conta mb-3">
-                                <p className='mb-1 font-weight-bold'>
-                                    <strong>Conta {conta.nome}</strong>
-                                </p>
-                            </div>
-
                             <table key={`table-${index}`} className="table table-bordered tabela-status-pc">
                                 <thead>
                                     <tr>
@@ -166,12 +154,6 @@ export const TabelaAprovadas = ({infoContas, status, exibirUltimoItem}) => {
 
                     infoContas.contas.map((conta, index) => 
                         <Fragment key={index}>
-                            <div className="titulo-tabelas-conta mb-3">
-                                <p className='mb-1 font-weight-bold'>
-                                    <strong>Conta {conta.nome}</strong>
-                                </p>
-                            </div>
-
                             <table key={`table-${index}`} className="table table-bordered tabela-status-pc">
                                 <thead>
                                     <tr>
