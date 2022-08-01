@@ -32,28 +32,6 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
     // Consolidado DRE
     const [consolidadoDre, setConsolidadoDre] = useState(false);
 
-    useEffect(() => {
-        getDadosAta();
-    }, []);
-
-    useEffect(() => {
-        consultaInfoContas();
-    }, [dadosAta]);
-
-    const getDadosAta = async () => {
-        let dados_ata = await getAtaParecerTecnico(uuid_ata);
-        setDadosAta(dados_ata);
-    }
-
-    const consultaInfoContas = async () => {
-        if(dadosAta && Object.entries(dadosAta).length > 0){
-            let info = await getInfoContas(dadosAta.dre.uuid, dadosAta.periodo.uuid)
-            setInfoContas(info)
-            setLoading(false);
-        }
-
-    }
-
     const carregaConsolidadoDrePorUuidDaAtaDeParecerTecnico = useCallback(async () => {
         if (uuid_ata){
             let consolidado_dre = await getConsolidadoDrePorUuidAtaDeParecerTecnico(uuid_ata)
@@ -64,6 +42,30 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
     useEffect(() => {
         carregaConsolidadoDrePorUuidDaAtaDeParecerTecnico()
     }, [carregaConsolidadoDrePorUuidDaAtaDeParecerTecnico])
+
+
+    const getDadosAta = useCallback(async () => {
+        let dados_ata = await getAtaParecerTecnico(uuid_ata);
+        console.log("XXXXXXXXXXX getDadosAta ", dados_ata)
+        setDadosAta(dados_ata);
+    }, [uuid_ata])
+
+    useEffect(() => {
+        getDadosAta();
+    }, [getDadosAta]);
+
+    const consultaInfoContas = useCallback( async () => {
+        if(dadosAta && Object.entries(dadosAta).length > 0){
+            let info = await getInfoContas(dadosAta.dre.uuid, dadosAta.periodo.uuid, uuid_ata)
+
+            setInfoContas(info)
+            setLoading(false);
+        }
+    }, [dadosAta, uuid_ata])
+
+    useEffect(() => {
+        consultaInfoContas();
+    }, [consultaInfoContas]);
 
     const dataPorExtenso = (data) => {
         if (!data) {
@@ -266,11 +268,22 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
                             />
                         }
 
+                        {dadosAta && dadosAta.comentarios &&
+                            <>
+                                <p className="titulo-tabelas mb-1">Comentários</p>
+                                <div className="row">
+                                    <div className="col-12">
+                                        <p>{dadosAta.comentarios}</p>
+                                    </div>
+                                </div>
+                            </>
+                        }
                         {dadosAta && Object.entries(dadosAta).length > 0 && dadosAta.presentes_na_ata &&
                             <Assinaturas
                                 presentes_na_ata={dadosAta.presentes_na_ata}
                             />
                         }
+
                     </div>
                 </>
             }
