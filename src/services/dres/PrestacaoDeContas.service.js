@@ -207,6 +207,10 @@ export const getTiposDeAcertoLancamentos = async () => {
     return (await api.get(`/api/tipos-acerto-lancamento/`, authHeader)).data
 };
 
+export const getTiposDeAcertoLancamentosAgrupadoCategoria = async () => {
+    return (await api.get(`/api/tipos-acerto-lancamento/tabelas/`, authHeader)).data
+};
+
 export const getListaDeSolicitacaoDeAcertos = async (prestacao_de_contas_uuid, analise_lancamento_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/analises-de-lancamento/?analise_lancamento=${analise_lancamento_uuid}`, authHeader)).data
 };
