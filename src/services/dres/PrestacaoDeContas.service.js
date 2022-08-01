@@ -207,6 +207,10 @@ export const getTiposDeAcertoLancamentos = async () => {
     return (await api.get(`/api/tipos-acerto-lancamento/`, authHeader)).data
 };
 
+export const getTiposDeAcertoLancamentosAgrupadoCategoria = async () => {
+    return (await api.get(`/api/tipos-acerto-lancamento/tabelas/`, authHeader)).data
+};
+
 export const getListaDeSolicitacaoDeAcertos = async (prestacao_de_contas_uuid, analise_lancamento_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/analises-de-lancamento/?analise_lancamento=${analise_lancamento_uuid}`, authHeader)).data
 };
@@ -229,6 +233,10 @@ export const postDocumentosParaConferenciaMarcarNaoConferido = async (prestacao_
 
 export const getTiposDeAcertosDocumentos = async (documento_uuid) => {
     return (await api.get(`/api/tipos-acerto-documento/?tipos_documento_prestacao__uuid=${documento_uuid}`, authHeader)).data
+};
+
+export const getTabelas = async (documento_uuid=null) => {
+    return (await api.get(`/api/tipos-acerto-documento/tabelas/?tipos_documento_prestacao__uuid=${documento_uuid}`, authHeader)).data
 };
 
 export const getSolicitacaoDeAcertosDocumentos = async (prestacao_de_contas_uuid, analise_documento_uuid) => {

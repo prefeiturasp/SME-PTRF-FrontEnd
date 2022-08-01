@@ -2,9 +2,9 @@ import React, {memo} from "react";
 import {FieldArray, Formik} from "formik";
 import {YupSignupSchemaDetalharAcertosDocumentos} from './YupSignupSchemaDetalharAcertosDocumentos'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
+import {faTimesCircle, faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
 
-const FormularioAcertos = ({solicitacoes_acerto, tiposDeAcertoDocumentos, onSubmitFormAcertos, formRef}) =>{
+const FormularioAcertos = ({solicitacoes_acerto, onSubmitFormAcertos, formRef, tiposDeAcertoDocumentosAgrupados, handleChangeTipoDeAcertoDocumento, textoCategoria, corTextoCategoria, adicionaTextoECorCategoriaVazio, removeTextoECorCategoriaTipoDeAcertoJaCadastrado}) =>{
     return(
         <div className='mt-3'>
             <Formik
@@ -40,6 +40,7 @@ const FormularioAcertos = ({solicitacoes_acerto, tiposDeAcertoDocumentos, onSubm
                                                                 className="btn btn-link btn-remover-despesa mr-2 p-0 d-flex align-items-center"
                                                                 onClick={() => {
                                                                     remove(index)
+                                                                    removeTextoECorCategoriaTipoDeAcertoJaCadastrado(index)
                                                                 }}
                                                             >
                                                                 <FontAwesomeIcon
@@ -64,14 +65,30 @@ const FormularioAcertos = ({solicitacoes_acerto, tiposDeAcertoDocumentos, onSubm
                                                                     className="form-control"
                                                                     onChange={(e) => {
                                                                         props.handleChange(e);
+                                                                        handleChangeTipoDeAcertoDocumento(e, index);
                                                                     }}
                                                                 >
                                                                     <option key='' value="">Selecione a especificação do acerto</option>
-                                                                    {tiposDeAcertoDocumentos && tiposDeAcertoDocumentos.length > 0 && tiposDeAcertoDocumentos.map(item => (
-                                                                        <option key={item.uuid} value={item.uuid}>{item.nome}</option>
+                                                                    {tiposDeAcertoDocumentosAgrupados && tiposDeAcertoDocumentosAgrupados.length > 0 && tiposDeAcertoDocumentosAgrupados.map(item => (
+                                                                        <optgroup key={item.id} label={item.nome}>
+                                                                            {item.tipos_acerto_documento && item.tipos_acerto_documento.length > 0 && item.tipos_acerto_documento.map(tipo_acerto => (
+                                                                                <option key={tipo_acerto.uuid} value={tipo_acerto.uuid} data-categoria={item.id}>{tipo_acerto.nome}</option>
+                                                                            ))}
+                                                                        </optgroup>
                                                                     ))}
                                                                 </select>
                                                                 <p className='mt-1 mb-0'><span className="text-danger">{errors && errors.solicitacoes_acerto && errors.solicitacoes_acerto[index] && errors.solicitacoes_acerto[index].tipo_acerto ? errors.solicitacoes_acerto[index].tipo_acerto : ''}</span></p>
+                                                                {textoCategoria[index] &&
+                                                                    <p className='mt-2 mb-0'>
+                                                                        <FontAwesomeIcon
+                                                                            style={{fontSize: '17px', marginRight:'4px'}}
+                                                                            icon={faExclamationCircle}
+                                                                            className={corTextoCategoria[index]}
+                                                                        />
+
+                                                                        <span className={corTextoCategoria[index]}>{textoCategoria[index]}</span>
+                                                                    </p>
+                                                                }
                                                             </div>
 
                                                             <div className="col-12 mt-3">
@@ -102,6 +119,7 @@ const FormularioAcertos = ({solicitacoes_acerto, tiposDeAcertoDocumentos, onSubm
                                                             tipo_acerto: '',
                                                             detalhamento: '',
                                                         });
+                                                        adicionaTextoECorCategoriaVazio();
                                                     }}
                                                 >
                                                     + Adicionar novo item

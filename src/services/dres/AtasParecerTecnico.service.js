@@ -12,8 +12,8 @@ export const getAtaParecerTecnico = async (uuid_ata) => {
     return (await api.get(`api/ata-parecer-tecnico/${uuid_ata}/`, authHeader)).data
 }
 
-export const getInfoContas = async (dre_uuid, periodo_uuid) => {
-    return (await api.get(`api/ata-parecer-tecnico/info-ata/?dre=${dre_uuid}&periodo=${periodo_uuid}`, authHeader)).data
+export const getInfoContas = async (dre_uuid, periodo_uuid, uuid_ata) => {
+    return (await api.get(`api/ata-parecer-tecnico/info-ata/?dre=${dre_uuid}&periodo=${periodo_uuid}&ata=${uuid_ata}`, authHeader)).data
 }
 
 export const getListaPresentesPadrao = async (dre_uuid, ata_uuid) => {
