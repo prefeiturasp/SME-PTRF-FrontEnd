@@ -162,12 +162,12 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
       } catch (e) {
         if (e.response.data && e.response.data.non_field_errors) {
           setMensagemModalInfoNaoPodeGravar(
-            "Ja existe uma ação com esse nome."
+            "Houve um erro interno ao salvar o formulário"
           );
           setShowModalInfoNaoPodeGravar(true);
         } else {
           setMensagemModalInfoNaoPodeGravar(
-            "Houve um erro ao tentar fazer essa atualização."
+            "Já existe um lançamento com esse nome."
           );
           setShowModalInfoNaoPodeGravar(true);
         }

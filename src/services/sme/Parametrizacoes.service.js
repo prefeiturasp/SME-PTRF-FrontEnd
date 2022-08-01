@@ -200,7 +200,6 @@ export const putAtualizarAcaoAssociacao = async (acao_associacao_uuid, payload) 
 };
 
 export const putAtualizarLancamento = async (acerto_lancamento_uuid, payload) => {
-    console.log("Estou aqui hehehe", payload, + 'uuid: ' + acerto_lancamento_uuid)
     return (await api.patch(`/api/tipos-acerto-lancamento/${acerto_lancamento_uuid}/`, payload, authHeader)).data
 };
 
