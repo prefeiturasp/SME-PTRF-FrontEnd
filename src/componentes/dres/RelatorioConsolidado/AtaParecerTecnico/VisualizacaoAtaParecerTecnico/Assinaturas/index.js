@@ -11,7 +11,7 @@ moment.updateLocale('pt', {
 export const Assinaturas = ({presentes_na_ata}) => {
     return (
         <>
-            <p className="mt-5 titulo-assinaturas">
+            <p className="mt-3 titulo-assinaturas">
                 Nada mais a ser tratado, os trabalhos foram encerrados, a Ata lida e achada conforme,
                 vai assinada pelos membros da Comissão.
             </p>
