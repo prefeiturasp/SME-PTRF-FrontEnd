@@ -287,7 +287,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
           </>
         ) : (
         <MsgImgCentralizada
-            texto='Selecione um período e um tipo de conta para consultar os saldos bancários'
+            texto='Não há lançamento(s)'
             img={Img404}
         />
         )
@@ -313,7 +313,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
             handleClose={handleCloseDeleteLancamento}
             onDeleteLancamentoTrue={onDeleteLancamentoTrue}
             titulo="Excluir Ação"
-            texto="<p>Deseja realmente excluir esta ação?</p>"
+            texto={`<p>Deseja realmente apagar ${stateFormModal.nome}?</p>`}
             primeiroBotaoTexto="Cancelar"
             primeiroBotaoCss="outline-success"
             segundoBotaoCss="danger"

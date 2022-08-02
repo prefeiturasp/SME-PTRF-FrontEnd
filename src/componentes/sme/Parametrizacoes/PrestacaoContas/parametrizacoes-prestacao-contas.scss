@@ -6,8 +6,10 @@ span.total-lancamentos{
 .categoria-table-multiple-search {
   width: 100%;
   border-collapse: collapse;
+  min-height: calc(1.5em + .75rem + 2px);
 }
 
 .categoria-table-multiple-search .ant-select-selector {
   height: 38px;
+  min-height: calc(1.5em + .75rem + 2px);
 }

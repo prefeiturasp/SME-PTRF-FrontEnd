@@ -117,7 +117,7 @@ export const ModalFormLancamentos = (props) => {
     return (
         <ModalFormParametrizacoesAcertos
             show={props.show}
-            titulo={props.stateFormModal && props.stateFormModal.operacao === 'edit' ? 'Editar tipo de acerto - lançamentos ' : 'Adicionar tipo de acerto - lançamentos '}
+            titulo={props.stateFormModal && props.stateFormModal.operacao === 'edit' ? 'Editar lançamento ' : 'Adicionar lançamento'}
             onHide={props.handleClose}
             bodyText={bodyTextarea(props.stateFormModal.operacao)}
             primeiroBotaoOnclick={props.handleClose}

@@ -205,7 +205,7 @@ export const putAtualizarLancamento = async (acerto_lancamento_uuid, payload) =>
 };
 
 export const deleteAcaoAssociacao = async (acao_associacao_uuid) => {
-    return (await api.delete(`/api/tipos-acerto-lancamento/${acao_associacao_uuid}/`, authHeader))
+    return (await api.delete(`/api/acoes-associacoes/${acao_associacao_uuid}/`, authHeader))
 };
 
 export const getAcoesFiltradas = async (nome='') => {
