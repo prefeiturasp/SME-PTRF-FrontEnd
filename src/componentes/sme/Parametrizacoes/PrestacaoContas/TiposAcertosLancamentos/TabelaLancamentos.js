@@ -22,7 +22,7 @@ export const TabelaLancamentos = ({todosLancamentos, rowsPerPage, lancamentosTem
     const categoriaTemplate = (rowData) => {
         if (categoriaTabela.length > 0){
             let categoria = categoriaTabela.find(categoria => categoria.id === rowData.categoria)
-            return categoria.nome
+            return categoria ? categoria.nome : ''
         }
     }
 
