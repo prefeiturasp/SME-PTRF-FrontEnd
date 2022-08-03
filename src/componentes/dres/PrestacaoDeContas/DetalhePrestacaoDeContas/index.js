@@ -1184,7 +1184,7 @@ export const DetalhePrestacaoDeContas = () =>{
                     <ModalNaoPodeVoltarParaAnalise
                         show={showNaoPodeVoltarParaAnalise}
                         handleClose={onHandleClose}
-                        texto={`<p>Não é possível voltar com essa PC para análise porque ela consta na versão final do relatório consolidado ${prestacaoDeContas.referencia_consolidado_dre}</p>`}
+                        texto={`<p>Não é possível reabrir essa PC para análise, pois ela já foi publicada no Relatório Consolidado ${prestacaoDeContas.referencia_consolidado_dre}.</p>`}
                         primeiroBotaoTexto="Fechar"
                         primeiroBotaoCss="success"
                     />
