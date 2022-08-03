@@ -13,6 +13,7 @@ import IconeTiposCusteio from "../../../assets/img/icone-parametro-tipos-custeio
 import IconeTiposDocumento from "../../../assets/img/icone-parametro-tipos-documento.svg"
 import IconeTiposTransacao from "../../../assets/img/icone-parametro-tipos-transacao.svg"
 import IconeTiposReceita from "../../../assets/img/icone-parametro-tipos-receita.svg"
+import IconeTiposAcertos from "../../../assets/img/icone-parametro-tipos-acertos.svg"
 import IconeUsuarios from "../../../assets/img/icone-parametro-usuarios.svg"
 import IconeTextosFiqueDeOlho from "../../../assets/img/icone-parametro-textos-fique-de-olho.svg"
 import IconeFornecedores from "../../../assets/img/icone-parametro-fornecedores.svg"
@@ -112,6 +113,15 @@ export const PainelParametrizacoes = () => {
         }
     ];
 
+    const itensParametrizacaoPrestacaoContas = [
+        {
+            parametro: 'Tipos de acertos Lançamentos',
+            url: 'parametro-tipos-acertos-lancamentos',
+            icone: IconeTiposAcertos,
+            permissoes: ['access_painel_parametrizacoes'],
+        },
+    ];
+
     const itensParametrizacaoEdicaoDeTexto = [
         {
             parametro: 'Textos do Fique de Olho',
@@ -143,6 +153,10 @@ export const PainelParametrizacoes = () => {
             <ParametrizacaoCard
                 itensParametrizacao={itensParametrizacaoReceitas}
                 nomeGrupo='Receitas'
+            />
+            <ParametrizacaoCard
+                itensParametrizacao={itensParametrizacaoPrestacaoContas}
+                nomeGrupo='Prestação de Contas'
             />
             <ParametrizacaoCard
                 itensParametrizacao={itensParametrizacaoEdicaoDeTexto}

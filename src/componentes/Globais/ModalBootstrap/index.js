@@ -348,6 +348,22 @@ export const ModalFormParametrizacoesAcoes = (propriedades) =>{
     )
 };
 
+export const ModalFormParametrizacoesAcertos = (propriedades) =>{
+
+    return (
+        <Fragment>
+            <Modal centered show={propriedades.show} onHide={propriedades.onHide} size='lg'>
+                <Modal.Header>
+                    <Modal.Title>{propriedades.titulo}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {propriedades.bodyText}
+                </Modal.Body>
+            </Modal>
+        </Fragment>
+    )
+};
+
 export const ModalBootstrapTipoRecursoNaoAceito = (propriedades) =>{
     return (
         <Fragment>
