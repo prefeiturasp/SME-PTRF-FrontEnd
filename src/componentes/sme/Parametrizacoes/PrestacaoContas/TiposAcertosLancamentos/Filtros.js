@@ -34,7 +34,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             {categoriaTabela && categoriaTabela.length > 0 && categoriaTabela.map(item => (
                                 <Option key={item.id} value={item.id}>{item.nome}</Option>
                             ))}
-                            <Option >Todos</Option>
+                            <Option>Todos</Option>
                         </Select>
                     </div>
                     <div className="form-group col-md-3">
