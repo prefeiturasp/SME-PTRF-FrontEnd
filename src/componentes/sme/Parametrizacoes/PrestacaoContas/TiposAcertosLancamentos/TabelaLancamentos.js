@@ -40,11 +40,17 @@ export const TabelaLancamentos = ({todosLancamentos, rowsPerPage, lancamentosTem
                 header="Categoria de acerto"
                 body={categoriaTemplate}
             />
-            <Column style={{width: '10%', textAlign: 'center'}} field="ativo" header="Ativo" body={ativoTemplate}/>
+            <Column 
+                style={{width: '15%'}}
+                field="ativo"
+                header="Ativo"
+                className="text-center"
+                body={ativoTemplate}/>
             <Column
-                style={{width: '10%', textAlign: 'center'}}
+                style={{width: '10%'}}
                 field="acoes"
                 header="Ações"
+                className="text-center"
                 body={lancamentosTemplate}
             />
         </DataTable>
