@@ -234,7 +234,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
 
   return (
     <PaginasContainer>
-      <h1 className="titulo-itens-painel mt-5">Tipo de Acertos Lançamentos</h1>
+      <h1 className="titulo-itens-painel mt-5">Tipo de acertos em lançamentos</h1>
       <div className="page-content-inner">
         <>
           <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
@@ -250,7 +250,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
                       style={{ marginRight: "5px", color: "#fff" }}
                       icon={faPlus}
                     />
-                    Adicionar tipo de acerto nos lançamentos
+                    Adicionar tipo de acerto em lançamentos
                   </Link>
                 </div>
                 <Filtros
@@ -263,7 +263,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
                   <p>
                     Exibindo{" "}
                     <span className="total-lancamentos">{totalLancamentos}</span>{" "}
-                    tipos de acertos de lançamentos
+                    tipos de acertos em lançamentos
                   </p>
             </>
             
@@ -287,7 +287,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
           </>
         ) : (
         <MsgImgCentralizada
-            texto='Não há lançamento(s)'
+            texto='Não há lançamentos'
             img={Img404}
         />
         )

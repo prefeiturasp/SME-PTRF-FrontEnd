@@ -37,11 +37,12 @@ export const TabelaLancamentos = ({todosLancamentos, rowsPerPage, lancamentosTem
             <Column field="nome" header="Nome do tipo"/>
             <Column 
                 field="categoria"
-                header="Categoria de acerto em lançamento"
+                header="Categoria de acerto"
                 body={categoriaTemplate}
             />
-            <Column field="ativo" header="Ativo" body={ativoTemplate}/>
+            <Column style={{width: '10%', textAlign: 'center'}} field="ativo" header="Ativo" body={ativoTemplate}/>
             <Column
+                style={{width: '10%', textAlign: 'center'}}
                 field="acoes"
                 header="Ações"
                 body={lancamentosTemplate}

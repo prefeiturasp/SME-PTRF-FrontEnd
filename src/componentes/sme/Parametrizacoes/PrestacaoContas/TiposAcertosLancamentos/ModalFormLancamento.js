@@ -45,7 +45,7 @@ export const ModalFormLancamentos = (props) => {
 
                         <div className='col-8'>
                             <div className="form-check form-check-inline">
-                                <p className='mt-3 mb-0 mr-4 pr-4 font-weight-normal'>Reabre lançamentos para edição?</p>
+                                <p className='mt-3 mb-0 mr-4 pr-4 font-weight-normal'>Ativo?</p>
                             </div>
                             <div className="form-check form-check-inline">
                                 <input
@@ -117,7 +117,7 @@ export const ModalFormLancamentos = (props) => {
     return (
         <ModalFormParametrizacoesAcertos
             show={props.show}
-            titulo={props.stateFormModal && props.stateFormModal.operacao === 'edit' ? 'Editar lançamento ' : 'Adicionar lançamento'}
+            titulo={props.stateFormModal && props.stateFormModal.operacao === 'edit' ? 'Editar tipo de acerto em lançamento' : 'Adicionar tipo de acerto em lançamento'}
             onHide={props.handleClose}
             bodyText={bodyTextarea(props.stateFormModal.operacao)}
             primeiroBotaoOnclick={props.handleClose}

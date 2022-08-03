@@ -9,7 +9,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
             <form>
                 <div className="form-row">
                     <div className="form-group col-md-5">
-                        <label htmlFor="filtrar_por_nome">Filtrar por tipo de acerto</label>
+                        <label htmlFor="filtrar_por_nome">Filtrar por nome</label>
                         <input
                             value={stateFiltros.filtrar_por_lancamento}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
@@ -17,7 +17,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             id="filtrar_por_nome"
                             type="text"
                             className="form-control"
-                            placeholder="Selecione um tipo"
+                            placeholder="Escreva o termo que deseja filtrar"
                         />
                     </div>
                     <div className="col-md-4">
@@ -38,7 +38,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                         </Select>
                     </div>
                     <div className="form-group col-md-3">
-                        <label htmlFor="filtrar_por_ativo">Filtrar por ativo</label>
+                        <label htmlFor="filtrar_por_ativo">Filtrar por status</label>
                         <select
                             value={stateFiltros.filtrar_por_ativo}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
@@ -48,8 +48,8 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             placeholder="Selecione um tipo"
                         >
                             <option value=''>Selecione o status</option>
-                            <option value='True'>Sim</option>
-                            <option value='False'>Não</option>
+                            <option value='True'>Ativo</option>
+                            <option value='False'>Inativo</option>
                         </select>
                     </div>
                 </div>
