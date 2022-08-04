@@ -45,7 +45,8 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
     };
 
     const onClickPreencherRelatorio = (contaEscolhida) =>{
-        window.location.assign(`/dre-relatorio-consolidado-apuracao/${periodoEscolhido}/${contaEscolhida}/${consolidadoDre.ja_publicado}`)
+        let consolidado_dre_uuid = consolidadoDre.uuid
+        window.location.assign(`/dre-relatorio-consolidado-apuracao/${periodoEscolhido}/${contaEscolhida}/${consolidadoDre.ja_publicado}/${consolidado_dre_uuid}`)
     };
 
     const geraItensSplitButton = useCallback( () => {
