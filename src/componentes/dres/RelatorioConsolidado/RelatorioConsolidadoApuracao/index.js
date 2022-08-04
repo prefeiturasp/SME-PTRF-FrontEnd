@@ -28,7 +28,7 @@ import Loading from "../../../../utils/Loading";
 
 export const RelatorioConsolidadoApuracao = () => {
 
-    let {periodo_uuid, conta_uuid, ja_publicado} = useParams();
+    let {periodo_uuid, conta_uuid, ja_publicado, consolidado_dre_uuid} = useParams();
 
     // Para bloquear as edições quando for de um Consolidado DRE incremental publicacoes_anteriores
     // eslint-disable-next-line no-eval
@@ -70,7 +70,6 @@ export const RelatorioConsolidadoApuracao = () => {
         carregaNomePeriodo();
         carregaNomeConta();
         retornaQtdeEmAnalise();
-        carregaExecucaoFinanceira();
         carregaDevolucoesContaPtrf();
         carregaJustificativa();
         carregaDevolucoesAoTesouro();
@@ -115,14 +114,19 @@ export const RelatorioConsolidadoApuracao = () => {
         setContaNome(conta_nome);
     };
 
-    const carregaExecucaoFinanceira = async () => {
+    const carregaExecucaoFinanceira = useCallback( async () => {
         try {
-            let execucao = await getExecucaoFinanceira(dre_uuid, periodo_uuid, conta_uuid);
+            let execucao = await getExecucaoFinanceira(dre_uuid, periodo_uuid,  consolidado_dre_uuid !== 'null' ? consolidado_dre_uuid : '');
+            console.log("XXXXXXXXXXXXXXX getExecucaoFinanceira ", execucao)
             setExecucaoFinanceira(execucao);
         } catch (e) {
             console.log("Erro ao carregar execução financeira ", e)
         }
-    };
+    }, [dre_uuid, periodo_uuid, consolidado_dre_uuid]);
+
+    useEffect(() => {
+        carregaExecucaoFinanceira();
+    }, [carregaExecucaoFinanceira]);
 
     const carregaDevolucoesContaPtrf = async () => {
         try {
