@@ -178,8 +178,12 @@ export const getListaDeAcoes = async () => {
     return (await api.get(`/api/acoes/`, authHeader)).data
 };
 
-export const getListaDeLancamentos = async () => {
+export const getListaDeAcertosLancamentos = async () => {
     return (await api.get(`/api/tipos-acerto-lancamento/`, authHeader)).data
+};
+
+export const getListaDeAcertosDocumentos = async () => {
+    return (await api.get(`/api/tipos-acerto-documento/`, authHeader)).data
 };
 
 export const getTabelaCategoria = async () => {

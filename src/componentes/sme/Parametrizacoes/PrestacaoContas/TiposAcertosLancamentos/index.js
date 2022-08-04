@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { PaginasContainer } from "../../../../../paginas/PaginasContainer";
 import {
-  getListaDeLancamentos,
+  getListaDeAcertosLancamentos,
   getLancamentosFiltrados,
   postAddLancamentos,
   putAtualizarLancamento,
@@ -52,7 +52,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
 
   const carregaTodosLancamentos = useCallback(async () => {
     setLoading(true);
-    let todosLancamentos = await getListaDeLancamentos();
+    let todosLancamentos = await getListaDeAcertosLancamentos();
     setTodosLancamentos(todosLancamentos);
     setLoading(false);
   }, []);
@@ -105,7 +105,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
       <div>
         <button
           onClick={() => handleEditarLancamentos(rowData)}
-          className="btn-editar-membro"
+          className="btn-editar-lancamento"
         >
           <FontAwesomeIcon
             style={{ fontSize: "20px", marginRight: "0", color: "#00585E" }}
