@@ -256,7 +256,7 @@ const RelatorioConsolidado = () => {
                                         </div>
                                     ) :
                                     <>
-                                        {podeGerarPrevia() &&
+                                        {consolidadoDreProximaPublicacao && podeGerarPrevia() &&
                                             <div className='mt-3'>
                                                 <PublicarDocumentos
                                                     publicarConsolidadoDre={publicarConsolidadoDre}
