@@ -131,7 +131,6 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
   };
 
   const handleEditarDocumentos = (rowData) => {
-    console.log(rowData.tipos_documento_prestacao)
     setReadOnly(false);
     setStateFormModal({
       uuid: rowData.uuid,
