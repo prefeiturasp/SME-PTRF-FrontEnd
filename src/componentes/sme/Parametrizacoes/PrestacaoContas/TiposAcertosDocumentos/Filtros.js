@@ -1,17 +1,17 @@
 import React from "react";
 import { Select } from 'antd';
 
-export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, categoriaTabela}) =>{
+export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, categoriaTabela, documentoTabela}) =>{
     const { Option } = Select;
 
     return(
         <>
             <form>
                 <div className="form-row">
-                    <div className="form-group col-md-5">
+                    <div className="form-group col-md-3">
                         <label htmlFor="filtrar_por_nome">Filtrar por nome</label>
                         <input
-                            value={1}
+                            value={stateFiltros.filtrar_por_nome}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
                             name='filtrar_por_nome'
                             id="filtrar_por_nome"
@@ -20,31 +20,51 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             placeholder="Escreva o termo que deseja filtrar"
                         />
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-3">
                         <label htmlFor="filtrar_por_categoria">Filtrar por categorias</label>
                         <Select
                             mode="multiple"
                             allowClear
                             placeholder="Selecione as categorias"
-                            value={1}
+                            value={stateFiltros.filtrar_por_categoria}
                             onChange={(value) => handleChangeFiltros('filtrar_por_categoria', value)}
-                            className="categoria-table-multiple-search"
+                            className="categorias-table-multiple-search"
                             required
                         >
+                            {categoriaTabela && categoriaTabela.length > 0 && categoriaTabela.map(item => (
+                                <Option key={item.id} value={item.id}>{item.nome}</Option>
+                            ))}
                             <Option>Todos</Option>
                         </Select>
                     </div>
-                    <div className="form-group col-md-3">
+                    <div className="col-md-4">
+                        <label htmlFor="filtrar_por_documento_prestacao">Filtrar por tipo documentos de prestação</label>
+                        <Select
+                            mode="multiple"
+                            placeholder="Selecione os documentos de prestação"
+                            value={stateFiltros.filtrar_por_documento_prestacao}
+                            onChange={(value) => handleChangeFiltros('filtrar_por_documento_prestacao', value)}
+                            className="documentos-table-multiple-search"
+                            allowClear
+                            required
+                        >
+                            {documentoTabela && documentoTabela.length > 0 && documentoTabela.map(item => (
+                                <Option key={item.id} value={item.id}>{item.nome}</Option>
+                            ))}
+                            <Option value={[1,2,3,4,5]}>Todos</Option>
+                        </Select>
+                    </div>
+                    <div className="form-group col-md-2">
                         <label htmlFor="filtrar_por_ativo">Filtrar por status</label>
                         <select
-                            value={1}
+                            value={stateFiltros.filtrar_por_ativo}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
                             name='filtrar_por_ativo'
                             id="filtrar_por_ativo"
                             className="form-control"
                             placeholder="Selecione um tipo"
                         >
-                            <option value=''>Selecione o status</option>
+                            <option>Selecione o status</option>
                             <option value='True'>Ativo</option>
                             <option value='False'>Inativo</option>
                         </select>

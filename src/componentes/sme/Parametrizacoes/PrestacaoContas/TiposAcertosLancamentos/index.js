@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faEdit } from "@fortawesome/free-solid-svg-icons";
 import Loading from "../../../../../utils/Loading";
 import { Link } from "react-router-dom";
-import { ModalFormLancamentos } from "../../PrestacaoContas/TiposAcertosLancamentos/ModalFormLancamento";
+import { ModalFormLancamentos } from "./ModalFormLancamento";
 import { ModalConfirmDeleteLancamento } from "../../PrestacaoContas/TiposAcertosLancamentos/ModalConfirmDeleteLancamento";
 import { ModalInfoNaoPodeExcluir } from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
 import { ModalInfoNaoPodeGravar } from "../../Estrutura/Acoes/ModalInfoNaoPodeGravar";
@@ -105,7 +105,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
       <div>
         <button
           onClick={() => handleEditarLancamentos(rowData)}
-          className="btn-editar-lancamento"
+          className="btn-editar-acertos"
         >
           <FontAwesomeIcon
             style={{ fontSize: "20px", marginRight: "0", color: "#00585E" }}
@@ -199,7 +199,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
             setShowModalInfoNaoPodeExcluir(true);
             console.log(e.response.data.mensagem)
         }
-        console.log('Erro ao excluir Ação!! ', e.response)
+        console.log('Erro ao excluir Lançamento!! ', e.response)
     }
 };
 
@@ -262,7 +262,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
                   />
                   <p>
                     Exibindo{" "}
-                    <span className="total-lancamentos">{totalLancamentos}</span>{" "}
+                    <span className="total">{totalLancamentos}</span>{" "}
                     tipos de acertos em lançamentos
                   </p>
             </>

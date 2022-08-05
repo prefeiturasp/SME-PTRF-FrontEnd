@@ -1,10 +1,10 @@
 import React, {useEffect, useState}from "react";
-import {getTabelaCategoria} from "../../../../../services/sme/Parametrizacoes.service";
+import {getTabelaDocumento} from "../../../../../services/sme/Parametrizacoes.service";
 import {DataTable} from 'primereact/datatable'
 import {Column} from 'primereact/column'
 
 
-export const TabelaDocumentos = ({todosDocumentos: todosDocumentos, rowsPerPage, lancamentosTemplate}) => {
+export const TabelaDocumentos = ({todosDocumentos: todosDocumentos, rowsPerPage, editDocumentosTemplate}) => {
     const [categoriaTabela, setCategoriaTabela] = useState([]);
 
     const ativoTemplate = (rowData) => {
@@ -13,19 +13,28 @@ export const TabelaDocumentos = ({todosDocumentos: todosDocumentos, rowsPerPage,
 
     useEffect(() => {
         async function carregaTabelaCategoria() {
-            let resp = await getTabelaCategoria()
+            let resp = await getTabelaDocumento()
             setCategoriaTabela(resp.categorias)
         }
         carregaTabelaCategoria();
     }, []);
 
     const categoriaTemplate = (rowData) => {
-        if (categoriaTabela.length > 0){
+        if (rowData){
             let categoria = categoriaTabela.find(categoria => categoria.id === rowData.categoria)
             return categoria ? categoria.nome : ''
         }
     }
 
+    const documentoTemplate = (rowData) => {
+        let listDocumentos = []
+        if (rowData){
+            rowData.tipos_documento_prestacao.map(element => {
+                listDocumentos.push(element.nome)
+            })
+            return listDocumentos.map(item => <p style={{'textAlign': 'start'}} key={item}>{item};</p>)
+        }
+    }
 
     return(
         <DataTable
@@ -41,11 +50,11 @@ export const TabelaDocumentos = ({todosDocumentos: todosDocumentos, rowsPerPage,
                 body={categoriaTemplate}
             />
             <Column 
-                style={{width: '15%'}}
-                field="documentos"
+                style={{width: '25%'}}
+                field="tipos_documento_prestacao"
                 header="Documentos relacionados"
                 className="text-center"
-                body={ativoTemplate}/>
+                body={documentoTemplate}/>
             <Column 
                 style={{width: '15%'}}
                 field="ativo"
@@ -57,7 +66,7 @@ export const TabelaDocumentos = ({todosDocumentos: todosDocumentos, rowsPerPage,
                 field="acoes"
                 header="Ações"
                 className="text-center"
-                body={lancamentosTemplate}
+                body={editDocumentosTemplate}
             />
         </DataTable>
     )

@@ -1,5 +1,6 @@
 import React from "react";
 import { Select } from 'antd';
+import "../parametrizacoes-prestacao-contas.scss";
 
 export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros, categoriaTabela}) =>{
     const { Option } = Select;
@@ -11,7 +12,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                     <div className="form-group col-md-5">
                         <label htmlFor="filtrar_por_nome">Filtrar por nome</label>
                         <input
-                            value={stateFiltros.filtrar_por_lancamento}
+                            value={stateFiltros.filtrar_por_nome}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
                             name='filtrar_por_nome'
                             id="filtrar_por_nome"
@@ -26,15 +27,15 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             mode="multiple"
                             allowClear
                             placeholder="Selecione as categorias"
-                            value={stateFiltros.lancamento_modal}
+                            value={stateFiltros.filtrar_por_categoria}
                             onChange={(value) => handleChangeFiltros('filtrar_por_categoria', value)}
-                            className="categoria-table-multiple-search"
+                            className="categorias-table-multiple-search"
                             required
                         >
                             {categoriaTabela && categoriaTabela.length > 0 && categoriaTabela.map(item => (
                                 <Option key={item.id} value={item.id}>{item.nome}</Option>
                             ))}
-                            <Option>Todos</Option>
+                            <Option value="">Todos</Option>
                         </Select>
                     </div>
                     <div className="form-group col-md-3">
