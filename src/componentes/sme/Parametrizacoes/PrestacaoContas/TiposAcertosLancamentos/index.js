@@ -2,11 +2,11 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { PaginasContainer } from "../../../../../paginas/PaginasContainer";
 import {
   getListaDeAcertosLancamentos,
-  getLancamentosFiltrados,
-  postAddLancamentos,
-  putAtualizarLancamento,
+  getAcertosLancamentosFiltrados,
+  postAddAcertosLancamentos,
+  putAtualizarAcertosLancamentos,
   getTabelaCategoria,
-  deleteLancamento,
+  deleteAcertosLancamentos,
 } from "../../../../../services/sme/Parametrizacoes.service";
 import { Filtros } from "./Filtros";
 import { TabelaLancamentos } from "../../PrestacaoContas/TiposAcertosLancamentos/TabelaLancamentos";
@@ -83,7 +83,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
 
   const handleSubmitFiltros = async () => {
     setLoading(true);
-    let lancamentosFiltrados = await getLancamentosFiltrados(
+    let lancamentosFiltrados = await getAcertosLancamentosFiltrados(
       stateFiltros.filtrar_por_nome,
       stateFiltros.filtrar_por_categoria,
       stateFiltros.filtrar_por_ativo
@@ -139,7 +139,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
 
     if (stateFormModal.operacao === "create") {
       try {
-        await postAddLancamentos(payload);
+        await postAddAcertosLancamentos(payload);
         setShowModalForm(false);
         await carregaTodosLancamentos();
       } catch (e) {
@@ -157,7 +157,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
       }
     } else {
       try {
-        await putAtualizarLancamento(stateFormModal.uuid, payload);
+        await putAtualizarAcertosLancamentos(stateFormModal.uuid, payload);
         setShowModalForm(false);
         console.log("Ação alterada com sucesso", payload);
         await carregaTodosLancamentos();
@@ -189,7 +189,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
   const onDeleteLancamentoTrue = async () => {
     try {
         setShowModalDeleteLancamento(false);
-        await deleteLancamento(stateFormModal.uuid);
+        await deleteAcertosLancamentos(stateFormModal.uuid);
         setShowModalForm(false);
         console.log('Lançamento excluído com sucesso');
         await carregaTodosLancamentos();
