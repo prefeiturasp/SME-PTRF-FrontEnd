@@ -131,7 +131,7 @@ export const ModalFormDocumentos = (props) => {
                         <div className="p-Y bd-highlight">
                             <button
                                 id="btn-documento-submit"
-                                disabled={true}
+                                disabled={props.stateFormModal.operacao === 'create' ? true : false}
                                 verificaSeAtivo={verificaSeAtivo(props.stateFormModal)}
                                 onClick={() => {props.handleSubmitModalFormDocumentos(props.stateFormModal)}}
                                 type="button"
