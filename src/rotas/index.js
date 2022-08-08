@@ -74,6 +74,7 @@ import { VisualizacaoDaAtaParecerTecnico } from "../componentes/dres/RelatorioCo
 import { EdicaoAtaParecerTecnico } from "../componentes/dres/RelatorioConsolidado/AtaParecerTecnico/VisualizacaoAtaParecerTecnico/EdicaoAta";
 import { ParametrizacoesMotivosDeEstorno } from "../componentes/sme/Parametrizacoes/Receitas/ParametrizacoesMotivosEstorno";
 import { ParametrizacoesTiposAcertosLancamentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosLancamentos";
+import { ParametrizacoesTiposAcertosDocumentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosDocumentos";
 import {ExtracaoDadosPage} from '../paginas/SME/ExtracaoDados'
 
 const routesConfig = [
@@ -341,7 +342,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/dre-relatorio-consolidado-apuracao/:periodo_uuid/:conta_uuid/:ja_publicado?",
+        path: "/dre-relatorio-consolidado-apuracao/:periodo_uuid/:conta_uuid/:ja_publicado?/:consolidado_dre_uuid?",
         component: RelatorioConsolidadoApuracao,
         permissoes: ['access_relatorio_consolidado_dre'],
     },
@@ -433,6 +434,12 @@ const routesConfig = [
         exact: true,
         path: "/parametro-tipos-acertos-lancamentos",
         component: ParametrizacoesTiposAcertosLancamentos,
+        permissoes: ['access_painel_parametrizacoes'],
+    },
+    {
+        exact: true,
+        path: "/parametro-tipos-acertos-documentos",
+        component: ParametrizacoesTiposAcertosDocumentos,
         permissoes: ['access_painel_parametrizacoes'],
     },
     {

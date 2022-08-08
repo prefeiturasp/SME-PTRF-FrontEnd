@@ -46,7 +46,6 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
 
     const getDadosAta = useCallback(async () => {
         let dados_ata = await getAtaParecerTecnico(uuid_ata);
-        console.log("XXXXXXXXXXX getDadosAta ", dados_ata)
         setDadosAta(dados_ata);
     }, [uuid_ata])
 
