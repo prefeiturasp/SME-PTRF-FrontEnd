@@ -6,6 +6,8 @@ import '../parametrizacoes-prestacao-contas.scss'
 export const ModalFormDocumentos = (props) => {
     const { Option } = Select;
 
+
+
     const bodyTextarea = (operacao) => {
 
         return (
@@ -35,7 +37,7 @@ export const ModalFormDocumentos = (props) => {
                             value={props.stateFormModal.tipos_documento_prestacao}
                             onChange={(value) => props.handleChangeFormModal('tipos_documento_prestacao', value)}
                             className="documentos-table-multiple-search mb-2"
-                            required
+                            required={true}
                         >
                             {props.documentoTabela && props.documentoTabela.length > 0 && props.documentoTabela.map(item => (
                                 <Option key={item.id} value={item.id}>{item.nome}</Option>
@@ -117,7 +119,8 @@ export const ModalFormDocumentos = (props) => {
                         </div>
                         <div className="p-Y bd-highlight">
                             <button
-                                disabled={props.readOnly || !props.stateFormModal.nome || !props.stateFormModal.categoria}
+                                id="btn-documento-submit"
+                                disabled={props.readOnly || !props.stateFormModal.nome || !props.stateFormModal.categoria || !props.stateFormModal.tipos_documento_prestacao}
                                 onClick={() => {props.handleSubmitModalFormDocumentos(props.stateFormModal)}}
                                 type="button"
                                 className="btn btn btn-success mt-2"

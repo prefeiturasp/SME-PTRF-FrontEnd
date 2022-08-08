@@ -246,6 +246,19 @@ export const ParametrizacoesTiposAcertosDocumentos = () => {
   };
 
   const handleChangeFormModal = (name, value) => {
+    let categoria = document.getElementById('categoria')
+    let nome = document.getElementById('nome')
+    if(name === 'tipos_documento_prestacao'){
+      if(value.length === 0){
+        document.getElementById('btn-documento-submit').disabled = true;
+      }
+      else if (value.length > 1 && categoria.length === 0 && nome.length === 0){
+        document.getElementById('btn-documento-submit').disabled = true;
+      }
+      else{
+        document.getElementById('btn-documento-submit').disabled = false;
+      }
+    }
     setStateFormModal({
       ...stateFormModal,
       [name]: value,

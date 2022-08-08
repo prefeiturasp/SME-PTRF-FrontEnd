@@ -51,7 +51,7 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                             {documentoTabela && documentoTabela.length > 0 && documentoTabela.map(item => (
                                 <Option key={item.id} value={item.id}>{item.nome}</Option>
                             ))}
-                            <Option value={[1,2,3,4,5]}>Todos</Option>
+                            <Option value='all'>Todos</Option>
                         </Select>
                     </div>
                     <div className="form-group col-md-2">
