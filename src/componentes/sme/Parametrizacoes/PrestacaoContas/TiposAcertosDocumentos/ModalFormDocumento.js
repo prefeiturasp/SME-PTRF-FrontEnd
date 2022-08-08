@@ -6,7 +6,17 @@ import '../parametrizacoes-prestacao-contas.scss'
 export const ModalFormDocumentos = (props) => {
     const { Option } = Select;
 
-
+    const checkIsEnabled = (state) => {
+        let handleSubmitDocumentos = document.getElementById('btn-documento-submit')
+        if(handleSubmitDocumentos) {
+            if(state.nome.length === 0 || state.categoria.length === 0 || state.tipos_documento_prestacao.length === 0){
+                handleSubmitDocumentos.disabled = true;
+            }
+            else {
+                handleSubmitDocumentos.disabled = false;
+            }
+        }
+    }
 
     const bodyTextarea = (operacao) => {
 
@@ -33,6 +43,7 @@ export const ModalFormDocumentos = (props) => {
                             mode="multiple"
                             allowClear
                             name="tipos_documento_prestacao"
+                            id="documento"
                             placeholder="Selecione as documentos de prestação"
                             value={props.stateFormModal.tipos_documento_prestacao}
                             onChange={(value) => props.handleChangeFormModal('tipos_documento_prestacao', value)}
@@ -120,7 +131,7 @@ export const ModalFormDocumentos = (props) => {
                         <div className="p-Y bd-highlight">
                             <button
                                 id="btn-documento-submit"
-                                disabled={props.readOnly || !props.stateFormModal.nome || !props.stateFormModal.categoria || !props.stateFormModal.tipos_documento_prestacao}
+                                disabled={checkIsEnabled(props.stateFormModal)}
                                 onClick={() => {props.handleSubmitModalFormDocumentos(props.stateFormModal)}}
                                 type="button"
                                 className="btn btn btn-success mt-2"
