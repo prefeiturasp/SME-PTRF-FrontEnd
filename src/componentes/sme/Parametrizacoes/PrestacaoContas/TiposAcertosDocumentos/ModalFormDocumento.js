@@ -6,7 +6,7 @@ import '../parametrizacoes-prestacao-contas.scss'
 export const ModalFormDocumentos = (props) => {
     const { Option } = Select;
 
-    const checkIsEnabled = (state) => {
+    const verificaSeAtivo = (state) => {
         let handleSubmitDocumentos = document.getElementById('btn-documento-submit')
         if(handleSubmitDocumentos) {
             if(state.nome.length === 0 || state.categoria.length === 0 || state.tipos_documento_prestacao.length === 0){
@@ -131,7 +131,8 @@ export const ModalFormDocumentos = (props) => {
                         <div className="p-Y bd-highlight">
                             <button
                                 id="btn-documento-submit"
-                                disabled={checkIsEnabled(props.stateFormModal)}
+                                disabled={true}
+                                verificaSeAtivo={verificaSeAtivo(props.stateFormModal)}
                                 onClick={() => {props.handleSubmitModalFormDocumentos(props.stateFormModal)}}
                                 type="button"
                                 className="btn btn btn-success mt-2"
