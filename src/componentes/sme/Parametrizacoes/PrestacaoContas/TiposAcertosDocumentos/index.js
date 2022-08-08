@@ -1,77 +1,90 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
+import Loading from "../../../../../utils/Loading";
+import { 
+getListaDeAcertosDocumentos,
+getAcertosDocumentosFiltrados,
+postAddAcertosDocumentos,
+putAtualizarAcertosDocumentos,
+deleteAcertosDocumentos,
+getTabelaDocumento,
+ } from "../../../../../services/sme/Parametrizacoes.service";
+import { TabelaDocumentos } from "./TabelaDocumento";
 import { PaginasContainer } from "../../../../../paginas/PaginasContainer";
-import {
-  getListaDeAcertosLancamentos,
-  getAcertosLancamentosFiltrados,
-  postAddAcertosLancamentos,
-  putAtualizarAcertosLancamentos,
-  getTabelaCategoria,
-  deleteAcertosLancamentos,
-} from "../../../../../services/sme/Parametrizacoes.service";
 import { Filtros } from "./Filtros";
-import { TabelaLancamentos } from "../../PrestacaoContas/TiposAcertosLancamentos/TabelaLancamentos";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faEdit } from "@fortawesome/free-solid-svg-icons";
-import Loading from "../../../../../utils/Loading";
 import { Link } from "react-router-dom";
-import { ModalFormLancamentos } from "./ModalFormLancamento";
-import { ModalConfirmDeleteLancamento } from "../../PrestacaoContas/TiposAcertosLancamentos/ModalConfirmDeleteLancamento";
-import { ModalInfoNaoPodeExcluir } from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
-import { ModalInfoNaoPodeGravar } from "../../Estrutura/Acoes/ModalInfoNaoPodeGravar";
 import {MsgImgCentralizada} from "../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../assets/img/img-404.svg"
 import "../parametrizacoes-prestacao-contas.scss";
+import { ModalFormDocumentos } from "./ModalFormDocumento";
+import { ModalConfirmDeleteDocumento } from "../../PrestacaoContas/TiposAcertosDocumentos/ModalConfirmDeleteDocumento";
+import { ModalInfoNaoPodeExcluir } from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
+import { ModalInfoNaoPodeGravar } from "../../Estrutura/Acoes/ModalInfoNaoPodeGravar";
 
-export const ParametrizacoesTiposAcertosLancamentos = () => {
+
+export const ParametrizacoesTiposAcertosDocumentos = () => {
   
   const initialStateFiltros = {
-    filtrar_por_nome: "",
-    filtrar_por_categoria: "",
-    filtrar_por_ativo: "",
+      filtrar_por_nome: "",
+      filtrar_por_categoria: [],
+      filtrar_por_ativo: "",
+      filtrar_por_documento_relacionado: [],
   };
 
   const initialStateFormModal = {
-    nome: "",
-    categoria: "",
-    ativo: false,
-    operacao: 'create',
+      nome: "",
+      categoria: "",
+      tipos_documento_prestacao: [],
+      ativo: false,
+      operacao: 'create',
   };
 
-  const [todosLancamentos, setTodosLancamentos] = useState([]);
+  const [todosDocumentos, setTodosDocumentos] = useState([]);
   const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
   const [stateFormModal, setStateFormModal] = useState(initialStateFormModal);
   const [showModalForm, setShowModalForm] = useState(false);
   const [showModalInfoNaoPodeGravar, setShowModalInfoNaoPodeGravar] = useState(false);
   const [mensagemModalInfoNaoPodeGravar, setMensagemModalInfoNaoPodeGravar] = useState("");
-  const [showModalDeleteLancamento, setShowModalDeleteLancamento] = useState(false);
+  const [showModalDeleteDocumento, setShowModalDeleteDocumento] = useState(false);
   const [showModalInfoNaoPodeExcluir, setShowModalInfoNaoPodeExcluir] = useState(false);
   const [mensagemModalInfoNaoPodeExcluir, setMensagemModalInfoNaoPodeExcluir] = useState("");
   const [categoriaTabela, setCategoriaTabela] = useState([]);
+  const [documentoTabela, setDocumentoTabela] = useState([]);
   const [loading, setLoading] = useState(true);
   const [readOnly, setReadOnly] = useState(false);
 
-  const carregaTodosLancamentos = useCallback(async () => {
+  const carregaTodosAcertosDocumentos = useCallback(async () => {
     setLoading(true);
-    let todosLancamentos = await getListaDeAcertosLancamentos();
-    setTodosLancamentos(todosLancamentos);
+    let todosDocumentos = await getListaDeAcertosDocumentos();
+    setTodosDocumentos(todosDocumentos);
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    carregaTodosLancamentos();
-  }, [carregaTodosLancamentos]);
+    carregaTodosAcertosDocumentos();
+  }, [carregaTodosAcertosDocumentos]);
 
   useEffect(() => {
     async function carregaTabelaCategoria() {
-        let resp = await getTabelaCategoria()
+        let resp = await getTabelaDocumento()
         setCategoriaTabela(resp.categorias)
     }
     carregaTabelaCategoria();
   }, []);
 
-  const totalLancamentos = useMemo(
-    () => todosLancamentos.length,
-    [todosLancamentos]
+  useEffect(() => {
+    async function carregaTabelaDocumento() {
+        let resp = await getTabelaDocumento()
+        setDocumentoTabela(resp.documentos)
+    }
+    carregaTabelaDocumento();
+  }, []);
+
+
+  const totalDocumentos = useMemo(
+    () => todosDocumentos.length,
+    [todosDocumentos]
   );
 
   const handleChangeFiltros = (name, value) => {
@@ -83,12 +96,13 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
 
   const handleSubmitFiltros = async () => {
     setLoading(true);
-    let lancamentosFiltrados = await getAcertosLancamentosFiltrados(
+    let documentosFiltrado = await getAcertosDocumentosFiltrados(
       stateFiltros.filtrar_por_nome,
       stateFiltros.filtrar_por_categoria,
-      stateFiltros.filtrar_por_ativo
+      stateFiltros.filtrar_por_ativo,
+      stateFiltros.filtrar_por_documento_relacionado.join(',')
     );
-    setTodosLancamentos(lancamentosFiltrados);
+    setTodosDocumentos(documentosFiltrado);
     setLoading(false);
   };
 
@@ -100,11 +114,11 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
 
   const rowsPerPage = 20;
 
-  const lancamentosTemplate = (rowData) => {
+  const editDocumentosTemplate = (rowData) => {
     return (
       <div>
         <button
-          onClick={() => handleEditarLancamentos(rowData)}
+          onClick={() => handleEditarDocumentos(rowData)}
           className="btn-editar-acertos"
         >
           <FontAwesomeIcon
@@ -116,32 +130,51 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
     );
   };
 
+  const handleEditarDocumentos = (rowData) => {
+    setReadOnly(false);
+    setStateFormModal({
+      uuid: rowData.uuid,
+      id: rowData.id,
+      nome: rowData.nome,
+      categoria: rowData.categoria,
+      tipos_documento_prestacao: rowData.tipos_documento_prestacao.map(v => v.id),
+      ativo: rowData.ativo,
+      operacao: "edit",
+    });
+    setShowModalForm(true);
+  };
+
   const onHandleClose = () => {
     setStateFormModal(initialStateFormModal);
     setShowModalForm(false);
   };
 
   const handleOnChangeMultipleSelectModal = async (value) => {
-      let name = "categoria"
+    let name = "categoria"
 
-      setStateFormModal({
-          ...stateFormModal,
-          [name]: value
-      });
+    setStateFormModal({
+        ...stateFormModal,
+        [name]: value
+    });
   }
 
-  const handleSubmitModalFormLancamentos = async (stateFormModal) => {
+  const handleSubmitModalFormDocumentos = async (stateFormModal) => {
     const payload = {
       nome: stateFormModal.nome,
       categoria: stateFormModal.categoria,
+      tipos_documento_prestacao: stateFormModal.tipos_documento_prestacao,
       ativo: stateFormModal.ativo,
-    };
+    }
 
+    if(payload.tipos_documento_prestacao.includes('all')){
+        payload.tipos_documento_prestacao = documentoTabela.map(item => item.id)
+    }
+    
     if (stateFormModal.operacao === "create") {
       try {
-        await postAddAcertosLancamentos(payload);
+        await postAddAcertosDocumentos(payload);
         setShowModalForm(false);
-        await carregaTodosLancamentos();
+        await carregaTodosAcertosDocumentos();
       } catch (e) {
         if (e.response.data && e.response.data.non_field_errors) {
           setMensagemModalInfoNaoPodeGravar(
@@ -157,10 +190,10 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
       }
     } else {
       try {
-        await putAtualizarAcertosLancamentos(stateFormModal.uuid, payload);
+        await putAtualizarAcertosDocumentos(stateFormModal.uuid, payload);
         setShowModalForm(false);
         console.log("Ação alterada com sucesso", payload);
-        await carregaTodosLancamentos();
+        await carregaTodosAcertosDocumentos();
       } catch (e) {
         if (e.response.data && e.response.data.non_field_errors) {
           setMensagemModalInfoNaoPodeGravar(
@@ -169,7 +202,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
           setShowModalInfoNaoPodeGravar(true);
         } else {
           setMensagemModalInfoNaoPodeGravar(
-            "Já existe um lançamento com esse nome."
+            "Já existe um documento com esse nome."
           );
           setShowModalInfoNaoPodeGravar(true);
         }
@@ -177,29 +210,29 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
     }
   };
 
-  const serviceCrudLancamentos = async () => {
-    setShowModalDeleteLancamento(true)
+  const serviceCrudDocumentos = async () => {
+    setShowModalDeleteDocumento(true)
   };
 
-  const handleCloseDeleteLancamento = () => {
+  const handleCloseDeleteDocumento = () => {
     setShowModalInfoNaoPodeExcluir(false)
-    setShowModalDeleteLancamento(false)
+    setShowModalDeleteDocumento(false)
   };
 
-  const onDeleteLancamentoTrue = async () => {
+  const onDeleteDocumentoTrue = async () => {
     try {
-        setShowModalDeleteLancamento(false);
-        await deleteAcertosLancamentos(stateFormModal.uuid);
+        setShowModalDeleteDocumento(false);
+        await deleteAcertosDocumentos(stateFormModal.uuid);
         setShowModalForm(false);
-        console.log('Lançamento excluído com sucesso');
-        await carregaTodosLancamentos();
+        console.log('Documentos excluído com sucesso');
+        await carregaTodosAcertosDocumentos();
     } catch (e) {
         if (e.response && e.response.data && e.response.data.mensagem){
             setMensagemModalInfoNaoPodeExcluir(e.response.data.mensagem);
             setShowModalInfoNaoPodeExcluir(true);
             console.log(e.response.data.mensagem)
         }
-        console.log('Erro ao excluir Lançamento!! ', e.response)
+        console.log('Erro ao excluir Delete!! ', e.response)
     }
 };
 
@@ -212,19 +245,6 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
     setShowModalInfoNaoPodeExcluir(false)
   };
 
-  const handleEditarLancamentos = (rowData) => {
-    setReadOnly(false);
-    setStateFormModal({
-      uuid: rowData.uuid,
-      id: rowData.id,
-      nome: rowData.nome,
-      categoria: rowData.categoria,
-      ativo: rowData.ativo,
-      operacao: "edit",
-    });
-    setShowModalForm(true);
-  };
-
   const handleChangeFormModal = (name, value) => {
     setStateFormModal({
       ...stateFormModal,
@@ -234,7 +254,7 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
 
   return (
     <PaginasContainer>
-      <h1 className="titulo-itens-painel mt-5">Tipo de acertos em lançamentos</h1>
+      <h1 className="titulo-itens-painel mt-5">Tipo de acertos em documentos</h1>
       <div className="page-content-inner">
         <>
           <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
@@ -250,11 +270,12 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
                       style={{ marginRight: "5px", color: "#fff" }}
                       icon={faPlus}
                     />
-                    Adicionar tipo de acerto em lançamentos
+                    Adicionar tipo de acertos em documentos
                   </Link>
                 </div>
                 <Filtros
                   categoriaTabela={categoriaTabela}
+                  documentoTabela={documentoTabela}
                   stateFiltros={stateFiltros}
                   handleChangeFiltros={handleChangeFiltros}
                   handleSubmitFiltros={handleSubmitFiltros}
@@ -262,57 +283,56 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
                   />
                   <p>
                     Exibindo{" "}
-                    <span className="total">{totalLancamentos}</span>{" "}
-                    tipos de acertos em lançamentos
+                    <span className="total">{totalDocumentos}</span>{" "}
+                    tipos de acertos em documentos
                   </p>
+                  {loading ? (
+            <div className="mt-5">
+              <Loading
+                corGrafico="black"
+                corFonte="dark"
+                marginTop="0"
+                marginBottom="0"
+              />
+            </div>
+          ) : (
+            todosDocumentos.length > 0 ? (
+            <>
+              <TabelaDocumentos
+                todosDocumentos={todosDocumentos}
+                rowsPerPage={rowsPerPage}
+                editDocumentosTemplate={editDocumentosTemplate}
+              />
             </>
-            
-        {loading ? (
-          <div className="mt-5">
-            <Loading
-              corGrafico="black"
-              corFonte="dark"
-              marginTop="0"
-              marginBottom="0"
-            />
-          </div>
-        ) : (
-          todosLancamentos.length > 0 ? (
-          <>
-            <TabelaLancamentos
-              todosLancamentos={todosLancamentos}
-              rowsPerPage={rowsPerPage}
-              lancamentosTemplate={lancamentosTemplate}
-            />
-          </>
-        ) : (
-        <MsgImgCentralizada
-            texto='Não há lançamentos'
-            img={Img404}
-        />
-        )
+          ) : (
+          <MsgImgCentralizada
+              texto='Não há documentos'
+              img={Img404}
+          />
+          )
       )}
         <section>
-          <ModalFormLancamentos
+          <ModalFormDocumentos
             show={showModalForm}
             handleClose={onHandleClose}
-            handleSubmitModalFormLancamentos={handleSubmitModalFormLancamentos}
+            handleSubmitModalFormDocumentos={handleSubmitModalFormDocumentos}
             handleOnChangeMultipleSelectModal={handleOnChangeMultipleSelectModal}
             handleChangeFormModal={handleChangeFormModal}
             stateFormModal={stateFormModal}
             readOnly={readOnly}
             categoriaTabela={categoriaTabela}
-            serviceCrudLancamentos={serviceCrudLancamentos}
+            documentoTabela={documentoTabela}
+            serviceCrudDocumentos={serviceCrudDocumentos}
             primeiroBotaoTexto="Cancelar"
             primeiroBotaoCss="outline-success"
           />
         </section>
         <section>
-          <ModalConfirmDeleteLancamento
-            show={showModalDeleteLancamento}
-            handleClose={handleCloseDeleteLancamento}
-            onDeleteLancamentoTrue={onDeleteLancamentoTrue}
-            titulo="Excluir Ação"
+          <ModalConfirmDeleteDocumento
+            show={showModalDeleteDocumento}
+            handleClose={handleCloseDeleteDocumento}
+            onDeleteDocumentoTrue={onDeleteDocumentoTrue}
+            titulo="Excluir documento"
             texto={`<p>Deseja realmente apagar ${stateFormModal.nome}?</p>`}
             primeiroBotaoTexto="Cancelar"
             primeiroBotaoCss="outline-success"
@@ -340,7 +360,8 @@ export const ParametrizacoesTiposAcertosLancamentos = () => {
             primeiroBotaoCss="success"
           />
         </section>
-      </div>
+        </>
+        </div>
     </PaginasContainer>
-  );
-};
+  )
+}

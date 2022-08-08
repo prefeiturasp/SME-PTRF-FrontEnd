@@ -1,14 +1,28 @@
 import React from "react";
 import {ModalFormParametrizacoesAcertos} from "../../../../Globais/ModalBootstrap";
+import { Select } from 'antd';
 import '../parametrizacoes-prestacao-contas.scss'
 
-export const ModalFormLancamentos = (props) => {
+export const ModalFormDocumentos = (props) => {
+    const { Option } = Select;
+
+    const checkIsEnabled = (state) => {
+        let handleSubmitDocumentos = document.getElementById('btn-documento-submit')
+        if(handleSubmitDocumentos) {
+            if(state.nome.length === 0 || state.categoria.length === 0 || state.tipos_documento_prestacao.length === 0){
+                handleSubmitDocumentos.disabled = true;
+            }
+            else {
+                handleSubmitDocumentos.disabled = false;
+            }
+        }
+    }
 
     const bodyTextarea = (operacao) => {
 
         return (
             <>
-                <form onSubmit={props.handleSubmitModalFormLancamentos}>
+                <form onSubmit={props.handleSubmitModalFormDocumentos}>
                     <div className='row'>
 
                     <div className='form-group col-md-10'>
@@ -23,6 +37,25 @@ export const ModalFormLancamentos = (props) => {
                                 onChange={(e) => props.handleChangeFormModal(e.target.name, e.target.value)}
                             />
                         </div>
+                        <div className="col-md-10">
+                        <label htmlFor="documentos_prestacao">Documentos Prestações</label>
+                        <Select
+                            mode="multiple"
+                            allowClear
+                            name="tipos_documento_prestacao"
+                            id="documento"
+                            placeholder="Selecione as documentos de prestação"
+                            value={props.stateFormModal.tipos_documento_prestacao}
+                            onChange={(value) => props.handleChangeFormModal('tipos_documento_prestacao', value)}
+                            className="documentos-table-multiple-search mb-2"
+                            required={true}
+                        >
+                            {props.documentoTabela && props.documentoTabela.length > 0 && props.documentoTabela.map(item => (
+                                <Option key={item.id} value={item.id}>{item.nome}</Option>
+                            ))}
+                            <Option key={'all'} value='all'>Todos</Option>
+                        </Select>
+                    </div>
                         <div className="form-group col-md-10">
                             <label htmlFor="categoria">Categoria</label>
                                 <select value={props.stateFormModal.categoria}
@@ -30,7 +63,7 @@ export const ModalFormLancamentos = (props) => {
                                         placeholder="Selecione a categoria"
                                         name="categoria"
                                         id="categoria"
-                                        className="form-control"
+                                        className="categorias-multiple-search form-control"
                                         required={true}
                                 >
                                     <option value="">Selecione uma categoria</option>
@@ -38,7 +71,6 @@ export const ModalFormLancamentos = (props) => {
                                         <option key={item.id} value={item.id}>{item.nome}</option>
                                     ))}
                                 </select>
-                                
                         </div>
 
                         <div className='col-8'>
@@ -50,24 +82,24 @@ export const ModalFormLancamentos = (props) => {
                                     name="ativo"
                                     className={`form-check-input`}
                                     type="radio"
-                                    id="reabertura-lancamentos"
+                                    id="reabertura-Documentos"
                                     value="True"
                                     checked={props.stateFormModal.ativo}
                                     onChange={() => props.handleChangeFormModal('ativo', true)}
                                 />
-                                <label className="form-check-label font-weight-bold" htmlFor="reabertura-lancamentos">Sim</label>
+                                <label className="form-check-label font-weight-bold" htmlFor="reabertura-documentos">Sim</label>
                             </div>
                             <div className="form-check form-check-inline">
                                 <input
                                     name="ativo"
                                     className={`form-check-input`}
                                     type="radio"
-                                    id="reabertura-lancamentos"
+                                    id="reabertura-documentos"
                                     value="False"
                                     checked={!props.stateFormModal.ativo}
                                     onChange={() => props.handleChangeFormModal('ativo', false)}
                                 />
-                                <label className="form-check-label font-weight-bold" htmlFor="reabertura-lancamentos">Não</label>
+                                <label className="form-check-label font-weight-bold" htmlFor="reabertura-documentos">Não</label>
                             </div>
                         </div>
                     </div>
@@ -88,7 +120,7 @@ export const ModalFormLancamentos = (props) => {
                     <div className="d-flex bd-highlight mt-2">
                         <div className="p-Y flex-grow-1 bd-highlight">
                             {props.stateFormModal && props.stateFormModal.operacao === 'edit' &&
-                            <button onClick={props.serviceCrudLancamentos} type="button" className="btn btn btn-danger mt-2 mr-2">
+                            <button onClick={props.serviceCrudDocumentos} type="button" className="btn btn btn-danger mt-2 mr-2">
                                 Apagar
                             </button>
                             }
@@ -98,8 +130,9 @@ export const ModalFormLancamentos = (props) => {
                         </div>
                         <div className="p-Y bd-highlight">
                             <button
-                                disabled={props.readOnly || !props.stateFormModal.nome || !props.stateFormModal.categoria}
-                                onClick={() => {props.handleSubmitModalFormLancamentos(props.stateFormModal)}}
+                                id="btn-documento-submit"
+                                disabled={checkIsEnabled(props.stateFormModal)}
+                                onClick={() => {props.handleSubmitModalFormDocumentos(props.stateFormModal)}}
                                 type="button"
                                 className="btn btn btn-success mt-2"
                             >
@@ -115,7 +148,7 @@ export const ModalFormLancamentos = (props) => {
     return (
         <ModalFormParametrizacoesAcertos
             show={props.show}
-            titulo={props.stateFormModal && props.stateFormModal.operacao === 'edit' ? 'Editar tipo de acerto em lançamento' : 'Adicionar tipo de acerto em lançamento'}
+            titulo={props.stateFormModal && props.stateFormModal.operacao === 'edit' ? 'Editar tipo de acerto em documento' : 'Adicionar tipo de acerto em documento'}
             onHide={props.handleClose}
             bodyText={bodyTextarea(props.stateFormModal.operacao)}
             primeiroBotaoOnclick={props.handleClose}

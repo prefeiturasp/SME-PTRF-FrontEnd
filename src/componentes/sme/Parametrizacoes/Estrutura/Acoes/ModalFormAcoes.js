@@ -8,10 +8,7 @@ export const ModalFormAcoes = (props) => {
         return (
             <>
                 <form onSubmit={props.handleSubmitModalFormAcoes}>
-
-
                     <div className='row mt-3'>
-
                         <div className='col'>
                             <label htmlFor="nome">Nome da ação</label>
                             <input
