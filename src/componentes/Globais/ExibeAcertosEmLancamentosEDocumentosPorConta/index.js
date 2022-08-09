@@ -387,13 +387,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                     toggleBtnEscolheConta={toggleBtnEscolheConta}
                     clickBtnEscolheConta={clickBtnEscolheConta}
                 >
-                    <FiltrosAcertosDeLancamentos
-                        stateFiltros={stateFiltros}
-                        listaTiposDeAcertoLancamentos={listaTiposDeAcertoLancamentos}
-                        handleChangeFiltros={handleChangeFiltros}
-                        handleSubmitFiltros={handleSubmitFiltros}
-                        limpaFiltros={limpaFiltros}
-                    />
+                    
                     {loadingLancamentos ? (
                             <Loading
                                 corGrafico="black"
