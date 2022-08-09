@@ -39,6 +39,8 @@ export const RelatorioConsolidadoEmTela = () => {
     const [btnSalvarJustificativaDisable, setBtnSalvarJustificativaDisable] = useState(true);
     const [showSalvarJustificativa, setShowSalvarJustificativa] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [ePrevia, setEPrevia] = useState(true);
+
 
     // Consolidado DRE
     const [consolidadoDre, setConsolidadoDre] = useState(false);
@@ -48,11 +50,21 @@ export const RelatorioConsolidadoEmTela = () => {
         carregaJustificativa();
     }, []);
 
+    useEffect( () => {
+        if(!consolidadoDre || consolidadoDre.versao === 'PREVIA'){
+            setEPrevia(true);
+        }
+        else {
+            setEPrevia(false);
+        }
+    }, [consolidadoDre])
+
     // Consolidado DRE
     const carregaConsolidadoDre = useCallback(async () => {
         if (dre_uuid && periodo_uuid){
             try {
                 let consolidado_dre = await getConsolidadoDre(dre_uuid, periodo_uuid)
+                console.log('Consolidado DRE:', consolidado_dre)
                 if (consolidado_dre && consolidado_dre.length > 0){
                     setConsolidadoDre(consolidado_dre[0])
                 }else {
@@ -79,7 +91,7 @@ export const RelatorioConsolidadoEmTela = () => {
     const carregaExecucaoFinanceira = useCallback( async () => {
         try {
             let execucao = await getExecucaoFinanceira(dre_uuid, periodo_uuid,  consolidado_dre_uuid !== 'null' ? consolidado_dre_uuid : '');
-            console.log("XXXXXXXXXXXXXXX getExecucaoFinanceira ", execucao)
+            console.log("Execução Financeira:", execucao)
             setExecucaoFinanceira(execucao);
         } catch (e) {
             console.log("Erro ao carregar execução financeira ", e)
@@ -149,18 +161,13 @@ export const RelatorioConsolidadoEmTela = () => {
         setShowSalvarJustificativa(false);
     }
 
-    const publicado = () => {
+    const versaoConsolidadoDRE = () => {
         if(!consolidadoDre){
-            return false;
+            return "PREVIA";
         }
-        else if(consolidadoDre && consolidadoDre.versao === "PREVIA"){
-            return false;
+        else {
+            return consolidadoDre.versao;
         }
-        else if(consolidadoDre && consolidadoDre.versao === "FINAL"){
-            return true;
-        }
-
-        return false;
     }
 
     return (
@@ -179,9 +186,9 @@ export const RelatorioConsolidadoEmTela = () => {
                     ) :
                     <>
                         <div className="col-12 mt-5">
-                            <h1>Novo</h1>
                             <TopoComBotoes
                                 periodoNome={periodoNome}
+                                ePrevia={ePrevia}
                             />
                             <TabelaExecucaoFinanceira
                                 execucaoFinanceira={execucaoFinanceira}
