@@ -1,19 +1,19 @@
 import React from "react";
 
-export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate, comparaValores}) =>{
+export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate, comparaValores, tipoConta}) =>{
 
     return(
         <>
-            <h5 className='mt-3 mb-3'>Execução Financeira</h5>
+            <h5 className='mt-3 mb-3'>Execução Financeira - Conta {tipoConta}</h5>
             {execucaoFinanceira && Object.entries(execucaoFinanceira).length > 0 &&
                 <table className="table table-bordered tabela-execucao-financeira">
                     <thead>
                     <tr className='tr-titulo'>
-                        <th scope="col">Tipo de recurso</th>
-                        <th scope="col">Custeio</th>
-                        <th scope="col">Capital</th>
-                        <th scope="col">Livre Aplicação</th>
-                        <th scope="col">Total (R$)</th>
+                        <th scope="col" style={{width:'60%'}}>Tipo de recurso</th>
+                        <th scope="col" style={{width:'10%'}}>Custeio</th>
+                        <th scope="col" style={{width:'10%'}}>Capital</th>
+                        <th scope="col" style={{width:'10%'}}>Livre Aplicação</th>
+                        <th scope="col" style={{width:'10%'}}>Total (R$)</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -24,7 +24,7 @@ export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate, com
                         <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre) :'-'}</td>
                         <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_total ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_total) :'-'}</td>
                     </tr>
-                    {comparaValores() &&
+                    {comparaValores(execucaoFinanceira) &&
                         <>
                             <tr>
                                 <td><span className='texto-aviso-associacoes-em-analise'><strong>Previsto Secretaria Municipal de Educação</strong></span></td>

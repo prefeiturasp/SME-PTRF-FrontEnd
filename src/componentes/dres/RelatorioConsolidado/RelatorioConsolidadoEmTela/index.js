@@ -40,9 +40,6 @@ export const RelatorioConsolidadoEmTela = () => {
     const [showSalvarJustificativa, setShowSalvarJustificativa] = useState(false);
     const [loading, setLoading] = useState(false);
     const [ePrevia, setEPrevia] = useState(true);
-
-
-    // Consolidado DRE
     const [consolidadoDre, setConsolidadoDre] = useState(false);
 
     useEffect(() => {
@@ -50,14 +47,11 @@ export const RelatorioConsolidadoEmTela = () => {
         carregaJustificativa();
     }, []);
 
+
     useEffect( () => {
-        if(!consolidadoDre || consolidadoDre.versao === 'PREVIA'){
-            setEPrevia(true);
-        }
-        else {
-            setEPrevia(false);
-        }
+        setEPrevia(!consolidadoDre || consolidadoDre.versao === 'PREVIA')
     }, [consolidadoDre])
+
 
     // Consolidado DRE
     const carregaConsolidadoDre = useCallback(async () => {
@@ -123,12 +117,12 @@ export const RelatorioConsolidadoEmTela = () => {
         return valor_formatado
     };
 
-    const comparaValores = () => {
-        if (execucaoFinanceira) {
-            return execucaoFinanceira.repasses_previstos_sme_custeio !== execucaoFinanceira.repasses_no_periodo_custeio ||
-                execucaoFinanceira.repasses_previstos_sme_capital !== execucaoFinanceira.repasses_no_periodo_capital ||
-                execucaoFinanceira.repasses_previstos_sme_livre !== execucaoFinanceira.repasses_no_periodo_livre ||
-                execucaoFinanceira.repasses_previstos_sme_total !== execucaoFinanceira.repasses_no_periodo_total;
+    const comparaValores = (execucaoFinanceiraConta) => {
+        if (execucaoFinanceiraConta) {
+            return execucaoFinanceiraConta.repasses_previstos_sme_custeio !== execucaoFinanceiraConta.repasses_no_periodo_custeio ||
+                execucaoFinanceiraConta.repasses_previstos_sme_capital !== execucaoFinanceiraConta.repasses_no_periodo_capital ||
+                execucaoFinanceiraConta.repasses_previstos_sme_livre !== execucaoFinanceiraConta.repasses_no_periodo_livre ||
+                execucaoFinanceiraConta.repasses_previstos_sme_total !== execucaoFinanceiraConta.repasses_no_periodo_total;
         }
     };
 
@@ -156,18 +150,8 @@ export const RelatorioConsolidadoEmTela = () => {
         }
     };
 
-
     const onHandleCloseSalvarJustificativa = () => {
         setShowSalvarJustificativa(false);
-    }
-
-    const versaoConsolidadoDRE = () => {
-        if(!consolidadoDre){
-            return "PREVIA";
-        }
-        else {
-            return consolidadoDre.versao;
-        }
     }
 
     return (
@@ -190,11 +174,16 @@ export const RelatorioConsolidadoEmTela = () => {
                                 periodoNome={periodoNome}
                                 ePrevia={ePrevia}
                             />
-                            <TabelaExecucaoFinanceira
-                                execucaoFinanceira={execucaoFinanceira}
-                                valorTemplate={valorTemplate}
-                                comparaValores={comparaValores}
-                            />
+                            {execucaoFinanceira && execucaoFinanceira.por_tipo_de_conta.map((valoresConta) => {
+                                return <TabelaExecucaoFinanceira
+                                    key={valoresConta.tipo_conta}
+                                    execucaoFinanceira={valoresConta.valores}
+                                    valorTemplate={valorTemplate}
+                                    comparaValores={comparaValores}
+                                    tipoConta={valoresConta.tipo_conta}
+                                />
+                            })}
+
                             <JustificativaDiferenca
                                 comparaValores={comparaValores}
                                 justificativaDiferenca={justificativaDiferenca}
