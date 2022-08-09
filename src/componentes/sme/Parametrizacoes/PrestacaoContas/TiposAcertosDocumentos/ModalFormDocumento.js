@@ -1,22 +1,21 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import {ModalFormParametrizacoesAcertos} from "../../../../Globais/ModalBootstrap";
 import { Select } from 'antd';
 import '../parametrizacoes-prestacao-contas.scss'
 
 export const ModalFormDocumentos = (props) => {
+    const [isEnabled, setIsEnabled] = useState(true);
     const { Option } = Select;
 
-    const verificaSeAtivo = (state) => {
-        let handleSubmitDocumentos = document.getElementById('btn-documento-submit')
-        if(handleSubmitDocumentos) {
-            if(state.nome.length === 0 || state.categoria.length === 0 || state.tipos_documento_prestacao.length === 0){
-                handleSubmitDocumentos.disabled = true;
-            }
-            else {
-                handleSubmitDocumentos.disabled = false;
-            }
+    useEffect(() => {
+        if(props.stateFormModal.nome.length === 0 || props.stateFormModal.categoria.length === 0 || props.stateFormModal.tipos_documento_prestacao.length === 0){
+            setIsEnabled(true);
         }
-    }
+        else {
+            setIsEnabled(false);
+        }
+    }, [props.stateFormModal])
+
 
     const bodyTextarea = (operacao) => {
 
@@ -131,10 +130,9 @@ export const ModalFormDocumentos = (props) => {
                         <div className="p-Y bd-highlight">
                             <button
                                 id="btn-documento-submit"
-                                disabled={props.stateFormModal.operacao === 'create' ? true : false}
-                                verificaSeAtivo={verificaSeAtivo(props.stateFormModal)}
                                 onClick={() => {props.handleSubmitModalFormDocumentos(props.stateFormModal)}}
                                 type="button"
+                                disabled={isEnabled}
                                 className="btn btn btn-success mt-2"
                             >
                                 Salvar
