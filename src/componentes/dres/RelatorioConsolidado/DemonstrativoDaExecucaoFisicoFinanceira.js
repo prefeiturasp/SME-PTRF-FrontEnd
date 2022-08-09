@@ -46,7 +46,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
 
     const onClickPreencherRelatorio = (contaEscolhida) =>{
         let consolidado_dre_uuid = consolidadoDre.uuid
-        window.location.assign(`/dre-relatorio-consolidado-apuracao/${periodoEscolhido}/${contaEscolhida}/${consolidadoDre.ja_publicado}/${consolidado_dre_uuid}`)
+        window.location.assign(`/dre-relatorio-consolidado-em-tela/${periodoEscolhido}/${contaEscolhida}/${consolidadoDre.ja_publicado}/${consolidado_dre_uuid}`)
     };
 
     const geraItensSplitButton = useCallback( () => {
@@ -88,6 +88,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                                 </div>
                             </div>
                             <div className="col-12 col-md-4 align-self-center text-right">
+                                {/*TODO Remover o SplitButton e manter apenas o botão normal.*/}
                                 {!relatorio.tipo_conta ? (
                                     <SplitButton
                                         className="btn-consultar-relatorio"
@@ -97,6 +98,7 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                                     >
                                     </SplitButton>
                                 ):
+                                    //TODO Não passar mais o tipo de conta.
                                     <button
                                         onClick={()=> onClickPreencherRelatorio(relatorio.tipo_conta_uuid)}
                                         type="button"
