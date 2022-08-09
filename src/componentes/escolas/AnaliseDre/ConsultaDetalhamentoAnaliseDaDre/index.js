@@ -97,7 +97,7 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
                 <TextoSuperior
                     retornaTextoSuperior={retornaTextoSuperior}
                 />
-                 <h1 className="titulo-itens-painel mt-5">Devoluções para acertos da DRE</h1>
+                <h1 className="titulo-itens-painel mt-5">Devoluções para acertos da DRE</h1>
                 <hr className="mt-0 mb-0"/>
                 {totalAnalisesDePcDevolvidas > 0 ? (
                         <>
