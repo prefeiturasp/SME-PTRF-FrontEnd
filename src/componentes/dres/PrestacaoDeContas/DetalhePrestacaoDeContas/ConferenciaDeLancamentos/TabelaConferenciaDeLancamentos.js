@@ -38,7 +38,6 @@ import {
     limparDetalharAcertos
 } from "../../../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions";
 import {visoesService} from "../../../../../services/visoes.service";
-import moment from "moment";
 import {ModalBootstrapLegendaInformacao} from "../../../../../componentes/Globais/ModalBootstrap";
 
 const TabelaConferenciaDeLancamentos = ({

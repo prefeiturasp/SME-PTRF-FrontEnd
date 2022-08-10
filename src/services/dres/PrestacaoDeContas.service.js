@@ -301,6 +301,10 @@ export const getAnalisePrestacaoConta = async (analise_prestacao_uuid) => {
     return (await api.get(`/api/analises-prestacoes-contas/${analise_prestacao_uuid}`, authHeader)).data
 };
 
+export const getAnaliseLancamentosPrestacaoConta = async () => {
+    return (await api.get(`/api/analises-lancamento-prestacao-conta/tabelas/`, authHeader)).data
+};
+
 export const downloadDocumentoPreviaPdf = async (analise_atual_uuid) => {
     return api
             .get(`/api/analises-prestacoes-contas/download-documento-pdf/?analise_prestacao_uuid=${analise_atual_uuid}`, {

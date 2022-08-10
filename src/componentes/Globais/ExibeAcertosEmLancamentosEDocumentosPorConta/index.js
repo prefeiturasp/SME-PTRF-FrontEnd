@@ -16,7 +16,8 @@ import {useDispatch} from "react-redux";
 import {addDetalharAcertos, limparDetalharAcertos} from "../../../store/reducers/componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/DetalharAcertos/actions"
 
 import TabelaAcertosDocumentos from "./TabelaAcertosDocumentos";
-import {FiltrosAcertosDeLancamentos} from "./FiltrosAcertosDeLancamentos";
+import { getAnaliseLancamentosPrestacaoConta } from "../../../services/dres/PrestacaoDeContas.service";
+
 
 // Hooks Personalizados
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
@@ -57,6 +58,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     const [loadingExtratosBancarios, setLoadingExtratosBancarios] = useState(true)
     const [loadingLancamentos, setLoadingLancamentos] = useState(true)
     const [loadingDocumentos, setLoadingDocumentos] = useState(true)
+    const [opcoesJustificativa, setOpcoesJustificativa] = useState([])
     const [expandedRowsLancamentos, setExpandedRowsLancamentos] = useState(null);
     const [expandedRowsDocumentos, setExpandedRowsDocumentos] = useState(null);
     const [stateFiltros, setStateFiltros] = useState(initialStateFiltros);
@@ -159,7 +161,10 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     const carregaAcertosLancamentos = useCallback(async (conta_uuid, filtrar_por_lancamento=null, filtrar_por_tipo_de_ajuste=null) => {
         setContaUuid(conta_uuid)
         setLoadingLancamentos(true)
+        let { status_realizacao } = await getAnaliseLancamentosPrestacaoConta()
         let lancamentos_ajustes = await getLancamentosAjustes(analiseAtualUuid, conta_uuid, filtrar_por_lancamento, filtrar_por_tipo_de_ajuste)
+
+        setOpcoesJustificativa(status_realizacao)
         setLancamentosAjustes(lancamentos_ajustes)
         setLoadingLancamentos(false)
     }, [analiseAtualUuid])
@@ -169,6 +174,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         setLancamentosDocumentos(documentos_ajustes)
         setLoadingDocumentos(false)
     }, [analiseAtualUuid])
+
 
     useEffect(() => {
         if (contasAssociacao && contasAssociacao.length > 0){
@@ -399,6 +405,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                         <>
                             <TabelaAcertosLancamentos
                                 lancamentosAjustes={lancamentosAjustes}
+                                opcoesJustificativa={opcoesJustificativa}
                                 expandedRowsLancamentos={expandedRowsLancamentos}
                                 setExpandedRowsLancamentos={setExpandedRowsLancamentos}
                                 rowExpansionTemplateLancamentos={rowExpansionTemplateLancamentos}
