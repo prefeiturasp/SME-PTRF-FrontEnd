@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Botoes = ({handleSalvarValoresReprogramados, handleConcluirValoresReprogramados, handleVoltar, permiteSalvarOuConcluir}) => {
+export const Botoes = ({handleSalvarValoresReprogramados, handleOnClickConcluirValoresReprogramados, handleVoltar, permiteSalvarOuConcluir}) => {
     return(
         <>
             <div className="row">
@@ -25,7 +25,7 @@ export const Botoes = ({handleSalvarValoresReprogramados, handleConcluirValoresR
                     <button 
                         type="button" 
                         className="btn btn-success mr-2"
-                        onClick={handleConcluirValoresReprogramados}
+                        onClick={handleOnClickConcluirValoresReprogramados}
                         disabled={!permiteSalvarOuConcluir()}
                     >
                         <strong>Concluir</strong>

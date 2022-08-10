@@ -2,11 +2,8 @@ import React from "react";
 
 export const BarraStatus = ({statusValoresReprogramados, defineCorBarraStatus}) => {
     return (
-        <div className={`row mt-n3 barra-status ${defineCorBarraStatus(statusValoresReprogramados.cor)}`}>
-            <div className="col-12">
-                    <p className="mt-2">{statusValoresReprogramados.texto}</p>
-            </div>
-            
+        <div className={`mt-2 col-12 d-flex align-items-center ${defineCorBarraStatus(statusValoresReprogramados.cor)}`}>
+            <p className={`barra-status pt-1 pb-1 mb-0`}>{statusValoresReprogramados.texto}</p>
         </div>
     )
 }

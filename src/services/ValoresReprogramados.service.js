@@ -23,3 +23,11 @@ export const patchConcluirValoresReprogramados = async (payload) => {
 export const getStatusValoresReprogramados = async(associacao_uuid) => {
     return (await api.get(`/api/valores-reprogramados/get-status-valores-reprogramados/?associacao_uuid=${associacao_uuid}`, authHeader)).data
 }
+
+export const getTextoExplicativoUe = async() => {
+    return (await api.get(`/api/parametros-ue/texto-pagina-valores-reprogramados/`, authHeader)).data
+}
+
+export const getTextoExplicativoDre = async() => {
+    return (await api.get(`/api/parametros-dre/texto-pagina-valores-reprogramados/`, authHeader)).data
+}

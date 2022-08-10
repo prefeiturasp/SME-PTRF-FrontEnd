@@ -64,7 +64,6 @@ export const ValoresReprogramadosDre = () =>{
     const buscaDiretoria = async () => {
         let diretoria = await getUnidade();
         setDadosDiretoria(diretoria);
-        setLoading(false);
     };
 
     const buscaListaDeValoresReprogramados = async () => {
@@ -72,12 +71,11 @@ export const ValoresReprogramadosDre = () =>{
             if(dadosDiretoria && dadosDiretoria.uuid){
                 let listaValoresReprogramados = await getListaValoresReprogramados(dadosDiretoria.uuid, statusPadrao);
                 setListaDeValoresReprogramados(listaValoresReprogramados.valores_reprogramados);
+                setLoading(false);
             }
         }catch (e){
             console.log("Erro ao buscar valores reprogramados ", e);
-        }
-
-        setLoading(false);
+        }        
     }
 
     const buscaTabelaAssociacoes = async () =>{
@@ -123,7 +121,6 @@ export const ValoresReprogramadosDre = () =>{
         setLoading(true);
         setStateFiltros(initialStateFiltros);
         await buscaListaDeValoresReprogramados();
-        setLoading(false);
     };
 
     // Templates tabela
