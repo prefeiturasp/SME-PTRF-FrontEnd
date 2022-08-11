@@ -7,6 +7,7 @@ import {getContasDaAssociacao, getSaldosIniciasAjustes, getDocumentosAjustes, ge
 import {TabelaAcertosLancamentos} from "./TabelaAcertosLancamentos";
 import TabsAcertosEmLancamentosPorConta from "./TabsAcertosEmLancamentosPorConta";
 import Loading from "../../../utils/Loading";
+import { postLimparStatusLancamentoPrestacaoConta } from "../../../services/dres/PrestacaoDeContas.service";
 
 import TabsAjustesEmValoresReprogramados from "./TabsAjustesEmValoresReprogramados"
 import TabelaAcertosEmValoresReprogramados from "./TabelaAcertosEmValoresReprogramados";
@@ -168,6 +169,14 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         setLancamentosAjustes(lancamentos_ajustes)
         setLoadingLancamentos(false)
     }, [analiseAtualUuid])
+
+    const limparStatus = async (lancamentosSelecionados) => {
+        setLoadingLancamentos(true)
+        postLimparStatusLancamentoPrestacaoConta({"uuids_analises_lancamentos": lancamentosSelecionados.map(lanc => lanc.analise_lancamento.uuid)})
+        const lancamentoAjuste = await getLancamentosAjustes(lancamentosSelecionados[0].analise_lancamento.analise_prestacao_conta, lancamentosAjustes[0].conta)
+        setLancamentosAjustes(lancamentoAjuste)
+        setLoadingLancamentos(false)
+    }
 
     const carregaAcertosDocumentos = useCallback(async () => {
         let documentos_ajustes = await getDocumentosAjustes(analiseAtualUuid)
@@ -405,6 +414,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                         <>
                             <TabelaAcertosLancamentos
                                 lancamentosAjustes={lancamentosAjustes}
+                                limparStatus={limparStatus}
                                 opcoesJustificativa={opcoesJustificativa}
                                 expandedRowsLancamentos={expandedRowsLancamentos}
                                 setExpandedRowsLancamentos={setExpandedRowsLancamentos}

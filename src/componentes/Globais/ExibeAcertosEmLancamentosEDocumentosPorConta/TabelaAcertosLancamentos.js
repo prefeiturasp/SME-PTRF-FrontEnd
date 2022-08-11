@@ -14,9 +14,12 @@ const tagColors = {
     'PENDENTE': '#FFF' 
 }
 
-export const TabelaAcertosLancamentos = ({lancamentosAjustes, opcoesJustificativa, setExpandedRowsLancamentos, expandedRowsLancamentos, rowExpansionTemplateLancamentos, rowsPerPageAcertosLancamentos, dataTemplate, numeroDocumentoTemplate, valor_template}) => {
+export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, opcoesJustificativa, setExpandedRowsLancamentos, expandedRowsLancamentos, rowExpansionTemplateLancamentos, rowsPerPageAcertosLancamentos, dataTemplate, numeroDocumentoTemplate, valor_template}) => {
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
     const [lancamentosSelecionados, setLancamentosSelecionados] = useState([])
+    const [exibirBtnJustificado, setExibirBtnJustificado] = useState(false)
+    const [exibirBtnRealizado, setExibirBtnRealizado] = useState(false)
+    const [exibirBtnSemStatus, setExibirBtnSemStatus] = useState(false)
     const [textoModalCheckNaoPermitido, setTextoModalCheckNaoPermitido] = useState('')
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
 
@@ -33,6 +36,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, opcoesJustificativ
                         setQuantidadeSelecionada(lancamentosSelecionados.length + 1)
                         if (lancamentosSelecionados.length) {
                             let statusId = lancamentosSelecionados[0].analise_lancamento.status_realizacao
+                            verificarStatus(statusId)
                             if(statusId !== rowData.analise_lancamento.status_realizacao) {
                                 e.preventDefault()
                                 setTextoModalCheckNaoPermitido('<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>')
@@ -62,6 +66,24 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, opcoesJustificativ
         )
     }
 
+    const verificarStatus = (statusId) => {
+        if(statusId === 'REALIZADO') {
+            setExibirBtnRealizado(true)
+            setExibirBtnSemStatus(false)
+            setExibirBtnJustificado(false)
+        }
+        else if(statusId === 'JUSTIFICADO') {
+            setExibirBtnJustificado(true)
+            setExibirBtnRealizado(false)
+            setExibirBtnSemStatus(false)
+        }
+        else if(statusId === 'PENDENTE') {
+            setExibirBtnSemStatus(true)
+            setExibirBtnJustificado(false)
+            setExibirBtnRealizado(false)
+        }
+    }
+
     const tagJustificativa = (rowData) => {        
         let status = '-'
 
@@ -75,7 +97,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, opcoesJustificativ
 
         return (
             <div className="tag-justificativa" 
-                style={{ backgroundColor: statusId ? tagColors[statusId] : '#fff' }}
+                style={{ backgroundColor: statusId ? tagColors[statusId] : '#fff', color: statusId === 'PENDENTE' ? '#000' : '#fff' }}
             >
                 {status}
             </div>
@@ -84,6 +106,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, opcoesJustificativ
 
     const selecionarPorStatus = (event, statusId) => {
         event.preventDefault()
+        verificarStatus(statusId)
 
         let lancamentos = lancamentosAjustes.filter(lanc => 
             lanc.analise_lancamento.status_realizacao === statusId
@@ -117,7 +140,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, opcoesJustificativ
                         <Dropdown.Menu>
                             <Dropdown.Item onClick={(e) => selecionarPorStatus(e, 'REALIZADO')}>Selecionar todos
                                 realizados</Dropdown.Item>
-                            <Dropdown.Item onClick={(e) => selecionarPorStatus(e, 'JUSTIFICADO')}>Selecionar todos não
+                            <Dropdown.Item onClick={(e) => selecionarPorStatus(e, 'JUSTIFICADO')}>Selecionar todos
                                 justificados</Dropdown.Item>
                             <Dropdown.Item onClick={(e) => selecionarPorStatus(e, 'PENDENTE')}>Selecionar todos sem status </Dropdown.Item>
                             <Dropdown.Item onClick={limparLancamentos}>Desmarcar todos</Dropdown.Item>
@@ -137,82 +160,122 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, opcoesJustificativ
                         <div className="col-5">
                             {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "lançamento selecionado" : "lançamentos selecionados"} / {totalDeAcertosLancamentos} totais
                         </div>
-                    </div>
-                <div className="col-7">
-                    <div className="row">
-                        <div className="col-12">
-                                <button className="float-right btn btn-link btn-montagem-selecionar"
-                                    onClick={(e) => limparLancamentos(e)}
-                                    style={{textDecoration: "underline", cursor: "pointer"}}>
-                                <strong>Cancelar</strong>
-                            </button>
-                            <>
-                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                <button
-                                    className="float-right btn btn-link btn-montagem-selecionar"
-                                    onClick={() => marcarComoCorreto()}
-                                    style={{textDecoration: "underline", cursor: "pointer"}}>
-                                    <FontAwesomeIcon
-                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                        icon={faCheckCircle}
-                                    />
-                                    <strong>Marcar como Correto</strong>
+                        <div className="col-7">
+                        {exibirBtnRealizado &&
+                                <>
+                                    <button
+                                        className="float-right btn btn-link btn-montagem-selecionar"
+                                        onClick={() => {}}
+                                        style={{textDecoration: "underline", cursor: "pointer"}}>
+                                        <FontAwesomeIcon
+                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                            icon={faCheckCircle}
+                                        />
+                                        <strong>Cancelar</strong>
+                                    </button>
+                                    <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                    <button
+                                        className="float-right btn btn-link btn-montagem-selecionar"
+                                        onClick={(e) => e}
+                                        style={{textDecoration: "underline", cursor: "pointer"}}>
+                                        <FontAwesomeIcon
+                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                            icon={faCheckCircle}
+                                        />
+                                        <strong>Justificar não realização</strong>
+                                    </button>
+                                    <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                    <button
+                                        className="float-right btn btn-link btn-montagem-selecionar"
+                                        onClick={() => limparStatus(lancamentosSelecionados)}
+                                        style={{textDecoration: "underline", cursor: "pointer"}}>
+                                        <FontAwesomeIcon
+                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                            icon={faCheckCircle}
+                                        />
+                                        <strong>Limpar Status</strong>
+                                    </button>
+                                </>
+                                }
+                        {exibirBtnJustificado &&
+                                <>
+                                 <button
+                                        className="float-right btn btn-link btn-montagem-selecionar"
+                                        onClick={(e) => limparLancamentos(e)}
+                                        style={{textDecoration: "underline", cursor: "pointer"}}>
+                                        <FontAwesomeIcon
+                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                            icon={faCheckCircle}
+                                        />
+                                        <strong>Cancelar</strong>
                                 </button>
-                            </>
+                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                    <button
+                                        className="float-right btn btn-link btn-montagem-selecionar"
+                                        onClick={(e) => e}
+                                        style={{textDecoration: "underline", cursor: "pointer"}}>
+                                        <FontAwesomeIcon
+                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                            icon={faCheckCircle}
+                                        />
+                                        <strong>Marcar como realizado</strong>
+                                    </button>
+                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                    <button
+                                        className="float-right btn btn-link btn-montagem-selecionar"
+                                        onClick={(e) => {
+                                            limparStatus(lancamentosSelecionados);
+                                        }}
+                                        style={{textDecoration: "underline", cursor: "pointer"}}>
+                                        <FontAwesomeIcon
+                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                            icon={faCheckCircle}
+                                        />
+                                        <strong>Limpar Status</strong>
+                                    </button>
+                                </>
+                                }
+                        {exibirBtnSemStatus &&
+                                <>
+                                <button
+                                       className="float-right btn btn-link btn-montagem-selecionar"
+                                       onClick={(e) => limparLancamentos(e)}
+                                       style={{textDecoration: "underline", cursor: "pointer"}}>
+                                       <FontAwesomeIcon
+                                           style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                           icon={faCheckCircle}
+                                       />
+                                       <strong>Cancelar</strong>
+                               </button>
+                               <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                   <button
+                                       className="float-right btn btn-link btn-montagem-selecionar"
+                                       onClick={(e) => e}
+                                       style={{textDecoration: "underline", cursor: "pointer"}}>
+                                       <FontAwesomeIcon
+                                           style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                           icon={faCheckCircle}
+                                       />
+                                       <strong>Marcar como realizado</strong>
+                                   </button>
+                               <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                   <button
+                                       className="float-right btn btn-link btn-montagem-selecionar"
+                                       onClick={(e) => e}
+                                       style={{textDecoration: "underline", cursor: "pointer"}}>
+                                       <FontAwesomeIcon
+                                           style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                           icon={faCheckCircle}
+                                       />
+                                       <strong>Justificar não realizado</strong>
+                                   </button>
+                               </>
+                                }
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
         )}
-        //                 <div className="col-7">
-        //                     <div className="row">
-        //                         <div className="col-12">
-        //                             <button className="float-right btn btn-link btn-montagem-selecionar"
-        //                                     onClick={(e) => limparLancamentos(e)}
-        //                                     style={{textDecoration: "underline", cursor: "pointer"}}>
-        //                                 <strong>Cancelar</strong>
-        //                             </button>
-        //                             {exibirBtnMarcarComoCorreto &&
-        //                             <>
-        //                                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-        //                                 <button
-        //                                     className="float-right btn btn-link btn-montagem-selecionar"
-        //                                     onClick={() => marcarComoCorreto()}
-        //                                     style={{textDecoration: "underline", cursor: "pointer"}}
-        //                                 >
-        //                                     <FontAwesomeIcon
-        //                                         style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-        //                                         icon={faCheckCircle}
-        //                                     />
-        //                                     <strong>Marcar como Correto</strong>
-        //                                 </button>
-        //                             </>
-        //                             }
-        //                             {exibirBtnMarcarComoNaoConferido &&
-        //                             <>
-        //                                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-        //                                 <button
-        //                                     className="float-right btn btn-link btn-montagem-selecionar"
-        //                                     onClick={() => marcarComoNaoConferido()}
-        //                                     style={{textDecoration: "underline", cursor: "pointer"}}
-        //                                 >
-        //                                     <FontAwesomeIcon
-        //                                         style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-        //                                         icon={faCheckCircle}
-        //                                     />
-        //                                     <strong>Marcar como Não conferido</strong>
-        //                                 </button>
-        //                             </>
-        //                             }
-        //                         </div>
-        //                     </div>
-        //                 </div>
-        //             </div>
-        //         </div>
-        //     </div>
-        // )
-    // }
 
     const totalDeAcertosLancamentos = useMemo(() => lancamentosAjustes.length, [lancamentosAjustes]);
 
@@ -227,33 +290,6 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, opcoesJustificativ
                 </div>
             </div>
         )
-    }
-    
-    const marcarComoCorreto = async () => {
-        // let documentos_marcados_como_corretos = getDocumentosSelecionados()
-        // if (documentos_marcados_como_corretos && documentos_marcados_como_corretos.length > 0) {
-        //     let payload = [];
-        //     documentos_marcados_como_corretos.map((documento) =>
-        //         payload.push({
-        //             "tipo_documento": documento.tipo_documento_prestacao_conta.uuid,
-        //             "conta_associacao": documento.tipo_documento_prestacao_conta.conta_associacao,
-        //         })
-        //     );
-        //     payload = {
-        //         'analise_prestacao': prestacaoDeContas.analise_atual.uuid,
-        //         'documentos_corretos': [
-        //             ...payload
-        //         ]
-        //     }
-        //     try {
-        //         await postDocumentosParaConferenciaMarcarComoCorreto(prestacaoDeContas.uuid, payload)
-        //         console.log("Documentos marcados como correto com sucesso!")
-        //         desmarcarTodos()
-        //         await carregaListaDeDocumentosParaConferencia()
-        //     } catch (e) {
-        //         console.log("Erro ao marcar documentos como correto ", e.response)
-        //     }
-        // }
     }
 
     return(
