@@ -193,6 +193,7 @@ export const RelatorioConsolidadoEmTela = () => {
                             <TopoComBotoes
                                 periodoNome={periodoNome}
                                 ePrevia={ePrevia}
+                                referencia={execucaoFinanceira.titulo_parcial}
                             />
                             {execucaoFinanceira && execucaoFinanceira.por_tipo_de_conta.map((execucaoFinanceiraConta) => {
                                 return <div key={execucaoFinanceiraConta.tipo_conta}>
