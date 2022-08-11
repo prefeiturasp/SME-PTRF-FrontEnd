@@ -18,8 +18,11 @@ export const JustificativaDiferenca = ({execucaoFinanceira, comparaValores, just
                     <p className='texto-aviso-associacoes-em-analise'><strong>Justificativa da diferença entre o valor previsto pela SME e o transferido pela DRE no período</strong></p>
                     <div className="form-group">
                         <textarea
-                            disabled={!visoesService.getPermissoes(['change_relatorio_consolidado_dre'])}
-                            onChange={(e)=>onChangeJustificativaDiferenca(e.target.value, execucaoFinanceira.tipo_conta)}
+                            disabled={
+                                jaPublicado ||
+                                !visoesService.getPermissoes(['change_relatorio_consolidado_dre'])
+                            }
+                            onChange={(e) => onChangeJustificativaDiferenca(e.target.value, execucaoFinanceira.tipo_conta)}
                             className="form-control" id="justificativaDiferenca"
                             rows="3"
                             value={justificativaDiferenca.texto}
