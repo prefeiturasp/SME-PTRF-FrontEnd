@@ -25,6 +25,7 @@ export const App = () => {
                     pathName.match(/\/visualizacao-da-ata-parecer-tecnico\/[a-zA-Z0-9]/) ||
                     pathName.match(/\/edicao-da-ata-parecer-tecnico\/[a-zA-Z0-9]/) ||
                     pathName.match(/\/dre-relatorio-consolidado-apuracao\/[a-zA-Z0-9]/) ||
+                    pathName.match(/\/dre-relatorio-consolidado-em-tela\/[a-zA-Z0-9]/) ||
                     pathName.match(/\/dre-relatorio-consolidado-dados-das-ues\/[a-zA-Z0-9]/) ? (
                         <>
                             <Cabecalho/>

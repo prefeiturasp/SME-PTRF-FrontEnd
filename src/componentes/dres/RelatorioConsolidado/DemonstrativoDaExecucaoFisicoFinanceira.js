@@ -44,9 +44,9 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
         await getDownloadRelatorio(relatorio_uuid, relatorio_versao);
     };
 
-    const onClickPreencherRelatorio = (contaEscolhida) =>{
+    const onClickPreencherRelatorio = () =>{
         let consolidado_dre_uuid = consolidadoDre.uuid
-        window.location.assign(`/dre-relatorio-consolidado-apuracao/${periodoEscolhido}/${contaEscolhida}/${consolidadoDre.ja_publicado}/${consolidado_dre_uuid}`)
+        window.location.assign(`/dre-relatorio-consolidado-em-tela/${periodoEscolhido}/${consolidadoDre.ja_publicado}/${consolidado_dre_uuid}`)
     };
 
     const geraItensSplitButton = useCallback( () => {
@@ -88,23 +88,13 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                                 </div>
                             </div>
                             <div className="col-12 col-md-4 align-self-center text-right">
-                                {!relatorio.tipo_conta ? (
-                                    <SplitButton
-                                        className="btn-consultar-relatorio"
-                                        label={consolidadoDre.ja_publicado ? "Consultar relatório" : "Preencher relatório"}
-                                        model={itensSplitButton}
-                                        menuStyle={{textAlign: "left"}}
-                                    >
-                                    </SplitButton>
-                                ):
-                                    <button
-                                        onClick={()=> onClickPreencherRelatorio(relatorio.tipo_conta_uuid)}
-                                        type="button"
-                                        className="btn btn-outline-success btn-sm"
-                                    >
-                                        {consolidadoDre.ja_publicado ? "Consultar" : "Preencher"} relatório
-                                    </button>
-                                }
+                                <button
+                                    onClick={()=> onClickPreencherRelatorio()}
+                                    type="button"
+                                    className="btn btn-outline-success btn-sm"
+                                >
+                                    {consolidadoDre.ja_publicado ? "Consultar" : "Preencher"} relatório
+                                </button>
                             </div>
                         </div>
                     )}
@@ -127,6 +117,13 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                             menuStyle={{textAlign: "left"}}
                         >
                         </SplitButton>
+                        <button
+                            onClick={()=> onClickPreencherRelatorio()}
+                            type="button"
+                            className="btn btn-outline-success btn-sm"
+                        >
+                            {consolidadoDre.ja_publicado ? "Consultar" : "Preencher"} relatório
+                        </button>
                     </div>
                 </div>
             }
