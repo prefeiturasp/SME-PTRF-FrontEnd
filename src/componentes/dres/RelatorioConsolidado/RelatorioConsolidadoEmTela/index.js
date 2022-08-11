@@ -88,7 +88,6 @@ export const RelatorioConsolidadoEmTela = () => {
     const carregaExecucaoFinanceira = async () => {
         try {
             let execucao = await getExecucaoFinanceira(dre_uuid, periodo_uuid,  consolidado_dre_uuid !== 'null' ? consolidado_dre_uuid : '');
-            console.log('Execução:', execucao)
             setExecucaoFinanceira(execucao);
             carregaJustificativas(execucao)
         } catch (e) {
