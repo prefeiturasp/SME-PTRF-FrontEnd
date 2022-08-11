@@ -307,6 +307,10 @@ export const postLimparStatusLancamentoPrestacaoConta = async (payload) => {
     return (await api.post(`/api/analises-lancamento-prestacao-conta/limpar-status/`, payload, authHeader)).data
 }
 
+export const postJustificarNaoRealizacaoLancamentoPrestacaoConta = async (payload) => {
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/justificar-nao-realizacao/`, payload, authHeader)).data
+}
+
 export const downloadDocumentoPreviaPdf = async (analise_atual_uuid) => {
     return api
             .get(`/api/analises-prestacoes-contas/download-documento-pdf/?analise_prestacao_uuid=${analise_atual_uuid}`, {

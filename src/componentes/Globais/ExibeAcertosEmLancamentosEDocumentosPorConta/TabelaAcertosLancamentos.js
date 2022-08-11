@@ -3,7 +3,8 @@ import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
-import {ModalCheckNaoPermitidoConfererenciaDeLancamentos} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/ModalCheckNaoPermitidoConfererenciaDeLancamentos";
+import {ModalCheckNaoPermitidoConfererenciaDeLancamentos,} from "../../dres/PrestacaoDeContas//DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalCheckNaoPermitidoConfererenciaDeLancamentos";
+import {ModalJustificarNaoRealizacao} from "../../dres/PrestacaoDeContas//DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificarNaoRealizacao";
 import Dropdown from "react-bootstrap/Dropdown";
 
 import './scss/tagJustificativaLancamentos.scss';
@@ -14,7 +15,7 @@ const tagColors = {
     'PENDENTE': '#FFF' 
 }
 
-export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, opcoesJustificativa, setExpandedRowsLancamentos, expandedRowsLancamentos, rowExpansionTemplateLancamentos, rowsPerPageAcertosLancamentos, dataTemplate, numeroDocumentoTemplate, valor_template}) => {
+export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, justificarNaoRealizacao, opcoesJustificativa, setExpandedRowsLancamentos, expandedRowsLancamentos, rowExpansionTemplateLancamentos, rowsPerPageAcertosLancamentos, dataTemplate, numeroDocumentoTemplate, valor_template}) => {
     const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
     const [lancamentosSelecionados, setLancamentosSelecionados] = useState([])
     const [exibirBtnJustificado, setExibirBtnJustificado] = useState(false)
@@ -22,6 +23,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, opco
     const [exibirBtnSemStatus, setExibirBtnSemStatus] = useState(false)
     const [textoModalCheckNaoPermitido, setTextoModalCheckNaoPermitido] = useState('')
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
+    const [showModalJustificarNaoRealizacao, setShowModalJustificarNaoRealizacao] = useState(false)
 
 
     const selecionarTemplate = (rowData) => {
@@ -176,7 +178,10 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, opco
                                     <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                                     <button
                                         className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={(e) => e}
+                                        onClick={(e) => {
+                                            setShowModalJustificarNaoRealizacao(true)
+                                            // justificarNaoRealizacao(lancamentosSelecionados)
+                                        }}
                                         style={{textDecoration: "underline", cursor: "pointer"}}>
                                         <FontAwesomeIcon
                                             style={{color: "white", fontSize: '15px', marginRight: "3px"}}
@@ -223,9 +228,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, opco
                                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                                     <button
                                         className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={(e) => {
-                                            limparStatus(lancamentosSelecionados);
-                                        }}
+                                        onClick={() => limparStatus(lancamentosSelecionados)}
                                         style={{textDecoration: "underline", cursor: "pointer"}}>
                                         <FontAwesomeIcon
                                             style={{color: "white", fontSize: '15px', marginRight: "3px"}}
@@ -256,7 +259,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, opco
                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
                                            icon={faCheckCircle}
                                        />
-                                       <strong>Marcar como realizado</strong>
+                                       <strong>Marca como realizado</strong>
                                    </button>
                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                                    <button
@@ -276,6 +279,42 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, opco
                 </div>
             </div>
         )}
+
+        const modalBodyHTML = () => {
+            return (
+                <form>
+                    <div className='row'>
+                        <div className="col-12 mt-2">
+                            <p>Motivos para a existência do estorno</p>
+                            <label htmlFor="ressalvas">Motivo(s)</label>
+                            <br/>
+                            <div className="multiselect-demo">
+                                <div className="">
+                                    <p>TEXTE</p>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div className='col-12'>
+                            <div className="d-flex  justify-content-end pb-3 mt-3">
+                                <button onClick={() => {}} type="reset"
+                                        className="btn btn btn-outline-success mt-2 mr-2">Cancelar
+                                </button>
+                                <button
+                                    onClick={() => {}}
+                                    type="button"
+                                    className="btn btn-success mt-2"
+                                >
+                                    Confirmar
+                                </button>
+                            </div>
+                        </div>
+    
+                    </div>
+                </form>
+            )
+        }
+
 
     const totalDeAcertosLancamentos = useMemo(() => lancamentosAjustes.length, [lancamentosAjustes]);
 
@@ -357,6 +396,16 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, opco
                     handleClose={() => setShowModalCheckNaoPermitido(false)}
                     titulo='Seleção não permitida'
                     texto={textoModalCheckNaoPermitido}
+                    primeiroBotaoTexto="Fechar"
+                    primeiroBotaoCss="success"
+                />
+            </section>
+            <section>
+                <ModalJustificarNaoRealizacao
+                    show={showModalJustificarNaoRealizacao}
+                    handleClose={() => setShowModalJustificarNaoRealizacao(false)}
+                    titulo='Marcar como não realizado'
+                    bodyText={modalBodyHTML}
                     primeiroBotaoTexto="Fechar"
                     primeiroBotaoCss="success"
                 />
