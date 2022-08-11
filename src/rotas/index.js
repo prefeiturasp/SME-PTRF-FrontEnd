@@ -49,7 +49,9 @@ import {ListaPrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/List
 import {DetalhePrestacaoDeContas} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContas";
 import {DetalhePrestacaoDeContasNaoApresentada} from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContasNaoApresentada";
 import RelatorioConsolidado from "../componentes/dres/RelatorioConsolidado";
+// TODO Remover RelatorioConsolidadoApuracao
 import {RelatorioConsolidadoApuracao} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoApuracao";
+import {RelatorioConsolidadoEmTela} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoEmTela";
 import {RelatorioConsolidadoDadosDasUes} from "../componentes/dres/RelatorioConsolidado/RelatorioConsolidadoDadosDasUes";
 import {PainelParametrizacoesPage} from "../paginas/SME/Parametrizacoes/PainelParametrizacoes";
 import {AcompanhamentoPcsSmePage} from "../paginas/SME/AcompanhamentoPcsSme";
@@ -343,6 +345,12 @@ const routesConfig = [
         exact: true,
         path: "/dre-relatorio-consolidado-apuracao/:periodo_uuid/:conta_uuid/:ja_publicado?/:consolidado_dre_uuid?",
         component: RelatorioConsolidadoApuracao,
+        permissoes: ['access_relatorio_consolidado_dre'],
+    },
+    {
+        exact: true,
+        path: "/dre-relatorio-consolidado-em-tela/:periodo_uuid/:ja_publicado?/:consolidado_dre_uuid?",
+        component: RelatorioConsolidadoEmTela,
         permissoes: ['access_relatorio_consolidado_dre'],
     },
     {
