@@ -348,7 +348,7 @@ const routesConfig = [
     },
     {
         exact: true,
-        path: "/dre-relatorio-consolidado-em-tela/:periodo_uuid/:conta_uuid/:ja_publicado?/:consolidado_dre_uuid?",
+        path: "/dre-relatorio-consolidado-em-tela/:periodo_uuid/:ja_publicado?/:consolidado_dre_uuid?",
         component: RelatorioConsolidadoEmTela,
         permissoes: ['access_relatorio_consolidado_dre'],
     },
