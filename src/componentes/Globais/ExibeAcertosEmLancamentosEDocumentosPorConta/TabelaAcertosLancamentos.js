@@ -3,8 +3,9 @@ import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
-import {ModalCheckNaoPermitidoConfererenciaDeLancamentos,} from "../../dres/PrestacaoDeContas//DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalCheckNaoPermitidoConfererenciaDeLancamentos";
-import {ModalJustificarNaoRealizacao} from "../../dres/PrestacaoDeContas//DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificarNaoRealizacao";
+import {ModalCheckNaoPermitidoConfererenciaDeLancamentos,} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalCheckNaoPermitidoConfererenciaDeLancamentos";
+import {ModalJustificarNaoRealizacao} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificarNaoRealizacao";
+import {ModalJustificadaApagada} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificadaApagada";
 import Dropdown from "react-bootstrap/Dropdown";
 
 import './scss/tagJustificativaLancamentos.scss';
@@ -15,15 +16,15 @@ const tagColors = {
     'PENDENTE': '#FFF' 
 }
 
-export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, justificarNaoRealizacao, opcoesJustificativa, setExpandedRowsLancamentos, expandedRowsLancamentos, rowExpansionTemplateLancamentos, rowsPerPageAcertosLancamentos, dataTemplate, numeroDocumentoTemplate, valor_template}) => {
-    const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(0);
+export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marcarComoRealizado, justificarNaoRealizacao, opcoesJustificativa, setExpandedRowsLancamentos, expandedRowsLancamentos, rowExpansionTemplateLancamentos, rowsPerPageAcertosLancamentos, dataTemplate, numeroDocumentoTemplate, valor_template}) => {
     const [lancamentosSelecionados, setLancamentosSelecionados] = useState([])
-    const [exibirBtnJustificado, setExibirBtnJustificado] = useState(false)
-    const [exibirBtnRealizado, setExibirBtnRealizado] = useState(false)
-    const [exibirBtnSemStatus, setExibirBtnSemStatus] = useState(false)
     const [textoModalCheckNaoPermitido, setTextoModalCheckNaoPermitido] = useState('')
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
     const [showModalJustificarNaoRealizacao, setShowModalJustificarNaoRealizacao] = useState(false)
+    const [showModalJustificadaApagada, setShowModalJustificadaApagada] = useState(false)
+    const [isConfirmadoJustificado, setIsConfirmadoJustificado] = useState(false)
+    const [textoConfirmadoJustificado, setTextoConfirmadoJustificado] = useState('')
+    const [status, setStatus] = useState()
 
 
     const selecionarTemplate = (rowData) => {
@@ -35,10 +36,9 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, just
                     checked={indexSelecionado >= 0}
                     type="checkbox"
                     onChange={(e) => {
-                        setQuantidadeSelecionada(lancamentosSelecionados.length + 1)
                         if (lancamentosSelecionados.length) {
                             let statusId = lancamentosSelecionados[0].analise_lancamento.status_realizacao
-                            verificarStatus(statusId)
+                            setStatus(statusId)
                             if(statusId !== rowData.analise_lancamento.status_realizacao) {
                                 e.preventDefault()
                                 setTextoModalCheckNaoPermitido('<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>')
@@ -54,10 +54,11 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, just
                                 lancamentos.push(rowData)
                             }
                             setLancamentosSelecionados(lancamentos)
-                            setQuantidadeSelecionada(lancamentos.length)
+
 
                         } else {
                             setLancamentosSelecionados([rowData])
+                            setStatus(rowData.analise_lancamento.status_realizacao)
                         }
                     }}
                     name="checkLancamentoAjuste"
@@ -66,24 +67,6 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, just
                 />
             </div>
         )
-    }
-
-    const verificarStatus = (statusId) => {
-        if(statusId === 'REALIZADO') {
-            setExibirBtnRealizado(true)
-            setExibirBtnSemStatus(false)
-            setExibirBtnJustificado(false)
-        }
-        else if(statusId === 'JUSTIFICADO') {
-            setExibirBtnJustificado(true)
-            setExibirBtnRealizado(false)
-            setExibirBtnSemStatus(false)
-        }
-        else if(statusId === 'PENDENTE') {
-            setExibirBtnSemStatus(true)
-            setExibirBtnJustificado(false)
-            setExibirBtnRealizado(false)
-        }
     }
 
     const tagJustificativa = (rowData) => {        
@@ -108,19 +91,17 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, just
 
     const selecionarPorStatus = (event, statusId) => {
         event.preventDefault()
-        verificarStatus(statusId)
+        setStatus(statusId)
 
         let lancamentos = lancamentosAjustes.filter(lanc => 
             lanc.analise_lancamento.status_realizacao === statusId
         )
 
         setLancamentosSelecionados(lancamentos)
-        setQuantidadeSelecionada(lancamentos.length)
     }
 
     const limparLancamentos = (event) => {
         setLancamentosSelecionados([])
-        setQuantidadeSelecionada(0)
     }
 
     const selecionarHeader = () => {
@@ -154,6 +135,8 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, just
     }
 
     const montagemSelecionar = () => {
+        const quantidadeSelecionada = lancamentosSelecionados.length
+
         return (
             <div className="row">
                 <div className="col-12"
@@ -163,46 +146,45 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, just
                             {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "lançamento selecionado" : "lançamentos selecionados"} / {totalDeAcertosLancamentos} totais
                         </div>
                         <div className="col-7">
-                        {exibirBtnRealizado &&
+                        {status === "REALIZADO" &&
                                 <>
-                                    <button
-                                        className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={() => {}}
-                                        style={{textDecoration: "underline", cursor: "pointer"}}>
-                                        <FontAwesomeIcon
-                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                            icon={faCheckCircle}
-                                        />
-                                        <strong>Cancelar</strong>
-                                    </button>
-                                    <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                    <button
-                                        className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={(e) => {
-                                            setShowModalJustificarNaoRealizacao(true)
-                                            // justificarNaoRealizacao(lancamentosSelecionados)
-                                        }}
-                                        style={{textDecoration: "underline", cursor: "pointer"}}>
-                                        <FontAwesomeIcon
-                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                            icon={faCheckCircle}
-                                        />
-                                        <strong>Justificar não realização</strong>
-                                    </button>
-                                    <div className="float-right" style={{padding: "0px 10px"}}>|</div>
-                                    <button
-                                        className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={() => limparStatus(lancamentosSelecionados)}
-                                        style={{textDecoration: "underline", cursor: "pointer"}}>
-                                        <FontAwesomeIcon
-                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
-                                            icon={faCheckCircle}
-                                        />
-                                        <strong>Limpar Status</strong>
-                                    </button>
+                                <button
+                                    className="float-right btn btn-link btn-montagem-selecionar"
+                                    onClick={(e) => limparLancamentos(e)}
+                                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                                    <FontAwesomeIcon
+                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                        icon={faCheckCircle}
+                                    />
+                                    <strong>Cancelar</strong>
+                                </button>
+                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                <button
+                                    className="float-right btn btn-link btn-montagem-selecionar"
+                                    onClick={() => {
+                                        setShowModalJustificarNaoRealizacao(true)
+                                    }}
+                                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                                    <FontAwesomeIcon
+                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                        icon={faCheckCircle}
+                                    />
+                                    <strong>Justificar não realização</strong>
+                                </button>
+                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                <button
+                                    className="float-right btn btn-link btn-montagem-selecionar"
+                                    onClick={() => limparStatus(lancamentosSelecionados)}
+                                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                                    <FontAwesomeIcon
+                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                        icon={faCheckCircle}
+                                    />
+                                    <strong>Limpar Status</strong>
+                                </button>
                                 </>
                                 }
-                        {exibirBtnJustificado &&
+                        {status === "JUSTIFICADO" &&
                                 <>
                                  <button
                                         className="float-right btn btn-link btn-montagem-selecionar"
@@ -217,7 +199,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, just
                                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                                     <button
                                         className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={(e) => e}
+                                        onClick={(e) => verificaApagadaJustificada(lancamentosSelecionados)}
                                         style={{textDecoration: "underline", cursor: "pointer"}}>
                                         <FontAwesomeIcon
                                             style={{color: "white", fontSize: '15px', marginRight: "3px"}}
@@ -238,7 +220,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, just
                                     </button>
                                 </>
                                 }
-                        {exibirBtnSemStatus &&
+                        { status === "PENDENTE" &&
                                 <>
                                 <button
                                        className="float-right btn btn-link btn-montagem-selecionar"
@@ -253,7 +235,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, just
                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                                    <button
                                        className="float-right btn btn-link btn-montagem-selecionar"
-                                       onClick={(e) => e}
+                                       onClick={(e) => verificaApagadaJustificada(lancamentosSelecionados)}
                                        style={{textDecoration: "underline", cursor: "pointer"}}>
                                        <FontAwesomeIcon
                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
@@ -264,7 +246,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, just
                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                                    <button
                                        className="float-right btn btn-link btn-montagem-selecionar"
-                                       onClick={(e) => e}
+                                       onClick={() => setShowModalJustificarNaoRealizacao(true)}
                                        style={{textDecoration: "underline", cursor: "pointer"}}>
                                        <FontAwesomeIcon
                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
@@ -282,39 +264,28 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, just
 
         const modalBodyHTML = () => {
             return (
-                <form>
-                    <div className='row'>
-                        <div className="col-12 mt-2">
-                            <p>Motivos para a existência do estorno</p>
-                            <label htmlFor="ressalvas">Motivo(s)</label>
-                            <br/>
-                            <div className="multiselect-demo">
-                                <div className="">
-                                    <p>TEXTE</p>
-                                </div>
-                            </div>
+                <div className="modal-body">
+                    <p>Você confirma que deseja marcar o lançamento como não realizado? Em caso afirmativo será necessário adicionar uma justificativa para tal evento.</p>
+                    <div className="form-check form-check-inline">
+                        <input className="form-check-input" type="radio" name="confirmacao-justificativa" id="confirmacao-justificativa1" onChange={() => {setIsConfirmadoJustificado(true)}}/>
+                        <label className="form-check-label" htmlFor="confirmacao-justificativa1">
+                            Sim
+                        </label>
                         </div>
-    
-                        <div className='col-12'>
-                            <div className="d-flex  justify-content-end pb-3 mt-3">
-                                <button onClick={() => {}} type="reset"
-                                        className="btn btn btn-outline-success mt-2 mr-2">Cancelar
-                                </button>
-                                <button
-                                    onClick={() => {}}
-                                    type="button"
-                                    className="btn btn-success mt-2"
-                                >
-                                    Confirmar
-                                </button>
-                            </div>
-                        </div>
-    
+                    <div className="form-check form-check-inline">
+                        <input className="form-check-input" type="radio" name="confirmacao-justificativa" id="confirmacao-justificativa2" onChange={() => {setIsConfirmadoJustificado(false);}} defaultChecked/>
+                        <label className="form-check-label" htmlFor="confirmacao-justificativa2">
+                            Não
+                        </label>
                     </div>
-                </form>
+                    {isConfirmadoJustificado && (<form>
+                        <label htmlFor="justifique-textarea">Justifique</label>
+                        <textarea className="form-check form-check-inline w-100 pl-1" style={{'resize': 'none'}} onChange={(e) => setTextoConfirmadoJustificado(e.target.value)} id="justifique-textarea" value={textoConfirmadoJustificado} rows="7"></textarea>
+                    </form>)
+                    }
+                </div>
             )
         }
-
 
     const totalDeAcertosLancamentos = useMemo(() => lancamentosAjustes.length, [lancamentosAjustes]);
 
@@ -331,9 +302,20 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, just
         )
     }
 
+    const verificaApagadaJustificada = (lancamentosSelecionados) => {
+        const justificados = lancamentosSelecionados.filter((lancamento) => lancamento.analise_lancamento.status_realizacao === 'JUSTIFICADO')
+        console.log('justificados', justificados)
+        if (justificados.length) {
+            setShowModalJustificadaApagada(true)
+        }
+        else{
+            marcarComoRealizado(lancamentosSelecionados)
+        }
+    }
+
     return(
         <>
-            {quantidadeSelecionada > 0 ?
+            {lancamentosSelecionados.length > 0 ?
                 montagemSelecionar() :
                 mensagemQuantidadeExibida()
             }
@@ -351,7 +333,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, just
                 >
                     <Column 
                         header='Ver Acertos'
-                        expander 
+                        expander
                         style={{width: '6%'}}/>
                     <Column
                         field='data'
@@ -403,11 +385,28 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, just
             <section>
                 <ModalJustificarNaoRealizacao
                     show={showModalJustificarNaoRealizacao}
-                    handleClose={() => setShowModalJustificarNaoRealizacao(false)}
                     titulo='Marcar como não realizado'
-                    bodyText={modalBodyHTML}
+                    bodyText={modalBodyHTML()}
                     primeiroBotaoTexto="Fechar"
-                    primeiroBotaoCss="success"
+                    primeiroBotaoCss="danger"
+                    primeiroBotaoOnClick={() => setShowModalJustificarNaoRealizacao(false)}
+                    segundoBotaoTexto="Confirmar"
+                    segundoBotaoCss="success"
+                    segundoBotaoOnclick={(e) => { justificarNaoRealizacao(lancamentosSelecionados, textoConfirmadoJustificado) }}
+                    segundoBotaoDisable={textoConfirmadoJustificado.length === 0 && isConfirmadoJustificado || !isConfirmadoJustificado}
+                />
+            </section>
+            <section>
+                <ModalJustificadaApagada
+                    show={showModalJustificadaApagada}
+                    titulo=''
+                    texto={'Atenção. Essa ação irá apagar as justificativas digitadas. Confirma ação?'}
+                    primeiroBotaoTexto="Fechar"
+                    primeiroBotaoCss="danger"
+                    primeiroBotaoOnClick={() => setShowModalJustificadaApagada(false)}
+                    segundoBotaoTexto="Confirmar"
+                    segundoBotaoCss="success"
+                    segundoBotaoOnclick={() => { marcarComoRealizado(lancamentosSelecionados) }}
                 />
             </section>
         </>

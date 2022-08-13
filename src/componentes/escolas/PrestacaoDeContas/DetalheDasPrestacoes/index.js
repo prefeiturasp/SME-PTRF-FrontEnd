@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 import {TopoComBotoes} from "./TopoComBotoes";
 import TabelaValoresPendentesPorAcao from "./TabelaValoresPendentesPorAcao";
 import {Justificativa} from "./Justivicativa";
@@ -53,6 +53,7 @@ export const DetalheDasPrestacoes = () => {
     const [btnSalvarExtratoBancarioDisable, setBtnSalvarExtratoBancarioDisable] = useState(true);
     const [classBtnSalvarExtratoBancario, setClassBtnSalvarExtratoBancario] = useState("secondary");
     const [checkSalvarExtratoBancario, setCheckSalvarExtratoBancario] = useState(false);
+
     
 
     useEffect(()=>{

@@ -311,6 +311,14 @@ export const postJustificarNaoRealizacaoLancamentoPrestacaoConta = async (payloa
     return (await api.post(`/api/analises-lancamento-prestacao-conta/justificar-nao-realizacao/`, payload, authHeader)).data
 }
 
+export const postMarcarComoRealizadoLancamentoPrestacaoConta = async (payload) => {
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/marcar-como-realizado/`, payload, authHeader)).data
+}
+
+export const patchAnaliseLancamentoPrestacaoConta = async (payload, analise_prestacao_uuid) => {
+    return (await api.patch(`/api/analises-lancamento-prestacao-conta/${analise_prestacao_uuid}/`, payload, authHeader)).data
+}
+
 export const downloadDocumentoPreviaPdf = async (analise_atual_uuid) => {
     return api
             .get(`/api/analises-prestacoes-contas/download-documento-pdf/?analise_prestacao_uuid=${analise_atual_uuid}`, {
