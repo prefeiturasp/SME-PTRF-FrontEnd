@@ -295,6 +295,10 @@ export const getAnaliseLancamentosPrestacaoConta = async () => {
     return (await api.get(`/api/analises-lancamento-prestacao-conta/tabelas/`, authHeader)).data
 };
 
+export const getAnaliseDocumentosPrestacaoConta = async () => {
+    return (await api.get(`/api/analises-documento-prestacao-conta/tabelas/`, authHeader)).data
+};
+
 export const postLimparStatusLancamentoPrestacaoConta = async (payload) => {
     return (await api.post(`/api/analises-lancamento-prestacao-conta/limpar-status/`, payload, authHeader)).data
 }

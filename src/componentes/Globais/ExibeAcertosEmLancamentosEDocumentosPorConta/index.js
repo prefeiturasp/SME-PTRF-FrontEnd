@@ -56,6 +56,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     const [exibeAcertosNosExtratos, setExibeAcertosNosExtratos] = useState(true);
     const [extratosBancariosAjustes, setExtratosBancariosAjustes] = useState(null);
     const [lancamentosAjustes, setLancamentosAjustes] = useState([])
+    const [documentosAjustes, setDocumentosAjustes] = useState([])
     const [lancamentosDocumentos, setLancamentosDocumentos] = useState([])
     const [contasAssociacao, setContasAssociacao] = useState([])
     const [loadingExtratosBancarios, setLoadingExtratosBancarios] = useState(true)
@@ -138,6 +139,8 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         setLoadingLancamentos(false)
     }, [analiseAtualUuid])
 
+    
+
     const limparStatus = async (lancamentosSelecionados) => {
         setLoadingLancamentos(true)
         await postLimparStatusLancamentoPrestacaoConta({"uuids_analises_lancamentos": lancamentosSelecionados.map(lanc => lanc.analise_lancamento.uuid)})
@@ -166,11 +169,13 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     }
 
     const carregaAcertosDocumentos = useCallback(async () => {
-        let documentos_ajustes = await getDocumentosAjustes(analiseAtualUuid)
-        setLancamentosDocumentos(documentos_ajustes)
+        setLoadingDocumentos(true)
+        let { status_realizacao } = await getAnaliseLancamentosPrestacaoConta()
+        let documentoAjuste = await getDocumentosAjustes(analiseAtualUuid)
+        setLancamentosDocumentos(documentoAjuste)
+        setOpcoesJustificativa(status_realizacao)
         setLoadingDocumentos(false)
     }, [analiseAtualUuid])
-
 
     useEffect(() => {
         if (contasAssociacao && contasAssociacao.length > 0){
@@ -476,6 +481,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                     lancamentosDocumentos && lancamentosDocumentos.length > 0 ? (
                             <TabelaAcertosDocumentos
                                 lancamentosDocumentos={lancamentosDocumentos}
+                                documentosAjustes={documentosAjustes}
                                 rowsPerPageAcertosDocumentos={rowsPerPageAcertosDocumentos}
                                 expandedRowsDocumentos={expandedRowsDocumentos}
                                 setExpandedRowsDocumentos={setExpandedRowsDocumentos}
