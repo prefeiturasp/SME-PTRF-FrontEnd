@@ -1,5 +1,4 @@
 import React, {memo, useCallback, useEffect, useState} from "react";
-import { SplitButton } from 'primereact/splitbutton';
 import {
     getDownloadRelatorio,
     getTiposConta
@@ -9,7 +8,6 @@ import {faDownload} from "@fortawesome/free-solid-svg-icons";
 
 const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhido}) => {
     const [contas, setContas] = useState(false);
-    const [itensSplitButton, setItensSplitButton] = useState([])
 
     useEffect(()=>{
         let mounted = true
@@ -48,23 +46,6 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
         let consolidado_dre_uuid = consolidadoDre.uuid
         window.location.assign(`/dre-relatorio-consolidado-em-tela/${periodoEscolhido}/${consolidadoDre.ja_publicado}/${consolidado_dre_uuid}`)
     };
-
-    const geraItensSplitButton = useCallback( () => {
-
-        if (contas && contas.length > 0){
-            contas.map((conta) => (
-                setItensSplitButton(prevState => [...prevState, {
-                    label: `Conta ${conta.nome}`,
-                    command: ()=> onClickPreencherRelatorio(conta.uuid)
-                }])
-            ))
-        }
-
-    }, [contas])
-
-    useEffect(()=>{
-        geraItensSplitButton()
-    }, [geraItensSplitButton])
 
     return (
         <div className="border">
@@ -110,13 +91,6 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                         </div>
                     </div>
                     <div className="col-12 col-md-4 align-self-center text-right">
-                        <SplitButton
-                            className="btn-consultar-relatorio"
-                            label={consolidadoDre.ja_publicado ? "Consultar relatório" : "Preencher relatório"}
-                            model={itensSplitButton}
-                            menuStyle={{textAlign: "left"}}
-                        >
-                        </SplitButton>
                         <button
                             onClick={()=> onClickPreencherRelatorio()}
                             type="button"

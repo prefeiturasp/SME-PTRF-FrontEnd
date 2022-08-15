@@ -1,10 +1,9 @@
-import React, {useEffect, useState, useCallback} from "react";
+import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {
     getExecucaoFinanceira,
     postJustificativa,
     patchJustificativa,
-    getConsolidadoDre
 } from "../../../../services/dres/RelatorioConsolidado.service";
 import {TopoComBotoes} from "./TopoComBotoes";
 import {visoesService} from "../../../../services/visoes.service";
@@ -40,42 +39,16 @@ export const RelatorioConsolidadoEmTela = () => {
     const [btnSalvarJustificativaDisableCartao, setBtnSalvarJustificativaDisableCartao] = useState(true);
     const [showSalvarJustificativa, setShowSalvarJustificativa] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [ePrevia, setEPrevia] = useState(true);
-    const [consolidadoDre, setConsolidadoDre] = useState(false);
-
-    useEffect(() => {
-        setLoading(true);
-        carregaNomePeriodo();
-        carregaExecucaoFinanceira();
-        setLoading(false);
-    }, []);
-
 
     useEffect( () => {
-        setEPrevia(!consolidadoDre || consolidadoDre.versao === 'PREVIA')
-    }, [consolidadoDre])
-
-
-    // Consolidado DRE
-    const carregaConsolidadoDre = useCallback(async () => {
-        if (dre_uuid && periodo_uuid){
-            try {
-                let consolidado_dre = await getConsolidadoDre(dre_uuid, periodo_uuid)
-                if (consolidado_dre && consolidado_dre.length > 0){
-                    setConsolidadoDre(consolidado_dre[0])
-                }else {
-                    setConsolidadoDre(false)
-                }
-            }catch (e) {
-                console.log("Erro ao buscar Consolidado Dre ", e)
-            }
+        async function carregaInformacoes(){
+            setLoading(true);
+            await carregaNomePeriodo();
+            await carregaExecucaoFinanceira();
+            setLoading(false);
         }
-    }, [dre_uuid, periodo_uuid])
-
-    useEffect(() => {
-        carregaConsolidadoDre()
-    }, [carregaConsolidadoDre])
-
+        carregaInformacoes()
+    }, []);
 
     const carregaNomePeriodo = async () => {
         if (periodo_uuid) {
@@ -83,7 +56,6 @@ export const RelatorioConsolidadoEmTela = () => {
             setPeriodoNome(periodo_nome);
         }
     };
-
 
     const carregaExecucaoFinanceira = async () => {
         try {
@@ -191,7 +163,7 @@ export const RelatorioConsolidadoEmTela = () => {
                         <div className="col-12 mt-5">
                             <TopoComBotoes
                                 periodoNome={periodoNome}
-                                ePrevia={ePrevia}
+                                ePrevia={!jaPublicado}
                                 referencia={execucaoFinanceira.titulo_parcial}
                             />
                             {execucaoFinanceira && execucaoFinanceira.por_tipo_de_conta.map((execucaoFinanceiraConta) => {
@@ -226,10 +198,7 @@ export const RelatorioConsolidadoEmTela = () => {
                     </>
 
                 }
-
             </div>
-
-
         </>
     )
 };
