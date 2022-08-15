@@ -137,7 +137,6 @@ export const DetalhePrestacaoDeContas = () =>{
     const [btnSalvarDisabled, setBtnSalvarDisabled] = useState(true);
     const [showModalSalvarAnalise, setShowModalSalvarAnalise] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [valoresReprogramadosAjustes, setValoresReprogramadosAjustes] = useState([])
     const [adicaoAjusteSaldo, setAdicaoAjusteSaldo] = useState(false);
     const [formErrosAjusteSaldo, setFormErrosAjusteSaldo] = useState([])
     const [ajusteSaldoSalvoComSucesso, setAjusteSaldoSalvoComSucesso] = useState([]);
@@ -1027,8 +1026,6 @@ export const DetalhePrestacaoDeContas = () =>{
 
                             prestacaoDeContas && prestacaoDeContas.status &&
                                 <GetComportamentoPorStatus
-                                    valoresReprogramadosAjustes={valoresReprogramadosAjustes}
-                                    setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
                                     prestacaoDeContas={prestacaoDeContas}
                                     receberPrestacaoDeContas={receberPrestacaoDeContas}
                                     setShowReabrirPc={setShowReabrirPc}
