@@ -32,6 +32,10 @@ export const postPublicarConsolidadoDre = async (payload) => {
     return (await api.post(`/api/consolidados-dre/publicar/`, payload, authHeader)).data
 };
 
+export const postPublicarConsolidadoDePublicacoesParciais = async (payload) => {
+    return (await api.post(`/api/consolidados-dre/gerar-consolidado-de-publicacoes-parciais/`, payload, authHeader)).data
+};
+
 export const postGerarPreviaConsolidadoDre = async (payload) => {
     return (await api.post(`/api/consolidados-dre/gerar-previa/`, payload, authHeader)).data
 };
@@ -52,7 +56,7 @@ export const getDownloadRelatorio = async (relatorio_uuid, versao) => {
         })
         .then((response) => {
             const url = window.URL.createObjectURL(new Blob([response.data]));
-            const filename = (versao === "FINAL") ? 'relatorio_fisico_financeiro_dre.pdf' : 'previa_relatorio_fisico_financeiro_dre.pdf'
+            const filename = (versao === "FINAL" || versao === "CONSOLIDADA") ? 'relatorio_fisico_financeiro_dre.pdf' : 'previa_relatorio_fisico_financeiro_dre.pdf'
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', filename);
