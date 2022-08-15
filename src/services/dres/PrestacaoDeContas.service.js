@@ -207,6 +207,10 @@ export const getTiposDeAcertoLancamentos = async () => {
     return (await api.get(`/api/tipos-acerto-lancamento/`, authHeader)).data
 };
 
+export const getTiposDeAcertoLancamentosAgrupadoCategoria = async () => {
+    return (await api.get(`/api/tipos-acerto-lancamento/tabelas/`, authHeader)).data
+};
+
 export const getListaDeSolicitacaoDeAcertos = async (prestacao_de_contas_uuid, analise_lancamento_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/analises-de-lancamento/?analise_lancamento=${analise_lancamento_uuid}`, authHeader)).data
 };
@@ -231,20 +235,16 @@ export const getTiposDeAcertosDocumentos = async (documento_uuid) => {
     return (await api.get(`/api/tipos-acerto-documento/?tipos_documento_prestacao__uuid=${documento_uuid}`, authHeader)).data
 };
 
+export const getTabelas = async (documento_uuid=null) => {
+    return (await api.get(`/api/tipos-acerto-documento/tabelas/?tipos_documento_prestacao__uuid=${documento_uuid}`, authHeader)).data
+};
+
 export const getSolicitacaoDeAcertosDocumentos = async (prestacao_de_contas_uuid, analise_documento_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/analises-de-documento/?analise_documento=${analise_documento_uuid}`, authHeader)).data
 };
 
 export const postSolicitacoesParaAcertosDocumentos = async (prestacao_de_contas_uuid, payload) => {
     return (await api.post(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/solicitacoes-de-acerto-documento/`, payload, authHeader)).data
-};
-
-export const getTemReajustes = async (analise_atual_uuid) => {
-    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/verifica-reajustes/`, authHeader)).data
-};
-
-export const getSaldosIniciasAjustes = async (analise_atual_uuid, conta_uuid) => {
-    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/saldos-iniciais-com-ajustes/?conta_associacao=${conta_uuid}`, authHeader)).data
 };
 
 export const getExtratosBancariosAjustes = async (analise_atual_uuid, conta_uuid) => {
@@ -313,18 +313,6 @@ export const downloadDocumentoPreviaPdf = async (analise_atual_uuid) => {
             }).catch(error => {
                 return error.response;
             });
-};
-
-export const getAnaliseValorReprogramadoPorAcao = async (analise_prestacao_uuid, conta_associacao_uuid, acao_associacao_uuid) => {
-    return (await api.get(`/api/analises-valores-reprogramados/valores-reprogramados-acao/?analise_prestacao_conta=${analise_prestacao_uuid}&conta_associacao=${conta_associacao_uuid}&acao_associacao=${acao_associacao_uuid}`, authHeader)).data
-};
-
-export const patchAnaliseValorReprogramadoPorAcao = async (uuid_analise_de_valor_reprogramado, payload) => {
-    return (await api.patch(`/api/analises-valores-reprogramados/${uuid_analise_de_valor_reprogramado}/`, payload, authHeader)).data
-};
-
-export const postAnaliseValorReprogramadoPorAcao = async (payload) => {
-    return (await api.post(`/api/analises-valores-reprogramados/salvar-valores-reprogramados-acao/`, payload, authHeader)).data
 };
 
 export const postAnaliseAjustesSaldoPorConta = async (payload) => {

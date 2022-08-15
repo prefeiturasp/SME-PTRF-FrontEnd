@@ -239,7 +239,6 @@ const RelatorioConsolidado = () => {
     }
 
     const publicarConsolidadoDePublicacoesParciais = async () => {
-
         let payload = {
             dre_uuid: dre_uuid,
             periodo_uuid: periodoEscolhido
