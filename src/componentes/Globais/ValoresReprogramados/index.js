@@ -3,19 +3,27 @@ import { useLocation } from 'react-router-dom';
 import { Botoes } from "./Botoes";
 import { ValoresReprogramadosFormFormik } from "./ValoresReprogramadosFormFormik";
 import { BarraStatus } from "./BarraStatus";
+import { Cabecalho } from "./Cabecalho";
+import { TextoExplicativo } from "./TextoExplicativoDaPagina";
 import { PaginasContainer } from "../../../paginas/PaginasContainer";
 import { 
     getValoresReprogramados, 
     patchSalvarValoresReprogramados ,
     patchConcluirValoresReprogramados,
-    getStatusValoresReprogramados
+    getStatusValoresReprogramados,
+    getTextoExplicativoUe,
+    getTextoExplicativoDre
 } from "../../../services/ValoresReprogramados.service";
 import { visoesService } from "../../../services/visoes.service";
 import Loading from "../../../utils/Loading";
-import { trataNumericos, round } from "../../../utils/ValidacoesAdicionaisFormularios";
+import { trataNumericos, exibeDataPT_BR } from "../../../utils/ValidacoesAdicionaisFormularios";
 import "./valores-reprogramados.scss"
 import { toastCustom } from "../ToastCustom";
-import { ModalConclusaoValoresReprogramadosNaoPermitido, ModalDescartarAlteracoesValoresReprogramados } from "../../../utils/Modais";
+import { 
+    ModalConclusaoValoresReprogramadosNaoPermitido, 
+    ModalDescartarAlteracoesValoresReprogramados,
+    ModalConcluirValoresReprogramados
+} from "../../../utils/Modais";
 
 
 export const ValoresReprogramados = () => {
@@ -35,6 +43,8 @@ export const ValoresReprogramados = () => {
     const [showConclusaoNaoPermitida, setShowConclusaoNaoPermitida] = useState(false);
     const [msgConclusaoNaoPermitida, setMsgConclusaoNaoPermitida] = useState("");
     const [showDescartarAlteracoes, setShowDescartarAlteracoes] = useState(false);
+    const [textoExplicativo, setShowTextoExplicativo] = useState("")
+    const [showConcluir, setShowConcluir] = useState(false);
 
     // Chamadas a API
     const carregaUuidAssociacao = useCallback(async () => {
@@ -88,7 +98,18 @@ export const ValoresReprogramados = () => {
         }
     }, [uuidAssociacao]);
 
-    
+    const carregaTextoExplicativo = useCallback(async () => {
+        if(visao_selecionada){
+            if(visao_selecionada === "UE"){
+                let texto = await getTextoExplicativoUe();
+                setShowTextoExplicativo(texto.detail);
+            }
+            else if(visao_selecionada === "DRE"){
+                let texto = await getTextoExplicativoDre();
+                setShowTextoExplicativo(texto.detail);
+            }
+        }
+    }, [visao_selecionada]);
 
     // useEffects
     useEffect(() => {
@@ -102,6 +123,10 @@ export const ValoresReprogramados = () => {
     useEffect(() => {
         carregaStatusValoresReprogramados()
     }, [carregaStatusValoresReprogramados])
+
+    useEffect(() => {
+        carregaTextoExplicativo()
+    }, [carregaTextoExplicativo])
 
 
     // handles
@@ -128,30 +153,13 @@ export const ValoresReprogramados = () => {
         }
     }
 
-    const handleConcluirValoresReprogramados = async () => {
+    const handleOnClickConcluirValoresReprogramados = async () => {
         let dadosForm = formRef.current.values;
         let dadosFormatado = formataDados(dadosForm);
         let validado = validaPayload(dadosFormatado);
 
         if(validado){
-            let payload = {
-                associacao_uuid: uuidAssociacao,
-                visao: visao_selecionada,
-                dadosForm: dadosFormatado
-            }
-
-            try {
-                setLoading(true);
-                let valores = await patchConcluirValoresReprogramados(payload);
-                setValoresReprogramados(valores);
-                setObjetoParaComparacao(valores);
-                let status = await getStatusValoresReprogramados(uuidAssociacao);
-                setStatusValoresReprogramados(status.status);
-                setLoading(false);
-                toastCustom.ToastCustomSuccess('Concluído com sucesso.', `${status.status.texto}`)
-            } catch (e) {
-                console.log("Erro ao salvar Valores Reprogramados ", e.response)
-            }
+            setShowConcluir(true);
         }
         else{
             if(visao_selecionada === "UE"){
@@ -162,7 +170,32 @@ export const ValoresReprogramados = () => {
             }
 
             setShowConclusaoNaoPermitida(true);
-        }        
+        } 
+    }
+
+    const handleConcluirValoresReprogramados = async () => {
+        let dadosForm = formRef.current.values;
+        let dadosFormatado = formataDados(dadosForm);
+
+        let payload = {
+            associacao_uuid: uuidAssociacao,
+            visao: visao_selecionada,
+            dadosForm: dadosFormatado
+        }
+
+        try {
+            setShowConcluir(false);
+            setLoading(true);
+            let valores = await patchConcluirValoresReprogramados(payload);
+            setValoresReprogramados(valores);
+            setObjetoParaComparacao(valores);
+            let status = await getStatusValoresReprogramados(uuidAssociacao);
+            setStatusValoresReprogramados(status.status);
+            setLoading(false);
+            toastCustom.ToastCustomSuccess('Concluído com sucesso.', `${status.status.texto}`)
+        } catch (e) {
+            console.log("Erro ao salvar Valores Reprogramados ", e.response)
+        }    
     }
 
     const objetosDiferentes = () => {
@@ -551,11 +584,27 @@ export const ValoresReprogramados = () => {
         return total;
     }
 
+    const textoPeriodo = () => {
+        let periodo = valoresReprogramados.associacao.periodo_inicial
+        let texto = "-"
+
+        if(periodo){
+            let data_inicio = periodo.data_inicio_realizacao_despesas ? exibeDataPT_BR(periodo.data_inicio_realizacao_despesas) : "-";
+            let data_fim = periodo.data_fim_realizacao_despesas ? exibeDataPT_BR(periodo.data_fim_realizacao_despesas) : "-";
+            texto = `${periodo.referencia} - ${data_inicio} até ${data_fim}`;
+        }
+
+        return texto
+    }
+
     return (
         <>
             <PaginasContainer>
 
                 <h1 className="titulo-itens-painel mt-5">Valores reprogramados</h1>
+                <TextoExplicativo
+                    textoExplicativo={textoExplicativo}
+                />
                 
                 <div className="page-content-inner">
                     {loading ? (
@@ -568,13 +617,18 @@ export const ValoresReprogramados = () => {
                     ) :
                         
                         <>
+                            <Cabecalho
+                                valoresReprogramados={valoresReprogramados}
+                                textoPeriodo={textoPeriodo}
+                            />
+
                             <BarraStatus
                                 statusValoresReprogramados={statusValoresReprogramados}
                                 defineCorBarraStatus={defineCorBarraStatus}
                             />
                             <Botoes
                                 handleSalvarValoresReprogramados={handleSalvarValoresReprogramados}
-                                handleConcluirValoresReprogramados={handleConcluirValoresReprogramados}
+                                handleOnClickConcluirValoresReprogramados={handleOnClickConcluirValoresReprogramados}
                                 handleVoltar={handleVoltar}
                                 permiteSalvarOuConcluir={permiteSalvarOuConcluir}
                             />
@@ -594,7 +648,7 @@ export const ValoresReprogramados = () => {
                             />
                             <Botoes
                                 handleSalvarValoresReprogramados={handleSalvarValoresReprogramados}
-                                handleConcluirValoresReprogramados={handleConcluirValoresReprogramados}
+                                handleOnClickConcluirValoresReprogramados={handleOnClickConcluirValoresReprogramados}
                                 handleVoltar={handleVoltar}
                                 permiteSalvarOuConcluir={permiteSalvarOuConcluir}
                             />
@@ -617,6 +671,14 @@ export const ValoresReprogramados = () => {
                         show={showDescartarAlteracoes}
                         handleClose={()=>setShowDescartarAlteracoes(false)}
                         redirecionarUsuario={redirecionarUsuario}
+                    />
+                </section>
+
+                <section>
+                    <ModalConcluirValoresReprogramados
+                        show={showConcluir}
+                        handleClose={()=>setShowConcluir(false)}
+                        handleConcluirValoresReprogramados={handleConcluirValoresReprogramados}
                     />
                 </section>
 

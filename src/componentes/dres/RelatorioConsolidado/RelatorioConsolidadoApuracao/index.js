@@ -1,3 +1,4 @@
+// TODO Remover o componente RelatorioConsolidadoApuracao.
 import React, {useEffect, useState, useCallback} from "react";
 import {useParams} from "react-router-dom";
 import {InfoAssociacoesEmAnalise} from "./InfoAssociacoesEmAnalise";

@@ -26,7 +26,7 @@
 }
 
 .status-conferencia {
-    margin-top: 27px;
+    margin-top: 9px;
 }
 
 .tabela-valores-reprogramados .tbody-total {
@@ -52,9 +52,19 @@
 }
 
 .barra-status{
-    color: #FFFFFF;
-    font-size: 14px;
+    color: #fff;
+    font-size: 14px !important;
+    font-weight: bold !important;
+}
+
+.titulo-associacao {
+    font-size: 24px;
+    color: #00585e;
     font-weight: 700;
+}
+
+.subtitulo-associacao {
+    font-size: 16px;
 }
 
 .cor-1 {

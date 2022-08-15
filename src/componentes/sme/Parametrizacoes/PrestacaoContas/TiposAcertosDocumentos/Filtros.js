@@ -38,12 +38,12 @@ export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros,
                         </Select>
                     </div>
                     <div className="col-md-4">
-                        <label htmlFor="filtrar_por_documento_prestacao">Filtrar por tipo documentos de prestação</label>
+                        <label htmlFor="filtrar_por_documento_relacionado">Filtrar por tipo documentos de prestação</label>
                         <Select
                             mode="multiple"
                             placeholder="Selecione os documentos de prestação"
-                            value={stateFiltros.filtrar_por_documento_prestacao}
-                            onChange={(value) => handleChangeFiltros('filtrar_por_documento_prestacao', value)}
+                            value={stateFiltros.filtrar_por_documento_relacionado}
+                            onChange={(value) => handleChangeFiltros('filtrar_por_documento_relacionado', value)}
                             className="documentos-table-multiple-search"
                             allowClear
                             required

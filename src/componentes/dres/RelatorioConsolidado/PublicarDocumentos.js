@@ -1,7 +1,7 @@
 import React, {memo, useState} from "react";
 import { ModalPublicarRelatorioConsolidado } from "../../../utils/Modais";
 
-const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre}) => {
+const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, publicarConsolidadoDePublicacoesParciais}) => {
     const [showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado] = useState(false);
     
     return(
@@ -27,7 +27,7 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
             <ModalPublicarRelatorioConsolidado
                 show={showPublicarRelatorioConsolidado}
                 handleClose={()=>setShowPublicarRelatorioConsolidado(false)}
-                publicarConsolidadoDre={() => publicarConsolidadoDre(consolidadoDre)}
+                publicarConsolidadoDre={!consolidadoDre.eh_consolidado_de_publicacoes_parciais ? () => publicarConsolidadoDre(consolidadoDre) : ()=>publicarConsolidadoDePublicacoesParciais() }
             />
         </section>
 </>
