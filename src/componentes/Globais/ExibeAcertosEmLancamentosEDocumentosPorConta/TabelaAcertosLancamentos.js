@@ -409,6 +409,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marc
                     segundoBotaoTexto="Cancelar"
                     segundoBotaoCss="danger"
                     handleClose={() => setShowModalJustificadaApagada(false)}
+
                 />
             </section>
         </>
