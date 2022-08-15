@@ -1,4 +1,4 @@
-import {ModalBootstrap} from "../../../../Globais/ModalBootstrap";
+import {ModalBootstrap} from "../../../../../Globais/ModalBootstrap";
 import React from "react";
 
 export const ModalCheckNaoPermitidoConfererenciaDeLancamentos = (props) => {
