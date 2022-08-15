@@ -7,6 +7,7 @@ import {ModalCheckNaoPermitidoConfererenciaDeLancamentos,} from "../../dres/Pres
 import {ModalJustificarNaoRealizacao} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificarNaoRealizacao";
 import {ModalJustificadaApagada} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificadaApagada";
 import Dropdown from "react-bootstrap/Dropdown";
+import {visoesService} from "../../../services/visoes.service";
 
 import './scss/tagJustificativaLancamentos.scss';
 
@@ -16,7 +17,7 @@ const tagColors = {
     'PENDENTE': '#FFF' 
 }
 
-export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marcarComoRealizado, justificarNaoRealizacao, opcoesJustificativa, setExpandedRowsLancamentos, expandedRowsLancamentos, rowExpansionTemplateLancamentos, rowsPerPageAcertosLancamentos, dataTemplate, numeroDocumentoTemplate, valor_template}) => {
+export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marcarComoRealizado, prestacaoDeContas, justificarNaoRealizacao, opcoesJustificativa, setExpandedRowsLancamentos, expandedRowsLancamentos, rowExpansionTemplateLancamentos, rowsPerPageAcertosLancamentos, dataTemplate, numeroDocumentoTemplate, valor_template}) => {
     const [lancamentosSelecionados, setLancamentosSelecionados] = useState([])
     const [textoModalCheckNaoPermitido, setTextoModalCheckNaoPermitido] = useState('')
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
@@ -25,6 +26,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marc
     const [isConfirmadoJustificado, setIsConfirmadoJustificado] = useState(false)
     const [textoConfirmadoJustificado, setTextoConfirmadoJustificado] = useState('')
     const [status, setStatus] = useState()
+    const [tipoAcao, setTipoAcao] = useState('')
 
 
     const selecionarTemplate = (rowData) => {
@@ -199,7 +201,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marc
                                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                                     <button
                                         className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={(e) => verificaApagadaJustificada(lancamentosSelecionados)}
+                                        onClick={(e) => verificaApagadaJustificada(lancamentosSelecionados, 'marcar_como_realizado')}
                                         style={{textDecoration: "underline", cursor: "pointer"}}>
                                         <FontAwesomeIcon
                                             style={{color: "white", fontSize: '15px', marginRight: "3px"}}
@@ -210,7 +212,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marc
                                 <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                                     <button
                                         className="float-right btn btn-link btn-montagem-selecionar"
-                                        onClick={() => limparStatus(lancamentosSelecionados)}
+                                        onClick={() => verificaApagadaJustificada(lancamentosSelecionados, 'limpar_status')}
                                         style={{textDecoration: "underline", cursor: "pointer"}}>
                                         <FontAwesomeIcon
                                             style={{color: "white", fontSize: '15px', marginRight: "3px"}}
@@ -235,7 +237,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marc
                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
                                    <button
                                        className="float-right btn btn-link btn-montagem-selecionar"
-                                       onClick={(e) => verificaApagadaJustificada(lancamentosSelecionados)}
+                                       onClick={(e) => marcarComoRealizado(lancamentosSelecionados)}
                                        style={{textDecoration: "underline", cursor: "pointer"}}>
                                        <FontAwesomeIcon
                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
@@ -302,15 +304,10 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marc
         )
     }
 
-    const verificaApagadaJustificada = (lancamentosSelecionados) => {
+    const verificaApagadaJustificada = (lancamentosSelecionados, tipoAcao) => {
         const justificados = lancamentosSelecionados.filter((lancamento) => lancamento.analise_lancamento.status_realizacao === 'JUSTIFICADO')
-        console.log('justificados', justificados)
-        if (justificados.length) {
-            setShowModalJustificadaApagada(true)
-        }
-        else{
-            marcarComoRealizado(lancamentosSelecionados)
-        }
+        setShowModalJustificadaApagada(true)
+        setTipoAcao(tipoAcao)
     }
 
     return(
@@ -340,32 +337,37 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marc
                         header='Data'
                         body={dataTemplate}
                         className="align-middle text-left borda-coluna"
+                        style={{width: '6%'}}
                     />
-                    <Column field='tipo_transacao' header='Tipo de lançamento' className="align-middle text-left borda-coluna"/>
+                    <Column field='tipo_transacao' header='Tipo de lançamento' style={{width: '10%'}} className="align-middle text-left borda-coluna"/>
                     <Column
                         field='numero_documento'
                         header='N.º do documento'
                         body={numeroDocumentoTemplate}
                         className="align-middle text-left borda-coluna"
+                        style={{width: '12%'}}
                     />
-                    <Column field='descricao' header='Descrição' className="align-middle text-left borda-coluna"/>
+                    <Column field='descricao' header='Descrição' style={{width: '40%'}} className="align-middle text-left borda-coluna"/>
                     <Column
                         field='valor_transacao_total'
                         header='Valor (R$)'
                         body={valor_template}
                         className="align-middle text-left borda-coluna"
+                        style={{width: '8%'}}
                     />
                     <Column 
                         field='status_realizacao'
                         header='Status'
                         className="align-middle text-left borda-coluna"
                         body={tagJustificativa}
-                        style={{width: '12%'}}/>
+                        style={{width: '10%'}}/>
+                    {visoesService.getItemUsuarioLogado('visao_selecionada.nome') !== 'DRE' || ![['change_analise_dre']].some(visoesService.getPermissoes) || prestacaoDeContas.status !== 'DEVOLVIDA' ? 
                     <Column
                         header={selecionarHeader()}
                         body={selecionarTemplate}
-                        style={{width: '3rem', borderLeft: 'none'}}
-                    />
+                        style={{width: '4%', borderLeft: 'none'}}
+                    /> : null
+                    }
                 </DataTable>
                 
                 
@@ -401,12 +403,12 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marc
                     show={showModalJustificadaApagada}
                     titulo=''
                     texto={'Atenção. Essa ação irá apagar as justificativas digitadas. Confirma ação?'}
-                    primeiroBotaoTexto="Fechar"
-                    primeiroBotaoCss="danger"
-                    primeiroBotaoOnClick={() => setShowModalJustificadaApagada(false)}
-                    segundoBotaoTexto="Confirmar"
-                    segundoBotaoCss="success"
-                    segundoBotaoOnclick={() => { marcarComoRealizado(lancamentosSelecionados) }}
+                    primeiroBotaoTexto="Confirmar"
+                    primeiroBotaoCss="success"
+                    primeiroBotaoOnclick={() => tipoAcao === 'limpar_status' ? limparStatus(lancamentosSelecionados) : marcarComoRealizado(lancamentosSelecionados) }
+                    segundoBotaoTexto="Cancelar"
+                    segundoBotaoCss="danger"
+                    handleClose={() => setShowModalJustificadaApagada(false)}
                 />
             </section>
         </>

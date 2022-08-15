@@ -31,6 +31,7 @@ import { getAnaliseLancamentosPrestacaoConta } from "../../../services/dres/Pres
 import {useCarregaPrestacaoDeContasPorUuid} from "../../../hooks/dres/PrestacaoDeContas/useCarregaPrestacaoDeContasPorUuid";
 import TabsAjustesEmExtratosBancarios from "./TabsAjustesEmExtratosBancarios";
 import TabelaAcertosEmExtratosBancarios from "./TabelaAcertosEmExtratosBancarios";
+import {visoesService} from "../../../services/visoes.service";
 
 const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAcertos=true, exibeBtnIrParaPaginaDeReceitaOuDespesa=false, prestacaoDeContasUuid, analiseAtualUuid, editavel}) => {
 
@@ -299,7 +300,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
             const salvarDesabilitados = !textareaJustificativa?.[data.analise_lancamento.uuid] || textareaJustificativa?.[data.analise_lancamento.uuid] === data.analise_lancamento.justificativa || showSalvar?.[data.analise_lancamento.uuid]
             return (
                 <>
-                    {console.log('textAreaJustificativa', textareaJustificativa)}
                     {data.analise_lancamento.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
                         <Fragment key={ajuste.id}>
                             {data.analise_lancamento.justificativa?.length > 0 && ( 
@@ -318,6 +318,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                                             id="justificativa"
                                             name="justificativa"
                                             placeholder="Escreva o comentário"
+                                            disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
                                         >
                                         </textarea>
                                                 <div className="bd-highlight d-flex justify-content-end align-items-center">
@@ -337,7 +338,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                                                     <button 
                                                         disabled={salvarDesabilitados} 
                                                         type="button" 
-                                                        className={`btn btn-${salvarDesabilitados ? 'secondary' : 'primary'} mt-2`}
+                                                        className={`btn btn-${salvarDesabilitados ? 'secondary' : 'success'} mt-2`}
                                                         onClick={() => handleOnClick(data.analise_lancamento.uuid)}
                                                         >
                                                             <strong>Salvar Justificativas</strong>
@@ -522,6 +523,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                             <TabelaAcertosLancamentos
                                 lancamentosAjustes={lancamentosAjustes}
                                 limparStatus={limparStatus}
+                                prestacaoDeContas={prestacaoDeContas}
                                 marcarComoRealizado={marcarComoRealizado}
                                 justificarNaoRealizacao={justificarNaoRealizacao}
                                 opcoesJustificativa={opcoesJustificativa}

@@ -8,10 +8,10 @@ export const ModalJustificadaApagada = (props) => {
             onHide={props.handleClose}
             titulo={props.titulo}
             bodyText={props.texto}
-            primeiroBotaoOnclick={props.handleClose}
+            primeiroBotaoOnclick={props.primeiroBotaoOnclick}
             primeiroBotaoTexto={props.primeiroBotaoTexto}
             primeiroBotaoCss={props.primeiroBotaoCss}
-            segundoBotaoOnclick={props.segundoBotaoOnclick}
+            segundoBotaoOnclick={props.handleClose}
             segundoBotaoTexto={props.segundoBotaoTexto}
             segundoBotaoCss={props.segundoBotaoCss}
         />
