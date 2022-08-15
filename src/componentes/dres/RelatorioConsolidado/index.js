@@ -5,7 +5,9 @@ import {
     getStatusConsolidadoDre,
     postPublicarConsolidadoDre,
     getTrilhaStatus,
-    postGerarPreviaConsolidadoDre, getConsolidadosDreJaPublicadosProximaPublicacao,
+    postGerarPreviaConsolidadoDre,
+    getConsolidadosDreJaPublicadosProximaPublicacao,
+    postPublicarConsolidadoDePublicacoesParciais,
 } from "../../../services/dres/RelatorioConsolidado.service";
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
@@ -64,6 +66,7 @@ const RelatorioConsolidado = () => {
         if (dre_uuid && periodoEscolhido && statusProcessamentoConsolidadoDre) {
             try {
                 let consolidados_dre = await getConsolidadosDreJaPublicadosProximaPublicacao(dre_uuid, periodoEscolhido)
+                console.log("XXXXXXXXXXXX Consolidados DRE ", consolidados_dre)
                 setConsolidadosDreJaPublicados(consolidados_dre.publicacoes_anteriores)
                 setConsolidadoDreProximaPublicacao(consolidados_dre.proxima_publicacao)
             } catch (e) {
@@ -182,6 +185,10 @@ const RelatorioConsolidado = () => {
         }
     }
 
+    const podeExibirProximaPublicacao = () =>{
+        return (consolidadoDreProximaPublicacao && podeGerarPrevia()) || consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais
+    }
+
     const publicarConsolidadoDre = async (consolidado_dre) => {
         let payload = {
             dre_uuid: dre_uuid,
@@ -198,6 +205,22 @@ const RelatorioConsolidado = () => {
         } catch (e) {
             console.log("Erro ao publicar Consolidado Dre ", e)
         }
+    }
+
+    const publicarConsolidadoDePublicacoesParciais = async () => {
+        setLoading(true)
+        let payload = {
+            dre_uuid: dre_uuid,
+            periodo_uuid: periodoEscolhido
+        }
+        try {
+            let publicar = await postPublicarConsolidadoDePublicacoesParciais(payload);
+            console.log("YYYYYYYYYYYYYYYYY publicarConsolidadoDePublicacoesParciais ", publicar)
+            await carregaConsolidadosDreJaPublicadosProximaPublicacao()
+        } catch (e) {
+            console.log("Erro ao publicar Consolidado de Publicações Parciais ", e)
+        }
+        setLoading(false)
     }
 
     const gerarPreviaConsolidadoDre = async () => {
@@ -256,10 +279,13 @@ const RelatorioConsolidado = () => {
                                         </div>
                                     ) :
                                     <>
-                                        {consolidadoDreProximaPublicacao && podeGerarPrevia() &&
+                                        {/*{consolidadoDreProximaPublicacao && podeGerarPrevia() &&*/}
+                                        {podeExibirProximaPublicacao() &&
+
                                             <div className='mt-3'>
                                                 <PublicarDocumentos
                                                     publicarConsolidadoDre={publicarConsolidadoDre}
+                                                    publicarConsolidadoDePublicacoesParciais={publicarConsolidadoDePublicacoesParciais}
                                                     podeGerarPrevia={podeGerarPrevia}
                                                     consolidadoDre={consolidadoDreProximaPublicacao}
                                                 >
