@@ -357,6 +357,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                                 rowsPerPageAcertosDocumentos={rowsPerPageAcertosDocumentos}
                                 expandedRowsDocumentos={expandedRowsDocumentos}
                                 setExpandedRowsDocumentos={setExpandedRowsDocumentos}
+                                opcoesJustificativa={opcoesJustificativa}
                                 rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
                             />
                         ):
