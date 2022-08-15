@@ -680,3 +680,20 @@ export const ModalDescartarAlteracoesValoresReprogramados = (propriedades) => {
         />
     )
 };
+
+export const ModalConcluirValoresReprogramados = (propriedades) => {
+    return (
+        <ModalBootstrap
+            show={propriedades.show}
+            onHide={propriedades.handleClose}
+            titulo="Concluir"
+            bodyText="Deseja mesmo concluir a operação? Essa ação não poderá ser revertida."
+            primeiroBotaoOnclick={propriedades.handleConcluirValoresReprogramados}
+            primeiroBotaoTexto="Sim"
+            primeiroBotaoCss="outline-success"
+            segundoBotaoOnclick={propriedades.handleClose}
+            segundoBotaoTexto="Não"
+            segundoBotaoCss="success"
+        />
+    )
+};

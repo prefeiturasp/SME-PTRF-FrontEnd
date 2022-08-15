@@ -43,8 +43,8 @@ export const ValoresReprogramadosFormFormik = ({
                                 <form>
                                     {values.contas &&  values.contas.length > 0 && values.contas.map((dado, index_conta) => {
                                         return (
-                                            <section className="form-row" key={index_conta}>
-                                                <div className="col">
+                                            <section className="form row" key={index_conta}>
+                                                <div className="col-12">
                                                     <p className="titulo-contas pt-4"><strong>Conta {dado.conta.tipo_conta}</strong></p>
 
                                                     <table className="tabela-valores-reprogramados table table-bordered border-0 mb-0 mt-2">
@@ -96,10 +96,6 @@ export const ValoresReprogramadosFormFormik = ({
                                                                             <td className="tabela-valores-reprogramados-td-dre">
                                                                                 <div className="row">
                                                                                     <div className="col">
-                                                                                        {(acao.custeio.status_conferencia === "correto" || acao.custeio.status_conferencia === "incorreto") &&
-                                                                                            <span><strong>{acao.custeio.status_conferencia === "correto" ? "Correto" : "Corrigir para:"}</strong></span>
-                                                                                        }
-                                                                                        
                                                                                         <CurrencyInput
                                                                                             allowNegative={false}
                                                                                             prefix='R$'
@@ -120,13 +116,19 @@ export const ValoresReprogramadosFormFormik = ({
                                                                                             allowEmpty={true}
                                                                                             disabled={!editavelDRE()}
                                                                                         />
+
+                                                                                        {(acao.custeio.status_conferencia === "correto" || acao.custeio.status_conferencia === "incorreto") &&
+                                                                                            <div className="mt-1">
+                                                                                                <span><strong>{acao.custeio.status_conferencia === "correto" ? "Correto" : "Corrigir valor"}</strong></span>
+                                                                                            </div>
+                                                                                        }
                                                                                         
-                                                                                        {!acao.custeio.status_conferencia && visao_selecionada === "DRE" &&
+                                                                                        {!acao.custeio.status_conferencia && visao_selecionada === "DRE" && editavelDRE() &&
                                                                                             <button
                                                                                                 onClick={(e) => {
                                                                                                     handleClickEstaCorreto(setFieldValue, acao.custeio, index_conta, index_acao)}
                                                                                                 }
-                                                                                                className={`link-esta-correto ${!editavelDRE() ? 'link-esta-correto-disabled' : ''} `}
+                                                                                                className={`mt-1 link-esta-correto ${!editavelDRE() ? 'link-esta-correto-disabled' : ''} `}
                                                                                                 disabled={!editavelDRE()}
                                                                                             >
                                                                                                 <strong>Está correto</strong>
@@ -185,10 +187,6 @@ export const ValoresReprogramadosFormFormik = ({
                                                                             <td className="tabela-valores-reprogramados-td-dre">
                                                                                 <div className="row">
                                                                                     <div className="col">
-                                                                                        {(acao.capital.status_conferencia === "correto" || acao.capital.status_conferencia === "incorreto") &&
-                                                                                            <span><strong>{acao.capital.status_conferencia === "correto" ? "Correto" : "Corrigir para:"}</strong></span>
-                                                                                        }
-                                                                                        
                                                                                         <CurrencyInput
                                                                                             allowNegative={false}
                                                                                             prefix='R$'
@@ -210,12 +208,18 @@ export const ValoresReprogramadosFormFormik = ({
                                                                                             disabled={!editavelDRE()}
                                                                                         />
 
-                                                                                        {!acao.capital.status_conferencia && visao_selecionada === "DRE" &&
+                                                                                        {(acao.capital.status_conferencia === "correto" || acao.capital.status_conferencia === "incorreto") &&
+                                                                                            <div className="mt-1">
+                                                                                                <span><strong>{acao.capital.status_conferencia === "correto" ? "Correto" : "Corrigir valor"}</strong></span>
+                                                                                            </div>
+                                                                                        }
+
+                                                                                        {!acao.capital.status_conferencia && visao_selecionada === "DRE" && editavelDRE() &&
                                                                                             <button
                                                                                                 onClick={(e) => {
                                                                                                     handleClickEstaCorreto(setFieldValue, acao.capital, index_conta, index_acao)}
                                                                                                 }
-                                                                                                className={`link-esta-correto ${!editavelDRE() ? 'link-esta-correto-disabled' : ''} `}
+                                                                                                className={`mt-1 link-esta-correto ${!editavelDRE() ? 'link-esta-correto-disabled' : ''} `}
                                                                                                 disabled={!editavelDRE()}
                                                                                             >
                                                                                                 <strong>Está correto</strong>
@@ -274,10 +278,6 @@ export const ValoresReprogramadosFormFormik = ({
                                                                             <td className="tabela-valores-reprogramados-td-dre">
                                                                                 <div className="row">
                                                                                     <div className="col">
-                                                                                        {(acao.livre.status_conferencia === "correto" || acao.livre.status_conferencia === "incorreto") &&
-                                                                                            <span><strong>{acao.livre.status_conferencia === "correto" ? "Correto" : "Corrigir para:"}</strong></span>
-                                                                                        }
-                                                                                        
                                                                                         <CurrencyInput
                                                                                             allowNegative={false}
                                                                                             prefix='R$'
@@ -299,12 +299,18 @@ export const ValoresReprogramadosFormFormik = ({
                                                                                             disabled={!editavelDRE()}
                                                                                         />
 
-                                                                                        {!acao.livre.status_conferencia && visao_selecionada === "DRE" &&
+                                                                                        {(acao.livre.status_conferencia === "correto" || acao.livre.status_conferencia === "incorreto") &&
+                                                                                            <div className="mt-1">
+                                                                                                <span><strong>{acao.livre.status_conferencia === "correto" ? "Correto" : "Corrigir valor"}</strong></span>
+                                                                                            </div>
+                                                                                        }
+
+                                                                                        {!acao.livre.status_conferencia && visao_selecionada === "DRE" && editavelDRE() &&
                                                                                             <button
                                                                                                 onClick={(e) => {
                                                                                                     handleClickEstaCorreto(setFieldValue, acao.livre, index_conta, index_acao)}
                                                                                                 }
-                                                                                                className={`link-esta-correto ${!editavelDRE() ? 'link-esta-correto-disabled' : ''} `}
+                                                                                                className={`mt-1 link-esta-correto ${!editavelDRE() ? 'link-esta-correto-disabled' : ''} `}
                                                                                                 disabled={!editavelDRE()}
                                                                                             >
                                                                                                 <strong>Está correto</strong>
