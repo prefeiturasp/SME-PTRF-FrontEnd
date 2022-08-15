@@ -5,8 +5,6 @@ import {AnalisesDeContaDaPrestacao} from "../AnalisesDeContaDaPrestacao";
 import {ResumoFinanceiroTabelaTotais} from "../ResumoFinanceiroTabelaTotais";
 import Loading from "../../../../../utils/Loading";
 import ArquivosDeReferenciaVisualizacaoDownload from "./ArquivosDeReferenciaVisualizacaoDownload";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 
 export const TabsArquivosDeReferencia = ({valoresReprogramadosAjustes, setValoresReprogramadosAjustes, prestacaoDeContas, infoAta, toggleBtnEscolheConta, exibeAtaPorConta, clickBtnEscolheConta, infoAtaPorConta, adicaoAjusteSaldo, setAdicaoAjusteSaldo, onClickAdicionarAcertoSaldo, onClickDescartarAcerto, formErrosAjusteSaldo, validaAjustesSaldo, handleOnKeyDownAjusteSaldo, onClickSalvarAcertoSaldo, ajusteSaldoSalvoComSucesso, onClickDeletarAcertoSaldo, ...rest}) => {
 
@@ -14,25 +12,6 @@ export const TabsArquivosDeReferencia = ({valoresReprogramadosAjustes, setValore
         <>
             <hr className='mt-4 mb-3'/>
             <h4 className='mb-3'>Materiais de referência</h4>
-            {prestacaoDeContas && prestacaoDeContas.permite_analise_valores_reprogramados && prestacaoDeContas.permite_analise_valores_reprogramados.permite_analise
-                ?
-                    <section className="row mb-4">
-                        <div className="col">
-                            <FontAwesomeIcon
-                                icon={faExclamationTriangle}
-                                className="texto-alerta "
-                            />
-                            <strong>
-                                <span className="texto-alerta ml-1">
-                                    Por se tratar do período inicial de uso do sistema pela Associação, favor conferir
-                                    os saldos iniciais de valores reprogramados dentro do item "Síntese do período por ação" abaixo.
-                                </span>
-                            </strong>
-                        </div>
-                    </section>
-                :
-                    null
-            }
             
             <nav>
                 <div className="nav nav-tabs mb-3 menu-interno-dre-prestacao-de-contas" id="nav-tab" role="tablist">
@@ -101,8 +80,6 @@ export const TabsArquivosDeReferencia = ({valoresReprogramadosAjustes, setValore
                                 >
 
                                     <ResumoFinanceiroTabelaAcoes
-                                        setValoresReprogramadosAjustes={setValoresReprogramadosAjustes}
-                                        valoresReprogramadosAjustes={valoresReprogramadosAjustes}
                                         infoAta={infoAtaPorConta}
                                         valorTemplate={rest.valorTemplate}
                                         toggleBtnTabelaAcoes={rest.toggleBtnTabelaAcoes}

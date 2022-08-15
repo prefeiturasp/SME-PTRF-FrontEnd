@@ -247,14 +247,6 @@ export const postSolicitacoesParaAcertosDocumentos = async (prestacao_de_contas_
     return (await api.post(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/solicitacoes-de-acerto-documento/`, payload, authHeader)).data
 };
 
-export const getTemReajustes = async (analise_atual_uuid) => {
-    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/verifica-reajustes/`, authHeader)).data
-};
-
-export const getSaldosIniciasAjustes = async (analise_atual_uuid, conta_uuid) => {
-    return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/saldos-iniciais-com-ajustes/?conta_associacao=${conta_uuid}`, authHeader)).data
-};
-
 export const getExtratosBancariosAjustes = async (analise_atual_uuid, conta_uuid) => {
     return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/ajustes-extratos-bancarios/?conta_associacao=${conta_uuid}`, authHeader)).data
 };
@@ -321,18 +313,6 @@ export const downloadDocumentoPreviaPdf = async (analise_atual_uuid) => {
             }).catch(error => {
                 return error.response;
             });
-};
-
-export const getAnaliseValorReprogramadoPorAcao = async (analise_prestacao_uuid, conta_associacao_uuid, acao_associacao_uuid) => {
-    return (await api.get(`/api/analises-valores-reprogramados/valores-reprogramados-acao/?analise_prestacao_conta=${analise_prestacao_uuid}&conta_associacao=${conta_associacao_uuid}&acao_associacao=${acao_associacao_uuid}`, authHeader)).data
-};
-
-export const patchAnaliseValorReprogramadoPorAcao = async (uuid_analise_de_valor_reprogramado, payload) => {
-    return (await api.patch(`/api/analises-valores-reprogramados/${uuid_analise_de_valor_reprogramado}/`, payload, authHeader)).data
-};
-
-export const postAnaliseValorReprogramadoPorAcao = async (payload) => {
-    return (await api.post(`/api/analises-valores-reprogramados/salvar-valores-reprogramados-acao/`, payload, authHeader)).data
 };
 
 export const postAnaliseAjustesSaldoPorConta = async (payload) => {
