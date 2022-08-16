@@ -361,7 +361,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marc
                         className="align-middle text-left borda-coluna"
                         body={tagJustificativa}
                         style={{width: '10%'}}/>
-                    {visoesService.getItemUsuarioLogado('visao_selecionada.nome') !== 'DRE' || ![['change_analise_dre']].some(visoesService.getPermissoes) || prestacaoDeContas.status !== 'DEVOLVIDA' ? 
+                    {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && visoesService.getPermissoes(["change_analise_dre"]) && prestacaoDeContas.status === "DEVOLVIDA" ?
                     <Column
                         header={selecionarHeader()}
                         body={selecionarTemplate}
@@ -401,7 +401,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marc
             <section>
                 <ModalJustificadaApagada
                     show={showModalJustificadaApagada}
-                    titulo=''
+                    titulo='Apagar justificativa(s)'
                     texto={'Atenção. Essa ação irá apagar as justificativas digitadas. Confirma ação?'}
                     primeiroBotaoTexto="Confirmar"
                     primeiroBotaoCss="success"
