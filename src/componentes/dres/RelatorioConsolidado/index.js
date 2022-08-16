@@ -8,6 +8,7 @@ import {
     postGerarPreviaConsolidadoDre,
     getConsolidadosDreJaPublicadosProximaPublicacao,
     postPublicarConsolidadoDePublicacoesParciais,
+    getStatusRelatorioConsolidadoDePublicacoesParciais,
 } from "../../../services/dres/RelatorioConsolidado.service";
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
 import {SelectPeriodo} from "./SelectPeriodo";
@@ -36,6 +37,7 @@ const RelatorioConsolidado = () => {
     const [consolidadoDreProximaPublicacao, setConsolidadoDreProximaPublicacao] = useState(false);
     const [statusBarraDeStatus, setStatusBarraDeStatus] = useState('');
     const [statusProcessamentoConsolidadoDre, setStatusProcessamentoConsolidadoDre] = useState('');
+    const [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais] = useState('');
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
 
@@ -63,7 +65,7 @@ const RelatorioConsolidado = () => {
 
 
     const carregaConsolidadosDreJaPublicadosProximaPublicacao = useCallback(async () => {
-        if (dre_uuid && periodoEscolhido && statusProcessamentoConsolidadoDre) {
+        if (dre_uuid && periodoEscolhido && statusProcessamentoConsolidadoDre && statusProcessamentoRelatorioConsolidadoDePublicacoesParciais) {
             try {
                 let consolidados_dre = await getConsolidadosDreJaPublicadosProximaPublicacao(dre_uuid, periodoEscolhido)
                 console.log("XXXXXXXXXXXX Consolidados DRE ", consolidados_dre)
@@ -73,7 +75,7 @@ const RelatorioConsolidado = () => {
                 console.log("Erro ao buscar Consolidado Dre ", e)
             }
         }
-    }, [dre_uuid, periodoEscolhido, statusProcessamentoConsolidadoDre])
+    }, [dre_uuid, periodoEscolhido, statusProcessamentoConsolidadoDre, statusProcessamentoRelatorioConsolidadoDePublicacoesParciais])
 
     useEffect(() => {
         carregaConsolidadosDreJaPublicadosProximaPublicacao()
@@ -99,6 +101,22 @@ const RelatorioConsolidado = () => {
         retornaStatusConsolidadosDre()
     }, [retornaStatusConsolidadosDre])
 
+    const retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais = useCallback(async () => {
+        if (dre_uuid && periodoEscolhido) {
+            try {
+                let status = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
+                setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status)
+            } catch (e) {
+                console.log("Erro ao buscar status Consolidado Dre ", e)
+            }
+        }
+    }, [dre_uuid, periodoEscolhido])
+
+
+    useEffect(() => {
+        retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais()
+    }, [retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais])
+
     const buscaTrilhaStatus = useCallback(async () => {
         if (dre_uuid && periodoEscolhido) {
             let trilha_status = await getTrilhaStatus(dre_uuid, periodoEscolhido)
@@ -123,6 +141,19 @@ const RelatorioConsolidado = () => {
             setLoading(false);
         }
     }, [statusProcessamentoConsolidadoDre, retornaStatusConsolidadosDre, buscaTrilhaStatus]);
+
+    useEffect(() => {
+        if (statusProcessamentoRelatorioConsolidadoDePublicacoesParciais && statusProcessamentoRelatorioConsolidadoDePublicacoesParciais === "EM_PROCESSAMENTO") {
+            setLoading(true)
+            const timer = setInterval(() => {
+                retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais();
+            }, 5000);
+            // clearing interval
+            return () => clearInterval(timer);
+        } else {
+            setLoading(false);
+        }
+    }, [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, retornaStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais]);
 
     const buscaFiqueDeOlho = useCallback(async () => {
         try {
@@ -208,19 +239,22 @@ const RelatorioConsolidado = () => {
     }
 
     const publicarConsolidadoDePublicacoesParciais = async () => {
-        setLoading(true)
         let payload = {
             dre_uuid: dre_uuid,
             periodo_uuid: periodoEscolhido
         }
         try {
-            let publicar = await postPublicarConsolidadoDePublicacoesParciais(payload);
-            console.log("YYYYYYYYYYYYYYYYY publicarConsolidadoDePublicacoesParciais ", publicar)
-            await carregaConsolidadosDreJaPublicadosProximaPublicacao()
+            await postPublicarConsolidadoDePublicacoesParciais(payload);
+
+            let status = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
+            console.log("YYYYYYYYYYYYYYYYY getStatusRelatorioConsolidadoDePublicacoesParciais ", status)
+
+            setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status);
+
         } catch (e) {
             console.log("Erro ao publicar Consolidado de Publicações Parciais ", e)
         }
-        setLoading(false)
+        await carregaConsolidadosDreJaPublicadosProximaPublicacao()
     }
 
     const gerarPreviaConsolidadoDre = async () => {
