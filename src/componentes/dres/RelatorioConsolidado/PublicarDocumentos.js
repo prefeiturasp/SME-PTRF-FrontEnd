@@ -3,7 +3,6 @@ import { ModalPublicarRelatorioConsolidado } from "../../../utils/Modais";
 
 const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, consolidadoDre, publicarConsolidadoDePublicacoesParciais}) => {
     const [showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado] = useState(false);
-    
     return(
         <>
         <div className="d-flex bd-highlight align-items-center container-publicar-cabecalho text-dark rounded-top border font-weight-bold">
@@ -16,9 +15,13 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
                             {children}
                         </div>
                     }
+
                     <div className="p-2 bd-highlight">
-                        <button onClick={() => setShowPublicarRelatorioConsolidado(true)} className="btn btn btn btn-success">Publicar</button>
+                        <button onClick={!consolidadoDre.eh_consolidado_de_publicacoes_parciais ? () => setShowPublicarRelatorioConsolidado(true) : ()=>publicarConsolidadoDePublicacoesParciais()}
+                                className="btn btn btn btn-success">Gerar
+                        </button>
                     </div>
+
                 </>
             }
         </div>
@@ -27,7 +30,7 @@ const PublicarDocumentos = ({publicarConsolidadoDre, podeGerarPrevia, children, 
             <ModalPublicarRelatorioConsolidado
                 show={showPublicarRelatorioConsolidado}
                 handleClose={()=>setShowPublicarRelatorioConsolidado(false)}
-                publicarConsolidadoDre={!consolidadoDre.eh_consolidado_de_publicacoes_parciais ? () => publicarConsolidadoDre(consolidadoDre) : ()=>publicarConsolidadoDePublicacoesParciais() }
+                publicarConsolidadoDre={() => publicarConsolidadoDre(consolidadoDre)}
             />
         </section>
 </>
