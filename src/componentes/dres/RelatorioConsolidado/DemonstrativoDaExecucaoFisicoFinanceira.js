@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useEffect, useState} from "react";
+import React, {memo, useEffect, useState} from "react";
 import {
     getDownloadRelatorio,
     getTiposConta
@@ -46,7 +46,6 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
         let consolidado_dre_uuid = consolidadoDre.uuid
         window.location.assign(`/dre-relatorio-consolidado-em-tela/${periodoEscolhido}/${consolidadoDre.ja_publicado}/${consolidado_dre_uuid}`)
     };
-
     return (
         <div className="border">
             {consolidadoDre.relatorios_fisico_financeiros && consolidadoDre.relatorios_fisico_financeiros.length > 0 ? (
@@ -68,15 +67,17 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                                     </p>
                                 </div>
                             </div>
+                            {!consolidadoDre.eh_consolidado_de_publicacoes_parciais &&
                             <div className="col-12 col-md-4 align-self-center text-right">
                                 <button
-                                    onClick={()=> onClickPreencherRelatorio()}
+                                    onClick={() => onClickPreencherRelatorio()}
                                     type="button"
                                     className="btn btn-outline-success btn-sm"
                                 >
                                     {consolidadoDre.ja_publicado ? "Consultar" : "Preencher"} relatório
                                 </button>
                             </div>
+                            }
                         </div>
                     )}
                 </>
@@ -90,15 +91,17 @@ const DemonstrativoDaExecucaoFisicoFinanceira = ({consolidadoDre, periodoEscolhi
                             </p>
                         </div>
                     </div>
+                    {!consolidadoDre.eh_consolidado_de_publicacoes_parciais &&
                     <div className="col-12 col-md-4 align-self-center text-right">
                         <button
-                            onClick={()=> onClickPreencherRelatorio()}
+                            onClick={() => onClickPreencherRelatorio()}
                             type="button"
                             className="btn btn-outline-success btn-sm"
                         >
                             {consolidadoDre.ja_publicado ? "Consultar" : "Preencher"} relatório
                         </button>
                     </div>
+                    }
                 </div>
             }
         </div>

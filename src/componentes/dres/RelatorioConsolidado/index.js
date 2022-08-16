@@ -65,10 +65,9 @@ const RelatorioConsolidado = () => {
 
 
     const carregaConsolidadosDreJaPublicadosProximaPublicacao = useCallback(async () => {
-        if (dre_uuid && periodoEscolhido && statusProcessamentoConsolidadoDre && statusProcessamentoRelatorioConsolidadoDePublicacoesParciais) {
+        if  ( (dre_uuid && periodoEscolhido && statusProcessamentoConsolidadoDre) || statusProcessamentoRelatorioConsolidadoDePublicacoesParciais ) {
             try {
                 let consolidados_dre = await getConsolidadosDreJaPublicadosProximaPublicacao(dre_uuid, periodoEscolhido)
-                console.log("XXXXXXXXXXXX Consolidados DRE ", consolidados_dre)
                 setConsolidadosDreJaPublicados(consolidados_dre.publicacoes_anteriores)
                 setConsolidadoDreProximaPublicacao(consolidados_dre.proxima_publicacao)
             } catch (e) {
@@ -247,7 +246,6 @@ const RelatorioConsolidado = () => {
             await postPublicarConsolidadoDePublicacoesParciais(payload);
 
             let status = await getStatusRelatorioConsolidadoDePublicacoesParciais(dre_uuid, periodoEscolhido)
-            console.log("YYYYYYYYYYYYYYYYY getStatusRelatorioConsolidadoDePublicacoesParciais ", status)
 
             setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais(status.status);
 
@@ -331,13 +329,17 @@ const RelatorioConsolidado = () => {
                                                     consolidadoDre={consolidadoDreProximaPublicacao}
                                                     periodoEscolhido={periodoEscolhido}
                                                 />
-                                                <AtaParecerTecnico
+                                                {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
+                                                    <AtaParecerTecnico
                                                     consolidadoDre={consolidadoDreProximaPublicacao}
-                                                />
+                                                    />
+                                                }
 
-                                                <Lauda
-                                                    consolidadoDre={consolidadoDreProximaPublicacao}
-                                                />
+                                                {!consolidadoDreProximaPublicacao.eh_consolidado_de_publicacoes_parciais &&
+                                                    <Lauda
+                                                        consolidadoDre={consolidadoDreProximaPublicacao}
+                                                    />
+                                                }
                                             </div>
                                         }
 
