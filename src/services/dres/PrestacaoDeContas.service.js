@@ -207,6 +207,10 @@ export const getTiposDeAcertoLancamentos = async () => {
     return (await api.get(`/api/tipos-acerto-lancamento/`, authHeader)).data
 };
 
+export const getTiposDeAcertoLancamentosAgrupadoCategoria = async () => {
+    return (await api.get(`/api/tipos-acerto-lancamento/tabelas/`, authHeader)).data
+};
+
 export const getListaDeSolicitacaoDeAcertos = async (prestacao_de_contas_uuid, analise_lancamento_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/analises-de-lancamento/?analise_lancamento=${analise_lancamento_uuid}`, authHeader)).data
 };
@@ -231,6 +235,10 @@ export const getTiposDeAcertosDocumentos = async (documento_uuid) => {
     return (await api.get(`/api/tipos-acerto-documento/?tipos_documento_prestacao__uuid=${documento_uuid}`, authHeader)).data
 };
 
+export const getTabelas = async (documento_uuid=null) => {
+    return (await api.get(`/api/tipos-acerto-documento/tabelas/?tipos_documento_prestacao__uuid=${documento_uuid}`, authHeader)).data
+};
+
 export const getSolicitacaoDeAcertosDocumentos = async (prestacao_de_contas_uuid, analise_documento_uuid) => {
     return (await api.get(`/api/prestacoes-contas/${prestacao_de_contas_uuid}/analises-de-documento/?analise_documento=${analise_documento_uuid}`, authHeader)).data
 };
@@ -246,8 +254,6 @@ export const getExtratosBancariosAjustes = async (analise_atual_uuid, conta_uuid
 export const getTemAjustesExtratos = async (analise_atual_uuid) => {
     return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/verifica-ajustes-extratos/`, authHeader)).data
 };
-
-
 
 export const getLancamentosAjustes = async (analise_atual_uuid, conta_uuid, tipo_lancamento=null, tipo_acerto=null) => {
     return (await api.get(`/api/analises-prestacoes-contas/${analise_atual_uuid}/lancamentos-com-ajustes/?conta_associacao=${conta_uuid}${tipo_lancamento ? '&tipo='+tipo_lancamento : ''}${tipo_acerto ? '&tipo_acerto='+tipo_acerto : ''}`, authHeader)).data
@@ -284,6 +290,26 @@ export const gerarPreviaRelatorioAcertos = async (analise_prestacao_uuid) => {
 export const getAnalisePrestacaoConta = async (analise_prestacao_uuid) => {
     return (await api.get(`/api/analises-prestacoes-contas/${analise_prestacao_uuid}`, authHeader)).data
 };
+
+export const getAnaliseLancamentosPrestacaoConta = async () => {
+    return (await api.get(`/api/analises-lancamento-prestacao-conta/tabelas/`, authHeader)).data
+};
+
+export const postLimparStatusLancamentoPrestacaoConta = async (payload) => {
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/limpar-status/`, payload, authHeader)).data
+}
+
+export const postJustificarNaoRealizacaoLancamentoPrestacaoConta = async (payload) => {
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/justificar-nao-realizacao/`, payload, authHeader)).data
+}
+
+export const postMarcarComoRealizadoLancamentoPrestacaoConta = async (payload) => {
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/marcar-como-realizado/`, payload, authHeader)).data
+}
+
+export const patchAnaliseLancamentoPrestacaoConta = async (payload, analise_prestacao_uuid) => {
+    return (await api.patch(`/api/analises-lancamento-prestacao-conta/${analise_prestacao_uuid}/`, payload, authHeader)).data
+}
 
 export const downloadDocumentoPreviaPdf = async (analise_atual_uuid) => {
     return api

@@ -1,7 +1,7 @@
 import {ModalBootstrap} from "../../../../Globais/ModalBootstrap";
 import React from "react";
 
-export const ModalCheckNaoPermitidoConfererenciaDeLancamentos = (props) => {
+export const ModalConfirmDeleteLancamento = (props) => {
     return (
         <ModalBootstrap
             show={props.show}
@@ -11,6 +11,9 @@ export const ModalCheckNaoPermitidoConfererenciaDeLancamentos = (props) => {
             primeiroBotaoOnclick={props.handleClose}
             primeiroBotaoTexto={props.primeiroBotaoTexto}
             primeiroBotaoCss={props.primeiroBotaoCss}
+            segundoBotaoOnclick={props.onDeleteLancamentoTrue}
+            segundoBotaoCss={props.segundoBotaoCss}
+            segundoBotaoTexto={props.segundoBotaoTexto}
         />
     )
 };

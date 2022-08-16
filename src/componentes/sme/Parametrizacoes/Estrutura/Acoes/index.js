@@ -120,6 +120,7 @@ export const Acoes = () => {
         setShowModalInfoNaoPodeGravar(false);
         setMensagemModalInfoNaoPodeGravar("");
     };
+    
     const handleChangeFormModal = (name, value) => {
         setStateFormModal({
             ...stateFormModal,
