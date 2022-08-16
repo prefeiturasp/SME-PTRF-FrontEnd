@@ -149,11 +149,22 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         setLoadingLancamentos(false)
     }
 
+    const limparDocumentoStatus = async (documentosSelecionados) => {
+
+    }
+
     const marcarComoRealizado = async (lancamentosSelecionados) => {
         setLoadingLancamentos(true)
         await postMarcarComoRealizadoLancamentoPrestacaoConta({"uuids_analises_lancamentos": lancamentosSelecionados.map(lanc => lanc.analise_lancamento.uuid)})
         const lancamentoAjuste = await getLancamentosAjustes(lancamentosSelecionados[0].analise_lancamento.analise_prestacao_conta, lancamentosAjustes[0].conta)
         setLancamentosAjustes(lancamentoAjuste)
+        setLoadingLancamentos(false)
+    }
+
+    const marcarDocumentoComoRealizado = async (documentosSelecionados) => {
+        setLoadingLancamentos(true)
+        await postMarcarComoRealizadoLancamentoPrestacaoConta({"uuids_analises_lancamentos": documentosSelecionados.map(doc => doc.analise_lancamento.uuid)})
+        setLancamentosAjustes(documentosAjustes)
         setLoadingLancamentos(false)
     }
 
@@ -482,7 +493,10 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                             <TabelaAcertosDocumentos
                                 lancamentosDocumentos={lancamentosDocumentos}
                                 documentosAjustes={documentosAjustes}
+                                marcarDocumentoComoRealizado={marcarDocumentoComoRealizado}
+                                limparDocumentoStatus={limparDocumentoStatus}
                                 rowsPerPageAcertosDocumentos={rowsPerPageAcertosDocumentos}
+                                justificarNaoRealizacao={justificarNaoRealizacao}
                                 expandedRowsDocumentos={expandedRowsDocumentos}
                                 setExpandedRowsDocumentos={setExpandedRowsDocumentos}
                                 opcoesJustificativa={opcoesJustificativa}

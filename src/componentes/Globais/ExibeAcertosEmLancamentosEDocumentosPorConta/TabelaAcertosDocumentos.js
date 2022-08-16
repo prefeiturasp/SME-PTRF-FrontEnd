@@ -1,6 +1,10 @@
-import React, {memo, useState} from "react";
+import React, {memo, useState, useMemo} from "react";
 import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
+import {ModalJustificadaApagada} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificadaApagada";
+import {ModalJustificarNaoRealizacao} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificarNaoRealizacao";
 import Dropdown from "react-bootstrap/Dropdown";
 import './scss/tagJustificativaLancamentos.scss';
 
@@ -11,22 +15,26 @@ const tagColors = {
 }
 // DOCUMENTOS
 
-const TabelaAcertosDocumentos = ({lancamentosDocumentos, documentosAjustes, rowsPerPageAcertosDocumentos, setExpandedRowsDocumentos, opcoesJustificativa, expandedRowsDocumentos, rowExpansionTemplateDocumentos,}) => {
+const TabelaAcertosDocumentos = ({documentosAjustes, limparDocumentoStatus, marcarDocumentoComoRealizado, justificarNaoRealizacao, rowsPerPageAcertosDocumentos, setExpandedRowsDocumentos, opcoesJustificativa, expandedRowsDocumentos, rowExpansionTemplateDocumentos,}) => {
     const [documentosSelecionados, setDocumentosSelecionados] = useState([])
     const [textoModalCheckNaoPermitido, setTextoModalCheckNaoPermitido] = useState('')
+    const [showModalJustificadaApagada, setShowModalJustificadaApagada] = useState(false)
     const [showModalCheckNaoPermitido, setShowModalCheckNaoPermitido] = useState(false)
+    const [showModalJustificarNaoRealizacao, setShowModalJustificarNaoRealizacao] = useState(false)
+    const [textoConfirmadoJustificado, setTextoConfirmadoJustificado] = useState('')
+    const [isConfirmadoJustificado, setIsConfirmadoJustificado] = useState(false)
+    const [tipoAcao, setTipoAcao] = useState('')
     const [status, setStatus] = useState()
 
     const selecionarPorStatus = (event, statusId) => {
-        console.log('event: ' + event, 'status : ' + statusId)
-        console.log('documentosAjustes: ' + documentosAjustes)
+        console.log('event', event, 'statusId', statusId)
+        console.log('documentosAjustes', documentosAjustes)
         event.preventDefault()
         setStatus(statusId)
 
         let documentos = documentosAjustes.filter(doc => 
             doc.status_realizacao === statusId
         )
-        console.log('documentos: ' + documentos)
 
         setDocumentosSelecionados(documentos)
     }
@@ -98,13 +106,18 @@ const TabelaAcertosDocumentos = ({lancamentosDocumentos, documentosAjustes, rows
         setDocumentosSelecionados([])
     }
 
+    const verificaApagadaJustificada = (documentosSelecionados, tipoAcao) => {
+        setShowModalJustificadaApagada(true)
+        setTipoAcao(tipoAcao)
+    }
+
     const selecionarHeader = () => {
         return (
             <div className="align-middle">
                     <Dropdown>
                         <Dropdown.Toggle id="dropdown-basic" className="p-0">
                             <input
-                                checked={false} // documentosSelecionados.length === documentosAjustes.length
+                                checked={documentosSelecionados.length === documentosAjustes.length} // documentosSelecionados.length === documentosAjustes.length
                                 type="checkbox"
                                 value=""
                                 onChange={(e) => e}
@@ -128,11 +141,184 @@ const TabelaAcertosDocumentos = ({lancamentosDocumentos, documentosAjustes, rows
         )
     }
 
+    const montagemSelecionar = () => {
+        const quantidadeSelecionada = documentosSelecionados.length
+
+        return (
+            <div className="row">
+                <div className="col-12"
+                     style={{background: "#00585E", color: 'white', padding: "15px", margin: "0px 15px", flex: "100%"}}>
+                    <div className="row">
+                        <div className="col-5">
+                            {quantidadeSelecionada} {quantidadeSelecionada === 1 ? "documento selecionado" : "documentos selecionados"} / {totalDeAcertosDocumentos} totais
+                        </div>
+                        <div className="col-7">
+                        {status === "REALIZADO" &&
+                                <>
+                                <button
+                                    className="float-right btn btn-link btn-montagem-selecionar"
+                                    onClick={(e) => limparDocumentos(e)}
+                                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                                    <FontAwesomeIcon
+                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                        icon={faCheckCircle}
+                                    />
+                                    <strong>Cancelar</strong>
+                                </button>
+                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                <button
+                                    className="float-right btn btn-link btn-montagem-selecionar"
+                                    onClick={() => {
+                                        setShowModalJustificarNaoRealizacao(true)
+                                    }}
+                                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                                    <FontAwesomeIcon
+                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                        icon={faCheckCircle}
+                                    />
+                                    <strong>Justificar não realização</strong>
+                                </button>
+                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                <button
+                                    className="float-right btn btn-link btn-montagem-selecionar"
+                                    onClick={() => limparDocumentoStatus(documentosSelecionados)}
+                                    style={{textDecoration: "underline", cursor: "pointer"}}>
+                                    <FontAwesomeIcon
+                                        style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                        icon={faCheckCircle}
+                                    />
+                                    <strong>Limpar Status</strong>
+                                </button>
+                                </>
+                                }
+                        {status === "JUSTIFICADO" &&
+                                <>
+                                 <button
+                                        className="float-right btn btn-link btn-montagem-selecionar"
+                                        onClick={(e) => limparDocumentos(e)}
+                                        style={{textDecoration: "underline", cursor: "pointer"}}>
+                                        <FontAwesomeIcon
+                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                            icon={faCheckCircle}
+                                        />
+                                        <strong>Cancelar</strong>
+                                </button>
+                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                    <button
+                                        className="float-right btn btn-link btn-montagem-selecionar"
+                                        onClick={(e) => verificaApagadaJustificada(documentosSelecionados, 'marcar_como_realizado')}
+                                        style={{textDecoration: "underline", cursor: "pointer"}}>
+                                        <FontAwesomeIcon
+                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                            icon={faCheckCircle}
+                                        />
+                                        <strong>Marcar como realizado</strong>
+                                    </button>
+                                <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                    <button
+                                        className="float-right btn btn-link btn-montagem-selecionar"
+                                        onClick={() => verificaApagadaJustificada(documentosSelecionados, 'limpar_status')}
+                                        style={{textDecoration: "underline", cursor: "pointer"}}>
+                                        <FontAwesomeIcon
+                                            style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                            icon={faCheckCircle}
+                                        />
+                                        <strong>Limpar Status</strong>
+                                    </button>
+                                </>
+                                }
+                        { status === "PENDENTE" &&
+                                <>
+                                <button
+                                       className="float-right btn btn-link btn-montagem-selecionar"
+                                       onClick={(e) => limparDocumentos(e)}
+                                       style={{textDecoration: "underline", cursor: "pointer"}}>
+                                       <FontAwesomeIcon
+                                           style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                           icon={faCheckCircle}
+                                       />
+                                       <strong>Cancelar</strong>
+                               </button>
+                               <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                   <button
+                                       className="float-right btn btn-link btn-montagem-selecionar"
+                                       onClick={(e) => marcarDocumentoComoRealizado(documentosSelecionados)}
+                                       style={{textDecoration: "underline", cursor: "pointer"}}>
+                                       <FontAwesomeIcon
+                                           style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                           icon={faCheckCircle}
+                                       />
+                                       <strong>Marca como realizado</strong>
+                                   </button>
+                               <div className="float-right" style={{padding: "0px 10px"}}>|</div>
+                                   <button
+                                       className="float-right btn btn-link btn-montagem-selecionar"
+                                       onClick={() => setShowModalJustificarNaoRealizacao(true)}
+                                       style={{textDecoration: "underline", cursor: "pointer"}}>
+                                       <FontAwesomeIcon
+                                           style={{color: "white", fontSize: '15px', marginRight: "3px"}}
+                                           icon={faCheckCircle}
+                                       />
+                                       <strong>Justificar não realizado</strong>
+                                   </button>
+                               </>
+                                }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )}
+    
+        const modalBodyHTML = () => {
+            return (
+                <div className="modal-body">
+                    <p>Você confirma que deseja marcar o lançamento como não realizado? Em caso afirmativo será necessário adicionar uma justificativa para tal evento.</p>
+                    <div className="form-check form-check-inline">
+                        <input className="form-check-input" type="radio" name="confirmacao-justificativa" id="confirmacao-justificativa1" onChange={() => {setIsConfirmadoJustificado(true)}}/>
+                        <label className="form-check-label" htmlFor="confirmacao-justificativa1">
+                            Sim
+                        </label>
+                        </div>
+                    <div className="form-check form-check-inline">
+                        <input className="form-check-input" type="radio" name="confirmacao-justificativa" id="confirmacao-justificativa2" onChange={() => {setIsConfirmadoJustificado(false);}} defaultChecked/>
+                        <label className="form-check-label" htmlFor="confirmacao-justificativa2">
+                            Não
+                        </label>
+                    </div>
+                    {isConfirmadoJustificado && (<form>
+                        <label htmlFor="justifique-textarea">Justifique</label>
+                        <textarea className="form-check form-check-inline w-100 pl-1" style={{'resize': 'none'}} onChange={(e) => setTextoConfirmadoJustificado(e.target.value)} id="justifique-textarea" value={textoConfirmadoJustificado} rows="7"></textarea>
+                    </form>)
+                    }
+                </div>
+            )
+        }
+
+    const totalDeAcertosDocumentos = useMemo(() => documentosAjustes.length, [documentosAjustes]);
+
+    const mensagemQuantidadeExibida = () => {
+        return (
+            <div className="row">
+                <div className="col-12" style={{padding: "15px 0px", margin: "0px 15px", flex: "100%"}}>
+                    Exibindo <span style={{
+                    color: "#00585E",
+                    fontWeight: "bold"
+                }}>{totalDeAcertosDocumentos}</span> documentos
+                </div>
+            </div>
+        )
+    }
+
     return(
-        <div>
+        <>
+        {documentosSelecionados.length > 0 ?
+                montagemSelecionar() :
+                mensagemQuantidadeExibida()
+        }
+        {documentosAjustes && documentosAjustes.length > 0 ? (
             <DataTable
-                value={lancamentosDocumentos}
-                paginator={lancamentosDocumentos.length > rowsPerPageAcertosDocumentos}
+                value={documentosAjustes}
+                paginator={documentosAjustes.length > rowsPerPageAcertosDocumentos}
                 rows={rowsPerPageAcertosDocumentos}
                 expandedRows={expandedRowsDocumentos}
                 onRowToggle={(e) => setExpandedRowsDocumentos(e.data)}
@@ -163,7 +349,39 @@ const TabelaAcertosDocumentos = ({lancamentosDocumentos, documentosAjustes, rows
                     style={{width: '4%', borderLeft: 'none'}}
                 />
             </DataTable>
-        </div>
+        ):
+            <p className='text-center fonte-18 mt-4'><strong>Não existem ajustes para serem exibidos</strong></p>
+        }
+        <section>
+            <ModalJustificarNaoRealizacao
+                show={showModalJustificarNaoRealizacao}
+                titulo='Marcar como não realizado'
+                bodyText={modalBodyHTML()}
+                primeiroBotaoTexto="Fechar"
+                primeiroBotaoCss="danger"
+                primeiroBotaoOnClick={() => setShowModalJustificarNaoRealizacao(false)}
+                segundoBotaoTexto="Confirmar"
+                segundoBotaoCss="success"
+                segundoBotaoOnclick={(e) => { justificarNaoRealizacao(documentosSelecionados, textoConfirmadoJustificado) }}
+                segundoBotaoDisable={textoConfirmadoJustificado.length === 0 && isConfirmadoJustificado || !isConfirmadoJustificado}
+            />
+        </section>
+        <section>
+            <ModalJustificadaApagada
+                show={showModalJustificadaApagada}
+                titulo='Apagar justificativa(s)'
+                texto={'Atenção. Essa ação irá apagar as justificativas digitadas. Confirma ação?'}
+                primeiroBotaoTexto="Confirmar"
+                primeiroBotaoCss="success"
+                primeiroBotaoOnclick={() => tipoAcao === 'limpar_status' ? limparDocumentoStatus(documentosSelecionados) : marcarDocumentoComoRealizado(documentosSelecionados) }
+                segundoBotaoTexto="Cancelar"
+                segundoBotaoCss="danger"
+                handleClose={() => setShowModalJustificadaApagada(false)}
+
+            />
+        </section>
+        </>
     )
 }
+
 export default memo(TabelaAcertosDocumentos)
