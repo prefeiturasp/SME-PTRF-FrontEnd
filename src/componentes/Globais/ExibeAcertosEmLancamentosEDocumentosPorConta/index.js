@@ -13,6 +13,7 @@ import {
     postMarcarComoRealizadoDocumentoPrestacaoConta,
     postLimparStatusDocumentoPrestacaoConta,
     getLancamentosAjustes,
+    patchAnaliseDocumentoPrestacaoConta,
     getTiposDeAcertoLancamentos,
     getExtratosBancariosAjustes,
     getTemAjustesExtratos
@@ -271,17 +272,22 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
           })
     };
 
-    const handleOnClick = (data) => {
-        salvarJustificativa(data);
+    const handleOnClick = (data, model) => {
+        salvarJustificativa(data, model);
     }
 
-    const salvarJustificativa = async (data) => {
+    const salvarJustificativa = async (data, model) => {
         let payload = {
             'justificativa': textareaJustificativa[data],
         }
 
         try {
-            await patchAnaliseLancamentoPrestacaoConta(payload, data)
+            if (model === 'lancamento'){
+                await patchAnaliseLancamentoPrestacaoConta(payload, data)
+            }
+            else if (model === 'documento'){
+                await patchAnaliseDocumentoPrestacaoConta(payload, data)
+            }
             setShowSalvar({
                 ...showSalvar,
                 [data]: true
@@ -335,7 +341,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                                                         disabled={salvarDesabilitados} 
                                                         type="button" 
                                                         className={`btn btn-${salvarDesabilitados ? 'secondary' : 'success'} mt-2`}
-                                                        onClick={() => handleOnClick(data.analise_lancamento.uuid)}
+                                                        onClick={() => handleOnClick(data.analise_lancamento.uuid, 'lancamento')}
                                                         >
                                                             <strong>Salvar Justificativas</strong>
                                                     </button>
@@ -367,11 +373,59 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         }
     };
 
+
     const rowExpansionTemplateDocumentos = (data) => {
         if (data && data.solicitacoes_de_ajuste_da_analise && data.solicitacoes_de_ajuste_da_analise.length > 0) {
+            const salvarDesabilitados = !textareaJustificativa?.[data.uuid] || textareaJustificativa?.[data.uuid] === data.justificativa || showSalvar?.[data.uuid]
             return (
+
                 data.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
-                    <div className='row p-2' style={{overflow: 'hidden'}} key={ajuste.id}>
+                    <Fragment key={ajuste.id}>
+                          {data.justificativa?.length > 0 && ( 
+                            <div className="row">
+                                <div className="col-12 px-4 py-2">
+                                    <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
+                                            <p className='mb-1'><strong>Justificativa</strong></p>
+                                        </div>
+                                    </div>
+                                     <div className="form-group w-100 px-4 py-2" style={{pointerEvents: 'all'}}>
+                                        <textarea
+                                            defaultValue={data.justificativa}
+                                            onChange={(event) => handleChangeTextareaJustificativa(event, data.uuid)}
+                                            className="form-control"
+                                            rows="3"
+                                            id="justificativa"
+                                            name="justificativa"
+                                            placeholder="Escreva o comentário"
+                                            disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
+                                        >
+                                        </textarea>
+                                                <div className="bd-highlight d-flex justify-content-end align-items-center">
+
+                                                    {showSalvar?.[data.uuid] &&
+                                                        <div className="">
+                                                            <p className="mr-2 mt-3">
+                                                                <span className="mr-1">
+                                                                <FontAwesomeIcon
+                                                                    style={{fontSize: '16px', color:'#297805'}}
+                                                                    icon={faCheck}
+                                                                />
+                                                                </span>Salvo
+                                                            </p>
+                                                        </div>
+                                                    }
+                                                    <button 
+                                                        disabled={salvarDesabilitados} 
+                                                        type="button" 
+                                                        className={`btn btn-${salvarDesabilitados ? 'secondary' : 'success'} mt-2`}
+                                                        onClick={() => handleOnClick(data.uuid, 'documento')}
+                                                        >
+                                                            <strong>Salvar Justificativas</strong>
+                                                    </button>
+                                                </div>
+                                    </div>
+                            </div>
+                        )}
                         <div className='col-12'>
                             <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
                                 <p className='mb-1'><strong>Item {index + 1}</strong></p>
@@ -381,7 +435,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                             <p className='mb-1'><strong>Detalhamento</strong></p>
                             <p className='mb-0'>{ajuste.detalhamento}</p>
                         </div>
-                    </div>
+                    </Fragment>
                 ))
             )
         }
