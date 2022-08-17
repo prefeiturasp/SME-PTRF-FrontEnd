@@ -15,7 +15,6 @@ const tagColors = {
     'REALIZADO': '#198459',
     'PENDENTE': '#FFF' 
 }
-// DOCUMENTOS
 
 const TabelaAcertosDocumentos = ({lancamentosDocumentos, documentosAjustes, limparDocumentoStatus, prestacaoDeContas, marcarDocumentoComoRealizado, justificarNaoRealizacaoDocumentos, rowsPerPageAcertosDocumentos, setExpandedRowsDocumentos, opcoesJustificativa, expandedRowsDocumentos, rowExpansionTemplateDocumentos}) => {
     const [documentosSelecionados, setDocumentosSelecionados] = useState([])
