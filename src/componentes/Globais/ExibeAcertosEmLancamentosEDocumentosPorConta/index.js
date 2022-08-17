@@ -5,7 +5,19 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import useValorTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
 import useDataTemplate from "../../../hooks/Globais/useDataTemplate";
 import useNumeroDocumentoTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
-import {getContasDaAssociacao, getDocumentosAjustes, getLancamentosAjustes, getTiposDeAcertoLancamentos, getExtratosBancariosAjustes, getTemAjustesExtratos} from "../../../services/dres/PrestacaoDeContas.service";
+import {
+    getContasDaAssociacao,
+    getDocumentosAjustes,
+    getAnaliseDocumentosPrestacaoConta,
+    postJustificarNaoRealizacaoDocumentoPrestacaoConta,
+    postMarcarComoRealizadoDocumentoPrestacaoConta,
+    postLimparStatusDocumentoPrestacaoConta,
+    getLancamentosAjustes,
+    patchAnaliseDocumentoPrestacaoConta,
+    getTiposDeAcertoLancamentos,
+    getExtratosBancariosAjustes,
+    getTemAjustesExtratos
+} from "../../../services/dres/PrestacaoDeContas.service";
 import {TabelaAcertosLancamentos} from "./TabelaAcertosLancamentos";
 import TabsAcertosEmLancamentosPorConta from "./TabsAcertosEmLancamentosPorConta";
 import Loading from "../../../utils/Loading";
@@ -15,6 +27,7 @@ import {
     postMarcarComoRealizadoLancamentoPrestacaoConta,
     patchAnaliseLancamentoPrestacaoConta
 } from "../../../services/dres/PrestacaoDeContas.service";
+
 
 // Redux
 import {useDispatch} from "react-redux";
@@ -56,6 +69,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     const [exibeAcertosNosExtratos, setExibeAcertosNosExtratos] = useState(true);
     const [extratosBancariosAjustes, setExtratosBancariosAjustes] = useState(null);
     const [lancamentosAjustes, setLancamentosAjustes] = useState([])
+    const [documentosAjustes, setDocumentosAjustes] = useState([])
     const [lancamentosDocumentos, setLancamentosDocumentos] = useState([])
     const [contasAssociacao, setContasAssociacao] = useState([])
     const [loadingExtratosBancarios, setLoadingExtratosBancarios] = useState(true)
@@ -138,6 +152,16 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         setLoadingLancamentos(false)
     }, [analiseAtualUuid])
 
+    const carregaAcertosDocumentos = useCallback(async () => {
+        setLoadingDocumentos(true)
+        let { status_realizacao } = await getAnaliseDocumentosPrestacaoConta()
+        let documentoAjuste = await getDocumentosAjustes(analiseAtualUuid)
+        setDocumentosAjustes(documentoAjuste)
+        setOpcoesJustificativa(status_realizacao)
+        setLoadingDocumentos(false)
+    }, [analiseAtualUuid])
+    
+
     const limparStatus = async (lancamentosSelecionados) => {
         setLoadingLancamentos(true)
         await postLimparStatusLancamentoPrestacaoConta({"uuids_analises_lancamentos": lancamentosSelecionados.map(lanc => lanc.analise_lancamento.uuid)})
@@ -146,12 +170,28 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         setLoadingLancamentos(false)
     }
 
+    const limparDocumentoStatus = async (documentosSelecionados) => {
+        setLoadingDocumentos(true)
+        await postLimparStatusDocumentoPrestacaoConta({"uuids_analises_documentos": documentosSelecionados.map(doc => doc.uuid)})
+        const documentoAjustes = await getDocumentosAjustes(documentosSelecionados[0].analise_prestacao_conta)
+        setDocumentosAjustes(documentoAjustes)
+        setLoadingDocumentos(false)
+    }
+
     const marcarComoRealizado = async (lancamentosSelecionados) => {
         setLoadingLancamentos(true)
         await postMarcarComoRealizadoLancamentoPrestacaoConta({"uuids_analises_lancamentos": lancamentosSelecionados.map(lanc => lanc.analise_lancamento.uuid)})
         const lancamentoAjuste = await getLancamentosAjustes(lancamentosSelecionados[0].analise_lancamento.analise_prestacao_conta, lancamentosAjustes[0].conta)
         setLancamentosAjustes(lancamentoAjuste)
         setLoadingLancamentos(false)
+    }
+
+    const marcarDocumentoComoRealizado = async (documentosSelecionados) => {
+        setLoadingDocumentos(true)
+        await postMarcarComoRealizadoDocumentoPrestacaoConta({"uuids_analises_documentos": documentosSelecionados.map(doc => doc.uuid)})
+        const documentoAjustes = await getDocumentosAjustes(documentosSelecionados[0].analise_prestacao_conta)
+        setDocumentosAjustes(documentoAjustes)
+        setLoadingDocumentos(false)
     }
 
     const justificarNaoRealizacao = async (lancamentosSelecionados, textoConfirmadoJustificado) => {
@@ -165,12 +205,16 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         setLoadingLancamentos(false)
     }
 
-    const carregaAcertosDocumentos = useCallback(async () => {
-        let documentos_ajustes = await getDocumentosAjustes(analiseAtualUuid)
-        setLancamentosDocumentos(documentos_ajustes)
+    const justificarNaoRealizacaoDocumentos = async (documentosSelecionados, textoConfirmadoJustificado) => {
+        setLoadingDocumentos(true)
+        await postJustificarNaoRealizacaoDocumentoPrestacaoConta({
+            "uuids_analises_documentos": documentosSelecionados.map(doc => doc.uuid),
+            "justificativa": textoConfirmadoJustificado
+        })
+        const documentoAjuste = await getDocumentosAjustes(documentosSelecionados[0].analise_prestacao_conta)
+        setDocumentosAjustes(documentoAjuste)
         setLoadingDocumentos(false)
-    }, [analiseAtualUuid])
-
+    }
 
     useEffect(() => {
         if (contasAssociacao && contasAssociacao.length > 0){
@@ -228,17 +272,22 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
           })
     };
 
-    const handleOnClick = (data) => {
-        salvarJustificativa(data);
+    const handleOnClick = (data, model) => {
+        salvarJustificativa(data, model);
     }
 
-    const salvarJustificativa = async (data) => {
+    const salvarJustificativa = async (data, model) => {
         let payload = {
             'justificativa': textareaJustificativa[data],
         }
 
         try {
-            await patchAnaliseLancamentoPrestacaoConta(payload, data)
+            if (model === 'lancamento'){
+                await patchAnaliseLancamentoPrestacaoConta(payload, data)
+            }
+            else if (model === 'documento'){
+                await patchAnaliseDocumentoPrestacaoConta(payload, data)
+            }
             setShowSalvar({
                 ...showSalvar,
                 [data]: true
@@ -292,7 +341,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                                                         disabled={salvarDesabilitados} 
                                                         type="button" 
                                                         className={`btn btn-${salvarDesabilitados ? 'secondary' : 'success'} mt-2`}
-                                                        onClick={() => handleOnClick(data.analise_lancamento.uuid)}
+                                                        onClick={() => handleOnClick(data.analise_lancamento.uuid, 'lancamento')}
                                                         >
                                                             <strong>Salvar Justificativas</strong>
                                                     </button>
@@ -324,11 +373,59 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         }
     };
 
+
     const rowExpansionTemplateDocumentos = (data) => {
         if (data && data.solicitacoes_de_ajuste_da_analise && data.solicitacoes_de_ajuste_da_analise.length > 0) {
+            const salvarDesabilitados = !textareaJustificativa?.[data.uuid] || textareaJustificativa?.[data.uuid] === data.justificativa || showSalvar?.[data.uuid]
             return (
+
                 data.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
-                    <div className='row p-2' style={{overflow: 'hidden'}} key={ajuste.id}>
+                    <Fragment key={ajuste.id}>
+                          {data.justificativa?.length > 0 && ( 
+                            <div className="row">
+                                <div className="col-12 px-4 py-2">
+                                    <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
+                                            <p className='mb-1'><strong>Justificativa</strong></p>
+                                        </div>
+                                    </div>
+                                     <div className="form-group w-100 px-4 py-2" style={{pointerEvents: 'all'}}>
+                                        <textarea
+                                            defaultValue={data.justificativa}
+                                            onChange={(event) => handleChangeTextareaJustificativa(event, data.uuid)}
+                                            className="form-control"
+                                            rows="3"
+                                            id="justificativa"
+                                            name="justificativa"
+                                            placeholder="Escreva o comentário"
+                                            disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
+                                        >
+                                        </textarea>
+                                                <div className="bd-highlight d-flex justify-content-end align-items-center">
+
+                                                    {showSalvar?.[data.uuid] &&
+                                                        <div className="">
+                                                            <p className="mr-2 mt-3">
+                                                                <span className="mr-1">
+                                                                <FontAwesomeIcon
+                                                                    style={{fontSize: '16px', color:'#297805'}}
+                                                                    icon={faCheck}
+                                                                />
+                                                                </span>Salvo
+                                                            </p>
+                                                        </div>
+                                                    }
+                                                    <button 
+                                                        disabled={salvarDesabilitados} 
+                                                        type="button" 
+                                                        className={`btn btn-${salvarDesabilitados ? 'secondary' : 'success'} mt-2`}
+                                                        onClick={() => handleOnClick(data.uuid, 'documento')}
+                                                        >
+                                                            <strong>Salvar Justificativas</strong>
+                                                    </button>
+                                                </div>
+                                    </div>
+                            </div>
+                        )}
                         <div className='col-12'>
                             <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
                                 <p className='mb-1'><strong>Item {index + 1}</strong></p>
@@ -338,7 +435,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                             <p className='mb-1'><strong>Detalhamento</strong></p>
                             <p className='mb-0'>{ajuste.detalhamento}</p>
                         </div>
-                    </div>
+                    </Fragment>
                 ))
             )
         }
@@ -473,16 +570,19 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                             marginBottom="0"
                         />
                     ) :
-                    lancamentosDocumentos && lancamentosDocumentos.length > 0 ? (
-                            <TabelaAcertosDocumentos
-                                lancamentosDocumentos={lancamentosDocumentos}
-                                rowsPerPageAcertosDocumentos={rowsPerPageAcertosDocumentos}
-                                expandedRowsDocumentos={expandedRowsDocumentos}
-                                setExpandedRowsDocumentos={setExpandedRowsDocumentos}
-                                rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
-                            />
-                        ):
-                        <p className='text-center fonte-18 mt-4'><strong>Não existem documentos para serem exibidos</strong></p>
+                        <TabelaAcertosDocumentos
+                            lancamentosDocumentos={lancamentosDocumentos}
+                            documentosAjustes={documentosAjustes}
+                            prestacaoDeContas={prestacaoDeContas}
+                            marcarDocumentoComoRealizado={marcarDocumentoComoRealizado}
+                            limparDocumentoStatus={limparDocumentoStatus}
+                            rowsPerPageAcertosDocumentos={rowsPerPageAcertosDocumentos}
+                            justificarNaoRealizacaoDocumentos={justificarNaoRealizacaoDocumentos}
+                            expandedRowsDocumentos={expandedRowsDocumentos}
+                            setExpandedRowsDocumentos={setExpandedRowsDocumentos}
+                            opcoesJustificativa={opcoesJustificativa}
+                            rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
+                        />
                 }
             </>
         </>
