@@ -3,8 +3,10 @@ import {Column} from "primereact/column";
 import {DataTable} from "primereact/datatable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
+import {ModalCheckNaoPermitidoConfererenciaDeLancamentos } from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalCheckNaoPermitidoConfererenciaDeLancamentos";
 import {ModalJustificadaApagada} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificadaApagada";
 import {ModalJustificarNaoRealizacao} from "../../dres/PrestacaoDeContas/DetalhePrestacaoDeContas/ConferenciaDeLancamentos/Modais/ModalJustificarNaoRealizacao";
+import {visoesService} from "../../../services/visoes.service";
 import Dropdown from "react-bootstrap/Dropdown";
 import './scss/tagJustificativaLancamentos.scss';
 
@@ -15,7 +17,7 @@ const tagColors = {
 }
 // DOCUMENTOS
 
-const TabelaAcertosDocumentos = ({documentosAjustes, limparDocumentoStatus, marcarDocumentoComoRealizado, justificarNaoRealizacao, rowsPerPageAcertosDocumentos, setExpandedRowsDocumentos, opcoesJustificativa, expandedRowsDocumentos, rowExpansionTemplateDocumentos,}) => {
+const TabelaAcertosDocumentos = ({lancamentosDocumentos, documentosAjustes, limparDocumentoStatus, prestacaoDeContas, marcarDocumentoComoRealizado, justificarNaoRealizacaoDocumentos, rowsPerPageAcertosDocumentos, setExpandedRowsDocumentos, opcoesJustificativa, expandedRowsDocumentos, rowExpansionTemplateDocumentos,}) => {
     const [documentosSelecionados, setDocumentosSelecionados] = useState([])
     const [textoModalCheckNaoPermitido, setTextoModalCheckNaoPermitido] = useState('')
     const [showModalJustificadaApagada, setShowModalJustificadaApagada] = useState(false)
@@ -25,19 +27,6 @@ const TabelaAcertosDocumentos = ({documentosAjustes, limparDocumentoStatus, marc
     const [isConfirmadoJustificado, setIsConfirmadoJustificado] = useState(false)
     const [tipoAcao, setTipoAcao] = useState('')
     const [status, setStatus] = useState()
-
-    const selecionarPorStatus = (event, statusId) => {
-        console.log('event', event, 'statusId', statusId)
-        console.log('documentosAjustes', documentosAjustes)
-        event.preventDefault()
-        setStatus(statusId)
-
-        let documentos = documentosAjustes.filter(doc => 
-            doc.status_realizacao === statusId
-        )
-
-        setDocumentosSelecionados(documentos)
-    }
 
     const selecionarTemplate = (rowData) => {
         let indexSelecionado = documentosSelecionados.findIndex(doc => doc.id === rowData.id)
@@ -53,7 +42,7 @@ const TabelaAcertosDocumentos = ({documentosAjustes, limparDocumentoStatus, marc
                             setStatus(statusId)
                             if(statusId !== rowData.status_realizacao) {
                                 e.preventDefault()
-                                setTextoModalCheckNaoPermitido('<p>Esse lançamento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>')
+                                setTextoModalCheckNaoPermitido('<p>Esse documento tem um status de conferência que não pode ser selecionado em conjunto com os demais status já selecionados.</p>')
                                 setShowModalCheckNaoPermitido(true)
                                 return
                             }
@@ -102,9 +91,22 @@ const TabelaAcertosDocumentos = ({documentosAjustes, limparDocumentoStatus, marc
         )
     }
 
+    const selecionarPorStatus = (event, statusId) => {
+        event.preventDefault()
+        setStatus(statusId)
+
+        let documentos = documentosAjustes.filter(doc => 
+            doc.status_realizacao === statusId
+        )
+
+        setDocumentosSelecionados(documentos)
+
+    }
+
     const limparDocumentos = (event) => {
         setDocumentosSelecionados([])
     }
+
 
     const verificaApagadaJustificada = (documentosSelecionados, tipoAcao) => {
         setShowModalJustificadaApagada(true)
@@ -117,7 +119,7 @@ const TabelaAcertosDocumentos = ({documentosAjustes, limparDocumentoStatus, marc
                     <Dropdown>
                         <Dropdown.Toggle id="dropdown-basic" className="p-0">
                             <input
-                                checked={documentosSelecionados.length === documentosAjustes.length} // documentosSelecionados.length === documentosAjustes.length
+                                checked={documentosSelecionados.length === documentosAjustes.length}
                                 type="checkbox"
                                 value=""
                                 onChange={(e) => e}
@@ -308,7 +310,7 @@ const TabelaAcertosDocumentos = ({documentosAjustes, limparDocumentoStatus, marc
             </div>
         )
     }
-
+    
     return(
         <>
         {documentosSelecionados.length > 0 ?
@@ -343,15 +345,24 @@ const TabelaAcertosDocumentos = ({documentosAjustes, limparDocumentoStatus, marc
                         body={tagJustificativa}
                         style={{width: '13%'}}
                 />
+                {visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'UE' && visoesService.getPermissoes(["change_analise_dre"]) && prestacaoDeContas.status === "DEVOLVIDA" ?
                 <Column
                     header={selecionarHeader()}
                     body={selecionarTemplate}
                     style={{width: '4%', borderLeft: 'none'}}
-                />
+                /> : null }
             </DataTable>
-        ):
-            <p className='text-center fonte-18 mt-4'><strong>Não existem ajustes para serem exibidos</strong></p>
-        }
+            ): null }
+        <section>
+            <ModalCheckNaoPermitidoConfererenciaDeLancamentos
+                show={showModalCheckNaoPermitido}
+                handleClose={() => setShowModalCheckNaoPermitido(false)}
+                titulo='Seleção não permitida'
+                texto={textoModalCheckNaoPermitido}
+                primeiroBotaoTexto="Fechar"
+                primeiroBotaoCss="success"
+            />
+        </section>
         <section>
             <ModalJustificarNaoRealizacao
                 show={showModalJustificarNaoRealizacao}
@@ -362,7 +373,7 @@ const TabelaAcertosDocumentos = ({documentosAjustes, limparDocumentoStatus, marc
                 primeiroBotaoOnClick={() => setShowModalJustificarNaoRealizacao(false)}
                 segundoBotaoTexto="Confirmar"
                 segundoBotaoCss="success"
-                segundoBotaoOnclick={(e) => { justificarNaoRealizacao(documentosSelecionados, textoConfirmadoJustificado) }}
+                segundoBotaoOnclick={(e) => { justificarNaoRealizacaoDocumentos(documentosSelecionados, textoConfirmadoJustificado) }}
                 segundoBotaoDisable={textoConfirmadoJustificado.length === 0 && isConfirmadoJustificado || !isConfirmadoJustificado}
             />
         </section>

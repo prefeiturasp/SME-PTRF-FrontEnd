@@ -5,7 +5,18 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import useValorTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useValorTemplate";
 import useDataTemplate from "../../../hooks/Globais/useDataTemplate";
 import useNumeroDocumentoTemplate from "../../../hooks/dres/PrestacaoDeContas/ConferenciaDeLancamentos/useNumeroDocumentoTemplate";
-import {getContasDaAssociacao, getDocumentosAjustes, getLancamentosAjustes, getTiposDeAcertoLancamentos, getExtratosBancariosAjustes, getTemAjustesExtratos} from "../../../services/dres/PrestacaoDeContas.service";
+import {
+    getContasDaAssociacao,
+    getDocumentosAjustes,
+    getAnaliseDocumentosPrestacaoConta,
+    postJustificarNaoRealizacaoDocumentoPrestacaoConta,
+    postMarcarComoRealizadoDocumentoPrestacaoConta,
+    postLimparStatusDocumentoPrestacaoConta,
+    getLancamentosAjustes,
+    getTiposDeAcertoLancamentos,
+    getExtratosBancariosAjustes,
+    getTemAjustesExtratos
+} from "../../../services/dres/PrestacaoDeContas.service";
 import {TabelaAcertosLancamentos} from "./TabelaAcertosLancamentos";
 import TabsAcertosEmLancamentosPorConta from "./TabsAcertosEmLancamentosPorConta";
 import Loading from "../../../utils/Loading";
@@ -140,6 +151,14 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         setLoadingLancamentos(false)
     }, [analiseAtualUuid])
 
+    const carregaAcertosDocumentos = useCallback(async () => {
+        setLoadingDocumentos(true)
+        let { status_realizacao } = await getAnaliseDocumentosPrestacaoConta()
+        let documentoAjuste = await getDocumentosAjustes(analiseAtualUuid)
+        setDocumentosAjustes(documentoAjuste)
+        setOpcoesJustificativa(status_realizacao)
+        setLoadingDocumentos(false)
+    }, [analiseAtualUuid])
     
 
     const limparStatus = async (lancamentosSelecionados) => {
@@ -151,7 +170,11 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     }
 
     const limparDocumentoStatus = async (documentosSelecionados) => {
-
+        setLoadingDocumentos(true)
+        await postLimparStatusDocumentoPrestacaoConta({"uuids_analises_documentos": documentosSelecionados.map(doc => doc.uuid)})
+        const documentoAjustes = await getDocumentosAjustes(documentosSelecionados[0].analise_prestacao_conta)
+        setDocumentosAjustes(documentoAjustes)
+        setLoadingDocumentos(false)
     }
 
     const marcarComoRealizado = async (lancamentosSelecionados) => {
@@ -163,10 +186,11 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     }
 
     const marcarDocumentoComoRealizado = async (documentosSelecionados) => {
-        setLoadingLancamentos(true)
-        await postMarcarComoRealizadoLancamentoPrestacaoConta({"uuids_analises_lancamentos": documentosSelecionados.map(doc => doc.analise_lancamento.uuid)})
-        setLancamentosAjustes(documentosAjustes)
-        setLoadingLancamentos(false)
+        setLoadingDocumentos(true)
+        await postMarcarComoRealizadoDocumentoPrestacaoConta({"uuids_analises_documentos": documentosSelecionados.map(doc => doc.uuid)})
+        const documentoAjustes = await getDocumentosAjustes(documentosSelecionados[0].analise_prestacao_conta)
+        setDocumentosAjustes(documentoAjustes)
+        setLoadingDocumentos(false)
     }
 
     const justificarNaoRealizacao = async (lancamentosSelecionados, textoConfirmadoJustificado) => {
@@ -180,14 +204,16 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         setLoadingLancamentos(false)
     }
 
-    const carregaAcertosDocumentos = useCallback(async () => {
+    const justificarNaoRealizacaoDocumentos = async (documentosSelecionados, textoConfirmadoJustificado) => {
         setLoadingDocumentos(true)
-        let { status_realizacao } = await getAnaliseLancamentosPrestacaoConta()
-        let documentoAjuste = await getDocumentosAjustes(analiseAtualUuid)
-        setLancamentosDocumentos(documentoAjuste)
-        setOpcoesJustificativa(status_realizacao)
+        await postJustificarNaoRealizacaoDocumentoPrestacaoConta({
+            "uuids_analises_documentos": documentosSelecionados.map(doc => doc.uuid),
+            "justificativa": textoConfirmadoJustificado
+        })
+        const documentoAjuste = await getDocumentosAjustes(documentosSelecionados[0].analise_prestacao_conta)
+        setDocumentosAjustes(documentoAjuste)
         setLoadingDocumentos(false)
-    }, [analiseAtualUuid])
+    }
 
     useEffect(() => {
         if (contasAssociacao && contasAssociacao.length > 0){
@@ -490,21 +516,19 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                             marginBottom="0"
                         />
                     ) :
-                    lancamentosDocumentos && lancamentosDocumentos.length > 0 ? (
-                            <TabelaAcertosDocumentos
-                                lancamentosDocumentos={lancamentosDocumentos}
-                                documentosAjustes={documentosAjustes}
-                                marcarDocumentoComoRealizado={marcarDocumentoComoRealizado}
-                                limparDocumentoStatus={limparDocumentoStatus}
-                                rowsPerPageAcertosDocumentos={rowsPerPageAcertosDocumentos}
-                                justificarNaoRealizacao={justificarNaoRealizacao}
-                                expandedRowsDocumentos={expandedRowsDocumentos}
-                                setExpandedRowsDocumentos={setExpandedRowsDocumentos}
-                                opcoesJustificativa={opcoesJustificativa}
-                                rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
-                            />
-                        ):
-                        <p className='text-center fonte-18 mt-4'><strong>Não existem documentos para serem exibidos</strong></p>
+                        <TabelaAcertosDocumentos
+                            lancamentosDocumentos={lancamentosDocumentos}
+                            documentosAjustes={documentosAjustes}
+                            prestacaoDeContas={prestacaoDeContas}
+                            marcarDocumentoComoRealizado={marcarDocumentoComoRealizado}
+                            limparDocumentoStatus={limparDocumentoStatus}
+                            rowsPerPageAcertosDocumentos={rowsPerPageAcertosDocumentos}
+                            justificarNaoRealizacaoDocumentos={justificarNaoRealizacaoDocumentos}
+                            expandedRowsDocumentos={expandedRowsDocumentos}
+                            setExpandedRowsDocumentos={setExpandedRowsDocumentos}
+                            opcoesJustificativa={opcoesJustificativa}
+                            rowExpansionTemplateDocumentos={rowExpansionTemplateDocumentos}
+                        />
                 }
             </>
         </>

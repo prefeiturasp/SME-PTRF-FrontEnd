@@ -303,12 +303,24 @@ export const postLimparStatusLancamentoPrestacaoConta = async (payload) => {
     return (await api.post(`/api/analises-lancamento-prestacao-conta/limpar-status/`, payload, authHeader)).data
 }
 
+export const postLimparStatusDocumentoPrestacaoConta = async (payload) => {
+    return (await api.post(`/api/analises-documento-prestacao-conta/limpar-status/`, payload, authHeader)).data
+}
+
 export const postJustificarNaoRealizacaoLancamentoPrestacaoConta = async (payload) => {
     return (await api.post(`/api/analises-lancamento-prestacao-conta/justificar-nao-realizacao/`, payload, authHeader)).data
 }
 
+export const postJustificarNaoRealizacaoDocumentoPrestacaoConta = async (payload) => {
+    return (await api.post(`/api/analises-documento-prestacao-conta/justificar-nao-realizacao/`, payload, authHeader)).data
+}
+
 export const postMarcarComoRealizadoLancamentoPrestacaoConta = async (payload) => {
     return (await api.post(`/api/analises-lancamento-prestacao-conta/marcar-como-realizado/`, payload, authHeader)).data
+}
+
+export const postMarcarComoRealizadoDocumentoPrestacaoConta = async (payload) => {
+    return (await api.post(`/api/analises-documento-prestacao-conta/marcar-como-realizado/`, payload, authHeader)).data
 }
 
 export const patchAnaliseLancamentoPrestacaoConta = async (payload, analise_prestacao_uuid) => {
