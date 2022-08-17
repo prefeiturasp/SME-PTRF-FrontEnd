@@ -14,7 +14,6 @@ import './scss/tagJustificativaLancamentos.scss';
 const tagColors = {
     'JUSTIFICADO':  '#5C4EF8',
     'REALIZADO': '#198459',
-    'PENDENTE': '#FFF' 
 }
 
 export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marcarComoRealizado, prestacaoDeContas, justificarNaoRealizacao, opcoesJustificativa, setExpandedRowsLancamentos, expandedRowsLancamentos, rowExpansionTemplateLancamentos, rowsPerPageAcertosLancamentos, dataTemplate, numeroDocumentoTemplate, valor_template}) => {
@@ -84,7 +83,7 @@ export const TabelaAcertosLancamentos = ({lancamentosAjustes, limparStatus, marc
 
         return (
             <div className="tag-justificativa" 
-                style={{ backgroundColor: statusId ? tagColors[statusId] : '#fff', color: statusId === 'PENDENTE' ? '#000' : '#fff' }}
+                style={{ backgroundColor: statusId ? tagColors[statusId] : 'none', color: statusId === 'PENDENTE' ? '#000' : '#fff' }}
             >
                 {status}
             </div>
