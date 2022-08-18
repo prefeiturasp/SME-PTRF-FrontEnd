@@ -32,7 +32,7 @@ export const TabelaDocumentos = ({todosDocumentos: todosDocumentos, rowsPerPage,
             rowData.tipos_documento_prestacao.map(element => {
                 listDocumentos.push(element.nome)
             })
-            return listDocumentos.map(item => <p style={{'textAlign': 'start'}} key={item}>{item};</p>)
+            return listDocumentos.map(item => <p style={{'textAlign': 'start'}} key={item}>{item}</p>)
         }
     }
 

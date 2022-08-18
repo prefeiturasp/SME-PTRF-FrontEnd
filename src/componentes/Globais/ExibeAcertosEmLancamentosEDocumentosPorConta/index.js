@@ -302,53 +302,55 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
             const salvarDesabilitados = !textareaJustificativa?.[data.analise_lancamento.uuid] || textareaJustificativa?.[data.analise_lancamento.uuid] === data.analise_lancamento.justificativa || showSalvar?.[data.analise_lancamento.uuid]
             return (
                 <>
+                {data.analise_lancamento.justificativa?.length > 0 && ( 
+                    <Fragment>
+                        <div className="row">
+                            <div className="col-12 px-4 py-2">
+                                <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
+                                        <p className='mb-1'><strong>Justificativa</strong></p>
+                                    </div>
+                                </div>
+                                    <div className="form-group w-100 px-4 py-2" style={{pointerEvents: 'all'}}>
+                                    <textarea
+                                        defaultValue={data.analise_lancamento.justificativa}
+                                        onChange={(event) => handleChangeTextareaJustificativa(event, data.analise_lancamento.uuid)}
+                                        className="form-control"
+                                        rows="3"
+                                        id="justificativa"
+                                        name="justificativa"
+                                        placeholder="Escreva o comentário"
+                                        disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
+                                    >
+                                    </textarea>
+                                            <div className="bd-highlight d-flex justify-content-end align-items-center">
+
+                                                {showSalvar?.[data.analise_lancamento.uuid] &&
+                                                    <div className="">
+                                                        <p className="mr-2 mt-3">
+                                                            <span className="mr-1">
+                                                            <FontAwesomeIcon
+                                                                style={{fontSize: '16px', color:'#297805'}}
+                                                                icon={faCheck}
+                                                            />
+                                                            </span>Salvo
+                                                        </p>
+                                                    </div>
+                                                }
+                                                <button 
+                                                    disabled={salvarDesabilitados} 
+                                                    type="button" 
+                                                    className={`btn btn-${salvarDesabilitados ? 'secondary' : 'success'} mt-2`}
+                                                    onClick={() => handleOnClick(data.analise_lancamento.uuid, 'lancamento')}
+                                                    >
+                                                        <strong>Salvar Justificativas</strong>
+                                                </button>
+                                            </div>
+                                </div>
+                        </div>
+                    </Fragment>
+                    )}
                     {data.analise_lancamento.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
                         <Fragment key={ajuste.id}>
-                            {data.analise_lancamento.justificativa?.length > 0 && ( 
-                            <div className="row">
-                                <div className="col-12 px-4 py-2">
-                                    <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
-                                            <p className='mb-1'><strong>Justificativa</strong></p>
-                                        </div>
-                                    </div>
-                                     <div className="form-group w-100 px-4 py-2" style={{pointerEvents: 'all'}}>
-                                        <textarea
-                                            defaultValue={data.analise_lancamento.justificativa}
-                                            onChange={(event) => handleChangeTextareaJustificativa(event, data.analise_lancamento.uuid)}
-                                            className="form-control"
-                                            rows="3"
-                                            id="justificativa"
-                                            name="justificativa"
-                                            placeholder="Escreva o comentário"
-                                            disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
-                                        >
-                                        </textarea>
-                                                <div className="bd-highlight d-flex justify-content-end align-items-center">
-
-                                                    {showSalvar?.[data.analise_lancamento.uuid] &&
-                                                        <div className="">
-                                                            <p className="mr-2 mt-3">
-                                                                <span className="mr-1">
-                                                                <FontAwesomeIcon
-                                                                    style={{fontSize: '16px', color:'#297805'}}
-                                                                    icon={faCheck}
-                                                                />
-                                                                </span>Salvo
-                                                            </p>
-                                                        </div>
-                                                    }
-                                                    <button 
-                                                        disabled={salvarDesabilitados} 
-                                                        type="button" 
-                                                        className={`btn btn-${salvarDesabilitados ? 'secondary' : 'success'} mt-2`}
-                                                        onClick={() => handleOnClick(data.analise_lancamento.uuid, 'lancamento')}
-                                                        >
-                                                            <strong>Salvar Justificativas</strong>
-                                                    </button>
-                                                </div>
-                                    </div>
-                            </div>
-                            )}
                             <div className='row'>
                                 <div className='col-12 px-4 py-2'>
                                     <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
@@ -378,54 +380,54 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         if (data && data.solicitacoes_de_ajuste_da_analise && data.solicitacoes_de_ajuste_da_analise.length > 0) {
             const salvarDesabilitados = !textareaJustificativa?.[data.uuid] || textareaJustificativa?.[data.uuid] === data.justificativa || showSalvar?.[data.uuid]
             return (
-
-                data.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
-                    <Fragment key={ajuste.id}>
-                          {data.justificativa?.length > 0 && ( 
-                            <div className="row">
-                                <div className="col-12 px-4 py-2">
-                                    <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
-                                            <p className='mb-1'><strong>Justificativa</strong></p>
-                                        </div>
-                                    </div>
-                                     <div className="form-group w-100 px-4 py-2" style={{pointerEvents: 'all'}}>
-                                        <textarea
-                                            defaultValue={data.justificativa}
-                                            onChange={(event) => handleChangeTextareaJustificativa(event, data.uuid)}
-                                            className="form-control"
-                                            rows="3"
-                                            id="justificativa"
-                                            name="justificativa"
-                                            placeholder="Escreva o comentário"
-                                            disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
-                                        >
-                                        </textarea>
-                                                <div className="bd-highlight d-flex justify-content-end align-items-center">
-
-                                                    {showSalvar?.[data.uuid] &&
-                                                        <div className="">
-                                                            <p className="mr-2 mt-3">
-                                                                <span className="mr-1">
-                                                                <FontAwesomeIcon
-                                                                    style={{fontSize: '16px', color:'#297805'}}
-                                                                    icon={faCheck}
-                                                                />
-                                                                </span>Salvo
-                                                            </p>
-                                                        </div>
-                                                    }
-                                                    <button 
-                                                        disabled={salvarDesabilitados} 
-                                                        type="button" 
-                                                        className={`btn btn-${salvarDesabilitados ? 'secondary' : 'success'} mt-2`}
-                                                        onClick={() => handleOnClick(data.uuid, 'documento')}
-                                                        >
-                                                            <strong>Salvar Justificativas</strong>
-                                                    </button>
-                                                </div>
-                                    </div>
+                <>
+                {data.justificativa?.length > 0 && ( 
+                    <div className="row">
+                        <div className="col-12 px-4 py-2">
+                            <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
+                                    <p className='mb-1'><strong>Justificativa</strong></p>
+                                </div>
                             </div>
-                        )}
+                             <div className="form-group w-100 px-4 py-2" style={{pointerEvents: 'all'}}>
+                                <textarea
+                                    defaultValue={data.justificativa}
+                                    onChange={(event) => handleChangeTextareaJustificativa(event, data.uuid)}
+                                    className="form-control"
+                                    rows="3"
+                                    id="justificativa"
+                                    name="justificativa"
+                                    placeholder="Escreva o comentário"
+                                    disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
+                                >
+                                </textarea>
+                                        <div className="bd-highlight d-flex justify-content-end align-items-center">
+
+                                            {showSalvar?.[data.uuid] &&
+                                                <div className="">
+                                                    <p className="mr-2 mt-3">
+                                                        <span className="mr-1">
+                                                        <FontAwesomeIcon
+                                                            style={{fontSize: '16px', color:'#297805'}}
+                                                            icon={faCheck}
+                                                        />
+                                                        </span>Salvo
+                                                    </p>
+                                                </div>
+                                            }
+                                            <button 
+                                                disabled={salvarDesabilitados} 
+                                                type="button" 
+                                                className={`btn btn-${salvarDesabilitados ? 'secondary' : 'success'} mt-2`}
+                                                onClick={() => handleOnClick(data.uuid, 'documento')}
+                                                >
+                                                    <strong>Salvar Justificativas</strong>
+                                            </button>
+                                        </div>
+                            </div>
+                    </div>
+                )}
+                {data.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
+                    <Fragment key={ajuste.id}>
                         <div className='col-12'>
                             <div className='titulo-row-expanded-conferencia-de-lancamentos mb-3'>
                                 <p className='mb-1'><strong>Item {index + 1}</strong></p>
@@ -436,7 +438,8 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                             <p className='mb-0'>{ajuste.detalhamento}</p>
                         </div>
                     </Fragment>
-                ))
+                ))}
+                </>
             )
         }
     };
