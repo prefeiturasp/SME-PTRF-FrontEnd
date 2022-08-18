@@ -13,7 +13,6 @@ import './scss/tagJustificativaLancamentos.scss';
 const tagColors = {
     'JUSTIFICADO':  '#5C4EF8',
     'REALIZADO': '#198459',
-    'PENDENTE': '#FFF' 
 }
 
 const TabelaAcertosDocumentos = ({lancamentosDocumentos, documentosAjustes, limparDocumentoStatus, prestacaoDeContas, marcarDocumentoComoRealizado, justificarNaoRealizacaoDocumentos, rowsPerPageAcertosDocumentos, setExpandedRowsDocumentos, opcoesJustificativa, expandedRowsDocumentos, rowExpansionTemplateDocumentos}) => {
@@ -83,7 +82,7 @@ const TabelaAcertosDocumentos = ({lancamentosDocumentos, documentosAjustes, limp
 
         return (
             <div className="tag-justificativa" 
-                style={{ backgroundColor: statusId ? tagColors[statusId] : '#fff', color: statusId === 'PENDENTE' ? '#000' : '#fff' }}
+                style={{ backgroundColor: statusId ? tagColors[statusId] : 'none', color: statusId === 'PENDENTE' ? '#000' : '#fff' }}
             >
                 {status}
             </div>
@@ -273,7 +272,7 @@ const TabelaAcertosDocumentos = ({lancamentosDocumentos, documentosAjustes, limp
         const modalBodyHTML = () => {
             return (
                 <div className="modal-body">
-                    <p>Você confirma que deseja marcar o lançamento como não realizado? Em caso afirmativo será necessário adicionar uma justificativa para tal evento.</p>
+                    <p>Você confirma que deseja marcar o documento como não realizado? Em caso afirmativo será necessário adicionar uma justificativa para tal evento.</p>
                     <div className="form-check form-check-inline">
                         <input className="form-check-input" type="radio" name="confirmacao-justificativa" id="confirmacao-justificativa1" onChange={() => {setIsConfirmadoJustificado(true)}}/>
                         <label className="form-check-label" htmlFor="confirmacao-justificativa1">
