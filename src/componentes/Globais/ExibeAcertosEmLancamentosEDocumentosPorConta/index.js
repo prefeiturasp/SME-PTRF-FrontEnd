@@ -358,12 +358,8 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                                     </div>
                                     <p className='mb-1'><strong>Tipo de acerto</strong></p>
                                     <p>{ajuste.tipo_acerto.nome}</p>
-                                    {ajuste.detalhamento &&
-                                    <span>
-                                        <p className='mb-1'><strong>Detalhamento</strong></p>
-                                        <p className='mb-0'>{ajuste.detalhamento}</p>
-                                    </span>
-                                    }
+                                    <p className='mb-1'><strong>Detalhamento</strong></p>
+                                    <p className='mb-0'>{ajuste.detalhamento}</p>
                                 </div>
                             </div>
                         </Fragment>
@@ -438,12 +434,8 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                             </div>
                             <p className='mb-1'><strong>Tipo de acerto</strong></p>
                             <p>{ajuste.tipo_acerto.nome}</p>
-                            {ajuste.detalhamento &&
-                            <span>
-                                <p className='mb-1'><strong>Detalhamento</strong></p>
-                                <p className='mb-0'>{ajuste.detalhamento}</p>
-                            </span>
-                            }
+                            <p className='mb-1'><strong>Detalhamento</strong></p>
+                            <p className='mb-0'>{ajuste.detalhamento}</p>
                         </div>
                     </Fragment>
                 ))}
