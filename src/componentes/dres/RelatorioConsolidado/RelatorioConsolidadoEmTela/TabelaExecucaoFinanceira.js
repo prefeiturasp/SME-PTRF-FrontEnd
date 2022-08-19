@@ -17,31 +17,27 @@ export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate, com
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>Saldo reprogramado período anterior</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_custeio ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_custeio) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_capital ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_capital) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre) :'-'}</td>
-                        <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_total ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_total) :'-'}</td>
-                    </tr>
-                    {comparaValores(execucaoFinanceira) &&
-                        <>
-                            <tr>
-                                <td><span className='texto-aviso-associacoes-em-analise'><strong>Previsto Secretaria Municipal de Educação</strong></span></td>
-                                <td>{execucaoFinanceira.repasses_previstos_sme_custeio ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_custeio) :'-'}</td>
-                                <td>{execucaoFinanceira.repasses_previstos_sme_capital ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_capital) :'-'}</td>
-                                <td>{execucaoFinanceira.repasses_previstos_sme_livre ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_livre) :'-'}</td>
-                                <td>{execucaoFinanceira.repasses_previstos_sme_total ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_total) :'-'}</td>
-                            </tr>
-                            <tr>
-                                <td><span className='texto-aviso-associacoes-em-analise'><strong>Transferido pela Diretoria Regional de Ensino no período</strong></span></td>
-                                <td>{execucaoFinanceira.repasses_no_periodo_custeio ? valorTemplate(execucaoFinanceira.repasses_no_periodo_custeio) :'-'}</td>
-                                <td>{execucaoFinanceira.repasses_no_periodo_capital ? valorTemplate(execucaoFinanceira.repasses_no_periodo_capital) :'-'}</td>
-                                <td>{execucaoFinanceira.repasses_no_periodo_livre ? valorTemplate(execucaoFinanceira.repasses_no_periodo_livre) :'-'}</td>
-                                <td>{execucaoFinanceira.repasses_no_periodo_total ? valorTemplate(execucaoFinanceira.repasses_no_periodo_total) :'-'}</td>
-                            </tr>
-                        </>
-                    }
+                        <tr>
+                            <td>Saldo reprogramado período anterior</td>
+                            <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_custeio ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_custeio) :'-'}</td>
+                            <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_capital ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_capital) :'-'}</td>
+                            <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre) :'-'}</td>
+                            <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_total ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_total) :'-'}</td>
+                        </tr>
+                        <tr>
+                            <td><span className={comparaValores(execucaoFinanceira) ? "texto-aviso-associacoes-em-analise" : ""}><strong>Previsto Secretaria Municipal de Educação</strong></span></td>
+                            <td>{execucaoFinanceira.repasses_previstos_sme_custeio ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_custeio) :'-'}</td>
+                            <td>{execucaoFinanceira.repasses_previstos_sme_capital ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_capital) :'-'}</td>
+                            <td>{execucaoFinanceira.repasses_previstos_sme_livre ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_livre) :'-'}</td>
+                            <td>{execucaoFinanceira.repasses_previstos_sme_total ? valorTemplate(execucaoFinanceira.repasses_previstos_sme_total) :'-'}</td>
+                        </tr>
+                        <tr>
+                            <td><span className={comparaValores(execucaoFinanceira) ? "texto-aviso-associacoes-em-analise" : ""}><strong>Transferido pela Diretoria Regional de Ensino no período</strong></span></td>
+                            <td>{execucaoFinanceira.repasses_no_periodo_custeio ? valorTemplate(execucaoFinanceira.repasses_no_periodo_custeio) :'-'}</td>
+                            <td>{execucaoFinanceira.repasses_no_periodo_capital ? valorTemplate(execucaoFinanceira.repasses_no_periodo_capital) :'-'}</td>
+                            <td>{execucaoFinanceira.repasses_no_periodo_livre ? valorTemplate(execucaoFinanceira.repasses_no_periodo_livre) :'-'}</td>
+                            <td>{execucaoFinanceira.repasses_no_periodo_total ? valorTemplate(execucaoFinanceira.repasses_no_periodo_total) :'-'}</td>
+                        </tr>
                     <tr>
                         <td>Rendimentos de Aplicação Financeira</td>
                         <td>{execucaoFinanceira.receitas_rendimento_no_periodo_custeio ? valorTemplate(execucaoFinanceira.receitas_rendimento_no_periodo_custeio) :'-'}</td>
