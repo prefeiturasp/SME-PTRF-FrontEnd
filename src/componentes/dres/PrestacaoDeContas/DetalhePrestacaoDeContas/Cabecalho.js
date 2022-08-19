@@ -24,7 +24,7 @@ const Cabecalho = ({prestacaoDeContas, exibeSalvar, metodoSalvarAnalise, btnSalv
     const verificaPublicacao = useCallback( () => {
      if (prestacaoDeContas.publicada){
          setPcPublicada(true)
-         let textoPublicacao = `Essa PC entrou no relatório consolidado ${prestacaoDeContas.referencia_consolidado_dre}`
+         let textoPublicacao = `Essa PC consta da Publicação ${prestacaoDeContas.referencia_consolidado_dre}`
          setPublicacaoTexto(textoPublicacao)
      }
     }, [prestacaoDeContas])
