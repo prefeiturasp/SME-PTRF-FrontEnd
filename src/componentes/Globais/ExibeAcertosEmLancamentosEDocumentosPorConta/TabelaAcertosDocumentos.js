@@ -329,7 +329,7 @@ const TabelaAcertosDocumentos = ({lancamentosDocumentos, documentosAjustes, limp
                 <Column 
                     header='Ver Acertos'
                     expander
-                    style={{width: '6%'}}
+                    style={{width: '8%'}}
                 />
                 <Column 
                     field='tipo_documento_prestacao_conta.nome'

@@ -85,6 +85,9 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     const [clickBtnEscolheContaExtratosBancarios, setClickBtnEscolheContaExtratosBancarios] = useState({0:true});
     const [textareaJustificativa, setTextareaJustificativa] = useState(() => {});
     const [showSalvar, setShowSalvar] = useState({});
+    const [showSalvarEsclarecimento, setShowSalvarEsclarecimento] = useState(false);
+    const [txtEsclarecimentoLancamento, setTxtEsclarecimentoLancamento] = useState('');
+    const [txtEsclarecimentoDocumento, setTxtEsclarecimentoDocumento] = useState('');
 
 
     const toggleBtnEscolheConta = (id) => {
@@ -269,8 +272,18 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         setTextareaJustificativa({
             ...textareaJustificativa,
             [id]: event.target.value
-          })
+        })
     };
+    
+    const handleChangeTextareaEsclarecimentoLancamento = (event) => {
+        setTxtEsclarecimentoLancamento(event.target.value)
+        setShowSalvarEsclarecimento(false)
+    }
+
+    const handleChangeTextareaEsclarecimentoDocumento = (event) => {
+        setTxtEsclarecimentoDocumento(event.target.value)
+        setShowSalvarEsclarecimento(false)
+    }
 
     const handleOnClick = (data, model) => {
         salvarJustificativa(data, model);
@@ -292,6 +305,21 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                 ...showSalvar,
                 [data]: true
             });
+        } catch (e) {
+            console.log("Erro: ", e.message)
+        }
+    }
+
+    const salvarJustificativaEsclarecimento = async (txtEsclarecimentoLancamento, tipoModelo) => {
+        let payload = {
+            'esclarecimento': tipoModelo === 'lancamento' ? txtEsclarecimentoLancamento : txtEsclarecimentoDocumento,
+        }
+
+        try {
+            setShowSalvarEsclarecimento(true);
+            // Liniker Precisa do back-end
+            // tipoModelo === 'lancamento' ? apiLancamento : apiDocumento
+            console.log('campo esclarecido : ', payload['esclarecimento'])
         } catch (e) {
             console.log("Erro: ", e.message)
         }
@@ -358,6 +386,44 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                                     </div>
                                     <p className='mb-1'><strong>Tipo de acerto</strong></p>
                                     <p>{ajuste.tipo_acerto.nome}</p>
+                                    <div className='titulo-row-expanded-conferencia-de-esclarecimento mb-2'></div>
+                                        {ajuste.tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
+                                        <div className="form-group w-100 " style={{pointerEvents: 'all', resize: false}}>
+                                            <label className='mb-1'>Esclarecimento do lançamento</label>
+                                            <textarea
+                                                rows="4"
+                                                cols="50"
+                                                name='esclarecimento'
+                                                value={txtEsclarecimentoLancamento}
+                                                onChange={(event) => handleChangeTextareaEsclarecimentoLancamento(event)}
+                                                className="form-control"
+                                                placeholder="Digite aqui o esclarecimento"
+                                                disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
+                                            />
+                                        </div>
+                                        }
+                                        <div className="bd-highlight d-flex justify-content-end align-items-center" style={{pointerEvents: 'all'}}>
+                                            {showSalvarEsclarecimento && <div className="">
+                                                <p className="mr-2 mt-3">
+                                                    <span className="mr-1">
+                                                    <FontAwesomeIcon
+                                                        style={{fontSize: '16px', color:'#297805'}}
+                                                        icon={faCheck}
+                                                    />
+                                                    </span>Salvo
+                                                </p>
+                                            </div>}
+                                            {ajuste.tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
+                                            <button 
+                                                disabled={txtEsclarecimentoLancamento && !showSalvarEsclarecimento ? false : true}
+                                                type="button" 
+                                                className={`btn btn-success mt-2`}
+                                                onClick={() => salvarJustificativaEsclarecimento(txtEsclarecimentoLancamento, 'lancamento')}
+                                                >
+                                                <strong>Salvar</strong>
+                                            </button>
+                                            }
+                                        </div>
                                     {ajuste.detalhamento &&
                                     <span>
                                         <p className='mb-1'><strong>Detalhamento</strong></p>
@@ -438,6 +504,44 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                             </div>
                             <p className='mb-1'><strong>Tipo de acerto</strong></p>
                             <p>{ajuste.tipo_acerto.nome}</p>
+                            <div className='titulo-row-expanded-conferencia-de-esclarecimento mb-2'></div>
+                                {ajuste.tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
+                                <div className="form-group w-100 " style={{pointerEvents: 'all', resize: false}}>
+                                    <label className='mb-1'>Esclarecimento do documento</label>
+                                    <textarea
+                                        rows="4"
+                                        cols="50"
+                                        name='esclarecimento'
+                                        value={txtEsclarecimentoDocumento}
+                                        onChange={(event) => handleChangeTextareaEsclarecimentoDocumento(event)}
+                                        className="form-control"
+                                        placeholder="Digite aqui o esclarecimento"
+                                        disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
+                                    />
+                                </div>
+                                }
+                                <div className="bd-highlight d-flex justify-content-end align-items-center" style={{pointerEvents: 'all'}}>
+                                    {showSalvarEsclarecimento && <div className="">
+                                        <p className="mr-2 mt-3">
+                                            <span className="mr-1">
+                                            <FontAwesomeIcon
+                                                style={{fontSize: '16px', color:'#297805'}}
+                                                icon={faCheck}
+                                            />
+                                            </span>Salvo
+                                        </p>
+                                    </div>}
+                                    {ajuste.tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
+                                    <button 
+                                        disabled={txtEsclarecimentoDocumento && !showSalvarEsclarecimento ? false : true}
+                                        type="button" 
+                                        className={`btn btn-success mt-2`}
+                                        onClick={() => salvarJustificativaEsclarecimento(txtEsclarecimentoDocumento, 'documento')}
+                                        >
+                                        <strong>Salvar</strong>
+                                    </button>
+                                    }
+                    </div>
                             {ajuste.detalhamento &&
                             <span>
                                 <p className='mb-1'><strong>Detalhamento</strong></p>
