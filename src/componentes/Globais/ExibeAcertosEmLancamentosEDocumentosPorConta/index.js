@@ -86,8 +86,8 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
     const [textareaJustificativa, setTextareaJustificativa] = useState(() => {});
     const [showSalvar, setShowSalvar] = useState({});
     const [showSalvarEsclarecimento, setShowSalvarEsclarecimento] = useState(false);
-    const [txtEsclarecimentoLancamento, setTxtEsclarecimentoLancamento] = useState('');
-    const [txtEsclarecimentoDocumento, setTxtEsclarecimentoDocumento] = useState('');
+    const [txtEsclarecimentoLancamento, setTxtEsclarecimentoLancamento] = useState(() => {});
+    const [txtEsclarecimentoDocumento, setTxtEsclarecimentoDocumento] = useState(() => {});
 
 
     const toggleBtnEscolheConta = (id) => {
@@ -275,14 +275,26 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         })
     };
     
-    const handleChangeTextareaEsclarecimentoLancamento = (event) => {
-        setTxtEsclarecimentoLancamento(event.target.value)
-        setShowSalvarEsclarecimento(false)
+    const handleChangeTextareaEsclarecimentoLancamento = (event, id) => {
+        setShowSalvarEsclarecimento({
+            ...showSalvar,
+            [id]: false
+        })
+        setTxtEsclarecimentoLancamento({
+            ...txtEsclarecimentoLancamento,
+            [id]: event.target.value
+        })
     }
 
-    const handleChangeTextareaEsclarecimentoDocumento = (event) => {
-        setTxtEsclarecimentoDocumento(event.target.value)
-        setShowSalvarEsclarecimento(false)
+    const handleChangeTextareaEsclarecimentoDocumento = (event, id) => {
+        setShowSalvarEsclarecimento({
+            ...showSalvar,
+            [id]: false
+        })
+        setTxtEsclarecimentoDocumento({
+            ...txtEsclarecimentoDocumento,
+            [id]: event.target.value
+        })
     }
 
     const handleOnClick = (data, model) => {
@@ -310,9 +322,9 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
         }
     }
 
-    const salvarJustificativaEsclarecimento = async (txtEsclarecimentoLancamento, tipoModelo) => {
+    const salvarJustificativaEsclarecimento = async (data, tipoModelo) => {
         let payload = {
-            'esclarecimento': tipoModelo === 'lancamento' ? txtEsclarecimentoLancamento : txtEsclarecimentoDocumento,
+            'esclarecimento': tipoModelo === 'lancamento' ? txtEsclarecimentoLancamento[data] : txtEsclarecimentoDocumento[data],
         }
 
         try {
@@ -394,7 +406,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                                                 rows="4"
                                                 cols="50"
                                                 name='esclarecimento'
-                                                value={txtEsclarecimentoLancamento}
+                                                defaultValue={data.esclarecimento}
                                                 onChange={(event) => handleChangeTextareaEsclarecimentoLancamento(event)}
                                                 className="form-control"
                                                 placeholder="Digite aqui o esclarecimento"
@@ -418,7 +430,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                                                 disabled={txtEsclarecimentoLancamento && !showSalvarEsclarecimento ? false : true}
                                                 type="button" 
                                                 className={`btn btn-success mt-2`}
-                                                onClick={() => salvarJustificativaEsclarecimento(txtEsclarecimentoLancamento, 'lancamento')}
+                                                onClick={() => salvarJustificativaEsclarecimento(ajuste.analise_lancamento.uuid, 'lancamento')}
                                                 >
                                                 <strong>Salvar</strong>
                                             </button>
@@ -512,8 +524,8 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                                         rows="4"
                                         cols="50"
                                         name='esclarecimento'
-                                        value={txtEsclarecimentoDocumento}
-                                        onChange={(event) => handleChangeTextareaEsclarecimentoDocumento(event)}
+                                        defaultValue={data.esclarecimento}
+                                        onChange={(event) => handleChangeTextareaEsclarecimentoDocumento(event, data.uuid)}
                                         className="form-control"
                                         placeholder="Digite aqui o esclarecimento"
                                         disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
@@ -536,7 +548,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({exibeBtnIrParaPaginaDeAce
                                         disabled={txtEsclarecimentoDocumento && !showSalvarEsclarecimento ? false : true}
                                         type="button" 
                                         className={`btn btn-success mt-2`}
-                                        onClick={() => salvarJustificativaEsclarecimento(txtEsclarecimentoDocumento, 'documento')}
+                                        onClick={() => salvarJustificativaEsclarecimento(data.uuid, 'documento')}
                                         >
                                         <strong>Salvar</strong>
                                     </button>
