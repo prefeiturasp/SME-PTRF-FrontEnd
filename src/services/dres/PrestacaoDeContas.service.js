@@ -82,8 +82,11 @@ export const getTiposDevolucao = async () => {
     return (await api.get(`/api/tipos-devolucao-ao-tesouro/`, authHeader)).data
 };
 
+export const marcarDevolucaoTesouro = async (uuid_analise_lancamento) => {
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/${uuid_analise_lancamento}/marcar-devolucao-tesouro-atualizada/`, authHeader)).data
+}
+
 export const getComentariosDeAnalise = async (prestacao_uuid) => {
-    // return (await api.get(`/api/comentarios-de-analises/?prestacao_conta__uuid=${prestacao_uuid}`, authHeader)).data
     return (await api.get(`/api/comentarios-de-analises/comentarios/?prestacao_conta__uuid=${prestacao_uuid}`, authHeader)).data
 };
 

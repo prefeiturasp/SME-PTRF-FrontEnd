@@ -16,8 +16,6 @@ export const DadosDaAsssociacao = () => {
 
     const parametros = useLocation();
 
-    console.log("XXXXXXXXXXXXXXXXX PARAMETROS ", parametros)
-
     const [stateAssociacao, setStateAssociacao] = useState({
         nome: "",
         codigo_eol: "",
