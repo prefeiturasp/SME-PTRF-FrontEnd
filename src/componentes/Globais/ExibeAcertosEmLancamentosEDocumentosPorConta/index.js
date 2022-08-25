@@ -390,6 +390,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                             analise_lancamento={data.analise_lancamento}
                             prestacaoDeContasUuid={prestacaoDeContasUuid}
                             prestacaoDeContas={prestacaoDeContas}
+                            tipo_transacao={data.tipo_transacao}
                         />
                     }
                 </>
@@ -478,10 +479,11 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
     const redirecionaDetalheAcerto = (lancamento) => {
         if (editavel) {
             return (
-                <p className='text-right border-top pt-3'>
+                <div className='text-right border-top pt-3 pb-2 container-botoes-ajustes'>
                     <button onClick={() => addDispatchRedireciona(lancamento)} className='btn btn-outline-success'>
-                        <strong>Ir para página de acertos</strong></button>
-                </p>
+                        <strong>Ir para página de acertos</strong>
+                    </button>
+                </div>
             )
         }
 
@@ -511,10 +513,11 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                 tipo_de_transacao = 'receita'
             }
             return (
-                <p className='text-right border-top pt-3'>
+                <div className='text-right border-top pt-3 pb-2 container-botoes-ajustes'>
                     <button onClick={() => redirecionaPaginaDespesaOuReceita(data)} className='btn btn-outline-success'>
-                        <strong>Ir para {tipo_de_transacao}</strong></button>
-                </p>
+                        <strong>Ir para {tipo_de_transacao}</strong>
+                    </button>
+                </div>
             )
         }
     }
