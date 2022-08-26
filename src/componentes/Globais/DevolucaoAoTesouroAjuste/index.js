@@ -104,7 +104,7 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
                     </tbody>
                 </table>
 
-                {state.tem_permissao_de_edicao && <div className="row">
+                {<div className="row">
                     <div
                         className="col-md-3 mt-2 pr-0 mr-xl-n3 mr-lg-n2">
                         <label htmlFor="data">Insira a data de realização da devolução:</label>
