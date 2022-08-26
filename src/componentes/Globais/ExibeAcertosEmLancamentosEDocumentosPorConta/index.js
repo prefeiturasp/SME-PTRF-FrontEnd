@@ -288,6 +288,8 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
     };
     
     const handleChangeTextareaEsclarecimentoLancamento = (event, id) => {
+        console.log('event : ', event.target.e)
+        console.log('id : ', id)
         setShowSalvarEsclarecimento({
             ...showSalvar,
             [id]: false
@@ -296,6 +298,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
             ...txtEsclarecimentoLancamento,
             [id]: event.target.value
         })
+        console.log('txtEsclarecimentoLancamento', txtEsclarecimentoLancamento)
     }
 
     const handleChangeTextareaEsclarecimentoDocumento = (event, id) => {
@@ -436,6 +439,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                                     </span>Salvo
                                                 </p>
                                             </div>}
+                                            {console.log('txtEsclarecimentoDocumento : ', txtEsclarecimentoDocumento, '!showSalvarEsclarecimento : ', !showSalvarEsclarecimento)}
                                             {ajuste.tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
                                             <button 
                                                 disabled={txtEsclarecimentoLancamento && !showSalvarEsclarecimento ? false : true}
@@ -562,7 +566,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                         </p>
                                     </div>}
                                     {ajuste.tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
-                                    <button 
+                                    <button
                                         disabled={txtEsclarecimentoDocumento && !showSalvarEsclarecimento ? false : true}
                                         type="button" 
                                         className={`btn btn-success mt-2`}
