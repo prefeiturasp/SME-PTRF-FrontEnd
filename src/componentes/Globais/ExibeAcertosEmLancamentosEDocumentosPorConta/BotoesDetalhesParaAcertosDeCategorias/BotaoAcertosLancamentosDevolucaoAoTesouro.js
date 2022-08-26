@@ -7,11 +7,10 @@ import {RetornaSeTemPermissaoEdicaoAjustesLancamentos} from "../RetornaSeTemPerm
 const BotaoAcertosLancamentosDevolucaoAoTesouro = ({analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas}) => {
 
     const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAjustesLancamentos(prestacaoDeContas)
-    const URL = '/devolucao-ao-tesouro-ajuste/'
+    const URL = '/dados-da-associacao/'
 
     return (
         <>
-            
             {analise_lancamento && !analise_lancamento.devolucao_tesouro_atualizada ? (
 
                 <LinkCustom
@@ -24,6 +23,7 @@ const BotaoAcertosLancamentosDevolucaoAoTesouro = ({analise_lancamento, prestaca
                     { TEMPERMISSAO ? 'Ajustar dev. tesouro' : "Ver dev. tesouro"}
                 </LinkCustom>
             ):
+
                 <LinkCustom
                     url={URL}
                     analise_lancamento={analise_lancamento}
