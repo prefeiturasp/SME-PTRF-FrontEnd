@@ -20,8 +20,9 @@ const LinkCustom = ({url, analise_lancamento, prestacaoDeContasUuid, prestacaoDe
                 state: {
                     uuid_analise_lancamento: analise_lancamento.uuid,
                     uuid_pc: prestacaoDeContasUuid,
-                    uuid_depesa: analise_lancamento.despesa,
+                    uuid_despesa: analise_lancamento.despesa,
                     uuid_receita: analise_lancamento.receita,
+                    uuid_associacao: prestacaoDeContas.associacao.uuid,
                     origem: getCurrentPathWithoutLastPart(),
                     origem_visao: visoesService.getItemUsuarioLogado('visao_selecionada.nome'),
                     tem_permissao_de_edicao: TEMPERMISSAO,

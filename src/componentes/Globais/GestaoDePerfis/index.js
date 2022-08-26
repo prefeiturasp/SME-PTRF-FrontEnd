@@ -112,7 +112,6 @@ export const GestaoDePerfis = () => {
     };
 
     const nomeUsuarioComIconeDeAcessoSuporteTemplate = (rowData) => {
-        console.log('Rowdata:', rowData)
         const unidadeLogada = rowData["unidades"].find(obj => {
                 return obj.uuid === unidade_selecionada
             })

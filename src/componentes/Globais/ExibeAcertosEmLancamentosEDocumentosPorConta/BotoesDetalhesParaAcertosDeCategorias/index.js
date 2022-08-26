@@ -2,9 +2,9 @@ import React, {memo} from "react";
 import BotaoAcertosLancamentosDevolucaoAoTesouro from "./BotaoAcertosLancamentosDevolucaoAoTesouro";
 import "./BotoesDetalhesParaAcertosDeCategorias.scss"
 import BotaoAcertosLancamentosEdicaoGasto from "./BotaoAcertosLancamentosEdicaoGasto";
+import BotaoAcertosLancamentosEdicaoCredito from "./BotaoAcertosLancamentosEdicaoCredito";
 
 const BotoesDetalhesParaAcertosDeCategorias = ({analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, tipo_transacao}) => {
-
     return (
         <>
             <div className='row'>
@@ -23,6 +23,14 @@ const BotoesDetalhesParaAcertosDeCategorias = ({analise_lancamento, prestacaoDeC
                             prestacaoDeContasUuid={prestacaoDeContasUuid}
                             prestacaoDeContas={prestacaoDeContas}
                             tipo_transacao='Gasto'
+                        />
+                    }
+                    {analise_lancamento && analise_lancamento.requer_atualizacao_lancamento && tipo_transacao === "Crédito" &&
+                        <BotaoAcertosLancamentosEdicaoCredito
+                            analise_lancamento={analise_lancamento}
+                            prestacaoDeContasUuid={prestacaoDeContasUuid}
+                            prestacaoDeContas={prestacaoDeContas}
+                            tipo_transacao='Crédito'
                         />
                     }
                 </div>
