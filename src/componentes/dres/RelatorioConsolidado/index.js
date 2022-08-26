@@ -25,10 +25,12 @@ import {AtaParecerTecnico} from "./AtaParecerTecnico";
 import Lauda from "./Lauda";
 import {ModalAtaNaoPreenchida} from "../../../utils/Modais";
 import PreviaDocumentos from "./PreviaDocumento";
+import {PERIODO_RELATORIO_CONSOLIDADO_DRE} from "../../../services/auth.service";
 
 const RelatorioConsolidado = () => {
 
     const dre_uuid = visoesService.getItemUsuarioLogado('associacao_selecionada.uuid');
+    const periodo_relatorio_consolidado_localstorage = localStorage.getItem(PERIODO_RELATORIO_CONSOLIDADO_DRE)
 
     const [fiqueDeOlho, setFiqueDeOlho] = useState("");
 
@@ -40,6 +42,7 @@ const RelatorioConsolidado = () => {
     const [statusProcessamentoRelatorioConsolidadoDePublicacoesParciais, setStatusProcessamentoRelatorioConsolidadoDePublicacoesParciais] = useState('');
     const [periodos, setPeriodos] = useState(false);
     const [periodoEscolhido, setPeriodoEsolhido] = useState(false);
+    const [showPublicarRelatorioConsolidado, setShowPublicarRelatorioConsolidado] = useState(false);
 
     // Ata
     const [showAtaNaoPreenchida, setShowAtaNaoPreenchida] = useState(false);
@@ -51,13 +54,20 @@ const RelatorioConsolidado = () => {
         try {
             let periodos = await getPeriodos();
             setPeriodos(periodos);
-            if (periodos && periodos.length > 0) {
-                setPeriodoEsolhido(periodos[0].uuid)
+            if (periodos && periodos.length > 0){
+                //Caso exista mais de um período seleciona por default o anterior ao corrente.
+                const periodoIndex = periodos.length > 1 ? 1 : 0;
+                if (periodo_relatorio_consolidado_localstorage){
+                    setPeriodoEsolhido(periodo_relatorio_consolidado_localstorage)
+                }else {
+                    setPeriodoEsolhido(periodos[periodoIndex].uuid)
+                }
+
             }
         } catch (e) {
             console.log("Erro ao buscar períodos ", e)
         }
-    }, []);
+    }, [periodo_relatorio_consolidado_localstorage]);
 
     useEffect(() => {
         carregaPeriodos()
@@ -169,6 +179,7 @@ const RelatorioConsolidado = () => {
 
     const handleChangePeriodos = async (uuid_periodo) => {
         setPeriodoEsolhido(uuid_periodo)
+        localStorage.setItem(PERIODO_RELATORIO_CONSOLIDADO_DRE, uuid_periodo);
     };
 
     const formataNumero = (status) => {
@@ -220,6 +231,7 @@ const RelatorioConsolidado = () => {
     }
 
     const publicarConsolidadoDre = async (consolidado_dre) => {
+        setShowPublicarRelatorioConsolidado(false)
         let payload = {
             dre_uuid: dre_uuid,
             periodo_uuid: periodoEscolhido
@@ -320,6 +332,8 @@ const RelatorioConsolidado = () => {
                                                     publicarConsolidadoDePublicacoesParciais={publicarConsolidadoDePublicacoesParciais}
                                                     podeGerarPrevia={podeGerarPrevia}
                                                     consolidadoDre={consolidadoDreProximaPublicacao}
+                                                    showPublicarRelatorioConsolidado={showPublicarRelatorioConsolidado}
+                                                    setShowPublicarRelatorioConsolidado={setShowPublicarRelatorioConsolidado}
                                                 >
                                                     <PreviaDocumentos
                                                         gerarPreviaConsolidadoDre={gerarPreviaConsolidadoDre}
