@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {visoesService} from "../../../../services/visoes.service";
 import {RetornaSeTemPermissaoEdicaoAjustesLancamentos} from "../RetornaSeTemPermissaoEdicaoAjustesLancamentos";
 
-const LinkCustom = ({url, analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, classeCssBotao, children}) => {
+const LinkCustom = ({url, analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, classeCssBotao, children, operacao, tipo_transacao}) => {
 
     const getCurrentPathWithoutLastPart = () => {
         const pathRgx = /\//g;
@@ -20,10 +20,14 @@ const LinkCustom = ({url, analise_lancamento, prestacaoDeContasUuid, prestacaoDe
                 state: {
                     uuid_analise_lancamento: analise_lancamento.uuid,
                     uuid_pc: prestacaoDeContasUuid,
-                    uuid_depesa: analise_lancamento.despesa,
+                    uuid_despesa: analise_lancamento.despesa,
+                    uuid_receita: analise_lancamento.receita,
+                    uuid_associacao: prestacaoDeContas.associacao.uuid,
                     origem: getCurrentPathWithoutLastPart(),
                     origem_visao: visoesService.getItemUsuarioLogado('visao_selecionada.nome'),
-                    tem_permissao_de_edicao: TEMPERMISSAO
+                    tem_permissao_de_edicao: TEMPERMISSAO,
+                    operacao: operacao,
+                    tipo_transacao: tipo_transacao,
                 }
             }}
             className={classeCssBotao}

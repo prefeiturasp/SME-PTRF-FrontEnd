@@ -4,14 +4,14 @@ import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import LinkCustom from "./LinkCustom";
 import {RetornaSeTemPermissaoEdicaoAjustesLancamentos} from "../RetornaSeTemPermissaoEdicaoAjustesLancamentos";
 
-const BotaoAcertosLancamentosDevolucaoAoTesouro = ({analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, tipo_transacao}) => {
+const BotaoAcertosLancamentosEdicaoGasto = ({analise_lancamento, prestacaoDeContasUuid, prestacaoDeContas, tipo_transacao}) => {
 
     const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAjustesLancamentos(prestacaoDeContas)
-    const URL = '/devolucao-ao-tesouro-ajuste/'
+    const URL = `/edicao-de-despesa/${analise_lancamento.despesa}`
 
     return (
         <>
-            {analise_lancamento && !analise_lancamento.devolucao_tesouro_atualizada ? (
+            {analise_lancamento && !analise_lancamento.lancamento_atualizado ? (
 
                 <LinkCustom
                     url={URL}
@@ -19,20 +19,20 @@ const BotaoAcertosLancamentosDevolucaoAoTesouro = ({analise_lancamento, prestaca
                     prestacaoDeContasUuid={prestacaoDeContasUuid}
                     prestacaoDeContas={prestacaoDeContas}
                     classeCssBotao='btn btn-outline-success mr-2'
-                    operacao='requer_atualizacao_devolucao_ao_tesouro'
+                    operacao='requer_atualizacao_lancamento_gasto'
                     tipo_transacao={tipo_transacao}
                 >
-                    { TEMPERMISSAO ? 'Ajustar dev. tesouro' : "Ver dev. tesouro"}
+                    { TEMPERMISSAO ? 'Ajustar despesa' : "Ver despesa"}
                 </LinkCustom>
-            ):
 
+            ):
                 <LinkCustom
                     url={URL}
                     analise_lancamento={analise_lancamento}
                     prestacaoDeContasUuid={prestacaoDeContasUuid}
                     prestacaoDeContas={prestacaoDeContas}
                     classeCssBotao='link-green text-center'
-                    operacao='requer_atualizacao_devolucao_ao_tesouro'
+                    operacao='requer_atualizacao_lancamento_gasto'
                     tipo_transacao={tipo_transacao}
                 >
                     <>
@@ -40,7 +40,7 @@ const BotaoAcertosLancamentosDevolucaoAoTesouro = ({analise_lancamento, prestaca
                             style={{fontSize: '16px', color: '#00585E'}}
                             icon={faCheckCircle}
                         />
-                        <strong> Dev.Tesouro atualizada. <span className='clique-aqui-atualizada mr-2'>Clique para { TEMPERMISSAO ? 'editar' : "ver"}</span></strong>
+                        <strong> Despesa atualizada. <span className='clique-aqui-atualizada'>Clique para { TEMPERMISSAO ? 'editar' : "ver"}</span></strong>
                     </>
                 </LinkCustom>
             }
@@ -48,4 +48,4 @@ const BotaoAcertosLancamentosDevolucaoAoTesouro = ({analise_lancamento, prestaca
     )
 }
 
-export default memo(BotaoAcertosLancamentosDevolucaoAoTesouro)
+export default memo(BotaoAcertosLancamentosEdicaoGasto)
