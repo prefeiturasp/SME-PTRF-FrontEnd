@@ -77,6 +77,7 @@ import { EdicaoAtaParecerTecnico } from "../componentes/dres/RelatorioConsolidad
 import { ParametrizacoesMotivosDeEstorno } from "../componentes/sme/Parametrizacoes/Receitas/ParametrizacoesMotivosEstorno";
 import { ParametrizacoesTiposAcertosLancamentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosLancamentos";
 import { ParametrizacoesTiposAcertosDocumentos } from "../componentes/sme/Parametrizacoes/PrestacaoContas/TiposAcertosDocumentos";
+import { DevolucaoAoTesouroAjuste } from "../componentes/Globais/DevolucaoAoTesouroAjuste"
 import {ExtracaoDadosPage} from '../paginas/SME/ExtracaoDados'
 
 const routesConfig = [
@@ -174,6 +175,12 @@ const routesConfig = [
         exact: true,
         path: "/visualizacao-da-ata/:uuid_ata",
         component: VisualizacaoDaAta,
+        permissoes: ['access_prestacao_contas'],
+    },
+    {
+        exact: true,
+        path: "/devolucao-ao-tesouro-ajuste/",
+        component: DevolucaoAoTesouroAjuste,
         permissoes: ['access_prestacao_contas'],
     },
     {
@@ -283,6 +290,12 @@ const routesConfig = [
         exact: true,
         path: "/dre-detalhe-prestacao-de-contas-detalhar-acertos-documentos/:prestacao_conta_uuid",
         component: DetalharAcertosDocumentos,
+        permissoes: ['access_acompanhamento_pcs_dre'],
+    },
+    {
+        exact: true,
+        path: "/dre-detalhe-prestacao-de-contas-resumo-acertos/:prestacao_conta_uuid",
+        component: ResumoDosAcertos,
         permissoes: ['access_acompanhamento_pcs_dre'],
     },
     {

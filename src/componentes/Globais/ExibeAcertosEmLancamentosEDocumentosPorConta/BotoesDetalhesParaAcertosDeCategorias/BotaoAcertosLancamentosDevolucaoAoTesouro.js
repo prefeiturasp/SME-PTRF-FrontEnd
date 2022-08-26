@@ -24,8 +24,8 @@ const BotaoAcertosLancamentosDevolucaoAoTesouro = ({analise_lancamento, prestaca
                 >
                     { TEMPERMISSAO ? 'Ajustar dev. tesouro' : "Ver dev. tesouro"}
                 </LinkCustom>
-
             ):
+
                 <LinkCustom
                     url={URL}
                     analise_lancamento={analise_lancamento}
