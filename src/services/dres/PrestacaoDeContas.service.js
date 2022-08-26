@@ -83,7 +83,7 @@ export const getTiposDevolucao = async () => {
 };
 
 export const marcarDevolucaoTesouro = async (uuid_analise_lancamento) => {
-    return (await api.post(`/api/analises-lancamento-prestacao-conta/${uuid_analise_lancamento}/marcar-devolucao-tesouro-atualizada/`, authHeader)).data
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/${uuid_analise_lancamento}/marcar-devolucao-tesouro-atualizada/`, {}, authHeader)).data
 }
 
 export const getComentariosDeAnalise = async (prestacao_uuid) => {

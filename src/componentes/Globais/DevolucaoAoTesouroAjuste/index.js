@@ -17,20 +17,25 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-
+        let mounted = true;
         getPrestacaoDeContasDetalhe(state.uuid_pc).then(prestacao => {
             prestacao.devolucoes_ao_tesouro_da_prestacao.forEach(devolucao => {
                 if (devolucao.despesa.uuid === state.uuid_despesa) {
-                    setDevolucao(devolucao)
-                    setDespesas(devolucao.despesa)
-                    if (devolucao.data) {
-                        setDateDevolucao(devolucao.data)
+                    if (mounted) {
+                      setDevolucao(devolucao)
+                      setDespesas(devolucao.despesa)
+                      if (devolucao.data) {
+                          setDateDevolucao(devolucao.data)
+                      }
                     }
                 }
             });
         }).catch(error => {
             console.log("Erro: ", error);
         });
+        return () =>{
+            mounted = false
+        }
     }, [])
 
     const validateDate = (value) => {
@@ -52,7 +57,6 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
     }
 
     const submitAlteracaoDevolucaoTesouro = async () => {
-        console.log('juros muito altos : ', new Date(dateDevolucao).toISOString().slice(0, 10))
         let payload = {
             devolucoes_ao_tesouro_da_prestacao: [
                 {
@@ -102,17 +106,16 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
 
                 {state.tem_permissao_de_edicao && <div className="row">
                     <div
-                        className="col-md-7 mt-2 pr-0 mr-xl-n3 mr-lg-n2">
+                        className="col-md-3 mt-2 pr-0 mr-xl-n3 mr-lg-n2">
                         <label htmlFor="data">Insira a data de realização da devolução:</label>
                     </div>
-                    <div className="col-md-3 col-sm-12 col-md-3 pl-0">
+                    <div className="col-md-2 col-sm-12 col-md-1 pl-0">
                         <div className="form-group">
                             <DatePickerField
                                 name='devolucoes_ao_tesouro_da_prestacao'
                                 placeholderText='dd/mm/aaaa'
                                 value={dateDevolucao}
                                 onChange={handleChangeDataDevolucao}
-                                
                                 disabled={!state.tem_permissao_de_edicao}
                                 required={true}
                             />
@@ -120,7 +123,7 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
                         </div>
                     </div>
                     <div
-                        className="col-md-2 col-sm-2 w-100">
+                        className="col-md-3 col-sm-2 w-100">
                         <button 
                             className="btn btn-outline-success mr-4"
                             onClick={handleCancelar}>
