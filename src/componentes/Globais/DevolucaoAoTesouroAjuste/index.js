@@ -1,22 +1,23 @@
 import React, {useEffect, useState, useCallback} from "react";
+import { useHistory } from "react-router-dom";
 import {DatePickerField} from "../DatePickerField";
 import {PaginasContainer} from "../../../paginas/PaginasContainer";
 import { getPrestacaoDeContasDetalhe } from "../../../services/dres/PrestacaoDeContas.service"
 import {useLocation} from 'react-router-dom';
 import {Button} from 'react-bootstrap';
 import {toastCustom} from "../../../componentes/Globais/ToastCustom"
-import {visoesService} from "../../../services/visoes.service";
 import { marcarDevolucaoTesouro, getSalvarDevoulucoesAoTesouro } from '../../../services/dres/PrestacaoDeContas.service.js'
 import moment from "moment";
 
 import './../../../componentes/escolas/GeracaoDaAta/geracao-da-ata.scss'
 
-export const DevolucaoAoTesouroAjuste = ({}) => {
+export const DevolucaoAoTesouroAjuste = () => {
     const { state } = useLocation();
     const [devolucao, setDevolucao] = useState([]);
     const [despesa, setDespesas] = useState([]);
     const [dateDevolucao, setDateDevolucao] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const history = useHistory();
 
     useEffect(() => {
         let mounted = true;
@@ -38,14 +39,11 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
         return () =>{
             mounted = false
         }
-    }, [])
+    }, [state.uuid_pc, state.uuid_despesa])
 
     const validateDate = (value) => {
-        if (!value) {
-            setErrorMessage("é Necessário um campo de data para a ação.")
-        }
         if (!(value instanceof Date)) {
-          setErrorMessage('é Necessário um campo de data para a ação.')
+          setErrorMessage('Data é um campo obrigatório')
         }
     }
 
@@ -55,7 +53,7 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
     }, [])
 
     const handleCancelar = () => {
-        window.history.go(-1);
+        history.push(`${state.origem}/${state.uuid_pc}`)
     }
 
     const submitAlteracaoDevolucaoTesouro = async () => {
@@ -76,7 +74,7 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
         await getSalvarDevoulucoesAoTesouro(state.uuid_pc, payload);
         await marcarDevolucaoTesouro(state.uuid_analise_lancamento);
         toastCustom.ToastCustomSuccess('Data de devolução ao tesouro alterada com sucesso.')
-        window.history.go(-1);
+        history.push(`${state.origem}/${state.uuid_pc}`)
     }
 
     return(
@@ -135,10 +133,7 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
                             variant="success"
                             className="btn btn-sucess pr-4 pl-4"
                             onClick={submitAlteracaoDevolucaoTesouro}
-                            disabled={![['change_analise_dre']].some(visoesService.getPermissoes) ||
-                              visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' ||
-                              dateDevolucao === null ? true : false
-                            }
+                            disabled={!state.tem_permissao_de_edicao || !dateDevolucao}
                         >
                             Salvar
                         </Button>
