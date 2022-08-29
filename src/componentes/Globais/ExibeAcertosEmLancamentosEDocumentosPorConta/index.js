@@ -28,6 +28,7 @@ import {
     postMarcarComoRealizadoLancamentoPrestacaoConta,
     patchAnaliseLancamentoPrestacaoConta
 } from "../../../services/dres/PrestacaoDeContas.service";
+import {barraMensagemCustom} from "../../Globais/BarraMensagem";
 
 
 // Redux
@@ -389,6 +390,15 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                             </div>
                         </Fragment>
                     )}
+
+                    {data.analise_lancamento.requer_ajustes_externos &&
+                        <div className='row'>
+                            <div className='col-12 mb-3 px-4 py-2'>
+                                {barraMensagemCustom.BarraMensagemSucessAzul("Favor realizar os ajustes solicitados que são externos ao sistema.")}
+                            </div>
+                        </div>
+                    }
+
                     {data.analise_lancamento.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
                         <Fragment key={ajuste.id}>
                             <div className='row'>
@@ -513,8 +523,14 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                     </button>
                                 </div>
                             </div>
-                    </div>
-                )}
+                        </div>
+                    )}
+
+                    {data.requer_ajuste_externo &&
+                        <div className='col-12 mb-3'>
+                            {barraMensagemCustom.BarraMensagemSucessAzul("Favor realizar os ajustes solicitados que são externos ao sistema.")}
+                        </div>
+                    }
                     {data.solicitacoes_de_ajuste_da_analise.map((ajuste, index) => (
                     <Fragment key={ajuste.id}>
                         <div className='col-12'>

@@ -286,9 +286,8 @@ export const PrestacaoDeContas = ({setStatusPC}) => {
     const podeBaixarDocumentos = [['baixar_documentos_prestacao_contas']].some(visoesService.getPermissoes)
 
     const exibeBoxAtaRetificadora = useCallback(() => {
-        return statusPrestacaoDeConta &&
-            statusPrestacaoDeConta.prestacao_contas_status &&
-            (statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'DEVOLVIDA' || statusPrestacaoDeConta.prestacao_contas_status.status_prestacao === 'DEVOLVIDA_RETORNADA' )
+           return statusPrestacaoDeConta &&
+            statusPrestacaoDeConta.prestacao_contas_status && statusPrestacaoDeConta.prestacao_contas_status.requer_retificacao
     }, [statusPrestacaoDeConta])
 
     useEffect(()=>{

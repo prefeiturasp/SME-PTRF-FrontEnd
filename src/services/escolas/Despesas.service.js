@@ -105,3 +105,6 @@ export const getTagInformacao = async () => {
     return (await api.get(`api/despesas/tags-informacoes/`, authHeader)).data
 }
 
+export const marcarLancamentoAtualizado = async (uuid_analise_lancamento) => {
+    return (await api.post(`/api/analises-lancamento-prestacao-conta/${uuid_analise_lancamento}/marcar-lancamento-atualizado/`, {}, authHeader)).data
+};

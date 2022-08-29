@@ -33,7 +33,6 @@ import TabelaRepassesPendentes from "./TabelaRepassesPendentes";
 import {
     useCarregaRepassesPendentesPorPeriodoAteAgora
 } from "../../../../hooks/Globais/useCarregaRepassesPendentesPorPeriodoAteAgora";
-import TabelaDespesasComPagamentoAntecipado from "./TabelaDespesasComPagamentoAntecipado";
 
 moment.updateLocale('pt', {
     months: [
