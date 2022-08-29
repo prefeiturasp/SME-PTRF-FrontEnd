@@ -99,8 +99,8 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
     });
     const [showSalvar, setShowSalvar] = useState({});
     const [showSalvarEsclarecimento, setShowSalvarEsclarecimento] = useState(false);
-    const [txtEsclarecimentoLancamento, setTxtEsclarecimentoLancamento] = useState(() => {});
-    const [txtEsclarecimentoDocumento, setTxtEsclarecimentoDocumento] = useState(() => {});
+    const [txtEsclarecimentoLancamento, setTxtEsclarecimentoLancamento] = useState({});
+    const [txtEsclarecimentoDocumento, setTxtEsclarecimentoDocumento] = useState({});
 
 
     const toggleBtnEscolheConta = (id) => {
@@ -260,22 +260,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
 
     }, [])
 
-    const handleChangeFiltros = (name, value) => {
-        setStateFiltros({
-            ...stateFiltros,
-            [name]: value
-        });
-    };
-
-    const handleSubmitFiltros = async () => {
-        await carregaAcertosLancamentos(contaUuid, stateFiltros.filtrar_por_lancamento, stateFiltros.filtrar_por_tipo_de_ajuste)
-    };
-
-    const limpaFiltros = async () => {
-        setStateFiltros(initialStateFiltros);
-        await carregaAcertosLancamentos(contaUuid)
-    };
-
     const handleChangeTextareaJustificativa = (event, id) => {
         setShowSalvar({
             ...showSalvar,
@@ -288,8 +272,6 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
     };
     
     const handleChangeTextareaEsclarecimentoLancamento = (event, id) => {
-        console.log('event : ', event.target.e)
-        console.log('id : ', id)
         setShowSalvarEsclarecimento({
             ...showSalvar,
             [id]: false
@@ -337,9 +319,13 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
     }
 
     const salvarJustificativaEsclarecimento = async (data, tipoModelo) => {
+        console.log('data', data);
+        console.log('tipoModelo', tipoModelo);
+        console.log('txtEsclarecimentoLancamento', txtEsclarecimentoLancamento)
         let payload = {
-            'esclarecimento': tipoModelo === 'lancamento' ? txtEsclarecimentoLancamento[data] : txtEsclarecimentoDocumento[data],
+            'esclarecimento': tipoModelo === 'lancamento' ? txtEsclarecimentoLancamento : txtEsclarecimentoDocumento,
         }
+        console.log('payload', payload);
 
         try {
             setShowSalvarEsclarecimento(true);
@@ -421,7 +407,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                                 cols="50"
                                                 name='esclarecimento'
                                                 defaultValue={data.esclarecimento}
-                                                onChange={(event) => handleChangeTextareaEsclarecimentoLancamento(event)}
+                                                onChange={(event) => handleChangeTextareaEsclarecimentoLancamento(event, data.analise_lancamento.uuid)}
                                                 className="form-control"
                                                 placeholder="Digite aqui o esclarecimento"
                                                 disabled={![['change_analise_dre']].some(visoesService.getPermissoes) || visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' || prestacaoDeContas.status !== 'DEVOLVIDA'}
@@ -429,7 +415,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                         </div>
                                         }
                                         <div className="bd-highlight d-flex justify-content-end align-items-center" style={{pointerEvents: 'all'}}>
-                                            {showSalvarEsclarecimento && <div className="">
+                                            {showSalvarEsclarecimento?.[data.analise_lancamento.uuid] && <div className="">
                                                 <p className="mr-2 mt-3">
                                                     <span className="mr-1">
                                                     <FontAwesomeIcon
@@ -439,13 +425,12 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                                     </span>Salvo
                                                 </p>
                                             </div>}
-                                            {console.log('txtEsclarecimentoDocumento : ', txtEsclarecimentoDocumento, '!showSalvarEsclarecimento : ', !showSalvarEsclarecimento)}
                                             {ajuste.tipo_acerto.categoria === 'SOLICITACAO_ESCLARECIMENTO' &&
                                             <button 
-                                                disabled={txtEsclarecimentoLancamento && !showSalvarEsclarecimento ? false : true}
+                                                disabled={!txtEsclarecimentoLancamento[data.analise_lancamento.uuid]}
                                                 type="button" 
                                                 className={`btn btn-success mt-2`}
-                                                onClick={() => salvarJustificativaEsclarecimento(ajuste.analise_lancamento.uuid, 'lancamento')}
+                                                onClick={() => salvarJustificativaEsclarecimento(ajuste.uuid, 'lancamento')}
                                                 >
                                                 <strong>Salvar</strong>
                                             </button>
@@ -570,7 +555,7 @@ const ExibeAcertosEmLancamentosEDocumentosPorConta = ({
                                         disabled={txtEsclarecimentoDocumento && !showSalvarEsclarecimento ? false : true}
                                         type="button" 
                                         className={`btn btn-success mt-2`}
-                                        onClick={() => salvarJustificativaEsclarecimento(data.uuid, 'documento')}
+                                        onClick={() => salvarJustificativaEsclarecimento(ajuste.uuid, 'documento')}
                                         >
                                         <strong>Salvar</strong>
                                     </button>
