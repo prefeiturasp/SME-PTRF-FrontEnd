@@ -22,7 +22,7 @@ const BotaoAcertosLancamentosEdicaoGasto = ({analise_lancamento, prestacaoDeCont
                     operacao='requer_atualizacao_lancamento_gasto'
                     tipo_transacao={tipo_transacao}
                 >
-                    { TEMPERMISSAO ? 'Ajustar despesa' : "Ver despesa"}
+                    { TEMPERMISSAO ? 'Ajustar despesa' : "Ver despesa a ajustar"}
                 </LinkCustom>
 
             ):
