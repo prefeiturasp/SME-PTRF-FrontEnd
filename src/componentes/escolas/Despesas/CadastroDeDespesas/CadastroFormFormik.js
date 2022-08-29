@@ -103,7 +103,9 @@ export const CadastroFormFormik = ({
                                        formErrorsImposto,
                                        disableBtnAdicionarImposto,
                                        onCalendarCloseDataPagamento,
-                                       onCalendarCloseDataPagamentoImposto
+                                       onCalendarCloseDataPagamentoImposto,
+                                       parametroLocation,
+                                       bloqueiaCamposDespesa
                                    }) => {
 
     // Corrigi Cálculo validação dos valores
@@ -627,9 +629,9 @@ export const CadastroFormFormik = ({
                                                                     {index >= 1 && values.rateios.length > 1 && (
                                                                         <button
                                                                             type="button"
-                                                                            className="btn btn-link btn-remover-despesa mr-2 d-flex align-items-center"
+                                                                            className={`btn btn-link btn-remover-despesa mr-2 d-flex align-items-center ${bloqueiaCamposDespesa() ? 'desabilita-link-remover-despesa' : ''}`}
                                                                             onClick={() => removeRateio(remove, index, rateio)}
-                                                                            disabled={!visoesService.getPermissoes(['delete_despesa'])}
+                                                                            disabled={!visoesService.getPermissoes(['delete_despesa']) || bloqueiaCamposDespesa()}
                                                                         >
                                                                             <FontAwesomeIcon
                                                                                 style={{
@@ -766,7 +768,7 @@ export const CadastroFormFormik = ({
                                                     <button
                                                         type="button"
                                                         className="btn btn btn-outline-success mt-2 mr-2"
-                                                        disabled={![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes)}
+                                                        disabled={![['add_despesa'], ['change_despesa']].some(visoesService.getPermissoes) || bloqueiaCamposDespesa()}
                                                         onChange={(e) => {
                                                             props.handleChange(e);
                                                             aux.handleAvisoCapital(e.target.value, setShowAvisoCapital);
@@ -805,7 +807,7 @@ export const CadastroFormFormik = ({
                                             onClick={houveAlteracoes(values) ? onShowModal : onCancelarTrue}
                                             className="btn btn btn-outline-success mt-2 mr-2">Voltar
                                     </button>
-                                    {despesaContext.idDespesa
+                                    {despesaContext.idDespesa && !aux.ehOperacaoAtualizacao(parametroLocation)
                                         ? <button
                                             disabled={readOnlyBtnAcao || !visoesService.getPermissoes(["delete_despesa"])}
                                             type="reset"
