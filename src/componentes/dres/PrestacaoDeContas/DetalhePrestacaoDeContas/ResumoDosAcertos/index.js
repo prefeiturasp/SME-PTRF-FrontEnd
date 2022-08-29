@@ -7,7 +7,8 @@ import {
     getUltimaAnalisePc,
     getLancamentosAjustes,
     getDocumentosAjustes,
-    getExtratosBancariosAjustes
+    getExtratosBancariosAjustes,
+    getInfoAta,
 } from "../../../../../services/dres/PrestacaoDeContas.service";
 import moment from "moment";
 import {gerarUuid, trataNumericos} from "../../../../../utils/ValidacoesAdicionaisFormularios";
@@ -43,6 +44,76 @@ export const ResumoDosAcertos = () => {
     const [totalDocumentosAjustes, setTotalDocumentosAjustes] = useState(undefined)
     const [forcaVerificaSeExibeMsg, setForcaVerificaSeExibeMsg] = useState('')
     const [pcEmAnalise, setPcEmAnalise] = useState(false)
+    const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState([])
+    const [infoAta, setInfoAta] = useState([])
+    const [editavel, setEditavel] = useState(false)
+
+    const carregaInfoAta = useCallback(async () =>{
+        if (prestacaoDeContas.uuid){
+            let info_ata = await getInfoAta(prestacaoDeContas.uuid);
+            return info_ata;
+        }
+    }, [prestacaoDeContas]);
+
+    const getAnalisePrestacao = useCallback(()=>{
+        if (prestacaoDeContas) {
+            let arrayAnalises = [];
+            if (prestacaoDeContas && prestacaoDeContas.analises_de_conta_da_prestacao && prestacaoDeContas.analises_de_conta_da_prestacao.length > 0){
+                prestacaoDeContas.analises_de_conta_da_prestacao.map((conta)=>{
+                        arrayAnalises.push({
+                            uuid: conta.uuid,
+                            conta_associacao: conta.conta_associacao.uuid,
+                            data_extrato: conta.data_extrato,
+                            saldo_extrato: conta.saldo_extrato !== null ? valorTemplate(conta.saldo_extrato) : null,
+                        })
+                    });
+                return arrayAnalises;
+            }else {
+                return arrayAnalises;
+            }
+        }else {
+            return undefined
+        }
+    }, [prestacaoDeContas])
+
+    const verificaEditavel = useCallback(() => {
+        if(prestacaoDeContas.status === 'EM_ANALISE'){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }, [prestacaoDeContas]);
+
+    useEffect(() => {
+        if(props && props.state && props.state.analisesDeContaDaPrestacao){
+            setAnalisesDeContaDaPrestacao(props.state.analisesDeContaDaPrestacao)
+        }
+        else if(prestacaoDeContas){
+            setAnalisesDeContaDaPrestacao(getAnalisePrestacao())
+        }
+
+    }, [getAnalisePrestacao, props, prestacaoDeContas])
+
+    useEffect(() => {
+        if(props && props.state && props.state.infoAta){
+            setInfoAta(props.state.infoAta)
+        }
+        else if(prestacaoDeContas){
+            setInfoAta(carregaInfoAta())
+        }
+
+    }, [carregaInfoAta, props, prestacaoDeContas])
+
+    useEffect(() => {
+        if(props && props.state && props.state.editavel){
+            setEditavel(props.state.editavel);
+        }
+        else if(prestacaoDeContas){
+            setEditavel(verificaEditavel())
+        }
+
+    }, [verificaEditavel, props, prestacaoDeContas])
 
     const verificaPcEmAnalise = () => {
         if(prestacaoDeContas && prestacaoDeContas.status === "EM_ANALISE"){
@@ -57,7 +128,7 @@ export const ResumoDosAcertos = () => {
     // Necessario para quando voltar da aba Histórico para Conferencia atual
     const setAnaliseAtualUuidComPCAnaliseAtualUuid = useCallback(async () => {
         let analise_atual_uuid = '';
-        if (props.state.editavel) {
+        if (editavel) {
             if (prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid) {
                 analise_atual_uuid = prestacaoDeContas.analise_atual.uuid
             }
@@ -76,7 +147,7 @@ export const ResumoDosAcertos = () => {
         setTotalLancamentosAjustes(undefined)
         setTotalDocumentosAjustes(undefined)
         setForcaVerificaSeExibeMsg(gerarUuid())
-    }, [prestacaoDeContas, props])
+    }, [prestacaoDeContas, editavel])
 
     useEffect(() => {
         setAnaliseAtualUuidComPCAnaliseAtualUuid()
@@ -116,8 +187,8 @@ export const ResumoDosAcertos = () => {
 
     const verificaQtdeLancamentosDocumentosAjustes = useCallback(async () => {
         setLoading(true)
-        if (props.state.infoAta && props.state.infoAta.contas && props.state.infoAta.contas.length > 0 && analiseAtualUuid) {
-            props.state.infoAta.contas.map(async (conta) => {
+        if (infoAta && infoAta.contas && infoAta.contas.length > 0 && analiseAtualUuid) {
+            infoAta.contas.map(async (conta) => {
                 let extratos_ajustes = await getExtratosBancariosAjustes(analiseAtualUuid, conta.conta_associacao.uuid);
                 setTotalExtratosAjustes(extratos_ajustes.length)
 
@@ -127,8 +198,9 @@ export const ResumoDosAcertos = () => {
                 setTotalDocumentosAjustes(documentos_ajustes.length)
             })
         }
+
         setLoading(false)
-    }, [analiseAtualUuid, props.state.infoAta])
+    }, [analiseAtualUuid, infoAta])
 
     useEffect(() => {
         verificaQtdeLancamentosDocumentosAjustes()
@@ -162,13 +234,13 @@ export const ResumoDosAcertos = () => {
     }, [prestacao_conta_uuid, history])
 
     const trataAnalisesDeContaDaPrestacao = useCallback(() => {
-        let analises = [...props.state.analisesDeContaDaPrestacao]
+        let analises = [...analisesDeContaDaPrestacao]
         analises.forEach(item => {
             item.data_extrato = item.data_extrato ? moment(item.data_extrato).format("YYYY-MM-DD") : null;
             item.saldo_extrato = item.saldo_extrato ? trataNumericos(item.saldo_extrato) : 0;
         })
         return analises
-    }, [props.state.analisesDeContaDaPrestacao])
+    }, [analisesDeContaDaPrestacao])
 
     const devolverParaAcertos = useCallback(async () => {
         setBtnDevolverParaAcertoDisabled(true)
@@ -208,6 +280,16 @@ export const ResumoDosAcertos = () => {
         }
     }, [dataLimiteDevolucao, trataAnalisesDeContaDaPrestacao, prestacao_conta_uuid, onClickBtnVoltar])
 
+
+    const valorTemplate = (valor) => {
+        let valor_formatado = Number(valor).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+        valor_formatado = valor_formatado.replace(/R/, "").replace(/\$/, "");
+        return valor_formatado
+    };
+
     return (
         <>
             <PaginasContainer>
@@ -217,10 +299,14 @@ export const ResumoDosAcertos = () => {
                         onClickBtnVoltar={onClickBtnVoltar}
                         setShowModalConfirmaDevolverParaAcerto={setShowModalConfirmaDevolverParaAcerto}
                         dataLimiteDevolucao={dataLimiteDevolucao}
-                        qtdeAjustesLancamentos={props.state.totalLancamentosAjustes}
-                        qtdeAjustesDocumentos={props.state.totalDocumentosAjustes}
+                        // TODO verificar a necessidade desses props de lancamentos e documentos
+                        /* qtdeAjustesLancamentos={props.state.totalLancamentosAjustes}
+                        qtdeAjustesDocumentos={props.state.totalDocumentosAjustes} */
+                        qtdeAjustesLancamentos={totalLancamentosAjustes}
+                        qtdeAjustesDocumentos={totalDocumentosAjustes}
+                        qtdeAjustesExtrato={totalExtratosAjustes}
                         btnDevolverParaAcertoDisabled={btnDevolverParaAcertoDisabled}
-                        editavel={props.state.editavel}
+                        editavel={editavel}
                     />
 
                     {analiseAtualUuid && !loading ? (
@@ -235,7 +321,7 @@ export const ResumoDosAcertos = () => {
                                 totalAnalisesDePcDevolvidas={totalAnalisesDePcDevolvidas} // Para TabsConferenciaAtualHistorico
                                 setAnaliseAtualUuidComPCAnaliseAtualUuid={setAnaliseAtualUuidComPCAnaliseAtualUuid} // Para TabsConferenciaAtualHistorico
                                 setPrimeiraAnalisePcDevolvida={setPrimeiraAnalisePcDevolvida} // Para TabsConferenciaAtualHistorico
-                                editavel={props.state.editavel}
+                                editavel={editavel}
                                 pcEmAnalise={pcEmAnalise}
                             />
                         ) :

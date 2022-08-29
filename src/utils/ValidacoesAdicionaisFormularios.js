@@ -4,6 +4,7 @@ import * as yup from "yup";
 import moment from "moment";
 import {ASSOCIACAO_UUID} from "../services/auth.service";
 import {getPeriodoFechado} from "../services/escolas/Associacao.service";
+import {metodosAuxiliares} from "../componentes/escolas/Despesas/metodosAuxiliares";
 
 const retornaNumeroOrdinal = (index) =>{
   let _index = index + 1;
@@ -277,7 +278,7 @@ export const periodoFechadoImposto = async (despesas_impostos, setReadOnlyBtnAca
   }
 }
 
-export const validaPayloadDespesas = (values, despesasTabelas=null) => {
+export const validaPayloadDespesas = (values, despesasTabelas=null, parametroLocation=null) => {
 
   let exibe_documento_transacao
   if (despesasTabelas){
@@ -353,6 +354,12 @@ export const validaPayloadDespesas = (values, despesasTabelas=null) => {
             rateio.valor_rateio = round(trataNumericos(rateio.valor_rateio), 2);
             rateio.valor_original = round(trataNumericos(rateio.valor_original), 2);
         });
+
+        if(parametroLocation){
+          if(metodosAuxiliares.origemAnaliseDre(parametroLocation)){
+            metodosAuxiliares.mantemConciliacaoAtualImposto(despesa_imposto);
+          }
+        }
     }
   });
 
