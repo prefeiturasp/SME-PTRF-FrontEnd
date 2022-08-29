@@ -5,7 +5,9 @@ import { getPrestacaoDeContasDetalhe } from "../../../services/dres/PrestacaoDeC
 import {useLocation} from 'react-router-dom';
 import {Button} from 'react-bootstrap';
 import {toastCustom} from "../../../componentes/Globais/ToastCustom"
+import {visoesService} from "../../../services/visoes.service";
 import { marcarDevolucaoTesouro, getSalvarDevoulucoesAoTesouro } from '../../../services/dres/PrestacaoDeContas.service.js'
+import moment from "moment";
 
 import './../../../componentes/escolas/GeracaoDaAta/geracao-da-ata.scss'
 
@@ -43,7 +45,7 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
             setErrorMessage("é Necessário um campo de data para a ação.")
         }
         if (!(value instanceof Date)) {
-          setErrorMessage('precisa ser uma data valida.')
+          setErrorMessage('é Necessário um campo de data para a ação.')
         }
     }
 
@@ -79,7 +81,7 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
 
     return(
         <PaginasContainer>
-            <h1 className="titulo-itens-painel mt-5">Devolução ao tesouro table</h1>
+            <h1 className="titulo-itens-painel mt-5">Devolução ao tesouro</h1>
             <div className="page-content-inner">
                 <table className="table table-bordered tabela-devolucoes-ao-tesouro">
                     <thead>
@@ -98,8 +100,8 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
                             <td>{despesa.cpf_cnpj_fornecedor}</td>
                             <td>{despesa.tipo_documento ? despesa.tipo_documento.nome : ''}</td>
                             <td>{despesa.numero_documento}</td>
-                            <td>{despesa.data_documento}</td>
-                            <td>{despesa.valor_total}</td>
+                            <td>{moment(new Date(despesa.data_documento), "YYYY-MM-DD").format("DD/MM/YYYY")}</td>
+                            <td>{devolucao.valor}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -133,6 +135,10 @@ export const DevolucaoAoTesouroAjuste = ({}) => {
                             variant="success"
                             className="btn btn-sucess pr-4 pl-4"
                             onClick={submitAlteracaoDevolucaoTesouro}
+                            disabled={![['change_analise_dre']].some(visoesService.getPermissoes) ||
+                              visoesService.getItemUsuarioLogado('visao_selecionada.nome') === 'DRE' ||
+                              dateDevolucao === null ? true : false
+                            }
                         >
                             Salvar
                         </Button>
